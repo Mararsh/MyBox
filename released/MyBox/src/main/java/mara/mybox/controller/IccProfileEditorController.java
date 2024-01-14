@@ -41,12 +41,13 @@ import mara.mybox.color.IccTag;
 import mara.mybox.color.IccTagType;
 import mara.mybox.color.IccTags;
 import mara.mybox.color.IccXML;
+import mara.mybox.db.data.FileBackup;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.RecentVisitMenu;
-import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.ByteTools;
@@ -113,8 +114,6 @@ public class IccProfileEditorController extends ChromaticityBaseController {
     protected Tab tagDataTab;
     @FXML
     protected Button refreshHeaderButton, refreshXmlButton, exportXmlButton;
-    @FXML
-    protected ControlFileBackup backupController;
 
     protected enum SourceType {
         Embed, Internal_File, External_File, External_Data
@@ -141,8 +140,6 @@ public class IccProfileEditorController extends ChromaticityBaseController {
             initHeaderControls();
             initTagsTable();
             initOptions();
-
-            backupController.setParameters(this, baseName);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -709,7 +706,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
         } else {
             inputName = message("File") + ": " + name;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             private File file;
             private IccProfile p;
@@ -752,7 +749,6 @@ public class IccProfileEditorController extends ChromaticityBaseController {
                 }
                 profile = p;
                 displayProfileData();
-                backupController.loadBackups(sourceFile);
             }
 
             @Override
@@ -786,7 +782,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
         }
         resetMarkLabel(headerBox);
         inputsValid = true;
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             private String xml;
 
@@ -1052,7 +1048,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -1643,7 +1639,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             private String display, bytes;
 
@@ -1767,7 +1763,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -1846,7 +1842,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -1962,12 +1958,16 @@ public class IccProfileEditorController extends ChromaticityBaseController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
+
+            private boolean needBackup = false;
+            private FileBackup backup;
 
             @Override
             protected boolean handle() {
-                if (backupController.needBackup()) {
-                    backupController.addBackup(task, file);
+                needBackup = UserConfig.getBoolean(baseName + "BackupWhenSave", true);
+                if (needBackup) {
+                    backup = addBackup(this, file);
                 }
                 return profile.write(file, newHeaderData);
             }
@@ -1977,8 +1977,16 @@ public class IccProfileEditorController extends ChromaticityBaseController {
                 sourceFile = file;
                 sourceType = SourceType.External_File;
                 openProfile(file.getAbsolutePath());
-                popSuccessful();
-
+                if (needBackup) {
+                    if (backup != null && backup.getBackup() != null) {
+                        popInformation(message("SavedAndBacked"));
+                        FileBackupController.updateList(sourceFile);
+                    } else {
+                        popError(message("FailBackup"));
+                    }
+                } else {
+                    popInformation(sourceFile + "   " + message("Saved"));
+                }
             }
 
         };

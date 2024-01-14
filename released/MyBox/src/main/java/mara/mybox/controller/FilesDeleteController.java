@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.FileDeleteTools;
 import static mara.mybox.value.Languages.message;
 
@@ -51,7 +52,7 @@ public class FilesDeleteController extends BaseBatchFileController {
     }
 
     @Override
-    public String handleFile(File srcFile, File targetPath) {
+    public String handleFile(FxTask currentTask, File srcFile, File targetPath) {
         try {
             if (srcFile == null || !srcFile.isFile()) {
                 return message("Skip");
@@ -59,7 +60,7 @@ public class FilesDeleteController extends BaseBatchFileController {
             boolean ok;
             String msg;
             if (deleteRadio.isSelected()) {
-                ok = FileDeleteTools.delete(srcFile);
+                ok = FileDeleteTools.delete(currentTask, srcFile);
                 msg = message("FileDeletedSuccessfully") + ": " + srcFile.getAbsolutePath();
             } else {
                 ok = Desktop.getDesktop().moveToTrash(srcFile);
@@ -80,7 +81,7 @@ public class FilesDeleteController extends BaseBatchFileController {
     }
 
     @Override
-    protected boolean handleDirectory(File sourcePath, String targetPath) {
+    protected boolean handleDirectory(FxTask currentTask, File sourcePath, String targetPath) {
         if (sourcePath == null || !sourcePath.exists() || !sourcePath.isDirectory()
                 || (isPreview && dirFilesHandled > 0)) {
             return false;
@@ -88,10 +89,10 @@ public class FilesDeleteController extends BaseBatchFileController {
         try {
             File[] files = sourcePath.listFiles();
             if (files == null || files.length == 0) {
-                deleteEmptyDirectory(sourcePath);
+                deleteEmptyDirectory(currentTask, sourcePath);
             } else {
-                super.handleDirectory(sourcePath, targetPath);
-                deleteEmptyDirectory(sourcePath);
+                super.handleDirectory(currentTask, sourcePath, targetPath);
+                deleteEmptyDirectory(currentTask, sourcePath);
             }
             return true;
         } catch (Exception e) {
@@ -100,7 +101,7 @@ public class FilesDeleteController extends BaseBatchFileController {
         }
     }
 
-    protected void deleteEmptyDirectory(File sourcePath) {
+    protected void deleteEmptyDirectory(FxTask currentTask, File sourcePath) {
         if (!deleteEmptyCheck.isSelected()
                 || sourcePath == null || !sourcePath.exists() || !sourcePath.isDirectory()) {
             return;
@@ -109,7 +110,7 @@ public class FilesDeleteController extends BaseBatchFileController {
             File[] files = sourcePath.listFiles();
             if (files == null || files.length == 0) {
                 if (deleteRadio.isSelected()) {
-                    if (FileDeleteTools.deleteDir(sourcePath)) {
+                    if (FileDeleteTools.deleteDir(currentTask, sourcePath)) {
                         if (verboseCheck == null || verboseCheck.isSelected()) {
                             updateLogs(message("DirectoryDeletedSuccessfully") + ": " + sourcePath.getAbsolutePath());
                         }

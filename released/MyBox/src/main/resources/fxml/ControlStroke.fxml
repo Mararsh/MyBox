@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="thisPane" spacing="5.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlStroke">
+    <children>
+      <VBox layoutX="10.0" layoutY="268.0" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+         <children>
+            <FlowPane hgap="5.0" prefWrapLength="100.0" vgap="5.0">
+               <children>
+                  <Label text="%StrokeColor" />
+                  <fx:include fx:id="color" source="ControlColorSet.fxml" />
+               </children>
+            </FlowPane>
+                    <FlowPane hgap="5.0" prefWrapLength="100.0" vgap="5.0">
+                        <children>
+                            <Label minHeight="-Infinity" text="%Width" wrapText="true" />
+                            <ComboBox fx:id="widthSelector" editable="true" prefWidth="100.0" />
+                        </children>
+                    </FlowPane>
+         </children>
+      </VBox>
+      <VBox fx:id="fillBox" layoutX="10.0" layoutY="10.0" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+         <children>
+            <FlowPane hgap="5.0" prefWrapLength="100.0" vgap="5.0">
+               <children>
+                  <CheckBox fx:id="fillCheck" mnemonicParsing="false" text="%Fill" />
+                  <fx:include fx:id="fill" source="ControlColorSet.fxml" />
+               </children>
+            </FlowPane>
+            <FlowPane fx:id="fillOpacityPane" hgap="2.0" prefWrapLength="0.0" vgap="2.0">
+               <children>
+                  <Label minHeight="-Infinity" text="%FillOpacity" wrapText="true" />
+                  <ComboBox fx:id="fillOpacitySelector" editable="true" prefWidth="100.0" />
+               </children>
+            </FlowPane>
+         </children>
+      </VBox>
+      <VBox layoutX="10.0" layoutY="353.0" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+         <children>
+            <Label minHeight="-Infinity" text="%StrokeLineJoin" wrapText="true" />
+            <FlowPane hgap="5.0" prefWrapLength="100.0" vgap="5.0">
+               <children>
+                  <RadioButton fx:id="joinMiterRadio" layoutX="87.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%Miter">
+                     <toggleGroup>
+                        <ToggleGroup fx:id="joinGroup" />
+                     </toggleGroup>
+                  </RadioButton>
+                  <RadioButton fx:id="joinBevelRadio" mnemonicParsing="false" text="%Bevel" toggleGroup="$joinGroup" />
+                  <RadioButton fx:id="joinRoundRadio" layoutX="10.0" layoutY="31.0" mnemonicParsing="false" text="%Round" toggleGroup="$joinGroup" />
+               </children>
+            </FlowPane>
+            <FlowPane hgap="5.0" prefWrapLength="100.0" vgap="5.0">
+               <children>
+                  <Label minHeight="-Infinity" text="%StrokeMiterLimit" wrapText="true" />
+                  <ComboBox fx:id="limitSelector" editable="true" prefWidth="100.0" />
+               </children>
+            </FlowPane>
+         </children>
+      </VBox>
+      <VBox layoutX="10.0" layoutY="238.0" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+         <children>
+            <Label minHeight="-Infinity" text="%StrokeLineCap" wrapText="true" />
+            <FlowPane hgap="5.0" prefWrapLength="100.0" vgap="5.0">
+               <children>
+                  <RadioButton fx:id="capButtRadio" mnemonicParsing="false" selected="true" text="%Butt">
+                     <toggleGroup>
+                        <ToggleGroup fx:id="capGroup" />
+                     </toggleGroup>
+                  </RadioButton>
+                  <RadioButton fx:id="capSquareRadio" mnemonicParsing="false" text="%SquareShape" toggleGroup="$capGroup" />
+                  <RadioButton fx:id="capRoundRadio" mnemonicParsing="false" text="%Round" toggleGroup="$capGroup" />
+               </children>
+            </FlowPane>
+         </children>
+      </VBox>
+      <VBox layoutX="10.0" layoutY="310.0" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+         <children>
+            <CheckBox fx:id="dashCheck" minHeight="-Infinity" mnemonicParsing="false" text="%Dotted" wrapText="true" />
+            <FlowPane hgap="2.0" layoutX="15.0" layoutY="15.0" prefWrapLength="0.0" vgap="2.0">
+               <children>
+                  <Label minHeight="-Infinity" text="%StrokeDashArray" wrapText="true" />
+                  <TextField fx:id="arrayInput" prefWidth="120.0" />
+               </children>
+            </FlowPane>
+            <FlowPane hgap="2.0" prefWrapLength="0.0" vgap="2.0">
+               <children>
+                  <Label minHeight="-Infinity" text="%StrokeDashOffset" wrapText="true" />
+                  <TextField fx:id="offsetInput" prefWidth="80.0" />
+               </children>
+            </FlowPane>
+         </children>
+      </VBox>
+      <Hyperlink onAction="#aboutStroke" text="%AboutStroke" />
+    </children>
+</VBox>

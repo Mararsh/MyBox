@@ -9,6 +9,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -36,7 +37,7 @@ public class RemotePathGetController extends RemotePathHandleFilesController {
         try {
             super.setParameters(manageController);
 
-            targetPathInputController.baseName(baseName).init();
+            targetPathInputController.baseName(baseName).initFile();
 
             copyMtimeCheck.setSelected(UserConfig.getBoolean(baseName + "CopyMtime", true));
             copyMtimeCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -67,16 +68,16 @@ public class RemotePathGetController extends RemotePathHandleFilesController {
     }
 
     @Override
-    public boolean handleFile(String srcfile) {
+    public boolean handleFile(FxTask currentTask, String srcfile) {
         try {
             SftpATTRS attrs = manageController.remoteController.stat(srcfile);
             if (attrs == null) {
                 return false;
             }
             if (attrs.isDir()) {
-                return downDirectory(srcfile, targetPath);
+                return downDirectory(currentTask, srcfile, targetPath);
             } else {
-                return downFile(srcfile, attrs, targetPath);
+                return downFile(currentTask, srcfile, attrs, targetPath);
             }
         } catch (Exception e) {
             showLogs(e.toString());
@@ -84,10 +85,10 @@ public class RemotePathGetController extends RemotePathHandleFilesController {
         }
     }
 
-    public boolean downFile(String srcfile, SftpATTRS attrs, File path) {
+    public boolean downFile(FxTask currentTask, String srcfile, SftpATTRS attrs, File path) {
         try {
             File target = new File(path + File.separator + new File(srcfile).getName());
-            if (manageController.remoteController.get(srcfile, attrs,
+            if (manageController.remoteController.get(currentTask, srcfile, attrs,
                     target, copyMtimeCheck.isSelected())) {
                 doneCount++;
                 return true;
@@ -100,7 +101,7 @@ public class RemotePathGetController extends RemotePathHandleFilesController {
         }
     }
 
-    public boolean downDirectory(String srcfile, File path) {
+    public boolean downDirectory(FxTask currentTask, String srcfile, File path) {
         try {
             File target = new File(path + File.separator + new File(srcfile).getName());
             target.getParentFile().mkdirs();
@@ -110,7 +111,7 @@ public class RemotePathGetController extends RemotePathHandleFilesController {
             }
             boolean ok;
             while (iterator.hasNext()) {
-                if (task == null || task.isCancelled()) {
+                if (currentTask == null || !currentTask.isWorking()) {
                     return false;
                 }
                 LsEntry entry = iterator.next();
@@ -122,13 +123,13 @@ public class RemotePathGetController extends RemotePathHandleFilesController {
                 child = srcfile + "/" + child;
                 SftpATTRS attrs = entry.getAttrs();
                 if (attrs.isDir()) {
-                    ok = downDirectory(child, target);
+                    ok = downDirectory(currentTask, child, target);
                 } else {
-                    ok = downFile(child, attrs, target);
+                    ok = downFile(currentTask, child, attrs, target);
                 }
                 if (!ok && !continueCheck.isSelected()) {
-                    if (task != null) {
-                        task.cancel();
+                    if (currentTask != null) {
+                        currentTask.cancel();
                     }
                     return false;
                 }
@@ -156,8 +157,8 @@ public class RemotePathGetController extends RemotePathHandleFilesController {
             if (manageController == null) {
                 return null;
             }
-            RemotePathGetController controller = (RemotePathGetController) WindowTools.openChildStage(
-                    manageController.getMyWindow(), Fxmls.RemotePathGetFxml, false);
+            RemotePathGetController controller = (RemotePathGetController) WindowTools.branchStage(
+                    manageController, Fxmls.RemotePathGetFxml);
             controller.setParameters(manageController);
             controller.requestMouse();
             return controller;

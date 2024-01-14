@@ -28,8 +28,8 @@ import mara.mybox.db.data.ColorPaletteName;
 import mara.mybox.db.table.TableColorPalette;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
-import mara.mybox.fxml.SingletonBackgroundTask;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxBackgroundTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.StringTools;
@@ -90,7 +90,7 @@ public class ControlColorsPane extends BaseController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             List<ColorData> colors;
 
             @Override
@@ -122,7 +122,7 @@ public class ControlColorsPane extends BaseController {
             backgroundTask.cancel();
             backgroundTask = null;
         }
-        backgroundTask = new SingletonBackgroundTask<Void>(this) {
+        backgroundTask = new FxBackgroundTask<Void>(this) {
             List<Rectangle> rects = new ArrayList<>();
 
             @Override
@@ -303,7 +303,7 @@ public class ControlColorsPane extends BaseController {
 
         menu = new MenuItem(message("Information"), StyleTools.getIconImageView("iconInfo.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
-            HtmlPopController.openHtml(colorData.html());
+            HtmlPopController.showHtml(this, colorData.html());
         });
         items.add(menu);
 
@@ -350,7 +350,7 @@ public class ControlColorsPane extends BaseController {
             return;
         }
         Color sourceColor = Color.web(event.getDragboard().getString());
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             private List<ColorData> colors = null;
 
@@ -425,7 +425,7 @@ public class ControlColorsPane extends BaseController {
         if (task != null && !task.isQuit()) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             private int deletedCount = 0;
 

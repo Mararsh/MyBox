@@ -10,7 +10,7 @@ import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.db.table.TableData2DStyle;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.FxTask;
 
 /**
  * @Author Mara
@@ -31,7 +31,7 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
     public DataFilter filter;
     public ControlData2DLoad loadController;
     public boolean tableChanged;
-    public SingletonTask task, backgroundTask;
+    public FxTask task, backgroundTask;
     public String error;
 
     public Data2D_Attributes() {
@@ -252,20 +252,20 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
         return this;
     }
 
-    public SingletonTask getTask() {
+    public FxTask getTask() {
         return task;
     }
 
-    public Data2D_Attributes setTask(SingletonTask task) {
+    public Data2D_Attributes setTask(FxTask task) {
         this.task = task;
         return this;
     }
 
-    public SingletonTask getBackgroundTask() {
+    public FxTask getBackgroundTask() {
         return backgroundTask;
     }
 
-    public void setBackgroundTask(SingletonTask backgroundTask) {
+    public void setBackgroundTask(FxTask backgroundTask) {
         this.backgroundTask = backgroundTask;
     }
 

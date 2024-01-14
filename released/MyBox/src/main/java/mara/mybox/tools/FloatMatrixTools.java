@@ -2,6 +2,7 @@ package mara.mybox.tools;
 
 import java.util.Random;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 
 /**
  * @Author Mara
@@ -40,7 +41,7 @@ public class FloatMatrixTools {
         return rv;
     }
 
-    public static float[] matrix2Array(float[][] m) {
+    public static float[] matrix2Array(FxTask task, float[][] m) {
         if (m == null || m.length == 0 || m[0].length == 0) {
             return null;
         }
@@ -48,6 +49,9 @@ public class FloatMatrixTools {
         int w = m[0].length;
         float[] a = new float[w * h];
         for (int j = 0; j < h; ++j) {
+            if (task != null && !task.isWorking()) {
+                return null;
+            }
             System.arraycopy(m[j], 0, a, j * w, w);
         }
         return a;
@@ -617,7 +621,8 @@ public class FloatMatrixTools {
         return determinantByElimination(matrix);
     }
 
-    public static float determinantByComplementMinor(float[][] matrix) throws Exception {
+    public static float determinantByComplementMinor(float[][] matrix) throws
+            Exception {
         try {
             if (matrix == null) {
                 throw new Exception("InvalidValue");
@@ -645,7 +650,8 @@ public class FloatMatrixTools {
 
     }
 
-    public static float determinantByElimination(float[][] matrix) throws Exception {
+    public static float determinantByElimination(float[][] matrix) throws
+            Exception {
         try {
             if (matrix == null) {
                 throw new Exception("InvalidValue");

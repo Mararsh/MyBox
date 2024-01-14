@@ -28,20 +28,6 @@ public class ControlInfoTreeListSelector extends ControlInfoTreeList {
     protected BaseInfoTreeHandleController handler;
     protected ControlInfoTreeList sourceList;
 
-    public void setParameters(BaseInfoTreeHandleController handler) {
-        if (handler == null) {
-            return;
-        }
-        this.handler = handler;
-        if (handler.manager != null) {
-            setSource(handler.manager.treeController);
-        } else {
-            category = handler.handlerController.category;
-            baseName = baseName + "_" + category;
-            loadTree();
-        }
-    }
-
     @Override
     public boolean isSourceNode(InfoNode node) {
         return handler.isSourceNode(node);
@@ -165,7 +151,7 @@ public class ControlInfoTreeListSelector extends ControlInfoTreeList {
         });
         nothingMenu.setToggleGroup(clickGroup);
 
-        RadioMenuItem clickPopMenu = new RadioMenuItem(message("PopMenu"), StyleTools.getIconImageView("iconMenu.png"));
+        RadioMenuItem clickPopMenu = new RadioMenuItem(message("ContextMenu"), StyleTools.getIconImageView("iconMenu.png"));
         clickPopMenu.setSelected("PopMenu".equals(currentClick));
         clickPopMenu.setOnAction(new EventHandler<ActionEvent>() {
             @Override

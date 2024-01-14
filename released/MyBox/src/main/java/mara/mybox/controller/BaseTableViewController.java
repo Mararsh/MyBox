@@ -9,6 +9,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -26,9 +27,8 @@ import mara.mybox.data.StringTable;
 import mara.mybox.data2d.Data2DTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.NodeTools;
-import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.cell.TableRowSelectionCell;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.AppVariables;
@@ -109,16 +109,19 @@ public abstract class BaseTableViewController<P> extends BaseController {
                 }
             });
 
-            tableView.setOnMouseClicked((MouseEvent event) -> {
-                if (popMenu != null && popMenu.isShowing()) {
-                    popMenu.hide();
-                }
-                if (event.getButton() == MouseButton.SECONDARY) {
-                    popTableMenu(event);
-                } else if (event.getClickCount() == 1) {
-                    itemClicked();
-                } else if (event.getClickCount() > 1) {
-                    itemDoubleClicked();
+            tableView.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    if (popMenu != null && popMenu.isShowing()) {
+                        popMenu.hide();
+                    }
+                    if (event.getButton() == MouseButton.SECONDARY) {
+                        popTableMenu(event);
+                    } else if (event.getClickCount() == 1) {
+                        itemClicked();
+                    } else if (event.getClickCount() > 1) {
+                        itemDoubleClicked();
+                    }
                 }
             });
 
@@ -264,14 +267,18 @@ public abstract class BaseTableViewController<P> extends BaseController {
 
     protected List<P> selectedItems() {
         try {
-            List<P> items = tableView.getSelectionModel().getSelectedItems();
-            if (items != null) {
+            List<P> selectedItems = tableView.getSelectionModel().getSelectedItems();
+            if (selectedItems != null && !selectedItems.isEmpty()) {
+                List<P> items = new ArrayList<>();
+                for (P item : selectedItems) {
+                    items.add(item);
+                }
                 return items;
             }
-            List<Integer> selected = tableView.getSelectionModel().getSelectedIndices();
-            if (selected != null && !selected.isEmpty()) {
-                items = new ArrayList<>();
-                for (int index : selected) {
+            List<Integer> selectedIndices = tableView.getSelectionModel().getSelectedIndices();
+            if (selectedIndices != null && !selectedIndices.isEmpty()) {
+                List<P> items = new ArrayList<>();
+                for (int index : selectedIndices) {
                     items.add(tableData.get(index));
                 }
                 return items;
@@ -393,7 +400,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
         try {
             List<P> selected = selectedItems();
             if (selected == null || selected.isEmpty()) {
-                popError(message("SelectToHandle"));
+                clearAction();
                 return;
             }
             tableData.removeAll(selected);
@@ -405,9 +412,6 @@ public abstract class BaseTableViewController<P> extends BaseController {
     @FXML
     @Override
     public void clearAction() {
-        if (!PopTools.askSure(getTitle(), message("SureClearData"))) {
-            return;
-        }
         tableData.clear();
     }
 
@@ -417,6 +421,10 @@ public abstract class BaseTableViewController<P> extends BaseController {
             return;
         }
         tableData.remove(tableData.size() - 1);
+    }
+
+    public void clear() {
+        tableData.clear();
     }
 
     @FXML
@@ -498,7 +506,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
 
     @FXML
     public void snapAction() {
-        ImageViewerController.openImage(NodeTools.snap(tableView));
+        ImageEditorController.openImage(NodeTools.snap(tableView));
     }
 
     @FXML
@@ -507,7 +515,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
             popError(message("NoData"));
             return;
         }
-        SingletonTask dataTask = new SingletonTask<Void>(this) {
+        FxTask dataTask = new FxTask<Void>(this) {
             private List<String> names;
             private List<List<String>> data;
 
@@ -528,6 +536,9 @@ public abstract class BaseTableViewController<P> extends BaseController {
                     }
                     data = new ArrayList<>();
                     for (int r = 0; r < tableData.size(); r++) {
+                        if (!isWorking()) {
+                            return false;
+                        }
                         List<String> row = new ArrayList<>();
                         for (int c = 0; c < colsNumber; c++) {
                             if (c == rowsSelectionColumnIndex) {
@@ -563,12 +574,12 @@ public abstract class BaseTableViewController<P> extends BaseController {
             popError(message("NoData"));
             return;
         }
-        SingletonTask htmlTask = new SingletonTask<Void>(this) {
+        FxTask htmlTask = new FxTask<Void>(this) {
             private StringTable table;
 
             @Override
             protected boolean handle() {
-                table = makeStringTable();
+                table = makeStringTable(this);
                 return table != null;
             }
 
@@ -580,7 +591,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
         start(htmlTask, false, message("LoadingTableData"));
     }
 
-    protected StringTable makeStringTable() {
+    protected StringTable makeStringTable(FxTask currentTask) {
         try {
             List<String> names = new ArrayList<>();
             int rowsSelectionColumnIndex = -1;
@@ -614,7 +625,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
                             width = (int) image.getWidth();
                         }
                         if (image != null) {
-                            String base64 = FxImageTools.base64(image, "png");
+                            String base64 = FxImageTools.base64(currentTask, image, "png");
                             if (base64 != null) {
                                 s = "<img src=\"data:image/png;base64," + base64 + "\" width=" + width + " >";
                             }

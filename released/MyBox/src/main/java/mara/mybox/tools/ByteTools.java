@@ -14,6 +14,7 @@ import mara.mybox.bufferedimage.BufferedImageTools;
 import mara.mybox.data.FileEditInformation.Line_Break;
 import mara.mybox.data.FindReplaceString;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.value.AppValues;
 
 /**
@@ -336,16 +337,16 @@ public class ByteTools {
         }
     }
 
-    public static int countNumber(byte[] bytes, byte[] subBytes) {
-        return FindReplaceString.count(bytesToHex(bytes), bytesToHex(subBytes));
+    public static int countNumber(FxTask currentTask, byte[] bytes, byte[] subBytes) {
+        return FindReplaceString.count(currentTask, bytesToHex(bytes), bytesToHex(subBytes));
     }
 
-    public static int countNumber(byte[] bytes, byte c) {
-        return FindReplaceString.count(bytesToHex(bytes), byteToHex(c));
+    public static int countNumber(FxTask currentTask, byte[] bytes, byte c) {
+        return FindReplaceString.count(currentTask, bytesToHex(bytes), byteToHex(c));
     }
 
-    public static int countNumber(byte[] bytes, String hex) {
-        return FindReplaceString.count(bytesToHex(bytes), hex);
+    public static int countNumber(FxTask currentTask, byte[] bytes, String hex) {
+        return FindReplaceString.count(currentTask, bytesToHex(bytes), hex);
     }
 
     public static int lineIndex(String lineText, Charset charset, int offset) {
@@ -478,7 +479,7 @@ public class ByteTools {
     public static byte[] deflate(byte[] bytes) {
         try {
             ByteArrayOutputStream a = new ByteArrayOutputStream();
-            try ( DeflaterOutputStream out = new DeflaterOutputStream(a)) {
+            try (DeflaterOutputStream out = new DeflaterOutputStream(a)) {
                 out.write(bytes);
                 out.flush();
             }
@@ -495,7 +496,7 @@ public class ByteTools {
     public static byte[] inflate(byte[] bytes) {
         try {
             ByteArrayOutputStream a = new ByteArrayOutputStream();
-            try ( InflaterOutputStream out = new InflaterOutputStream(a)) {
+            try (InflaterOutputStream out = new InflaterOutputStream(a)) {
                 out.write(bytes);
                 out.flush();
             }
@@ -508,7 +509,7 @@ public class ByteTools {
     public static byte[] toBytes(Object object) {
         try {
             ByteArrayOutputStream a = new ByteArrayOutputStream();
-            try ( ObjectOutputStream out = new ObjectOutputStream(a)) {
+            try (ObjectOutputStream out = new ObjectOutputStream(a)) {
                 out.writeObject(object);
                 out.flush();
             }
@@ -521,7 +522,7 @@ public class ByteTools {
     public static Object toObject(byte[] bytes) {
         try {
             ByteArrayInputStream a = new ByteArrayInputStream(bytes);
-            try ( ObjectInputStream in = new ObjectInputStream(a)) {
+            try (ObjectInputStream in = new ObjectInputStream(a)) {
                 return in.readObject();
             }
         } catch (Exception e) {
@@ -529,8 +530,8 @@ public class ByteTools {
         }
     }
 
-    public static byte[] imageToBytes(BufferedImage image, String format) {
-        return BufferedImageTools.bytes(image, format);
+    public static byte[] imageToBytes(FxTask task, BufferedImage image, String format) {
+        return BufferedImageTools.bytes(task, image, format);
     }
 
 }

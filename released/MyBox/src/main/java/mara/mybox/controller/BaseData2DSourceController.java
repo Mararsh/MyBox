@@ -18,7 +18,7 @@ import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataFilter;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.style.NodeStyleTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -680,7 +680,7 @@ public class BaseData2DSourceController extends ControlData2DLoad {
         }
     }
 
-    public List<List<String>> selectedData(SingletonTask task) {
+    public List<List<String>> selectedData(FxTask task) {
         try {
             if (data2D == null || checkedColsIndices == null) {
                 return null;

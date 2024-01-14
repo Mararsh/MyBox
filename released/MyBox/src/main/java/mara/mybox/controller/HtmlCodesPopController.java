@@ -12,7 +12,7 @@ import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.web.WebView;
 import mara.mybox.db.data.VisitHistory.FileType;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WebViewTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.FileTools;
@@ -57,13 +57,14 @@ public class HtmlCodesPopController extends TextPopController {
         }
     }
 
-    public void setWebView(String baseName, WebView sourceWebView) {
+    public void setWebView(BaseController parent, WebView sourceWebView) {
         try {
-            this.baseName = baseName;
+            this.parentController = parent;
             this.sourceWebView = sourceWebView;
-            refreshAction();
 
             setControls();
+
+            refreshAction();
 
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -117,19 +118,19 @@ public class HtmlCodesPopController extends TextPopController {
     @FXML
     @Override
     public void saveAsAction() {
-        File file = chooseSaveFile();
+        File file = chooseSaveFile(sourceWebView != null ? sourceWebView.getEngine().getTitle() : null);
         if (file == null) {
             return;
         }
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             @Override
             protected boolean handle() {
                 try {
                     File tmpFile = HtmlWriteTools.writeHtml(textArea.getText());
-                    return FileTools.rename(tmpFile, file);
+                    return FileTools.override(tmpFile, file);
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -164,8 +165,8 @@ public class HtmlCodesPopController extends TextPopController {
             if (textInput == null) {
                 return null;
             }
-            HtmlCodesPopController controller = (HtmlCodesPopController) WindowTools.openChildStage(parent.getMyWindow(), Fxmls.HtmlCodesPopFxml, false);
-            controller.setSourceInput(parent.baseName, textInput);
+            HtmlCodesPopController controller = (HtmlCodesPopController) WindowTools.openStage(Fxmls.HtmlCodesPopFxml);
+            controller.setSourceInput(parent, textInput);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -178,8 +179,8 @@ public class HtmlCodesPopController extends TextPopController {
             if (srcWebView == null) {
                 return null;
             }
-            HtmlCodesPopController controller = (HtmlCodesPopController) WindowTools.openChildStage(parent.getMyWindow(), Fxmls.HtmlCodesPopFxml, false);
-            controller.setWebView(parent.baseName, srcWebView);
+            HtmlCodesPopController controller = (HtmlCodesPopController) WindowTools.openStage(Fxmls.HtmlCodesPopFxml);
+            controller.setWebView(parent, srcWebView);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e);

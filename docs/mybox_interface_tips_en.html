@@ -25,7 +25,7 @@
               - Each edit mode can change the html separately. 
               - The mode in current tab is "current edit mode".
               - Click button "Synchronize"(F10) to apply updates in current edit mode to other modes.
-              - Click button "Save"(F2) to save updates in current edit mode and synchronize automatically.
+              - Click button "Save"(CTRL+S or ALT+S) to save updates in current edit mode and synchronize automatically.
               - Note' html code should be contents of "body" and have not tags "html", "head" and "body".
        - Tags can be set for note.
        - Style can be set for note. Style is only for displaying and not saved in note's codes.
@@ -48,29 +48,9 @@ Texts in images can not be changed and extracted, but can be recognized by OCR t
     <H3>Edit Markdown</H3>
     <PRE>This tool helps to edit Markdown file(MD):
 -  Charset and Line Break are determined automatically when file is opened. 
-   If loaded contents are incorrent, change charset and click button "Refresh".
+-  If loaded incorrently, use "File-Format" to change charset and click button "OK".
 -  Corresponding html is converted(Read only).
--  When pages number is larger than 1, modification should be saved before filter strings or locate line/object.
--  Click button "Pop"(CTRL/ALT+p) to display current contents in a new window.
--  Click button "Menu" or right click edit area to pop buttons menu.
--  Click button "MyBox Clipboard"(CTRL/ALT+m) to pop texts clipboard for pasting.
-
-
-Some shortcuts:
-F2                          Save
-F3                          Recover            
-F6                          Close popped menu
-F11                        Save as
-Alt-PageUp            Previous page
-Alt-PageDown        Next page
-Alt-Home               First page
-Alt-End                   Last page
-Ctrl-f                       Open find pane
-Ctrl-1                      Find previous
-Ctrl-2                      Find next
-Ctrl-h                      Replace
-Ctrl-w                      Replace all
-More shortcuts can be found in help.</PRE>
+-  When pages number is larger than 1, modification should be saved before filter strings or locate line/object.</PRE>
     <H3>Edit Html</H3>
     <PRE>This tool helps to edit html:
 - Html can be loaded by opening file, creating new file , or inputting address.
@@ -80,9 +60,9 @@ More shortcuts can be found in help.</PRE>
        - The mode in current tab is called as "current edit mode".
 - Following buttons work for current edit mode:
        - Click button "Synchronize"(F10) to apply updates in current edit mode to other modes.
-       - Click button "Save"(F2) to save updates in current edit mode and do "Synchronize" automatically.
-       - Click button "Pop"(CTRL/ALT+p) to display contents in current edit mode in a new window.
-       - Click button "Menu"(F12) or right click edit area to pop context menu.
+       - Click button "Save"(CTRL+S or ALT+S) to save updates in current edit mode and do "Synchronize" automatically.
+       - Click button "Pop"(F4 or CTRL+P or ALT+p) to display contents in current edit mode in a new window.
+       - Click button "Menu"(F6) or right click edit area to pop context menu.
        - Click button "MyBox Clipboard"(CTRL/ALT+m) to pop texts clipboard for pasting.</PRE>
     <H3>Snap Html</H3>
     <PRE>To take the snapshot of page:
@@ -100,8 +80,8 @@ More shortcuts can be found in help.</PRE>
   - The mode in current tab is called as "current edit mode".
   - Following buttons work for current edit mode:
        - Click button "Synchronize"(F10) to apply updates in current edit mode to other modes.
-       - Click button "Save"(F2) to save updates in current edit mode and do "Synchronize" automatically.
-       - Click button "Menu"(F12) or right click edit area to pop context menu.
+       - Click button "Save"(CTRL+S or ALT+S) to save updates in current edit mode and do "Synchronize" automatically.
+       - Click button "Menu"(F6) or right click edit area to pop context menu.
 
 Composition of JSON:
   - String: Set of unicode characters and enclosed by double quotes
@@ -124,36 +104,15 @@ Composition of JSON:
   - The mode in current tab is called as "current edit mode".
   - Following buttons work for current edit mode:
        - Click button "Synchronize"(F10) to apply updates in current edit mode to other modes.
-       - Click button "Save"(F2) to save updates in current edit mode and do "Synchronize" automatically.
-       - Click button "Menu"(F12) or right click edit area to pop context menu.</PRE>
+       - Click button "Save"(CTRL+S or ALT+S) to save updates in current edit mode and do "Synchronize" automatically.
+       - Click button "Menu"(F6) or right click edit area to pop context menu.</PRE>
     <H3>Edit Text</H3>
     <PRE>This tool helps to edit text file:
 -  Charset and Line Break are determined automatically when file is opened. 
-   If loaded contents are incorrent, change charset and click button "Refresh".
+-  If loaded incorrently, use "File-Format" to change charset and click button "OK".
 -  Texts are encoded with current character set and display in right pane. (Read only)
 -  When pages number is larger than 1, modification should be saved before filter strings or locate line/object.
--  Each line break is counted as 1 character.  
--  Click button "Pop"(CTRL/ALT+p) to display current contents in a new window.
--  Click button "Menu" or right click edit area to pop buttons menu.
--  Click button "MyBox Clipboard"(CTRL/ALT+m) to pop texts clipboard for pasting.
-
-Some shortcuts:
-F2                          Save
-F3                          Recover            
-F4                          Show/Hide left pane
-F5                          Show/Hide right pane
-F6                          Close popped menu
-F11                        Save as
-Alt-PageUp            Previous page
-Alt-PageDown        Next page
-Alt-Home               First page
-Alt-End                   Last page
-Ctrl-f                       Open find pane
-Ctrl-1                      Find previous
-Ctrl-2                      Find next
-Ctrl-h                      Replace
-Ctrl-w                      Replace all
-More shortcuts can be found in help.</PRE>
+-  Each line break is counted as 1 character.  </PRE>
     <H3>Charset</H3>
     <PRE>When BOM is detected in file, its charset is definiate</PRE>
     <H3>BOM</H3>
@@ -224,38 +183,43 @@ assume maximum length of matched string is less than 1/16 of current JVM availab
 -  File ".docx"(Word 2007) is converted as text(Formats lost).</PRE>
 
 <H1>Image Tools</H1>
-    <H3>View Image</H3>
-    <PRE>This tool helps to view an image:
--  To scale image size:
-       - Set "Load Width" to enlarge or shrink the image in memory.
-       - Use zooming buttons to enlarge or shrink the image on display screen.
--  To handle image:
-      - Cropping and rotation will change the image. Click button "Save" to make updates take effect.
-      - To change size/color/shape, use function "Manufacture".
-- To selection part of the image:
-      - Check "Select Area"(CTRL/ALT+t) to enter "Selection Mode". 
-         A rectangle is displayed upon image to have user select the region to handle.
-      - Drag the anchors on rectangle line to adjust the area's margins.
-      - Right click to move the rectangle area. 
-- Some shortcuts:
-      - Check "Pick Color"(CTRL/ALT+k) to get colors in image.
-      - Click button "Pop"(CTRL/ALT+p) to display current image in popped window.
-      - Press key F12 or right click the image to pop buttons menu.
-      - When current focus is not in text input control, shortcuts can omit CTRL/ALT.
-        Example, press key "p" to pop image, press key "k" to pick color, press key "2" to zoom as pane size.</PRE>
     <H3>Edit image</H3>
-    <PRE>This tool helps to handle an image:
--  Image is handled in 24bit RGB or 32bit ARGB of Color Space "sRGB" even when it is changed as gray or black-white.
-   If need to  change color space or compress image file, please run "Save As" or use tool "Convert Image".
-- Some shortcuts:
-      - Check "Pick Color"(CTRL/ALT+k) to get colors in image.
-      - Click button "Pop"(CTRL/ALT+p) to display current image in popped window.
-      - Press key F12 or right click the image to pop buttons menu.
-      - When current focus is not in text input control, shortcuts can omit CTRL/ALT.
-        Example, press key "p" to pop image, press key "k" to pick color, press key "2" to zoom as pane size.
-- "Pop", "Menu", and zooming are against image in current tab.
-   Example, when current tab is "Scope", press key F12 to pop buttons menu for the scope image.
-   When current tab is "Histories" or "Backup", press key "p" to display the selected image in popped window.</PRE>
+    <PRE>This tool helps to edit an image.
+Image is handled in 24bit RGB or 32bit ARGB of Color Space "sRGB" even when it is changed as gray or black-white.
+If need to  change color space or compress image file, run "Save As"(F5 or CTRL+B or ALT+B).
+
+Set "Load width" to view the image in limited pixels.</PRE>
+    <H3>Scope</H3>
+    <PRE>Select pixels in image to be handled:
+- Set "Scope", which has following aspects:
+        - "Area" limits coordinates of pixels. Option "Area exclude" which means pixels outside the area.
+        - "Colors" matches pixels selected by the area: 
+                 - To add colors, click Color button to pop palette, or check "Pick colors" and click image.
+                 - Option "Color exclude" which means pixels not matching any color in the list.
+                 - Empty list means not limiting colors.
+        - Parameters about how to match colors.
+- Option "Scope exclude" which means pixels out of the scope.  
+- Option "Ignore transparent" which does not pick transparent pixels anyway.
+
+For scope type:
+- "Rectangle", "Circle", "Ellipse", "Pylogon":
+        - Drag anchors to adjust shape. Drag shape to translate it. Right click image to pop menu of shape. 
+        - For polygon, left click image to add points for the polygon. 
+- "Matting":
+        - "Area" is a list of start points for matting. Click image to add points.
+        - The algorithm only matches colors in the image itself, so need not colors list. 
+- "Colors": Area is all pixels.
+- "Outline":
+        - Select a picture with transparent background and its outline is fetched as "Area".
+        - Not matching colors, so need not colors list.
+
+To indicate selected pixels obviously, masked image is displayed:
+- Selected pixels are displayed as their orignial colors.
+- Unselected pixels are displayed as blending colors in orignial colors, mask color, and mask opacity. 
+- For image mostly in dark colors, suggest light color as mask color. 
+- For image mostly in light colors, suggest dark color as mask color. 
+
+Click button "Pop"(CTRL+P) to show source image, selected pixels, and masked image.</PRE>
     <H3>Edit SVG(Scalable Vector Graphics)</H3>
     <PRE>This tool helps to edit SVG(Scalable Vector Graphics):
   - Parse and handle SVG data, based on Apache Batik.
@@ -266,8 +230,8 @@ assume maximum length of matched string is less than 1/16 of current JVM availab
   - The mode in current tab is called as "current edit mode".
   - Following buttons work for current edit mode:
        - Click button "Synchronize"(F10) to apply updates in current edit mode to other modes.
-       - Click button "Save"(F2) to save updates in current edit mode and do "Synchronize" automatically.
-       - Click button "Menu"(F12) or right click edit area to pop context menu.
+       - Click button "Save"(CTRL+S or ALT+S) to save updates in current edit mode and do "Synchronize" automatically.
+       - Click button "Menu"(F6) or right click edit area to pop context menu.
 
 Known issue: MyBox may crash when the SVG data contains invalid format or contents.</PRE>
     <H3>Analyse Image</H3>
@@ -292,7 +256,11 @@ Options:
   - "Dithering" is to optimize the result of Color Quantization. 
   - The strategies to pick colors for target palette: 
        - "center color" may adjust the quality of the result, but may generate new colors not in original image. 
-       - "first color" only take original colors in original image.</PRE>
+       - "first color" only take original colors in original image.
+
+Colors number of the result may be different from the expected value:
+- When RGB/HSB Uniform makes the palette, the cube size may be larger than target size.
+- When source image includes fewer colors, the result size may be less than target size.</PRE>
     <H3>Dithering</H3>
     <PRE>Dithering is a technique to diffuse quantization error to avoid color banding.
 It may improve image quality after color quantization(Reduce colors in palette).</PRE>
@@ -323,6 +291,45 @@ Thus, the processed image can only contain the following colors:
     yellow (red = 255, green = 255, blue = 0)
     magenta (red = 255, green = 0, blue = 255)
     cyan (red = 0, green = 255, blue = 255)</PRE>
+    <H3>Contrast</H3>
+    <PRE>To change contrast of image:
+- Object can be: Saturation, Brightness, or Gray.
+- Algorithm can be: 
+       - Histogram Equalization:
+             - Count histogram of object values: X-axis shows object values and Y-axis shows pixels number.
+             - Calcualte new object values as normal distribution.
+             - Replace object values as new ones.
+       - Histogram Stretching:
+             - Input parameters: "Pixels threshold" and "Percentage of pixels".
+             - Count histogram of object values: X-axis shows object values and Y-axis shows pixels number.
+             - Calcualte locations to truncate values in both left side and right side of X-axis. The condition is: 
+                Pixels number(y) is less than the given threshold, 
+                or cumulatied pixels(area) is less than the given percentage of total pixels.
+             - Replace object values:
+                     - Set pixels truncated in left side as minimum value of the object.
+                     - Set pixels truncated in right side as maximum value of the object.
+                     - Set pixels untruncated in middle as normalized values based on truncate locations.
+       - Histogram Shifting:
+             - Input parameter: "Offset of object value".
+             - Count histogram of object values: X-axis shows object values and Y-axis shows pixels number.
+             - Calcualte new object values by offset.
+             - Replace object values as new ones.
+- Transparent pixels are skipped: They are not involved in statistic and not changed.</PRE>
+    <H3>Shear</H3>
+    <PRE>Following affine transform can shear an image:
+     tx = x + rx * y
+     ty = x * ry + y
+Parameters：
+     tx: value of x-axis of target image
+     ty: value of y-axis of target image
+     x: value of x-axis of original image
+     y: value of y-axis of original image
+     rx: shear ratio for x-axis
+     ry: shear ratio for y-axis
+
+Notice, following values will map image(2D) to line(1D) and be invalid:
+1) rx=1   ry=1 
+2) rx=-1   ry=-1 </PRE>
     <H3>Repeat/Tile Image</H3>
     <PRE>This tool helps to make background/texture image:
 - Select an image, set part or whole of it as input of scaling.
@@ -345,14 +352,6 @@ this function handles the original image in file instead of the loaded image in 
 
 When an image file includes too many pixels and loaded as sampled image, 
 this function handles the original image in file instead of the loaded image in memory.</PRE>
-    <H3>Browse Images</H3>
-    <PRE>This tool is to view multiple images under same directory:
-- Number of opened files can be changed.
-- Grid mode, thumb list mode, and file list mode can be choiced.
-- Click an image to view it in right pane. Double click to view it in new stage.
-- Press CTRL and click images to select multiple files.
-
-Notice: Rotation can not be saved for multi-frames image.</PRE>
     <H3>Edit Images List</H3>
     <PRE>This tool is to edit images list:
 - Add following:
@@ -410,6 +409,8 @@ Sometime it is better to have orginal image recognized directly.</PRE>
     <PRE>Two files will be generated for each source file:
   "xxxxx_alpha.png" which only holds alpha channel of original file in PNG format. 
   "xxxxx_noAlpha.yyy" which only holds RGB channels of original file in selected format.</PRE>
+    <H3>Convert image to SVG</H3>
+    <PRE>For large image, much CPU, memory, and time may be cost and large file may be generated.</PRE>
     <H3>Images in System Clipboard</H3>
     <PRE>When "Start" is clicked, the tool will monitor images in system clipboard and save/display them.
 
@@ -557,7 +558,7 @@ Decoding does reverse conversion.</PRE>
      - If a value contains delimiter or line break, it should be surrounded by quotes.
      - If delimiter is not "#", then lines started with "#" will be skipped(as comments).
 - When the file is opened for the first time, the tool guesses its delimiter and charset. 
-- If file is read abnormally, change options and click button "Refresh".
+- If file is read abnormally, use "File-Format" to change options and click button "OK".
 - Data are paginated. When pages number is larger than 1, changes should be saved before run some functions.
 - To string values, multiple lines can be edited and saved:
      - When the value is single line(not include line break):
@@ -572,7 +573,7 @@ Decoding does reverse conversion.</PRE>
 - Choose one worksheet to handle.
 - Worksheets can be added/renamed/deleted.
 - In general, the first line(header) defines column names, and each of followed lines defines a row of data.
-- If file is read abnormally, change options and click button "Refresh".
+- If file is read abnormally, use "File-Format" to change options and click button "OK".
 - Data are paginated. When pages number is larger than 1, changes should be saved before run some functions.
 - To string values, multiple lines can be edited and saved:
      - When the value is single line(not include line break):
@@ -593,7 +594,7 @@ If file includes format, style, formula, or chart, suggest to save changes as ne
      - Values should not contain delimiter nor line break.
      - If a line starts with "#", it will be skipped.
 - When the file is opened for the first time, the tool guesses its delimiter and charset. 
-- If file is read abnormally, change options and click button "Refresh".
+- If file is read abnormally, use "File-Format" to change options and click button "OK".
 - Data are paginated. When pages number is larger than 1, changes should be saved before run some functions.
 - Not support multiple lines in values.
 - Data can be saved as different charsets and delimiters.</PRE>

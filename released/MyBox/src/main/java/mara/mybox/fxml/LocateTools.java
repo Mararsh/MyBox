@@ -11,7 +11,6 @@ import javafx.scene.layout.Region;
 import javafx.scene.robot.Robot;
 import javafx.stage.PopupWindow;
 import javafx.stage.Stage;
-import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.SystemTools;
 
 /**
@@ -100,10 +99,7 @@ public class LocateTools {
         window.show((Node) event.getSource(), event.getScreenX(), event.getScreenY());
     }
 
-    public static void locateEvent(Event event, PopupWindow window) {
-        if (window == null || event == null) {
-            return;
-        }
+    public static Point2D coordinate(Event event) {
         double x, y;
         try {
             Point2D everntCoord = LocateTools.getScreenCoordinate(event);
@@ -114,7 +110,15 @@ public class LocateTools {
             x = r.getMouseX();
             y = r.getMouseY() + PopOffsetY;
         }
-        window.show((Node) event.getSource(), x, y);
+        return new Point2D(x, y);
+    }
+
+    public static void locateEvent(Event event, PopupWindow window) {
+        if (window == null || event == null) {
+            return;
+        }
+        Point2D everntCoord = coordinate(event);
+        window.show((Node) event.getSource(), everntCoord.getX(), everntCoord.getY());
     }
 
     public static void locateMouse(Node owner, PopupWindow window) {
@@ -225,7 +229,7 @@ public class LocateTools {
             Node node = (Node) (event.getTarget());
             return node.localToScreen(0, 0);
         } catch (Exception e) {
-            MyBoxLog.error(e);
+//            MyBoxLog.error(e);
             return null;
         }
     }

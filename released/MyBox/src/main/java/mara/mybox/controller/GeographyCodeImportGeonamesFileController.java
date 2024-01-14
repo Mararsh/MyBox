@@ -10,6 +10,7 @@ import mara.mybox.db.data.GeographyCode;
 import mara.mybox.db.data.GeographyCodeLevel;
 import mara.mybox.db.table.BaseTable;
 import mara.mybox.db.table.TableGeographyCode;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.Languages;
@@ -43,19 +44,22 @@ public class GeographyCodeImportGeonamesFileController extends BaseImportCsvCont
     //http://download.geonames.org/export/zip/
     // country	postal	place	state	stateCode	city	cityCode	county	countyCode	latitude	longitude 	accuracy
     @Override
-    public long importFile(File file) {
+    public long importFile(FxTask currentTask, File file) {
         long importCount = 0, insertCount = 0, updateCount = 0, skipCount = 0, failedCount = 0;
-        File validFile = FileTools.removeBOM(file);
-        try ( CSVParser parser = CSVParser.parse(validFile, StandardCharsets.UTF_8, CsvTools.csvFormat("\t"))) {
+        File validFile = FileTools.removeBOM(currentTask, file);
+        if (validFile == null || currentTask == null || !currentTask.isWorking()) {
+            return -1;
+        }
+        try (CSVParser parser = CSVParser.parse(validFile, StandardCharsets.UTF_8, CsvTools.csvFormat("\t"))) {
             GeographyCode code, countryCode = null, provinceCode = null, cityCode = null, countyCode = null;
             String lastCountry = null, lastProvince = null, lastCity = null, lastCounty = null;
             String sql;
-            try ( Connection conn = DerbyBase.getConnection();
-                     PreparedStatement insert = conn.prepareStatement(TableGeographyCode.Insert);
-                     PreparedStatement update = conn.prepareStatement(TableGeographyCode.Update)) {
+            try (Connection conn = DerbyBase.getConnection();
+                    PreparedStatement insert = conn.prepareStatement(TableGeographyCode.Insert);
+                    PreparedStatement update = conn.prepareStatement(TableGeographyCode.Update)) {
                 conn.setAutoCommit(false);
                 for (CSVRecord record : parser) {
-                    if (task == null || task.isCancelled()) {
+                    if (currentTask == null || !currentTask.isWorking()) {
                         updateLogs("Canceled", true);
                         return importCount;
                     }

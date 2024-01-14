@@ -19,12 +19,15 @@ import com.vladsch.flexmark.util.sequence.BasedSequence;
 import java.io.File;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import mara.mybox.data.Link;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
-import static mara.mybox.tools.HtmlWriteTools.setCharset;
+import mara.mybox.fxml.FxTask;
+import mara.mybox.value.UserConfig;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -169,23 +172,36 @@ public class MarkdownTools {
     }
 
     public static MutableDataHolder htmlOptions() {
-        return htmlOptions("PEGDOWN", 4, false, true, true);
+        try (Connection conn = DerbyBase.getConnection()) {
+            return htmlOptions(UserConfig.getString(conn, "MarkdownEmulation", "PEGDOWN"),
+                    UserConfig.getInt(conn, "MarkdownIndent", 4),
+                    UserConfig.getBoolean(conn, "MarkdownTrim", false),
+                    UserConfig.getBoolean(conn, "MarkdownDiscard", false),
+                    UserConfig.getBoolean(conn, "MarkdownAppend", false));
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+
     }
 
-    public static String md2html(MutableDataHolder htmlOptions, File mdFile, String style) {
+    public static String md2html(FxTask task, MutableDataHolder htmlOptions, File mdFile, String style) {
         try {
             if (mdFile == null || !mdFile.exists()) {
                 return null;
             }
             Parser htmlParser = Parser.builder(htmlOptions).build();
             HtmlRenderer htmlRender = HtmlRenderer.builder(htmlOptions).build();
-            Node document = htmlParser.parse(TextFileTools.readTexts(mdFile));
+            Node document = htmlParser.parse(TextFileTools.readTexts(task, mdFile));
             String html = htmlRender.render(document);
             Document doc = Jsoup.parse(html);
             if (doc == null) {
                 return null;
             }
-            setCharset(doc, Charset.forName("UTF-8"));
+            HtmlWriteTools.setCharset(task, doc, Charset.forName("UTF-8"));
+            if (task != null && !task.isWorking()) {
+                return null;
+            }
             doc.head().appendChild(new Element("style").text(style));
             return doc.outerHtml();
         } catch (Exception e) {

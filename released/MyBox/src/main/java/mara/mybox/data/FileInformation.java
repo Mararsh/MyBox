@@ -139,6 +139,28 @@ public class FileInformation {
         return null;
     }
 
+    public static FileInformation clone(FileInformation sourceInfo, FileInformation targetInfo) {
+        if (sourceInfo == null || targetInfo == null) {
+            return null;
+        }
+        targetInfo.file = sourceInfo.file;
+        targetInfo.tableIndex = sourceInfo.tableIndex;
+        targetInfo.fileSize = sourceInfo.fileSize;
+        targetInfo.createTime = sourceInfo.createTime;
+        targetInfo.modifyTime = sourceInfo.modifyTime;
+        targetInfo.filesNumber = sourceInfo.filesNumber;
+        targetInfo.data = sourceInfo.data;
+        targetInfo.handled = sourceInfo.handled;
+        targetInfo.fileType = sourceInfo.fileType;
+        targetInfo.selected.set(sourceInfo.selected.get());
+        targetInfo.sizeWithSubdir = sourceInfo.sizeWithSubdir;
+        targetInfo.sizeWithoutSubdir = sourceInfo.sizeWithoutSubdir;
+        targetInfo.filesWithSubdir = sourceInfo.filesWithSubdir;
+        targetInfo.filesWithoutSubdir = sourceInfo.filesWithoutSubdir;
+        targetInfo.duration = sourceInfo.duration;
+        return targetInfo;
+    }
+
     /*
         custmized get/set
      */
@@ -156,7 +178,7 @@ public class FileInformation {
         }
     }
 
-    public String getFileName() {
+    public String getFullName() {
         if (file != null) {
             return file.getAbsolutePath();
         } else {
@@ -166,17 +188,25 @@ public class FileInformation {
 
     public String getPath() {
         if (file != null) {
-            return file.getParent();
+            if (file.isDirectory()) {
+                return file.getAbsolutePath() + File.separator;
+            } else {
+                return file.getParent() + File.separator;
+            }
         } else {
             return null;
         }
     }
 
-    public String getName() {
+    public String getFileName() {
         if (file != null) {
-            return file.getName();
+            if (file.isDirectory()) {
+                return null;
+            } else {
+                return file.getName();
+            }
         } else {
-            return data;
+            return null;
         }
     }
 

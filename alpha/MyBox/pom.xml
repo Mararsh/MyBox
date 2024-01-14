@@ -18,7 +18,7 @@
     <organization>
         <name>Mara</name>
     </organization>  
-      
+    
     <repositories>
         <repository>
             <id>aliyun</id>
@@ -26,7 +26,8 @@
             <url>https://maven.aliyun.com/repository/public</url>
         </repository>
     </repositories>
-  
+      
+ 
     <dependencies>
         <dependency>
             <groupId>org.openjfx</groupId>

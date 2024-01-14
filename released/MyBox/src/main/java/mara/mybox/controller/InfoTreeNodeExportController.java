@@ -20,7 +20,6 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
-import static mara.mybox.data2d.Data2DTools.xmlTag;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.InfoNode;
 import mara.mybox.db.data.InfoNodeTag;
@@ -29,11 +28,13 @@ import mara.mybox.db.table.TableTreeNode;
 import mara.mybox.db.table.TableTreeNodeTag;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.JsonTools;
 import mara.mybox.tools.TextTools;
+import mara.mybox.tools.XmlTools;
 import mara.mybox.value.AppValues;
 import static mara.mybox.value.AppValues.Indent;
 import static mara.mybox.value.Languages.message;
@@ -61,7 +62,7 @@ public class InfoTreeNodeExportController extends BaseTaskController {
     @FXML
     protected ControlInfoTreeList listController;
     @FXML
-    protected CheckBox timeCheck, tagsCheck, iconCheck,
+    protected CheckBox idCheck, timeCheck, tagsCheck, iconCheck,
             textsCheck, htmlCheck, xmlCheck, jsonCheck, framesetCheck;
     @FXML
     protected ComboBox<String> charsetSelector;
@@ -77,6 +78,14 @@ public class InfoTreeNodeExportController extends BaseTaskController {
         try {
             super.initControls();
             infoTree = listController.treeView;
+
+            idCheck.setSelected(UserConfig.getBoolean(baseName + "ID", false));
+            idCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
+                    UserConfig.setBoolean(baseName + "ID", idCheck.isSelected());
+                }
+            });
 
             timeCheck.setSelected(UserConfig.getBoolean(baseName + "Time", false));
             timeCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -187,7 +196,8 @@ public class InfoTreeNodeExportController extends BaseTaskController {
             iconCheck.setSelected(false);
             iconCheck.setVisible(false);
         }
-        listController.setSource(manager.infoTree);
+        listController.setParameters(manager);
+        listController.loadTree();
         if (item == null) {
             infoTree.getSelectionModel().select(infoTree.getRoot());
         } else {
@@ -257,7 +267,7 @@ public class InfoTreeNodeExportController extends BaseTaskController {
     }
 
     @Override
-    public boolean doTask() {
+    public boolean doTask(FxTask currentTask) {
         if (selectedNode == null || targetPath == null) {
             return false;
         }
@@ -268,7 +278,7 @@ public class InfoTreeNodeExportController extends BaseTaskController {
         count = level = 0;
         firstRow = true;
         try (Connection conn = DerbyBase.getConnection()) {
-            exportNode(conn, selectedNode.getValue(), listController.chainName(selectedNode.getParent()));
+            exportNode(currentTask, conn, selectedNode.getValue(), listController.chainName(selectedNode.getParent()));
         } catch (Exception e) {
             updateLogs(e.toString());
         }
@@ -346,7 +356,7 @@ public class InfoTreeNodeExportController extends BaseTaskController {
                     StringBuilder s = new StringBuilder();
                     s.append("<?xml version=\"1.0\" encoding=\"")
                             .append(charset.name()).append("\"?>\n")
-                            .append("<").append(xmlTag(manager.category)).append(">\n");
+                            .append("<").append(XmlTools.xmlTag(manager.category)).append(">\n");
                     xmlWriter.write(s.toString());
                 } else if (targetPathController.isSkip()) {
                     updateLogs(message("Skipped"));
@@ -434,7 +444,7 @@ public class InfoTreeNodeExportController extends BaseTaskController {
         }
         if (xmlWriter != null) {
             try {
-                xmlWriter.write("</" + xmlTag(manager.category) + ">\n");
+                xmlWriter.write("</" + XmlTools.xmlTag(manager.category) + ">\n");
                 xmlWriter.flush();
                 xmlWriter.close();
                 xmlWriter = null;
@@ -459,7 +469,7 @@ public class InfoTreeNodeExportController extends BaseTaskController {
         return well;
     }
 
-    public void exportNode(Connection conn, InfoNode node, String parentChainName) {
+    public void exportNode(FxTask currentTask, Connection conn, InfoNode node, String parentChainName) {
         level++;
         if (conn == null || node == null) {
             return;
@@ -471,16 +481,19 @@ public class InfoTreeNodeExportController extends BaseTaskController {
                 tags = tableTreeNodeTag.nodeTags(conn, node.getNodeid());
             }
             if (textsWriter != null) {
-                writeTexts(conn, parentChainName, node, tags);
+                writeTexts(currentTask, conn, parentChainName, node, tags);
             }
             if (htmlWriter != null) {
-                writeHtml(conn, parentChainName, node, htmlWriter, tags);
+                writeHtml(currentTask, conn, parentChainName, node, htmlWriter, tags);
             }
             if (xmlWriter != null) {
-                writeXml(conn, parentChainName, node, tags);
+                writeXml(currentTask, conn, parentChainName, node, tags);
             }
             if (jsonWriter != null) {
-                writeJson(conn, parentChainName, node, tags);
+                writeJson(currentTask, conn, parentChainName, node, tags);
+            }
+            if (currentTask == null || !currentTask.isWorking()) {
+                return;
             }
             String nodeChainName;
             if (parentChainName != null && !parentChainName.isBlank()) {
@@ -508,7 +521,7 @@ public class InfoTreeNodeExportController extends BaseTaskController {
                 }
                 framesetNavWriter.write(prefix + "<A href=\"" + bookNavFile.getName() + "\"  target=booknav>" + node.getTitle() + "</A><BR>\n");
 
-                writeHtml(conn, nodeChainName, node, bookWriter, tags);
+                writeHtml(currentTask, conn, nodeChainName, node, bookWriter, tags);
                 try {
                     bookWriter.write(indent + "\n</BODY>\n</HTML>");
                     bookWriter.flush();
@@ -534,10 +547,16 @@ public class InfoTreeNodeExportController extends BaseTaskController {
                     updateLogs(e.toString());
                 }
             }
+            if (currentTask == null || !currentTask.isWorking()) {
+                return;
+            }
 
             if (children != null) {
                 for (InfoNode child : children) {
-                    exportNode(conn, child, nodeChainName);
+                    if (currentTask == null || !currentTask.isWorking()) {
+                        return;
+                    }
+                    exportNode(currentTask, conn, child, nodeChainName);
                 }
             }
         } catch (Exception e) {
@@ -546,9 +565,9 @@ public class InfoTreeNodeExportController extends BaseTaskController {
         level--;
     }
 
-    protected void writeTexts(Connection conn, String parentName, InfoNode node, List<InfoNodeTag> tags) {
+    protected void writeTexts(FxTask currentTask, Connection conn, String parentName, InfoNode node, List<InfoNodeTag> tags) {
         try {
-            textsWriter.write(AppValues.MyBoxSeparator + "\n");
+            textsWriter.write(AppValues.MyBoxSeparator + (idCheck.isSelected() ? node.getNodeid() : "") + "\n");
             textsWriter.write((parentName == null ? InfoNode.RootIdentify : parentName) + "\n");
             textsWriter.write(node.getTitle() + "\n");
             if (timeCheck.isSelected() && node.getUpdateTime() != null) {
@@ -581,9 +600,12 @@ public class InfoTreeNodeExportController extends BaseTaskController {
         }
     }
 
-    protected void writeHtml(Connection conn, String parentName, InfoNode node, FileWriter writer, List<InfoNodeTag> tags) {
+    protected void writeHtml(FxTask currentTask, Connection conn, String parentName, InfoNode node, FileWriter writer, List<InfoNodeTag> tags) {
         try {
             writer.write(indent + indent + "<div id=\"" + node.getNodeid() + "\">\n");
+            if (idCheck.isSelected()) {
+                writer.write(indent + indent + indent + "<H3>" + message("ID") + ": " + node.getNodeid() + "</H3>\n");
+            }
             if (parentName != null) {
                 writer.write(indent + indent + indent + "<H3><PRE><CODE>" + parentName + "</CODE></PRE></H3>\n");
             }
@@ -605,7 +627,7 @@ public class InfoTreeNodeExportController extends BaseTaskController {
                 writer.write("</H4>\n");
             }
             writer.write(indent + indent + indent + "<H4><PRE><CODE>" + node.getTitle() + "</CODE></PRE></H4>\n");
-            String infoHtml = InfoNode.infoHtml(node.getCategory(), node.getInfo(), iconCheck.isSelected(), true);
+            String infoHtml = InfoNode.infoHtml(currentTask, this, node.getCategory(), node.getInfo(), iconCheck.isSelected(), true);
             if (infoHtml != null && !infoHtml.isBlank()) {
                 writer.write(indent + indent + indent + infoHtml + "\n");
             }
@@ -615,15 +637,18 @@ public class InfoTreeNodeExportController extends BaseTaskController {
         }
     }
 
-    protected void writeXml(Connection conn, String parentName, InfoNode node, List<InfoNodeTag> tags) {
+    protected void writeXml(FxTask currentTask, Connection conn, String parentName, InfoNode node, List<InfoNodeTag> tags) {
         try {
             xmlWriter.write(indent + indent + "<" + message("Node") + ">\n");
-            if (parentName != null) {
-                xmlWriter.write(indent + indent + indent + "<" + xmlTag("ParentNode")
-                        + "><![CDATA[" + parentName + "]]></" + xmlTag("ParentNode") + ">\n");
+            if (idCheck.isSelected()) {
+                xmlWriter.write(indent + indent + indent + "<id>" + node.getNodeid() + "></id>\n");
             }
-            xmlWriter.write(indent + indent + indent + "<" + xmlTag("Title")
-                    + "><![CDATA[" + node.getTitle() + "]]></" + xmlTag("Title") + ">\n");
+            if (parentName != null) {
+                xmlWriter.write(indent + indent + indent + "<" + XmlTools.xmlTag("ParentNode")
+                        + "><![CDATA[" + parentName + "]]></" + XmlTools.xmlTag("ParentNode") + ">\n");
+            }
+            xmlWriter.write(indent + indent + indent + "<" + XmlTools.xmlTag("Title")
+                    + "><![CDATA[" + node.getTitle() + "]]></" + XmlTools.xmlTag("Title") + ">\n");
             if (timeCheck.isSelected() && node.getUpdateTime() != null) {
                 xmlWriter.write(indent + indent + indent + "<" + manager.timeMsg + ">"
                         + DateTools.datetimeToString(node.getUpdateTime())
@@ -639,21 +664,21 @@ public class InfoTreeNodeExportController extends BaseTaskController {
                         s += InfoNode.TagSeparater + v;
                     }
                 }
-                xmlWriter.write(indent + indent + indent + "<" + xmlTag("Tags")
-                        + "><![CDATA[" + s + "]]></" + xmlTag("Tags") + ">\n");
+                xmlWriter.write(indent + indent + indent + "<" + XmlTools.xmlTag("Tags")
+                        + "><![CDATA[" + s + "]]></" + XmlTools.xmlTag("Tags") + ">\n");
             }
             String infoXml = InfoNode.infoXml(node.getCategory(), node.getInfo(), indent + indent + indent);
             if (infoXml != null && !infoXml.isBlank()) {
                 xmlWriter.write(infoXml);
             }
-            xmlWriter.write(indent + indent + "</" + xmlTag("Node") + ">\n\n");
+            xmlWriter.write(indent + indent + "</" + XmlTools.xmlTag("Node") + ">\n\n");
 
         } catch (Exception e) {
             updateLogs(e.toString());
         }
     }
 
-    protected void writeJson(Connection conn, String parentName, InfoNode node, List<InfoNodeTag> tags) {
+    protected void writeJson(FxTask currentTask, Connection conn, String parentName, InfoNode node, List<InfoNodeTag> tags) {
         try {
             StringBuilder s = new StringBuilder();
             if (!firstRow) {
@@ -662,6 +687,11 @@ public class InfoTreeNodeExportController extends BaseTaskController {
                 firstRow = false;
             }
             s.append(indent).append("{").append("\n");
+            if (idCheck.isSelected()) {
+                s.append(indent).append(indent)
+                        .append("\"").append(message("ID")).append("\": ")
+                        .append(node.getNodeid()).append(",\n");
+            }
             if (parentName != null) {
                 s.append(indent).append(indent)
                         .append("\"").append(message("ParentNode")).append("\": \"")
@@ -691,7 +721,7 @@ public class InfoTreeNodeExportController extends BaseTaskController {
                         .append("\"").append(message("Tags")).append("\": ")
                         .append(JsonTools.encode(t));
             }
-            String infoJson = InfoNode.infoJson(node.getCategory(), node.getInfo(), indent + indent);
+            String infoJson = InfoNode.infoJson(currentTask, this, node.getCategory(), node.getInfo(), indent + indent);
             if (infoJson != null && !infoJson.isBlank()) {
                 s.append(infoJson);
             }

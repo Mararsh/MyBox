@@ -23,9 +23,10 @@ import static mara.mybox.value.Languages.message;
  */
 public class ImageQuantizationFactory {
 
-    public static ImageQuantization create(Image image, ImageScope scope,
+    public static ImageQuantization createFX(Image image, ImageScope scope,
             ControlImageQuantization quantizationController, boolean recordCount) {
-        return create(SwingFXUtils.fromFXImage(image, null), scope, quantizationController, recordCount);
+        return create(image != null ? SwingFXUtils.fromFXImage(image, null) : null,
+                scope, quantizationController, recordCount);
     }
 
     public static ImageQuantization create(BufferedImage image, ImageScope scope,
@@ -96,6 +97,9 @@ public class ImageQuantizationFactory {
         @Override
         public RGBUniformQuantization buildPalette() {
             try {
+                regionSize = quantizationSize;
+                algorithm = QuantizationAlgorithm.RGBUniformQuantization;
+
                 float redWegiht = weight1 < 1 ? 1 : weight1;
                 float greenWegiht = weight2 < 1 ? 1 : weight2;
                 float blueWegiht = weight3 < 1 ? 1 : weight3;
@@ -103,7 +107,7 @@ public class ImageQuantizationFactory {
                 redWegiht = redWegiht / sum;
                 greenWegiht = greenWegiht / sum;
                 blueWegiht = blueWegiht / sum;
-                float x = (float) Math.cbrt(regionSize / (redWegiht * greenWegiht * blueWegiht));
+                float x = (float) Math.cbrt(quantizationSize / (redWegiht * greenWegiht * blueWegiht));
 
                 float redValue = redWegiht * x;
                 redMod = (int) (256 / redValue);
@@ -117,7 +121,7 @@ public class ImageQuantizationFactory {
                 blueMod = (int) (256 / blueValue);
                 blueSize = (int) (256 / blueMod) + 1;
 
-//                MyBoxLog.console("regionSize:" + regionSize + " x:" + x);
+//                MyBoxLog.console("quantizationSize:" + quantizationSize + " x:" + x);
 //                MyBoxLog.console("redMod:" + redMod + " greenMod:" + greenMod + " blueMod:" + blueMod);
 //                MyBoxLog.console("redSize:" + redSize + " greenSize:" + greenSize + " blueSize:" + blueSize);
                 if (redSize <= 0 || greenSize <= 0 || blueSize <= 0
@@ -141,6 +145,14 @@ public class ImageQuantizationFactory {
                 MyBoxLog.error(e);
             }
             return this;
+        }
+
+        @Override
+        public String resultInfo() {
+            return message(algorithm.name()) + "\n"
+                    + message("ColorsRegionSize") + ": " + redSize * greenSize * blueSize + "\n"
+                    + "redMod: " + redMod + " greenMod: " + greenMod + " blueMod: " + blueMod + "\n"
+                    + "redSize: " + redSize + " greenSize: " + greenSize + " blueSize: " + blueSize;
         }
 
         @Override
@@ -199,6 +211,9 @@ public class ImageQuantizationFactory {
         @Override
         public HSBUniformQuantization buildPalette() {
             try {
+                regionSize = quantizationSize;
+                algorithm = QuantizationAlgorithm.HSBUniformQuantization;
+
                 float hueWegiht = weight1 < 1 ? 1 : weight1;
                 float saturationWegiht = weight2 < 1 ? 1 : weight2;
                 float brightnessWegiht = weight3 < 1 ? 1 : weight3;
@@ -206,7 +221,7 @@ public class ImageQuantizationFactory {
                 hueWegiht = hueWegiht / sum;
                 saturationWegiht = saturationWegiht / sum;
                 brightnessWegiht = brightnessWegiht / sum;
-                float x = (float) Math.cbrt(regionSize / (hueWegiht * saturationWegiht * brightnessWegiht));
+                float x = (float) Math.cbrt(quantizationSize / (hueWegiht * saturationWegiht * brightnessWegiht));
 
                 float hueValue = hueWegiht * x;
                 hueMod = (int) (360 / hueValue);
@@ -244,6 +259,14 @@ public class ImageQuantizationFactory {
                 MyBoxLog.error(e);
             }
             return this;
+        }
+
+        @Override
+        public String resultInfo() {
+            return message(algorithm.name()) + "\n"
+                    + message("ColorsRegionSize") + ": " + hueSize * saturationSize * brightnessSize + "\n"
+                    + "hueMod: " + hueMod + " saturationMod: " + saturationMod + " brightnessMod: " + brightnessMod + "\n"
+                    + "hueSize: " + hueSize + " saturationSize: " + saturationSize + " brightnessSize: " + brightnessSize;
         }
 
         @Override
@@ -289,6 +312,7 @@ public class ImageQuantizationFactory {
                 return color;
             }
         }
+
     }
 
     public static class RegionQuantization extends ImageQuantization {
@@ -302,17 +326,23 @@ public class ImageQuantizationFactory {
                 large = image.getWidth() * image.getHeight() > regionSize;
                 if (large) {
                     rgbPalette = RGBUniformQuantization.create();
-                    rgbPalette.setRegionSize(regionSize)
+                    rgbPalette.setQuantizationSize(regionSize)
                             .setFirstColor(firstColor)
                             .setRecordCount(recordCount)
                             .setWeight1(weight1).setWeight2(weight2).setWeight3(weight3)
-                            .setIsDithering(isDithering);
+                            .setIsDithering(isDithering)
+                            .setTask(task);
                     rgbPalette.buildPalette();
                 }
             } catch (Exception e) {
                 MyBoxLog.debug(e);
             }
             return this;
+        }
+
+        @Override
+        public String resultInfo() {
+            return rgbPalette.resultInfo();
         }
 
         @Override
@@ -421,15 +451,19 @@ public class ImageQuantizationFactory {
         @Override
         public PopularityQuantization buildPalette() {
             try {
+                algorithm = QuantizationAlgorithm.PopularityQuantization;
+
                 regionQuantization = PopularityRegionQuantization.create();
-                regionQuantization.setRegionSize(regionSize)
+                regionQuantization.setQuantizationSize(regionSize)
+                        .setRegionSize(regionSize)
                         .setFirstColor(firstColor)
                         .setWeight1(weight1).setWeight2(weight2).setWeight3(weight3)
                         .setRecordCount(false)
                         .setImage(image).setScope(scope).
                         setOperationType(PixelsOperation.OperationType.Quantization).
-                        setIsDithering(isDithering);
-                regionQuantization.buildPalette().operate();
+                        setIsDithering(isDithering)
+                        .setTask(task);
+                regionQuantization.buildPalette().start();
                 regions = regionQuantization.getRegions(quantizationSize);
 
                 if (recordCount) {
@@ -439,6 +473,16 @@ public class ImageQuantizationFactory {
                 MyBoxLog.debug(e);
             }
             return this;
+        }
+
+        @Override
+        public String resultInfo() {
+            if (regions == null) {
+                return null;
+            }
+            return message(algorithm.name()) + "\n"
+                    + message("ColorsNumber") + ": " + regions.size() + "\n-----\n"
+                    + regionQuantization.resultInfo();
         }
 
         @Override
@@ -508,11 +552,24 @@ public class ImageQuantizationFactory {
 
         @Override
         public KMeansClusteringQuantization buildPalette() {
+            algorithm = QuantizationAlgorithm.KMeansClustering;
+
             kmeans = imageKMeans();
             if (recordCount) {
                 counts = new HashMap<>();
             }
             return this;
+        }
+
+        @Override
+        public String resultInfo() {
+            if (kmeans == null) {
+                return null;
+            }
+            return message(algorithm.name()) + "\n"
+                    + message("ColorsNumber") + ": " + kmeans.centerSize() + "\n"
+                    + message("ActualLoop") + ": " + kmeans.getLoopCount() + "\n-----\n"
+                    + kmeans.regionQuantization.resultInfo();
         }
 
         @Override

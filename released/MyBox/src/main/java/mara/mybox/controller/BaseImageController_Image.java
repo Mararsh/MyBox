@@ -3,9 +3,11 @@ package mara.mybox.controller;
 import java.io.File;
 import javafx.scene.image.Image;
 import mara.mybox.bufferedimage.ImageInformation;
+import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.ScaleTools;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.FxTask;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -25,23 +27,11 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
         }
         frameIndex = 0;
         framesNumber = 0;
-        loadImageFile(file, loadWidth);
+        loadImageFile(file);
     }
 
     public void loadImageFile(File file) {
-        loadImageFile(file, loadWidth);
-    }
-
-    public void loadImageFile(File file, int width) {
-        loadImage(file, false, width, frameIndex);
-    }
-
-    public void loadImageFile(File file, boolean onlyInformation) {
-        loadImage(file, onlyInformation, loadWidth, frameIndex);
-    }
-
-    public void loadImageFile(File file, int width, int index) {
-        loadImage(file, false, width, index);
+        loadImage(file, false, loadWidth, frameIndex);
     }
 
     // index is 0-based
@@ -49,10 +39,10 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
         if (file == null || !file.exists() || !file.isFile()) {
             return;
         }
-        if (loadTask != null && !loadTask.isQuit()) {
-            return;
+        if (loadTask != null) {
+            loadTask.cancel();
         }
-        loadTask = new SingletonTask<Void>(this) {
+        loadTask = new FxTask<Void>(this) {
             private ImageInformation loadedInfo;
 
             @Override
@@ -70,8 +60,7 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
                 loadedInfo = new ImageInformation(file);
                 loadedInfo.setIndex(frame);
                 loadedInfo.setRequiredWidth(width);
-                loadedInfo.setTask(this);
-                loadedInfo = ImageFileReaders.makeInfo(loadedInfo, onlyInformation);
+                loadedInfo = ImageFileReaders.makeInfo(this, loadedInfo, onlyInformation);
                 if (loadedInfo == null) {
                     return false;
                 }
@@ -103,11 +92,15 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
             }
 
         };
-        start(loadTask);
+        if (backgroundLoad) {
+            start(loadTask, thisPane);
+        } else {
+            start(loadTask);
+        }
     }
 
     public void askSample(ImageInformation imageInfo) {
-        ImageTooLargeController controller = (ImageTooLargeController) openChildStage(Fxmls.ImageTooLargeFxml, true);
+        ImageTooLargeController controller = (ImageTooLargeController) WindowTools.childStage(this, Fxmls.ImageTooLargeFxml);
         controller.setParameters((BaseImageController) this, imageInfo);
     }
 
@@ -116,17 +109,17 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
             loadImageFile(file);
             return;
         }
-        if (loadTask != null && !loadTask.isQuit()) {
-            return;
+        if (loadTask != null) {
+            loadTask.cancel();
         }
         boolean exist = (info.getRegion() == null) && (sourceFile != null || image != null);
-        loadTask = new SingletonTask<Void>(this) {
+        loadTask = new FxTask<Void>(this) {
 
             private Image thumbLoaded;
 
             @Override
             protected boolean handle() {
-                thumbLoaded = info.loadThumbnail(loadWidth);
+                thumbLoaded = info.loadThumbnail(this, loadWidth);
                 return thumbLoaded != null;
             }
 
@@ -145,7 +138,11 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
                 loadTask = null;
             }
         };
-        loadingController = start(loadTask);
+        if (backgroundLoad) {
+            start(loadTask, thisPane);
+        } else {
+            start(loadTask);
+        }
     }
 
     public void loadImageInfo(ImageInformation info) {
@@ -169,14 +166,14 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
             loadImageInfo(info);
             return;
         }
-        if (loadTask != null && !loadTask.isQuit()) {
-            return;
+        if (loadTask != null) {
+            loadTask.cancel();
         }
-        loadTask = new SingletonTask<Void>(this) {
+        loadTask = new FxTask<Void>(this) {
 
             @Override
             protected boolean handle() {
-                image = info.loadThumbnail(loadWidth);
+                image = info.loadThumbnail(this, loadWidth);
                 return image != null;
             }
 
@@ -191,7 +188,11 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
                 loadTask = null;
             }
         };
-        loadingController = start(loadTask);
+        if (backgroundLoad) {
+            start(loadTask, thisPane);
+        } else {
+            start(loadTask);
+        }
     }
 
     public void loadImage(Image inImage) {
@@ -232,23 +233,22 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
         if (metaButton != null) {
             metaButton.setDisable(imageInformation == null);
         }
-        File file = imageFile();
         if (deleteButton != null) {
-            deleteButton.setDisable(file == null);
+            deleteButton.setDisable(sourceFile == null);
         }
         if (renameButton != null) {
-            renameButton.setDisable(file == null);
+            renameButton.setDisable(sourceFile == null);
         }
         if (previousButton != null) {
-            previousButton.setDisable(file == null);
+            previousButton.setDisable(sourceFile == null);
         }
         if (nextButton != null) {
-            nextButton.setDisable(file == null);
+            nextButton.setDisable(sourceFile == null);
         }
         if (openSourceButton != null) {
-            openSourceButton.setDisable(file == null || !file.exists());
+            openSourceButton.setDisable(sourceFile == null || !sourceFile.exists());
         }
-        checkSystemMethodButton(file);
+        checkSystemMethodButton(sourceFile);
     }
 
     public boolean afterImageLoaded() {
@@ -280,17 +280,25 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
                 return true;
             }
 
-            refinePane();
-
             if (imageInformation == null) {
                 setImageChanged(true);
             } else {
                 setImageChanged(imageInformation.isIsScaled());
             }
 
-            isPickingColor = false;
+            fitView();
+
+            drawMaskRulers();
+            if (xyText != null) {
+                xyText.setText("");
+            }
+
+            if (pickColorCheck != null) {
+                isPickingColor = pickColorCheck.isSelected();
+            } else {
+                isPickingColor = false;
+            }
             checkPickingColor();
-            finalRefineView();
 
             notifyLoad();
             return true;
@@ -304,15 +312,27 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
         }
     }
 
-    public void updateImage(Image image) {
+    public void fitView() {
+        fitSize();
+    }
+
+    public void updateImage(Image newImage) {
         try {
-            imageView.setImage(image);
+            imageView.setImage(newImage);
             refinePane();
-//            fitSize();
             setImageChanged(true);
+            notifyLoad();
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
+    }
+
+    public void updateImage(String operation, Image newImage) {
+        updateImage(newImage);
+    }
+
+    public void updateImage(String operation, String value, ImageScope opScope, Image newImage) {
+        updateImage(newImage);
     }
 
     protected void setLoadWidth(int width) {
@@ -325,9 +345,8 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
             return;
         }
         UserConfig.setInt(baseName + "LoadWidth", loadWidth);
-        File file = imageFile();
-        if (file != null && file.exists()) {
-            loadImageFile(file, loadWidth);
+        if (sourceFile != null && sourceFile.exists()) {
+            loadImageFile(sourceFile);
         } else if (imageView.getImage() != null) {
             loadImage(imageView.getImage(), loadWidth);
         } else if (image != null) {
@@ -344,41 +363,6 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
         return imageView != null && imageView.getImage() != null
                 && !(this instanceof ImageSplitController)
                 && !(this instanceof ImageSampleController);
-    }
-
-    protected boolean canSelect() {
-        return imageView != null && imageView.getImage() != null
-                && maskRectangle != null && maskCircle == null
-                && !(this instanceof ImageSplitController)
-                && !(this instanceof ImageSampleController)
-                && !(this instanceof ImageManufactureController);
-    }
-
-    protected void finalRefineView() {
-        if (isSettingValues) {
-            return;
-        }
-        if (isPop) {
-            paneSize();
-        } else {
-            fitSize();
-        }
-        clearMask();
-        if (canSelect()) {
-            boolean selected = UserConfig.getBoolean(baseName + "SelectArea", false);
-            if (cropButton != null) {
-                cropButton.setDisable(!selected);
-            }
-            if (selectAllButton != null) {
-                selectAllButton.setDisable(!selected);
-            }
-            if (selected) {
-                showMaskRectangle();
-            } else {
-                maskShapeChanged();
-            }
-        }
-        refinePane();
     }
 
 }

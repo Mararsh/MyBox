@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 import mara.mybox.bufferedimage.ImageAttributes;
 import mara.mybox.bufferedimage.ImageConvertTools;
 import mara.mybox.fxml.FxFileTools;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.imagefile.ImageFileReaders;
 import static mara.mybox.value.AppVariables.MyboxDataPath;
 
@@ -18,7 +19,7 @@ import static mara.mybox.value.AppVariables.MyboxDataPath;
  */
 public class IconTools {
 
-    public static File readIcon(String address, boolean download) {
+    public static File readIcon(FxTask task, String address, boolean download) {
         try {
             if (address == null) {
                 return null;
@@ -37,7 +38,7 @@ public class IconTools {
                 file = FxFileTools.getInternalFile("/icons/" + host + ".ico", "icons", host + ".ico");
                 if ((file == null || !file.exists()) && download) {
                     file = new File(MyboxDataPath + File.separator + "icons" + File.separator + host + ".ico");
-                    file = readIcon(address, file);
+                    file = readIcon(task, address, file);
                 }
             }
             return file != null && file.exists() ? file : null;
@@ -48,13 +49,13 @@ public class IconTools {
     }
 
     // https://www.cnblogs.com/luguo3000/p/3767380.html
-    public static File readIcon(String address, File targetFile) {
-        File actualTarget = readHostIcon(address, targetFile);
+    public static File readIcon(FxTask task, String address, File targetFile) {
+        File actualTarget = readHostIcon(task, address, targetFile);
         if (actualTarget == null) {
-            actualTarget = readHtmlIcon(address, targetFile);
+            actualTarget = readHtmlIcon(task, address, targetFile);
         }
         if (actualTarget != null) {
-            BufferedImage image = ImageFileReaders.readImage(actualTarget);
+            BufferedImage image = ImageFileReaders.readImage(task, actualTarget);
             if (image != null) {
                 String name = actualTarget.getAbsolutePath();
                 if (name.endsWith(".ico")) {
@@ -62,7 +63,7 @@ public class IconTools {
                             .setImageFormat("png").setColorSpaceName("sRGB")
                             .setAlpha(ImageAttributes.Alpha.Keep).setQuality(100);
                     File png = new File(name.substring(0, name.lastIndexOf(".")) + ".png");
-                    ImageConvertTools.convertColorSpace(actualTarget, attributes, png);
+                    ImageConvertTools.convertColorSpace(task, actualTarget, attributes, png);
                     if (png.exists()) {
                         FileDeleteTools.delete(actualTarget);
                         actualTarget = png;
@@ -76,7 +77,7 @@ public class IconTools {
         return null;
     }
 
-    public static File readHostIcon(String address, File targetFile) {
+    public static File readHostIcon(FxTask task, String address, File targetFile) {
         try {
             if (address == null || targetFile == null) {
                 return null;
@@ -86,10 +87,10 @@ public class IconTools {
                 return null;
             }
             String iconUrl = "https://" + url.getHost() + "/favicon.ico";
-            File actualTarget = downloadIcon(iconUrl, targetFile);
+            File actualTarget = downloadIcon(task, iconUrl, targetFile);
             if (actualTarget == null) {
                 iconUrl = "http://" + url.getHost() + "/favicon.ico";
-                actualTarget = downloadIcon(iconUrl, targetFile);
+                actualTarget = downloadIcon(task, iconUrl, targetFile);
             }
             return actualTarget;
         } catch (Exception e) {
@@ -98,28 +99,28 @@ public class IconTools {
         }
     }
 
-    public static File readHtmlIcon(String address, File targetFile) {
+    public static File readHtmlIcon(FxTask task, String address, File targetFile) {
         try {
             if (address == null) {
                 return null;
             }
-            String iconUrl = htmlIconAddress(address);
+            String iconUrl = htmlIconAddress(task, address);
             if (iconUrl == null) {
                 return null;
             }
-            return downloadIcon(iconUrl, targetFile);
+            return downloadIcon(task, iconUrl, targetFile);
         } catch (Exception e) {
 //            MyBoxLog.debug(e);
             return null;
         }
     }
 
-    public static File downloadIcon(String address, File targetFile) {
+    public static File downloadIcon(FxTask task, String address, File targetFile) {
         try {
             if (address == null || targetFile == null) {
                 return null;
             }
-            File iconFile = HtmlReadTools.download(address);
+            File iconFile = HtmlReadTools.download(task, address, 1000, 1000);
             if (iconFile == null || !iconFile.exists()) {
                 return null;
             }
@@ -128,7 +129,7 @@ public class IconTools {
             if (suffix != null && !suffix.isBlank()) {
                 actualTarget = new File(FileNameTools.replaceSuffix(targetFile.getAbsolutePath(), suffix));
             }
-            FileTools.rename(iconFile, actualTarget);
+            FileTools.override(iconFile, actualTarget);
             return actualTarget;
         } catch (Exception e) {
 //            MyBoxLog.debug(e);
@@ -136,12 +137,12 @@ public class IconTools {
         }
     }
 
-    public static String htmlIconAddress(String address) {
+    public static String htmlIconAddress(FxTask task, String address) {
         try {
             if (address == null) {
                 return null;
             }
-            String html = HtmlReadTools.url2html(address);
+            String html = HtmlReadTools.url2html(task, address);
             Pattern[] ICON_PATTERNS = new Pattern[]{
                 Pattern.compile("rel=[\"']shortcut icon[\"'][^\r\n>]+?((?<=href=[\"']).+?(?=[\"']))"),
                 Pattern.compile("((?<=href=[\"']).+?(?=[\"']))[^\r\n<]+?rel=[\"']shortcut icon[\"']")};

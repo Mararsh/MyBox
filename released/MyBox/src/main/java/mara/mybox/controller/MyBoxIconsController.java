@@ -10,7 +10,8 @@ import javafx.fxml.FXML;
 import javax.imageio.ImageIO;
 import mara.mybox.bufferedimage.PixelsOperation;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.style.StyleData.StyleColor;
 import mara.mybox.fxml.style.StyleTools;
@@ -44,7 +45,7 @@ public class MyBoxIconsController extends BaseBatchFileController {
             sourceCodesPathController.label(message("sourceCodesPath"))
                     .isDirectory(true).isSource(false).mustExist(true).permitNull(false)
                     .defaultFile("win".equals(SystemTools.os()) ? new File("D:\\MyBox") : new File("/home/mara/mybox"))
-                    .baseName(baseName).savedName(baseName + "SourceCodesPath").init();
+                    .baseName(baseName).savedName(baseName + "SourceCodesPath").initFile();
 
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -67,7 +68,7 @@ public class MyBoxIconsController extends BaseBatchFileController {
             popError(message("WrongSourceCodesPath"));
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             private List<File> icons = null;
 
             @Override
@@ -120,7 +121,8 @@ public class MyBoxIconsController extends BaseBatchFileController {
                     if (style == StyleColor.Red || style == StyleColor.Customize) {
                         continue;
                     }
-                    FileDeleteTools.clearDir(new File(resourcePath + StyleTools.ButtonsSourcePath + style.name() + "/"));
+                    FileDeleteTools.clearDir(null,
+                            new File(resourcePath + StyleTools.ButtonsSourcePath + style.name() + "/"));
                 }
             }
             return super.makeMoreParameters();
@@ -131,9 +133,9 @@ public class MyBoxIconsController extends BaseBatchFileController {
     }
 
     @Override
-    public String handleFile(File file) {
+    public String handleFile(FxTask currentTask, File file) {
         try {
-            if (task == null || task.isCancelled()) {
+            if (currentTask == null || !currentTask.isWorking()) {
                 return message("Canceled");
             }
             String filename = file.getName();
@@ -144,16 +146,24 @@ public class MyBoxIconsController extends BaseBatchFileController {
             BufferedImage srcImage = ImageIO.read(file);
 
             for (StyleColor style : StyleColor.values()) {
+                if (currentTask == null || !currentTask.isWorking()) {
+                    return message("Canceled");
+                }
                 if (style == StyleColor.Red || style == StyleColor.Customize) {
                     continue;
                 }
-                BufferedImage image = StyleTools.makeIcon(srcImage, color(style, true), color(style, false));
+                BufferedImage image = StyleTools.makeIcon(currentTask, srcImage,
+                        color(style, true), color(style, false));
+                if (currentTask == null || !currentTask.isWorking()) {
+                    return message("Canceled");
+                }
                 if (image == null) {
                     continue;
                 }
                 String tname = resourcePath + StyleTools.ButtonsSourcePath + style.name() + "/" + filename;
-                ImageFileWriters.writeImageFile(image, "png", tname);
-                targetFileGenerated(new File(tname));
+                if (ImageFileWriters.writeImageFile(currentTask, image, "png", tname)) {
+                    targetFileGenerated(new File(tname));
+                }
             }
             return message("Successful");
         } catch (Exception e) {

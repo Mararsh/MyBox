@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="thisPane" prefHeight="400.0" prefWidth="600.0" spacing="2.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageOptionsController">
+    <children>
+      <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+         <tabs>
+            <Tab text="%View">
+               <content>
+                  <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+                     <content>
+                        <VBox fx:id="viewBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                           <children>
+                              <FlowPane fx:id="stepPane" hgap="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" vgap="2.0">
+                                 <children>
+                                    <Label minHeight="-Infinity" text="%ZoomStep" wrapText="true" />
+                                    <ComboBox fx:id="zoomStepSelector" editable="true" prefWidth="120.0" />
+                                 </children>
+                              </FlowPane>
+                              <FlowPane hgap="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" vgap="2.0">
+                                 <children>
+                                    <Label text="%ThumbnailWidth" />
+                                    <TextField fx:id="thumbnailWidthInput" prefWidth="80.0" />
+                                 </children>
+                              </FlowPane>
+                              <FlowPane hgap="2.0" layoutX="15.0" layoutY="53.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" vgap="2.0">
+                                 <children>
+                                    <Label minHeight="-Infinity" text="%MaxDemoImage" wrapText="true" />
+                                    <TextField fx:id="maxDemoInput" prefWidth="140.0" />
+                                 </children>
+                              </FlowPane>
+                              <FlowPane hgap="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" vgap="2.0">
+                                 <children>
+                                    <Label text="%RulerColor" />
+                                    <fx:include fx:id="rulerColor" source="ControlColorSet.fxml" />
+                                 </children>
+                              </FlowPane>
+                              <VBox spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                 <children>
+                                    <Label text="%GridLines" />
+                                    <FlowPane hgap="2.0" vgap="2.0">
+                                       <children>
+                                          <Label text="%Color" />
+                                          <fx:include fx:id="gridColor" source="ControlColorSet.fxml" />
+                                          <Label text="%Width" />
+                                          <ComboBox fx:id="gridWidthSelector" editable="true" prefWidth="100.0" />
+                                       </children>
+                                    </FlowPane>
+                                    <FlowPane hgap="2.0" vgap="2.0">
+                                       <children>
+                                          <Label text="%Interval" />
+                                          <ComboBox fx:id="gridIntervalSelector" editable="true" prefWidth="100.0" />
+                                          <Label text="%Opacity" />
+                                          <ComboBox fx:id="gridOpacitySelector" editable="true" prefWidth="100.0" />
+                                       </children>
+                                    </FlowPane>
+                                 </children>
+                              </VBox>
+                              <FlowPane hgap="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" vgap="2.0">
+                                 <children>
+                                    <Label text="%AlphaColor" wrapText="true" />
+                                    <fx:include fx:id="alphaColorSet" source="ControlColorSet.fxml" />
+                                    <Label fx:id="alphaLabel" text="%AlphaReplaceComments" />
+                                 </children>
+                              </FlowPane>
+                              <FlowPane hgap="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" vgap="2.0">
+                                 <children>
+                                    <Label text="%ImageCoordinateDecimalDigits" />
+                                    <ComboBox fx:id="decimalSelector" editable="true" prefWidth="100.0" />
+                                 </children>
+                              </FlowPane>
+                           </children>
+                           <padding>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </padding>
+                        </VBox>
+                     </content>
+                  </ScrollPane>
+               </content>
+            </Tab>
+            <Tab text="%Render">
+               <content>
+                  <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+                     <content>
+                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                           <children>
+                              <CheckBox fx:id="renderCheck" minHeight="-Infinity" mnemonicParsing="false" text="%ImageApplyRenderOptions" wrapText="true" />
+                              <VBox fx:id="renderBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0" VBox.vgrow="ALWAYS">
+                                 <children>
+                                    <FlowPane hgap="2.0" vgap="2.0">
+                                       <children>
+                                          <Label text="%Rendering" />
+                                          <RadioButton fx:id="renderDefaultRadio" mnemonicParsing="false" selected="true" text="%Automatic">
+                                             <toggleGroup>
+                                                <ToggleGroup fx:id="renderGroup" />
+                                             </toggleGroup>
+                                          </RadioButton>
+                                          <RadioButton fx:id="renderQualityRadio" mnemonicParsing="false" text="%Quality" toggleGroup="$renderGroup" />
+                                          <RadioButton fx:id="renderSpeedRadio" mnemonicParsing="false" text="%Speed" toggleGroup="$renderGroup" />
+                                       </children>
+                                    </FlowPane>
+                                    <FlowPane hgap="2.0" vgap="2.0">
+                                       <children>
+                                          <Label text="%ColorRendering" />
+                                          <RadioButton fx:id="colorRenderDefaultRadio" mnemonicParsing="false" selected="true" text="%Automatic">
+                                             <toggleGroup>
+                                                <ToggleGroup fx:id="colorRenderGroup" />
+                                             </toggleGroup>
+                                          </RadioButton>
+                                          <RadioButton fx:id="colorRenderQualityRadio" mnemonicParsing="false" text="%Quality" toggleGroup="$colorRenderGroup" />
+                                          <RadioButton fx:id="colorRenderSpeedRadio" mnemonicParsing="false" text="%Speed" toggleGroup="$colorRenderGroup" />
+                                       </children>
+                                    </FlowPane>
+                                    <FlowPane hgap="2.0" vgap="2.0">
+                                       <children>
+                                          <Label text="%PixelsInterpolation" />
+                                          <RadioButton fx:id="pInter9Radio" mnemonicParsing="false" selected="true" text="%NearestNeighbor9">
+                                             <toggleGroup>
+                                                <ToggleGroup fx:id="pixelsInterGroup" />
+                                             </toggleGroup>
+                                          </RadioButton>
+                                          <RadioButton fx:id="pInter4Radio" mnemonicParsing="false" text="%NearestNeighbor4" toggleGroup="$pixelsInterGroup" />
+                                          <RadioButton fx:id="pInter1Radio" mnemonicParsing="false" text="%NearestNeighbor" toggleGroup="$pixelsInterGroup" />
+                                       </children>
+                                    </FlowPane>
+                                    <FlowPane hgap="2.0" vgap="2.0">
+                                       <children>
+                                          <Label text="%AlphaInterpolation" />
+                                          <RadioButton fx:id="aInterDefaultRadio" mnemonicParsing="false" selected="true" text="%Automatic">
+                                             <toggleGroup>
+                                                <ToggleGroup fx:id="alphaInterGroup" />
+                                             </toggleGroup>
+                                          </RadioButton>
+                                          <RadioButton fx:id="aInterQualityRadio" mnemonicParsing="false" text="%Quality" toggleGroup="$alphaInterGroup" />
+                                          <RadioButton fx:id="aInterSpeedRadio" mnemonicParsing="false" text="%Speed" toggleGroup="$alphaInterGroup" />
+                                       </children>
+                                    </FlowPane>
+                                    <FlowPane hgap="2.0" vgap="2.0">
+                                       <children>
+                                          <Label text="%ShapeAntialiasing" />
+                                          <RadioButton fx:id="antiDefaultRadio" mnemonicParsing="false" selected="true" text="%Automatic">
+                                             <toggleGroup>
+                                                <ToggleGroup fx:id="shapeAntiGroup" />
+                                             </toggleGroup>
+                                          </RadioButton>
+                                          <RadioButton fx:id="antiQualityRadio" mnemonicParsing="false" text="%On" toggleGroup="$shapeAntiGroup" />
+                                          <RadioButton fx:id="antiSpeedRadio" mnemonicParsing="false" text="%Off" toggleGroup="$shapeAntiGroup" />
+                                       </children>
+                                    </FlowPane>
+                                    <FlowPane hgap="2.0" vgap="2.0">
+                                       <children>
+                                          <Label text="%TextAntialiasing" />
+                                          <RadioButton fx:id="tantiDefaultRadio" mnemonicParsing="false" selected="true" text="%Automatic">
+                                             <toggleGroup>
+                                                <ToggleGroup fx:id="textAntiGroup" />
+                                             </toggleGroup>
+                                          </RadioButton>
+                                          <RadioButton fx:id="tantiOnRadio" mnemonicParsing="false" text="%On" toggleGroup="$textAntiGroup" />
+                                          <RadioButton fx:id="tantiOffRadio" mnemonicParsing="false" text="%Off" toggleGroup="$textAntiGroup" />
+                                          <RadioButton fx:id="tantiGaspRadio" mnemonicParsing="false" text="GASP" toggleGroup="$textAntiGroup" />
+                                          <RadioButton fx:id="tantiLcdHrgbRadio" mnemonicParsing="false" text="LCD_HRGB" toggleGroup="$textAntiGroup" />
+                                          <RadioButton fx:id="tantiLcdHbgrRadio" mnemonicParsing="false" text="LCD_HBGR" toggleGroup="$textAntiGroup" />
+                                          <RadioButton fx:id="tantiLcdVrgbOnRadio" mnemonicParsing="false" text="LCD_VRGB" toggleGroup="$textAntiGroup" />
+                                          <RadioButton fx:id="tantiLcdVbgrRadio" mnemonicParsing="false" text="LCD_VBGR" toggleGroup="$textAntiGroup" />
+                                       </children>
+                                    </FlowPane>
+                                    <FlowPane hgap="2.0" vgap="2.0">
+                                       <children>
+                                          <Label text="%FontFractionalMetrics" />
+                                          <RadioButton fx:id="fmDefaultRadio" mnemonicParsing="false" selected="true" text="%Automatic">
+                                             <toggleGroup>
+                                                <ToggleGroup fx:id="fontFmGroup" />
+                                             </toggleGroup>
+                                          </RadioButton>
+                                          <RadioButton fx:id="fmOnRadio" mnemonicParsing="false" text="%On" toggleGroup="$fontFmGroup" />
+                                          <RadioButton fx:id="fmOffRadio" mnemonicParsing="false" text="%Off" toggleGroup="$fontFmGroup" />
+                                       </children>
+                                    </FlowPane>
+                                    <FlowPane hgap="2.0" vgap="2.0">
+                                       <children>
+                                          <Label text="%Stroke" />
+                                          <RadioButton fx:id="strokeDefaultRadio" mnemonicParsing="false" selected="true" text="%Automatic">
+                                             <toggleGroup>
+                                                <ToggleGroup fx:id="strokeGroup" />
+                                             </toggleGroup>
+                                          </RadioButton>
+                                          <RadioButton fx:id="strokeNormalizeRadio" mnemonicParsing="false" text="%Normalize" toggleGroup="$strokeGroup" />
+                                          <RadioButton fx:id="strokePureRadio" mnemonicParsing="false" text="%Unmodified" toggleGroup="$strokeGroup" />
+                                       </children>
+                                    </FlowPane>
+                                    <FlowPane hgap="2.0" vgap="2.0">
+                                       <children>
+                                          <Label text="%Dithering" />
+                                          <RadioButton fx:id="ditherDefaultRadio" mnemonicParsing="false" selected="true" text="%Automatic">
+                                             <toggleGroup>
+                                                <ToggleGroup fx:id="ditherGroup" />
+                                             </toggleGroup>
+                                          </RadioButton>
+                                          <RadioButton fx:id="ditherOnRadio" mnemonicParsing="false" text="%On" toggleGroup="$ditherGroup" />
+                                          <RadioButton fx:id="ditherOffRadio" mnemonicParsing="false" text="%Off" toggleGroup="$ditherGroup" />
+                                       </children>
+                                    </FlowPane>
+                                 </children>
+                              </VBox>
+                              <Hyperlink onAction="#aboutRenderHints" text="RenderingHints" />
+                           </children>
+                           <padding>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </padding>
+                        </VBox>
+                     </content>
+                  </ScrollPane>
+               </content>
+            </Tab>
+         </tabs>
+      </TabPane>
+        <HBox alignment="CENTER_RIGHT" spacing="5.0">
+            <children>
+            <Button fx:id="closeButton" mnemonicParsing="false" onAction="#closeAction">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconClose.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            </children>
+        </HBox>
+    </children>
+    <padding>
+        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+    </padding>
+</VBox>

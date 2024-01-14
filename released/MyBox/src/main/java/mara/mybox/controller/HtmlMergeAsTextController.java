@@ -9,9 +9,10 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import mara.mybox.data.FileInformation;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.TextFileTools;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import org.jsoup.Jsoup;
 
 /**
@@ -27,11 +28,11 @@ public class HtmlMergeAsTextController extends HtmlToTextController {
     protected CheckBox deleteCheck;
 
     public HtmlMergeAsTextController() {
-        baseTitle = Languages.message("HtmlMergeAsText");
+        baseTitle = message("HtmlMergeAsText");
     }
 
     @Override
-    public boolean beforeHandleFiles() {
+    public boolean beforeHandleFiles(FxTask currentTask) {
         try {
             writer = new FileWriter(targetFile, Charset.forName("utf-8"));
             return true;
@@ -42,19 +43,26 @@ public class HtmlMergeAsTextController extends HtmlToTextController {
     }
 
     @Override
-    public String handleFile(File srcFile, File targetPath) {
+    public String handleFile(FxTask currentTask, File srcFile, File targetPath) {
         try {
-            String text = Jsoup.parse(TextFileTools.readTexts(srcFile)).wholeText();
+            String html = TextFileTools.readTexts(currentTask, srcFile);
+            if (currentTask == null || !currentTask.isWorking()) {
+                return message("Canceled");
+            }
+            if (html == null) {
+                return message("Failed");
+            }
+            String text = Jsoup.parse(html).wholeText();
             writer.write(text + "\n");
-            return Languages.message("Successful");
+            return message("Successful");
         } catch (Exception e) {
             MyBoxLog.error(e);
-            return Languages.message("Failed");
+            return message("Failed");
         }
     }
 
     @Override
-    public void afterHandleFiles() {
+    public void afterHandleFiles(FxTask currentTask) {
         try {
             writer.flush();
             writer.close();

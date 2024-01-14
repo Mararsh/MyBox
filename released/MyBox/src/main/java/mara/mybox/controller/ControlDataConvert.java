@@ -465,7 +465,7 @@ public class ControlDataConvert extends BaseController {
                     textWriter = new BufferedWriter(new FileWriter(textFile, textWriteOptionsController.charset));
                     textDelimiter = TextTools.delimiterValue(textWriteOptionsController.getDelimiterName());
                     if (textWriteOptionsController.withNamesCheck.isSelected()) {
-                        TextFileTools.writeLine(textWriter, names, textDelimiter);
+                        TextFileTools.writeLine(task, textWriter, names, textDelimiter);
                     }
                 } else if (skip) {
                     updateLogs(message("Skipped"));
@@ -599,7 +599,7 @@ public class ControlDataConvert extends BaseController {
             }
 
             if (textWriter != null) {
-                TextFileTools.writeLine(textWriter, row, textDelimiter);
+                TextFileTools.writeLine(task, textWriter, row, textDelimiter);
             }
 
             if (htmlWriter != null) {

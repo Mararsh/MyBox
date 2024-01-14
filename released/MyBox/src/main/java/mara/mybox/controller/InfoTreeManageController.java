@@ -5,11 +5,9 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.MenuItem;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
@@ -17,11 +15,8 @@ import javafx.stage.Window;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.InfoNode;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
-import mara.mybox.fxml.style.StyleTools;
-import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -56,8 +51,10 @@ public class InfoTreeManageController extends BaseInfoTreeController {
         try {
             super.initControls();
 
-            treeController.setParameters(this);
-            editor.setParameters(this);
+            treeController.setManager(this);
+            editor.setManager(this);
+
+            loadData();
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -66,14 +63,13 @@ public class InfoTreeManageController extends BaseInfoTreeController {
 
     @Override
     public boolean keyEventsFilter(KeyEvent event) {
-        if (!super.keyEventsFilter(event)) {
-            if (editor != null) {
-                return editor.keyEventsFilter(event); // pass event to editor
-            }
-            return false;
-        } else {
+        if (super.keyEventsFilter(event)) {
             return true;
         }
+        if (editor == null) {
+            return false;
+        }
+        return editor.keyEventsFilter(event); // pass event to editor
     }
 
     /*
@@ -83,8 +79,9 @@ public class InfoTreeManageController extends BaseInfoTreeController {
         if (parent == null || newNode == null) {
             return;
         }
-        if (loadedParent != null && parent.getNodeid() == loadedParent.getNodeid()) {
-            loadNodes(parent);
+        if (tableController.loadedParent != null
+                && parent.getNodeid() == tableController.loadedParent.getNodeid()) {
+            tableController.loadNodes(parent);
         }
     }
 
@@ -93,14 +90,15 @@ public class InfoTreeManageController extends BaseInfoTreeController {
             return;
         }
         long id = node.getNodeid();
-        if (loadedParent != null && id == loadedParent.getNodeid()) {
-            loadedParent = node;
-            makeConditionPane();
+        if (tableController.loadedParent != null
+                && id == tableController.loadedParent.getNodeid()) {
+            tableController.loadedParent = node;
+            tableController.makeConditionPane();
         } else {
-            for (int i = 0; i < tableData.size(); i++) {
-                InfoNode tnode = tableData.get(i);
+            for (int i = 0; i < tableController.tableData.size(); i++) {
+                InfoNode tnode = tableController.tableData.get(i);
                 if (tnode.getNodeid() == id) {
-                    tableData.set(i, node);
+                    tableController.tableData.set(i, node);
                     break;
                 }
             }
@@ -120,15 +118,16 @@ public class InfoTreeManageController extends BaseInfoTreeController {
             return;
         }
         long id = node.getNodeid();
-        if (loadedParent != null && id == loadedParent.getNodeid()) {
-            loadedParent = null;
-            makeConditionPane();
-            tableData.clear();
+        if (tableController.loadedParent != null
+                && id == tableController.loadedParent.getNodeid()) {
+            tableController.loadedParent = null;
+            tableController.makeConditionPane();
+            tableController.tableData.clear();
         } else {
-            for (int i = 0; i < tableData.size(); i++) {
-                InfoNode tnode = tableData.get(i);
+            for (int i = 0; i < tableController.tableData.size(); i++) {
+                InfoNode tnode = tableController.tableData.get(i);
                 if (tnode.getNodeid() == id) {
-                    tableData.remove(tnode);
+                    tableController.tableData.remove(tnode);
                     break;
                 }
             }
@@ -141,8 +140,8 @@ public class InfoTreeManageController extends BaseInfoTreeController {
             return;
         }
         long id = node.getNodeid();
-        if (loadedParent != null) {
-            loadNodes(loadedParent);
+        if (tableController.loadedParent != null) {
+            tableController.loadNodes(tableController.loadedParent);
         }
         if (editor.attributesController.currentNode != null
                 && id == editor.attributesController.currentNode.getNodeid()) {
@@ -158,21 +157,21 @@ public class InfoTreeManageController extends BaseInfoTreeController {
         if (parent == null || nodes == null || nodes.isEmpty()) {
             return;
         }
-        loadNodes(loadedParent);
-        treeController.loadTree();
+        tableController.loadNodes(tableController.loadedParent);
+        treeController.loadTree(parent);
     }
 
     public void nodesCopied(InfoNode parent) {
-        treeController.updateNode(parent);
+        treeController.loadTree(parent);
     }
 
     public void nodesDeleted() {
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
-                    loadedParent = tableTreeNode.readData(conn, loadedParent);
+                    tableController.loadedParent = tableTreeNode.readData(conn, tableController.loadedParent);
                     editor.attributesController.currentNode
                             = tableTreeNode.readData(conn, editor.attributesController.currentNode);
                     editor.attributesController.parentNode
@@ -187,7 +186,7 @@ public class InfoTreeManageController extends BaseInfoTreeController {
             @Override
             protected void whenSucceeded() {
                 editor.editNode(editor.attributesController.currentNode);
-                treeController.loadTree(loadedParent);
+                treeController.loadTree(tableController.loadedParent);
             }
         };
         start(task);
@@ -198,14 +197,14 @@ public class InfoTreeManageController extends BaseInfoTreeController {
             return;
         }
         long id = editor.attributesController.currentNode.getNodeid();
-        if (loadedParent != null && id == loadedParent.getNodeid()) {
-            loadedParent = editor.attributesController.currentNode;
-            makeConditionPane();
+        if (tableController.loadedParent != null && id == tableController.loadedParent.getNodeid()) {
+            tableController.loadedParent = editor.attributesController.currentNode;
+            tableController.makeConditionPane();
         }
-        for (int i = 0; i < tableData.size(); i++) {
-            InfoNode tnode = tableData.get(i);
+        for (int i = 0; i < tableController.tableData.size(); i++) {
+            InfoNode tnode = tableController.tableData.get(i);
             if (tnode.getNodeid() == id) {
-                tableData.set(i, editor.attributesController.currentNode);
+                tableController.tableData.set(i, editor.attributesController.currentNode);
                 break;
             }
         }
@@ -219,9 +218,9 @@ public class InfoTreeManageController extends BaseInfoTreeController {
         }
         treeController.addNewNode(treeController.find(editor.attributesController.parentNode),
                 editor.attributesController.currentNode, false);
-        if (loadedParent != null
-                && editor.attributesController.parentNode.getNodeid() == loadedParent.getNodeid()) {
-            loadNodes(editor.attributesController.currentNode);
+        if (tableController.loadedParent != null
+                && editor.attributesController.parentNode.getNodeid() == tableController.loadedParent.getNodeid()) {
+            tableController.loadNodes(editor.attributesController.currentNode);
         }
         editor.nodeChanged(false);
     }
@@ -246,140 +245,11 @@ public class InfoTreeManageController extends BaseInfoTreeController {
     /*
         tree
      */
-    @Override
-    public void loadTree() {
-        try (Connection conn = DerbyBase.getConnection()) {
-            if (tableTreeNode.categoryEmpty(conn, category)) {
-                File file = InfoNode.exampleFile(category);
-                if (file != null) {
-                    if (AppVariables.isTesting
-                            || PopTools.askSure(getTitle(), message("ImportExamples") + ": " + message(category))) {
-                        treeController.importExamples();
-                        return;
-                    }
-                }
-            }
-            treeController.loadTree();
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
-    }
-
-    /*
-        table
-     */
-    @Override
-    protected long clearData() {
-        if (queryConditions != null) {
-            return tableTreeNode.deleteCondition(queryConditions);
-
-        } else {
-            return -1;
-        }
-    }
-
-    @Override
-    protected void afterDeletion() {
-        super.afterDeletion();
-        nodesDeleted();
-    }
-
-    @Override
-    protected void afterClear() {
-        super.afterClear();
-        nodesDeleted();
-    }
-
-    @Override
-    protected List<MenuItem> makeTableContextMenu() {
-        try {
-            List<MenuItem> items = new ArrayList<>();
-            MenuItem menu;
-
-            menu = new MenuItem(message("View"), StyleTools.getIconImageView("iconView.png"));
-            menu.setOnAction((ActionEvent menuItemEvent) -> {
-                viewAction();
-            });
-            menu.setDisable(copyButton.isDisabled());
-            items.add(menu);
-
-            if (pasteButton != null) {
-                menu = new MenuItem(message("Paste"), StyleTools.getIconImageView("iconPaste.png"));
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    pasteAction();
-                });
-                menu.setDisable(pasteButton.isDisabled());
-                items.add(menu);
-            }
-
-            menu = new MenuItem(message("Move"), StyleTools.getIconImageView("iconMove.png"));
-            menu.setOnAction((ActionEvent menuItemEvent) -> {
-                moveAction();
-            });
-            menu.setDisable(moveDataButton.isDisabled());
-            items.add(menu);
-
-            menu = new MenuItem(message("Copy"), StyleTools.getIconImageView("iconCopy.png"));
-            menu.setOnAction((ActionEvent menuItemEvent) -> {
-                copyAction();
-            });
-            menu.setDisable(copyButton.isDisabled());
-            items.add(menu);
-
-            items.addAll(super.makeTableContextMenu());
-
-            return items;
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
-    }
-
-    @Override
-    public void itemClicked() {
-        editAction();
-    }
-
-    @Override
-    protected void checkButtons() {
-        if (isSettingValues) {
-            return;
-        }
-        super.checkButtons();
-
-        boolean none = isNoneSelected();
-        deleteButton.setDisable(none);
-        copyButton.setDisable(none);
-        moveDataButton.setDisable(none);
-        if (pasteButton != null) {
-            pasteButton.setDisable(none);
-        }
-    }
-
-    @FXML
-    @Override
-    public void addAction() {
+    public boolean editNode(InfoNode node) {
         if (!checkBeforeNextAction()) {
-            return;
+            return false;
         }
-        if (loadedParent != null) {
-            editor.attributesController.parentNode = loadedParent;
-        }
-        editNode(null);
-    }
-
-    @FXML
-    @Override
-    public void editAction() {
-        editNode(selectedItem());
-    }
-
-    public void editNode(InfoNode node) {
-        if (!checkBeforeNextAction()) {
-            return;
-        }
-        editor.editNode(node);
+        return editor.editNode(node);
     }
 
     @FXML
@@ -391,12 +261,6 @@ public class InfoTreeManageController extends BaseInfoTreeController {
     @FXML
     protected void moveAction() {
         InfoTreeNodesMoveController.oneOpen(this);
-    }
-
-    @FXML
-    @Override
-    public void pasteAction() {
-        pasteNode(selectedItem());
     }
 
     public void pasteNode(InfoNode node) {
@@ -425,7 +289,9 @@ public class InfoTreeManageController extends BaseInfoTreeController {
      */
     @FXML
     protected void addNode() {
-        editNode(null);
+        if (editNode(null)) {
+            editor.newNodeCreated();
+        }
     }
 
     @FXML
@@ -434,6 +300,7 @@ public class InfoTreeManageController extends BaseInfoTreeController {
             return;
         }
         editor.attributesController.copyNode();
+        editor.newNodeCreated();
     }
 
     @FXML
@@ -449,10 +316,7 @@ public class InfoTreeManageController extends BaseInfoTreeController {
 
     @Override
     public void sourceFileChanged(File file) {
-        if (file == null || !file.exists() || !checkBeforeNextAction()) {
-            return;
-        }
-        editor.loadFile(file);
+        editor.sourceFileChanged(file);
     }
 
     public boolean isNodeChanged() {

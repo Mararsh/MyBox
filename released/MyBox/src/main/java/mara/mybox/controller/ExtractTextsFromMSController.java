@@ -9,6 +9,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.MicrosoftDocumentTools;
 import mara.mybox.tools.TextFileTools;
@@ -64,7 +65,7 @@ public class ExtractTextsFromMSController extends BaseBatchFileController {
     }
 
     @Override
-    public String handleFile(File srcFile, File targetPath) {
+    public String handleFile(FxTask currentTask, File srcFile, File targetPath) {
         File target = makeTargetFile(FileNameTools.prefix(srcFile.getName()), ".txt", targetPath);
         if (target == null) {
             return Languages.message("Skip");

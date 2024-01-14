@@ -11,7 +11,7 @@ import javafx.fxml.FXML;
 import mara.mybox.calculation.OLSLinearRegression;
 import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.NumberTools;
 import mara.mybox.value.Fxmls;
@@ -87,7 +87,7 @@ public class Data2DMultipleLinearRegressionCombinationController extends BaseDat
         }
         resultsController.clear();
         namesMap = new HashMap<>();
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             List<List<String>> data;
             int n, xLen, yLen;
@@ -218,8 +218,8 @@ public class Data2DMultipleLinearRegressionCombinationController extends BaseDat
      */
     public static Data2DMultipleLinearRegressionCombinationController open(ControlData2DLoad tableController) {
         try {
-            Data2DMultipleLinearRegressionCombinationController controller = (Data2DMultipleLinearRegressionCombinationController) WindowTools.openChildStage(
-                    tableController.getMyWindow(), Fxmls.Data2DMultipleLinearRegressionCombinationFxml, false);
+            Data2DMultipleLinearRegressionCombinationController controller = (Data2DMultipleLinearRegressionCombinationController) WindowTools.branchStage(
+                    tableController, Fxmls.Data2DMultipleLinearRegressionCombinationFxml);
             controller.setParameters(tableController);
             controller.requestMouse();
             return controller;

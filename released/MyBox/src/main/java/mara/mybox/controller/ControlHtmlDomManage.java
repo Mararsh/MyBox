@@ -14,6 +14,7 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.data.HtmlNode;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
 import static mara.mybox.value.Languages.message;
 import org.jsoup.nodes.Attribute;
@@ -47,6 +48,16 @@ public class ControlHtmlDomManage extends BaseHtmlTreeController {
 
         } catch (Exception e) {
             MyBoxLog.error(e);
+        }
+    }
+
+    @Override
+    public void setControlsStyle() {
+        try {
+            super.setControlsStyle();
+            NodeStyleTools.setTooltip(rightPaneControl, message("ControlRightPane"));
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
         }
     }
 

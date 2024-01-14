@@ -17,9 +17,9 @@ import mara.mybox.db.table.TableColorPalette;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.value.Fxmls;
@@ -84,7 +84,7 @@ public class ColorInputController extends BaseController {
 
     @FXML
     protected void showHistories(Event event) {
-        PopTools.popStringValues(this, valuesArea, event, "ColorInputHistories", false, true);
+        PopTools.popStringValues(this, valuesArea, event, "ColorInputHistories", false);
     }
 
     @FXML
@@ -93,7 +93,7 @@ public class ColorInputController extends BaseController {
         if (task != null && !task.isQuit()) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -187,7 +187,7 @@ public class ColorInputController extends BaseController {
                 ((ColorInputController) object).close();
             }
         }
-        ColorInputController controller = (ColorInputController) WindowTools.openChildStage(parent.getMyStage(), Fxmls.ColorInputFxml, false);
+        ColorInputController controller = (ColorInputController) WindowTools.branchStage(parent, Fxmls.ColorInputFxml);
         controller.setParameters(parent);
         return controller;
     }

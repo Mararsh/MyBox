@@ -6,7 +6,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import mara.mybox.calculation.SimpleLinearRegression;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.NumberTools;
 import mara.mybox.value.Fxmls;
@@ -48,7 +48,7 @@ public class Data2DSimpleLinearRegressionCombinationController extends BaseData2
             task.cancel();
         }
         resultsController.clear();
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -135,8 +135,8 @@ public class Data2DSimpleLinearRegressionCombinationController extends BaseData2
     public static Data2DSimpleLinearRegressionCombinationController open(ControlData2DLoad tableController) {
         try {
             Data2DSimpleLinearRegressionCombinationController controller
-                    = (Data2DSimpleLinearRegressionCombinationController) WindowTools.openChildStage(
-                            tableController.getMyWindow(), Fxmls.Data2DSimpleLinearRegressionCombinationFxml, false);
+                    = (Data2DSimpleLinearRegressionCombinationController) WindowTools.branchStage(
+                            tableController, Fxmls.Data2DSimpleLinearRegressionCombinationFxml);
             controller.setParameters(tableController);
             controller.requestMouse();
             return controller;

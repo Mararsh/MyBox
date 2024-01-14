@@ -2,15 +2,12 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.image.ImageView;
 import javafx.stage.Window;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -20,106 +17,95 @@ import mara.mybox.value.UserConfig;
 public class MenuImageViewController extends MenuImageBaseController {
 
     protected ImageView imageView;
-    protected ImageViewerController imageViewerController;
+    protected BaseImageController viewerController;
 
-    public void setParameters(ImageViewerController imageViewerController, double x, double y) {
+    @Override
+    public void setParameters(BaseImageController controller, double x, double y) {
         try {
-            this.imageViewerController = imageViewerController;
-            super.setParameters(imageViewerController, x, y);
-
-            if (selectAreaCheck != null && cropButton != null) {
-                selectAreaCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                    @Override
-                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        cropButton.setDisable(!newValue);
-                    }
-                });
-            }
+            viewerController = controller;
+            super.setParameters(viewerController, x, y);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
-    @Override
-    public void updateImage() {
-        super.updateImage();
-        boolean selected = UserConfig.getBoolean(baseName + "SelectArea", false);
-        if (cropButton != null) {
-            cropButton.setDisable(!selected);
-        }
-        if (selectAllButton != null) {
-            selectAllButton.setDisable(!selected);
-        }
-
-    }
-
-    @FXML
-    @Override
-    public void selectAllAction() {
-        imageViewerController.selectAllAction();
-    }
-
     @FXML
     @Override
     public void cropAction() {
-        imageViewerController.cropAction();
+        viewerController.cropAction();
     }
 
     @FXML
     public void turnOver() {
-        imageViewerController.turnOver();
+        viewerController.turnOver();
     }
 
     @FXML
     public void rotateRight() {
-        imageViewerController.rotateRight();
+        viewerController.rotateRight();
     }
 
     @FXML
     public void rotateLeft() {
-        imageViewerController.rotateLeft();
+        viewerController.rotateLeft();
     }
 
     @FXML
     @Override
     public void recoverAction() {
-        imageViewerController.recoverAction();
+        viewerController.recoverAction();
     }
 
     @FXML
     @Override
     public void saveAction() {
-        imageViewerController.saveAction();
+        viewerController.saveAction();
     }
 
     @FXML
     public void renameAction() {
-        imageViewerController.renameAction();
+        viewerController.renameAction();
+    }
+
+    @FXML
+    @Override
+    public void systemMethod() {
+        viewerController.systemMethod();
+    }
+
+    @FXML
+    public void filesListAction() {
+        FileBrowseController.open(viewerController);
+    }
+
+    @FXML
+    public void selectPixels() {
+        viewerController.selectPixels();
     }
 
     @FXML
     @Override
     public void loadContentInSystemClipboard() {
-        imageViewerController.loadContentInSystemClipboard();
+        viewerController.loadContentInSystemClipboard();
     }
 
     @FXML
     @Override
     public void previousAction() {
-        imageViewerController.previousAction();
+        viewerController.previousAction();
     }
 
     @FXML
     @Override
     public void nextAction() {
-        imageViewerController.nextAction();
+        viewerController.nextAction();
     }
 
     @Override
     public void cleanPane() {
         try {
-            imageViewerController = null;
+            viewerController = null;
             imageView = null;
         } catch (Exception e) {
         }
@@ -130,10 +116,10 @@ public class MenuImageViewController extends MenuImageBaseController {
     /*
         static methods
      */
-    public static MenuImageViewController imageViewMenu(ImageViewerController imageViewerController, double x, double y) {
+    public static MenuImageViewController imageViewMenu(BaseImageController controller, double x, double y) {
         try {
             try {
-                if (imageViewerController == null) {
+                if (controller == null) {
                     return null;
                 }
                 List<Window> windows = new ArrayList<>();
@@ -142,18 +128,18 @@ public class MenuImageViewController extends MenuImageBaseController {
                     Object object = window.getUserData();
                     if (object != null && object instanceof MenuImageViewController) {
                         try {
-                            MenuImageViewController controller = (MenuImageViewController) object;
-                            if (controller.imageViewerController.equals(imageViewerController)) {
-                                controller.close();
+                            MenuImageViewController menu = (MenuImageViewController) object;
+                            if (menu.viewerController.equals(controller)) {
+                                menu.close();
                             }
                         } catch (Exception e) {
                         }
                     }
                 }
-                MenuImageViewController controller = (MenuImageViewController) WindowTools.openChildStage(
-                        imageViewerController.getMyWindow(), Fxmls.MenuImageViewFxml, false);
-                controller.setParameters(imageViewerController, x, y);
-                return controller;
+                MenuImageViewController menu = (MenuImageViewController) WindowTools.branchStage(
+                        controller, Fxmls.MenuImageViewFxml);
+                menu.setParameters(controller, x, y);
+                return menu;
             } catch (Exception e) {
                 MyBoxLog.error(e);
                 return null;

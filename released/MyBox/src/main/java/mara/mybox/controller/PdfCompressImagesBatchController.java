@@ -15,6 +15,7 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import mara.mybox.bufferedimage.ImageBinary;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.PdfTools.PdfImageFormat;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -162,17 +163,26 @@ public class PdfCompressImagesBatchController extends PdfImagesConvertBatchContr
     }
 
     @Override
-    public PDImageXObject handleImage(BufferedImage sourceImage) {
+    public PDImageXObject handleImage(FxTask currentTask, BufferedImage sourceImage) {
         if (sourceImage == null) {
             return null;
         }
         try {
             PDImageXObject newObject = null;
             if (pdfFormat == PdfImageFormat.Tiff) {
-                ImageBinary imageBinary = new ImageBinary(sourceImage, threshold);
-                imageBinary.setIsDithering(ditherCheck.isSelected());
-                BufferedImage newImage = imageBinary.operate();
-                newImage = ImageBinary.byteBinary(newImage);
+                ImageBinary imageBinary = new ImageBinary();
+                imageBinary.setAlgorithm(ImageBinary.BinaryAlgorithm.Threshold)
+                        .setImage(sourceImage)
+                        .setIntPara1(threshold)
+                        .setIsDithering(ditherCheck.isSelected());
+                BufferedImage newImage = imageBinary.start();
+                newImage = ImageBinary.byteBinary(currentTask, newImage);
+                if (currentTask == null || !currentTask.isWorking()) {
+                    return null;
+                }
+                if (newImage == null) {
+                    return null;
+                }
                 newObject = CCITTFactory.createFromImage(doc, newImage);
 
             } else if (pdfFormat == PdfImageFormat.Jpeg) {

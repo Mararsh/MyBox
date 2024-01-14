@@ -7,6 +7,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import mara.mybox.data.FileInformation;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.value.AppValues;
 import static mara.mybox.value.Languages.message;
 
@@ -58,9 +59,9 @@ public class FilesMergeController extends BaseBatchFileController {
     }
 
     @Override
-    public String handleFile(File file) {
+    public String handleFile(FxTask currentTask, File file) {
         try {
-            if (task == null || task.isCancelled()) {
+            if (currentTask == null || !currentTask.isWorking()) {
                 return message("Canceled");
             }
             if (file == null || !file.isFile() || !match(file)) {
@@ -69,8 +70,11 @@ public class FilesMergeController extends BaseBatchFileController {
             byte[] buf = new byte[AppValues.IOBufferLength];
             int bufLen;
             FileInformation d = (FileInformation) tableData.get(currentParameters.currentIndex);
-            try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(d.getFile()))) {
+            try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(d.getFile()))) {
                 while ((bufLen = inputStream.read(buf)) > 0) {
+                    if (currentTask == null || !currentTask.isWorking()) {
+                        return message("Canceled");
+                    }
                     outputStream.write(buf, 0, bufLen);
                 }
             }

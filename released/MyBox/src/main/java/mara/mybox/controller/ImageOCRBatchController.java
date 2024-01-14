@@ -6,7 +6,6 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
 import java.nio.charset.Charset;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -27,6 +26,7 @@ import mara.mybox.data.StringTable;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTmpTools;
@@ -229,22 +229,28 @@ public class ImageOCRBatchController extends BaseBatchImageController {
     }
 
     @Override
-    public String handleFile(File srcFile, File targetPath) {
+    public String handleFile(FxTask currentTask, File srcFile, File targetPath) {
         try {
             File target = makeTargetFile(srcFile, targetPath);
             if (target == null) {
                 return message("Skip");
             }
-            lastImage = preprocess(srcFile);
+            lastImage = preprocess(currentTask, srcFile);
+            if (currentTask == null || !currentTask.isWorking()) {
+                return message("Canceled");
+            }
             if (lastImage == null) {
                 return message("Failed");
             }
-
             boolean ret;
             if (ocrOptionsController.embedRadio.isSelected()) {
-                ret = embedded(srcFile, target);
+                ret = embedded(currentTask, srcFile, target);
             } else {
-                ret = command(srcFile, target);
+                ret = command(currentTask, srcFile, target);
+            }
+            if (currentTask == null || !currentTask.isWorking()) {
+                updateLogs(message("Canceled"));
+                return message("Canceled");
             }
             if (ret) {
                 return message("Successful");
@@ -257,91 +263,111 @@ public class ImageOCRBatchController extends BaseBatchImageController {
         }
     }
 
-    public BufferedImage preprocess(File srcFile) {
+    public BufferedImage preprocess(FxTask currentTask, File srcFile) {
         try {
-            lastImage = ImageFileReaders.readImage(srcFile);
+            lastImage = ImageFileReaders.readImage(currentTask, srcFile);
+            if (currentTask == null || !currentTask.isWorking()) {
+                return null;
+            }
             if (lastImage == null) {
                 return null;
             }
 //            lastImage = ImageManufacture.removeAlpha(lastImage);
             if (threshold > 0) {
-                ImageBinary bin = new ImageBinary(lastImage, threshold);
-                lastImage = bin.operateImage();
+                ImageBinary imageBinary = new ImageBinary();
+                imageBinary.setAlgorithm(ImageBinary.BinaryAlgorithm.Threshold)
+                        .setImage(lastImage)
+                        .setIntPara1(threshold);
+                lastImage = imageBinary.start();
+                if (currentTask == null || !currentTask.isWorking()) {
+                    return null;
+                }
             }
 
             if (rotate != 0) {
-                lastImage = TransformTools.rotateImage(lastImage, rotate);
+                lastImage = TransformTools.rotateImage(currentTask, lastImage, rotate);
+                if (currentTask == null || !currentTask.isWorking()) {
+                    return null;
+                }
             }
             if (scale > 0 && scale != 1) {
                 lastImage = ScaleTools.scaleImageByScale(lastImage, scale);
+                if (currentTask == null || !currentTask.isWorking()) {
+                    return null;
+                }
             }
 
             String algorithm = algorithmSelector.getValue();
             if (algorithm == null || algorithm.trim().isEmpty()) {
             } else if (message("GrayHistogramEqualization").equals(algorithm)) {
-                ImageContrast imageContrast = new ImageContrast(lastImage,
-                        ImageContrast.ContrastAlgorithm.Gray_Histogram_Equalization);
-                lastImage = imageContrast.operateImage();
+                ImageContrast imageContrast = new ImageContrast()
+                        .setAlgorithm(ImageContrast.ContrastAlgorithm.GrayHistogramEqualization);
+                imageContrast.setImage(lastImage).setTask(currentTask);
+                lastImage = imageContrast.start();
 
             } else if (message("GrayHistogramStretching").equals(algorithm)) {
-                ImageContrast imageContrast = new ImageContrast(lastImage,
-                        ImageContrast.ContrastAlgorithm.Gray_Histogram_Stretching);
-                imageContrast.setIntPara1(100);
-                imageContrast.setIntPara2(100);
-                lastImage = imageContrast.operateImage();
+                ImageContrast imageContrast = new ImageContrast()
+                        .setAlgorithm(ImageContrast.ContrastAlgorithm.GrayHistogramStretching);
+                imageContrast.setImage(lastImage).setTask(currentTask).
+                        setIntPara1(100).setIntPara2(100);
+                lastImage = imageContrast.start();
 
             } else if (message("GrayHistogramShifting").equals(algorithm)) {
-                ImageContrast imageContrast = new ImageContrast(lastImage,
-                        ImageContrast.ContrastAlgorithm.Gray_Histogram_Shifting);
-                imageContrast.setIntPara1(80);
-                lastImage = imageContrast.operateImage();
+                ImageContrast imageContrast = new ImageContrast()
+                        .setAlgorithm(ImageContrast.ContrastAlgorithm.GrayHistogramShifting);
+                imageContrast.setImage(lastImage).setIntPara1(80).setTask(currentTask);
+                lastImage = imageContrast.start();
 
             } else if (message("HSBHistogramEqualization").equals(algorithm)) {
-                ImageContrast imageContrast = new ImageContrast(lastImage,
-                        ImageContrast.ContrastAlgorithm.HSB_Histogram_Equalization);
-                lastImage = imageContrast.operateImage();
+                ImageContrast imageContrast = new ImageContrast()
+                        .setAlgorithm(ImageContrast.ContrastAlgorithm.SaturationHistogramEqualization);
+                imageContrast.setImage(lastImage).setTask(currentTask);
+                lastImage = imageContrast.start();
 
             } else if (message("UnsharpMasking").equals(algorithm)) {
                 ConvolutionKernel kernel = ConvolutionKernel.makeUnsharpMasking(3);
                 ImageConvolution imageConvolution = ImageConvolution.create().
                         setImage(lastImage).setKernel(kernel);
-                lastImage = imageConvolution.operateImage();
+                lastImage = imageConvolution.setTask(currentTask).start();
 
             } else if ((message("Enhancement") + "-" + "FourNeighborLaplace").equals(algorithm)) {
                 ConvolutionKernel kernel = ConvolutionKernel.MakeSharpenFourNeighborLaplace();
                 ImageConvolution imageConvolution = ImageConvolution.create().
                         setImage(lastImage).setKernel(kernel);
-                lastImage = imageConvolution.operateImage();
+                lastImage = imageConvolution.setTask(currentTask).start();
 
             } else if ((message("Enhancement") + "-" + "EightNeighborLaplace").equals(algorithm)) {
                 ConvolutionKernel kernel = ConvolutionKernel.MakeSharpenEightNeighborLaplace();
                 ImageConvolution imageConvolution = ImageConvolution.create().
                         setImage(lastImage).setKernel(kernel);
-                lastImage = imageConvolution.operateImage();
+                lastImage = imageConvolution.setTask(currentTask).start();
 
             } else if (message("GaussianBlur").equals(algorithm)) {
                 ConvolutionKernel kernel = ConvolutionKernel.makeGaussBlur(3);
                 ImageConvolution imageConvolution = ImageConvolution.create().
                         setImage(lastImage).setKernel(kernel);
-                lastImage = imageConvolution.operateImage();
+                lastImage = imageConvolution.setTask(currentTask).start();
 
             } else if (message("AverageBlur").equals(algorithm)) {
                 ConvolutionKernel kernel = ConvolutionKernel.makeAverageBlur(1);
                 ImageConvolution imageConvolution = ImageConvolution.create().
                         setImage(lastImage).setKernel(kernel);
-                lastImage = imageConvolution.operateImage();
+                lastImage = imageConvolution.setTask(currentTask).start();
 
             } else if ((message("EdgeDetection") + "-" + message("EightNeighborLaplaceInvert")).equals(algorithm)) {
                 ConvolutionKernel kernel = ConvolutionKernel.makeEdgeDetectionEightNeighborLaplaceInvert().setGray(true);
                 ImageConvolution imageConvolution = ImageConvolution.create().
                         setImage(lastImage).setKernel(kernel);
-                lastImage = imageConvolution.operateImage();
+                lastImage = imageConvolution.setTask(currentTask).start();
 
             } else if ((message("EdgeDetection") + "-" + message("EightNeighborLaplace")).equals(algorithm)) {
                 ConvolutionKernel kernel = ConvolutionKernel.makeEdgeDetectionEightNeighborLaplace().setGray(true);
                 ImageConvolution imageConvolution = ImageConvolution.create().
                         setImage(lastImage).setKernel(kernel);
-                lastImage = imageConvolution.operateImage();
+                lastImage = imageConvolution.setTask(currentTask).start();
+            }
+            if (currentTask == null || !currentTask.isWorking()) {
+                return null;
             }
 
             if (deskewCheck.isSelected()) {
@@ -350,13 +376,16 @@ public class ImageOCRBatchController extends BaseBatchImageController {
                 if ((imageSkewAngle > OCRTools.MINIMUM_DESKEW_THRESHOLD
                         || imageSkewAngle < -(OCRTools.MINIMUM_DESKEW_THRESHOLD))) {
                     lastImage = ImageHelper.rotateImage(lastImage, -imageSkewAngle);
+                    if (currentTask == null || !currentTask.isWorking()) {
+                        return null;
+                    }
                 }
             }
 
             if (invertCheck.isSelected()) {
                 PixelsOperation pixelsOperation = PixelsOperationFactory.create(lastImage,
                         null, PixelsOperation.OperationType.RGB, PixelsOperation.ColorActionType.Invert);
-                lastImage = pixelsOperation.operateImage();
+                lastImage = pixelsOperation.setTask(currentTask).start();
             }
             return lastImage;
         } catch (Exception e) {
@@ -365,7 +394,7 @@ public class ImageOCRBatchController extends BaseBatchImageController {
         }
     }
 
-    protected boolean embedded(File srcFile, File targetFile) {
+    protected boolean embedded(FxTask currentTask, File srcFile, File targetFile) {
         try {
             if (lastImage == null || OCRinstance == null) {
                 return false;
@@ -385,20 +414,24 @@ public class ImageOCRBatchController extends BaseBatchImageController {
 
             OCRinstance.createDocumentsWithResults​(lastImage, tmpPrefix,
                     tmpPrefix, formats, TessPageIteratorLevel.RIL_SYMBOL);
+            if (currentTask == null || !currentTask.isWorking()) {
+                return false;
+            }
+
             File tmpTextFile = new File(tmpPrefix + ".txt");
             if (!tmpTextFile.exists()) {
                 updateLogs(message("Failed" + ":" + tmpTextFile), true, true);
                 return false;
             }
             File textFile = new File(actualPrefix + ".txt");
-            FileTools.rename(tmpTextFile, textFile);
+            FileTools.override(tmpTextFile, textFile);
             textFiles.add(textFile);
             targetFileGenerated(textFile);
 
             if (ocrOptionsController.htmlCheck.isSelected()) {
                 File hocrFile = new File(tmpPrefix + ".hocr");
                 File htmlFile = new File(actualPrefix + ".html");
-                if (FileTools.rename(hocrFile, htmlFile)) {
+                if (FileTools.override(hocrFile, htmlFile)) {
                     targetFileGenerated(htmlFile);
                 }
             }
@@ -406,7 +439,7 @@ public class ImageOCRBatchController extends BaseBatchImageController {
             if (ocrOptionsController.pdfCheck.isSelected()) {
                 File tmpPdfFile = new File(tmpPrefix + ".pdf");
                 File pdfFile = new File(actualPrefix + ".pdf");
-                if (FileTools.rename(tmpPdfFile, pdfFile)) {
+                if (FileTools.override(tmpPdfFile, pdfFile)) {
                     targetFileGenerated(pdfFile);
                 }
             }
@@ -468,7 +501,7 @@ public class ImageOCRBatchController extends BaseBatchImageController {
         }
     }
 
-    protected boolean command(File srcFile, File targetFile) {
+    protected boolean command(FxTask currentTask, File srcFile, File targetFile) {
         if (lastImage == null) {
             return false;
         }
@@ -483,18 +516,25 @@ public class ImageOCRBatchController extends BaseBatchImageController {
             String tmpPrefix = FileTmpTools.getTempFile().getAbsolutePath();
 
             process = ocrOptionsController.process(srcFile, tmpPrefix);
+
             if (process == null) {
                 return false;
             }
             String outputs = "", line;
             try (BufferedReader inReader = process.inputReader(Charset.defaultCharset())) {
                 while ((line = inReader.readLine()) != null) {
+                    if (currentTask == null || !currentTask.isWorking()) {
+                        break;
+                    }
                     outputs += line + "\n";
                 }
             } catch (Exception e) {
                 outputs += e.toString() + "\n";
             }
             process.waitFor();
+            if (currentTask == null || !currentTask.isWorking()) {
+                return false;
+            }
 
             File tmpTextFile = new File(tmpPrefix + ".txt");
             if (!tmpTextFile.exists()) {
@@ -502,14 +542,14 @@ public class ImageOCRBatchController extends BaseBatchImageController {
                 return false;
             }
             File textFile = new File(actualPrefix + ".txt");
-            FileTools.rename(tmpTextFile, textFile);
+            FileTools.override(tmpTextFile, textFile);
             textFiles.add(textFile);
             targetFileGenerated(textFile);
 
             if (ocrOptionsController.htmlCheck.isSelected()) {
                 File hocrFile = new File(tmpPrefix + ".hocr");
                 File htmlFile = new File(actualPrefix + ".html");
-                if (FileTools.rename(hocrFile, htmlFile)) {
+                if (FileTools.override(hocrFile, htmlFile)) {
                     targetFileGenerated(htmlFile);
                 }
             }
@@ -517,7 +557,7 @@ public class ImageOCRBatchController extends BaseBatchImageController {
             if (ocrOptionsController.pdfCheck.isSelected()) {
                 File tmpPdfFile = new File(tmpPrefix + ".pdf");
                 File pdfFile = new File(actualPrefix + ".pdf");
-                if (FileTools.rename(tmpPdfFile, pdfFile)) {
+                if (FileTools.override(tmpPdfFile, pdfFile)) {
                     targetFileGenerated(pdfFile);
                 }
             }
@@ -545,17 +585,14 @@ public class ImageOCRBatchController extends BaseBatchImageController {
     }
 
     @Override
-    public void afterTask() {
+    public void afterHandleFiles(FxTask currentTask) {
         if (textFiles != null && textFiles.size() > 1 && mergeCheck.isSelected()) {
             File mFile = new File(FileNameTools.append(textFiles.get(0).getAbsolutePath(), "_OCR_merged"));
-            if (TextFileTools.mergeTextFiles(textFiles, mFile)) {
-                popInformation(MessageFormat.format(message("FilesGenerated"), mFile.getAbsolutePath()));
+            if (TextFileTools.mergeTextFiles(currentTask, textFiles, mFile)) {
                 targetFileGenerated(mFile);
             }
         }
         OCRinstance = null;
-        super.afterTask();
-
     }
 
 }

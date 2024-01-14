@@ -14,7 +14,7 @@ import mara.mybox.db.table.TableTextClipboard;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.fxml.TextClipboardMonitor.DefaultInterval;
 import mara.mybox.tools.TextFileTools;
-import static mara.mybox.value.AppVariables.textClipboardMonitor;
+import static mara.mybox.value.AppVariables.TextClipMonitor;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -29,9 +29,9 @@ public class TextClipboardTools {
         monitor
      */
     public static void stopTextClipboardMonitor() {
-        if (textClipboardMonitor != null) {
-            textClipboardMonitor.stop();
-            textClipboardMonitor = null;
+        if (TextClipMonitor != null) {
+            TextClipMonitor.stop();
+            TextClipMonitor = null;
         }
     }
 
@@ -40,11 +40,11 @@ public class TextClipboardTools {
     }
 
     public static void startTextClipboardMonitor(int interval) {
-        if (textClipboardMonitor != null) {
-            textClipboardMonitor.cancel();
-            textClipboardMonitor = null;
+        if (TextClipMonitor != null) {
+            TextClipMonitor.cancel();
+            TextClipMonitor = null;
         }
-        textClipboardMonitor = new TextClipboardMonitor().start(interval);
+        TextClipMonitor = new TextClipboardMonitor().start(interval);
     }
 
     public static int getMonitorInterval() {
@@ -64,7 +64,7 @@ public class TextClipboardTools {
     }
 
     public static boolean isMonitoring() {
-        return textClipboardMonitor != null;
+        return TextClipMonitor != null;
     }
 
     public static boolean isCopy() {
@@ -158,7 +158,7 @@ public class TextClipboardTools {
                     controller.popError(message("NoData"));
                     return;
                 }
-                copyToSystemClipboard(controller, TextFileTools.readTexts(file));
+                copyToSystemClipboard(controller, TextFileTools.readTexts(null, file));
             }
         });
     }

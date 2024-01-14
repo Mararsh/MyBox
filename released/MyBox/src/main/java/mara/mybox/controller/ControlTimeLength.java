@@ -92,38 +92,14 @@ public class ControlTimeLength extends BaseController {
             }
         }
 
-        lengthSelector.getSelectionModel().selectedItemProperty().addListener(
+        lengthSelector.valueProperty().addListener(
                 (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
                     if (isSettingValues) {
                         return;
                     }
-                    value = -1;
-                    try {
-                        int pos = newValue.indexOf(' ');
-                        String s = newValue;
-                        if (pos >= 0) {
-                            s = newValue.substring(0, pos);
-                        }
-                        long v = Long.parseLong(s);
-                        if (v > 0 || (permitZero && v == 0)) {
-                            value = v;
-                            UserConfig.setString(name, v + "");
-                        }
-                    } catch (Exception e) {
-                    }
-                    if (value < 0) {
-                        if (permitNotSet || permitInvalid) {
-                            lengthSelector.getEditor().setStyle(null);
-                            UserConfig.setString(name, "-1");
-                        } else {
-                            lengthSelector.getEditor().setStyle(UserConfig.badStyle());
-                        }
-                    } else {
-                        lengthSelector.getEditor().setStyle(null);
-                    }
-//                    MyBoxLog.debug(name + " " + this.defaultValue + " " + value);
-                    notify.set(!notify.get());
+                    pickValue();
                 });
+
         isSettingValues = true;
         value = this.defaultValue;
 //        MyBoxLog.debug(name + " " + this.defaultValue + " " + value);
@@ -132,14 +108,14 @@ public class ControlTimeLength extends BaseController {
             if ("-1".equals(saved) || message("NotSet").equals(saved)) {
                 value = -1;
                 if (permitNotSet) {
-                    lengthSelector.getSelectionModel().select(message("NotSet"));
+                    lengthSelector.setValue(message("NotSet"));
                 }
             } else {
                 try {
                     long v = Long.parseLong(saved);
                     if (v > 0 || (permitZero && v == 0)) {
                         value = v;
-                        lengthSelector.getSelectionModel().select(value + "");
+                        lengthSelector.setValue(value + "");
                     }
                 } catch (Exception e) {
                 }
@@ -171,4 +147,36 @@ public class ControlTimeLength extends BaseController {
         }
     }
 
+    public long pickValue() {
+        value = -1;
+        String vs = lengthSelector.getValue();
+        try {
+            int pos = vs.indexOf(' ');
+            String s = vs;
+            if (pos >= 0) {
+                s = vs.substring(0, pos);
+            }
+            long v = Long.parseLong(s);
+            if (v > 0 || (permitZero && v == 0)) {
+                value = v;
+                UserConfig.setString(name, v + "");
+            }
+        } catch (Exception e) {
+        }
+        if (value < 0) {
+            if (permitNotSet || permitInvalid) {
+                lengthSelector.getEditor().setStyle(null);
+                UserConfig.setString(name, "-1");
+            } else {
+                lengthSelector.getEditor().setStyle(UserConfig.badStyle());
+                popError(message("InvalidParameter"));
+                return -1;
+            }
+        } else {
+            lengthSelector.getEditor().setStyle(null);
+        }
+//                    MyBoxLog.debug(name + " " + this.defaultValue + " " + value);
+        notify.set(!notify.get());
+        return value;
+    }
 }

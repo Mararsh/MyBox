@@ -5,6 +5,7 @@ import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.Data2DTools;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.db.data.InfoNode;
+import mara.mybox.fxml.FxSingletonTask;
 
 /**
  * @Author Mara
@@ -40,19 +41,41 @@ public class Data2DDefinitionEditor extends InfoTreeNodeEditor {
     }
 
     @Override
-    protected void editNode(InfoNode node) {
-        if (node != null) {
-            data2D = Data2DTools.definitionFromXML(node.getInfo());
-        } else {
-            data2D = null;
+    protected boolean editNode(InfoNode node) {
+        if (task != null) {
+            task.cancel();
         }
-        if (data2D == null) {
-            data2D = new DataFileCSV();
-        }
-        columnsController.load(data2D);
-        defAttributesController.editNode(node, data2D);
-        nodeChanged(false);
-        updateTitle(node);
+        task = new FxSingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                try {
+                    if (node != null) {
+                        data2D = Data2DTools.definitionFromXML(this, myController, node.getInfo());
+                    } else {
+                        data2D = null;
+                    }
+                    if (data2D == null) {
+                        data2D = new DataFileCSV();
+                    }
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                columnsController.load(data2D);
+                defAttributesController.editNode(node, data2D);
+                nodeChanged(false);
+                updateEditorTitle(node);
+            }
+
+        };
+        start(task);
+        return true;
     }
 
     @Override
@@ -81,11 +104,33 @@ public class Data2DDefinitionEditor extends InfoTreeNodeEditor {
         if (node == null) {
             return;
         }
-        Data2D data = Data2DTools.definitionFromXML(node.getInfo());
-        if (data != null && data.getColumns() != null) {
-            columnsController.tableData.addAll(data.getColumns());
+        if (task != null) {
+            task.cancel();
         }
-        tabPane.getSelectionModel().select(valueTab);
+        task = new FxSingletonTask<Void>(this) {
+            Data2D data;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    data = Data2DTools.definitionFromXML(this, myController, node.getInfo());
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                if (data != null && data.getColumns() != null) {
+                    columnsController.tableData.addAll(data.getColumns());
+                }
+                tabPane.getSelectionModel().select(valueTab);
+            }
+
+        };
+        start(task);
     }
 
 }

@@ -47,7 +47,7 @@ public class TableStringValues extends BaseTable<StringValues> {
         if (name == null || name.trim().isEmpty()) {
             return records;
         }
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             conn.setReadOnly(true);
             return read(conn, name);
         } catch (Exception e) {
@@ -64,8 +64,8 @@ public class TableStringValues extends BaseTable<StringValues> {
         }
         String sql = " SELECT * FROM String_Values WHERE key_name='"
                 + stringValue(name) + "' ORDER BY create_time DESC";
-        try ( Statement statement = conn.createStatement();
-                 ResultSet results = statement.executeQuery(sql)) {
+        try (Statement statement = conn.createStatement();
+                ResultSet results = statement.executeQuery(sql)) {
             while (results.next()) {
                 records.add(results.getString("string_value"));
             }
@@ -81,7 +81,7 @@ public class TableStringValues extends BaseTable<StringValues> {
         if (name == null || name.trim().isEmpty()) {
             return records;
         }
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             conn.setReadOnly(true);
             return values(conn, name);
         } catch (Exception e) {
@@ -98,8 +98,8 @@ public class TableStringValues extends BaseTable<StringValues> {
         }
         String sql = " SELECT * FROM String_Values WHERE key_name='"
                 + stringValue(name) + "' ORDER BY create_time DESC";
-        try ( Statement statement = conn.createStatement();
-                 ResultSet results = statement.executeQuery(sql)) {
+        try (Statement statement = conn.createStatement();
+                ResultSet results = statement.executeQuery(sql)) {
             while (results.next()) {
                 StringValues record = new StringValues(name,
                         results.getString("string_value"),
@@ -118,13 +118,13 @@ public class TableStringValues extends BaseTable<StringValues> {
             return null;
         }
         String value = null;
-        try ( Connection conn = DerbyBase.getConnection();
-                 Statement statement = conn.createStatement()) {
+        try (Connection conn = DerbyBase.getConnection();
+                Statement statement = conn.createStatement()) {
             conn.setReadOnly(true);
             statement.setMaxRows(1);
             String sql = " SELECT * FROM String_Values WHERE key_name='"
                     + stringValue(name) + "' ORDER BY create_time DESC";
-            try ( ResultSet results = statement.executeQuery(sql)) {
+            try (ResultSet results = statement.executeQuery(sql)) {
                 if (results.next()) {
                     value = results.getString("string_value");
                 }
@@ -141,7 +141,7 @@ public class TableStringValues extends BaseTable<StringValues> {
         if (name == null || name.trim().isEmpty() || max < 0) {
             return records;
         }
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             return max(conn, name, max);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -154,11 +154,11 @@ public class TableStringValues extends BaseTable<StringValues> {
         if (conn == null || name == null || name.trim().isEmpty() || max < 0) {
             return records;
         }
-        try ( Statement statement = conn.createStatement()) {
+        try (Statement statement = conn.createStatement()) {
             String sql = " SELECT * FROM String_Values WHERE key_name='"
                     + stringValue(name) + "' ORDER BY create_time DESC";
             List<String> invalid = new ArrayList<>();
-            try ( ResultSet results = statement.executeQuery(sql)) {
+            try (ResultSet results = statement.executeQuery(sql)) {
                 while (results.next()) {
                     String value = results.getString("string_value");
                     if (records.size() >= max) {
@@ -181,11 +181,11 @@ public class TableStringValues extends BaseTable<StringValues> {
     }
 
     public static boolean add(String name, String value) {
-        if (name == null || name.trim().isEmpty()
-                || value == null || value.trim().isEmpty()) {
+        if (name == null || name.isBlank()
+                || value == null || value.isBlank()) {
             return false;
         }
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             return add(conn, name, value);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -194,11 +194,15 @@ public class TableStringValues extends BaseTable<StringValues> {
     }
 
     public static boolean add(Connection conn, String name, String value) {
-        try ( Statement statement = conn.createStatement()) {
+        if (name == null || name.isBlank()
+                || value == null || value.isBlank()) {
+            return false;
+        }
+        try (Statement statement = conn.createStatement()) {
             boolean existed = false;
             String sql = " SELECT * FROM String_Values WHERE "
                     + "key_name='" + stringValue(name) + "' AND string_value='" + stringValue(value) + "'";
-            try ( ResultSet results = statement.executeQuery(sql)) {
+            try (ResultSet results = statement.executeQuery(sql)) {
                 if (results.next()) {
                     existed = true;
                 }
@@ -224,7 +228,7 @@ public class TableStringValues extends BaseTable<StringValues> {
         if (values == null || values.isEmpty()) {
             return false;
         }
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             return add(conn, name, values);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -253,7 +257,7 @@ public class TableStringValues extends BaseTable<StringValues> {
         if (nameValues == null || nameValues.isEmpty()) {
             return false;
         }
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             conn.setAutoCommit(false);
             for (String name : nameValues.keySet()) {
                 String value = nameValues.get(name);
@@ -273,8 +277,8 @@ public class TableStringValues extends BaseTable<StringValues> {
                 || value == null || value.trim().isEmpty()) {
             return false;
         }
-        try ( Connection conn = DerbyBase.getConnection();
-                 Statement statement = conn.createStatement()) {
+        try (Connection conn = DerbyBase.getConnection();
+                Statement statement = conn.createStatement()) {
             String sql = "DELETE FROM String_Values WHERE key_name='" + stringValue(name)
                     + "' AND string_value='" + stringValue(value) + "'";
             statement.executeUpdate(sql);
@@ -287,8 +291,8 @@ public class TableStringValues extends BaseTable<StringValues> {
     }
 
     public static boolean clear(String name) {
-        try ( Connection conn = DerbyBase.getConnection();
-                 Statement statement = conn.createStatement()) {
+        try (Connection conn = DerbyBase.getConnection();
+                Statement statement = conn.createStatement()) {
             String sql = "DELETE FROM String_Values WHERE key_name='" + stringValue(name) + "'";
             statement.executeUpdate(sql);
             return true;
@@ -303,7 +307,7 @@ public class TableStringValues extends BaseTable<StringValues> {
         if (name == null || name.trim().isEmpty()) {
             return -1;
         }
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             conn.setReadOnly(true);
             return size(conn, name);
         } catch (Exception e) {

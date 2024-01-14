@@ -21,6 +21,7 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
@@ -30,9 +31,11 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 import mara.mybox.db.data.VisitHistory.FileType;
 import mara.mybox.db.data.VisitHistoryTools;
+import mara.mybox.db.table.TableFileBackup;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -44,7 +47,7 @@ import mara.mybox.value.UserConfig;
 public abstract class BaseController_Attributes {
 
     protected BaseController parentController, myController;
-    protected SingletonTask<Void> task, backgroundTask;
+    protected FxTask<Void> task, backgroundTask;
     protected int SourceFileType = -1, SourcePathType, TargetFileType, TargetPathType, AddFileType, AddPathType,
             operationType, dpi;
     protected List<FileChooser.ExtensionFilter> sourceExtensionFilter, targetExtensionFilter;
@@ -57,11 +60,17 @@ public abstract class BaseController_Attributes {
     protected Popup popup;
     protected ContextMenu popMenu;
     protected String error, targetFileSuffix;
-    protected boolean isSettingValues, isPop;
+    protected boolean isSettingValues;
     protected File sourceFile, sourcePath, targetPath, targetFile;
+    protected StageType stageType;
     protected SaveAsType saveAsType;
+    protected TableFileBackup tableFileBackup;
 
-    protected enum SaveAsType {
+    public static enum StageType {
+        Normal, Branch, Child, Pop, Popup, OneOpen
+    }
+
+    public static enum SaveAsType {
         Load, Open, Edit, None
     }
 
@@ -91,13 +100,15 @@ public abstract class BaseController_Attributes {
             infoButton, metaButton, openSourceButton, systemMethodButton,
             transparentButton, whiteButton, blackButton, withdrawButton;
     @FXML
-    protected VBox paraBox;
+    protected VBox paraBox, mainAreaBox;
+    @FXML
+    protected HBox toolbar;
     @FXML
     protected Label bottomLabel, tipsLabel;
     @FXML
     protected ImageView tipsView, rightTipsView, linksView, leftPaneControl, rightPaneControl;
     @FXML
-    protected CheckBox topCheck, rightPaneCheck, leftPaneCheck;
+    protected CheckBox rightPaneCheck, leftPaneCheck, toolbarCheck;
     @FXML
     protected ToggleGroup saveAsGroup, fileTypeGroup;
     @FXML
@@ -157,7 +168,11 @@ public abstract class BaseController_Attributes {
     }
 
     public String getTitle() {
-        return getBaseTitle();
+        if (getMyStage() != null) {
+            return myStage.getTitle();
+        } else {
+            return getBaseTitle();
+        }
     }
 
     public void setTitle(String title) {
@@ -201,6 +216,24 @@ public abstract class BaseController_Attributes {
         return myStage;
     }
 
+    public Window getStage() {
+        if (getMyWindow() instanceof Popup) {
+            return ((Popup) myWindow).getOwnerWindow();
+        } else {
+            return getMyStage();
+        }
+    }
+
+    public boolean isIndependantStage() {
+        return getMyStage() != null
+                && mainMenuController != null
+                && myStage.getOwner() == null
+                && stageType != StageType.Branch
+                && stageType != StageType.Child
+                && stageType != StageType.Pop
+                && stageType != StageType.Popup;
+    }
+
     public boolean isPopup() {
         Window win = getMyWindow();
         return win != null && (win instanceof Popup);
@@ -227,6 +260,19 @@ public abstract class BaseController_Attributes {
             return myStage.isShowing();
         } else {
             return false;
+        }
+    }
+
+    @FXML
+    public void popTips() {
+        String tips = null;
+        if (tipsView != null) {
+            tips = NodeStyleTools.getTips(tipsView);
+        } else if (rightTipsView != null) {
+            tips = NodeStyleTools.getTips(rightTipsView);
+        }
+        if (tips != null && !tips.isBlank()) {
+            TextPopController.loadText(tips);
         }
     }
 
@@ -343,10 +389,6 @@ public abstract class BaseController_Attributes {
         this.myWindow = myWindow;
     }
 
-    public boolean isIsPop() {
-        return isPop;
-    }
-
     public boolean isIsSettingValues() {
         return isSettingValues;
     }
@@ -355,14 +397,22 @@ public abstract class BaseController_Attributes {
         return interfaceName;
     }
 
+    public StageType getStageType() {
+        return stageType;
+    }
+
+    public void setStageType(StageType stageType) {
+        this.stageType = stageType;
+    }
+
     /*
         task
      */
-    public SingletonTask<Void> getTask() {
+    public FxTask<Void> getTask() {
         return task;
     }
 
-    public void setTask(SingletonTask<Void> task) {
+    public void setTask(FxTask<Void> task) {
         this.task = task;
     }
 
@@ -370,11 +420,11 @@ public abstract class BaseController_Attributes {
 
     }
 
-    public SingletonTask<Void> getBackgroundTask() {
+    public FxTask<Void> getBackgroundTask() {
         return backgroundTask;
     }
 
-    public void setBackgroundTask(SingletonTask<Void> backgroundTask) {
+    public void setBackgroundTask(FxTask<Void> backgroundTask) {
         this.backgroundTask = backgroundTask;
     }
 

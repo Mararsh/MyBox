@@ -8,9 +8,10 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.FileNameTools;
-import mara.mybox.tools.FileTools;
 import mara.mybox.tools.FileTmpTools;
+import mara.mybox.tools.FileTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import org.apache.pdfbox.text.PDFTextStripper;
@@ -63,7 +64,7 @@ public class PdfExtractTextsBatchController extends BaseBatchPdfController {
     }
 
     @Override
-    public boolean preHandlePages() {
+    public boolean preHandlePages(FxTask currentTask) {
         try {
             File tFile = makeTargetFile(FileNameTools.prefix(currentParameters.currentSourceFile.getName()),
                     ".txt", currentParameters.currentTargetPath);
@@ -78,7 +79,7 @@ public class PdfExtractTextsBatchController extends BaseBatchPdfController {
     }
 
     @Override
-    public int handleCurrentPage() {
+    public int handleCurrentPage(FxTask currentTask) {
         int len = 0;
         try {
             stripper.setStartPage(currentParameters.currentPage);  // 1-based
@@ -103,12 +104,12 @@ public class PdfExtractTextsBatchController extends BaseBatchPdfController {
     }
 
     @Override
-    public void postHandlePages() {
+    public void postHandlePages(FxTask currentTask) {
         try {
             if (fileWriter != null) {
                 fileWriter.close();
                 File tFile = new File(currentTargetFile);
-                if (FileTools.rename(tmpFile, tFile)) {
+                if (FileTools.override(tmpFile, tFile)) {
                     targetFileGenerated(tFile);
                 }
             }

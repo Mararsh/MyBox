@@ -50,8 +50,8 @@ public class TextInputController extends BaseInputController {
 
     public static TextInputController open(BaseController parent, String title, String initValue) {
         try {
-            TextInputController controller = (TextInputController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.TextInputFxml, true);
+            TextInputController controller = (TextInputController) WindowTools.childStage(
+                    parent, Fxmls.TextInputFxml);
             controller.setParameters(parent, title, initValue);
             return controller;
         } catch (Exception e) {

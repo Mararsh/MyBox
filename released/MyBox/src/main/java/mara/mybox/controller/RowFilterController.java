@@ -40,15 +40,6 @@ public class RowFilterController extends InfoTreeManageController {
         }
     }
 
-    @Override
-    public void itemClicked() {
-    }
-
-    @Override
-    public void itemDoubleClicked() {
-        editAction();
-    }
-
     public void edit(String script, boolean reversed, long max) {
         if (!checkBeforeNextAction()) {
             return;

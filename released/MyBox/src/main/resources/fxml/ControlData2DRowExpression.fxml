@@ -73,11 +73,11 @@ License:    Apache License Version 2.0
                                                                         </ImageView>
                                                                     </graphic>
                                                                 </Button>
-                                                                <Button fx:id="dataButton" mnemonicParsing="false" onAction="#dataAction">
+                                                                <Button fx:id="manageButton" mnemonicParsing="false" onAction="#manageAction">
                                                                     <graphic>
                                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                             <image>
-                                                                                <Image url="@../buttons/Red/iconData.png" />
+                                                                                <Image url="@../buttons/Red/iconManage.png" />
                                                                             </image>
                                                                         </ImageView>
                                                                     </graphic>
@@ -97,6 +97,7 @@ License:    Apache License Version 2.0
                                                             <columns>
                                                                 <TreeTableColumn fx:id="titleColumn" prefWidth="200.0" text="%Title" />
                                                                 <TreeTableColumn fx:id="hierarchyColumn" prefWidth="120.0" text="%HierarchyNumber" />
+                                                                <TreeTableColumn fx:id="idColumn" text="%ID" />
                                                                 <TreeTableColumn fx:id="valueColumn" prefWidth="120.0" text="%Value" />
                                                                 <TreeTableColumn fx:id="timeColumn" prefWidth="180.0" text="%ModifiedTime" />
                                                             </columns>

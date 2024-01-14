@@ -28,11 +28,12 @@ import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.table.TableData2D;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FileCopyTools;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextFileTools;
 import static mara.mybox.value.Languages.message;
@@ -56,7 +57,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
     /*
         to/from database table
      */
-    public DataTable toTable(SingletonTask task, String targetName) {
+    public DataTable toTable(FxTask task, String targetName) {
         DataTable dataTable = null;
         try (Connection conn = DerbyBase.getConnection()) {
             String tableName = DerbyBase.fixedIdentifier(targetName);
@@ -75,8 +76,8 @@ public abstract class Data2D_Convert extends Data2D_Edit {
         }
         return dataTable;
     }
-
-    public DataTable createTable(SingletonTask task, Connection conn, String targetName, boolean dropExisted) {
+    
+    public DataTable createTable(FxTask task, Connection conn, String targetName, boolean dropExisted) {
         try {
             if (columns == null || columns.isEmpty()) {
                 readColumns(conn);
@@ -100,8 +101,8 @@ public abstract class Data2D_Convert extends Data2D_Edit {
             return null;
         }
     }
-
-    public long importTable(SingletonTask task, Connection conn,
+    
+    public long importTable(FxTask task, Connection conn,
             DataTable dataTable, List<Integer> cols, boolean includeRowNumber, InvalidAs invalidAs) {
         try {
             if (conn == null || dataTable == null) {
@@ -140,12 +141,12 @@ public abstract class Data2D_Convert extends Data2D_Edit {
             return -5;
         }
     }
-
-    public long importTable(SingletonTask task, Connection conn, DataTable dataTable) {
+    
+    public long importTable(FxTask task, Connection conn, DataTable dataTable) {
         return importTable(task, conn, dataTable, null, false, InvalidAs.Blank);
     }
-
-    public DataTable singleColumn(SingletonTask task, List<Integer> cols) {
+    
+    public DataTable singleColumn(FxTask task, List<Integer> cols) {
         try (Connection conn = DerbyBase.getConnection()) {
             if (columns == null || columns.isEmpty()) {
                 readColumns(conn);
@@ -186,7 +187,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
     /* 
         static
      */
-    public static DataTable makeTable(SingletonTask task, String tname,
+    public static DataTable makeTable(FxTask task, String tname,
             List<Data2DColumn> referColumns, List<String> keys, String idName) {
         try {
             if (referColumns == null || referColumns.isEmpty()) {
@@ -199,7 +200,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
             TableData2D tableData2D = dataTable.getTableData2D();
             String tableName = DerbyBase.fixedIdentifier(tname);
             tableData2D.setTableName(tableName);
-
+            
             List<Data2DColumn> tableColumns = new ArrayList<>();
             List<String> validNames = new ArrayList<>();
             if (keys == null || keys.isEmpty()) {
@@ -239,8 +240,8 @@ public abstract class Data2D_Convert extends Data2D_Edit {
             return null;
         }
     }
-
-    public static DataTable createTable(SingletonTask task, Connection conn,
+    
+    public static DataTable createTable(FxTask task, Connection conn,
             String targetName, List<Data2DColumn> referColumns, List<String> keys, String comments,
             String idName, boolean dropExisted) {
         try {
@@ -282,12 +283,12 @@ public abstract class Data2D_Convert extends Data2D_Edit {
             return null;
         }
     }
-
-    public static DataTable createTable(SingletonTask task, Connection conn, List<Data2DColumn> columns) {
+    
+    public static DataTable createTable(FxTask task, Connection conn, List<Data2DColumn> columns) {
         return createTable(task, conn, null, columns, null, null, null, true);
     }
-
-    public static DataFileCSV toCSV(SingletonTask task, DataTable dataTable, File file, boolean save) {
+    
+    public static DataFileCSV toCSV(FxTask task, DataTable dataTable, File file, boolean save) {
         if (task == null || dataTable == null || !dataTable.isValid() || file == null) {
             return null;
         }
@@ -339,13 +340,13 @@ public abstract class Data2D_Convert extends Data2D_Edit {
             return null;
         }
     }
-
-    public static DataFileCSV toCSV(SingletonTask task, DataTable dataTable) {
+    
+    public static DataFileCSV toCSV(FxTask task, DataTable dataTable) {
         File csvFile = dataTable.tmpFile(dataTable.dataName(), null, "csv");
         return toCSV(task, dataTable, csvFile, true);
     }
-
-    public static DataFileText toText(SingletonTask task, DataTable dataTable) {
+    
+    public static DataFileText toText(FxTask task, DataTable dataTable) {
         if (task == null || dataTable == null || !dataTable.isValid()) {
             return null;
         }
@@ -365,8 +366,8 @@ public abstract class Data2D_Convert extends Data2D_Edit {
             return null;
         }
     }
-
-    public static DataFileExcel toExcel(SingletonTask task, DataTable dataTable) {
+    
+    public static DataFileExcel toExcel(FxTask task, DataTable dataTable) {
         if (task == null || dataTable == null || !dataTable.isValid()) {
             return null;
         }
@@ -427,8 +428,8 @@ public abstract class Data2D_Convert extends Data2D_Edit {
             return null;
         }
     }
-
-    public static DataMatrix toMatrix(SingletonTask task, DataTable dataTable) {
+    
+    public static DataMatrix toMatrix(FxTask task, DataTable dataTable) {
         if (task == null || dataTable == null || !dataTable.isValid()) {
             return null;
         }
@@ -472,8 +473,8 @@ public abstract class Data2D_Convert extends Data2D_Edit {
             return null;
         }
     }
-
-    public static DataClipboard toClip(SingletonTask task, DataTable dataTable) {
+    
+    public static DataClipboard toClip(FxTask task, DataTable dataTable) {
         if (task == null || dataTable == null || !dataTable.isValid()) {
             return null;
         }
@@ -485,31 +486,32 @@ public abstract class Data2D_Convert extends Data2D_Edit {
             return null;
         }
     }
-
-    public static String toString(SingletonTask task, DataTable dataTable) {
+    
+    public static String toString(FxTask task, DataTable dataTable) {
         if (task == null || dataTable == null || !dataTable.isValid()) {
             return null;
         }
         File txtFile = dataTable.tmpFile(dataTable.dataName(), null, "txt");
         DataFileCSV csvData = toCSV(task, dataTable, txtFile, false);
         if (csvData != null && txtFile != null && txtFile.exists()) {
-            return TextFileTools.readTexts(txtFile);
+            return TextFileTools.readTexts(task, txtFile);
         } else {
             return null;
         }
     }
-
-    public static DataFileCSV save(SingletonTask task, ResultSet results) {
+    
+    public static DataFileCSV save(FxTask task, ResultSet results) {
         return save(null, null, task, results, null, 8, InvalidAs.Blank);
     }
-
-    public static DataFileCSV save(DataTable dataTable, String dname, SingletonTask task,
+    
+    public static DataFileCSV save(DataTable dataTable, String dname, FxTask task,
             ResultSet results, String rowNumberName, int dscale, InvalidAs invalidAs) {
         try {
             if (results == null) {
                 return null;
             }
-            File csvFile = dataTable.tmpFile(dname, null, "csv");
+            File csvFile = dataTable != null ? dataTable.tmpFile(dname, null, "csv")
+                    : FileTmpTools.generateFile(dname, "csv");
             long count = 0;
             int colsSize;
             List<Data2DColumn> db2Columns = new ArrayList<>();
@@ -582,7 +584,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
             return null;
         }
     }
-
+    
     public static void openDataTable(BaseController controller, DataTable dataTable, String target) {
         if (dataTable == null || target == null) {
             return;
@@ -607,7 +609,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
     /*  
         to/from CSV
      */
-    public static DataFileExcel toExcel(SingletonTask task, DataFileCSV csvData) {
+    public static DataFileExcel toExcel(FxTask task, DataFileCSV csvData) {
         if (task == null || csvData == null) {
             return null;
         }
@@ -619,7 +621,10 @@ public abstract class Data2D_Convert extends Data2D_Edit {
         boolean targetHasHeader = false;
         int tcolsNumber = 0, trowsNumber = 0;
         String targetSheetName = message("Sheet") + "1";
-        File validFile = FileTools.removeBOM(csvFile);
+        File validFile = FileTools.removeBOM(task, csvFile);
+        if (validFile == null || (task != null && !task.isWorking())) {
+            return null;
+        }
         try (CSVParser parser = CSVParser.parse(validFile, csvData.getCharset(), csvData.cvsFormat());
                 Workbook targetBook = new XSSFWorkbook()) {
             Sheet targetSheet = targetBook.createSheet(targetSheetName);
@@ -683,7 +688,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
             return null;
         }
     }
-
+    
     public static DataFileText toText(DataFileCSV csvData) {
         if (csvData == null) {
             return null;
@@ -703,8 +708,8 @@ public abstract class Data2D_Convert extends Data2D_Edit {
             return null;
         }
     }
-
-    public static DataMatrix toMatrix(SingletonTask task, DataFileCSV csvData) {
+    
+    public static DataMatrix toMatrix(FxTask task, DataFileCSV csvData) {
         if (task == null || csvData == null) {
             return null;
         }
@@ -738,8 +743,8 @@ public abstract class Data2D_Convert extends Data2D_Edit {
             return null;
         }
     }
-
-    public static DataClipboard toClip(SingletonTask task, DataFileCSV csvData) {
+    
+    public static DataClipboard toClip(FxTask task, DataFileCSV csvData) {
         if (task == null || csvData == null) {
             return null;
         }
@@ -771,7 +776,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
             return null;
         }
     }
-
+    
     public static void openCSV(BaseController controller, DataFileCSV csvFile, String target) {
         if (csvFile == null || target == null) {
             return;
@@ -785,7 +790,8 @@ public abstract class Data2D_Convert extends Data2D_Edit {
         } else if ("matrix".equals(target)) {
             MatricesManageController.loadCSV(csvFile);
         } else if ("systemClipboard".equals(target)) {
-            TextClipboardTools.copyToSystemClipboard(controller, TextFileTools.readTexts(csvFile.getFile()));
+            TextClipboardTools.copyToSystemClipboard(controller,
+                    TextFileTools.readTexts(null, csvFile.getFile()));
         } else if ("myBoxClipboard".equals(target)) {
             DataInMyBoxClipboardController.loadCSV(csvFile);
         } else if ("table".equals(target)) {
@@ -794,5 +800,5 @@ public abstract class Data2D_Convert extends Data2D_Edit {
             Data2DTargetExportController.open(csvFile, target);
         }
     }
-
+    
 }

@@ -8,6 +8,7 @@ import java.util.List;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileNameTools;
@@ -44,7 +45,7 @@ public class FFmpegConvertMediaFilesController extends BaseBatchFFmpegController
     }
 
     @Override
-    public String handleFile(File srcFile, File targetPath) {
+    public String handleFile(FxTask currentTask, File srcFile, File targetPath) {
         try {
             String ext = ffmpegOptionsController.extensionInput.getText().trim();
             if (ext.isEmpty() || message("OriginalFormat").equals(ext)) {
@@ -54,7 +55,7 @@ public class FFmpegConvertMediaFilesController extends BaseBatchFFmpegController
             if (target == null) {
                 return message("Skip");
             }
-            convert(srcFile.getAbsolutePath(), target);
+            convert(currentTask, srcFile.getAbsolutePath(), target);
             return message("Successful");
         } catch (Exception e) {
             showLogs(e.toString());
@@ -76,7 +77,7 @@ public class FFmpegConvertMediaFilesController extends BaseBatchFFmpegController
         });
     }
 
-    protected void convert(String sourceMedia, File targetFile) {
+    protected void convert(FxTask currentTask, String sourceMedia, File targetFile) {
         try {
             if (sourceMedia == null || targetFile == null) {
                 return;
@@ -90,6 +91,9 @@ public class FFmpegConvertMediaFilesController extends BaseBatchFFmpegController
             try (BufferedReader inReader = process.inputReader(Charset.defaultCharset())) {
                 String line;
                 while ((line = inReader.readLine()) != null) {
+                    if (currentTask == null || !currentTask.isWorking()) {
+                        break;
+                    }
                     if (verboseCheck.isSelected()) {
                         updateLogs(line + "\n");
                     }

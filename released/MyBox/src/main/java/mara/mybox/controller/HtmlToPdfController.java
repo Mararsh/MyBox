@@ -4,8 +4,9 @@ import java.io.File;
 import javafx.fxml.FXML;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.TextFileTools;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -18,7 +19,7 @@ public class HtmlToPdfController extends BaseBatchFileController {
     protected ControlHtml2PdfOptions optionsController;
 
     public HtmlToPdfController() {
-        baseTitle = Languages.message("HtmlToPdf");
+        baseTitle = message("HtmlToPdf");
         targetFileSuffix = "pdf";
     }
 
@@ -40,15 +41,24 @@ public class HtmlToPdfController extends BaseBatchFileController {
     }
 
     @Override
-    public String handleFile(File srcFile, File targetPath) {
+    public String handleFile(FxTask currentTask, File srcFile, File targetPath) {
         try {
             File target = makeTargetFile(srcFile, targetPath);
             if (target == null) {
-                return Languages.message("Skip");
+                return message("Skip");
             }
-            String html = TextFileTools.readTexts(srcFile);
-            String result = optionsController.html2pdf(html, target);
-            if (Languages.message("Successful").equals(result)) {
+            String html = TextFileTools.readTexts(currentTask, srcFile);
+            if (currentTask == null || !currentTask.isWorking()) {
+                return message("Canceled");
+            }
+            if (html == null) {
+                return message("Failed");
+            }
+            String result = optionsController.html2pdf(currentTask, html, target);
+            if (currentTask == null || !currentTask.isWorking()) {
+                return message("Canceled");
+            }
+            if (message("Successful").equals(result)) {
                 targetFileGenerated(target);
             }
             return result;

@@ -14,7 +14,6 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import mara.mybox.bufferedimage.AlphaTools;
 import mara.mybox.bufferedimage.CropTools;
-import mara.mybox.bufferedimage.ImageAttributes;
 import mara.mybox.bufferedimage.ImageBinary;
 import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.controller.ControlPdfWriteOptions;
@@ -22,6 +21,7 @@ import mara.mybox.data.WeiboSnapParameters;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fxml.FxFileTools;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
@@ -90,7 +90,7 @@ public class PdfTools {
     public static PDDocument createPDF(File file, String author) {
         PDDocument targetDoc = null;
         try {
-            PDDocument document = new PDDocument(AppVariables.pdfMemUsage);
+            PDDocument document = new PDDocument(AppVariables.PdfMemUsage);
             PDDocumentInformation info = new PDDocumentInformation();
             info.setCreationDate(Calendar.getInstance());
             info.setModificationDate(Calendar.getInstance());
@@ -119,10 +119,13 @@ public class PdfTools {
         }
     }
 
-    public static PDImageXObject imageObject(PDDocument document, String format, BufferedImage bufferedImage) {
+    public static PDImageXObject imageObject(FxTask task, PDDocument document, String format, BufferedImage bufferedImage) {
         try {
             PDImageXObject imageObject;
-            bufferedImage = AlphaTools.checkAlpha(bufferedImage, format);
+            bufferedImage = AlphaTools.checkAlpha(task, bufferedImage, format);
+            if (bufferedImage == null || (task != null && !task.isWorking())) {
+                return null;
+            }
             switch (format) {
                 case "tif":
                 case "tiff":
@@ -142,12 +145,13 @@ public class PdfTools {
         }
     }
 
-    public static boolean writePage(PDDocument document,
+    public static boolean writePage(FxTask task, PDDocument document,
             String sourceFormat, BufferedImage bufferedImage, int pageNumber, int total,
             ControlPdfWriteOptions options) {
         try {
             PDFont font = PdfTools.getFont(document, options.getTtfFile());
-            return writePage(document, font, options.getFontSize(), sourceFormat, bufferedImage,
+            return writePage(task, document, font, options.getFontSize(),
+                    sourceFormat, bufferedImage,
                     pageNumber, total, options.getImageFormat(),
                     options.getThreshold(), options.getJpegQuality(),
                     options.isIsImageSize(), options.isShowPageNumber(),
@@ -160,7 +164,7 @@ public class PdfTools {
         }
     }
 
-    public static boolean writePage(PDDocument document, PDFont font, int fontSize,
+    public static boolean writePage(FxTask task, PDDocument document, PDFont font, int fontSize,
             String sourceFormat, BufferedImage bufferedImage,
             int pageNumber, int total, PdfImageFormat targetFormat,
             int threshold, int jpegQuality, boolean isImageSize,
@@ -170,19 +174,35 @@ public class PdfTools {
             PDImageXObject imageObject;
             switch (targetFormat) {
                 case Tiff:
-                    ImageBinary imageBinary = new ImageBinary(bufferedImage, threshold);
-                    imageBinary.setIsDithering(dithering);
-                    bufferedImage = imageBinary.operate();
-                    bufferedImage = ImageBinary.byteBinary(bufferedImage);
+                    ImageBinary imageBinary = new ImageBinary();
+                    imageBinary.setAlgorithm(ImageBinary.BinaryAlgorithm.Threshold)
+                            .setImage(bufferedImage)
+                            .setIntPara1(threshold)
+                            .setIsDithering(dithering)
+                            .setTask(task);
+                    bufferedImage = imageBinary.start();
+                    if (bufferedImage == null || (task != null && !task.isWorking())) {
+                        return false;
+                    }
+                    bufferedImage = ImageBinary.byteBinary(task, bufferedImage);
+                    if (bufferedImage == null || (task != null && !task.isWorking())) {
+                        return false;
+                    }
                     imageObject = CCITTFactory.createFromImage(document, bufferedImage);
                     break;
                 case Jpeg:
-                    bufferedImage = AlphaTools.checkAlpha(bufferedImage, "jpg");
+                    bufferedImage = AlphaTools.checkAlpha(task, bufferedImage, "jpg");
+                    if (bufferedImage == null || (task != null && !task.isWorking())) {
+                        return false;
+                    }
                     imageObject = JPEGFactory.createFromImage(document, bufferedImage, jpegQuality / 100f);
                     break;
                 default:
                     if (sourceFormat != null) {
-                        bufferedImage = AlphaTools.checkAlpha(bufferedImage, sourceFormat);
+                        bufferedImage = AlphaTools.checkAlpha(task, bufferedImage, sourceFormat);
+                    }
+                    if (bufferedImage == null || (task != null && !task.isWorking())) {
+                        return false;
                     }
                     imageObject = LosslessFactory.createFromImage(document, bufferedImage);
                     break;
@@ -240,22 +260,22 @@ public class PdfTools {
         }
     }
 
-    public static boolean imageInPdf(PDDocument document,
+    public static boolean imageInPdf(FxTask task, PDDocument document,
             BufferedImage bufferedImage, WeiboSnapParameters p,
             int showPageNumber, int totalPage, PDFont font) {
-        return writePage(document, font, p.getFontSize(),
+        return writePage(task, document, font, p.getFontSize(),
                 "png", bufferedImage, showPageNumber, totalPage, p.getFormat(),
                 p.getThreshold(), p.getJpegQuality(), p.isIsImageSize(), p.isAddPageNumber(),
                 p.getPageWidth(), p.getPageHeight(), p.getMarginSize(), p.getTitle(), p.isDithering());
     }
 
-    public static boolean images2Pdf(List<Image> images, File targetFile, WeiboSnapParameters p) {
+    public static boolean images2Pdf(FxTask task, List<Image> images, File targetFile, WeiboSnapParameters p) {
         try {
             if (images == null || images.isEmpty()) {
                 return false;
             }
             int count = 0, total = images.size();
-            try (PDDocument document = new PDDocument(AppVariables.pdfMemUsage)) {
+            try (PDDocument document = new PDDocument(AppVariables.PdfMemUsage)) {
                 PDDocumentInformation info = new PDDocumentInformation();
                 info.setCreationDate(Calendar.getInstance());
                 info.setModificationDate(Calendar.getInstance());
@@ -267,6 +287,9 @@ public class PdfTools {
 
                 BufferedImage bufferedImage;
                 for (Image image : images) {
+                    if (task != null && !task.isWorking()) {
+                        return false;
+                    }
                     if (null == p.getFormat()) {
                         bufferedImage = SwingFXUtils.fromFXImage(image, null);
                     } else {
@@ -275,14 +298,14 @@ public class PdfTools {
                                 bufferedImage = SwingFXUtils.fromFXImage(image, null);
                                 break;
                             case Jpeg:
-                                bufferedImage = FxImageTools.checkAlpha(image, "jpg");
+                                bufferedImage = FxImageTools.checkAlpha(task, image, "jpg");
                                 break;
                             default:
                                 bufferedImage = SwingFXUtils.fromFXImage(image, null);
                                 break;
                         }
                     }
-                    imageInPdf(document, bufferedImage, p, ++count, total, font);
+                    imageInPdf(task, document, bufferedImage, p, ++count, total, font);
                 }
 
                 PDPage page = document.getPage(0);
@@ -306,14 +329,14 @@ public class PdfTools {
 
     }
 
-    public static boolean imagesFiles2Pdf(List<String> files, File targetFile,
+    public static boolean imagesFiles2Pdf(FxTask task, List<String> files, File targetFile,
             WeiboSnapParameters p, boolean deleteFiles) {
         try {
             if (files == null || files.isEmpty()) {
                 return false;
             }
             int count = 0, total = files.size();
-            try (PDDocument document = new PDDocument(AppVariables.pdfMemUsage)) {
+            try (PDDocument document = new PDDocument(AppVariables.PdfMemUsage)) {
                 PDDocumentInformation info = new PDDocumentInformation();
                 info.setCreationDate(Calendar.getInstance());
                 info.setModificationDate(Calendar.getInstance());
@@ -326,9 +349,18 @@ public class PdfTools {
                 BufferedImage bufferedImage;
                 File file;
                 for (String filename : files) {
+                    if (task != null && !task.isWorking()) {
+                        return false;
+                    }
                     file = new File(filename);
-                    bufferedImage = ImageFileReaders.readImage(file);
-                    imageInPdf(document, bufferedImage, p, ++count, total, font);
+                    bufferedImage = ImageFileReaders.readImage(task, file);
+                    if (bufferedImage == null || (task != null && !task.isWorking())) {
+                        return false;
+                    }
+                    imageInPdf(task, document, bufferedImage, p, ++count, total, font);
+                    if (task != null && !task.isWorking()) {
+                        return false;
+                    }
                     if (deleteFiles) {
                         FileDeleteTools.delete(file);
                     }
@@ -392,7 +424,7 @@ public class PdfTools {
         return font;
     }
 
-    public static List<PDImageXObject> getImageListFromPDF(PDDocument document,
+    public static List<PDImageXObject> getImageListFromPDF(FxTask task, PDDocument document,
             Integer startPage) throws Exception {
         List<PDImageXObject> imageList = new ArrayList<>();
         if (null != document) {
@@ -401,9 +433,15 @@ public class PdfTools {
             int len = pages.getCount();
             if (startPage < len) {
                 for (int i = startPage; i < len; ++i) {
+                    if (task != null && !task.isWorking()) {
+                        return null;
+                    }
                     PDPage page = pages.get(i);
                     Iterable<COSName> objectNames = page.getResources().getXObjectNames();
                     for (COSName imageObjectName : objectNames) {
+                        if (task != null && !task.isWorking()) {
+                            return null;
+                        }
                         if (page.getResources().isImageXObject(imageObjectName)) {
                             imageList.add((PDImageXObject) page.getResources().getXObject(imageObjectName));
                         }
@@ -414,12 +452,12 @@ public class PdfTools {
         return imageList;
     }
 
-    public static boolean writeSplitImages(String sourceFormat, String sourceFile,
+    public static boolean writeSplitImages(FxTask task, String sourceFormat, String sourceFile,
             ImageInformation imageInformation, List<Integer> rows, List<Integer> cols,
-            ImageAttributes attributes, File targetFile,
-            PdfImageFormat pdfFormat, String fontFile, int fontSize,
+            File targetFile, PdfImageFormat pdfFormat, String fontFile, int fontSize,
             String author, int threshold, int jpegQuality, boolean isImageSize,
-            boolean pageNumber, int pageWidth, int pageHeight, int marginSize, String header) {
+            boolean pageNumber, int pageWidth, int pageHeight, int marginSize, String header,
+            boolean isDithering) {
         try {
             if (sourceFormat == null || sourceFile == null || imageInformation == null
                     || rows == null || rows.isEmpty()
@@ -427,7 +465,7 @@ public class PdfTools {
                 return false;
             }
             File tmpFile = FileTmpTools.getTempFile();
-            try (PDDocument document = new PDDocument(AppVariables.pdfMemUsage)) {
+            try (PDDocument document = new PDDocument(AppVariables.PdfMemUsage)) {
                 int x1, y1, x2, y2;
                 BufferedImage wholeSource = null;
                 if (imageInformation.getImage() != null && !imageInformation.isIsScaled()) {
@@ -439,28 +477,37 @@ public class PdfTools {
                 ImageInformation info = new ImageInformation(new File(sourceFile));
                 info.setImageFormat(sourceFormat);
                 for (int i = 0; i < rows.size() - 1; ++i) {
+                    if (task != null && !task.isWorking()) {
+                        return false;
+                    }
                     y1 = rows.get(i);
                     y2 = rows.get(i + 1);
                     for (int j = 0; j < cols.size() - 1; ++j) {
+                        if (task != null && !task.isWorking()) {
+                            return false;
+                        }
                         x1 = cols.get(j);
                         x2 = cols.get(j + 1);
                         BufferedImage target;
                         if (wholeSource == null) {
                             info.setRegion(x1, y1, x2, y2);
-                            target = ImageFileReaders.readFrame(info);
+                            target = ImageFileReaders.readFrame(task, info);
                         } else {
-                            target = CropTools.cropOutside(wholeSource, x1, y1, x2, y2);
+                            target = CropTools.cropOutside(task, wholeSource, x1, y1, x2, y2);
                         }
-                        PdfTools.writePage(document, font, fontSize, sourceFormat, target,
+                        if (target == null || (task != null && !task.isWorking())) {
+                            return false;
+                        }
+                        PdfTools.writePage(task, document, font, fontSize, sourceFormat, target,
                                 ++count, total, pdfFormat, threshold, jpegQuality, isImageSize, pageNumber,
-                                pageWidth, pageHeight, marginSize, header, attributes.isIsDithering());
+                                pageWidth, pageHeight, marginSize, header, isDithering);
                     }
                 }
                 setValues(document, author, "MyBox v" + AppValues.AppVersion, 100, 1.0f);
                 document.save(tmpFile);
                 document.close();
             }
-            return FileTools.rename(tmpFile, targetFile);
+            return FileTools.override(tmpFile, targetFile);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return false;
@@ -497,13 +544,17 @@ public class PdfTools {
         }
     }
 
-    public static String html2pdf(File target, String html, String css, boolean ignoreHead, DataHolder pdfOptions) {
+    public static String html2pdf(FxTask task, File target, String html,
+            String css, boolean ignoreHead, DataHolder pdfOptions) {
         try {
             if (html == null || html.isBlank()) {
                 return null;
             }
             if (ignoreHead) {
-                html = HtmlWriteTools.ignoreHead(html);
+                html = HtmlWriteTools.ignoreHead(task, html);
+                if (html == null || (task != null && !task.isWorking())) {
+                    return message("Canceled");
+                }
             }
             if (!css.isBlank()) {
                 try {
@@ -530,7 +581,7 @@ public class PdfTools {
         }
     }
 
-    public static File html2pdf(String html) {
+    public static File html2pdf(FxTask task, String html) {
         try {
             if (html == null || html.isBlank()) {
                 return null;
@@ -549,7 +600,7 @@ public class PdfTools {
                     .toMutable()
                     .set(TocExtension.LIST_CLASS, PdfConverterExtension.DEFAULT_TOC_LIST_CLASS)
                     .toImmutable();
-            html2pdf(pdfFile, html, css, true, pdfOptions);
+            html2pdf(task, pdfFile, html, css, true, pdfOptions);
             return pdfFile;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -557,24 +608,24 @@ public class PdfTools {
         }
     }
 
-    public static File text2pdf(String text) {
+    public static File text2pdf(FxTask task, String text) {
         try {
             if (text == null || text.isBlank()) {
                 return null;
             }
-            return html2pdf(HtmlWriteTools.textToHtml(text));
+            return html2pdf(task, HtmlWriteTools.textToHtml(text));
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;
         }
     }
 
-    public static File md2pdf(String md) {
+    public static File md2pdf(FxTask task, String md) {
         try {
             if (md == null || md.isBlank()) {
                 return null;
             }
-            return html2pdf(HtmlWriteTools.md2html(md));
+            return html2pdf(task, HtmlWriteTools.md2html(md));
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;

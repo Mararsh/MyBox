@@ -22,8 +22,9 @@ import javafx.scene.layout.VBox;
 import mara.mybox.data.FileNode;
 import mara.mybox.db.data.PathConnection;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.StyleTools;
@@ -104,7 +105,7 @@ public class RemotePathManageController extends FilesTreeController {
             task.cancel();
         }
         tabPane.getSelectionModel().select(logsTab);
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             TreeItem<FileNode> rootItem;
 
@@ -122,7 +123,7 @@ public class RemotePathManageController extends FilesTreeController {
                     rootItem = new TreeItem(rootInfo);
                     rootItem.setExpanded(true);
 
-                    List<TreeItem<FileNode>> children = makeChildren(rootItem);
+                    List<TreeItem<FileNode>> children = makeChildren(this, rootItem);
                     if (children != null && !children.isEmpty()) {
                         rootItem.getChildren().setAll(children);
                         addSelectedListener(rootItem);
@@ -163,14 +164,20 @@ public class RemotePathManageController extends FilesTreeController {
         return remoteController.connect(task);
     }
 
-    protected List<TreeItem<FileNode>> makeChildren(TreeItem<FileNode> treeItem) {
+    protected List<TreeItem<FileNode>> makeChildren(FxTask currentTask, TreeItem<FileNode> treeItem) {
         List<TreeItem<FileNode>> children = new ArrayList<>();
         try {
             FileNode remoteFile = (FileNode) (treeItem.getValue());
             if (remoteFile == null || !checkConnection()) {
                 return null;
             }
-            List<FileNode> fileNodes = remoteController.children(remoteFile);
+            List<FileNode> fileNodes = remoteController.children(currentTask, remoteFile);
+            if (currentTask == null || !currentTask.isWorking()) {
+                return null;
+            }
+            if (fileNodes == null || fileNodes.isEmpty()) {
+                return children;
+            }
             Collections.sort(fileNodes, new Comparator<FileNode>() {
                 @Override
                 public int compare(FileNode v1, FileNode v2) {
@@ -183,7 +190,7 @@ public class RemotePathManageController extends FilesTreeController {
                             return 1;
                         }
                     }
-                    return v1.getFileName().compareTo(v2.getFileName());
+                    return v1.getFullName().compareTo(v2.getFullName());
                 }
             });
             for (FileNode fileInfo : fileNodes) {
@@ -229,14 +236,14 @@ public class RemotePathManageController extends FilesTreeController {
             task.cancel();
         }
         treeItem.setExpanded(true);
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             List<TreeItem<FileNode>> children;
 
             @Override
             protected boolean handle() {
                 try {
-                    children = makeChildren(treeItem);
+                    children = makeChildren(this, treeItem);
                     return children != null;
                 } catch (Exception e) {
                     error = e.toString();
@@ -300,7 +307,7 @@ public class RemotePathManageController extends FilesTreeController {
             popError(message("SelectToHandle"));
             return;
         }
-        TextClipboardTools.copyToSystemClipboard(this, item.getValue().fullName());
+        TextClipboardTools.copyToSystemClipboard(this, item.getValue().nodeFullName());
     }
 
     @FXML
@@ -312,7 +319,7 @@ public class RemotePathManageController extends FilesTreeController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -363,7 +370,7 @@ public class RemotePathManageController extends FilesTreeController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -417,7 +424,7 @@ public class RemotePathManageController extends FilesTreeController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -425,7 +432,7 @@ public class RemotePathManageController extends FilesTreeController {
                     return false;
                 }
                 remoteController.count = 0;
-                return remoteController.clearDirectory(clearName);
+                return remoteController.clearDirectory(this, clearName);
             }
 
             @Override
@@ -454,7 +461,7 @@ public class RemotePathManageController extends FilesTreeController {
         if (item == null || item.getValue() == null) {
             filename = null;
         } else if (item.getValue().isDirectory()) {
-            filename = StringTools.menuSuffix(item.getValue().fullName());
+            filename = StringTools.menuSuffix(item.getValue().nodeFullName());
         } else {
             filename = (StringTools.menuSuffix(item.getValue().path(true)) + "\n"
                     + StringTools.menuSuffix(item.getValue().getNodename()));

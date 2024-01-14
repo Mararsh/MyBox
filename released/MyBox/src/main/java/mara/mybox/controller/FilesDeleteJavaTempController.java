@@ -5,8 +5,8 @@ import java.text.MessageFormat;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.Languages;
@@ -46,7 +46,7 @@ public class FilesDeleteJavaTempController extends BaseController {
     // https://www.jb51.net/article/42298.htm
     // https://stackoverflow.com/questions/2149785/get-size-of-folder-or-file
     public void countSize() {
-        SingletonTask countTask = new SingletonTask<Void>(this) {
+        FxTask countTask = new FxTask<Void>(this) {
 
             private String size;
 
@@ -82,7 +82,7 @@ public class FilesDeleteJavaTempController extends BaseController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             private long before = 0, after = 0;
 
             @Override
@@ -90,7 +90,7 @@ public class FilesDeleteJavaTempController extends BaseController {
                 try {
                     System.gc();
                     before = FileUtils.sizeOfDirectory(path);
-                    FileDeleteTools.clearJavaIOTmpPath();
+                    FileDeleteTools.clearJavaIOTmpPath(this);
                     after = FileUtils.sizeOfDirectory(path);
                 } catch (Exception e) {
 //                        MyBoxLog.debug(e);

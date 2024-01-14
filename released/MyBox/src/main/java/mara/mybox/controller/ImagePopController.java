@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.io.File;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -19,6 +20,7 @@ import mara.mybox.value.UserConfig;
  */
 public class ImagePopController extends BaseImageController {
 
+    protected BaseImageController sourceController;
     protected ImageView sourceImageView;
     protected ChangeListener sourceListener;
 
@@ -27,13 +29,11 @@ public class ImagePopController extends BaseImageController {
     @FXML
     protected Button refreshButton;
 
-    @Override
-    public void setStageStatus() {
-    }
-
     public void setControls() {
         try {
-            baseName += parentController.baseName;
+            if (parentController != null) {
+                baseName = parentController.baseName + "_" + baseName;
+            }
 
             saveAsType = SaveAsType.Open;
 
@@ -46,17 +46,17 @@ public class ImagePopController extends BaseImageController {
                 }
             };
 
-            refreshChangeCheck.setSelected(UserConfig.getBoolean(baseName + "Sychronized", true));
-            checkSychronize();
+            refreshChangeCheck.setSelected(UserConfig.getBoolean(interfaceName + "Sychronized", true));
             refreshChangeCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldState, Boolean newState) {
+                    UserConfig.setBoolean(interfaceName + "Sychronized", refreshChangeCheck.isSelected());
                     checkSychronize();
                 }
             });
 
-            setAsPop(baseName);
-            paneSize();
+            fitSize();
+            checkSychronize();
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -80,9 +80,10 @@ public class ImagePopController extends BaseImageController {
         try {
             this.parentController = parent;
             this.sourceImageView = sourceImageView;
-            refreshAction();
 
             setControls();
+
+            refreshAction();
 
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -95,17 +96,55 @@ public class ImagePopController extends BaseImageController {
             refreshChangeCheck.setVisible(false);
             refreshButton.setVisible(false);
 
+            setControls();
+
             loadImage(image);
 
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
+    }
+
+    public void setFile(BaseController parent, String filename) {
+        try {
+            this.parentController = parent;
+            refreshChangeCheck.setVisible(false);
+            refreshButton.setVisible(false);
+
             setControls();
+
+            sourceFileChanged(new File(filename));
+
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
+    }
+
+    public void setSourceController(BaseImageController parent) {
+        try {
+            this.parentController = parent;
+            sourceController = parent;
+            sourceImageView = parent.imageView;
+
+            setControls();
+
+            refreshAction();
+
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
     }
 
     @FXML
+    @Override
     public void refreshAction() {
-        if (sourceImageView != null) {
+        if (sourceController != null) {
+            loadImage(sourceController.sourceFile,
+                    sourceController.imageInformation,
+                    sourceController.image,
+                    sourceController.imageChanged);
+
+        } else if (sourceImageView != null) {
             loadImage(sourceImageView.getImage());
 
         } else {
@@ -134,10 +173,10 @@ public class ImagePopController extends BaseImageController {
      */
     public static ImagePopController openImage(BaseController parent, Image image) {
         try {
-            if (parent == null || image == null) {
+            if (image == null) {
                 return null;
             }
-            ImagePopController controller = (ImagePopController) WindowTools.openChildStage(parent.getMyWindow(), Fxmls.ImagePopFxml, false);
+            ImagePopController controller = (ImagePopController) WindowTools.popStage(parent, Fxmls.ImagePopFxml);
             controller.setImage(parent, image);
             return controller;
         } catch (Exception e) {
@@ -151,8 +190,30 @@ public class ImagePopController extends BaseImageController {
             if (parent == null || imageView == null) {
                 return null;
             }
-            ImagePopController controller = (ImagePopController) WindowTools.openChildStage(parent.getMyWindow(), Fxmls.ImagePopFxml, false);
+            ImagePopController controller = (ImagePopController) WindowTools.popStage(parent, Fxmls.ImagePopFxml);
             controller.setSourceImageView(parent, imageView);
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public static ImagePopController openFile(BaseController parent, String filename) {
+        try {
+            ImagePopController controller = (ImagePopController) WindowTools.popStage(parent, Fxmls.ImagePopFxml);
+            controller.setFile(parent, filename);
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public static ImagePopController openSource(BaseImageController parent) {
+        try {
+            ImagePopController controller = (ImagePopController) WindowTools.popStage(parent, Fxmls.ImagePopFxml);
+            controller.setSourceController(parent);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e);

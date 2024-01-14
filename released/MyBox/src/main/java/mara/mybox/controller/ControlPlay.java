@@ -329,7 +329,8 @@ public class ControlPlay extends BaseController {
             }
             Image snapshot = snapNode.snapshot(snapParameters, null);
             File tmpfile = FileTmpTools.getTempFile(".png");
-            ImageFileWriters.writeImageFile(SwingFXUtils.fromFXImage(snapshot, null), "png", tmpfile.getAbsolutePath());
+            ImageFileWriters.writeImageFile(null,
+                    SwingFXUtils.fromFXImage(snapshot, null), "png", tmpfile.getAbsolutePath());
             snaps.add(tmpfile);
             synchronized (snapNode) {
                 snapNode.notifyAll();
@@ -457,16 +458,6 @@ public class ControlPlay extends BaseController {
 
     public void pause() {
         try {
-            stopped.set(true);
-            if (snapNode != null) {
-                synchronized (snapNode) {
-                    snapNode.notifyAll();
-                }
-            }
-            if (snapping) {
-                outSnaps();
-            }
-            snapping = false;
             if (schedule != null) {
                 schedule.cancel(true);
             }
@@ -478,12 +469,24 @@ public class ControlPlay extends BaseController {
                 targetThread.interrupt();
             }
 
+            stopped.set(true);
+            if (snapNode != null) {
+                synchronized (snapNode) {
+                    snapNode.notifyAll();
+                }
+            }
+            if (snapping) {
+                outSnaps();
+            }
+            snapping = false;
+
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
                     setPauseButton(true);
                 }
             });
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -574,7 +577,7 @@ public class ControlPlay extends BaseController {
                     loadingController = null;
                 }
                 if (snaps != null && !snaps.isEmpty()) {
-                    ImagesEditorController.open(snaps);
+                    ImagesEditorController.openFiles(snaps);
                 }
             }
         });

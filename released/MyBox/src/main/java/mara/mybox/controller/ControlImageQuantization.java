@@ -47,6 +47,10 @@ public class ControlImageQuantization extends BaseController {
     @FXML
     protected ImageView imageQuantizationTipsView;
 
+    public ControlImageQuantization() {
+        TipsLabelKey = "ImageQuantizationComments";
+    }
+
     @Override
     public void initControls() {
         try {
@@ -242,11 +246,11 @@ public class ControlImageQuantization extends BaseController {
 
         if (rgbQuanRadio.isSelected()) {
             algorithm = QuantizationAlgorithm.RGBUniformQuantization;
-            setBox.getChildren().addAll(regionPane, rgbWeightPane);
+            setBox.getChildren().addAll(numberPane, rgbWeightPane);
 
         } else if (hsbQuanRadio.isSelected()) {
             algorithm = QuantizationAlgorithm.HSBUniformQuantization;
-            setBox.getChildren().addAll(regionPane, hsbWeightPane);
+            setBox.getChildren().addAll(numberPane, hsbWeightPane);
 
         } else if (popularQuanRadio.isSelected()) {
             algorithm = QuantizationAlgorithm.PopularityQuantization;

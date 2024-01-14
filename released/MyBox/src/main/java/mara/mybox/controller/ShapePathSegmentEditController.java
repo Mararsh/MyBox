@@ -158,7 +158,15 @@ public class ShapePathSegmentEditController extends BaseInputController {
     }
 
     public void checkCoord() {
-        if (isSettingValues || segment == null) {
+        if (isSettingValues) {
+            return;
+        }
+        if (segment == null) {
+            if (hlineRadio.isSelected()) {
+                endYInput.setText(startY + "");
+            } else if (vlineRadio.isSelected()) {
+                endXInput.setText(startX + "");
+            }
             return;
         }
         DoublePoint p;
@@ -478,7 +486,7 @@ public class ShapePathSegmentEditController extends BaseInputController {
 
     @FXML
     protected void popHelps(Event event) {
-        if (UserConfig.getBoolean("SvgHelpsPopWhenMouseHovering", false)) {
+        if (UserConfig.getBoolean("SVGHelpsPopWhenMouseHovering", false)) {
             showHelps(event);
         }
     }
@@ -494,8 +502,8 @@ public class ShapePathSegmentEditController extends BaseInputController {
     public static ShapePathSegmentEditController open(ControlPath2D pathController,
             int index, DoublePathSegment segment) {
         try {
-            ShapePathSegmentEditController controller = (ShapePathSegmentEditController) WindowTools.openChildStage(
-                    pathController.getMyWindow(), Fxmls.ShapePathSegmentEditFxml, true);
+            ShapePathSegmentEditController controller = (ShapePathSegmentEditController) WindowTools.childStage(
+                    pathController, Fxmls.ShapePathSegmentEditFxml);
             controller.setParameters(pathController, index, segment);
             return controller;
         } catch (Exception e) {

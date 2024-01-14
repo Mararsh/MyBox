@@ -14,7 +14,6 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
@@ -30,11 +29,11 @@ import mara.mybox.db.table.TableColorPalette;
 import mara.mybox.db.table.TableColorPaletteName;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.PaletteTools;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.StringTools;
-import mara.mybox.value.Languages;
+import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -138,7 +137,7 @@ public class ControlColorPaletteSelector extends BaseController {
                         doubleClickedNotify.set(!doubleClickedNotify.get());
                     } else if (event.getButton() == MouseButton.SECONDARY) {
                         if (isManager) {
-                            popNodeMenu(palettesList, makeFunctionsMenu());
+                            popNodeMenu(palettesList, operationsMenuItems(null));
                         }
                     }
                 }
@@ -159,13 +158,13 @@ public class ControlColorPaletteSelector extends BaseController {
         } else {
             palettesList.getItems().clear();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             private List<ColorPaletteName> palettes;
             private String lang;
 
             @Override
             protected boolean handle() {
-                lang = Languages.getLangName();
+                lang = AppVariables.CurrentLangName;
                 try (Connection conn = DerbyBase.getConnection()) {
                     PaletteTools.defaultPalette(lang, conn);
                     palettes = tableColorPaletteName.readAll(conn);
@@ -189,7 +188,8 @@ public class ControlColorPaletteSelector extends BaseController {
                         palettesList.getItems().addAll(palettes);
                     }
                     palettesList.refresh();
-                    String s = UserConfig.getString(baseName + "Palette", PaletteTools.defaultPaletteName(lang));
+                    String s = UserConfig.getString(baseName + "Palette",
+                            PaletteTools.defaultPaletteName(lang));
                     for (ColorPaletteName palette : palettes) {
                         if (palette.getName().equals(s)) {
                             palettesList.getSelectionModel().select(palette);
@@ -214,7 +214,7 @@ public class ControlColorPaletteSelector extends BaseController {
         if (task != null && !task.isQuit()) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             private ColorPaletteName newPalatte;
 
             @Override
@@ -282,7 +282,8 @@ public class ControlColorPaletteSelector extends BaseController {
         return currentPalette == null ? -1 : currentPalette.getCpnid();
     }
 
-    public List<MenuItem> makeFunctionsMenu() {
+    @Override
+    public List<MenuItem> operationsMenuItems(Event fevent) {
         ColorPaletteName palette = selected();
         boolean isAll = palette.getName().equals(allColors.getName());
         List<MenuItem> items = new ArrayList<>();
@@ -338,33 +339,7 @@ public class ControlColorPaletteSelector extends BaseController {
         });
         items.add(menu);
 
-        items.add(new SeparatorMenuItem());
-
         return items;
-    }
-
-    @FXML
-    public void popFunctionsMenu(Event event) {
-        if (UserConfig.getBoolean("ColorsFunctionsPopWhenMouseHovering", true)) {
-            showFunctionsMenu(event);
-        }
-    }
-
-    @FXML
-    public void showFunctionsMenu(Event event) {
-        List<MenuItem> items = makeFunctionsMenu();
-
-        CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
-        popItem.setSelected(UserConfig.getBoolean("ColorsFunctionsPopWhenMouseHovering", true));
-        popItem.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                UserConfig.setBoolean("ColorsFunctionsPopWhenMouseHovering", popItem.isSelected());
-            }
-        });
-        items.add(popItem);
-
-        popEventMenu(event, items);
     }
 
     public void deletePalette() {
@@ -379,7 +354,7 @@ public class ControlColorPaletteSelector extends BaseController {
         if (!PopTools.askSure(getTitle(), selected.getName(), message("DeletePalette"))) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -404,7 +379,7 @@ public class ControlColorPaletteSelector extends BaseController {
         if (!PopTools.askSure(getTitle(), message("DeleteAllPalettes"))) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -437,7 +412,7 @@ public class ControlColorPaletteSelector extends BaseController {
         if (name == null || name.isBlank()) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             @Override
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
@@ -478,7 +453,7 @@ public class ControlColorPaletteSelector extends BaseController {
         if (name == null || name.isBlank()) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             private ColorPaletteName newPalatte;
 
             @Override

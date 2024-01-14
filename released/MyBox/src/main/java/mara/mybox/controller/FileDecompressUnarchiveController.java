@@ -23,7 +23,8 @@ import javafx.scene.layout.VBox;
 import mara.mybox.data.FileInformation.FileType;
 import mara.mybox.data.FileNode;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.CompressTools;
 import mara.mybox.tools.DateTools;
@@ -193,7 +194,7 @@ public class FileDecompressUnarchiveController extends FilesTreeController {
         String info = message("Reading") + ": " + sourceFile.getAbsolutePath()
                 + "   " + FileTools.showFileSize(sourceFile.length());
         updateLogs(info);
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -264,7 +265,7 @@ public class FileDecompressUnarchiveController extends FilesTreeController {
                 + sourceFile.getAbsolutePath() + "    "
                 + FileTools.showFileSize(sourceFile.length());
         updateLogs(info);
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             File decompressedFile;
             String archiver;
 
@@ -338,7 +339,7 @@ public class FileDecompressUnarchiveController extends FilesTreeController {
         FilesTreeController thisController = this;
         tabPane.getSelectionModel().select(logsTab);
         updateLogs(message("Reading") + ": " + unarchiveFile.getAbsolutePath());
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             private TreeItem<FileNode> root;
 
@@ -503,7 +504,7 @@ public class FileDecompressUnarchiveController extends FilesTreeController {
     }
 
     @Override
-    public boolean doTask() {
+    public boolean doTask(FxTask currentTask) {
         try {
             fileUnarchive = new FileUnarchive()
                     .setTaskController(this)

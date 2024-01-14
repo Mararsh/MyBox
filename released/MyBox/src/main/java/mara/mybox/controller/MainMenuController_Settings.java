@@ -127,9 +127,9 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
         languagesMenu.getItems().add(chineseMenuItem);
         languagesMenu.getItems().add(englishMenuItem);
 
-        if (AppVariables.currentBundle == Languages.BundleZhCN) {
+        if (AppVariables.CurrentBundle == Languages.BundleZhCN) {
             chineseMenuItem.setSelected(true);
-        } else if (AppVariables.currentBundle == Languages.BundleEn) {
+        } else if (AppVariables.CurrentBundle == Languages.BundleEn) {
             englishMenuItem.setSelected(true);
         }
 

@@ -14,8 +14,8 @@ import mara.mybox.db.data.InfoNode;
 import mara.mybox.db.data.InfoNodeTag;
 import mara.mybox.db.data.Tag;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.DateTools;
 import static mara.mybox.value.Languages.message;
 
@@ -29,7 +29,7 @@ public class ControlInfoNodeAttributes extends InfoTreeTagsController {
     protected InfoTreeManageController manager;
     protected InfoTreeNodeEditor editor;
     protected InfoNode parentNode;
-    protected SingletonTask tagsTask;
+    protected FxTask tagsTask;
 
     @FXML
     protected TextField idInput, nameInput, timeInput;
@@ -129,7 +129,7 @@ public class ControlInfoNodeAttributes extends InfoTreeTagsController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             private boolean newData = false;
 
             @Override
@@ -253,7 +253,7 @@ public class ControlInfoNodeAttributes extends InfoTreeTagsController {
     }
 
     protected void refreshParentNode() {
-        SingletonTask updateTask = new SingletonTask<Void>(this) {
+        FxTask updateTask = new FxTask<Void>(this) {
             private String chainName;
 
             @Override
@@ -306,7 +306,7 @@ public class ControlInfoNodeAttributes extends InfoTreeTagsController {
         if (name == null || name.isBlank()) {
             return;
         }
-        SingletonTask tagTask = new SingletonTask<Void>(this) {
+        FxTask tagTask = new FxTask<Void>(this) {
             private Tag tag = null;
 
             @Override
@@ -360,7 +360,7 @@ public class ControlInfoNodeAttributes extends InfoTreeTagsController {
         if (tagsTask != null) {
             tagsTask.cancel();
         }
-        tagsTask = new SingletonTask<Void>(this) {
+        tagsTask = new FxTask<Void>(this) {
             private List<String> nodeTags;
 
             @Override

@@ -16,11 +16,12 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
 import mara.mybox.data.PdfInformation;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileCopyTools;
-import mara.mybox.tools.FileTools;
 import mara.mybox.tools.FileTmpTools;
+import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -360,13 +361,16 @@ public class PdfAttributesBatchController extends BaseBatchPdfController {
     }
 
     @Override
-    public String handleFile(File srcFile, File targetPath) {
+    public String handleFile(FxTask currentTask, File srcFile, File targetPath) {
         try {
             PdfInformation rowInfo = tableData.get(currentParameters.currentIndex);
             String filePassword = rowInfo.getUserPassword();
             File tmpFile = FileTmpTools.getTempFile();
             FileCopyTools.copyFile(srcFile, tmpFile);
-            try (PDDocument pd = PDDocument.load(tmpFile, filePassword, AppVariables.pdfMemUsage)) {
+            if (currentTask == null || !currentTask.isWorking()) {
+                return message("Canceled");
+            }
+            try (PDDocument pd = PDDocument.load(tmpFile, filePassword, AppVariables.PdfMemUsage)) {
                 PDDocumentInformation docInfo = pd.getDocumentInformation();
                 if (authorCheck.isSelected()) {
                     docInfo.setAuthor(authorInput.getText());
@@ -423,7 +427,7 @@ public class PdfAttributesBatchController extends BaseBatchPdfController {
                 pd.save(tmpFile);
                 pd.close();
             }
-            if (FileTools.rename(tmpFile, srcFile, true)) {
+            if (FileTools.override(tmpFile, srcFile, true)) {
                 return message("Successful");
             } else {
                 return message("Failed");

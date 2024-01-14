@@ -2,7 +2,6 @@ package mara.mybox.bufferedimage;
 
 import java.awt.color.ICC_Profile;
 import java.awt.image.BufferedImage;
-import mara.mybox.bufferedimage.ImageBinary.BinaryAlgorithm;
 import mara.mybox.value.FileExtensions;
 import org.apache.pdfbox.rendering.ImageType;
 
@@ -21,10 +20,10 @@ public class ImageAttributes {
 
     protected String imageFormat, compressionType, colorSpaceName;
     protected ImageType colorType;
-    protected int density, threshold, quality, ratioAdjustion, width;
+    protected int density, quality, ratioAdjustion, width;
     protected Alpha alpha;
-    protected BinaryAlgorithm binaryConversion;
-    protected boolean embedProfile, keepRatio, isDithering;
+    protected ImageBinary imageBinary;
+    protected boolean embedProfile, keepRatio;
     protected int sourceWidth, sourceHeight, targetWidth, targetHeight;
     protected ICC_Profile profile;
     protected String profileName;
@@ -38,6 +37,7 @@ public class ImageAttributes {
         this.colorType = colorSpace;
         this.density = density;
         this.quality = 100;
+        imageBinary = null;
     }
 
     public ImageAttributes(BufferedImage image, String format) {
@@ -137,30 +137,12 @@ public class ImageAttributes {
         return this;
     }
 
-    public int getThreshold() {
-        return threshold;
-    }
-
-    public ImageAttributes setThreshold(int threshold) {
-        this.threshold = threshold;
-        return this;
-    }
-
     public int getQuality() {
         return quality;
     }
 
     public ImageAttributes setQuality(int quality) {
         this.quality = quality;
-        return this;
-    }
-
-    public BinaryAlgorithm getBinaryConversion() {
-        return binaryConversion;
-    }
-
-    public ImageAttributes setBinaryConversion(BinaryAlgorithm binaryConversion) {
-        this.binaryConversion = binaryConversion;
         return this;
     }
 
@@ -200,12 +182,12 @@ public class ImageAttributes {
         return this;
     }
 
-    public boolean isIsDithering() {
-        return isDithering;
+    public ImageBinary getImageBinary() {
+        return imageBinary;
     }
 
-    public ImageAttributes setIsDithering(boolean isDithering) {
-        this.isDithering = isDithering;
+    public ImageAttributes setImageBinary(ImageBinary imageBinary) {
+        this.imageBinary = imageBinary;
         return this;
     }
 

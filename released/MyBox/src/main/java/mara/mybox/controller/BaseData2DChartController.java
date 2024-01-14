@@ -16,7 +16,7 @@ import mara.mybox.data2d.reader.DataTableGroup;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.tools.DoubleTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -71,9 +71,6 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
             }
 
             chartMaxData = UserConfig.getInt(baseName + "ChartMaxData", 100);
-            if (chartMaxData <= 0) {
-                chartMaxData = 100;
-            }
             if (chartMaxInput != null) {
                 chartMaxInput.setText(chartMaxData + "");
             }
@@ -255,7 +252,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
         if (task != null && !task.isQuit()) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -348,32 +345,26 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
         drawChart();
     }
 
+    public boolean checkMax() {
+        if (chartMaxInput != null) {
+            try {
+                chartMaxData = Integer.parseInt(chartMaxInput.getText());
+                UserConfig.setInt(baseName + "ChartMaxData", chartMaxData);
+                return true;
+            } catch (Exception ex) {
+                popError(message("Invalid") + ": " + message("Maximum"));
+                return false;
+            }
+        }
+        return true;
+    }
+
     @FXML
     @Override
     public void refreshAction() {
-        if (chartMaxInput != null) {
-            boolean ok;
-            try {
-                int v = Integer.parseInt(chartMaxInput.getText());
-                if (v > 0) {
-                    chartMaxData = v;
-                    UserConfig.setInt(baseName + "ChartMaxData", chartMaxData);
-                    ok = true;
-                } else {
-                    ok = false;
-                }
-            } catch (Exception ex) {
-                ok = false;
-            }
-            if (ok) {
-                chartMaxInput.setStyle(null);
-            } else {
-                chartMaxInput.setStyle(UserConfig.badStyle());
-                popError(message("Invalid") + ": " + message("Maximum"));
-                return;
-            }
+        if (!checkMax()) {
+            return;
         }
-
         okAction();
     }
 
@@ -397,36 +388,9 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
 
     @FXML
     public void goMaxAction() {
-        if (chartMaxInput != null) {
-            boolean ok;
-            String s = chartMaxInput.getText();
-            if (s == null || s.isBlank()) {
-                chartMaxData = -1;
-                ok = true;
-            } else {
-                try {
-                    int v = Integer.parseInt(s);
-                    if (v > 0) {
-                        chartMaxData = v;
-
-                        ok = true;
-                    } else {
-                        ok = false;
-                    }
-                } catch (Exception ex) {
-                    ok = false;
-                }
-            }
-            if (ok) {
-                UserConfig.setInt(baseName + "ChartMaxData", chartMaxData);
-                chartMaxInput.setStyle(null);
-            } else {
-                chartMaxInput.setStyle(UserConfig.badStyle());
-                popError(message("Invalid") + ": " + message("Maximum"));
-                return;
-            }
+        if (!checkMax()) {
+            return;
         }
-
         drawChart();
     }
 
@@ -441,7 +405,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
         groupDataController.loadNull();
         group = null;
         framesNumber = -1;
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {

@@ -93,6 +93,7 @@ public class ControlTextOptions extends BaseController {
                 charsetSelector.setDisable(false);
             }
         }
+        UserConfig.setBoolean(baseName + "AutoDetermine", autoDetermine);
         UserConfig.setString(baseName + "TextCharset", charset.name());
     }
 
@@ -103,6 +104,13 @@ public class ControlTextOptions extends BaseController {
         if (charset != null) {
             charsetSelector.setValue(charset.name());
         }
+    }
+
+    public String getCharsetName() {
+        if (charset == null) {
+            charset = Charset.defaultCharset();
+        }
+        return charset.name();
     }
 
     protected void setDelimiterName(String delimiter) {

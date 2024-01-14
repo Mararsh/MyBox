@@ -10,6 +10,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import mara.mybox.data.FileNode;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.tools.FileTools;
@@ -43,7 +44,7 @@ public class FilesRenameResultsController extends BaseTaskController {
             tableView.setItems(tableData);
 
             pathColumn.setCellValueFactory(new PropertyValueFactory<>("path"));
-            oNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+            oNameColumn.setCellValueFactory(new PropertyValueFactory<>("fileName"));
             nNameColumn.setCellValueFactory(new PropertyValueFactory<>("nodename"));
             invalidColumn.setCellValueFactory(new PropertyValueFactory<>("permission"));
 
@@ -100,13 +101,14 @@ public class FilesRenameResultsController extends BaseTaskController {
     }
 
     @Override
-    public boolean doTask() {
+    public boolean doTask(FxTask currentTask) {
         try {
             for (FileNode node : tableData) {
-                if (task == null || task.isCancelled()) {
-                    break;
+                if (currentTask == null || !currentTask.isWorking()) {
+                    updateLogs(message("Canceled"));
+                    return false;
                 }
-                String file = node.getFileName();
+                String file = node.getFullName();
                 String newname = node.getData();
                 if (newname == null || newname.isBlank()) {
                     updateLogs(message("Skipped") + ": " + file);

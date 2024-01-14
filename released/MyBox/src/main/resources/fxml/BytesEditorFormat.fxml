@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="thisPane" maxHeight="-Infinity" prefHeight="100.0" prefWidth="300.0" spacing="5.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.BytesEditorFormatController">
+      <children>
+      <FlowPane hgap="2.0" vgap="2.0">
+         <children>
+            <RadioButton fx:id="lbWidthRadio" mnemonicParsing="false" selected="true" text="%BytesNumber">
+               <toggleGroup>
+                  <ToggleGroup fx:id="breakGroup" />
+               </toggleGroup>
+            </RadioButton>
+            <TextField fx:id="lbWidthInput" prefWidth="80.0" text="30" />
+         </children>
+      </FlowPane>
+      <RadioButton fx:id="lbLFRadio" mnemonicParsing="false" text="%LFHex" toggleGroup="$breakGroup" />
+      <RadioButton fx:id="lbCRRadio" mnemonicParsing="false" text="%CRHex" toggleGroup="$breakGroup" />
+      <RadioButton fx:id="lbCRLFRsadio" mnemonicParsing="false" text="%CRLFHex" toggleGroup="$breakGroup" />
+      <FlowPane hgap="2.0" vgap="2.0">
+         <children>
+            <RadioButton fx:id="bytesRadio" mnemonicParsing="false" text="%BytesHex" toggleGroup="$breakGroup" />
+            <TextField fx:id="lbBytesInput" prefWidth="150.0" text="0D 0A" />
+         </children>
+      </FlowPane>
+      <FlowPane alignment="CENTER_RIGHT" hgap="2.0" prefWrapLength="100.0" vgap="2.0">
+         <children>
+            <CheckBox fx:id="closeAfterCheck" mnemonicParsing="false" selected="true">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconClose.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </CheckBox>
+            <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconCancel.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction">
+               <graphic>
+                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconOK.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+         </children>
+      </FlowPane>
+      </children>
+   <padding>
+      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+   </padding>
+  </VBox>

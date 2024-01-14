@@ -24,7 +24,7 @@ import mara.mybox.controller.BaseController;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.FxFileTools;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.StyleData.StyleColor;
 import mara.mybox.imagefile.ImageFileWriters;
@@ -46,28 +46,10 @@ public class StyleTools {
         Style Data
      */
     public static StyleData getStyleData(Node node) {
-        if (node == null || node.getId() == null) {
+        if (node == null) {
             return null;
         }
-        String id = node.getId();
-        StyleData style;
-        if (id.startsWith("color")) {
-            style = StylePrefix.color(node, id);
-
-        } else if (id.startsWith("his")) {
-            style = StylePrefix.his(node, id);
-
-        } else if (id.startsWith("settings")) {
-            style = StylePrefix.settings(node, id);
-
-        } else if (id.startsWith("scope")) {
-            style = StylePrefix.scope(node, id);
-
-        } else {
-            style = getStyleData(node, id);
-
-        }
-        return style;
+        return getStyleData(node, node.getId());
     }
 
     public static StyleData getStyleData(Node node, String id) {
@@ -152,7 +134,7 @@ public class StyleTools {
         AppVariables.ControlColor = getColorStyle(value);
         UserConfig.setString("ControlColor", AppVariables.ControlColor.name());
         if (AppVariables.ControlColor == StyleColor.Customize) {
-            SingletonTask task = new SingletonTask<Void>(controller) {
+            FxTask task = new FxTask<Void>(controller) {
 
                 @Override
                 protected boolean handle() {
@@ -168,9 +150,9 @@ public class StyleTools {
                             if (new File(tname).exists()) {
                                 continue;
                             }
-                            BufferedImage image = makeIcon(StyleColor.Customize, iconName);
+                            BufferedImage image = makeIcon(this, StyleColor.Customize, iconName);
                             if (image != null) {
-                                ImageFileWriters.writeImageFile(image, "png", tname);
+                                ImageFileWriters.writeImageFile(this, image, "png", tname);
                                 setInfo(MessageFormat.format(message("FilesGenerated"), tname));
                             }
                         }
@@ -348,7 +330,7 @@ public class StyleTools {
         setIcon(node, StyleTools.getIconImageView(StyleData));
     }
 
-    public static BufferedImage makeIcon(StyleColor style, String iconName) {
+    public static BufferedImage makeIcon(FxTask task, StyleColor style, String iconName) {
         try {
             if (iconName == null) {
                 return null;
@@ -356,43 +338,43 @@ public class StyleTools {
             if (style == StyleColor.Red) {
                 return StyleTools.getSourceBufferedImage(iconName);
             }
-            return makeIcon(iconName, color(style, true), color(style, false));
+            return makeIcon(task, iconName, color(style, true), color(style, false));
         } catch (Exception e) {
             MyBoxLog.console(e);
             return null;
         }
     }
 
-    public static BufferedImage makeIcon(String iconName, Color darkColor, Color lightColor) {
+    public static BufferedImage makeIcon(FxTask task, String iconName, Color darkColor, Color lightColor) {
         try {
             BufferedImage srcImage = StyleTools.getSourceBufferedImage(iconName);
-            return makeIcon(srcImage, darkColor, lightColor);
+            return makeIcon(task, srcImage, darkColor, lightColor);
         } catch (Exception e) {
             MyBoxLog.console(e);
             return null;
         }
     }
 
-    public static BufferedImage makeIcon(BufferedImage srcImage, Color darkColor, Color lightColor) {
+    public static BufferedImage makeIcon(FxTask task, BufferedImage srcImage, Color darkColor, Color lightColor) {
         try {
             if (srcImage == null || darkColor == null || lightColor == null) {
                 return null;
             }
-            PixelsOperation operation = PixelsOperationFactory.replaceColorOperation(srcImage,
-                    color(StyleColor.Red, true), darkColor, 20);
-            operation = PixelsOperationFactory.replaceColorOperation(operation.operate(),
-                    color(StyleColor.Red, false), lightColor, 20);
-            return operation.operate();
+            PixelsOperation operation = PixelsOperationFactory.replaceColorOperation(task, srcImage,
+                    color(StyleColor.Red, true), darkColor, 20).setTask(task);
+            operation = PixelsOperationFactory.replaceColorOperation(task, operation.start(),
+                    color(StyleColor.Red, false), lightColor, 20).setTask(task);
+            return operation.start();
         } catch (Exception e) {
             MyBoxLog.console(e);
             return null;
         }
     }
 
-    public static Image makeImage(String iconName,
+    public static Image makeImage(FxTask task, String iconName,
             javafx.scene.paint.Color darkColor, javafx.scene.paint.Color lightColor) {
         try {
-            BufferedImage targetImage = makeIcon(iconName,
+            BufferedImage targetImage = makeIcon(task, iconName,
                     FxColorTools.toAwtColor(darkColor), FxColorTools.toAwtColor(lightColor));
             if (targetImage == null) {
                 return null;

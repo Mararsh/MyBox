@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="thisPane" spacing="2.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlImageThresholding">
+    <children>
+        <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+            <image>
+                <Image url="@../buttons/Red/iconTips.png" />
+            </image>
+        </ImageView>
+        <FlowPane hgap="5.0" maxWidth="1.7976931348623157E308" prefWidth="100.0" prefWrapLength="0.0" vgap="5.0">
+            <children>
+                <Label minHeight="-Infinity" text="%Threshold" wrapText="true" />
+                <TextField fx:id="thresholdInput" prefWidth="80.0" />
+            </children>
+        </FlowPane>
+        <FlowPane hgap="5.0" maxWidth="1.7976931348623157E308" prefWidth="100.0" prefWrapLength="0.0" vgap="5.0">
+            <children>
+                <Label minHeight="-Infinity" text="%BigValue" wrapText="true" />
+                <TextField fx:id="bigInput" prefWidth="80.0" />
+            </children>
+        </FlowPane>
+        <FlowPane hgap="5.0" maxWidth="1.7976931348623157E308" prefWidth="100.0" prefWrapLength="0.0" vgap="5.0">
+            <children>
+                <Label minHeight="-Infinity" text="%SmallValue" wrapText="true" />
+                <TextField fx:id="smallInput" prefWidth="80.0" />
+            </children>
+        </FlowPane>
+    </children>
+</VBox>

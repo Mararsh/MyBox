@@ -11,7 +11,7 @@ import mara.mybox.data2d.DataFileText;
 import mara.mybox.data2d.DataFilter;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.StringTools;
 
 /**
@@ -31,7 +31,7 @@ public abstract class Data2DReader {
     protected boolean failed;
     protected DataFilter filter;
     protected boolean readerHasHeader, readerStopped, needCheckTask;
-    protected SingletonTask task;
+    protected FxTask task;
 
     public abstract void scanData();
 
@@ -152,7 +152,7 @@ public abstract class Data2DReader {
     }
 
     public boolean readerStopped() {
-        return readerStopped || (needCheckTask && (task == null || task.isCancelled()));
+        return readerStopped || (needCheckTask && (task == null || !task.isWorking()));
     }
 
     /*
@@ -194,7 +194,7 @@ public abstract class Data2DReader {
         return this;
     }
 
-    public Data2DReader setTask(SingletonTask task) {
+    public Data2DReader setTask(FxTask task) {
         this.task = task;
         return this;
     }

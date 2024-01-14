@@ -6,22 +6,21 @@ import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.data.FileInformation;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.value.AppVariables;
-import thridparty.image4j.ICODecoder;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.poi.sl.usermodel.Slide;
 import org.apache.poi.sl.usermodel.SlideShow;
 import org.apache.poi.sl.usermodel.SlideShowFactory;
+import thridparty.image4j.ICODecoder;
 
 /**
  * @Author Mara
  * @CreateDate 2018-6-19
- * @Version 1.0
- * @Description
  * @License Apache License Version 2.0
  */
 public class ImageFileInformation extends FileInformation {
@@ -44,24 +43,24 @@ public class ImageFileInformation extends FileInformation {
     /*
         static methods
      */
-    public static ImageFileInformation create(File file) {
-        return create(file, null);
+    public static ImageFileInformation create(FxTask task, File file) {
+        return create(task, file, null);
     }
 
-    public static ImageFileInformation create(File file, String password) {
+    public static ImageFileInformation create(FxTask task, File file, String password) {
         try {
             if (file == null || !file.exists()) {
                 return null;
             }
             String suffix = FileNameTools.suffix(file.getName());
             if (suffix != null && suffix.equalsIgnoreCase("pdf")) {
-                return readPDF(file, password);
+                return readPDF(task, file, password);
             } else if (suffix != null && (suffix.equalsIgnoreCase("ppt") || suffix.equalsIgnoreCase("pptx"))) {
-                return readPPT(file);
+                return readPPT(task, file);
             } else if (suffix != null && (suffix.equalsIgnoreCase("ico") || suffix.equalsIgnoreCase("icon"))) {
-                return readIconFile(file);
+                return readIconFile(task, file);
             } else {
-                return readImageFile(file);
+                return readImageFile(task, file);
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -69,11 +68,25 @@ public class ImageFileInformation extends FileInformation {
         }
     }
 
-    public static ImageFileInformation readImageFile(File file) {
-        return ImageFileReaders.readImageFileMetaData(file);
+    public static ImageFileInformation clone(ImageFileInformation sourceInfo, ImageFileInformation targetInfo) {
+        if (sourceInfo == null || targetInfo == null) {
+            return null;
+        }
+        FileInformation.clone(sourceInfo, targetInfo);
+        targetInfo.imageFormat = sourceInfo.imageFormat;
+        targetInfo.password = sourceInfo.password;
+        targetInfo.imageInformation = sourceInfo.imageInformation;
+        targetInfo.imagesInformation = sourceInfo.imagesInformation;
+        targetInfo.createTime = sourceInfo.createTime;
+        targetInfo.numberOfImages = sourceInfo.numberOfImages;
+        return targetInfo;
     }
 
-    public static ImageFileInformation readIconFile(File file) {
+    public static ImageFileInformation readImageFile(FxTask task, File file) {
+        return ImageFileReaders.readImageFileMetaData(task, file);
+    }
+
+    public static ImageFileInformation readIconFile(FxTask task, File file) {
         ImageFileInformation fileInfo = new ImageFileInformation(file);
         String format = "ico";
         fileInfo.setImageFormat(format);
@@ -85,6 +98,9 @@ public class ImageFileInformation extends FileInformation {
                 List<ImageInformation> imagesInfo = new ArrayList<>();
                 ImageInformation imageInfo;
                 for (int i = 0; i < num; i++) {
+                    if (task != null && !task.isWorking()) {
+                        return null;
+                    }
                     BufferedImage bufferedImage = frames.get(i);
                     imageInfo = ImageInformation.create(format, file);
                     imageInfo.setImageFileInformation(fileInfo);
@@ -112,18 +128,21 @@ public class ImageFileInformation extends FileInformation {
         return fileInfo;
     }
 
-    public static ImageFileInformation readPDF(File file, String password) {
+    public static ImageFileInformation readPDF(FxTask task, File file, String password) {
         ImageFileInformation fileInfo = new ImageFileInformation(file);
         String format = "png";
         fileInfo.setImageFormat(format);
         fileInfo.setPassword(password);
-        try (PDDocument doc = PDDocument.load(file, password, AppVariables.pdfMemUsage)) {
+        try (PDDocument doc = PDDocument.load(file, password, AppVariables.PdfMemUsage)) {
             int num = doc.getNumberOfPages();
             fileInfo.setNumberOfImages(num);
             List<ImageInformation> imagesInfo = new ArrayList<>();
             ImageInformation imageInfo;
 
             for (int i = 0; i < num; ++i) {
+                if (task != null && !task.isWorking()) {
+                    return null;
+                }
                 PDPage page = doc.getPage(i);
                 PDRectangle rect = page.getBleedBox();
                 imageInfo = ImageInformation.create(format, file);
@@ -139,7 +158,7 @@ public class ImageFileInformation extends FileInformation {
                 imageInfo.setIsMultipleFrames(num > 1);
                 imageInfo.setIndex(i);
                 imageInfo.setImageType(BufferedImage.TYPE_INT_RGB);
-                ImageInformation.checkMem(imageInfo);
+                ImageInformation.checkMem(task, imageInfo);
                 imagesInfo.add(imageInfo);
             }
             fileInfo.setImagesInformation(imagesInfo);
@@ -153,7 +172,7 @@ public class ImageFileInformation extends FileInformation {
         return fileInfo;
     }
 
-    public static ImageFileInformation readPPT(File file) {
+    public static ImageFileInformation readPPT(FxTask task, File file) {
         ImageFileInformation fileInfo = new ImageFileInformation(file);
         String format = "png";
         fileInfo.setImageFormat(format);
@@ -167,6 +186,9 @@ public class ImageFileInformation extends FileInformation {
             int width = (int) Math.ceil(ppt.getPageSize().getWidth());
             int height = (int) Math.ceil(ppt.getPageSize().getHeight());
             for (int i = 0; i < num; ++i) {
+                if (task != null && !task.isWorking()) {
+                    return null;
+                }
                 imageInfo = ImageInformation.create(format, file);
                 imageInfo.setImageFileInformation(fileInfo);
                 imageInfo.setImageFormat(format);
@@ -179,7 +201,7 @@ public class ImageFileInformation extends FileInformation {
                 imageInfo.setIsMultipleFrames(num > 1);
                 imageInfo.setIndex(i);
                 imageInfo.setImageType(BufferedImage.TYPE_INT_ARGB);
-                ImageInformation.checkMem(imageInfo);
+                ImageInformation.checkMem(task, imageInfo);
                 imagesInfo.add(imageInfo);
             }
             fileInfo.setImagesInformation(imagesInfo);

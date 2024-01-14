@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.data.DoubleShape;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 
 /**
  * @Author Mara
@@ -53,29 +54,41 @@ public abstract class PixelsBlend {
 
     protected ImagesBlendMode blendMode;
     protected float opacity;
-    protected boolean orderReversed = false, ignoreTransparency = true;
+    protected boolean baseAbove = false;
 
     protected Color foreColor, backColor;
     protected int red, green, blue, alpha;
+    protected TransparentAs baseTransparentAs = TransparentAs.Transparent,
+            overlayTransparentAs = TransparentAs.Another;
+
+    public enum TransparentAs {
+        Another, Transparent, Blend
+    }
 
     public PixelsBlend() {
     }
 
-    protected int blend(int forePixel, int backPixel) {
-        if (ignoreTransparency) {
-            if (forePixel == 0) {
-                return backPixel;
-            }
-            if (backPixel == 0) {
-                return forePixel;
+    protected int blend(int overlayPixel, int basePixel) {
+        if (basePixel == 0) {
+            if (baseTransparentAs == TransparentAs.Transparent) {
+                return 0;
+            } else if (baseTransparentAs == TransparentAs.Another) {
+                return overlayPixel;
             }
         }
-        if (orderReversed) {
-            foreColor = new Color(backPixel, true);
-            backColor = new Color(forePixel, true);
+        if (overlayPixel == 0) {
+            if (overlayTransparentAs == TransparentAs.Another) {
+                return basePixel;
+            } else if (overlayTransparentAs == TransparentAs.Transparent) {
+                return 0;
+            }
+        }
+        if (baseAbove) {
+            foreColor = new Color(basePixel, true);
+            backColor = new Color(overlayPixel, true);
         } else {
-            foreColor = new Color(forePixel, true);
-            backColor = new Color(backPixel, true);
+            foreColor = new Color(overlayPixel, true);
+            backColor = new Color(basePixel, true);
         }
         makeRGB();
         makeAlpha();
@@ -87,14 +100,14 @@ public abstract class PixelsBlend {
         return newColor.getRGB();
     }
 
-    protected Color blend(Color foreColor, Color backColor) {
-        if (foreColor == null) {
-            return backColor;
+    protected Color blend(Color overlayColor, Color baseColor) {
+        if (overlayColor == null) {
+            return baseColor;
         }
-        if (backColor == null) {
-            return foreColor;
+        if (baseColor == null) {
+            return overlayColor;
         }
-        int b = blend(foreColor.getRGB(), backColor.getRGB());
+        int b = blend(overlayColor.getRGB(), baseColor.getRGB());
         return new Color(b, true);
     }
 
@@ -110,43 +123,46 @@ public abstract class PixelsBlend {
         alpha = (int) (foreColor.getAlpha() * w + backColor.getAlpha() * (1.0f - w));
     }
 
-    public BufferedImage blend(BufferedImage foreImage, BufferedImage backImage, int x, int y) {
+    public BufferedImage blend(FxTask task, BufferedImage overlay, BufferedImage baseImage, int x, int y) {
         try {
-            if (foreImage == null || backImage == null) {
+            if (overlay == null || baseImage == null) {
                 return null;
             }
             int imageType = BufferedImage.TYPE_INT_ARGB;
-            DoubleRectangle rect = DoubleRectangle.xywh(x, y, foreImage.getWidth(), foreImage.getHeight());
-            BufferedImage target = new BufferedImage(backImage.getWidth(), backImage.getHeight(), imageType);
-            for (int j = 0; j < backImage.getHeight(); ++j) {
-                for (int i = 0; i < backImage.getWidth(); ++i) {
-                    int backPixel = backImage.getRGB(i, j);
+            DoubleRectangle rect = DoubleRectangle.xywh(x, y, overlay.getWidth(), overlay.getHeight());
+            BufferedImage target = new BufferedImage(baseImage.getWidth(), baseImage.getHeight(), imageType);
+            int height = baseImage.getHeight();
+            int width = baseImage.getWidth();
+            for (int j = 0; j < height; ++j) {
+                if (task != null && !task.isWorking()) {
+                    return null;
+                }
+                for (int i = 0; i < width; ++i) {
+                    if (task != null && !task.isWorking()) {
+                        return null;
+                    }
+                    int basePixel = baseImage.getRGB(i, j);
                     if (DoubleShape.contains(rect, i, j)) {
-                        int forePixel = foreImage.getRGB(i - x, j - y);
-                        target.setRGB(i, j, blend(forePixel, backPixel));
+                        int overlayPixel = overlay.getRGB(i - x, j - y);
+                        target.setRGB(i, j, blend(overlayPixel, basePixel));
                     } else {
-                        target.setRGB(i, j, backPixel);
+                        target.setRGB(i, j, basePixel);
                     }
                 }
             }
             return target;
         } catch (Exception e) {
             MyBoxLog.error(e);
-            return foreImage;
+            return overlay;
         }
     }
 
     /*
         static
      */
-    public static Color blend(Color foreColor, Color backColor, float opacity, boolean ignoreTransparency) {
-        if (ignoreTransparency) {
-            if (foreColor.getRGB() == 0) {
-                return backColor;
-            }
-            if (backColor.getRGB() == 0) {
-                return foreColor;
-            }
+    public static Color blend2(Color foreColor, Color backColor, float opacity, boolean ignoreTransparency) {
+        if (backColor.getRGB() == 0 && ignoreTransparency) {
+            return backColor;
         }
         return blend(foreColor, backColor, opacity);
     }
@@ -179,46 +195,36 @@ public abstract class PixelsBlend {
         return (int) (A * w + B * (1.0f - w));
     }
 
-    public static PixelsBlend normalBlender(float opacity) {
-        return PixelsBlendFactory.create(ImagesBlendMode.NORMAL)
-                .setOpacity(opacity)
-                .setOrderReversed(false)
-                .setIgnoreTransparency(false);
-    }
-
-    public static PixelsBlend blender(ImagesBlendMode blendMode, float opacity,
-            boolean orderReversed, boolean ignoreTransparent) {
-        return PixelsBlendFactory.create(blendMode)
-                .setBlendMode(blendMode)
-                .setOpacity(fixedOpacity(opacity))
-                .setOrderReversed(orderReversed)
-                .setIgnoreTransparency(ignoreTransparent);
-    }
-
-    public static BufferedImage blend(BufferedImage foreImage, BufferedImage backImage,
+    public static BufferedImage blend(FxTask task, BufferedImage overlay, BufferedImage baseImage,
             int x, int y, PixelsBlend blender) {
         try {
-            if (foreImage == null || backImage == null || blender == null) {
+            if (overlay == null || baseImage == null || blender == null) {
                 return null;
             }
             int imageType = BufferedImage.TYPE_INT_ARGB;
-            DoubleRectangle rect = DoubleRectangle.xywh(x, y, foreImage.getWidth(), foreImage.getHeight());
-            BufferedImage target = new BufferedImage(backImage.getWidth(), backImage.getHeight(), imageType);
-            for (int j = 0; j < backImage.getHeight(); ++j) {
-                for (int i = 0; i < backImage.getWidth(); ++i) {
-                    int backPixel = backImage.getRGB(i, j);
+            DoubleRectangle rect = DoubleRectangle.xywh(x, y, overlay.getWidth(), overlay.getHeight());
+            BufferedImage target = new BufferedImage(baseImage.getWidth(), baseImage.getHeight(), imageType);
+            for (int j = 0; j < baseImage.getHeight(); ++j) {
+                if (task != null && !task.isWorking()) {
+                    return null;
+                }
+                for (int i = 0; i < baseImage.getWidth(); ++i) {
+                    if (task != null && !task.isWorking()) {
+                        return null;
+                    }
+                    int basePixel = baseImage.getRGB(i, j);
                     if (DoubleShape.contains(rect, i, j)) {
-                        int forePixel = foreImage.getRGB(i - x, j - y);
-                        target.setRGB(i, j, blender.blend(forePixel, backPixel));
+                        int overlayPixel = overlay.getRGB(i - x, j - y);
+                        target.setRGB(i, j, blender.blend(overlayPixel, basePixel));
                     } else {
-                        target.setRGB(i, j, backPixel);
+                        target.setRGB(i, j, basePixel);
                     }
                 }
             }
             return target;
         } catch (Exception e) {
             MyBoxLog.error(e);
-            return foreImage;
+            return overlay;
         }
     }
 
@@ -243,21 +249,30 @@ public abstract class PixelsBlend {
         return this;
     }
 
-    public boolean isOrderReversed() {
-        return orderReversed;
+    public boolean isBaseAbove() {
+        return baseAbove;
     }
 
-    public PixelsBlend setOrderReversed(boolean orderReversed) {
-        this.orderReversed = orderReversed;
+    public PixelsBlend setBaseAbove(boolean orderReversed) {
+        this.baseAbove = orderReversed;
         return this;
     }
 
-    public boolean isIgnoreTransparency() {
-        return ignoreTransparency;
+    public TransparentAs getBaseTransparentAs() {
+        return baseTransparentAs;
     }
 
-    public PixelsBlend setIgnoreTransparency(boolean ignoreTransparency) {
-        this.ignoreTransparency = ignoreTransparency;
+    public PixelsBlend setBaseTransparentAs(TransparentAs baseTransparentAs) {
+        this.baseTransparentAs = baseTransparentAs;
+        return this;
+    }
+
+    public TransparentAs getOverlayTransparentAs() {
+        return overlayTransparentAs;
+    }
+
+    public PixelsBlend setOverlayTransparentAs(TransparentAs overlayTransparentAs) {
+        this.overlayTransparentAs = overlayTransparentAs;
         return this;
     }
 

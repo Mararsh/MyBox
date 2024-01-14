@@ -17,6 +17,7 @@ import mara.mybox.data.FileEditInformation;
 import mara.mybox.data.TextEditInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.TextTools;
@@ -199,15 +200,18 @@ public class TextFilesConvertController extends BaseBatchFileController {
     }
 
     @Override
-    public String handleFile(File srcFile, File targetPath) {
+    public String handleFile(FxTask currentTask, File srcFile, File targetPath) {
         try {
             File target = makeTargetFile(srcFile, targetPath);
             if (target == null) {
                 return message("Skip");
             }
             sourceInformation.setFile(srcFile);
-            sourceInformation.setLineBreak(TextTools.checkLineBreak(srcFile));
+            sourceInformation.setLineBreak(TextTools.checkLineBreak(currentTask, srcFile));
             sourceInformation.setLineBreakValue(TextTools.lineBreakValue(sourceInformation.getLineBreak()));
+            if (currentTask == null || !currentTask.isWorking()) {
+                return message("Canceled");
+            }
             if (sourceEncodingAutoDetermine) {
                 boolean ok = TextTools.checkCharset(sourceInformation);
                 if (!ok || sourceInformation == null) {
@@ -224,7 +228,11 @@ public class TextFilesConvertController extends BaseBatchFileController {
                 targetInformation.setLineBreakValue(sourceInformation.getLineBreakValue());
             }
 
-            List<File> files = TextTools.convert(sourceInformation, targetInformation, maxLines);
+            List<File> files = TextTools.convert(currentTask,
+                    sourceInformation, targetInformation, maxLines);
+            if (currentTask == null || !currentTask.isWorking()) {
+                return message("Canceled");
+            }
             if (files != null && !files.isEmpty()) {
                 targetFileGenerated(files);
                 return message("Successful");

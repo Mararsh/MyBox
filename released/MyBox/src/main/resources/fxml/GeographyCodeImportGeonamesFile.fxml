@@ -64,7 +64,7 @@ License:    Apache License Version 2.0
                                             <children>
                                                 <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
                                                     <children>
-                                                        <CheckBox fx:id="replaceCheck" mnemonicParsing="false" text="%ReplaceExistedData" />
+                                                        <CheckBox fx:id="replaceCheck" mnemonicParsing="false" text="%UpdateExistedData" />
                                                         <CheckBox fx:id="closeWhenCompleteCheck" mnemonicParsing="false" selected="false" text="%CloseWhenComplete" />
                                                     </children>
                                                 </HBox>

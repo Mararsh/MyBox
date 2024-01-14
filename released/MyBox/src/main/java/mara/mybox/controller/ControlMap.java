@@ -31,7 +31,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.NodeTools;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.DateTools;
@@ -595,7 +595,7 @@ public class ControlMap extends BaseController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             private String html;
 
             @Override
@@ -611,7 +611,10 @@ public class ControlMap extends BaseController {
 
                     File imageFile = FileTmpTools.generateFile("jpg");
                     BufferedImage bufferedImage = SwingFXUtils.fromFXImage(mapSnap, null);
-                    ImageFileWriters.writeImageFile(bufferedImage, "jpg", imageFile.getAbsolutePath());
+                    ImageFileWriters.writeImageFile(this, bufferedImage, "jpg", imageFile.getAbsolutePath());
+                    if (isCancelled()) {
+                        return false;
+                    }
                     s.append("<h2  class=\"center\">").append(message("Image")).append("</h2>\n");
                     s.append("<div align=\"center\"><img src=\"").append(imageFile.toURI().toString())
                             .append("\"  style=\"max-width:95%;\"></div>\n");
@@ -663,7 +666,7 @@ public class ControlMap extends BaseController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             private List<Data2DColumn> columns;
             private List<List<String>> data;

@@ -1,10 +1,17 @@
 package mara.mybox.controller;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
+import javafx.scene.control.MenuItem;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.SvgTools;
@@ -16,74 +23,108 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2023-7-2
  * @License Apache License Version 2.0
  */
-public class ControlSvgHtml extends ControlSvgOptions {
+public class ControlSvgHtml extends BaseController {
 
+    protected SvgEditorController editor;
+    protected ControlSvgViewOptions optionsController;
     protected WebEngine webEngine;
-    protected String currentXML;
+    protected String currentSVG;
 
     @FXML
     protected WebView webView;
 
-    @Override
-    public void initControls() {
+    public void setParameters(SvgEditorController editor) {
         try {
-            super.initControls();
-
-            webView.setCache(false);
             webEngine = webView.getEngine();
+            webView.setCache(false);
             webEngine.setJavaScriptEnabled(true);
+
+            this.editor = editor;
+            optionsController = editor.optionsController;
 
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
-    @Override
-    public void sizeChanged() {
-        drawSVG();
+    public void drawSVG(String svg) {
+        currentSVG = svg;
+        webEngine.loadContent(svg);
     }
 
     @Override
-    public void bgColorChanged() {
-        drawSVG();
-    }
-
-    @Override
-    public void opacityChanged() {
-        drawSVG();
-    }
-
-    public void drawSVG() {
+    public List<MenuItem> operationsMenuItems(Event fevent) {
         try {
-            if (doc == null) {
-                currentXML = null;
-                webEngine.loadContent("");
-                return;
-            }
-            currentXML = toXML();
-            webEngine.loadContent(currentXML);
+            List<MenuItem> items = new ArrayList<>();
+            MenuItem menu;
+
+            menu = new MenuItem(message("Html"), StyleTools.getIconImageView("iconHtml.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                htmlAction();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("Image"), StyleTools.getIconImageView("iconDefault.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                imageAction();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("SystemMethod"), StyleTools.getIconImageView("iconSystemOpen.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                systemMethod();
+            });
+            items.add(menu);
+
+            menu = new MenuItem("PDF", StyleTools.getIconImageView("iconPDF.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                pdfAction();
+            });
+            items.add(menu);
+
+            menu = new MenuItem("XML", StyleTools.getIconImageView("iconXML.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                xmlAction();
+            });
+            items.add(menu);
+
+            menu = new MenuItem("SVG", StyleTools.getIconImageView("iconSVG.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                svgAction();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("Text"), StyleTools.getIconImageView("iconTxt.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                txtAction();
+            });
+            items.add(menu);
+
+            return items;
         } catch (Exception e) {
             MyBoxLog.error(e);
+            return null;
         }
     }
 
     @FXML
     public void htmlAction() {
-        if (currentXML == null || currentXML.isBlank()) {
+        if (currentSVG == null || currentSVG.isBlank()) {
             popError(message("NoData"));
             return;
         }
-        HtmlEditorController.openHtml(currentXML);
+        HtmlEditorController.openHtml(currentSVG);
     }
 
     @FXML
+    @Override
     public void systemMethod() {
-        if (currentXML == null || currentXML.isBlank()) {
+        if (currentSVG == null || currentSVG.isBlank()) {
             popError(message("NoData"));
             return;
         }
         File tmpFile = FileTmpTools.getTempFile(".svg");
-        TextFileTools.writeFile(tmpFile, currentXML);
+        TextFileTools.writeFile(tmpFile, currentSVG);
         if (tmpFile != null && tmpFile.exists()) {
             browse(tmpFile);
         } else {
@@ -93,52 +134,109 @@ public class ControlSvgHtml extends ControlSvgOptions {
 
     @FXML
     public void pdfAction() {
-        if (currentXML == null || currentXML.isBlank()) {
+        if (currentSVG == null || currentSVG.isBlank()) {
             popError(message("NoData"));
             return;
         }
-        File tmpFile = SvgTools.textToPDF(this, currentXML, width, height, viewBox);
-        if (tmpFile != null && tmpFile.exists()) {
-            if (tmpFile.length() > 0) {
-                PdfViewController.open(tmpFile);
-            } else {
-                FileDeleteTools.delete(tmpFile);
-            }
+        if (task != null) {
+            task.cancel();
         }
+        task = new FxSingletonTask<Void>(this) {
+            private File tmpFile;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    tmpFile = SvgTools.textToPDF(this,
+                            myController, currentSVG,
+                            optionsController.width,
+                            optionsController.height,
+                            optionsController.viewBox);
+                    return tmpFile != null && tmpFile.exists();
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                if (tmpFile.length() > 0) {
+                    PdfViewController.open(tmpFile);
+                } else {
+                    FileDeleteTools.delete(tmpFile);
+                }
+            }
+
+        };
+        start(task);
     }
 
     @FXML
-    public void viewAction() {
-        if (currentXML == null || currentXML.isBlank()) {
+    public void imageAction() {
+        if (currentSVG == null || currentSVG.isBlank()) {
             popError(message("NoData"));
             return;
         }
-        File tmpFile = SvgTools.textToImage(this, currentXML, width, height, viewBox);
-        if (tmpFile != null && tmpFile.exists()) {
-            if (tmpFile.length() > 0) {
-                ImageViewerController.openFile(tmpFile);
-            } else {
-                FileDeleteTools.delete(tmpFile);
-            }
+        if (task != null) {
+            task.cancel();
         }
+        task = new FxSingletonTask<Void>(this) {
+            private File tmpFile;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    tmpFile = SvgTools.textToImage(this,
+                            myController, currentSVG,
+                            optionsController.width,
+                            optionsController.height,
+                            optionsController.viewBox);
+                    return tmpFile != null && tmpFile.exists();
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                if (tmpFile.length() > 0) {
+                    ImageEditorController.openFile(tmpFile);
+                } else {
+                    FileDeleteTools.delete(tmpFile);
+                }
+            }
+
+        };
+        start(task);
     }
 
     @FXML
     protected void txtAction() {
-        if (currentXML == null || currentXML.isBlank()) {
+        if (currentSVG == null || currentSVG.isBlank()) {
             popError(message("NoData"));
             return;
         }
-        TextEditorController.edit(currentXML);
+        TextPopController.loadText(currentSVG);
     }
 
     @FXML
-    protected void popXml() {
-        if (currentXML == null || currentXML.isBlank()) {
+    protected void xmlAction() {
+        if (currentSVG == null || currentSVG.isBlank()) {
             popError(message("NoData"));
             return;
         }
-        HtmlPopController.openHtml(currentXML);
+        XmlEditorController.load(currentSVG);
+    }
+
+    @FXML
+    protected void svgAction() {
+        if (currentSVG == null || currentSVG.isBlank()) {
+            popError(message("NoData"));
+            return;
+        }
+        SvgEditorController.load(currentSVG);
     }
 
 }

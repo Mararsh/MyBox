@@ -6,11 +6,12 @@ import javafx.beans.binding.Bindings;
 import mara.mybox.bufferedimage.AlphaTools;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.value.FileFilters;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -18,10 +19,10 @@ import mara.mybox.value.Languages;
  * @Description
  * @License Apache License Version 2.0
  */
-public class ImageAlphaExtractBatchController extends BaseImageManufactureBatchController {
+public class ImageAlphaExtractBatchController extends BaseImageEditBatchController {
 
     public ImageAlphaExtractBatchController() {
-        baseTitle = Languages.message("ImageAlphaExtract");
+        baseTitle = message("ImageAlphaExtract");
 
         operationType = VisitHistory.OperationType.Alpha;
 
@@ -45,36 +46,55 @@ public class ImageAlphaExtractBatchController extends BaseImageManufactureBatchC
     }
 
     @Override
-    public String handleFile(File srcFile, File targetPath) {
+    public String handleFile(FxTask currentTask, File srcFile, File targetPath) {
         try {
             File target = makeTargetFile(srcFile, targetPath);
             if (target == null) {
-                return Languages.message("Skip");
+                return message("Skip");
             }
 
-            BufferedImage source = ImageFileReaders.readImage(srcFile);
-            BufferedImage[] targets = AlphaTools.extractAlpha(source);
+            BufferedImage source = ImageFileReaders.readImage(currentTask, srcFile);
+            if (source == null) {
+                if (currentTask.isWorking()) {
+                    return message("Failed");
+                } else {
+                    return message("Canceled");
+                }
+            }
+            BufferedImage[] targets = AlphaTools.extractAlpha(currentTask, source);
             if (targets == null) {
-                return Languages.message("Failed");
+                if (currentTask.isWorking()) {
+                    return message("Failed");
+                } else {
+                    return message("Canceled");
+                }
             }
             String prefix = target.getParent() + File.separator + FileNameTools.prefix(target.getName());
             String noAlphaFileName = prefix + "_noAlpha." + targetFileSuffix;
-            ImageFileWriters.writeImageFile(targets[0], attributes, noAlphaFileName);
-            targetFileGenerated(new File(noAlphaFileName));
-
+            if (ImageFileWriters.writeImageFile(currentTask, targets[0], attributes, noAlphaFileName)) {
+                targetFileGenerated(new File(noAlphaFileName));
+            } else if (currentTask.isWorking()) {
+                return message("Failed");
+            } else {
+                return message("Canceled");
+            }
             String alphaFileName = prefix + "_alpha.png";
-            ImageFileWriters.writeImageFile(targets[1], "png", alphaFileName);
-            targetFileGenerated(new File(alphaFileName));
-
-            return Languages.message("Successful");
+            if (ImageFileWriters.writeImageFile(currentTask, targets[1], "png", alphaFileName)) {
+                targetFileGenerated(new File(alphaFileName));
+            } else if (currentTask.isWorking()) {
+                return message("Failed");
+            } else {
+                return message("Canceled");
+            }
+            return message("Successful");
         } catch (Exception e) {
             MyBoxLog.error(e);
-            return Languages.message("Failed");
+            return message("Failed");
         }
     }
 
     @Override
-    protected BufferedImage handleImage(BufferedImage source) {
+    protected BufferedImage handleImage(FxTask currentTask, BufferedImage source) {
         return null;
     }
 

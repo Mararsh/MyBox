@@ -12,6 +12,7 @@ import mara.mybox.db.DerbyBase;
 import mara.mybox.db.table.TableColor;
 import mara.mybox.db.table.TableColorPalette;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.FileTools;
 import org.apache.commons.csv.CSVParser;
@@ -141,9 +142,12 @@ public class ColorDataTools {
         }
     }
 
-    public static List<ColorData> readCSV(File file, boolean reOrder) {
+    public static List<ColorData> readCSV(FxTask task, File file, boolean reOrder) {
         List<ColorData> data = new ArrayList();
-        File validFile = FileTools.removeBOM(file);
+        File validFile = FileTools.removeBOM(task, file);
+        if (validFile == null || (task != null && !task.isWorking())) {
+            return null;
+        }
         try (CSVParser parser = CSVParser.parse(validFile, StandardCharsets.UTF_8, CsvTools.csvFormat())) {
             List<String> names = parser.getHeaderNames();
             if (names == null || (!names.contains("rgba") && !names.contains("rgb"))) {
@@ -151,6 +155,10 @@ public class ColorDataTools {
             }
             int index = 0;
             for (CSVRecord record : parser) {
+                if (task != null && !task.isWorking()) {
+                    parser.close();
+                    return null;
+                }
                 try {
                     ColorData item = new ColorData();
                     if (names.contains("rgba")) {

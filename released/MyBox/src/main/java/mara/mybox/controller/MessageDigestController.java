@@ -16,7 +16,7 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.DateTools;
@@ -205,7 +205,7 @@ public class MessageDigestController extends BaseController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             private long datalen;
 
@@ -213,7 +213,7 @@ public class MessageDigestController extends BaseController {
             protected boolean handle() {
                 try {
                     if (inputType == InputType.File) {
-                        digest = MessageDigestTools.messageDigest(sourceFile, algorithm);
+                        digest = MessageDigestTools.messageDigest(this, sourceFile, algorithm);
                         datalen = sourceFile.length();
                     } else {
                         byte[] data = inputArea.getText().getBytes(charset);

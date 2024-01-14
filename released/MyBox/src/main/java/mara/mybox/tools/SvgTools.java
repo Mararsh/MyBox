@@ -14,14 +14,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import javafx.scene.paint.Color;
+import mara.mybox.bufferedimage.AlphaTools;
 import mara.mybox.bufferedimage.ImageQuantization;
 import static mara.mybox.bufferedimage.ImageQuantization.QuantizationAlgorithm.KMeansClustering;
 import mara.mybox.bufferedimage.ImageRGBKMeans;
 import mara.mybox.bufferedimage.PixelsOperation;
 import mara.mybox.controller.BaseController;
 import mara.mybox.controller.ControlImageQuantization;
+import mara.mybox.controller.ControlSvgFromImage;
+import mara.mybox.controller.ControlSvgFromImage.Algorithm;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.imagefile.ImageFileReaders;
 import static mara.mybox.value.Languages.message;
@@ -33,8 +37,10 @@ import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.image.PNGTranscoder;
 import org.apache.fop.svg.PDFTranscoder;
 import org.w3c.dom.*;
-import thridparty.jankovicsandras.ImageTracer;
-import static thridparty.jankovicsandras.ImageTracer.bytetrans;
+import thridparty.miguelemosreverte.ImageTracer;
+import static thridparty.miguelemosreverte.ImageTracer.bytetrans;
+import thridparty.miguelemosreverte.SVGUtils;
+import thridparty.miguelemosreverte.VectorizingUtils;
 
 /**
  * @Author Mara
@@ -46,43 +52,43 @@ public class SvgTools {
     /*
         to image
      */
-    public static File docToImage(BaseController controller, Document doc,
+    public static File docToImage(FxTask task, BaseController controller, Document doc,
             float width, float height, Rectangle area) {
         if (doc == null) {
             return null;
         }
-        return textToImage(controller, XmlTools.transform(doc), width, height, area);
+        return textToImage(task, controller, XmlTools.transform(doc), width, height, area);
     }
 
-    public static File textToImage(BaseController controller, String svg,
+    public static File textToImage(FxTask task, BaseController controller, String svg,
             float width, float height, Rectangle area) {
         if (svg == null || svg.isBlank()) {
             return null;
         }
-        String handled = handleAlpha(controller, svg); // Looks batik does not supper color formats with alpha
+        String handled = handleAlpha(task, controller, svg); // Looks batik does not supper color formats with alpha
         try (ByteArrayInputStream inputStream = new ByteArrayInputStream(handled.getBytes("utf-8"))) {
-            return toImage(controller, inputStream, width, height, area);
+            return toImage(task, controller, inputStream, width, height, area);
         } catch (Exception e) {
             PopTools.showError(controller, e.toString());
             return null;
         }
     }
 
-    public static File fileToImage(BaseController controller, File file,
+    public static File fileToImage(FxTask task, BaseController controller, File file,
             float width, float height, Rectangle area) {
         if (file == null || !file.exists()) {
             return null;
         }
-        return textToImage(controller, TextFileTools.readTexts(file), width, height, area);
+        return textToImage(task, controller, TextFileTools.readTexts(task, file), width, height, area);
     }
 
-    public static BufferedImage pathToImage(BaseController controller, String path) {
+    public static BufferedImage pathToImage(FxTask task, BaseController controller, String path) {
         if (path == null || path.isBlank()) {
             return null;
         }
         String svg = "<svg xmlns=\"http://www.w3.org/2000/svg\" ><path d=\""
                 + path + "\"></path></svg>";
-        File tmpFile = textToImage(controller, svg, -1, -1, null);
+        File tmpFile = textToImage(task, controller, svg, -1, -1, null);
         if (tmpFile == null || !tmpFile.exists()) {
             return null;
         }
@@ -90,10 +96,10 @@ public class SvgTools {
             FileDeleteTools.delete(tmpFile);
             return null;
         }
-        return ImageFileReaders.readImage(tmpFile);
+        return ImageFileReaders.readImage(task, tmpFile);
     }
 
-    public static File toImage(BaseController controller, InputStream inputStream,
+    public static File toImage(FxTask task, BaseController controller, InputStream inputStream,
             float width, float height, Rectangle area) {
         if (inputStream == null) {
             return null;
@@ -128,37 +134,40 @@ public class SvgTools {
     /*
        to pdf
      */
-    public static File docToPDF(BaseController controller, Document doc,
+    public static File docToPDF(FxTask task, BaseController controller, Document doc,
             float width, float height, Rectangle area) {
         if (doc == null) {
             return null;
         }
-        return textToPDF(controller, XmlTools.transform(doc), width, height, area);
+        return textToPDF(task, controller, XmlTools.transform(doc), width, height, area);
     }
 
-    public static File textToPDF(BaseController controller, String svg,
+    public static File textToPDF(FxTask task, BaseController controller, String svg,
             float width, float height, Rectangle area) {
         if (svg == null || svg.isBlank()) {
             return null;
         }
-        String handled = handleAlpha(controller, svg); // Looks batik does not supper color formats with alpha
+        String handled = handleAlpha(task, controller, svg); // Looks batik does not supper color formats with alpha
+        if (handled == null || (task != null && !task.isWorking())) {
+            return null;
+        }
         try (ByteArrayInputStream inputStream = new ByteArrayInputStream(handled.getBytes("utf-8"))) {
-            return toPDF(controller, inputStream, width, height, area);
+            return toPDF(task, controller, inputStream, width, height, area);
         } catch (Exception e) {
             PopTools.showError(controller, e.toString());
             return null;
         }
     }
 
-    public static File fileToPDF(BaseController controller, File file,
+    public static File fileToPDF(FxTask task, BaseController controller, File file,
             float width, float height, Rectangle area) {
         if (file == null || !file.exists()) {
             return null;
         }
-        return textToPDF(controller, TextFileTools.readTexts(file), width, height, area);
+        return textToPDF(task, controller, TextFileTools.readTexts(task, file), width, height, area);
     }
 
-    public static File toPDF(BaseController controller, InputStream inputStream,
+    public static File toPDF(FxTask task, BaseController controller, InputStream inputStream,
             float width, float height, Rectangle area) {
         if (inputStream == null) {
             return null;
@@ -193,16 +202,16 @@ public class SvgTools {
     /*
         color
      */
-    public static String handleAlpha(BaseController controller, String svg) {
+    public static String handleAlpha(FxTask task, BaseController controller, String svg) {
         if (svg == null || svg.isBlank()) {
             return svg;
         }
         try {
-            Document doc = XmlTools.textToDoc(controller, svg);
-            if (doc == null) {
+            Document doc = XmlTools.textToDoc(task, controller, svg);
+            if (doc == null || (task != null && !task.isWorking())) {
                 return svg;
             }
-            handleAlpha(controller, doc);
+            handleAlpha(task, controller, doc);
             return XmlTools.transform(doc);
         } catch (Exception e) {
             PopTools.showError(controller, e.toString());
@@ -210,7 +219,7 @@ public class SvgTools {
         }
     }
 
-    public static boolean handleAlpha(BaseController controller, Node node) {
+    public static boolean handleAlpha(FxTask task, BaseController controller, Node node) {
         if (node == null) {
             return false;
         }
@@ -254,8 +263,11 @@ public class SvgTools {
             NodeList children = node.getChildNodes();
             if (children != null) {
                 for (int i = 0; i < children.getLength(); i++) {
+                    if (task != null && !task.isWorking()) {
+                        return false;
+                    }
                     Node child = children.item(i);
-                    handleAlpha(controller, child);
+                    handleAlpha(task, controller, child);
                 }
             }
             return true;
@@ -306,14 +318,14 @@ public class SvgTools {
     }
 
     public static Document blankDoc(float width, float height) {
-        return XmlTools.textToDoc(null, blankSVG(width, height));
+        return XmlTools.textToDoc(null, null, blankSVG(width, height));
     }
 
     public static Document blankDoc() {
         return blankDoc(500.0f, 500.0f);
     }
 
-    public static Document focus(Document doc, Node node, float bgOpacity) {
+    public static Document focus(FxTask task, Document doc, Node node, float bgOpacity) {
         if (doc == null) {
             return doc;
         }
@@ -329,12 +341,18 @@ public class SvgTools {
         Node targetNode = XmlTools.find(clonedDoc, hierarchyNumber);
         Node cnode = targetNode;
         while (cnode != null) {
+            if (task != null && !task.isWorking()) {
+                return doc;
+            }
             Node parent = cnode.getParentNode();
             if (parent == null) {
                 break;
             }
             NodeList nodes = parent.getChildNodes();
             for (int i = 0; i < nodes.getLength(); i++) {
+                if (task != null && !task.isWorking()) {
+                    return doc;
+                }
                 Node child = nodes.item(i);
                 if (child.equals(cnode) || !(child instanceof Element)) {
                     continue;
@@ -387,8 +405,8 @@ public class SvgTools {
         }
     }
 
-    public static String toText(SVGGraphics2D g) {
-        String s = TextFileTools.readTexts(toFile(g), Charset.forName("utf-8"));
+    public static String toText(FxTask task, SVGGraphics2D g) {
+        String s = TextFileTools.readTexts(task, toFile(g), Charset.forName("utf-8"));
         return s;
 //        if (s == null) {
 //            return null;
@@ -406,68 +424,223 @@ public class SvgTools {
     /*
         image to svg
      */
-    public static File imageToSvgFile(BaseController controller, File imageFile,
-            ControlImageQuantization quantizationController,
-            HashMap<String, Float> options) {
+    public static String imagefileToSvg(FxTask task, BaseController controller,
+            File imageFile, ControlSvgFromImage optionsController) {
         try {
             if (imageFile == null || !imageFile.exists()) {
                 return null;
             }
-            BufferedImage image = ImageFileReaders.readImage(imageFile);
-            String svg = imageToSvg(controller, image, quantizationController, options);
-            if (svg == null || svg.isBlank()) {
+            BufferedImage image = ImageFileReaders.readImage(task, imageFile);
+            if (image == null || (task != null && !task.isWorking())) {
                 return null;
             }
-            File svgFile = FileTmpTools.generateFile("svg");
-            ImageTracer.saveString(svgFile.getAbsolutePath(), svg);
-            return svgFile;
+            return imageToSvg(task, controller, image, optionsController);
         } catch (Exception e) {
             PopTools.showError(controller, e.toString());
             return null;
         }
     }
 
-    public static String imageToSvg(BaseController controller, BufferedImage image,
-            ControlImageQuantization quantizationController,
-            HashMap<String, Float> options) {
+    // https://github.com/miguelemosreverte/imagetracerjava
+    public static String imageToSvg(FxTask task, BaseController controller,
+            BufferedImage inImage, ControlSvgFromImage optionsController) {
+        try {
+            if (optionsController == null || inImage == null) {
+                PopTools.showError(controller, message("InvalidData"));
+                return null;
+            }
+            BufferedImage image = AlphaTools.removeAlpha(task, inImage);
+            switch (optionsController.getQuantization()) {
+                case jankovicsandras:
+                    return jankovicsandras(task, controller, image, optionsController);
+                case mybox:
+                    return mybox(task, controller, image, optionsController);
+                default:
+                    return miguelemosreverte(task, controller, image, optionsController);
+            }
+
+        } catch (Exception e) {
+            PopTools.showError(controller, e.toString());
+            return null;
+        }
+    }
+
+    public static String miguelemosreverte(FxTask task, BaseController controller,
+            BufferedImage image, ControlSvgFromImage optionsController) {
+        try {
+            if (image == null || optionsController == null) {
+                return null;
+            }
+            HashMap<String, Float> options = optionsController.getOptions();
+            options = ImageTracer.checkoptions(options);
+            if (options == null || (task != null && !task.isWorking())) {
+                return null;
+            }
+            ImageTracer.IndexedImage ii
+                    = miguelemosreverteQuantization(task, controller, image, options);
+            if (ii == null || (task != null && !task.isWorking())) {
+                return null;
+            }
+            return miguelemosreverteSVG(task, controller, ii, options);
+        } catch (Exception e) {
+            PopTools.showError(controller, e.toString());
+            return null;
+        }
+    }
+
+    public static ImageTracer.IndexedImage miguelemosreverteQuantization(FxTask task,
+            BaseController controller, BufferedImage image, HashMap<String, Float> options) {
         try {
             if (image == null) {
                 PopTools.showError(controller, message("InvalidData"));
                 return null;
             }
-            options = ImageTracer.checkoptions(options);
-
-            // 1. Color quantization
-            ImageTracer.IndexedImage ii;
-            if (quantizationController != null) {
-                ii = colorQuantization(controller, image, quantizationController);
-            } else {
-                ImageTracer.ImageData imgd = ImageTracer.loadImageData(image);
-                ii = ImageTracer.colorquantization(imgd, null, options);
+            if (options == null || (task != null && !task.isWorking())) {
+                return null;
             }
-
-            // 2. Layer separation and edge detection
-            int[][][] rawlayers = ImageTracer.layering(ii);
-
-            // 3. Batch pathscan
-            ArrayList<ArrayList<ArrayList<Integer[]>>> bps
-                    = ImageTracer.batchpathscan(rawlayers, (int) (Math.floor(options.get("pathomit"))));
-
-            // 4. Batch interpollation
-            ArrayList<ArrayList<ArrayList<Double[]>>> bis = ImageTracer.batchinternodes(bps);
-
-            // 5. Batch tracing
-            ii.layers = ImageTracer.batchtracelayers(bis, options.get("ltres"), options.get("qtres"));
-
-            return ImageTracer.getsvgstring(ii, options);
+            ImageTracer.ImageData imgd = ImageTracer.loadImageData(image);
+            if (imgd == null || (task != null && !task.isWorking())) {
+                return null;
+            }
+            byte[][] palette = ImageTracer.getPalette(image, options);
+            if (palette == null || (task != null && !task.isWorking())) {
+                return null;
+            }
+            return VectorizingUtils.colorquantization(imgd, palette, options);
         } catch (Exception e) {
             PopTools.showError(controller, e.toString());
             return null;
         }
     }
 
-    public static ImageTracer.IndexedImage colorQuantization(BaseController controller,
-            BufferedImage image, ControlImageQuantization quantization) {
+    public static String miguelemosreverteSVG(FxTask task, BaseController controller,
+            ImageTracer.IndexedImage ii, HashMap<String, Float> options) {
+        try {
+            if (ii == null || (task != null && !task.isWorking())) {
+                return null;
+            }
+
+            // 2. Layer separation and edge detection
+            int[][][] rawlayers = VectorizingUtils.layering(ii);
+            if (rawlayers == null || (task != null && !task.isWorking())) {
+                return null;
+            }
+
+            // 3. Batch pathscan
+            ArrayList<ArrayList<ArrayList<Integer[]>>> bps
+                    = VectorizingUtils.batchpathscan(rawlayers, (int) (Math.floor(options.get("pathomit"))));
+            if (bps == null || (task != null && !task.isWorking())) {
+                return null;
+            }
+
+            // 4. Batch interpollation
+            ArrayList<ArrayList<ArrayList<Double[]>>> bis = VectorizingUtils.batchinternodes(bps);
+            if (bis == null || (task != null && !task.isWorking())) {
+                return null;
+            }
+
+            // 5. Batch tracing
+            ii.layers = VectorizingUtils.batchtracelayers(bis, options.get("ltres"), options.get("qtres"));
+            if (ii.layers == null || (task != null && !task.isWorking())) {
+                return null;
+            }
+
+            return SVGUtils.getsvgstring(ii, options);
+        } catch (Exception e) {
+            PopTools.showError(controller, e.toString());
+            return null;
+        }
+    }
+
+    public static String jankovicsandras(FxTask task, BaseController controller,
+            BufferedImage image, ControlSvgFromImage optionsController) {
+        try {
+            if (image == null || optionsController == null) {
+                return null;
+            }
+            HashMap<String, Float> options = optionsController.getOptions();
+            options = thridparty.jankovicsandras.ImageTracer.checkoptions(options);
+            if (options == null || (task != null && !task.isWorking())) {
+                return null;
+            }
+            thridparty.jankovicsandras.ImageTracer.IndexedImage ii
+                    = jankovicsandrasQuantization(task, controller, image, options);
+            if (ii == null || (task != null && !task.isWorking())) {
+                return null;
+            }
+            return jankovicsandrasSVG(task, controller, ii, options);
+        } catch (Exception e) {
+            PopTools.showError(controller, e.toString());
+            return null;
+        }
+    }
+
+    // https://github.com/jankovicsandras/imagetracerjava
+    public static thridparty.jankovicsandras.ImageTracer.IndexedImage
+            jankovicsandrasQuantization(FxTask task, BaseController controller,
+                    BufferedImage image, HashMap<String, Float> options) {
+        try {
+            if (image == null || options == null) {
+                return null;
+            }
+            thridparty.jankovicsandras.ImageTracer.ImageData imgd
+                    = thridparty.jankovicsandras.ImageTracer.loadImageData(image);
+            if (imgd == null || (task != null && !task.isWorking())) {
+                return null;
+            }
+            return thridparty.jankovicsandras.ImageTracer.colorquantization(imgd, null, options);
+        } catch (Exception e) {
+            PopTools.showError(controller, e.toString());
+            return null;
+        }
+    }
+
+    public static String jankovicsandrasSVG(FxTask task, BaseController controller,
+            thridparty.jankovicsandras.ImageTracer.IndexedImage ii,
+            HashMap<String, Float> options) {
+        try {
+            if (ii == null || (task != null && !task.isWorking())) {
+                return null;
+            }
+
+            // 2. Layer separation and edge detection
+            int[][][] rawlayers = thridparty.jankovicsandras.ImageTracer.layering(ii);
+            if (rawlayers == null || (task != null && !task.isWorking())) {
+                return null;
+            }
+
+            // 3. Batch pathscan
+            ArrayList<ArrayList<ArrayList<Integer[]>>> bps
+                    = thridparty.jankovicsandras.ImageTracer.batchpathscan(rawlayers,
+                            (int) (Math.floor(options.get("pathomit"))));
+            if (bps == null || (task != null && !task.isWorking())) {
+                return null;
+            }
+
+            // 4. Batch interpollation
+            ArrayList<ArrayList<ArrayList<Double[]>>> bis
+                    = thridparty.jankovicsandras.ImageTracer.batchinternodes(bps);
+            if (bis == null || (task != null && !task.isWorking())) {
+                return null;
+            }
+
+            // 5. Batch tracing
+            ii.layers = thridparty.jankovicsandras.ImageTracer.batchtracelayers(bis,
+                    options.get("ltres"), options.get("qtres"));
+            if (ii.layers == null || (task != null && !task.isWorking())) {
+                return null;
+            }
+
+            return thridparty.jankovicsandras.ImageTracer.getsvgstring(ii, options);
+        } catch (Exception e) {
+            PopTools.showError(controller, e.toString());
+            return null;
+        }
+    }
+
+    public static ImageKMeans myboxQuantization(FxTask task,
+            BaseController controller, BufferedImage image,
+            ControlImageQuantization quantization) {
         try {
             ImageKMeans kmeans = ImageKMeans.create();
             kmeans.setAlgorithm(KMeansClustering).
@@ -480,9 +653,51 @@ public class SvgTools {
                     .setFirstColor(quantization.getFirstColorCheck().isSelected())
                     .setOperationType(PixelsOperation.OperationType.Quantization)
                     .setImage(image).setScope(null)
-                    .setIsDithering(quantization.getQuanDitherCheck().isSelected());
-            kmeans.makePalette().operate();
-            return new ImageTracer.IndexedImage(kmeans.getColorIndice(), kmeans.paletteBytes);
+                    .setIsDithering(quantization.getQuanDitherCheck().isSelected())
+                    .setTask(task);
+            kmeans.makePalette().start();
+            return kmeans;
+        } catch (Exception e) {
+            PopTools.showError(controller, e.toString());
+            return null;
+        }
+    }
+
+    public static String mybox(FxTask task, BaseController controller,
+            BufferedImage image, ControlSvgFromImage optionsController) {
+        try {
+            if (image == null || optionsController == null) {
+                return null;
+            }
+            ImageKMeans kmeans = myboxQuantization(task, controller, image,
+                    optionsController.getQuantizationController());
+            if (kmeans == null
+                    || kmeans.paletteBytes == null
+                    || kmeans.getColorIndice() == null
+                    || (task != null && !task.isWorking())) {
+                return null;
+            }
+            HashMap<String, Float> options = optionsController.getOptions();
+            MyBoxLog.console(optionsController.getLayer().name());
+            if (optionsController.getLayer() == Algorithm.jankovicsandras) {
+                options = thridparty.jankovicsandras.ImageTracer.checkoptions(options);
+                if (options == null || (task != null && !task.isWorking())) {
+                    return null;
+                }
+                thridparty.jankovicsandras.ImageTracer.IndexedImage ii
+                        = new thridparty.jankovicsandras.ImageTracer.IndexedImage(
+                                kmeans.getColorIndice(), kmeans.paletteBytes);
+                return jankovicsandrasSVG(task, controller, ii, options);
+            } else {
+                options = ImageTracer.checkoptions(options);
+                if (options == null || (task != null && !task.isWorking())) {
+                    return null;
+                }
+                ImageTracer.IndexedImage ii = new ImageTracer.IndexedImage(
+                        kmeans.getColorIndice(), kmeans.paletteBytes);
+                return miguelemosreverteSVG(task, controller, ii, options);
+            }
+
         } catch (Exception e) {
             PopTools.showError(controller, e.toString());
             return null;
@@ -507,6 +722,9 @@ public class SvgTools {
                 int size = paletteColors.size();
                 paletteBytes = new byte[size + 1][4];
                 for (int i = 0; i < size; i++) {
+                    if (task != null && !task.isWorking()) {
+                        return null;
+                    }
                     int value = paletteColors.get(i).getRGB();
                     paletteBytes[i][3] = bytetrans((byte) (value >>> 24));
                     paletteBytes[i][0] = bytetrans((byte) (value >>> 16));
@@ -523,10 +741,16 @@ public class SvgTools {
                 int height = image.getHeight();
                 colorIndice = new int[height + 2][width + 2];
                 for (int j = 0; j < (height + 2); j++) {
+                    if (task != null && !task.isWorking()) {
+                        return null;
+                    }
                     colorIndice[j][0] = -1;
                     colorIndice[j][width + 1] = -1;
                 }
                 for (int i = 0; i < (width + 2); i++) {
+                    if (task != null && !task.isWorking()) {
+                        return null;
+                    }
                     colorIndice[0][i] = -1;
                     colorIndice[height + 1][i] = -1;
                 }

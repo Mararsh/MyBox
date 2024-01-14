@@ -10,16 +10,15 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import jdk.jshell.JShell;
 import jdk.jshell.SourceCodeAnalysis;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonCurrentTask;
-import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
@@ -39,7 +38,7 @@ public class JShellEditor extends InfoTreeNodeEditor {
     protected JShellController jShellController;
     protected String outputs = "";
     protected JShell jShell;
-    protected SingletonTask resetTask;
+    protected FxTask resetTask;
 
     @FXML
     protected Button clearCodesButton, suggestionsButton;
@@ -56,7 +55,7 @@ public class JShellEditor extends InfoTreeNodeEditor {
     @FXML
     public synchronized void resetJShell() {
         reset();
-        resetTask = new SingletonTask<Void>(this) {
+        resetTask = new FxTask<Void>(this) {
             @Override
             protected boolean handle() {
                 try {
@@ -100,7 +99,7 @@ public class JShellEditor extends InfoTreeNodeEditor {
         startButton.applyCss();
         startButton.setUserData("started");
         jShellController.rightPaneCheck.setSelected(true);
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             @Override
             protected boolean handle() {
                 return handleCodes(codes);
@@ -211,10 +210,9 @@ public class JShellEditor extends InfoTreeNodeEditor {
     @FXML
     protected void showSyntaxMenu(Event event) {
         try {
-            MenuController controller = MenuController.open(jShellController, valueInput, event);
-            controller.setTitleLabel(message("Syntax"));
-
             String menuName = interfaceName + "Syntax";
+            MenuController controller = MenuController.open(jShellController, valueInput, event, menuName, false);
+            controller.setTitleLabel(message("Syntax"));
 
             List<Node> topButtons = new ArrayList<>();
             Button newLineButton = new Button();
@@ -240,30 +238,6 @@ public class JShellEditor extends InfoTreeNodeEditor {
             });
             topButtons.add(clearInputButton);
 
-            CheckBox closeCheck = new CheckBox();
-            closeCheck.setGraphic(StyleTools.getIconImageView("iconClose.png"));
-            NodeStyleTools.setTooltip(closeCheck, new Tooltip(message("CloseAfterPaste")));
-            closeCheck.setSelected(UserConfig.getBoolean(menuName + "ValuesCloseAfterPaste", true));
-            closeCheck.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent aevent) {
-                    UserConfig.setBoolean(menuName + "ValuesCloseAfterPaste", closeCheck.isSelected());
-                }
-            });
-            topButtons.add(closeCheck);
-
-            CheckBox popCheck = new CheckBox();
-            popCheck.setGraphic(StyleTools.getIconImageView("iconPop.png"));
-            NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWindowWhenMouseHovering")));
-            popCheck.setSelected(UserConfig.getBoolean(menuName + "PopWhenMouseHovering", false));
-            popCheck.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    UserConfig.setBoolean(menuName + "PopWhenMouseHovering", popCheck.isSelected());
-                }
-            });
-            topButtons.add(popCheck);
-
             controller.addFlowPane(topButtons);
 
             PopTools.addButtonsPane(controller, valueInput, Arrays.asList(
@@ -274,13 +248,13 @@ public class JShellEditor extends InfoTreeNodeEditor {
                     "short maxShort = Short.MAX_VALUE, minShort = Short.MIN_VALUE;",
                     "String s1 =\"Hello\";",
                     "String[] sArray = new String[3]; "
-            ), menuName);
+            ));
             PopTools.addButtonsPane(controller, valueInput, Arrays.asList(
                     ";", " , ", "( )", " = ", " { } ", "[ ]", "\"", " + ", " - ", " * ", " / "
-            ), menuName);
+            ));
             PopTools.addButtonsPane(controller, valueInput, Arrays.asList(
                     " == ", " != ", " >= ", " > ", " <= ", " < ", " && ", " || ", " ! "
-            ), menuName);
+            ));
             PopTools.addButtonsPane(controller, valueInput, Arrays.asList(
                     "if (3 > 2) {\n"
                     + "   int a = 1;\n"
@@ -292,23 +266,11 @@ public class JShellEditor extends InfoTreeNodeEditor {
                     + "    double d = Math.PI;\n"
                     + "    if ( d > 3 ) break;\n"
                     + "}"
-            ), menuName);
+            ));
 
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
-    }
-
-    @FXML
-    protected void popHistories(Event event) {
-        if (UserConfig.getBoolean("JShellHistoriesPopWhenMouseHovering", false)) {
-            showHistories(event);
-        }
-    }
-
-    @FXML
-    protected void showHistories(Event event) {
-        PopTools.popStringValues(this, valueInput, event, "JShellHistories", false, true);
     }
 
     @FXML

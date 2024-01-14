@@ -10,24 +10,29 @@ import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.layout.Region;
 import javafx.scene.robot.Robot;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import mara.mybox.db.data.FileBackup;
+import mara.mybox.db.table.TableFileBackup;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControllerTools;
+import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonCurrentTask;
-import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.AppVariables;
@@ -247,8 +252,23 @@ public abstract class BaseController_Actions extends BaseController_Interface {
     }
 
     @FXML
-    public void infoAction() {
+    public void openBackups() {
+        FileBackupController.load((BaseController) this);
+    }
 
+    public FileBackup addBackup(FxTask inTask, File file) {
+        if (file == null || !file.exists()) {
+            return null;
+        }
+        if (tableFileBackup == null) {
+            tableFileBackup = new TableFileBackup();
+        }
+        return tableFileBackup.addBackup(file);
+    }
+
+    @FXML
+    public boolean infoAction() {
+        return false;
     }
 
     @FXML
@@ -269,6 +289,15 @@ public abstract class BaseController_Actions extends BaseController_Interface {
     @FXML
     public void selectAction() {
 
+    }
+
+    @FXML
+    public void previewAction() {
+    }
+
+    @FXML
+    public void operationsAction() {
+        showOperationsMenu(null);
     }
 
     @FXML
@@ -313,7 +342,10 @@ public abstract class BaseController_Actions extends BaseController_Interface {
 
     @FXML
     public void refreshAction() {
-
+        if (sourceFile == null || !checkBeforeNextAction()) {
+            return;
+        }
+        sourceFileChanged(sourceFile);
     }
 
     @FXML
@@ -332,12 +364,12 @@ public abstract class BaseController_Actions extends BaseController_Interface {
     }
 
     @FXML
-    public void withdrawAction() {
-
+    public boolean withdrawAction() {
+        return false;
     }
 
     @FXML
-    public void mybox(ActionEvent event) {
+    public void mybox() {
         openStage(Fxmls.MyboxFxml);
     }
 
@@ -348,6 +380,14 @@ public abstract class BaseController_Actions extends BaseController_Interface {
         }
     }
 
+    @FXML
+    public void setAlwaysOnTop() {
+        if (getMyStage() == null) {
+            return;
+        }
+        myStage.setAlwaysOnTop(true);
+    }
+
     public void clearUserSettings() {
         if (!PopTools.askSure(getTitle(), message("ClearPersonalSettings"), message("SureClear"))) {
             return;
@@ -355,7 +395,7 @@ public abstract class BaseController_Actions extends BaseController_Interface {
         if (task != null && !task.isQuit()) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(myController) {
+        task = new FxSingletonTask<Void>(myController) {
 
             @Override
             protected boolean handle() {
@@ -384,7 +424,7 @@ public abstract class BaseController_Actions extends BaseController_Interface {
 
     public void view(File file) {
         if (file != null) {
-            ControllerTools.openTarget(file.getAbsolutePath());
+            ControllerTools.popTarget(myController, file.getAbsolutePath(), true);
         }
     }
 
@@ -408,6 +448,9 @@ public abstract class BaseController_Actions extends BaseController_Interface {
         PopTools.browseURI(myController, uri);
     }
 
+    /*
+        task
+     */
     public LoadingController handling() {
         return handling(null, Modality.WINDOW_MODAL, null);
     }
@@ -426,16 +469,16 @@ public abstract class BaseController_Actions extends BaseController_Interface {
 
     public LoadingController handling(Task<?> task, Modality block, String info) {
         try {
-            LoadingController controller = (LoadingController) WindowTools.handling(getMyWindow(), Fxmls.LoadingFxml);
+            LoadingController controller = (LoadingController) WindowTools.popupStage(
+                    myController, Fxmls.LoadingFxml);
             controller.init(task);
             if (info != null) {
                 controller.setInfo(info);
             }
-            controller.parentController = myController;
 
             if (task != null) {
-                if (task instanceof SingletonTask) {
-                    SingletonTask sTask = (SingletonTask) task;
+                if (task instanceof FxTask) {
+                    FxTask sTask = (FxTask) task;
                     sTask.setController(myController);
                     sTask.setSelf(sTask);
                     sTask.setLoading(controller);
@@ -459,44 +502,44 @@ public abstract class BaseController_Actions extends BaseController_Interface {
         }
     }
 
-    public LoadingController start(Task<?> task) {
-        return start(task, true, null);
+    public LoadingController start(Task<?> currentTask) {
+        return start(currentTask, true, null);
     }
 
-    public LoadingController start(Task<?> task, String info) {
-        return start(task, true, info);
+    public LoadingController start(Task<?> currentTask, String info) {
+        return start(currentTask, true, info);
     }
 
-    public LoadingController start(Task<?> task, boolean handling) {
-        return start(task, handling, null);
+    public LoadingController start(Task<?> currentTask, boolean handling) {
+        return start(currentTask, handling, null);
     }
 
-    public LoadingController start(Task<?> task, boolean handling, String info) {
+    public LoadingController start(Task<?> currentTask, boolean handling, String info) {
         LoadingController controller = null;
         if (handling) {
-            controller = handling(task, info);
-        } else if (task instanceof SingletonTask) {
-            SingletonTask sTask = (SingletonTask) task;
+            controller = handling(currentTask, info);
+        } else if (currentTask instanceof FxTask) {
+            FxTask sTask = (FxTask) currentTask;
             sTask.setController(myController);
             sTask.setSelf(sTask);
             sTask.setLoading(controller);
         }
-        Thread thread = new Thread(task);
+        Thread thread = new Thread(currentTask);
         thread.setDaemon(false);
         thread.start();
         return controller;
     }
 
-    public void start(Task<?> task, Node node) {
-        if (task instanceof SingletonTask) {
-            SingletonTask sTask = (SingletonTask) task;
+    public void start(Task<?> currentTask, Node node) {
+        if (currentTask instanceof FxTask) {
+            FxTask sTask = (FxTask) currentTask;
             sTask.setController(myController);
             sTask.setSelf(sTask);
             if (node != null) {
                 sTask.setDisableNode(node);
             }
         }
-        Thread thread = new Thread(task);
+        Thread thread = new Thread(currentTask);
         thread.setDaemon(false);
         thread.start();
     }
@@ -540,16 +583,126 @@ public abstract class BaseController_Actions extends BaseController_Interface {
                 browseURI(new File(path).toURI());
                 recordFileOpened(path);
             } else if (result.get() == buttonBrowse) {
-                final ImagesBrowserController controller = ImagesBrowserController.open();
-                if (controller != null) {
-                    controller.loadFiles(fileNames);
-                }
+                ImagesBrowserController.loadNames(fileNames);
             }
 
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
 
+    }
+
+    /*
+        menu
+     */
+    @FXML
+    public void popFunctionsMenu(Event event) {
+        if (UserConfig.getBoolean(baseName + "FunctionsMenuPopWhenMouseHovering", true)) {
+            showFunctionsMenu(event);
+        }
+    }
+
+    @FXML
+    public void showFunctionsMenu(Event fevent) {
+        try {
+            List<MenuItem> items = functionsMenuItems(fevent);
+            if (items == null || items.isEmpty()) {
+                return;
+            }
+            items.add(new SeparatorMenuItem());
+
+            CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
+            popItem.setSelected(UserConfig.getBoolean(baseName + "FunctionsMenuPopWhenMouseHovering", true));
+            popItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean(baseName + "FunctionsMenuPopWhenMouseHovering", popItem.isSelected());
+                }
+            });
+            items.add(popItem);
+
+            popEventMenu(fevent, items);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    public List<MenuItem> functionsMenuItems(Event fevent) {
+        return null;
+    }
+
+    @FXML
+    public void popViewMenu(Event event) {
+        if (UserConfig.getBoolean(baseName + "ViewMenuPopWhenMouseHovering", true)) {
+            showViewMenu(event);
+        }
+    }
+
+    @FXML
+    public void showViewMenu(Event fevent) {
+        try {
+            List<MenuItem> items = viewMenuItems(fevent);
+            if (items == null || items.isEmpty()) {
+                return;
+            }
+
+            items.add(new SeparatorMenuItem());
+
+            CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
+            popItem.setSelected(UserConfig.getBoolean(baseName + "ViewMenuPopWhenMouseHovering", true));
+            popItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean(baseName + "ViewMenuPopWhenMouseHovering", popItem.isSelected());
+                }
+            });
+            items.add(popItem);
+
+            popEventMenu(fevent, items);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    public List<MenuItem> viewMenuItems(Event fevent) {
+        return null;
+    }
+
+    @FXML
+    public void popOperationsMenu(Event event) {
+        if (UserConfig.getBoolean(baseName + "OperationsMenuPopWhenMouseHovering", true)) {
+            showOperationsMenu(event);
+        }
+    }
+
+    @FXML
+    public void showOperationsMenu(Event fevent) {
+        try {
+            List<MenuItem> items = operationsMenuItems(fevent);
+            if (items == null || items.isEmpty()) {
+                return;
+            }
+
+            items.add(new SeparatorMenuItem());
+
+            CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
+            popItem.setSelected(UserConfig.getBoolean(baseName + "OperationsMenuPopWhenMouseHovering", true));
+            popItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean(baseName + "OperationsMenuPopWhenMouseHovering", popItem.isSelected());
+                }
+            });
+            items.add(popItem);
+
+            popEventMenu(fevent, items);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    public List<MenuItem> operationsMenuItems(Event fevent) {
+        return null;
     }
 
     @FXML
@@ -576,7 +729,7 @@ public abstract class BaseController_Actions extends BaseController_Interface {
             return;
         }
         Robot robot = new Robot();
-        popMenu(node, menuItems, robot.getMouseX() + 10, robot.getMouseY() + 10);
+        popMenu(node, menuItems, robot.getMouseX() - 40, robot.getMouseY() + 10);
     }
 
     public void popCenterMenu(Node node, List<MenuItem> menuItems) {

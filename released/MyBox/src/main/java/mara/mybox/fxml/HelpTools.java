@@ -7,13 +7,11 @@ import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.CheckMenuItem;
-import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import mara.mybox.controller.BaseController;
 import mara.mybox.controller.ColorQueryController;
 import mara.mybox.controller.WebBrowserController;
-import mara.mybox.data.FunctionsList;
 import mara.mybox.data.ImageItem;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
@@ -37,7 +35,7 @@ public class HelpTools {
 
     public static void readMe(BaseController controller) {
         try {
-            File htmlFile = makeReadMe(Languages.getLangName());
+            File htmlFile = makeReadMe(Languages.embedFileLang());
             if (htmlFile == null) {
                 return;
             }
@@ -48,12 +46,13 @@ public class HelpTools {
         }
     }
 
-    public static File makeReadMe(String lang) {
+    public static File makeReadMe(String fileLang) {
         try {
-            File htmlFile = new File(AppVariables.MyboxDataPath + "/doc/readme_" + lang + ".html");
-            File mdFile = FxFileTools.getInternalFile("/doc/" + lang + "/README.md",
-                    "doc", "README-" + lang + ".md", true);
-            String html = MarkdownTools.md2html(MarkdownTools.htmlOptions(), mdFile, HtmlStyles.DefaultStyle);
+            File htmlFile = new File(AppVariables.MyboxDataPath + "/doc/readme_" + fileLang + ".html");
+            File mdFile = FxFileTools.getInternalFile("/doc/" + fileLang + "/README.md",
+                    "doc", "README-" + fileLang + ".md", true);
+            String html = MarkdownTools.md2html(null,
+                    MarkdownTools.htmlOptions(), mdFile, HtmlStyles.DefaultStyle);
             if (html == null) {
                 return null;
             }
@@ -193,7 +192,7 @@ public class HelpTools {
 
     public static File aboutData2D() {
         try {
-            String lang = Languages.getLangName();
+            String lang = Languages.embedFileLang();
             File file = FxFileTools.getInternalFile("/doc/" + lang + "/mybox_about_data2d_" + lang + ".html",
                     "doc", "mybox_about_data2d_" + lang + ".html");
             return file;
@@ -205,7 +204,7 @@ public class HelpTools {
 
     public static File aboutGroupingRows() {
         try {
-            String lang = Languages.getLangName();
+            String lang = Languages.embedFileLang();
             File file = FxFileTools.getInternalFile("/doc/" + lang + "/mybox_about_grouping_" + lang + ".html",
                     "doc", "mybox_about_grouping_" + lang + ".html");
             return file;
@@ -217,7 +216,7 @@ public class HelpTools {
 
     public static File aboutRowExpression() {
         try {
-            String lang = Languages.getLangName();
+            String lang = Languages.embedFileLang();
             File file = FxFileTools.getInternalFile("/doc/" + lang + "/mybox_about_row_expression_" + lang + ".html",
                     "doc", "mybox_about_row_expression_" + lang + ".html");
             return file;
@@ -227,9 +226,9 @@ public class HelpTools {
         }
     }
 
-    public static File AboutTreeInformation() {
+    public static File aboutTreeInformation() {
         try {
-            String lang = Languages.getLangName();
+            String lang = Languages.embedFileLang();
             File file = FxFileTools.getInternalFile("/doc/" + lang + "/mybox_about_tree_" + lang + ".html",
                     "doc", "mybox_about_tree_" + lang + ".html");
             return file;
@@ -240,12 +239,12 @@ public class HelpTools {
     }
 
     public static void imageStories(BaseController controller) {
-        SingletonTask task = new SingletonTask<Void>(controller) {
+        FxTask task = new FxTask<Void>(controller) {
             private File htmFile;
 
             @Override
             protected boolean handle() {
-                htmFile = imageStories(this, false, Languages.getLangName());
+                htmFile = imageStories(this, false, AppVariables.CurrentLangName);
                 return htmFile != null && htmFile.exists();
             }
 
@@ -258,7 +257,7 @@ public class HelpTools {
         controller.start(task);
     }
 
-    public static File imageStories(SingletonTask task, boolean isRemote, String lang) {
+    public static File imageStories(FxTask task, boolean isRemote, String lang) {
         try {
             StringTable table = new StringTable(null, message(lang, "StoriesOfImages"));
             List<ImageItem> predefinedItems = ImageItem.predefined(lang);
@@ -339,24 +338,6 @@ public class HelpTools {
         }
     }
 
-    public static File makeFunctionsList(MenuBar menuBar) {
-        try {
-            FunctionsList list = new FunctionsList(menuBar, false);
-            StringTable table = list.make();
-            if (table != null) {
-                File htmlFile = new File(FileTmpTools.generatePath("html")
-                        + "/mybox_functions_" + Languages.getLangName() + ".html");
-                TextFileTools.writeFile(htmlFile, table.html());
-                return htmlFile;
-            } else {
-                return null;
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
-    }
-
     public static File makeInterfaceTips(String lang) {
         try {
             StringBuilder s = new StringBuilder();
@@ -424,11 +405,12 @@ public class HelpTools {
             s.append("\n");
 
             s.append("<H1>").append(message(lang, "ImageTools")).append("</H1>\n");
-            s.append("    <H3>").append(message(lang, "ImageViewer")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "ImageViewerTips")).append("</PRE>\n");
 
             s.append("    <H3>").append(message(lang, "EditImage")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "ImageManufactureTips")).append("</PRE>\n");
+            s.append("    <PRE>").append(message(lang, "ImageEditTips")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message(lang, "Scope")).append("</H3>\n");
+            s.append("    <PRE>").append(message(lang, "ScopeTips")).append("</PRE>\n");
 
             s.append("    <H3>").append(message(lang, "SVGEditor")).append("</H3>\n");
             s.append("    <PRE>").append(message(lang, "SVGEditorTips")).append("</PRE>\n");
@@ -451,6 +433,12 @@ public class HelpTools {
             s.append("    <H3>").append(message(lang, "Thresholding")).append("</H3>\n");
             s.append("    <PRE>").append(message(lang, "ImageThresholdingComments")).append("</PRE>\n");
 
+            s.append("    <H3>").append(message(lang, "Contrast")).append("</H3>\n");
+            s.append("    <PRE>").append(message(lang, "ImageContrastComments")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message(lang, "Shear")).append("</H3>\n");
+            s.append("    <PRE>").append(message(lang, "ImageShearComments")).append("</PRE>\n");
+
             s.append("    <H3>").append(message(lang, "ImageRepeatTile")).append("</H3>\n");
             s.append("    <PRE>").append(message(lang, "ImageRepeatTips")).append("</PRE>\n");
 
@@ -459,9 +447,6 @@ public class HelpTools {
 
             s.append("    <H3>").append(message(lang, "ImageSplit")).append("</H3>\n");
             s.append("    <PRE>").append(message(lang, "ImageSplitTips")).append("</PRE>\n");
-
-            s.append("    <H3>").append(message(lang, "ImagesBrowser")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "ImagesBrowserTips")).append("</PRE>\n");
 
             s.append("    <H3>").append(message(lang, "ImagesEditor")).append("</H3>\n");
             s.append("    <PRE>").append(message(lang, "ImagesEditorTips")).append("</PRE>\n");
@@ -475,6 +460,9 @@ public class HelpTools {
 
             s.append("    <H3>").append(message(lang, "ImageAlphaExtract")).append("</H3>\n");
             s.append("    <PRE>").append(message(lang, "ImageAlphaExtractTips")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message(lang, "ImageToSvg")).append("</H3>\n");
+            s.append("    <PRE>").append(message(lang, "SvgFromImageComments")).append("</PRE>\n");
 
             s.append("    <H3>").append(message(lang, "ImagesInSystemClipboard")).append("</H3>\n");
             s.append("    <PRE>").append(message(lang, "RecordImagesTips")).append("</PRE>\n");
@@ -671,16 +659,28 @@ public class HelpTools {
         }
     }
 
+    public static File xmlExample(String lang) {
+        return FxFileTools.getInternalFile(
+                "/data/examples/Food_consumption_of_China_" + lang + ".xml",
+                "data", "Food_consumption_of_China_" + lang + ".xml", true);
+    }
+
+    public static File jsonExample(String lang) {
+        return FxFileTools.getInternalFile(
+                "/data/examples/Food_consumption_of_China_" + lang + ".json",
+                "data", "Food_consumption_of_China_" + lang + ".json", true);
+    }
+
     public static String charsetLink() {
-        return "https://docs.oracle.com/en/java/javase/20/docs/api/java.base/java/nio/charset/Charset.html";
+        return "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/charset/Charset.html";
     }
 
     public static String uriLink() {
-        return "https://docs.oracle.com/en/java/javase/20/docs/api/java.base/java/net/URI.html";
+        return "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/net/URI.html";
     }
 
     public static String urlLink() {
-        return "https://docs.oracle.com/en/java/javase/20/docs/api/java.base/java/net/URL.html";
+        return "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/net/URL.html";
     }
 
     public static String javaFxCssLink() {
@@ -688,11 +688,11 @@ public class HelpTools {
     }
 
     public static String derbyLink() {
-        return "https://db.apache.org/derby/docs/10.15/ref/index.html";
+        return "https://db.apache.org/derby/docs/10.17/ref/index.html";
     }
 
     public static String sqlLink() {
-        return "https://db.apache.org/derby/docs/10.15/ref/crefsqlj18919.html";
+        return "https://db.apache.org/derby/docs/10.17/ref/crefsqlj18919.html";
     }
 
     public static String javaLink() {
@@ -700,23 +700,23 @@ public class HelpTools {
     }
 
     public static String javaAPILink() {
-        return "https://docs.oracle.com/en/java/javase/20/docs/api/index.html";
+        return "https://docs.oracle.com/en/java/javase/21/docs/api/index.html";
     }
 
     public static String javaMathLink() {
-        return "https://docs.oracle.com/en/java/javase/20/docs/api/java.base/java/lang/Math.html";
+        return "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Math.html";
     }
 
     public static String decimalFormatLink() {
-        return "https://docs.oracle.com/en/java/javase/20/docs/api/java.base/java/text/DecimalFormat.html";
+        return "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/text/DecimalFormat.html";
     }
 
     public static String simpleDateFormatLink() {
-        return "https://docs.oracle.com/en/java/javase/20/docs/api/java.base/java/text/SimpleDateFormat.html";
+        return "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/text/SimpleDateFormat.html";
     }
 
     public static String renderingHintsLink() {
-        return "https://docs.oracle.com/en/java/javase/20/docs/api/java.desktop/java/awt/RenderingHints.html";
+        return "https://docs.oracle.com/en/java/javase/21/docs/api/java.desktop/java/awt/RenderingHints.html";
     }
 
     public static String cssSpecificationLink() {
@@ -760,7 +760,7 @@ public class HelpTools {
     }
 
     public static String jsonZhLink() {
-        return "http://www.vue5.com/json/json_quick_guide.html";
+        return "https://developer.mozilla.org/zh-CN/docs/Learn/JavaScript/Objects/JSON";
     }
 
     public static String jsonSpecification() {
@@ -772,7 +772,7 @@ public class HelpTools {
     }
 
     public static String xmlZhLink() {
-        return "http://www.vue5.com/xml/dom.html";
+        return "https://developer.mozilla.org/zh-CN/docs/Web/XML/XML_introduction";
     }
 
     public static String domSpecification() {
@@ -784,7 +784,7 @@ public class HelpTools {
     }
 
     public static String svgZhLink() {
-        return "http://www.vue5.com/svg/svg_tutorial.html";
+        return "https://developer.mozilla.org/zh-CN/docs/Web/SVG/Tutorial";
     }
 
     public static String svgSpecification() {
@@ -792,15 +792,15 @@ public class HelpTools {
     }
 
     public static String javaShape2DLink() {
-        return "https://docs.oracle.com/en/java/javase/20/docs/api/java.desktop/java/awt/Shape.html";
+        return "https://docs.oracle.com/en/java/javase/21/docs/api/java.desktop/java/awt/Shape.html";
     }
 
     public static String javafxShape2DLink() {
-        return "https://openjfx.io/javadoc/20/javafx.graphics/javafx/scene/shape/Shape.html";
+        return "https://openjfx.io/javadoc/21/javafx.graphics/javafx/scene/shape/Shape.html";
     }
 
     public static String javafxSVGPathLink() {
-        return "https://openjfx.io/javadoc/20/javafx.graphics/javafx/scene/shape/SVGPath.html";
+        return "https://openjfx.io/javadoc/21/javafx.graphics/javafx/scene/shape/SVGPath.html";
     }
 
     public static String expEnLink() {
@@ -817,6 +817,10 @@ public class HelpTools {
 
     public static String jexlRefLink() {
         return "https://commons.apache.org/proper/commons-jexl/reference/index.html";
+    }
+
+    public static String strokeLink() {
+        return "https://openjfx.io/javadoc/21/javafx.graphics/javafx/scene/shape/Shape.html";
     }
 
     public static List<MenuItem> javaHelps() {
@@ -1160,7 +1164,7 @@ public class HelpTools {
         }
     }
 
-    public static List<MenuItem> xmlHelps(boolean popMenu) {
+    public static List<MenuItem> xmlHelps() {
         try {
             List<MenuItem> items = new ArrayList<>();
 
@@ -1190,20 +1194,6 @@ public class HelpTools {
                 }
             });
             items.add(menuItem);
-
-            if (popMenu) {
-                items.add(new SeparatorMenuItem());
-
-                CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
-                hoverMenu.setSelected(UserConfig.getBoolean("XmlHelpsPopWhenMouseHovering", false));
-                hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent event) {
-                        UserConfig.setBoolean("XmlHelpsPopWhenMouseHovering", hoverMenu.isSelected());
-                    }
-                });
-                items.add(hoverMenu);
-            }
 
             return items;
         } catch (Exception e) {
@@ -1245,7 +1235,7 @@ public class HelpTools {
 
             items.add(new SeparatorMenuItem());
 
-            items.addAll(HelpTools.xmlHelps(false));
+            items.addAll(HelpTools.xmlHelps());
 
             items.add(new SeparatorMenuItem());
 
@@ -1255,11 +1245,11 @@ public class HelpTools {
                 items.add(new SeparatorMenuItem());
 
                 CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
-                hoverMenu.setSelected(UserConfig.getBoolean("SvgHelpsPopWhenMouseHovering", false));
+                hoverMenu.setSelected(UserConfig.getBoolean("SVGHelpsPopWhenMouseHovering", false));
                 hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
-                        UserConfig.setBoolean("SvgHelpsPopWhenMouseHovering", hoverMenu.isSelected());
+                        UserConfig.setBoolean("SVGHelpsPopWhenMouseHovering", hoverMenu.isSelected());
                     }
                 });
                 items.add(hoverMenu);
@@ -1358,7 +1348,7 @@ public class HelpTools {
             menuItem.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    WebBrowserController.openAddress("https://openjfx.io/javadoc/20/javafx.graphics/javafx/scene/paint/Color.html", true);
+                    WebBrowserController.openAddress("https://openjfx.io/javadoc/21/javafx.graphics/javafx/scene/paint/Color.html", true);
                 }
             });
             items.add(menuItem);
@@ -1367,7 +1357,7 @@ public class HelpTools {
             menuItem.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    WebBrowserController.openAddress("https://docs.oracle.com/en/java/javase/20/docs/api/java.desktop/java/awt/color/ColorSpace.html", true);
+                    WebBrowserController.openAddress("https://docs.oracle.com/en/java/javase/21/docs/api/java.desktop/java/awt/color/ColorSpace.html", true);
                 }
             });
             items.add(menuItem);
@@ -1376,7 +1366,7 @@ public class HelpTools {
             menuItem.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    WebBrowserController.openAddress("https://docs.oracle.com/en/java/javase/20/docs/api/java.desktop/java/awt/image/ColorModel.html", true);
+                    WebBrowserController.openAddress("https://docs.oracle.com/en/java/javase/21/docs/api/java.desktop/java/awt/image/ColorModel.html", true);
                 }
             });
             items.add(menuItem);
@@ -1477,8 +1467,8 @@ public class HelpTools {
             values.put("stroke-linecap: butt; ", message("StrokeLinecap") + " - " + message("Butt"));
             values.put("stroke-linecap: round; ", message("StrokeLinecap") + " - " + message("Round"));
             values.put("stroke-linecap: square; ", message("StrokeLinecap") + " - " + message("SquareShape"));
-            values.put("stroke-dasharray: 2,5; ", message("StrokeDasharray"));
-            values.put("stroke-dasharray: 20,10,5,5,5,10; ", message("StrokeDasharray"));
+            values.put("stroke-dasharray: 2,5; ", message("StrokeDashArray"));
+            values.put("stroke-dasharray: 20,10,5,5,5,10; ", message("StrokeDashArray"));
             values.put("font-size: 15px; ", message("FontSize"));
             values.put("font-family: sans-serif; ", message("FontFamily"));
             values.put("color: #6900ff; ", message("Color"));

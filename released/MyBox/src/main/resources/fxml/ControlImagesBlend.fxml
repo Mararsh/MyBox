@@ -1,33 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0" 
-      xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlImagesBlend">
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlImagesBlend">
     <children>
         <FlowPane fx:id="modePane" hgap="5.0" prefWidth="200.0" prefWrapLength="0.0" vgap="5.0">
             <children>
                 <Label fx:id="blendLabel" text="%BlendMode" />
-                <Button fx:id="demoButton" mnemonicParsing="false" onAction="#demo">
-                    <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../buttons/Red/iconDemo.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
             </children>
         </FlowPane>
-        <ComboBox fx:id="blendSelector" prefWidth="200.0" />
+      <ListView fx:id="modeList" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="200.0" VBox.vgrow="ALWAYS" />
         <FlowPane fx:id="opacityPane" hgap="5.0" prefWidth="200.0" prefWrapLength="0.0" vgap="5.0">
             <children>
                 <Label text="%Opacity">
@@ -38,7 +28,38 @@
                 <ComboBox fx:id="opacitySelector" editable="true" prefWidth="100.0" />
             </children>
         </FlowPane>
-        <CheckBox fx:id="foreTopCheck" mnemonicParsing="false" selected="true" text="%OnTop" />
-        <CheckBox fx:id="ignoreTransparentCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%IgnoreTransparent" wrapText="true" />
+        <CheckBox fx:id="baseAboveCheck" minHeight="-Infinity" mnemonicParsing="false" text="%BaseImageAboveOverlay" wrapText="true" />
+      <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+         <children>
+            <Label text="%SetValueWhenBaseImageTransparent" />
+            <FlowPane hgap="2.0" prefWrapLength="100.0" vgap="2.0">
+               <children>
+                  <RadioButton fx:id="baseAsOverlayRadio" mnemonicParsing="false" text="%PixelOfOverlay">
+                     <toggleGroup>
+                        <ToggleGroup fx:id="baseGroup" />
+                     </toggleGroup>
+                  </RadioButton>
+                  <RadioButton fx:id="baseAsTransparentRadio" mnemonicParsing="false" selected="true" text="%Transparent" toggleGroup="$baseGroup" />
+                  <RadioButton fx:id="baseBlendRadio" mnemonicParsing="false" text="%Blend" toggleGroup="$baseGroup" />
+               </children>
+            </FlowPane>
+         </children>
+      </VBox>
+      <VBox layoutX="10.0" layoutY="497.0" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+         <children>
+            <Label text="%SetValueWhenOverlayTransparent" />
+            <FlowPane hgap="2.0" prefWrapLength="100.0" vgap="2.0">
+               <children>
+                  <RadioButton fx:id="overlayAsBaseRadio" mnemonicParsing="false" selected="true" text="%PixelOfBaseImage">
+                     <toggleGroup>
+                        <ToggleGroup fx:id="overlayGroup" />
+                     </toggleGroup>
+                  </RadioButton>
+                  <RadioButton fx:id="overlayAsTransparentRadio" mnemonicParsing="false" text="%Transparent" toggleGroup="$overlayGroup" />
+                  <RadioButton fx:id="overlayBlendRadio" mnemonicParsing="false" text="%Blend" toggleGroup="$overlayGroup" />
+               </children>
+            </FlowPane>
+         </children>
+      </VBox>
     </children>
 </VBox>

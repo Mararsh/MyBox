@@ -11,7 +11,7 @@ import java.util.List;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTmpTools;
@@ -70,7 +70,10 @@ public class DataFileCSV extends DataFileText {
         CSVFormat tFormat = targetCSVFile.cvsFormat();
         checkForLoad();
         if (file != null && file.exists() && file.length() > 0) {
-            File validFile = FileTools.removeBOM(file);
+            File validFile = FileTools.removeBOM(task, file);
+            if (validFile == null || (task != null && !task.isWorking())) {
+                return false;
+            }
             try (CSVParser parser = CSVParser.parse(validFile, charset, cvsFormat());
                     CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, tCharset), tFormat)) {
                 if (tHasHeader) {
@@ -79,7 +82,7 @@ public class DataFileCSV extends DataFileText {
                 long index = -1;
                 Iterator<CSVRecord> iterator = parser.iterator();
                 if (iterator != null) {
-                    while (iterator.hasNext() && task != null && !task.isCancelled()) {
+                    while (iterator.hasNext() && task != null && task.isWorking()) {
                         try {
                             CSVRecord record = iterator.next();
                             if (record != null) {
@@ -124,7 +127,7 @@ public class DataFileCSV extends DataFileText {
                 return false;
             }
         }
-        return FileTools.rename(tmpFile, tFile, false);
+        return FileTools.override(tmpFile, tFile);
     }
 
     public boolean writeHeader(CSVPrinter csvPrinter) {
@@ -216,7 +219,7 @@ public class DataFileCSV extends DataFileText {
         }
     }
 
-    public static File csvFile(SingletonTask task, File tmpFile,
+    public static File csvFile(FxTask task, File tmpFile,
             String delimeter, List<String> cols, List<List<String>> data) {
         if (tmpFile == null) {
             return null;
@@ -253,7 +256,7 @@ public class DataFileCSV extends DataFileText {
         return tmpFile;
     }
 
-    public static DataFileCSV save(String dname, SingletonTask task, String delimeter,
+    public static DataFileCSV save(String dname, FxTask task, String delimeter,
             List<Data2DColumn> cols, List<List<String>> data) {
         try {
             if (cols == null || cols.isEmpty()) {
@@ -296,7 +299,8 @@ public class DataFileCSV extends DataFileText {
         }
     }
 
-    public static LinkedHashMap<File, Boolean> save(File path, String filePrefix, List<StringTable> tables) {
+    public static LinkedHashMap<File, Boolean> save(FxTask task, File path,
+            String filePrefix, List<StringTable> tables) {
         if (tables == null || tables.isEmpty()) {
             return null;
         }
@@ -307,10 +311,11 @@ public class DataFileCSV extends DataFileText {
             CSVFormat csvFormat = CsvTools.csvFormat();
             for (StringTable stringTable : tables) {
                 List<List<String>> tableData = stringTable.getData();
-                if (tableData == null || tableData.isEmpty()) {
+                if (tableData == null || tableData.isEmpty()
+                        || (task != null && !task.isWorking())) {
                     continue;
                 }
-                data = TextTools.toArray(tableData);
+                data = TextTools.toArray(task, tableData);
                 if (data == null || data.length == 0) {
                     continue;
                 }
@@ -326,6 +331,10 @@ public class DataFileCSV extends DataFileText {
                         csvPrinter.printRecord(names);
                     }
                     for (int r = 0; r < data.length; r++) {
+                        if (task != null && !task.isWorking()) {
+                            csvPrinter.close();
+                            return null;
+                        }
                         csvPrinter.printRecord(Arrays.asList(data[r]));
                     }
                 } catch (Exception e) {

@@ -10,7 +10,6 @@ import javafx.scene.control.TableColumn;
 import javafx.util.Callback;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.cell.TableRowIndexCell;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -22,20 +21,12 @@ import mara.mybox.value.UserConfig;
 public class ControlLines extends BaseTableViewController<List<DoublePoint>> {
 
     @FXML
-    protected TableColumn<List<DoublePoint>, String> indexColumn, pointsColumn;
+    protected TableColumn<List<DoublePoint>, String> pointsColumn, numberColumn;
 
     @Override
     public void initControls() {
         try {
             super.initControls();
-
-            indexColumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<List<DoublePoint>, String>, ObservableValue<String>>() {
-                @Override
-                public ObservableValue<String> call(TableColumn.CellDataFeatures<List<DoublePoint>, String> param) {
-                    return new SimpleStringProperty("x");
-                }
-            });
-            indexColumn.setCellFactory(new TableRowIndexCell());
 
             pointsColumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<List<DoublePoint>, String>, ObservableValue<String>>() {
                 @Override
@@ -46,6 +37,21 @@ public class ControlLines extends BaseTableViewController<List<DoublePoint>> {
                             return null;
                         }
                         return new SimpleStringProperty(DoublePoint.imageCoordinatesToText(points, " "));
+                    } catch (Exception e) {
+                        return null;
+                    }
+                }
+            });
+
+            numberColumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<List<DoublePoint>, String>, ObservableValue<String>>() {
+                @Override
+                public ObservableValue<String> call(TableColumn.CellDataFeatures<List<DoublePoint>, String> param) {
+                    try {
+                        List<DoublePoint> points = param.getValue();
+                        if (points == null) {
+                            return null;
+                        }
+                        return new SimpleStringProperty(points.size() + "");
                     } catch (Exception e) {
                         return null;
                     }

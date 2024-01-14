@@ -106,4 +106,47 @@ public class SVG {
         return viewBox;
     }
 
+    /*
+        set
+     */
+    public SVG setDoc(Document doc) {
+        this.doc = doc;
+        return this;
+    }
+
+    public SVG setSvgNode(Element svgNode) {
+        this.svgNode = svgNode;
+        return this;
+    }
+
+    public SVG setWidth(float width) {
+        this.width = width;
+        return this;
+    }
+
+    public SVG setHeight(float height) {
+        this.height = height;
+        return this;
+    }
+
+    public SVG setRenderedWidth(float renderedWidth) {
+        this.renderedWidth = renderedWidth;
+        return this;
+    }
+
+    public SVG setRenderedheight(float renderedheight) {
+        this.renderedheight = renderedheight;
+        return this;
+    }
+
+    public SVG setViewBox(Rectangle viewBox) {
+        this.viewBox = viewBox;
+        return this;
+    }
+
+    public SVG setImageFile(File imageFile) {
+        this.imageFile = imageFile;
+        return this;
+    }
+
 }

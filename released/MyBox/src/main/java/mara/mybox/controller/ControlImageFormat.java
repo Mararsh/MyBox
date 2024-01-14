@@ -141,17 +141,10 @@ public class ControlImageFormat extends BaseController {
             });
 
             if (parent instanceof BaseImageController) {
-                binaryController.setParameters(parent, ((BaseImageController) parent).imageView);
+                binaryController.setParameters(((BaseImageController) parent).imageView);
             } else {
-                binaryController.setParameters(parent, null);
+                binaryController.setParameters(null);
             }
-            binaryController.notify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
-                    checkBinary();
-                    notifyChange();
-                }
-            });
 
             icoWidthSelector.getItems().addAll(Arrays.asList(
                     "45", "40", "30", "50", "25", "80", "120", "24", "64", "128", "256", "512", "48", "96", "144"
@@ -471,9 +464,7 @@ public class ControlImageFormat extends BaseController {
             if (isSettingValues || attributes == null || !thisPane.getChildren().contains(binaryBox)) {
                 return;
             }
-            attributes.setBinaryConversion(binaryController.algorithm());
-            attributes.setThreshold(binaryController.threshold());
-            attributes.setIsDithering(binaryController.dither());
+            attributes.setImageBinary(binaryController.pickValues(-1));
 
         } catch (Exception e) {
             MyBoxLog.error(e);

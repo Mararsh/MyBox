@@ -34,6 +34,7 @@ import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.StringTools;
+import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -48,13 +49,32 @@ public class ControlInfoTreeListManage extends ControlInfoTreeList {
     protected InfoTreeManageController manager;
     protected boolean nodeExecutable;
 
-    public void setParameters(InfoTreeManageController parent) {
+    public void setManager(InfoTreeManageController parent) {
         manager = parent;
         nodeExecutable = manager != null
                 && (manager.startButton != null || manager.goButton != null
                 || (manager.editor != null
                 && (manager.editor.startButton != null
                 || manager.editor.goButton != null)));
+    }
+
+    @Override
+    public void loadTree() {
+        try (Connection conn = DerbyBase.getConnection()) {
+            if (tableTreeNode.categoryEmpty(conn, category)) {
+                File file = InfoNode.exampleFile(category);
+                if (file != null) {
+                    if (AppVariables.isTesting
+                            || PopTools.askSure(getTitle(), message("ImportExamples") + ": " + message(category))) {
+                        importExamples();
+                        return;
+                    }
+                }
+            }
+            loadTree(null);
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
     }
 
     public String chainName(Connection conn, InfoNode node) {
@@ -581,8 +601,17 @@ public class ControlInfoTreeListManage extends ControlInfoTreeList {
 
     @FXML
     protected void importAction() {
-        InfoTreeNodeImportController controller = (InfoTreeNodeImportController) childStage(Fxmls.InfoTreeNodeImportFxml);
+        InfoTreeNodeImportController controller
+                = (InfoTreeNodeImportController) childStage(Fxmls.InfoTreeNodeImportFxml);
         controller.setCaller(manager);
+    }
+
+    @FXML
+    protected void importExamples() {
+        InfoTreeNodeImportController controller
+                = (InfoTreeNodeImportController) childStage(Fxmls.InfoTreeNodeImportFxml);
+        controller.setCaller(infoController);
+        controller.importExamples();
     }
 
     @FXML

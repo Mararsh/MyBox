@@ -4,7 +4,7 @@ import java.sql.Connection;
 import java.util.List;
 import javafx.fxml.FXML;
 import mara.mybox.db.data.InfoNode;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.FxTask;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -22,7 +22,7 @@ public abstract class BaseInfoTreeHandleController extends BaseChildController {
 
     public void setParameters(InfoTreeManageController manager) {
         this.manager = manager;
-        handlerController.setParameters(this);
+        handlerController.setParameters(this, manager.category);
     }
 
     public boolean managerRunning() {
@@ -36,7 +36,7 @@ public abstract class BaseInfoTreeHandleController extends BaseChildController {
     }
 
     public boolean matchManagerSelected(InfoNode node) {
-        List<InfoNode> nodes = manager.selectedItems();
+        List<InfoNode> nodes = manager.tableController.selectedItems();
         if (nodes == null || nodes.isEmpty()) {
             return false;
         }
@@ -48,7 +48,7 @@ public abstract class BaseInfoTreeHandleController extends BaseChildController {
         return false;
     }
 
-    public boolean checkOptions(SingletonTask<Void> task, Connection conn,
+    public boolean checkOptions(FxTask<Void> currentTask, Connection conn,
             List<InfoNode> sourceNodes, InfoNode targetNode) {
         if (sourceNodes == null || sourceNodes.isEmpty()) {
             displayError(message("NoData"));
@@ -59,7 +59,7 @@ public abstract class BaseInfoTreeHandleController extends BaseChildController {
             return false;
         }
         for (InfoNode source : sourceNodes) {
-            if (manager.tableTreeNode.equalOrDescendant(task, conn, targetNode, source)) {
+            if (manager.tableTreeNode.equalOrDescendant(currentTask, conn, targetNode, source)) {
                 displayError(message("TreeTargetComments"));
                 return false;
             }

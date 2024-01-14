@@ -267,7 +267,6 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
             return true;
         }
         return false;
-
     }
 
     public boolean controlAltV() {
@@ -317,9 +316,6 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
             return true;
         } else if (okButton != null && !okButton.isDisabled() && okButton.isVisible()) {
             okAction();
-            return true;
-        } else if (setButton != null && !setButton.isDisabled() && setButton.isVisible()) {
-            setAction();
             return true;
         } else if (playButton != null && !playButton.isDisabled() && playButton.isVisible()) {
             playAction();
@@ -490,12 +486,7 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
     }
 
     public boolean controlAltW() {
-        if (cancelButton != null) {
-            if (!cancelButton.isDisabled() && cancelButton.isVisible()) {
-                cancelAction();
-            }
-            return true;
-        } else if (withdrawButton != null) {
+        if (withdrawButton != null) {
             if (!withdrawButton.isDisabled() && withdrawButton.isVisible()) {
                 withdrawAction();
             }
@@ -537,9 +528,9 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
     }
 
     public boolean controlAltU() {
-        if (selectButton != null) {
-            if (!selectButton.isDisabled() && selectButton.isVisible()) {
-                selectAction();
+        if (previewButton != null) {
+            if (!previewButton.isDisabled() && previewButton.isVisible()) {
+                previewAction();
             }
             return true;
         }
@@ -681,14 +672,45 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
     }
 
     public boolean keyF2() {
-        return controlAltS();
+        return controlAltG();
     }
 
     public boolean keyF3() {
-        return controlAltR();
+        return controlAltU();
     }
 
     public boolean keyF4() {
+        return controlAltP();
+    }
+
+    public boolean keyF5() {
+        return controlAltB();
+    }
+
+    public boolean keyF6() {
+        return menuAction();
+    }
+
+    public boolean keyF7() {
+        operationsAction();
+        return true;
+    }
+
+    public boolean keyF8() {
+        mybox();
+        return true;
+    }
+
+    public boolean keyF9() {
+        popTips();
+        return true;
+    }
+
+    public boolean keyF10() {
+        return synchronizeAction();
+    }
+
+    public boolean keyF11() {
         if (leftPaneControl != null) {
             controlLeftPane();
             return true;
@@ -700,7 +722,7 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
         return false;
     }
 
-    public boolean keyF5() {
+    public boolean keyF12() {
         if (rightPaneControl != null) {
             controlRightPane();
             return true;
@@ -712,43 +734,9 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
         return false;
     }
 
-    public boolean keyF6() {
-        return keyESC();
-    }
-
-    public boolean keyF7() {
-        closeStage();
-        return true;
-
-    }
-
-    public boolean keyF8() {
-        refreshInterfaceAndFile();
-        return true;
-
-    }
-
-    public boolean keyF9() {
-        return controlAltG();
-    }
-
-    public boolean keyF10() {
-        return synchronizeAction();
-    }
-
-    public boolean keyF11() {
-        return controlAltB();
-    }
-
-    public boolean keyF12() {
-        return menuAction();
-    }
-
     public boolean keyESC() {
         if (cancelButton != null && !cancelButton.isDisabled() && cancelButton.isVisible()) {
             cancelAction();
-        } else if (withdrawButton != null && !withdrawButton.isDisabled() && withdrawButton.isVisible()) {
-            withdrawAction();
         }
         WindowTools.closeAllPopup();
         MenuController.closeAll();

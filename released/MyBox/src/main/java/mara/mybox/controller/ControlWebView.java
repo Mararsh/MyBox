@@ -46,11 +46,11 @@ import mara.mybox.data.StringTable;
 import mara.mybox.db.data.ImageClipboard;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.ImageClipboardTools;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonCurrentTask;
-import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.WebViewTools;
 import mara.mybox.fxml.WindowTools;
@@ -171,10 +171,8 @@ public class ControlWebView extends BaseController {
                     if (nt == null) {
                         return;
                     }
+                    setWebViewLabel(nt.getMessage());
                     Platform.runLater(() -> {
-                        if (webViewLabel != null) {
-                            webViewLabel.setText(nt.getMessage());
-                        }
                         alertError(nt.getMessage());
                     });
                 }
@@ -241,22 +239,16 @@ public class ControlWebView extends BaseController {
                         if (timer != null) {
                             timer.cancel();
                         }
-                        if (webViewLabel != null) {
-                            webViewLabel.setText(message("Canceled"));
-                        }
+                        setWebViewLabel(message("Canceled"));
                         break;
                     case FAILED:
                         if (timer != null) {
                             timer.cancel();
                         }
-                        if (webViewLabel != null) {
-                            webViewLabel.setText(message("Failed"));
-                        }
+                        setWebViewLabel(message("Failed"));
                         break;
                     default:
-                        if (webViewLabel != null) {
-                            webViewLabel.setText(state.name());
-                        }
+                        setWebViewLabel(state.name());
                 }
             } catch (Exception e) {
                 MyBoxLog.error(e);
@@ -285,16 +277,14 @@ public class ControlWebView extends BaseController {
             if (webViewLabel != null) {
                 String label;
                 if ("mouseover".equals(domEventType)) {
-                    label = href != null ? URLDecoder.decode(href, charset) : tag;
+                    label = href != null ? href : tag;
                 } else if ("mouseout".equals(domEventType)) {
                     label = "";
                 } else {
                     label = null;
                 }
                 if (label != null) {
-                    Platform.runLater(() -> {
-                        webViewLabel.setText(label);
-                    });
+                    setWebViewLabel(label);
                 }
             }
             if (element == null) {
@@ -358,11 +348,7 @@ public class ControlWebView extends BaseController {
     public void statusChanged(WebEvent<String> ev) {
         try {
 //            MyBoxLog.console(ev.toString());
-            if (webViewLabel != null) {
-                Platform.runLater(() -> {
-                    webViewLabel.setText(ev.getData());
-                });
-            }
+            setWebViewLabel(ev.getData());
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -372,7 +358,7 @@ public class ControlWebView extends BaseController {
         try {
             if (webViewLabel != null && nv != null) {
                 Platform.runLater(() -> {
-                    webViewLabel.setText(URLDecoder.decode(nv, charset));
+                    setWebViewLabel(URLDecoder.decode(nv, charset));
                 });
             }
         } catch (Exception e) {
@@ -779,7 +765,13 @@ public class ControlWebView extends BaseController {
      */
     public void setWebViewLabel(String string) {
         if (webViewLabel != null) {
-            webViewLabel.setText(string);
+            Platform.runLater(() -> {
+                if (string == null || string.isBlank()) {
+                    webViewLabel.setText("");
+                } else {
+                    webViewLabel.setText(URLDecoder.decode(string, charset));
+                }
+            });
         }
     }
 
@@ -996,15 +988,15 @@ public class ControlWebView extends BaseController {
             return;
         }
         popInformation(message("Handling..."));
-        SingletonTask bgTask = new SingletonTask<Void>(this) {
+        FxTask bgTask = new FxTask<Void>(this) {
 
             private Image image = null;
 
             @Override
             protected boolean handle() {
                 try {
-                    File imageFile = HtmlReadTools.url2image(address, name);
-                    BufferedImage bi = ImageFileReaders.readImage(imageFile);
+                    File imageFile = HtmlReadTools.url2image(this, address, name);
+                    BufferedImage bi = ImageFileReaders.readImage(this, imageFile);
                     if (bi == null) {
                         return false;
                     }
@@ -1026,10 +1018,10 @@ public class ControlWebView extends BaseController {
                         ImageClipboardTools.copyToMyBoxClipboard(myController, image, ImageClipboard.ImageSource.Link);
                         break;
                     case "edit":
-                        ImageManufactureController.openImage(image);
+                        ImageEditorController.openImage(image);
                         break;
                     default:
-                        ImageViewerController.openImage(image);
+                        ImageEditorController.openImage(image);
                 }
             }
 
@@ -1122,6 +1114,7 @@ public class ControlWebView extends BaseController {
     }
 
     @FXML
+    @Override
     public void popOperationsMenu(Event event) {
         if (UserConfig.getBoolean("WebviewOperationsPopWhenMouseHovering", true)) {
             showOperationsMenu(event);
@@ -1129,6 +1122,7 @@ public class ControlWebView extends BaseController {
     }
 
     @FXML
+    @Override
     public void showOperationsMenu(Event event) {
         try {
             List<MenuItem> items = new ArrayList<>();
@@ -1168,7 +1162,7 @@ public class ControlWebView extends BaseController {
             ToggleGroup clickGroup = new ToggleGroup();
             String currentClick = UserConfig.getString("WebViewWhenLeftClickImageOrLink", "PopMenu");
 
-            RadioMenuItem clickPopMenu = new RadioMenuItem(message("PopMenu"), StyleTools.getIconImageView("iconMenu.png"));
+            RadioMenuItem clickPopMenu = new RadioMenuItem(message("ContextMenu"), StyleTools.getIconImageView("iconMenu.png"));
             clickPopMenu.setSelected(currentClick == null || "PopMenu".equals(currentClick));
             clickPopMenu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -1245,7 +1239,7 @@ public class ControlWebView extends BaseController {
                 items.add(new SeparatorMenuItem());
             }
 
-            Menu operationsMenu = new Menu(message("Operations"), StyleTools.getIconImageView("iconAsterisk.png"));
+            Menu operationsMenu = new Menu(message("Operations"), StyleTools.getIconImageView("iconOperation.png"));
             operationsMenu.getItems().setAll(operationsMenu());
             items.add(operationsMenu);
 
@@ -1545,7 +1539,7 @@ public class ControlWebView extends BaseController {
             return;
         }
         popInformation(message("Handling..."));
-        SingletonTask bgTask = new SingletonTask<Void>(this) {
+        FxTask bgTask = new FxTask<Void>(this) {
 
             private StringTable table;
 
@@ -1615,7 +1609,7 @@ public class ControlWebView extends BaseController {
             return;
         }
         popInformation(message("Handling..."));
-        SingletonTask bgTask = new SingletonTask<Void>(this) {
+        FxTask bgTask = new FxTask<Void>(this) {
 
             private StringTable table;
 
@@ -1687,7 +1681,7 @@ public class ControlWebView extends BaseController {
             return;
         }
         popInformation(message("Handling..."));
-        SingletonTask bgTask = new SingletonTask<Void>(this) {
+        FxTask bgTask = new FxTask<Void>(this) {
 
             private String toc;
 
@@ -1716,7 +1710,7 @@ public class ControlWebView extends BaseController {
             return;
         }
         popInformation(message("Handling..."));
-        SingletonTask bgTask = new SingletonTask<Void>(this) {
+        FxTask bgTask = new FxTask<Void>(this) {
 
             private String texts;
 
@@ -1745,7 +1739,7 @@ public class ControlWebView extends BaseController {
             return;
         }
         popInformation(message("Handling..."));
-        SingletonTask bgTask = new SingletonTask<Void>(this) {
+        FxTask bgTask = new FxTask<Void>(this) {
 
             private List<StringTable> tables;
 
@@ -1793,21 +1787,21 @@ public class ControlWebView extends BaseController {
             popError(message("NoData"));
             return;
         }
-        File file = chooseSaveFile();
+        File file = chooseSaveFile(webEngine.getTitle());
         if (file == null) {
             return;
         }
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             @Override
             protected boolean handle() {
                 File tmpFile = HtmlWriteTools.writeHtml(html);
                 if (tmpFile == null || !tmpFile.exists()) {
                     return false;
                 }
-                return FileTools.rename(tmpFile, file);
+                return FileTools.override(tmpFile, file);
             }
 
             @Override
@@ -1940,7 +1934,7 @@ public class ControlWebView extends BaseController {
 
     @FXML
     public void snapAction() {
-        ImageViewerController.openImage(NodeTools.snap(webView));
+        ImageEditorController.openImage(NodeTools.snap(webView));
     }
 
     @Override

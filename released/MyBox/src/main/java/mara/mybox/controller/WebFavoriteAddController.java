@@ -8,7 +8,7 @@ import mara.mybox.db.data.InfoNode;
 import mara.mybox.db.table.TableTreeNode;
 import mara.mybox.db.table.TableTreeNodeTag;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.IconTools;
 import mara.mybox.value.Fxmls;
@@ -71,15 +71,14 @@ public class WebFavoriteAddController extends ControlInfoTreeList {
             alertError(message("SelectNodeAddInto"));
             return;
         }
-        InfoNode node = selectedItem.getValue();
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
-            private InfoNode data;
+            private InfoNode newNode;
 
             @Override
             protected boolean handle() {
                 try {
-                    File icon = IconTools.readIcon(address, true);
+                    File icon = IconTools.readIcon(this, address, true);
                     String info;
                     if (address != null && !address.isBlank()) {
                         info = address.trim() + "\n";
@@ -93,13 +92,13 @@ public class WebFavoriteAddController extends ControlInfoTreeList {
                         error = message("NoData");
                         return false;
                     }
-                    data = InfoNode.create()
-                            .setParentid(node.getNodeid())
+                    newNode = InfoNode.create()
+                            .setParentid(selectedItem.getValue().getNodeid())
                             .setCategory(category)
                             .setTitle(title)
                             .setInfo(info);
-                    data = tableTreeNode.insertData(data);
-                    return data != null;
+                    newNode = tableTreeNode.insertData(newNode);
+                    return newNode != null;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -108,7 +107,10 @@ public class WebFavoriteAddController extends ControlInfoTreeList {
 
             @Override
             protected void whenSucceeded() {
-                WebFavoritesController.oneOpen(node);
+                WebFavoritesController c = WebFavoritesController.oneOpen();
+                if (!c.treeController.focusNode(newNode)) {
+                    c.treeController.loadTree(newNode);
+                }
                 closeStage();
             }
         };

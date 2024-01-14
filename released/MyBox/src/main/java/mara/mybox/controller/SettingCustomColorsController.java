@@ -73,7 +73,7 @@ public class SettingCustomColorsController extends BaseChildController {
 
     public void updateView() {
         try {
-            Image image = StyleTools.makeImage("iconAdd.png", darkColor, lightColor);
+            Image image = StyleTools.makeImage(null, "iconAdd.png", darkColor, lightColor);
             if (image != null) {
                 exampleView.setImage(image);
             }
@@ -91,7 +91,7 @@ public class SettingCustomColorsController extends BaseChildController {
                 || !light.equalsIgnoreCase(UserConfig.getString("CustomizeColorLight", null))) {
             UserConfig.setString("CustomizeColorDark", dark);
             UserConfig.setString("CustomizeColorLight", light);
-            FileDeleteTools.clearDir(new File(AppVariables.MyboxDataPath + "/buttons/"));
+            FileDeleteTools.clearDir(null, new File(AppVariables.MyboxDataPath + "/buttons/"));
         }
         if (useCheck.isSelected() || AppVariables.ControlColor == StyleData.StyleColor.Customize) {
             StyleTools.setConfigStyleColor(parentController, "customize");
@@ -103,8 +103,8 @@ public class SettingCustomColorsController extends BaseChildController {
 
     public static SettingCustomColorsController open(BaseController parent) {
         try {
-            SettingCustomColorsController controller = (SettingCustomColorsController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.SettingCustomColorsFxml, true);
+            SettingCustomColorsController controller = (SettingCustomColorsController) WindowTools.childStage(
+                    parent, Fxmls.SettingCustomColorsFxml);
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {

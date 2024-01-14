@@ -12,8 +12,10 @@ import java.nio.charset.Charset;
 import java.text.MessageFormat;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -54,13 +56,19 @@ public class MarkdownToTextController extends BaseBatchFileController {
     }
 
     @Override
-    public String handleFile(File srcFile, File targetPath) {
+    public String handleFile(FxTask currentTask, File srcFile, File targetPath) {
         try {
             File target = makeTargetFile(srcFile, targetPath);
             if (target == null) {
                 return Languages.message("Skip");
             }
-            String md = TextFileTools.readTexts(srcFile);
+            String md = TextFileTools.readTexts(currentTask, srcFile);
+            if (currentTask == null || !currentTask.isWorking()) {
+                return message("Canceled");
+            }
+            if (md == null) {
+                return message("Failed");
+            }
             Node document = textParser.parse(md);
             String text = textCollectingVisitor.collectAndGetText(document);
 

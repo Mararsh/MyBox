@@ -21,8 +21,8 @@ import mara.mybox.db.table.TableTreeNode;
 import mara.mybox.db.table.TableTreeNodeTag;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
 import mara.mybox.fxml.cell.TableColorEditCell;
 import static mara.mybox.value.Languages.message;
@@ -189,7 +189,7 @@ public class InfoTreeTagsController extends BaseSysTableController<Tag> {
         if (name == null || name.isBlank()) {
             return;
         }
-        SingletonTask tagTask = new SingletonTask<Void>(this) {
+        FxTask tagTask = new FxTask<Void>(this) {
             private Tag tag = null;
 
             @Override
@@ -218,7 +218,7 @@ public class InfoTreeTagsController extends BaseSysTableController<Tag> {
         if (isSettingValues) {
             return;
         }
-        SingletonTask saveTask = new SingletonTask<Void>(this) {
+        FxTask saveTask = new FxTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -244,15 +244,7 @@ public class InfoTreeTagsController extends BaseSysTableController<Tag> {
             popError(message("SelectToHandle"));
             return;
         }
-        infoController.clearQuery();
-        infoController.queryConditions = " category='" + category + "' AND "
-                + tableTreeNode.tagsCondition(selected);
-        infoController.queryConditionsString = message("Tag") + ": ";
-        for (Tag tag : selected) {
-            infoController.queryConditionsString += " " + tag.getTag();
-        }
-        infoController.loadTableData();
-        infoController.showNodesList(true);
+        infoController.tableController.queryTags(selected);
     }
 
     @FXML
@@ -277,7 +269,7 @@ public class InfoTreeTagsController extends BaseSysTableController<Tag> {
         if (isSettingValues) {
             return;
         }
-        SingletonTask saveTask = new SingletonTask<Void>(this) {
+        FxTask saveTask = new FxTask<Void>(this) {
 
             @Override
             protected boolean handle() {

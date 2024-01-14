@@ -73,7 +73,7 @@ public class InfoTreeNodeEditor extends BaseController {
         }
     }
 
-    public void setParameters(InfoTreeManageController treeController) {
+    public void setManager(InfoTreeManageController treeController) {
         try {
             this.manager = treeController;
             attributesController.setParameters(manager);

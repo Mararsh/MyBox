@@ -220,8 +220,8 @@ public class MenuBytesEditController extends MenuTextEditController {
                     }
                 }
             }
-            MenuBytesEditController controller = (MenuBytesEditController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.MenuBytesEditFxml, false);
+            MenuBytesEditController controller = (MenuBytesEditController) WindowTools.branchStage(
+                    parent, Fxmls.MenuBytesEditFxml);
             controller.setParameters(parent, node, x, y);
             return controller;
         } catch (Exception e) {

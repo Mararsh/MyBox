@@ -9,6 +9,8 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import mara.mybox.data.IntPoint;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
+import mara.mybox.value.Colors;
 
 /**
  * @Author Mara
@@ -20,7 +22,8 @@ import mara.mybox.dev.MyBoxLog;
 public abstract class PixelsOperation {
 
     protected BufferedImage image;
-    protected boolean isDithering, boolPara1, boolPara2, boolPara3, skipTransparent = true, excludeScope;
+    protected boolean isDithering, skipTransparent, excludeScope,
+            boolPara1, boolPara2, boolPara3;
     protected int intPara1, intPara2, intPara3, scopeColor = 0;
     protected float floatPara1, floatPara2;
     protected Color colorPara1, colorPara2;
@@ -33,12 +36,14 @@ public abstract class PixelsOperation {
     protected int thisLineY;
     protected int imageWidth, imageHeight;
 
+    protected FxTask task;
+
     public enum OperationType {
         Smooth, Denoise, Blur, Sharpen, Clarity, Emboss, EdgeDetect,
         Thresholding, Quantization, Gray, BlackOrWhite, Sepia,
         ReplaceColor, Invert, Red, Green, Blue, Yellow, Cyan, Magenta, Mosaic, FrostedGlass,
         Brightness, Saturation, Hue, Opacity, PreOpacity, RGB, Color, Blend,
-        ShowScope, Convolution, Contrast
+        ShowScope, SelectPixels, Convolution, Contrast
     }
 
     public enum ColorActionType {
@@ -47,6 +52,7 @@ public abstract class PixelsOperation {
 
     public PixelsOperation() {
         excludeScope = false;
+        skipTransparent = true;
     }
 
     public PixelsOperation(BufferedImage image, ImageScope scope, OperationType operationType) {
@@ -55,11 +61,20 @@ public abstract class PixelsOperation {
         this.scope = scope;
     }
 
-    public BufferedImage operate() {
+    public BufferedImage start() {
         return operateImage();
     }
 
-    public BufferedImage operateImage() {
+    public Image startFx() {
+        BufferedImage target = start();
+        if (target == null || taskInvalid()) {
+            return null;
+        }
+        return SwingFXUtils.toFXImage(target, null);
+    }
+
+    // do not refer this directly
+    protected BufferedImage operateImage() {
         if (image == null || operationType == null) {
             return image;
         }
@@ -69,7 +84,9 @@ public abstract class PixelsOperation {
                 && operationType != OperationType.Quantization) {
             isDithering = false;
         }
-        scope = ImageScopeFactory.create(scope);
+        if (scope != null) {
+            scope = ImageScopeFactory.create(scope);
+        }
         if (scope != null && scope.getScopeType() == ImageScope.ScopeType.Matting) {
             isDithering = false;
             return operateMatting();
@@ -78,23 +95,14 @@ public abstract class PixelsOperation {
         }
     }
 
-    public Image operateFxImage() {
-        BufferedImage target = operate();
-        if (target == null) {
-            return null;
-        }
-        return SwingFXUtils.toFXImage(target, null);
-    }
-
-    protected BufferedImage operateScope() {
+    private BufferedImage operateScope() {
         if (image == null) {
             return image;
         }
         try {
             int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage target = new BufferedImage(imageWidth, imageHeight, imageType);
-            boolean isShowScope = (operationType == OperationType.ShowScope);
-            boolean isWhole = (scope == null || scope.getScopeType() == ImageScope.ScopeType.All);
+            boolean isWhole = (scope == null || scope.isWhole());
             boolean inScope;
             if (isDithering) {
                 thisLine = new Color[imageWidth];
@@ -105,22 +113,22 @@ public abstract class PixelsOperation {
             Color newColor;
             int pixel;
             for (int y = 0; y < image.getHeight(); y++) {
+                if (taskInvalid()) {
+                    return null;
+                }
                 for (int x = 0; x < image.getWidth(); x++) {
+                    if (taskInvalid()) {
+                        return null;
+                    }
                     pixel = image.getRGB(x, y);
                     Color color = new Color(pixel, true);
-                    if (pixel == 0 && skipTransparent) {  // transparency  need write dithering lines while they affect nothing
-                        target.setRGB(x, y, pixel);
-                        newColor = color;
+                    if (pixel == 0 && skipTransparent) {
+                        // transparency  need write dithering lines while they affect nothing
+                        newColor = skipTransparent(target, x, y);
 
                     } else {
 
-                        inScope = isWhole || scope.inScope(x, y, color);
-                        if (excludeScope) {
-                            inScope = !inScope;
-                        }
-                        if (isShowScope) {
-                            inScope = !inScope;
-                        }
+                        inScope = inScope(isWhole, x, y, color);
                         if (isDithering && y == thisLineY) {
                             color = thisLine[x];
                         }
@@ -149,29 +157,34 @@ public abstract class PixelsOperation {
 
     // https://en.wikipedia.org/wiki/Flood_fill
     // https://www.codeproject.com/Articles/6017/QuickFill-An-Efficient-Flood-Fill-Algorithm
-    protected BufferedImage operateMatting() {
+    private BufferedImage operateMatting() {
         try {
-            if (image == null || scope == null) {
+            if (image == null || scope == null || scope.isWhole()) {
                 return image;
             }
-            boolean isShowScope = operationType == OperationType.ShowScope;
             int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage target = new BufferedImage(imageWidth, imageHeight, imageType);
             boolean excluded = scope.isColorExcluded();
             if (excludeScope) {
                 excluded = !excluded;
             }
-            if (isShowScope) {
+            if (operationType == OperationType.ShowScope) {
                 excluded = !excluded;
             }
             if (excluded) {
                 for (int y = 0; y < imageHeight; y++) {
                     for (int x = 0; x < imageWidth; x++) {
+                        if (taskInvalid()) {
+                            return null;
+                        }
                         operatePixel(target, x, y);
                     }
                 }
             } else {
                 target = image.getSubimage(0, 0, imageWidth, imageHeight);
+            }
+            if (taskInvalid()) {
+                return null;
             }
             List<IntPoint> points = scope.getPoints();
             if (points == null || points.isEmpty()) {
@@ -181,12 +194,25 @@ public abstract class PixelsOperation {
             boolean[][] visited = new boolean[imageHeight][imageWidth];
             Queue<IntPoint> queue = new LinkedList<>();
             boolean eightNeighbor = scope.isEightNeighbor();
+            int x, y;
             for (IntPoint point : points) {
-                Color startColor = new Color(image.getRGB(point.getX(), point.getY()), true);
+                if (taskInvalid()) {
+                    return null;
+                }
+                x = point.getX();
+                y = point.getY();
+                if (x < 0 || x >= imageWidth || y < 0 || y >= imageHeight) {
+                    continue;
+                }
+                Color startColor = new Color(image.getRGB(x, y), true);
                 queue.add(point);
                 while (!queue.isEmpty()) {
+                    if (taskInvalid()) {
+                        return null;
+                    }
                     IntPoint p = queue.remove();
-                    int x = p.getX(), y = p.getY();
+                    x = p.getX();
+                    y = p.getY();
                     if (x < 0 || x >= imageWidth || y < 0 || y >= imageHeight
                             || visited[y][x]) {
                         continue;
@@ -196,7 +222,7 @@ public abstract class PixelsOperation {
                     Color color = new Color(pixel, true);
                     if (scope.inColorMatch(startColor, color)) {
                         if (pixel == 0 && skipTransparent) {
-                            target.setRGB(x, y, pixel);
+                            skipTransparent(target, x, y);
                         } else {
                             if (excluded) {
                                 target.setRGB(x, y, pixel);
@@ -226,13 +252,38 @@ public abstract class PixelsOperation {
         }
     }
 
+    protected boolean inScope(boolean isWhole, int x, int y, Color color) {
+        try {
+            boolean inScope = isWhole || scope.inScope(x, y, color);
+            if (excludeScope) {
+                inScope = !inScope;
+            }
+            return inScope;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    protected Color skipTransparent(BufferedImage target, int x, int y) {
+        try {
+            target.setRGB(x, y, 0);
+            return Colors.TRANSPARENT;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     protected Color operatePixel(BufferedImage target, int x, int y) {
-        int pixel = image.getRGB(x, y);
-        Color color = new Color(pixel, true);
-        if (pixel == 0 && skipTransparent) {
-            return color;
-        } else {
-            return operatePixel(target, color, x, y);
+        try {
+            int pixel = image.getRGB(x, y);
+            Color color = new Color(pixel, true);
+            if (pixel == 0 && skipTransparent) {
+                return color;
+            } else {
+                return operatePixel(target, color, x, y);
+            }
+        } catch (Exception e) {
+            return null;
         }
     }
 
@@ -300,6 +351,10 @@ public abstract class PixelsOperation {
     // SubClass should implement this
     protected Color operateColor(Color color) {
         return color;
+    }
+
+    public boolean taskInvalid() {
+        return task != null && !task.isWorking();
     }
 
     /*
@@ -512,6 +567,15 @@ public abstract class PixelsOperation {
 
     public PixelsOperation setExcludeScope(boolean excludeScope) {
         this.excludeScope = excludeScope;
+        return this;
+    }
+
+    public FxTask getTask() {
+        return task;
+    }
+
+    public PixelsOperation setTask(FxTask task) {
+        this.task = task;
         return this;
     }
 

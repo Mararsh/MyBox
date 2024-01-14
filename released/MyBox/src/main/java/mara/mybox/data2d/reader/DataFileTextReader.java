@@ -25,8 +25,11 @@ public class DataFileTextReader extends Data2DReader {
 
     @Override
     public void scanData() {
-        File validFile = FileTools.removeBOM(sourceFile);
-        try ( BufferedReader reader = new BufferedReader(new FileReader(validFile, readerText.getCharset()))) {
+        File validFile = FileTools.removeBOM(task, sourceFile);
+        if (validFile == null || readerStopped()) {
+            return;
+        }
+        try (BufferedReader reader = new BufferedReader(new FileReader(validFile, readerText.getCharset()))) {
             textReader = reader;
             operator.handleData();
             textReader = null;

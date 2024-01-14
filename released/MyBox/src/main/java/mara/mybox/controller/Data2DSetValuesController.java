@@ -7,13 +7,14 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Tab;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.NumberTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -100,7 +101,7 @@ public class Data2DSetValuesController extends BaseData2DTargetsController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -157,16 +158,15 @@ public class Data2DSetValuesController extends BaseData2DTargetsController {
 
     @Override
     public void handleAllTask() {
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             private long count;
 
             @Override
             protected boolean handle() {
                 try {
-                    if (!data2D.isTmpData() && tableController.dataController.backupController != null
-                            && tableController.dataController.backupController.needBackup()) {
-                        tableController.dataController.backupController.addBackup(task, data2D.getFile());
+                    if (!data2D.isTmpData() && UserConfig.getBoolean(tableController.baseName + "BackupWhenSave", true)) {
+                        addBackup(this, data2D.getFile());
                     }
                     data2D.startTask(this, filterController.filter);
                     count = data2D.setValue(checkedColsIndices, valueController.setValue, valueController.errorContinueCheck.isSelected());
@@ -513,8 +513,8 @@ public class Data2DSetValuesController extends BaseData2DTargetsController {
      */
     public static Data2DSetValuesController open(ControlData2DLoad tableController) {
         try {
-            Data2DSetValuesController controller = (Data2DSetValuesController) WindowTools.openChildStage(
-                    tableController.getMyWindow(), Fxmls.Data2DSetValuesFxml, false);
+            Data2DSetValuesController controller = (Data2DSetValuesController) WindowTools.branchStage(
+                    tableController, Fxmls.Data2DSetValuesFxml);
             controller.setParameters(tableController);
             controller.requestMouse();
             return controller;

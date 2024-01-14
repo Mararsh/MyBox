@@ -31,7 +31,7 @@ import mara.mybox.data.StringTable;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.HtmlWriteTools;
@@ -107,11 +107,11 @@ public class ControlOCROptions extends BaseController {
             tesseractPathController.type(VisitHistory.FileType.All)
                     .isDirectory(false).mustExist(true).permitNull(true)
                     .defaultFile("win".equals(os) ? new File("D:\\Programs\\Tesseract-OCR\\tesseract.exe") : new File("/bin/tesseract"))
-                    .baseName(baseName).savedName("TesseractPath").init();
+                    .baseName(baseName).savedName("TesseractPath").initFile();
 
             dataPathController.isDirectory(true).mustExist(true).permitNull(false)
                     .defaultFile("win".equals(os) ? new File("D:\\Programs\\Tesseract-OCR\\tessdata") : new File("/usr/local/share/tessdata/"))
-                    .baseName(baseName).savedName(OCRTools.TessDataPath).init();
+                    .baseName(baseName).savedName(OCRTools.TessDataPath).initFile();
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -294,7 +294,7 @@ public class ControlOCROptions extends BaseController {
                 languagesController.selectNames(selectedNames);
                 isSettingValues = false;
             } else {
-                currentOCRFilesLabel.setText(MessageFormat.format(message("CurrentDataFiles"), message("NoData")));
+                currentOCRFilesLabel.setText(MessageFormat.format(message("CurrentDataFiles"), message("SelectToHandle")));
                 currentOCRFilesLabel.setStyle(UserConfig.badStyle());
             }
 
@@ -340,8 +340,8 @@ public class ControlOCROptions extends BaseController {
             if (tesseractRadio.isSelected()) {
                 if (parentController != null && parentController instanceof ImageOCRController) {
                     ImageOCRController ocrController = (ImageOCRController) parentController;
-                    if (ocrController.ocrTabPane.getTabs().contains(ocrController.regionsTab)) {
-                        ocrController.ocrTabPane.getTabs().removeAll(ocrController.regionsTab, ocrController.wordsTab);
+                    if (ocrController.resultsTabPane.getTabs().contains(ocrController.regionsTab)) {
+                        ocrController.resultsTabPane.getTabs().removeAll(ocrController.regionsTab, ocrController.wordsTab);
                     }
                 }
                 tesseractPathController.thisPane.setDisable(false);
@@ -350,8 +350,8 @@ public class ControlOCROptions extends BaseController {
             } else {
                 if (parentController != null && parentController instanceof ImageOCRController) {
                     ImageOCRController ocrController = (ImageOCRController) parentController;
-                    if (!ocrController.ocrTabPane.getTabs().contains(ocrController.regionsTab)) {
-                        ocrController.ocrTabPane.getTabs().addAll(ocrController.regionsTab, ocrController.wordsTab);
+                    if (!ocrController.resultsTabPane.getTabs().contains(ocrController.regionsTab)) {
+                        ocrController.resultsTabPane.getTabs().addAll(ocrController.regionsTab, ocrController.wordsTab);
                     }
                 }
                 tesseractPathController.thisPane.setDisable(true);
@@ -429,7 +429,7 @@ public class ControlOCROptions extends BaseController {
                 currentOCRFilesLabel.setStyle(null);
             } else {
                 UserConfig.setString("ImageOCRLanguages", null);
-                currentOCRFilesLabel.setText(MessageFormat.format(message("CurrentDataFiles"), message("NoData")));
+                currentOCRFilesLabel.setText(MessageFormat.format(message("CurrentDataFiles"), message("SelectToHandle")));
                 currentOCRFilesLabel.setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
@@ -501,16 +501,16 @@ public class ControlOCROptions extends BaseController {
         words = null;
     }
 
-    public boolean imageOCR(SingletonTask task, Image image, boolean allData) {
+    public boolean imageOCR(FxTask currentTask, Image image, boolean allData) {
         BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
-        bufferedImage = AlphaTools.removeAlpha(bufferedImage);
-        return bufferedImageOCR(task, bufferedImage, allData);
+        bufferedImage = AlphaTools.removeAlpha(currentTask, bufferedImage);
+        return bufferedImageOCR(currentTask, bufferedImage, allData);
     }
 
-    public boolean bufferedImageOCR(SingletonTask task, BufferedImage bufferedImage, boolean allData) {
+    public boolean bufferedImageOCR(FxTask currentTask, BufferedImage bufferedImage, boolean allData) {
         try {
             clearResults();
-            if (task == null || bufferedImage == null) {
+            if (bufferedImage == null || (currentTask != null && !currentTask.isWorking())) {
                 return false;
             }
             Tesseract instance = tesseract();
@@ -527,13 +527,18 @@ public class ControlOCROptions extends BaseController {
             instance.createDocumentsWithResults​(bufferedImage, tmp,
                     tmp, formats, ITessAPI.TessPageIteratorLevel.RIL_SYMBOL);
             File txtFile = new File(tmp + ".txt");
-            texts = TextFileTools.readTexts(txtFile);
+            texts = TextFileTools.readTexts(currentTask, txtFile);
             FileDeleteTools.delete(txtFile);
-
+            if (texts == null || (currentTask != null && !currentTask.isWorking())) {
+                return false;
+            }
             if (allData) {
                 File htmlFile = new File(tmp + ".hocr");
-                html = TextFileTools.readTexts(htmlFile);
+                html = TextFileTools.readTexts(currentTask, htmlFile);
                 FileDeleteTools.delete(htmlFile);
+                if (html == null || (currentTask != null && !currentTask.isWorking())) {
+                    return false;
+                }
 
                 if (wordLevel >= 0) {
                     words = instance.getWords(bufferedImage, wordLevel);

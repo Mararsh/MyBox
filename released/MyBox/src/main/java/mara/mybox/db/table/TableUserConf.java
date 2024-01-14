@@ -56,8 +56,8 @@ public class TableUserConf extends BaseTable<StringValue> {
             if (values == null || values.isEmpty()) {
                 return false;
             }
-            try ( PreparedStatement intStatement = conn.prepareStatement(InsertInt);
-                     PreparedStatement stringStatement = conn.prepareStatement(InsertString)) {
+            try (PreparedStatement intStatement = conn.prepareStatement(InsertInt);
+                    PreparedStatement stringStatement = conn.prepareStatement(InsertString)) {
                 for (String key : values.keySet()) {
                     String value = values.get(key);
                     switch (value.toLowerCase()) {
@@ -94,7 +94,7 @@ public class TableUserConf extends BaseTable<StringValue> {
     }
 
     public static String readString(String keyName, String defaultValue) {
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             return readString(conn, keyName, defaultValue);
         } catch (Exception e) {
 //            MyBoxLog.debug(e);
@@ -107,10 +107,10 @@ public class TableUserConf extends BaseTable<StringValue> {
             return defaultValue;
         }
         String value = defaultValue;
-        try ( PreparedStatement queryStatement = conn.prepareStatement(QueryString)) {
+        try (PreparedStatement queryStatement = conn.prepareStatement(QueryString)) {
             queryStatement.setString(1, keyName);
             conn.setAutoCommit(true);
-            try ( ResultSet resultSet = queryStatement.executeQuery()) {
+            try (ResultSet resultSet = queryStatement.executeQuery()) {
                 if (resultSet.next()) {
                     value = resultSet.getString(1);
                 }
@@ -120,7 +120,7 @@ public class TableUserConf extends BaseTable<StringValue> {
             if (value == null) {
                 delete(conn, keyName);
                 if (defaultValue != null) {
-                    try ( PreparedStatement insert = conn.prepareStatement(InsertString)) {
+                    try (PreparedStatement insert = conn.prepareStatement(InsertString)) {
                         insert.setString(1, keyName);
                         insert.setString(2, defaultValue);
                         insert.executeUpdate();
@@ -141,7 +141,7 @@ public class TableUserConf extends BaseTable<StringValue> {
     }
 
     public static int readInt(String keyName, int defaultValue) {
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             return readInt(conn, keyName, defaultValue);
         } catch (Exception e) {
 //            MyBoxLog.debug(e);
@@ -158,10 +158,10 @@ public class TableUserConf extends BaseTable<StringValue> {
             return defaultValue;
         }
         int value = defaultValue;
-        try ( PreparedStatement queryStatement = conn.prepareStatement(QueryInt)) {
+        try (PreparedStatement queryStatement = conn.prepareStatement(QueryInt)) {
             queryStatement.setString(1, keyName);
             conn.setAutoCommit(true);
-            try ( ResultSet resultSet = queryStatement.executeQuery()) {
+            try (ResultSet resultSet = queryStatement.executeQuery()) {
                 if (resultSet != null && resultSet.next()) {
                     value = resultSet.getInt(1);
                 }
@@ -174,7 +174,7 @@ public class TableUserConf extends BaseTable<StringValue> {
         if (value == AppValues.InvalidInteger) {
             delete(conn, keyName);
             if (defaultValue != AppValues.InvalidInteger) {
-                try ( PreparedStatement insert = conn.prepareStatement(InsertString)) {
+                try (PreparedStatement insert = conn.prepareStatement(InsertString)) {
                     insert.setString(1, keyName);
                     insert.setInt(2, defaultValue);
                     insert.executeUpdate();
@@ -198,10 +198,10 @@ public class TableUserConf extends BaseTable<StringValue> {
     }
 
     public static int writeString(String keyName, String stringValue) {
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             return writeString(conn, keyName, stringValue);
         } catch (Exception e) {
-            MyBoxLog.error(e);
+//            MyBoxLog.error(e);
             return 0;
         }
     }
@@ -217,7 +217,7 @@ public class TableUserConf extends BaseTable<StringValue> {
             String exist = readString(conn, keyName);
             if (exist != null) {
                 if (!stringValue.equals(exist)) {
-                    try ( PreparedStatement statement = conn.prepareStatement(UpdateString)) {
+                    try (PreparedStatement statement = conn.prepareStatement(UpdateString)) {
                         statement.setString(1, DerbyBase.stringValue(stringValue));
                         statement.setString(2, DerbyBase.stringValue(keyName));
                         return statement.executeUpdate();
@@ -226,7 +226,7 @@ public class TableUserConf extends BaseTable<StringValue> {
                     return 1;
                 }
             } else {
-                try ( PreparedStatement statement = conn.prepareStatement(InsertString)) {
+                try (PreparedStatement statement = conn.prepareStatement(InsertString)) {
                     statement.setString(1, DerbyBase.stringValue(keyName));
                     statement.setString(2, DerbyBase.stringValue(stringValue));
                     return statement.executeUpdate();
@@ -239,7 +239,7 @@ public class TableUserConf extends BaseTable<StringValue> {
     }
 
     public static int writeInt(String keyName, int intValue) {
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             return writeInt(conn, keyName, intValue);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -252,7 +252,7 @@ public class TableUserConf extends BaseTable<StringValue> {
             int exist = readInt(conn, keyName);
             if (exist != AppValues.InvalidInteger) {
                 if (intValue != exist) {
-                    try ( PreparedStatement statement = conn.prepareStatement(UpdateInt)) {
+                    try (PreparedStatement statement = conn.prepareStatement(UpdateInt)) {
                         statement.setInt(1, intValue);
                         statement.setString(2, keyName);
                         return statement.executeUpdate();
@@ -261,7 +261,7 @@ public class TableUserConf extends BaseTable<StringValue> {
                     return 1;
                 }
             } else {
-                try ( PreparedStatement statement = conn.prepareStatement(InsertInt)) {
+                try (PreparedStatement statement = conn.prepareStatement(InsertInt)) {
                     statement.setString(1, keyName);
                     statement.setInt(2, intValue);
                     return statement.executeUpdate();
@@ -285,7 +285,7 @@ public class TableUserConf extends BaseTable<StringValue> {
         if (keyName == null || keyName.isEmpty()) {
             return false;
         }
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             return delete(conn, keyName);
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -297,7 +297,7 @@ public class TableUserConf extends BaseTable<StringValue> {
         if (keyName == null || keyName.isEmpty()) {
             return false;
         }
-        try ( PreparedStatement statement = conn.prepareStatement(Delete)) {
+        try (PreparedStatement statement = conn.prepareStatement(Delete)) {
             statement.setString(1, keyName);
             return statement.executeUpdate() >= 0;
         } catch (Exception e) {
@@ -310,7 +310,7 @@ public class TableUserConf extends BaseTable<StringValue> {
         if (keyName == null || keyName.isEmpty()) {
             return false;
         }
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             return deletePrefix(conn, keyName);
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -322,7 +322,7 @@ public class TableUserConf extends BaseTable<StringValue> {
         if (keyName == null || keyName.isEmpty()) {
             return false;
         }
-        try ( PreparedStatement statement = conn.prepareStatement(DeleteLike)) {
+        try (PreparedStatement statement = conn.prepareStatement(DeleteLike)) {
             statement.setString(1, keyName + "%");
             return statement.executeUpdate() >= 0;
         } catch (Exception e) {

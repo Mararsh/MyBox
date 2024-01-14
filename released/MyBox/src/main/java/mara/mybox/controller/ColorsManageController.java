@@ -40,8 +40,9 @@ import mara.mybox.db.table.TableColorPaletteName;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fximage.PaletteTools;
+import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.HelpTools;
-import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
 import mara.mybox.fxml.cell.TableColorCell;
@@ -479,7 +480,7 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
         if (file == null) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             @Override
             protected boolean handle() {
                 if ("all".equals(type)) {
@@ -532,7 +533,7 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
                     if (task != null && !task.isQuit()) {
                         return;
                     }
-                    task = new SingletonCurrentTask<Void>(this) {
+                    task = new FxSingletonTask<Void>(this) {
 
                         private List<ColorData> data;
 
@@ -568,12 +569,11 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
             }
             List<String> names = new ArrayList<>();
             for (TableColumn column : tableView.getColumns()) {
-                if (!column.equals(rowsSelectionColumn) && !column.equals(orderColumn)
-                        && !column.equals(rgbaColumn) && !column.equals(rgbColumn)) {
+                if (!column.equals(rowsSelectionColumn) && !column.equals(orderColumn)) {
                     names.add(column.getText());
                 }
             }
-            StringTable table = new StringTable(names, title, 1);
+            StringTable table = new StringTable(names, title);
             for (ColorData data : rows) {
                 if (data.needConvert()) {
                     data.convert();
@@ -583,9 +583,14 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
                     if (column.equals(colorValueColumn)) {
                         row.add(data.getColorValue() + "");
                     } else if (column.equals(colorColumn)) {
-                        row.add(data.getRgba());
+                        row.add("<DIV style=\"width: 50px;  background-color:"
+                                + data.getRgb() + "; \">&nbsp;&nbsp;&nbsp;</DIV>");
                     } else if (column.equals(colorNameColumn)) {
                         row.add(data.getColorName());
+                    } else if (column.equals(rgbaColumn)) {
+                        row.add(data.getRgba());
+                    } else if (column.equals(rgbColumn)) {
+                        row.add(data.getRgb());
                     } else if (column.equals(sRGBColumn)) {
                         row.add(data.getSrgb());
                     } else if (column.equals(HSBColumn)) {
@@ -674,7 +679,7 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
         if (task != null && !task.isQuit()) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             private int deletedCount = 0;
 
@@ -696,7 +701,7 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
     }
 
     @Override
-    protected long clearData() {
+    protected long clearData(FxTask currentTask) {
         if (palettesController.isAllColors()) {
             return tableColor.clearData();
         } else {
@@ -719,7 +724,7 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
         if (task != null && !task.isQuit()) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -749,7 +754,7 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
        Data
      */
     @Override
-    public long readDataSize(Connection conn) {
+    public long readDataSize(FxTask currentTask, Connection conn) {
         if (palettesController.isAllColors()) {
             return tableColor.size(conn);
         } else {
@@ -758,7 +763,7 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
     }
 
     @Override
-    public List<ColorData> readPageData(Connection conn) {
+    public List<ColorData> readPageData(FxTask currentTask, Connection conn) {
         if (palettesController.isAllColors()) {
             return tableColor.queryConditions(conn, null, null, startRowOfCurrentPage, pageSize);
         } else {
@@ -773,7 +778,7 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
     }
 
     @Override
-    protected int deleteData(List<ColorData> data) {
+    protected int deleteData(FxTask currentTask, List<ColorData> data) {
         if (data == null || data.isEmpty()) {
             return 0;
         }
@@ -837,7 +842,7 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
         if (selected == null) {
             return false;
         }
-        HtmlPopController.openHtml(selected.html());
+        HtmlPopController.showHtml(this, selected.html());
         return true;
     }
 

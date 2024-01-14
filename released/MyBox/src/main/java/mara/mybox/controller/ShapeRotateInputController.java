@@ -27,7 +27,7 @@ public class ShapeRotateInputController extends BaseShapeTransformController {
     protected ComboBox<String> angleSelector;
 
     @Override
-    public void setParameters(BaseImageController parent, DoubleShape shapeData, DoublePoint point) {
+    public void setParameters(BaseShapeController parent, DoubleShape shapeData, DoublePoint point) {
         try {
             super.setParameters(parent, shapeData, point);
 
@@ -65,21 +65,14 @@ public class ShapeRotateInputController extends BaseShapeTransformController {
             return;
         }
         DoubleShape.translateCenterAbs(pathData, c.getX(), c.getY());
-        if (imageController.supportPath) {
-            imageController.clearMask();
-            imageController.maskPathData = pathData;
-            imageController.showMaskPath();
-            imageController.maskShapeDataChanged();
-        } else {
-            TextPopController.loadText(imageController, pathData.pathAbs());
-        }
+        imageController.handleSvgPath(pathData);
         close();
     }
 
-    public static ShapeRotateInputController open(BaseImageController parent, DoubleShape shapeData, DoublePoint point) {
+    public static ShapeRotateInputController open(BaseShapeController parent, DoubleShape shapeData, DoublePoint point) {
         try {
-            ShapeRotateInputController controller = (ShapeRotateInputController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.ShapeRotateInputFxml, true);
+            ShapeRotateInputController controller = (ShapeRotateInputController) WindowTools.childStage(
+                    parent, Fxmls.ShapeRotateInputFxml);
             controller.setParameters(parent, shapeData, point);
             return controller;
         } catch (Exception e) {

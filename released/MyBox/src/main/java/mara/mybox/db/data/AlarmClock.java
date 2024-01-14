@@ -7,9 +7,9 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.AlarmClockTask;
-import static mara.mybox.value.AppVariables.executorService;
-import static mara.mybox.value.AppVariables.scheduledTasks;
 import static mara.mybox.value.Languages.message;
+import static mara.mybox.value.AppVariables.ExecutorService;
+import static mara.mybox.value.AppVariables.ScheduledTasks;
 
 /**
  * @Author Mara
@@ -91,22 +91,22 @@ public class AlarmClock extends BaseData {
             }
             AlarmClockTask task = new AlarmClockTask(this);
             ScheduledFuture newFuture;
-            if (executorService == null) {
-                executorService = Executors.newScheduledThreadPool(10);
+            if (ExecutorService == null) {
+                ExecutorService = Executors.newScheduledThreadPool(10);
             }
             if (alarmType == AlarmType.NotRepeat) {
-                newFuture = executorService.schedule(task, task.getDelay(), TimeUnit.MILLISECONDS);
+                newFuture = ExecutorService.schedule(task, task.getDelay(), TimeUnit.MILLISECONDS);
             } else {
                 if (task.getPeriod() <= 0) {
                     isActive = false;
                     return 1;
                 }
-                newFuture = executorService.scheduleAtFixedRate(task, task.getDelay(), task.getPeriod(), TimeUnit.MILLISECONDS);
+                newFuture = ExecutorService.scheduleAtFixedRate(task, task.getDelay(), task.getPeriod(), TimeUnit.MILLISECONDS);
             }
-            if (scheduledTasks == null) {
-                scheduledTasks = new HashMap<>();
+            if (ScheduledTasks == null) {
+                ScheduledTasks = new HashMap<>();
             }
-            scheduledTasks.put(scehduleKey(), newFuture);
+            ScheduledTasks.put(scehduleKey(), newFuture);
             return 0;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -116,14 +116,14 @@ public class AlarmClock extends BaseData {
 
     public boolean removeFromSchedule() {
         try {
-            if (scheduledTasks == null) {
+            if (ScheduledTasks == null) {
                 return false;
             }
             String key = scehduleKey();
-            ScheduledFuture future = scheduledTasks.get(key);
+            ScheduledFuture future = ScheduledTasks.get(key);
             if (future != null) {
                 future.cancel(true);
-                scheduledTasks.remove(key);
+                ScheduledTasks.remove(key);
             }
             return true;
         } catch (Exception e) {

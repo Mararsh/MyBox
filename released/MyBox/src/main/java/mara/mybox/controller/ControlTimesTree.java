@@ -17,7 +17,7 @@ import javafx.scene.layout.FlowPane;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ConditionNode;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.tools.DateTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.TimeFormats;
@@ -77,7 +77,7 @@ public class ControlTimesTree extends ControlConditionTree {
         );
         root.setExpanded(true);
         treeView.setRoot(root);
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             private List<String> years;
 
             @Override
@@ -149,7 +149,7 @@ public class ControlTimesTree extends ControlConditionTree {
         if (year == null) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             private List<String> months;
 
             @Override
@@ -217,7 +217,7 @@ public class ControlTimesTree extends ControlConditionTree {
         if (month == null) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             private List<String> days;
 
             @Override
@@ -279,7 +279,7 @@ public class ControlTimesTree extends ControlConditionTree {
         if (day == null) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             private List<String> hours;
 
             @Override
@@ -341,7 +341,7 @@ public class ControlTimesTree extends ControlConditionTree {
         if (hour == null) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             private List<String> minutes;
 
             @Override
@@ -403,7 +403,7 @@ public class ControlTimesTree extends ControlConditionTree {
         if (minute == null) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             private List<Date> times;
 
             @Override

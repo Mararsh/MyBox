@@ -74,20 +74,6 @@ public class JavaScriptController extends InfoTreeManageController {
         tabPane.getTabs().remove(htmlTab);
     }
 
-    @Override
-    public void setStageStatus() {
-        setAsNormal();
-    }
-
-    @Override
-    public void itemClicked() {
-    }
-
-    @Override
-    public void itemDoubleClicked() {
-        editAction();
-    }
-
     @FXML
     protected void showHtmlStyle(Event event) {
         PopTools.popHtmlStyle(event, outputController);
@@ -169,8 +155,8 @@ public class JavaScriptController extends InfoTreeManageController {
      */
     public static JavaScriptController open(ControlWebView controlWebView) {
         try {
-            JavaScriptController controller = (JavaScriptController) WindowTools.openChildStage(
-                    controlWebView.getMyWindow(), Fxmls.JavaScriptFxml, false);
+            JavaScriptController controller = (JavaScriptController) WindowTools.branchStage(
+                    controlWebView, Fxmls.JavaScriptFxml);
             controller.setParameters(controlWebView);
             controller.requestMouse();
             return controller;

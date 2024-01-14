@@ -9,9 +9,9 @@ import mara.mybox.data2d.DataFileExcel;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileCopyTools;
 import mara.mybox.tools.FileDeleteTools;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.MicrosoftDocumentTools;
-import mara.mybox.tools.FileTmpTools;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
@@ -49,7 +49,7 @@ public class DataFileExcelWriter extends Data2DWriter {
         File tmpFile = FileTmpTools.getTempFile();
         rowIndex = 0;
         count = 0;
-        try ( Workbook sourceBook = WorkbookFactory.create(sourceFile)) {
+        try (Workbook sourceBook = WorkbookFactory.create(sourceFile)) {
             if (sheetName != null) {
                 sourceSheet = sourceBook.getSheet(sheetName);
             } else {
@@ -91,11 +91,11 @@ public class DataFileExcelWriter extends Data2DWriter {
             if (failed) {
                 FileDeleteTools.delete(tmpFile);
             } else {
-                try ( FileOutputStream fileOut = new FileOutputStream(tmpFile)) {
+                try (FileOutputStream fileOut = new FileOutputStream(tmpFile)) {
                     targetBook.write(fileOut);
                 }
                 targetBook.close();
-                failed = !FileTools.rename(tmpFile, sourceFile, false);
+                failed = !FileTools.override(tmpFile, sourceFile);
             }
             FileDeleteTools.delete(tmpDataFile);
         } catch (Exception e) {

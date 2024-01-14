@@ -11,8 +11,8 @@ import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColorData;
 import mara.mybox.db.table.TableColorPalette;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.value.Fxmls;
@@ -118,7 +118,7 @@ public class ColorsCustomizeController extends BaseChildController {
             if (task != null) {
                 task.cancel();
             }
-            task = new SingletonCurrentTask<Void>(this) {
+            task = new FxSingletonTask<Void>(this) {
                 private int count = 0;
 
                 @Override
@@ -235,8 +235,8 @@ public class ColorsCustomizeController extends BaseChildController {
         static methods
      */
     public static ColorsCustomizeController open(ColorsManageController manager) {
-        ColorsCustomizeController controller = (ColorsCustomizeController) WindowTools.openChildStage(
-                manager.getMyWindow(), Fxmls.ColorsCustomizeFxml);
+        ColorsCustomizeController controller = (ColorsCustomizeController) WindowTools.childStage(
+                manager, Fxmls.ColorsCustomizeFxml);
         if (controller != null) {
             controller.setParameters(manager);
             controller.requestMouse();

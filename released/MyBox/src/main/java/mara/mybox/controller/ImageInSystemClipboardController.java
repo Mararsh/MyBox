@@ -23,17 +23,17 @@ import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
-import static mara.mybox.value.AppVariables.imageClipboardMonitor;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
+import static mara.mybox.value.AppVariables.ImageClipMonitor;
 
 /**
  * @Author Mara
  * @CreateDate 2019-1-22
  * @License Apache License Version 2.0
  */
-public class ImageInSystemClipboardController extends ImageViewerController {
+public class ImageInSystemClipboardController extends BaseImageController {
 
     private int scaledWidth;
     private String filePrefix;
@@ -48,6 +48,8 @@ public class ImageInSystemClipboardController extends ImageViewerController {
     protected Label recordLabel, numberLabel, filesLabel;
     @FXML
     protected ComboBox<String> intervalSelector, widthSelector;
+    @FXML
+    protected ControlImageFormat formatController;
 
     public ImageInSystemClipboardController() {
         baseTitle = message("ImagesInSystemClipboard");
@@ -125,7 +127,7 @@ public class ImageInSystemClipboardController extends ImageViewerController {
                 }
             });
 
-            targetPathInputController.baseName(baseName).init();
+            targetPathInputController.baseName(baseName).initFile();
 
             targetPathInputController.notify.addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -141,11 +143,13 @@ public class ImageInSystemClipboardController extends ImageViewerController {
                 }
             });
 
+            formatController.setParameters(this, false);
+
             formatController.notify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) {
-                    if (imageClipboardMonitor != null) {
-                        imageClipboardMonitor.setAttributes(formatController.getAttributes());
+                    if (ImageClipMonitor != null) {
+                        ImageClipMonitor.setAttributes(formatController.getAttributes());
                     }
                 }
             });
@@ -162,7 +166,6 @@ public class ImageInSystemClipboardController extends ImageViewerController {
     public void afterSceneLoaded() {
         super.afterSceneLoaded();
         updateStatus();
-        refreshAction();
     }
 
     @Override
@@ -188,12 +191,12 @@ public class ImageInSystemClipboardController extends ImageViewerController {
 
     public void startMonitor() {
         try {
-            if (imageClipboardMonitor != null) {
-                imageClipboardMonitor.cancel();
-                imageClipboardMonitor = null;
+            if (ImageClipMonitor != null) {
+                ImageClipMonitor.cancel();
+                ImageClipMonitor = null;
             }
             checkTargetPath();
-            imageClipboardMonitor = new ImageClipboardMonitor()
+            ImageClipMonitor = new ImageClipboardMonitor()
                     .start(ImageClipboardTools.getMonitorInterval(), formatController.getAttributes(), filePrefix);
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -211,8 +214,8 @@ public class ImageInSystemClipboardController extends ImageViewerController {
                     filePrefix = targetPath.getAbsolutePath() + File.separator
                             + targetPrefixInput.getText().trim() + "-";
                 }
-                if (imageClipboardMonitor != null) {
-                    filesLabel.setText(message("FilesSaved") + ": " + imageClipboardMonitor.getSavedNumber());
+                if (ImageClipMonitor != null) {
+                    filesLabel.setText(message("FilesSaved") + ": " + ImageClipMonitor.getSavedNumber());
                 }
             } else {
                 filePrefix = null;
@@ -220,8 +223,8 @@ public class ImageInSystemClipboardController extends ImageViewerController {
                     filesLabel.setText(message("ImageNotSaveDueInvalidPath"));
                 }
             }
-            if (imageClipboardMonitor != null) {
-                imageClipboardMonitor.setFilePrefix(filePrefix);
+            if (ImageClipMonitor != null) {
+                ImageClipMonitor.setFilePrefix(filePrefix);
             }
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -261,16 +264,17 @@ public class ImageInSystemClipboardController extends ImageViewerController {
             }
             checkTargetPath();
             updateNumbers();
+            refreshAction();
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
     }
 
     public void updateNumbers() {
-        if (imageClipboardMonitor != null) {
-            numberLabel.setText(message("Read") + ": " + imageClipboardMonitor.getRecordNumber() + "   "
-                    + message("Saved") + ": " + imageClipboardMonitor.getSavedNumber() + "   "
-                    + message("Copied") + ": " + imageClipboardMonitor.getCopiedNumber());
+        if (ImageClipMonitor != null) {
+            numberLabel.setText(message("Read") + ": " + ImageClipMonitor.getRecordNumber() + "   "
+                    + message("Saved") + ": " + ImageClipMonitor.getSavedNumber() + "   "
+                    + message("Copied") + ": " + ImageClipMonitor.getCopiedNumber());
         } else {
             numberLabel.setText("");
         }
@@ -278,6 +282,7 @@ public class ImageInSystemClipboardController extends ImageViewerController {
     }
 
     @FXML
+    @Override
     public void refreshAction() {
         Clipboard clipboard = Clipboard.getSystemClipboard();
         if (!clipboard.hasImage()) {
@@ -327,6 +332,7 @@ public class ImageInSystemClipboardController extends ImageViewerController {
             controller = (ImageInSystemClipboardController) WindowTools.openStage(Fxmls.ImageInSystemClipboardFxml);
         }
         controller.requestMouse();
+        controller.updateStatus();
         return controller;
     }
 

@@ -8,7 +8,7 @@ import javafx.scene.control.RadioButton;
 import javafx.stage.Window;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.InfoNode;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -38,7 +38,7 @@ public class InfoTreeNodesCopyController extends BaseInfoTreeHandleController {
         if (!managerRunning()) {
             return;
         }
-        List<InfoNode> sourceNodes = manager.selectedItems();
+        List<InfoNode> sourceNodes = manager.tableController.selectedItems();
         InfoNode targetNode = handlerController.selectedNode;
         if (targetNode == null) {
             popError(message("SelectNodeMoveInto"));
@@ -47,12 +47,12 @@ public class InfoTreeNodesCopyController extends BaseInfoTreeHandleController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
-                    if (!checkOptions(task, conn, sourceNodes, targetNode)) {
+                    if (!checkOptions(this, conn, sourceNodes, targetNode)) {
                         return false;
                     }
                     for (InfoNode sourceNode : sourceNodes) {
@@ -102,7 +102,8 @@ public class InfoTreeNodesCopyController extends BaseInfoTreeHandleController {
             }
         }
         if (controller == null) {
-            controller = (InfoTreeNodesCopyController) WindowTools.openChildStage(manager.getMyWindow(), Fxmls.InfoTreeNodesCopyFxml);
+            controller = (InfoTreeNodesCopyController) WindowTools.childStage(
+                    manager, Fxmls.InfoTreeNodesCopyFxml);
         }
         if (controller != null) {
             controller.setParameters(manager);

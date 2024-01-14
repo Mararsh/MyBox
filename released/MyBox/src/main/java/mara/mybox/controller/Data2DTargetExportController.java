@@ -11,6 +11,7 @@ import javafx.scene.layout.VBox;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTmpTools;
@@ -109,15 +110,18 @@ public class Data2DTargetExportController extends BaseTaskController {
     }
 
     @Override
-    public boolean doTask() {
+    public boolean doTask(FxTask currentTask) {
         try {
             convertController.setExport(targetPath, columns, filePrefix, targetPathController.isSkip());
             if (csvFile != null) {
-                csvFile.startTask(task, null);
+                csvFile.startTask(currentTask, null);
                 csvFile.export(convertController, csvFile.columnIndices());
                 csvFile.stopTask();
             } else {
                 for (List<String> row : dataRows) {
+                    if (currentTask == null || !currentTask.isWorking()) {
+                        break;
+                    }
                     convertController.writeRow(row);
                 }
             }

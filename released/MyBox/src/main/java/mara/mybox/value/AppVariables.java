@@ -21,8 +21,6 @@ import mara.mybox.fxml.TextClipboardMonitor;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.StyleData;
 import mara.mybox.fxml.style.StyleTools;
-import static mara.mybox.value.Languages.getBundle;
-import static mara.mybox.value.UserConfig.getPdfMem;
 import org.apache.pdfbox.io.MemoryUsageSetting;
 
 /**
@@ -32,42 +30,45 @@ import org.apache.pdfbox.io.MemoryUsageSetting;
  */
 public class AppVariables {
 
-    public static String[] appArgs;
+    public static String[] AppArgs;
     public static File MyboxConfigFile, MyBoxLogsPath;
-    public static String MyboxDataPath, AlarmClocksFile;
+    public static String MyboxDataPath, AlarmClocksFile, CurrentLangName;
     public static File MyBoxTempPath, MyBoxDerbyPath, MyBoxLanguagesPath;
     public static List<File> MyBoxReservePaths;
-    public static ResourceBundle currentBundle;
-    public static Map<String, String> userConfigValues = new HashMap<>();
-    public static Map<String, String> systemConfigValues = new HashMap<>();
-    public static ScheduledExecutorService executorService;
-    public static Map<String, ScheduledFuture<?>> scheduledTasks;
-    public static AlarmClockController alarmClockController;
-    public static MemoryUsageSetting pdfMemUsage;
+    public static ResourceBundle CurrentBundle;
+    public static Map<String, String> UserConfigValues = new HashMap<>();
+    public static Map<String, String> SystemConfigValues = new HashMap<>();
+    public static ScheduledExecutorService ExecutorService;
+    public static Map<String, ScheduledFuture<?>> ScheduledTasks;
+    public static AlarmClockController AlarmClockController;
+    public static MemoryUsageSetting PdfMemUsage;
     public static int sceneFontSize, fileRecentNumber, iconSize, thumbnailWidth;
-    public static boolean isChinese, isTesting, handlingExit, ShortcutsCanNotOmitCtrlAlt, icons40px,
+    public static long maxDemoImage;
+    public static boolean isTesting, handlingExit, ShortcutsCanNotOmitCtrlAlt, icons40px,
             closeCurrentWhenOpenTool, recordWindowsSizeLocation, controlDisplayText,
             commitModificationWhenDataCellLoseFocus,
             ignoreDbUnavailable, popErrorLogs, saveDebugLogs, detailedDebugLogs;
-    public static TextClipboardMonitor textClipboardMonitor;
-    public static ImageClipboardMonitor imageClipboardMonitor;
-    public static Timer exitTimer;
-    public static SimpleBooleanProperty errorNotify;
-    public static Map<RenderingHints.Key, Object> imageRenderHints;
+    public static TextClipboardMonitor TextClipMonitor;
+    public static ImageClipboardMonitor ImageClipMonitor;
+    public static Timer ExitTimer;
+    public static SimpleBooleanProperty ErrorNotify;
+    public static Map<RenderingHints.Key, Object> ImageHints;
     public static StyleData.StyleColor ControlColor;
 
     public static void initAppVaribles() {
         try {
-            userConfigValues.clear();
-            systemConfigValues.clear();
-            currentBundle = getBundle();
-            getPdfMem();
+            UserConfigValues.clear();
+            SystemConfigValues.clear();
+            CurrentLangName = Languages.getLangName();
+            CurrentBundle = Languages.getBundle();
+            UserConfig.getPdfMem();
             closeCurrentWhenOpenTool = UserConfig.getBoolean("CloseCurrentWhenOpenTool", false);
             recordWindowsSizeLocation = UserConfig.getBoolean("RecordWindowsSizeLocation", true);
             sceneFontSize = UserConfig.getInt("SceneFontSize", 15);
             fileRecentNumber = UserConfig.getInt("FileRecentNumber", VisitHistory.Default_Max_Histories);
             iconSize = UserConfig.getInt("IconSize", 20);
             thumbnailWidth = UserConfig.getInt("ThumbnailWidth", 100);
+            maxDemoImage = UserConfig.getLong("MaxDemoImage", 1000000);
             ControlColor = StyleTools.getConfigStyleColor();
             controlDisplayText = UserConfig.getBoolean("ControlDisplayText", false);
             icons40px = UserConfig.getBoolean("Icons40px", Toolkit.getDefaultToolkit().getScreenResolution() <= 120);
@@ -77,8 +78,7 @@ public class AppVariables {
             detailedDebugLogs = UserConfig.getBoolean("DetailedDebugLogs", false);
             ignoreDbUnavailable = false;
             popErrorLogs = UserConfig.getBoolean("PopErrorLogs", true);
-            errorNotify = new SimpleBooleanProperty(false);
-            isChinese = Languages.isChinese();
+            ErrorNotify = new SimpleBooleanProperty(false);
             isTesting = false;
 
             Database.BatchSize = UserConfig.getLong("DatabaseBatchSize", 500);
@@ -89,11 +89,11 @@ public class AppVariables {
 
             ImageRenderHints.loadImageRenderHints();
 
-            if (exitTimer != null) {
-                exitTimer.cancel();
+            if (ExitTimer != null) {
+                ExitTimer.cancel();
             }
-            exitTimer = new Timer();
-            exitTimer.schedule(new TimerTask() {
+            ExitTimer = new Timer();
+            ExitTimer.schedule(new TimerTask() {
 
                 @Override
                 public void run() {

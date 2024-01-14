@@ -12,6 +12,7 @@ import mara.mybox.bufferedimage.ImageAttributes;
 import mara.mybox.bufferedimage.ImageConvertTools;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.value.Languages;
@@ -141,7 +142,7 @@ public class PdfConvertImagesBatchController extends BaseBatchPdfController {
     }
 
     @Override
-    public boolean preHandlePages() {
+    public boolean preHandlePages(FxTask currentTask) {
         try {
             renderer = new PDFRenderer(doc);
         } catch (Exception e) {
@@ -152,7 +153,7 @@ public class PdfConvertImagesBatchController extends BaseBatchPdfController {
     }
 
     @Override
-    public int handleCurrentPage() {
+    public int handleCurrentPage(FxTask currentTask) {
         try {
             File tFile = makeTargetFile();
             ImageType imageType = ImageType.RGB;
@@ -165,18 +166,19 @@ public class PdfConvertImagesBatchController extends BaseBatchPdfController {
                     attributes.getDensity(), imageType);
             String targetFormat = attributes.getImageFormat();
             if ("ico".equals(targetFormat) || "icon".equals(targetFormat)) {
-                if (ImageConvertTools.convertToIcon(pageImage, attributes, tFile)) {
+                if (ImageConvertTools.convertToIcon(currentTask, pageImage, attributes, tFile)) {
                     targetFileGenerated(tFile);
                     return 1;
                 } else {
                     return 0;
                 }
             } else {
-                BufferedImage targetImage = ImageConvertTools.convertColorSpace(pageImage, attributes);
+                BufferedImage targetImage
+                        = ImageConvertTools.convertColorSpace(currentTask, pageImage, attributes);
                 if (targetImage == null) {
                     return 0;
                 }
-                if (!ImageFileWriters.writeImageFile(targetImage, attributes, tFile.getAbsolutePath())) {
+                if (!ImageFileWriters.writeImageFile(currentTask, targetImage, attributes, tFile.getAbsolutePath())) {
                     return 0;
                 }
                 targetFileGenerated(tFile);
@@ -223,7 +225,7 @@ public class PdfConvertImagesBatchController extends BaseBatchPdfController {
     }
 
     @Override
-    public void postHandlePages() {
+    public void postHandlePages(FxTask currentTask) {
         renderer = null;
     }
 

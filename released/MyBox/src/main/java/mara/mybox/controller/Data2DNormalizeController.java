@@ -173,8 +173,8 @@ public class Data2DNormalizeController extends BaseData2DTargetsController {
      */
     public static Data2DNormalizeController open(ControlData2DLoad tableController) {
         try {
-            Data2DNormalizeController controller = (Data2DNormalizeController) WindowTools.openChildStage(
-                    tableController.getMyWindow(), Fxmls.Data2DNormalizeFxml, false);
+            Data2DNormalizeController controller = (Data2DNormalizeController) WindowTools.branchStage(
+                    tableController, Fxmls.Data2DNormalizeFxml);
             controller.setParameters(tableController);
             controller.requestMouse();
             return controller;

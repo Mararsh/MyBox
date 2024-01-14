@@ -1,15 +1,18 @@
 package mara.mybox.controller;
 
 import com.vladsch.flexmark.util.data.MutableDataHolder;
+import java.sql.Connection;
 import java.util.Arrays;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.ValidationTools;
 import mara.mybox.tools.MarkdownTools;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -19,7 +22,6 @@ import mara.mybox.value.UserConfig;
  */
 public class ControlMarkdownOptions extends BaseController {
 
-    protected final SimpleBooleanProperty changedNotify;
     protected int indentSize = 4;
 
     @FXML
@@ -27,78 +29,71 @@ public class ControlMarkdownOptions extends BaseController {
     @FXML
     protected CheckBox trimCheck, appendCheck, discardCheck, linesCheck;
 
-    public ControlMarkdownOptions() {
-        changedNotify = new SimpleBooleanProperty(false);
-    }
-
     @Override
     public void initControls() {
-        try {
+        try (Connection conn = DerbyBase.getConnection()) {
             super.initControls();
 
             emulationSelector.getItems().addAll(Arrays.asList(
                     "GITHUB", "MARKDOWN", "GITHUB_DOC", "COMMONMARK", "KRAMDOWN", "PEGDOWN",
                     "FIXED_INDENT", "MULTI_MARKDOWN", "PEGDOWN_STRICT"
             ));
-            emulationSelector.getSelectionModel().select(UserConfig.getString(baseName + "Emulation", "GITHUB"));
-            emulationSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+            emulationSelector.setValue(UserConfig.getString(conn, "MarkdownEmulation", "GITHUB"));
+
+            indentSize = UserConfig.getInt(conn, "MarkdownIndent", 4);
+            if (indentSize < 0) {
+                indentSize = 4;
+            }
+            indentSelector.getItems().addAll(Arrays.asList("4", "2", "0", "6", "8"));
+            indentSelector.setValue(indentSize + "");
+            indentSelector.valueProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    UserConfig.setString(baseName + "Emulation", newValue);
-                    changedNotify.set(!changedNotify.get());
+                    checkIndents();
                 }
             });
 
-            indentSize = UserConfig.getInt(baseName + "Indent", 4);
-            indentSelector.getItems().addAll(Arrays.asList(
-                    "4", "2", "0", "6", "8"
-            ));
-            indentSelector.getSelectionModel().select(indentSize + "");
-            indentSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    try {
-                        int v = Integer.parseInt(newValue);
-                        if (v >= 0) {
-                            indentSize = v;
-                            UserConfig.setInt(baseName + "Indent", v);
-                            changedNotify.set(!changedNotify.get());
-                        }
-                    } catch (Exception e) {
-                    }
-                }
-            });
-
-            trimCheck.setSelected(UserConfig.getBoolean(baseName + "Trim", false));
-            trimCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "Trim", trimCheck.isSelected());
-                    changedNotify.set(!changedNotify.get());
-                }
-            });
-
-            appendCheck.setSelected(UserConfig.getBoolean(baseName + "Append", false));
-            appendCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "Append", appendCheck.isSelected());
-                    changedNotify.set(!changedNotify.get());
-                }
-            });
-
-            discardCheck.setSelected(UserConfig.getBoolean(baseName + "Discard", false));
-            discardCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "Discard", discardCheck.isSelected());
-                    changedNotify.set(!changedNotify.get());
-                }
-            });
-
+            trimCheck.setSelected(UserConfig.getBoolean(conn, "MarkdownTrim", false));
+            appendCheck.setSelected(UserConfig.getBoolean(conn, "MarkdownAppend", false));
+            discardCheck.setSelected(UserConfig.getBoolean(conn, "MarkdownDiscard", false));
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
+    }
+
+    public boolean checkIndents() {
+        int v;
+        try {
+            v = Integer.parseInt(indentSelector.getValue());
+        } catch (Exception e) {
+            v = -1;
+        }
+        if (v >= 0) {
+            indentSize = v;
+            ValidationTools.setEditorNormal(indentSelector);
+            return true;
+        } else {
+            ValidationTools.setEditorBadStyle(indentSelector);
+            popError(message("InvalidParameter") + ": " + message("IndentSize"));
+            return false;
+        }
+    }
+
+    public boolean pickValues() {
+        if (!checkIndents()) {
+            return false;
+        }
+        try (Connection conn = DerbyBase.getConnection()) {
+            UserConfig.setString(conn, "MarkdownEmulation", emulationSelector.getValue());
+            UserConfig.setInt(conn, "MarkdownIndent", indentSize);
+            UserConfig.setBoolean(conn, "MarkdownTrim", trimCheck.isSelected());
+            UserConfig.setBoolean(conn, "MarkdownAppend", appendCheck.isSelected());
+            UserConfig.setBoolean(conn, "MarkdownDiscard", discardCheck.isSelected());
+        } catch (Exception e) {
+//            MyBoxLog.error(e);
+            return false;
+        }
+        return true;
     }
 
     public MutableDataHolder options() {

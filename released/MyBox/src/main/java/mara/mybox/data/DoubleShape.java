@@ -10,7 +10,7 @@ import javafx.event.EventHandler;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import mara.mybox.controller.BaseController;
-import mara.mybox.controller.BaseImageController;
+import mara.mybox.controller.BaseShapeController;
 import mara.mybox.controller.ControlSvgNodeEdit;
 import mara.mybox.controller.TextEditorController;
 import mara.mybox.controller.TextPopController;
@@ -389,8 +389,8 @@ public interface DoubleShape {
                 @Override
                 public void handle(ActionEvent mevent) {
                     if (pathData.toAbs(controller)) {
-                        if (controller instanceof BaseImageController) {
-                            ((BaseImageController) controller).maskShapeDataChanged();
+                        if (controller instanceof BaseShapeController) {
+                            ((BaseShapeController) controller).maskShapeDataChanged();
                         } else if (controller instanceof ControlSvgNodeEdit) {
                             ((ControlSvgNodeEdit) controller).loadPath(pathData.getContent());
                         }
@@ -404,8 +404,8 @@ public interface DoubleShape {
                 @Override
                 public void handle(ActionEvent mevent) {
                     if (pathData.toRel(controller)) {
-                        if (controller instanceof BaseImageController) {
-                            ((BaseImageController) controller).maskShapeDataChanged();
+                        if (controller instanceof BaseShapeController) {
+                            ((BaseShapeController) controller).maskShapeDataChanged();
                         } else if (controller instanceof ControlSvgNodeEdit) {
                             ((ControlSvgNodeEdit) controller).loadPath(pathData.getContent());
                         }
@@ -414,11 +414,33 @@ public interface DoubleShape {
             });
             items.add(menu);
 
+            items.add(new SeparatorMenuItem());
+
+        }
+
+        items.addAll(svgInfoMenu(shapeData));
+
+        items.add(new SeparatorMenuItem());
+
+        return items;
+
+    }
+
+    public static List<MenuItem> svgInfoMenu(DoubleShape shapeData) {
+        if (shapeData == null) {
+            return null;
+        }
+        List<MenuItem> items = new ArrayList<>();
+        MenuItem menu;
+
+        if (shapeData instanceof DoublePath) {
+            DoublePath pathData = (DoublePath) shapeData;
+
             menu = new MenuItem(message("Pop"), StyleTools.getIconImageView("iconPop.png"));
             menu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent mevent) {
-                    TextPopController.loadText(controller, pathData.getContent());
+                    TextPopController.loadText(pathData.getContent());
                 }
             });
             items.add(menu);
@@ -435,54 +457,56 @@ public interface DoubleShape {
 
         if (shapeData instanceof DoublePath || shapeData instanceof DoubleQuadratic
                 || shapeData instanceof DoubleCubic || shapeData instanceof DoubleArc) {
-            menu = new MenuItem(message("DisplaySVGElement") + " - " + message("AbsoluteCoordinate"), StyleTools.getIconImageView("iconView.png"));
+            menu = new MenuItem(message("DisplaySVGElement") + " - " + message("AbsoluteCoordinate"),
+                    StyleTools.getIconImageView("iconView.png"));
             menu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent mevent) {
-                    TextPopController.loadText(controller, shapeData.elementAbs());
+                    TextPopController.loadText(shapeData.elementAbs());
                 }
             });
             items.add(menu);
 
-            menu = new MenuItem(message("DisplaySVGElement") + " - " + message("RelativeCoordinate"), StyleTools.getIconImageView("iconView.png"));
+            menu = new MenuItem(message("DisplaySVGElement") + " - " + message("RelativeCoordinate"),
+                    StyleTools.getIconImageView("iconMeta.png"));
             menu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent mevent) {
-                    TextPopController.loadText(controller, shapeData.elementRel());
+                    TextPopController.loadText(shapeData.elementRel());
                 }
             });
             items.add(menu);
         } else {
-            menu = new MenuItem(message("DisplaySVGElement"), StyleTools.getIconImageView("iconView.png"));
+            menu = new MenuItem(message("DisplaySVGElement"), StyleTools.getIconImageView("iconMeta.png"));
             menu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent mevent) {
-                    TextPopController.loadText(controller, shapeData.elementAbs());
+                    TextPopController.loadText(shapeData.elementAbs());
                 }
             });
             items.add(menu);
 
-            menu = new MenuItem(message("DisplaySVGPath") + " - " + message("AbsoluteCoordinate"), StyleTools.getIconImageView("iconView.png"));
+            menu = new MenuItem(message("DisplaySVGPath") + " - " + message("AbsoluteCoordinate"),
+                    StyleTools.getIconImageView("iconMeta.png"));
             menu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent mevent) {
-                    TextPopController.loadText(controller, "<path d=\"\n" + shapeData.pathAbs() + "\n\">");
+                    TextPopController.loadText("<path d=\"\n" + shapeData.pathAbs() + "\n\">");
                 }
             });
             items.add(menu);
 
-            menu = new MenuItem(message("DisplaySVGPath") + " - " + message("RelativeCoordinate"), StyleTools.getIconImageView("iconView.png"));
+            menu = new MenuItem(message("DisplaySVGPath") + " - " + message("RelativeCoordinate"),
+                    StyleTools.getIconImageView("iconMeta.png"));
             menu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent mevent) {
-                    TextPopController.loadText(controller, "<path d=\"\n" + shapeData.pathRel() + "\n\">");
+                    TextPopController.loadText("<path d=\"\n" + shapeData.pathRel() + "\n\">");
                 }
             });
             items.add(menu);
 
         }
-
-        items.add(new SeparatorMenuItem());
 
         return items;
 

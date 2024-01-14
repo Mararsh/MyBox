@@ -8,9 +8,10 @@ import java.io.File;
 import javafx.fxml.FXML;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.MarkdownTools;
 import mara.mybox.tools.TextFileTools;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -27,7 +28,7 @@ public class MarkdownToPdfController extends BaseBatchFileController {
     protected ControlHtml2PdfOptions optionsController;
 
     public MarkdownToPdfController() {
-        baseTitle = Languages.message("MarkdownToPdf");
+        baseTitle = message("MarkdownToPdf");
         targetFileSuffix = "pdf";
     }
 
@@ -63,17 +64,27 @@ public class MarkdownToPdfController extends BaseBatchFileController {
     }
 
     @Override
-    public String handleFile(File srcFile, File targetPath) {
+    public String handleFile(FxTask currentTask, File srcFile, File targetPath) {
         try {
             File target = makeTargetFile(srcFile, targetPath);
             if (target == null) {
-                return Languages.message("Skip");
+                return message("Skip");
             }
-            Node document = htmlParser.parse(TextFileTools.readTexts(srcFile));
+            String md = TextFileTools.readTexts(currentTask, srcFile);
+            if (currentTask == null || !currentTask.isWorking()) {
+                return message("Canceled");
+            }
+            if (md == null) {
+                return message("Failed");
+            }
+            Node document = htmlParser.parse(md);
             String html = htmlRender.render(document);
 
-            String result = optionsController.html2pdf(html, target);
-            if (Languages.message("Successful").equals(result)) {
+            String result = optionsController.html2pdf(currentTask, html, target);
+            if (currentTask == null || !currentTask.isWorking()) {
+                return message("Canceled");
+            }
+            if (message("Successful").equals(result)) {
                 targetFileGenerated(target);
             }
             return result;

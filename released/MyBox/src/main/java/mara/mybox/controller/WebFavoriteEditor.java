@@ -13,7 +13,7 @@ import mara.mybox.db.data.InfoNode;
 import static mara.mybox.db.data.InfoNode.ValueSeparater;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.tools.IconTools;
 import static mara.mybox.value.Languages.message;
@@ -89,7 +89,7 @@ public class WebFavoriteEditor extends InfoTreeNodeEditor {
             if (icon != null) {
                 File file = new File(icon);
                 if (file.exists()) {
-                    BufferedImage image = ImageFileReaders.readImage(file);
+                    BufferedImage image = ImageFileReaders.readImage(null, file);
                     if (image != null) {
                         iconView.setImage(SwingFXUtils.toFXImage(image, null));
                     }
@@ -113,12 +113,12 @@ public class WebFavoriteEditor extends InfoTreeNodeEditor {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             private File iconFile;
 
             @Override
             protected boolean handle() {
-                iconFile = IconTools.readIcon(address, true);
+                iconFile = IconTools.readIcon(this, address, true);
                 return iconFile != null && iconFile.exists();
             }
 

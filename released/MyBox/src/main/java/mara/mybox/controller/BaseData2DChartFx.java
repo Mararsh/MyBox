@@ -21,8 +21,8 @@ import mara.mybox.data.StringTable;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.NodeTools;
-import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.chart.ChartOptions.ChartType;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.imagefile.ImageFileWriters;
@@ -178,7 +178,7 @@ public abstract class BaseData2DChartFx extends BaseController {
             return;
         }
         Image image = snapChart();
-        SingletonTask htmlTask = new SingletonTask<Void>(this) {
+        FxTask htmlTask = new FxTask<Void>(this) {
 
             private String html;
 
@@ -187,8 +187,11 @@ public abstract class BaseData2DChartFx extends BaseController {
                 try {
                     File imageFile = FileTmpTools.generateFile("jpg");
                     BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
-                    ImageFileWriters.writeImageFile(bufferedImage, "jpg", imageFile.getAbsolutePath());
-
+                    ImageFileWriters.writeImageFile(this,
+                            bufferedImage, "jpg", imageFile.getAbsolutePath());
+                    if (!isWorking()) {
+                        return false;
+                    }
                     StringBuilder s = new StringBuilder();
                     String title = chart.getTitle();
                     if (title != null) {

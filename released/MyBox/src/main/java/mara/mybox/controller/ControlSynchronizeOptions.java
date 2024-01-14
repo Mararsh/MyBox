@@ -270,7 +270,7 @@ public class ControlSynchronizeOptions extends BaseController {
 
     @FXML
     protected void showNameHistories(Event event) {
-        PopTools.popStringValues(this, notCopyInput, event, interfaceName + "Histories", true, true);
+        PopTools.popStringValues(this, notCopyInput, event, interfaceName + "Histories", true);
     }
 
     @FXML
@@ -282,7 +282,7 @@ public class ControlSynchronizeOptions extends BaseController {
 
     @FXML
     protected void showModifyHistories(Event event) {
-        PopTools.popStringValues(this, modifyAfterInput.getEditor(), event, interfaceName + "Modify", true, true);
+        PopTools.popStringValues(this, modifyAfterInput.getEditor(), event, interfaceName + "Modify", true);
     }
 
 }

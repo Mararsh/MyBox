@@ -5,29 +5,29 @@ import java.util.List;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.TableView;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.VBox;
 import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
  * @CreateDate 2021-5-27
  * @License Apache License Version 2.0
  */
-public class ImagesEditorController extends BaseImagesListController {
-
-    protected ObservableList<ImageInformation> tableData;
-    protected TableView<ImageInformation> tableView;
+public class ImagesEditorController extends BaseController {
 
     @FXML
     protected ControlImagesTable tableController;
+    @FXML
+    protected ControlImageView viewController;
+    @FXML
+    protected VBox tableBox, viewBox;
 
     public ImagesEditorController() {
         baseTitle = Languages.message("ImagesEditor");
@@ -35,42 +35,37 @@ public class ImagesEditorController extends BaseImagesListController {
     }
 
     @Override
-    public void initControls() {
+    public void initValues() {
         try {
-            super.initControls();
-
+            super.initValues();
             tableController.parentController = this;
             tableController.parentFxml = myFxml;
-            tableData = tableController.tableData;
-            tableView = tableController.tableView;
-
-            tableView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
-                @Override
-                public void changed(ObservableValue ov, Object t, Object t1) {
-                    checkImages();
-                }
-            });
-
-            tableData.addListener(new ListChangeListener<ImageInformation>() {
-                @Override
-                public void onChanged(ListChangeListener.Change<? extends ImageInformation> change) {
-                    checkImages();
-                }
-            });
-
-            playButton.disableProperty().bind(Bindings.isEmpty(imageInfos));
+            tableController.tableView.getColumns().remove(tableController.currentIndexColumn);
+            viewController.backgroundLoad = true;
 
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
-    public void checkImages() {
-        List<ImageInformation> selected = tableController.selectedItems();
-        if (selected == null || selected.isEmpty()) {
-            selected = tableData;
+    @Override
+    public void initControls() {
+        try {
+            super.initControls();
+
+            tableController.tableView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
+                @Override
+                public void changed(ObservableValue ov, Object t, Object t1) {
+                    viewImage();
+                }
+            });
+
+            playButton.disableProperty().bind(Bindings.isEmpty(tableController.tableData));
+            saveAsButton.disableProperty().bind(Bindings.isEmpty(tableController.tableData));
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
         }
-        imageInfos.setAll(selected);
     }
 
     public void open(File file) {
@@ -78,16 +73,69 @@ public class ImagesEditorController extends BaseImagesListController {
     }
 
     public void loadImages(List<ImageInformation> infos) {
-        setImages(infos);
-        tableData.setAll(imageInfos);
+        if (infos == null || infos.isEmpty()) {
+            return;
+        }
+        for (ImageInformation info : infos) {
+            tableController.tableData.add(info.cloneAttributes());
+        }
+    }
+
+    public List<ImageInformation> selected() {
+        List<ImageInformation> list = tableController.selectedItems();
+        if (list == null || list.isEmpty()) {
+            list = tableController.tableData;
+        }
+        if (list == null || list.isEmpty()) {
+            popError(message("NoData"));
+        }
+        return list;
+    }
+
+    public void viewImage() {
+        ImageInformation info = tableController.selectedItem();
+        if (info == null) {
+            return;
+        }
+        viewController.loadImageInfo(info);
     }
 
     @FXML
     @Override
     public void playAction() {
         try {
-            ImagesPlayController controller = (ImagesPlayController) openStage(Fxmls.ImagesPlayFxml);
-            controller.loadImages(imageInfos);
+            List<ImageInformation> list = selected();
+            if (list == null || list.isEmpty()) {
+                return;
+            }
+            ImagesPlayController.playImages(list);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    @FXML
+    @Override
+    public void saveAsAction() {
+        try {
+            List<ImageInformation> list = selected();
+            if (list == null || list.isEmpty()) {
+                return;
+            }
+            ImagesSaveController.saveImages(this, list);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    @FXML
+    public void editFrames() {
+        try {
+            List<ImageInformation> list = selected();
+            if (list == null || list.isEmpty()) {
+                return;
+            }
+            openImages(list);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -95,23 +143,53 @@ public class ImagesEditorController extends BaseImagesListController {
 
     @Override
     public boolean keyEventsFilter(KeyEvent event) {
-        if (!super.keyEventsFilter(event)) {
-            if (tableController != null) {
-                return tableController.keyEventsFilter(event);
+        if (viewBox.isFocused() || viewBox.isFocusWithin()) {
+            if (viewController.keyEventsFilter(event)) {
+                return true;
             }
-            return false;
-        } else {
+        } else if (tableBox.isFocused() || tableBox.isFocusWithin()) {
+            if (tableController.keyEventsFilter(event)) {
+                return true;
+            }
+        }
+        if (super.keyEventsFilter(event)) {
             return true;
         }
+        if (viewController.keyEventsFilter(event)) {
+            return true;
+        }
+        return tableController.keyEventsFilter(event);
     }
 
     /*
         static methods
      */
-    public static ImagesEditorController open(List<File> files) {
+    public static ImagesEditorController openFiles(List<File> files) {
         try {
             ImagesEditorController controller = (ImagesEditorController) WindowTools.openStage(Fxmls.ImagesEditorFxml);
             controller.tableController.addFiles(0, files);
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public static ImagesEditorController openImages(List<ImageInformation> infos) {
+        try {
+            ImagesEditorController controller = (ImagesEditorController) WindowTools.openStage(Fxmls.ImagesEditorFxml);
+            controller.loadImages(infos);
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public static ImagesEditorController openFile(File file) {
+        try {
+            ImagesEditorController controller = (ImagesEditorController) WindowTools.openStage(Fxmls.ImagesEditorFxml);
+            controller.open(file);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e);

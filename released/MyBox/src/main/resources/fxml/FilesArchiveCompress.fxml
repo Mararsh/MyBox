@@ -43,19 +43,19 @@ License:    Apache License Version 2.0
                                                 <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                             </padding>
                                             <children>
-                                                <Label fx:id="archiverLabel1" maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%ArchiveComments" wrapText="true" VBox.vgrow="NEVER" />
+                                                <Label  maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%ArchiveComments" wrapText="true" VBox.vgrow="NEVER" />
                                                 <FlowPane hgap="5.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWidth="80.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" vgap="5.0">
                                                     <children>
-                                                        <RadioButton fx:id="PosterizingRadio22" layoutX="266.0" layoutY="15.0" selected="true" text="zip">
+                                                        <RadioButton  layoutX="266.0" layoutY="15.0" selected="true" text="zip">
                                                             <toggleGroup>
                                                                 <ToggleGroup fx:id="archiverGroup" />
                                                             </toggleGroup>
                                                         </RadioButton>
-                                                        <RadioButton fx:id="PosterizingRadio21" layoutX="266.0" layoutY="15.0" text="tar" toggleGroup="$archiverGroup" />
-                                                        <RadioButton fx:id="PosterizingRadio2" layoutX="15.0" layoutY="15.0" text="jar" toggleGroup="$archiverGroup" />
-                                                        <RadioButton fx:id="PosterizingRadio211" layoutX="596.0" layoutY="15.0" text="7z" toggleGroup="$archiverGroup" />
-                                                        <RadioButton fx:id="PosterizingRadio" layoutX="103.0" layoutY="10.0" text="ar" toggleGroup="$archiverGroup" />
-                                                        <RadioButton fx:id="ThresholdingRadio2" layoutX="94.0" layoutY="15.0" text="cpio" toggleGroup="$archiverGroup" />
+                                                        <RadioButton  layoutX="266.0" layoutY="15.0" text="tar" toggleGroup="$archiverGroup" />
+                                                        <RadioButton  layoutX="15.0" layoutY="15.0" text="jar" toggleGroup="$archiverGroup" />
+                                                        <RadioButton  layoutX="596.0" layoutY="15.0" text="7z" toggleGroup="$archiverGroup" />
+                                                        <RadioButton  layoutX="103.0" layoutY="10.0" text="ar" toggleGroup="$archiverGroup" />
+                                                        <RadioButton  layoutX="94.0" layoutY="15.0" text="cpio" toggleGroup="$archiverGroup" />
                                                     </children>
                                                     <padding>
                                                         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />

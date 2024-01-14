@@ -45,7 +45,7 @@ import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fximage.ImageViewTools;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.RecentVisitMenu;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.DoubleTools;
@@ -62,7 +62,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2019-5-20
  * @License Apache License Version 2.0
  */
-public class ChromaticityDiagramController extends ImageViewerController {
+public class ChromaticityDiagramController extends BaseImageController {
 
     protected boolean isLine, inputInit = true;
     protected int dotSize, fontSize;
@@ -541,7 +541,7 @@ public class ChromaticityDiagramController extends ImageViewerController {
         if (task != null && !task.isQuit()) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             private StringTable degree2nm1Table, degree10nm1Table, degree2nm5Table, degree10nm5Table;
 
             @Override
@@ -593,12 +593,12 @@ public class ChromaticityDiagramController extends ImageViewerController {
         if (task != null && !task.isQuit()) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             private String texts;
 
             @Override
             protected boolean handle() {
-                texts = TextFileTools.readTexts(file);
+                texts = TextFileTools.readTexts(this, file);
                 return texts != null;
             }
 
@@ -858,7 +858,7 @@ public class ChromaticityDiagramController extends ImageViewerController {
         if (task != null && !task.isQuit()) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             private Image image;
 
             @Override
@@ -929,7 +929,7 @@ public class ChromaticityDiagramController extends ImageViewerController {
         if (task != null && !task.isQuit()) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -938,14 +938,14 @@ public class ChromaticityDiagramController extends ImageViewerController {
                 if (this == null || this.isCancelled()) {
                     return false;
                 }
-                ImageFileWriters.writeImageFile(bufferedImage, format, file.getAbsolutePath());
+                ImageFileWriters.writeImageFile(this, bufferedImage, format, file.getAbsolutePath());
                 return true;
             }
 
             @Override
             protected void whenSucceeded() {
                 recordFileWritten(file, VisitHistory.FileType.Image);
-                ImageViewerController.openFile(file);
+                ImageEditorController.openFile(file);
             }
 
         };

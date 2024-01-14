@@ -12,7 +12,7 @@ import mara.mybox.data2d.DataFileExcel;
 import mara.mybox.data2d.DataFileText;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.StringTools;
 
 /**
@@ -31,7 +31,7 @@ public abstract class Data2DWriter {
     protected List<String> sourceRow, targetRow;
     protected List<Integer> cols;
     protected boolean writerStopped, needCheckTask, errorContinue;
-    protected SingletonTask task;
+    protected FxTask task;
     protected boolean failed;
     protected SetValue setValue;
     protected String dataValue;
@@ -241,7 +241,7 @@ public abstract class Data2DWriter {
     }
 
     public boolean writerStopped() {
-        return writerStopped || (needCheckTask && (task == null || task.isCancelled()));
+        return writerStopped || (needCheckTask && (task == null || !task.isWorking()));
     }
 
     /*
@@ -273,7 +273,7 @@ public abstract class Data2DWriter {
         return this;
     }
 
-    public Data2DWriter setTask(SingletonTask task) {
+    public Data2DWriter setTask(FxTask task) {
         this.task = task;
         return this;
     }

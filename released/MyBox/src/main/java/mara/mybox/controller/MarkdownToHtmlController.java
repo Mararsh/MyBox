@@ -15,6 +15,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.TextFileTools;
@@ -93,13 +94,20 @@ public class MarkdownToHtmlController extends BaseBatchFileController {
     }
 
     @Override
-    public String handleFile(File srcFile, File targetPath) {
+    public String handleFile(FxTask currentTask, File srcFile, File targetPath) {
         try {
             File target = makeTargetFile(srcFile, targetPath);
             if (target == null) {
                 return message("Skip");
             }
-            Node document = htmlParser.parse(TextFileTools.readTexts(srcFile));
+            String md = TextFileTools.readTexts(currentTask, srcFile);
+            if (currentTask == null || !currentTask.isWorking()) {
+                return message("Canceled");
+            }
+            if (md == null) {
+                return message("Failed");
+            }
+            Node document = htmlParser.parse(md);
             String html = htmlRender.render(document);
             String style = UserConfig.getString(baseName + "HtmlStyle", null);
             html = HtmlWriteTools.html(null, style, html);

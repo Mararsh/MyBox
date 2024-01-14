@@ -16,7 +16,6 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Pane;
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.FileChooser;
@@ -26,7 +25,6 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.WindowTools;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.FileFilters;
@@ -83,7 +81,7 @@ public class AlarmClockController extends BaseController {
     public void initControls() {
         try {
             super.initControls();
-            AppVariables.alarmClockController = this;
+            AppVariables.AlarmClockController = this;
             miao = FxFileTools.getInternalFile("/sound/guaiMiao3.mp3", "sound", "guaiMiao3.mp3");
 
             alertClockTableController.setAlarmClockController(this);
@@ -199,17 +197,6 @@ public class AlarmClockController extends BaseController {
             MyBoxLog.error(e);
         }
 
-    }
-
-    @Override
-    public void setControlsStyle() {
-        try {
-            super.setControlsStyle();
-
-            NodeStyleTools.setTooltip(saveButton, new Tooltip("F2 / CTRL+s"));
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
     }
 
     protected void checkSound() {

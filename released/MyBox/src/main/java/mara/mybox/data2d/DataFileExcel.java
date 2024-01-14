@@ -231,7 +231,7 @@ public class DataFileExcel extends DataFile {
                 return false;
             }
         }
-        return FileTools.rename(tmpFile, tFile, false);
+        return FileTools.override(tmpFile, tFile);
     }
 
     public int writeHeader(Sheet targetSheet, int targetRowIndex) {
@@ -369,7 +369,7 @@ public class DataFileExcel extends DataFile {
             if (tmpFile == null || !tmpFile.exists()) {
                 return false;
             }
-            if (FileTools.rename(tmpFile, file)) {
+            if (FileTools.override(tmpFile, file)) {
                 initFile(file);
                 hasHeader = false;
                 sheet = sheetName;
@@ -406,7 +406,7 @@ public class DataFileExcel extends DataFile {
             if (tmpFile == null || !tmpFile.exists()) {
                 return false;
             }
-            if (FileTools.rename(tmpFile, file)) {
+            if (FileTools.override(tmpFile, file)) {
                 sheet = newName;
                 sheetNames.set(sheetNames.indexOf(oldName), sheet);
                 tableData2DDefinition.updateData(this);
@@ -448,7 +448,7 @@ public class DataFileExcel extends DataFile {
             if (index < 0) {
                 return -1;
             }
-            if (FileTools.rename(tmpFile, file)) {
+            if (FileTools.override(tmpFile, file)) {
                 return index;
             } else {
                 return -1;

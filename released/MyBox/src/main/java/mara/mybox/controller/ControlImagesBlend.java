@@ -1,34 +1,33 @@
 package mara.mybox.controller;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ListView;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.SelectionMode;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import mara.mybox.bufferedimage.PixelsBlend;
 import mara.mybox.bufferedimage.PixelsBlend.ImagesBlendMode;
+import mara.mybox.bufferedimage.PixelsBlend.TransparentAs;
+import static mara.mybox.bufferedimage.PixelsBlend.fixedOpacity;
 import mara.mybox.bufferedimage.PixelsBlendFactory;
 import mara.mybox.bufferedimage.ScaleTools;
+import mara.mybox.data.ImageItem;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
-import mara.mybox.fxml.SingletonCurrentTask;
-import mara.mybox.fxml.ValidationTools;
-import mara.mybox.fxml.WindowTools;
-import mara.mybox.imagefile.ImageFileWriters;
-import mara.mybox.value.AppValues;
-import mara.mybox.value.AppVariables;
-import mara.mybox.value.Fxmls;
+import mara.mybox.fximage.ShapeDemos;
+import mara.mybox.fxml.FxSingletonTask;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -39,187 +38,201 @@ import mara.mybox.value.UserConfig;
  */
 public class ControlImagesBlend extends BaseController {
 
-    protected ImageView backView;
     protected ImagesBlendMode blendMode;
     protected float opacity;
     protected int keepRatioType;
-    protected SimpleBooleanProperty optionChangedNotify;
+    protected TransparentAs baseTransparentAs = TransparentAs.Transparent,
+            overlayTransparentAs = TransparentAs.Another;
 
     @FXML
-    protected ComboBox<String> blendSelector, opacitySelector;
+    protected ListView<String> modeList;
     @FXML
-    protected CheckBox foreTopCheck, ignoreTransparentCheck;
+    protected ComboBox<String> opacitySelector;
+    @FXML
+    protected CheckBox baseAboveCheck;
+    @FXML
+    protected ToggleGroup baseGroup, overlayGroup;
+    @FXML
+    protected RadioButton baseAsOverlayRadio, baseAsTransparentRadio, baseBlendRadio,
+            overlayAsBaseRadio, overlayAsTransparentRadio, overlayBlendRadio;
     @FXML
     protected Button demoButton;
 
-    public ControlImagesBlend() {
-        optionChangedNotify = new SimpleBooleanProperty(false);
-    }
-
     public void setParameters(BaseController parent) {
-        setParameters(parent, null);
+        try (Connection conn = DerbyBase.getConnection()) {
+            setParameters(conn, parent);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
-    public void setParameters(BaseController parent, ImageView imageView) {
+    public void setParameters(Connection conn, BaseController parent) {
         try {
             this.parentController = parent;
-            baseName = parentController.interfaceName + "Blend";
-            this.backView = imageView;
+            baseName = parentController.baseName + "_Blend";
 
-            foreTopCheck.setSelected(UserConfig.getBoolean(baseName + "OnTop", true));
-            foreTopCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
-                    UserConfig.setBoolean(baseName + "OnTop", foreTopCheck.isSelected());
-                    notifyOptionChanged();
-                }
-            });
+            baseAboveCheck.setSelected(UserConfig.getBoolean(conn, baseName + "BaseAbove", false));
 
-            ignoreTransparentCheck.setSelected(UserConfig.getBoolean(baseName + "IgnoreTransparent", true));
-            ignoreTransparentCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
-                    UserConfig.setBoolean(baseName + "IgnoreTransparent", ignoreTransparentCheck.isSelected());
-                    notifyOptionChanged();
-                }
-            });
+            String v = UserConfig.getString(conn, baseName + "BaseTransparentAs", "Transparent");
+            if ("Another".equals(v)) {
+                baseAsOverlayRadio.setSelected(true);
+                baseTransparentAs = TransparentAs.Another;
+            } else if ("Blend".equals(v)) {
+                baseBlendRadio.setSelected(true);
+                baseTransparentAs = TransparentAs.Blend;
+            } else {
+                baseAsTransparentRadio.setSelected(true);
+                baseTransparentAs = TransparentAs.Transparent;
+            }
 
-            String mode = UserConfig.getString(baseName + "BlendMode", message("NormalMode"));
+            v = UserConfig.getString(conn, baseName + "OverlayTransparentAs", "Another");
+            if ("Transparent".equals(v)) {
+                overlayAsTransparentRadio.setSelected(true);
+                overlayTransparentAs = TransparentAs.Transparent;
+            } else if ("Blend".equals(v)) {
+                overlayBlendRadio.setSelected(true);
+                overlayTransparentAs = TransparentAs.Blend;
+            } else {
+                overlayAsBaseRadio.setSelected(true);
+                overlayTransparentAs = TransparentAs.Another;
+            }
+
+            String mode = UserConfig.getString(conn, baseName + "BlendMode", message("NormalMode"));
             blendMode = PixelsBlendFactory.blendMode(mode);
-            blendSelector.getItems().addAll(PixelsBlendFactory.blendModes());
-            blendSelector.setValue(mode);
-            blendSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> ov, String oldValue, String newValue) {
-                    String mode = blendSelector.getSelectionModel().getSelectedItem();
-                    blendMode = PixelsBlendFactory.blendMode(mode);
-                    UserConfig.setString(baseName + "BlendMode", mode);
-                    notifyOptionChanged();
-                }
-            });
+            modeList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+            modeList.getItems().setAll(PixelsBlendFactory.blendModes());
+            modeList.scrollTo(mode);
+            modeList.getSelectionModel().select(mode);
 
-            opacity = UserConfig.getInt(baseName + "BlendOpacity", 100) / 100f;
+            opacity = UserConfig.getInt(conn, baseName + "BlendOpacity", 100) / 100f;
             opacity = (opacity >= 0.0f && opacity <= 1.0f) ? opacity : 1.0f;
             opacitySelector.getItems().addAll(Arrays.asList("0.5", "1.0", "0.3", "0.1", "0.8", "0.2", "0.9", "0.0"));
             opacitySelector.setValue(opacity + "");
-            opacitySelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    try {
-                        float f = Float.parseFloat(newValue);
-                        if (opacity >= 0.0f && opacity <= 1.0f) {
-                            opacity = f;
-                            UserConfig.setInt(baseName + "BlendOpacity", (int) (f * 100));
-                            ValidationTools.setEditorNormal(opacitySelector);
-                            notifyOptionChanged();
-                        } else {
-                            ValidationTools.setEditorBadStyle(opacitySelector);
-                        }
-                    } catch (Exception e) {
-                        ValidationTools.setEditorBadStyle(opacitySelector);
-                    }
-                }
-            });
 
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
-    public void notifyOptionChanged() {
-        optionChangedNotify.set(!optionChangedNotify.get());
+    public TransparentAs baseTransparentAs() {
+        if (baseAsOverlayRadio.isSelected()) {
+            baseTransparentAs = TransparentAs.Another;
+        } else if (baseBlendRadio.isSelected()) {
+            baseTransparentAs = TransparentAs.Blend;
+        } else {
+            baseTransparentAs = TransparentAs.Transparent;
+        }
+        return baseTransparentAs;
     }
 
-    public boolean isTop() {
-        return foreTopCheck.isSelected();
+    public TransparentAs overlayTransparentAs() {
+        if (overlayAsTransparentRadio.isSelected()) {
+            overlayTransparentAs = TransparentAs.Transparent;
+        } else if (overlayBlendRadio.isSelected()) {
+            overlayTransparentAs = TransparentAs.Blend;
+        } else {
+            overlayTransparentAs = TransparentAs.Another;
+        }
+        return overlayTransparentAs;
     }
 
-    public boolean ignoreTransparent() {
-        return ignoreTransparentCheck.isSelected();
+    public float checkOpacity() {
+        float f = -1;
+        try {
+            f = Float.parseFloat(opacitySelector.getValue());
+        } catch (Exception e) {
+        }
+        if (f >= 0.0f && f <= 1.0f) {
+            opacity = f;
+        } else {
+            popError(message("InvalidParameter") + ": " + message("Opacity"));
+        }
+        return f;
     }
 
-    public PixelsBlend blender() {
-        return PixelsBlend.blender(blendMode, opacity, !isTop(), ignoreTransparent());
+    public boolean checkValues() {
+        return checkOpacity() >= 0;
+    }
+
+    public PixelsBlend pickValues(float t) {
+        if (t < 0) {
+            if (!checkValues()) {
+                return null;
+            }
+        } else {
+            opacity = t;
+        }
+        PixelsBlend blend = null;
+        try (Connection conn = DerbyBase.getConnection()) {
+            blend = pickValues(conn);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+        return blend;
+    }
+
+    public PixelsBlend pickValues(Connection conn) {
+        try {
+            String mode = modeList.getSelectionModel().getSelectedItem();
+            blendMode = PixelsBlendFactory.blendMode(mode);
+            UserConfig.setString(conn, baseName + "BlendMode", mode);
+
+            UserConfig.setInt(conn, baseName + "BlendOpacity", (int) (opacity * 100));
+
+            baseTransparentAs();
+            UserConfig.setString(conn, baseName + "BaseTransparentAs", baseTransparentAs.name());
+
+            overlayTransparentAs();
+            UserConfig.setString(conn, baseName + "OverlayTransparentAs", overlayTransparentAs.name());
+
+            UserConfig.setBoolean(conn, baseName + "BaseAbove", baseAboveCheck.isSelected());
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+        return PixelsBlendFactory.create(blendMode)
+                .setBlendMode(blendMode)
+                .setOpacity(fixedOpacity(opacity))
+                .setBaseAbove(baseAboveCheck.isSelected())
+                .setBaseTransparentAs(baseTransparentAs)
+                .setOverlayTransparentAs(overlayTransparentAs);
     }
 
     @FXML
     public void demo() {
-        Image backImage = null;
-        if (backView != null) {
-            backImage = backView.getImage();
-        }
-        if (backImage == null) {
-            backImage = new Image("img/cover" + AppValues.AppYear + "g5.png");
-        }
-        Image foreImage = null;
-        Color foreColor = Color.PINK;
-        if (parentController instanceof ImageManufactureClipboardController) {
-            foreImage = ((ImageManufactureClipboardController) parentController).finalClip;
-        } else if (parentController instanceof ImageManufactureColorController) {
-            foreColor = ((ImageManufactureColorController) parentController).valueColorSetController.color();
-        } else if (parentController instanceof ImageManufactureBatchColorController) {
-            foreColor = ((ImageManufactureBatchColorController) parentController).colorSetController.color();
-        }
-        if (foreImage == null) {
-            foreImage = FxImageTools.createImage(
-                    (int) (backImage.getWidth() * 3 / 4), (int) (backImage.getHeight() * 3 / 4),
-                    foreColor);
-        }
-        demo(backImage, foreImage);
+        demo(Color.PINK);
     }
 
-    public void demo(Image backImage, Image foreImage) {
-        if (backImage == null || foreImage == null) {
+    public void demo(Color color) {
+        Image baseImage = ImageItem.exampleImage();
+        Image overlay = FxImageTools.createImage(
+                (int) (baseImage.getWidth()), (int) (baseImage.getHeight()),
+                color);
+        demo(baseImage, overlay);
+    }
+
+    public void demo(Image baseImage, Image overlay) {
+        if (baseImage == null || overlay == null) {
             return;
         }
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
-            private List<File> files;
+        task = new FxSingletonTask<Void>(this) {
+            private List<String> files;
 
             @Override
             protected boolean handle() {
                 try {
-                    int x = (int) (backImage.getWidth() - foreImage.getWidth()) / 2;
-                    int y = (int) (backImage.getHeight() - foreImage.getHeight()) / 2;
-                    BufferedImage foreBI = SwingFXUtils.fromFXImage(foreImage, null);
-                    foreBI = ScaleTools.scaleImageLess(foreBI, 1000000);
-                    BufferedImage backBI = SwingFXUtils.fromFXImage(backImage, null);
-                    backBI = ScaleTools.scaleImageLess(backBI, 1000000);
+                    BufferedImage overlayBI = SwingFXUtils.fromFXImage(overlay, null);
+                    overlayBI = ScaleTools.demoImage(overlayBI);
+                    BufferedImage baseBI = SwingFXUtils.fromFXImage(baseImage, null);
+                    baseBI = ScaleTools.demoImage(baseBI);
                     files = new ArrayList<>();
-                    boolean reversed = !isTop();
-                    boolean ignoreTrans = ignoreTransparent();
-                    float copacity = opacity >= 1f ? 0.5f : 1f;
-                    BufferedImage blended = PixelsBlend.blend(foreBI, backBI, x, y,
-                            PixelsBlend.blender(ImagesBlendMode.NORMAL, copacity, reversed, ignoreTrans));
-                    if (task == null || isCancelled()) {
-                        return true;
-                    }
-                    File tmpFile = new File(AppVariables.MyBoxTempPath + File.separator
-                            + message("NormalMode") + "-" + message("Opacity") + "-" + copacity + "f.png");
-                    if (ImageFileWriters.writeImageFile(blended, tmpFile)) {
-                        files.add(tmpFile);
-                        task.setInfo(tmpFile.getAbsolutePath());
-                    }
-                    for (String name : PixelsBlendFactory.blendModes()) {
-                        if (task == null || isCancelled()) {
-                            return true;
-                        }
-                        PixelsBlend.ImagesBlendMode mode = PixelsBlendFactory.blendMode(name);
-                        blended = PixelsBlend.blend(foreBI, backBI, x, y,
-                                PixelsBlend.blender(mode, opacity, reversed, ignoreTrans));
-                        if (task == null || isCancelled()) {
-                            return true;
-                        }
-                        tmpFile = new File(AppVariables.MyBoxTempPath + File.separator + name + "-"
-                                + message("Opacity") + "-" + opacity + "f.png");
-                        if (ImageFileWriters.writeImageFile(blended, tmpFile)) {
-                            files.add(tmpFile);
-                            task.setInfo(tmpFile.getAbsolutePath());
-                        }
-                    }
-                    return !files.isEmpty();
+                    int x = (int) (baseImage.getWidth() - overlay.getWidth()) / 2;
+                    int y = (int) (baseImage.getHeight() - overlay.getHeight()) / 2;
+                    ShapeDemos.blendImage(this, files, message("BlendColor"), baseBI, overlayBI, x, y, null);
+                    return true;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -234,22 +247,12 @@ public class ControlImagesBlend extends BaseController {
             protected void finalAction() {
                 super.finalAction();
                 if (files != null && !files.isEmpty()) {
-                    ImagesBrowserController b
-                            = (ImagesBrowserController) WindowTools.openStage(Fxmls.ImagesBrowserFxml);
-                    b.loadImages(files);
+                    ImagesBrowserController.loadNames(files);
                 }
             }
 
         };
         start(task);
-    }
-
-    public BufferedImage blend(BufferedImage fore, BufferedImage back, int x, int y) {
-        return PixelsBlend.blend(fore, back, x, y, blender());
-    }
-
-    public Image blend(Image foreImage, Image backImage, int x, int y) {
-        return FxImageTools.blend(foreImage, backImage, x, y, blender());
     }
 
 }

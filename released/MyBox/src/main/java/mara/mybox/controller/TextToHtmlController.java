@@ -6,10 +6,12 @@ import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -52,13 +54,20 @@ public class TextToHtmlController extends BaseBatchFileController {
     }
 
     @Override
-    public String handleFile(File srcFile, File targetPath) {
+    public String handleFile(FxTask currentTask, File srcFile, File targetPath) {
         try {
             File target = makeTargetFile(srcFile, targetPath);
             if (target == null) {
                 return Languages.message("Skip");
             }
-            String body = HtmlWriteTools.stringToHtml(TextFileTools.readTexts(srcFile));
+            String texts = TextFileTools.readTexts(currentTask, srcFile);
+            if (currentTask == null || !currentTask.isWorking()) {
+                return message("Canceled");
+            }
+            if (texts == null) {
+                return message("Failed");
+            }
+            String body = HtmlWriteTools.stringToHtml(texts);
             String filePrefix = FileNameTools.prefix(target.getName());
             String html = "<!DOCTYPE html><html>\n"
                     + headArea.getText().replace("####title####", filePrefix) + "\n"

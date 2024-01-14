@@ -44,8 +44,8 @@ public class Data2DCopyController extends BaseData2DTargetsController {
      */
     public static Data2DCopyController open(ControlData2DLoad tableController) {
         try {
-            Data2DCopyController controller = (Data2DCopyController) WindowTools.openChildStage(
-                    tableController.getMyWindow(), Fxmls.Data2DCopyFxml, false);
+            Data2DCopyController controller = (Data2DCopyController) WindowTools.branchStage(
+                    tableController, Fxmls.Data2DCopyFxml);
             controller.setParameters(tableController);
             controller.requestMouse();
             return controller;

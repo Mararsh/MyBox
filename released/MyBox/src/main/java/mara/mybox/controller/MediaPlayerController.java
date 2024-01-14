@@ -45,7 +45,7 @@ import javafx.util.Duration;
 import mara.mybox.data.MediaInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
@@ -235,7 +235,6 @@ public class MediaPlayerController extends BaseController {
             super.setControlsStyle();
             NodeStyleTools.setTooltip(stopButton, new Tooltip(message("Stop") + "\nq / Q"));
             NodeStyleTools.setTooltip(fullScreenButton, new Tooltip(message("FullScreen") + "\nf / F"));
-            NodeStyleTools.setTooltip(paneSizeButton, new Tooltip(message("PaneSize") + "\np / P"));
             NodeStyleTools.setTooltip(soundButton, new Tooltip(message("Mute") + "\nm / M"));
             NodeStyleTools.setTooltip(dataButton, new Tooltip(message("ManageMediaLists")));
             NodeStyleTools.setTooltip(supportTipsView, new Tooltip(message("MediaPlayerSupports")));
@@ -255,7 +254,6 @@ public class MediaPlayerController extends BaseController {
         myStage.fullScreenProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue observable, Boolean oldValue, Boolean newValue) {
-                MyBoxLog.console(myStage.isFullScreen());
                 if (myStage.isFullScreen()) {
                     enterFullScreen();
                 } else {
@@ -283,12 +281,27 @@ public class MediaPlayerController extends BaseController {
                 case F:
                     fullScreenButton.fire();
                     return true;
-                case P:
-                    paneSizeButton.fire();
-                    return true;
             }
         }
         return super.keyFilter(event);
+    }
+
+    @Override
+    public boolean controlAlt2() {
+        paneSize();
+        return true;
+    }
+
+    @Override
+    public boolean controlAlt3() {
+        zoomIn();
+        return true;
+    }
+
+    @Override
+    public boolean controlAlt4() {
+        zoomOut();
+        return true;
     }
 
     protected void initPlayer() {
@@ -573,7 +586,7 @@ public class MediaPlayerController extends BaseController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             private int index;
             private MediaInformation info;
@@ -659,7 +672,7 @@ public class MediaPlayerController extends BaseController {
         } else {
             popInformation(message("ReadingMedia...") + "\n" + currentMedia.getAddress());
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -926,8 +939,12 @@ public class MediaPlayerController extends BaseController {
 
     @FXML
     @Override
-    public void infoAction() {
+    public boolean infoAction() {
+        if (currentMedia == null) {
+            return false;
+        }
         tableController.popInfo(currentMedia);
+        return true;
     }
 
     @FXML

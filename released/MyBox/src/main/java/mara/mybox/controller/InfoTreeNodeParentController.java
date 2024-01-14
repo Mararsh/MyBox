@@ -45,8 +45,8 @@ public class InfoTreeNodeParentController extends BaseInfoTreeHandleController {
         static methods
      */
     public static InfoTreeNodeParentController open(ControlInfoNodeAttributes nodeController) {
-        InfoTreeNodeParentController controller = (InfoTreeNodeParentController) WindowTools.openChildStage(
-                nodeController.getMyWindow(), Fxmls.InfoTreeNodeParentFxml);
+        InfoTreeNodeParentController controller = (InfoTreeNodeParentController) WindowTools.childStage(
+                nodeController, Fxmls.InfoTreeNodeParentFxml);
         controller.setParameters(nodeController);
         controller.requestMouse();
         return controller;

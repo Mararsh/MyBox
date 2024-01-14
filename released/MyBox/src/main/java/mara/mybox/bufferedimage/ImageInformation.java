@@ -12,17 +12,15 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
-import mara.mybox.controller.LoadingController;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.CropTools;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.AppVariables.imageRenderHints;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.AppVariables.ImageHints;
 import static mara.mybox.value.Languages.message;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.ImageType;
@@ -36,7 +34,7 @@ import org.apache.poi.sl.usermodel.SlideShowFactory;
  * @CreateDate 2018-6-19
  * @License Apache License Version 2.0
  */
-public class ImageInformation extends ImageFileInformation implements Cloneable {
+public class ImageInformation extends ImageFileInformation {
 
     protected ImageFileInformation imageFileInformation;
     protected ImageInformation self;
@@ -53,7 +51,6 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
     protected long availableMem, bytesSize, requiredMem, totalRequiredMem;
     protected byte[] iccProfile;
     protected DoubleRectangle region;
-    protected SingletonTask task;
 
     public ImageInformation() {
         initImage();
@@ -93,25 +90,59 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
         self = this;
     }
 
-    @Override
-    public Object clone() throws CloneNotSupportedException {   // just need shallow copy
-        try {
-            ImageInformation newInfo = (ImageInformation) super.clone();
-            newInfo.self = newInfo;
-            return newInfo;
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-            return null;
-        }
+    public ImageInformation cloneAttributes() {
+        ImageInformation info = new ImageInformation();
+        return clone(this, info);
     }
 
-    public ImageInformation cloneAttributes() {
-        try {
-            return (ImageInformation) clone();
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
+    public static ImageInformation clone(ImageInformation sourceInfo, ImageInformation targetInfo) {
+        if (sourceInfo == null || targetInfo == null) {
             return null;
         }
+        ImageFileInformation.clone(sourceInfo, targetInfo);
+        if (sourceInfo.imageFileInformation != null) {
+            targetInfo.imageFileInformation = new ImageFileInformation();
+            ImageFileInformation.clone(sourceInfo.imageFileInformation, targetInfo.imageFileInformation);
+        }
+        targetInfo.self = targetInfo;
+        targetInfo.index = sourceInfo.index;
+        targetInfo.imageType = sourceInfo.imageType;
+        targetInfo.sampleScale = sourceInfo.sampleScale;
+        targetInfo.dpi = sourceInfo.dpi;
+        targetInfo.xscale = sourceInfo.xscale;
+        targetInfo.yscale = sourceInfo.yscale;
+        targetInfo.width = sourceInfo.width;
+        targetInfo.height = sourceInfo.height;
+        targetInfo.requiredWidth = sourceInfo.requiredWidth;
+        targetInfo.maxWidth = sourceInfo.maxWidth;
+        targetInfo.thumbnailRotation = sourceInfo.thumbnailRotation;
+        targetInfo.colorSpace = sourceInfo.colorSpace;
+        targetInfo.pixelsString = sourceInfo.pixelsString;
+        targetInfo.loadSizeString = sourceInfo.loadSizeString;
+        targetInfo.pixelsString = sourceInfo.pixelsString;
+        targetInfo.fileSizeString = sourceInfo.fileSizeString;
+        targetInfo.profileName = sourceInfo.profileName;
+        targetInfo.profileCompressionMethod = sourceInfo.profileCompressionMethod;
+        targetInfo.metaDataXml = sourceInfo.metaDataXml;
+        targetInfo.error = sourceInfo.error;
+        targetInfo.isMultipleFrames = sourceInfo.isMultipleFrames;
+        targetInfo.isSampled = sourceInfo.isSampled;
+        targetInfo.isScaled = sourceInfo.isScaled;
+        targetInfo.needSample = sourceInfo.needSample;
+        targetInfo.region = sourceInfo.region;
+        targetInfo.availableMem = sourceInfo.availableMem;
+        targetInfo.bytesSize = sourceInfo.bytesSize;
+        targetInfo.requiredMem = sourceInfo.requiredMem;
+        targetInfo.totalRequiredMem = sourceInfo.totalRequiredMem;
+        targetInfo.image = sourceInfo.image;
+        targetInfo.thumbnail = sourceInfo.thumbnail;
+        targetInfo.regionImage = sourceInfo.regionImage;
+        targetInfo.metaData = sourceInfo.metaData;
+        targetInfo.standardAttributes = sourceInfo.standardAttributes;
+        targetInfo.nativeAttributes = sourceInfo.nativeAttributes;
+        targetInfo.imageTypes = sourceInfo.imageTypes;
+        targetInfo.rawImageType = sourceInfo.rawImageType;
+        return targetInfo;
     }
 
     public ImageInformation as() {
@@ -123,22 +154,22 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
         }
     }
 
-    public Image loadImage() {
+    public Image loadImage(FxTask task) {
         if (region != null) {
-            return readRegion(this, -1);
+            return readRegion(task, this, -1);
         }
         if (image == null || image.getWidth() != width) {
-            image = readImage(this);
+            image = readImage(task, this);
         }
         return image;
     }
 
-    public Image loadThumbnail(int thumbWidth) {
+    public Image loadThumbnail(FxTask task, int thumbWidth) {
         if (region != null) {
-            thumbnail = readRegion(this, thumbWidth);
+            thumbnail = readRegion(task, this, thumbWidth);
         }
         if (thumbnail == null || (int) (thumbnail.getWidth()) != thumbWidth) {
-            thumbnail = readImage(this, thumbWidth);
+            thumbnail = readImage(task, this, thumbWidth);
         }
         if (image == null && thumbnail != null && (int) (thumbnail.getWidth()) == width) {
             image = thumbnail;
@@ -146,8 +177,8 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
         return thumbnail;
     }
 
-    public Image loadThumbnail() {
-        return loadThumbnail(AppVariables.thumbnailWidth);
+    public Image loadThumbnail(FxTask task) {
+        return loadThumbnail(task, AppVariables.thumbnailWidth);
     }
 
     public void loadBufferedImage(BufferedImage bufferedImage) {
@@ -170,7 +201,7 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
         }
     }
 
-    public String sampleInformation(Image image) {
+    public String sampleInformation(FxTask task, Image image) {
         int sampledWidth, sampledHeight, sampledSize;
         if (image != null) {
             sampledWidth = (int) image.getWidth();
@@ -179,16 +210,26 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
             if (width <= 0) {
                 width = 512;
             }
-            checkMem(this);
+            checkMem(task, this);
             sampledWidth = (int) maxWidth;
             sampledHeight = (int) (maxWidth * height / width);
         }
-        sampledSize = (int) (sampledWidth * sampledHeight * getColorChannels() / (1024 * 1024));
-        String msg = MessageFormat.format(Languages.message("ImageTooLarge"),
-                width, height, getColorChannels(),
-                bytesSize / (1024 * 1024), requiredMem / (1024 * 1024), availableMem / (1024 * 1024),
-                sampledWidth, sampledHeight, sampledSize);
+        int channels = getColorChannels();
+        int mb = 1024 * 1024;
+        sampledSize = (int) (sampledWidth * sampledHeight * channels / mb);
+        String msg = MessageFormat.format(message("ImageTooLarge"),
+                width, height, channels,
+                bytesSize / mb, requiredMem / mb, availableMem / mb,
+                sampleScale, sampledWidth, sampledHeight, sampledSize);
         return msg;
+    }
+
+    @Override
+    public void setFile(File file) {
+        if (imageFileInformation != null) {
+            imageFileInformation.setFile(file);
+        }
+        super.setFile(file);
     }
 
     /*
@@ -203,19 +244,19 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
         }
     }
 
-    public static Image readImage(ImageInformation imageInfo) {
+    public static Image readImage(FxTask task, ImageInformation imageInfo) {
         if (imageInfo == null) {
             return null;
         }
-        return readImage(imageInfo, -1);
+        return readImage(task, imageInfo, -1);
     }
 
-    public static Image readImage(ImageInformation imageInfo, int requiredWidth) {
+    public static Image readImage(FxTask task, ImageInformation imageInfo, int requiredWidth) {
         if (imageInfo == null) {
             return null;
         }
         if (imageInfo.getRegion() != null) {
-            return readRegion(imageInfo, requiredWidth);
+            return readRegion(task, imageInfo, requiredWidth);
         }
         imageInfo.setIsSampled(false);
         imageInfo.setIsScaled(false);
@@ -256,7 +297,7 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
                     bufferedImage = readPPT(imageInfo, targetWidth);
                 } else {
                     imageInfo.setRequiredWidth(requiredWidth);
-                    bufferedImage = ImageFileReaders.readFrame(imageInfo);
+                    bufferedImage = ImageFileReaders.readFrame(task, imageInfo);
                 }
                 if (bufferedImage != null) {
                     targetImage = SwingFXUtils.toFXImage(bufferedImage, null);
@@ -279,7 +320,7 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
 
     public static BufferedImage readPDF(ImageInformation imageInfo, int width) {
         BufferedImage bufferedImage = null;
-        try (PDDocument pdfDoc = PDDocument.load(imageInfo.getFile(), imageInfo.getPassword(), AppVariables.pdfMemUsage)) {
+        try (PDDocument pdfDoc = PDDocument.load(imageInfo.getFile(), imageInfo.getPassword(), AppVariables.PdfMemUsage)) {
             bufferedImage = readPDF(null, new PDFRenderer(pdfDoc), ImageType.RGB, imageInfo, width);
             pdfDoc.close();
         } catch (Exception e) {
@@ -288,7 +329,7 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
         return bufferedImage;
     }
 
-    public static BufferedImage readPDF(SingletonTask<Void> task, PDFRenderer renderer, ImageType imageType,
+    public static BufferedImage readPDF(FxTask task, PDFRenderer renderer, ImageType imageType,
             ImageInformation imageInfo, int targetWidth) {
         if (renderer == null || imageInfo == null) {
             return null;
@@ -316,7 +357,7 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
         return bufferedImage;
     }
 
-    public static BufferedImage scaleImage(SingletonTask<Void> task, BufferedImage inImage,
+    public static BufferedImage scaleImage(FxTask task, BufferedImage inImage,
             ImageInformation imageInfo, int targetWidth) {
         if (imageInfo == null) {
             return null;
@@ -330,7 +371,7 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
             imageInfo.setImageType(bufferedImage.getType());
             DoubleRectangle region = imageInfo.getRegion();
             if (region != null) {
-                bufferedImage = mara.mybox.bufferedimage.CropTools.cropOutside(inImage, region);
+                bufferedImage = mara.mybox.bufferedimage.CropTools.cropOutside(task, inImage, region);
                 if (task != null && task.isCancelled()) {
                     return null;
                 }
@@ -341,8 +382,8 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
                     return null;
                 }
             }
-            if (imageRenderHints != null) {
-                bufferedImage = BufferedImageTools.applyRenderHints(bufferedImage, imageRenderHints);
+            if (ImageHints != null) {
+                bufferedImage = BufferedImageTools.applyRenderHints(bufferedImage, ImageHints);
                 if (task != null && task.isCancelled()) {
                     return null;
                 }
@@ -368,7 +409,7 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
         return bufferedImage;
     }
 
-    public static BufferedImage readPPT(SingletonTask<Void> task, SlideShow ppt, ImageInformation imageInfo, int targetWidth) {
+    public static BufferedImage readPPT(FxTask task, SlideShow ppt, ImageInformation imageInfo, int targetWidth) {
         if (ppt == null || imageInfo == null) {
             return null;
         }
@@ -380,8 +421,8 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
             Slide slide = slides.get(imageInfo.getIndex());
             bufferedImage = new BufferedImage(pptWidth, pptHeight, BufferedImage.TYPE_INT_ARGB);
             Graphics2D g = bufferedImage.createGraphics();
-            if (AppVariables.imageRenderHints != null) {
-                g.addRenderingHints(AppVariables.imageRenderHints);
+            if (AppVariables.ImageHints != null) {
+                g.addRenderingHints(AppVariables.ImageHints);
             }
             if (task != null && task.isCancelled()) {
                 return null;
@@ -400,7 +441,8 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
         return bufferedImage;
     }
 
-    public static BufferedImage readImage(SingletonTask<Void> task, ImageReader reader, ImageInformation imageInfo, int targetWidth) {
+    public static BufferedImage readImage(FxTask task,
+            ImageReader reader, ImageInformation imageInfo, int targetWidth) {
         if (reader == null || imageInfo == null) {
             return null;
         }
@@ -408,7 +450,7 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
         try {
             imageInfo.setThumbnail(null);
             imageInfo.setRequiredWidth(targetWidth);
-            bufferedImage = ImageFileReaders.readFrame(reader, imageInfo);
+            bufferedImage = ImageFileReaders.readFrame(task, reader, imageInfo);
             if (bufferedImage != null) {
                 imageInfo.setThumbnail(SwingFXUtils.toFXImage(bufferedImage, null));
             }
@@ -421,13 +463,13 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
         return bufferedImage;
     }
 
-    public static Image readRegion(ImageInformation imageInfo, int requireWidth) {
+    public static Image readRegion(FxTask task, ImageInformation imageInfo, int requireWidth) {
         if (imageInfo == null) {
             return null;
         }
         DoubleRectangle region = imageInfo.getRegion();
         if (region == null) {
-            return readImage(imageInfo, requireWidth);
+            return readImage(task, imageInfo, requireWidth);
         }
         Image regionImage = imageInfo.getRegionImage();
         try {
@@ -440,13 +482,13 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
             imageInfo.setRequiredWidth(targetWidth);
             Image image = imageInfo.getImage();
             if (image != null && (int) image.getWidth() == infoWidth) {
-                regionImage = CropTools.cropOutsideFx(image, region);
+                regionImage = CropTools.cropOutsideFx(task, image, region);
                 regionImage = mara.mybox.fximage.ScaleTools.scaleImage(regionImage, targetWidth);
             }
             if (regionImage == null) {
                 Image thumb = imageInfo.getThumbnail();
                 if (thumb != null && (int) thumb.getWidth() == infoWidth) {
-                    regionImage = CropTools.cropOutsideFx(thumb, region);
+                    regionImage = CropTools.cropOutsideFx(task, thumb, region);
                     regionImage = mara.mybox.fximage.ScaleTools.scaleImage(regionImage, targetWidth);
                 }
             }
@@ -460,7 +502,7 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
                     } else if (suffix != null && (suffix.equalsIgnoreCase("ppt") || suffix.equalsIgnoreCase("pptx"))) {
                         bufferedImage = readPPT(imageInfo, targetWidth);
                     } else {
-                        bufferedImage = ImageFileReaders.readFrame(imageInfo);
+                        bufferedImage = ImageFileReaders.readFrame(task, imageInfo);
                     }
                     if (bufferedImage != null) {
                         regionImage = SwingFXUtils.toFXImage(bufferedImage, null);
@@ -474,8 +516,8 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
         return regionImage;
     }
 
-    public static BufferedImage readBufferedImage(ImageInformation info) {
-        Image image = readImage(info);
+    public static BufferedImage readBufferedImage(FxTask task, ImageInformation info) {
+        Image image = readImage(task, info);
         if (image != null) {
             return SwingFXUtils.fromFXImage(image, null);
         } else {
@@ -483,7 +525,7 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
         }
     }
 
-    public static boolean checkMem(ImageInformation imageInfo) {
+    public static boolean checkMem(FxTask task, ImageInformation imageInfo) {
         if (imageInfo == null) {
             return false;
         }
@@ -504,8 +546,6 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
                 imageInfo.setBytesSize(bytesSize);
                 imageInfo.setRequiredMem(requiredMem);
 
-                SingletonTask task = imageInfo.getTask();
-                LoadingController loading = task != null ? task.getLoading() : null;
                 if (availableMem < requiredMem) {
                     int scale = (int) Math.ceil(1d * requiredMem / availableMem);
 //                    int scale = (int) Math.sqrt(1d * requiredMem / availableMem);
@@ -513,15 +553,15 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
                     imageInfo.setSampleScale(scale);
                     imageInfo.setMaxWidth(imageInfo.getWidth() / scale);
 
-                    if (loading != null) {
+                    if (task != null) {
                         int sampledWidth = (int) (imageInfo.getWidth() / scale);
                         int sampledHeight = (int) (imageInfo.getHeight() / scale);
                         int sampledSize = (int) (sampledWidth * sampledHeight * imageInfo.getColorChannels() / (1024 * 1024));
-                        String msg = MessageFormat.format(Languages.message("ImageTooLarge"),
+                        String msg = MessageFormat.format(message("ImageTooLarge"),
                                 imageInfo.getWidth(), imageInfo.getHeight(), imageInfo.getColorChannels(),
                                 bytesSize / (1024 * 1024), requiredMem / (1024 * 1024), availableMem / (1024 * 1024),
                                 sampledWidth, sampledHeight, sampledSize);
-                        loading.setInfo(msg);
+                        task.setInfo(msg);
                     }
 
                 } else {
@@ -530,13 +570,12 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
                     imageInfo.setNeedSample(false);
                     imageInfo.setMaxWidth(imageInfo.getWidth() * ratio);
 
-                    if (loading != null) {
+                    if (task != null) {
                         String msg = message("AvaliableMemory") + ": " + availableMem / (1024 * 1024) + "MB" + "\n"
                                 + message("RequireMemory") + ": " + requiredMem / (1024 * 1024) + "MB";
-                        loading.setInfo(msg);
+                        task.setInfo(msg);
                     }
                 }
-
             }
 
             return true;
@@ -633,8 +672,9 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
         this.imageType = imageType;
     }
 
-    public void setWidth(double width) {
+    public ImageInformation setWidth(double width) {
         this.width = width;
+        return this;
     }
 
     public void setHeight(double height) {
@@ -1510,14 +1550,6 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
 
     public void setDpi(int dpi) {
         this.dpi = dpi;
-    }
-
-    public SingletonTask getTask() {
-        return task;
-    }
-
-    public void setTask(SingletonTask task) {
-        this.task = task;
     }
 
 }

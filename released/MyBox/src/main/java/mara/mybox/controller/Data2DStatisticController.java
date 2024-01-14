@@ -14,7 +14,7 @@ import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.data2d.TmpTable;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -183,7 +183,7 @@ public class Data2DStatisticController extends BaseData2DTargetsController {
     }
 
     public void handleAllByColumnsTask() {
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -239,7 +239,7 @@ public class Data2DStatisticController extends BaseData2DTargetsController {
     }
 
     public void handleAllByAllTask() {
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -247,7 +247,7 @@ public class Data2DStatisticController extends BaseData2DTargetsController {
                     data2D.startTask(this, filterController.filter);
                     calculation.setTask(this);
                     if (calculation.needStored()) {
-                        DataTable dataTable = data2D.singleColumn(task, checkedColsIndices);
+                        DataTable dataTable = data2D.singleColumn(this, checkedColsIndices);
                         if (dataTable == null) {
                             return false;
                         }
@@ -314,8 +314,8 @@ public class Data2DStatisticController extends BaseData2DTargetsController {
      */
     public static Data2DStatisticController open(ControlData2DLoad tableController) {
         try {
-            Data2DStatisticController controller = (Data2DStatisticController) WindowTools.openChildStage(
-                    tableController.getMyWindow(), Fxmls.Data2DStatisticFxml, false);
+            Data2DStatisticController controller = (Data2DStatisticController) WindowTools.branchStage(
+                    tableController, Fxmls.Data2DStatisticFxml);
             controller.setParameters(tableController);
             controller.requestMouse();
             return controller;

@@ -59,18 +59,17 @@ public class ControlData2DEdit extends BaseController {
 
     @Override
     public boolean keyEventsFilter(KeyEvent event) {
-        if (!super.keyEventsFilter(event)) {
-            if (tableTab.isSelected()) {
-                return tableController.keyEventsFilter(event);
-
-            } else if (textTab.isSelected()) {
-                return csvController.keyEventsFilter(event);
-
-            }
-            return false;
-        } else {
+        if (super.keyEventsFilter(event)) {
             return true;
         }
+        if (tableTab.isSelected()) {
+            return tableController.keyEventsFilter(event);
+
+        } else if (textTab.isSelected()) {
+            return csvController.keyEventsFilter(event);
+
+        }
+        return false;
     }
 
     @Override

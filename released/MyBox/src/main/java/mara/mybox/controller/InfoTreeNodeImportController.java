@@ -5,13 +5,14 @@ import java.io.File;
 import java.io.FileReader;
 import java.sql.Connection;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.Toggle;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.paint.Color;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.InfoNode;
@@ -22,6 +23,8 @@ import mara.mybox.db.table.TableTag;
 import mara.mybox.db.table.TableTreeNode;
 import mara.mybox.db.table.TableTreeNodeTag;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
+import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
@@ -39,17 +42,20 @@ import mara.mybox.value.UserConfig;
  */
 public class InfoTreeNodeImportController extends BaseBatchFileController {
 
-    protected InfoTreeManageController manager;
+    protected BaseInfoTreeController infoController;
     protected TableTreeNode tableTreeNode;
     protected TableTreeNodeTag tableTreeNodeTag;
     protected TableTag tableTag;
     protected InfoNode rootNode;
     protected String category;
-    protected Map<String, Long> parents;
     protected boolean isWebFavorite, downIcon;
 
     @FXML
-    protected CheckBox replaceCheck, iconCheck;
+    protected ToggleGroup existedGroup;
+    @FXML
+    protected RadioButton updateRadio, skipRadio, createRadio;
+    @FXML
+    protected CheckBox iconCheck;
     @FXML
     protected Label formatLabel;
 
@@ -67,12 +73,27 @@ public class InfoTreeNodeImportController extends BaseBatchFileController {
         try {
             super.initControls();
 
-            replaceCheck.setSelected(UserConfig.getBoolean(baseName + "ReplaceExisted", true));
-
-            replaceCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            String existed = UserConfig.getString(baseName + "Existed", "Update");
+            if ("Create".equalsIgnoreCase(existed)) {
+                createRadio.setSelected(true);
+            } else if ("Skip".equalsIgnoreCase(existed)) {
+                skipRadio.setSelected(true);
+            } else {
+                updateRadio.setSelected(true);
+            }
+            existedGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
-                public void changed(ObservableValue ov, Boolean oldv, Boolean newv) {
-                    UserConfig.setBoolean(baseName + "ReplaceExisted", newv);
+                public void changed(ObservableValue<? extends Toggle> v, Toggle ov, Toggle bv) {
+                    if (isSettingValues) {
+                        return;
+                    }
+                    if (createRadio.isSelected()) {
+                        UserConfig.setString(baseName + "Existed", "Create");
+                    } else if (skipRadio.isSelected()) {
+                        UserConfig.setString(baseName + "Existed", "Skip");
+                    } else {
+                        UserConfig.setString(baseName + "Existed", "Update");
+                    }
                 }
             });
 
@@ -81,14 +102,14 @@ public class InfoTreeNodeImportController extends BaseBatchFileController {
         }
     }
 
-    public void setCaller(InfoTreeManageController manager) {
-        this.manager = manager;
-        tableTreeNode = manager.tableTreeNode;
-        tableTreeNodeTag = manager.tableTreeNodeTag;
+    public void setCaller(BaseInfoTreeController controller) {
+        this.infoController = controller;
+        tableTreeNode = infoController.tableTreeNode;
+        tableTreeNodeTag = infoController.tableTreeNodeTag;
         tableTag = new TableTag();
-        category = manager.category;
-        iconCheck.setVisible((category.equals(InfoNode.WebFavorite)
-                || category.equals(message(InfoNode.WebFavorite))));
+        category = infoController.category;
+        isWebFavorite = InfoNode.isWebFavorite(category);
+        iconCheck.setVisible(isWebFavorite);
     }
 
     public void importExamples() {
@@ -97,7 +118,7 @@ public class InfoTreeNodeImportController extends BaseBatchFileController {
             return;
         }
         isSettingValues = true;
-        replaceCheck.setSelected(true);
+        updateRadio.setSelected(true);
         iconCheck.setSelected(false);
         isSettingValues = false;
         startFile(file);
@@ -111,22 +132,18 @@ public class InfoTreeNodeImportController extends BaseBatchFileController {
         if (tableTreeNode == null) {
             tableTreeNode = new TableTreeNode();
         }
-        parents = new HashMap<>();
         rootNode = tableTreeNode.findAndCreateRoot(category);
         if (rootNode == null) {
             return false;
         }
-        parents.put(rootNode.getTitle(), rootNode.getNodeid());
-        parents.put(message(rootNode.getTitle()), rootNode.getNodeid());
-        isWebFavorite = InfoNode.WebFavorite.equals(category);
-        downIcon = iconCheck.isSelected();
+        downIcon = isWebFavorite && iconCheck.isSelected();
         return super.makeMoreParameters();
     }
 
     @Override
-    public String handleFile(File srcFile, File targetPath) {
+    public String handleFile(FxTask currentTask, File srcFile, File targetPath) {
         try {
-            long count = importFile(srcFile);
+            long count = importFile(currentTask, srcFile);
             if (count >= 0) {
                 totalItemsHandled += count;
                 return message("Imported") + ": " + count;
@@ -138,29 +155,41 @@ public class InfoTreeNodeImportController extends BaseBatchFileController {
         }
     }
 
-    public long importFile(File file) {
+    public long importFile(FxTask currentTask, File file) {
         if (file == null || !file.exists()) {
             return -1;
         }
-        File validFile = FileTools.removeBOM(file);
+        File validFile = FileTools.removeBOM(currentTask, file);
+        if (currentTask != null && !currentTask.isWorking()) {
+            return -4;
+        }
+        if (validFile == null) {
+            return -1;
+        }
         try (Connection conn = DerbyBase.getConnection();
                 BufferedReader reader = new BufferedReader(new FileReader(validFile, TextFileTools.charset(validFile)))) {
             conn.setAutoCommit(false);
             String line;
             while ((line = reader.readLine()) != null && line.isBlank()) {
+                if (currentTask != null && !currentTask.isWorking()) {
+                    return -4;
+                }
+            }
+            if (line == null) {
+                return -2;
             }
             if (line.startsWith(AppValues.MyBoxSeparator)) {
-                return importByMyBoxSeparator(conn, reader);
+                return importByMyBoxSeparator(currentTask, conn, reader);
             } else {
-                return importByBlankLine(conn, reader, line);
+                return importByBlankLine(currentTask, conn, reader, line);
             }
         } catch (Exception e) {
             showLogs(e.toString());
-            return -1;
+            return -3;
         }
     }
 
-    public long importByBlankLine(Connection conn, BufferedReader reader, String firstLine) {
+    public long importByBlankLine(FxTask currentTask, Connection conn, BufferedReader reader, String firstLine) {
         if (conn == null || reader == null || rootNode == null) {
             return -1;
         }
@@ -171,7 +200,10 @@ public class InfoTreeNodeImportController extends BaseBatchFileController {
             Date time;
             long parentid, baseTime = new Date().getTime();
             while (line != null) {
-                parentid = getParent(conn, line);
+                if (currentTask != null && !currentTask.isWorking()) {
+                    return -4;
+                }
+                parentid = getParent(currentTask, conn, line);
                 if (parentid < -1) {
                     break;
                 }
@@ -181,6 +213,9 @@ public class InfoTreeNodeImportController extends BaseBatchFileController {
                 }
                 if (line.isBlank()) {
                     while ((line = reader.readLine()) != null && line.isBlank()) {
+                        if (currentTask != null && !currentTask.isWorking()) {
+                            return -4;
+                        }
                     }
                     continue;
                 }
@@ -207,22 +242,28 @@ public class InfoTreeNodeImportController extends BaseBatchFileController {
                     value = line;
                     if (value != null && !line.isBlank()) {
                         while ((line = reader.readLine()) != null && !line.isBlank()) {
+                            if (currentTask != null && !currentTask.isWorking()) {
+                                return -4;
+                            }
                             value += System.lineSeparator() + line;
                         }
                         if (isWebFavorite) {
                             String[] lines = value.split("\n");
                             if (lines.length > 1) {
                                 value = lines[0];
-                                more = lines[0];
+                                more = lines[1];
                             }
                             if (more == null || more.isBlank()) {
                                 try {
-                                    File iconFile = IconTools.readIcon(value, downIcon);
+                                    File iconFile = IconTools.readIcon(currentTask, value, downIcon);
                                     if (iconFile != null && iconFile.exists()) {
                                         more = iconFile.getAbsolutePath();
                                     }
                                 } catch (Exception e) {
                                 }
+                            }
+                            if (more != null && !more.isBlank()) {
+                                value += InfoNode.ValueSeparater + "\n" + more;
                             }
                         }
                     }
@@ -234,6 +275,9 @@ public class InfoTreeNodeImportController extends BaseBatchFileController {
                     count++;
                 }
                 while ((line = reader.readLine()) != null && line.isBlank()) {
+                    if (currentTask != null && !currentTask.isWorking()) {
+                        return -4;
+                    }
                 }
             }
             conn.commit();
@@ -243,7 +287,7 @@ public class InfoTreeNodeImportController extends BaseBatchFileController {
         return count;
     }
 
-    public long importByMyBoxSeparator(Connection conn, BufferedReader reader) {
+    public long importByMyBoxSeparator(FxTask currentTask, Connection conn, BufferedReader reader) {
         if (conn == null || reader == null || rootNode == null) {
             return -1;
         }
@@ -254,7 +298,13 @@ public class InfoTreeNodeImportController extends BaseBatchFileController {
             Date time;
             long parentid, baseTime = new Date().getTime();
             while ((line = reader.readLine()) != null && !line.isBlank()) {
-                parentid = getParent(conn, line);
+                if (currentTask != null && !currentTask.isWorking()) {
+                    return -4;
+                }
+                parentid = getParent(currentTask, conn, line);
+                if (currentTask != null && !currentTask.isWorking()) {
+                    return -4;
+                }
                 if (parentid < -1) {
                     break;
                 }
@@ -262,6 +312,9 @@ public class InfoTreeNodeImportController extends BaseBatchFileController {
                 time = null;
                 tagsString = null;
                 while ((line = reader.readLine()) != null && line.isBlank()) {
+                    if (currentTask != null && !currentTask.isWorking()) {
+                        return -4;
+                    }
                 }
                 if (line == null) {
                     break;
@@ -271,6 +324,9 @@ public class InfoTreeNodeImportController extends BaseBatchFileController {
                 }
                 name = line;
                 while ((line = reader.readLine()) != null && line.isBlank()) {
+                    if (currentTask != null && !currentTask.isWorking()) {
+                        return -4;
+                    }
                 }
                 if (line != null && !line.startsWith(AppValues.MyBoxSeparator)) {
                     if (line.startsWith(InfoNode.TimePrefix)) {
@@ -289,12 +345,15 @@ public class InfoTreeNodeImportController extends BaseBatchFileController {
                     info = line;
                     if (info != null && !info.startsWith(AppValues.MyBoxSeparator)) {
                         while ((line = reader.readLine()) != null && !line.startsWith(AppValues.MyBoxSeparator)) {
+                            if (currentTask != null && !currentTask.isWorking()) {
+                                return -4;
+                            }
                             info += "\n" + line;
                         }
                     }
                     if (info != null && !info.isBlank() && isWebFavorite) {
                         try {
-                            File iconFile = IconTools.readIcon(info, downIcon);
+                            File iconFile = IconTools.readIcon(currentTask, info, downIcon);
                             if (iconFile != null && iconFile.exists()) {
                                 info += InfoNode.ValueSeparater + "\n" + iconFile.getAbsolutePath();
                             }
@@ -316,43 +375,45 @@ public class InfoTreeNodeImportController extends BaseBatchFileController {
         return count;
     }
 
-    public long getParent(Connection conn, String parentChain) {
+    public long getParent(FxTask currentTask, Connection conn, String parentChain) {
         try {
+            if (parentChain == null || parentChain.isBlank()) {
+                return -2;
+            }
             if (InfoNode.RootIdentify.equals(parentChain)) {
                 return -1;
             } else {
-
                 long parentid = rootNode.getNodeid();
-                if (parents.containsKey(parentChain)) {
-                    parentid = parents.get(parentChain);
+                String rootTitle = rootNode.getTitle();
+                String rootTitleMsg = message(rootTitle);
+                if (parentChain.equals(rootTitle) || parentChain.equals(rootTitleMsg)) {
+                    return parentid;
+                }
+                String chain = parentChain;
+                String prefix = rootTitle + InfoNode.TitleSeparater;
+                if (chain.startsWith(prefix)) {
+                    chain = chain.substring(prefix.length());
                 } else {
-                    String chain = parentChain;
-                    String prefix = rootNode.getTitle() + InfoNode.TitleSeparater;
+                    prefix = rootTitleMsg + InfoNode.TitleSeparater;
                     if (chain.startsWith(prefix)) {
                         chain = chain.substring(prefix.length());
-                    } else {
-                        prefix = message(rootNode.getTitle()) + InfoNode.TitleSeparater;
-                        if (chain.startsWith(prefix)) {
-                            chain = chain.substring(prefix.length());
-                        } else {
-                            prefix = "";
-                        }
                     }
-                    String[] nodes = chain.split(InfoNode.TitleSeparater);
-                    for (String node : nodes) {
-                        InfoNode parentNode = tableTreeNode.find(conn, parentid, node);
-                        if (parentNode == null) {
-                            parentNode = InfoNode.create()
-                                    .setCategory(category)
-                                    .setParentid(parentid)
-                                    .setUpdateTime(new Date())
-                                    .setTitle(node);
-                            parentNode = tableTreeNode.insertData(conn, parentNode);
-                        }
-                        parentid = parentNode.getNodeid();
-                        parents.put(prefix + node, parentid);
-                        prefix = prefix + node + InfoNode.TitleSeparater;
+                }
+                String[] names = chain.split(InfoNode.TitleSeparater);
+                for (String name : names) {
+                    if (currentTask != null && !currentTask.isWorking()) {
+                        return -4;
                     }
+                    InfoNode parentNode = tableTreeNode.find(conn, parentid, name);
+                    if (parentNode == null) {
+                        parentNode = InfoNode.create()
+                                .setCategory(category)
+                                .setParentid(parentid)
+                                .setUpdateTime(new Date())
+                                .setTitle(name);
+                        parentNode = tableTreeNode.insertData(conn, parentNode);
+                    }
+                    parentid = parentNode.getNodeid();
                 }
                 return parentid;
             }
@@ -378,10 +439,21 @@ public class InfoTreeNodeImportController extends BaseBatchFileController {
                 info = InfoNode.encodeInfo(category, info);
                 currentNode = tableTreeNode.find(conn, parentid, name);
                 if (currentNode != null) {
-                    if (replaceCheck.isSelected()) {
+                    if (updateRadio.isSelected()) {
                         currentNode.setInfo(info)
                                 .setUpdateTime(time);
                         currentNode = tableTreeNode.updateData(conn, currentNode);
+
+                    } else if (createRadio.isSelected()) {
+                        currentNode = InfoNode.create()
+                                .setCategory(category)
+                                .setParentid(parentid)
+                                .setTitle(name)
+                                .setInfo(info)
+                                .setUpdateTime(time);
+                        currentNode = tableTreeNode.insertData(conn, currentNode);
+                    } else {
+                        return false;
                     }
                 } else {
                     currentNode = InfoNode.create()
@@ -392,6 +464,7 @@ public class InfoTreeNodeImportController extends BaseBatchFileController {
                             .setUpdateTime(time);
                     currentNode = tableTreeNode.insertData(conn, currentNode);
                 }
+
             }
             if (currentNode == null) {
                 return false;
@@ -438,15 +511,19 @@ public class InfoTreeNodeImportController extends BaseBatchFileController {
 
     @Override
     public void afterTask() {
-        if (manager != null) {
-            manager.loadTree();
-            if (!AppVariables.isTesting) {
-                manager.alertInformation(message("Imported") + ": " + totalItemsHandled);
-            }
-            closeStage();
+        if (infoController != null) {
+            infoController.infoTree.loadTree();
 
-            manager.refreshTagss();
-            manager.refreshTimes();
+            if (!isPreview) {
+                closeStage();
+            }
+
+            infoController.refreshTags();
+            infoController.refreshTimes();
+            if (!AppVariables.isTesting) {
+                infoController.popInformation(message("Imported") + ": " + totalItemsHandled);
+            }
+
         } else {
             tableView.refresh();
             if (miaoCheck != null && miaoCheck.isSelected()) {
@@ -456,12 +533,17 @@ public class InfoTreeNodeImportController extends BaseBatchFileController {
     }
 
     @FXML
-    public void demo() {
+    public void exampleData() {
         File file = InfoNode.exampleFile(category);
         if (file == null) {
             file = InfoNode.exampleFile(InfoNode.Notebook);
         }
         TextEditorController.open(file);
+    }
+
+    @FXML
+    public void aboutTreeInformation() {
+        openHtml(HelpTools.aboutTreeInformation());
     }
 
 }

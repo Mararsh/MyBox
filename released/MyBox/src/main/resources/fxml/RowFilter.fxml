@@ -8,16 +8,12 @@ License:    Apache License Version 2.0
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
-<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.image.Image?>
@@ -27,7 +23,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.RowFilterController">
+<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.RowFilterController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
@@ -130,175 +126,12 @@ License:    Apache License Version 2.0
                                             </children>
                                         </VBox>
                                         <VBox fx:id="nodesListBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
-                                            <children>
-                                                <HBox alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="NEVER">
-                                                    <children>
-                                                        <FlowPane alignment="CENTER_RIGHT" hgap="5.0" maxWidth="1.7976931348623157E308" prefWrapLength="2000.0" vgap="5.0" HBox.hgrow="ALWAYS">
-                                                            <children>
-                                                                <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#refreshAction">
-                                                                    <graphic>
-                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                            <image>
-                                                                                <Image url="@../buttons/Red/iconRefresh.png" />
-                                                                            </image>
-                                                                        </ImageView>
-                                                                    </graphic>
-                                                                </Button>
-                                                                <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction">
-                                                                    <graphic>
-                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                            <image>
-                                                                                <Image url="@../buttons/Red/iconClear.png" />
-                                                                            </image>
-                                                                        </ImageView>
-                                                                    </graphic>
-                                                                </Button>
-                                                                <Button fx:id="deleteButton" disable="true" mnemonicParsing="false" onAction="#deleteAction">
-                                                                    <graphic>
-                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                            <image>
-                                                                                <Image url="@../buttons/Red/iconDelete.png" />
-                                                                            </image>
-                                                                        </ImageView>
-                                                                    </graphic>
-                                                                </Button>
-                                                                <Button fx:id="moveDataButton" disable="true" mnemonicParsing="false" onAction="#moveAction">
-                                                                    <graphic>
-                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                            <image>
-                                                                                <Image url="@../buttons/Red/iconMove.png" />
-                                                                            </image>
-                                                                        </ImageView>
-                                                                    </graphic>
-                                                                </Button>
-                                                                <Button fx:id="copyButton" disable="true" mnemonicParsing="false" onAction="#copyAction">
-                                                                    <graphic>
-                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                            <image>
-                                                                                <Image url="@../buttons/Red/iconCopy.png" />
-                                                                            </image>
-                                                                        </ImageView>
-                                                                    </graphic>
-                                                                </Button>
-                                                                <Button fx:id="addButton" mnemonicParsing="false" onAction="#addAction">
-                                                                    <graphic>
-                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                            <image>
-                                                                                <Image url="@../buttons/Red/iconAdd.png" />
-                                                                            </image>
-                                                                        </ImageView>
-                                                                    </graphic>
-                                                                </Button>
-                                                                <Button fx:id="pasteButton" mnemonicParsing="false" onAction="#pasteAction">
-                                                                    <graphic>
-                                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                                            <image>
-                                                                                <Image url="@../buttons/Red/iconPaste.png" />
-                                                                            </image>
-                                                                        </ImageView>
-                                                                    </graphic>
-                                                                </Button>
-                                                                <Button fx:id="editButton" layoutX="184.0" layoutY="43.0" mnemonicParsing="false" onAction="#editAction">
-                                                                    <graphic>
-                                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                                            <image>
-                                                                                <Image url="@../buttons/Red/iconEdit.png" />
-                                                                            </image>
-                                                                        </ImageView>
-                                                                    </graphic>
-                                                                </Button>
-                                                            </children>
-                                                        </FlowPane>
-                                                    </children>
-                                                </HBox>
-                                                <VBox fx:id="conditionBox" spacing="2.0" VBox.vgrow="NEVER">
-                                                    <children>
-                                                        <FlowPane fx:id="namesPane" hgap="2.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWrapLength="2000.0" vgap="2.0" HBox.hgrow="ALWAYS" />
-                                                        <FlowPane fx:id="nodeGroupPane" hgap="2.0" layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWrapLength="2000.0" vgap="2.0">
-                                                            <children>
-                                                                <RadioButton fx:id="childrenRadio" mnemonicParsing="false" selected="true" text="%SelfAndChildren">
-                                                                    <toggleGroup>
-                                                                        <ToggleGroup fx:id="nodesGroup" />
-                                                                    </toggleGroup> 
-                                                                </RadioButton>
-                                                                <RadioButton fx:id="descendantsRadio" mnemonicParsing="false" text="%SelfAndDescendants" toggleGroup="$nodesGroup" />
-                                                            </children>
-                                                        </FlowPane>
-                                                        <Label fx:id="conditionLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" VBox.vgrow="NEVER" />
-                                                    </children>
-                                                </VBox>
-                                                <TableView fx:id="tableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
-                                                    <columns>
-                                                        <TableColumn fx:id="rowsSelectionColumn" maxWidth="1.7976931348623157E308" prefWidth="-1.0">
-                                                            <graphic>
-                                                                <CheckBox fx:id="allRowsCheck" mnemonicParsing="false" text="%TableRow" />
-                                                            </graphic>
-                                                        </TableColumn>
-                                                        <TableColumn fx:id="nameColumn" prefWidth="200.0" text="%Title" />
-                                                        <TableColumn fx:id="timeColumn" prefWidth="200.0" text="%UpdateTime" />
-                                                        <TableColumn fx:id="nodeidColumn" text="%ID" />
-                                                    </columns>
-                                                </TableView>
-                                                <FlowPane fx:id="paginationPane" hgap="2.0" vgap="2.0">
-                                                    <children>
-                                                        <Label text="%Page" />
-                                                        <ComboBox fx:id="pageSelector" editable="true" prefWidth="80.0" />
-                                                        <Label fx:id="pageLabel" />
-                                                        <Button fx:id="goPageButton" mnemonicParsing="false" onAction="#goPage">
-                                                            <graphic>
-                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                    <image>
-                                                                        <Image url="@../buttons/Red/iconGo.png" />
-                                                                    </image>
-                                                                </ImageView>
-                                                            </graphic>
-                                                        </Button>
-                                                        <Button fx:id="pagePreviousButton" mnemonicParsing="false" onAction="#pagePreviousAction">
-                                                            <graphic>
-                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                    <image>
-                                                                        <Image url="@../buttons/Red/iconPrevious.png" />
-                                                                    </image>
-                                                                </ImageView>
-                                                            </graphic>
-                                                        </Button>
-                                                        <Button fx:id="pageNextButton" mnemonicParsing="false" onAction="#pageNextAction">
-                                                            <graphic>
-                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                    <image>
-                                                                        <Image url="@../buttons/Red/iconNext.png" />
-                                                                    </image>
-                                                                </ImageView>
-                                                            </graphic>
-                                                        </Button>
-                                                        <Button fx:id="pageFirstButton" mnemonicParsing="false" onAction="#pageFirstAction">
-                                                            <graphic>
-                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                    <image>
-                                                                        <Image url="@../buttons/Red/iconFirst.png" />
-                                                                    </image>
-                                                                </ImageView>
-                                                            </graphic>
-                                                        </Button>
-                                                        <Button fx:id="pageLastButton" mnemonicParsing="false" onAction="#pageLastAction">
-                                                            <graphic>
-                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                    <image>
-                                                                        <Image url="@../buttons/Red/iconLast.png" />
-                                                                    </image>
-                                                                </ImageView>
-                                                            </graphic>
-                                                        </Button>
-                                                        <Label text="%PageSize" />
-                                                        <ComboBox fx:id="pageSizeSelector" editable="true" prefWidth="80.0" />
-                                                        <Label fx:id="dataSizeLabel" minHeight="-Infinity" wrapText="true" />
-                                                        <Label fx:id="selectedLabel" minHeight="-Infinity" wrapText="true" />
-                                                    </children>
-                                                </FlowPane>
-                                            </children>
                                             <padding>
                                                 <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                                             </padding>
+                                 <children>
+                                    <fx:include fx:id="table" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlInfoTreeTable.fxml" VBox.vgrow="ALWAYS" />
+                                 </children>
                                         </VBox>
                                     </items>
                                 </SplitPane>
@@ -310,17 +143,13 @@ License:    Apache License Version 2.0
                                     <children>
                                         <HBox alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
                                             <children>
+                                    <ImageView fx:id="leftPaneControl" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconDoubleLeft.png" />
+                                       </image>
+                                    </ImageView>
                                                 <FlowPane alignment="CENTER_RIGHT" hgap="2.0" maxWidth="1.7976931348623157E308" vgap="2.0" HBox.hgrow="ALWAYS">
                                                     <children>
-                                                        <CheckBox fx:id="leftPaneCheck" minWidth="-Infinity" mnemonicParsing="false">
-                                                            <graphic>
-                                                                <ImageView  fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                    <image>
-                                                                        <Image url="@../buttons/Red/iconDoubleLeft.png" />
-                                                                    </image>
-                                                                </ImageView>
-                                                            </graphic>
-                                                        </CheckBox>
                                                         <Button fx:id="recoverNodeButton" mnemonicParsing="false" onAction="#recoverNode">
                                                             <graphic>
                                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -353,15 +182,6 @@ License:    Apache License Version 2.0
                                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                     <image>
                                                                         <Image url="@../buttons/Red/iconSave.png" />
-                                                                    </image>
-                                                                </ImageView>
-                                                            </graphic>
-                                                        </Button>
-                                                        <Button fx:id="selectFileButton" mnemonicParsing="false" onAction="#pickSourceFile" onMouseEntered="#popSourceFile">
-                                                            <graphic>
-                                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                                    <image>
-                                                                        <Image url="@../buttons/Red/iconSelectFile.png" />
                                                                     </image>
                                                                 </ImageView>
                                                             </graphic>

@@ -44,4 +44,11 @@ public class ScaleTools {
         return newImage;
     }
 
+    public static Image demoImage(Image image) {
+        BufferedImage source = SwingFXUtils.fromFXImage(image, null);
+        BufferedImage target = mara.mybox.bufferedimage.ScaleTools.demoImage(source);
+        Image newImage = SwingFXUtils.toFXImage(target, null);
+        return newImage;
+    }
+
 }

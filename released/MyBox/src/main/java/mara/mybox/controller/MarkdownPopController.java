@@ -7,7 +7,7 @@ import javafx.scene.control.TextInputControl;
 import javafx.scene.input.ContextMenuEvent;
 import mara.mybox.db.data.VisitHistory.FileType;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextFileTools;
@@ -62,12 +62,12 @@ public class MarkdownPopController extends TextPopController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             @Override
             protected boolean handle() {
                 try {
                     File tmpFile = TextFileTools.writeFile(textArea.getText());
-                    return FileTools.rename(tmpFile, file);
+                    return FileTools.override(tmpFile, file);
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -92,8 +92,22 @@ public class MarkdownPopController extends TextPopController {
             if (textInput == null) {
                 return null;
             }
-            MarkdownPopController controller = (MarkdownPopController) WindowTools.openChildStage(parent.getMyWindow(), Fxmls.MarkdownPopFxml, false);
-            controller.setSourceInput(parent.baseName, textInput);
+            MarkdownPopController controller = (MarkdownPopController) WindowTools.popStage(parent, Fxmls.MarkdownPopFxml);
+            controller.setSourceInput(parent, textInput);
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public static MarkdownPopController openFile(BaseController parent, String filename) {
+        try {
+            if (filename == null) {
+                return null;
+            }
+            MarkdownPopController controller = (MarkdownPopController) WindowTools.popStage(parent, Fxmls.MarkdownPopFxml);
+            controller.setFile(parent, filename);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e);

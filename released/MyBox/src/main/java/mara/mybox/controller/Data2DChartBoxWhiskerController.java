@@ -695,8 +695,8 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
      */
     public static Data2DChartBoxWhiskerController open(ControlData2DLoad tableController) {
         try {
-            Data2DChartBoxWhiskerController controller = (Data2DChartBoxWhiskerController) WindowTools.openChildStage(
-                    tableController.getMyWindow(), Fxmls.Data2DChartBoxWhiskerFxml, false);
+            Data2DChartBoxWhiskerController controller = (Data2DChartBoxWhiskerController) WindowTools.branchStage(
+                    tableController, Fxmls.Data2DChartBoxWhiskerFxml);
             controller.setParameters(tableController);
             controller.requestMouse();
             return controller;

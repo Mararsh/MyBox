@@ -18,8 +18,8 @@ import javafx.scene.paint.Color;
 import mara.mybox.data.FindReplaceString;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WebViewTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.HtmlWriteTools;
@@ -190,7 +190,7 @@ public class HtmlFindController extends WebAddressController {
         TableStringValues.add("HtmlFindHistories", string);
         reset();
         isQuerying = true;
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             private StringBuilder results;
 
@@ -215,19 +215,31 @@ public class HtmlFindController extends WebAddressController {
                     results = new StringBuilder();
                     String texts;
 
-                    textsChecker.setInputString(inputString).setFindString("</head>").setAnchor(0).handleString();
+                    textsChecker.setInputString(inputString).setFindString("</head>")
+                            .setAnchor(0).handleString(this);
+                    if (!isWorking()) {
+                        return false;
+                    }
                     if (textsChecker.getStringRange() != null) {
                         results.append(inputString.substring(0, textsChecker.getLastEnd()));
                         inputString = inputString.substring(textsChecker.getLastEnd());
                     }
                     while (!inputString.isBlank()) {
-                        textsChecker.setInputString(inputString).setFindString(">").setAnchor(0).handleString();
+                        if (!isWorking()) {
+                            return false;
+                        }
+                        textsChecker.setInputString(inputString).setFindString(">")
+                                .setAnchor(0).handleString(this);
+                        if (!isWorking()) {
+                            return false;
+                        }
                         if (textsChecker.getStringRange() == null) {
                             break;
                         }
                         results.append(inputString.substring(0, textsChecker.getLastEnd()));
                         inputString = inputString.substring(textsChecker.getLastEnd());
-                        textsChecker.setInputString(inputString).setFindString("<").setAnchor(0).handleString();
+                        textsChecker.setInputString(inputString).setFindString("<")
+                                .setAnchor(0).handleString(this);
                         if (textsChecker.getStringRange() == null) {
                             texts = inputString;
                             inputString = "";
@@ -244,7 +256,13 @@ public class HtmlFindController extends WebAddressController {
                         }
                         StringBuilder r = new StringBuilder();
                         while (!texts.isBlank()) {
-                            finder.setInputString(texts).setAnchor(0).handleString();
+                            if (!isWorking()) {
+                                return false;
+                            }
+                            finder.setInputString(texts).setAnchor(0).handleString(this);
+                            if (!isWorking()) {
+                                return false;
+                            }
                             if (finder.getStringRange() == null) {
                                 break;
                             }
@@ -271,7 +289,7 @@ public class HtmlFindController extends WebAddressController {
 //                                + "\n<body>\n"
 //                                + results.toString()
 //                                + "\n</body>\n</html>";
-                    return true;
+                    return isWorking();
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -411,7 +429,7 @@ public class HtmlFindController extends WebAddressController {
 
     @FXML
     protected void showFindHistories(Event event) {
-        PopTools.popStringValues(this, findInput, event, "HtmlFindHistories", false, true);
+        PopTools.popStringValues(this, findInput, event, "HtmlFindHistories", false);
     }
 
     @FXML

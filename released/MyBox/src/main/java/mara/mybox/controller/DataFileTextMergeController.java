@@ -16,6 +16,7 @@ import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextFileTools;
@@ -99,16 +100,22 @@ public class DataFileTextMergeController extends FilesMergeController {
     }
 
     @Override
-    public String handleFile(File srcFile) {
+    public String handleFile(FxTask currentTask, File srcFile) {
         if (readOptionsController.autoDetermine) {
             sourceCharset = TextFileTools.charset(srcFile);
         }
         String result;
-        File validFile = FileTools.removeBOM(srcFile);
-        try ( BufferedReader reader = new BufferedReader(new FileReader(validFile, sourceCharset))) {
+        File validFile = FileTools.removeBOM(currentTask, srcFile);
+        if (currentTask == null || !currentTask.isWorking()) {
+            return message("Cancelled");
+        }
+        if (validFile == null) {
+            return null;
+        }
+        try (BufferedReader reader = new BufferedReader(new FileReader(validFile, sourceCharset))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                if (task == null || task.isCancelled()) {
+                if (currentTask == null || !currentTask.isWorking()) {
                     return message("Cancelled");
                 }
                 List<String> rowData = TextTools.parseLine(line, sourceDelimiterName);
@@ -125,13 +132,13 @@ public class DataFileTextMergeController extends FilesMergeController {
                         }
                     }
                     if (targetWithName) {
-                        TextFileTools.writeLine(writer, headers, targetDelimiter);
+                        TextFileTools.writeLine(currentTask, writer, headers, targetDelimiter);
                     }
                     if (sourceWithName) {
                         continue;
                     }
                 }
-                TextFileTools.writeLine(writer, rowData, targetDelimiter);
+                TextFileTools.writeLine(currentTask, writer, rowData, targetDelimiter);
             }
             result = Languages.message("Handled") + ": " + srcFile;
         } catch (Exception e) {
@@ -145,7 +152,7 @@ public class DataFileTextMergeController extends FilesMergeController {
         try {
             writer.flush();
             writer.close();
-            try ( Connection conn = DerbyBase.getConnection()) {
+            try (Connection conn = DerbyBase.getConnection()) {
                 TableData2DDefinition tableData2DDefinition = new TableData2DDefinition();
                 Data2DDefinition def = tableData2DDefinition.queryFile(conn, Data2DDefinition.Type.Texts, targetFile);
                 if (def == null) {

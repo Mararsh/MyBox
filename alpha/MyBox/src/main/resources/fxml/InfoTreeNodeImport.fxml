@@ -22,6 +22,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
@@ -47,7 +48,6 @@ License:    Apache License Version 2.0
                                             <content>
                                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                                     <children>
-                                                        <Hyperlink maxWidth="1.7976931348623157E308" minHeight="-Infinity" onAction="#aboutTreeInformation" text="%AboutTreeInformation" wrapText="true" />
                                                         <HBox alignment="CENTER_LEFT" spacing="5.0">
                                                             <children>
                                                                 <Label text="%ExistedNode" />
@@ -56,22 +56,27 @@ License:    Apache License Version 2.0
                                                                         <ToggleGroup fx:id="existedGroup" />
                                                                     </toggleGroup>
                                                                 </RadioButton>
-                                                                <RadioButton fx:id="skipRadio" layoutX="51.0" layoutY="10.0" mnemonicParsing="false" text="%NotChangeAttributes" toggleGroup="$existedGroup" />
+                                                                <RadioButton fx:id="skipRadio" layoutX="51.0" layoutY="10.0" mnemonicParsing="false" text="%Skip" toggleGroup="$existedGroup" />
                                                                 <RadioButton fx:id="createRadio" layoutX="101.0" layoutY="10.0" mnemonicParsing="false" text="%CreateDuplicatedChild" toggleGroup="$existedGroup" />
                                                             </children>
                                                         </HBox>
                                                         <CheckBox fx:id="iconCheck" mnemonicParsing="false" text="%DownloadIcons" />
                                                         <Separator prefWidth="200.0" />
                                                         <Label fx:id="formatLabel" minHeight="-Infinity" text="%TreeImportComments" wrapText="true" />
-                                                        <Button fx:id="demoButton" mnemonicParsing="false" onAction="#demo">
-                                                            <graphic>
-                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                    <image>
-                                                                        <Image url="@../buttons/Red/iconDemo.png" />
-                                                                    </image>
-                                                                </ImageView>
-                                                            </graphic>
-                                                        </Button>
+                                          <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="0.0" vgap="2.0">
+                                             <children>
+                                                              <Hyperlink maxWidth="1.7976931348623157E308" minHeight="-Infinity" onAction="#aboutTreeInformation" text="%AboutTreeInformation" wrapText="true" />
+                                                              <Button fx:id="exampleButton" mnemonicParsing="false" onAction="#exampleData">
+                                                                  <graphic>
+                                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                          <image>
+                                                                              <Image url="@../buttons/Red/iconExamples.png" />
+                                                                          </image>
+                                                                      </ImageView>
+                                                                  </graphic>
+                                                              </Button>
+                                             </children>
+                                          </FlowPane>
                                                     </children>
                                                     <padding>
                                                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />

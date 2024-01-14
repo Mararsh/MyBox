@@ -16,7 +16,7 @@ import mara.mybox.db.data.ColorPaletteName;
 import mara.mybox.db.table.TableColor;
 import mara.mybox.db.table.TableColorPalette;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -116,7 +116,7 @@ public class ColorsPickingController extends BaseChildController {
         if (task != null && !task.isQuit()) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -170,9 +170,8 @@ public class ColorsPickingController extends BaseChildController {
                 ((ColorsPickingController) object).close();
             }
         }
-        ColorsPickingController controller
-                = (ColorsPickingController) WindowTools.openChildStage(parent.getMyStage(),
-                        Fxmls.ColorsPickingFxml, false);
+        ColorsPickingController controller = (ColorsPickingController) WindowTools
+                .branchStage(parent, Fxmls.ColorsPickingFxml);
         controller.setParameters(parent);
         return controller;
     }

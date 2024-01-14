@@ -21,6 +21,7 @@ import mara.mybox.data.Link;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.DownloadTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.value.AppValues;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -42,7 +43,13 @@ public class HtmlReadTools {
     /*
         read html
      */
-    public static File download(String urlAddress) {
+    public static File download(FxTask task, String urlAddress) {
+        return download(task, urlAddress,
+                UserConfig.getInt("WebConnectTimeout", 10000),
+                UserConfig.getInt("WebReadTimeout", 10000));
+    }
+
+    public static File download(FxTask task, String urlAddress, int connectTimeout, int readTimeout) {
         try {
             if (urlAddress == null) {
                 return null;
@@ -57,8 +64,12 @@ public class HtmlReadTools {
                 FileCopyTools.copyFile(new File(url.getFile()), tmpFile);
             } else if ("https".equalsIgnoreCase(protocal)) {
                 HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
-                connection.setConnectTimeout(UserConfig.getInt("WebConnectTimeout", 10000));
-                connection.setReadTimeout(UserConfig.getInt("WebReadTimeout", 10000));
+                if (connectTimeout > 0) {
+                    connection.setConnectTimeout(connectTimeout);
+                }
+                if (readTimeout > 0) {
+                    connection.setReadTimeout(readTimeout);
+                }
 //                connection.setRequestProperty("User-Agent", httpUserAgent);
                 connection.connect();
                 if ("gzip".equalsIgnoreCase(connection.getContentEncoding())) {
@@ -67,6 +78,9 @@ public class HtmlReadTools {
                         byte[] buf = new byte[AppValues.IOBufferLength];
                         int len;
                         while ((len = inStream.read(buf)) > 0) {
+                            if (task != null && !task.isWorking()) {
+                                return null;
+                            }
                             outputStream.write(buf, 0, len);
                         }
                     }
@@ -76,6 +90,9 @@ public class HtmlReadTools {
                         byte[] buf = new byte[AppValues.IOBufferLength];
                         int len;
                         while ((len = inStream.read(buf)) > 0) {
+                            if (task != null && !task.isWorking()) {
+                                return null;
+                            }
                             outputStream.write(buf, 0, len);
                         }
                     }
@@ -94,6 +111,9 @@ public class HtmlReadTools {
                         byte[] buf = new byte[AppValues.IOBufferLength];
                         int len;
                         while ((len = inStream.read(buf)) > 0) {
+                            if (task != null && !task.isWorking()) {
+                                return null;
+                            }
                             outputStream.write(buf, 0, len);
                         }
                     }
@@ -103,6 +123,9 @@ public class HtmlReadTools {
                         byte[] buf = new byte[AppValues.IOBufferLength];
                         int len;
                         while ((len = inStream.read(buf)) > 0) {
+                            if (task != null && !task.isWorking()) {
+                                return null;
+                            }
                             outputStream.write(buf, 0, len);
                         }
                     }
@@ -117,12 +140,12 @@ public class HtmlReadTools {
             }
             return tmpFile;
         } catch (Exception e) {
-            MyBoxLog.console(e.toString() + " " + urlAddress);
+//            MyBoxLog.console(e.toString() + " " + urlAddress);
             return null;
         }
     }
 
-    public static String url2html(String urlAddress) {
+    public static String url2html(FxTask task, String urlAddress) {
         try {
             if (urlAddress == null) {
                 return null;
@@ -133,11 +156,11 @@ public class HtmlReadTools {
             }
             String protocal = url.getProtocol();
             if ("file".equalsIgnoreCase(protocal)) {
-                return TextFileTools.readTexts(new File(url.getFile()));
+                return TextFileTools.readTexts(task, new File(url.getFile()));
             } else if ("https".equalsIgnoreCase(protocal) || "http".equalsIgnoreCase(protocal)) {
-                File file = download(url.toString());
+                File file = download(task, url.toString());
                 if (file != null) {
-                    return TextFileTools.readTexts(file);
+                    return TextFileTools.readTexts(task, file);
                 }
             }
         } catch (Exception e) {
@@ -146,9 +169,9 @@ public class HtmlReadTools {
         return null;
     }
 
-    public static Document url2doc(String urlAddress) {
+    public static Document url2doc(FxTask task, String urlAddress) {
         try {
-            String html = url2html(urlAddress);
+            String html = url2html(task, urlAddress);
             if (html != null) {
                 return Jsoup.parse(html);
             }
@@ -158,12 +181,12 @@ public class HtmlReadTools {
         return null;
     }
 
-    public static Document file2doc(File file) {
+    public static Document file2doc(FxTask task, File file) {
         try {
             if (file == null || !file.exists()) {
                 return null;
             }
-            String html = TextFileTools.readTexts(file);
+            String html = TextFileTools.readTexts(task, file);
             if (html != null) {
                 return Jsoup.parse(html);
             }
@@ -173,9 +196,9 @@ public class HtmlReadTools {
         return null;
     }
 
-    public static String baseURI(String urlAddress) {
+    public static String baseURI(FxTask task, String urlAddress) {
         try {
-            Document doc = url2doc(urlAddress);
+            Document doc = url2doc(task, urlAddress);
             if (doc == null) {
                 return null;
             }
@@ -186,7 +209,7 @@ public class HtmlReadTools {
         }
     }
 
-    public static File url2image(String address, String name) {
+    public static File url2image(FxTask task, String address, String name) {
         try {
             if (address == null) {
                 return null;
@@ -206,12 +229,12 @@ public class HtmlReadTools {
                     && !"jpeg".equalsIgnoreCase(suffix) && !"tiff".equalsIgnoreCase(suffix))) {
                 suffix = "jpg";
             }
-            File tmpFile = download(address);
+            File tmpFile = download(task, address);
             if (tmpFile == null) {
                 return null;
             }
             File imageFile = new File(tmpFile.getAbsoluteFile() + "." + suffix);
-            if (FileTools.rename(tmpFile, imageFile)) {
+            if (FileTools.override(tmpFile, imageFile)) {
                 return imageFile;
             } else {
                 return null;
@@ -483,7 +506,7 @@ public class HtmlReadTools {
         return links;
     }
 
-    public static List<Link> links(Link addressLink, File path, Link.FilenameType nameType) {
+    public static List<Link> links(FxTask task, Link addressLink, File path, Link.FilenameType nameType) {
         try {
             if (addressLink == null || path == null) {
                 return null;
@@ -495,10 +518,13 @@ public class HtmlReadTools {
             validLinks.add(coverLink);
             String html = addressLink.getHtml();
             if (html == null) {
-                html = TextFileTools.readTexts(new File(addressLink.getFile()));
+                html = TextFileTools.readTexts(task, new File(addressLink.getFile()));
             }
             List<Link> links = HtmlReadTools.links(url, html);
             for (Link link : links) {
+                if (task != null && !task.isWorking()) {
+                    return null;
+                }
                 if (link.getAddress() == null) {
                     continue;
                 }

@@ -312,7 +312,7 @@ public class ControlData2DColumns extends BaseData2DColumnsController {
                 if (node == null) {
                     return;
                 }
-                addColumns(Data2DTools.definitionFromXML(node.getInfo()));
+                addColumns(Data2DTools.definitionFromXML(null, myController, node.getInfo()));
                 controller.close();
             }
         });

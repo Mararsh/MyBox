@@ -5,7 +5,7 @@ import java.util.List;
 import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.DoubleTools;
 import static mara.mybox.value.Languages.message;
 import org.apache.commons.math3.stat.regression.OLSMultipleLinearRegression;
@@ -25,7 +25,7 @@ public class OLSLinearRegression extends OLSMultipleLinearRegression {
     public double[][] x;
     public double[] y, coefficients;
     public InvalidAs invalidAs;
-    protected SingletonTask<Void> task;
+    protected FxTask<Void> task;
 
     public OLSLinearRegression(boolean includeIntercept) {
         super();
@@ -164,7 +164,7 @@ public class OLSLinearRegression extends OLSMultipleLinearRegression {
         return this;
     }
 
-    public OLSLinearRegression setTask(SingletonTask<Void> task) {
+    public OLSLinearRegression setTask(FxTask<Void> task) {
         this.task = task;
         return this;
     }

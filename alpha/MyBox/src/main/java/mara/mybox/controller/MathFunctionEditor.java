@@ -35,9 +35,9 @@ public class MathFunctionEditor extends InfoTreeNodeEditor {
     }
 
     @Override
-    public void setParameters(InfoTreeManageController treeController) {
+    public void setManager(InfoTreeManageController treeController) {
         try {
-            super.setParameters(treeController);
+            super.setManager(treeController);
 
             functionController = (MathFunctionController) treeController;
 

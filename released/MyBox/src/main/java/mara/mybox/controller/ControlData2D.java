@@ -31,11 +31,12 @@ import mara.mybox.data2d.DataClipboard;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
+import mara.mybox.db.data.FileBackup;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Languages;
@@ -57,7 +58,6 @@ public class ControlData2D extends BaseController {
     protected ControlData2DEditTable tableController;
     protected ControlData2DEditCSV csvController;
     protected final SimpleBooleanProperty statusNotify, loadedNotify, savedNotify;
-    protected ControlFileBackup backupController;
 
     @FXML
     protected Tab editTab, viewTab, attributesTab, columnsTab;
@@ -259,13 +259,6 @@ public class ControlData2D extends BaseController {
 
     public void notifyLoaded() {
         notifyStatus();
-        if (backupController != null) {
-            if (data2D.isTmpData()) {
-                backupController.loadBackups(null);
-            } else {
-                backupController.loadBackups(data2D.getFile());
-            }
-        }
         loadedNotify.set(!loadedNotify.get());
     }
 
@@ -435,7 +428,7 @@ public class ControlData2D extends BaseController {
         Data2D targetData = data2D.cloneAll();
         if (targetData.isDataFile()) {
             if (targetData.getFile() == null) {
-                File file = chooseSaveFile();
+                File file = chooseSaveFile(targetData.dataName());
                 if (file == null) {
                     return;
                 }
@@ -450,13 +443,18 @@ public class ControlData2D extends BaseController {
                 targetData.setFile(file);
             }
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
+
+            private boolean needBackup = false;
+            private FileBackup backup;
 
             @Override
             protected boolean handle() {
                 try {
-                    if (backupController != null && backupController.needBackup() && !data2D.isTmpData()) {
-                        backupController.addBackup(task, data2D.getFile());
+                    needBackup = data2D.isDataFile() && !data2D.isTmpData()
+                            && UserConfig.getBoolean(baseName + "BackupWhenSave", true);
+                    if (needBackup) {
+                        backup = addBackup(this, data2D.getFile());
                     }
                     data2D.startTask(this, null);
                     data2D.savePageData(targetData);
@@ -474,6 +472,14 @@ public class ControlData2D extends BaseController {
             @Override
             protected void whenSucceeded() {
                 tableController.dataSaved();
+                if (needBackup) {
+                    if (backup != null && backup.getBackup() != null) {
+                        popInformation(message("SavedAndBacked"));
+                        FileBackupController.updateList(sourceFile);
+                    } else {
+                        popError(message("FailBackup"));
+                    }
+                }
             }
 
             @Override
@@ -493,7 +499,7 @@ public class ControlData2D extends BaseController {
         if (task != null && !task.isQuit()) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -725,24 +731,23 @@ public class ControlData2D extends BaseController {
 
     @Override
     public boolean keyEventsFilter(KeyEvent event) {
-        if (!super.keyEventsFilter(event)) {
-            if (editTab.isSelected()) {
-                return editController.keyEventsFilter(event);
-
-            } else if (viewTab.isSelected()) {
-                return viewController.keyEventsFilter(event);
-
-            } else if (attributesTab.isSelected()) {
-                return attributesController.keyEventsFilter(event);
-
-            } else if (columnsTab.isSelected()) {
-                return columnsController.keyEventsFilter(event);
-
-            }
-            return false;
-        } else {
+        if (super.keyEventsFilter(event)) {
             return true;
         }
+        if (editTab.isSelected()) {
+            return editController.keyEventsFilter(event);
+
+        } else if (viewTab.isSelected()) {
+            return viewController.keyEventsFilter(event);
+
+        } else if (attributesTab.isSelected()) {
+            return attributesController.keyEventsFilter(event);
+
+        } else if (columnsTab.isSelected()) {
+            return columnsController.keyEventsFilter(event);
+
+        }
+        return false;
     }
 
     @Override

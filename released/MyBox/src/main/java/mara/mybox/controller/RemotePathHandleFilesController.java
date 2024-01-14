@@ -13,6 +13,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TreeItem;
 import mara.mybox.data.FileNode;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -49,7 +50,7 @@ public abstract class RemotePathHandleFilesController extends BaseTaskController
             List<TreeItem<FileNode>> items = manageController.filesTreeView.getSelectionModel().getSelectedItems();
             if (items != null) {
                 for (TreeItem<FileNode> item : items) {
-                    namesArea.appendText(item.getValue().fullName() + "\n");
+                    namesArea.appendText(item.getValue().nodeFullName() + "\n");
                 }
             }
 
@@ -115,21 +116,21 @@ public abstract class RemotePathHandleFilesController extends BaseTaskController
     }
 
     @Override
-    public boolean doTask() {
+    public boolean doTask(FxTask currentTask) {
         try {
-            manageController.task = task;
-            manageController.remoteController.task = task;
+            manageController.task = currentTask;
+            manageController.remoteController.task = currentTask;
             if (!manageController.checkConnection()) {
                 return false;
             }
             sftp = manageController.remoteController.sftp;
             doneCount = 0;
             for (String name : names) {
-                if (task == null || task.isCancelled()) {
+                if (currentTask == null || !currentTask.isWorking()) {
                     return false;
                 }
                 showLogs(message("SourceFile") + ": " + name);
-                if (handleFile(name)) {
+                if (handleFile(currentTask, name)) {
                     showLogs(doneString + ": " + name);
                 } else {
                     showLogs(message("Failed") + ": " + name);
@@ -145,7 +146,7 @@ public abstract class RemotePathHandleFilesController extends BaseTaskController
         }
     }
 
-    public boolean handleFile(String name) {
+    public boolean handleFile(FxTask currentTask, String name) {
         return false;
     }
 
@@ -173,8 +174,8 @@ public abstract class RemotePathHandleFilesController extends BaseTaskController
             if (manageController == null) {
                 return null;
             }
-            RemotePathHandleFilesController controller = (RemotePathHandleFilesController) WindowTools.openChildStage(
-                    manageController.getMyWindow(), Fxmls.RemotePathDeleteFxml, false);
+            RemotePathHandleFilesController controller = (RemotePathHandleFilesController) WindowTools.branchStage(
+                    manageController, Fxmls.RemotePathDeleteFxml);
             controller.setParameters(manageController);
             controller.requestMouse();
             return controller;

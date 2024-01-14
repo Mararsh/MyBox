@@ -73,17 +73,26 @@ public class Fxmls {
     public static final String MarkdownToPdfFxml = "/fxml/MarkdownToPdf.fxml";
     public static final String MarkdownPopFxml = "/fxml/MarkdownPop.fxml";
     public static final String MarkdownTypesettingFxml = "/fxml/MarkdownTypesetting.fxml";
+    public static final String MarkdownOptionsFxml = "/fxml/MarkdownOptions.fxml";
 
     public static final String JsonEditorFxml = "/fxml/JsonEditor.fxml";
     public static final String JsonAddFieldFxml = "/fxml/JsonAddField.fxml";
     public static final String JsonAddElementFxml = "/fxml/JsonAddElement.fxml";
     public static final String JsonTypesettingFxml = "/fxml/JsonTypesetting.fxml";
+    public static final String JsonOptionsFxml = "/fxml/JsonOptions.fxml";
 
     public static final String XmlEditorFxml = "/fxml/XmlEditor.fxml";
     public static final String XmlAddNodeFxml = "/fxml/XmlAddNode.fxml";
     public static final String XmlTypesettingFxml = "/fxml/XmlTypesetting.fxml";
+    public static final String XmlOptionsFxml = "/fxml/XmlOptions.fxml";
 
     public static final String TextEditorFxml = "/fxml/TextEditor.fxml";
+    public static final String TextEditorSaveAsFxml = "/fxml/TextEditorSaveAs.fxml";
+    public static final String TextEditorFormatFxml = "/fxml/TextEditorFormat.fxml";
+    public static final String TextLocateFxml = "/fxml/TextLocate.fxml";
+    public static final String TextFilterFxml = "/fxml/TextFilter.fxml";
+    public static final String TextIntervalInputFxml = "/fxml/TextIntervalInput.fxml";
+
     public static final String TextFilesConvertFxml = "/fxml/TextFilesConvert.fxml";
     public static final String TextFilesMergeFxml = "/fxml/TextFilesMerge.fxml";
     public static final String TextFindBatchFxml = "/fxml/TextFindBatch.fxml";
@@ -96,6 +105,8 @@ public class Fxmls {
     public static final String TextPopFxml = "/fxml/TextPop.fxml";
 
     public static final String BytesEditorFxml = "/fxml/BytesEditor.fxml";
+    public static final String BytesEditorFormatFxml = "/fxml/BytesEditorFormat.fxml";
+    public static final String BytesEditorSaveAsFxml = "/fxml/BytesEditorSaveAs.fxml";
     public static final String BytesFindBatchFxml = "/fxml/BytesFindBatch.fxml";
     public static final String BytesPopFxml = "/fxml/BytesPop.fxml";
 
@@ -113,51 +124,103 @@ public class Fxmls {
     /*
         image
      */
-    public static final String ImageViewerFxml = "/fxml/ImageViewer.fxml";
     public static final String ImageAnalyseFxml = "/fxml/ImageAnalyse.fxml";
     public static final String ImagesBrowserFxml = "/fxml/ImagesBrowser.fxml";
     public static final String ImageConverterFxml = "/fxml/ImageConverter.fxml";
 
-    public static final String ImageManufactureFxml = "/fxml/ImageManufacture.fxml";
-    public static final String ImageManufactureViewFxml = "/fxml/ImageManufactureView.fxml";
-    public static final String ImageManufactureCopyFxml = "/fxml/ImageManufactureCopy.fxml";
-    public static final String ImageManufactureClipboardFxml = "/fxml/ImageManufactureClipboard.fxml";
-    public static final String ImageManufacturePaletteFxml = "/fxml/ImageManufacturePalette.fxml";
-    public static final String ImageManufactureSizeFxml = "/fxml/ImageManufactureSize.fxml";
-    public static final String ImageManufactureScaleFxml = "/fxml/ImageManufactureScale.fxml";
-    public static final String ImageManufactureCropFxml = "/fxml/ImageManufactureCrop.fxml";
-    public static final String ImageManufactureColorFxml = "/fxml/ImageManufactureColor.fxml";
-    public static final String ImageManufactureEffectsFxml = "/fxml/ImageManufactureEffects.fxml";
-    public static final String ImageManufactureEnhancementFxml = "/fxml/ImageManufactureEnhancement.fxml";
-    public static final String ImageManufactureTextFxml = "/fxml/ImageManufactureText.fxml";
-    public static final String ImageManufactureArcFxml = "/fxml/ImageManufactureArc.fxml";
-    public static final String ImageManufactureShapeFxml = "/fxml/ImageManufactureShape.fxml";
-    public static final String ImageManufactureEliminateFxml = "/fxml/ImageManufactureEliminate.fxml";
-    public static final String ImageManufactureShadowFxml = "/fxml/ImageManufactureShadow.fxml";
-    public static final String ImageManufactureTransformFxml = "/fxml/ImageManufactureTransform.fxml";
-    public static final String ImageManufactureMarginsFxml = "/fxml/ImageManufactureMargins.fxml";
-    public static final String ImageManufactureBatchFxml = "/fxml/ImageManufactureBatch.fxml";
-    public static final String ImageManufactureBatchSizeFxml = "/fxml/ImageManufactureBatchSize.fxml";
-    public static final String ImageManufactureBatchCropFxml = "/fxml/ImageManufactureBatchCrop.fxml";
-    public static final String ImageManufactureBatchPasteFxml = "/fxml/ImageManufactureBatchPaste.fxml";
-    public static final String ImageManufactureBatchColorFxml = "/fxml/ImageManufactureBatchColor.fxml";
-    public static final String ImageManufactureBatchEffectsFxml = "/fxml/ImageManufactureBatchEffects.fxml";
-    public static final String ImageManufactureBatchEnhancementFxml = "/fxml/ImageManufactureBatchEnhancement.fxml";
-    public static final String ImageManufactureBatchReplaceColorFxml = "/fxml/ImageManufactureBatchReplaceColor.fxml";
-    public static final String ImageManufactureBatchTextFxml = "/fxml/ImageManufactureBatchText.fxml";
-    public static final String ImageManufactureBatchArcFxml = "/fxml/ImageManufactureBatchArc.fxml";
-    public static final String ImageManufactureBatchShadowFxml = "/fxml/ImageManufactureBatchShadow.fxml";
-    public static final String ImageManufactureBatchTransformFxml = "/fxml/ImageManufactureBatchTransform.fxml";
-    public static final String ImageManufactureBatchMarginsFxml = "/fxml/ImageManufactureBatchMargins.fxml";
+    public static final String ImageEditorFxml = "/fxml/ImageEditor.fxml";
+    public static final String ImageSelectPixelsFxml = "/fxml/ImageSelectPixels.fxml";
+    public static final String ImageCopyFxml = "/fxml/ImageCopy.fxml";
+    public static final String ImageCropFxml = "/fxml/ImageCrop.fxml";
+    public static final String ImagePasteFxml = "/fxml/ImagePaste.fxml";
+    public static final String ImageMarginsFxml = "/fxml/ImageMargins.fxml";
+    public static final String ImageSizeFxml = "/fxml/ImageSize.fxml";
+    public static final String ImageReplaceColorFxml = "/fxml/ImageReplaceColor.fxml";
+    public static final String ImageBlendColorFxml = "/fxml/ImageBlendColor.fxml";
+    public static final String ImageAdjustColorFxml = "/fxml/ImageAdjustColor.fxml";
+    public static final String ImageThresholdingFxml = "/fxml/ImageThresholding.fxml";
+    public static final String ImageEdgeFxml = "/fxml/ImageEdge.fxml";
+    public static final String ImageEmbossFxml = "/fxml/ImageEmboss.fxml";
+    public static final String ImageBlackWhiteFxml = "/fxml/ImageBlackWhite.fxml";
+    public static final String ImageGreyFxml = "/fxml/ImageGrey.fxml";
+    public static final String ImageSepiaFxml = "/fxml/ImageSepia.fxml";
+    public static final String ImageMosaicFxml = "/fxml/ImageMosaic.fxml";
+    public static final String ImageGlassFxml = "/fxml/ImageGlass.fxml";
+    public static final String ImageReduceColorsFxml = "/fxml/ImageReduceColors.fxml";
+    public static final String ImageRotateFxml = "/fxml/ImageRotate.fxml";
+    public static final String ImageMirrorFxml = "/fxml/ImageMirror.fxml";
+    public static final String ImageShearFxml = "/fxml/ImageShear.fxml";
+    public static final String ImageRoundFxml = "/fxml/ImageRound.fxml";
+    public static final String ImageShadowFxml = "/fxml/ImageShadow.fxml";
+    public static final String ImageEraserFxml = "/fxml/ImageEraser.fxml";
+    public static final String ImageSmoothFxml = "/fxml/ImageSmooth.fxml";
+    public static final String ImageSharpenFxml = "/fxml/ImageSharpen.fxml";
+    public static final String ImageContrastFxml = "/fxml/ImageContrast.fxml";
+    public static final String ImageConvolutionFxml = "/fxml/ImageConvolution.fxml";
+    public static final String ImageLineFxml = "/fxml/ImageLine.fxml";
+    public static final String ImagePolylinesFxml = "/fxml/ImagePolylines.fxml";
+    public static final String ImageRectangleFxml = "/fxml/ImageRectangle.fxml";
+    public static final String ImageCircleFxml = "/fxml/ImageCircle.fxml";
+    public static final String ImageEllipseFxml = "/fxml/ImageEllipse.fxml";
+    public static final String ImagePolylineFxml = "/fxml/ImagePolyline.fxml";
+    public static final String ImagePolygonFxml = "/fxml/ImagePolygon.fxml";
+    public static final String ImageArcFxml = "/fxml/ImageArc.fxml";
+    public static final String ImageQuadraticFxml = "/fxml/ImageQuadratic.fxml";
+    public static final String ImageCubicFxml = "/fxml/ImageCubic.fxml";
+    public static final String ImageSVGPathFxml = "/fxml/ImageSVGPath.fxml";
+    public static final String ImageTextFxml = "/fxml/ImageText.fxml";
+
+    public static final String ImageScopeFxml = "/fxml/ImageScope.fxml";
+    public static final String ImageCanvasInputFxml = "/fxml/ImageCanvasInput.fxml";
+    public static final String ImageHistoriesFxml = "/fxml/ImageHistories.fxml";
+    public static final String ImageScopeViewsFxml = "/fxml/ImageScopeViews.fxml";
+    public static final String ImageScopeSavedFxml = "/fxml/ImageScopeSaved.fxml";
+    public static final String ImageClipSelectFxml = "/fxml/ImageClipSelect.fxml";
+
+    public static final String ImageCropBatchFxml = "/fxml/ImageCropBatch.fxml";
+    public static final String ImageAdjustColorBatchFxml = "/fxml/ImageAdjustColorBatch.fxml";
+    public static final String ImageReplaceColorBatchFxml = "/fxml/ImageReplaceColorBatch.fxml";
+    public static final String ImageBlendColorBatchFxml = "/fxml/ImageBlendColorBatch.fxml";
+    public static final String ImageReduceColorsBatchFxml = "/fxml/ImageReduceColorsBatch.fxml";
+    public static final String ImageGreyBatchFxml = "/fxml/ImageGreyBatch.fxml";
+    public static final String ImageBlackWhiteBatchFxml = "/fxml/ImageBlackWhiteBatch.fxml";
+    public static final String ImageSepiaBatchFxml = "/fxml/ImageSepiaBatch.fxml";
+    public static final String ImageThresholdingBatchFxml = "/fxml/ImageThresholdingBatch.fxml";
+    public static final String ImageTextBatchFxml = "/fxml/ImageTextBatch.fxml";
+    public static final String ImageEdgeBatchFxml = "/fxml/ImageEdgeBatch.fxml";
+    public static final String ImageEmbossBatchFxml = "/fxml/ImageEmbossBatch.fxml";
+    public static final String ImageSharpenBatchFxml = "/fxml/ImageSharpenBatch.fxml";
+    public static final String ImageSmoothBatchFxml = "/fxml/ImageSmoothBatch.fxml";
+    public static final String ImageShadowBatchFxml = "/fxml/ImageShadowBatch.fxml";
+    public static final String ImageRoundBatchFxml = "/fxml/ImageRoundBatch.fxml";
+    public static final String ImageMarginsBatchFxml = "/fxml/ImageMarginsBatch.fxml";
+    public static final String ImageSizeBatchFxml = "/fxml/ImageSizeBatch.fxml";
+    public static final String ImageMirrorBatchFxml = "/fxml/ImageMirrorBatch.fxml";
+    public static final String ImageShearBatchFxml = "/fxml/ImageShearBatch.fxml";
+    public static final String ImageRotateBatchFxml = "/fxml/ImageRotateBatch.fxml";
+    public static final String ImagePasteBatchFxml = "/fxml/ImagePasteBatch.fxml";
+    public static final String ImageMosaicBatchFxml = "/fxml/ImageMosaicBatch.fxml";
+    public static final String ImageGlassBatchFxml = "/fxml/ImageGlassBatch.fxml";
+    public static final String ImageContrastBatchFxml = "/fxml/ImageContrastBatch.fxml";
+    public static final String ImageConvolutionBatchFxml = "/fxml/ImageConvolutionBatch.fxml";
 
     public static final String SvgEditorFxml = "/fxml/SvgEditor.fxml";
-    public static final String SvgAddShapeFxml = "/fxml/SvgAddShape.fxml";
-    public static final String SvgEditShapeFxml = "/fxml/SvgEditShape.fxml";
     public static final String SvgTypesettingFxml = "/fxml/SvgTypesetting.fxml";
     public static final String SvgToImageFxml = "/fxml/SvgToImage.fxml";
     public static final String SvgToPDFFxml = "/fxml/SvgToPDF.fxml";
     public static final String SvgFromImageFxml = "/fxml/SvgFromImage.fxml";
     public static final String SvgFromImageBatchFxml = "/fxml/SvgFromImageBatch.fxml";
+    public static final String SvgCircleFxml = "/fxml/SvgCircle.fxml";
+    public static final String SvgRectangleFxml = "/fxml/SvgRectangle.fxml";
+    public static final String SvgEllipseFxml = "/fxml/SvgEllipse.fxml";
+    public static final String SvgLineFxml = "/fxml/SvgLine.fxml";
+    public static final String SvgPolylineFxml = "/fxml/SvgPolyline.fxml";
+    public static final String SvgPolygonFxml = "/fxml/SvgPolygon.fxml";
+    public static final String SvgQuadraticFxml = "/fxml/SvgQuadratic.fxml";
+    public static final String SvgCubicFxml = "/fxml/SvgCubic.fxml";
+    public static final String SvgArcFxml = "/fxml/SvgArc.fxml";
+    public static final String SvgPolylinesFxml = "/fxml/SvgPolylines.fxml";
+    public static final String SvgPathFxml = "/fxml/SvgPath.fxml";
 
     public static final String PointInputFxml = "/fxml/PointInput.fxml";
     public static final String LineInputFxml = "/fxml/LineInput.fxml";
@@ -172,6 +235,7 @@ public class Fxmls {
     public static final String ImageSplitFxml = "/fxml/ImageSplit.fxml";
     public static final String ImageSampleFxml = "/fxml/ImageSample.fxml";
     public static final String ImagesEditorFxml = "/fxml/ImagesEditor.fxml";
+    public static final String ImagesSaveFxml = "/fxml/ImagesSave.fxml";
     public static final String ImagesPlayFxml = "/fxml/ImagesPlay.fxml";
     public static final String ImageAlphaExtractBatchFxml = "/fxml/ImageAlphaExtractBatch.fxml";
     public static final String ImageAlphaAddBatchFxml = "/fxml/ImageAlphaAddBatch.fxml";
@@ -206,8 +270,11 @@ public class Fxmls {
     public static final String ConvolutionKernelManagerFxml = "/fxml/ConvolutionKernelManager.fxml";
     public static final String ImageBase64Fxml = "/fxml/ImageBase64.fxml";
 
+    public static final String ImageLoadWidthFxml = "/fxml/ImageLoadWidth.fxml";
+    public static final String ImageFramesFxml = "/fxml/ImageFrames.fxml";
+    public static final String ImageOptionsFxml = "/fxml/ImageOptions.fxml";
+    public static final String ImageShapeOptionsFxml = "/fxml/ImageShapeOptions.fxml";
     public static final String ImagePopFxml = "/fxml/ImagePop.fxml";
-    public static final String ImageScopePopFxml = "/fxml/ImageScopePop.fxml";
     public static final String ImageInformationFxml = "/fxml/ImageInformation.fxml";
     public static final String ImageMetaDataFxml = "/fxml/ImageMetaData.fxml";
     public static final String ImageTooLargeFxml = "/fxml/ImageTooLarge.fxml";
@@ -281,14 +348,21 @@ public class Fxmls {
     public static final String MathFunctionXYChartFxml = "/fxml/MathFunctionXYChart.fxml";
 
     public static final String DataFileCSVFxml = "/fxml/DataFileCSV.fxml";
+    public static final String DataFileCSVFormatFxml = "/fxml/DataFileCSVFormat.fxml";
+    public static final String DataFileCSVSaveAsFxml = "/fxml/DataFileCSVSaveAs.fxml";
     public static final String DataFileCSVConvertFxml = "/fxml/DataFileCSVConvert.fxml";
     public static final String DataFileCSVMergeFxml = "/fxml/DataFileCSVMerge.fxml";
 
     public static final String DataFileExcelFxml = "/fxml/DataFileExcel.fxml";
+    public static final String DataFileExcelSheetsFxml = "/fxml/DataFileExcelSheets.fxml";
+    public static final String DataFileExcelFormatFxml = "/fxml/DataFileExcelFormat.fxml";
+    public static final String DataFileExcelSaveAsFxml = "/fxml/DataFileExcelSaveAs.fxml";
     public static final String DataFileExcelConvertFxml = "/fxml/DataFileExcelConvert.fxml";
     public static final String DataFileExcelMergeFxml = "/fxml/DataFileExcelMerge.fxml";
 
     public static final String DataFileTextFxml = "/fxml/DataFileText.fxml";
+    public static final String DataFileTextFormatFxml = "/fxml/DataFileTextFormat.fxml";
+    public static final String DataFileTextSaveAsFxml = "/fxml/DataFileTextSaveAs.fxml";
     public static final String DataFileTextConvertFxml = "/fxml/DataFileTextConvert.fxml";
     public static final String DataFileTextMergeFxml = "/fxml/DataFileTextMerge.fxml";
 
@@ -297,6 +371,7 @@ public class Fxmls {
     public static final String MatricesBinaryCalculationFxml = "/fxml/MatricesBinaryCalculation.fxml";
 
     public static final String DatabaseSqlFxml = "/fxml/DatabaseSql.fxml";
+    public static final String DatabaseTableDefinitionFxml = "/fxml/DatabaseTableDefinition.fxml";
     public static final String DataTablesFxml = "/fxml/DataTables.fxml";
 
     public static final String BarcodeCreatorFxml = "/fxml/BarcodeCreator.fxml";
@@ -437,6 +512,7 @@ public class Fxmls {
     public static final String SettingCustomColorsFxml = "/fxml/SettingCustomColors.fxml";
     public static final String HtmlStyleInputFxml = "/fxml/HtmlStyleInput.fxml";
     public static final String FileBackupFxml = "/fxml/FileBackup.fxml";
+    public static final String FileBrowseFxml = "/fxml/FileBrowse.fxml";
 
     public static final String MenuFxml = "/fxml/Menu.fxml";
     public static final String MenuTextEditFxml = "/fxml/MenuTextEdit.fxml";
@@ -447,12 +523,13 @@ public class Fxmls {
     public static final String MenuImageFxml = "/fxml/MenuImage.fxml";
     public static final String MenuImageBaseFxml = "/fxml/MenuImageBase.fxml";
     public static final String MenuImageViewFxml = "/fxml/MenuImageView.fxml";
+    public static final String MenuImageEditFxml = "/fxml/MenuImageEdit.fxml";
     public static final String MenuImageManufactureFxml = "/fxml/MenuImageManufacture.fxml";
     public static final String MenuImageScopeFxml = "/fxml/MenuImageScope.fxml";
 
     public static final String TextClipboardPopFxml = "/fxml/TextClipboardPop.fxml";
-    public static final String FindReplacePopFxml = "/fxml/FindReplacePop.fxml";
-    public static final String FindPopFxml = "/fxml/FindPop.fxml";
+    public static final String FindReplaceFxml = "/fxml/FindReplace.fxml";
+    public static final String FindFxml = "/fxml/Find.fxml";
     public static final String ColorsPickingFxml = "/fxml/ColorsPicking.fxml";
 
     public static final String SettingsFxml = "/fxml/Settings.fxml";

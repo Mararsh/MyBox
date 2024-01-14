@@ -14,32 +14,64 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" maxHeight="600.0" minHeight="200.0" prefWidth="600.0" spacing="5.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.MenuController">
+<VBox fx:id="thisPane" maxHeight="600.0" minHeight="200.0" prefWidth="600.0" spacing="5.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.MenuController">
     <children>
-        <HBox fx:id="topBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
+        <HBox fx:id="topBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="NEVER">
             <children>
-                <Button fx:id="closePop2Button" mnemonicParsing="false" onAction="#closeAction">
-                    <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../buttons/Red/iconCancel.png" />
-                            </image>
+            <FlowPane hgap="2.0" maxWidth="1.7976931348623157E308" prefWrapLength="0.0" vgap="2.0" HBox.hgrow="ALWAYS">
+               <children>
+                      <Button fx:id="closePop2Button" mnemonicParsing="false" onAction="#closeAction">
+                          <graphic>
+                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                  <image>
+                                      <Image url="@../buttons/Red/iconCancel.png" />
+                                  </image>
+                              </ImageView>
+                          </graphic>
+                      </Button>
+                  <CheckBox fx:id="childWindowCheck" mnemonicParsing="false">
+                     <graphic>
+                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../buttons/red/iconWindow.png" />
+                           </image>
                         </ImageView>
-                    </graphic>
-                </Button>
-            <CheckBox fx:id="childWindowCheck" mnemonicParsing="false" selected="true">
-               <graphic>
-                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/red/iconWindow.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </CheckBox>
-                <Label fx:id="titleLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" /> 
+                     </graphic>
+                  </CheckBox>
+                  <CheckBox fx:id="popMenuCheck" mnemonicParsing="false">
+                     <graphic>
+                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../buttons/red/iconPop.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </CheckBox>
+                  <CheckBox fx:id="closeNemuCheck" mnemonicParsing="false">
+                     <graphic>
+                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../buttons/red/iconClose.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </CheckBox>
+                  <CheckBox fx:id="clearInputCheck" mnemonicParsing="false">
+                     <graphic>
+                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../buttons/red/iconClear.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </CheckBox>
+               </children>
+            </FlowPane>
+                <Label fx:id="titleLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" textAlignment="RIGHT" wrapText="true" /> 
                 <Button fx:id="styleButton" mnemonicParsing="false" onAction="#showStyles" onMouseEntered="#popStyles">
                     <graphic>
                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">

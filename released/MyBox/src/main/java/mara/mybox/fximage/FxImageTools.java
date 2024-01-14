@@ -22,20 +22,17 @@ import javafx.scene.text.Text;
 import mara.mybox.bufferedimage.AlphaTools;
 import mara.mybox.bufferedimage.BufferedImageTools;
 import mara.mybox.bufferedimage.ColorConvertTools;
-import mara.mybox.bufferedimage.ImageTextTools;
 import mara.mybox.bufferedimage.PixelsBlend;
 import mara.mybox.bufferedimage.PixelsOperationFactory;
-import mara.mybox.bufferedimage.ShadowTools;
-import mara.mybox.controller.ControlImageText;
 import mara.mybox.data.DoubleShape;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.fximage.FxColorTools.toAwtColor;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.imagefile.ImageFileReaders;
 
 /**
  * @Author Mara
  * @CreateDate 2018-6-11 11:19:42
- * @Description
  * @License Apache License Version 2.0
  */
 public class FxImageTools {
@@ -61,44 +58,44 @@ public class FxImageTools {
         return newImage;
     }
 
-    public static Image readImage(File file) {
-        BufferedImage bufferedImage = ImageFileReaders.readImage(file);
+    public static Image readImage(FxTask task, File file) {
+        BufferedImage bufferedImage = ImageFileReaders.readImage(task, file);
         if (bufferedImage == null) {
             return null;
         }
         return SwingFXUtils.toFXImage(bufferedImage, null);
     }
 
-    public static byte[] bytes(Image image, String format) {
-        return BufferedImageTools.bytes(SwingFXUtils.fromFXImage(image, null), format);
+    public static byte[] bytes(FxTask task, Image image, String format) {
+        return BufferedImageTools.bytes(task, SwingFXUtils.fromFXImage(image, null), format);
     }
 
-    public static String base64(File file, String format) {
+    public static String base64(FxTask task, File file, String format) {
         try {
-            BufferedImage bufferedImage = ImageFileReaders.readImage(file);
+            BufferedImage bufferedImage = ImageFileReaders.readImage(task, file);
             if (bufferedImage == null) {
                 return null;
             }
-            return BufferedImageTools.base64(bufferedImage, format);
+            return BufferedImageTools.base64(task, bufferedImage, format);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;
         }
     }
 
-    public static String base64(Image image, String format) {
+    public static String base64(FxTask task, Image image, String format) {
         try {
             if (image == null || format == null) {
                 return null;
             }
-            return BufferedImageTools.base64(SwingFXUtils.fromFXImage(image, null), format);
+            return BufferedImageTools.base64(task, SwingFXUtils.fromFXImage(image, null), format);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;
         }
     }
 
-    public static Image clone(Image srcImage) {
+    public static Image clone(FxTask task, Image srcImage) {
         if (srcImage == null) {
             return srcImage;
         }
@@ -116,7 +113,7 @@ public class FxImageTools {
     }
 
     // This way may be more quicker than comparing digests
-    public static boolean sameImage(Image imageA, Image imageB) {
+    public static boolean sameImage(FxTask task, Image imageA, Image imageB) {
         try {
             if (imageA == null || imageB == null
                     || imageA.getWidth() != imageB.getWidth()
@@ -127,24 +124,42 @@ public class FxImageTools {
             PixelReader readA = imageA.getPixelReader();
             PixelReader readB = imageB.getPixelReader();
             for (int y = 0; y < height / 2; y++) {
+                if (task != null && !task.isWorking()) {
+                    return false;
+                }
                 for (int x = 0; x < width / 2; x++) {
+                    if (task != null && !task.isWorking()) {
+                        return false;
+                    }
                     if (!readA.getColor(x, y).equals(readB.getColor(x, y))) {
                         return false;
                     }
                 }
                 for (int x = width - 1; x >= width / 2; x--) {
+                    if (task != null && !task.isWorking()) {
+                        return false;
+                    }
                     if (!readA.getColor(x, y).equals(readB.getColor(x, y))) {
                         return false;
                     }
                 }
             }
             for (int y = height - 1; y >= height / 2; y--) {
+                if (task != null && !task.isWorking()) {
+                    return false;
+                }
                 for (int x = 0; x < width / 2; x++) {
+                    if (task != null && !task.isWorking()) {
+                        return false;
+                    }
                     if (!readA.getColor(x, y).equals(readB.getColor(x, y))) {
                         return false;
                     }
                 }
                 for (int x = width - 1; x >= width / 2; x--) {
+                    if (task != null && !task.isWorking()) {
+                        return false;
+                    }
                     if (!readA.getColor(x, y).equals(readB.getColor(x, y))) {
                         return false;
                     }
@@ -165,22 +180,15 @@ public class FxImageTools {
         return source;
     }
 
-    public static BufferedImage checkAlpha(Image image, String format) {
+    public static BufferedImage checkAlpha(FxTask task, Image image, String format) {
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
-        BufferedImage target = AlphaTools.checkAlpha(source, format);
+        BufferedImage target = AlphaTools.checkAlpha(task, source, format);
         return target;
     }
 
-    public static Image clearAlpha(Image image) {
+    public static Image clearAlpha(FxTask task, Image image) {
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
-        BufferedImage target = AlphaTools.removeAlpha(source);
-        Image newImage = SwingFXUtils.toFXImage(target, null);
-        return newImage;
-    }
-
-    public static Image addText(Image image, ControlImageText optionsController) {
-        BufferedImage source = SwingFXUtils.fromFXImage(image, null);
-        BufferedImage target = ImageTextTools.addText(source, optionsController);
+        BufferedImage target = AlphaTools.removeAlpha(task, source);
         Image newImage = SwingFXUtils.toFXImage(target, null);
         return newImage;
     }
@@ -218,43 +226,34 @@ public class FxImageTools {
         }
     }
 
-    public static Image addArc(Image image, int arc, Color bgColor) {
-        if (image == null || arc <= 0) {
+    public static Image setRound(FxTask task, Image image, int roundX, int roundY, Color bgColor) {
+        if (image == null || roundX <= 0 || roundY <= 0) {
             return image;
         }
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
-        BufferedImage target = BufferedImageTools.addArc(source, arc, toAwtColor(bgColor));
+        BufferedImage target = BufferedImageTools.setRound(task, source, roundX, roundY, toAwtColor(bgColor));
         Image newImage = SwingFXUtils.toFXImage(target, null);
         return newImage;
     }
 
-    public static Image addShadowAlpha(Image image, int shadow, Color color) {
-        if (image == null || shadow <= 0) {
+    public static Image addShadow(FxTask task, Image image, int offsetX, int offsetY, Color color, boolean isBlur) {
+        if (image == null || color == null) {
             return image;
         }
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
-        BufferedImage target = ShadowTools.addShadowAlpha(source, shadow, toAwtColor(color));
+        BufferedImage target = BufferedImageTools.addShadow(task, source, offsetX, offsetY, toAwtColor(color), isBlur);
         Image newImage = SwingFXUtils.toFXImage(target, null);
         return newImage;
     }
 
-    public static Image addShadowNoAlpha(Image image, int shadow, Color color) {
-        if (image == null || shadow <= 0) {
-            return image;
-        }
-        BufferedImage source = SwingFXUtils.fromFXImage(image, null);
-        BufferedImage target = ShadowTools.addShadowNoAlpha(source, shadow, toAwtColor(color));
-        Image newImage = SwingFXUtils.toFXImage(target, null);
-        return newImage;
-    }
-
-    public static Image blend(Image foreImage, Image backImage, int x, int y, PixelsBlend blender) {
+    public static Image blend(FxTask task, Image foreImage, Image backImage,
+            int x, int y, PixelsBlend blender) {
         if (foreImage == null || backImage == null || blender == null) {
             return null;
         }
         BufferedImage source1 = SwingFXUtils.fromFXImage(foreImage, null);
         BufferedImage source2 = SwingFXUtils.fromFXImage(backImage, null);
-        BufferedImage target = PixelsBlend.blend(source1, source2, x, y, blender);
+        BufferedImage target = PixelsBlend.blend(task, source1, source2, x, y, blender);
         if (target == null) {
             target = source1;
         }
@@ -262,7 +261,7 @@ public class FxImageTools {
         return newImage;
     }
 
-    public static Image makeMosaic(Image image, DoubleShape shape, int size,
+    public static Image makeMosaic(FxTask task, Image image, DoubleShape shape, int size,
             boolean isMosaic, boolean isExcluded) {
         if (!shape.isValid()) {
             return image;
@@ -274,7 +273,13 @@ public class FxImageTools {
         PixelWriter pixelWriter = newImage.getPixelWriter();
 
         for (int y = 0; y < h; y++) {
+            if (task != null && !task.isWorking()) {
+                return null;
+            }
             for (int x = 0; x < w; x++) {
+                if (task != null && !task.isWorking()) {
+                    return null;
+                }
                 if (isExcluded) {
                     if (DoubleShape.contains(shape, x, y)) {
                         pixelWriter.setColor(x, y, pixelReader.getColor(x, y));
@@ -310,12 +315,12 @@ public class FxImageTools {
         return newImage;
     }
 
-    public static Image replaceColor(Image image, Color oldColor, Color newColor, int distance) {
+    public static Image replaceColor(FxTask task, Image image, Color oldColor, Color newColor, int distance) {
         if (image == null || oldColor == null || newColor == null || distance < 0) {
             return image;
         }
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
-        BufferedImage target = PixelsOperationFactory.replaceColor(source,
+        BufferedImage target = PixelsOperationFactory.replaceColor(task, source,
                 ColorConvertTools.converColor(oldColor), ColorConvertTools.converColor(newColor), distance);
         Image newImage = SwingFXUtils.toFXImage(target, null);
         return newImage;

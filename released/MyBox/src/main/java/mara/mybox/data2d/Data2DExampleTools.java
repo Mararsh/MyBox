@@ -38,17 +38,18 @@ public class Data2DExampleTools {
     public static List<MenuItem> examplesMenu(ControlData2D controller) {
         try {
             List<MenuItem> items = new ArrayList<>();
-            String lang = Languages.getLangName();
+            String fileLang = Languages.embedFileLang();
+            boolean isChinese = Languages.isChinese(fileLang);
 
-            items.add(myData(lang, controller));
+            items.add(myData(fileLang, isChinese, controller));
 
-            items.add(statisticDataOfChina(lang, controller));
+            items.add(statisticDataOfChina(fileLang, isChinese, controller));
 
-            items.add(regression(lang, controller));
+            items.add(regression(fileLang, isChinese, controller));
 
-            items.add(location(lang, controller));
+            items.add(location(fileLang, isChinese, controller));
 
-            items.add(projectManagement(lang, controller));
+            items.add(projectManagement(fileLang, isChinese, controller));
 
             items.add(new SeparatorMenuItem());
 
@@ -70,14 +71,14 @@ public class Data2DExampleTools {
         }
     }
 
-    public static Menu myData(String lang, ControlData2D controller) {
+    public static Menu myData(String fileLang, boolean isChinese, ControlData2D controller) {
         try {
             Menu myMenu = new Menu(message("MyData"), StyleTools.getIconImageView("iconCat.png"));
 
             MenuItem menu = new MenuItem(message("Notes"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.Notes(lang);
-                if (makeExampleFile("MyData_notes_" + lang, data)) {
+                DataFileCSV data = Data2DExampleTools.Notes();
+                if (makeExampleFile("MyData_notes_" + fileLang, data)) {
                     controller.loadCSVFile(data);
                 }
             });
@@ -85,8 +86,8 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("Contacts"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.Contacts(lang);
-                if (makeExampleFile("MyData_contacts_" + lang, data)) {
+                DataFileCSV data = Data2DExampleTools.Contacts();
+                if (makeExampleFile("MyData_contacts_" + fileLang, data)) {
                     controller.loadCSVFile(data);
                 }
             });
@@ -94,8 +95,8 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("CashFlow"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.CashFlow(lang);
-                if (makeExampleFile("MyData_cashflow_" + lang, data)) {
+                DataFileCSV data = Data2DExampleTools.CashFlow();
+                if (makeExampleFile("MyData_cashflow_" + fileLang, data)) {
                     controller.loadCSVFile(data);
                 }
             });
@@ -103,8 +104,8 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("PrivateProperty"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.PrivateProperty(lang);
-                if (makeExampleFile("MyData_property_" + lang, data)) {
+                DataFileCSV data = Data2DExampleTools.PrivateProperty();
+                if (makeExampleFile("MyData_property_" + fileLang, data)) {
                     controller.loadCSVFile(data);
                 }
             });
@@ -114,7 +115,7 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("Eyesight"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.Eyesight(lang);
+                DataFileCSV data = Data2DExampleTools.Eyesight(isChinese);
                 if (makeExampleFile("MyData_eyesight", data)) {
                     controller.loadCSVFile(data);
                 }
@@ -123,7 +124,7 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("Weight"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.Weight(lang);
+                DataFileCSV data = Data2DExampleTools.Weight();
                 if (makeExampleFile("MyData_weight", data)) {
                     controller.loadCSVFile(data);
                 }
@@ -132,7 +133,7 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("Height"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.Height(lang);
+                DataFileCSV data = Data2DExampleTools.Height();
                 if (makeExampleFile("MyData_height", data)) {
                     controller.loadCSVFile(data);
                 }
@@ -141,7 +142,7 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("Menstruation"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.Menstruation(lang);
+                DataFileCSV data = Data2DExampleTools.Menstruation(isChinese);
                 if (makeExampleFile("MyData_menstruation", data)) {
                     controller.loadCSVFile(data);
                 }
@@ -155,14 +156,14 @@ public class Data2DExampleTools {
         }
     }
 
-    public static Menu statisticDataOfChina(String lang, ControlData2D controller) {
+    public static Menu statisticDataOfChina(String fileLang, boolean isChinese, ControlData2D controller) {
         try {
             // https://data.stats.gov.cn/index.htm
             Menu chinaMenu = new Menu(message("StatisticDataOfChina"), StyleTools.getIconImageView("iconChina.png"));
 
             MenuItem menu = new MenuItem(message("ChinaPopulation"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.ChinaPopulation(lang);
+                DataFileCSV data = Data2DExampleTools.ChinaPopulation(isChinese);
                 if (makeExampleFile("ChinaPopulation", data)) {
                     controller.loadCSVFile(data);
                 }
@@ -171,7 +172,7 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("ChinaCensus"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.ChinaCensus(lang);
+                DataFileCSV data = Data2DExampleTools.ChinaCensus(isChinese);
                 if (makeExampleFile("ChinaCensus", data)) {
                     controller.loadCSVFile(data);
                 }
@@ -180,7 +181,7 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("ChinaGDP"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.ChinaGDP(lang);
+                DataFileCSV data = Data2DExampleTools.ChinaGDP(isChinese);
                 if (makeExampleFile("ChinaGDP", data)) {
                     controller.loadCSVFile(data);
                 }
@@ -189,7 +190,7 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("ChinaCPI"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.ChinaCPI(lang);
+                DataFileCSV data = Data2DExampleTools.ChinaCPI(isChinese);
                 if (makeExampleFile("ChinaCPI", data)) {
                     controller.loadCSVFile(data);
                 }
@@ -198,8 +199,8 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("ChinaFoodConsumption"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.ChinaFoodConsumption(lang);
-                if (makeExampleFile("ChinaFoods_" + lang, data)) {
+                DataFileCSV data = Data2DExampleTools.ChinaFoodConsumption(isChinese);
+                if (makeExampleFile("ChinaFoods_" + fileLang, data)) {
                     controller.loadCSVFile(data);
                 }
             });
@@ -207,7 +208,7 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("ChinaGraduates"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.ChinaGraduates(lang);
+                DataFileCSV data = Data2DExampleTools.ChinaGraduates(isChinese);
                 if (makeExampleFile("ChinaGraduates", data)) {
                     controller.loadCSVFile(data);
                 }
@@ -216,7 +217,7 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("ChinaMuseums"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.ChinaMuseums(lang);
+                DataFileCSV data = Data2DExampleTools.ChinaMuseums(isChinese);
                 if (makeExampleFile("ChinaMuseums", data)) {
                     controller.loadCSVFile(data);
                 }
@@ -225,7 +226,7 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("ChinaHealthPersonnel"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.ChinaHealthPersonnel(lang);
+                DataFileCSV data = Data2DExampleTools.ChinaHealthPersonnel(isChinese);
                 if (makeExampleFile("ChinaHealthPersonnel", data)) {
                     controller.loadCSVFile(data);
                 }
@@ -234,7 +235,7 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("ChinaMarriage"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.ChinaMarriage(lang);
+                DataFileCSV data = Data2DExampleTools.ChinaMarriage(isChinese);
                 if (makeExampleFile("ChinaMarriage", data)) {
                     controller.loadCSVFile(data);
                 }
@@ -243,7 +244,7 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("ChinaSportWorldChampions"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.ChinaSportWorldChampions(lang);
+                DataFileCSV data = Data2DExampleTools.ChinaSportWorldChampions(isChinese);
                 if (makeExampleFile("ChinaSportWorldChampions", data)) {
                     controller.loadCSVFile(data);
                 }
@@ -252,7 +253,7 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("CrimesFiledByChinaPolice"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.CrimesFiledByChinaPolice(lang);
+                DataFileCSV data = Data2DExampleTools.CrimesFiledByChinaPolice(isChinese);
                 if (makeExampleFile("CrimesFiledByChinaPolice", data)) {
                     controller.loadCSVFile(data);
                 }
@@ -261,7 +262,7 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("CrimesFiledByChinaProcuratorate"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.CrimesFiledByChinaProcuratorate(lang);
+                DataFileCSV data = Data2DExampleTools.CrimesFiledByChinaProcuratorate(isChinese);
                 if (makeExampleFile("ChinaCrimesFiledByProcuratorate", data)) {
                     controller.loadCSVFile(data);
                 }
@@ -284,13 +285,13 @@ public class Data2DExampleTools {
         }
     }
 
-    public static Menu regression(String lang, ControlData2D controller) {
+    public static Menu regression(String fileLang, boolean isChinese, ControlData2D controller) {
         try {
             Menu regressionMenu = new Menu(message("RegressionData"), StyleTools.getIconImageView("iconLinearPgression.png"));
 
             MenuItem menu = new MenuItem(message("IncomeHappiness"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.IncomeHappiness(lang);
+                DataFileCSV data = Data2DExampleTools.IncomeHappiness(isChinese);
                 if (makeExampleFile("DataAnalyse_IncomeHappiness", data)) {
                     controller.loadCSVFile(data);
                 }
@@ -299,7 +300,7 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("ExperienceSalary"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.ExperienceSalary(lang);
+                DataFileCSV data = Data2DExampleTools.ExperienceSalary(isChinese);
                 if (makeExampleFile("DataAnalyse_ExperienceSalary", data)) {
                     controller.loadCSVFile(data);
                 }
@@ -308,7 +309,7 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("IrisSpecies"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.IrisSpecies(lang);
+                DataFileCSV data = Data2DExampleTools.IrisSpecies(isChinese);
                 if (makeExampleFile("DataAnalyse_IrisSpecies", data)) {
                     controller.loadCSVFile(data);
                 }
@@ -317,7 +318,7 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("DiabetesPrediction"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.DiabetesPrediction(lang);
+                DataFileCSV data = Data2DExampleTools.DiabetesPrediction(isChinese);
                 if (makeExampleFile("DataAnalyse_DiabetesPrediction", data)) {
                     controller.loadCSVFile(data);
                 }
@@ -326,7 +327,7 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("DiabetesPredictionStandardized"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.DiabetesPredictionStandardized(lang);
+                DataFileCSV data = Data2DExampleTools.DiabetesPredictionStandardized(isChinese);
                 if (makeExampleFile("DataAnalyse_DiabetesPrediction_standardized", data)) {
                     controller.loadCSVFile(data);
                 }
@@ -335,7 +336,7 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("HeartFailure"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.HeartFailure(lang);
+                DataFileCSV data = Data2DExampleTools.HeartFailure(isChinese);
                 if (makeExampleFile("DataAnalyse_HeartFailure", data)) {
                     controller.loadCSVFile(data);
                 }
@@ -344,7 +345,7 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("ConcreteCompressiveStrength"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.ConcreteCompressiveStrength(lang);
+                DataFileCSV data = Data2DExampleTools.ConcreteCompressiveStrength(isChinese);
                 if (makeExampleFile("DataAnalyse_ConcreteCompressiveStrength", data)) {
                     controller.loadCSVFile(data);
                 }
@@ -353,7 +354,7 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("DogRadiographsDataset"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.DogRadiographsDataset(lang);
+                DataFileCSV data = Data2DExampleTools.DogRadiographsDataset(isChinese);
                 if (makeExampleFile("DataAnalyse_DogRadiographs", data)) {
                     controller.loadCSVFile(data);
                 }
@@ -362,7 +363,7 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("BaseballSalaries"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.BaseballSalaries(lang);
+                DataFileCSV data = Data2DExampleTools.BaseballSalaries(isChinese);
                 if (makeExampleFile("DataAnalyse_BaseballSalaries", data)) {
                     controller.loadCSVFile(data);
                 }
@@ -371,7 +372,7 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("SouthGermanCredit"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.SouthGermanCredit(lang);
+                DataFileCSV data = Data2DExampleTools.SouthGermanCredit(isChinese);
                 if (makeExampleFile("DataAnalyse_SouthGermanCredit", data)) {
                     controller.loadCSVFile(data);
                 }
@@ -380,7 +381,7 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("BostonHousingPrices"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.BostonHousingPrices(lang);
+                DataFileCSV data = Data2DExampleTools.BostonHousingPrices(isChinese);
                 if (makeExampleFile("DataAnalyse_BostonHousingPrices", data)) {
                     controller.loadCSVFile(data);
                 }
@@ -403,14 +404,14 @@ public class Data2DExampleTools {
         }
     }
 
-    public static Menu location(String lang, ControlData2D controller) {
+    public static Menu location(String fileLang, boolean isChinese, ControlData2D controller) {
         try {
             Menu locationMenu = new Menu(message("LocationData"), StyleTools.getIconImageView("iconLocation.png"));
 
             MenuItem menu = new MenuItem(message("ChineseHistoricalCapitals"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.ChineseHistoricalCapitals(lang);
-                if (makeExampleFile("Location_ChineseHistoricalCapitals_" + lang, data)) {
+                DataFileCSV data = Data2DExampleTools.ChineseHistoricalCapitals(isChinese);
+                if (makeExampleFile("Location_ChineseHistoricalCapitals_" + fileLang, data)) {
                     controller.loadCSVFile(data);
                 }
             });
@@ -418,7 +419,7 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("AutumnMovementPatternsOfEuropeanGadwalls"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.AutumnMovementPatternsOfEuropeanGadwalls(lang);
+                DataFileCSV data = Data2DExampleTools.AutumnMovementPatternsOfEuropeanGadwalls();
                 if (makeExampleFile("Location_EuropeanGadwalls", data)) {
                     controller.loadCSVFile(data);
                 }
@@ -427,7 +428,7 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("SpermWhalesGulfOfMexico"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.SpermWhalesGulfOfMexico(lang);
+                DataFileCSV data = Data2DExampleTools.SpermWhalesGulfOfMexico();
                 if (makeExampleFile("Location_SpermWhales", data)) {
                     controller.loadCSVFile(data);
                 }
@@ -436,7 +437,7 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("EpidemicReportsCOVID19"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.EpidemicReportsCOVID19(lang);
+                DataFileCSV data = Data2DExampleTools.EpidemicReportsCOVID19();
                 if (makeExampleFile("Location_EpidemicReports", data)) {
                     controller.loadCSVFile(data);
                 }
@@ -450,14 +451,14 @@ public class Data2DExampleTools {
         }
     }
 
-    public static Menu projectManagement(String lang, ControlData2D controller) {
+    public static Menu projectManagement(String fileLang, boolean isChinese, ControlData2D controller) {
         try {
             Menu pmMenu = new Menu(message("ProjectManagement"), StyleTools.getIconImageView("iconCalculator.png"));
 
             MenuItem menu = new MenuItem(message("ProjectRegister"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.ProjectRegister(lang);
-                if (makeExampleFile("PM_ProjectRegister_" + lang, data)) {
+                DataFileCSV data = Data2DExampleTools.ProjectRegister(isChinese);
+                if (makeExampleFile("PM_ProjectRegister_" + fileLang, data)) {
                     controller.loadCSVFile(data);
                 }
             });
@@ -465,8 +466,8 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("ProjectStatus"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.ProjectStatus(lang);
-                if (makeExampleFile("PM_ProjectStatus_" + lang, data)) {
+                DataFileCSV data = Data2DExampleTools.ProjectStatus(isChinese);
+                if (makeExampleFile("PM_ProjectStatus_" + fileLang, data)) {
                     controller.loadCSVFile(data);
                 }
             });
@@ -474,8 +475,8 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("TaskRegister"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.TaskRegister(lang);
-                if (makeExampleFile("PM_TaskRegister_" + lang, data)) {
+                DataFileCSV data = Data2DExampleTools.TaskRegister(isChinese);
+                if (makeExampleFile("PM_TaskRegister_" + fileLang, data)) {
                     controller.loadCSVFile(data);
                 }
             });
@@ -483,8 +484,8 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("TaskStatus"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.TaskStatus(lang);
-                if (makeExampleFile("PM_TaskStatus_" + lang, data)) {
+                DataFileCSV data = Data2DExampleTools.TaskStatus(isChinese);
+                if (makeExampleFile("PM_TaskStatus_" + fileLang, data)) {
                     controller.loadCSVFile(data);
                 }
             });
@@ -492,8 +493,8 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("PersonRegister"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.PersonRegister(lang);
-                if (makeExampleFile("PM_PersonRegister_" + lang, data)) {
+                DataFileCSV data = Data2DExampleTools.PersonRegister(isChinese);
+                if (makeExampleFile("PM_PersonRegister_" + fileLang, data)) {
                     controller.loadCSVFile(data);
                 }
             });
@@ -501,8 +502,8 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("PersonStatus"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.PersonStatus(lang);
-                if (makeExampleFile("PM_PersonStatus_" + lang, data)) {
+                DataFileCSV data = Data2DExampleTools.PersonStatus(isChinese);
+                if (makeExampleFile("PM_PersonStatus_" + fileLang, data)) {
                     controller.loadCSVFile(data);
                 }
             });
@@ -510,8 +511,8 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("ResourceRegister"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.ResourceRegister(lang);
-                if (makeExampleFile("PM_ResourceRegister_" + lang, data)) {
+                DataFileCSV data = Data2DExampleTools.ResourceRegister(isChinese);
+                if (makeExampleFile("PM_ResourceRegister_" + fileLang, data)) {
                     controller.loadCSVFile(data);
                 }
             });
@@ -519,8 +520,8 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("ResourceStatus"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.ResourceStatus(lang);
-                if (makeExampleFile("PM_ResourceStatus_" + lang, data)) {
+                DataFileCSV data = Data2DExampleTools.ResourceStatus(isChinese);
+                if (makeExampleFile("PM_ResourceStatus_" + fileLang, data)) {
                     controller.loadCSVFile(data);
                 }
             });
@@ -528,8 +529,8 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("RiskAnalysis"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.RiskAnalysis(lang);
-                if (makeExampleFile("PM_RiskAnalysis_" + lang, data)) {
+                DataFileCSV data = Data2DExampleTools.RiskAnalysis(isChinese);
+                if (makeExampleFile("PM_RiskAnalysis_" + fileLang, data)) {
                     controller.loadCSVFile(data);
                 }
             });
@@ -537,8 +538,8 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("CostRecord"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.CostRecord(lang);
-                if (makeExampleFile("PM_CostRecords_" + lang, data)) {
+                DataFileCSV data = Data2DExampleTools.CostRecord(isChinese);
+                if (makeExampleFile("PM_CostRecords_" + fileLang, data)) {
                     controller.loadCSVFile(data);
                 }
             });
@@ -546,8 +547,8 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("VerificationRecord"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.VerificationRecord(lang);
-                if (makeExampleFile("PM_VerifyRecord_" + lang, data)) {
+                DataFileCSV data = Data2DExampleTools.VerificationRecord(isChinese);
+                if (makeExampleFile("PM_VerifyRecord_" + fileLang, data)) {
                     controller.loadCSVFile(data);
                 }
             });
@@ -617,7 +618,7 @@ public class Data2DExampleTools {
     /*
         exmaples of data 2D definition
      */
-    public static DataFileCSV Notes(String lang) {
+    public static DataFileCSV Notes() {
         DataFileCSV data = new DataFileCSV();
         List<Data2DColumn> columns = new ArrayList<>();
         columns.add(new Data2DColumn(message("Time"), ColumnType.Datetime, 180));
@@ -629,7 +630,7 @@ public class Data2DExampleTools {
         return data;
     }
 
-    public static DataFileCSV Contacts(String lang) {
+    public static DataFileCSV Contacts() {
         DataFileCSV data = new DataFileCSV();
         List<Data2DColumn> columns = new ArrayList<>();
         columns.add(new Data2DColumn(message("Name"), ColumnType.String));
@@ -645,7 +646,7 @@ public class Data2DExampleTools {
         return data;
     }
 
-    public static DataFileCSV CashFlow(String lang) {
+    public static DataFileCSV CashFlow() {
         DataFileCSV data = new DataFileCSV();
         List<Data2DColumn> columns = new ArrayList<>();
         columns.add(new Data2DColumn(message("Time"), ColumnType.Datetime, 180));
@@ -658,7 +659,7 @@ public class Data2DExampleTools {
         return data;
     }
 
-    public static DataFileCSV PrivateProperty(String lang) {
+    public static DataFileCSV PrivateProperty() {
         DataFileCSV data = new DataFileCSV();
         List<Data2DColumn> columns = new ArrayList<>();
         columns.add(new Data2DColumn(message("Time"), ColumnType.Datetime, 180));
@@ -670,8 +671,7 @@ public class Data2DExampleTools {
         return data;
     }
 
-    public static DataFileCSV Eyesight(String lang) {
-        boolean isChinese = "zh".equals(lang);
+    public static DataFileCSV Eyesight(boolean isChinese) {
         DataFileCSV data = new DataFileCSV();
         List<Data2DColumn> columns = new ArrayList<>();
         columns.add(new Data2DColumn(message("Time"), ColumnType.Datetime, true, true).setWidth(180));
@@ -683,7 +683,7 @@ public class Data2DExampleTools {
         return data;
     }
 
-    public static DataFileCSV Weight(String lang) {
+    public static DataFileCSV Weight() {
         DataFileCSV data = new DataFileCSV();
         List<Data2DColumn> columns = new ArrayList<>();
         columns.add(new Data2DColumn(message("Time"), ColumnType.Datetime, true, true).setWidth(180));
@@ -693,7 +693,7 @@ public class Data2DExampleTools {
         return data;
     }
 
-    public static DataFileCSV Height(String lang) {
+    public static DataFileCSV Height() {
         DataFileCSV data = new DataFileCSV();
         List<Data2DColumn> columns = new ArrayList<>();
         columns.add(new Data2DColumn(message("Time"), ColumnType.Datetime, true, true).setWidth(180));
@@ -703,8 +703,7 @@ public class Data2DExampleTools {
         return data;
     }
 
-    public static DataFileCSV Menstruation(String lang) {
-        boolean isChinese = "zh".equals(lang);
+    public static DataFileCSV Menstruation(boolean isChinese) {
         DataFileCSV data = new DataFileCSV();
         List<Data2DColumn> columns = new ArrayList<>();
         columns.add(new Data2DColumn(message("StartTime"), ColumnType.Datetime, true).setWidth(180));
@@ -716,8 +715,7 @@ public class Data2DExampleTools {
         return data;
     }
 
-    public static DataFileCSV ChinaPopulation(String lang) {
-        boolean isChinese = "zh".equals(lang);
+    public static DataFileCSV ChinaPopulation(boolean isChinese) {
         DataFileCSV data = new DataFileCSV();
         List<Data2DColumn> columns = new ArrayList<>();
         columns.add(new Data2DColumn(isChinese ? "年" : "year_", ColumnType.String, true));
@@ -731,8 +729,7 @@ public class Data2DExampleTools {
         return data;
     }
 
-    public static DataFileCSV ChinaCensus(String lang) {
-        boolean isChinese = "zh".equals(lang);
+    public static DataFileCSV ChinaCensus(boolean isChinese) {
         DataFileCSV data = new DataFileCSV();
         List<Data2DColumn> columns = new ArrayList<>();
         columns.add(new Data2DColumn(isChinese ? "年" : "year_", ColumnType.String, true));
@@ -765,8 +762,7 @@ public class Data2DExampleTools {
         return data;
     }
 
-    public static DataFileCSV ChinaGDP(String lang) {
-        boolean isChinese = "zh".equals(lang);
+    public static DataFileCSV ChinaGDP(boolean isChinese) {
         DataFileCSV data = new DataFileCSV();
         List<Data2DColumn> columns = new ArrayList<>();
         columns.add(new Data2DColumn(isChinese ? "年" : "year_", ColumnType.String, true));
@@ -781,8 +777,7 @@ public class Data2DExampleTools {
         return data;
     }
 
-    public static DataFileCSV ChinaCPI(String lang) {
-        boolean isChinese = "zh".equals(lang);
+    public static DataFileCSV ChinaCPI(boolean isChinese) {
         DataFileCSV data = new DataFileCSV();
         List<Data2DColumn> columns = new ArrayList<>();
         columns.add(new Data2DColumn(isChinese ? "年" : "year_", ColumnType.String, true));
@@ -798,8 +793,7 @@ public class Data2DExampleTools {
         return data;
     }
 
-    public static DataFileCSV ChinaFoodConsumption(String lang) {
-        boolean isChinese = "zh".equals(lang);
+    public static DataFileCSV ChinaFoodConsumption(boolean isChinese) {
         DataFileCSV data = new DataFileCSV();
         List<Data2DColumn> columns = new ArrayList<>();
         columns.add(new Data2DColumn(isChinese ? "指标" : "item", ColumnType.String, true));
@@ -816,8 +810,7 @@ public class Data2DExampleTools {
         return data;
     }
 
-    public static DataFileCSV ChinaGraduates(String lang) {
-        boolean isChinese = "zh".equals(lang);
+    public static DataFileCSV ChinaGraduates(boolean isChinese) {
         DataFileCSV data = new DataFileCSV();
 
         List<Data2DColumn> columns = new ArrayList<>();
@@ -834,8 +827,7 @@ public class Data2DExampleTools {
         return data;
     }
 
-    public static DataFileCSV ChinaMuseums(String lang) {
-        boolean isChinese = "zh".equals(lang);
+    public static DataFileCSV ChinaMuseums(boolean isChinese) {
         DataFileCSV data = new DataFileCSV();
 
         List<Data2DColumn> columns = new ArrayList<>();
@@ -854,8 +846,7 @@ public class Data2DExampleTools {
         return data;
     }
 
-    public static DataFileCSV ChinaHealthPersonnel(String lang) {
-        boolean isChinese = "zh".equals(lang);
+    public static DataFileCSV ChinaHealthPersonnel(boolean isChinese) {
         DataFileCSV data = new DataFileCSV();
 
         List<Data2DColumn> columns = new ArrayList<>();
@@ -875,8 +866,7 @@ public class Data2DExampleTools {
         return data;
     }
 
-    public static DataFileCSV ChinaMarriage(String lang) {
-        boolean isChinese = "zh".equals(lang);
+    public static DataFileCSV ChinaMarriage(boolean isChinese) {
         DataFileCSV data = new DataFileCSV();
         List<Data2DColumn> columns = new ArrayList<>();
         columns.add(new Data2DColumn(isChinese ? "年" : "year_", ColumnType.String, true));
@@ -892,8 +882,7 @@ public class Data2DExampleTools {
         return data;
     }
 
-    public static DataFileCSV ChinaSportWorldChampions(String lang) {
-        boolean isChinese = "zh".equals(lang);
+    public static DataFileCSV ChinaSportWorldChampions(boolean isChinese) {
         DataFileCSV data = new DataFileCSV();
         List<Data2DColumn> columns = new ArrayList<>();
         columns.add(new Data2DColumn(isChinese ? "年" : "year_", ColumnType.String, true));
@@ -908,8 +897,7 @@ public class Data2DExampleTools {
         return data;
     }
 
-    public static DataFileCSV CrimesFiledByChinaPolice(String lang) {
-        boolean isChinese = "zh".equals(lang);
+    public static DataFileCSV CrimesFiledByChinaPolice(boolean isChinese) {
         DataFileCSV data = new DataFileCSV();
         List<Data2DColumn> columns = new ArrayList<>();
         columns.add(new Data2DColumn(isChinese ? "年" : "year_", ColumnType.String, true));
@@ -929,8 +917,7 @@ public class Data2DExampleTools {
         return data;
     }
 
-    public static DataFileCSV CrimesFiledByChinaProcuratorate(String lang) {
-        boolean isChinese = "zh".equals(lang);
+    public static DataFileCSV CrimesFiledByChinaProcuratorate(boolean isChinese) {
         DataFileCSV data = new DataFileCSV();
         List<Data2DColumn> columns = new ArrayList<>();
         columns.add(new Data2DColumn(isChinese ? "年" : "year_", ColumnType.String, true));
@@ -952,8 +939,7 @@ public class Data2DExampleTools {
         return data;
     }
 
-    public static DataFileCSV IncomeHappiness(String lang) {
-        boolean isChinese = "zh".equals(lang);
+    public static DataFileCSV IncomeHappiness(boolean isChinese) {
         DataFileCSV data = new DataFileCSV();
         List<Data2DColumn> columns = new ArrayList<>();
         columns.add(new Data2DColumn(isChinese ? "收入" : "income", ColumnType.Double, true));
@@ -963,8 +949,7 @@ public class Data2DExampleTools {
         return data;
     }
 
-    public static DataFileCSV ExperienceSalary(String lang) {
-        boolean isChinese = "zh".equals(lang);
+    public static DataFileCSV ExperienceSalary(boolean isChinese) {
         DataFileCSV data = new DataFileCSV();
         List<Data2DColumn> columns = new ArrayList<>();
         columns.add(new Data2DColumn(isChinese ? "工作经验" : "YearsExperience", ColumnType.Double, true));
@@ -974,8 +959,7 @@ public class Data2DExampleTools {
         return data;
     }
 
-    public static DataFileCSV IrisSpecies(String lang) {
-        boolean isChinese = "zh".equals(lang);
+    public static DataFileCSV IrisSpecies(boolean isChinese) {
         DataFileCSV data = new DataFileCSV();
         List<Data2DColumn> columns = new ArrayList<>();
         columns.add(new Data2DColumn(isChinese ? "花萼长度(cm)" : "SepalLengthCm", ColumnType.Double, true));
@@ -988,8 +972,7 @@ public class Data2DExampleTools {
         return data;
     }
 
-    public static DataFileCSV DiabetesPrediction(String lang) {
-        boolean isChinese = "zh".equals(lang);
+    public static DataFileCSV DiabetesPrediction(boolean isChinese) {
         DataFileCSV data = new DataFileCSV();
         List<Data2DColumn> columns = new ArrayList<>();
         columns.add(new Data2DColumn(isChinese ? "年龄" : "age", ColumnType.Double));
@@ -1008,8 +991,7 @@ public class Data2DExampleTools {
         return data;
     }
 
-    public static DataFileCSV DiabetesPredictionStandardized(String lang) {
-        boolean isChinese = "zh".equals(lang);
+    public static DataFileCSV DiabetesPredictionStandardized(boolean isChinese) {
         DataFileCSV data = new DataFileCSV();
         List<Data2DColumn> columns = new ArrayList<>();
         columns.add(new Data2DColumn(isChinese ? "年龄" : "age", ColumnType.Double));
@@ -1030,8 +1012,7 @@ public class Data2DExampleTools {
         return data;
     }
 
-    public static DataFileCSV HeartFailure(String lang) {
-        boolean isChinese = "zh".equals(lang);
+    public static DataFileCSV HeartFailure(boolean isChinese) {
         DataFileCSV data = new DataFileCSV();
         List<Data2DColumn> columns = new ArrayList<>();
         columns.add(new Data2DColumn(isChinese ? "年龄" : "age", ColumnType.Integer));
@@ -1056,8 +1037,7 @@ public class Data2DExampleTools {
         return data;
     }
 
-    public static DataFileCSV ConcreteCompressiveStrength(String lang) {
-        boolean isChinese = "zh".equals(lang);
+    public static DataFileCSV ConcreteCompressiveStrength(boolean isChinese) {
         DataFileCSV data = new DataFileCSV();
         List<Data2DColumn> columns = new ArrayList<>();
         columns.add(new Data2DColumn(isChinese ? "水泥(公斤)" : "Cement(kg)", ColumnType.Short));
@@ -1075,8 +1055,7 @@ public class Data2DExampleTools {
         return data;
     }
 
-    public static DataFileCSV DogRadiographsDataset(String lang) {
-        boolean isChinese = "zh".equals(lang);
+    public static DataFileCSV DogRadiographsDataset(boolean isChinese) {
         DataFileCSV data = new DataFileCSV();
         List<Data2DColumn> columns = new ArrayList<>();
         columns.add(new Data2DColumn(isChinese ? "透亮度有改变" : "lucency changed", ColumnType.Boolean)
@@ -1095,8 +1074,7 @@ public class Data2DExampleTools {
         return data;
     }
 
-    public static DataFileCSV BaseballSalaries(String lang) {
-        boolean isChinese = "zh".equals(lang);
+    public static DataFileCSV BaseballSalaries(boolean isChinese) {
         DataFileCSV data = new DataFileCSV();
         List<Data2DColumn> columns = new ArrayList<>();
         columns.add(new Data2DColumn(isChinese ? "薪水(千美元)" : "Salary (thousands of dollars)", ColumnType.Double));
@@ -1123,8 +1101,7 @@ public class Data2DExampleTools {
         return data;
     }
 
-    public static DataFileCSV SouthGermanCredit(String lang) {
-        boolean isChinese = "zh".equals(lang);
+    public static DataFileCSV SouthGermanCredit(boolean isChinese) {
         DataFileCSV data = new DataFileCSV();
         List<Data2DColumn> columns = new ArrayList<>();
         columns.add(new Data2DColumn(isChinese ? "状态" : "status", ColumnType.Short)
@@ -1249,8 +1226,7 @@ public class Data2DExampleTools {
         return data;
     }
 
-    public static DataFileCSV BostonHousingPrices(String lang) {
-        boolean isChinese = "zh".equals(lang);
+    public static DataFileCSV BostonHousingPrices(boolean isChinese) {
         DataFileCSV data = new DataFileCSV();
         List<Data2DColumn> columns = new ArrayList<>();
         columns.add(new Data2DColumn(isChinese ? "镇" : "town", ColumnType.String, true));
@@ -1274,212 +1250,202 @@ public class Data2DExampleTools {
         return data;
     }
 
-    public static DataFileCSV ChineseHistoricalCapitals(String lang) {
-        boolean isChinese = "zh".equals(lang);
+    public static DataFileCSV ChineseHistoricalCapitals(boolean isChinese) {
         DataFileCSV data = new DataFileCSV();
         List<Data2DColumn> columns = new ArrayList<>();
-        columns.add(new Data2DColumn(message(lang, "Country"), ColumnType.String, true).setWidth(140));
-        columns.add(new Data2DColumn(message(lang, "Capital"), ColumnType.String, true).setWidth(200));
-        columns.add(new Data2DColumn(message(lang, "Longitude"), ColumnType.Longitude));
-        columns.add(new Data2DColumn(message(lang, "Latitude"), ColumnType.Latitude));
-        columns.add(new Data2DColumn(message(lang, "StartTime"), ColumnType.Era).setFormat(isChinese ? "Gy" : "y G"));
-        columns.add(new Data2DColumn(message(lang, "EndTime"), ColumnType.Era).setFormat(isChinese ? "Gy" : "y G"));
-        columns.add(new Data2DColumn(message(lang, "Comments"), ColumnType.String));
+        columns.add(new Data2DColumn(message("Country"), ColumnType.String, true).setWidth(140));
+        columns.add(new Data2DColumn(message("Capital"), ColumnType.String, true).setWidth(200));
+        columns.add(new Data2DColumn(message("Longitude"), ColumnType.Longitude));
+        columns.add(new Data2DColumn(message("Latitude"), ColumnType.Latitude));
+        columns.add(new Data2DColumn(message("StartTime"), ColumnType.Era).setFormat(isChinese ? "Gy" : "y G"));
+        columns.add(new Data2DColumn(message("EndTime"), ColumnType.Era).setFormat(isChinese ? "Gy" : "y G"));
+        columns.add(new Data2DColumn(message("Comments"), ColumnType.String));
         data.setColumns(columns).setDataName(message("ChineseHistoricalCapitals"));
         return data;
     }
 
-    public static DataFileCSV AutumnMovementPatternsOfEuropeanGadwalls(String lang) {
+    public static DataFileCSV AutumnMovementPatternsOfEuropeanGadwalls() {
         DataFileCSV data = new DataFileCSV();
         List<Data2DColumn> columns = new ArrayList<>();
-        columns.add(new Data2DColumn(message(lang, "StartTime"), ColumnType.Datetime, 180).setFixTwoDigitYear(true));
-        columns.add(new Data2DColumn(message(lang, "EndTime"), ColumnType.Datetime, 180).setFixTwoDigitYear(true));
-        columns.add(new Data2DColumn(message(lang, "Longitude"), ColumnType.Longitude));
-        columns.add(new Data2DColumn(message(lang, "Latitude"), ColumnType.Latitude));
-        columns.add(new Data2DColumn(message(lang, "CoordinateSystem"), ColumnType.String));
-        columns.add(new Data2DColumn(message(lang, "Comments"), ColumnType.String));
+        columns.add(new Data2DColumn(message("StartTime"), ColumnType.Datetime, 180).setFixTwoDigitYear(true));
+        columns.add(new Data2DColumn(message("EndTime"), ColumnType.Datetime, 180).setFixTwoDigitYear(true));
+        columns.add(new Data2DColumn(message("Longitude"), ColumnType.Longitude));
+        columns.add(new Data2DColumn(message("Latitude"), ColumnType.Latitude));
+        columns.add(new Data2DColumn(message("CoordinateSystem"), ColumnType.String));
+        columns.add(new Data2DColumn(message("Comments"), ColumnType.String));
         data.setColumns(columns).setDataName(message("AutumnMovementPatternsOfEuropeanGadwalls"))
                 .setComments("https://www.datarepository.movebank.org/handle/10255/move.346");
         return data;
     }
 
-    public static DataFileCSV SpermWhalesGulfOfMexico(String lang) {
+    public static DataFileCSV SpermWhalesGulfOfMexico() {
         DataFileCSV data = new DataFileCSV();
         List<Data2DColumn> columns = new ArrayList<>();
-        columns.add(new Data2DColumn(message(lang, "Time"), ColumnType.Datetime, 180).setFixTwoDigitYear(true));
-        columns.add(new Data2DColumn(message(lang, "Longitude"), ColumnType.Longitude));
-        columns.add(new Data2DColumn(message(lang, "Latitude"), ColumnType.Latitude));
-        columns.add(new Data2DColumn(message(lang, "CoordinateSystem"), ColumnType.String));
-        columns.add(new Data2DColumn(message(lang, "Comments"), ColumnType.String));
+        columns.add(new Data2DColumn(message("Time"), ColumnType.Datetime, 180).setFixTwoDigitYear(true));
+        columns.add(new Data2DColumn(message("Longitude"), ColumnType.Longitude));
+        columns.add(new Data2DColumn(message("Latitude"), ColumnType.Latitude));
+        columns.add(new Data2DColumn(message("CoordinateSystem"), ColumnType.String));
+        columns.add(new Data2DColumn(message("Comments"), ColumnType.String));
         data.setColumns(columns).setDataName(message("SpermWhalesGulfOfMexico"))
                 .setComments("https://www.datarepository.movebank.org/handle/10255/move.1059");
         return data;
     }
 
-    public static DataFileCSV EpidemicReportsCOVID19(String lang) {
+    public static DataFileCSV EpidemicReportsCOVID19() {
         DataFileCSV data = new DataFileCSV();
         List<Data2DColumn> columns = new ArrayList<>();
-        columns.add(new Data2DColumn(message(lang, "Date"), ColumnType.Date)
+        columns.add(new Data2DColumn(message("Date"), ColumnType.Date)
                 .setFixTwoDigitYear(false).setFormat("yyyy-MM-dd"));
-        columns.add(new Data2DColumn(message(lang, "Country"), ColumnType.String));
-        columns.add(new Data2DColumn(message(lang, "Province"), ColumnType.String));
-        columns.add(new Data2DColumn(message(lang, "Confirmed"), ColumnType.Integer).setInvalidAs(InvalidAs.Zero));
-        columns.add(new Data2DColumn(message(lang, "Healed"), ColumnType.Integer).setInvalidAs(InvalidAs.Zero));
-        columns.add(new Data2DColumn(message(lang, "Dead"), ColumnType.Integer).setInvalidAs(InvalidAs.Zero));
-        columns.add(new Data2DColumn(message(lang, "Longitude"), ColumnType.Longitude));
-        columns.add(new Data2DColumn(message(lang, "Latitude"), ColumnType.Latitude));
+        columns.add(new Data2DColumn(message("Country"), ColumnType.String));
+        columns.add(new Data2DColumn(message("Province"), ColumnType.String));
+        columns.add(new Data2DColumn(message("Confirmed"), ColumnType.Integer).setInvalidAs(InvalidAs.Zero));
+        columns.add(new Data2DColumn(message("Healed"), ColumnType.Integer).setInvalidAs(InvalidAs.Zero));
+        columns.add(new Data2DColumn(message("Dead"), ColumnType.Integer).setInvalidAs(InvalidAs.Zero));
+        columns.add(new Data2DColumn(message("Longitude"), ColumnType.Longitude));
+        columns.add(new Data2DColumn(message("Latitude"), ColumnType.Latitude));
         data.setColumns(columns).setDataName(message("EpidemicReportsCOVID19"))
                 .setComments("https://github.com/CSSEGISandData/COVID-19");
         return data;
     }
 
-    public static DataFileCSV ProjectRegister(String lang) {
-        boolean isChinese = "zh".equals(lang);
+    public static DataFileCSV ProjectRegister(boolean isChinese) {
         DataFileCSV data = new DataFileCSV();
         List<Data2DColumn> columns = new ArrayList<>();
-        columns.add(new Data2DColumn(message(lang, "ConfigurationID"), ColumnType.String, true).setWidth(140));
-        columns.add(new Data2DColumn(message(lang, "Name"), ColumnType.String, true).setWidth(200));
-        columns.add(new Data2DColumn(message(lang, "LastStatus"), ColumnType.Enumeration)
+        columns.add(new Data2DColumn(message("ConfigurationID"), ColumnType.String, true).setWidth(140));
+        columns.add(new Data2DColumn(message("Name"), ColumnType.String, true).setWidth(200));
+        columns.add(new Data2DColumn(message("LastStatus"), ColumnType.Enumeration)
                 .setFormat(isChinese ? "申请\n已批准\n需求分析\n设计\n实现\n测试\n验证\n维护\n已完成\n被否定\n失败\n已取消"
                         : "Applying\nApproved\nRequirement\nDesign\nImplementing\nTesting\nValidated\nMaintenance\nCompleted\nDenied\nFailed\nCanceled"));
         columns.add(new Data2DColumn(isChinese ? "项目经理" : "Manager", ColumnType.String));
         columns.add(new Data2DColumn(isChinese ? "批准者" : "Approver", ColumnType.String));
-        columns.add(new Data2DColumn(message(lang, "StartTime"), ColumnType.Datetime));
+        columns.add(new Data2DColumn(message("StartTime"), ColumnType.Datetime));
         columns.add(new Data2DColumn(isChinese ? "关闭时间" : "Closed time", ColumnType.Datetime));
-        columns.add(new Data2DColumn(message(lang, "Comments"), ColumnType.String));
+        columns.add(new Data2DColumn(message("Comments"), ColumnType.String));
         data.setColumns(columns).setDataName(isChinese ? "项目登记" : "Project register");
         return data;
     }
 
-    public static DataFileCSV ProjectStatus(String lang) {
-        boolean isChinese = "zh".equals(lang);
+    public static DataFileCSV ProjectStatus(boolean isChinese) {
         DataFileCSV data = new DataFileCSV();
         List<Data2DColumn> columns = new ArrayList<>();
         columns.add(new Data2DColumn(isChinese ? "项目编号" : "Project ID", ColumnType.String, true).setWidth(140));
-        columns.add(new Data2DColumn(message(lang, "Status"), ColumnType.Enumeration)
+        columns.add(new Data2DColumn(message("Status"), ColumnType.Enumeration)
                 .setFormat(isChinese ? "申请\n已批准\n需求分析\n设计\n实现\n测试\n验证\n维护\n已完成\n被否定\n失败\n已取消"
                         : "Applying\nApproved\nRequirement\nDesign\nImplementing\nTesting\nValidated\nMaintenance\nCompleted\nDenied\nFailed\nCanceled"));
-        columns.add(new Data2DColumn(message(lang, "Comments"), ColumnType.String));
-        columns.add(new Data2DColumn(message(lang, "Recorder"), ColumnType.String));
-        columns.add(new Data2DColumn(message(lang, "RecordTime"), ColumnType.Datetime));
+        columns.add(new Data2DColumn(message("Comments"), ColumnType.String));
+        columns.add(new Data2DColumn(message("Recorder"), ColumnType.String));
+        columns.add(new Data2DColumn(message("RecordTime"), ColumnType.Datetime));
         data.setColumns(columns).setDataName(isChinese ? "项目状态" : "Project Status");
         return data;
     }
 
-    public static DataFileCSV TaskRegister(String lang) {
-        boolean isChinese = "zh".equals(lang);
+    public static DataFileCSV TaskRegister(boolean isChinese) {
         DataFileCSV data = new DataFileCSV();
         List<Data2DColumn> columns = new ArrayList<>();
-        columns.add(new Data2DColumn(message(lang, "ConfigurationID"), ColumnType.String, true).setWidth(140));
+        columns.add(new Data2DColumn(message("ConfigurationID"), ColumnType.String, true).setWidth(140));
         columns.add(new Data2DColumn(isChinese ? "项目编号" : "Project ID", ColumnType.String, true).setWidth(140));
-        columns.add(new Data2DColumn(message(lang, "Name"), ColumnType.String, true).setWidth(200));
-        columns.add(new Data2DColumn(message(lang, "LastStatus"), ColumnType.Enumeration)
+        columns.add(new Data2DColumn(message("Name"), ColumnType.String, true).setWidth(200));
+        columns.add(new Data2DColumn(message("LastStatus"), ColumnType.Enumeration)
                 .setFormat(isChinese ? "分派\n执行\n完成\n失败\n取消"
                         : "Assign\nPerform\nComplete\nFail\nCancel"));
         columns.add(new Data2DColumn(isChinese ? "执行者" : "Performer", ColumnType.String));
         columns.add(new Data2DColumn(isChinese ? "开始时间" : "StartTime", ColumnType.Datetime));
         columns.add(new Data2DColumn(isChinese ? "关闭时间" : "ClosedTime", ColumnType.Datetime));
-        columns.add(new Data2DColumn(message(lang, "Comments"), ColumnType.String));
+        columns.add(new Data2DColumn(message("Comments"), ColumnType.String));
         data.setColumns(columns).setDataName(isChinese ? "任务登记" : "Task register");
         return data;
     }
 
-    public static DataFileCSV TaskStatus(String lang) {
-        boolean isChinese = "zh".equals(lang);
+    public static DataFileCSV TaskStatus(boolean isChinese) {
         DataFileCSV data = new DataFileCSV();
         List<Data2DColumn> columns = new ArrayList<>();
         columns.add(new Data2DColumn(isChinese ? "任务编号" : "Task ID", ColumnType.String, true).setWidth(140));
-        columns.add(new Data2DColumn(message(lang, "Status"), ColumnType.Enumeration)
+        columns.add(new Data2DColumn(message("Status"), ColumnType.Enumeration)
                 .setFormat(isChinese ? "计划\n执行\n完成\n失败\n取消"
                         : "Plan\nPerform\nComplete\nFail\nCancel"));
-        columns.add(new Data2DColumn(message(lang, "Comments"), ColumnType.String));
-        columns.add(new Data2DColumn(message(lang, "Recorder"), ColumnType.String));
-        columns.add(new Data2DColumn(message(lang, "RecordTime"), ColumnType.Datetime));
+        columns.add(new Data2DColumn(message("Comments"), ColumnType.String));
+        columns.add(new Data2DColumn(message("Recorder"), ColumnType.String));
+        columns.add(new Data2DColumn(message("RecordTime"), ColumnType.Datetime));
         data.setColumns(columns).setDataName(isChinese ? "任务状态" : "Task Status");
         return data;
     }
 
-    public static DataFileCSV PersonRegister(String lang) {
-        boolean isChinese = "zh".equals(lang);
+    public static DataFileCSV PersonRegister(boolean isChinese) {
         DataFileCSV data = new DataFileCSV();
         List<Data2DColumn> columns = new ArrayList<>();
-        columns.add(new Data2DColumn(message(lang, "ConfigurationID"), ColumnType.String, true).setWidth(140));
+        columns.add(new Data2DColumn(message("ConfigurationID"), ColumnType.String, true).setWidth(140));
         columns.add(new Data2DColumn(isChinese ? "任务编号" : "Task ID", ColumnType.String, true).setWidth(140));
-        columns.add(new Data2DColumn(message(lang, "Role"), ColumnType.Enumeration)
+        columns.add(new Data2DColumn(message("Role"), ColumnType.Enumeration)
                 .setFormat(isChinese ? "投资人\n监管者\n项目经理\n组长\n设计者\n编程者\n测试者\n其他/她"
                         : "Investor\nSupervisor\nProject manager\nTeam leader\nDesigner\nProgrammer\nTester\n\nOther"));
-        columns.add(new Data2DColumn(message(lang, "Name"), ColumnType.String, true));
-        columns.add(new Data2DColumn(message(lang, "PhoneNumber"), ColumnType.String));
-        columns.add(new Data2DColumn(message(lang, "Comments"), ColumnType.String));
+        columns.add(new Data2DColumn(message("Name"), ColumnType.String, true));
+        columns.add(new Data2DColumn(message("PhoneNumber"), ColumnType.String));
+        columns.add(new Data2DColumn(message("Comments"), ColumnType.String));
         data.setColumns(columns).setDataName(isChinese ? "人员登记" : "Person register");
         return data;
     }
 
-    public static DataFileCSV PersonStatus(String lang) {
-        boolean isChinese = "zh".equals(lang);
+    public static DataFileCSV PersonStatus(boolean isChinese) {
         DataFileCSV data = new DataFileCSV();
         List<Data2DColumn> columns = new ArrayList<>();
         columns.add(new Data2DColumn(isChinese ? "人员编号" : "Person ID", ColumnType.String, true).setWidth(140));
-        columns.add(new Data2DColumn(message(lang, "Status"), ColumnType.Enumeration)
+        columns.add(new Data2DColumn(message("Status"), ColumnType.Enumeration)
                 .setFormat(isChinese ? "加入\n修改信息\n退出"
                         : "Join\nUpdate information\nQuit"));
-        columns.add(new Data2DColumn(message(lang, "Comments"), ColumnType.String));
-        columns.add(new Data2DColumn(message(lang, "Recorder"), ColumnType.String));
-        columns.add(new Data2DColumn(message(lang, "RecordTime"), ColumnType.Datetime));
+        columns.add(new Data2DColumn(message("Comments"), ColumnType.String));
+        columns.add(new Data2DColumn(message("Recorder"), ColumnType.String));
+        columns.add(new Data2DColumn(message("RecordTime"), ColumnType.Datetime));
         data.setColumns(columns).setDataName(isChinese ? "人员状态" : "Person Status");
         return data;
     }
 
-    public static DataFileCSV ResourceRegister(String lang) {
-        boolean isChinese = "zh".equals(lang);
+    public static DataFileCSV ResourceRegister(boolean isChinese) {
         DataFileCSV data = new DataFileCSV();
         List<Data2DColumn> columns = new ArrayList<>();
-        columns.add(new Data2DColumn(message(lang, "ConfigurationID"), ColumnType.String, true).setWidth(140));
+        columns.add(new Data2DColumn(message("ConfigurationID"), ColumnType.String, true).setWidth(140));
         columns.add(new Data2DColumn(isChinese ? "任务编号" : "Task ID", ColumnType.String, true).setWidth(140));
-        columns.add(new Data2DColumn(message(lang, "Type"), ColumnType.Enumeration)
+        columns.add(new Data2DColumn(message("Type"), ColumnType.Enumeration)
                 .setFormat(isChinese ? "设备\n程序\n源代码\n文档\n数据\n其它"
                         : "Device\nProgram\nSource codes\nDocument\nData\nOther"));
-        columns.add(new Data2DColumn(message(lang, "Name"), ColumnType.String, true));
-        columns.add(new Data2DColumn(message(lang, "LastStatus"), ColumnType.Enumeration)
+        columns.add(new Data2DColumn(message("Name"), ColumnType.String, true));
+        columns.add(new Data2DColumn(message("LastStatus"), ColumnType.Enumeration)
                 .setFormat(isChinese ? "正常\n出借\n出售\n废弃\n损毁\n丢失"
                         : "Normal\nLent\nSaled\nDiscarded\nDamaged\nLost"));
         columns.add(new Data2DColumn(isChinese ? "保管者" : "Keeper", ColumnType.String));
         columns.add(new Data2DColumn(isChinese ? "登记时间" : "Register time", ColumnType.Datetime));
         columns.add(new Data2DColumn(isChinese ? "失效时间" : "Invalid time", ColumnType.Datetime));
-        columns.add(new Data2DColumn(message(lang, "Comments"), ColumnType.String));
+        columns.add(new Data2DColumn(message("Comments"), ColumnType.String));
         data.setColumns(columns).setDataName(isChinese ? "资源登记" : "Resource register");
         return data;
     }
 
-    public static DataFileCSV ResourceStatus(String lang) {
-        boolean isChinese = "zh".equals(lang);
+    public static DataFileCSV ResourceStatus(boolean isChinese) {
         DataFileCSV data = new DataFileCSV();
         List<Data2DColumn> columns = new ArrayList<>();
         columns.add(new Data2DColumn(isChinese ? "资源编号" : "Resource ID", ColumnType.String, true).setWidth(140));
-        columns.add(new Data2DColumn(message(lang, "Status"), ColumnType.Enumeration)
+        columns.add(new Data2DColumn(message("Status"), ColumnType.Enumeration)
                 .setFormat(isChinese ? "正常\n出借\n出售\n废弃\n损毁\n丢失"
                         : "Normal\nLent\nSaled\nDiscarded\nDamaged\nLost"));
-        columns.add(new Data2DColumn(message(lang, "Comments"), ColumnType.String));
-        columns.add(new Data2DColumn(message(lang, "Recorder"), ColumnType.String));
-        columns.add(new Data2DColumn(message(lang, "RecordTime"), ColumnType.Datetime));
+        columns.add(new Data2DColumn(message("Comments"), ColumnType.String));
+        columns.add(new Data2DColumn(message("Recorder"), ColumnType.String));
+        columns.add(new Data2DColumn(message("RecordTime"), ColumnType.Datetime));
         data.setColumns(columns).setDataName(isChinese ? "资源状态" : "Resource Status");
         return data;
     }
 
-    public static DataFileCSV RiskAnalysis(String lang) {
-        boolean isChinese = "zh".equals(lang);
+    public static DataFileCSV RiskAnalysis(boolean isChinese) {
         DataFileCSV data = new DataFileCSV();
         List<Data2DColumn> columns = new ArrayList<>();
-        columns.add(new Data2DColumn(message(lang, "ConfigurationID"), ColumnType.String, true).setWidth(140));
+        columns.add(new Data2DColumn(message("ConfigurationID"), ColumnType.String, true).setWidth(140));
         columns.add(new Data2DColumn(isChinese ? "任务编号" : "Task ID", ColumnType.String, true).setWidth(140));
-        columns.add(new Data2DColumn(message(lang, "Type"), ColumnType.Enumeration)
+        columns.add(new Data2DColumn(message("Type"), ColumnType.Enumeration)
                 .setFormat(isChinese ? "范围\n质量\n时间\n资金\n技术\n人力\n法律\n其它"
                         : "Scope\nQuality\nTime\nMoney\nTechnique\nHuman\nLaw\nOther"));
         columns.add(new Data2DColumn(isChinese ? "风险项" : "Risk Item", ColumnType.String, true));
         columns.add(new Data2DColumn(isChinese ? "可能性" : "Probability", ColumnType.Integer));
         columns.add(new Data2DColumn(isChinese ? "严重性" : "Severity", ColumnType.Integer));
         columns.add(new Data2DColumn(isChinese ? "优先级" : "Priority", ColumnType.Integer));
-        columns.add(new Data2DColumn(message(lang, "Description"), ColumnType.String));
+        columns.add(new Data2DColumn(message("Description"), ColumnType.String));
         columns.add(new Data2DColumn(isChinese ? "影响" : "Effects", ColumnType.String));
         columns.add(new Data2DColumn(isChinese ? "应急措施" : "Contingency Actions", ColumnType.String));
         columns.add(new Data2DColumn(isChinese ? "分析者" : "Analyzer", ColumnType.String));
@@ -1488,8 +1454,7 @@ public class Data2DExampleTools {
         return data;
     }
 
-    public static DataFileCSV CostRecord(String lang) {
-        boolean isChinese = "zh".equals(lang);
+    public static DataFileCSV CostRecord(boolean isChinese) {
         DataFileCSV data = new DataFileCSV();
         List<Data2DColumn> columns = new ArrayList<>();
         columns.add(new Data2DColumn(isChinese ? "任务编号" : "Task ID", ColumnType.String, true).setWidth(140));
@@ -1503,21 +1468,20 @@ public class Data2DExampleTools {
         columns.add(new Data2DColumn(isChinese ? "实际工作量（人月）" : "Actual workload(person-month)", ColumnType.Float));
         columns.add(new Data2DColumn(isChinese ? "实际成本（元）" : "Actual cost(Yuan)", ColumnType.Float));
         columns.add(new Data2DColumn(isChinese ? "实际产出" : "Actual results", ColumnType.String));
-        columns.add(new Data2DColumn(message(lang, "Recorder"), ColumnType.String));
-        columns.add(new Data2DColumn(message(lang, "RecordTime"), ColumnType.Datetime));
+        columns.add(new Data2DColumn(message("Recorder"), ColumnType.String));
+        columns.add(new Data2DColumn(message("RecordTime"), ColumnType.Datetime));
         data.setColumns(columns).setDataName(isChinese ? "成本记录" : "Cost Records");
         return data;
     }
 
-    public static DataFileCSV VerificationRecord(String lang) {
-        boolean isChinese = "zh".equals(lang);
+    public static DataFileCSV VerificationRecord(boolean isChinese) {
         DataFileCSV data = new DataFileCSV();
         List<Data2DColumn> columns = new ArrayList<>();
         columns.add(new Data2DColumn(isChinese ? "任务编号" : "Task ID", ColumnType.String, true).setWidth(140));
         columns.add(new Data2DColumn(isChinese ? "事项" : "Item", ColumnType.Integer));
         columns.add(new Data2DColumn(isChinese ? "通过" : "Pass", ColumnType.Boolean));
         columns.add(new Data2DColumn(isChinese ? "严重性" : "Severity", ColumnType.Integer));
-        columns.add(new Data2DColumn(message(lang, "Description"), ColumnType.String));
+        columns.add(new Data2DColumn(message("Description"), ColumnType.String));
         columns.add(new Data2DColumn(isChinese ? "影响" : "Effects", ColumnType.String));
         columns.add(new Data2DColumn(isChinese ? "建议" : "Suggestions", ColumnType.String));
         columns.add(new Data2DColumn(isChinese ? "检验者" : "Verifier", ColumnType.String));

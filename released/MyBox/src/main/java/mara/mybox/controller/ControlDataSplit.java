@@ -60,7 +60,7 @@ public class ControlDataSplit extends BaseController {
                 fromInput.setStyle(null);
             } catch (Exception e) {
                 fromInput.setStyle(UserConfig.badStyle());
-                popError(message("InvalidParamter") + ": " + name + " - " + message("From"));
+                popError(message("InvalidParameter") + ": " + name + " - " + message("From"));
                 return false;
             }
 
@@ -68,14 +68,14 @@ public class ControlDataSplit extends BaseController {
                 double t = Double.parseDouble(toInput.getText().trim());
                 if (t < from) {
                     toInput.setStyle(UserConfig.badStyle());
-                    popError(message("InvalidParamter") + ": " + name + " - " + message("To"));
+                    popError(message("InvalidParameter") + ": " + name + " - " + message("To"));
                     return false;
                 }
                 to = t;
                 toInput.setStyle(null);
             } catch (Exception e) {
                 toInput.setStyle(UserConfig.badStyle());
-                popError(message("InvalidParamter") + ": " + name + " - " + message("To"));
+                popError(message("InvalidParameter") + ": " + name + " - " + message("To"));
                 return false;
             }
 
@@ -88,7 +88,7 @@ public class ControlDataSplit extends BaseController {
                     intervalInput.setStyle(null);
                 } catch (Exception e) {
                     intervalInput.setStyle(UserConfig.badStyle());
-                    popError(message("InvalidParamter") + ": " + name + " - " + message("DataInterval"));
+                    popError(message("InvalidParameter") + ": " + name + " - " + message("DataInterval"));
                     return false;
                 }
             } else {
@@ -97,14 +97,14 @@ public class ControlDataSplit extends BaseController {
                     int n = Integer.parseInt(numberInput.getText().trim());
                     if (n <= 0) {
                         numberInput.setStyle(UserConfig.badStyle());
-                        popError(message("InvalidParamter") + ": " + name + " - " + message("NumberOfSplit"));
+                        popError(message("InvalidParameter") + ": " + name + " - " + message("NumberOfSplit"));
                         return false;
                     }
                     number = n;
                     numberInput.setStyle(null);
                 } catch (Exception e) {
                     numberInput.setStyle(UserConfig.badStyle());
-                    popError(message("InvalidParamter") + ": " + name + " - " + message("NumberOfSplit"));
+                    popError(message("InvalidParameter") + ": " + name + " - " + message("NumberOfSplit"));
                     return false;
                 }
             }

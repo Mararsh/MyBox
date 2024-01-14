@@ -4,6 +4,7 @@ import java.io.File;
 import java.nio.charset.Charset;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.TextFileTools;
 import static mara.mybox.value.Languages.message;
@@ -15,7 +16,7 @@ import static mara.mybox.value.Languages.message;
  */
 public abstract class BaseBatchHtmlController extends BaseBatchFileController {
 
-    public abstract String covertHtml(File srcFile, Charset charset);
+    public abstract String covertHtml(FxTask currentTask, File srcFile, Charset charset);
 
     public BaseBatchHtmlController() {
         baseTitle = message("Html");
@@ -31,14 +32,17 @@ public abstract class BaseBatchHtmlController extends BaseBatchFileController {
     }
 
     @Override
-    public String handleFile(File srcFile, File targetPath) {
+    public String handleFile(FxTask currentTask, File srcFile, File targetPath) {
         try {
             File target = makeTargetFile(srcFile, targetPath);
             if (target == null) {
                 return message("Skip");
             }
             Charset charset = chartset(srcFile);
-            String converted = covertHtml(srcFile, charset);
+            String converted = covertHtml(currentTask, srcFile, charset);
+            if (currentTask == null || !currentTask.isWorking()) {
+                return message("Canceled");
+            }
             if (converted == null) {
                 return message("Failed");
             }

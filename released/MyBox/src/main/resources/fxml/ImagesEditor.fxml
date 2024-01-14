@@ -8,7 +8,6 @@ License:    Apache License Version 2.0
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SplitPane?>
@@ -18,7 +17,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="720.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImagesEditorController">
+<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImagesEditorController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
@@ -38,16 +37,39 @@ License:    Apache License Version 2.0
                                                         <Image url="@../buttons/Red/iconTips.png" />
                                                     </image>
                                                 </ImageView>
-                                                <Label maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%SelectSomeOrNone" wrapText="true" HBox.hgrow="ALWAYS" />
-                                    <CheckBox fx:id="rightPaneCheck" minWidth="-Infinity" mnemonicParsing="false">
+                                                <Label alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%SelectSomeOrNone" wrapText="true" HBox.hgrow="ALWAYS" />
+                                                <Button fx:id="playButton" mnemonicParsing="false" onAction="#playAction">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/Red/iconPlay.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                    <Button fx:id="editFramesButton" mnemonicParsing="false" onAction="#editFrames">
                                        <graphic>
-                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                          <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                              <image>
-                                                <Image url="@../buttons/Red/iconDoubleRight.png" />
+                                                <Image url="@../buttons/Red/iconThumbsList.png" />
                                              </image>
                                           </ImageView>
                                        </graphic>
-                                    </CheckBox>
+                                    </Button>
+                                    <Button fx:id="saveAsButton" layoutX="565.0" layoutY="10.0" mnemonicParsing="false" onAction="#saveAsAction">
+                                       <graphic>
+                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../buttons/iconSaveAs.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                    </Button>
+                                    <ImageView fx:id="rightPaneControl" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconDoubleRight.png" />
+                                       </image>
+                                    </ImageView>
                                             </children>
                                         </HBox>
                                         <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
@@ -64,39 +86,13 @@ License:    Apache License Version 2.0
                         </ScrollPane>
                         <ScrollPane fx:id="rightPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
                             <content>
-                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
-                                    <children>
-                                        <HBox alignment="CENTER_LEFT" spacing="2.0" VBox.vgrow="NEVER">
-                                            <children>
-                                    <CheckBox fx:id="leftPaneCheck" minWidth="-Infinity" mnemonicParsing="false">
-                                       <graphic>
-                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../buttons/Red/iconDoubleLeft.png" />
-                                             </image>
-                                          </ImageView>
-                                       </graphic>
-                                    </CheckBox>
-                                                <Button fx:id="playButton" mnemonicParsing="false" onAction="#playAction">
-                                                    <graphic>
-                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/Red/iconPlay.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </Button>
-                                            </children>
-                                        </HBox>
-                                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" vbarPolicy="ALWAYS" VBox.vgrow="ALWAYS">
-                                            <content> 
-                                                <fx:include fx:id="save" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlImagesSave.fxml" />
-                                            </content>
-                                        </ScrollPane>
-                                    </children>
+                                <VBox fx:id="viewBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                                     <padding>
                                         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                                     </padding>
+                           <children>
+                              <fx:include fx:id="view" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlImageView.fxml" VBox.vgrow="ALWAYS" />
+                           </children>
                                 </VBox>
                             </content>
                         </ScrollPane>

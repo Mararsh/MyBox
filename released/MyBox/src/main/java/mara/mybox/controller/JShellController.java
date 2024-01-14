@@ -50,10 +50,6 @@ public class JShellController extends InfoTreeManageController {
         }
     }
 
-    @Override
-    public void itemClicked() {
-    }
-
     @FXML
     protected void showHtmlStyle(Event event) {
         PopTools.popHtmlStyle(event, webViewController);

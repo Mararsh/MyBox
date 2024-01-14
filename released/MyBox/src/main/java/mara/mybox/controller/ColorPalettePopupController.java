@@ -7,6 +7,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -26,10 +27,11 @@ import mara.mybox.db.table.TableColorPalette;
 import mara.mybox.db.table.TableColorPaletteName;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.PaletteTools;
-import mara.mybox.fxml.SingletonCurrentTask;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
@@ -66,14 +68,13 @@ public class ColorPalettePopupController extends BaseChildController {
 
     @Override
     public boolean keyEventsFilter(KeyEvent event) {
-        if (!super.keyEventsFilter(event)) {
-            if (parentController != null) {
-                return parentController.keyEventsFilter(event);
-            } else {
-                return false;
-            }
+        if (super.keyEventsFilter(event)) {
+            return true;
         }
-        return true;
+        if (parentController == null) {
+            return false;
+        }
+        return parentController.keyEventsFilter(event);
     }
 
     @Override
@@ -136,7 +137,7 @@ public class ColorPalettePopupController extends BaseChildController {
         if (task != null && !task.isQuit()) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             protected List<ColorData> colors;
 
@@ -236,22 +237,32 @@ public class ColorPalettePopupController extends BaseChildController {
     }
 
     @FXML
-    public void popDataMenu(MouseEvent mouseEvent) {
+    public void popFunctionsMenu(Event event) {
+        showFunctionsMenu(event);
+    }
+
+    @FXML
+    public void showFunctionsMenu(Event fevent) {
         try {
             List<MenuItem> items = new ArrayList<>();
 
-            MenuItem menu = new MenuItem(message("ManageColors"));
+            MenuItem menu = new MenuItem(message("ManageColors"), StyleTools.getIconImageView("iconManage.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 ColorsManageController.oneOpen();
             });
             items.add(menu);
 
             items.add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("Examples"));
+            menu.setStyle("-fx-text-fill: #2e598a;");
+            items.add(menu);
+
             items.addAll(PaletteTools.paletteExamplesMenu(parentController == null ? myController : parentController));
 
             items.add(new SeparatorMenuItem());
 
-            popEventMenu(mouseEvent, items);
+            popEventMenu(fevent, items);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -268,7 +279,7 @@ public class ColorPalettePopupController extends BaseChildController {
             popError(message("InvalidParameters") + ": " + message("Color"));
             return;
         }
-        SingletonTask addTask = new SingletonTask<Void>(this) {
+        FxTask addTask = new FxTask<Void>(this) {
             @Override
             protected boolean handle() {
                 return tableColorPalette.findAndCreate(currentPalette.getCpnid(), colorData) != null;
@@ -313,8 +324,8 @@ public class ColorPalettePopupController extends BaseChildController {
      */
     public static ColorPalettePopupController open(BaseController parent, Rectangle rect) {
         try {
-            ColorPalettePopupController controller = (ColorPalettePopupController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.ColorPalettePopupFxml, true);
+            ColorPalettePopupController controller = (ColorPalettePopupController) WindowTools.popupStage(
+                    parent, Fxmls.ColorPalettePopupFxml);
             controller.load(parent, rect);
             return controller;
         } catch (Exception e) {

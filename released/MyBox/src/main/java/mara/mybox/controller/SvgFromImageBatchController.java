@@ -2,13 +2,15 @@ package mara.mybox.controller;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.nio.charset.Charset;
 import javafx.fxml.FXML;
 import mara.mybox.bufferedimage.ImageAttributes;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.imagefile.ImageFileReaders;
-import mara.mybox.tools.FileTools;
 import mara.mybox.tools.SvgTools;
+import mara.mybox.tools.TextFileTools;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -39,20 +41,28 @@ public class SvgFromImageBatchController extends BaseBatchFileController {
     }
 
     @Override
-    public String handleFile(File srcFile, File targetPath) {
+    public String handleFile(FxTask currentTask, File srcFile, File targetPath) {
         try {
             File target = makeTargetFile(srcFile, targetPath);
             if (target == null) {
                 return message("Skip");
             }
-            BufferedImage image = ImageFileReaders.readImage(srcFile);
+            BufferedImage image = ImageFileReaders.readImage(currentTask, srcFile);
+            if (currentTask == null || !currentTask.isWorking()) {
+                return message("Canceled");
+            }
             if (image == null) {
                 return message("InvalidData");
             }
-            File svgFile = SvgTools.imageToSvgFile(this, srcFile,
-                    optionsController.myboxRadio.isSelected() ? optionsController.quantizationController : null,
-                    optionsController.options);
-            if (svgFile.exists() && FileTools.rename(svgFile, target, true)) {
+            String svg = SvgTools.imagefileToSvg(currentTask, this, srcFile, optionsController);
+            if (svg == null || svg.isBlank()) {
+                return message("Failed");
+            }
+            if (currentTask == null || !currentTask.isWorking()) {
+                return message("Canceled");
+            }
+            target = TextFileTools.writeFile(target, svg, Charset.forName("utf-8"));
+            if (target != null && target.exists()) {
                 targetFileGenerated(target);
                 return message("Successful");
             } else {

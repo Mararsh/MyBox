@@ -176,7 +176,7 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
 
     @FXML
     @Override
-    public void dataAction() {
+    public void manageAction() {
         RowFilterController.open();
     }
 

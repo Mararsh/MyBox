@@ -19,10 +19,10 @@ import mara.mybox.value.UserConfig;
  */
 public class BaseLogs extends BaseController {
 
-    protected int logsMaxChars, logsTotalLines;
-    protected int logsNewlines;
+    protected long logsMaxChars, logsTotalLines, logsTotalchars, logsNewlines;
     protected StringBuffer newLogs;
     protected long lastLogTime;
+    protected final Object lock = new Object();
 
     @FXML
     protected CheckBox verboseCheck;
@@ -36,7 +36,7 @@ public class BaseLogs extends BaseController {
         try {
             super.initControls();
 
-            logsMaxChars = UserConfig.getInt("TaskMaxLinesNumber", 50000);
+            logsMaxChars = UserConfig.getLong("TaskMaxLinesNumber", 5000);
             if (logsMaxChars <= 0) {
                 logsMaxChars = 5000;
             }
@@ -49,11 +49,11 @@ public class BaseLogs extends BaseController {
                             if (nv) {
                                 return;
                             }
-                            int iv = Integer.parseInt(maxCharsinput.getText());
+                            long iv = Long.parseLong(maxCharsinput.getText());
                             if (iv > 0) {
                                 logsMaxChars = iv;
                                 maxCharsinput.setStyle(null);
-                                UserConfig.setInt("TaskMaxLinesNumber", logsMaxChars);
+                                UserConfig.setLong("TaskMaxLinesNumber", logsMaxChars);
                             } else {
                                 maxCharsinput.setStyle(UserConfig.badStyle());
                             }
@@ -70,17 +70,34 @@ public class BaseLogs extends BaseController {
         }
     }
 
-    public void initLogs() {
-        if (logsTextArea != null) {
-            if (!logsTextArea.getText().isBlank()) {
-                updateLogs("\n", false, true);
-                return;
-            }
+    @FXML
+    public void clearLogs() {
+        if (logsTextArea == null) {
+            return;
         }
-        newLogs = new StringBuffer();
-        logsNewlines = 0;
-        logsTotalLines = 0;
-        lastLogTime = new Date().getTime();
+        try {
+            synchronized (lock) {
+                newLogs = new StringBuffer();
+                logsNewlines = 0;
+                logsTotalLines = 0;
+                logsTotalchars = 0;
+                lastLogTime = new Date().getTime();
+                logsTextArea.setText("");
+            }
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
+    }
+
+    public void initLogs() {
+        if (logsTextArea == null) {
+            return;
+        }
+        if (logsTotalchars > 0) {
+            updateLogs("\n", false, true);
+        } else {
+            clearLogs();
+        }
     }
 
     public void showLogs(String line) {
@@ -96,53 +113,40 @@ public class BaseLogs extends BaseController {
     }
 
     public void updateLogs(String line, boolean showTime, boolean immediate) {
-        try {
-            if (logsTextArea == null || line == null) {
-                return;
-            }
-            Platform.runLater(() -> {
-                try {
-                    synchronized (logsTextArea) {
-                        if (newLogs == null) {
-                            newLogs = new StringBuffer();
-                        }
-                        if (showTime) {
-                            newLogs.append(DateTools.datetimeToString(new Date())).append("  ");
-                        }
-                        newLogs.append(line).append("\n");
-                        logsNewlines++;
-                        long ctime = new Date().getTime();
-                        if (immediate || logsNewlines > 50 || ctime - lastLogTime > 3000) {
-                            logsTextArea.appendText(newLogs.toString());
-                            newLogs = new StringBuffer();
-                            logsTotalLines += logsNewlines;
-                            logsNewlines = 0;
-                            lastLogTime = ctime;
-                            int extra = logsTextArea.getText().length() - logsMaxChars;
-                            if (extra > 0) {
-                                logsTextArea.deleteText(0, extra);
-                            }
-                        }
-                    }
-                } catch (Exception e) {
-                    MyBoxLog.debug(e);
-                }
-            });
-
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
-    }
-
-    @FXML
-    public void clearLogs() {
-        if (logsTextArea == null) {
+        if (logsTextArea == null || line == null) {
             return;
         }
         Platform.runLater(() -> {
-            synchronized (logsTextArea) {
-                logsTextArea.setText("");
-                logsTotalLines = 0;
+            try {
+                synchronized (lock) {
+                    if (newLogs == null) {
+                        newLogs = new StringBuffer();
+                    }
+                    if (showTime) {
+                        newLogs.append(DateTools.datetimeToString(new Date())).append("  ");
+                    }
+                    newLogs.append(line).append("\n");
+                    logsNewlines++;
+                    long ctime = new Date().getTime();
+                    if (immediate || logsNewlines > 50 || ctime - lastLogTime > 3000) {
+                        String s = newLogs.toString();
+                        logsTotalchars += s.length();
+                        logsTextArea.appendText(s);
+                        newLogs = new StringBuffer();
+                        logsTotalLines += logsNewlines;
+                        logsNewlines = 0;
+                        lastLogTime = ctime;
+                        int extra = (int) (logsTotalchars - logsMaxChars);
+                        if (extra > 0) {
+                            logsTextArea.deleteText(0, extra);
+                            logsTotalchars = logsMaxChars;
+                        }
+                        logsTextArea.selectEnd();
+                        logsTextArea.deselect();
+                    }
+                }
+            } catch (Exception e) {
+                MyBoxLog.debug(e);
             }
         });
     }

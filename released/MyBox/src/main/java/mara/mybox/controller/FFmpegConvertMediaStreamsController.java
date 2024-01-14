@@ -5,7 +5,8 @@ import java.io.File;
 import java.text.MessageFormat;
 import java.util.Date;
 import mara.mybox.data.MediaInformation;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.FileNameTools;
 import static mara.mybox.value.Languages.message;
 
@@ -32,7 +33,7 @@ public class FFmpegConvertMediaStreamsController extends FFmpegConvertMediaFiles
         processStartTime = new Date();
         totalFilesHandled = 0;
         updateInterface("Started");
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             public Void call() {
@@ -45,7 +46,7 @@ public class FFmpegConvertMediaStreamsController extends FFmpegConvertMediaFiles
                         break;
                     }
 
-                    handleCurrentFile();
+                    handleCurrentFile(this);
 
                     updateTaskProgress(currentParameters.currentIndex + 1, len);
 
@@ -88,7 +89,7 @@ public class FFmpegConvertMediaStreamsController extends FFmpegConvertMediaFiles
     }
 
     @Override
-    public void handleCurrentFile() {
+    public void handleCurrentFile(FxTask currentTask) {
         String result;
         try {
             MediaInformation info = (MediaInformation) tableData.get(currentParameters.currentIndex);
@@ -129,7 +130,7 @@ public class FFmpegConvertMediaStreamsController extends FFmpegConvertMediaFiles
                 result = message("Skip");
             } else {
                 updateLogs(message("TargetFile") + ": " + target, true);
-                convert(address, target);
+                convert(currentTask, address, target);
                 result = message("Successful");
             }
         } catch (Exception e) {

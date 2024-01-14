@@ -22,8 +22,8 @@ import javax.imageio.ImageWriter;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
-import mara.mybox.bufferedimage.ImageBinary.BinaryAlgorithm;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.imagefile.ImageFileReaders;
 import static mara.mybox.imagefile.ImageFileReaders.getReader;
 import static mara.mybox.imagefile.ImageFileReaders.readBrokenImage;
@@ -88,32 +88,26 @@ public class ImageConvertTools {
         return 25.4f / dpi;
     }
 
-    public static BufferedImage convert(BufferedImage srcImage, String format) {
-        return convertColorSpace(srcImage, new ImageAttributes(srcImage, format));
+    public static BufferedImage convert(FxTask task, BufferedImage srcImage, String format) {
+        return convertColorSpace(task, srcImage, new ImageAttributes(srcImage, format));
     }
 
-    public static BufferedImage convertBinary(BufferedImage srcImage, ImageAttributes attributes) {
+    public static BufferedImage convertBinary(FxTask task, BufferedImage srcImage,
+            ImageAttributes attributes) {
         try {
             if (srcImage == null || attributes == null) {
                 return srcImage;
             }
-            int color = srcImage.getType();
-            ImageBinary imageBinary;
-            if (attributes.getBinaryConversion() == BinaryAlgorithm.Threshold
-                    && attributes.getThreshold() >= 0) {
-                imageBinary = new ImageBinary(srcImage, attributes.getThreshold());
-            } else if (attributes.getBinaryConversion() == BinaryAlgorithm.OTSU) {
-                imageBinary = new ImageBinary(srcImage, -1);
-                imageBinary.setCalculate(true);
-            } else if (color != BufferedImage.TYPE_BYTE_BINARY || attributes.isIsDithering()) {
-                imageBinary = new ImageBinary(srcImage, -1);
-            } else {
-                return srcImage;
+            ImageBinary imageBinary = attributes.getImageBinary();
+            if (imageBinary == null) {
+                imageBinary = new ImageBinary();
             }
-            imageBinary.setIsDithering(attributes.isIsDithering());
-            BufferedImage targetImage = imageBinary.operate();
-            targetImage = AlphaTools.removeAlpha(targetImage);
-            targetImage = ImageBinary.byteBinary(targetImage);
+            imageBinary.setImage(srcImage).setTask(task);
+            BufferedImage targetImage = imageBinary.start();
+            if (targetImage == null) {
+                return null;
+            }
+            targetImage = ImageBinary.byteBinary(task, targetImage);
             return targetImage;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -121,28 +115,31 @@ public class ImageConvertTools {
         }
     }
 
-    public static BufferedImage convertColorSpace(BufferedImage srcImage, ImageAttributes attributes) {
+    public static BufferedImage convertColorSpace(FxTask task, BufferedImage srcImage, ImageAttributes attributes) {
         try {
             if (srcImage == null || attributes == null) {
                 return srcImage;
             }
             String targetFormat = attributes.getImageFormat();
             if ("ico".equals(targetFormat) || "icon".equals(targetFormat)) {
-                return convertToIcon(srcImage, attributes);
+                return convertToIcon(task, srcImage, attributes);
             }
             BufferedImage tmpImage = srcImage;
             if (null != attributes.getAlpha()) {
                 switch (attributes.getAlpha()) {
                     case PremultipliedAndKeep:
-                        tmpImage = AlphaTools.premultipliedAlpha(srcImage, false);
+                        tmpImage = AlphaTools.premultipliedAlpha(task, srcImage, false);
                         break;
                     case PremultipliedAndRemove:
-                        tmpImage = AlphaTools.premultipliedAlpha(srcImage, true);
+                        tmpImage = AlphaTools.premultipliedAlpha(task, srcImage, true);
                         break;
                     case Remove:
-                        tmpImage = AlphaTools.removeAlpha(srcImage);
+                        tmpImage = AlphaTools.removeAlpha(task, srcImage);
                         break;
                 }
+            }
+            if (tmpImage == null) {
+                return null;
             }
             ICC_Profile targetProfile = attributes.getProfile();
             String csName = attributes.getColorSpaceName();
@@ -151,19 +148,20 @@ public class ImageConvertTools {
                     return tmpImage;
                 }
                 if ("BlackOrWhite".equals(csName) || message("BlackOrWhite").equals(csName)) {
-                    tmpImage = AlphaTools.removeAlpha(srcImage);
-                    return convertBinary(tmpImage, attributes);
+                    return convertBinary(task, tmpImage, attributes);
                 } else {
                     if (message("Gray").equals(csName)) {
                         csName = "Gray";
-                        tmpImage = AlphaTools.removeAlpha(srcImage);
+                        tmpImage = AlphaTools.removeAlpha(task, srcImage);
                     }
                     targetProfile = ImageColorSpace.internalProfileByName(csName);
                     attributes.setProfile(targetProfile);
                     attributes.setProfileName(csName);
                 }
             }
-
+            if (tmpImage == null || (task != null && !task.isWorking())) {
+                return null;
+            }
             ICC_ColorSpace targetColorSpace = new ICC_ColorSpace(targetProfile);
             ColorConvertOp c = new ColorConvertOp(targetColorSpace, null);
             BufferedImage targetImage = c.filter(tmpImage, null);
@@ -174,7 +172,7 @@ public class ImageConvertTools {
         }
     }
 
-    public static boolean convertColorSpace(File srcFile, ImageAttributes attributes, File targetFile) {
+    public static boolean convertColorSpace(FxTask task, File srcFile, ImageAttributes attributes, File targetFile) {
         try {
             if (srcFile == null || targetFile == null || attributes == null) {
                 return false;
@@ -182,11 +180,11 @@ public class ImageConvertTools {
 
             String targetFormat = attributes.getImageFormat();
             if ("ico".equals(targetFormat) || "icon".equals(targetFormat)) {
-                return convertToIcon(srcFile, attributes, targetFile);
+                return convertToIcon(task, srcFile, attributes, targetFile);
             }
             String sourceFormat = FileNameTools.suffix(srcFile.getName());
             if ("ico".equals(sourceFormat) || "icon".equals(sourceFormat)) {
-                return convertFromIcon(srcFile, attributes, targetFile);
+                return convertFromIcon(task, srcFile, attributes, targetFile);
             }
             boolean supportMultiFrames = FileExtensions.MultiFramesImages.contains(targetFormat);
             ImageWriter writer = ImageFileWriters.getWriter(targetFormat);
@@ -211,18 +209,23 @@ public class ImageConvertTools {
                 int index = 0;
                 ImageInformation info = new ImageInformation(srcFile);
                 while (true) {
+                    if (task != null && !task.isWorking()) {
+                        writer.dispose();
+                        reader.dispose();
+                        return false;
+                    }
                     try {
                         bufferedImage = reader.read(index);
                     } catch (Exception e) {
                         if (e.toString().contains("java.lang.IndexOutOfBoundsException")) {
                             break;
                         }
-                        bufferedImage = readBrokenImage(e, info.setIndex(index));
+                        bufferedImage = readBrokenImage(task, e, info.setIndex(index));
                     }
                     if (bufferedImage == null) {
                         continue;
                     }
-                    bufferedImage = ImageConvertTools.convertColorSpace(bufferedImage, attributes);
+                    bufferedImage = ImageConvertTools.convertColorSpace(task, bufferedImage, attributes);
                     if (bufferedImage == null) {
                         continue;
                     }
@@ -235,6 +238,11 @@ public class ImageConvertTools {
                     }
                     index++;
                 }
+                if (task != null && !task.isWorking()) {
+                    writer.dispose();
+                    reader.dispose();
+                    return false;
+                }
                 if (supportMultiFrames) {
                     writer.endWriteSequence();
                 }
@@ -242,7 +250,7 @@ public class ImageConvertTools {
                 reader.dispose();
             }
             writer.dispose();
-            return FileTools.rename(tmpFile, targetFile);
+            return FileTools.override(tmpFile, targetFile);
         } catch (Exception e) {
             MyBoxLog.error(e);
             return false;
@@ -267,7 +275,8 @@ public class ImageConvertTools {
         }
     }
 
-    public static boolean convertToIcon(File srcFile, ImageAttributes attributes, File targetFile) {
+    public static boolean convertToIcon(FxTask task, File srcFile,
+            ImageAttributes attributes, File targetFile) {
         try {
             if (srcFile == null || targetFile == null) {
                 return false;
@@ -283,16 +292,24 @@ public class ImageConvertTools {
                 int index = 0;
                 ImageInformation info = new ImageInformation(srcFile);
                 while (true) {
+                    if (task != null && !task.isWorking()) {
+                        reader.dispose();
+                        return false;
+                    }
                     try {
                         bufferedImage = reader.read(index);
                     } catch (Exception e) {
                         if (e.toString().contains("java.lang.IndexOutOfBoundsException")) {
                             break;
                         }
-                        bufferedImage = readBrokenImage(e, info.setIndex(index));
+                        bufferedImage = readBrokenImage(task, e, info.setIndex(index));
+                    }
+                    if (task != null && !task.isWorking()) {
+                        reader.dispose();
+                        return false;
                     }
                     if (bufferedImage != null) {
-                        bufferedImage = convertToIcon(bufferedImage, attributes);
+                        bufferedImage = convertToIcon(task, bufferedImage, attributes);
                         images.add(bufferedImage);
                         index++;
                     } else {
@@ -312,12 +329,16 @@ public class ImageConvertTools {
         }
     }
 
-    public static boolean convertToIcon(BufferedImage bufferedImage, ImageAttributes attributes, File targetFile) {
+    public static boolean convertToIcon(FxTask task, BufferedImage bufferedImage,
+            ImageAttributes attributes, File targetFile) {
         try {
             if (bufferedImage == null || targetFile == null) {
                 return false;
             }
-            BufferedImage icoImage = convertToIcon(bufferedImage, attributes);
+            BufferedImage icoImage = convertToIcon(task, bufferedImage, attributes);
+            if (icoImage == null || (task != null && !task.isWorking())) {
+                return false;
+            }
             ICOEncoder.write(icoImage, targetFile);
             return true;
         } catch (Exception e) {
@@ -326,7 +347,8 @@ public class ImageConvertTools {
         }
     }
 
-    public static BufferedImage convertToIcon(BufferedImage bufferedImage, ImageAttributes attributes) {
+    public static BufferedImage convertToIcon(FxTask task, BufferedImage bufferedImage,
+            ImageAttributes attributes) {
         try {
             if (bufferedImage == null) {
                 return null;
@@ -346,13 +368,13 @@ public class ImageConvertTools {
         }
     }
 
-    public static boolean convertFromIcon(File srcFile, ImageAttributes attributes, File targetFile) {
+    public static boolean convertFromIcon(FxTask task, File srcFile, ImageAttributes attributes, File targetFile) {
         try {
             if (srcFile == null || targetFile == null) {
                 return false;
             }
             List<BufferedImage> images = ICODecoder.read(srcFile);
-            if (images == null || images.isEmpty()) {
+            if (images == null || images.isEmpty() || (task != null && !task.isWorking())) {
                 return false;
             }
             String targetFormat = attributes.getImageFormat();
@@ -371,8 +393,16 @@ public class ImageConvertTools {
                 }
                 BufferedImage bufferedImage;
                 for (int i = 0; i < num; ++i) {
+                    if (task != null && !task.isWorking()) {
+                        writer.dispose();
+                        return false;
+                    }
                     bufferedImage = images.get(i);
-                    bufferedImage = ImageConvertTools.convertColorSpace(bufferedImage, attributes);
+                    bufferedImage = ImageConvertTools.convertColorSpace(task, bufferedImage, attributes);
+                    if (task != null && !task.isWorking()) {
+                        writer.dispose();
+                        return false;
+                    }
                     if (bufferedImage == null) {
                         continue;
                     }
@@ -384,6 +414,10 @@ public class ImageConvertTools {
                         writer.write(metaData, new IIOImage(bufferedImage, null, metaData), param);
                     }
                 }
+                if (task != null && !task.isWorking()) {
+                    writer.dispose();
+                    return false;
+                }
                 if (supportMultiFrames) {
                     writer.endWriteSequence();
                 }
@@ -391,7 +425,7 @@ public class ImageConvertTools {
             }
             writer.dispose();
 
-            return FileTools.rename(tmpFile, targetFile);
+            return FileTools.override(tmpFile, targetFile);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -403,14 +437,20 @@ public class ImageConvertTools {
     // https://stackoverflow.com/questions/50798014/determining-color-space-for-jpeg/50861048?r=SearchResults#50861048
     // https://blog.idrsolutions.com/2011/10/ycck-color-conversion-in-pdf-files/
     // https://community.oracle.com/message/10003648?tstart=0
-    public static void ycck2cmyk(WritableRaster rast, boolean invertedColors) {
+    public static void ycck2cmyk(FxTask task, WritableRaster rast, boolean invertedColors) {
         int w = rast.getWidth(), h = rast.getHeight();
         double c, m, y, k;
         double Y, Cb, Cr, K;
         int[] pixels = null;
         for (int row = 0; row < h; row++) {
+            if (task != null && !task.isWorking()) {
+                return;
+            }
             pixels = rast.getPixels(0, row, w, 1, pixels);
             for (int i = 0; i < pixels.length; i += 4) {
+                if (task != null && !task.isWorking()) {
+                    return;
+                }
                 Y = pixels[i];
                 Cb = pixels[i + 1];
                 Cr = pixels[i + 2];
@@ -437,24 +477,33 @@ public class ImageConvertTools {
         }
     }
 
-    public static void invertPixelValue(WritableRaster raster) {
+    public static void invertPixelValue(FxTask task, WritableRaster raster) {
         int height = raster.getHeight();
         int width = raster.getWidth();
         int stride = width * 4;
         int[] pixelRow = new int[stride];
         for (int h = 0; h < height; h++) {
+            if (task != null && !task.isWorking()) {
+                return;
+            }
             raster.getPixels(0, h, width, 1, pixelRow);
             for (int x = 0; x < stride; x++) {
+                if (task != null && !task.isWorking()) {
+                    return;
+                }
                 pixelRow[x] = 255 - pixelRow[x];
             }
             raster.setPixels(0, h, width, 1, pixelRow);
         }
     }
 
-    public static Raster ycck2cmyk(final byte[] buffer, final int w, final int h)
+    public static Raster ycck2cmyk(FxTask task, final byte[] buffer, final int w, final int h)
             throws IOException {
         final int pixelCount = w * h * 4;
         for (int i = 0; i < pixelCount; i = i + 4) {
+            if (task != null && !task.isWorking()) {
+                return null;
+            }
             int y = (buffer[i] & 255);
             int cb = (buffer[i + 1] & 255);
             int cr = (buffer[i + 2] & 255);
@@ -483,8 +532,8 @@ public class ImageConvertTools {
         return rgb2cmyk.filter(inImage, null);
     }
 
-    public static BufferedImage cmyk2rgb(Raster cmykRaster,
-            ICC_Profile cmykProfile) throws IOException {
+    public static BufferedImage cmyk2rgb(Raster cmykRaster, ICC_Profile cmykProfile)
+            throws IOException {
         if (cmykProfile == null) {
             cmykProfile = ImageColorSpace.eciCmykProfile();
         }
@@ -498,7 +547,7 @@ public class ImageConvertTools {
     }
 
     // https://bugs.openjdk.java.net/browse/JDK-8041125
-    public static BufferedImage cmyk2rgb(final byte[] buffer, final int w,
+    public static BufferedImage cmyk2rgb(FxTask task, final byte[] buffer, final int w,
             final int h) throws IOException {
 
         final ColorSpace CMYK = ImageColorSpace.adobeCmykColorSpace();
@@ -510,6 +559,9 @@ public class ImageConvertTools {
         float[] RGB = new float[]{0f, 0f, 0f};
         //turn YCC in Buffer to CYM using profile
         for (int i = 0; i < pixelCount; i = i + 4) {
+            if (task != null && !task.isWorking()) {
+                return null;
+            }
 
             C = (buffer[i] & 255);
             M = (buffer[i + 1] & 255);

@@ -21,7 +21,7 @@ import mara.mybox.bufferedimage.BufferedImageTools;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileNameTools;
@@ -138,18 +138,26 @@ public class ImageBase64Controller extends BaseController {
         if (label != null) {
             label.setText("");
         }
-        controller.task = new SingletonCurrentTask<Void>(controller) {
+        controller.task = new FxSingletonTask<Void>(controller) {
 
             private String imageBase64;
 
             @Override
             protected boolean handle() {
                 try {
-                    imageBase64 = BufferedImageTools.base64(file, format);
+                    imageBase64 = BufferedImageTools.base64(this, file, format);
+                    if (imageBase64 == null) {
+                        if (isWorking()) {
+                            error = message("Failed");
+                        } else {
+                            error = message("Canceled");
+                        }
+                        return false;
+                    }
                     if (withTag) {
                         imageBase64 = "<img src=\"data:image/" + format + ";base64," + imageBase64 + "\" >";
                     }
-                    return true;
+                    return imageBase64 != null;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -210,7 +218,7 @@ public class ImageBase64Controller extends BaseController {
         if (controller.task != null && !controller.task.isQuit()) {
             return;
         }
-        controller.task = new SingletonCurrentTask<Void>(controller) {
+        controller.task = new FxSingletonTask<Void>(controller) {
 
             @Override
             protected boolean handle() {

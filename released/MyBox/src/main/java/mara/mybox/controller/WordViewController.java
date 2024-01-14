@@ -4,7 +4,7 @@ import java.io.File;
 import javafx.fxml.FXML;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.MicrosoftDocumentTools;
@@ -42,7 +42,7 @@ public class WordViewController extends BaseWebViewController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             private File htmlFile;
 
@@ -59,7 +59,6 @@ public class WordViewController extends BaseWebViewController {
                 getMyStage().setTitle(getBaseTitle() + " " + sourceFile.getAbsolutePath());
                 webViewController.loadFile(htmlFile);
                 fileInfoLabel.setText(FileTools.fileInformation(sourceFile));
-                browseController.setCurrentFile(sourceFile);
             }
 
         };

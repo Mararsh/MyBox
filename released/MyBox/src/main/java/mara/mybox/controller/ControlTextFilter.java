@@ -10,16 +10,16 @@ import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.control.Tooltip;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.FlowPane;
 import mara.mybox.data.FileEditInformation.StringFilterType;
+import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.Languages;
@@ -34,7 +34,7 @@ public class ControlTextFilter extends BaseController {
 
     protected StringFilterType filterType;
     protected String[] filterStrings;
-    protected long maxLen, sourceLen;
+    protected long maxLen;
     protected boolean isBytes;
     protected SimpleBooleanProperty valid;
 
@@ -47,10 +47,9 @@ public class ControlTextFilter extends BaseController {
     @FXML
     protected CheckBox filterLineNumberCheck;
     @FXML
-    protected VBox filtersTypeBox;
-
-    public ControlTextFilter() {
-    }
+    protected Label inputLabel;
+    @FXML
+    protected FlowPane buttonsPane;
 
     @Override
     public void initControls() {
@@ -68,7 +67,6 @@ public class ControlTextFilter extends BaseController {
                     checkFilterType();
                 }
             });
-            checkFilterType();
 
             filterInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
@@ -78,7 +76,6 @@ public class ControlTextFilter extends BaseController {
                     }
                 }
             });
-            checkFilterStrings();
 
             filterLineNumberCheck.setSelected(UserConfig.getBoolean(baseName + "FilterRecordLineNumber", true));
             filterLineNumberCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -88,25 +85,9 @@ public class ControlTextFilter extends BaseController {
                 }
             });
 
-            NodeStyleTools.setTooltip(filtersTypeBox, new Tooltip(Languages.message("FilterTypesComments")));
+            checkFilterType();
+            checkFilterStrings();
 
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
-    }
-
-    @Override
-    public void setControlsStyle() {
-        try {
-            super.setControlsStyle();
-            if (filterType == StringFilterType.MatchRegularExpression
-                    || filterType == StringFilterType.NotMatchRegularExpression
-                    || filterType == StringFilterType.IncludeRegularExpression
-                    || filterType == StringFilterType.NotIncludeRegularExpression) {
-                NodeStyleTools.removeTooltip(filterInput);
-            } else {
-                NodeStyleTools.setTooltip(filterInput, new Tooltip(Languages.message("SeparateByCommaBlanksInvolved")));
-            }
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
@@ -127,17 +108,24 @@ public class ControlTextFilter extends BaseController {
                 || filterType == StringFilterType.NotMatchRegularExpression
                 || filterType == StringFilterType.IncludeRegularExpression
                 || filterType == StringFilterType.NotIncludeRegularExpression) {
-            exampleFilterButton.setVisible(true);
+            if (!buttonsPane.getChildren().contains(exampleFilterButton)) {
+                buttonsPane.getChildren().add(0, exampleFilterButton);
+                refreshStyle(buttonsPane);
+            }
+            inputLabel.setVisible(false);
+
         } else {
-            exampleFilterButton.setVisible(false);
+            if (buttonsPane.getChildren().contains(exampleFilterButton)) {
+                buttonsPane.getChildren().remove(exampleFilterButton);
+            }
+            inputLabel.setVisible(true);
         }
-        setControlsStyle();
     }
 
     protected void checkFilterStrings() {
         filterStrings = null;
         String string = filterInput.getText();
-        if (string.isEmpty() || sourceLen < 1) {
+        if (string.isEmpty()) {
             valid.set(false);
             return;
         }
@@ -207,6 +195,15 @@ public class ControlTextFilter extends BaseController {
         });
     }
 
+    public boolean pickValue() {
+        if (valid.get()) {
+            TableStringValues.add(baseName + "FilterString", filterInput.getText());
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     @FXML
     protected void showFilterExample(Event event) {
         PopTools.popRegexExamples(this, filterInput, event);
@@ -217,6 +214,23 @@ public class ControlTextFilter extends BaseController {
         if (UserConfig.getBoolean("RegexExamplesPopWhenMouseHovering", false)) {
             showFilterExample(event);
         }
+    }
+
+    @FXML
+    protected void showHistories(Event event) {
+        PopTools.popStringValues(this, filterInput, event, baseName + "FilterString", false);
+    }
+
+    @FXML
+    protected void popHistories(Event event) {
+        if (UserConfig.getBoolean(baseName + "FilterStringPopWhenMouseHovering", false)) {
+            showHistories(event);
+        }
+    }
+
+    @FXML
+    public void clearAction(Event event) {
+        filterInput.clear();
     }
 
 }

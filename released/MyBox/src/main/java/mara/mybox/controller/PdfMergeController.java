@@ -9,10 +9,12 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import mara.mybox.data.PdfInformation;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.apache.pdfbox.multipdf.PageExtractor;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -65,7 +67,7 @@ public class PdfMergeController extends BaseBatchPdfController {
     }
 
     @Override
-    public String handleFile(File srcFile, File targetPath) {
+    public String handleFile(FxTask currentTask, File srcFile, File targetPath) {
         int generated = 0;
         doc = null;
         try {
@@ -77,15 +79,21 @@ public class PdfMergeController extends BaseBatchPdfController {
             }
             actualParameters.toPage = info.getToPage();
             actualParameters.password = info.getUserPassword();
-            try ( PDDocument pd = PDDocument.load(currentParameters.currentSourceFile,
-                    currentParameters.password, AppVariables.pdfMemUsage)) {
+            try (PDDocument pd = PDDocument.load(currentParameters.currentSourceFile,
+                    currentParameters.password, AppVariables.PdfMemUsage)) {
                 doc = pd;
+                if (currentTask == null || !currentTask.isWorking()) {
+                    return message("Canceled");
+                }
                 if (currentParameters.toPage <= 0 || currentParameters.toPage > doc.getNumberOfPages()) {
                     currentParameters.toPage = doc.getNumberOfPages();
                 }
                 currentParameters.currentTargetPath = targetPath;
                 extractor = new PageExtractor(doc, currentParameters.fromPage, currentParameters.toPage);
                 PDDocument subDoc = extractor.extract();
+                if (currentTask == null || !currentTask.isWorking()) {
+                    return message("Canceled");
+                }
                 if (subDoc != null) {
                     mergePdf.appendDocument(targetDoc, subDoc);
                     subDoc.close();

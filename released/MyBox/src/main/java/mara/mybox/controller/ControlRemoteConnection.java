@@ -25,8 +25,8 @@ import mara.mybox.data.FileNode;
 import mara.mybox.db.data.PathConnection;
 import mara.mybox.db.table.TablePathConnection;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.DateTools;
 import static mara.mybox.tools.FileTools.showFileSize;
 import mara.mybox.tools.FloatTools;
@@ -206,7 +206,7 @@ public class ControlRemoteConnection extends BaseSysTableController<PathConnecti
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -243,7 +243,7 @@ public class ControlRemoteConnection extends BaseSysTableController<PathConnecti
     /*
         sftp
      */
-    public boolean connect(SingletonTask<Void> task) {
+    public boolean connect(FxTask<Void> task) {
         try {
             disconnect();
             if (currentConnection == null) {
@@ -382,15 +382,15 @@ public class ControlRemoteConnection extends BaseSysTableController<PathConnecti
                 .attrs(stat(nodename));
     }
 
-    public List<FileNode> children(FileNode targetNode) {
+    public List<FileNode> children(FxTask currentTask, FileNode targetNode) {
         List<FileNode> children = new ArrayList<>();
         try {
-            Iterator<ChannelSftp.LsEntry> iterator = ls(targetNode.fullName());
+            Iterator<ChannelSftp.LsEntry> iterator = ls(targetNode.nodeFullName());
             if (iterator == null) {
                 return children;
             }
             while (iterator.hasNext()) {
-                if (task == null || task.isCancelled()) {
+                if (currentTask == null || !currentTask.isWorking()) {
                     return children;
                 }
                 ChannelSftp.LsEntry entry = iterator.next();
@@ -452,9 +452,9 @@ public class ControlRemoteConnection extends BaseSysTableController<PathConnecti
         return -1;
     }
 
-    public boolean put(File sourceFile, String target, boolean copyMtime, int permission) {
+    public boolean put(FxTask currentTask, File sourceFile, String target, boolean copyMtime, int permission) {
         try {
-            if (task == null || task.isCancelled()
+            if (currentTask == null || !currentTask.isWorking()
                     || target == null || sourceFile == null
                     || !sourceFile.exists() || !sourceFile.isFile()) {
                 return false;
@@ -467,7 +467,7 @@ public class ControlRemoteConnection extends BaseSysTableController<PathConnecti
             if (copyMtime) {
 
             }
-            setStat(targetName, copyMtime ? (int) (sourceFile.lastModified() / 1000) : -1, permission);
+            setStat(currentTask, targetName, copyMtime ? (int) (sourceFile.lastModified() / 1000) : -1, permission);
             return true;
         } catch (Exception e) {
             showLogs(e.toString());
@@ -475,9 +475,9 @@ public class ControlRemoteConnection extends BaseSysTableController<PathConnecti
         }
     }
 
-    public boolean setStat(String target, int time, int permission) {
+    public boolean setStat(FxTask currentTask, String target, int time, int permission) {
         try {
-            if (task == null || task.isCancelled() || target == null) {
+            if (currentTask == null || !currentTask.isWorking() || target == null) {
                 return false;
             }
             if (time > 0 || permission > 0) {
@@ -506,9 +506,9 @@ public class ControlRemoteConnection extends BaseSysTableController<PathConnecti
         }
     }
 
-    public boolean get(String source, SftpATTRS attrs, File targetFile, boolean copyMtime) {
+    public boolean get(FxTask currentTask, String source, SftpATTRS attrs, File targetFile, boolean copyMtime) {
         try {
-            if (task == null || task.isCancelled()
+            if (currentTask == null || !currentTask.isWorking()
                     || targetFile == null || source == null || attrs == null) {
                 return false;
             }
@@ -541,9 +541,9 @@ public class ControlRemoteConnection extends BaseSysTableController<PathConnecti
         }
     }
 
-    public boolean delete(String filename) {
+    public boolean delete(FxTask currentTask, String filename) {
         if (isDirectory(filename)) {
-            return deleteDirectory(filename);
+            return deleteDirectory(currentTask, filename);
         } else {
             return deleteFile(filename);
         }
@@ -562,10 +562,10 @@ public class ControlRemoteConnection extends BaseSysTableController<PathConnecti
         }
     }
 
-    public boolean deleteDirectory(String dirname) {
+    public boolean deleteDirectory(FxTask currentTask, String dirname) {
         try {
             dirname = fixFilename(dirname);
-            if (!clearDirectory(dirname)) {
+            if (!clearDirectory(currentTask, dirname)) {
                 return false;
             }
             showLogs("rmdir " + dirname);
@@ -579,7 +579,7 @@ public class ControlRemoteConnection extends BaseSysTableController<PathConnecti
         }
     }
 
-    public boolean clearDirectory(String dirname) {
+    public boolean clearDirectory(FxTask currentTask, String dirname) {
         try {
             dirname = fixFilename(dirname);
             Iterator<LsEntry> iterator = ls(dirname);
@@ -587,7 +587,7 @@ public class ControlRemoteConnection extends BaseSysTableController<PathConnecti
                 return false;
             }
             while (iterator.hasNext()) {
-                if (task == null || task.isCancelled()) {
+                if (currentTask == null || !currentTask.isWorking()) {
                     return false;
                 }
                 LsEntry entry = iterator.next();
@@ -599,13 +599,13 @@ public class ControlRemoteConnection extends BaseSysTableController<PathConnecti
                 child = dirname + "/" + child;
                 SftpATTRS attrs = entry.getAttrs();
                 if (attrs.isDir()) {
-                    if (clearDirectory(child)) {
+                    if (clearDirectory(currentTask, child)) {
                         showLogs("rmdir " + child);
                         sftp.rmdir(child);
                         count++;
                     } else {
-                        if (task != null) {
-                            task.cancel();
+                        if (currentTask != null) {
+                            currentTask.cancel();
                         }
                         return false;
                     }

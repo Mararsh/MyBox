@@ -35,8 +35,8 @@ public class Data2DChartGroupComparisonBarsController extends Data2DChartCompari
      */
     public static Data2DChartGroupComparisonBarsController open(ControlData2DLoad tableController) {
         try {
-            Data2DChartGroupComparisonBarsController controller = (Data2DChartGroupComparisonBarsController) WindowTools.openChildStage(
-                    tableController.getMyWindow(), Fxmls.Data2DChartGroupComparisonBarsFxml, false);
+            Data2DChartGroupComparisonBarsController controller = (Data2DChartGroupComparisonBarsController) WindowTools.branchStage(
+                    tableController, Fxmls.Data2DChartGroupComparisonBarsFxml);
             controller.setParameters(tableController);
             controller.requestMouse();
             return controller;

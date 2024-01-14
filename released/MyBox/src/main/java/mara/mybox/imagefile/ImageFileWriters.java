@@ -27,10 +27,12 @@ import mara.mybox.bufferedimage.ImageFileInformation;
 import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.FileNameTools;
-import mara.mybox.tools.FileTools;
 import mara.mybox.tools.FileTmpTools;
+import mara.mybox.tools.FileTools;
 import mara.mybox.value.FileExtensions;
+import static mara.mybox.value.Languages.message;
 import thridparty.image4j.ICOEncoder;
 
 /**
@@ -43,43 +45,47 @@ import thridparty.image4j.ICOEncoder;
 // https://docs.oracle.com/javase/10/docs/api/javax/imageio/metadata/doc-files/standard_metadata.html
 public class ImageFileWriters {
 
-    public static boolean saveAs(File srcFile, String targetFile) {
+    public static boolean saveAs(FxTask task, File srcFile, String targetFile) {
         try {
-            BufferedImage image = ImageFileReaders.readImage(srcFile);
-            return writeImageFile(image, targetFile);
+            BufferedImage image = ImageFileReaders.readImage(task, srcFile);
+            if (image == null) {
+                return false;
+            }
+            return writeImageFile(task, image, targetFile);
         } catch (Exception e) {
             MyBoxLog.debug(e);
             return false;
         }
     }
 
-    public static boolean saveAs(File srcFile, File targetFile) {
+    public static boolean saveAs(FxTask task, File srcFile, File targetFile) {
         try {
-            return saveAs(srcFile, targetFile.getAbsolutePath());
+            return saveAs(task, srcFile, targetFile.getAbsolutePath());
         } catch (Exception e) {
             return false;
         }
     }
 
-    public static boolean writeImageFile(BufferedImage image, File targetFile) {
+    public static boolean writeImageFile(FxTask task, BufferedImage image, File targetFile) {
         try {
-            return writeImageFile(image, targetFile.getAbsolutePath());
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-            return false;
-        }
-    }
-
-    public static boolean writeImageFile(BufferedImage image, String targetFile) {
-        try {
-            return writeImageFile(image, FileNameTools.suffix(targetFile), targetFile);
+            return writeImageFile(task, image, targetFile.getAbsolutePath());
         } catch (Exception e) {
             MyBoxLog.debug(e);
             return false;
         }
     }
 
-    public static boolean writeImageFile(BufferedImage image, String format, String targetFile) {
+    public static boolean writeImageFile(FxTask task, BufferedImage image, String targetFile) {
+        try {
+            return writeImageFile(task, image, FileNameTools.suffix(targetFile), targetFile);
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+            return false;
+        }
+    }
+
+    public static boolean writeImageFile(FxTask task, BufferedImage image,
+            String format, String targetFile) {
         if (image == null || targetFile == null) {
             return false;
         }
@@ -95,12 +101,12 @@ public class ImageFileWriters {
                 case "jpeg 2000":
                 case "jp2":
                 case "jpm":
-                    return ImageIO.write(AlphaTools.removeAlpha(image), "JPEG2000", new File(targetFile));
+                    return ImageIO.write(AlphaTools.removeAlpha(task, image), "JPEG2000", new File(targetFile));
                 case "wbmp":
-                    image = ImageBinary.byteBinary(image);
+                    image = ImageBinary.byteBinary(task, image);
                     break;
             }
-            return writeImageFile(image, attributes, targetFile);
+            return writeImageFile(task, image, attributes, targetFile);
         } catch (Exception e) {
             MyBoxLog.debug(e);
             return false;
@@ -144,24 +150,28 @@ public class ImageFileWriters {
     }
 
     // Not convert color space
-    public static boolean writeImageFile(BufferedImage srcImage, ImageAttributes attributes, String targetFile) {
+    public static boolean writeImageFile(FxTask task, BufferedImage srcImage,
+            ImageAttributes attributes, String targetFile) {
         if (srcImage == null || targetFile == null) {
             return false;
         }
         if (attributes == null) {
-            return writeImageFile(srcImage, targetFile);
+            return writeImageFile(task, srcImage, targetFile);
         }
         try {
             String targetFormat = attributes.getImageFormat().toLowerCase();
             if ("ico".equals(targetFormat) || "icon".equals(targetFormat)) {
-                return writeIcon(srcImage, attributes.getWidth(), new File(targetFile));
+                return writeIcon(task, srcImage, attributes.getWidth(), new File(targetFile));
             }
-            BufferedImage targetImage = AlphaTools.checkAlpha(srcImage, targetFormat);
+            BufferedImage targetImage = AlphaTools.checkAlpha(task, srcImage, targetFormat);
+            if (targetImage == null || (task != null && !task.isWorking())) {
+                return false;
+            }
             ImageWriter writer = getWriter(targetFormat);
             ImageWriteParam param = getWriterParam(attributes, writer);
             IIOMetadata metaData = ImageFileWriters.getWriterMetaData(targetFormat, attributes, targetImage, writer, param);
             File tmpFile = FileTmpTools.getTempFile();
-            try ( ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
+            try (ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
                 writer.setOutput(out);
                 writer.write(metaData, new IIOImage(targetImage, null, metaData), param);
                 out.flush();
@@ -170,15 +180,18 @@ public class ImageFileWriters {
                 MyBoxLog.error(e.toString());
                 return false;
             }
+            if (task != null && !task.isWorking()) {
+                return false;
+            }
             File file = new File(targetFile);
-            return FileTools.rename(tmpFile, file);
+            return FileTools.override(tmpFile, file);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return false;
         }
     }
 
-    public static boolean writeIcon(BufferedImage image, int width, File targetFile) {
+    public static boolean writeIcon(FxTask task, BufferedImage image, int width, File targetFile) {
         try {
             if (image == null || targetFile == null) {
                 return false;
@@ -188,6 +201,9 @@ public class ImageFileWriters {
                 targetWidth = Math.min(512, image.getWidth());
             }
             BufferedImage scaled = ScaleTools.scaleImageWidthKeep(image, targetWidth);
+            if (task != null && !task.isWorking()) {
+                return false;
+            }
             ICOEncoder.write(scaled, targetFile);
             return true;
         } catch (Exception e) {
@@ -196,12 +212,12 @@ public class ImageFileWriters {
         }
     }
 
-    public static String writeFrame(File sourcefile, int frameIndex, BufferedImage frameImage) {
-        return writeFrame(sourcefile, frameIndex, frameImage, sourcefile, null);
+    public static String writeFrame(FxTask task, File sourcefile, int frameIndex, BufferedImage frameImage) {
+        return writeFrame(task, sourcefile, frameIndex, frameImage, sourcefile, null);
     }
 
     // Convert color space if inAttributes is not null
-    public static String writeFrame(File sourcefile, int frameIndex, BufferedImage frameImage,
+    public static String writeFrame(FxTask task, File sourcefile, int frameIndex, BufferedImage frameImage,
             File targetFile, ImageAttributes inAttributes) {
         try {
             if (frameImage == null || sourcefile == null || !sourcefile.exists()
@@ -217,25 +233,28 @@ public class ImageFileWriters {
                 targetFormat = inAttributes.getImageFormat().toLowerCase();
             }
             if (!FileExtensions.MultiFramesImages.contains(targetFormat)) {
-                return writeImageFile(frameImage, targetAttributes, targetFile.getAbsolutePath()) ? null : "Failed";
+                return writeImageFile(task, frameImage, targetAttributes, targetFile.getAbsolutePath()) ? null : "Failed";
             }
             List<ImageInformation> gifInfos = null;
             if ("gif".equals(targetFormat)) {
-                ImageFileInformation imageFileInformation = ImageFileReaders.readImageFileMetaData(sourcefile);
+                ImageFileInformation imageFileInformation = ImageFileReaders.readImageFileMetaData(task, sourcefile);
+                if (task != null && !task.isWorking()) {
+                    return message("Cancelled");
+                }
                 if (imageFileInformation == null || imageFileInformation.getImagesInformation() == null) {
                     return "InvalidData";
                 }
                 gifInfos = imageFileInformation.getImagesInformation();
             }
             File tmpFile = FileTmpTools.getTempFile();
-            try ( ImageInputStream iis = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(sourcefile)))) {
+            try (ImageInputStream iis = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(sourcefile)))) {
                 ImageReader reader = ImageFileReaders.getReader(iis, FileNameTools.suffix(sourcefile.getName()));
                 if (reader == null) {
                     return "InvalidData";
                 }
                 reader.setInput(iis, false);
                 int size = reader.getNumImages(true);
-                try ( ImageOutputStream out = ImageIO.createImageOutputStream(new BufferedOutputStream(new FileOutputStream(tmpFile)))) {
+                try (ImageOutputStream out = ImageIO.createImageOutputStream(new BufferedOutputStream(new FileOutputStream(tmpFile)))) {
                     int readIndex = 0, duration;
                     ImageWriter writer = getWriter(targetFormat);
                     if (writer == null) {
@@ -246,6 +265,11 @@ public class ImageFileWriters {
                     writer.prepareWriteSequence(null);
                     ImageInformation info = new ImageInformation(sourcefile);
                     while (readIndex < size) {
+                        if (task != null && !task.isWorking()) {
+                            writer.dispose();
+                            reader.dispose();
+                            return message("Cancelled");
+                        }
                         BufferedImage bufferedImage;
                         if (readIndex == frameIndex) {
                             bufferedImage = frameImage;
@@ -256,8 +280,13 @@ public class ImageFileWriters {
                                 if (e.toString().contains("java.lang.IndexOutOfBoundsException")) {
                                     break;
                                 }
-                                bufferedImage = ImageFileReaders.readBrokenImage(e, info.setIndex(readIndex));
+                                bufferedImage = ImageFileReaders.readBrokenImage(task, e, info.setIndex(readIndex));
                             }
+                        }
+                        if (task != null && !task.isWorking()) {
+                            writer.dispose();
+                            reader.dispose();
+                            return message("Cancelled");
                         }
                         if (bufferedImage == null) {
                             break;
@@ -265,9 +294,17 @@ public class ImageFileWriters {
                         BufferedImage targetFrame = bufferedImage;
                         IIOMetadata metaData;
                         if (inAttributes != null) {
-                            targetFrame = ImageConvertTools.convertColorSpace(targetFrame, inAttributes);
+                            targetFrame = ImageConvertTools.convertColorSpace(task, targetFrame, inAttributes);
                         } else {
-                            targetFrame = AlphaTools.checkAlpha(bufferedImage, targetFormat);
+                            targetFrame = AlphaTools.checkAlpha(task, bufferedImage, targetFormat);
+                        }
+                        if (task != null && !task.isWorking()) {
+                            writer.dispose();
+                            reader.dispose();
+                            return message("Cancelled");
+                        }
+                        if (targetFrame == null) {
+                            break;
                         }
                         metaData = getWriterMetaData(targetFormat, targetAttributes, targetFrame, writer, param);
                         if (gifInfos != null) {
@@ -296,7 +333,10 @@ public class ImageFileWriters {
                 MyBoxLog.error(e.toString());
                 return e.toString();
             }
-            if (FileTools.rename(tmpFile, targetFile)) {
+            if (task != null && !task.isWorking()) {
+                return message("Cancelled");
+            }
+            if (FileTools.override(tmpFile, targetFile)) {
                 return null;
             } else {
                 return "Failed";

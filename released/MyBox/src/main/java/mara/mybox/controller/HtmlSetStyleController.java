@@ -7,6 +7,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextArea;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.value.Languages;
@@ -55,8 +56,10 @@ public class HtmlSetStyleController extends BaseBatchHtmlController {
     }
 
     @Override
-    public String covertHtml(File srcFile, Charset charset) {
-        return HtmlWriteTools.setStyle(srcFile, charset, css, ignoreCheck.isSelected());
+    public String covertHtml(FxTask currentTask, File srcFile, Charset charset) {
+        return HtmlWriteTools.setStyle(currentTask, srcFile,
+                charset, css, ignoreCheck.isSelected());
+
     }
 
 }

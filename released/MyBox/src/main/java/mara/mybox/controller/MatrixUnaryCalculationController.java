@@ -22,7 +22,7 @@ import mara.mybox.data2d.Data2D;
 import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.data2d.DataMatrix;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.DoubleMatrixTools;
@@ -320,7 +320,7 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
         }
         resultLabel.setText("");
         resultBox.getChildren().clear();
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             private String op;
 
             @Override

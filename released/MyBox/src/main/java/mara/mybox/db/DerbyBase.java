@@ -153,7 +153,7 @@ public class DerbyBase {
         }
     }
 
-    // https://db.apache.org/derby/docs/10.4/devguide/rdevcsecure26537.html
+    // https://db.apache.org/derby/docs/10.17/devguide/rdevcsecure26537.html
     public static void shutdownEmbeddedDerby() {
         try (Connection conn = DriverManager.getConnection("jdbc:derby:;shutdown=true")) {
         } catch (Exception e) {
@@ -676,7 +676,7 @@ public class DerbyBase {
     public static boolean initTableValues() {
         try (Connection conn = DriverManager.getConnection(protocol + dbHome() + create)) {
             if (TableGeographyCode.China(conn) == null) {
-                GeographyCodeTools.importPredefined(conn);
+                GeographyCodeTools.importPredefined(null, conn);
             }
             return true;
         } catch (Exception e) {
@@ -852,8 +852,8 @@ public class DerbyBase {
         }
     }
 
-    // https://db.apache.org/derby/docs/10.15/ref/crefsqlj1003454.html#crefsqlj1003454
-    // https://db.apache.org/derby/docs/10.15/ref/rrefkeywords29722.html
+    // https://db.apache.org/derby/docs/10.17/ref/crefsqlj1003454.html#crefsqlj1003454
+    // https://db.apache.org/derby/docs/10.17/ref/rrefkeywords29722.html
     public static String fixedIdentifier(String name) {
         if (name == null) {
             return null;

@@ -12,7 +12,7 @@ import javafx.scene.control.TextArea;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.tools.TextTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -117,12 +117,12 @@ public class ControlData2DEditCSV extends BaseController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             private String text;
 
             @Override
             protected boolean handle() {
-                text = data2D.encodeCSV(task, delimiterName, false, false, false);
+                text = data2D.encodeCSV(this, delimiterName, false, false, false);
                 return text != null;
             }
 
@@ -185,7 +185,7 @@ public class ControlData2DEditCSV extends BaseController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             private List<List<String>> rows;
 
             @Override
@@ -195,7 +195,7 @@ public class ControlData2DEditCSV extends BaseController {
                     String text = textArea.getText();
                     if (text != null && !text.isEmpty()) {
                         int colsNumber = data2D.columnsNumber();
-                        List<List<String>> data = data2D.decodeCSV(task, text, delimiterName, false);
+                        List<List<String>> data = data2D.decodeCSV(this, text, delimiterName, false);
                         if (data == null) {
                             return false;
                         }

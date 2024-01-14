@@ -187,12 +187,13 @@ public class MenuWebviewController extends MenuController {
 
     @Override
     public boolean keyEventsFilter(KeyEvent event) {
-        if (!super.keyEventsFilter(event)) {
-            if (webViewController != null) {
-                return webViewController.keyEventsFilter(event);
-            }
+        if (super.keyEventsFilter(event)) {
+            return true;
         }
-        return true;
+        if (webViewController == null) {
+            return false;
+        }
+        return webViewController.keyEventsFilter(event);
     }
 
     @Override
@@ -312,7 +313,7 @@ public class MenuWebviewController extends MenuController {
         if (webView == null) {
             return;
         }
-        ImageViewerController.openImage(NodeTools.snap(webView));
+        ImageEditorController.openImage(NodeTools.snap(webView));
     }
 
     @FXML
@@ -359,8 +360,8 @@ public class MenuWebviewController extends MenuController {
                     }
                 }
             }
-            MenuWebviewController controller = (MenuWebviewController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.MenuWebviewFxml, false);
+            MenuWebviewController controller = (MenuWebviewController) WindowTools.branchStage(
+                    parent, Fxmls.MenuWebviewFxml);
             controller.setParameters(parent, element, x, y);
             return controller;
         } catch (Exception e) {

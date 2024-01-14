@@ -25,8 +25,9 @@ import mara.mybox.bufferedimage.ImageConvertTools;
 import static mara.mybox.bufferedimage.ImageConvertTools.dpi2dpm;
 import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.tools.FileTools;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.FileTmpTools;
+import mara.mybox.tools.FileTools;
 
 /**
  * @Author Mara
@@ -93,22 +94,22 @@ public class ImageBmpFile {
         }
     }
 
-    public static boolean writeBmpImageFile(BufferedImage srcimage,
+    public static boolean writeBmpImageFile(FxTask task, BufferedImage srcimage,
             ImageAttributes attributes, File file) {
-        BufferedImage image = AlphaTools.removeAlpha(srcimage);
+        BufferedImage image = AlphaTools.removeAlpha(task, srcimage);
         try {
             ImageWriter writer = getWriter();
             ImageWriteParam param = getPara(attributes, writer);
             IIOMetadata metaData = getWriterMeta(attributes, image, writer, param);
 
             File tmpFile = FileTmpTools.getTempFile();
-            try ( ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
+            try (ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
                 writer.setOutput(out);
                 writer.write(metaData, new IIOImage(image, null, metaData), param);
                 out.flush();
             }
             writer.dispose();
-            return FileTools.rename(tmpFile, file);
+            return FileTools.override(tmpFile, file);
         } catch (Exception e) {
             try {
                 return ImageIO.write(image, attributes.getImageFormat(), file);
@@ -121,7 +122,7 @@ public class ImageBmpFile {
     public static BMPMetadata getBmpIIOMetadata(File file) {
         try {
             BMPImageReader reader = new BMPImageReader(new BMPImageReaderSpi());
-            try ( ImageInputStream iis = ImageIO.createImageInputStream(file)) {
+            try (ImageInputStream iis = ImageIO.createImageInputStream(file)) {
                 reader.setInput(iis, false);
                 BMPMetadata metadata = (BMPMetadata) reader.getImageMetadata(0);
                 reader.dispose();

@@ -12,7 +12,7 @@ import mara.mybox.db.data.InfoNode;
 import static mara.mybox.db.data.InfoNode.TitleSeparater;
 import mara.mybox.db.data.Tag;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.FxTask;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -51,7 +51,7 @@ public class TableTreeNode extends BaseTable<InfoNode> {
             = "CREATE INDEX Tree_Node_parent_index on Tree_Node ( parentid )";
 
     public static final String Create_Title_Index
-            = "CREATE INDEX Tree_Node_title_index on Tree_Node ( title )";
+            = "CREATE INDEX Tree_Node_title_index on Tree_Node ( parentid, title )";
 
     public static final String QueryID
             = "SELECT * FROM Tree_Node WHERE nodeid=?";
@@ -62,8 +62,8 @@ public class TableTreeNode extends BaseTable<InfoNode> {
     public static final String QueryChildren
             = "SELECT * FROM Tree_Node WHERE parentid=? AND nodeid<>parentid";
 
-    public static final String QueryTitle
-            = "SELECT * FROM Tree_Node WHERE parentid=? AND title=?";
+    public static final String QueryChild
+            = "SELECT * FROM Tree_Node WHERE parentid=? AND title=? AND nodeid<>parentid ORDER BY nodeid DESC FETCH FIRST ROW ONLY";
 
     public static final String DeleteID
             = "DELETE FROM Tree_Node WHERE nodeid=?";
@@ -207,7 +207,7 @@ public class TableTreeNode extends BaseTable<InfoNode> {
         if (conn == null || title == null || title.isBlank()) {
             return null;
         }
-        try (PreparedStatement statement = conn.prepareStatement(QueryTitle)) {
+        try (PreparedStatement statement = conn.prepareStatement(QueryChild)) {
             statement.setLong(1, parent);
             statement.setString(2, title);
             return query(conn, statement);
@@ -510,7 +510,7 @@ public class TableTreeNode extends BaseTable<InfoNode> {
         return isEmpty;
     }
 
-    public boolean equalOrDescendant(SingletonTask<Void> task, Connection conn, InfoNode node1, InfoNode node2) {
+    public boolean equalOrDescendant(FxTask<Void> task, Connection conn, InfoNode node1, InfoNode node2) {
         if (conn == null || node1 == null || node2 == null) {
             if (task != null) {
                 task.setError(message("InvalidData"));

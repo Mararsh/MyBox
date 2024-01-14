@@ -10,7 +10,7 @@ import mara.mybox.color.ChromaticAdaptation;
 import mara.mybox.color.Illuminant;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.tools.DoubleArrayTools;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -83,7 +83,7 @@ public class IlluminantsController extends ChromaticityBaseController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             private StringTable table;
 

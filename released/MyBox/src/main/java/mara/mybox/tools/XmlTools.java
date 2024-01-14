@@ -7,7 +7,6 @@ import java.io.StringReader;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
-import javafx.application.Platform;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
@@ -16,7 +15,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import mara.mybox.controller.BaseController;
-import mara.mybox.controller.BaseLogs;
 import mara.mybox.data.XmlTreeNode;
 import static mara.mybox.data.XmlTreeNode.NodeType.CDATA;
 import static mara.mybox.data.XmlTreeNode.NodeType.Comment;
@@ -24,7 +22,9 @@ import static mara.mybox.data.XmlTreeNode.NodeType.ProcessingInstruction;
 import static mara.mybox.data.XmlTreeNode.NodeType.Text;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.PopTools;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 import org.w3c.dom.Document;
 import org.w3c.dom.DocumentType;
@@ -54,35 +54,74 @@ public class XmlTools {
     public static boolean ignoreComment;
     public static boolean ignoreBlankCDATA;
 
+    /*
+        encode
+     */
+    public static String xmlTag(String tag) {
+        return message(tag).replaceAll(" ", "_");
+    }
+
+    public static boolean matchXmlTag(String matchTo, String s) {
+        try {
+            if (matchTo == null || s == null) {
+                return false;
+            }
+            return message("en", matchTo).replaceAll(" ", "_").equalsIgnoreCase(s)
+                    || message("zh", matchTo).replaceAll(" ", "_").equalsIgnoreCase(s)
+                    || message(matchTo).replaceAll(" ", "_").equalsIgnoreCase(s)
+                    || matchTo.replaceAll(" ", "_").equalsIgnoreCase(s);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public static String cdata(Node node) {
+        if (node == null) {
+            return null;
+        }
+        try {
+            NodeList fNodes = node.getChildNodes();
+            if (fNodes != null) {
+                for (int f = 0; f < fNodes.getLength(); f++) {
+                    Node c = fNodes.item(f);
+                    if (c.getNodeType() == Node.CDATA_SECTION_NODE) {
+                        return c.getNodeValue();
+                    }
+                }
+            }
+        } catch (Exception ex) {
+        }
+        return node.getTextContent();
+    }
 
     /*
         parse
      */
-    public static Document textToDoc(BaseController controller, String xml) {
+    public static Document textToDoc(FxTask task, BaseController controller, String xml) {
         try {
-            return doc(controller, new InputSource(new StringReader(xml)));
+            return doc(task, controller, new InputSource(new StringReader(xml)));
         } catch (Exception e) {
             PopTools.showError(controller, e.toString());
             return null;
         }
     }
 
-    public static Document fileToDoc(BaseController controller, File file) {
+    public static Document fileToDoc(FxTask task, BaseController controller, File file) {
         try {
-            return doc(controller, new InputSource(new FileReader(file)));
+            return doc(task, controller, new InputSource(new FileReader(file)));
         } catch (Exception e) {
             PopTools.showError(controller, e.toString());
             return null;
         }
     }
 
-    public static Document doc(BaseController controller, InputSource inputSource) {
+    public static Document doc(FxTask task, BaseController controller, InputSource inputSource) {
         try {
             Document doc = builder(controller).parse(inputSource);
             if (doc == null) {
                 return null;
             }
-            Strip(controller, doc);
+            Strip(task, controller, doc);
             return doc;
         } catch (Exception e) {
             PopTools.showError(controller, e.toString());
@@ -90,10 +129,10 @@ public class XmlTools {
         }
     }
 
-    public static Element toElement(BaseController controller, String xml) {
+    public static Element toElement(FxTask task, BaseController controller, String xml) {
         try {
-            Document doc = textToDoc(controller, xml);
-            if (doc == null) {
+            Document doc = textToDoc(task, controller, xml);
+            if (doc == null || (task != null && !task.isWorking())) {
                 return null;
             }
             return doc.getDocumentElement();
@@ -140,9 +179,9 @@ public class XmlTools {
         return builder;
     }
 
-    public static Node Strip(BaseController controller, Node node) {
+    public static Node Strip(FxTask task, BaseController controller, Node node) {
         try {
-            if (node == null) {
+            if (node == null || (task != null && !task.isWorking())) {
                 return node;
             }
             NodeList nodeList = node.getChildNodes();
@@ -151,9 +190,15 @@ public class XmlTools {
             }
             List<Node> children = new ArrayList<>();
             for (int i = 0; i < nodeList.getLength(); i++) {
+                if (task != null && !task.isWorking()) {
+                    return node;
+                }
                 children.add(nodeList.item(i));
             }
             for (Node child : children) {
+                if (task != null && !task.isWorking()) {
+                    return node;
+                }
                 XmlTreeNode.NodeType t = type(child);
                 if (ignoreComment && t == XmlTreeNode.NodeType.Comment) {
                     node.removeChild(child);
@@ -185,18 +230,10 @@ public class XmlTools {
                             break;
                     }
                 }
-                Strip(controller, child);
+                Strip(task, controller, child);
             }
         } catch (Exception e) {
-            if (controller == null) {
-                MyBoxLog.error(e);
-            } else if (controller instanceof BaseLogs) {
-                ((BaseLogs) controller).updateLogs(e.toString(), true, true);
-            } else {
-                Platform.runLater(() -> {
-                    controller.alertError(e.toString());
-                });
-            }
+            PopTools.showError(controller, e.toString());
         }
         return node;
     }
@@ -454,9 +491,9 @@ public class XmlTools {
         return h;
     }
 
-    public static Node find(Node node, String hierarchyNumber) {
+    public static Node find(Node doc, String hierarchyNumber) {
         try {
-            if (node == null || hierarchyNumber == null || hierarchyNumber.isBlank()) {
+            if (doc == null || hierarchyNumber == null || hierarchyNumber.isBlank()) {
                 return null;
             }
             String[] numbers = hierarchyNumber.split("\\.", -1);
@@ -464,7 +501,7 @@ public class XmlTools {
                 return null;
             }
             int index;
-            Node current = node;
+            Node current = doc;
             for (String n : numbers) {
                 index = Integer.parseInt(n);
                 NodeList nodeList = current.getChildNodes();
@@ -480,27 +517,40 @@ public class XmlTools {
         }
     }
 
-    public static void remove(Node sourceNode, Node targetNode) {
+    public static void remove(Node doc, Node targetNode) {
         try {
-            if (sourceNode == null || targetNode == null) {
+            if (doc == null || targetNode == null) {
                 return;
             }
-            NodeList nodeList = sourceNode.getChildNodes();
-            if (nodeList == null) {
+            Node child = find(doc, hierarchyNumber(targetNode));
+            if (child == null) {
                 return;
             }
-            for (int i = 0; i < nodeList.getLength(); i++) {
-                Node child = nodeList.item(i);
-                if (targetNode.equals(child)) {
-                    sourceNode.removeChild(child);
-                    return;
-                }
-                remove(child, targetNode);
+            Node parent = child.getParentNode();
+            if (parent == null) {
+                return;
             }
+            parent.removeChild(child);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
+
+    public static void remove(Node targetNode) {
+        try {
+            if (targetNode == null) {
+                return;
+            }
+            Node parent = targetNode.getParentNode();
+            if (parent == null) {
+                return;
+            }
+            parent.removeChild(targetNode);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
 
     /*
         transform

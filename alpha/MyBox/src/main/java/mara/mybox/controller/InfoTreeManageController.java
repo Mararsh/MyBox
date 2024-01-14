@@ -51,10 +51,10 @@ public class InfoTreeManageController extends BaseInfoTreeController {
         try {
             super.initControls();
 
-            treeController.setParameters(this);
-            editor.setParameters(this);
+            treeController.setManager(this);
+            editor.setManager(this);
 
-            setParameters(this);
+            loadData();
 
         } catch (Exception e) {
             MyBoxLog.error(e);

@@ -12,6 +12,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextArea;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.value.UserConfig;
 
@@ -92,8 +93,8 @@ public class ControlHtml2PdfOptions extends BaseController {
         cssArea.setText(css);
     }
 
-    public String html2pdf(String html, File target) {
-        return PdfTools.html2pdf(target, html, cssArea.getText().trim(),
+    public String html2pdf(FxTask currentTask, String html, File target) {
+        return PdfTools.html2pdf(currentTask, target, html, cssArea.getText().trim(),
                 ignoreHeadCheck.isVisible() && ignoreHeadCheck.isSelected(), pdfOptions);
     }
 

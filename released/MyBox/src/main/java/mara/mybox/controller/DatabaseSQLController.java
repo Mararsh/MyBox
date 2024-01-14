@@ -35,15 +35,6 @@ public class DatabaseSqlController extends InfoTreeManageController {
         }
     }
 
-    @Override
-    public void itemClicked() {
-    }
-
-    @Override
-    public void itemDoubleClicked() {
-        editAction();
-    }
-
     public void setInternal(boolean internal) {
         editorController.internal = internal;
     }

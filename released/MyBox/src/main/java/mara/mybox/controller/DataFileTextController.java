@@ -2,8 +2,12 @@ package mara.mybox.controller;
 
 import java.io.File;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.List;
+import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
+import javafx.scene.control.MenuItem;
 import javafx.stage.Window;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataFileCSV;
@@ -14,9 +18,11 @@ import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -26,9 +32,6 @@ import static mara.mybox.value.Languages.message;
 public class DataFileTextController extends BaseData2DFileController {
 
     protected DataFileText dataFileText;
-
-    @FXML
-    protected ControlTextOptions readOptionsController, writeOptionsController;
 
     public DataFileTextController() {
         baseTitle = message("EditTextDataFile");
@@ -51,41 +54,30 @@ public class DataFileTextController extends BaseData2DFileController {
     }
 
     @Override
-    public void initControls() {
-        try {
-            super.initControls();
-
-            readOptionsController.setControls(baseName + "Read", true, true);
-            writeOptionsController.setControls(baseName + "Write", false, true);
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    @Override
     public void pickRefreshOptions() {
         Charset charset;
-        if (readOptionsController.autoDetermine) {
+        if (UserConfig.getBoolean(baseName + "SourceAutoDetermine", true)) {
             charset = TextFileTools.charset(dataFileText.getFile());
         } else {
-            charset = readOptionsController.charset;
+            charset = Charset.forName(UserConfig.getString(baseName + "SourceCharset", "utf-8"));
         }
-        dataFileText.setOptions(readOptionsController.withNamesCheck.isSelected(),
-                charset, readOptionsController.getDelimiterName());
+        dataFileText.setOptions(
+                UserConfig.getBoolean(baseName + "SourceWithNames", true),
+                charset,
+                UserConfig.getString(baseName + "SourceDelimiter", ","));
     }
 
     @Override
     public Data2D saveAsTarget() {
-        File file = chooseSaveFile();
+        File file = chooseSaveFile(dataFileText.dataName());
         if (file == null) {
             return null;
         }
         DataFileText targetData = new DataFileText();
         targetData.initFile(file)
-                .setCharset(writeOptionsController.charset)
-                .setDelimiter(writeOptionsController.getDelimiterName())
-                .setHasHeader(writeOptionsController.withNamesCheck.isSelected());
+                .setCharset(Charset.forName(UserConfig.getString(baseName + "TargetCharset", "utf-8")))
+                .setDelimiter(UserConfig.getString(baseName + "TargetDelimiter", ","))
+                .setHasHeader(UserConfig.getBoolean(baseName + "TargetWithNames", true));
         return targetData;
     }
 
@@ -93,14 +85,36 @@ public class DataFileTextController extends BaseData2DFileController {
         if (file == null || !checkBeforeNextAction()) {
             return;
         }
-        readOptionsController.withNamesCheck.setSelected(withName);
-        readOptionsController.setDelimiterName(delimiter);
-        readOptionsController.setCharset(charset);
         dataFileText.initFile(file);
         dataFileText.setOptions(withName, charset, delimiter + "");
         dataController.readDefinition();
     }
 
+    @FXML
+    @Override
+    public void saveAsAction() {
+        if (!dataFileText.hasData() || !dataController.tableController.verifyData()) {
+            return;
+        }
+        DataFileTextSaveAsController.open(this);
+    }
+
+    @Override
+    public List<MenuItem> fileMenuItems(Event fevent) {
+        List<MenuItem> items = new ArrayList<>();
+        MenuItem menu;
+
+        if (sourceFile != null) {
+            menu = new MenuItem(message("Format"), StyleTools.getIconImageView("iconFormat.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                DataFileTextFormatController.open(this);
+            });
+            items.add(menu);
+        }
+
+        items.addAll(super.fileMenuItems(fevent));
+        return items;
+    }
 
     /*
         static
@@ -127,7 +141,7 @@ public class DataFileTextController extends BaseData2DFileController {
     }
 
     public static DataFileTextController load(Window parent) {
-        DataFileTextController controller = (DataFileTextController) WindowTools.openScene(parent, Fxmls.DataFileTextFxml);
+        DataFileTextController controller = (DataFileTextController) WindowTools.replaceStage(parent, Fxmls.DataFileTextFxml);
         controller.createAction();
         controller.requestMouse();
         return controller;

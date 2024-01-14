@@ -378,17 +378,23 @@ public class BaseWebViewController extends BaseFileController {
 
     @FXML
     public void snapAction() {
-        ImageViewerController.openImage(NodeTools.snap(webView));
+        ImageEditorController.openImage(NodeTools.snap(webView));
     }
 
     @Override
     public boolean keyEventsFilter(KeyEvent event) {
-        if (!super.keyEventsFilter(event)) {
-            if (webViewController == null) {
-                return false;
-            }
-            return webViewController.keyEventsFilter(event);
+        if (super.keyEventsFilter(event)) {
+            return true;
         }
+        if (webViewController == null) {
+            return false;
+        }
+        return webViewController.keyEventsFilter(event);
+    }
+
+    @Override
+    public boolean controlAltB() {
+        saveAsAction();
         return true;
     }
 

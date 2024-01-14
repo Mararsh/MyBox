@@ -4,6 +4,7 @@ import java.sql.Connection;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.SoundTools;
 
 /**
@@ -62,17 +63,17 @@ public class Data2DConvertToDataBaseTask extends Data2DTableCreateController {
     }
 
     @Override
-    public boolean doTask() {
+    public boolean doTask(FxTask currentTask) {
         try (Connection conn = DerbyBase.getConnection()) {
             attributesController.columnIndices = convertController.checkedColsIndices;
-            if (!attributesController.createTable(conn)) {
+            if (!attributesController.createTable(currentTask, conn)) {
                 return false;
             }
             if (convertController.importCheck.isSelected()) {
-                attributesController.data2D.startTask(task, convertController.filterController.filter);
-                attributesController.task = task;
+                attributesController.data2D.startTask(currentTask, convertController.filterController.filter);
+                attributesController.task = currentTask;
                 if (convertController.isAllPages() && convertController.data2D.isMutiplePages()) {
-                    attributesController.importAllData(conn, convertController.invalidAs);
+                    attributesController.importAllData(currentTask, conn, convertController.invalidAs);
                 } else {
                     attributesController.importData(conn, convertController.filteredRowsIndices(), convertController.invalidAs);
                 }

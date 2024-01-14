@@ -21,7 +21,7 @@ public abstract class BaseInputController extends BaseChildController {
         try {
             parentController = parent;
             if (parent != null) {
-                baseName = parent.baseName;
+                baseName = parent.baseName + "_" + baseName;
                 getMyStage().setTitle(parent.getMyStage().getTitle());
             }
             getMyStage().centerOnScreen();

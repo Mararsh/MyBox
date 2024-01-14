@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="thisPane" spacing="2.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlArc">
+    <children>
+              <Label minHeight="-Infinity" text="%Center" wrapText="true" />
+              <FlowPane hgap="2.0" minHeight="-Infinity" prefWrapLength="100.0" vgap="2.0">
+                  <children>
+                      <Label text="x">
+                          <FlowPane.margin>
+                              <Insets />
+                          </FlowPane.margin>
+                      </Label>
+                      <TextField fx:id="arcCenterXInput" prefWidth="100.0" />
+                  </children>
+              </FlowPane>
+              <FlowPane hgap="2.0" minHeight="-Infinity" prefWrapLength="100.0" vgap="2.0">
+                  <children>
+                      <Label text="y" />
+                      <TextField fx:id="arcCenterYInput" prefWidth="100.0" />
+                  </children>
+              </FlowPane>
+              <FlowPane hgap="2.0" minHeight="-Infinity" prefWrapLength="100.0" vgap="2.0">
+                  <children>
+                      <Label minHeight="-Infinity" text="%RadiusX" wrapText="true" />
+                      <TextField fx:id="arcRadiusXInput" prefWidth="100.0" />
+                  </children>
+              </FlowPane>
+              <FlowPane hgap="2.0" minHeight="-Infinity" prefWrapLength="100.0" vgap="2.0">
+                  <children>
+                      <Label minHeight="-Infinity" text="%RadiusY" wrapText="true" />
+                      <TextField fx:id="arcRadiusYInput" prefWidth="100.0" />
+                  </children>
+              </FlowPane>
+              <FlowPane hgap="2.0" minHeight="-Infinity" prefWrapLength="100.0" vgap="2.0">
+                  <children>
+                      <Label minHeight="-Infinity" text="%StartAngle" wrapText="true" />
+                      <TextField fx:id="arcStartAngleInput" prefWidth="100.0" />
+                  </children>
+              </FlowPane>
+              <FlowPane hgap="2.0" minHeight="-Infinity" prefWrapLength="100.0" vgap="2.0">
+                  <children>
+                      <Label minHeight="-Infinity" text="%ExtentAngle" wrapText="true" />
+                      <TextField fx:id="arcExtentAngleInput" prefWidth="100.0" />
+                  </children>
+              </FlowPane>
+      <FlowPane hgap="2.0" minHeight="-Infinity" prefWrapLength="100.0" vgap="2.0">
+         <children>
+            <Label minHeight="-Infinity" text="%Type" wrapText="true" />
+            <RadioButton fx:id="arcOpenRadio" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%Open" wrapText="true">
+               <toggleGroup>
+                  <ToggleGroup fx:id="arcType" />
+               </toggleGroup>
+            </RadioButton>
+            <RadioButton fx:id="arcChordRadio" layoutX="39.0" layoutY="10.0" minHeight="-Infinity" mnemonicParsing="false" text="%ChordClose" toggleGroup="$arcType" wrapText="true" />
+            <RadioButton fx:id="arcPieRadio" layoutX="137.0" layoutY="10.0" minHeight="-Infinity" mnemonicParsing="false" text="%PieClose" toggleGroup="$arcType" wrapText="true" />
+         </children>
+      </FlowPane>
+    </children>
+</VBox>

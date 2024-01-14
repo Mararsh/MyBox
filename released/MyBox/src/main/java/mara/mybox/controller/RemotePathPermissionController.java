@@ -12,6 +12,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -118,7 +119,7 @@ public class RemotePathPermissionController extends RemotePathHandleFilesControl
     }
 
     @Override
-    public boolean handleFile(String srcfile) {
+    public boolean handleFile(FxTask currentTask, String srcfile) {
         try {
             changeFile(srcfile);
             if (!dirCheck.isSelected()) {
@@ -126,7 +127,7 @@ public class RemotePathPermissionController extends RemotePathHandleFilesControl
             }
             SftpATTRS attrs = manageController.remoteController.stat(srcfile);
             if (attrs != null && attrs.isDir()) {
-                return changeFilesInDirectory(srcfile);
+                return changeFilesInDirectory(currentTask, srcfile);
             }
             return true;
         } catch (Exception e) {
@@ -158,7 +159,7 @@ public class RemotePathPermissionController extends RemotePathHandleFilesControl
         }
     }
 
-    public boolean changeFilesInDirectory(String dir) {
+    public boolean changeFilesInDirectory(FxTask currentTask, String dir) {
         try {
             Iterator<ChannelSftp.LsEntry> iterator = manageController.remoteController.ls(dir);
             if (iterator == null) {
@@ -166,7 +167,7 @@ public class RemotePathPermissionController extends RemotePathHandleFilesControl
             }
             boolean ok;
             while (iterator.hasNext()) {
-                if (task == null || task.isCancelled()) {
+                if (currentTask == null || !currentTask.isWorking()) {
                     return false;
                 }
                 ChannelSftp.LsEntry entry = iterator.next();
@@ -179,12 +180,12 @@ public class RemotePathPermissionController extends RemotePathHandleFilesControl
                 ok = changeFile(child);
                 if (ok) {
                     if (entry.getAttrs().isDir()) {
-                        ok = changeFilesInDirectory(child);
+                        ok = changeFilesInDirectory(currentTask, child);
                     }
                 }
                 if (!ok && !continueCheck.isSelected()) {
-                    if (task != null) {
-                        task.cancel();
+                    if (currentTask != null) {
+                        currentTask.cancel();
                     }
                     return false;
                 }
@@ -212,8 +213,8 @@ public class RemotePathPermissionController extends RemotePathHandleFilesControl
             if (manageController == null) {
                 return null;
             }
-            RemotePathPermissionController controller = (RemotePathPermissionController) WindowTools.openChildStage(
-                    manageController.getMyWindow(), Fxmls.RemotePathPermissionFxml, false);
+            RemotePathPermissionController controller = (RemotePathPermissionController) WindowTools.branchStage(
+                    manageController, Fxmls.RemotePathPermissionFxml);
             controller.setParameters(manageController);
             controller.requestMouse();
             return controller;

@@ -90,7 +90,7 @@ public class ControlJavaScriptRefer extends ControlInfoTreeList {
     }
 
     @FXML
-    public void dataAction() {
+    public void manageAction() {
         JavaScriptController.loadScript("");
     }
 
@@ -119,13 +119,13 @@ public class ControlJavaScriptRefer extends ControlInfoTreeList {
         try {
             MenuController controller
                     = PopTools.popJavaScriptExamples(this, event, scriptInput, interfaceName + "Examples");
-            moreExampleButtons(controller, interfaceName + "Examples");
+            moreExampleButtons(controller);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
-    protected void moreExampleButtons(MenuController controller, String menuName) {
+    protected void moreExampleButtons(MenuController controller) {
 
     }
 
@@ -138,7 +138,7 @@ public class ControlJavaScriptRefer extends ControlInfoTreeList {
 
     @FXML
     protected void showScriptHistories(Event event) {
-        PopTools.popStringValues(this, scriptInput, event, interfaceName + "Histories", false, true);
+        PopTools.popStringValues(this, scriptInput, event, interfaceName + "Histories", false);
     }
 
 }

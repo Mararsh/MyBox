@@ -11,6 +11,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
 import java.util.Arrays;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.value.FileExtensions;
 import static mara.mybox.value.Languages.message;
 import org.apache.commons.io.FileUtils;
@@ -80,10 +81,25 @@ public class FileTools {
     }
 
     public static boolean rename(File sourceFile, File targetFile) {
-        return rename(sourceFile, targetFile, false);
+        try {
+            if (sourceFile == null || !sourceFile.exists() || !sourceFile.isFile()
+                    || targetFile == null || targetFile.exists()
+                    || sourceFile.equals(targetFile)) {
+                return false;
+            }
+            FileUtils.moveFile(sourceFile, targetFile);
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e, sourceFile + "    " + targetFile);
+            return false;
+        }
     }
 
-    public static boolean rename(File sourceFile, File targetFile, boolean noEmpty) {
+    public static boolean override(File sourceFile, File targetFile) {
+        return override(sourceFile, targetFile, false);
+    }
+
+    public static boolean override(File sourceFile, File targetFile, boolean noEmpty) {
         try {
             if (sourceFile == null || !sourceFile.exists() || !sourceFile.isFile()
                     || targetFile == null || sourceFile.equals(targetFile)) {
@@ -145,8 +161,8 @@ public class FileTools {
         return size;
     }
 
-    public static boolean same(File file1, File file2) {
-        return Arrays.equals(MessageDigestTools.SHA1(file1), MessageDigestTools.SHA1(file2));
+    public static boolean same(FxTask task, File file1, File file2) {
+        return Arrays.equals(MessageDigestTools.SHA1(task, file1), MessageDigestTools.SHA1(task, file2));
 
     }
 
@@ -170,7 +186,7 @@ public class FileTools {
         return name1.equals(name2) || name1.startsWith(name2);
     }
 
-    public static File removeBOM(File file) {
+    public static File removeBOM(FxTask task, File file) {
         if (!hasData(file)) {
             return file;
         }
@@ -197,6 +213,9 @@ public class FileTools {
             int readLen;
             byte[] buf = new byte[bufSize(file, 16)];
             while ((readLen = inputStream.read(buf)) > 0) {
+                if (task != null && !task.isWorking()) {
+                    return null;
+                }
                 outputStream.write(buf, 0, readLen);
             }
             outputStream.flush();

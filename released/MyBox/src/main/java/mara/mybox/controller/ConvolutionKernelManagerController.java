@@ -26,6 +26,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import mara.mybox.bufferedimage.ImageConvolution;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.db.data.ConvolutionKernel.Convolution_Type;
 import mara.mybox.db.table.TableConvolutionKernel;
@@ -33,11 +34,11 @@ import mara.mybox.db.table.TableFloatMatrix;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FloatTools;
-import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -89,7 +90,7 @@ public class ConvolutionKernelManagerController extends BaseTablePagesController
         try {
             super.initControls();
             initEditFields();
-            loadList();
+            refreshAction();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -112,15 +113,25 @@ public class ConvolutionKernelManagerController extends BaseTablePagesController
         }
     }
 
-    private void loadList() {
-        List<ConvolutionKernel> records = TableConvolutionKernel.read();
-        tableData.clear();
-        tableData.addAll(records);
+    @FXML
+    @Override
+    public void refreshAction() {
+        FxTask refreshTask = new FxTask<Void>(this) {
+            List<ConvolutionKernel> records;
 
-        if (parentController != null && parentController instanceof ControlImageEnhancementOptions) {
-            ControlImageEnhancementOptions p = (ControlImageEnhancementOptions) parentController;
-            p.loadKernelsList(records);
-        }
+            @Override
+            protected boolean handle() {
+                records = TableConvolutionKernel.read();
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                tableData.setAll(records);
+                ImageConvolutionController.updateList();
+            }
+        };
+        start(refreshTask, thisPane);
     }
 
     @Override
@@ -465,7 +476,7 @@ public class ConvolutionKernelManagerController extends BaseTablePagesController
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -480,7 +491,7 @@ public class ConvolutionKernelManagerController extends BaseTablePagesController
 
             @Override
             protected void whenSucceeded() {
-                loadList();
+                refreshAction();
             }
         };
         start(task);
@@ -498,7 +509,7 @@ public class ConvolutionKernelManagerController extends BaseTablePagesController
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -509,7 +520,7 @@ public class ConvolutionKernelManagerController extends BaseTablePagesController
 
             @Override
             protected void whenSucceeded() {
-                loadList();
+                refreshAction();
             }
         };
         start(task);
@@ -589,7 +600,7 @@ public class ConvolutionKernelManagerController extends BaseTablePagesController
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -600,7 +611,7 @@ public class ConvolutionKernelManagerController extends BaseTablePagesController
 
             @Override
             protected void whenSucceeded() {
-                loadList();
+                refreshAction();
             }
         };
         start(task);
@@ -627,14 +638,33 @@ public class ConvolutionKernelManagerController extends BaseTablePagesController
     }
 
     @FXML
-    public void demo(ActionEvent event) {
+    public void demo() {
         if (!pickKernel()) {
             return;
         }
-        ImageManufactureController c
-                = (ImageManufactureController) openStage(Fxmls.ImageManufactureFxml);
-        c.loadImage(new Image("img/exg2.png"));
-        c.applyKernel(kernel);
+        FxTask demoTask = new FxTask<Void>(this) {
+            Image demoImage;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    ImageConvolution convolution = ImageConvolution.create();
+                    convolution.setImage(new Image("img/exg2.png"))
+                            .setKernel(kernel);
+                    demoImage = convolution.startFx();
+                    return demoImage != null;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                ImagePopController.openImage(myController, demoImage);
+            }
+        };
+        start(demoTask, false);
     }
 
     @FXML
@@ -646,7 +676,7 @@ public class ConvolutionKernelManagerController extends BaseTablePagesController
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -657,7 +687,7 @@ public class ConvolutionKernelManagerController extends BaseTablePagesController
 
             @Override
             protected void whenSucceeded() {
-                loadList();
+                refreshAction();
             }
         };
         start(task);

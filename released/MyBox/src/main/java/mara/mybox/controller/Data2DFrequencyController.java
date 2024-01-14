@@ -129,8 +129,8 @@ public class Data2DFrequencyController extends BaseData2DTargetsController {
      */
     public static Data2DFrequencyController open(ControlData2DLoad tableController) {
         try {
-            Data2DFrequencyController controller = (Data2DFrequencyController) WindowTools.openChildStage(
-                    tableController.getMyWindow(), Fxmls.Data2DFrequencyFxml, false);
+            Data2DFrequencyController controller = (Data2DFrequencyController) WindowTools.branchStage(
+                    tableController, Fxmls.Data2DFrequencyFxml);
             controller.setParameters(tableController);
             controller.requestMouse();
             return controller;

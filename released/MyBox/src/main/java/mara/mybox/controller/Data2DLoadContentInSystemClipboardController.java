@@ -5,7 +5,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -56,7 +56,7 @@ public class Data2DLoadContentInSystemClipboardController extends BaseChildContr
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             List<List<String>> data;
 
             @Override
@@ -95,8 +95,8 @@ public class Data2DLoadContentInSystemClipboardController extends BaseChildContr
     public static Data2DLoadContentInSystemClipboardController open(ControlData2DLoad parent, String text) {
         try {
             Data2DLoadContentInSystemClipboardController controller
-                    = (Data2DLoadContentInSystemClipboardController) WindowTools.openChildStage(
-                            parent.getMyWindow(), Fxmls.Data2DLoadContentInSystemClipboardFxml, true);
+                    = (Data2DLoadContentInSystemClipboardController) WindowTools.childStage(
+                            parent, Fxmls.Data2DLoadContentInSystemClipboardFxml);
             controller.setParameters(parent, text);
             controller.requestMouse();
             return controller;

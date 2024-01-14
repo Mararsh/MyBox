@@ -21,6 +21,7 @@ import javafx.stage.StageStyle;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 import mara.mybox.controller.BaseController;
+import mara.mybox.controller.BaseController_Attributes.StageType;
 import mara.mybox.controller.BaseTaskController;
 import mara.mybox.controller.ClearExpiredDataController;
 import mara.mybox.controller.WindowsListController;
@@ -40,8 +41,11 @@ public class WindowTools {
 
     public static final Image AppIcon = new Image("img/MyBox.png");
 
+    /*
+     * make stage
+     */
     public static BaseController initScene(Stage stage, String newFxml, StageStyle stageStyle) {
-        return initScene(stage, newFxml, AppVariables.currentBundle, stageStyle);
+        return initScene(stage, newFxml, AppVariables.CurrentBundle, stageStyle);
     }
 
     public static BaseController initScene(Stage stage, String newFxml, ResourceBundle bundle, StageStyle stageStyle) {
@@ -127,7 +131,7 @@ public class WindowTools {
 
             WindowsListController.refresh();
 
-            Platform.setImplicitExit(AppVariables.scheduledTasks == null || AppVariables.scheduledTasks.isEmpty());
+            Platform.setImplicitExit(AppVariables.ScheduledTasks == null || AppVariables.ScheduledTasks.isEmpty());
 
             return controller;
         } catch (Exception e) {
@@ -173,7 +177,7 @@ public class WindowTools {
             if (url == null) {
                 return null;
             }
-            FXMLLoader fxmlLoader = new FXMLLoader(url, AppVariables.currentBundle);
+            FXMLLoader fxmlLoader = new FXMLLoader(url, AppVariables.CurrentBundle);
             Pane pane = fxmlLoader.load();
             try {
                 pane.getStylesheets().add(WindowTools.class.getResource(UserConfig.getStyle()).toExternalForm());
@@ -193,7 +197,7 @@ public class WindowTools {
 
     public static FXMLLoader newFxml(String fxml) {
         try {
-            return new FXMLLoader(WindowTools.class.getResource(fxml), AppVariables.currentBundle);
+            return new FXMLLoader(WindowTools.class.getResource(fxml), AppVariables.CurrentBundle);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;
@@ -213,8 +217,29 @@ public class WindowTools {
         }
     }
 
+
+    /*
+     * open stage
+     */
     public static BaseController openStage(String fxml) {
         return initController(newFxml(fxml), newStage(), null);
+    }
+
+    public static BaseController replaceStage(Window parent, String fxml) {
+        try {
+            Stage newStage = new Stage();  // new stage should be opened instead of keeping old stage, to clean resources
+            newStage.initModality(Modality.NONE);
+            newStage.initStyle(StageStyle.DECORATED);
+            newStage.initOwner(null);
+            BaseController controller = initScene(newStage, fxml, StageStyle.DECORATED);
+            if (controller != null) {
+                closeWindow(parent);
+            }
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
     }
 
     public static BaseController openStage(Window parent, String fxml, ResourceBundle bundle,
@@ -239,46 +264,88 @@ public class WindowTools {
     }
 
     public static BaseController openStage(Window parent, String newFxml) {
-        return openStage(parent, newFxml, AppVariables.currentBundle, false, Modality.NONE, null);
+        return openStage(parent, newFxml, AppVariables.CurrentBundle, false, Modality.NONE, null);
     }
 
     public static BaseController openStage(String fxml, ResourceBundle bundle) {
         return openStage(null, fxml, bundle, false, Modality.NONE, null);
     }
 
-    public static BaseController openChildStage(Window parent, String newFxml) {
-        return openChildStage(parent, newFxml, true);
-    }
-
-    public static BaseController openChildStage(Window parent, String newFxml, boolean isModal) {
-        return openStage(parent, newFxml, AppVariables.currentBundle, true, isModal ? Modality.WINDOW_MODAL : Modality.NONE, null);
-    }
-
-    public static BaseController handling(Window parent, String newFxml) {
-        return openStage(parent, newFxml, AppVariables.currentBundle, true, Modality.WINDOW_MODAL, StageStyle.DECORATED);
-    }
-
-    public static BaseController openScene(Window parent, String newFxml, StageStyle stageStyle) {
+    /*
+     * sub stage
+     */
+    public static BaseController childStage(BaseController parent, String newFxml) {
         try {
-            Stage newStage = new Stage();  // new stage should be opened instead of keeping old stage, to clean resources
-            newStage.initModality(Modality.NONE);
-            newStage.initStyle(StageStyle.DECORATED);
-            newStage.initOwner(null);
-            BaseController controller = initScene(newStage, newFxml, stageStyle);
-            if (controller != null) {
-                closeWindow(parent);
+            if (parent == null) {
+                return null;
             }
-            return controller;
+            BaseController c = openStage(parent.getMyWindow(), newFxml,
+                    AppVariables.CurrentBundle, true, Modality.WINDOW_MODAL, null);
+            if (c == null) {
+                return null;
+            }
+            c.setParent(parent, StageType.Child);
+            return c;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;
         }
     }
 
-    public static BaseController openScene(Window parent, String fxml) {
-        return openScene(parent, fxml, null);
+    public static BaseController branchStage(BaseController parent, String newFxml) {
+        try {
+            if (parent == null) {
+                return null;
+            }
+            BaseController c = openStage(parent.getMyWindow(), newFxml);
+            if (c == null) {
+                return null;
+            }
+            c.setParent(parent, StageType.Branch);
+            return c;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
     }
 
+    public static BaseController popStage(BaseController parent, String newFxml) {
+        try {
+            BaseController c = parent != null
+                    ? openStage(parent.getMyWindow(), newFxml)
+                    : openStage(newFxml);
+            if (c == null) {
+                return null;
+            }
+            c.setParent(parent, StageType.Pop);
+            return c;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static BaseController popupStage(BaseController parent, String newFxml) {
+        try {
+            if (parent == null) {
+                return null;
+            }
+            BaseController c = openStage(parent.getMyWindow(), newFxml,
+                    AppVariables.CurrentBundle, true, Modality.WINDOW_MODAL, null);
+            if (c == null) {
+                return null;
+            }
+            c.setParent(parent, StageType.Popup);
+            return c;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    /*
+     * handle stage
+     */
     public static void reloadAll() {
         try {
             List<Window> windows = new ArrayList<>();
@@ -350,10 +417,10 @@ public class WindowTools {
             return false;
         }
         List<String> keys = new ArrayList<>();
-        keys.addAll(AppVariables.userConfigValues.keySet());
+        keys.addAll(AppVariables.UserConfigValues.keySet());
         for (String key : keys) {
             if (key.startsWith("Interface_")) {
-                AppVariables.userConfigValues.remove(key);
+                AppVariables.UserConfigValues.remove(key);
             }
         }
         return true;
@@ -432,34 +499,34 @@ public class WindowTools {
             ImageClipboardTools.stopImageClipboardMonitor();
             TextClipboardTools.stopTextClipboardMonitor();
 
-            if (AppVariables.scheduledTasks != null && !AppVariables.scheduledTasks.isEmpty()) {
+            if (AppVariables.ScheduledTasks != null && !AppVariables.ScheduledTasks.isEmpty()) {
                 if (UserConfig.getBoolean("StopAlarmsWhenExit")) {
-                    for (String key : AppVariables.scheduledTasks.keySet()) {
-                        ScheduledFuture future = AppVariables.scheduledTasks.get(key);
+                    for (String key : AppVariables.ScheduledTasks.keySet()) {
+                        ScheduledFuture future = AppVariables.ScheduledTasks.get(key);
                         future.cancel(true);
                     }
-                    AppVariables.scheduledTasks = null;
-                    if (AppVariables.executorService != null) {
-                        AppVariables.executorService.shutdownNow();
-                        AppVariables.executorService = null;
+                    AppVariables.ScheduledTasks = null;
+                    if (AppVariables.ExecutorService != null) {
+                        AppVariables.ExecutorService.shutdownNow();
+                        AppVariables.ExecutorService = null;
                     }
                 }
             } else {
-                if (AppVariables.scheduledTasks != null) {
-                    AppVariables.scheduledTasks = null;
+                if (AppVariables.ScheduledTasks != null) {
+                    AppVariables.ScheduledTasks = null;
                 }
-                if (AppVariables.executorService != null) {
-                    AppVariables.executorService.shutdownNow();
-                    AppVariables.executorService = null;
+                if (AppVariables.ExecutorService != null) {
+                    AppVariables.ExecutorService.shutdownNow();
+                    AppVariables.ExecutorService = null;
                 }
             }
 
-            if (AppVariables.exitTimer != null) {
-                AppVariables.exitTimer.cancel();
-                AppVariables.exitTimer = null;
+            if (AppVariables.ExitTimer != null) {
+                AppVariables.ExitTimer.cancel();
+                AppVariables.ExitTimer = null;
             }
 
-            if (AppVariables.scheduledTasks == null || AppVariables.scheduledTasks.isEmpty()) {
+            if (AppVariables.ScheduledTasks == null || AppVariables.ScheduledTasks.isEmpty()) {
                 MyBoxLog.info("Exit now. Bye!");
                 if (DerbyBase.status == DerbyStatus.Embedded) {
                     MyBoxLog.info("Shut down Derby...");
@@ -482,14 +549,14 @@ public class WindowTools {
 
     }
 
-    public static void taskInfo(SingletonTask task, String info) {
+    public static void taskInfo(FxTask task, String info) {
         if (task != null) {
             task.setInfo(info);
         }
         MyBoxLog.console(info);
     }
 
-    public static void taskError(SingletonTask task, String error) {
+    public static void taskError(FxTask task, String error) {
         if (task != null) {
             task.setError(error);
         }
@@ -521,6 +588,22 @@ public class WindowTools {
             }
         } catch (Exception e) {
         }
+    }
+
+    public static BaseController getController(Window window) {
+        if (window == null) {
+            return null;
+        }
+        Object object = window.getUserData();
+        if (object != null) {
+            try {
+                if (object instanceof BaseController) {
+                    return (BaseController) object;
+                }
+            } catch (Exception e) {
+            }
+        }
+        return null;
     }
 
     public static BaseController find(String interfaceName) {

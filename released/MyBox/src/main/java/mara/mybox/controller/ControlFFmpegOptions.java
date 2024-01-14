@@ -22,8 +22,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.HelpTools;
-import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.StringTools;
@@ -49,7 +49,7 @@ public class ControlFFmpegOptions extends BaseController {
     protected String executableName, executableDefault;
     protected File executable;
     protected List<String> dataTypes;
-    protected SingletonTask encoderTask, muxerTask, queryTask;
+    protected FxTask encoderTask, muxerTask, queryTask;
     protected String muxer, videoCodec, audioCodec, subtitleCodec, aspect, x264preset, volumn;
     protected boolean disableVideo, disableAudio, disableSubtitle;
     protected long mediaStart;
@@ -224,7 +224,7 @@ public class ControlFFmpegOptions extends BaseController {
             ProcessBuilder pb = new ProcessBuilder(command).redirectErrorStream(true);
             final Process process = pb.start();
 
-            muxerTask = new SingletonTask<Void>(this) {
+            muxerTask = new FxTask<Void>(this) {
                 private List<String> muxers, commons;
 
                 @Override
@@ -337,7 +337,7 @@ public class ControlFFmpegOptions extends BaseController {
             ProcessBuilder pb = new ProcessBuilder(command).redirectErrorStream(true);
             final Process process = pb.start();
 
-            encoderTask = new SingletonTask<Void>(this) {
+            encoderTask = new FxTask<Void>(this) {
                 private List<String> aEncoders, vEncoders, sEncoders, videoCommons;
 
                 @Override
@@ -1133,7 +1133,7 @@ public class ControlFFmpegOptions extends BaseController {
             cmd.addAll(parameters);
             if (targetFile != null) {
                 cmd.add(targetFile.getAbsolutePath());
-                FileDeleteTools.delete(targetFile);
+                FileDeleteTools.delete(null, targetFile);
             }
             parameters.add("-y");
             showCmd(cmd);

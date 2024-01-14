@@ -1,6 +1,7 @@
 package mara.mybox.controller;
 
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -18,9 +19,9 @@ public class RemotePathDeleteController extends RemotePathHandleFilesController 
     }
 
     @Override
-    public boolean handleFile(String name) {
+    public boolean handleFile(FxTask currentTask, String name) {
         manageController.remoteController.count = 0;
-        boolean ok = manageController.remoteController.delete(name);
+        boolean ok = manageController.remoteController.delete(currentTask, name);
         doneCount += manageController.remoteController.count;
         return ok;
     }
@@ -41,8 +42,8 @@ public class RemotePathDeleteController extends RemotePathHandleFilesController 
             if (manageController == null) {
                 return null;
             }
-            RemotePathDeleteController controller = (RemotePathDeleteController) WindowTools.openChildStage(
-                    manageController.getMyWindow(), Fxmls.RemotePathDeleteFxml, false);
+            RemotePathDeleteController controller = (RemotePathDeleteController) WindowTools.branchStage(
+                    manageController, Fxmls.RemotePathDeleteFxml);
             controller.setParameters(manageController);
             controller.requestMouse();
             return controller;

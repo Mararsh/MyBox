@@ -33,10 +33,6 @@ public class HtmlPopController extends BaseWebViewController {
         baseTitle = Languages.message("Html");
     }
 
-    @Override
-    public void setStageStatus() {
-    }
-
     public void openWebView(String baseName, WebView sourceWebView, String address) {
         try {
             this.baseName = baseName;
@@ -80,8 +76,6 @@ public class HtmlPopController extends BaseWebViewController {
                 }
             });
             refreshChangeCheck.setSelected(UserConfig.getBoolean(baseName + "Sychronized", true));
-
-            setAsPop(baseName);
 
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -149,10 +143,10 @@ public class HtmlPopController extends BaseWebViewController {
      */
     public static HtmlPopController openWebView(BaseController parent, WebView srcWebView) {
         try {
-            if (srcWebView == null) {
+            if (parent == null || srcWebView == null) {
                 return null;
             }
-            HtmlPopController controller = (HtmlPopController) WindowTools.openChildStage(parent.getMyWindow(), Fxmls.HtmlPopFxml, false);
+            HtmlPopController controller = (HtmlPopController) WindowTools.popStage(parent, Fxmls.HtmlPopFxml);
             if (parent instanceof BaseWebViewController) {
                 BaseWebViewController c = (BaseWebViewController) parent;
                 controller.openWebView(parent.baseName, srcWebView, c.webViewController == null ? null : c.webViewController.address);
@@ -171,7 +165,7 @@ public class HtmlPopController extends BaseWebViewController {
             if (parent == null || html == null) {
                 return null;
             }
-            HtmlPopController controller = (HtmlPopController) WindowTools.openChildStage(parent.getMyWindow(), Fxmls.HtmlPopFxml, false);
+            HtmlPopController controller = (HtmlPopController) WindowTools.popStage(parent, Fxmls.HtmlPopFxml);
             if (parent instanceof BaseWebViewController) {
                 BaseWebViewController c = (BaseWebViewController) parent;
                 controller.openHtml(parent.baseName, html, c.webViewController == null ? null : c.webViewController.address);
@@ -185,13 +179,14 @@ public class HtmlPopController extends BaseWebViewController {
         }
     }
 
-    public static HtmlPopController openAddress(BaseController parent, String address) {
+    public static HtmlPopController showHtml(BaseController parent, String html) {
         try {
-            if (parent == null || address == null) {
+            if (html == null) {
                 return null;
             }
-            HtmlPopController controller = (HtmlPopController) WindowTools.openChildStage(parent.getMyWindow(), Fxmls.HtmlPopFxml, false);
-            controller.openAddress(parent.baseName, address);
+            HtmlPopController controller = (HtmlPopController) WindowTools.popStage(parent, Fxmls.HtmlPopFxml);
+            controller.openHtml("HtmlPop", html, null);
+            controller.requestMouse();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -199,14 +194,13 @@ public class HtmlPopController extends BaseWebViewController {
         }
     }
 
-    public static HtmlPopController openHtml(String html) {
+    public static HtmlPopController openAddress(BaseController parent, String address) {
         try {
-            if (html == null) {
+            if (parent == null || address == null) {
                 return null;
             }
-            HtmlPopController controller = (HtmlPopController) WindowTools.openStage(Fxmls.HtmlPopFxml);
-            controller.openHtml("HtmlPop", html, null);
-            controller.requestMouse();
+            HtmlPopController controller = (HtmlPopController) WindowTools.popStage(parent, Fxmls.HtmlPopFxml);
+            controller.openAddress(parent.baseName, address);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e);

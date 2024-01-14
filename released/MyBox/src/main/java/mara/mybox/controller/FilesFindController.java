@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.Date;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
@@ -13,6 +12,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.data.FileInformation;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.cell.TableFileSizeCell;
 import mara.mybox.fxml.cell.TableTimeCell;
@@ -34,7 +34,7 @@ public class FilesFindController extends BaseBatchFileController {
     @FXML
     protected TableView<FileInformation> filesView;
     @FXML
-    protected TableColumn<FileInformation, String> fileColumn, typeColumn;
+    protected TableColumn<FileInformation, String> dirColumn, fileColumn, typeColumn;
     @FXML
     protected TableColumn<FileInformation, Long> sizeColumn, modifyTimeColumn, createTimeColumn;
 
@@ -65,8 +65,11 @@ public class FilesFindController extends BaseBatchFileController {
             filesList = FXCollections.observableArrayList();
             filesView.setItems(filesList);
 
+            dirColumn.setCellValueFactory(new PropertyValueFactory<>("path"));
+            dirColumn.setPrefWidth(260);
+
             fileColumn.setCellValueFactory(new PropertyValueFactory<>("fileName"));
-            fileColumn.setPrefWidth(400);
+            fileColumn.setPrefWidth(160);
 
             typeColumn.setCellValueFactory(new PropertyValueFactory<>("suffix"));
 
@@ -125,7 +128,7 @@ public class FilesFindController extends BaseBatchFileController {
     }
 
     @Override
-    public String handleFile(File file) {
+    public String handleFile(FxTask currentTask, File file) {
         try {
             if (!match(file)) {
                 return done;
@@ -139,7 +142,7 @@ public class FilesFindController extends BaseBatchFileController {
     }
 
     @Override
-    public String handleDirectory(File directory) {
+    public String handleDirectory(FxTask currentTask, File directory) {
         try {
             if (directory == null || !directory.isDirectory()) {
                 return done;
@@ -149,7 +152,7 @@ public class FilesFindController extends BaseBatchFileController {
                 return done;
             }
             for (File srcFile : files) {
-                if (task == null || task.isCancelled()) {
+                if (currentTask == null || !currentTask.isWorking()) {
                     return done;
                 }
                 if (srcFile.isFile()) {
@@ -160,7 +163,7 @@ public class FilesFindController extends BaseBatchFileController {
                     totalMatched++;
                     filesList.add(new FileInformation(srcFile));
                 } else if (srcFile.isDirectory()) {
-                    handleDirectory(srcFile);
+                    handleDirectory(currentTask, srcFile);
                 }
             }
             return done;

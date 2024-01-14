@@ -9,6 +9,7 @@ import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.style.StyleData;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.AppVariables;
+import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -43,7 +44,7 @@ public class MapOptions {
         try {
             mapType = UserConfig.getString(baseName + "MapType", "Gaode");
             mapStyle = UserConfig.getString(baseName + "MapStyle", "default");
-            language = UserConfig.getString(baseName + "Language", AppVariables.isChinese ? "zh_cn" : "en");
+            language = UserConfig.getString(baseName + "Language", Languages.isChinese() ? "zh_cn" : "en");
             markerSize = UserConfig.getInt(baseName + "MarkerSize", 24);
             textSize = UserConfig.getInt(baseName + "TextSize", 12);
             mapSize = UserConfig.getInt(baseName + "MapSize", 9);

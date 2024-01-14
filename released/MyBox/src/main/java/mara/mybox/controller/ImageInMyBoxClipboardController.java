@@ -1,69 +1,80 @@
 package mara.mybox.controller;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import javafx.event.EventHandler;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.image.Image;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import javafx.stage.Window;
 import mara.mybox.db.data.ImageClipboard;
-import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.FxTask;
+import mara.mybox.fxml.ImageClipboardTools;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.tools.FileDeleteTools;
+import mara.mybox.value.AppPaths;
 import mara.mybox.value.Fxmls;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
  * @CreateDate 2021-6-5
  * @License Apache License Version 2.0
  */
-public class ImageInMyBoxClipboardController extends ImageViewerController {
+public class ImageInMyBoxClipboardController extends BaseImageClipController {
 
     @FXML
-    protected ControlImagesClipboard clipsController;
+    protected ControlImageView imageController;
+    @FXML
+    protected VBox tableBox, viewBox;
 
     public ImageInMyBoxClipboardController() {
-        baseTitle = Languages.message("ImagesInMyBoxClipboard");
+        baseTitle = message("ImagesInMyBoxClipboard");
     }
 
     @Override
-    public void afterSceneLoaded() {
+    public void initControls() {
         try {
-            super.afterSceneLoaded();
+            super.initControls();
 
-            clipsController.setParameters(this, false);
-
-            clipsController.tableView.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent event) {
-                    selectClip();
-                }
-            });
+            refreshAction();
 
         } catch (Exception e) {
-            MyBoxLog.debug(e);
         }
     }
 
-    public void selectClip() {
-        if (clipsController.tableData.isEmpty()) {
+    @Override
+    protected void checkButtons() {
+        if (isSettingValues) {
+            return;
+        }
+        super.checkButtons();
+        boolean none = isNoneSelected();
+        copyToSystemClipboardButton.setDisable(none);
+    }
+
+    @Override
+    public void itemClicked() {
+        ImageClipboard clip = selectedItem();
+        if (clip == null) {
             return;
         }
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
+
+            Image image;
 
             @Override
             protected boolean handle() {
                 try {
-                    ImageClipboard clip = clipsController.selectedItem();
-                    if (clip == null) {
-                        clip = clipsController.tableData.get(0);
-                    }
-                    image = ImageClipboard.loadImage(clip);
-                    return image != null;
+                    image = ImageClipboard.loadImage(this, clip);
+                    return true;
                 } catch (Exception e) {
                     return false;
                 }
@@ -71,11 +82,88 @@ public class ImageInMyBoxClipboardController extends ImageViewerController {
 
             @Override
             protected void whenSucceeded() {
-                afterImageLoaded();
-                setImageChanged(false);
+                if (image != null) {
+                    imageController.loadImage(image);
+                }
             }
         };
         start(task);
+    }
+
+    @Override
+    protected int deleteData(FxTask currentTask, List<ImageClipboard> data) {
+        if (data == null || data.isEmpty()) {
+            return 0;
+        }
+        for (ImageClipboard clip : data) {
+            FileDeleteTools.delete(clip.getImageFile());
+            FileDeleteTools.delete(clip.getThumbnailFile());
+        }
+        return tableDefinition.deleteData(data);
+    }
+
+    @Override
+    protected void afterClear() {
+        super.afterClear();
+        FileDeleteTools.clearDir(null, new File(AppPaths.getImageClipboardPath()));
+    }
+
+    @FXML
+    @Override
+    public void refreshAction() {
+        loadTableData();
+        if (ImageClipboardTools.isMonitoring()) {
+            bottomLabel.setText(message("MonitoringImageInSystemClipboard"));
+        } else {
+            bottomLabel.setText(message("NotMonitoringImageInSystemClipboard"));
+        }
+    }
+
+    @FXML
+    @Override
+    public void copyToSystemClipboard() {
+        ImageClipboard clip = selectedItem();
+        if (clip == null) {
+            return;
+        }
+        if (task != null) {
+            task.cancel();
+        }
+        task = new FxSingletonTask<Void>(this) {
+
+            private Image selectedImage;
+
+            @Override
+            protected boolean handle() {
+                selectedImage = ImageClipboard.loadImage(this, clip);
+                return selectedImage != null;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                ImageClipboardTools.copyToSystemClipboard(parentController, selectedImage);
+            }
+        };
+        parentController.start(task);
+    }
+
+    @FXML
+    @Override
+    public void systemClipBoard() {
+        ImageInSystemClipboardController.oneOpen();
+    }
+
+    @Override
+    public boolean keyEventsFilter(KeyEvent event) {
+        if (viewBox.isFocused() || viewBox.isFocusWithin()) {
+            if (imageController.keyEventsFilter(event)) {
+                return true;
+            }
+        }
+        if (super.keyEventsFilter(event)) {
+            return true;
+        }
+        return imageController.keyEventsFilter(event);
     }
 
     /*
@@ -100,6 +188,52 @@ public class ImageInMyBoxClipboardController extends ImageViewerController {
         }
         controller.requestMouse();
         return controller;
+    }
+
+    public static void updateClipboards() {
+        Platform.runLater(() -> {
+            List<Window> windows = new ArrayList<>();
+            windows.addAll(Window.getWindows());
+            for (Window window : windows) {
+                if (!(window instanceof Stage)) {
+                    continue;
+                }
+                Stage stage = (Stage) window;
+                Object controller = stage.getUserData();
+                if (controller == null) {
+                    continue;
+                }
+                if (controller instanceof ImageInMyBoxClipboardController) {
+                    try {
+                        ((ImageInMyBoxClipboardController) controller).refreshAction();
+                    } catch (Exception e) {
+                    }
+                }
+            }
+        });
+    }
+
+    public static void updateClipboardsStatus() {
+        Platform.runLater(() -> {
+            List<Window> windows = new ArrayList<>();
+            windows.addAll(Window.getWindows());
+            for (Window window : windows) {
+                if (!(window instanceof Stage)) {
+                    continue;
+                }
+                Stage stage = (Stage) window;
+                Object controller = stage.getUserData();
+                if (controller == null) {
+                    continue;
+                }
+                if (controller instanceof ImageInMyBoxClipboardController) {
+                    try {
+                        ((ImageInMyBoxClipboardController) controller).updateStatus();
+                    } catch (Exception e) {
+                    }
+                }
+            }
+        });
     }
 
 }

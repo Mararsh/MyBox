@@ -13,6 +13,7 @@ import javafx.scene.control.TextField;
 import mara.mybox.data.FileInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.HtmlReadTools;
@@ -97,15 +98,22 @@ public class HtmlMergeAsHtmlController extends FilesMergeController {
     }
 
     @Override
-    public String handleFile(File file) {
+    public String handleFile(FxTask currentTask, File file) {
         try {
-            if (task == null || task.isCancelled()) {
+            if (currentTask == null || !currentTask.isWorking()) {
                 return message("Canceled");
             }
             if (file == null || !file.isFile() || !match(file)) {
                 return message("Skip" + ": " + file);
             }
-            String body = HtmlReadTools.body(TextFileTools.readTexts(file), false);
+            String texts = TextFileTools.readTexts(currentTask, file);
+            if (currentTask == null || !currentTask.isWorking()) {
+                return message("Canceled");
+            }
+            if (texts == null) {
+                return message("Failed");
+            }
+            String body = HtmlReadTools.body(texts, false);
             writer.write(body + "\n");
             return message("Successful");
         } catch (Exception e) {

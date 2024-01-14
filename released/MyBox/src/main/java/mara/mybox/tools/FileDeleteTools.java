@@ -5,6 +5,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 
 /**
  * @Author Mara
@@ -14,20 +15,28 @@ import mara.mybox.dev.MyBoxLog;
 public class FileDeleteTools {
 
     public static boolean delete(String fileName) {
+        return delete(null, fileName);
+    }
+
+    public static boolean delete(FxTask currentTask, String fileName) {
         if (fileName == null || fileName.isBlank()) {
             return false;
         }
-        return delete(new File(fileName));
+        return delete(currentTask, new File(fileName));
     }
 
     public static boolean delete(File file) {
+        return delete(null, file);
+    }
+
+    public static boolean delete(FxTask currentTask, File file) {
         try {
             if (file == null || !file.exists()) {
                 return true;
             }
             System.gc();
             if (file.isDirectory()) {
-                return deleteDir(file);
+                return deleteDir(currentTask, file);
             } else {
                 return file.delete();
             }
@@ -38,14 +47,19 @@ public class FileDeleteTools {
     }
 
     public static boolean deleteDir(File file) {
-        if (file == null) {
+        return delete(null, file);
+    }
+
+    public static boolean deleteDir(FxTask currentTask, File file) {
+        if (file == null || (currentTask != null && !currentTask.isWorking())) {
             return false;
         }
         if (file.exists() && file.isDirectory()) {
             File[] children = file.listFiles();
             if (children != null) {
                 for (File child : children) {
-                    if (!deleteDir(child)) {
+                    if ((currentTask != null && !currentTask.isWorking())
+                            || !deleteDir(currentTask, child)) {
                         return false;
                     }
                 }
@@ -56,16 +70,19 @@ public class FileDeleteTools {
         //        return true;
     }
 
-    public static boolean clearDir(File file) {
-        if (file == null) {
+    public static boolean clearDir(FxTask currentTask, File file) {
+        if (file == null || (currentTask != null && !currentTask.isWorking())) {
             return false;
         }
         if (file.exists() && file.isDirectory()) {
             File[] children = file.listFiles();
             if (children != null) {
                 for (File child : children) {
+                    if ((currentTask != null && !currentTask.isWorking())) {
+                        return false;
+                    }
                     if (child.isDirectory()) {
-                        if (clearDir(child)) {
+                        if (clearDir(currentTask, child)) {
                             child.delete();
                         } else {
                             return false;
@@ -86,108 +103,141 @@ public class FileDeleteTools {
         //        }
     }
 
-    public static boolean deleteDirExcept(File dir, File except) {
+    public static boolean deleteDirExcept(FxTask currentTask, File dir, File except) {
         if (dir.isDirectory()) {
             File[] children = dir.listFiles();
             if (children != null) {
                 for (File child : children) {
+                    if ((currentTask != null && !currentTask.isWorking())) {
+                        return false;
+                    }
                     if (child.equals(except)) {
                         continue;
                     }
-                    if (!deleteDirExcept(child, except)) {
+                    if (!deleteDirExcept(currentTask, child, except)) {
                         return false;
                     }
                 }
             }
         }
-        return delete(dir);
+        return delete(currentTask, dir);
     }
 
-    public static void deleteNestedDir(File sourceDir) {
+    public static void deleteNestedDir(FxTask currentTask, File sourceDir) {
         try {
-            if (sourceDir == null || !sourceDir.exists() || !sourceDir.isDirectory()) {
+            if ((currentTask != null && !currentTask.isWorking())
+                    || sourceDir == null || !sourceDir.exists() || !sourceDir.isDirectory()) {
                 return;
             }
             System.gc();
             File targetTmpDir = FileTmpTools.getTempDirectory();
-            deleteNestedDir(sourceDir, targetTmpDir);
-            deleteDir(targetTmpDir);
-            deleteDir(sourceDir);
+            deleteNestedDir(currentTask, sourceDir, targetTmpDir);
+            deleteDir(currentTask, targetTmpDir);
+            deleteDir(currentTask, sourceDir);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
-    public static void deleteNestedDir(File sourceDir, File tmpDir) {
+    public static void deleteNestedDir(FxTask currentTask, File sourceDir, File tmpDir) {
         try {
+            if ((currentTask != null && !currentTask.isWorking())
+                    || sourceDir == null || !sourceDir.exists()) {
+                return;
+            }
             if (sourceDir.isDirectory()) {
                 File[] files = sourceDir.listFiles();
                 if (files == null || files.length == 0) {
                     return;
                 }
                 for (File file : files) {
+                    if ((currentTask != null && !currentTask.isWorking())) {
+                        return;
+                    }
                     if (file.isDirectory()) {
                         File[] subfiles = file.listFiles();
                         if (subfiles != null) {
                             for (File subfile : subfiles) {
+                                if ((currentTask != null && !currentTask.isWorking())) {
+                                    return;
+                                }
                                 if (subfile.isDirectory()) {
                                     String target = tmpDir.getAbsolutePath() + File.separator + subfile.getName();
                                     new File(target).getParentFile().mkdirs();
                                     Files.move(Paths.get(subfile.getAbsolutePath()), Paths.get(target));
                                 } else {
-                                    delete(subfile);
+                                    delete(currentTask, subfile);
                                 }
                             }
                         }
                         file.delete();
                     } else {
-                        delete(file);
+                        delete(currentTask, file);
                     }
                 }
-                deleteNestedDir(tmpDir, sourceDir);
+                if ((currentTask != null && !currentTask.isWorking())) {
+                    return;
+                }
+                deleteNestedDir(currentTask, tmpDir, sourceDir);
             }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
-    public static int deleteEmptyDir(File dir, boolean trash) {
-        return deleteEmptyDir(dir, 0, trash);
+    public static int deleteEmptyDir(FxTask currentTask, File dir, boolean trash) {
+        return deleteEmptyDir(currentTask, dir, 0, trash);
     }
 
-    public static int deleteEmptyDir(File dir, int count, boolean trash) {
+    public static int deleteEmptyDir(FxTask currentTask, File dir, int count, boolean trash) {
+        if ((currentTask != null && !currentTask.isWorking())) {
+            return count;
+        }
         if (dir != null && dir.exists() && dir.isDirectory()) {
             File[] children = dir.listFiles();
             if (children == null || children.length == 0) {
+                boolean ok;
                 if (trash) {
-                    Desktop.getDesktop().moveToTrash(dir);
+                    ok = Desktop.getDesktop().moveToTrash(dir);
                 } else {
-                    deleteDir(dir);
+                    ok = deleteDir(currentTask, dir);
                 }
-                return ++count;
+                if (ok) {
+                    return ++count;
+                } else {
+                    return count;
+                }
             }
             for (File child : children) {
+                if ((currentTask != null && !currentTask.isWorking())) {
+                    return count;
+                }
                 if (child.isDirectory()) {
-                    count = deleteEmptyDir(child, count, trash);
+                    count = deleteEmptyDir(currentTask, child, count, trash);
                 }
             }
             children = dir.listFiles();
             if (children == null || children.length == 0) {
+                boolean ok;
                 if (trash) {
-                    Desktop.getDesktop().moveToTrash(dir);
+                    ok = Desktop.getDesktop().moveToTrash(dir);
                 } else {
-                    deleteDir(dir);
+                    ok = deleteDir(currentTask, dir);
                 }
-                return ++count;
+                if (ok) {
+                    return ++count;
+                } else {
+                    return count;
+                }
             }
         }
         return count;
     }
 
-    public static void clearJavaIOTmpPath() {
+    public static void clearJavaIOTmpPath(FxTask currentTask) {
         try {
             System.gc();
-            clearDir(FileTools.javaIOTmpPath());
+            clearDir(currentTask, FileTools.javaIOTmpPath());
         } catch (Exception e) {
 //            MyBoxLog.debug(e);
         }

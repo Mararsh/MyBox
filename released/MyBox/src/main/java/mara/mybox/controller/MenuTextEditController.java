@@ -18,8 +18,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.stage.Window;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.NodeTools;
-import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
@@ -53,8 +53,8 @@ public class MenuTextEditController extends MenuTextBaseController {
         try {
             super.setParameters(parent, node, x, y);
 
-            if (parent instanceof BaseFileEditorController) {
-                BaseFileEditorController e = (BaseFileEditorController) parent;
+            if (parent instanceof BaseTextController) {
+                BaseTextController e = (BaseTextController) parent;
                 if (textInput == null || textInput != e.mainArea) {
                     fileBox.getChildren().removeAll(saveButton, recoverButton);
                 }
@@ -251,7 +251,7 @@ public class MenuTextEditController extends MenuTextBaseController {
     @FXML
     @Override
     public void saveAction() {
-        if (textInput == null || !(parentController instanceof BaseFileEditorController)) {
+        if (textInput == null || !(parentController instanceof BaseTextController)) {
             return;
         }
         parentController.saveAction();
@@ -260,7 +260,7 @@ public class MenuTextEditController extends MenuTextBaseController {
     @FXML
     @Override
     public void recoverAction() {
-        if (textInput == null || !(parentController instanceof BaseFileEditorController)) {
+        if (textInput == null || !(parentController instanceof BaseTextController)) {
             return;
         }
         parentController.recoverAction();
@@ -287,7 +287,7 @@ public class MenuTextEditController extends MenuTextBaseController {
             return;
         }
         popInformation(message("WaitAndHandling"));
-        SingletonTask htmltask = new SingletonTask<Void>(this) {
+        FxTask htmltask = new FxTask<Void>(this) {
 
             private String html;
 
@@ -317,13 +317,13 @@ public class MenuTextEditController extends MenuTextBaseController {
             return;
         }
         popInformation(message("WaitAndHandling"));
-        SingletonTask pdftask = new SingletonTask<Void>(this) {
+        FxTask pdftask = new FxTask<Void>(this) {
 
             private File pdf;
 
             @Override
             protected boolean handle() {
-                pdf = PdfTools.text2pdf(text);
+                pdf = PdfTools.text2pdf(this, text);
                 return pdf != null && pdf.exists();
             }
 
@@ -346,7 +346,7 @@ public class MenuTextEditController extends MenuTextBaseController {
             popError(message("NoData"));
             return;
         }
-        ImageViewerController.openImage(NodeTools.snap(textInput));
+        ImageEditorController.openImage(NodeTools.snap(textInput));
     }
 
     @Override
@@ -389,8 +389,8 @@ public class MenuTextEditController extends MenuTextBaseController {
                     }
                 }
             }
-            MenuTextEditController controller = (MenuTextEditController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.MenuTextEditFxml, false);
+            MenuTextEditController controller = (MenuTextEditController) WindowTools.branchStage(
+                    parent, Fxmls.MenuTextEditFxml);
             controller.setParameters(parent, node, x, y);
             return controller;
         } catch (Exception e) {

@@ -19,6 +19,7 @@ import mara.mybox.bufferedimage.ImageFileInformation;
 import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.ImageClipboardTools;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
@@ -29,7 +30,7 @@ import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.Fxmls;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -187,7 +188,7 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
     }
 
     @Override
-    public void tableChanged() {
+    protected void tableChanged() {
         super.tableChanged();
         hasSampled.set(hasSampled());
     }
@@ -230,14 +231,18 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
                 d += m.getDuration();
             }
         }
-        String s = Languages.message("TotalPixels") + ": " + StringTools.format(pixels) + "  ";
+        String s = message("TotalPixels") + ": " + StringTools.format(pixels) + "  ";
         if (durationColumn != null) {
-            s += Languages.message("TotalDuration") + ": " + DateTools.timeMsDuration(d) + "  ";
+            s += message("TotalDuration") + ": " + DateTools.timeMsDuration(d) + "  ";
         }
-        s += MessageFormat.format(Languages.message("TotalFilesNumberSize"),
+        s += MessageFormat.format(message("TotalFilesNumberSize"),
                 totalFilesNumber, FileTools.showFileSize(totalFilesSize));
         if (viewButton != null) {
-            s += "  " + Languages.message("DoubleClickToOpen");
+            s += "  " + message("DoubleClickToOpen");
+        }
+        int selected = tableView.getSelectionModel().getSelectedIndices().size();
+        if (selected > 0) {
+            s += "  " + message("Selected") + ": " + selected;
         }
         tableLabel.setText(s);
     }
@@ -252,25 +257,25 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
     }
 
     @Override
-    protected ImageInformation create(File file) {
-        ImageFileInformation finfo = ImageFileInformation.create(file);
+    protected ImageInformation create(FxTask currentTask, File file) {
+        ImageFileInformation finfo = ImageFileInformation.create(currentTask, file);
         return finfo != null ? finfo.getImageInformation() : null;
     }
 
     @Override
-    public List<ImageInformation> createFiles(List<File> files) {
+    public List<ImageInformation> createFiles(FxTask currentTask, List<File> files) {
         try {
             if (files == null || files.isEmpty()) {
                 return null;
             }
             List<ImageInformation> infos = new ArrayList<>();
             for (File file : files) {
-                if (task == null || task.isCancelled()) {
+                if (currentTask == null || !currentTask.isWorking()) {
                     return infos;
                 }
-                task.setInfo(file.getAbsolutePath());
-                ImageFileInformation finfo = ImageFileInformation.create(file);
-                if (finfo != null) {
+                currentTask.setInfo(file.getAbsolutePath());
+                ImageFileInformation finfo = ImageFileInformation.create(currentTask, file);
+                if (finfo != null && finfo.getImagesInformation() != null) {
                     infos.addAll(finfo.getImagesInformation());
 
                 }
@@ -280,6 +285,29 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;
+        }
+    }
+
+    @Override
+    public void addDirectory(int index, File directory) {
+        if (directory == null || !directory.exists() || !directory.isDirectory()) {
+            return;
+        }
+        try {
+            File[] list = directory.listFiles();
+            if (list == null || list.length == 0) {
+                popInformation(message("NoData"));
+                return;
+            }
+            List<File> files = new ArrayList<>();
+            for (File file : list) {
+                if (file.exists() && file.isFile() && FileTools.isSupportedImage(file)) {
+                    files.add(file);
+                }
+            }
+            addFiles(index, files);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
         }
     }
 
@@ -301,7 +329,7 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
                 controller.loadFile(info.getFile(), info.getIndex());
 
             } else {
-                ImageViewerController.openImageInfo(info);
+                ImageEditorController.openImageInfo(info);
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -316,7 +344,7 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
             if (info == null) {
                 return;
             }
-            ImageManufactureController.openImageInfo(info);
+            ImageEditorController.openImageInfo(info);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -324,15 +352,16 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
 
     @FXML
     @Override
-    public void infoAction() {
+    public boolean infoAction() {
         if (tableData.isEmpty()) {
-            return;
+            return false;
         }
         ImageInformation info = selectedItem();
         if (info == null) {
             info = tableData.get(0);
         }
         ImageInformationController.open(info);
+        return true;
     }
 
     @FXML
@@ -353,7 +382,7 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
     public void pasteAction() {
         Image clip = ImageClipboardTools.fetchImageInClipboard(false);
         if (clip == null) {
-            popError(Languages.message("NoImageInClipboard"));
+            popError(message("NoImageInClipboard"));
             return;
         }
         ImageInformation info = new ImageInformation(clip);
@@ -379,7 +408,7 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
     public void setDurationAction() {
         try {
             if (duration <= 0) {
-                popError(Languages.message("InvalidData"));
+                popError(message("InvalidData"));
                 return;
             }
             isSettingValues = true;

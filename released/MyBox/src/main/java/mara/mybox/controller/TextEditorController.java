@@ -1,25 +1,31 @@
 package mara.mybox.controller;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.IndexRange;
+import javafx.scene.control.MenuItem;
 import javafx.scene.input.ContextMenuEvent;
-import mara.mybox.data.FileEditInformation.Line_Break;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
-import mara.mybox.value.UserConfig;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
  * @CreateDate 2018-7-31
  * @License Apache License Version 2.0
  */
-public class TextEditorController extends BaseFileEditorController {
+public class TextEditorController extends BaseTextController {
 
     public TextEditorController() {
         baseTitle = Languages.message("TextEditer");
@@ -29,38 +35,6 @@ public class TextEditorController extends BaseFileEditorController {
     @Override
     public void setFileType() {
         setTextType();
-    }
-
-    @Override
-    protected void initLineBreakGroup() {
-        try {
-            String savedLB = UserConfig.getString(baseName + "LineBreak", Line_Break.LF.toString());
-            if (savedLB.equals(Line_Break.CR.toString())) {
-                crRadio.setSelected(true);
-            } else if (savedLB.equals(Line_Break.CRLF.toString())) {
-                crlfRadio.setSelected(true);
-            } else {
-                lfRadio.setSelected(true);
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    @Override
-    protected void checkLineBreakGroup() {
-        try {
-            if (crRadio.isSelected()) {
-                lineBreak = Line_Break.CR;
-            } else if (crlfRadio.isSelected()) {
-                lineBreak = Line_Break.CRLF;
-            } else {
-                lineBreak = Line_Break.LF;
-            }
-            UserConfig.setString(baseName + "LineBreak", lineBreak.toString());
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
     }
 
     @Override
@@ -112,20 +86,58 @@ public class TextEditorController extends BaseFileEditorController {
                 || !splitPane.getItems().contains(rightPane)) {
             return;
         }
-        isSettingValues = true;
-        pairArea.deselect();
-        final String text = mainArea.getText();
-        if (!text.isEmpty()) {
-            IndexRange hexRange = TextTools.hexIndex(text, sourceInformation.getCharset(),
-                    sourceInformation.getLineBreakValue(), mainArea.getSelection());
-            int bomLen = 0;
-            if (sourceInformation.isWithBom()) {
-                bomLen = TextTools.bomHex(sourceInformation.getCharset().name()).length() + 1;
-            }
-            pairArea.selectRange(hexRange.getStart() + bomLen, hexRange.getEnd() + bomLen);
-            pairArea.setScrollTop(mainArea.getScrollTop());
+        if (pairTask != null) {
+            pairTask.cancel();
         }
-        isSettingValues = false;
+        pairTask = new FxTask<Void>(this) {
+            private IndexRange hexRange;
+            private int bomLen;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    hexRange = null;
+                    final String text = mainArea.getText();
+                    if (!text.isEmpty()) {
+                        hexRange = TextTools.hexIndex(this, text, sourceInformation.getCharset(),
+                                sourceInformation.getLineBreakValue(), mainArea.getSelection());
+                        bomLen = 0;
+                        if (sourceInformation.isWithBom()) {
+                            bomLen = TextTools.bomHex(sourceInformation.getCharset().name()).length() + 1;
+                        }
+                    }
+                    return hexRange != null;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                isSettingValues = true;
+                pairArea.deselect();
+                pairArea.selectRange(hexRange.getStart() + bomLen, hexRange.getEnd() + bomLen);
+                pairArea.setScrollTop(mainArea.getScrollTop());
+                isSettingValues = false;
+            }
+
+            @Override
+            protected void whenCanceled() {
+            }
+
+            @Override
+            protected void whenFailed() {
+            }
+
+        };
+        start(pairTask, rightPane);
+    }
+
+    @FXML
+    @Override
+    public void saveAsAction() {
+        TextEditorSaveAsController.open(this);
     }
 
     @FXML
@@ -138,6 +150,23 @@ public class TextEditorController extends BaseFileEditorController {
     @FXML
     public void popBytesAction() {
         BytesPopController.open(this, pairArea);
+    }
+
+    @Override
+    public List<MenuItem> fileMenuItems(Event fevent) {
+        List<MenuItem> items = new ArrayList<>();
+        MenuItem menu;
+
+        if (sourceFile != null) {
+            menu = new MenuItem(message("Format"), StyleTools.getIconImageView("iconFormat.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                TextEditorFormatController.open(this);
+            });
+            items.add(menu);
+        }
+
+        items.addAll(super.fileMenuItems(fevent));
+        return items;
     }
 
     /*

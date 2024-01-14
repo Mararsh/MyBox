@@ -13,7 +13,7 @@ import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.table.TableData2DCell;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.NumberTools;
 
@@ -208,7 +208,7 @@ public class DataMatrix extends Data2D {
         return count;
     }
 
-    public static boolean save(SingletonTask task, DataMatrix matrix,
+    public static boolean save(FxTask task, DataMatrix matrix,
             List<Data2DColumn> cols, List<List<String>> rows) {
         if (matrix == null || cols == null || rows == null) {
             return false;

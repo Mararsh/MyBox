@@ -2,8 +2,6 @@ package mara.mybox.controller;
 
 import java.io.File;
 import java.sql.Connection;
-import java.util.Date;
-import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -14,11 +12,7 @@ import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.FileBackup;
 import mara.mybox.db.table.TableFileBackup;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
-import mara.mybox.tools.DateTools;
-import mara.mybox.tools.FileCopyTools;
-import mara.mybox.tools.FileNameTools;
-import static mara.mybox.value.AppPaths.getBackupsPath;
+import mara.mybox.fxml.FxTask;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -28,10 +22,6 @@ import mara.mybox.value.UserConfig;
  * @License Apache License Version 2.0
  */
 public class ControlFileBackup extends BaseController {
-
-    protected FileBackupController fileBackupController;
-    protected TableFileBackup tableFileBackup;
-    protected File backupPath, backupFile;
 
     @FXML
     protected CheckBox backupCheck;
@@ -57,6 +47,9 @@ public class ControlFileBackup extends BaseController {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean oldv, Boolean newv) {
                     UserConfig.setBoolean(baseName + "Backup", backupCheck.isSelected());
+                    if (!backupCheck.isSelected()) {
+                        totalLabel.setText("");
+                    }
 
                 }
             });
@@ -69,75 +62,51 @@ public class ControlFileBackup extends BaseController {
     }
 
     public void loadBackups(File file) {
-        this.sourceFile = file;
+        sourceFile = file;
         totalLabel.setText("");
-        backupPath = null;
-        if (fileBackupController != null) {
-            fileBackupController.close();
-        }
     }
 
-    public void addBackup(SingletonTask task, File sourceFile) {
-        this.sourceFile = sourceFile;
-        addBackup(task);
-    }
-
-    public void addBackup(SingletonTask task) {
-        if (sourceFile == null || !sourceFile.exists()) {
-            return;
-        }
-        SingletonTask backTask = new SingletonTask<Void>(this) {
+    public void addBackup2(FxTask currentTask, File file) {
+        sourceFile = file;
+        FxTask backTask = new FxTask<Void>(this) {
             private int total;
+            private FileBackup backup;
 
             @Override
             protected boolean handle() {
-                try {
-                    List<FileBackup> list = backup(this);
-                    total = list != null ? list.size() : 0;
-                    return backupFile != null && total > 0;
+                backup = null;
+                total = 0;
+                if (sourceFile == null || !sourceFile.exists()) {
+                    return false;
+                }
+                try (Connection conn = DerbyBase.getConnection()) {
+                    backup = tableFileBackup.addBackup(conn, sourceFile);
+                    if (backup != null) {
+                        total = tableFileBackup.count(conn, sourceFile);
+                    }
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
                 }
+                return true;
             }
 
             @Override
             protected void whenSucceeded() {
-                totalLabel.setText(message("Saved") + ": " + backupFile + "\n"
-                        + message("Total") + ": " + total);
+                if (backup != null) {
+                    totalLabel.setText(message("Saved") + ": " + backup.getBackup() + "\n"
+                            + message("Total") + ": " + total);
+                    FileBackupController.updateList(sourceFile);
+                }
             }
 
             @Override
             protected void whenFailed() {
-                totalLabel.setText(message("Failed"));
+                totalLabel.setText(error != null ? error : message("FailBackup"));
             }
 
         };
         start(backTask, false);
-    }
-
-    public List<FileBackup> backup(SingletonTask task) {
-        try (Connection conn = DerbyBase.getConnection()) {
-            backupPath = tableFileBackup.path(conn, sourceFile);
-            if (backupPath == null) {
-                String fname = sourceFile.getName();
-                String ext = FileNameTools.suffix(fname);
-                backupPath = new File(getBackupsPath() + File.separator
-                        + (ext == null || ext.isBlank() ? "x" : ext) + File.separator
-                        + FileNameTools.prefix(fname) + new Date().getTime() + File.separator);
-            }
-            backupPath.mkdirs();
-            backupFile = new File(backupPath,
-                    FileNameTools.append(sourceFile.getName(), "-" + DateTools.nowFileString()));
-            if (!FileCopyTools.copyFile(sourceFile, backupFile, false, false) || !backupFile.exists()) {
-                return null;
-            }
-            FileBackup newBackup = new FileBackup(sourceFile, backupFile);
-            return tableFileBackup.addBackups(conn, newBackup);
-        } catch (Exception e) {
-            task.setError(e.toString());
-            return null;
-        }
     }
 
     public boolean needBackup() {
@@ -146,7 +115,7 @@ public class ControlFileBackup extends BaseController {
 
     @FXML
     public void showBackups() {
-        fileBackupController = FileBackupController.load(this);
+        FileBackupController.load(this);
     }
 
 }

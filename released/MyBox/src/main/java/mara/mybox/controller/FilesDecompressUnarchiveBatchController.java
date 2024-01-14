@@ -12,6 +12,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.CompressTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileDeleteTools;
@@ -73,7 +74,7 @@ public class FilesDecompressUnarchiveBatchController extends BaseBatchFileContro
     }
 
     @Override
-    public boolean beforeHandleFiles() {
+    public boolean beforeHandleFiles(FxTask currentTask) {
         try {
             aFactory = new ArchiveStreamFactory();
             return true;
@@ -84,7 +85,7 @@ public class FilesDecompressUnarchiveBatchController extends BaseBatchFileContro
     }
 
     @Override
-    public String handleFile(File srcFile, File targetPath) {
+    public String handleFile(FxTask currentTask, File srcFile, File targetPath) {
         try {
             Date fStartTime = new Date();
             if (verboseCheck == null || verboseCheck.isSelected()) {
@@ -111,6 +112,9 @@ public class FilesDecompressUnarchiveBatchController extends BaseBatchFileContro
                 } else {
                     decompressedFile = null;
                 }
+            }
+            if (currentTask == null || !currentTask.isWorking()) {
+                return message("Canceled");
             }
             archiver = CompressTools.detectArchiver(this, unarchiveFile);
             if (archiver != null && unarchiveFile != null) {
@@ -142,6 +146,9 @@ public class FilesDecompressUnarchiveBatchController extends BaseBatchFileContro
                         return message("Successful");
                     }
                 }
+            }
+            if (currentTask == null || !currentTask.isWorking()) {
+                return message("Canceled");
             }
             if (decompressedFile == null) {
                 return message("Failed");

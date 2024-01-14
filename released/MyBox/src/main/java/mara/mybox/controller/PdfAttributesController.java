@@ -18,8 +18,8 @@ import javafx.stage.Stage;
 import mara.mybox.data.PdfInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.DateTools;
@@ -242,7 +242,7 @@ public class PdfAttributesController extends BaseController {
             return;
         }
         pdfInfo = new PdfInformation(sourceFile);
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             private boolean pop;
 
@@ -251,7 +251,7 @@ public class PdfAttributesController extends BaseController {
                 ok = false;
                 pop = false;
                 setInfo(message("LoadingFileInfo"));
-                try (PDDocument doc = PDDocument.load(sourceFile, password, AppVariables.pdfMemUsage)) {
+                try (PDDocument doc = PDDocument.load(sourceFile, password, AppVariables.PdfMemUsage)) {
                     pdfInfo.setUserPassword(password);
                     pdfInfo.readInfo(this, doc);
                     doc.close();
@@ -365,16 +365,17 @@ public class PdfAttributesController extends BaseController {
 
     @FXML
     @Override
-    public void infoAction() {
+    public boolean infoAction() {
         if (pdfInfo == null) {
-            return;
+            return false;
         }
         try {
             final PdfInformationController controller = (PdfInformationController) openStage(Fxmls.PdfInformationFxml);
             controller.setInformation(pdfInfo);
-
+            return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
+            return false;
         }
     }
 
@@ -455,7 +456,7 @@ public class PdfAttributesController extends BaseController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -479,7 +480,7 @@ public class PdfAttributesController extends BaseController {
             }
             File tmpFile = FileTmpTools.getTempFile();
             FileCopyTools.copyFile(file, tmpFile);
-            try (PDDocument doc = PDDocument.load(tmpFile, password, AppVariables.pdfMemUsage)) {
+            try (PDDocument doc = PDDocument.load(tmpFile, password, AppVariables.PdfMemUsage)) {
                 PDDocumentInformation docInfo = doc.getDocumentInformation();
                 docInfo.setAuthor(info.getAuthor());
                 docInfo.setTitle(info.getTitle());
@@ -514,7 +515,7 @@ public class PdfAttributesController extends BaseController {
                 doc.save(tmpFile);
                 doc.close();
             }
-            return FileTools.rename(tmpFile, file, true);
+            return FileTools.override(tmpFile, file, true);
         } catch (Exception e) {
             MyBoxLog.debug(e);
             return false;

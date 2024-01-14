@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import mara.mybox.controller.BaseTaskController;
 import mara.mybox.db.Database;
@@ -13,12 +14,16 @@ import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.FileBackup;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.FxTask;
 import static mara.mybox.fxml.WindowTools.recordError;
 import static mara.mybox.fxml.WindowTools.recordInfo;
 import static mara.mybox.fxml.WindowTools.taskError;
+import mara.mybox.tools.DateTools;
+import mara.mybox.tools.FileCopyTools;
 import mara.mybox.tools.FileDeleteTools;
+import mara.mybox.tools.FileNameTools;
 import mara.mybox.value.AppPaths;
+import static mara.mybox.value.AppPaths.getBackupsPath;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -67,13 +72,24 @@ public class TableFileBackup extends BaseTable<FileBackup> {
     public static final String DeleteBackup
             = "DELETE FROM File_Backup  WHERE file=? AND backup=?";
 
-    public File path(Connection conn, File srcFile) {
-        if (conn == null || srcFile == null || !srcFile.exists()) {
+    public File path(File file) {
+        if (file == null || !file.exists()) {
             return null;
         }
-        try (PreparedStatement query = conn.prepareStatement(QueryPath)) {
-            query.setString(1, srcFile.getAbsolutePath());
-            FileBackup backup = query(conn, query);
+        try (Connection conn = DerbyBase.getConnection()) {
+            return path(conn, file);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public File path(Connection conn, File file) {
+        if (conn == null || file == null || !file.exists()) {
+            return null;
+        }
+        try (PreparedStatement s = conn.prepareStatement(QueryPath)) {
+            s.setString(1, file.getAbsolutePath());
+            FileBackup backup = query(conn, s);
             if (backup != null) {
                 File backFile = backup.getBackup();
                 if (backFile != null && backFile.exists()) {
@@ -86,22 +102,22 @@ public class TableFileBackup extends BaseTable<FileBackup> {
         return null;
     }
 
-    public List<FileBackup> read(File srcFile) {
+    public List<FileBackup> read(File file) {
         List<FileBackup> records = new ArrayList<>();
-        if (srcFile == null || !srcFile.exists()) {
+        if (file == null || !file.exists()) {
             return records;
         }
         try (Connection conn = DerbyBase.getConnection()) {
-            return read(conn, srcFile);
+            return read(conn, file);
         } catch (Exception e) {
-            MyBoxLog.debug(e, srcFile.getAbsolutePath());
+            MyBoxLog.debug(e, file.getAbsolutePath());
             return records;
         }
     }
 
-    public List<FileBackup> read(Connection conn, File srcFile) {
+    public List<FileBackup> read(Connection conn, File file) {
         List<FileBackup> records = new ArrayList<>();
-        if (srcFile == null || !srcFile.exists()) {
+        if (conn == null || file == null || !file.exists()) {
             return records;
         }
         try (PreparedStatement statement = conn.prepareStatement(FileQuery)) {
@@ -111,7 +127,7 @@ public class TableFileBackup extends BaseTable<FileBackup> {
                 UserConfig.setInt(conn, "MaxFileBackups", FileBackup.Default_Max_Backups);
             }
             conn.setAutoCommit(true);
-            statement.setString(1, srcFile.getAbsolutePath());
+            statement.setString(1, file.getAbsolutePath());
             try (ResultSet results = statement.executeQuery()) {
                 while (results.next()) {
                     FileBackup data = readData(results);
@@ -126,24 +142,62 @@ public class TableFileBackup extends BaseTable<FileBackup> {
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e, srcFile.getAbsolutePath());
+            MyBoxLog.debug(e, file.getAbsolutePath());
         }
         return records;
     }
 
-    public List<FileBackup> addBackups(Connection conn, FileBackup data) {
-        if (conn == null || data == null) {
+    public FileBackup addBackup(File file) {
+        if (file == null) {
+            return null;
+        }
+        try (Connection conn = DerbyBase.getConnection()) {
+            return addBackup(conn, file);
+        } catch (Exception e) {
+            MyBoxLog.debug(e, file.getAbsolutePath());
+            return null;
+        }
+    }
+
+    public FileBackup addBackup(Connection conn, File file) {
+        if (conn == null || file == null) {
             return null;
         }
         try {
-            data = super.insertData(conn, data);
-            if (data == null) {
+            File backupPath = path(conn, file);
+            if (backupPath == null) {
+                String fname = file.getName();
+                String ext = FileNameTools.suffix(fname);
+                backupPath = new File(getBackupsPath() + File.separator
+                        + (ext == null || ext.isBlank() ? "x" : ext) + File.separator
+                        + FileNameTools.prefix(fname) + new Date().getTime() + File.separator);
+            }
+            backupPath.mkdirs();
+            File backupFile = new File(backupPath,
+                    FileNameTools.append(file.getName(), "-" + DateTools.nowFileString()));
+            while (backupFile.exists()) {
+                backupFile = new File(backupPath,
+                        FileNameTools.append(file.getName(), "-" + DateTools.nowFileString()));
+                Thread.sleep(100);
+            }
+            if (!FileCopyTools.copyFile(file, backupFile, false, false)) {
                 return null;
             }
-            return read(conn, data.getFile());
+            FileBackup data = new FileBackup(file, backupFile);
+            data = insertData(conn, data);
+            return data;
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            MyBoxLog.debug(e, file.getAbsolutePath());
             return null;
+        }
+    }
+
+    public int count(Connection conn, File file) {
+        List<FileBackup> records = read(conn, file);
+        if (records == null) {
+            return -1;
+        } else {
+            return records.size();
         }
     }
 
@@ -159,36 +213,39 @@ public class TableFileBackup extends BaseTable<FileBackup> {
         return count;
     }
 
-    public void clearBackups(SingletonTask task, String filename) {
+    public long clearBackups(FxTask task, String filename) {
+        long count = 0;
         if (filename == null) {
-            return;
+            return count;
         }
         try (Connection conn = DerbyBase.getConnection()) {
             List<String> files = new ArrayList<>();
             files.add(filename);
-            clearBackups(task, conn, files);
+            return clearBackups(task, conn, files);
         } catch (Exception e) {
             MyBoxLog.error(e);
+            return count;
         }
     }
 
-    public void clearBackups(SingletonTask task, Connection conn, List<String> files) {
+    public long clearBackups(FxTask task, Connection conn, List<String> files) {
+        long count = 0;
         if (conn == null || files == null || files.isEmpty()) {
-            return;
+            return count;
         }
 //        taskInfo(task, FileQuery);
         try (PreparedStatement query = conn.prepareStatement(FileQuery)) {
             conn.setAutoCommit(true);
             for (String file : files) {
                 if (task != null && task.isCancelled()) {
-                    return;
+                    return count;
                 }
 //                taskInfo(task, message("Check") + ": " + file);
                 query.setString(1, file);
                 try (ResultSet results = query.executeQuery()) {
                     while (results.next()) {
                         if (task != null && task.isCancelled()) {
-                            return;
+                            return -3;
                         }
                         FileBackup data = readData(results);
 //                        taskInfo(task, message("Delete") + ": " + data.getBackup());
@@ -203,21 +260,23 @@ public class TableFileBackup extends BaseTable<FileBackup> {
         }
 //        taskInfo(task, DeleteFile);
         if (task != null && task.isCancelled()) {
-            return;
+            return count;
         }
         try (PreparedStatement statement = conn.prepareStatement(DeleteFile)) {
             conn.setAutoCommit(true);
             for (String file : files) {
                 if (task != null && task.isCancelled()) {
-                    return;
+                    return count;
                 }
 //                taskInfo(task, message("Clear") + ": " + file);
                 statement.setString(1, file);
                 statement.executeUpdate();
+                count++;
             }
         } catch (Exception e) {
             taskError(task, e.toString() + "\n" + tableName);
         }
+        return count;
     }
 
     public int clearInvalid(BaseTaskController taskController, Connection conn) {
@@ -387,42 +446,6 @@ public class TableFileBackup extends BaseTable<FileBackup> {
         recordInfo(taskController, message("Checked") + ": " + rowCount + " "
                 + message("Expired") + ": " + invalidCount);
         return invalidCount;
-    }
-
-    /*
-        static
-     */
-    public static void deleteBackup(FileBackup record) {
-        if (record == null) {
-            return;
-        }
-        try (Connection conn = DerbyBase.getConnection()) {
-            deleteBackup(conn, record);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    public static void deleteBackup(Connection conn, FileBackup record) {
-        if (conn == null || record == null || record.getFile() == null || record.getBackup() == null) {
-            return;
-        }
-        deleteBackup(conn, record.getFile().getAbsolutePath(), record.getBackup().getAbsolutePath());
-    }
-
-    public static void deleteBackup(Connection conn, String filename, String backup) {
-        if (conn == null || filename == null || backup == null) {
-            return;
-        }
-        try (PreparedStatement statement = conn.prepareStatement(DeleteBackup)) {
-            conn.setAutoCommit(true);
-            statement.setString(1, filename);
-            statement.setString(2, backup);
-            statement.executeUpdate();
-        } catch (Exception e) {
-            MyBoxLog.error(e + "  " + filename + "  " + backup);
-        }
-        FileDeleteTools.delete(backup);
     }
 
 }

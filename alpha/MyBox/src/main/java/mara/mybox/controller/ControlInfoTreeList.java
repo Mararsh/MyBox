@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import java.io.File;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Date;
@@ -33,8 +32,6 @@ import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.cell.TreeTableDateCell;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
-import mara.mybox.value.AppVariables;
-import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -139,25 +136,7 @@ public class ControlInfoTreeList extends BaseTreeTableViewController<InfoNode> {
         tree
      */
     public void loadTree() {
-        if (infoController instanceof InfoTreeManageController) {
-            try (Connection conn = DerbyBase.getConnection()) {
-                if (tableTreeNode.categoryEmpty(conn, category)) {
-                    File file = InfoNode.exampleFile(category);
-                    if (file != null) {
-                        if (AppVariables.isTesting
-                                || PopTools.askSure(getTitle(), message("ImportExamples") + ": " + message(category))) {
-                            importExamples();
-                            return;
-                        }
-                    }
-                }
-                loadTree(null);
-            } catch (Exception e) {
-                MyBoxLog.debug(e);
-            }
-        } else {
-            loadTree(null);
-        }
+        loadTree(null);
     }
 
     public void loadTree(InfoNode selectNode) {
@@ -596,14 +575,6 @@ public class ControlInfoTreeList extends BaseTreeTableViewController<InfoNode> {
             return;
         }
         infoController.tableController.loadDescendants(item.getValue());
-    }
-
-    @FXML
-    protected void importExamples() {
-        InfoTreeNodeImportController controller
-                = (InfoTreeNodeImportController) childStage(Fxmls.InfoTreeNodeImportFxml);
-        controller.setCaller(infoController);
-        controller.importExamples();
     }
 
     @FXML

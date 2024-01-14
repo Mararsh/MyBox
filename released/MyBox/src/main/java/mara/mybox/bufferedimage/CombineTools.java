@@ -10,6 +10,7 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.value.AppVariables;
 
 /**
@@ -19,8 +20,8 @@ import mara.mybox.value.AppVariables;
  */
 public class CombineTools {
 
-    public static Image combineSingleRow(ImageCombine imageCombine, List<ImageInformation> images,
-            boolean isPart, boolean careTotal) {
+    public static Image combineSingleRow(FxTask task, ImageCombine imageCombine,
+            List<ImageInformation> images, boolean isPart, boolean careTotal) {
         if (imageCombine == null || images == null) {
             return null;
         }
@@ -34,6 +35,9 @@ public class CombineTools {
             int sizeType = imageCombine.getSizeType();
             if (sizeType == ImageCombine.CombineSizeType.AlignAsBigger) {
                 for (ImageInformation imageInfo : images) {
+                    if (task != null && !task.isWorking()) {
+                        return null;
+                    }
                     imageHeight = (int) imageInfo.getPickedHeight();
                     if (imageHeight > maxHeight) {
                         maxHeight = imageHeight;
@@ -41,6 +45,9 @@ public class CombineTools {
                 }
             } else if (sizeType == ImageCombine.CombineSizeType.AlignAsSmaller) {
                 for (ImageInformation imageInfo : images) {
+                    if (task != null && !task.isWorking()) {
+                        return null;
+                    }
                     imageHeight = (int) imageInfo.getPickedHeight();
                     if (imageHeight < minHeight) {
                         minHeight = imageHeight;
@@ -54,6 +61,9 @@ public class CombineTools {
             List<Integer> widths = new ArrayList<>();
             List<Integer> heights = new ArrayList<>();
             for (int i = 0; i < images.size(); i++) {
+                if (task != null && !task.isWorking()) {
+                    return null;
+                }
                 ImageInformation imageInfo = images.get(i);
                 imageWidth = (int) imageInfo.getPickedWidth();
                 imageHeight = (int) imageInfo.getPickedHeight();
@@ -87,7 +97,7 @@ public class CombineTools {
                 totalWidth += imageCombine.getMarginsValue();
                 totalHeight += 2 * imageCombine.getMarginsValue();
             }
-            Image newImage = combineImages(images, (int) totalWidth, (int) totalHeight,
+            Image newImage = combineImages(task, images, (int) totalWidth, (int) totalHeight,
                     FxColorTools.toAwtColor(imageCombine.getBgColor()), xs, ys, widths, heights,
                     imageCombine.getTotalWidthValue(), imageCombine.getTotalHeightValue(),
                     careTotal && (sizeType == ImageCombine.CombineSizeType.TotalWidth),
@@ -99,7 +109,7 @@ public class CombineTools {
         }
     }
 
-    public static Image combineSingleColumn(ImageCombine imageCombine,
+    public static Image combineSingleColumn(FxTask task, ImageCombine imageCombine,
             List<ImageInformation> imageInfos, boolean isPart, boolean careTotal) {
         if (imageCombine == null || imageInfos == null) {
             return null;
@@ -114,6 +124,9 @@ public class CombineTools {
             int sizeType = imageCombine.getSizeType();
             if (sizeType == ImageCombine.CombineSizeType.AlignAsBigger) {
                 for (ImageInformation imageInfo : imageInfos) {
+                    if (task != null && !task.isWorking()) {
+                        return null;
+                    }
                     imageWidth = (int) imageInfo.getPickedWidth();
                     if (imageWidth > maxWidth) {
                         maxWidth = imageWidth;
@@ -121,6 +134,9 @@ public class CombineTools {
                 }
             } else if (sizeType == ImageCombine.CombineSizeType.AlignAsSmaller) {
                 for (ImageInformation imageInfo : imageInfos) {
+                    if (task != null && !task.isWorking()) {
+                        return null;
+                    }
                     imageWidth = (int) imageInfo.getPickedWidth();
                     if (imageWidth < minWidth) {
                         minWidth = imageWidth;
@@ -134,6 +150,9 @@ public class CombineTools {
             List<Integer> widths = new ArrayList<>();
             List<Integer> heights = new ArrayList<>();
             for (ImageInformation imageInfo : imageInfos) {
+                if (task != null && !task.isWorking()) {
+                    return null;
+                }
                 imageWidth = (int) imageInfo.getPickedWidth();
                 imageHeight = (int) imageInfo.getPickedHeight();
                 if (sizeType == ImageCombine.CombineSizeType.KeepSize
@@ -170,7 +189,7 @@ public class CombineTools {
                 totalWidth += 2 * imageCombine.getMarginsValue();
                 totalHeight += imageCombine.getMarginsValue();
             }
-            Image newImage = combineImages(imageInfos, (int) totalWidth, (int) totalHeight,
+            Image newImage = combineImages(task, imageInfos, (int) totalWidth, (int) totalHeight,
                     FxColorTools.toAwtColor(imageCombine.getBgColor()), xs, ys,
                     widths, heights, imageCombine.getTotalWidthValue(), imageCombine.getTotalHeightValue(),
                     careTotal && (sizeType == ImageCombine.CombineSizeType.TotalWidth),
@@ -182,7 +201,8 @@ public class CombineTools {
         }
     }
 
-    public static Image combineImages(List<ImageInformation> imageInfos, int totalWidth, int totalHeight, Color bgColor,
+    public static Image combineImages(FxTask task, List<ImageInformation> imageInfos,
+            int totalWidth, int totalHeight, Color bgColor,
             List<Integer> xs, List<Integer> ys, List<Integer> widths, List<Integer> heights,
             int trueTotalWidth, int trueTotalHeight, boolean isTotalWidth, boolean isTotalHeight) {
         if (imageInfos == null || xs == null || ys == null || widths == null || heights == null) {
@@ -191,15 +211,21 @@ public class CombineTools {
         try {
             BufferedImage target = new BufferedImage(totalWidth, totalHeight, BufferedImage.TYPE_INT_ARGB);
             Graphics2D g = target.createGraphics();
-            if (AppVariables.imageRenderHints != null) {
-                g.addRenderingHints(AppVariables.imageRenderHints);
+            if (AppVariables.ImageHints != null) {
+                g.addRenderingHints(AppVariables.ImageHints);
             }
             g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
             g.setColor(bgColor);
             g.fillRect(0, 0, totalWidth, totalHeight);
             for (int i = 0; i < imageInfos.size(); ++i) {
+                if (task != null && !task.isWorking()) {
+                    return null;
+                }
                 ImageInformation imageInfo = imageInfos.get(i);
-                Image image = imageInfo.loadImage();
+                Image image = imageInfo.loadImage(task);
+                if (image == null || (task != null && !task.isWorking())) {
+                    return null;
+                }
                 BufferedImage source = SwingFXUtils.fromFXImage(image, null);
                 g.drawImage(source, xs.get(i), ys.get(i), widths.get(i), heights.get(i), null);
             }
@@ -208,7 +234,47 @@ public class CombineTools {
             } else if (isTotalHeight) {
                 target = ScaleTools.scaleImageBySize(target, (trueTotalHeight * totalWidth) / totalHeight, trueTotalHeight);
             }
+            if (target == null || (task != null && !task.isWorking())) {
+                return null;
+            }
             Image newImage = SwingFXUtils.toFXImage(target, null);
+            return newImage;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public static Image combineImagesColumns(FxTask currentTask, ImageCombine imageCombine,
+            List<ImageInformation> imageInfos) {
+        if (imageInfos == null || imageInfos.isEmpty() || imageCombine.getColumnsValue() <= 0) {
+            return null;
+        }
+        try {
+            List<ImageInformation> rowImages = new ArrayList<>();
+            List<ImageInformation> rows = new ArrayList<>();
+            for (ImageInformation imageInfo : imageInfos) {
+                if (currentTask != null && !currentTask.isWorking()) {
+                    return null;
+                }
+                rowImages.add(imageInfo);
+                if (rowImages.size() == imageCombine.getColumnsValue()) {
+                    Image rowImage = CombineTools.combineSingleRow(currentTask, imageCombine, rowImages, true, false);
+                    if (rowImage == null || (currentTask != null && !currentTask.isWorking())) {
+                        return null;
+                    }
+                    rows.add(new ImageInformation(rowImage));
+                    rowImages = new ArrayList<>();
+                }
+            }
+            if (!rowImages.isEmpty()) {
+                Image rowImage = CombineTools.combineSingleRow(currentTask, imageCombine, rowImages, true, false);
+                if (rowImage == null || (currentTask != null && !currentTask.isWorking())) {
+                    return null;
+                }
+                rows.add(new ImageInformation(rowImage));
+            }
+            Image newImage = CombineTools.combineSingleColumn(currentTask, imageCombine, rows, false, true);
             return newImage;
         } catch (Exception e) {
             MyBoxLog.error(e);

@@ -1,9 +1,9 @@
 package mara.mybox.controller;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.SelectionMode;
 import mara.mybox.db.data.InfoNode;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.style.HtmlStyles;
 
 /**
@@ -28,20 +28,10 @@ public class ControlInfoTreeHandler extends BaseInfoTreeController {
             infoTree = nodesController;
 
             viewController.initStyle = HtmlStyles.styleValue("Table");
-            tableView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
-    }
-
-    public void setParameters(BaseInfoTreeHandleController handler) {
-        if (handler == null) {
-            return;
-        }
-        this.handler = handler;
-        category = handler.manager.category;
-        nodesController.setParameters(handler);
     }
 
     public void setParameters(BaseInfoTreeHandleController handler, String categroy) {
@@ -50,30 +40,39 @@ public class ControlInfoTreeHandler extends BaseInfoTreeController {
         }
         this.handler = handler;
         this.category = categroy;
-        nodesController.setParameters(handler);
+        nodesController.handler = handler;
+        loadData();
     }
 
-    /*
-        table
-     */
-    @Override
-    public void itemClicked() {
-        viewAction();
-    }
-
-    @FXML
-    @Override
-    public void viewAction() {
-        viewNode(selectedItem());
-    }
-
-    protected void viewNode(InfoNode node) {
+    public void viewNode(InfoNode node) {
         if (node == null) {
             return;
         }
-        String html = InfoNode.nodeHtml(node, null);
-        viewController.loadContents(html);
-        selectedNode = node;
+        if (task != null) {
+            task.cancel();
+        }
+        task = new FxSingletonTask<Void>(this) {
+            private String html;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    html = InfoNode.nodeHtml(this, myController, node, null);
+                    return html != null;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                viewController.loadContents(html);
+                selectedNode = node;
+            }
+
+        };
+        start(task);
     }
 
 }

@@ -12,7 +12,7 @@ import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -117,7 +117,7 @@ public class Data2DTransposeController extends BaseData2DTargetsController {
     @Override
     public DataFileCSV generatedFile() {
         try {
-            SingletonTask data2DTask = data2D.getTask();
+            FxTask data2DTask = data2D.getTask();
             Data2D tmp2D = data2D.cloneAll();
             tmp2D.startTask(data2DTask, filterController.filter);
             if (data2DTask != null) {
@@ -157,8 +157,8 @@ public class Data2DTransposeController extends BaseData2DTargetsController {
      */
     public static Data2DTransposeController open(ControlData2DLoad tableController) {
         try {
-            Data2DTransposeController controller = (Data2DTransposeController) WindowTools.openChildStage(
-                    tableController.getMyWindow(), Fxmls.Data2DTransposeFxml, false);
+            Data2DTransposeController controller = (Data2DTransposeController) WindowTools.branchStage(
+                    tableController, Fxmls.Data2DTransposeFxml);
             controller.setParameters(tableController);
             controller.requestMouse();
             return controller;

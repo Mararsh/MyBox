@@ -17,8 +17,9 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.NumberTools;
 import static mara.mybox.value.Languages.message;
@@ -108,14 +109,17 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
         if (task != null && !task.isQuit()) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             private List<P> data;
 
             @Override
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
-                    countPagination(conn, page);
-                    data = readPageData(conn);
+                    countPagination(this, conn, page);
+                    if (task == null || !isWorking()) {
+                        return false;
+                    }
+                    data = readPageData(this, conn);
                 } catch (Exception e) {
                     MyBoxLog.error(e);
                     return false;
@@ -148,8 +152,8 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
         }
     }
 
-    protected void countPagination(Connection conn, long page) {
-        dataSize = readDataSize(conn);
+    protected void countPagination(FxTask currentTask, Connection conn, long page) {
+        dataSize = readDataSize(currentTask, conn);
         if (dataSize < 0 || dataSize <= pageSize) {
             pagesNumber = 1;
         } else {
@@ -180,7 +184,7 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
         setPagination();
     }
 
-    public long readDataSize(Connection conn) {
+    public long readDataSize(FxTask currentTask, Connection conn) {
         return 0;
     }
 
@@ -188,7 +192,7 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
         dataSizeLoaded = true;
     }
 
-    public List<P> readPageData(Connection conn) {
+    public List<P> readPageData(FxTask currentTask, Connection conn) {
         return null;
     }
 
@@ -416,13 +420,13 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
         if (task != null && !task.isQuit()) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             private int deletedCount = 0;
 
             @Override
             protected boolean handle() {
-                deletedCount = deleteSelectedData();
+                deletedCount = deleteSelectedData(this);
                 return deletedCount >= 0;
             }
 
@@ -443,16 +447,16 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
         start(task);
     }
 
-    protected int deleteSelectedData() {
+    protected int deleteSelectedData(FxTask currentTask) {
         List<P> selected = new ArrayList<>();
         selected.addAll(selectedItems());
         if (selected.isEmpty()) {
             return 0;
         }
-        return deleteData(selected);
+        return deleteData(currentTask, selected);
     }
 
-    protected int deleteData(List<P> data) {
+    protected int deleteData(FxTask currentTask, List<P> data) {
         return 0;
     }
 
@@ -463,21 +467,18 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
     @FXML
     @Override
     public void clearAction() {
-        if (!checkBeforeNextAction()) {
-            return;
-        }
         if (!PopTools.askSure(getTitle(), message("SureClearData"))) {
             return;
         }
         if (task != null && !task.isQuit()) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             long deletedCount = 0;
 
             @Override
             protected boolean handle() {
-                deletedCount = clearData();
+                deletedCount = clearData(this);
                 return deletedCount >= 0;
             }
 
@@ -492,12 +493,8 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
         start(task);
     }
 
-    protected long clearData() {
-        int size = tableData.size();
-        isSettingValues = true;
-        tableData.clear();
-        isSettingValues = false;
-        return size;
+    protected long clearData(FxTask currentTask) {
+        return tableData.size();
     }
 
     protected void afterClear() {

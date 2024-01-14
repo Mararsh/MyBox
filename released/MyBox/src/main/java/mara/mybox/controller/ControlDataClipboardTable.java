@@ -1,10 +1,12 @@
 package mara.mybox.controller;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import javafx.fxml.FXML;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.value.AppPaths;
 import static mara.mybox.value.Languages.message;
@@ -21,14 +23,23 @@ public class ControlDataClipboardTable extends ControlData2DList {
     }
 
     @Override
-    protected int deleteData(List<Data2DDefinition> data) {
+    protected int deleteData(FxTask currentTask, List<Data2DDefinition> data) {
         if (data == null || data.isEmpty()) {
             return 0;
         }
+        List<Data2DDefinition> handled = new ArrayList<>();
         for (Data2DDefinition d : data) {
-            FileDeleteTools.delete(d.getFile());
+            if (currentTask == null || !currentTask.isWorking()) {
+                break;
+            }
+            FileDeleteTools.delete(null, d.getFile());
+            handled.add(d);
         }
-        return tableData2DDefinition.deleteData(data);
+        if (handled.isEmpty()) {
+            return 0;
+        } else {
+            return tableData2DDefinition.deleteData(handled);
+        }
     }
 
     @Override
@@ -43,7 +54,7 @@ public class ControlDataClipboardTable extends ControlData2DList {
     @Override
     protected void afterClear() {
         super.afterClear();
-        FileDeleteTools.clearDir(new File(AppPaths.getDataClipboardPath()));
+        FileDeleteTools.clearDir(null, new File(AppPaths.getDataClipboardPath()));
         manageController.dataController.loadNull();
     }
 

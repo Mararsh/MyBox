@@ -7,7 +7,7 @@ import javafx.fxml.FXML;
 import javafx.stage.Window;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.InfoNode;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -34,7 +34,7 @@ public class InfoTreeNodesMoveController extends BaseInfoTreeHandleController {
         if (!managerRunning()) {
             return;
         }
-        List<InfoNode> sourceNodes = manager.selectedItems();
+        List<InfoNode> sourceNodes = manager.tableController.selectedItems();
         InfoNode targetNode = handlerController.selectedNode;
         if (targetNode == null) {
             popError(message("SelectNodeMoveInto"));
@@ -43,14 +43,14 @@ public class InfoTreeNodesMoveController extends BaseInfoTreeHandleController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             private int count;
 
             @Override
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
-                    if (!checkOptions(task, conn, sourceNodes, targetNode)) {
+                    if (!checkOptions(this, conn, sourceNodes, targetNode)) {
                         return false;
                     }
                     long parentid = targetNode.getNodeid();
@@ -96,7 +96,8 @@ public class InfoTreeNodesMoveController extends BaseInfoTreeHandleController {
             }
         }
         if (controller == null) {
-            controller = (InfoTreeNodesMoveController) WindowTools.openChildStage(manager.getMyWindow(), Fxmls.InfoTreeNodesMoveFxml);
+            controller = (InfoTreeNodesMoveController) WindowTools.childStage(
+                    manager, Fxmls.InfoTreeNodesMoveFxml);
         }
         if (controller != null) {
             controller.setParameters(manager);

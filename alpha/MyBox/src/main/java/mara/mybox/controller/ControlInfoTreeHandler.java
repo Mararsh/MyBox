@@ -41,7 +41,7 @@ public class ControlInfoTreeHandler extends BaseInfoTreeController {
         this.handler = handler;
         this.category = categroy;
         nodesController.handler = handler;
-        setParameters(this);
+        loadData();
     }
 
     public void viewNode(InfoNode node) {

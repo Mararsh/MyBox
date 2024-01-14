@@ -38,6 +38,13 @@ public class ControlFileSelecter extends BaseController {
     protected TextField fileInput;
 
     public ControlFileSelecter() {
+        initSelecter();
+    }
+
+    public final ControlFileSelecter initSelecter() {
+        file = null;
+        defaultFile = null;
+        savedName = null;
         isSource = true;
         isDirectory = false;
         checkQuit = false;
@@ -45,6 +52,7 @@ public class ControlFileSelecter extends BaseController {
         mustExist = false;
         notify = new SimpleBooleanProperty(false);
         valid = new SimpleBooleanProperty(false);
+        return this;
     }
 
     public static ControlFileSelecter create() {
@@ -77,7 +85,7 @@ public class ControlFileSelecter extends BaseController {
         return defaultFile.getAbsolutePath();
     }
 
-    public ControlFileSelecter init() {
+    public ControlFileSelecter initFile() {
         String defaultName = defaultName();
         String name;
         if (savedName != null) {
@@ -86,7 +94,10 @@ public class ControlFileSelecter extends BaseController {
             name = defaultName;
         }
         if (fileInput != null) {
+            isSettingValues = true;
             fileInput.setText(name);
+            isSettingValues = false;
+            checkFileInput();
         } else {
             setFile(new File(name));
         }
@@ -328,6 +339,10 @@ public class ControlFileSelecter extends BaseController {
 
     public File file() {
         return file;
+    }
+
+    public boolean valid() {
+        return valid.get();
     }
 
     @Override

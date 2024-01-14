@@ -13,6 +13,7 @@ import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextFileTools;
@@ -103,13 +104,19 @@ public class DataFileCSVMergeController extends FilesMergeController {
     }
 
     @Override
-    public String handleFile(File srcFile) {
+    public String handleFile(FxTask currentTask, File srcFile) {
         if (csvSourceController.autoDetermine) {
             sourceCharset = TextFileTools.charset(srcFile);
         }
         String result;
-        File validFile = FileTools.removeBOM(srcFile);
-        try ( CSVParser parser = CSVParser.parse(validFile, sourceCharset, sourceFormat)) {
+        File validFile = FileTools.removeBOM(currentTask, srcFile);
+        if (currentTask == null || !currentTask.isWorking()) {
+            return message("Cancelled");
+        }
+        if (validFile == null) {
+            return null;
+        }
+        try (CSVParser parser = CSVParser.parse(validFile, sourceCharset, sourceFormat)) {
             if (headers == null && targetWithName && sourceWithName) {
                 headers = new ArrayList<>();
                 headers.addAll(parser.getHeaderNames());
@@ -117,7 +124,7 @@ public class DataFileCSVMergeController extends FilesMergeController {
             }
             List<String> rowData = new ArrayList<>();
             for (CSVRecord record : parser) {
-                if (task == null || task.isCancelled()) {
+                if (currentTask == null || !currentTask.isWorking()) {
                     return message("Cancelled");
                 }
                 for (int i = 0; i < record.size(); i++) {
@@ -145,7 +152,7 @@ public class DataFileCSVMergeController extends FilesMergeController {
         try {
             csvPrinter.flush();
             csvPrinter.close();
-            try ( Connection conn = DerbyBase.getConnection()) {
+            try (Connection conn = DerbyBase.getConnection()) {
                 TableData2DDefinition tableData2DDefinition = new TableData2DDefinition();
                 Data2DDefinition def = tableData2DDefinition.queryFile(conn, Data2DDefinition.Type.CSV, targetFile);
                 if (def == null) {

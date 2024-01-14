@@ -9,11 +9,12 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.OutputStreamWriter;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
 import static mara.mybox.tools.TextTools.bomBytes;
 import static mara.mybox.tools.TextTools.bomSize;
-import mara.mybox.tools.FileTmpTools;
 
 /**
  * @Author Mara
@@ -34,7 +35,7 @@ public class TextEditInformation extends FileEditInformation {
     }
 
     @Override
-    public boolean readTotalNumbers() {
+    public boolean readTotalNumbers(FxTask currentTask) {
         if (file == null || pageSize <= 0 || lineBreakValue == null) {
             return false;
         }
@@ -42,9 +43,12 @@ public class TextEditInformation extends FileEditInformation {
         linesNumber = 0;
         pagesNumber = 1;
         long lineIndex = 0, charIndex = 0;
-        try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
             String line;
             while ((line = reader.readLine()) != null) {
+                if (currentTask != null && !currentTask.isWorking()) {
+                    return false;
+                }
                 charIndex += line.length();
                 lineIndex++;
             }
@@ -63,23 +67,26 @@ public class TextEditInformation extends FileEditInformation {
     }
 
     @Override
-    public String readPage(long pageNumber) {
-        return readLines(pageNumber * pageSize, pageSize);
+    public String readPage(FxTask currentTask, long pageNumber) {
+        return readLines(currentTask, pageNumber * pageSize, pageSize);
     }
 
     @Override
-    public String readLines(long from, long number) {
+    public String readLines(FxTask currentTask, long from, long number) {
         if (file == null || from < 0 || number <= 0 || (linesNumber > 0 && from >= linesNumber)) {
             return null;
         }
         long lineIndex = 0, charIndex = 0, lineStart = 0;
         StringBuilder pageText = new StringBuilder();
-        try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
             lineStart = (from / pageSize) * pageSize;
             long lineEnd = Math.max(from + number, lineStart + pageSize);
             String line, fixedLine;
             boolean moreLine = false;
             while ((line = reader.readLine()) != null) {
+                if (currentTask != null && !currentTask.isWorking()) {
+                    return null;
+                }
                 if (lineIndex > 0) {
                     fixedLine = "\n" + line;
                 } else {
@@ -112,17 +119,20 @@ public class TextEditInformation extends FileEditInformation {
     }
 
     @Override
-    public String readObjects(long from, long number) {
+    public String readObjects(FxTask currentTask, long from, long number) {
         if (file == null || from < 0 || number <= 0 || (objectsNumber > 0 && from >= objectsNumber)) {
             return null;
         }
         long charIndex = 0, lineIndex = 0, lineStart = 0;
         StringBuilder pageText = new StringBuilder();
-        try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(file, charset))) {
             long to = from + number;
             boolean moreLine = false;
             String line, fixedLine;
             while ((line = reader.readLine()) != null) {
+                if (currentTask != null && !currentTask.isWorking()) {
+                    return null;
+                }
                 if (lineIndex > 0) {
                     fixedLine = "\n" + line;
                 } else {
@@ -158,17 +168,20 @@ public class TextEditInformation extends FileEditInformation {
     }
 
     @Override
-    public File filter(boolean recordLineNumbers) {
+    public File filter(FxTask currentTask, boolean recordLineNumbers) {
         try {
             if (file == null || filterStrings == null || filterStrings.length == 0) {
                 return file;
             }
             File targetFile = FileTmpTools.getTempFile();
             long lineIndex = 0;
-            try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset));
-                     BufferedWriter writer = new BufferedWriter(new FileWriter(targetFile, charset, false))) {
+            try (BufferedReader reader = new BufferedReader(new FileReader(file, charset));
+                    BufferedWriter writer = new BufferedWriter(new FileWriter(targetFile, charset, false))) {
                 String line;
                 while ((line = reader.readLine()) != null) {
+                    if (currentTask != null && !currentTask.isWorking()) {
+                        return null;
+                    }
                     if (isMatchFilters(line)) {
                         if (recordLineNumbers) {
                             line = StringTools.fillRightBlank(lineIndex, 15) + line;
@@ -188,15 +201,18 @@ public class TextEditInformation extends FileEditInformation {
     }
 
     @Override
-    public boolean writeObject(String text) {
+    public boolean writeObject(FxTask currentTask, String text) {
         if (file == null || charset == null || text == null || text.isEmpty()) {
             return false;
         }
-        try ( BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file));
-                 OutputStreamWriter writer = new OutputStreamWriter(outputStream, charset)) {
+        try (BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file));
+                OutputStreamWriter writer = new OutputStreamWriter(outputStream, charset)) {
             if (withBom) {
                 byte[] bytes = bomBytes(charset.name());
                 outputStream.write(bytes);
+            }
+            if (currentTask != null && !currentTask.isWorking()) {
+                return false;
             }
             if (lineBreak != Line_Break.LF) {
                 writer.write(text.replaceAll("\n", lineBreakValue));
@@ -212,7 +228,7 @@ public class TextEditInformation extends FileEditInformation {
     }
 
     @Override
-    public boolean writePage(FileEditInformation sourceInfo, String pageText) {
+    public boolean writePage(FxTask currentTask, FileEditInformation sourceInfo, String pageText) {
         try {
             if (sourceInfo.getFile() == null || sourceInfo.getCharset() == null
                     || sourceInfo.getPageSize() <= 0 || pageText == null
@@ -223,9 +239,9 @@ public class TextEditInformation extends FileEditInformation {
             if (sourceInfo.getFile().equals(file)) {
                 targetFile = FileTmpTools.getTempFile();
             }
-            try ( BufferedReader reader = new BufferedReader(new FileReader(sourceInfo.getFile(), sourceInfo.charset));
-                     BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(targetFile));
-                     OutputStreamWriter writer = new OutputStreamWriter(outputStream, charset)) {
+            try (BufferedReader reader = new BufferedReader(new FileReader(sourceInfo.getFile(), sourceInfo.charset));
+                    BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(targetFile));
+                    OutputStreamWriter writer = new OutputStreamWriter(outputStream, charset)) {
                 if (sourceInfo.isWithBom()) {
                     reader.skip(bomSize(sourceInfo.getCharset().name()));
                 }
@@ -233,10 +249,16 @@ public class TextEditInformation extends FileEditInformation {
                     byte[] bytes = bomBytes(charset.name());
                     outputStream.write(bytes);
                 }
+                if (currentTask != null && !currentTask.isWorking()) {
+                    return false;
+                }
                 String line, text;
                 long lineIndex = 0, pageLineStart = sourceInfo.getCurrentPageLineStart(),
                         pageLineEnd = sourceInfo.getCurrentPageLineEnd();
                 while ((line = reader.readLine()) != null) {
+                    if (currentTask != null && !currentTask.isWorking()) {
+                        return false;
+                    }
                     text = null;
                     if (lineIndex < pageLineStart || lineIndex >= pageLineEnd) {
                         text = line;
@@ -260,8 +282,11 @@ public class TextEditInformation extends FileEditInformation {
                 MyBoxLog.debug(e);
                 return false;
             }
+            if (currentTask != null && !currentTask.isWorking()) {
+                return false;
+            }
             if (sourceInfo.getFile().equals(file)) {
-                FileTools.rename(targetFile, file);
+                FileTools.override(targetFile, file);
             }
             return true;
         } catch (Exception e) {

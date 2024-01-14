@@ -36,16 +36,11 @@ public class MathFunctionController extends InfoTreeManageController {
             editor = editorController;
             super.initControls();
 
-            editorController.setParameters(this);
             calculateController.setParameters(editorController);
 
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
-    }
-
-    @Override
-    public void itemClicked() {
     }
 
     @FXML

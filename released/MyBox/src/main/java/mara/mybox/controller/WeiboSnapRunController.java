@@ -46,7 +46,7 @@ import mara.mybox.data.WeiboSnapParameters;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.CropTools;
-import mara.mybox.fxml.BaseTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SoundTools;
@@ -378,7 +378,7 @@ public class WeiboSnapRunController extends BaseController {
                     tempdir = AppVariables.MyBoxTempPath;
                 }
             }
-            memSettings = AppVariables.pdfMemUsage.setTempDir(tempdir);
+            memSettings = AppVariables.PdfMemUsage.setTempDir(tempdir);
 
             Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
             if (parameters.getWebWidth() <= 0) {
@@ -622,7 +622,7 @@ public class WeiboSnapRunController extends BaseController {
                 return true;
             }
 
-            loadingController = (WeiboSnapingInfoController) WindowTools.handling(getMyStage(), Fxmls.WeiboSnapingInfoFxml);
+            loadingController = (WeiboSnapingInfoController) WindowTools.popupStage(this, Fxmls.WeiboSnapingInfoFxml);
             loadingController.setParent(this);
 
             return true;
@@ -701,9 +701,9 @@ public class WeiboSnapRunController extends BaseController {
                 if (parameters.isCreatePDF()) {
                     mergeMonthPdf(pdfPath, currentMonthString, currentMonthPageCount);
                 }
-                FileDeleteTools.deleteEmptyDir(pdfPath, false);
-                FileDeleteTools.deleteEmptyDir(htmlPath, false);
-                FileDeleteTools.deleteEmptyDir(pixPath, false);
+                FileDeleteTools.deleteEmptyDir(null, pdfPath, false);
+                FileDeleteTools.deleteEmptyDir(null, htmlPath, false);
+                FileDeleteTools.deleteEmptyDir(null, pixPath, false);
                 Calendar c = Calendar.getInstance();
                 c.setTime(currentMonth);
                 c.add(Calendar.MONTH, 1);
@@ -1082,7 +1082,7 @@ public class WeiboSnapRunController extends BaseController {
         if (filename == null || contents == null) {
             return;
         }
-        BaseTask<Void> saveHtmlTask = new BaseTask<Void>() {
+        FxTask<Void> saveHtmlTask = new FxTask<Void>() {
 
             @Override
             protected boolean handle() {
@@ -1107,7 +1107,7 @@ public class WeiboSnapRunController extends BaseController {
         if (address == null) {
             return;
         }
-        BaseTask<Void> savePicturesTask = new BaseTask<Void>() {
+        FxTask<Void> savePicturesTask = new FxTask<Void>() {
             @Override
             protected boolean handle() {
                 try {
@@ -1288,7 +1288,7 @@ public class WeiboSnapRunController extends BaseController {
                 // Final format is determined when write PDF file.
                 String filename = pdfFilename + "-Image" + imageFiles.size() + ".png";
                 BufferedImage bufferedImage = SwingFXUtils.fromFXImage(snapshot, null);
-                ImageFileWriters.writeImageFile(bufferedImage, "png", filename);
+                ImageFileWriters.writeImageFile(task, bufferedImage, "png", filename);
                 imageFiles.add(filename);
             } catch (Exception e) {
                 MyBoxLog.debug(e);
@@ -1316,16 +1316,16 @@ public class WeiboSnapRunController extends BaseController {
                     int y1 = snapHeight - pageHeight + 100;
 //                                            MyBoxLog.debug(pageHeight + " " + snapHeight + " " + windowHeight + " " + y1);
                     String filename = imageFiles.get(imageFiles.size() - 1);
-                    Image lastSnap = CropTools.cropOutsideFx(snapshot, 0, y1 * snapScale,
+                    Image lastSnap = CropTools.cropOutsideFx(task, snapshot, 0, y1 * snapScale,
                             (int) snapshot.getWidth(), (int) snapshot.getHeight());
                     BufferedImage bufferedImage = SwingFXUtils.fromFXImage(lastSnap, null);
                     FileDeleteTools.delete(new File(filename));
-                    ImageFileWriters.writeImageFile(bufferedImage, "png", filename);
+                    ImageFileWriters.writeImageFile(task, bufferedImage, "png", filename);
                 }
 
                 File currentPdf = new File(pdfFilename);
                 loadingController.addLine(Languages.message("Generateing") + ": " + currentPdf.getAbsolutePath());
-                Boolean isOK = PdfTools.imagesFiles2Pdf(imageFiles, currentPdf, parameters, true);
+                Boolean isOK = PdfTools.imagesFiles2Pdf(task, imageFiles, currentPdf, parameters, true);
                 for (String file : imageFiles) {
                     FileDeleteTools.delete(file);
                 }
@@ -1359,7 +1359,7 @@ public class WeiboSnapRunController extends BaseController {
         if (path == null || !path.exists() || !path.isDirectory()) {
             return;
         }
-        BaseTask<Void> clearTask = new BaseTask<Void>() {
+        FxTask<Void> clearTask = new FxTask<Void>() {
             @Override
             protected boolean handle() {
                 try {
@@ -1382,7 +1382,7 @@ public class WeiboSnapRunController extends BaseController {
     }
 
     protected void mergeMonthPdf(final File path, final String month, final int pageCount) {
-        BaseTask<Void> mergeTask = new BaseTask<Void>() {
+        FxTask<Void> mergeTask = new FxTask<Void>() {
             @Override
             protected boolean handle() {
                 try {
@@ -1406,7 +1406,7 @@ public class WeiboSnapRunController extends BaseController {
                     File monthFile = new File(monthFileName);
                     FileDeleteTools.delete(monthFile);
                     if (files.size() == 1) {
-                        FileTools.rename(files.get(0), monthFile);
+                        FileTools.override(files.get(0), monthFile);
                         savedMonthPdfCount++;
                         savedPagePdfCount--;
                         pdfs.remove(month);
@@ -1469,7 +1469,7 @@ public class WeiboSnapRunController extends BaseController {
             if (openLoadingStage()) {
                 loadingController.setInfo(Languages.message("DeleteEmptyDirectories"));
             }
-            FileDeleteTools.deleteEmptyDir(rootPath, false);
+            FileDeleteTools.deleteEmptyDir(null, rootPath, false);
             if (parent != null && snapType == SnapType.Posts) {
                 parent.setDuration(currentMonthString, "");
             }

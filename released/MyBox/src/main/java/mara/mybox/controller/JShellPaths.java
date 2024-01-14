@@ -79,7 +79,7 @@ public class JShellPaths extends BaseController {
 
     @FXML
     protected void showHistories(Event event) {
-        PopTools.popStringValues(this, pathInput, event, "JarPathHistories", false, true);
+        PopTools.popStringValues(this, pathInput, event, "JarPathHistories", false);
     }
 
     @FXML

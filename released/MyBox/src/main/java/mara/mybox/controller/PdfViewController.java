@@ -8,10 +8,14 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
@@ -23,9 +27,10 @@ import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.data.PdfInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -47,17 +52,17 @@ import org.apache.pdfbox.rendering.PDFRenderer;
 public class PdfViewController extends PdfViewController_Html {
 
     protected SimpleBooleanProperty infoLoaded;
-    protected SingletonTask outlineTask;
+    protected FxTask bookmarksTask;
 
     @FXML
-    protected CheckBox transparentBackgroundCheck, bookmarksCheck,
+    protected CheckBox transparentBackgroundCheck, viewBookmarkCheck,
             wrapTextsCheck, refreshSwitchTextsCheck, refreshChangeTextsCheck,
             wrapOCRCheck, refreshChangeOCRCheck, refreshSwitchOCRCheck,
             refreshChangeHtmlCheck, refreshSwitchHtmlCheck;
     @FXML
-    protected ScrollPane outlineScrollPane;
+    protected ScrollPane bookmarksScrollPane;
     @FXML
-    protected TreeView outlineTree;
+    protected TreeView bookmarksTree;
 
     public PdfViewController() {
         baseTitle = message("PdfView");
@@ -89,27 +94,23 @@ public class PdfViewController extends PdfViewController_Html {
             }
             initTabPane();
 
-            if (bookmarksCheck != null) {
-                bookmarksCheck.setSelected(UserConfig.getBoolean(baseName + "Bookmarks", true));
-                bookmarksCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                    @Override
-                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        checkOutline();
-                        UserConfig.setBoolean(baseName + "Bookmarks", bookmarksCheck.isSelected());
-                    }
-                });
-            }
+            viewBookmarkCheck.setSelected(UserConfig.getBoolean(baseName + "Bookmarks", true));
+            viewBookmarkCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(baseName + "Bookmarks", viewBookmarkCheck.isSelected());
+                    loadBookmarks();
+                }
+            });
 
-            if (transparentBackgroundCheck != null) {
-                transparentBackgroundCheck.setSelected(UserConfig.getBoolean(baseName + "Transparent", false));
-                transparentBackgroundCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                    @Override
-                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        UserConfig.setBoolean(baseName + "Transparent", transparentBackgroundCheck.isSelected());
-                        loadPage();
-                    }
-                });
-            }
+            transparentBackgroundCheck.setSelected(UserConfig.getBoolean(baseName + "Transparent", false));
+            transparentBackgroundCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(baseName + "Transparent", transparentBackgroundCheck.isSelected());
+                    loadPage();
+                }
+            });
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -213,25 +214,6 @@ public class PdfViewController extends PdfViewController_Html {
         }
     }
 
-    protected void checkOutline() {
-        if (!infoLoaded.get()) {
-            return;
-        }
-        if (bookmarksCheck.isSelected()) {
-            if (!mainPane.getItems().contains(outlineScrollPane)) {
-                mainPane.getItems().add(mainPane.getItems().size() - 1, outlineScrollPane);
-            }
-            loadOutline();
-
-        } else {
-            if (mainPane.getItems().contains(outlineScrollPane)) {
-                mainPane.getItems().remove(outlineScrollPane);
-            }
-        }
-        adjustSplitPane();
-
-    }
-
     @Override
     public void sourceFileChanged(File file) {
         if (file == null) {
@@ -247,12 +229,12 @@ public class PdfViewController extends PdfViewController_Html {
                 task.cancel();
                 task = null;
             }
-            if (outlineTask != null) {
-                outlineTask.cancel();
-                outlineTask = null;
+            if (bookmarksTask != null) {
+                bookmarksTask.cancel();
+                bookmarksTask = null;
             }
             infoLoaded.set(false);
-            outlineTree.setRoot(null);
+            bookmarksTree.setRoot(null);
             ocrArea.clear();
             ocrLabel.setText("");
             textsArea.clear();
@@ -300,7 +282,7 @@ public class PdfViewController extends PdfViewController_Html {
         pageSelector.getItems().clear();
         isSettingValues = false;
         pageLabel.setText("");
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -328,9 +310,8 @@ public class PdfViewController extends PdfViewController_Html {
                 isSettingValues = false;
                 initCurrentPage();
                 loadPage();
-                checkOutline();
-                checkThumbs();
-                browseController.setCurrentFile(sourceFile);
+                loadBookmarks();
+                loadThumbs();
             }
 
         };
@@ -339,7 +320,7 @@ public class PdfViewController extends PdfViewController_Html {
 
     @Override
     protected Image readPageImage() {
-        try (PDDocument doc = PDDocument.load(sourceFile, password, AppVariables.pdfMemUsage)) {
+        try (PDDocument doc = PDDocument.load(sourceFile, password, AppVariables.PdfMemUsage)) {
             PDFRenderer renderer = new PDFRenderer(doc);
             BufferedImage bufferedImage = renderer.renderImageWithDPI(frameIndex, dpi,
                     transparentBackgroundCheck.isSelected() ? ImageType.ARGB : ImageType.RGB);
@@ -370,20 +351,20 @@ public class PdfViewController extends PdfViewController_Html {
         }
     }
 
-    protected void loadOutline() {
-        if (outlineTask != null) {
-            outlineTask.cancel();
+    protected void loadBookmarks() {
+        if (bookmarksTask != null) {
+            bookmarksTask.cancel();
         }
-        if (!infoLoaded.get()) {
+        if (!viewBookmarkCheck.isSelected() || !infoLoaded.get()) {
             return;
         }
-        outlineTree.setRoot(null);
-        outlineTask = new SingletonTask<Void>(this) {
+        bookmarksTree.setRoot(null);
+        bookmarksTask = new FxTask<Void>(this) {
             private TreeItem outlineRoot;
 
             @Override
             protected boolean handle() {
-                try (PDDocument doc = PDDocument.load(sourceFile, password, AppVariables.pdfMemUsage)) {
+                try (PDDocument doc = PDDocument.load(sourceFile, password, AppVariables.PdfMemUsage)) {
                     PDDocumentOutline outline = doc.getDocumentCatalog().getDocumentOutline();
                     if (outline != null) {
                         outlineRoot = new TreeItem<>(message("Bookmarks"));
@@ -393,7 +374,6 @@ public class PdfViewController extends PdfViewController_Html {
                     doc.close();
                 } catch (Exception e) {
                     error = e.toString();
-                    MyBoxLog.debug(e);
                     return false;
                 }
                 return ok;
@@ -401,20 +381,24 @@ public class PdfViewController extends PdfViewController_Html {
 
             @Override
             protected void whenSucceeded() {
-                outlineTree.setRoot(outlineRoot);
-                outlineScrollPane.applyCss();
-                outlineScrollPane.layout();
+                bookmarksTree.setRoot(outlineRoot);
+                bookmarksScrollPane.applyCss();
+                bookmarksScrollPane.layout();
+            }
+
+            @Override
+            protected void whenFailed() {
             }
 
         };
-        start(outlineTask, false);
+        start(bookmarksTask, false);
     }
 
     protected boolean loadOutlineItem(PDOutlineNode parentOutlineItem, TreeItem parentTreeItem) {
         try {
             PDOutlineItem childOutlineItem = parentOutlineItem.getFirstChild();
             while (childOutlineItem != null) {
-                if (outlineTask == null || outlineTask.isCancelled()) {
+                if (bookmarksTask == null || bookmarksTask.isCancelled()) {
                     return false;
                 }
                 int pageNumber = 0;
@@ -440,7 +424,7 @@ public class PdfViewController extends PdfViewController_Html {
                 TreeItem<Text> treeItem = new TreeItem<>(link);
                 treeItem.setExpanded(true);
                 parentTreeItem.getChildren().add(treeItem);
-                if (outlineTask == null || outlineTask.isCancelled()) {
+                if (bookmarksTask == null || bookmarksTask.isCancelled()) {
                     return false;
                 }
                 loadOutlineItem(childOutlineItem, treeItem);
@@ -455,7 +439,7 @@ public class PdfViewController extends PdfViewController_Html {
 
     @Override
     protected boolean loadThumbs(List<Integer> missed) {
-        try (PDDocument doc = PDDocument.load(sourceFile, password, AppVariables.pdfMemUsage)) {
+        try (PDDocument doc = PDDocument.load(sourceFile, password, AppVariables.PdfMemUsage)) {
             PDFRenderer renderer = new PDFRenderer(doc);
             for (Integer index : missed) {
                 if (thumbTask == null || thumbTask.isCancelled()) {
@@ -466,8 +450,8 @@ public class PdfViewController extends PdfViewController_Html {
                     continue;
                 }
                 BufferedImage bufferedImage = renderer.renderImageWithDPI(index, 72, ImageType.RGB);  // 0-based
-                if (bufferedImage.getWidth() > ThumbWidth) {
-                    bufferedImage = ScaleTools.scaleImageWidthKeep(bufferedImage, ThumbWidth);
+                if (bufferedImage.getWidth() > thumbWidth) {
+                    bufferedImage = ScaleTools.scaleImageWidthKeep(bufferedImage, thumbWidth);
                 }
                 Image thumb = SwingFXUtils.toFXImage(bufferedImage, null);
                 view.setImage(thumb);
@@ -484,15 +468,17 @@ public class PdfViewController extends PdfViewController_Html {
 
     @FXML
     @Override
-    public void infoAction() {
+    public boolean infoAction() {
         if (pdfInformation == null) {
-            return;
+            return false;
         }
         try {
             PdfInformationController controller = (PdfInformationController) openStage(Fxmls.PdfInformationFxml);
             controller.setInformation(pdfInformation);
+            return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
+            return false;
         }
     }
 
@@ -504,9 +490,9 @@ public class PdfViewController extends PdfViewController_Html {
             }
             webEngine = null;
             webView.setUserData(null);
-            if (outlineTask != null) {
-                outlineTask.cancel();
-                outlineTask = null;
+            if (bookmarksTask != null) {
+                bookmarksTask.cancel();
+                bookmarksTask = null;
             }
             if (htmlTask != null) {
                 htmlTask.cancel();
@@ -531,13 +517,64 @@ public class PdfViewController extends PdfViewController_Html {
         ImagesPlayController.playPDF(sourceFile, password);
     }
 
-    @Override
-    public void setFilesBrowse() {
-    }
-
     @FXML
     public void permissionAction() {
         PdfAttributesController.open(sourceFile, password);
+    }
+
+    @Override
+    public List<MenuItem> fileMenuItems(Event fevent) {
+        try {
+            if (sourceFile == null) {
+                return null;
+            }
+            List<MenuItem> items = new ArrayList<>();
+            MenuItem menu;
+
+            menu = new MenuItem(message("Permissions"), StyleTools.getIconImageView("iconPermission.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                permissionAction();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("Information") + "    Ctrl+I " + message("Or") + " Alt+I",
+                    StyleTools.getIconImageView("iconInfo.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                infoAction();
+            });
+            items.add(menu);
+
+            items.add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("OpenDirectory"), StyleTools.getIconImageView("iconOpenPath.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                openSourcePath();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("BrowseFiles"), StyleTools.getIconImageView("iconList.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                FileBrowseController.open(this);
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("SystemMethod"), StyleTools.getIconImageView("iconSystemOpen.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                systemMethod();
+            });
+            items.add(menu);
+
+            return items;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    @Override
+    public boolean controlAltI() {
+        infoAction();
+        return true;
     }
 
     /*

@@ -20,11 +20,6 @@ public class CoordinatePickerController extends LocationInMapController {
         notify = new SimpleBooleanProperty();
     }
 
-    @Override
-    public void setStageStatus() {
-        setAsPop(baseName);
-    }
-
     @FXML
     @Override
     public void okAction() {
@@ -47,7 +42,7 @@ public class CoordinatePickerController extends LocationInMapController {
     public static CoordinatePickerController open(BaseController parent, double longitude, double latitude) {
         try {
             CoordinatePickerController controller
-                    = (CoordinatePickerController) WindowTools.openChildStage(parent.getMyWindow(), Fxmls.CoordinatePickerFxml, true);
+                    = (CoordinatePickerController) WindowTools.childStage(parent, Fxmls.CoordinatePickerFxml);
             controller.loadCoordinate(longitude, latitude);
             return controller;
         } catch (Exception e) {

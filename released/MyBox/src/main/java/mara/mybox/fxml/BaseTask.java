@@ -3,7 +3,6 @@ package mara.mybox.fxml;
 import java.util.Date;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
-import javafx.scene.Node;
 import mara.mybox.tools.DateTools;
 
 /**
@@ -18,7 +17,6 @@ public class BaseTask<P> extends Task<P> {
     protected long cost;
     protected boolean ok, quit;
     protected String error;
-    protected Node disableNode;
 
     public BaseTask() {
         error = null;
@@ -49,9 +47,6 @@ public class BaseTask<P> extends Task<P> {
 
     protected boolean initValues() {
         startTime = new Date();
-        if (disableNode != null) {
-            disableNode.setDisable(true);
-        }
         return true;
     }
 
@@ -62,14 +57,12 @@ public class BaseTask<P> extends Task<P> {
     @Override
     protected void succeeded() {
         super.succeeded();
-        if (startTime != null) {
-            cost = new Date().getTime() - startTime.getTime();
-        }
         taskQuit();
         Platform.runLater(() -> {
             if (isCancelled()) {
-                whenCanceled();
-            } else if (ok) {
+                return;
+            }
+            if (ok) {
                 whenSucceeded();
             } else {
                 whenFailed();
@@ -93,33 +86,41 @@ public class BaseTask<P> extends Task<P> {
     protected void failed() {
         super.failed();
         taskQuit();
-        whenFailed();
-        finalAction();
+        Platform.runLater(() -> {
+            whenFailed();
+            finalAction();
+        });
+
     }
 
     @Override
     protected void cancelled() {
         super.cancelled();
         taskQuit();
-        whenCanceled();
-        finalAction();
+        Platform.runLater(() -> {
+            whenCanceled();
+            finalAction();
+        });
     }
 
     protected void taskQuit() {
         endTime = new Date();
+        if (startTime != null) {
+            cost = endTime.getTime() - startTime.getTime();
+        }
         self = null;
         quit = true;
-        if (disableNode != null) {
-            disableNode.setDisable(false);
-        }
     }
 
     protected void finalAction() {
-
     }
 
     public String duration() {
         return DateTools.datetimeMsDuration(new Date().getTime() - startTime.getTime());
+    }
+
+    public boolean isWorking() {
+        return !quit && !isCancelled() && !isDone();
     }
 
     /*
@@ -179,14 +180,6 @@ public class BaseTask<P> extends Task<P> {
 
     public void setQuit(boolean quit) {
         this.quit = quit;
-    }
-
-    public Node getDisableNode() {
-        return disableNode;
-    }
-
-    public void setDisableNode(Node disableNode) {
-        this.disableNode = disableNode;
     }
 
 }

@@ -118,7 +118,7 @@ public class InfoTreeNodeImportController extends BaseBatchFileController {
             return;
         }
         isSettingValues = true;
-        createRadio.setSelected(true);
+        updateRadio.setSelected(true);
         iconCheck.setSelected(false);
         isSettingValues = false;
         startFile(file);
@@ -377,16 +377,24 @@ public class InfoTreeNodeImportController extends BaseBatchFileController {
 
     public long getParent(FxTask currentTask, Connection conn, String parentChain) {
         try {
+            if (parentChain == null || parentChain.isBlank()) {
+                return -2;
+            }
             if (InfoNode.RootIdentify.equals(parentChain)) {
                 return -1;
             } else {
                 long parentid = rootNode.getNodeid();
+                String rootTitle = rootNode.getTitle();
+                String rootTitleMsg = message(rootTitle);
+                if (parentChain.equals(rootTitle) || parentChain.equals(rootTitleMsg)) {
+                    return parentid;
+                }
                 String chain = parentChain;
-                String prefix = rootNode.getTitle() + InfoNode.TitleSeparater;
+                String prefix = rootTitle + InfoNode.TitleSeparater;
                 if (chain.startsWith(prefix)) {
                     chain = chain.substring(prefix.length());
                 } else {
-                    prefix = message(rootNode.getTitle()) + InfoNode.TitleSeparater;
+                    prefix = rootTitleMsg + InfoNode.TitleSeparater;
                     if (chain.startsWith(prefix)) {
                         chain = chain.substring(prefix.length());
                     }
@@ -506,9 +514,11 @@ public class InfoTreeNodeImportController extends BaseBatchFileController {
         if (infoController != null) {
             infoController.infoTree.loadTree();
 
-            closeStage();
+            if (!isPreview) {
+                closeStage();
+            }
 
-            infoController.refreshTagss();
+            infoController.refreshTags();
             infoController.refreshTimes();
             if (!AppVariables.isTesting) {
                 infoController.popInformation(message("Imported") + ": " + totalItemsHandled);
@@ -523,7 +533,7 @@ public class InfoTreeNodeImportController extends BaseBatchFileController {
     }
 
     @FXML
-    public void demo() {
+    public void exampleData() {
         File file = InfoNode.exampleFile(category);
         if (file == null) {
             file = InfoNode.exampleFile(InfoNode.Notebook);

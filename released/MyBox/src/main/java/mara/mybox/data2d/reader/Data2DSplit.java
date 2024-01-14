@@ -110,7 +110,7 @@ public class Data2DSplit extends Data2DOperator {
             csvPrinter.close();
             csvPrinter = null;
             File file = data2D.tmpFile(prefix + "_" + startIndex + "-" + rowIndex, null, "csv");
-            if (FileTools.rename(currentFile, file) && file.exists()) {
+            if (FileTools.override(currentFile, file) && file.exists()) {
                 DataFileCSV dataFileCSV = new DataFileCSV();
                 dataFileCSV.setTask(task);
                 dataFileCSV.setColumns(targetColumns)

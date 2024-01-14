@@ -14,6 +14,7 @@ import javafx.scene.layout.HBox;
 import mara.mybox.bufferedimage.AlphaTools;
 import mara.mybox.bufferedimage.ImageAttributes;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.value.FileFilters;
@@ -23,10 +24,9 @@ import mara.mybox.value.UserConfig;
 /**
  * @Author Mara
  * @CreateDate 2018-9-25
- * @Description
  * @License Apache License Version 2.0
  */
-public class ImageAlphaAddBatchController extends BaseImageManufactureBatchController {
+public class ImageAlphaAddBatchController extends BaseImageEditBatchController {
 
     private float opacityValue;
     private boolean useOpacityValue;
@@ -155,9 +155,6 @@ public class ImageAlphaAddBatchController extends BaseImageManufactureBatchContr
         if (!super.makeMoreParameters()) {
             return false;
         }
-        if (!useOpacityValue) {
-            alphaImage = ImageFileReaders.readImage(sourceFile);
-        }
         if (tifRadio.isSelected()) {
             targetFileSuffix = "tif";
         } else {
@@ -168,7 +165,16 @@ public class ImageAlphaAddBatchController extends BaseImageManufactureBatchContr
     }
 
     @Override
-    protected BufferedImage handleImage(BufferedImage source) {
+    public boolean beforeHandleFiles(FxTask currentTask) {
+        if (!useOpacityValue) {
+            alphaImage = ImageFileReaders.readImage(currentTask, sourceFile);
+            return alphaImage != null;
+        }
+        return true;
+    }
+
+    @Override
+    protected BufferedImage handleImage(FxTask currentTask, BufferedImage source) {
         try {
             if (source.getColorModel().hasAlpha() && blendMode == AlphaBlendMode.KeepOriginal) {
                 errorString = Languages.message("NeedNotHandle");
@@ -176,9 +182,9 @@ public class ImageAlphaAddBatchController extends BaseImageManufactureBatchContr
             }
             BufferedImage target;
             if (useOpacityValue) {
-                target = AlphaTools.addAlpha(source, opacityValue, blendMode == AlphaBlendMode.Plus);
+                target = AlphaTools.addAlpha(currentTask, source, opacityValue, blendMode == AlphaBlendMode.Plus);
             } else {
-                target = AlphaTools.addAlpha(source, alphaImage, blendMode == AlphaBlendMode.Plus);
+                target = AlphaTools.addAlpha(currentTask, source, alphaImage, blendMode == AlphaBlendMode.Plus);
             }
             return target;
         } catch (Exception e) {

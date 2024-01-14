@@ -9,6 +9,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import mara.mybox.db.data.VisitHistory;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.HtmlWriteTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -90,8 +91,8 @@ public class HtmlSetEquivController extends BaseBatchHtmlController {
     }
 
     @Override
-    public String covertHtml(File srcFile, Charset charset) {
-        return HtmlWriteTools.setEquiv(srcFile, charset, key, value);
+    public String covertHtml(FxTask currentTask, File srcFile, Charset charset) {
+        return HtmlWriteTools.setEquiv(currentTask, srcFile, charset, key, value);
     }
 
 }

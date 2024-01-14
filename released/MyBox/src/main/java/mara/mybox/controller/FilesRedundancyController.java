@@ -18,6 +18,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import mara.mybox.data.FileNode;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.ByteTools;
@@ -81,7 +82,7 @@ public class FilesRedundancyController extends BaseBatchFileController {
     }
 
     @Override
-    public String handleFile(File file) {
+    public String handleFile(FxTask currentTask, File file) {
         try {
             if (!match(file)) {
                 return done;
@@ -97,7 +98,7 @@ public class FilesRedundancyController extends BaseBatchFileController {
     }
 
     @Override
-    public String handleDirectory(File directory) {
+    public String handleDirectory(FxTask currentTask, File directory) {
         try {
             if (directory == null || !directory.isDirectory()) {
                 return done;
@@ -111,9 +112,9 @@ public class FilesRedundancyController extends BaseBatchFileController {
                     return done;
                 }
                 if (srcFile.isFile()) {
-                    handleFile(srcFile);
+                    handleFile(currentTask, srcFile);
                 } else if (srcFile.isDirectory()) {
-                    handleDirectory(srcFile);
+                    handleDirectory(currentTask, srcFile);
                 }
             }
             return done;
@@ -124,7 +125,7 @@ public class FilesRedundancyController extends BaseBatchFileController {
     }
 
     @Override
-    public void afterHandleFiles() {
+    public void afterHandleFiles(FxTask currentTask) {
         try {
             if (filesList == null || filesList.isEmpty()) {
                 return;
@@ -151,7 +152,7 @@ public class FilesRedundancyController extends BaseBatchFileController {
             sameSize.add(f);
             updateTaskProgress(1, filesList.size());
             for (int i = 1; i < filesList.size(); ++i) {
-                if (task == null || task.isCancelled()) {
+                if (currentTask == null || !currentTask.isWorking()) {
                     return;
                 }
                 f = filesList.get(i);
@@ -165,15 +166,18 @@ public class FilesRedundancyController extends BaseBatchFileController {
                     sameSize.add(f);
                 } else {
                     if (sameSize.size() > 1) {
-                        checkDigest(sameSize);
+                        checkDigest(currentTask, sameSize);
                     }
                     sameSize = new ArrayList();
                     sameSize.add(f);
                     size = f.getFileSize();
                 }
             }
+            if (currentTask == null || !currentTask.isWorking()) {
+                return;
+            }
             if (sameSize.size() > 1) {
-                checkDigest(sameSize);
+                checkDigest(currentTask, sameSize);
             }
             filesList.clear();
         } catch (Exception e) {
@@ -181,16 +185,16 @@ public class FilesRedundancyController extends BaseBatchFileController {
         }
     }
 
-    protected void checkDigest(List<FileNode> files) {
+    protected void checkDigest(FxTask currentTask, List<FileNode> files) {
         long big = 500 * 1024 * 1024L;
         for (FileNode f : files) {
-            if (task == null || task.isCancelled()) {
+            if (currentTask == null || !currentTask.isWorking()) {
                 return;
             }
             if (f.getFileSize() > big) {
                 showStatus(MessageFormat.format(message("CalculatingDigest"), f.getFile().getAbsolutePath()), f);
             }
-            f.setData(ByteTools.bytesToHex(MessageDigestTools.MD5(f.getFile())));
+            f.setData(ByteTools.bytesToHex(MessageDigestTools.MD5(currentTask, f.getFile())));
         }
         Collections.sort(files, new Comparator<FileNode>() {
             @Override
@@ -203,7 +207,7 @@ public class FilesRedundancyController extends BaseBatchFileController {
         List<FileNode> sameFiles = new ArrayList();
         sameFiles.add(f);
         for (int i = 1; i < files.size(); ++i) {
-            if (task == null || task.isCancelled()) {
+            if (currentTask == null || !currentTask.isWorking()) {
                 return;
             }
             f = files.get(i);
@@ -220,6 +224,9 @@ public class FilesRedundancyController extends BaseBatchFileController {
                 sameFiles.add(f);
                 digest = f.getData();
             }
+        }
+        if (currentTask == null || !currentTask.isWorking()) {
+            return;
         }
         if (sameFiles.size() > 1) {
             redundancy.put(digest, sameFiles);
@@ -242,8 +249,8 @@ public class FilesRedundancyController extends BaseBatchFileController {
             popInformation(message("NoRedundancy"));
 
         } else {
-            FilesRedundancyResultsController controller
-                    = (FilesRedundancyResultsController) WindowTools.openChildStage(getMyStage(), Fxmls.FilesRedundancyResultsFxml, false);
+            FilesRedundancyResultsController controller = (FilesRedundancyResultsController) WindowTools.branchStage(
+                    this, Fxmls.FilesRedundancyResultsFxml);
             if (controller != null) {
                 controller.loadRedundancy(redundancy);
             }

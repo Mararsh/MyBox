@@ -322,7 +322,7 @@ public class BaseHtmlTreeController extends BaseTreeTableViewController<HtmlNode
             popInformation(message("NullOrBlank"));
             return;
         }
-        TextPopController.loadText(this, text);
+        TextPopController.loadText(text);
     }
 
     @FXML

@@ -14,7 +14,7 @@ import javafx.scene.control.TextInputControl;
 import javafx.stage.Window;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.Languages;
 
@@ -57,6 +57,7 @@ public class MenuTextBaseController extends MenuController {
                 replaceButton.setDisable(true);
             }
             super.setParameters(parent, node, x, y);
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -99,7 +100,8 @@ public class MenuTextBaseController extends MenuController {
         if (parentController == null || node == null) {
             return false;
         }
-        MenuTextEditController.textMenu(parentController, node, initX, initY);
+        MenuTextEditController.textMenu(parentController, node,
+                getMyStage().getX(), getMyStage().getY());
         return true;
     }
 
@@ -110,7 +112,7 @@ public class MenuTextBaseController extends MenuController {
             return;
         }
         Window window = thisPane.getScene().getWindow();
-        FindPopController.findMenu(parentController, node, window.getX(), window.getY());
+        FindController.forInput(parentController, textInput);
         window.hide();
     }
 
@@ -121,7 +123,8 @@ public class MenuTextBaseController extends MenuController {
             return;
         }
         Window window = thisPane.getScene().getWindow();
-        FindReplacePopController.replaceMenu(parentController, node, window.getX(), window.getY());
+        FindReplaceController.forInput(parentController, textInput);
+        window.hide();
     }
 
     @FXML
@@ -150,7 +153,7 @@ public class MenuTextBaseController extends MenuController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {

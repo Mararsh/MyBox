@@ -15,7 +15,7 @@ import javafx.scene.shape.Rectangle;
 import javax.imageio.ImageIO;
 import mara.mybox.fxml.FxFileTools;
 import mara.mybox.value.AppValues;
-import mara.mybox.value.Languages;
+import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -126,7 +126,7 @@ public class ImageItem {
         static
      */
     public static List<ImageItem> predefined() {
-        return predefined(Languages.getLangName());
+        return predefined(AppVariables.CurrentLangName);
     }
 
     public static List<ImageItem> predefined(String lang) {
@@ -164,13 +164,13 @@ public class ImageItem {
             icons.addAll(Arrays.asList("Add", "Analyse", "Anchor", "Cancel", "Cat",
                     "Clear", "Clipboard", "Close", "Copy",
                     "Data", "Default", "Delete", "Delimiter", "Demo", "DoubleLeft",
-                    "Edit", "Examples", "Export",
-                    "Function", "Go", "Import", "Menu", "NewItem", "OK", "OpenPath",
-                    "Panes", "Play", "Permission", "Polylines", "Pop", "Query",
+                    "Edit", "Examples", "Export", "File", "Format", "Frame",
+                    "Function", "Go", "History", "Import", "Manage", "Menu", "NewItem",
+                    "OK", "OpenPath", "Operation", "Options",
+                    "Panes", "Play", "Permission", "Polylines", "Pop", "Preview", "Query",
                     "Random", "Recover", "Refresh", "Repeat",
-                    "Sample", "Save", "SelectAll", "SelectFile", "SelectPath", "Style",
-                    "SVG", "Tips", "Tree", "Typesetting",
-                    "Undo", "Verify", "View", "Window"));
+                    "Sample", "Save", "SelectAll", "SelectFile", "SelectPath", "Shape", "Style",
+                    "SVG", "Tips", "Tree", "Undo", "Verify", "View", "Window", "Withdraw"));
             for (String name : icons) {
                 item = new ImageItem()
                         .setName("icon" + name + ".png")
@@ -195,6 +195,18 @@ public class ImageItem {
         } catch (Exception e) {
         }
         return preDefined;
+    }
+
+    public static String exampleImageName() {
+        return "img/cover" + AppValues.AppYear + "g5.png";
+    }
+
+    public static Image exampleImage() {
+        return new Image(exampleImageName());
+    }
+
+    public static File exampleImageFile() {
+        return FxFileTools.getInternalFile("/" + exampleImageName(), "image", "About.png");
     }
 
     /*

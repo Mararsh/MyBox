@@ -11,6 +11,7 @@ import java.util.List;
 import javafx.scene.control.IndexRange;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.FileTmpTools;
@@ -25,7 +26,7 @@ import org.apache.commons.csv.CSVPrinter;
  */
 public class FindReplaceBytesFile {
 
-    public static boolean countBytes(FileEditInformation sourceInfo, FindReplaceFile findReplaceFile) {
+    public static boolean countBytes(FxTask currentTask, FileEditInformation sourceInfo, FindReplaceFile findReplaceFile) {
         if (sourceInfo == null || sourceInfo.getFile() == null || findReplaceFile == null
                 || findReplaceFile.getFindString() == null || findReplaceFile.getFindString().isEmpty()) {
             if (findReplaceFile != null) {
@@ -47,13 +48,19 @@ public class FindReplaceBytesFile {
             int bufLen, backFrom, hexLen;
             String pageHex, backString = "", checkedString;
             while ((bufLen = inputStream.read(pageBytes)) > 0) {
+                if (currentTask != null && !currentTask.isWorking()) {
+                    return false;
+                }
                 if (bufLen < pageSize) {
                     pageBytes = ByteTools.subBytes(pageBytes, 0, bufLen);
                 }
                 pageHex = ByteTools.bytesToHexFormat(pageBytes);
                 hexLen = pageHex.length();
                 checkedString = backString + pageHex;
-                findReplaceString.setInputString(checkedString).handleString();
+                findReplaceString.setInputString(checkedString).handleString(currentTask);
+                if (currentTask != null && !currentTask.isWorking()) {
+                    return false;
+                }
                 IndexRange lastRange = findReplaceString.getStringRange();
                 if (lastRange != null) {
                     count += findReplaceString.getCount();
@@ -78,13 +85,19 @@ public class FindReplaceBytesFile {
         }
     }
 
-    public static boolean findNextBytes(FileEditInformation sourceInfo, FindReplaceFile findReplaceFile) {
+    public static boolean findNextBytes(FxTask currentTask, FileEditInformation sourceInfo, FindReplaceFile findReplaceFile) {
         try {
-            LongRange found = findNextBytesRange(sourceInfo, findReplaceFile);
+            LongRange found = findNextBytesRange(currentTask, sourceInfo, findReplaceFile);
+            if (currentTask != null && !currentTask.isWorking()) {
+                return false;
+            }
             if (found == null) {
                 return findReplaceFile != null && findReplaceFile.getError() == null;
             }
-            String pageText = sourceInfo.readObjects(found.getStart() / 3, found.getLength() / 3);
+            String pageText = sourceInfo.readObjects(currentTask, found.getStart() / 3, found.getLength() / 3);
+            if (currentTask != null && !currentTask.isWorking()) {
+                return false;
+            }
             IndexRange stringRange = FindReplaceTextFile.pageRange(findReplaceFile);
             if (stringRange == null) {
                 findReplaceFile.setError(message("InvalidData"));
@@ -101,7 +114,7 @@ public class FindReplaceBytesFile {
         }
     }
 
-    public static LongRange findNextBytesRange(FileEditInformation sourceInfo, FindReplaceFile findReplaceFile) {
+    public static LongRange findNextBytesRange(FxTask currentTask, FileEditInformation sourceInfo, FindReplaceFile findReplaceFile) {
         if (sourceInfo == null || sourceInfo.getFile() == null || findReplaceFile == null
                 || findReplaceFile.getFindString() == null || findReplaceFile.getFindString().isEmpty()) {
             if (findReplaceFile != null) {
@@ -134,7 +147,10 @@ public class FindReplaceBytesFile {
                     .setFindString(findString).setAnchor(0).setWrap(false);
             // findString should have been in hex format
             int findHexLen = findReplaceFile.isIsRegex() ? maxBytesLen * 3 : findString.length();
-            LongRange found = findNextBytesRange(sourceFile, findReplaceString, hexStartPosition, fileLength * 3, maxBytesLen, findHexLen);
+            LongRange found = findNextBytesRange(currentTask, sourceFile, findReplaceString, hexStartPosition, fileLength * 3, maxBytesLen, findHexLen);
+            if (currentTask != null && !currentTask.isWorking()) {
+                return null;
+            }
             if (found == null && findReplaceString.getError() != null) {
                 findReplaceFile.setError(findReplaceString.getError());
                 return null;
@@ -146,7 +162,10 @@ public class FindReplaceBytesFile {
                 } else {
                     hexEndPosition = hexStartPosition + findHexLen;
                 }
-                found = findNextBytesRange(sourceFile, findReplaceString, 0, hexEndPosition, maxBytesLen, findHexLen);
+                found = findNextBytesRange(currentTask, sourceFile, findReplaceString, 0, hexEndPosition, maxBytesLen, findHexLen);
+                if (currentTask != null && !currentTask.isWorking()) {
+                    return null;
+                }
             }
             if (found == null && findReplaceString.getError() != null) {
                 findReplaceFile.setError(findReplaceString.getError());
@@ -161,7 +180,7 @@ public class FindReplaceBytesFile {
         }
     }
 
-    public static LongRange findNextBytesRange(File file, FindReplaceString findReplaceString,
+    public static LongRange findNextBytesRange(FxTask currentTask, File file, FindReplaceString findReplaceString,
             long hexStartPosition, long hexEndPosition, long maxBytesLen, int findHexLen) {
         if (file == null || findReplaceString == null || hexStartPosition >= hexEndPosition) {
             return null;
@@ -180,6 +199,9 @@ public class FindReplaceBytesFile {
             int bufLen, backFrom, hexLen, keepLen;
             LongRange found = null;
             while ((bufLen = inputStream.read(bufBytes)) > 0) {
+                if (currentTask != null && !currentTask.isWorking()) {
+                    return null;
+                }
                 if (bufLen < bufSize) {
                     bufBytes = ByteTools.subBytes(bufBytes, 0, bufLen);
                 }
@@ -191,7 +213,11 @@ public class FindReplaceBytesFile {
                     bufHex = bufHex.substring(0, hexLen - keepLen);
                     hexLen = bufHex.length();
                 }
-                findReplaceString.setInputString(backString.concat(bufHex)).setAnchor(0).handleString();
+                findReplaceString.setInputString(backString.concat(bufHex))
+                        .setAnchor(0).handleString(currentTask);
+                if (currentTask != null && !currentTask.isWorking()) {
+                    return null;
+                }
                 range = findReplaceString.getStringRange();
                 if (range != null) {
                     found = new LongRange();
@@ -218,13 +244,16 @@ public class FindReplaceBytesFile {
 
     }
 
-    public static boolean findPreviousBytes(FileEditInformation sourceInfo, FindReplaceFile findReplaceFile) {
+    public static boolean findPreviousBytes(FxTask currentTask, FileEditInformation sourceInfo, FindReplaceFile findReplaceFile) {
         try {
-            LongRange found = findPreviousBytesRange(sourceInfo, findReplaceFile);
+            LongRange found = findPreviousBytesRange(currentTask, sourceInfo, findReplaceFile);
             if (found == null) {
                 return findReplaceFile != null && findReplaceFile.getError() == null;
             }
-            String pageText = sourceInfo.readObjects(found.getStart() / 3, found.getLength() / 3);
+            String pageText = sourceInfo.readObjects(currentTask, found.getStart() / 3, found.getLength() / 3);
+            if (currentTask != null && !currentTask.isWorking()) {
+                return false;
+            }
             IndexRange stringRange = FindReplaceTextFile.pageRange(findReplaceFile);
             if (stringRange == null) {
                 findReplaceFile.setError(message("InvalidData"));
@@ -241,7 +270,7 @@ public class FindReplaceBytesFile {
         }
     }
 
-    public static LongRange findPreviousBytesRange(FileEditInformation sourceInfo, FindReplaceFile findReplaceFile) {
+    public static LongRange findPreviousBytesRange(FxTask currentTask, FileEditInformation sourceInfo, FindReplaceFile findReplaceFile) {
         if (sourceInfo == null || sourceInfo.getFile() == null || findReplaceFile == null
                 || findReplaceFile.getFindString() == null || findReplaceFile.getFindString().isEmpty()) {
             if (findReplaceFile != null) {
@@ -271,7 +300,10 @@ public class FindReplaceBytesFile {
                     .setFindString(findString).setAnchor(0).setWrap(false);
             // findString should have been in hex format
             int findHexLen = findReplaceFile.isIsRegex() ? maxBytesLen * 3 : findString.length();
-            LongRange found = findPreviousBytesRange(sourceFile, findReplaceString, 0, hexEndPosition, maxBytesLen, findHexLen);
+            LongRange found = findPreviousBytesRange(currentTask, sourceFile, findReplaceString, 0, hexEndPosition, maxBytesLen, findHexLen);
+            if (currentTask != null && !currentTask.isWorking()) {
+                return null;
+            }
             if (found == null && findReplaceString.getError() != null) {
                 findReplaceFile.setError(findReplaceString.getError());
                 return null;
@@ -283,7 +315,10 @@ public class FindReplaceBytesFile {
                 } else {
                     hexStartPosition = Math.max(0, hexEndPosition - findHexLen);
                 }
-                found = findPreviousBytesRange(sourceFile, findReplaceString, hexStartPosition, fileLength * 3, maxBytesLen, findHexLen);
+                found = findPreviousBytesRange(currentTask, sourceFile, findReplaceString, hexStartPosition, fileLength * 3, maxBytesLen, findHexLen);
+                if (currentTask != null && !currentTask.isWorking()) {
+                    return null;
+                }
             }
             if (found == null && findReplaceString.getError() != null) {
                 findReplaceFile.setError(findReplaceString.getError());
@@ -298,7 +333,7 @@ public class FindReplaceBytesFile {
         }
     }
 
-    public static LongRange findPreviousBytesRange(File file, FindReplaceString findReplaceString,
+    public static LongRange findPreviousBytesRange(FxTask currentTask, File file, FindReplaceString findReplaceString,
             long hexStartPosition, long hexEndPosition, long maxBytesLen, int findHexLen) {
         if (file == null || findReplaceString == null || hexStartPosition >= hexEndPosition) {
             return null;
@@ -317,6 +352,9 @@ public class FindReplaceBytesFile {
             int bufLen, backFrom, hexLen, checkLen, keepLen;
             LongRange found = null;
             while ((bufLen = inputStream.read(bufBytes)) > 0) {
+                if (currentTask != null && !currentTask.isWorking()) {
+                    return null;
+                }
                 if (bufLen < maxBytesLen) {
                     bufBytes = ByteTools.subBytes(bufBytes, 0, bufLen);
                 }
@@ -330,7 +368,11 @@ public class FindReplaceBytesFile {
                 }
                 checkString = backString.concat(bufHex);
                 checkLen = checkString.length();
-                findReplaceString.setInputString(checkString).setAnchor(checkLen).handleString();
+                findReplaceString.setInputString(checkString)
+                        .setAnchor(checkLen).handleString(currentTask);
+                if (currentTask != null && !currentTask.isWorking()) {
+                    return null;
+                }
                 range = findReplaceString.getStringRange();
                 if (range != null) {
                     found = new LongRange();
@@ -366,7 +408,7 @@ public class FindReplaceBytesFile {
         }
     }
 
-    public static boolean replaceFirstBytes(FileEditInformation sourceInfo, FindReplaceFile findReplaceFile) {
+    public static boolean replaceFirstBytes(FxTask currentTask, FileEditInformation sourceInfo, FindReplaceFile findReplaceFile) {
         try {
             if (findReplaceFile == null) {
                 return false;
@@ -376,7 +418,10 @@ public class FindReplaceBytesFile {
                 return false;
             }
             findReplaceFile.setOperation(FindReplaceString.Operation.FindNext);
-            findNextBytes(sourceInfo, findReplaceFile);
+            findNextBytes(currentTask, sourceInfo, findReplaceFile);
+            if (currentTask != null && !currentTask.isWorking()) {
+                return false;
+            }
             IndexRange stringRange = findReplaceFile.getStringRange();
             findReplaceFile.setOperation(FindReplaceString.Operation.ReplaceFirst);
             if (stringRange == null) {
@@ -399,7 +444,7 @@ public class FindReplaceBytesFile {
         }
     }
 
-    public static boolean replaceAllBytes(FileEditInformation sourceInfo, FindReplaceFile findReplaceFile) {
+    public static boolean replaceAllBytes(FxTask currentTask, FileEditInformation sourceInfo, FindReplaceFile findReplaceFile) {
         if (sourceInfo == null || sourceInfo.getFile() == null
                 || findReplaceFile.getFindString() == null || findReplaceFile.getFindString().isEmpty()) {
             if (findReplaceFile != null) {
@@ -429,13 +474,20 @@ public class FindReplaceBytesFile {
             String pageHex, backString = "", checkedString, replacedString;
             int pageLen, backFrom, lastReplacedLength;
             while ((pageLen = inputStream.read(pageBytes)) > 0) {
+                if (currentTask != null && !currentTask.isWorking()) {
+                    return false;
+                }
                 if (pageLen < pageSize) {
                     pageBytes = ByteTools.subBytes(pageBytes, 0, pageLen);
                 }
                 pageHex = ByteTools.bytesToHexFormat(pageBytes);
                 pageLen = pageHex.length();
                 checkedString = backString + pageHex;
-                findReplaceString.setInputString(checkedString).setAnchor(0).handleString();
+                findReplaceString.setInputString(checkedString)
+                        .setAnchor(0).handleString(currentTask);
+                if (currentTask != null && !currentTask.isWorking()) {
+                    return false;
+                }
                 range = findReplaceString.getStringRange();
                 if (range != null) {
                     replacedString = findReplaceString.getOutputString();
@@ -464,11 +516,14 @@ public class FindReplaceBytesFile {
             findReplaceFile.setError(e.toString());
             return false;
         }
+        if (currentTask != null && !currentTask.isWorking()) {
+            return false;
+        }
         findReplaceFile.setCount(total);
         if (tmpFile != null && tmpFile.exists()) {
             if (total > 0) {
-                findReplaceFile.backup(sourceFile);
-                return FileTools.rename(tmpFile, sourceFile);
+                findReplaceFile.backup(currentTask, sourceFile);
+                return FileTools.override(tmpFile, sourceFile);
             } else {
                 return true;
             }
@@ -476,7 +531,7 @@ public class FindReplaceBytesFile {
         return false;
     }
 
-    public static boolean findAllBytes(FileEditInformation sourceInfo, FindReplaceFile findReplaceFile) {
+    public static boolean findAllBytes(FxTask currentTask, FileEditInformation sourceInfo, FindReplaceFile findReplaceFile) {
         if (sourceInfo == null || sourceInfo.getFile() == null
                 || findReplaceFile.getFindString() == null || findReplaceFile.getFindString().isEmpty()) {
             if (findReplaceFile != null) {
@@ -514,6 +569,9 @@ public class FindReplaceBytesFile {
             csvPrinter.printRecord(names);
             List<String> row = new ArrayList<>();
             while ((pageLen = inputStream.read(pageBytes)) > 0) {
+                if (currentTask != null && !currentTask.isWorking()) {
+                    return false;
+                }
                 if (pageLen < pageSize) {
                     pageBytes = ByteTools.subBytes(pageBytes, 0, pageLen);
                 }
@@ -521,8 +579,10 @@ public class FindReplaceBytesFile {
                 pageLen = pageHex.length();
                 checkedString = backString + pageHex;
                 findReplaceString.setInputString(checkedString)
-                        .setAnchor(0)
-                        .handleString();
+                        .setAnchor(0).handleString(currentTask);
+                if (currentTask != null && !currentTask.isWorking()) {
+                    return false;
+                }
                 range = findReplaceString.getStringRange();
                 if (range != null) {
                     long offset = bytesStart - backString.length();
@@ -551,6 +611,9 @@ public class FindReplaceBytesFile {
             findReplaceFile.setError(e.toString());
             return false;
         }
+        if (currentTask != null && !currentTask.isWorking()) {
+            return false;
+        }
         if (tmpFile == null || !tmpFile.exists()) {
             return false;
         }
@@ -559,7 +622,7 @@ public class FindReplaceBytesFile {
         }
         DataFileCSV matchesData = findReplaceFile.initMatchesData(sourceFile);
         File matchesFile = matchesData.getFile();
-        if (!FileTools.rename(tmpFile, matchesFile)) {
+        if (!FileTools.override(tmpFile, matchesFile)) {
             return false;
         }
         matchesData.setRowsNumber(count);

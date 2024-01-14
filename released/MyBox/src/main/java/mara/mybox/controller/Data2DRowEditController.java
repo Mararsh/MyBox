@@ -62,8 +62,8 @@ public class Data2DRowEditController extends BaseChildController {
      */
     public static Data2DRowEditController open(ControlData2DEditTable tableViewController, int index) {
         try {
-            Data2DRowEditController controller = (Data2DRowEditController) WindowTools.openChildStage(
-                    tableViewController.getMyWindow(), Fxmls.Data2DRowEditFxml, false);
+            Data2DRowEditController controller = (Data2DRowEditController) WindowTools.branchStage(
+                    tableViewController, Fxmls.Data2DRowEditFxml);
             controller.setParameters(tableViewController, index);
             return controller;
         } catch (Exception e) {

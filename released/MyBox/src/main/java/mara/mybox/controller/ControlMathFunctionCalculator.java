@@ -18,15 +18,15 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
+import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ExpressionCalculator;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.tools.CsvTools;
@@ -157,7 +157,7 @@ public class ControlMathFunctionCalculator extends BaseController {
                     tab.setClosable(false);
                     dataTabPane.getTabs().add(tab);
                     FXMLLoader fxmlLoader = new FXMLLoader(WindowTools.class.getResource(
-                            Fxmls.ControlDataSplitFxml), AppVariables.currentBundle);
+                            Fxmls.ControlDataSplitFxml), AppVariables.CurrentBundle);
                     Pane pane = fxmlLoader.load();
                     tab.setContent(pane);
                     refreshStyle(pane);
@@ -307,7 +307,7 @@ public class ControlMathFunctionCalculator extends BaseController {
                 calculateScale = v;
                 UserConfig.setInt(baseName + "CalculateScale", v);
             } else {
-                popError(message("InvalidParamter") + ": " + message("DecimalScale"));
+                popError(message("InvalidParameter") + ": " + message("DecimalScale"));
                 return;
             }
             expression = script();
@@ -516,7 +516,7 @@ public class ControlMathFunctionCalculator extends BaseController {
             dataScale = v;
             UserConfig.setInt(baseName + "DataScale", v);
         } else {
-            popError(message("InvalidParamter") + ": " + message("DecimalScale"));
+            popError(message("InvalidParameter") + ": " + message("DecimalScale"));
             return false;
         }
         expression = script();
@@ -532,7 +532,7 @@ public class ControlMathFunctionCalculator extends BaseController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             private DataFileCSV data;
 
@@ -559,7 +559,7 @@ public class ControlMathFunctionCalculator extends BaseController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             private List<List<String>> rows;
             private List<Data2DColumn> columns;
@@ -608,7 +608,7 @@ public class ControlMathFunctionCalculator extends BaseController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             private File chartFile;
 
@@ -650,8 +650,8 @@ public class ControlMathFunctionCalculator extends BaseController {
      */
     public static ControlMathFunctionCalculator open(MathFunctionEditor editorController) {
         try {
-            ControlMathFunctionCalculator controller = (ControlMathFunctionCalculator) WindowTools.openChildStage(
-                    editorController.getMyWindow(), Fxmls.MathFunctionCalculatorFxml, false);
+            ControlMathFunctionCalculator controller = (ControlMathFunctionCalculator) WindowTools.branchStage(
+                    editorController, Fxmls.MathFunctionCalculatorFxml);
             controller.setParameters(editorController);
             controller.requestMouse();
             return controller;

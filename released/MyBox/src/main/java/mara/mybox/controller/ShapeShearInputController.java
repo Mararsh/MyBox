@@ -26,7 +26,7 @@ public class ShapeShearInputController extends BaseShapeTransformController {
     @FXML
     protected ComboBox<String> xSelector, ySelector;
 
-    public void setParameters(BaseImageController parent, DoubleShape shapeData) {
+    public void setParameters(BaseShapeController parent, DoubleShape shapeData) {
         try {
             super.setParameters(parent, shapeData, null);
 
@@ -84,21 +84,14 @@ public class ShapeShearInputController extends BaseShapeTransformController {
             return;
         }
         DoubleShape.translateCenterAbs(pathData, c.getX(), c.getY());
-        if (imageController.supportPath) {
-            imageController.clearMask();
-            imageController.maskPathData = pathData;
-            imageController.showMaskPath();
-            imageController.maskShapeDataChanged();
-        } else {
-            TextPopController.loadText(imageController, pathData.pathAbs());
-        }
+        imageController.handleSvgPath(pathData);
         close();
     }
 
-    public static ShapeShearInputController open(BaseImageController parent, DoubleShape shapeData) {
+    public static ShapeShearInputController open(BaseShapeController parent, DoubleShape shapeData) {
         try {
-            ShapeShearInputController controller = (ShapeShearInputController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.ShapeShearInputFxml, true);
+            ShapeShearInputController controller = (ShapeShearInputController) WindowTools.childStage(
+                    parent, Fxmls.ShapeShearInputFxml);
             controller.setParameters(parent, shapeData);
             return controller;
         } catch (Exception e) {

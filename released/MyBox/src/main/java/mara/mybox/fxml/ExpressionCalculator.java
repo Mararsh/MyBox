@@ -222,7 +222,7 @@ public class ExpressionCalculator {
     }
 
     public String replaceAll(String script, String string, String replaced) {
-        return getFindReplace().replace(script, string, replaced);
+        return getFindReplace().replace(null, script, string, replaced);
     }
 
     /*

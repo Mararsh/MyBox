@@ -5,6 +5,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Colors;
 import mara.mybox.value.FileExtensions;
@@ -17,14 +18,14 @@ import mara.mybox.value.FileExtensions;
 public class AlphaTools {
 
     // https://bugs.java.com/bugdatabase/view_bug.do?bug_id=4836466
-    public static BufferedImage checkAlpha(BufferedImage source, String targetFormat) {
+    public static BufferedImage checkAlpha(FxTask task, BufferedImage source, String targetFormat) {
         if (targetFormat == null) {
             return source;
         }
         BufferedImage checked = source;
         if (FileExtensions.NoAlphaImages.contains(targetFormat.toLowerCase())) {
             if (hasAlpha(source)) {
-                checked = AlphaTools.premultipliedAlpha(source, true);
+                checked = AlphaTools.premultipliedAlpha(task, source, true);
             }
         }
         return checked;
@@ -51,14 +52,14 @@ public class AlphaTools {
         }
     }
 
-    public static BufferedImage removeAlpha(BufferedImage source) {
+    public static BufferedImage removeAlpha(FxTask task, BufferedImage source) {
         if (!hasAlpha(source)) {
             return source;
         }
-        return AlphaTools.removeAlpha(source, ColorConvertTools.alphaColor());
+        return AlphaTools.removeAlpha(task, source, ColorConvertTools.alphaColor());
     }
 
-    public static BufferedImage removeAlpha(BufferedImage source, Color alphaColor) {
+    public static BufferedImage removeAlpha(FxTask task, BufferedImage source, Color alphaColor) {
         try {
             int width = source.getWidth();
             int height = source.getHeight();
@@ -66,7 +67,13 @@ public class AlphaTools {
             BufferedImage target = new BufferedImage(width, height, imageType);
             int alphaPixel = alphaColor.getRGB();
             for (int j = 0; j < height; ++j) {
+                if (task != null && !task.isWorking()) {
+                    return null;
+                }
                 for (int i = 0; i < width; ++i) {
+                    if (task != null && !task.isWorking()) {
+                        return null;
+                    }
                     int pixel = source.getRGB(i, j);
                     if (pixel == 0) {
                         target.setRGB(i, j, alphaPixel);
@@ -82,7 +89,7 @@ public class AlphaTools {
         }
     }
 
-    public static BufferedImage[] extractAlpha(BufferedImage source) {
+    public static BufferedImage[] extractAlpha(FxTask task, BufferedImage source) {
         try {
             if (source == null) {
                 return null;
@@ -97,7 +104,13 @@ public class AlphaTools {
             int pixel;
             int alphaPixel = ColorConvertTools.alphaColor().getRGB();
             for (int j = 0; j < height; ++j) {
+                if (task != null && !task.isWorking()) {
+                    return null;
+                }
                 for (int i = 0; i < width; ++i) {
+                    if (task != null && !task.isWorking()) {
+                        return null;
+                    }
                     pixel = source.getRGB(i, j);
                     if (pixel == 0) {
                         noAlphaImage.setRGB(i, j, alphaPixel);
@@ -120,7 +133,7 @@ public class AlphaTools {
         }
     }
 
-    public static BufferedImage extractAlphaOnly(BufferedImage source) {
+    public static BufferedImage extractAlphaOnly(FxTask task, BufferedImage source) {
         try {
             if (source == null) {
                 return null;
@@ -132,7 +145,13 @@ public class AlphaTools {
             Color newColor;
             int pixel;
             for (int j = 0; j < height; ++j) {
+                if (task != null && !task.isWorking()) {
+                    return null;
+                }
                 for (int i = 0; i < width; ++i) {
+                    if (task != null && !task.isWorking()) {
+                        return null;
+                    }
                     pixel = source.getRGB(i, j);
                     color = new Color(pixel, true);
                     newColor = new Color(0, 0, 0, color.getAlpha());
@@ -146,7 +165,7 @@ public class AlphaTools {
         }
     }
 
-    public static BufferedImage premultipliedAlpha(BufferedImage source, boolean removeAlpha) {
+    public static BufferedImage premultipliedAlpha(FxTask task, BufferedImage source, boolean removeAlpha) {
         try {
             if (source == null || !AlphaTools.hasAlpha(source) || (source.isAlphaPremultiplied() && !removeAlpha)) {
                 return source;
@@ -165,7 +184,13 @@ public class AlphaTools {
             Color bkColor = ColorConvertTools.alphaColor();
             int bkPixel = bkColor.getRGB();
             for (int j = 0; j < sourceHeight; ++j) {
+                if (task != null && !task.isWorking()) {
+                    return null;
+                }
                 for (int i = 0; i < sourceWidth; ++i) {
+                    if (task != null && !task.isWorking()) {
+                        return null;
+                    }
                     int pixel = source.getRGB(i, j);
                     if (pixel == 0) {
                         target.setRGB(i, j, bkPixel);
@@ -183,7 +208,7 @@ public class AlphaTools {
         }
     }
 
-    public static BufferedImage addAlpha(BufferedImage source, BufferedImage alpha, boolean isPlus) {
+    public static BufferedImage addAlpha(FxTask task, BufferedImage source, BufferedImage alpha, boolean isPlus) {
         try {
             if (source == null || alpha == null || !alpha.getColorModel().hasAlpha()) {
                 return source;
@@ -199,7 +224,13 @@ public class AlphaTools {
             Color newColor;
             int alphaValue;
             for (int j = 0; j < sourceHeight; ++j) {
+                if (task != null && !task.isWorking()) {
+                    return null;
+                }
                 for (int i = 0; i < sourceWidth; ++i) {
+                    if (task != null && !task.isWorking()) {
+                        return null;
+                    }
                     if (i < alphaWidth && j < alphaHeight) {
                         sourceColor = new Color(source.getRGB(i, j), addAlpha);
                         alphaColor = new Color(alpha.getRGB(i, j), true);
@@ -221,7 +252,7 @@ public class AlphaTools {
         }
     }
 
-    public static BufferedImage addAlpha(BufferedImage source, float opacity, boolean isPlus) {
+    public static BufferedImage addAlpha(FxTask task, BufferedImage source, float opacity, boolean isPlus) {
         try {
             if (source == null || opacity < 0) {
                 return source;
@@ -234,7 +265,13 @@ public class AlphaTools {
             Color newColor;
             int opacityValue = Math.min(255, Math.round(opacity * 255));
             for (int j = 0; j < sourceHeight; ++j) {
+                if (task != null && !task.isWorking()) {
+                    return null;
+                }
                 for (int i = 0; i < sourceWidth; ++i) {
+                    if (task != null && !task.isWorking()) {
+                        return null;
+                    }
                     sourceColor = new Color(source.getRGB(i, j), addAlpha);
                     if (addAlpha) {
                         opacityValue = Math.min(255, opacityValue + sourceColor.getAlpha());
@@ -250,7 +287,7 @@ public class AlphaTools {
         }
     }
 
-    public static BufferedImage premultipliedAlpha2(BufferedImage source, boolean removeAlpha) {
+    public static BufferedImage premultipliedAlpha2(FxTask task, BufferedImage source, boolean removeAlpha) {
         try {
             if (source == null || !AlphaTools.hasAlpha(source) || (source.isAlphaPremultiplied() && !removeAlpha)) {
                 return source;
@@ -258,7 +295,7 @@ public class AlphaTools {
             BufferedImage target = BufferedImageTools.clone(source);
             target.coerceData(true);
             if (removeAlpha) {
-                target = AlphaTools.removeAlpha(target);
+                target = AlphaTools.removeAlpha(task, target);
             }
             return target;
         } catch (Exception e) {
@@ -267,11 +304,11 @@ public class AlphaTools {
         }
     }
 
-    public static BufferedImage[] outline(BufferedImage bgImage, BufferedImage alphaImage, DoubleRectangle rect) {
-        return outline(alphaImage, rect, bgImage.getWidth(), bgImage.getHeight(), false);
+    public static BufferedImage[] outline(FxTask task, BufferedImage bgImage, BufferedImage alphaImage, DoubleRectangle rect) {
+        return outline(task, alphaImage, rect, bgImage.getWidth(), bgImage.getHeight(), false);
     }
 
-    public static BufferedImage[] outline(BufferedImage alphaImage,
+    public static BufferedImage[] outline(FxTask task, BufferedImage alphaImage,
             DoubleRectangle rect, int bgWidth, int bgHeight, boolean keepRatio) {
         try {
             if (alphaImage == null) {
@@ -289,15 +326,21 @@ public class AlphaTools {
             int startY = offsetY >= 0 ? offsetY : 0;
             BufferedImage target = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
             Graphics2D g = target.createGraphics();
-            if (AppVariables.imageRenderHints != null) {
-                g.addRenderingHints(AppVariables.imageRenderHints);
+            if (AppVariables.ImageHints != null) {
+                g.addRenderingHints(AppVariables.ImageHints);
             }
             g.setColor(Colors.TRANSPARENT);
             g.fillRect(0, 0, width, height);
             int imagePixel;
             int inPixel = 64, outPixel = -64;
             for (int j = 0; j < scaledHeight; ++j) {
+                if (task != null && !task.isWorking()) {
+                    return null;
+                }
                 for (int i = 0; i < scaledWidth; ++i) {
+                    if (task != null && !task.isWorking()) {
+                        return null;
+                    }
                     imagePixel = scaledImage.getRGB(i, j);
                     target.setRGB(i + startX, j + startY, imagePixel == 0 ? outPixel : inPixel);
                 }

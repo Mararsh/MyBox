@@ -14,6 +14,7 @@ import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import static mara.mybox.db.table.BaseTable.FilenameMaxLength;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.DateTools;
 
 /**
@@ -62,10 +63,10 @@ public class TableImageScope extends BaseTable<ImageScope> {
 
     @Override
     public ImageScope readData(ResultSet results) {
-        return decode(results);
+        return decode(null, results);
     }
 
-    public static List<ImageScope> read(String imageLocation) {
+    public static List<ImageScope> read(FxTask task, String imageLocation) {
         List<ImageScope> records = new ArrayList<>();
         if (imageLocation == null || imageLocation.trim().isEmpty()) {
             imageLocation = "Unknown";
@@ -76,7 +77,7 @@ public class TableImageScope extends BaseTable<ImageScope> {
             String sql = " SELECT * FROM image_scope WHERE image_location='" + imageLocation + "' ORDER BY modify_time DESC";
             try (ResultSet results = statement.executeQuery(sql)) {
                 while (results.next()) {
-                    ImageScope scope = decode(results);
+                    ImageScope scope = decode(task, results);
                     if (scope != null) {
                         records.add(scope);
                     }
@@ -88,14 +89,14 @@ public class TableImageScope extends BaseTable<ImageScope> {
         return records;
     }
 
-    public static ImageScope read(ImageScope scope) {
+    public static ImageScope read(FxTask task, ImageScope scope) {
         if (scope == null) {
             return null;
         }
-        return read(scope.getFile(), scope.getName());
+        return read(task, scope.getFile(), scope.getName());
     }
 
-    public static ImageScope read(String imageLocation, String name) {
+    public static ImageScope read(FxTask task, String imageLocation, String name) {
         if (name == null) {
             return null;
         }
@@ -108,7 +109,7 @@ public class TableImageScope extends BaseTable<ImageScope> {
                     + "' AND name='" + DerbyBase.stringValue(name) + "'";
             try (ResultSet results = statement.executeQuery(sql)) {
                 if (results.next()) {
-                    return decode(results);
+                    return decode(task, results);
                 }
             }
         } catch (Exception e) {
@@ -117,7 +118,7 @@ public class TableImageScope extends BaseTable<ImageScope> {
         return null;
     }
 
-    public static ImageScope decode(ResultSet results) {
+    public static ImageScope decode(FxTask task, ResultSet results) {
         if (results == null) {
             return null;
         }
@@ -126,7 +127,7 @@ public class TableImageScope extends BaseTable<ImageScope> {
             ScopeType type = ImageScopeTools.scopeType(results.getString("scope_type"));
             if (decodeAreaData(type, results, scope)
                     && decodeColorData(type, results, scope)
-                    && decodeOutline(type, results, scope)) {
+                    && decodeOutline(task, type, results, scope)) {
                 scope.setFile(results.getString("image_location"));
                 scope.setName(results.getString("name"));
                 scope.setScopeType(type);
@@ -152,7 +153,7 @@ public class TableImageScope extends BaseTable<ImageScope> {
             return false;
         }
         try {
-            return ImageScope.decodeAreaData(type, results.getString("area_data"), scope);
+            return ImageScopeTools.decodeAreaData(type, results.getString("area_data"), scope);
         } catch (Exception e) {
             MyBoxLog.error(e);
             return false;
@@ -164,14 +165,14 @@ public class TableImageScope extends BaseTable<ImageScope> {
             return false;
         }
         try {
-            return ImageScope.decodeColorData(type, results.getString("color_data"), scope);
+            return ImageScopeTools.decodeColorData(type, results.getString("color_data"), scope);
         } catch (Exception e) {
             MyBoxLog.error(e);
             return false;
         }
     }
 
-    public static boolean decodeOutline(ScopeType type, ResultSet results, ImageScope scope) {
+    public static boolean decodeOutline(FxTask task, ScopeType type, ResultSet results, ImageScope scope) {
         if (type == null || results == null || scope == null) {
             return false;
         }
@@ -179,7 +180,7 @@ public class TableImageScope extends BaseTable<ImageScope> {
             return true;
         }
         try {
-            return ImageScope.decodeOutline(type, results.getString("outline"), scope);
+            return ImageScopeTools.decodeOutline(task, type, results.getString("outline"), scope);
         } catch (Exception e) {
             MyBoxLog.error(e);
 //            MyBoxLog.debug(e);
@@ -187,8 +188,8 @@ public class TableImageScope extends BaseTable<ImageScope> {
         }
     }
 
-    public static int write(ImageScope scope) {
-        if (scope == null || scope.getFile() == null || scope.getName() == null) {
+    public static int write(FxTask task, ImageScope scope) {
+        if (scope == null || scope.getScopeType() == null || scope.getFile() == null || scope.getName() == null) {
             return -1;
         }
         if (scope.getFile() == null || scope.getFile().trim().isEmpty()) {
@@ -197,9 +198,9 @@ public class TableImageScope extends BaseTable<ImageScope> {
         int count = 0;
         try (Connection conn = DerbyBase.getConnection();
                 Statement statement = conn.createStatement()) {
-            String areaData = ImageScope.encodeAreaData(scope);
-            String colorData = ImageScope.encodeColorData(scope);
-            String outline = ImageScope.encodeOutline(scope);
+            String areaData = ImageScopeTools.encodeAreaData(scope);
+            String colorData = ImageScopeTools.encodeColorData(scope);
+            String outline = ImageScopeTools.encodeOutline(task, scope);
             String sql = " SELECT * FROM image_scope WHERE image_location='" + scope.getFile()
                     + "' AND name='" + DerbyBase.stringValue(scope.getName()) + "'";
             boolean exist = false;

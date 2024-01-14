@@ -24,7 +24,7 @@ import mara.mybox.db.data.Data2DRow;
 import static mara.mybox.db.table.BaseTable.StringMaxLength;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ExpressionCalculator;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.DateTools;
 import static mara.mybox.value.Languages.message;
@@ -560,10 +560,13 @@ public class TmpTable extends DataTable {
         }
         String tmpScript = script;
         for (int i = 0; i < sourcePickIndice.size(); i++) {
+            if (task == null || task.isCancelled()) {
+                return null;
+            }
             int col = sourcePickIndice.get(i);
             String sourceName = sourceData.columnName(col);
             String tmpName = columnName(i + valueIndexOffset);
-            tmpScript = findReplace().replace(script, "#{" + sourceName + "}", "#{" + tmpName + "}");
+            tmpScript = findReplace().replace(task, script, "#{" + sourceName + "}", "#{" + tmpName + "}");
         }
         return tmpScript;
     }
@@ -579,7 +582,7 @@ public class TmpTable extends DataTable {
         return TmpTablePrefix + sourceName + DateTools.nowString3();
     }
 
-    public static TmpTable toStatisticTable(Data2D sourceData, SingletonTask task,
+    public static TmpTable toStatisticTable(Data2D sourceData, FxTask task,
             List<Integer> cols, InvalidAs invalidAs) {
         if (cols == sourceData || cols == null || cols.isEmpty()) {
             return null;

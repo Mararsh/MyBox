@@ -7,6 +7,7 @@ import javafx.scene.image.PixelReader;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
+import mara.mybox.fxml.FxTask;
 
 /**
  * @Author Mara
@@ -15,16 +16,22 @@ import javafx.scene.paint.Color;
  */
 public class TransformTools {
 
-    public static Image horizontalImage(Image image) {
+    public static Image horizontalImage(FxTask task, Image image) {
         int width = (int) image.getWidth();
         int height = (int) image.getHeight();
         PixelReader pixelReader = image.getPixelReader();
         WritableImage newImage = new WritableImage(width, height);
         PixelWriter pixelWriter = newImage.getPixelWriter();
         for (int j = 0; j < height; ++j) {
+            if (task != null && !task.isWorking()) {
+                return null;
+            }
             int l = 0;
             int r = width - 1;
             while (l <= r) {
+                if (task != null && !task.isWorking()) {
+                    return null;
+                }
                 Color cl = pixelReader.getColor(l, j);
                 Color cr = pixelReader.getColor(r, j);
                 pixelWriter.setColor(l, j, cr);
@@ -36,16 +43,22 @@ public class TransformTools {
         return newImage;
     }
 
-    public static Image verticalImage(Image image) {
+    public static Image verticalImage(FxTask task, Image image) {
         int width = (int) image.getWidth();
         int height = (int) image.getHeight();
         PixelReader pixelReader = image.getPixelReader();
         WritableImage newImage = new WritableImage(width, height);
         PixelWriter pixelWriter = newImage.getPixelWriter();
         for (int i = 0; i < width; ++i) {
+            if (task != null && !task.isWorking()) {
+                return null;
+            }
             int t = 0;
             int b = height - 1;
             while (t <= b) {
+                if (task != null && !task.isWorking()) {
+                    return null;
+                }
                 Color ct = pixelReader.getColor(i, t);
                 Color cb = pixelReader.getColor(i, b);
                 pixelWriter.setColor(i, t, cb);
@@ -57,16 +70,22 @@ public class TransformTools {
         return newImage;
     }
 
-    public static Image rotateImage(Image image, int angle) {
+    public static Image rotateImage(FxTask task, Image image, int angle) {
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
-        BufferedImage target = mara.mybox.bufferedimage.TransformTools.rotateImage(source, angle);
+        BufferedImage target = mara.mybox.bufferedimage.TransformTools.rotateImage(task, source, angle);
+        if (target == null || (task != null && !task.isWorking())) {
+            return null;
+        }
         Image newImage = SwingFXUtils.toFXImage(target, null);
         return newImage;
     }
 
-    public static Image shearImage(Image image, float shearX, float shearY) {
+    public static Image shearImage(FxTask task, Image image, float shearX, float shearY) {
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
-        BufferedImage target = mara.mybox.bufferedimage.TransformTools.shearImage(source, shearX, shearY);
+        BufferedImage target = mara.mybox.bufferedimage.TransformTools.shearImage(task, source, shearX, shearY);
+        if (target == null || (task != null && !task.isWorking())) {
+            return null;
+        }
         Image newImage = SwingFXUtils.toFXImage(target, null);
         return newImage;
     }

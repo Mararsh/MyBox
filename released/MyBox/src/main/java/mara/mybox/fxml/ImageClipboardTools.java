@@ -1,15 +1,14 @@
 package mara.mybox.fxml;
 
-import javafx.application.Platform;
 import javafx.scene.image.Image;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import mara.mybox.bufferedimage.ImageAttributes;
 import mara.mybox.controller.BaseController;
-import mara.mybox.controller.ControlImagesClipboard;
+import mara.mybox.controller.ImageInMyBoxClipboardController;
 import mara.mybox.db.data.ImageClipboard;
 import static mara.mybox.fxml.ImageClipboardMonitor.DefaultInterval;
-import static mara.mybox.value.AppVariables.imageClipboardMonitor;
+import static mara.mybox.value.AppVariables.ImageClipMonitor;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -25,18 +24,18 @@ public class ImageClipboardTools {
         monitor
      */
     public static void stopImageClipboardMonitor() {
-        if (imageClipboardMonitor != null) {
-            imageClipboardMonitor.stop();
-            imageClipboardMonitor = null;
+        if (ImageClipMonitor != null) {
+            ImageClipMonitor.stop();
+            ImageClipMonitor = null;
         }
     }
 
     public static void startImageClipboardMonitor(int interval, ImageAttributes attributes, String filePrefix) {
-        if (imageClipboardMonitor != null) {
-            imageClipboardMonitor.stop();
-            imageClipboardMonitor = null;
+        if (ImageClipMonitor != null) {
+            ImageClipMonitor.stop();
+            ImageClipMonitor = null;
         }
-        imageClipboardMonitor = new ImageClipboardMonitor().start(interval, attributes, filePrefix);
+        ImageClipMonitor = new ImageClipboardMonitor().start(interval, attributes, filePrefix);
     }
 
     public static int getMonitorInterval() {
@@ -56,7 +55,7 @@ public class ImageClipboardTools {
     }
 
     public static boolean isMonitoring() {
-        return imageClipboardMonitor != null;
+        return ImageClipMonitor != null;
     }
 
     public static int getWidth() {
@@ -95,20 +94,15 @@ public class ImageClipboardTools {
         if (controller == null || image == null) {
             return;
         }
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                ClipboardContent cc = new ClipboardContent();
-                cc.putImage(image);
-                Clipboard.getSystemClipboard().setContent(cc);
-                if (isMonitoringCopy()) {
-                    controller.popInformation(message("CopiedInClipBoards"));
-                    ControlImagesClipboard.updateClipboards();
-                } else {
-                    controller.popInformation(message("CopiedInSystemClipBoard"));
-                }
-            }
-        });
+        ClipboardContent cc = new ClipboardContent();
+        cc.putImage(image);
+        Clipboard.getSystemClipboard().setContent(cc);
+        if (isMonitoringCopy()) {
+            controller.popInformation(message("CopiedInClipBoards"));
+            ImageInMyBoxClipboardController.updateClipboards();
+        } else {
+            controller.popInformation(message("CopiedInSystemClipBoard"));
+        }
     }
 
     public static Image fetchImageInClipboard(boolean clear) {
@@ -130,16 +124,11 @@ public class ImageClipboardTools {
         if (controller == null || image == null) {
             return;
         }
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                if (ImageClipboard.add(image, source) != null) {
-                    controller.popInformation(message("CopiedInMyBoxClipBoard"));
-                } else {
-                    controller.popFailed();
-                }
-            }
-        });
+        if (ImageClipboard.add(null, image, source) != null) {
+            controller.popInformation(message("CopiedInMyBoxClipBoard"));
+        } else {
+            controller.popFailed();
+        }
     }
 
 }

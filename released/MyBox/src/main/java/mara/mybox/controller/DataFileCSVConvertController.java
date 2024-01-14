@@ -7,6 +7,7 @@ import java.util.List;
 import javafx.fxml.FXML;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextFileTools;
@@ -55,15 +56,15 @@ public class DataFileCSVConvertController extends BaseDataConvertController {
     }
 
     @Override
-    public String handleFile(File srcFile, File targetPath) {
+    public String handleFile(FxTask currentTask, File srcFile, File targetPath) {
         if (csvReadController.withNamesCheck.isSelected()) {
-            return withHeader(srcFile, targetPath);
+            return withHeader(currentTask, srcFile, targetPath);
         } else {
-            return withoutHeader(srcFile, targetPath);
+            return withoutHeader(currentTask, srcFile, targetPath);
         }
     }
 
-    public String withHeader(File srcFile, File targetPath) {
+    public String withHeader(FxTask currentTask, File srcFile, File targetPath) {
         String result;
         Charset fileCharset;
         if (csvReadController.autoDetermine) {
@@ -71,14 +72,17 @@ public class DataFileCSVConvertController extends BaseDataConvertController {
         } else {
             fileCharset = csvReadController.charset;
         }
-        File validFile = FileTools.removeBOM(srcFile);
-        try ( CSVParser parser = CSVParser.parse(validFile, fileCharset,
+        File validFile = FileTools.removeBOM(currentTask, srcFile);
+        if (validFile == null || (currentTask != null && !currentTask.isWorking())) {
+            return null;
+        }
+        try (CSVParser parser = CSVParser.parse(validFile, fileCharset,
                 CsvTools.csvFormat(csvReadController.getDelimiterName(), true))) {
             List<String> names = new ArrayList<>();
             names.addAll(parser.getHeaderNames());
             convertController.setParameters(targetPath, names, filePrefix(srcFile), skip);
             for (CSVRecord record : parser) {
-                if (task == null || task.isCancelled()) {
+                if (currentTask == null || currentTask.isCancelled()) {
                     return message("Cancelled");
                 }
                 List<String> rowData = new ArrayList<>();
@@ -95,7 +99,7 @@ public class DataFileCSVConvertController extends BaseDataConvertController {
         return result;
     }
 
-    public String withoutHeader(File srcFile, File targetPath) {
+    public String withoutHeader(FxTask currentTask, File srcFile, File targetPath) {
         String result;
         Charset fileCharset;
         if (csvReadController.autoDetermine) {
@@ -103,12 +107,15 @@ public class DataFileCSVConvertController extends BaseDataConvertController {
         } else {
             fileCharset = csvReadController.charset;
         }
-        File validFile = FileTools.removeBOM(srcFile);
-        try ( CSVParser parser = CSVParser.parse(validFile, fileCharset,
+        File validFile = FileTools.removeBOM(currentTask, srcFile);
+        if (validFile == null || (currentTask != null && !currentTask.isWorking())) {
+            return null;
+        }
+        try (CSVParser parser = CSVParser.parse(validFile, fileCharset,
                 CsvTools.csvFormat(csvReadController.getDelimiterName(), false))) {
             List<String> names = null;
             for (CSVRecord record : parser) {
-                if (task == null || task.isCancelled()) {
+                if (currentTask == null || currentTask.isCancelled()) {
                     return message("Cancelled");
                 }
                 if (names == null) {

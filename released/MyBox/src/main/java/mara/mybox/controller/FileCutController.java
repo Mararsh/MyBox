@@ -14,6 +14,7 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.FileSplitTools;
@@ -190,7 +191,7 @@ public class FileCutController extends BaseBatchFileController {
     }
 
     @Override
-    public String handleFile(File srcFile, File targetPath) {
+    public String handleFile(FxTask currentTask, File srcFile, File targetPath) {
         File target = makeTargetFile(srcFile, targetPath);
         if (target == null) {
             return Languages.message("Skip");
@@ -199,13 +200,13 @@ public class FileCutController extends BaseBatchFileController {
         List<File> files = null;
         switch (splitType) {
             case FilesNumber:
-                files = FileSplitTools.splitFileByFilesNumber(srcFile, targetName, filesNumber);
+                files = FileSplitTools.splitFileByFilesNumber(currentTask, srcFile, targetName, filesNumber);
                 break;
             case BytesNumber:
-                files = FileSplitTools.splitFileByBytesNumber(srcFile, targetName, bytesNumber);
+                files = FileSplitTools.splitFileByBytesNumber(currentTask, srcFile, targetName, bytesNumber);
                 break;
             case StartEndList:
-                files = FileSplitTools.splitFileByStartEndList(srcFile, targetName, startEndList);
+                files = FileSplitTools.splitFileByStartEndList(currentTask, srcFile, targetName, startEndList);
                 break;
         }
         if (files == null || files.isEmpty()) {

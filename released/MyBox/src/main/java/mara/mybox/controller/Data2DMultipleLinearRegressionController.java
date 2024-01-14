@@ -8,7 +8,7 @@ import mara.mybox.calculation.OLSLinearRegression;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.HtmlWriteTools;
@@ -84,7 +84,7 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DRegressi
             task.cancel();
         }
         modelController.clear();
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -132,7 +132,7 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DRegressi
                     return;
                 }
                 if (error != null && !error.isBlank()) {
-                    //https://db.apache.org/derby/docs/10.15/ref/rrefsqljvarsamp.html#rrefsqljvarsamp
+                    //https://db.apache.org/derby/docs/10.17/ref/rrefsqljvarsamp.html#rrefsqljvarsamp
                     if (error.contains("java.sql.SQLDataException: 22003 : [0] DOUBLE")) {
                         alertError(error + "\n\n" + message("DataOverflow"));
                     } else {
@@ -271,8 +271,8 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DRegressi
      */
     public static Data2DMultipleLinearRegressionController open(ControlData2DLoad tableController) {
         try {
-            Data2DMultipleLinearRegressionController controller = (Data2DMultipleLinearRegressionController) WindowTools.openChildStage(
-                    tableController.getMyWindow(), Fxmls.Data2DMultipleLinearRegressionFxml, false);
+            Data2DMultipleLinearRegressionController controller = (Data2DMultipleLinearRegressionController) WindowTools.branchStage(
+                    tableController, Fxmls.Data2DMultipleLinearRegressionFxml);
             controller.setParameters(tableController);
             controller.requestMouse();
             return controller;

@@ -13,8 +13,8 @@ public class HtmlStyleInputController extends TextInputController {
 
     public static HtmlStyleInputController open(BaseController parent, String title, String initValue) {
         try {
-            HtmlStyleInputController controller = (HtmlStyleInputController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.HtmlStyleInputFxml, false);
+            HtmlStyleInputController controller = (HtmlStyleInputController) WindowTools.branchStage(
+                    parent, Fxmls.HtmlStyleInputFxml);
             controller.setParameters(parent, title, initValue);
             return controller;
         } catch (Exception e) {

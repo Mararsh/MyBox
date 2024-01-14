@@ -17,10 +17,10 @@ public class StyleImageView {
             return new StyleData(id, "", "", "iconTipsRight.png");
         }
         if (id.startsWith("leftPane")) {
-            return new StyleData(id, message("ControlLeftPane"), "", "iconDoubleLeft.png");
+            return new StyleData(id, message("ControlLeftPane") + "\n" + message("ControlLeftPaneShortcut"), "", "iconDoubleLeft.png");
         }
         if (id.startsWith("rightPane")) {
-            return new StyleData(id, message("ControlRightPane"), "", "iconDoubleRight.png");
+            return new StyleData(id, message("ControlRightPane") + "\n" + message("ControlRightPaneShortcut"), "", "iconDoubleRight.png");
         }
         if (id.startsWith("links")) {
             return new StyleData(id, "", message("Links"), "iconLink.png");
@@ -30,18 +30,12 @@ public class StyleImageView {
         }
         if (id.toLowerCase().endsWith("tipsview")) {
             switch (id) {
-                case "distanceTipsView":
-                    return new StyleData(id, "", message("ColorMatchComments"), "", "iconTips.png");
                 case "pdfMemTipsView":
                     return new StyleData(id, "", message("PdfMemComments"), "", "iconTips.png");
                 case "pdfPageSizeTipsView":
                     return new StyleData(id, "", message("PdfPageSizeComments"), "", "iconTips.png");
                 case "preAlphaTipsView":
                     return new StyleData(id, "", message("PremultipliedAlphaTips"), "", "iconTips.png");
-                case "imageThresholdTipsView":
-                    return new StyleData(id, "", message("ImageThresholdingComments"), "", "iconTips.png");
-                case "imageQuantizationTipsView":
-                    return new StyleData(id, "", message("ImageQuantizationComments"), "", "iconTips.png");
                 default:
                     return new StyleData(id, "", "", "iconTips.png");
             }

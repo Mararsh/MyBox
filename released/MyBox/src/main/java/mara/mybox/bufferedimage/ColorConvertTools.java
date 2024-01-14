@@ -39,9 +39,20 @@ public class ColorConvertTools {
         return new Color(c.getRed(), c.getGreen(), c.getBlue(), a).getRGB();
     }
 
+    public static String color2css(Color color) {
+        return "rgba(" + color.getRed() + ","
+                + color.getGreen() + ","
+                + color.getBlue() + ","
+                + color.getTransparency() + ")";
+    }
+
     /*
         rgb
      */
+    public static Color rgb(Color color) {
+        return new Color(color.getRed(), color.getGreen(), color.getBlue());
+    }
+
     public static Color pixel2rgb(int pixel) {
         return new Color(pixel);
     }
@@ -146,12 +157,6 @@ public class ColorConvertTools {
         Color c = new Color(pixel);
         return rgb2grayValue(c.getRed(), c.getGreen(), c.getBlue());
     }
-
-    public static int grayPixel2grayValue(int pixel) {
-        Color c = pixel2rgb(pixel);
-        return c.getRed();
-    }
-
 
     /*
         others

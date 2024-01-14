@@ -7,10 +7,12 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import mara.mybox.bufferedimage.ImageScope;
+import mara.mybox.bufferedimage.ImageScopeTools;
+import mara.mybox.controller.BaseController;
 import mara.mybox.controller.Data2DDefinitionController;
 import mara.mybox.controller.DatabaseSqlController;
-import mara.mybox.controller.HtmlTableController;
-import mara.mybox.controller.ImageMaterialController;
+import mara.mybox.controller.ImageScopeController;
 import mara.mybox.controller.InfoTreeManageController;
 import mara.mybox.controller.JShellController;
 import mara.mybox.controller.JavaScriptController;
@@ -25,6 +27,7 @@ import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
 import static mara.mybox.fxml.FxFileTools.getInternalFile;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.JsonTools;
 import mara.mybox.value.Languages;
@@ -39,6 +42,7 @@ public class InfoNode extends BaseData {
 
     public static final String RootIdentify = "MyBoxTreeRoot;;;";
     public static final String TitleSeparater = " > ";
+    public static final String IDPrefix = "ID:";
     public static final String TimePrefix = "Time:";
     public static final String TagsPrefix = "Tags:";
     public static final String TagSeparater = ";;;";
@@ -54,6 +58,7 @@ public class InfoNode extends BaseData {
     public static final String JavaScript = "JavaScript";
     public static final String MathFunction = "MathFunction";
     public static final String RowFilter = "RowFilter";
+    public static final String ImageScope = "ImageScope";
     public static final String ImageMaterial = "ImageMaterial";
     public static final String Data2DDefinition = "Data2DDefinition";
 
@@ -112,6 +117,7 @@ public class InfoNode extends BaseData {
     public boolean equal(InfoNode node) {
         return equal(this, node);
     }
+
 
     /*
         Static methods
@@ -182,7 +188,7 @@ public class InfoNode extends BaseData {
         if (null == category) {
             return null;
         } else {
-            String lang = Languages.getLangName();
+            String lang = Languages.embedFileLang();
             return getInternalFile("/data/examples/" + category + "_Examples_" + lang + ".txt",
                     "data", category + "_Examples_" + lang + ".txt", true);
         }
@@ -362,6 +368,7 @@ public class InfoNode extends BaseData {
                     values.put("Value", info);
                     break;
                 case InfoNode.Data2DDefinition:
+                case InfoNode.ImageScope:
                     values.put("XML", info);
                     break;
                 default:
@@ -490,14 +497,8 @@ public class InfoNode extends BaseData {
         }
     }
 
-    public static void view(InfoNode node, String title) {
-        String html = InfoNode.nodeHtml(node, title);
-        if (html != null && !html.isBlank()) {
-            HtmlTableController.open(title, html);
-        }
-    }
-
-    public static String nodeHtml(InfoNode node, String title) {
+    public static String nodeHtml(FxTask task, BaseController controller,
+            InfoNode node, String title) {
         if (node == null) {
             return null;
         }
@@ -520,11 +521,12 @@ public class InfoNode extends BaseData {
         row.addAll(Arrays.asList(message("UpdateTime"), DateTools.datetimeToString(node.getUpdateTime())));
         table.add(row);
 
-        return table.div() + "<BR>"
-                + infoHtml(node.getCategory(), node.getInfo(), true, false);
+        return table.div() + "<BR>" + infoHtml(task, controller,
+                node.getCategory(), node.getInfo(), true, false);
     }
 
-    public static String infoHtml(String category, String s, boolean showIcon, boolean singleNotIn) {
+    public static String infoHtml(FxTask task, BaseController controller,
+            String category, String s, boolean showIcon, boolean singleNotIn) {
         if (s == null || s.isBlank()) {
             return "";
         }
@@ -542,7 +544,7 @@ public class InfoNode extends BaseData {
                         String icon = values.get("Icon");
                         if (showIcon && icon != null && !icon.isBlank()) {
                             try {
-                                String base64 = FxImageTools.base64(new File(icon), "png");
+                                String base64 = FxImageTools.base64(null, new File(icon), "png");
                                 if (base64 != null) {
                                     html += "<img src=\"data:image/png;base64," + base64 + "\" width=" + 40 + " >";
                                 }
@@ -555,9 +557,16 @@ public class InfoNode extends BaseData {
                 break;
             }
             case InfoNode.Data2DDefinition: {
-                DataFileCSV csv = Data2DTools.definitionFromXML(s);
+                DataFileCSV csv = Data2DTools.definitionFromXML(task, controller, s);
                 if (csv != null) {
                     html = Data2DTools.definitionToHtml(csv);
+                }
+                break;
+            }
+            case InfoNode.ImageScope: {
+                ImageScope scope = ImageScopeTools.fromXML(task, controller, s);
+                if (scope != null) {
+                    html = ImageScopeTools.toHtml(scope);
                 }
                 break;
             }
@@ -596,7 +605,8 @@ public class InfoNode extends BaseData {
         }
         String xml = "";
         switch (category) {
-            case InfoNode.Data2DDefinition: {
+            case InfoNode.Data2DDefinition:
+            case InfoNode.ImageScope: {
                 xml = s + "\n";
                 break;
             }
@@ -619,17 +629,26 @@ public class InfoNode extends BaseData {
         return xml;
     }
 
-    public static String infoJson(String category, String s, String prefix) {
+    public static String infoJson(FxTask task, BaseController controller,
+            String category, String s, String prefix) {
         if (s == null || s.isBlank()) {
             return "";
         }
         String json = "";
         switch (category) {
             case InfoNode.Data2DDefinition: {
-                DataFileCSV csv = Data2DTools.definitionFromXML(s);
+                DataFileCSV csv = Data2DTools.definitionFromXML(task, controller, s);
                 if (csv != null) {
                     json = prefix + ",\n"
                             + Data2DTools.definitionToJSON(csv, true, prefix);
+                }
+                break;
+            }
+            case InfoNode.ImageScope: {
+                ImageScope scope = ImageScopeTools.fromXML(task, controller, s);
+                if (scope != null) {
+                    json = prefix + ",\n"
+                            + ImageScopeTools.toJSON(scope, prefix);
                 }
                 break;
             }
@@ -657,6 +676,10 @@ public class InfoNode extends BaseData {
         return node1.getNodeid() == node2.getNodeid();
     }
 
+    public static boolean isWebFavorite(String category) {
+        return Languages.matchIgnoreCase(category, InfoNode.WebFavorite);
+    }
+
     public static InfoTreeManageController openManager(String category) {
         if (category == null) {
             return null;
@@ -680,10 +703,12 @@ public class InfoNode extends BaseData {
                 return RowFilterController.open();
             case InfoNode.MathFunction:
                 return MathFunctionController.open();
-            case InfoNode.ImageMaterial:
-                return ImageMaterialController.open();
+//            case InfoNode.ImageMaterial:
+//                return ImageMaterialController.open();
             case InfoNode.Data2DDefinition:
                 return Data2DDefinitionController.open();
+            case InfoNode.ImageScope:
+                return ImageScopeController.open();
 
         }
         return null;

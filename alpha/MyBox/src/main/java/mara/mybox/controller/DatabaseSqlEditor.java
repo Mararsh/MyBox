@@ -70,9 +70,9 @@ public class DatabaseSqlEditor extends InfoTreeNodeEditor {
     }
 
     @Override
-    public void setParameters(InfoTreeManageController treeController) {
+    public void setManager(InfoTreeManageController treeController) {
         try {
-            super.setParameters(treeController);
+            super.setManager(treeController);
 
             wrapOutputsCheck.setSelected(UserConfig.getBoolean(manager.category + "OutputsWrap", false));
             wrapOutputsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {

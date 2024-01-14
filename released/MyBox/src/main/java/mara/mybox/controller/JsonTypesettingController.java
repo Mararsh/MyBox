@@ -10,6 +10,7 @@ import javafx.scene.control.ToggleGroup;
 import mara.mybox.data.JsonTreeNode;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -27,7 +28,7 @@ public class JsonTypesettingController extends BaseBatchFileController {
     @FXML
     protected RadioButton indentRadio;
     @FXML
-    protected ControlJsonOptions optionsController;
+    protected JsonOptionsController optionsController;
 
     public JsonTypesettingController() {
         baseTitle = message("JsonTypesetting");
@@ -56,7 +57,7 @@ public class JsonTypesettingController extends BaseBatchFileController {
     }
 
     @Override
-    public String handleFile(File srcFile, File targetPath) {
+    public String handleFile(FxTask currentTask, File srcFile, File targetPath) {
         try {
             File target = makeTargetFile(srcFile, targetPath);
             if (target == null) {

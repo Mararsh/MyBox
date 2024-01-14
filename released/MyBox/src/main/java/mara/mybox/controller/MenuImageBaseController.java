@@ -28,15 +28,15 @@ import mara.mybox.value.UserConfig;
 public class MenuImageBaseController extends MenuController {
 
     protected BaseImageController imageController;
-    protected ChangeListener<Boolean> colorListener, areaListener, coordinateListener,
+    protected ChangeListener<Boolean> colorListener, coordinateListener,
             rulersListener, gridListener, loadListener;
     protected ChangeListener<String> widthListener, zoomListener;
 
     @FXML
     protected Button imageSizeButton, paneSizeButton, zoomInButton, zoomOutButton,
-            rotateLeftButton, rotateRightButton, turnOverButton, infoAction;
+            rotateLeftButton, rotateRightButton, turnOverButton;
     @FXML
-    protected CheckBox pickColorCheck, rulerXCheck, gridCheck, coordinateCheck, selectAreaCheck;
+    protected CheckBox pickColorCheck, rulerXCheck, gridCheck, coordinateCheck;
     @FXML
     protected ComboBox<String> zoomStepSelector, loadWidthSelector;
 
@@ -45,9 +45,6 @@ public class MenuImageBaseController extends MenuController {
         try {
             super.setControlsStyle();
             NodeStyleTools.setTooltip(zoomStepSelector, new Tooltip(message("ZoomStep")));
-            if (selectAreaCheck != null) {
-                NodeStyleTools.setTooltip(selectAreaCheck, new Tooltip(message("SelectArea") + "\nCTRL+t"));
-            }
             NodeStyleTools.setTooltip(pickColorCheck, new Tooltip(message("PickColor") + "\nCTRL+k"));
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -103,46 +100,6 @@ public class MenuImageBaseController extends MenuController {
                 });
             }
 
-            if (selectAreaCheck != null) {
-                if (!imageController.canSelect()) {
-                    selectAreaCheck.setDisable(true);
-                } else if (imageController.selectAreaCheck != null) {
-                    selectAreaCheck.setSelected(imageController.selectAreaCheck.isSelected());
-                    selectAreaCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                        @Override
-                        public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                            if (isSettingValues) {
-                                return;
-                            }
-                            isSettingValues = true;
-                            imageController.selectAreaCheck.setSelected(newValue);
-                            isSettingValues = false;
-                        }
-                    });
-                    areaListener = new ChangeListener<Boolean>() {
-                        @Override
-                        public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                            if (isSettingValues) {
-                                return;
-                            }
-                            isSettingValues = true;
-                            selectAreaCheck.setSelected(newValue);
-                            isSettingValues = false;
-                        }
-                    };
-                    imageController.selectAreaCheck.selectedProperty().addListener(areaListener);
-                } else {
-                    selectAreaCheck.setSelected(UserConfig.getBoolean(baseName + "SelectArea", false));
-                    selectAreaCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                        @Override
-                        public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                            UserConfig.setBoolean(baseName + "SelectArea", newValue);
-                            imageController.finalRefineView();
-                        }
-                    });
-                }
-            }
-
             if (imageController.coordinateCheck != null) {
                 coordinateCheck.setSelected(imageController.coordinateCheck.isSelected());
                 coordinateCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -174,7 +131,6 @@ public class MenuImageBaseController extends MenuController {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                         UserConfig.setBoolean("ImagePopCooridnate", coordinateCheck.isSelected());
-                        imageController.checkCoordinate();
                     }
                 });
             }
@@ -286,8 +242,6 @@ public class MenuImageBaseController extends MenuController {
                                 imageController.zoomStepSelector.setValue(newVal);
                             } else {
                                 imageController.zoomStep = v;
-                                imageController.xZoomStep = v;
-                                imageController.yZoomStep = v;
                                 imageController.zoomStepChanged();
                             }
                             isSettingValues = false;
@@ -379,6 +333,9 @@ public class MenuImageBaseController extends MenuController {
         if (openSourceButton != null) {
             openSourceButton.setDisable(sourceFile == null || !sourceFile.exists());
         }
+        if (systemMethodButton != null) {
+            systemMethodButton.setDisable(sourceFile == null || !sourceFile.exists());
+        }
         if (getMyStage() != null) {
             myStage.setTitle(imageController.getTitle());
         }
@@ -386,9 +343,7 @@ public class MenuImageBaseController extends MenuController {
 
     @FXML
     public void popFunctionsMenu(Event event) {
-        if (UserConfig.getBoolean("ImageFunctionsPopWhenMouseHovering", true)) {
-            showFunctionsMenu(event);
-        }
+        imageController.popFunctionsMenu(event);
     }
 
     @FXML
@@ -459,8 +414,8 @@ public class MenuImageBaseController extends MenuController {
     }
 
     @FXML
-    public void manufactureAction() {
-        imageController.manufactureAction();
+    public void editAction() {
+        imageController.editAction();
     }
 
     @FXML
@@ -471,8 +426,8 @@ public class MenuImageBaseController extends MenuController {
 
     @FXML
     @Override
-    public void infoAction() {
-        imageController.infoAction();
+    public boolean infoAction() {
+        return imageController.infoAction();
     }
 
     @FXML
@@ -481,8 +436,8 @@ public class MenuImageBaseController extends MenuController {
     }
 
     @FXML
-    public void settings() {
-        imageController.settings();
+    public void options() {
+        imageController.options();
     }
 
     @Override
@@ -495,7 +450,6 @@ public class MenuImageBaseController extends MenuController {
                 imageController.gridCheck.selectedProperty().removeListener(gridListener);
                 imageController.rulerXCheck.selectedProperty().removeListener(rulersListener);
                 imageController.coordinateCheck.selectedProperty().removeListener(coordinateListener);
-                imageController.selectAreaCheck.selectedProperty().removeListener(areaListener);
                 imageController.pickColorCheck.selectedProperty().removeListener(colorListener);
             }
             loadListener = null;
@@ -504,7 +458,6 @@ public class MenuImageBaseController extends MenuController {
             gridListener = null;
             rulersListener = null;
             coordinateListener = null;
-            areaListener = null;
             colorListener = null;
             imageController = null;
         } catch (Exception e) {
@@ -534,8 +487,8 @@ public class MenuImageBaseController extends MenuController {
                     }
                 }
             }
-            MenuImageBaseController controller = (MenuImageBaseController) WindowTools.openChildStage(
-                    imageController.getMyWindow(), Fxmls.MenuImageBaseFxml, false);
+            MenuImageBaseController controller = (MenuImageBaseController) WindowTools.branchStage(
+                    imageController, Fxmls.MenuImageBaseFxml);
             controller.setParameters(imageController, x, y);
             return controller;
         } catch (Exception e) {

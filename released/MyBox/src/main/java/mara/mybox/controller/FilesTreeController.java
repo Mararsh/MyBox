@@ -58,7 +58,7 @@ public class FilesTreeController extends BaseTaskController {
     protected void initTreeTableView() {
         try {
             if (fileColumn != null) {
-                fileColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("fileName"));
+                fileColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("name"));
                 fileColumn.setPrefWidth(400);
             }
 

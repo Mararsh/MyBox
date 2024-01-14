@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageHistoriesController">
+    <top>
+        <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
+    </top>
+    <center>
+        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" BorderPane.alignment="CENTER">
+            <padding>
+                <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+            </padding>
+            <children>
+            <HBox alignment="CENTER_LEFT" spacing="2.0">
+               <children>
+                  <Label fx:id="fileLabel1" text="%File" />
+                  <Label fx:id="fileLabel" minHeight="-Infinity" wrapText="true" />
+               </children>
+            </HBox>
+                <HBox spacing="2.0">
+                    <children>
+                        <CheckBox fx:id="recordHistoriesCheck" mnemonicParsing="false" selected="true" text="%RecordEditHistories" />
+                        <CheckBox fx:id="loadCheck" mnemonicParsing="false" selected="true" text="%RecordWhenImageLoad" />
+                        <Label fx:id="infoLabel" minHeight="-Infinity" underline="true">
+                            <HBox.margin>
+                                <Insets left="20.0" />
+                            </HBox.margin>
+                        </Label>
+                    </children>
+                </HBox>
+                <VBox fx:id="historiesListBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="ALWAYS">
+                    <children>
+                        <HBox alignment="CENTER_LEFT" spacing="2.0" VBox.vgrow="NEVER">
+                            <children>
+                        <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#refreshAction">
+                           <graphic>
+                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../buttons/Red/iconRefresh.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#deleteAction">
+                           <graphic>
+                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../buttons/Red/iconDelete.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction">
+                           <graphic>
+                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../buttons/Red/iconClear.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Button fx:id="viewButton" mnemonicParsing="false" onAction="#viewAction">
+                           <graphic>
+                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../buttons/Red/iconView.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                                <Button fx:id="useButton" layoutX="71.0" layoutY="10.0" mnemonicParsing="false" onAction="#useHistory">
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/Red/iconYes.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                              <FlowPane alignment="CENTER_RIGHT" hgap="2.0" maxWidth="1.7976931348623157E308" prefWrapLength="800.0" vgap="2.0" HBox.hgrow="ALWAYS">
+                                  <children>
+                                      <Label text="%MaxEditHistories" />
+                                      <TextField fx:id="maxHistoriesInput" prefWidth="100.0" text="10" />
+                                      <Button fx:id="okHistoriesSizeButton" mnemonicParsing="false" onAction="#okHistoriesSize">
+                                          <graphic>
+                                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                  <image>
+                                                      <Image url="@../buttons/Red/iconOK.png" />
+                                                  </image>
+                                              </ImageView>
+                                          </graphic>
+                                      </Button>
+                                      <Button fx:id="openPathHisButton" mnemonicParsing="false" onAction="#hisPath">
+                                          <graphic>
+                                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                  <image>
+                                                      <Image url="@../buttons/Red/iconOpenPath.png" />
+                                                  </image>
+                                              </ImageView>
+                                          </graphic>
+                                      </Button>
+                                  </children>
+                              </FlowPane>
+                            </children>
+                        </HBox>
+                        <TableView fx:id="tableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
+                            <columns>
+                                <TableColumn fx:id="rowsSelectionColumn" maxWidth="1.7976931348623157E308" prefWidth="-1.0">
+                                    <graphic>
+                                        <CheckBox fx:id="allRowsCheck" mnemonicParsing="false" text="%TableRow" />
+                                    </graphic>
+                                </TableColumn>
+                                <TableColumn fx:id="timeColumn" editable="false" maxWidth="1.7976931348623157E308" minWidth="160.0" prefWidth="-1.0" text="%RecordTime" />
+                                <TableColumn fx:id="sizeColumn" editable="false" maxWidth="1.7976931348623157E308" minWidth="120.0" prefWidth="-1.0" text="%Size" />
+                                <TableColumn fx:id="imageColumn" editable="false" maxWidth="1.7976931348623157E308" minWidth="120.0" prefWidth="-1.0" text="%Image" />
+                        <TableColumn fx:id="typeColumn" editable="false" maxWidth="1.7976931348623157E308" minWidth="-1.0" prefWidth="100.0" text="%Type" />
+                                <TableColumn fx:id="descColumn" editable="false" maxWidth="1.7976931348623157E308" minWidth="-1.0" prefWidth="300.0" text="%Description" />
+                        <TableColumn fx:id="fileColumn" editable="false" maxWidth="1.7976931348623157E308" prefWidth="160.0" text="%File" />
+                            </columns>
+                        </TableView>
+                    </children>
+                </VBox>
+            <Label fx:id="bottomLabel" minHeight="-Infinity" wrapText="true" />
+            </children>
+        </VBox>
+    </center>
+    <padding>
+        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+    </padding>
+</BorderPane>

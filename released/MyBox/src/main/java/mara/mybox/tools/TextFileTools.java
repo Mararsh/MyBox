@@ -9,6 +9,7 @@ import java.nio.charset.Charset;
 import java.util.List;
 import mara.mybox.data.TextEditInformation;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 
 /**
  * @Author Mara
@@ -17,21 +18,27 @@ import mara.mybox.dev.MyBoxLog;
  */
 public class TextFileTools {
 
-    public static String readTexts(File file) {
-        return readTexts(file, charset(file));
+    public static String readTexts(FxTask task, File file) {
+        return readTexts(task, file, charset(file));
     }
 
-    public static String readTexts(File file, Charset charset) {
+    public static String readTexts(FxTask task, File file, Charset charset) {
         if (file == null || charset == null) {
             return null;
         }
         StringBuilder s = new StringBuilder();
-        File validFile = FileTools.removeBOM(file);
+        File validFile = FileTools.removeBOM(task, file);
+        if (validFile == null || (task != null && !task.isWorking())) {
+            return null;
+        }
         try (final BufferedReader reader = new BufferedReader(new FileReader(validFile, charset))) {
             String line = reader.readLine();
             if (line != null) {
                 s.append(line);
                 while ((line = reader.readLine()) != null) {
+                    if (task != null && !task.isWorking()) {
+                        break;
+                    }
                     s.append(System.lineSeparator()).append(line);
                 }
             }
@@ -86,7 +93,7 @@ public class TextFileTools {
         return charset.equals(Charset.forName("utf-8"));
     }
 
-    public static boolean mergeTextFiles(List<File> files, File targetFile) {
+    public static boolean mergeTextFiles(FxTask task, List<File> files, File targetFile) {
         if (files == null || files.isEmpty() || targetFile == null) {
             return false;
         }
@@ -94,9 +101,12 @@ public class TextFileTools {
         String line;
         try (final FileWriter writer = new FileWriter(targetFile, Charset.forName("utf-8"))) {
             for (File file : files) {
-                File validFile = FileTools.removeBOM(file);
+                File validFile = FileTools.removeBOM(task, file);
                 try (final BufferedReader reader = new BufferedReader(new FileReader(validFile, charset(validFile)))) {
                     while ((line = reader.readLine()) != null) {
+                        if (task != null && !task.isWorking()) {
+                            return false;
+                        }
                         writer.write(line + System.lineSeparator());
                     }
                 }
@@ -109,7 +119,7 @@ public class TextFileTools {
         return true;
     }
 
-    public static void writeLine(BufferedWriter writer, List<String> values, String delimiter) {
+    public static void writeLine(FxTask task, BufferedWriter writer, List<String> values, String delimiter) {
         try {
             if (writer == null || values == null || values.isEmpty() || delimiter == null) {
                 return;
@@ -118,6 +128,9 @@ public class TextFileTools {
             int end = values.size() - 1;
             String line = "";
             for (int c = 0; c <= end; c++) {
+                if (task != null && !task.isWorking()) {
+                    return;
+                }
                 String value = values.get(c);
                 if (value != null) {
                     line += value;

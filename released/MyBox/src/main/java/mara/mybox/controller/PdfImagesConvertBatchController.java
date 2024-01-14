@@ -11,10 +11,11 @@ import javafx.scene.control.CheckBox;
 import mara.mybox.bufferedimage.ImageAttributes;
 import mara.mybox.bufferedimage.ImageConvertTools;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.FileNameTools;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.PdfTools;
-import mara.mybox.tools.FileTmpTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -88,7 +89,7 @@ public class PdfImagesConvertBatchController extends BaseBatchPdfController {
     }
 
     @Override
-    public boolean preHandlePages() {
+    public boolean preHandlePages(FxTask currentTask) {
         try {
             File tFile = makeTargetFile(FileNameTools.prefix(currentParameters.currentSourceFile.getName()),
                     ".pdf", currentParameters.currentTargetPath);
@@ -109,7 +110,7 @@ public class PdfImagesConvertBatchController extends BaseBatchPdfController {
     }
 
     @Override
-    public int handleCurrentPage() {
+    public int handleCurrentPage(FxTask currentTask) {
         int count = 0;
         try {
             PDPage sourcePage = doc.getPage(currentParameters.currentPage - 1);  // 0-based
@@ -122,7 +123,7 @@ public class PdfImagesConvertBatchController extends BaseBatchPdfController {
             Iterator<COSName> pageIterator = iterable.iterator();
 
             while (pageIterator.hasNext()) {
-                if (task == null || task.isCancelled()) {
+                if (currentTask == null || currentTask.isCancelled()) {
                     break;
                 }
                 COSName cosName = pageIterator.next();
@@ -131,7 +132,10 @@ public class PdfImagesConvertBatchController extends BaseBatchPdfController {
                 }
                 PDImageXObject pdxObject = (PDImageXObject) pdResources.getXObject(cosName);
                 BufferedImage sourceImage = pdxObject.getImage();
-                PDImageXObject newObject = handleImage(sourceImage);
+                PDImageXObject newObject = handleImage(currentTask, sourceImage);
+                if (currentTask == null || currentTask.isCancelled()) {
+                    break;
+                }
                 if (newObject != null) {
                     pdResources.put(cosName, newObject);
                     count++;
@@ -139,6 +143,9 @@ public class PdfImagesConvertBatchController extends BaseBatchPdfController {
                         break;
                     }
                 }
+            }
+            if (currentTask == null || currentTask.isCancelled()) {
+                return count;
             }
             if (copyAllCheck.isSelected()) {
                 targetDoc.getPage(currentParameters.currentPage - 1).setResources(pdResources);
@@ -152,7 +159,7 @@ public class PdfImagesConvertBatchController extends BaseBatchPdfController {
 
     }
 
-    public PDImageXObject handleImage(BufferedImage sourceImage) {
+    public PDImageXObject handleImage(FxTask currentTask, BufferedImage sourceImage) {
         if (sourceImage == null) {
             return null;
         }
@@ -160,12 +167,15 @@ public class PdfImagesConvertBatchController extends BaseBatchPdfController {
             PDImageXObject newObject = null;
             BufferedImage targetImage;
             if ("ico".equals(format) || "icon".equals(format)) {
-                targetImage = ImageConvertTools.convertToIcon(sourceImage, attributes);
+                targetImage = ImageConvertTools.convertToIcon(currentTask, sourceImage, attributes);
             } else {
-                targetImage = ImageConvertTools.convertColorSpace(sourceImage, attributes);
+                targetImage = ImageConvertTools.convertColorSpace(currentTask, sourceImage, attributes);
+            }
+            if (currentTask == null || !currentTask.isWorking()) {
+                return null;
             }
             if (targetImage != null) {
-                newObject = PdfTools.imageObject(doc, format, targetImage);
+                newObject = PdfTools.imageObject(currentTask, doc, format, targetImage);
             }
             return newObject;
         } catch (Exception e) {
@@ -175,13 +185,13 @@ public class PdfImagesConvertBatchController extends BaseBatchPdfController {
     }
 
     @Override
-    public void postHandlePages() {
+    public void postHandlePages(FxTask currentTask) {
         try {
             if (targetDoc != null) {
                 targetDoc.save(tmpFile);
                 targetDoc.close();
                 File tFile = new File(currentTargetFile);
-                if (FileTools.rename(tmpFile, tFile)) {
+                if (FileTools.override(tmpFile, tFile)) {
                     targetFileGenerated(tFile);
                 }
             }

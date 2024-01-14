@@ -230,8 +230,8 @@ public class Data2DChartXYController extends BaseData2DChartController {
      */
     public static Data2DChartXYController open(ControlData2DLoad tableController) {
         try {
-            Data2DChartXYController controller = (Data2DChartXYController) WindowTools.openChildStage(
-                    tableController.getMyWindow(), Fxmls.Data2DChartXYFxml, false);
+            Data2DChartXYController controller = (Data2DChartXYController) WindowTools.branchStage(
+                    tableController, Fxmls.Data2DChartXYFxml);
             controller.setParameters(tableController);
             controller.requestMouse();
             return controller;

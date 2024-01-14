@@ -14,6 +14,7 @@ import mara.mybox.data.StringTable;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataFilter;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WebViewTools;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.tools.HtmlWriteTools;
@@ -325,17 +326,33 @@ public class ControlData2DView extends BaseController {
     }
 
     protected void textInTable() {
-        String title = null;
-        if (titleCheck.isSelected()) {
-            title = data2D.titleName();
-        }
-        String text = data2D.encodeCSV(task, displayDelimiterName,
-                rowCheck.isSelected(), columnCheck.isSelected(), true);
-        if (title != null && !title.isBlank()) {
-            textArea.setText(title + "\n\n" + text);
-        } else {
-            textArea.setText(text);
-        }
+        FxTask<Void> textTask = new FxTask<Void>(this) {
+            String text;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    text = data2D.encodeCSV(this, displayDelimiterName,
+                            rowCheck.isSelected(), columnCheck.isSelected(), true);
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                String title = titleCheck.isSelected() ? data2D.titleName() : null;
+                if (title != null && !title.isBlank()) {
+                    textArea.setText(title + "\n\n" + text);
+                } else {
+                    textArea.setText(text);
+                }
+            }
+
+        };
+        start(textTask, false);
     }
 
     protected void textInForm() {

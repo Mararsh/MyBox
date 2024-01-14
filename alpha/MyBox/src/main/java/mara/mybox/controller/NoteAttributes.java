@@ -17,7 +17,7 @@ public class NoteAttributes extends InfoTreeNodeEditor {
             this.editorController = editorController;
             tabPane = editorController.tabPane;
             attributesTab = editorController.attributesTab;
-            setParameters(editorController.notesController);
+            setManager(editorController.notesController);
 
         } catch (Exception e) {
             MyBoxLog.error(e);

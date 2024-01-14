@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="thisPane" spacing="2.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlQuadratic">
+   <children>
+      <Label minHeight="-Infinity" text="%StartPoint" wrapText="true" />
+      <FlowPane hgap="2.0" minHeight="-Infinity" prefWrapLength="100.0" vgap="2.0">
+         <children>
+            <Label text="x">
+               <FlowPane.margin>
+                  <Insets />
+               </FlowPane.margin>
+            </Label>
+            <TextField fx:id="quadStartXInput" prefWidth="100.0" />
+         </children>
+      </FlowPane>
+      <FlowPane hgap="2.0" minHeight="-Infinity" prefWrapLength="100.0" vgap="2.0">
+         <children>
+            <Label text="y" />
+            <TextField fx:id="quadStartYInput" prefWidth="100.0" />
+         </children>
+      </FlowPane>
+      <Label minHeight="-Infinity" text="%ControlPoint" wrapText="true" />
+      <FlowPane hgap="2.0" minHeight="-Infinity" prefWrapLength="100.0" vgap="2.0">
+         <children>
+            <Label text="x">
+               <FlowPane.margin>
+                  <Insets />
+               </FlowPane.margin>
+            </Label>
+            <TextField fx:id="quadControlXInput" prefWidth="100.0" />
+         </children>
+      </FlowPane>
+      <FlowPane hgap="2.0" minHeight="-Infinity" prefWrapLength="100.0" vgap="2.0">
+         <children>
+            <Label text="y" />
+            <TextField fx:id="quadControlYInput" prefWidth="100.0" />
+         </children>
+      </FlowPane>
+      <Label minHeight="-Infinity" text="%EndPoint" wrapText="true" />
+      <FlowPane hgap="2.0" minHeight="-Infinity" prefWrapLength="100.0" vgap="2.0">
+         <children>
+            <Label text="x">
+               <FlowPane.margin>
+                  <Insets />
+               </FlowPane.margin>
+            </Label>
+            <TextField fx:id="quadEndXInput" prefWidth="100.0" />
+         </children>
+      </FlowPane>
+      <FlowPane hgap="2.0" minHeight="-Infinity" prefWrapLength="100.0" vgap="2.0">
+         <children>
+            <Label text="y" />
+            <TextField fx:id="quadEndYInput" prefWidth="100.0" />
+         </children>
+      </FlowPane>
+   </children>
+</VBox>

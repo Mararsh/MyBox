@@ -28,8 +28,8 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.RecentVisitMenu;
-import mara.mybox.fxml.SingletonCurrentTask;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.tools.SystemTools;
@@ -322,7 +322,7 @@ public class FFmpegProbeMediaInformationController extends ControlFFmpegOptions 
         formatArea.clear();
         streamsArea.clear();
         queryArea.clear();
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -397,7 +397,7 @@ public class FFmpegProbeMediaInformationController extends ControlFFmpegOptions 
         if (queryTask != null) {
             queryTask.cancel();
         }
-        queryTask = new SingletonTask<Void>(this) {
+        queryTask = new FxTask<Void>(this) {
 
             private File file;
 

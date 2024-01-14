@@ -7,6 +7,7 @@ import java.util.Map;
 import mara.mybox.bufferedimage.ColorComponentTools.ColorComponent;
 import mara.mybox.calculation.IntStatistic;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 
 /**
  * @Author Mara
@@ -21,7 +22,7 @@ public class ImageStatistic {
     protected Map<ColorComponent, ComponentStatistic> data;
     protected long nonTransparent;
 
-    public ImageStatistic analyze() {
+    public ImageStatistic analyze(FxTask task) {
         try {
             if (image == null) {
                 return null;
@@ -44,7 +45,13 @@ public class ImageStatistic {
             int[] brightnessHistogram = new int[101];
             nonTransparent = 0;
             for (int y = 0; y < image.getHeight(); y++) {
+                if (task != null && !task.isWorking()) {
+                    return null;
+                }
                 for (int x = 0; x < image.getWidth(); x++) {
+                    if (task != null && !task.isWorking()) {
+                        return null;
+                    }
                     int p = image.getRGB(x, y);
                     if (p == 0) {
                         continue;
@@ -153,7 +160,13 @@ public class ImageStatistic {
             redSkewness = greenSkewness = blueSkewness = alphaSkewness = hueSkewness = saturationSkewness = brightnessSkewness = graySkewness = 0;
             double d;
             for (int y = 0; y < image.getHeight(); y++) {
+                if (task != null && !task.isWorking()) {
+                    return null;
+                }
                 for (int x = 0; x < image.getWidth(); x++) {
+                    if (task != null && !task.isWorking()) {
+                        return null;
+                    }
                     int p = image.getRGB(x, y);
                     if (p == 0) {
                         continue;
@@ -291,13 +304,16 @@ public class ImageStatistic {
         return s.getStatistic();
     }
 
-    public static int[] grayHistogram(BufferedImage image) {
+    public static int[] grayHistogram(FxTask task, BufferedImage image) {
         if (image == null) {
             return null;
         }
-        BufferedImage grayImage = ImageGray.byteGray(image);
+        BufferedImage grayImage = ImageGray.byteGray(task, image);
         int[] histogram = new int[256];
         for (int y = 0; y < image.getHeight(); y++) {
+            if (task != null && !task.isWorking()) {
+                return null;
+            }
             for (int x = 0; x < image.getWidth(); x++) {
                 int gray = new Color(grayImage.getRGB(x, y)).getRed();
                 histogram[gray]++;
@@ -313,13 +329,19 @@ public class ImageStatistic {
         return new ImageStatistic().setImage(image).setData(new HashMap<>());
     }
 
-    public static long nonTransparent(BufferedImage image) {
+    public static long nonTransparent(FxTask task, BufferedImage image) {
         if (image == null) {
             return 0;
         }
         long nonTransparent = 0;
         for (int y = 0; y < image.getHeight(); y++) {
+            if (task != null && !task.isWorking()) {
+                return -1;
+            }
             for (int x = 0; x < image.getWidth(); x++) {
+                if (task != null && !task.isWorking()) {
+                    return -1;
+                }
                 if (image.getRGB(x, y) == 0) {
                     nonTransparent++;
                 }

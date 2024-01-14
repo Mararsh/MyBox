@@ -16,15 +16,15 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.ImageView;
 import mara.mybox.data.DataSort;
 import mara.mybox.data2d.Data2D;
-import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.data2d.Data2D_Operations.ObjectType;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.TmpTable;
 import mara.mybox.data2d.reader.DataTableGroup;
+import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.FileDeleteTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -66,11 +66,6 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
 
     public BaseData2DHandleController() {
         baseTitle = message("Handle");
-    }
-
-    @Override
-    public void setStageStatus() {
-        setAsNormal();
     }
 
     @Override
@@ -353,7 +348,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
         if (task != null && !task.isQuit()) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -459,6 +454,9 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
 
     public List<List<String>> sortedData(List<Integer> colIndices, boolean needRowNumber) {
         try {
+            if (data2D == null) {
+                return null;
+            }
             if (maxData <= 0 && (sortController == null || orders == null || orders.isEmpty())) {
                 return filteredData(colIndices, needRowNumber);
             }
@@ -470,7 +468,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
             if (showColNames()) {
                 outputData.add(0, csvData.columnNames());
             }
-            FileDeleteTools.delete(csvData.getFile());
+            FileDeleteTools.delete(data2D.getTask(), csvData.getFile());
             outputColumns = csvData.columns;
             return outputData;
         } catch (Exception e) {
@@ -484,7 +482,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
 
     public TmpTable tmpTable(String dname, List<Integer> colIndices, boolean needRowNumber) {
         try {
-            SingletonTask data2DTask = data2D.getTask();
+            FxTask data2DTask = data2D.getTask();
             Data2D tmp2D = data2D.cloneAll();
             tmp2D.startTask(data2DTask, filterController.filter);
             if (data2DTask != null) {

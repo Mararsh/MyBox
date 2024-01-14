@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Data>
+    <Row>
+        <Col name="item" >food consumption per capita(kilogram)</Col>
+        <Col name="year 2020" >141.2</Col>
+        <Col name="year 2019" >130.1</Col>
+        <Col name="year 2018" >127.2</Col>
+        <Col name="year 2017" >130.1</Col>
+        <Col name="year 2016" >132.8</Col>
+        <Col name="year 2015" >134.5</Col>
+        <Col name="year 2014" >141.0</Col>
+        <Col name="year 2013" >148.7</Col>
+    </Row>
+    <Row>
+        <Col name="item" >cooking oil consumption per capita(kilogram)</Col>
+        <Col name="year 2020" >10.4</Col>
+        <Col name="year 2019" >9.5</Col>
+        <Col name="year 2018" >9.6</Col>
+        <Col name="year 2017" >10.4</Col>
+        <Col name="year 2016" >10.6</Col>
+        <Col name="year 2015" >10.6</Col>
+        <Col name="year 2014" >10.4</Col>
+        <Col name="year 2013" >10.6</Col>
+    </Row>
+    <Row>
+        <Col name="item" >vegetables and mushrooms consumption per capita(kilogram)</Col>
+        <Col name="year 2020" >103.7</Col>
+        <Col name="year 2019" >98.6</Col>
+        <Col name="year 2018" >96.1</Col>
+        <Col name="year 2017" >99.2</Col>
+        <Col name="year 2016" >100.1</Col>
+        <Col name="year 2015" >97.8</Col>
+        <Col name="year 2014" >96.9</Col>
+        <Col name="year 2013" >97.5</Col>
+    </Row>
+    <Row>
+        <Col name="item" >meat consumption per capita(kilogram)</Col>
+        <Col name="year 2020" >24.8</Col>
+        <Col name="year 2019" >26.9</Col>
+        <Col name="year 2018" >29.5</Col>
+        <Col name="year 2017" >26.7</Col>
+        <Col name="year 2016" >26.1</Col>
+        <Col name="year 2015" >26.2</Col>
+        <Col name="year 2014" >25.6</Col>
+        <Col name="year 2013" >25.6</Col>
+    </Row>
+    <Row>
+        <Col name="item" >poultry consumption per capita(kilogram)</Col>
+        <Col name="year 2020" >12.7</Col>
+        <Col name="year 2019" >10.8</Col>
+        <Col name="year 2018" >9.0</Col>
+        <Col name="year 2017" >8.9</Col>
+        <Col name="year 2016" >9.1</Col>
+        <Col name="year 2015" >8.4</Col>
+        <Col name="year 2014" >8.0</Col>
+        <Col name="year 2013" >7.2</Col>
+    </Row>
+    <Row>
+        <Col name="item" >aquatic products consumption per capita(kilogram)</Col>
+        <Col name="year 2020" >13.9</Col>
+        <Col name="year 2019" >13.6</Col>
+        <Col name="year 2018" >11.4</Col>
+        <Col name="year 2017" >11.5</Col>
+        <Col name="year 2016" >11.4</Col>
+        <Col name="year 2015" >11.2</Col>
+        <Col name="year 2014" >10.8</Col>
+        <Col name="year 2013" >10.4</Col>
+    </Row>
+    <Row>
+        <Col name="item" >eggs consumption per capita(kilogram)</Col>
+        <Col name="year 2020" >12.8</Col>
+        <Col name="year 2019" >10.7</Col>
+        <Col name="year 2018" >9.7</Col>
+        <Col name="year 2017" >10.0</Col>
+        <Col name="year 2016" >9.7</Col>
+        <Col name="year 2015" >9.5</Col>
+        <Col name="year 2014" >8.6</Col>
+        <Col name="year 2013" >8.2</Col>
+    </Row>
+    <Row>
+        <Col name="item" >milk consumption per capita(kilogram)</Col>
+        <Col name="year 2020" >13.0</Col>
+        <Col name="year 2019" >12.5</Col>
+        <Col name="year 2018" >12.2</Col>
+        <Col name="year 2017" >12.1</Col>
+        <Col name="year 2016" >12.0</Col>
+        <Col name="year 2015" >12.1</Col>
+        <Col name="year 2014" >12.6</Col>
+        <Col name="year 2013" >11.7</Col>
+    </Row>
+    <Row>
+        <Col name="item" >fruits consumption per capita(kilogram)</Col>
+        <Col name="year 2020" >56.3</Col>
+        <Col name="year 2019" >56.4</Col>
+        <Col name="year 2018" >52.1</Col>
+        <Col name="year 2017" >50.1</Col>
+        <Col name="year 2016" >48.3</Col>
+        <Col name="year 2015" >44.5</Col>
+        <Col name="year 2014" >42.2</Col>
+        <Col name="year 2013" >40.7</Col>
+    </Row>
+    <Row>
+        <Col name="item" >sugar consumption per capita(kilogram)</Col>
+        <Col name="year 2020" >1.3</Col>
+        <Col name="year 2019" >1.3</Col>
+        <Col name="year 2018" >1.3</Col>
+        <Col name="year 2017" >1.3</Col>
+        <Col name="year 2016" >1.3</Col>
+        <Col name="year 2015" >1.3</Col>
+        <Col name="year 2014" >1.3</Col>
+        <Col name="year 2013" >1.2</Col>
+    </Row>
+</Data>

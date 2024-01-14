@@ -87,7 +87,7 @@ public class ControlRowFilterRefer extends ControlInfoTreeList {
     }
 
     @FXML
-    public void dataAction() {
+    public void manageAction() {
         JavaScriptController.loadScript("");
     }
 
@@ -138,7 +138,7 @@ public class ControlRowFilterRefer extends ControlInfoTreeList {
 
     @FXML
     protected void showScriptHistories(Event event) {
-        PopTools.popStringValues(this, scriptInput, event, interfaceName + "Histories", false, true);
+        PopTools.popStringValues(this, scriptInput, event, interfaceName + "Histories", false);
     }
 
 }

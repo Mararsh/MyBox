@@ -11,6 +11,7 @@ import java.util.Map;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.FloatTools;
 import mara.mybox.tools.StringTools;
 import static mara.mybox.value.Languages.message;
@@ -69,13 +70,16 @@ public class ImageQuantization extends PixelsOperation {
         }
     }
 
-    public List<ColorCount> sortCounts() {
+    public List<ColorCount> sortCounts(FxTask currentTask) {
         totalCount = 0;
         if (counts == null) {
             return null;
         }
         sortedCounts = new ArrayList<>();
         for (Color color : counts.keySet()) {
+            if (currentTask != null && !currentTask.isWorking()) {
+                return null;
+            }
             sortedCounts.add(new ColorCount(color, counts.get(color)));
             totalCount += counts.get(color);
         }
@@ -95,9 +99,12 @@ public class ImageQuantization extends PixelsOperation {
         return sortedCounts;
     }
 
-    public StringTable countTable(String name) {
+    public StringTable countTable(FxTask currentTask, String name) {
         try {
-            sortedCounts = sortCounts();
+            sortedCounts = sortCounts(currentTask);
+            if (currentTask != null && !currentTask.isWorking()) {
+                return null;
+            }
             if (sortedCounts == null || totalCount == 0) {
                 return null;
             }
@@ -111,9 +118,12 @@ public class ImageQuantization extends PixelsOperation {
             if (name != null) {
                 title += "_" + name;
             }
-            StringTable table = new StringTable(names, title, 3);
+            StringTable table = new StringTable(names, title);
             int id = 1;
             for (ColorCount count : sortedCounts) {
+                if (currentTask != null && !currentTask.isWorking()) {
+                    return null;
+                }
                 List<String> row = new ArrayList<>();
                 javafx.scene.paint.Color color = ColorConvertTools.converColor(count.color);
                 int red = (int) Math.round(color.getRed() * 255);
@@ -121,7 +131,9 @@ public class ImageQuantization extends PixelsOperation {
                 int blue = (int) Math.round(color.getBlue() * 255);
                 row.addAll(Arrays.asList((id++) + "", StringTools.format(count.count),
                         FloatTools.percentage(count.count, totalCount) + "%",
-                        FxColorTools.color2rgba(color), red + " ", green + " ", blue + " ",
+                        "<DIV style=\"width: 50px;  background-color:"
+                        + FxColorTools.color2rgb(color) + "; \">&nbsp;&nbsp;&nbsp;</DIV>",
+                        red + " ", green + " ", blue + " ",
                         (int) Math.round(color.getOpacity() * 100) + "%",
                         Math.round(color.getHue()) + " ",
                         Math.round(color.getSaturation() * 100) + "%",
@@ -136,6 +148,10 @@ public class ImageQuantization extends PixelsOperation {
         }
     }
 
+    public String resultInfo() {
+        return null;
+    }
+
     @Override
     public Color operateColor(Color color) {
         return color;
@@ -145,16 +161,18 @@ public class ImageQuantization extends PixelsOperation {
         try {
             ImageQuantizationFactory.KMeansRegionQuantization regionQuantization
                     = ImageQuantizationFactory.KMeansRegionQuantization.create();
-            regionQuantization.setRegionSize(regionSize)
+            regionQuantization.setQuantizationSize(regionSize)
+                    .setRegionSize(regionSize)
                     .setFirstColor(firstColor)
                     .setWeight1(weight1).setWeight2(weight2).setWeight3(weight3)
                     .setRecordCount(true)
                     .setImage(image).setScope(scope).
                     setOperationType(PixelsOperation.OperationType.Quantization).
-                    setIsDithering(isDithering);
-            regionQuantization.buildPalette().operate();
+                    setIsDithering(isDithering)
+                    .setTask(task);
+            regionQuantization.buildPalette().start();
             ImageRGBKMeans kmeans = ImageRGBKMeans.create();
-            kmeans.setK(quantizationSize);
+            kmeans.setK(quantizationSize).setTask(task);
             if (kmeans.init(regionQuantization).run()) {
                 kmeans.makeMap();
                 return kmeans;

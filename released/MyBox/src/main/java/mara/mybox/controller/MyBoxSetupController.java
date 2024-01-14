@@ -3,7 +3,6 @@ package mara.mybox.controller;
 import java.io.File;
 import java.net.URL;
 import java.text.MessageFormat;
-import java.util.Locale;
 import java.util.ResourceBundle;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -60,7 +59,7 @@ public class MyBoxSetupController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         try {
-            lang = Locale.getDefault().getLanguage().toLowerCase();
+            lang = Languages.embedLangName();
             if (AppVariables.MyboxConfigFile == null) {
                 AppVariables.MyboxConfigFile = ConfigTools.defaultConfigFile();
             }

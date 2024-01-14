@@ -2,7 +2,6 @@ package mara.mybox.controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-
 import mara.mybox.value.Fxmls;
 
 /**
@@ -55,16 +54,6 @@ public abstract class MainMenuController_Media extends MainMenuController_Data {
     @FXML
     protected void openFFmpegConvertMediaStreams(ActionEvent event) {
         loadScene(Fxmls.FFmpegConvertMediaStreamsFxml);
-    }
-
-    @FXML
-    protected void ImagesInMyBoxClipboard(ActionEvent event) {
-        ImageInMyBoxClipboardController.oneOpen();
-    }
-
-    @FXML
-    protected void ImagesInSystemClipboard(ActionEvent event) {
-        ImageInSystemClipboardController.oneOpen();
     }
 
     @FXML

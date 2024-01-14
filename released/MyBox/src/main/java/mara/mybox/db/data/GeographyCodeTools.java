@@ -22,6 +22,7 @@ import static mara.mybox.data.GeoCoordinateSystem.Value.GCJ_02;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FileTmpTools;
@@ -88,7 +89,7 @@ public class GeographyCodeTools {
                         outputStream.write(buf, 0, len);
                     }
                 }
-                String data = TextFileTools.readTexts(jsonFile);
+                String data = TextFileTools.readTexts(null, jsonFile);
                 double longitude = -200;
                 double latitude = -200;
                 String flag = "\"lon\":";
@@ -195,7 +196,7 @@ public class GeographyCodeTools {
                     outputStream.write(buf, 0, len);
                 }
             }
-            String data = TextFileTools.readTexts(jsonFile);
+            String data = TextFileTools.readTexts(null, jsonFile);
 //            MyBoxLog.debug(data);
             String flag = "\"formatted_address\":\"";
             int pos = data.indexOf(flag);
@@ -395,7 +396,7 @@ public class GeographyCodeTools {
             if (url == null) {
                 return null;
             }
-            File xmlFile = HtmlReadTools.download(url.toString());
+            File xmlFile = HtmlReadTools.download(null, url.toString());
 //            MyBoxLog.debug(FileTools.readTexts(xmlFile));
             Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(xmlFile);
             NodeList nodes = doc.getElementsByTagName("formatted_address");
@@ -545,26 +546,26 @@ public class GeographyCodeTools {
         }
     }
 
-    public static GeographyCode encode(GeographyCode code) {
+    public static GeographyCode encode(FxTask task, GeographyCode code) {
         if (code == null) {
             return null;
         }
         try (Connection conn = DerbyBase.getConnection();
                 PreparedStatement geoInsert = conn.prepareStatement(TableGeographyCode.Insert)) {
-            return encode(conn, geoInsert, code, true);
+            return encode(task, conn, geoInsert, code, true);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
         return null;
     }
 
-    public static GeographyCode encode(Connection conn, PreparedStatement geoInsert,
+    public static GeographyCode encode(FxTask task, Connection conn, PreparedStatement geoInsert,
             GeographyCode code, boolean decodeAncestors) {
         if (code == null) {
             return null;
         }
         try {
-            Map<String, Object> codeRet = encode(conn, geoInsert, code.getLevel(),
+            Map<String, Object> codeRet = encode(task, conn, geoInsert, code.getLevel(),
                     code.getLongitude(), code.getLatitude(),
                     code.getContinentName(), code.getCountryName(),
                     code.getProvinceName(), code.getCityName(), code.getCountyName(),
@@ -585,7 +586,7 @@ public class GeographyCodeTools {
     }
 
     // !! Caller responses for committing the update
-    public static Map<String, Object> encode(Connection conn, PreparedStatement geoInsert,
+    public static Map<String, Object> encode(FxTask task, Connection conn, PreparedStatement geoInsert,
             int level, double longitude, double latitude, String continent, String country, String province,
             String city, String county, String town, String village, String building, String poi,
             boolean create, boolean decodeAncestors) {
@@ -600,7 +601,7 @@ public class GeographyCodeTools {
             GeographyCode earch = TableGeographyCode.earth(conn);
             if (level == 1) {
                 if (earch == null) {
-                    importPredefined(conn, null);
+                    importPredefined(task, conn, null);
                     earch = TableGeographyCode.earth(conn);
                 }
                 earch.setOwnerCode(earch);
@@ -1186,18 +1187,18 @@ public class GeographyCodeTools {
     /*
         Import
      */
-    public static void importPredefined() {
-        importPredefined(null, null);
+    public static void importPredefined(FxTask task) {
+        importPredefined(task, null, null);
     }
 
-    public static void importPredefined(Connection conn) {
-        importPredefined(conn, null);
+    public static void importPredefined(FxTask task, Connection conn) {
+        importPredefined(task, conn, null);
     }
 
-    public static void importPredefined(Connection conn, LoadingController loading) {
+    public static void importPredefined(FxTask task, Connection conn, LoadingController loading) {
         if (conn == null) {
             try (final Connection conn1 = DerbyBase.getConnection()) {
-                importPredefined(conn1, loading);
+                importPredefined(task, conn1, loading);
             } catch (Exception e) {
                 MyBoxLog.debug(e);
             }
@@ -1206,9 +1207,12 @@ public class GeographyCodeTools {
         try {
             conn.setAutoCommit(false);
             File file = mara.mybox.fxml.FxFileTools.getInternalFile("/data/examples/Geography_Code_global_internal.csv", "data", "Geography_Code_global_internal.csv");
-            importInternalCSV(conn, loading, file, true);
+            importInternalCSV(task, conn, loading, file, true);
             file = mara.mybox.fxml.FxFileTools.getInternalFile("/data/examples/Geography_Code_countries_internal.csv", "data", "Geography_Code_countries_internal.csv");
-            importInternalCSV(conn, loading, file, true);
+            importInternalCSV(task, conn, loading, file, true);
+            if (task != null && !task.isWorking()) {
+                return;
+            }
             if (!Languages.isChinese()) {
                 try {
                     String sql = "UPDATE Geography_Code SET comments=null WHERE level=3 AND predefined=1";
@@ -1218,13 +1222,22 @@ public class GeographyCodeTools {
                 }
             }
             file = mara.mybox.fxml.FxFileTools.getInternalFile("/data/examples/Geography_Code_china_provinces_internal.csv", "data", "Geography_Code_china_provinces_internal.csv");
-            importInternalCSV(conn, loading, file, true);
+            importInternalCSV(task, conn, loading, file, true);
+            if (task != null && !task.isWorking()) {
+                return;
+            }
             file = mara.mybox.fxml.FxFileTools.getInternalFile("/data/examples/Geography_Code_china_cities_internal.csv", "data", "Geography_Code_china_cities_internal.csv");
-            importInternalCSV(conn, loading, file, true);
+            importInternalCSV(task, conn, loading, file, true);
+            if (task != null && !task.isWorking()) {
+                return;
+            }
             file = mara.mybox.fxml.FxFileTools.getInternalFile("/data/examples/Geography_Code_china_counties_internal.csv", "data", "Geography_Code_china_counties_internal.csv");
-            importInternalCSV(conn, loading, file, true);
+            importInternalCSV(task, conn, loading, file, true);
+            if (task != null && !task.isWorking()) {
+                return;
+            }
             file = mara.mybox.fxml.FxFileTools.getInternalFile("/data/examples/Geography_Code_special.csv", "data", "Geography_Code_special.csv");
-            importInternalCSV(conn, loading, file, true);
+            importInternalCSV(task, conn, loading, file, true);
             conn.commit();
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -1236,20 +1249,20 @@ public class GeographyCodeTools {
 
     // gcid,levelid,longitude,latitude,chinese_name,english_name,code1,code2,code3,code4,code5,alias1,alias2,alias3,alias4,alias5,
     // area,population,continentid,countryid,provinceid,cityid,countyid,townid,villageid,buildingid,comments
-    public static void importInternalCSV(LoadingController loading, File file, boolean predefined) {
+    public static void importInternalCSV(FxTask task, LoadingController loading, File file, boolean predefined) {
         try (final Connection conn = DerbyBase.getConnection()) {
-            importInternalCSV(conn, loading, file, predefined);
+            importInternalCSV(task, conn, loading, file, predefined);
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
     }
 
-    public static void importInternalCSV(Connection conn, LoadingController loading, File file, boolean predefined) {
+    public static void importInternalCSV(FxTask task, Connection conn, LoadingController loading, File file, boolean predefined) {
         long importCount = 0;
         long insertCount = 0;
         long updateCount = 0;
         long failedCount = 0;
-        File validFile = FileTools.removeBOM(file);
+        File validFile = FileTools.removeBOM(task, file);
         try (final CSVParser parser = CSVParser.parse(validFile, StandardCharsets.UTF_8, CsvTools.csvFormat())) {
             conn.setAutoCommit(false);
             List<String> names = parser.getHeaderNames();
@@ -1262,6 +1275,10 @@ public class GeographyCodeTools {
                 gcidQeury.setMaxRows(1);
                 boolean exist;
                 for (CSVRecord record : parser) {
+                    if (task != null && !task.isWorking()) {
+                        parser.close();
+                        return;
+                    }
                     GeographyCode code = GeographyCodeTools.readIntenalRecord(names, record);
                     if (predefined) {
                         code.setSource(GeographyCode.AddressSource.PredefinedData);
@@ -1311,9 +1328,12 @@ public class GeographyCodeTools {
         }
     }
 
-    public static List<GeographyCode> readInternalCSV(File file) {
+    public static List<GeographyCode> readInternalCSV(FxTask task, File file) {
         List<GeographyCode> codes = new ArrayList();
-        File validFile = FileTools.removeBOM(file);
+        File validFile = FileTools.removeBOM(task, file);
+        if (validFile == null || (task != null && !task.isWorking())) {
+            return null;
+        }
         try (final CSVParser parser = CSVParser.parse(validFile, StandardCharsets.UTF_8, CsvTools.csvFormat())) {
             List<String> names = parser.getHeaderNames();
             for (CSVRecord record : parser) {
@@ -1990,7 +2010,7 @@ public class GeographyCodeTools {
             if (url == null) {
                 return null;
             }
-            File xmlFile = HtmlReadTools.download(url.toString());
+            File xmlFile = HtmlReadTools.download(null, url.toString());
             Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(xmlFile);
             NodeList nodes = doc.getElementsByTagName("info");
             if (nodes == null || nodes.getLength() == 0) {

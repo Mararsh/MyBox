@@ -6,6 +6,7 @@ import java.util.Date;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.imagefile.ImageFileReaders;
 import static mara.mybox.value.Languages.message;
 
@@ -49,16 +50,34 @@ public class ImageEditHistory extends BaseData {
         }
     }
 
-    public String getDesc() {
-        String s = message(updateType);
-        if (objectType != null && !objectType.isEmpty()) {
-            s += " " + message(objectType);
-        }
+    public String getType() {
         if (opType != null && !opType.isEmpty()) {
-            s += " " + message(opType);
+            return message(opType);
+        } else if (objectType != null && !objectType.isEmpty()) {
+            return message(objectType);
+        } else if (updateType != null && !updateType.isEmpty()) {
+            return message(updateType);
+        } else if (scopeType != null && !scopeType.isEmpty()) {
+            return message(scopeType);
+        } else if (scopeName != null && !scopeName.isEmpty()) {
+            return message(scopeName);
+        }
+        return null;
+    }
+
+    public String getDesc() {
+        String s;
+        if (objectType != null && !objectType.isEmpty()) {
+            s = objectType + " ";
+        } else if (opType != null && !opType.isEmpty()) {
+            s = opType + " ";
+        } else if (updateType != null && !updateType.isEmpty()) {
+            s = updateType + " ";
+        } else {
+            s = " ";
         }
         if (scopeType != null && !scopeType.isEmpty()) {
-            s += " " + message(scopeType);
+            s += message(scopeType);
         }
         if (scopeName != null && !scopeName.isEmpty()) {
             s += " " + message(scopeName);
@@ -74,12 +93,12 @@ public class ImageEditHistory extends BaseData {
         return historyFile != null && historyFile.exists() ? historyFile.getName() : null;
     }
 
-    public Image historyImage() {
+    public Image historyImage(FxTask task) {
         try {
             if (!historyFile.exists()) {
                 return null;
             }
-            BufferedImage bufferedImage = ImageFileReaders.readImage(historyFile);
+            BufferedImage bufferedImage = ImageFileReaders.readImage(task, historyFile);
             if (bufferedImage != null) {
                 return SwingFXUtils.toFXImage(bufferedImage, null);
             }

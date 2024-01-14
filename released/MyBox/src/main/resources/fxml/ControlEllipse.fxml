@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="thisPane" spacing="2.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlEllipse">
+    <children>
+              <Label minHeight="-Infinity" text="%Center" wrapText="true" />
+              <FlowPane hgap="2.0" minHeight="-Infinity" prefWrapLength="100.0" vgap="2.0">
+                  <children>
+                      <Label text="x">
+                          <FlowPane.margin>
+                              <Insets />
+                          </FlowPane.margin>
+                      </Label>
+                      <TextField fx:id="ellipseXInput" prefWidth="100.0" />
+                  </children>
+              </FlowPane>
+              <FlowPane hgap="2.0" minHeight="-Infinity" prefWrapLength="100.0" vgap="2.0">
+                  <children>
+                      <Label text="y" />
+                      <TextField fx:id="ellipseYInput" prefWidth="100.0" />
+                  </children>
+              </FlowPane>
+              <FlowPane hgap="2.0" minHeight="-Infinity" prefWrapLength="100.0" vgap="2.0">
+                  <children>
+                      <Label minHeight="-Infinity" text="%RadiusX" wrapText="true" />
+                      <TextField fx:id="ellipseXRadiusInput" prefWidth="100.0" />
+                  </children>
+              </FlowPane>
+              <FlowPane hgap="2.0" minHeight="-Infinity" prefWrapLength="100.0" vgap="2.0">
+                  <children>
+                      <Label minHeight="-Infinity" text="%RadiusY" wrapText="true" />
+                      <TextField fx:id="ellipseYRadiusInput" prefWidth="100.0" />
+                  </children>
+              </FlowPane>
+    </children>
+</VBox>

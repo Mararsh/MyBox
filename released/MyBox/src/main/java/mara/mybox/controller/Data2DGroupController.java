@@ -10,7 +10,7 @@ import mara.mybox.data2d.DataTable;
 import mara.mybox.data2d.reader.DataTableGroup;
 import mara.mybox.data2d.reader.DataTableGroup.TargetType;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -43,7 +43,7 @@ public class Data2DGroupController extends BaseData2DHandleController {
             task.cancel();
         }
         resultsFile = null;
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             private DataTableGroup group;
 
@@ -106,8 +106,8 @@ public class Data2DGroupController extends BaseData2DHandleController {
      */
     public static Data2DGroupController open(ControlData2DLoad tableController) {
         try {
-            Data2DGroupController controller = (Data2DGroupController) WindowTools.openChildStage(
-                    tableController.getMyWindow(), Fxmls.Data2DGroupFxml, false);
+            Data2DGroupController controller = (Data2DGroupController) WindowTools.branchStage(
+                    tableController, Fxmls.Data2DGroupFxml);
             controller.setParameters(tableController);
             controller.requestMouse();
             return controller;

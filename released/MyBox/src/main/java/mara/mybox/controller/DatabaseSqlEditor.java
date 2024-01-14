@@ -28,8 +28,8 @@ import mara.mybox.db.DerbyBase;
 import mara.mybox.db.table.TableData2D;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.DateTools;
@@ -63,9 +63,16 @@ public class DatabaseSqlEditor extends InfoTreeNodeEditor {
     }
 
     @Override
-    public void initControls() {
+    public void setControlsStyle() {
+        super.setControlsStyle();
+        NodeStyleTools.setTooltip(listButton, new Tooltip(message("TableName")));
+        startButton.requestFocus();
+    }
+
+    @Override
+    public void setManager(InfoTreeManageController treeController) {
         try {
-            super.initControls();
+            super.setManager(treeController);
 
             wrapOutputsCheck.setSelected(UserConfig.getBoolean(manager.category + "OutputsWrap", false));
             wrapOutputsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -78,15 +85,8 @@ public class DatabaseSqlEditor extends InfoTreeNodeEditor {
             outputArea.setWrapText(wrapOutputsCheck.isSelected());
 
         } catch (Exception e) {
-            MyBoxLog.debug(e);
+            MyBoxLog.error(e);
         }
-    }
-
-    @Override
-    public void setControlsStyle() {
-        super.setControlsStyle();
-        NodeStyleTools.setTooltip(listButton, new Tooltip(message("TableName")));
-        startButton.requestFocus();
     }
 
     @FXML
@@ -116,7 +116,7 @@ public class DatabaseSqlEditor extends InfoTreeNodeEditor {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             private DataFileCSV data;
 
@@ -127,7 +127,7 @@ public class DatabaseSqlEditor extends InfoTreeNodeEditor {
                         Statement statement = conn.createStatement()) {
                     for (String sql : sqls) {
                         try {
-                            TableStringValues.add(conn, hisName(), sql);
+                            TableStringValues.add(conn, editorName(), sql);
                             outputArea.appendText(DateTools.nowString() + "  " + sql + "\n");
                             if (statement.execute(sql)) {
                                 int count = statement.getUpdateCount();
@@ -135,7 +135,7 @@ public class DatabaseSqlEditor extends InfoTreeNodeEditor {
                                     outputArea.appendText(DateTools.nowString() + "  " + message("UpdatedCount") + ": " + count);
                                 } else {
                                     ResultSet results = statement.getResultSet();
-                                    data = DataTable.save(task, results);
+                                    data = DataTable.save(this, results);
                                 }
                             }
                             conn.commit();
@@ -183,20 +183,9 @@ public class DatabaseSqlEditor extends InfoTreeNodeEditor {
         PopTools.popSqlExamples(this, valueInput, null, false, event);
     }
 
-    protected String hisName() {
+    @Override
+    protected String editorName() {
         return "SQLHistories" + (internal ? "Internal" : "");
-    }
-
-    @FXML
-    protected void popHistories(Event event) {
-        if (UserConfig.getBoolean(hisName() + "PopWhenMouseHovering", false)) {
-            showHistories(event);
-        }
-    }
-
-    @FXML
-    protected void showHistories(Event event) {
-        PopTools.popStringValues(this, valueInput, event, hisName(), false, true);
     }
 
     @FXML
@@ -213,7 +202,7 @@ public class DatabaseSqlEditor extends InfoTreeNodeEditor {
 
     protected void tableNames(Event event) {
         try {
-            MenuController controller = MenuController.open(this, valueInput, event);
+            MenuController controller = MenuController.open(this, valueInput, event, "TableNames", false);
 
             List<Node> topButtons = new ArrayList<>();
             topButtons.add(new Label(message("TableName")));
@@ -260,10 +249,8 @@ public class DatabaseSqlEditor extends InfoTreeNodeEditor {
     }
 
     @FXML
-    protected void popTableDefinition(MouseEvent event) {
-        if (UserConfig.getBoolean("TableDefinitionPopWhenMouseHovering", false)) {
-            tableDefinition(event);
-        }
+    protected void tableDefinition() {
+        DatabaseTableDefinitionController.open(false);
     }
 
     @FXML
@@ -273,7 +260,7 @@ public class DatabaseSqlEditor extends InfoTreeNodeEditor {
 
     protected void tableDefinition(Event event) {
         try {
-            MenuController controller = MenuController.open(this, valueInput, event);
+            MenuController controller = MenuController.open(this, valueInput, event, "TableDefinition", false);
 
             List<Node> topButtons = new ArrayList<>();
             topButtons.add(new Label(message("TableDefinition")));

@@ -9,8 +9,9 @@ import javafx.scene.control.CheckBox;
 import mara.mybox.bufferedimage.ImageAttributes;
 import mara.mybox.bufferedimage.ImageConvertTools;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.FileNameTools;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -29,7 +30,7 @@ public class ImageConverterBatchController extends BaseBatchImageController {
     protected CheckBox appendColorCheck, appendCompressionCheck, appendQualityCheck;
 
     public ImageConverterBatchController() {
-        baseTitle = Languages.message("ImageConverterBatch");
+        baseTitle = message("ImageConverterBatch");
         browseTargets = true;
     }
 
@@ -99,21 +100,25 @@ public class ImageConverterBatchController extends BaseBatchImageController {
     }
 
     @Override
-    public String handleFile(File srcFile, File targetPath) {
+    public String handleFile(FxTask currentTask, File srcFile, File targetPath) {
         try {
             File target = makeTargetFile(srcFile, targetPath);
             if (target == null) {
-                return Languages.message("Skip");
+                return message("Skip");
             }
-            if (ImageConvertTools.convertColorSpace(srcFile, attributes, target)) {
+            if (ImageConvertTools.convertColorSpace(currentTask, srcFile, attributes, target)) {
                 targetFileGenerated(target);
-                return Languages.message("Successful");
+                return message("Successful");
             } else {
-                return Languages.message("Failed");
+                if (currentTask.isWorking()) {
+                    return message("Failed");
+                } else {
+                    return message("Canceled");
+                }
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
-            return Languages.message("Failed");
+            return message("Failed");
         }
     }
 
@@ -125,7 +130,7 @@ public class ImageConverterBatchController extends BaseBatchImageController {
             if (srcFile.isFile()) {
                 if (!"ico".equals(attributes.getImageFormat())) {
                     if (appendColorCheck.isSelected()) {
-                        if (Languages.message("IccProfile").equals(attributes.getColorSpaceName())) {
+                        if (message("IccProfile").equals(attributes.getColorSpaceName())) {
                             namePrefix += "_" + attributes.getProfileName();
                         } else {
                             namePrefix += "_" + attributes.getColorSpaceName();

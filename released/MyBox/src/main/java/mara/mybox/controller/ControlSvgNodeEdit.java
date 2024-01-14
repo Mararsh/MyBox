@@ -68,7 +68,7 @@ public class ControlSvgNodeEdit extends ControlXmlNodeEdit {
             focusedNode = treeItem.getValue().getNode();
         } catch (Exception e) {
         }
-        editor.htmlController.loadDoc(editor.treeController.doc, focusedNode);
+        editor.drawSVG(focusedNode);
         shapeOpPane.setVisible(item != null && item.getValue() != null
                 && item.getValue().isSvgShape());
     }
@@ -166,7 +166,7 @@ public class ControlSvgNodeEdit extends ControlXmlNodeEdit {
 
     @FXML
     protected void showStyleHistories(Event event) {
-        PopTools.popStringValues(this, styleArea, event, "SvgStyleHistories", false, true);
+        PopTools.popStringValues(this, styleArea, event, "SvgStyleHistories", false);
     }
 
     @FXML
@@ -177,15 +177,6 @@ public class ControlSvgNodeEdit extends ControlXmlNodeEdit {
     /*
         shape
      */
-    @FXML
-    public void drawShape() {
-        if (treeItem == null) {
-            popInformation(message("SelectToHandle"));
-            return;
-        }
-        SvgEditShapeController.open(editor, treeItem);
-    }
-
     @FXML
     public void popShapeMenu(Event event) {
         if (UserConfig.getBoolean("SvgNodeShapeMenuPopWhenMouseHovering", true)) {

@@ -7,6 +7,7 @@ import mara.mybox.data.PdfInformation;
 import mara.mybox.data.ProcessParameters;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Languages;
@@ -74,7 +75,7 @@ public abstract class BaseBatchPdfController extends BaseBatchController<PdfInfo
     // page number is 1-based.
     // Notice: Some APIs of PdfBox are 0-base and others are 1-based.
     @Override
-    public String handleFile(File srcFile, File targetPath) {
+    public String handleFile(FxTask currentTask, File srcFile, File targetPath) {
         int generated = 0;
         doc = null;
         try {
@@ -91,7 +92,7 @@ public abstract class BaseBatchPdfController extends BaseBatchController<PdfInfo
                 currentParameters.currentPage = currentParameters.fromPage;
             }
             try (PDDocument pd = PDDocument.load(currentParameters.currentSourceFile,
-                    currentParameters.password, AppVariables.pdfMemUsage)) {
+                    currentParameters.password, AppVariables.PdfMemUsage)) {
                 doc = pd;
                 if (currentParameters.toPage <= 0 || currentParameters.toPage > doc.getNumberOfPages()) {
                     currentParameters.toPage = doc.getNumberOfPages();
@@ -105,21 +106,21 @@ public abstract class BaseBatchPdfController extends BaseBatchController<PdfInfo
                         currentParameters.currentTargetPath.mkdirs();
                     }
                 }
-                if (preHandlePages()) {
+                if (preHandlePages(currentTask)) {
                     int total = currentParameters.toPage - currentParameters.fromPage + 1;
                     updateFileProgress(0, total);
                     for (currentParameters.currentPage = currentParameters.startPage;
                             currentParameters.currentPage <= currentParameters.toPage; currentParameters.currentPage++) {
-                        if (task == null || task.isCancelled()) {
+                        if (currentTask == null || currentTask.isCancelled()) {
                             break;
                         }
 
-                        generated += handleCurrentPage();
+                        generated += handleCurrentPage(currentTask);
 
                         updateFileProgress(currentParameters.currentPage - currentParameters.fromPage + 1, total);
                     }
                 }
-                postHandlePages();
+                postHandlePages(currentTask);
                 doc.close();
             }
             currentParameters.startPage = 1;
@@ -133,15 +134,15 @@ public abstract class BaseBatchPdfController extends BaseBatchController<PdfInfo
                 currentParameters.currentPage - currentParameters.fromPage, generated);
     }
 
-    public boolean preHandlePages() {
+    public boolean preHandlePages(FxTask currentTask) {
         return true;
     }
 
-    public void postHandlePages() {
+    public void postHandlePages(FxTask currentTask) {
 
     }
 
-    public int handleCurrentPage() {
+    public int handleCurrentPage(FxTask currentTask) {
         return 0;
     }
 

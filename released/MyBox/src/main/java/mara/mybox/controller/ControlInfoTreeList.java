@@ -7,17 +7,16 @@ import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
-import javafx.scene.control.TreeTableView;
 import javafx.scene.control.cell.TreeItemPropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.db.DerbyBase;
@@ -26,15 +25,14 @@ import static mara.mybox.db.data.InfoNode.TitleSeparater;
 import mara.mybox.db.table.TableTreeNode;
 import mara.mybox.db.table.TableTreeNodeTag;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.cell.TreeTableDateCell;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
-import mara.mybox.tools.StringTools;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -51,11 +49,15 @@ public class ControlInfoTreeList extends BaseTreeTableViewController<InfoNode> {
     protected String category;
 
     @FXML
+    protected TreeTableColumn<InfoNode, Long> idColumn;
+    @FXML
     protected TreeTableColumn<InfoNode, Date> timeColumn;
     @FXML
     protected Label titleLabel;
     @FXML
     protected CheckBox nodesListCheck;
+    @FXML
+    protected Button helpButton;
 
 
     /*
@@ -75,9 +77,26 @@ public class ControlInfoTreeList extends BaseTreeTableViewController<InfoNode> {
     }
 
     @Override
+    public void setControlsStyle() {
+        try {
+            super.setControlsStyle();
+
+            if (helpButton != null) {
+                NodeStyleTools.setTooltip(helpButton, new Tooltip(message("AboutTreeInformation")));
+            }
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
+    }
+
+    @Override
     public void initTree() {
         try {
             super.initTree();
+
+            if (idColumn != null) {
+                idColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("nodeid"));
+            }
 
             timeColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("updateTime"));
             timeColumn.setCellFactory(new TreeTableDateCell());
@@ -89,12 +108,12 @@ public class ControlInfoTreeList extends BaseTreeTableViewController<InfoNode> {
     }
 
     public void setParameters(BaseInfoTreeController parent) {
-        this.parentController = parent;
-        this.baseName = parent.baseName + "_" + baseName;
         infoController = parent;
         tableTreeNode = parent.tableTreeNode;
         tableTreeNodeTag = parent.tableTreeNodeTag;
         category = infoController.category;
+        parentController = parent;
+        baseName = parent.baseName + "_" + category;
         baseTitle = category;
 
         infoController.showNodesList(false);
@@ -109,15 +128,8 @@ public class ControlInfoTreeList extends BaseTreeTableViewController<InfoNode> {
                 }
             });
         }
-    }
 
-    public void setSource(ControlInfoTreeList source) {
-        if (source == null) {
-            return;
-        }
-        baseName = source.baseName + "_" + baseName;
-        category = source.category;
-        cloneTree(source.treeView);
+        loadTree();
     }
 
     /*
@@ -132,7 +144,7 @@ public class ControlInfoTreeList extends BaseTreeTableViewController<InfoNode> {
             task.cancel();
         }
         clearTree();
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             private TreeItem<InfoNode> rootItem;
 
             @Override
@@ -192,35 +204,6 @@ public class ControlInfoTreeList extends BaseTreeTableViewController<InfoNode> {
     /*
         data
      */
-    public void cloneTree(TreeTableView<InfoNode> sourceTreeView) {
-        if (sourceTreeView == null) {
-            return;
-        }
-        TreeItem<InfoNode> sourceRoot = sourceTreeView.getRoot();
-        if (sourceRoot == null) {
-            return;
-        }
-        TreeItem<InfoNode> targetRoot = new TreeItem(sourceRoot.getValue());
-        cloneNode(sourceRoot, targetRoot);
-        setRoot(targetRoot);
-    }
-
-    public void cloneNode(TreeItem<InfoNode> sourceNode, TreeItem<InfoNode> targetNode) {
-        if (sourceNode == null || targetNode == null) {
-            return;
-        }
-        List<TreeItem<InfoNode>> sourceChildren = sourceNode.getChildren();
-        if (sourceChildren == null) {
-            return;
-        }
-        for (TreeItem<InfoNode> sourceChild : sourceChildren) {
-            TreeItem<InfoNode> targetChild = new TreeItem<>(sourceChild.getValue());
-            targetNode.getChildren().add(targetChild);
-            targetChild.setExpanded(sourceChild.isExpanded());
-            cloneNode(sourceChild, targetChild);
-        }
-    }
-
     public InfoNode copyNode(Connection conn, InfoNode sourceNode, InfoNode targetNode) {
         if (conn == null || sourceNode == null || targetNode == null) {
             if (task != null) {
@@ -351,57 +334,17 @@ public class ControlInfoTreeList extends BaseTreeTableViewController<InfoNode> {
         List<TreeItem<InfoNode>> ancestor = ancestor(item);
         if (ancestor != null) {
             for (TreeItem<InfoNode> a : ancestor) {
-                chainName += a.getValue().getTitle() + TitleSeparater;
+                chainName += title(a.getValue()) + TitleSeparater;
             }
         }
-        chainName += item.getValue().getTitle();
+        chainName += title(item.getValue());
         return chainName;
     }
+
 
     /*
         actions
      */
-    @FXML
-    public void popViewMenu(Event event) {
-        if (UserConfig.getBoolean(baseName + "TreeViewPopWhenMouseHovering", true)) {
-            showViewMenu(event);
-        }
-    }
-
-    @FXML
-    public void showViewMenu(Event event) {
-        TreeItem<InfoNode> item = selected();
-        if (item == null) {
-            return;
-        }
-        List<MenuItem> items = new ArrayList<>();
-
-        MenuItem menu = new MenuItem(StringTools.menuPrefix(label(item)));
-        menu.setStyle("-fx-text-fill: #2e598a;");
-        items.add(menu);
-        items.add(new SeparatorMenuItem());
-
-        items.addAll(viewMenuItems(item));
-
-        items.add(new SeparatorMenuItem());
-
-        CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
-        popItem.setSelected(UserConfig.getBoolean(baseName + "TreeViewPopWhenMouseHovering", true));
-        popItem.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                UserConfig.setBoolean(baseName + "TreeViewPopWhenMouseHovering", popItem.isSelected());
-            }
-        });
-        items.add(popItem);
-
-        if (event == null) {
-            popNodeMenu(treeView, items);
-        } else {
-            popEventMenu(event, items);
-        }
-    }
-
     @Override
     public List<MenuItem> viewMenuItems(TreeItem<InfoNode> item) {
         if (item == null) {
@@ -463,6 +406,14 @@ public class ControlInfoTreeList extends BaseTreeTableViewController<InfoNode> {
         });
         items.add(menu);
 
+        items.add(new SeparatorMenuItem());
+
+        menu = new MenuItem(message("AboutTreeInformation"), StyleTools.getIconImageView("iconClaw.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            openHtml(HelpTools.aboutTreeInformation());
+        });
+        items.add(menu);
+
         return items;
     }
 
@@ -499,7 +450,7 @@ public class ControlInfoTreeList extends BaseTreeTableViewController<InfoNode> {
         if (task != null && !task.isQuit()) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             private InfoNode newNode;
 
             @Override
@@ -522,10 +473,10 @@ public class ControlInfoTreeList extends BaseTreeTableViewController<InfoNode> {
     }
 
     protected void popNode(TreeItem<InfoNode> item) {
-        if (item == null) {
+        if (item == null || infoController == null) {
             return;
         }
-        InfoNode.view(item.getValue(), message("HierarchyNumber") + ": " + hierarchyNumber(item));
+        infoController.popNode(item.getValue());
     }
 
     @Override
@@ -536,7 +487,7 @@ public class ControlInfoTreeList extends BaseTreeTableViewController<InfoNode> {
         if (task != null && !task.isQuit()) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -616,14 +567,14 @@ public class ControlInfoTreeList extends BaseTreeTableViewController<InfoNode> {
         if (item == null || infoController == null) {
             return;
         }
-        infoController.loadChildren(item.getValue());
+        infoController.tableController.loadChildren(item.getValue());
     }
 
     protected void listDescentants(TreeItem<InfoNode> item) {
         if (item == null || infoController == null) {
             return;
         }
-        infoController.loadDescendants(item.getValue());
+        infoController.tableController.loadDescendants(item.getValue());
     }
 
     @FXML
@@ -633,8 +584,8 @@ public class ControlInfoTreeList extends BaseTreeTableViewController<InfoNode> {
     }
 
     @FXML
-    public void AboutTreeInformation() {
-        openHtml(HelpTools.AboutTreeInformation());
+    public void aboutTreeInformation() {
+        openHtml(HelpTools.aboutTreeInformation());
     }
 
     @FXML

@@ -24,7 +24,7 @@ import mara.mybox.db.data.GeographyCode;
 import mara.mybox.db.data.GeographyCodeTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
@@ -256,7 +256,7 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
             task.cancel();
         }
         valuesController.loadNull();
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             private DataFileCSV csvData;
 
@@ -390,7 +390,7 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
         if (dataPoints == null || dataPoints.isEmpty()) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             private List<MapPoint> mapPoints;
             private int size;
@@ -533,8 +533,8 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
      */
     public static Data2DLocationDistributionController open(ControlData2DLoad tableController) {
         try {
-            Data2DLocationDistributionController controller = (Data2DLocationDistributionController) WindowTools.openChildStage(
-                    tableController.getMyWindow(), Fxmls.Data2DLocationDistributionFxml, false);
+            Data2DLocationDistributionController controller = (Data2DLocationDistributionController) WindowTools.branchStage(
+                    tableController, Fxmls.Data2DLocationDistributionFxml);
             controller.setParameters(tableController);
             controller.requestMouse();
             return controller;

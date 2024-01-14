@@ -14,7 +14,7 @@ import mara.mybox.db.table.TableData2D;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.tools.StringTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -111,7 +111,7 @@ public class DataTableQueryEditor extends InfoTreeNodeEditor {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             private DataFileCSV dataCSV;
 
@@ -154,16 +154,9 @@ public class DataTableQueryEditor extends InfoTreeNodeEditor {
                 true, event);
     }
 
-    @FXML
-    protected void popHistories(Event event) {
-        if (UserConfig.getBoolean("DataTableQueryHistoriesPopWhenMouseHovering", false)) {
-            showHistories(event);
-        }
-    }
-
-    @FXML
-    protected void showHistories(Event event) {
-        PopTools.popStringValues(this, valueInput, event, "DataTableQueryHistories", false, true);
+    @Override
+    protected String editorName() {
+        return "DataTableQuery";
     }
 
     @FXML

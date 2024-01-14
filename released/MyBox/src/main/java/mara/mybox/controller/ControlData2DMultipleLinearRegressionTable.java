@@ -46,8 +46,8 @@ public class ControlData2DMultipleLinearRegressionTable extends ControlData2DSim
             Data2DMultipleLinearRegressionController.open(regressController.tableController);
         } else {
             try {
-                Data2DMultipleLinearRegressionController controller = (Data2DMultipleLinearRegressionController) WindowTools.openChildStage(
-                        regressController.parentController.getMyWindow(), Fxmls.Data2DMultipleLinearRegressionFxml, false);
+                Data2DMultipleLinearRegressionController controller = (Data2DMultipleLinearRegressionController) WindowTools
+                        .branchStage(regressController.parentController, Fxmls.Data2DMultipleLinearRegressionFxml);
                 controller.categoryColumnSelector.setValue(selected.get(1));
                 List<Integer> cols = new ArrayList<>();
                 List<String> names = ((Data2DMultipleLinearRegressionCombinationController) regressController).namesMap.get(selected.get(2));

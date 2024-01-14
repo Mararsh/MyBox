@@ -45,9 +45,9 @@ public class AlarmClockTask extends TimerTask {
                         AlarmClockRunController controller = (AlarmClockRunController) WindowTools.openStage(Fxmls.AlarmClockRunFxml);
                         controller.runAlarm(alarm);
 
-                        if (AppVariables.alarmClockController != null
-                                && AppVariables.alarmClockController.getAlertClockTableController() != null) {
-                            AppVariables.alarmClockController.getAlertClockTableController().refreshAction();
+                        if (AppVariables.AlarmClockController != null
+                                && AppVariables.AlarmClockController.getAlertClockTableController() != null) {
+                            AppVariables.AlarmClockController.getAlertClockTableController().refreshAction();
                         }
                     } catch (Exception e) {
                         MyBoxLog.error(e.toString());
@@ -56,10 +56,10 @@ public class AlarmClockTask extends TimerTask {
             });
 
 //            if (alarm.getAlarmType() == NotRepeat) {
-//                ScheduledFuture future = scheduledTasks.get(alarm.getKey());
+//                ScheduledFuture future = ScheduledTasks.get(alarm.getKey());
 //                if (future != null) {
 //                    future.cancel(true);
-//                    scheduledTasks.remove(alarm.getKey());
+//                    ScheduledTasks.remove(alarm.getKey());
 //                }
 //                alarm.setIsActive(false);
 //                AlarmClock.writeAlarmClock(alarm);

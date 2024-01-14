@@ -73,8 +73,8 @@ public class Data2DChartPieOptionsController extends BaseData2DChartFxOptionsCon
             if (chartController == null) {
                 return null;
             }
-            Data2DChartPieOptionsController controller = (Data2DChartPieOptionsController) WindowTools.openChildStage(
-                    chartController.getMyWindow(), Fxmls.Data2DChartPieOptionsFxml, false);
+            Data2DChartPieOptionsController controller = (Data2DChartPieOptionsController) WindowTools.branchStage(
+                    chartController, Fxmls.Data2DChartPieOptionsFxml);
             controller.setParameters(chartController);
             return controller;
         } catch (Exception e) {

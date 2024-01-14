@@ -22,7 +22,7 @@ import javafx.stage.Window;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.tools.UrlTools;
@@ -99,7 +99,7 @@ public class MenuMarkdownEditController extends MenuTextEditController {
             table.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    TableSizeController controller = (TableSizeController) openChildStage(Fxmls.TableSizeFxml, true);
+                    TableSizeController controller = (TableSizeController) childStage(Fxmls.TableSizeFxml);
                     controller.setParameters(parentController, message("Table"));
                     controller.notify.addListener(new ChangeListener<Boolean>() {
                         @Override
@@ -116,7 +116,7 @@ public class MenuMarkdownEditController extends MenuTextEditController {
             tableRow.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    TableSizeController controller = (TableSizeController) openChildStage(Fxmls.TableSizeFxml, true);
+                    TableSizeController controller = (TableSizeController) childStage(Fxmls.TableSizeFxml);
                     controller.setParameters(parentController, message("TableRow"));
                     controller.notify.addListener(new ChangeListener<Boolean>() {
                         @Override
@@ -133,7 +133,7 @@ public class MenuMarkdownEditController extends MenuTextEditController {
             image.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    AddressInputController controller = (AddressInputController) openChildStage(Fxmls.AddressInputFxml, true);
+                    AddressInputController controller = (AddressInputController) childStage(Fxmls.AddressInputFxml);
                     controller.setParameters(parentController);
                     controller.notify.addListener(new ChangeListener<Boolean>() {
                         @Override
@@ -151,7 +151,7 @@ public class MenuMarkdownEditController extends MenuTextEditController {
             link.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    AddressInputController controller = (AddressInputController) openChildStage(Fxmls.AddressInputFxml, true);
+                    AddressInputController controller = (AddressInputController) childStage(Fxmls.AddressInputFxml);
                     controller.setParameters(parentController);
                     controller.notify.addListener(new ChangeListener<Boolean>() {
                         @Override
@@ -472,13 +472,13 @@ public class MenuMarkdownEditController extends MenuTextEditController {
             return;
         }
         popInformation(message("WaitAndHandling"));
-        SingletonTask pdftask = new SingletonTask<Void>(this) {
+        FxTask pdftask = new FxTask<Void>(this) {
 
             private File pdf;
 
             @Override
             protected boolean handle() {
-                pdf = PdfTools.md2pdf(text);
+                pdf = PdfTools.md2pdf(this, text);
                 return pdf != null && pdf.exists();
             }
 
@@ -514,8 +514,8 @@ public class MenuMarkdownEditController extends MenuTextEditController {
                     }
                 }
             }
-            MenuMarkdownEditController controller = (MenuMarkdownEditController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.MenuMarkdownEditFxml, false);
+            MenuMarkdownEditController controller = (MenuMarkdownEditController) WindowTools.branchStage(
+                    parent, Fxmls.MenuMarkdownEditFxml);
             controller.setParameters(parent, node, x, y);
             return controller;
         } catch (Exception e) {

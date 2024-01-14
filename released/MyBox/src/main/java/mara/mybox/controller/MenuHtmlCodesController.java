@@ -91,7 +91,7 @@ public class MenuHtmlCodesController extends MenuTextEditController {
             table.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    TableSizeController controller = (TableSizeController) openChildStage(Fxmls.TableSizeFxml, true);
+                    TableSizeController controller = (TableSizeController) childStage(Fxmls.TableSizeFxml);
                     controller.setParameters(parentController, message("Table"));
                     controller.notify.addListener(new ChangeListener<Boolean>() {
                         @Override
@@ -108,7 +108,7 @@ public class MenuHtmlCodesController extends MenuTextEditController {
             tableRow.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    TableSizeController controller = (TableSizeController) openChildStage(Fxmls.TableSizeFxml, true);
+                    TableSizeController controller = (TableSizeController) childStage(Fxmls.TableSizeFxml);
                     controller.setParameters(parentController, message("TableRow"));
                     controller.notify.addListener(new ChangeListener<Boolean>() {
                         @Override
@@ -125,7 +125,7 @@ public class MenuHtmlCodesController extends MenuTextEditController {
             image.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    AddressInputController controller = (AddressInputController) openChildStage(Fxmls.AddressInputFxml, true);
+                    AddressInputController controller = (AddressInputController) childStage(Fxmls.AddressInputFxml);
                     controller.setParameters(parentController);
                     controller.notify.addListener(new ChangeListener<Boolean>() {
                         @Override
@@ -151,7 +151,7 @@ public class MenuHtmlCodesController extends MenuTextEditController {
             link.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    AddressInputController controller = (AddressInputController) openChildStage(Fxmls.AddressInputFxml, true);
+                    AddressInputController controller = (AddressInputController) childStage(Fxmls.AddressInputFxml);
                     controller.setParameters(parentController);
                     controller.notify.addListener(new ChangeListener<Boolean>() {
                         @Override
@@ -483,8 +483,8 @@ public class MenuHtmlCodesController extends MenuTextEditController {
                     }
                 }
             }
-            MenuHtmlCodesController controller = (MenuHtmlCodesController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.MenuHtmlCodesFxml, false);
+            MenuHtmlCodesController controller = (MenuHtmlCodesController) WindowTools.branchStage(
+                    parent, Fxmls.MenuHtmlCodesFxml);
             controller.setParameters(parent, node, x, y);
             return controller;
         } catch (Exception e) {

@@ -10,7 +10,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.DateTools;
 import static mara.mybox.value.Languages.message;
 
@@ -42,8 +42,8 @@ public class LoadingController extends BaseLogs {
                 showTimer();
             }
             getMyStage().toFront();
-            if (task != null && (task instanceof SingletonTask)) {
-                SingletonTask stask = (SingletonTask) task;
+            if (task != null && (task instanceof FxTask)) {
+                FxTask stask = (FxTask) task;
                 setTitle(stask.getController().getTitle());
                 setInfo(getTitle());
             } else {

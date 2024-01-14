@@ -10,7 +10,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.layout.HBox;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -108,7 +108,7 @@ public class ControlData2DPaste extends BaseController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             List<List<String>> data;
 

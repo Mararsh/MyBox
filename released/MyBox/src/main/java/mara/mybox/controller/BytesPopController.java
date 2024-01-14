@@ -7,7 +7,7 @@ import javafx.scene.control.TextInputControl;
 import javafx.scene.input.ContextMenuEvent;
 import mara.mybox.db.data.VisitHistory.FileType;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.ByteFileTools;
 import mara.mybox.tools.ByteTools;
@@ -65,13 +65,13 @@ public class BytesPopController extends TextPopController {
         if (task != null && !task.isQuit()) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             @Override
             protected boolean handle() {
                 try {
                     File tmpFile = FileTmpTools.getTempFile();
                     tmpFile = ByteFileTools.writeFile(tmpFile, ByteTools.hexFormatToBytes(textArea.getText()));
-                    return FileTools.rename(tmpFile, file);
+                    return FileTools.override(tmpFile, file);
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -96,8 +96,8 @@ public class BytesPopController extends TextPopController {
             if (textInput == null) {
                 return null;
             }
-            BytesPopController controller = (BytesPopController) WindowTools.openChildStage(parent.getMyWindow(), Fxmls.BytesPopFxml, false);
-            controller.setSourceInput(parent.baseName, textInput);
+            BytesPopController controller = (BytesPopController) WindowTools.popStage(parent, Fxmls.BytesPopFxml);
+            controller.setSourceInput(parent, textInput);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e);

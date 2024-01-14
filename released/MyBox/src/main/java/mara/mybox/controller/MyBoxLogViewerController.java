@@ -86,7 +86,7 @@ public class MyBoxLogViewerController extends HtmlTableController {
     }
 
     @FXML
-    public void dataAction(ActionEvent event) {
+    public void manageAction(ActionEvent event) {
         MyBoxLogController controller = MyBoxLogController.oneOpen();
         if (controller != null) {
             controller.getMyStage().requestFocus();

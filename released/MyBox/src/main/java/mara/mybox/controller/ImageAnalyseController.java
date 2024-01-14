@@ -16,12 +16,12 @@ import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Transform;
 import javafx.scene.web.WebView;
@@ -34,8 +34,8 @@ import mara.mybox.data.StringTable;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.NodeTools;
-import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WebViewTools;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.imagefile.ImageFileWriters;
@@ -53,25 +53,24 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2019-9-6
  * @License Apache License Version 2.0
  */
-public class ImageAnalyseController extends ImageViewerController {
+public class ImageAnalyseController extends BaseController {
 
+    protected Image image;
     protected ImageStatistic data;
     protected long nonTransparent;
 
+    @FXML
+    protected BaseImageController imageController;
     @FXML
     protected CheckBox sortCheck, componentsLegendCheck, grayHistCheck, redHistCheck,
             greenHistCheck, blueHistCheck, alphaHistCheck,
             hueHistCheck, saturationHistCheck, brightnessHistCheck;
     @FXML
-    protected TabPane dataPane;
-    @FXML
-    protected Tab statisticTab, histogramTab, dominantTab, redTab, greenTab, blueTab,
+    protected Tab imageTab, statisticTab, histogramTab, dominantTab, redTab, greenTab, blueTab,
             hueTab, brightnessTab, saturationTab, grayTab, alphaTab;
     @FXML
     protected BarChart colorsBarchart, grayBarchart, redBarchart, greenBarchart, blueBarchart,
             hueBarchart, saturationBarchart, brightnessBarchart, alphaBarchart;
-    @FXML
-    protected Button refreshButton;
     @FXML
     protected WebView grayView, redView, greenView, blueView,
             hueView, saturationView, brightnessView, alphaView;
@@ -79,6 +78,8 @@ public class ImageAnalyseController extends ImageViewerController {
     protected ControlWebView statisticController;
     @FXML
     protected ImageAnalyseDominantController dominantController;
+    @FXML
+    protected FlowPane buttonsPane;
 
     public ImageAnalyseController() {
         baseTitle = message("ImageAnalyse");
@@ -99,13 +100,6 @@ public class ImageAnalyseController extends ImageViewerController {
 
             dominantController.analyseController = this;
 
-            maskShapeChanged.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    loadData();
-                }
-            });
-
             sortCheck.setSelected(UserConfig.getBoolean(baseName + "Sort", true));
             sortCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -115,29 +109,22 @@ public class ImageAnalyseController extends ImageViewerController {
                 }
             });
 
-            showRightPane();
+            buttonsPane.disableProperty().bind(imageController.imageView.imageProperty().isNull());
+
+            imageController.loadNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
+                    loadData();
+                }
+            });
 
         } catch (Exception e) {
             MyBoxLog.error(e);
-        }
-    }
-
-    @Override
-    public boolean afterImageLoaded() {
-        try {
-            if (!super.afterImageLoaded()) {
-                return false;
-            }
-            loadData();
-
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return false;
         }
     }
 
     protected void loadData() {
+        image = imageController.imageView.getImage();
         if (image == null || isSettingValues) {
             return;
         }
@@ -164,7 +151,7 @@ public class ImageAnalyseController extends ImageViewerController {
         alphaBarchart.getData().clear();
         dominantController.clear();
         updateStageTitle(sourceFile);
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             private BufferedImage bufferedImage;
 
             @Override
@@ -176,7 +163,7 @@ public class ImageAnalyseController extends ImageViewerController {
                     }
                     task.setInfo(message("CalculatingImageComponents"));
                     ImageStatistic imageStatistic = ImageStatistic.create(bufferedImage);
-                    data = imageStatistic.analyze();
+                    data = imageStatistic.analyze(this);
                     nonTransparent = imageStatistic.getNonTransparent();
                     return data != null;
                 } catch (Exception e) {
@@ -204,14 +191,7 @@ public class ImageAnalyseController extends ImageViewerController {
 
     public BufferedImage bufferedImageToHandle() {
         try {
-            Image aImage = null;
-            if (selectAreaCheck.isSelected()) {
-                aImage = imageToHandle();
-            }
-            if (aImage == null) {
-                aImage = image;
-            }
-            return SwingFXUtils.fromFXImage(aImage, null);
+            return SwingFXUtils.fromFXImage(image, null);
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
@@ -562,7 +542,7 @@ public class ImageAnalyseController extends ImageViewerController {
                     message("Red"), message("Green"), message("Blue"), message("Opacity"),
                     message("Hue"), message("Brightness"), message("Saturation")
             ));
-            StringTable table = new StringTable(names, message(component.name()), 3);
+            StringTable table = new StringTable(names, message(component.name()));
             int[] histogram = data.histogram(component);
 
             List<List<Integer>> sort = new ArrayList<>();
@@ -598,7 +578,9 @@ public class ImageAnalyseController extends ImageViewerController {
                 Color fColor = ColorConvertTools.converColor(aColor);
                 row.addAll(Arrays.asList(value + "", StringTools.format(count),
                         FloatTools.percentage(count, nonTransparent) + "%",
-                        FxColorTools.color2rgba(fColor), red + " ", green + " ", blue + " ",
+                        "<DIV style=\"width: 50px;  background-color:"
+                        + FxColorTools.color2rgb(fColor) + "; \">&nbsp;&nbsp;&nbsp;</DIV>",
+                        red + " ", green + " ", blue + " ",
                         (int) Math.round(fColor.getOpacity() * 100) + "%",
                         Math.round(fColor.getHue()) + " ",
                         Math.round(fColor.getSaturation() * 100) + "%",
@@ -632,6 +614,9 @@ public class ImageAnalyseController extends ImageViewerController {
         }
     }
 
+    /*
+        actions
+     */
     @FXML
     @Override
     public void saveAsAction() {
@@ -652,16 +637,16 @@ public class ImageAnalyseController extends ImageViewerController {
             snapPara.setTransform(Transform.scale(scale, scale));
 
             // Display the object when make snapshot, so need switch to each tab
-            Tab currentTab = dataPane.getSelectionModel().getSelectedItem();
+            Tab currentTab = tabPane.getSelectionModel().getSelectedItem();
 
-            dataPane.getSelectionModel().select(statisticTab);
+            tabPane.getSelectionModel().select(statisticTab);
             String html = statisticController.currentHtml();
             Thread.sleep(50);
             final String colorsViewHml = HtmlReadTools.body(html);
 
             final Image colorsBarchartSnap = colorsBarchart.snapshot(snapPara, null);
 
-            dataPane.getSelectionModel().select(dominantTab);
+            tabPane.getSelectionModel().select(dominantTab);
             dominantController.tabPane.getSelectionModel().select(dominantController.colorTab);
             html = dominantController.colorsController.currentHtml();
             Thread.sleep(50);
@@ -671,7 +656,7 @@ public class ImageAnalyseController extends ImageViewerController {
             dominantController.tabPane.getSelectionModel().select(dominantController.pieTab);
             final Image dominantPieSnap = dominantController.dominantPie.snapshot(snapPara, null);
 
-            dataPane.getSelectionModel().select(grayTab);
+            tabPane.getSelectionModel().select(grayTab);
             html = WebViewTools.getHtml(grayView);
             Thread.sleep(50);
             final String greyHtml = HtmlReadTools.body(html);
@@ -679,7 +664,7 @@ public class ImageAnalyseController extends ImageViewerController {
             Thread.sleep(50);
             final Image greyBarchartSnap = grayBarchart.snapshot(snapPara, null);
 
-            dataPane.getSelectionModel().select(redTab);
+            tabPane.getSelectionModel().select(redTab);
             html = WebViewTools.getHtml(redView);
             Thread.sleep(50);
             final String redHtml = HtmlReadTools.body(html);
@@ -687,7 +672,7 @@ public class ImageAnalyseController extends ImageViewerController {
             Thread.sleep(50);
             final Image redBarchartSnap = redBarchart.snapshot(snapPara, null);
 
-            dataPane.getSelectionModel().select(greenTab);
+            tabPane.getSelectionModel().select(greenTab);
             html = WebViewTools.getHtml(greenView);
             Thread.sleep(50);
             final String greenHtml = HtmlReadTools.body(html);
@@ -695,7 +680,7 @@ public class ImageAnalyseController extends ImageViewerController {
             Thread.sleep(50);
             final Image greenBarchartSnap = greenBarchart.snapshot(snapPara, null);
 
-            dataPane.getSelectionModel().select(blueTab);
+            tabPane.getSelectionModel().select(blueTab);
             html = WebViewTools.getHtml(blueView);
             Thread.sleep(50);
             final String blueHtml = HtmlReadTools.body(html);
@@ -703,7 +688,7 @@ public class ImageAnalyseController extends ImageViewerController {
             Thread.sleep(50);
             final Image blueBarchartSnap = blueBarchart.snapshot(snapPara, null);
 
-            dataPane.getSelectionModel().select(hueTab);
+            tabPane.getSelectionModel().select(hueTab);
             html = WebViewTools.getHtml(hueView);
             Thread.sleep(50);
             final String hueHtml = HtmlReadTools.body(html);
@@ -711,7 +696,7 @@ public class ImageAnalyseController extends ImageViewerController {
             Thread.sleep(50);
             final Image hueBarchartSnap = hueBarchart.snapshot(snapPara, null);
 
-            dataPane.getSelectionModel().select(brightnessTab);
+            tabPane.getSelectionModel().select(brightnessTab);
             html = WebViewTools.getHtml(brightnessView);
             Thread.sleep(50);
             final String brightnessHtml = HtmlReadTools.body(html);
@@ -719,7 +704,7 @@ public class ImageAnalyseController extends ImageViewerController {
             Thread.sleep(50);
             final Image brightnessBarchartSnap = brightnessBarchart.snapshot(snapPara, null);
 
-            dataPane.getSelectionModel().select(saturationTab);
+            tabPane.getSelectionModel().select(saturationTab);
             html = WebViewTools.getHtml(saturationView);
             Thread.sleep(50);
             final String saturationHtml = HtmlReadTools.body(html);
@@ -727,7 +712,7 @@ public class ImageAnalyseController extends ImageViewerController {
             Thread.sleep(50);
             final Image saturationBarchartSnap = saturationBarchart.snapshot(snapPara, null);
 
-            dataPane.getSelectionModel().select(alphaTab);
+            tabPane.getSelectionModel().select(alphaTab);
             html = WebViewTools.getHtml(alphaView);
             Thread.sleep(50);
             final String alphaHtml = HtmlReadTools.body(html);
@@ -735,9 +720,9 @@ public class ImageAnalyseController extends ImageViewerController {
             Thread.sleep(50);
             final Image alphaBarchartSnap = alphaBarchart.snapshot(snapPara, null);
 
-            dataPane.getSelectionModel().select(currentTab);
+            tabPane.getSelectionModel().select(currentTab);
 
-            task = new SingletonCurrentTask<Void>(this) {
+            task = new FxSingletonTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {
@@ -756,7 +741,7 @@ public class ImageAnalyseController extends ImageViewerController {
                             s.append("<h3  class=\"center\">").append(sourceFile).append("</h3>\n");
                         }
                         BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
-                        ImageFileWriters.writeImageFile(bufferedImage, "jpg", path + File.separator + "image.jpg");
+                        ImageFileWriters.writeImageFile(this, bufferedImage, "jpg", path + File.separator + "image.jpg");
                         String imageName = subPath + "/image.jpg";
                         s.append("<div align=\"center\"><img src=\"").append(imageName).append("\"  style=\"max-width:95%;\"></div>\n");
                         if (task == null || isCancelled()) {
@@ -767,7 +752,7 @@ public class ImageAnalyseController extends ImageViewerController {
                         s.append("<h2  class=\"center\">").append(message("Summary")).append("</h2>\n");
                         s.append(colorsViewHml);
                         bufferedImage = SwingFXUtils.fromFXImage(colorsBarchartSnap, null);
-                        ImageFileWriters.writeImageFile(bufferedImage, "jpg", path + File.separator + "colorsBarchartImage.jpg");
+                        ImageFileWriters.writeImageFile(this, bufferedImage, "jpg", path + File.separator + "colorsBarchartImage.jpg");
                         imageName = subPath + "/colorsBarchartImage.jpg";
                         s.append("<div align=\"center\"><img src=\"").append(imageName).append("\"  style=\"width:85%;\" ></div>\n");
                         if (task == null || isCancelled()) {
@@ -777,7 +762,7 @@ public class ImageAnalyseController extends ImageViewerController {
                         s.append("\n<h2  class=\"center\">").append(message("DominantColors")).append("</h2>\n");
                         s.append(dominantViewHml);
                         bufferedImage = SwingFXUtils.fromFXImage(dominantPieSnap, null);
-                        ImageFileWriters.writeImageFile(bufferedImage, "jpg", path + File.separator + "dominantPieImage.jpg");
+                        ImageFileWriters.writeImageFile(this, bufferedImage, "jpg", path + File.separator + "dominantPieImage.jpg");
                         imageName = subPath + "/dominantPieImage.jpg";
                         s.append("<div align=\"center\"><img src=\"").append(imageName).append("\"  style=\"width:85%;\" ></div>\n");
                         if (task == null || isCancelled()) {
@@ -786,7 +771,7 @@ public class ImageAnalyseController extends ImageViewerController {
 
                         s.append(greyHtml);
                         bufferedImage = SwingFXUtils.fromFXImage(greyBarchartSnap, null);
-                        ImageFileWriters.writeImageFile(bufferedImage, "jpg", path + File.separator + "greyBarchartImage.jpg");
+                        ImageFileWriters.writeImageFile(this, bufferedImage, "jpg", path + File.separator + "greyBarchartImage.jpg");
                         imageName = subPath + "/greyBarchartImage.jpg";
                         s.append("<div align=\"center\"><img src=\"").append(imageName).append("\"  style=\"max-width:95%;\" ></div>\n");
                         if (task == null || isCancelled()) {
@@ -795,7 +780,7 @@ public class ImageAnalyseController extends ImageViewerController {
 
                         s.append(redHtml);
                         bufferedImage = SwingFXUtils.fromFXImage(redBarchartSnap, null);
-                        ImageFileWriters.writeImageFile(bufferedImage, "jpg", path + File.separator + "redBarchartImage.jpg");
+                        ImageFileWriters.writeImageFile(this, bufferedImage, "jpg", path + File.separator + "redBarchartImage.jpg");
                         imageName = subPath + "/redBarchartImage.jpg";
                         s.append("<div align=\"center\"><img src=\"").append(imageName).append("\"  style=\"max-width:95%;\" ></div>\n");
                         if (task == null || isCancelled()) {
@@ -804,7 +789,7 @@ public class ImageAnalyseController extends ImageViewerController {
 
                         s.append(greenHtml);
                         bufferedImage = SwingFXUtils.fromFXImage(greenBarchartSnap, null);
-                        ImageFileWriters.writeImageFile(bufferedImage, "jpg", path + File.separator + "greenBarchartImage.jpg");
+                        ImageFileWriters.writeImageFile(this, bufferedImage, "jpg", path + File.separator + "greenBarchartImage.jpg");
                         imageName = subPath + "/greenBarchartImage.jpg";
                         s.append("<div align=\"center\"><img src=\"").append(imageName).append("\"  style=\"max-width:95%;\" ></div>\n");
                         if (task == null || isCancelled()) {
@@ -813,7 +798,7 @@ public class ImageAnalyseController extends ImageViewerController {
 
                         s.append(blueHtml);
                         bufferedImage = SwingFXUtils.fromFXImage(blueBarchartSnap, null);
-                        ImageFileWriters.writeImageFile(bufferedImage, "jpg", path + File.separator + "blueBarchartImage.jpg");
+                        ImageFileWriters.writeImageFile(this, bufferedImage, "jpg", path + File.separator + "blueBarchartImage.jpg");
                         imageName = subPath + "/blueBarchartImage.jpg";
                         s.append("<div align=\"center\"><img src=\"").append(imageName).append("\"  style=\"max-width:95%;\" ></div>\n");
                         if (task == null || isCancelled()) {
@@ -822,7 +807,7 @@ public class ImageAnalyseController extends ImageViewerController {
 
                         s.append(hueHtml);
                         bufferedImage = SwingFXUtils.fromFXImage(hueBarchartSnap, null);
-                        ImageFileWriters.writeImageFile(bufferedImage, "jpg", path + File.separator + "hueBarchartImage.jpg");
+                        ImageFileWriters.writeImageFile(this, bufferedImage, "jpg", path + File.separator + "hueBarchartImage.jpg");
                         imageName = subPath + "/hueBarchartImage.jpg";
                         s.append("<div align=\"center\"><img src=\"").append(imageName).append("\"  style=\"max-width:95%;\" ></div>\n");
                         if (task == null || isCancelled()) {
@@ -831,7 +816,7 @@ public class ImageAnalyseController extends ImageViewerController {
 
                         s.append(saturationHtml);
                         bufferedImage = SwingFXUtils.fromFXImage(saturationBarchartSnap, null);
-                        ImageFileWriters.writeImageFile(bufferedImage, "jpg", path + File.separator + "saturationBarchartImage.jpg");
+                        ImageFileWriters.writeImageFile(this, bufferedImage, "jpg", path + File.separator + "saturationBarchartImage.jpg");
                         imageName = subPath + "/saturationBarchartImage.jpg";
                         s.append("<div align=\"center\"><img src=\"").append(imageName).append("\"  style=\"max-width:95%;\" ></div>\n");
                         if (task == null || isCancelled()) {
@@ -840,7 +825,7 @@ public class ImageAnalyseController extends ImageViewerController {
 
                         s.append(brightnessHtml);
                         bufferedImage = SwingFXUtils.fromFXImage(brightnessBarchartSnap, null);
-                        ImageFileWriters.writeImageFile(bufferedImage, "jpg", path + File.separator + "brightnessBarchartImage.jpg");
+                        ImageFileWriters.writeImageFile(this, bufferedImage, "jpg", path + File.separator + "brightnessBarchartImage.jpg");
                         imageName = subPath + "/brightnessBarchartImage.jpg";
                         s.append("<div align=\"center\"><img src=\"").append(imageName).append("\"  style=\"max-width:95%;\" ></div>\n");
                         if (task == null || isCancelled()) {
@@ -849,7 +834,7 @@ public class ImageAnalyseController extends ImageViewerController {
 
                         s.append(alphaHtml);
                         bufferedImage = SwingFXUtils.fromFXImage(alphaBarchartSnap, null);
-                        ImageFileWriters.writeImageFile(bufferedImage, "jpg", path + File.separator + "alphaBarchartImage.jpg");
+                        ImageFileWriters.writeImageFile(this, bufferedImage, "jpg", path + File.separator + "alphaBarchartImage.jpg");
                         imageName = subPath + "/alphaBarchartImage.jpg";
                         s.append("<div align=\"center\"><img src=\"").append(imageName).append("\"  style=\"max-width:95%;\" ></div>\n");
                         if (task == null || isCancelled()) {
@@ -886,11 +871,44 @@ public class ImageAnalyseController extends ImageViewerController {
     @Override
     public void refreshAction() {
         try {
-            fitSize();
+            imageController.fitSize();
             loadData();
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
+    }
+
+    @FXML
+    @Override
+    public boolean menuAction() {
+        Tab tab = tabPane.getSelectionModel().getSelectedItem();
+        if (tab == imageTab) {
+            imageController.menuAction();
+            return true;
+        }
+        return super.menuAction();
+    }
+
+    @FXML
+    @Override
+    public boolean popAction() {
+        Tab tab = tabPane.getSelectionModel().getSelectedItem();
+        if (tab == imageTab) {
+            imageController.popAction();
+            return true;
+        }
+        return super.popAction();
+    }
+
+    @Override
+    public boolean keyEventsFilter(KeyEvent event) {
+        Tab tab = tabPane.getSelectionModel().getSelectedItem();
+        if (tab == imageTab) {
+            if (imageController.keyEventsFilter(event)) {
+                return true;
+            }
+        }
+        return super.keyEventsFilter(event);
     }
 
 }

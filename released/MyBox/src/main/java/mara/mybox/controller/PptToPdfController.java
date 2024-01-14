@@ -9,9 +9,10 @@ import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.PdfTools;
-import mara.mybox.tools.FileTmpTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Languages;
@@ -63,14 +64,14 @@ public class PptToPdfController extends BaseBatchFileController {
     }
 
     @Override
-    public String handleFile(File srcFile, File targetPath) {
+    public String handleFile(FxTask currentTask, File srcFile, File targetPath) {
         File target = makeTargetFile(srcFile, targetPath);
         if (target == null) {
             return message("Skip");
         }
         File tmpFile = FileTmpTools.getTempFile();
-        try ( PDDocument document = new PDDocument(AppVariables.pdfMemUsage);
-                 SlideShow ppt = SlideShowFactory.create(srcFile)) {
+        try (PDDocument document = new PDDocument(AppVariables.PdfMemUsage);
+                SlideShow ppt = SlideShowFactory.create(srcFile)) {
             PDDocumentInformation info = new PDDocumentInformation();
             info.setCreationDate(Calendar.getInstance());
             info.setModificationDate(Calendar.getInstance());
@@ -84,19 +85,23 @@ public class PptToPdfController extends BaseBatchFileController {
             int height = ppt.getPageSize().height;
             int count = 0, total = slides.size();
             for (Slide slide : slides) {
-                if (task == null || task.isCancelled()) {
-                    return message("Cancelled");
+                if (currentTask == null || !currentTask.isWorking()) {
+                    return message("Canceled");
                 }
                 BufferedImage slideImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
                 Graphics2D g = slideImage.createGraphics();
-                if (AppVariables.imageRenderHints != null) {
-                    g.addRenderingHints(AppVariables.imageRenderHints);
+                if (AppVariables.ImageHints != null) {
+                    g.addRenderingHints(AppVariables.ImageHints);
                 }
                 slide.draw(g);
-                if (task == null || task.isCancelled()) {
-                    return message("Cancelled");
+                if (currentTask == null || !currentTask.isWorking()) {
+                    return message("Canceled");
                 }
-                PdfTools.writePage(document, "png", slideImage, ++count, total, pdfOptionsController);
+                PdfTools.writePage(currentTask,
+                        document, "png", slideImage, ++count, total, pdfOptionsController);
+            }
+            if (currentTask == null || !currentTask.isWorking()) {
+                return message("Canceled");
             }
             PDPage page = document.getPage(0);
             PDPageXYZDestination dest = new PDPageXYZDestination();
@@ -113,7 +118,7 @@ public class PptToPdfController extends BaseBatchFileController {
             updateLogs(e.toString());
             return e.toString();
         }
-        if (FileTools.rename(tmpFile, target)) {
+        if (FileTools.override(tmpFile, target)) {
             targetFileGenerated(target);
             return message("Successful");
         } else {

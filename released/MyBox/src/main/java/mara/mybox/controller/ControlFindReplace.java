@@ -17,6 +17,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputControl;
+import javafx.scene.control.Tooltip;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.VBox;
 import mara.mybox.data.BytesEditInformation;
@@ -31,8 +32,8 @@ import mara.mybox.data.StringTable;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.StringTools;
@@ -46,7 +47,7 @@ import mara.mybox.value.UserConfig;
  */
 public class ControlFindReplace extends BaseController {
 
-    protected BaseFileEditorController editerController;
+    protected BaseTextController editerController;
     protected TextInputControl textInput;
     protected FindReplaceFile findReplace;
     protected double initX, initY;
@@ -57,8 +58,8 @@ public class ControlFindReplace extends BaseController {
     @FXML
     protected TextArea findArea, replaceArea;
     @FXML
-    protected Button findPreviousButton, findNextButton, countButton, listButton, historyFindButton,
-            replaceButton, replaceAllButton, exampleFindButton, historyStringButton;
+    protected Button findPreviousButton, findNextButton, countButton, listButton,
+            replaceButton, replaceAllButton, exampleFindButton;
     @FXML
     protected Label findLabel;
     @FXML
@@ -67,20 +68,6 @@ public class ControlFindReplace extends BaseController {
     public ControlFindReplace() {
         baseTitle = message("FindReplace");
         TipsLabelKey = message("FindReplaceTips");
-    }
-
-    @Override
-    public void setControlsStyle() {
-        try {
-            super.setControlsStyle();
-
-            NodeStyleTools.removeTooltip(historyFindButton);
-            if (historyStringButton != null) {
-                NodeStyleTools.removeTooltip(historyStringButton);
-            }
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
     }
 
     @Override
@@ -103,12 +90,21 @@ public class ControlFindReplace extends BaseController {
         }
     }
 
-    public void setEditor(BaseFileEditorController parent) {
-        editerController = parent;
-        parentController = parent;
-        textInput = parent.mainArea;
-        editType = parent.editType;
-        setControls();
+    public void setEditor(BaseTextController parent) {
+        try {
+            editerController = parent;
+            parentController = parent;
+            textInput = editerController.mainArea;
+            editType = editerController.editType;
+            if (editerController.isBytes()) {
+                NodeStyleTools.setTooltip(tipsView, new Tooltip(message("FindReplaceBytesTips")));
+            } else {
+                NodeStyleTools.setTooltip(tipsView, new Tooltip(message("FindReplaceTextsTips")));
+            }
+            setControls();
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
     }
 
     public void setEditInput(BaseController parent, TextInputControl textInput) {
@@ -227,30 +223,6 @@ public class ControlFindReplace extends BaseController {
             MyBoxLog.error(e);
         }
 
-    }
-
-    @Override
-    public boolean controlAltF() {
-        findNextAction();
-        return true;
-    }
-
-    @Override
-    public boolean controlAltW() {
-        replaceAllAction();
-        return true;
-    }
-
-    @Override
-    public boolean controlAlt1() {
-        findPreviousAction();
-        return true;
-    }
-
-    @Override
-    public boolean controlAlt2() {
-        findNextAction();
-        return true;
     }
 
     protected void checkFindInput(String string) {
@@ -374,21 +346,6 @@ public class ControlFindReplace extends BaseController {
     }
 
     @FXML
-    @Override
-    public void findAction() {
-        findNextAction();
-    }
-
-    @FXML
-    @Override
-    public void replaceAction() {
-        if (replaceArea == null) {
-            return;
-        }
-        findReplace(Operation.ReplaceFirst);
-    }
-
-    @FXML
     protected void replaceAllAction() {
         if (replaceArea == null) {
             return;
@@ -450,6 +407,9 @@ public class ControlFindReplace extends BaseController {
             return false;
         }
         String findString = findString();
+        if (findString == null || findString.isEmpty()) {
+            return false;
+        }
         String pageText = textInput.getText();
         if (pageText == null || pageText.isEmpty()) {
             popError(message("EmptyValue"));
@@ -468,7 +428,7 @@ public class ControlFindReplace extends BaseController {
             }
         }
         String selectedText = textInput.getSelectedText();
-        if (editerController != null && editerController.sourceInformation.getEditType() == Edit_Type.Bytes) {
+        if (editerController != null && editerController.isBytes()) {
             pageText = StringTools.replaceLineBreak(pageText);
             findString = StringTools.replaceLineBreak(findString);
             replaceString = StringTools.replaceLineBreak(replaceString);
@@ -513,7 +473,7 @@ public class ControlFindReplace extends BaseController {
 
         if (editerController != null) {
             findReplace.setFileInfo(editerController.sourceInformation)
-                    .setBackupController(editerController.backupController);
+                    .setController(editerController);
             editerController.sourceInformation.setFindReplace(findReplace);
         }
         return true;
@@ -527,7 +487,7 @@ public class ControlFindReplace extends BaseController {
             task.cancel();
         }
         textInput.deselect();
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             protected IndexRange lastStringRange;
             private boolean askSave = false;
@@ -535,15 +495,24 @@ public class ControlFindReplace extends BaseController {
             @Override
             protected boolean handle() {
                 if (!findReplace.isMultiplePages()) {
-                    if (!findReplace.handleString()) {
+                    if (!findReplace.handleString(this)) {
+                        if (!isWorking()) {
+                            return false;
+                        }
                         error = findReplace.getError();
                     }
-                } else if (!findReplace.handlePage()) {
+                } else if (!findReplace.handlePage(this)) {
+                    if (!isWorking()) {
+                        return false;
+                    }
                     if (editerController.fileChanged.getValue()) {
                         askSave = true;
                         return false;
                     }
-                    if (!findReplace.handleFile()) {
+                    if (!findReplace.handleFile(this)) {
+                        if (!isWorking()) {
+                            return false;
+                        }
                         error = findReplace.getError();
                     }
                 }
@@ -551,7 +520,7 @@ public class ControlFindReplace extends BaseController {
                     return false;
                 }
                 lastStringRange = findReplace.getStringRange();
-                return true;
+                return isWorking();
             }
 
             @Override
@@ -634,20 +603,23 @@ public class ControlFindReplace extends BaseController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             protected IndexRange lastStringRange;
 
             @Override
             protected boolean handle() {
-                if (!findReplace.handleString()) {
+                if (!findReplace.handleString(this)) {
+                    if (!isWorking()) {
+                        return false;
+                    }
                     error = findReplace.getError();
                 }
                 if (error != null) {
                     return false;
                 }
                 lastStringRange = findReplace.getStringRange();
-                return true;
+                return isWorking();
             }
 
             @Override
@@ -760,7 +732,7 @@ public class ControlFindReplace extends BaseController {
 
     @FXML
     protected void showFindHistories(Event event) {
-        PopTools.popStringValues(this, findArea, event, baseName + "FindString", false, true);
+        PopTools.popStringValues(this, findArea, event, baseName + "FindString", false);
     }
 
     @FXML
@@ -772,7 +744,7 @@ public class ControlFindReplace extends BaseController {
 
     @FXML
     protected void showReplaceHistories(Event event) {
-        PopTools.popStringValues(this, replaceArea, event, baseName + "ReplaceString", false, true);
+        PopTools.popStringValues(this, replaceArea, event, baseName + "ReplaceString", false);
     }
 
     @FXML
@@ -780,6 +752,45 @@ public class ControlFindReplace extends BaseController {
         if (UserConfig.getBoolean(baseName + "ReplaceStringPopWhenMouseHovering", false)) {
             showReplaceHistories(event);
         }
+    }
+
+    @FXML
+    @Override
+    public void findAction() {
+        findNextAction();
+    }
+
+    @FXML
+    @Override
+    public void replaceAction() {
+        if (replaceArea == null) {
+            return;
+        }
+        findReplace(Operation.ReplaceFirst);
+    }
+
+    @Override
+    public boolean controlAltF() {
+        findNextAction();
+        return true;
+    }
+
+    @Override
+    public boolean controlAltW() {
+        replaceAllAction();
+        return true;
+    }
+
+    @Override
+    public boolean controlAlt1() {
+        findPreviousAction();
+        return true;
+    }
+
+    @Override
+    public boolean controlAlt2() {
+        findNextAction();
+        return true;
     }
 
 }

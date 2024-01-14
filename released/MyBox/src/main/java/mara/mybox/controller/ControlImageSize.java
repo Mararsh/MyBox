@@ -18,8 +18,9 @@ import javafx.scene.layout.VBox;
 import mara.mybox.bufferedimage.BufferedImageTools.KeepRatioType;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.ScaleTools;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.ValidationTools;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -31,7 +32,7 @@ import mara.mybox.value.UserConfig;
  */
 public class ControlImageSize extends BaseController {
 
-    protected ImageViewerController imageController;
+    protected BaseShapeController imageController;
     protected ScaleType scaleType;
     protected double width, height;
     protected float scale = 1.0f;
@@ -113,7 +114,7 @@ public class ControlImageSize extends BaseController {
 
     }
 
-    public void setParameters(ImageViewerController imageController) {
+    public void setParameters(BaseShapeController imageController) {
         this.imageController = imageController;
 
         imageController.loadNotify.addListener(new ChangeListener<Boolean>() {
@@ -136,7 +137,7 @@ public class ControlImageSize extends BaseController {
         if (imageController == null) {
             return null;
         } else {
-            return imageController.scopeImage();
+            return imageController.imageView.getImage();
         }
     }
 
@@ -327,7 +328,7 @@ public class ControlImageSize extends BaseController {
                 return;
             }
             PixelsCalculationController controller
-                    = (PixelsCalculationController) openChildStage(Fxmls.PixelsCalculatorFxml, true);
+                    = (PixelsCalculationController) WindowTools.childStage(this, Fxmls.PixelsCalculatorFxml);
             controller.setSource((int) image.getWidth(), (int) image.getHeight(), keepRatioType);
             controller.notify.addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -371,7 +372,7 @@ public class ControlImageSize extends BaseController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             private Image newImage;
 

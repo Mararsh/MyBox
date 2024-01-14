@@ -20,7 +20,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.cell.TableDateCell;
-import mara.mybox.fxml.cell.TableImageFileCell;
+import mara.mybox.fxml.cell.TableFileNameCell;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
@@ -62,7 +62,7 @@ public class WebHistoriesController extends BaseSysTableController<WebHistory> {
         try {
             super.initColumns();
             iconColumn.setCellValueFactory(new PropertyValueFactory<>("icon"));
-            iconColumn.setCellFactory(new TableImageFileCell(20));
+            iconColumn.setCellFactory(new TableFileNameCell(20));
             titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
             addressColumn.setCellValueFactory(new PropertyValueFactory<>("address"));
             timeColumn.setCellValueFactory(new PropertyValueFactory<>("visitTime"));
@@ -194,7 +194,7 @@ public class WebHistoriesController extends BaseSysTableController<WebHistory> {
 
     @FXML
     protected void showFindHistories(Event event) {
-        PopTools.popStringValues(this, findInput, event, "WebHistoriesFindHistories", false, true);
+        PopTools.popStringValues(this, findInput, event, "WebHistoriesFindHistories", false);
     }
 
     @FXML

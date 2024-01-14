@@ -19,7 +19,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlFilesTable">
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlFilesTable">
     <children>
         <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
             <children>
@@ -108,7 +108,7 @@ License:    Apache License Version 2.0
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../buttons/Red/iconSetting.png" />
+                                <Image url="@../buttons/Red/iconOptions.png" />
                             </image>
                         </ImageView> 
                     </graphic>
@@ -128,11 +128,12 @@ License:    Apache License Version 2.0
                         <CheckBox fx:id="allRowsCheck" mnemonicParsing="false" text="%TableRow" />
                     </graphic>
                 </TableColumn>
-                <TableColumn fx:id="handledColumn" editable="false" prefWidth="220.0" text="%Handled" />
+                <TableColumn fx:id="handledColumn" editable="false" prefWidth="140.0" text="%Handled" />
                 <TableColumn fx:id="currentIndexColumn" editable="false" maxWidth="1.7976931348623157E308" prefWidth="60.0" text="%Current" />
-                <TableColumn fx:id="fileColumn" editable="false" maxWidth="1.7976931348623157E308" prefWidth="300.0" text="%File" />
-                <TableColumn fx:id="typeColumn" editable="false" minWidth="0.0" prefWidth="100.0" text="%Type" />
-                <TableColumn fx:id="numberColumn" editable="false" prefWidth="120.0" text="%FilesNumber" />
+            <TableColumn fx:id="dirColumn" editable="false" maxWidth="1.7976931348623157E308" prefWidth="260.0" text="%Directory" />
+                <TableColumn fx:id="fileColumn" editable="false" maxWidth="1.7976931348623157E308" prefWidth="160.0" text="%File" />
+                <TableColumn fx:id="typeColumn" editable="false" minWidth="0.0" text="%Type" />
+                <TableColumn fx:id="numberColumn" editable="false" prefWidth="100.0" text="%FilesNumber" />
                 <TableColumn fx:id="sizeColumn" editable="false" prefWidth="160.0" text="%Size" />
                 <TableColumn fx:id="modifyTimeColumn" editable="false" prefWidth="160.0" text="%ModifyTime" />
                 <TableColumn fx:id="createTimeColumn" editable="false" prefWidth="160.0" text="%CreateTime" />

@@ -20,7 +20,7 @@ public class ShapeTranslateInputController extends BaseShapeTransformController 
     protected RadioButton centerRadio, leftTopRadio, rightBottomRadio, leftBottomRadio, rightTopRadio;
 
     @Override
-    public void setParameters(BaseImageController parent, DoubleShape shapeData, DoublePoint point) {
+    public void setParameters(BaseShapeController parent, DoubleShape shapeData, DoublePoint point) {
         try {
             super.setParameters(parent, shapeData, point);
 
@@ -69,10 +69,10 @@ public class ShapeTranslateInputController extends BaseShapeTransformController 
         close();
     }
 
-    public static ShapeTranslateInputController open(BaseImageController parent, DoubleShape shapeData, DoublePoint point) {
+    public static ShapeTranslateInputController open(BaseShapeController parent, DoubleShape shapeData, DoublePoint point) {
         try {
-            ShapeTranslateInputController controller = (ShapeTranslateInputController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.ShapeTranslateInputFxml, true);
+            ShapeTranslateInputController controller = (ShapeTranslateInputController) WindowTools.childStage(
+                    parent, Fxmls.ShapeTranslateInputFxml);
             controller.setParameters(parent, shapeData, point);
             return controller;
         } catch (Exception e) {

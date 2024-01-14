@@ -12,7 +12,7 @@ import javafx.scene.control.TextField;
 import mara.mybox.color.ChromaticAdaptation;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.tools.DoubleMatrixTools;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -139,7 +139,7 @@ public class ChromaticAdaptationMatrixController extends ChromaticityBaseControl
         if (task != null && !task.isQuit()) {
             return;
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             private StringTable table;
             private String allTexts;
 

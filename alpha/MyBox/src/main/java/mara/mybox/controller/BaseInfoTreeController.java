@@ -86,12 +86,10 @@ public abstract class BaseInfoTreeController extends BaseController {
         }
     }
 
-    public void setParameters(BaseInfoTreeController infoController) {
+    public void loadData() {
         try {
-            infoTree.setParameters(infoController);
-
-            tableController.setParameters(infoController);
-
+            infoTree.setParameters(this);
+            tableController.setParameters(this);
             tagsController.setParameters(this);
             tagsController.loadTableData();
 
@@ -197,7 +195,7 @@ public abstract class BaseInfoTreeController extends BaseController {
     /*
         Tags
      */
-    protected void refreshTagss() {
+    protected void refreshTags() {
         tagsController.refreshAction();
     }
 

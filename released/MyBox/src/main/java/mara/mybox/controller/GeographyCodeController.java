@@ -22,9 +22,10 @@ import mara.mybox.db.data.GeographyCodeTools;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
+import mara.mybox.fxml.FxBackgroundTask;
 import mara.mybox.fxml.FxFileTools;
-import mara.mybox.fxml.SingletonBackgroundTask;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.cell.TableCoordinateSystemCell;
 import mara.mybox.fxml.cell.TableLatitudeCell;
 import mara.mybox.fxml.cell.TableLongitudeCell;
@@ -165,7 +166,7 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
     }
 
     @Override
-    public List<GeographyCode> readPageData(Connection conn) {
+    public List<GeographyCode> readPageData(FxTask currentTask, Connection conn) {
         setPageSQL();
 //        MyBoxLog.debug(dataQuerySQL);
         return TableGeographyCode.queryCodes(conn, pageQuerySQL, true);
@@ -214,7 +215,7 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
             backgroundTask.cancel();
             backgroundTask = null;
         }
-        backgroundTask = new SingletonBackgroundTask<Void>(this) {
+        backgroundTask = new FxBackgroundTask<Void>(this) {
             private List<GeographyCode> mapData;
 
             @Override
@@ -371,11 +372,11 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
-                GeographyCodeTools.importPredefined(null, loading);
+                GeographyCodeTools.importPredefined(this, null, loading);
                 return true;
             }
 
@@ -391,13 +392,13 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
                 File file = FxFileTools.getInternalFile("/data/examples/Geography_Code_china_towns_internal.csv",
                         "data", "Geography_Code_china_towns_internal.csv");
-                GeographyCodeTools.importInternalCSV(loading, file, true);
+                GeographyCodeTools.importInternalCSV(this, loading, file, true);
                 return true;
             }
 
@@ -444,7 +445,7 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {

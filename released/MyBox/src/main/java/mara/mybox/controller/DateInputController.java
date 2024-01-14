@@ -85,8 +85,8 @@ public class DateInputController extends BaseInputController {
 
     public static DateInputController open(BaseController parent, String title, String initValue, ColumnType timeType) {
         try {
-            DateInputController controller = (DateInputController) WindowTools.openChildStage(
-                    parent.getMyWindow(), Fxmls.DateInputFxml, true);
+            DateInputController controller = (DateInputController) WindowTools.childStage(
+                    parent, Fxmls.DateInputFxml);
             controller.setParameters(parent, title, initValue, timeType);
             return controller;
         } catch (Exception e) {

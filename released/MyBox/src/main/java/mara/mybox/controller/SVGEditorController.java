@@ -13,9 +13,12 @@ import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.VBox;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.StyleTools;
@@ -26,6 +29,7 @@ import mara.mybox.tools.SvgTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
+import org.w3c.dom.Node;
 
 /**
  * @Author Mara
@@ -38,25 +42,15 @@ public class SvgEditorController extends XmlEditorController {
     protected ControlSvgTree treeController;
     @FXML
     protected ControlSvgHtml htmlController;
+    @FXML
+    protected ControlSvgViewOptions optionsController;
+    @FXML
+    protected VBox htmlBox;
 
     public SvgEditorController() {
         baseTitle = message("SVGEditor");
         TipsLabelKey = "SVGEditorTips";
-    }
-
-    @Override
-    public void initValues() {
-        try {
-            super.initValues();
-
-            domController = treeController;
-
-            treeController.editorController = this;
-            treeController.svgNodeController.editor = this;
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
+        typeName = "SVG";
     }
 
     @Override
@@ -65,14 +59,30 @@ public class SvgEditorController extends XmlEditorController {
     }
 
     @Override
+    public void initValues() {
+        try {
+            domController = treeController;
+            treeController.editorController = this;
+            treeController.svgNodeController.editor = this;
+
+            super.initValues();
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    @Override
     public void initControls() {
         try {
             super.initControls();
 
+            htmlController.setParameters(this);
+
             treeController.loadedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    htmlController.loadDoc(treeController.doc, null);
+                    drawSVG();
                 }
             });
 
@@ -81,10 +91,46 @@ public class SvgEditorController extends XmlEditorController {
         }
     }
 
+    public void drawSVG() {
+        drawSVG(treeController.selectedNode());
+    }
+
+    public void drawSVG(Node focusNode) {
+        if (treeController.doc == null) {
+            htmlController.drawSVG("");
+            return;
+        }
+        if (backgroundTask != null) {
+            backgroundTask.cancel();
+        }
+        backgroundTask = new FxSingletonTask<Void>(this) {
+            String svg;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    optionsController.loadFocus(this, treeController.doc, focusNode);
+                    svg = optionsController.toXML(this);
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                htmlController.drawSVG(svg);
+            }
+
+        };
+        start(backgroundTask, false);
+    }
+
     @Override
     public void domChanged(boolean changed) {
         super.domChanged(changed);
-        htmlController.loadDoc(treeController.doc, treeController.selectedNode());
+        drawSVG();
     }
 
     @Override
@@ -95,6 +141,14 @@ public class SvgEditorController extends XmlEditorController {
     @Override
     public void openSavedFile(File file) {
         SvgEditorController.open(file);
+    }
+
+    @FXML
+    public void goView() {
+        if (!optionsController.pickValues()) {
+            return;
+        }
+        drawSVG();
     }
 
     @FXML
@@ -224,19 +278,24 @@ public class SvgEditorController extends XmlEditorController {
         }
     }
 
-    @FXML
     @Override
-    protected void popHelps(Event event) {
-        if (UserConfig.getBoolean("SvgHelpsPopWhenMouseHovering", false)) {
-            showHelps(event);
-        }
+    protected List<MenuItem> helpMenus(Event event) {
+        return HelpTools.svgHelps(false);
     }
 
-    @FXML
     @Override
-    protected void showHelps(Event event) {
-        popEventMenu(event, HelpTools.svgHelps(true));
+    public boolean keyEventsFilter(KeyEvent event) {
+        if (htmlBox.isFocused() || htmlBox.isFocusWithin()) {
+            if (htmlController.keyEventsFilter(event)) {
+                return true;
+            }
+        }
+        if (super.keyEventsFilter(event)) {
+            return true;
+        }
+        return htmlController.keyEventsFilter(event);
     }
+
 
     /*
         static
@@ -245,6 +304,18 @@ public class SvgEditorController extends XmlEditorController {
         try {
             SvgEditorController controller = (SvgEditorController) WindowTools.openStage(Fxmls.SvgEditorFxml);
             controller.sourceFileChanged(file);
+            controller.requestMouse();
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public static SvgEditorController load(String xml) {
+        try {
+            SvgEditorController controller = (SvgEditorController) WindowTools.openStage(Fxmls.SvgEditorFxml);
+            controller.writePanes(xml);
             controller.requestMouse();
             return controller;
         } catch (Exception e) {

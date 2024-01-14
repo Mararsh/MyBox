@@ -76,8 +76,8 @@ public class DataTableQueryController extends InfoTreeManageController {
      */
     public static DataTableQueryController open(ControlData2DLoad tableController) {
         try {
-            DataTableQueryController controller = (DataTableQueryController) WindowTools.openChildStage(
-                    tableController.getMyWindow(), Fxmls.DataTableQueryFxml, false);
+            DataTableQueryController controller = (DataTableQueryController) WindowTools.branchStage(
+                    tableController, Fxmls.DataTableQueryFxml);
             controller.setParameters(tableController);
             controller.requestMouse();
             return controller;

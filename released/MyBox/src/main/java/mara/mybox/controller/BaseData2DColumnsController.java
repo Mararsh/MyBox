@@ -36,7 +36,7 @@ import mara.mybox.db.table.TableColor;
 import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
-import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
 import mara.mybox.fxml.cell.TableCheckboxCell;
 import mara.mybox.fxml.cell.TableColorEditCell;
@@ -575,14 +575,15 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             DataFileCSV csv;
 
             @Override
             protected boolean handle() {
                 try {
-                    csv = Data2DTools.definitionFromXML(TextFileTools.readTexts(file));
+                    csv = Data2DTools.definitionFromXML(this, myController,
+                            TextFileTools.readTexts(this, file));
                     return csv != null;
                 } catch (Exception e) {
                     error = e.toString();
@@ -701,14 +702,14 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
             popError(message("NoData"));
             return;
         }
-        File file = chooseSaveFile(VisitHistory.FileType.CSV);
+        File file = chooseSaveFile(VisitHistory.FileType.CSV, currentData.dataName());
         if (file == null) {
             return;
         }
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             DataFileCSV csv;
 
@@ -741,14 +742,14 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
             popError(message("NoData"));
             return;
         }
-        File file = chooseSaveFile(VisitHistory.FileType.XML);
+        File file = chooseSaveFile(VisitHistory.FileType.XML, currentData.dataName());
         if (file == null) {
             return;
         }
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             @Override
             protected boolean handle() {
                 try {
@@ -768,7 +769,7 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
                         MyBoxLog.error(e.toString());
                         return false;
                     }
-                    if (FileTools.rename(tmpFile, file, true)) {
+                    if (FileTools.override(tmpFile, file, true)) {
                         recordFileWritten(file, VisitHistory.FileType.XML);
                         return true;
                     } else {
@@ -793,14 +794,14 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
             popError(message("NoData"));
             return;
         }
-        File file = chooseSaveFile(VisitHistory.FileType.JSON);
+        File file = chooseSaveFile(VisitHistory.FileType.JSON, currentData.dataName());
         if (file == null) {
             return;
         }
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
             @Override
             protected boolean handle() {
                 try {
@@ -816,7 +817,7 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
                         jsonWriter.flush();
                         jsonWriter.close();
                     }
-                    if (FileTools.rename(tmpFile, file, true)) {
+                    if (FileTools.override(tmpFile, file, true)) {
                         recordFileWritten(file, VisitHistory.FileType.JSON);
                         return true;
                     } else {
@@ -841,14 +842,14 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
             popError(message("NoData"));
             return;
         }
-        File file = chooseSaveFile(VisitHistory.FileType.Excel);
+        File file = chooseSaveFile(VisitHistory.FileType.Excel, currentData.dataName());
         if (file == null) {
             return;
         }
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonCurrentTask<Void>(this) {
+        task = new FxSingletonTask<Void>(this) {
 
             DataFileExcel excel;
 

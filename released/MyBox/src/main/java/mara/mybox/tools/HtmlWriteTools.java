@@ -16,6 +16,7 @@ import mara.mybox.data.FindReplaceString;
 import mara.mybox.data.Link;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.style.HtmlStyles;
 import static mara.mybox.value.AppValues.Indent;
 import mara.mybox.value.Languages;
@@ -216,7 +217,7 @@ public class HtmlWriteTools {
         }
     }
 
-    public static String setCharset(String html, Charset charset) {
+    public static String setCharset(FxTask task, String html, Charset charset) {
         try {
             if (html == null) {
                 return "InvalidData";
@@ -225,15 +226,18 @@ public class HtmlWriteTools {
             if (doc == null) {
                 return "InvalidData";
             }
-            setCharset(doc, charset);
-            return doc.outerHtml();
+            if (setCharset(task, doc, charset)) {
+                return doc.outerHtml();
+            } else {
+                return null;
+            }
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;
         }
     }
 
-    public static boolean setCharset(Document doc, Charset charset) {
+    public static boolean setCharset(FxTask task, Document doc, Charset charset) {
         try {
             if (doc == null) {
                 return false;
@@ -243,6 +247,9 @@ public class HtmlWriteTools {
             }
             Elements children = doc.head().children();
             for (Element e : children) {
+                if (task != null && !task.isWorking()) {
+                    return false;
+                }
                 if (!e.tagName().equalsIgnoreCase("meta")) {
                     continue;
                 }
@@ -266,21 +273,28 @@ public class HtmlWriteTools {
         }
     }
 
-    public static String setEquiv(File htmlFile, Charset charset, String key, String value) {
+    public static String setEquiv(FxTask task, File htmlFile, Charset charset, String key, String value) {
         try {
             if (htmlFile == null || key == null || value == null) {
                 return "InvalidData";
             }
-            String html = TextFileTools.readTexts(htmlFile, charset);
+            String html = TextFileTools.readTexts(task, htmlFile, charset);
             Document doc = Jsoup.parse(html);
             if (doc == null) {
                 return "InvalidData";
             }
             if (!"Content-Type".equalsIgnoreCase(key)) {
-                setCharset(doc, charset);
+                if (setCharset(task, doc, charset)) {
+                    return doc.outerHtml();
+                } else {
+                    return "Canceled";
+                }
             }
             Elements children = doc.head().children();
             for (Element e : children) {
+                if (task != null && !task.isWorking()) {
+                    return null;
+                }
                 if (!e.tagName().equalsIgnoreCase("meta") || !e.hasAttr("http-equiv")) {
                     continue;
                 }
@@ -299,7 +313,7 @@ public class HtmlWriteTools {
         }
     }
 
-    public static String ignoreHead(String html) {
+    public static String ignoreHead(FxTask task, String html) {
         try {
             Document doc = Jsoup.parse(html);
             if (doc == null) {
@@ -310,24 +324,28 @@ public class HtmlWriteTools {
             if (charset == null) {
                 charset = Charset.forName("utf-8");
             }
-            setCharset(doc, charset);
-            return html;
+            if (setCharset(task, doc, charset)) {
+                return html;
+            } else {
+                return "Canceled";
+            }
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;
         }
     }
 
-    public static String toUTF8(File htmlFile) {
-        return setCharset(TextFileTools.readTexts(htmlFile), Charset.forName("utf-8"));
+    public static String toUTF8(FxTask task, File htmlFile) {
+        return setCharset(task,
+                TextFileTools.readTexts(task, htmlFile), Charset.forName("utf-8"));
     }
 
-    public static String setStyle(File htmlFile, Charset charset, String css, boolean ignoreOriginal) {
+    public static String setStyle(FxTask task, File htmlFile, Charset charset, String css, boolean ignoreOriginal) {
         try {
             if (htmlFile == null || css == null) {
                 return "InvalidData";
             }
-            String html = TextFileTools.readTexts(htmlFile, charset);
+            String html = TextFileTools.readTexts(task, htmlFile, charset);
             Document doc = Jsoup.parse(html);
             if (doc == null) {
                 return "InvalidData";
@@ -338,7 +356,9 @@ public class HtmlWriteTools {
             if (ignoreOriginal) {
                 doc.head().empty();
             }
-            setCharset(doc, charset);
+            if (!setCharset(task, doc, charset)) {
+                return "Canceled";
+            }
             doc.head().appendChild(new Element("style").text(css));
             return doc.outerHtml();
         } catch (Exception e) {
@@ -437,7 +457,7 @@ public class HtmlWriteTools {
         }
     }
 
-    public static int replace(org.w3c.dom.Document doc, String findString,
+    public static int replace(FxTask currentTask, org.w3c.dom.Document doc, String findString,
             boolean reg, boolean caseInsensitive, String color, String bgColor, String font) {
         if (doc == null) {
             return 0;
@@ -449,10 +469,10 @@ public class HtmlWriteTools {
         FindReplaceString finder = FindReplaceString.create().setOperation(FindReplaceString.Operation.FindNext)
                 .setFindString(findString).setIsRegex(reg).setCaseInsensitive(caseInsensitive).setMultiline(true);
         String replaceSuffix = " style=\"color:" + color + "; background: " + bgColor + "; font-size:" + font + ";\">" + findString + "</span>";
-        return replace(finder, nodeList.item(0), 0, replaceSuffix);
+        return replace(currentTask, finder, nodeList.item(0), 0, replaceSuffix);
     }
 
-    public static int replace(FindReplaceString finder, Node node, int index, String replaceSuffix) {
+    public static int replace(FxTask currentTask, FindReplaceString finder, Node node, int index, String replaceSuffix) {
         if (node == null || replaceSuffix == null || finder == null) {
             return index;
         }
@@ -461,7 +481,13 @@ public class HtmlWriteTools {
         if (texts != null && !texts.isBlank()) {
             StringBuilder s = new StringBuilder();
             while (true) {
-                finder.setInputString(texts).setAnchor(0).handleString();
+                if (currentTask != null && !currentTask.isWorking()) {
+                    return -1;
+                }
+                finder.setInputString(texts).setAnchor(0).handleString(currentTask);
+                if (currentTask != null && !currentTask.isWorking()) {
+                    return -1;
+                }
                 if (finder.getStringRange() == null) {
                     break;
                 }
@@ -477,24 +503,30 @@ public class HtmlWriteTools {
         }
         Node child = node.getFirstChild();
         while (child != null) {
-            replace(finder, child, newIndex, replaceSuffix);
+            if (currentTask != null && !currentTask.isWorking()) {
+                return -1;
+            }
+            replace(currentTask, finder, child, newIndex, replaceSuffix);
             child = child.getNextSibling();
         }
         return newIndex;
     }
 
-    public static boolean relinkPage(File httpFile, Map<File, Link> completedLinks, Map<String, File> completedAddresses) {
+    public static boolean relinkPage(FxTask task, File httpFile, Map<File, Link> completedLinks, Map<String, File> completedAddresses) {
         try {
             if (httpFile == null || !httpFile.exists() || completedAddresses == null) {
                 return false;
             }
             Link baseLink = completedLinks.get(httpFile);
-            String html = TextFileTools.readTexts(httpFile);
+            String html = TextFileTools.readTexts(task, httpFile);
             List<Link> links = HtmlReadTools.links(baseLink.getUrl(), html);
             String replaced = "";
             String unchecked = html;
             int pos;
             for (Link link : links) {
+                if (task != null && !task.isWorking()) {
+                    return false;
+                }
                 try {
                     String originalAddress = link.getAddressOriginal();
                     pos = unchecked.indexOf("\"" + originalAddress + "\"");
@@ -523,7 +555,7 @@ public class HtmlWriteTools {
             replaced += unchecked;
             File tmpFile = FileTmpTools.getTempFile();
             TextFileTools.writeFile(tmpFile, replaced, TextFileTools.charset(httpFile));
-            return FileTools.rename(tmpFile, httpFile);
+            return FileTools.override(tmpFile, httpFile);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return false;

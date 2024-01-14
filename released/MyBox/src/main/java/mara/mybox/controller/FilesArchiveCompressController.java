@@ -25,13 +25,13 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.DateTools;
-import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileNameTools;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.TextTools;
-import mara.mybox.tools.FileTmpTools;
 import mara.mybox.value.AppValues;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -241,7 +241,7 @@ public class FilesArchiveCompressController extends BaseBatchFileController {
     }
 
     @Override
-    public boolean beforeHandleFiles() {
+    public boolean beforeHandleFiles(FxTask currentTask) {
         try {
             targetFile = makeTargetFile(FileNameTools.prefix(targetFile.getName()),
                     "." + FileNameTools.suffix(targetFile.getName()),
@@ -273,18 +273,18 @@ public class FilesArchiveCompressController extends BaseBatchFileController {
     }
 
     @Override
-    public String handleFile(File file) {
+    public String handleFile(FxTask currentTask, File file) {
         try {
             if (!match(file)) {
                 return message("Skip");
             }
-            return addEntry(file, rootName);
+            return addEntry(currentTask, file, rootName);
         } catch (Exception e) {
             return message("Failed");
         }
     }
 
-    public String addEntry(File file, String entryPath) {
+    public String addEntry(FxTask currentTask, File file, String entryPath) {
         try {
             String name;
             if (archiver.equalsIgnoreCase(ArchiveStreamFactory.AR)) {
@@ -305,6 +305,10 @@ public class FilesArchiveCompressController extends BaseBatchFileController {
                         int len;
                         byte[] buf = new byte[AppValues.IOBufferLength];
                         while ((len = inputStream.read(buf)) > 0) {
+                            if (currentTask == null || !currentTask.isWorking()) {
+                                sevenZOutput.closeArchiveEntry();
+                                return message("Canceled");
+                            }
                             sevenZOutput.write(buf, 0, len);
                         }
                     }
@@ -338,17 +342,17 @@ public class FilesArchiveCompressController extends BaseBatchFileController {
     }
 
     @Override
-    public String handleDirectory(File dir) {
+    public String handleDirectory(FxTask currentTask, File dir) {
         try {
             if (archiver.equalsIgnoreCase(ArchiveStreamFactory.AR)) {
                 return message("Skip");
             }
             dirFilesNumber = dirFilesHandled = 0;
-            addEntry(dir, rootName);
+            addEntry(currentTask, dir, rootName);
             if (rootName == null || rootName.trim().isEmpty()) {
-                handleDirectory(dir, dir.getName());
+                handleDirectory(currentTask, dir, dir.getName());
             } else {
-                handleDirectory(dir, rootName + "/" + dir.getName());
+                handleDirectory(currentTask, dir, rootName + "/" + dir.getName());
             }
             return MessageFormat.format(message("DirHandledSummary"),
                     dirFilesNumber, dirFilesHandled);
@@ -359,7 +363,7 @@ public class FilesArchiveCompressController extends BaseBatchFileController {
     }
 
     @Override
-    protected boolean handleDirectory(File sourcePath, String entryPath) {
+    protected boolean handleDirectory(FxTask currentTask, File sourcePath, String entryPath) {
         if (sourcePath == null || !sourcePath.exists() || !sourcePath.isDirectory()
                 || (isPreview && dirFilesHandled > 0)) {
             return false;
@@ -370,7 +374,7 @@ public class FilesArchiveCompressController extends BaseBatchFileController {
                 return false;
             }
             for (File srcFile : files) {
-                if (task == null || task.isCancelled()) {
+                if (currentTask == null || !currentTask.isWorking()) {
                     return false;
                 }
                 if (srcFile.isFile()) {
@@ -381,13 +385,14 @@ public class FilesArchiveCompressController extends BaseBatchFileController {
                     if (!match(srcFile)) {
                         continue;
                     }
-                    String result = addEntry(srcFile, entryPath);
-                    if (!message("Failed").equals(result)
+                    String result = addEntry(currentTask, srcFile, entryPath);
+                    if (!message("Canceled").equals(result)
+                            && !message("Failed").equals(result)
                             && !message("Skip").equals(result)) {
                         dirFilesHandled++;
                     }
                 } else if (srcFile.isDirectory() && sourceCheckSubdir) {
-                    handleDirectory(srcFile, entryPath + "/" + srcFile.getName());
+                    handleDirectory(currentTask, srcFile, entryPath + "/" + srcFile.getName());
                 }
             }
             return true;
@@ -398,7 +403,7 @@ public class FilesArchiveCompressController extends BaseBatchFileController {
     }
 
     @Override
-    public void afterHandleFiles() {
+    public void afterHandleFiles(FxTask currentTask) {
         try {
             if (archiver.equalsIgnoreCase(ArchiveStreamFactory.SEVEN_Z)) {
                 sevenZOutput.finish();
@@ -407,8 +412,8 @@ public class FilesArchiveCompressController extends BaseBatchFileController {
                 archiveOut.finish();
                 archiveOut.close();
             }
-            if (targetFile.exists()) {
-                FileDeleteTools.delete(targetFile);
+            if (currentTask == null || !currentTask.isWorking()) {
+                return;
             }
             if (!message("None").equals(compressor)) {
                 File tmpFile = FileTmpTools.getTempFile();
@@ -420,9 +425,9 @@ public class FilesArchiveCompressController extends BaseBatchFileController {
                         IOUtils.copy(inputStream, compressOut);
                     }
                 }
-                FileTools.rename(tmpFile, targetFile);
+                FileTools.override(tmpFile, targetFile);
             } else {
-                FileTools.rename(archiveFile, targetFile);
+                FileTools.override(archiveFile, targetFile);
             }
         } catch (Exception e) {
             MyBoxLog.debug(e);

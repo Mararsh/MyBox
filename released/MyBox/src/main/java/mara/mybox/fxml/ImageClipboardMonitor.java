@@ -13,7 +13,7 @@ import javafx.scene.input.Clipboard;
 import mara.mybox.bufferedimage.ImageAttributes;
 import mara.mybox.bufferedimage.ImageConvertTools;
 import mara.mybox.bufferedimage.ScaleTools;
-import mara.mybox.controller.ControlImagesClipboard;
+import mara.mybox.controller.ImageInMyBoxClipboardController;
 import mara.mybox.controller.ImageInSystemClipboardController;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ImageClipboard;
@@ -55,7 +55,7 @@ public class ImageClipboardMonitor extends Timer {
         schedule(new MonitorTask(), 0, interval);
         Platform.runLater(() -> {
             ImageInSystemClipboardController.updateSystemClipboardStatus();
-            ControlImagesClipboard.updateClipboardsStatus();
+            ImageInMyBoxClipboardController.updateClipboardsStatus();
         });
         MyBoxLog.debug("Image Clipboard Monitor started. Interval:" + interval);
         return this;
@@ -65,7 +65,7 @@ public class ImageClipboardMonitor extends Timer {
         cancel();
         Platform.runLater(() -> {
             ImageInSystemClipboardController.updateSystemClipboardStatus();
-            ControlImagesClipboard.updateClipboardsStatus();
+            ImageInMyBoxClipboardController.updateClipboardsStatus();
         });
         MyBoxLog.debug("Image Clipboard Monitor stopped.");
         clearTmpClips();
@@ -100,7 +100,7 @@ public class ImageClipboardMonitor extends Timer {
                             return;
                         }
                         clip = clipboard.getImage();
-                        if (clip == null || FxImageTools.sameImage(lastImage, clip)) {
+                        if (clip == null || FxImageTools.sameImage(null, lastImage, clip)) {
                             return;
                         }
                         lastImage = clip;
@@ -174,8 +174,8 @@ public class ImageClipboardMonitor extends Timer {
                 if (width > 0) {
                     bufferedImage = ScaleTools.scaleImageWidthKeep(bufferedImage, width);
                 }
-                BufferedImage converted = ImageConvertTools.convertColorSpace(bufferedImage, attributes);
-                ImageFileWriters.writeImageFile(converted, attributes, fname);
+                BufferedImage converted = ImageConvertTools.convertColorSpace(null, bufferedImage, attributes);
+                ImageFileWriters.writeImageFile(null, converted, attributes, fname);
                 savedNumber++;
                 if (controller != null) {
                     Platform.runLater(() -> {
@@ -194,7 +194,7 @@ public class ImageClipboardMonitor extends Timer {
         new Thread() {
             @Override
             public void run() {
-                try ( Connection conn = DerbyBase.getConnection()) {
+                try (Connection conn = DerbyBase.getConnection()) {
                     int width = ImageClipboardTools.getWidth();
                     BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
                     if (width > 0) {
@@ -206,9 +206,10 @@ public class ImageClipboardMonitor extends Timer {
                     if (tableImageClipboard == null) {
                         tableImageClipboard = new TableImageClipboard();
                     }
-                    tableImageClipboard.insertData(conn, ImageClipboard.create(bufferedImage, ImageSource.SystemClipBoard));
+                    tableImageClipboard.insertData(conn,
+                            ImageClipboard.create(null, bufferedImage, ImageSource.SystemClipBoard));
                     conn.commit();
-                    ControlImagesClipboard.updateClipboards();
+                    ImageInMyBoxClipboardController.updateClipboards();
                     copiedNumber++;
                     ImageInSystemClipboardController controller = ImageInSystemClipboardController.running();
                     if (controller != null) {

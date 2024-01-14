@@ -6,7 +6,11 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import mara.mybox.bufferedimage.PixelsOperation.ColorActionType;
 import mara.mybox.bufferedimage.PixelsOperation.OperationType;
+import static mara.mybox.bufferedimage.PixelsOperation.OperationType.Blend;
+import static mara.mybox.bufferedimage.PixelsOperation.OperationType.Color;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
+import mara.mybox.value.Colors;
 
 /**
  * @Author Mara
@@ -15,33 +19,32 @@ import mara.mybox.dev.MyBoxLog;
  */
 public class PixelsOperationFactory {
 
-    public static PixelsOperation create(Image image, ImageScope scope, OperationType operationType) {
-        BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
-        return create(bufferedImage, scope, operationType);
+    public static PixelsOperation createFX(Image image, ImageScope scope, OperationType operationType) {
+        return create(image != null ? SwingFXUtils.fromFXImage(image, null) : null,
+                scope, operationType);
     }
 
     public static PixelsOperation create(BufferedImage image, ImageScope scope, OperationType operationType) {
-        switch (operationType) {
-            case ShowScope:
-                return new ShowScope(image, scope);
-            case Sepia:
-                return new Sepia(image, scope);
-            case Thresholding:
-                return new Thresholding(image, scope);
-            default:
-                return null;
-        }
+        return create(image, scope, operationType, null);
     }
 
     public static PixelsOperation create(BufferedImage image, ImageScope scope,
             OperationType operationType, ColorActionType colorActionType) {
         switch (operationType) {
+            case ShowScope:
+                return new ShowScope(image, scope);
+            case SelectPixels:
+                return new SelectPixels(image, scope);
             case ReplaceColor:
                 return new ReplaceColor(image, scope);
             case Color:
                 return new ColorSet(image, scope);
             case Blend:
                 return new BlendColor(image, scope);
+            case Sepia:
+                return new Sepia(image, scope);
+            case Thresholding:
+                return new Thresholding(image, scope);
             case Opacity:
                 switch (colorActionType) {
                     case Increase:
@@ -193,34 +196,37 @@ public class PixelsOperationFactory {
         }
     }
 
-    public static PixelsOperation create(Image image, ImageScope scope,
+    public static PixelsOperation createFX(Image image, ImageScope scope,
             OperationType operationType, ColorActionType colorActionType) {
         BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
         return create(bufferedImage, scope, operationType, colorActionType);
     }
 
-    public static BufferedImage replaceColor(BufferedImage image, Color oldColor, Color newColor, int distance) {
-        PixelsOperation pixelsOperation = replaceColorOperation(image, oldColor, newColor, distance);
+    public static BufferedImage replaceColor(FxTask task, BufferedImage image,
+            Color oldColor, Color newColor, int distance) {
+        PixelsOperation pixelsOperation = replaceColorOperation(task, image, oldColor, newColor, distance);
         if (pixelsOperation == null) {
             return image;
         }
-        return pixelsOperation.operateImage();
+        return pixelsOperation.start();
     }
 
-    public static PixelsOperation replaceColorOperation(BufferedImage image, Color oldColor, Color newColor, int distance) {
+    public static PixelsOperation replaceColorOperation(FxTask task, BufferedImage image,
+            Color oldColor, Color newColor, int distance) {
         if (oldColor == null || distance < 0) {
             return null;
         }
         try {
             ImageScope scope = new ImageScope();
-            scope.setScopeType(ImageScope.ScopeType.Color);
+            scope.setScopeType(ImageScope.ScopeType.Colors);
             scope.setColorScopeType(ImageScope.ColorScopeType.Color);
             scope.getColors().add(oldColor);
             scope.setColorDistance(distance);
             PixelsOperation pixelsOperation = PixelsOperationFactory.create(image,
-                    scope, OperationType.ReplaceColor, ColorActionType.Set);
-            pixelsOperation.setColorPara1(oldColor);
-            pixelsOperation.setColorPara2(newColor);
+                    scope, OperationType.ReplaceColor, ColorActionType.Set)
+                    .setColorPara1(oldColor)
+                    .setColorPara2(newColor)
+                    .setTask(task);
             return pixelsOperation;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -234,18 +240,65 @@ public class PixelsOperationFactory {
      */
     public static class ShowScope extends PixelsOperation {
 
-        private final int opacity;
+        private final float maskOpacity;
+        private final Color maskColor;
 
         public ShowScope(BufferedImage image, ImageScope scope) {
             this.operationType = OperationType.ShowScope;
             this.image = image;
             this.scope = scope;
-            opacity = (int) (scope.getOpacity() * 255);
+            maskOpacity = scope.getMaskOpacity();
+            maskColor = scope.getMaskColor();
+        }
+
+        @Override
+        protected boolean inScope(boolean isWhole, int x, int y, Color color) {
+            return !super.inScope(isWhole, x, y, color);
+        }
+
+        @Override
+        protected Color skipTransparent(BufferedImage target, int x, int y) {
+            try {
+                Color color = ColorBlendTools.blendColor(Colors.TRANSPARENT, maskOpacity, maskColor, true);
+                target.setRGB(x, y, color.getRGB());
+                return Colors.TRANSPARENT;
+            } catch (Exception e) {
+                return null;
+            }
         }
 
         @Override
         protected Color operateColor(Color color) {
-            return new Color(color.getRed(), color.getGreen(), color.getBlue(), opacity);
+            return ColorBlendTools.blendColor(color, maskOpacity, maskColor, true);
+        }
+    }
+
+    public static class SelectPixels extends PixelsOperation {
+
+        public SelectPixels(BufferedImage image, ImageScope scope) {
+            this.operationType = OperationType.SelectPixels;
+            this.image = image;
+            this.scope = scope;
+        }
+
+        @Override
+        protected Color skipTransparent(BufferedImage target, int x, int y) {
+            try {
+                target.setRGB(x, y, colorPara1.getRGB());
+                return colorPara1;
+            } catch (Exception e) {
+                return null;
+            }
+        }
+
+        @Override
+        protected boolean inScope(boolean isWhole, int x, int y, Color color) {
+            return !super.inScope(isWhole, x, y, color);
+        }
+
+        @Override
+        protected Color operateColor(Color color) {
+            return colorPara1;
         }
     }
 
@@ -293,7 +346,7 @@ public class PixelsOperationFactory {
         }
 
         @Override
-        public BufferedImage operate() {
+        public BufferedImage start() {
             directReplace = (boolPara1 && boolPara2 && boolPara3)
                     || (!boolPara1 && !boolPara2 && !boolPara3);
             if (!directReplace) {
@@ -302,7 +355,7 @@ public class PixelsOperationFactory {
                 paraSaturation = hsb[1];
                 paraBrightness = hsb[2];
             }
-            return super.operate();
+            return super.start();
         }
 
         @Override
@@ -334,7 +387,7 @@ public class PixelsOperationFactory {
         }
 
         @Override
-        public BufferedImage operate() {
+        public BufferedImage start() {
             directReplace = (boolPara1 && boolPara2 && boolPara3)
                     || (!boolPara1 && !boolPara2 && !boolPara3);
             if (!directReplace) {
@@ -343,7 +396,7 @@ public class PixelsOperationFactory {
                 paraSaturation = hsb[1];
                 paraBrightness = hsb[2];
             }
-            return super.operate();
+            return super.start();
         }
 
         @Override
@@ -370,8 +423,9 @@ public class PixelsOperationFactory {
             this.scope = scope;
         }
 
-        public void setBlender(PixelsBlend blender) {
+        public BlendColor setBlender(PixelsBlend blender) {
             this.blender = blender;
+            return this;
         }
 
         @Override

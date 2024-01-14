@@ -20,8 +20,8 @@ public class ScaleTools {
         int imageType = BufferedImage.TYPE_INT_ARGB;
         BufferedImage target = new BufferedImage(width, height, imageType);
         Graphics2D g = target.createGraphics();
-        if (AppVariables.imageRenderHints != null) {
-            g.addRenderingHints(AppVariables.imageRenderHints);
+        if (AppVariables.ImageHints != null) {
+            g.addRenderingHints(AppVariables.ImageHints);
         }
         g.setBackground(bgColor);
         g.drawImage(source, 0, 0, width, height, null);
@@ -108,11 +108,15 @@ public class ScaleTools {
         return scaleImage(source, width, height);
     }
 
-    public static BufferedImage scaleImageLess(BufferedImage source, int size) {
+    public static BufferedImage demoImage(BufferedImage source) {
+        return scaleImageLess(source, AppVariables.maxDemoImage);
+    }
+
+    public static BufferedImage scaleImageLess(BufferedImage source, long size) {
         if (size <= 0) {
             return source;
         }
-        float scale = size / (source.getWidth() * source.getHeight());
+        float scale = size * 1f / (source.getWidth() * source.getHeight());
         if (scale >= 1) {
             return source;
         }
@@ -127,8 +131,8 @@ public class ScaleTools {
             int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage target = new BufferedImage(targetW, targetH, imageType);
             Graphics2D g = target.createGraphics();
-            if (AppVariables.imageRenderHints != null) {
-                g.addRenderingHints(AppVariables.imageRenderHints);
+            if (AppVariables.ImageHints != null) {
+                g.addRenderingHints(AppVariables.ImageHints);
             }
             g.setBackground(Colors.TRANSPARENT);
             g.drawImage(source, (targetW - finalW) / 2, (targetH - finalH) / 2, finalW, finalH, null);
