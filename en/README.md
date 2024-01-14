@@ -25,7 +25,7 @@ This is compute application to provide simple and easy functions. It's free and 
      - More algorithm for converting image to SVG.                                                                                                          
 * Upgrade to: JDK 21; javaFX 21; Derby 10.17.1.0.                                     
 * Solved problems:                                   
-     - MyBox fails to start when host's default local is not embedded one(Chinese or English).(Bug existed in many versions)                                                                                                           
+     - MyBox fails to start when host's default locale is not embedded one(Chinese or English).(Bug existed in many versions)                                                                                                           
      - Files table should not be counted when process is being in batch.                                                                                                          
      - Results of SQL execution is not shown.                                                                                                          
      - Some keys do not work in interface "Splice Data".                                                                                                          
