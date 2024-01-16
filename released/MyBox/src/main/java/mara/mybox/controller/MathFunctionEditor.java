@@ -89,20 +89,26 @@ public class MathFunctionEditor extends InfoTreeNodeEditor {
     }
 
     @Override
-    protected String nodeInfo() {
+    protected InfoNode nodeInfo(InfoNode node) {
+        if (node == null) {
+            return null;
+        }
         String name = functionNameInput.getText();
         String variables = variablesInput.getText();
         String exp = valueInput.getText();
         String domain = moreInput.getText();
+        String info;
         if ((name == null || name.isBlank())
                 && (variables == null || variables.isBlank())
                 && (domain == null || domain.isBlank())) {
-            return exp == null || exp.isBlank() ? null : exp.trim();
+            info = exp == null || exp.isBlank() ? null : exp.trim();
+        } else {
+            info = (name == null ? "" : name.trim()) + ValueSeparater + "\n"
+                    + (variables == null ? "" : variables.trim()) + ValueSeparater + "\n"
+                    + (exp == null ? "" : exp.trim()) + ValueSeparater + "\n"
+                    + (domain == null ? "" : domain.trim());
         }
-        return (name == null ? "" : name.trim()) + ValueSeparater + "\n"
-                + (variables == null ? "" : variables.trim()) + ValueSeparater + "\n"
-                + (exp == null ? "" : exp.trim()) + ValueSeparater + "\n"
-                + (domain == null ? "" : domain.trim());
+        return node.setInfo(info);
     }
 
     public List<String> variableNames() {

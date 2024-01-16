@@ -230,10 +230,10 @@ License:    Apache License Version 2.0
                                         <MenuItem mnemonicParsing="false" onAction="#ImageToSvg" text="%ImageToSvg" /> 
                                     </items>
                                 </Menu>
+                                <!--<MenuItem mnemonicParsing="false" onAction="#imageScope" text="%ImageScope" />-->
                                 <MenuItem mnemonicParsing="false" onAction="#imageOptions" text="%ImageOptions" />
                                 <!--<SeparatorMenuItem mnemonicParsing="false" />-->
-                                <!--                                <MenuItem mnemonicParsing="false" onAction="#ImageMaterial" text="%ImageMaterial" />
-                                <MenuItem mnemonicParsing="false" onAction="#ImageScope" text="%ImageScope" />-->
+                                <!--<MenuItem mnemonicParsing="false" onAction="#ImageMaterial" text="%ImageMaterial" />-->
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#openManageColors" text="%ManageColors" />
                                 <MenuItem mnemonicParsing="false" onAction="#queryColor" text="%ColorQuery" />

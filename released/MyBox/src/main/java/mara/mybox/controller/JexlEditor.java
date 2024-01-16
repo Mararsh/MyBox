@@ -86,17 +86,23 @@ public class JexlEditor extends JShellEditor {
     }
 
     @Override
-    protected String nodeInfo() {
+    protected InfoNode nodeInfo(InfoNode node) {
+        if (node == null) {
+            return null;
+        }
         String script = valueInput.getText();
         String context = moreInput.getText();
         String parameters = parametersInput.getText();
+        String info;
         if ((parameters == null || parameters.isBlank())
                 && (context == null || context.isBlank())) {
-            return script == null || script.isBlank() ? null : script.trim();
+            info = script == null || script.isBlank() ? null : script.trim();
+        } else {
+            info = (script == null ? "" : script.trim()) + ValueSeparater + "\n"
+                    + (context == null ? "" : context.trim()) + ValueSeparater + "\n"
+                    + (parameters == null ? "" : parameters.trim());
         }
-        return (script == null ? "" : script.trim()) + ValueSeparater + "\n"
-                + (context == null ? "" : context.trim()) + ValueSeparater + "\n"
-                + (parameters == null ? "" : parameters.trim());
+        return node.setInfo(info);
     }
 
     @Override

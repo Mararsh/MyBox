@@ -1,11 +1,12 @@
 package mara.mybox.controller;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import javafx.fxml.FXML;
 import javafx.scene.paint.Color;
 import mara.mybox.bufferedimage.ColorConvertTools;
 import mara.mybox.bufferedimage.ImageScope;
+import mara.mybox.data.ImageItem;
 import mara.mybox.dev.MyBoxLog;
 
 /**
@@ -15,46 +16,30 @@ import mara.mybox.dev.MyBoxLog;
  */
 public abstract class ControlSelectPixels_Save extends ControlSelectPixels_mask {
 
-    @FXML
-    public void saveScope() {
-//        if (finalScope() == null) {
-//            return;
-//        }
-//        String name = scopeNameInput.getText().trim();
-//        if (name.isEmpty()) {
-//            popError(message("InvalidParameters"));
-//            return;
-//        }
-//        scope.setName(name);
-//        if (task != null) {
-//            task.cancel();
-//        }
-//        task = new SingletonCurrentTask<Void>(this) {
-//
-//            @Override
-//            protected boolean handle() {
-//                TableImageScope.write(scope);
-//                return true;
-//            }
-//
-//            @Override
-//            protected void whenSucceeded() {
-//                popSaved();
-//            }
-//        };
-//        start(task);
+    public void loadScope(ImageScope inScope) {
+        scope = inScope != null ? inScope.cloneValues() : new ImageScope();
+        File file = null;
+        if (scope.getFile() != null) {
+            file = new File(scope.getFile());
+        }
+        if (file == null || !file.exists()) {
+            file = ImageItem.exampleImageFile();
+        }
+        scope.setFile(file.toString());
+        sourceFileChanged(file);
     }
 
-    public void loadScope(ImageScope inScope) {
-        if (inScope == null || inScope.getScopeType() == null) {
+    public void loadScope() {
+        if (scope == null || scope.getScopeType() == null) {
             applyScope();
             return;
         }
         clearControls();
-        scope = inScope.cloneValues();
+        isSettingValues = true;
         showScopeType(scope);
         showAreaData(scope);
         showColorData(scope);
+        isSettingValues = false;
         matchController.show(scope);
         setControls();
         showScope();
@@ -64,7 +49,6 @@ public abstract class ControlSelectPixels_Save extends ControlSelectPixels_mask 
         if (scope == null || scope.getScopeType() == null) {
             return false;
         }
-        isSettingValues = true;
         switch (scope.getScopeType()) {
             case Matting:
                 scopeMattingRadio.setSelected(true);
@@ -88,9 +72,7 @@ public abstract class ControlSelectPixels_Save extends ControlSelectPixels_mask 
                 scopeOutlineRadio.setSelected(true);
                 break;
         }
-        isSettingValues = false;
         return true;
-
     }
 
     private boolean showAreaData(ImageScope scope) {
@@ -134,7 +116,6 @@ public abstract class ControlSelectPixels_Save extends ControlSelectPixels_mask 
             return false;
         }
         try {
-            isSettingValues = true;
             colorsList.getItems().clear();
             colorExcludedCheck.setSelected(scope.isColorExcluded());
             eightNeighborCheck.setSelected(scope.isEightNeighbor());
@@ -154,11 +135,9 @@ public abstract class ControlSelectPixels_Save extends ControlSelectPixels_mask 
                         colorsList.getSelectionModel().selectLast();
                     }
             }
-            isSettingValues = false;
             return true;
         } catch (Exception e) {
             MyBoxLog.debug(e);
-            isSettingValues = false;
             return false;
         }
     }

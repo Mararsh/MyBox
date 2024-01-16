@@ -41,13 +41,13 @@ import static mara.mybox.value.Languages.message;
  */
 public abstract class ControlSelectPixels_Base extends BaseShapeController {
 
-    protected BasePixelsController handler;
     protected BaseImageController imageController;
+    protected ImageScopeEditor editor;
     protected ImageScope scope;
     protected TableColor tableColor;
     protected java.awt.Color maskColor;
     protected float maskOpacity;
-    protected SimpleBooleanProperty showNotify;
+    protected SimpleBooleanProperty showNotify, changedNotify;
 
     @FXML
     protected ToggleGroup scopeTypeGroup;
@@ -77,7 +77,7 @@ public abstract class ControlSelectPixels_Base extends BaseShapeController {
     @FXML
     protected Button shapeButton, goScopeButton, popScopeButton,
             scopeOutlineFileButton, scopeOutlineShrinkButton, scopeOutlineExpandButton,
-            clearColorsButton, deleteColorsButton, saveColorsButton;
+            clearColorsButton, deleteColorsButton, saveColorsButton, fileMenuButton;
     @FXML
     protected RadioButton scopeWholeRadio, scopeMattingRadio, scopeRectangleRadio, scopeCircleRadio,
             scopeEllipseRadio, scopePolygonRadio, scopeColorRadio, scopeOutlineRadio;
@@ -91,14 +91,21 @@ public abstract class ControlSelectPixels_Base extends BaseShapeController {
     public Image srcImage() {
         if (imageController != null) {
             image = imageController.imageView.getImage();
-        } else {
-            image = imageView.getImage();
-        }
-        if (image == null) {
-            image = ImageItem.exampleImage();
-            loadImage(image);
+            sourceFile = imageController.sourceFile;
+        } else if (editor != null) {
+            if (editor.srcImage == null) {
+                loadExampleImage();
+            }
+            image = editor.srcImage;
         }
         return image;
+    }
+
+    public void loadExampleImage() {
+        editor.sourceFile = null;
+        editor.srcImage = ImageItem.exampleImage();
+        sourceFile = ImageItem.exampleImageFile();
+        loadImage(editor.srcImage);
     }
 
     public java.awt.Color maskColor() {
@@ -197,14 +204,14 @@ public abstract class ControlSelectPixels_Base extends BaseShapeController {
             if (srcImage() == null || scope == null) {
                 return false;
             }
-            scope.setImage(srcImage())
+            scope.setImage(image)
                     .setAreaExcluded(areaExcludedCheck.isSelected())
                     .setColorExcluded(colorExcludedCheck.isSelected())
                     .setEightNeighbor(eightNeighborCheck.isSelected())
                     .setMaskColor(maskColor)
                     .setMaskOpacity(maskOpacity);
-            if (imageController.sourceFile != null) {
-                scope.setFile(imageController.sourceFile.getAbsolutePath());
+            if (sourceFile != null) {
+                scope.setFile(sourceFile.getAbsolutePath());
             } else {
                 scope.setFile("Unknown");
             }

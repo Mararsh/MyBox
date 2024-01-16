@@ -72,6 +72,11 @@ public class ImageScopeTools {
 
     public static void cloneValues(ImageScope targetScope, ImageScope sourceScope) {
         try {
+            targetScope.setFile(sourceScope.getFile());
+            targetScope.setName(sourceScope.getName());
+            targetScope.setAreaData(sourceScope.getAreaData());
+            targetScope.setColorData(sourceScope.getColorData());
+            targetScope.setOutlineName(sourceScope.getOutlineName());
             List<IntPoint> npoints = new ArrayList<>();
             if (sourceScope.getPoints() != null) {
                 npoints.addAll(sourceScope.getPoints());
@@ -94,8 +99,13 @@ public class ImageScopeTools {
             targetScope.setAreaExcluded(sourceScope.isAreaExcluded());
             targetScope.setMaskOpacity(sourceScope.getMaskOpacity());
             targetScope.setCreateTime(sourceScope.getCreateTime());
+            targetScope.setModifyTime(sourceScope.getModifyTime());
+            targetScope.setOutlineSource(sourceScope.getOutlineSource());
             targetScope.setOutline(sourceScope.getOutline());
             targetScope.setEightNeighbor(sourceScope.isEightNeighbor());
+            targetScope.setClip(sourceScope.getClip());
+            targetScope.setMaskColor(sourceScope.getMaskColor());
+            targetScope.setMaskOpacity(sourceScope.getMaskOpacity());
         } catch (Exception e) {
             //            MyBoxLog.debug(e);
         }
@@ -303,10 +313,10 @@ public class ImageScopeTools {
                     continue;
                 }
                 tag = child.getNodeName();
-
                 if (tag == null || tag.isBlank()) {
                     continue;
                 }
+
                 if (XmlTools.matchXmlTag("Background", tag)) {
                     scope.setFile(cdata(child));
 
@@ -354,6 +364,9 @@ public class ImageScopeTools {
                     }
                 }
             }
+            decodeColorData(scope);
+            decodeAreaData(scope);
+            decodeOutline(task, scope);
             return scope;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -391,7 +404,7 @@ public class ImageScopeTools {
                         .append("<![CDATA[").append(v).append("]]>")
                         .append("</").append(XmlTools.xmlTag("Name")).append(">\n");
             }
-            v = scope.getOutlineName();
+            v = ImageScopeTools.encodeOutline(null, scope);
             if (v != null && !v.isBlank()) {
                 s.append(prefix).append("<").append(XmlTools.xmlTag("Outline")).append(">")
                         .append("<![CDATA[").append(v).append("]]>")
@@ -403,13 +416,13 @@ public class ImageScopeTools {
                         .append(ctype)
                         .append("</").append(XmlTools.xmlTag("ScopeColorType")).append(">\n");
             }
-            v = scope.getAreaData();
+            v = ImageScopeTools.encodeAreaData(scope);
             if (v != null && !v.isBlank()) {
                 s.append(prefix).append("<").append(XmlTools.xmlTag("Area")).append(">")
                         .append("<![CDATA[").append(v).append("]]>")
                         .append("</").append(XmlTools.xmlTag("Area")).append(">\n");
             }
-            v = scope.getColorData();
+            v = ImageScopeTools.encodeColorData(scope);
             if (v != null && !v.isBlank()) {
                 s.append(prefix).append("<").append(XmlTools.xmlTag("Colors")).append(">")
                         .append("<![CDATA[").append(v).append("]]>")
@@ -464,7 +477,7 @@ public class ImageScopeTools {
                 s.append(prefix).append("\"").append(message("Name")).append("\": ")
                         .append(JsonTools.encode(v)).append(",\n");
             }
-            v = scope.getOutlineName();
+            v = ImageScopeTools.encodeOutline(null, scope);
             if (v != null && !v.isBlank()) {
                 s.append(prefix).append("\"").append(message("Outline")).append("\": ")
                         .append(JsonTools.encode(v)).append(",\n");
@@ -474,12 +487,12 @@ public class ImageScopeTools {
                 s.append(prefix).append("\"").append(message("ScopeColorType")).append("\": ")
                         .append(JsonTools.encode(ctype.name())).append(",\n");
             }
-            v = scope.getAreaData();
+            v = ImageScopeTools.encodeAreaData(scope);
             if (v != null && !v.isBlank()) {
                 s.append(prefix).append("\"").append(message("Area")).append("\": ")
                         .append(JsonTools.encode(v)).append(",\n");
             }
-            v = scope.getColorData();
+            v = ImageScopeTools.encodeColorData(scope);
             if (v != null && !v.isBlank()) {
                 s.append(prefix).append("\"").append(message("Colors")).append("\": ")
                         .append(JsonTools.encode(v)).append(",\n");
@@ -529,7 +542,7 @@ public class ImageScopeTools {
                 row.addAll(Arrays.asList(message("Name"), "<PRE><CODE>" + v + "</CODE></PRE>"));
                 htmlTable.add(row);
             }
-            v = scope.getOutlineName();
+            v = ImageScopeTools.encodeOutline(null, scope);
             if (v != null && !v.isBlank()) {
                 row = new ArrayList<>();
                 row.addAll(Arrays.asList(message("Outline"), "<PRE><CODE>" + v + "</CODE></PRE>"));
@@ -541,13 +554,13 @@ public class ImageScopeTools {
                 row.addAll(Arrays.asList(message("ScopeColorType"), ctype.name()));
                 htmlTable.add(row);
             }
-            v = scope.getAreaData();
+            v = ImageScopeTools.encodeAreaData(scope);
             if (v != null && !v.isBlank()) {
                 row = new ArrayList<>();
                 row.addAll(Arrays.asList(message("Area"), v));
                 htmlTable.add(row);
             }
-            v = scope.getColorData();
+            v = ImageScopeTools.encodeColorData(scope);
             if (v != null && !v.isBlank()) {
                 row = new ArrayList<>();
                 row.addAll(Arrays.asList(message("Colors"), v));
@@ -684,6 +697,7 @@ public class ImageScopeTools {
         if (scope == null || scope.getScopeType() == null) {
             return "";
         }
+        MyBoxLog.console(scope.getScopeType());
         String s = "";
         try {
             switch (scope.getScopeType()) {
@@ -730,6 +744,7 @@ public class ImageScopeTools {
                     }
                     break;
             }
+            MyBoxLog.console(s);
             scope.setAreaData(s);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -762,6 +777,7 @@ public class ImageScopeTools {
                 break;
                 case Rectangle:
                 case Outline: {
+                    MyBoxLog.console(areaData);
                     String[] items = areaData.split(TableImageScope.DataSeparator);
                     if (items.length == 4) {
                         DoubleRectangle rect = DoubleRectangle.xy12(Double.parseDouble(items[0]),
@@ -769,6 +785,7 @@ public class ImageScopeTools {
                                 Double.parseDouble(items[2]),
                                 Double.parseDouble(items[3]));
                         scope.setRectangle(rect);
+                        MyBoxLog.console(rect.elementAbs());
                     } else {
                         return false;
                     }

@@ -79,7 +79,10 @@ public class Data2DDefinitionEditor extends InfoTreeNodeEditor {
     }
 
     @Override
-    protected String nodeInfo() {
+    protected InfoNode nodeInfo(InfoNode node) {
+        if (node == null) {
+            return null;
+        }
         if (data2D == null) {
             data2D = new DataFileCSV();
         }
@@ -90,7 +93,10 @@ public class Data2DDefinitionEditor extends InfoTreeNodeEditor {
                 .setComments(defAttributesController.descInput.getText())
                 .setDataName(nodeTitle());
         String info = Data2DTools.definitionToXML(data2D, true, "");
-        return info;
+        if (info == null) {
+            return null;
+        }
+        return node.setInfo(info);
     }
 
     @FXML

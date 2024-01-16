@@ -35,8 +35,11 @@ public class NoteAttributes extends InfoTreeNodeEditor {
     }
 
     @Override
-    protected String nodeInfo() {
-        return editorController.currentHtml(true);
+    protected InfoNode nodeInfo(InfoNode node) {
+        if (node == null) {
+            return null;
+        }
+        return node.setInfo(editorController.currentHtml(true));
     }
 
     @Override

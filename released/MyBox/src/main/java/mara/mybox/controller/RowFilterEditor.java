@@ -137,14 +137,20 @@ public class RowFilterEditor extends InfoTreeNodeEditor {
     }
 
     @Override
-    protected String nodeInfo() {
-        String script = valueInput.getText();
-        if (trueRadio.isSelected() && maxData <= 0) {
-            return script;
+    protected InfoNode nodeInfo(InfoNode node) {
+        if (node == null) {
+            return null;
         }
-        return (script == null ? "" : script.trim()) + ValueSeparater + "\n"
-                + (trueRadio.isSelected() ? "true" : "false") + ValueSeparater + "\n"
-                + (maxData > 0 ? maxData + "" : "");
+        String script = valueInput.getText();
+        String info;
+        if (trueRadio.isSelected() && maxData <= 0) {
+            info = script;
+        } else {
+            info = (script == null ? "" : script.trim()) + ValueSeparater + "\n"
+                    + (trueRadio.isSelected() ? "true" : "false") + ValueSeparater + "\n"
+                    + (maxData > 0 ? maxData + "" : "");
+        }
+        return node.setInfo(info);
     }
 
     @FXML

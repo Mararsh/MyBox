@@ -20,7 +20,7 @@ import static mara.mybox.value.Languages.message;
  */
 public class ImageScopeViewsController extends BaseChildController {
 
-    protected BasePixelsController handler;
+    protected ControlSelectPixels scopeController;
 
     @FXML
     protected ControlImageView selectedController, sourceController, maskController;
@@ -33,11 +33,11 @@ public class ImageScopeViewsController extends BaseChildController {
         baseTitle = message("Scope");
     }
 
-    protected void setParameters(BasePixelsController parent) {
+    protected void setParameters(ControlSelectPixels parent) {
         try {
-            handler = parent;
+            scopeController = parent;
 
-            handler.scopeController.showNotify.addListener(new ChangeListener<Boolean>() {
+            scopeController.showNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
                     refreshAction();
@@ -58,21 +58,8 @@ public class ImageScopeViewsController extends BaseChildController {
         refreshScope();
     }
 
-    public boolean checkValid() {
-        if (handler == null || !handler.isShowing()
-                || handler.imageController == null
-                || !handler.imageController.isShowing()) {
-            close();
-            return false;
-        }
-        return true;
-    }
-
     public Image srcImage() {
-        if (!checkValid()) {
-            return null;
-        }
-        return handler.srcImage();
+        return scopeController.srcImage();
     }
 
     @FXML
@@ -90,7 +77,7 @@ public class ImageScopeViewsController extends BaseChildController {
         if (srcImage == null) {
             return;
         }
-        maskController.loadImage(handler.scopeController.imageView.getImage());
+        maskController.loadImage(scopeController.imageView.getImage());
     }
 
     @FXML
@@ -108,7 +95,7 @@ public class ImageScopeViewsController extends BaseChildController {
             @Override
             protected boolean handle() {
                 try {
-                    selectedScope = handler.scopeController.scopeImage(this);
+                    selectedScope = scopeController.scopeImage(this);
                     return true;
                 } catch (Exception e) {
                     MyBoxLog.error(e);
@@ -147,7 +134,7 @@ public class ImageScopeViewsController extends BaseChildController {
     /*
         static methods
      */
-    public static ImageScopeViewsController open(BasePixelsController parent) {
+    public static ImageScopeViewsController open(ControlSelectPixels parent) {
         try {
             if (parent == null || !parent.isShowing()) {
                 return null;

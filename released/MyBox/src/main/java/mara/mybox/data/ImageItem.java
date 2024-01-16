@@ -206,7 +206,7 @@ public class ImageItem {
     }
 
     public static File exampleImageFile() {
-        return FxFileTools.getInternalFile("/" + exampleImageName(), "image", "About.png");
+        return FxFileTools.getInternalFile("/" + exampleImageName(), "image", "Example.png");
     }
 
     /*

@@ -73,14 +73,20 @@ public class WebFavoriteEditor extends InfoTreeNodeEditor {
     }
 
     @Override
-    protected String nodeInfo() {
+    protected InfoNode nodeInfo(InfoNode node) {
+        if (node == null) {
+            return null;
+        }
         String address = valueInput.getText();
         String icon = moreInput.getText();
+        String info;
         if (icon == null || icon.isBlank()) {
-            return address == null || address.isBlank() ? null : address.trim();
+            info = address == null || address.isBlank() ? null : address.trim();
+        } else {
+            info = (address == null ? "" : address.trim()) + ValueSeparater + "\n"
+                    + icon.trim();
         }
-        return (address == null ? "" : address.trim()) + ValueSeparater + "\n"
-                + icon.trim();
+        return node.setInfo(info);
     }
 
     protected void updateIcon(String icon) {

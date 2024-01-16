@@ -18,7 +18,7 @@ public abstract class BasePixelsController extends BaseImageEditController {
 
     @Override
     protected void initMore() {
-        scopeController.setParameters(this);
+        scopeController.setParameters(imageController);
     }
 
     @Override

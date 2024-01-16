@@ -4,6 +4,7 @@ import java.util.Date;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.image.Image;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.bufferedimage.ImageScopeTools;
 import mara.mybox.db.data.InfoNode;
@@ -17,73 +18,74 @@ import mara.mybox.tools.DateTools;
  */
 public class ImageScopeEditor extends InfoTreeNodeEditor {
 
-    protected ImageScopeController scopeController;
-    protected ImageScope scope;
+    protected Image srcImage;
 
     @FXML
-    protected ControlSelectPixels valuesController;
+    protected ControlSelectPixels scopeController;
 
     public ImageScopeEditor() {
         defaultExt = "png";
     }
 
-    protected void setParameters(ImageScopeController scopeController) {
+    @Override
+    public void setManager(InfoTreeManageController treeController) {
         try {
-            this.scopeController = scopeController;
-            valuesController.showNotify.addListener(new ChangeListener<Boolean>() {
+            super.setManager(treeController);
+
+            scopeController.setEditor(this);
+            scopeController.changedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue v, Boolean ov, Boolean nv) {
                     valueChanged(true);
                 }
             });
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
-    @Override
-    protected boolean editNode(InfoNode node) {
-        if (node != null) {
-            scope = ImageScopeTools.fromXML(null, myController, node.getInfo());
-        } else {
-            scope = null;
+    protected void setScope(ImageScope scope) {
+        if (isSettingValues || !isNewNode()
+                || scope == null || scope.getScopeType() == null) {
+            return;
         }
-        if (scope == null) {
-            scope = new ImageScope();
-        }
-        valuesController.loadScope(scope);
-        nodeChanged(false);
-        updateEditorTitle(node);
-        return true;
+        attributesController.nameInput.setText(
+                scope.getScopeType() + "_" + DateTools.datetimeToString(new Date()));
     }
 
     @Override
-    protected String nodeInfo() {
+    protected void editInfo(InfoNode node) {
+        sourceFile = null;
+        srcImage = null;
+        ImageScope scope = null;
+        if (node != null) {
+            scope = ImageScopeTools.fromXML(null, myController, node.getInfo());
+        }
+        scopeController.loadScope(scope);
+    }
+
+    @Override
+    protected InfoNode nodeInfo(InfoNode node) {
+        if (node == null) {
+            return null;
+        }
+        ImageScope scope = scopeController.pickScopeValues();
         if (scope == null) {
-            scope = new ImageScope();
+            return null;
         }
         scope.setName(nodeTitle());
         String info = ImageScopeTools.toXML(scope, "");
-        return info;
-    }
-
-    @Override
-    public void valueChanged(boolean changed) {
-        super.valueChanged(changed);
-        if (isSettingValues || scope == null) {
-            return;
+        if (info == null) {
+            return null;
         }
-        String name = attributesController.nameInput.getText();
-        if (name == null || name.isBlank()) {
-            attributesController.nameInput.setText(
-                    scope.getScopeType() + "_" + DateTools.datetimeToString(new Date()));
-        }
+        return node.setInfo(info);
     }
 
     @FXML
     @Override
     public void clearValue() {
-        valuesController.clearControls();
+        scopeController.clearControls();
     }
 
     @Override
@@ -91,15 +93,21 @@ public class ImageScopeEditor extends InfoTreeNodeEditor {
         if (node == null) {
             return;
         }
-        if (scope == null) {
-            scope = new ImageScope();
+        if (scopeController.scope == null) {
+            return;
         }
-        ImageScope srcScope = ImageScopeTools.fromXML(null, myController, node.getInfo());
-        if (srcScope == null) {
-            valuesController.loadScope(scope);
-            nodeChanged(true);
-        }
-        tabPane.getSelectionModel().select(valueTab);
+//        ImageScope srcScope = ImageScopeTools.fromXML(null, myController, node.getInfo());
+//        if (srcScope != null) {
+//            scopeController.loadScope();
+//            nodeChanged(true);
+//        }
+//        tabPane.getSelectionModel().select(valueTab);
+    }
+
+    @Override
+    public void newNodeCreated() {
+        super.newNodeCreated();
+        scopeController.applyScope();
     }
 
 }

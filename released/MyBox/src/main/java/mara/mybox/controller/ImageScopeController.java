@@ -36,19 +36,6 @@ public class ImageScopeController extends InfoTreeManageController {
         }
     }
 
-    @Override
-    public void initControls() {
-        try {
-
-            super.initControls();
-
-            editorController.setParameters(this);
-
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
-    }
-
     /*
         static methods
      */

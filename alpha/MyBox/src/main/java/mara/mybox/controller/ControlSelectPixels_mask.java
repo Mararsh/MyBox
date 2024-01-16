@@ -26,7 +26,7 @@ import mara.mybox.value.UserConfig;
  * @License Apache License Version 2.0
  */
 public abstract class ControlSelectPixels_mask extends ControlSelectPixels_Outline {
-
+    
     public void applyScope() {
         if (isSettingValues) {
             return;
@@ -38,60 +38,64 @@ public abstract class ControlSelectPixels_mask extends ControlSelectPixels_Outli
             }
             setControls();
             showScope();
-
+            
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
-
+    
     public ImageScope initScopeType() {
         try {
             if (srcImage() == null || scope == null) {
                 return null;
             }
-
+            
             if (scopeTypeGroup.getSelectedToggle() == null
                     || scopeWholeRadio.isSelected()) {
                 scope.setScopeType(ImageScope.ScopeType.Whole);
-
+                
             } else {
-
+                
                 if (scopeMattingRadio.isSelected()) {
                     scope.setScopeType(ImageScope.ScopeType.Matting);
-
+                    
                 } else if (scopeRectangleRadio.isSelected()) {
                     showMaskRectangle();
                     scope.setScopeType(ImageScope.ScopeType.Rectangle);
-
+                    
                 } else if (scopeCircleRadio.isSelected()) {
                     showMaskCircle();
                     scope.setScopeType(ImageScope.ScopeType.Circle);
-
+                    
                 } else if (scopeEllipseRadio.isSelected()) {
                     showMaskEllipse();
                     scope.setScopeType(ImageScope.ScopeType.Ellipse);
-
+                    
                 } else if (scopePolygonRadio.isSelected()) {
                     showMaskPolygon();
                     scope.setScopeType(ImageScope.ScopeType.Polygon);
-
+                    
                 } else if (scopeColorRadio.isSelected()) {
                     scope.setScopeType(ImageScope.ScopeType.Colors);
-
+                    
                 } else if (scopeOutlineRadio.isSelected()) {
                     scope.setScopeType(ImageScope.ScopeType.Outline);
-
+                    
                 }
-
+                
             }
-
+            
+            if (editor != null) {
+                editor.setScope(scope);
+            }
+            
             return scope;
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;
         }
     }
-
+    
     protected void setControls() {
         try {
             Tab selectedTab = tabPane.getSelectionModel().getSelectedItem();
@@ -120,7 +124,7 @@ public abstract class ControlSelectPixels_mask extends ControlSelectPixels_Outli
                     VBox.setVgrow(pointsBox, Priority.ALWAYS);
                     addPointCheck.setSelected(true);
                     break;
-
+                
                 case Rectangle:
                     tabPane.getTabs().setAll(areaTab, colorsTab, matchTab);
                     areaBox.getChildren().setAll(rectangleBox, goScopeButton);
@@ -133,7 +137,7 @@ public abstract class ControlSelectPixels_mask extends ControlSelectPixels_Outli
                     isSettingValues = false;
                     rectangleLabel.setText(message("Rectangle"));
                     break;
-
+                
                 case Circle:
                     tabPane.getTabs().setAll(areaTab, colorsTab, matchTab);
                     areaBox.getChildren().setAll(circleBox, goScopeButton);
@@ -144,7 +148,7 @@ public abstract class ControlSelectPixels_mask extends ControlSelectPixels_Outli
                     circleRadiusInput.setText(scale(maskCircleData.getRadius(), 2) + "");
                     isSettingValues = false;
                     break;
-
+                
                 case Ellipse:
                     tabPane.getTabs().setAll(areaTab, colorsTab, matchTab);
                     areaBox.getChildren().setAll(rectangleBox, goScopeButton);
@@ -157,7 +161,7 @@ public abstract class ControlSelectPixels_mask extends ControlSelectPixels_Outli
                     isSettingValues = false;
                     rectangleLabel.setText(message("Ellipse"));
                     break;
-
+                
                 case Polygon:
                     tabPane.getTabs().setAll(areaTab, colorsTab, matchTab);
                     areaBox.getChildren().setAll(pointsBox);
@@ -166,38 +170,38 @@ public abstract class ControlSelectPixels_mask extends ControlSelectPixels_Outli
                     VBox.setVgrow(areaBox, Priority.ALWAYS);
                     VBox.setVgrow(pointsBox, Priority.ALWAYS);
                     break;
-
+                
                 case Colors:
                     tabPane.getTabs().setAll(colorsTab, matchTab);
                     opPane.getChildren().setAll(clearButton, pickColorBox,
                             clearDataWhenLoadImageCheck);
                     showLeftPane();
                     break;
-
+                
                 case Outline:
                     tabPane.getTabs().setAll(pixTab);
                     showLeftPane();
                     break;
-
+                
             }
-
+            
             pickColorCheck.setSelected(type == ScopeType.Colors);
             handleTransparentCheck.setVisible(type != ScopeType.Outline);
-
+            
             if (selectedTab != null && tabPane.getTabs().contains(selectedTab)) {
                 tabPane.getSelectionModel().select(selectedTab);
             }
-
+            
             matchController.setDistanceValue(scope);
-
+            
             refreshStyle(tabPane);
             refreshStyle(opPane);
-
+            
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
-
+    
     public void clearControls() {
         try {
             clearMaskShapes();
@@ -213,12 +217,12 @@ public abstract class ControlSelectPixels_mask extends ControlSelectPixels_Outli
             scope.setMaskOpacity(maskOpacity);
             scope.setMaskColor(maskColor);
             resetShapeOptions();
-
+            
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
-
+    
     @Override
     public void showScope() {
         if (scope.getScopeType() == ImageScope.ScopeType.Outline) {
@@ -233,7 +237,7 @@ public abstract class ControlSelectPixels_mask extends ControlSelectPixels_Outli
         }
         task = new FxSingletonTask<Void>(this) {
             private Image maskImage;
-
+            
             @Override
             protected boolean handle() {
                 try {
@@ -247,7 +251,7 @@ public abstract class ControlSelectPixels_mask extends ControlSelectPixels_Outli
                     return false;
                 }
             }
-
+            
             @Override
             protected void whenSucceeded() {
                 image = maskImage;
@@ -259,19 +263,19 @@ public abstract class ControlSelectPixels_mask extends ControlSelectPixels_Outli
                 }
                 showNotify.set(!showNotify.get());
             }
-
+            
             @Override
             protected void whenCanceled() {
             }
-
+            
             @Override
             protected void whenFailed() {
             }
-
+            
         };
         start(task, viewBox);
     }
-
+    
     public void drawMattingPoints() {
         try {
             clearMaskAnchors();
@@ -287,5 +291,5 @@ public abstract class ControlSelectPixels_mask extends ControlSelectPixels_Outli
             MyBoxLog.error(e);
         }
     }
-
+    
 }

@@ -101,8 +101,8 @@ public class InfoTreeNodeEditor extends BaseController {
 
     protected boolean editNode(InfoNode node) {
         updateEditorTitle(node);
-        editInfo(node);
         attributesController.editNode(node);
+        editInfo(node);
         showEditorPane();
         nodeChanged(false);
         return true;
@@ -135,20 +135,21 @@ public class InfoTreeNodeEditor extends BaseController {
         if (title == null || title.isBlank()) {
             return null;
         }
-        String info = nodeInfo();
         InfoNode node = InfoNode.create()
                 .setCategory(manager.category)
-                .setTitle(title)
-                .setInfo(info);
-        return node;
+                .setTitle(title);
+        return nodeInfo(node);
     }
 
-    protected String nodeInfo() {
+    protected InfoNode nodeInfo(InfoNode node) {
+        if (node == null) {
+            return null;
+        }
         String info = null;
         if (valueInput != null) {
             info = valueInput.getText();
         }
-        return info;
+        return node.setInfo(info);
     }
 
     protected String nodeTitle() {
@@ -203,6 +204,10 @@ public class InfoTreeNodeEditor extends BaseController {
         if (tabPane != null && attributesTab != null) {
             tabPane.getSelectionModel().select(attributesTab);
         }
+    }
+
+    public boolean isNewNode() {
+        return attributesController.currentNode == null;
     }
 
     @FXML

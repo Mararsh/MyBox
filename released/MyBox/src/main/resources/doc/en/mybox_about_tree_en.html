@@ -148,26 +148,39 @@
             <li>One node can have multiple tags.</li>
             <li>One tag can belong to multiple nodes.</li>
         </ul>
-        <h2>5 Manage Tree Structure</h2>
-        <h3>5.1 Tree View</h3>
+        <h3>3.5 Reserved Strings</h3>
+        <ul>
+            <li>Node's title should not include " > "(Blank before and after greater-than sign), which is separator of chain name.</li>
+            <li>Node's tag value should not include ";;;", which is separator between tags.</li>
+            <li>All attributes of node should not include following strings:
+                <ul>
+                    <li>"MyBoxTreeRoot;;;": This is identify of root node.</li>
+                    <li>"##MyBox#": This is separator among nodes. </li>
+                    <li>"_:;MyBoxNodeValue;:_": This is separator of node's internal values.</li>
+                    <li>"MyBoxTreeNodeMore:": This is prefix of node's internal values.</li>
+                </ul>
+            </li>
+        </ul>
+        <h2>4 Manage Tree Structure</h2>
+        <h3>4.1 Tree View</h3>
         <p>Select one node, and display its "Tree View" with this node as root:</p>
         <ul>
             <li>Tree information is shown in html page.</li>
             <li>Click node name to unfold/fold its childrent.</li>
             <li>Options to display hierarchy number, tags, and node values.</li>
         </ul>
-        <h3>5.2 Examples</h3>
+        <h3>4.2 Examples</h3>
         <p>MyBox provides examples for functions in tree.<br />
             Click menu item "Examples" to import example data of the function.</p>
         <p>Examples' tree view of  of each function tree can be viewed in MyBox documents list.</p>
-        <h3>5.3 Export</h3>
+        <h3>4.3 Export</h3>
         <p>Select one node, and export its tree with this node as root:</p>
         <ul>
             <li>Format can be chosen: text, single html, html frameset, xml, or json.</li>
             <li>Options to export node's modified time, and its tags.</li>
             <li>Style of exported html can be set.</li>
         </ul>
-        <h3>5.4 Import</h3>
+        <h3>4.4 Import</h3>
         <p>Tree information can be imported in batch:</p>
         <ul>
             <li>Select multiple files which hold tree information as source.</li>
@@ -191,7 +204,7 @@
                 </ul>
             </li>
         </ul>
-        <h3>5.5 Query and Select Nodes</h3>
+        <h3>4.5 Query and Select Nodes</h3>
         <p>To select nodes, following ways can be taken:</p>
         <ul>
             <li>Click node in the tree.</li>
@@ -200,7 +213,7 @@
             <li>Select multiple time values, and select one or multiple nodes in result list of the query.</li>
             <li>Input multiple keywords, query against node title or node value, and select one or multiple nodes in result list of the query.</li>
         </ul>
-        <h3>5.5 Add/Delete/Modify Nodes</h3>
+        <h3>4.6 Add/Delete/Modify Nodes</h3>
         <p>Select one or multiple nodes, and:</p>
         <ul>
             <li>Add child node.</li>
@@ -221,7 +234,7 @@
             </li>
             <li>Edit Node.</li>
         </ul>
-        <h3>5.6 View Nodes</h3>
+        <h3>4.7 View Nodes</h3>
         <p>Select one node:</p>
         <ul>
             <li>View node's information in popped window.</li>
@@ -230,7 +243,7 @@
             <li>Unfold node, or node and its descendant.</li>
             <li>Load children or decendant.</li>
         </ul>
-        <h3>5.7 Menu</h3>
+        <h3>4.8 Menu</h3>
         <ul>
             <li>Click buttons in interface to view menus.</li>
             <li>Right click the tree to pop the menu.</li>

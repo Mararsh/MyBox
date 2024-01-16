@@ -41,12 +41,14 @@ public class BaseImageEditController extends BaseShapeController {
             imageController = parent;
             needFixSize = true;
 
-            imageController.loadNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
-                    loadImage();
-                }
-            });
+            if (imageController != this) {
+                imageController.loadNotify.addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                        loadImage();
+                    }
+                });
+            }
 
             closeAfterCheck.setSelected(UserConfig.getBoolean(baseName + "CloseAfterHandle", false));
             closeAfterCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -302,6 +304,12 @@ public class BaseImageEditController extends BaseShapeController {
     public boolean keyESC() {
         close();
         return false;
+    }
+
+    @Override
+    public boolean controlAltS() {
+        saveAction();
+        return true;
     }
 
 }

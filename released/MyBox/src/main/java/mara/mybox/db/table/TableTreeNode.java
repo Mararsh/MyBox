@@ -60,9 +60,9 @@ public class TableTreeNode extends BaseTable<InfoNode> {
             = "SELECT * FROM Tree_Node WHERE category=? ORDER BY nodeid ASC";
 
     public static final String QueryChildren
-            = "SELECT * FROM Tree_Node WHERE parentid=? AND nodeid<>parentid";
+            = "SELECT * FROM Tree_Node WHERE parentid=? AND nodeid<>parentid  ORDER BY nodeid ASC";
 
-    public static final String QueryChild
+    public static final String QueryLastChild
             = "SELECT * FROM Tree_Node WHERE parentid=? AND title=? AND nodeid<>parentid ORDER BY nodeid DESC FETCH FIRST ROW ONLY";
 
     public static final String DeleteID
@@ -207,7 +207,7 @@ public class TableTreeNode extends BaseTable<InfoNode> {
         if (conn == null || title == null || title.isBlank()) {
             return null;
         }
-        try (PreparedStatement statement = conn.prepareStatement(QueryChild)) {
+        try (PreparedStatement statement = conn.prepareStatement(QueryLastChild)) {
             statement.setLong(1, parent);
             statement.setString(2, title);
             return query(conn, statement);

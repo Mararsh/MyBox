@@ -86,11 +86,13 @@ public class ControlSelectPixels extends ControlSelectPixels_Save {
             shapeStyle = null;
             needFixSize = true;
             showNotify = new SimpleBooleanProperty(false);
+            changedNotify = new SimpleBooleanProperty(false);
 
             scopeTypeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
                     applyScope();
+                    changedNotify.set(!changedNotify.get());
                 }
             });
 
@@ -99,6 +101,7 @@ public class ControlSelectPixels extends ControlSelectPixels_Save {
                 public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                     if (!isSettingValues) {
                         showScope();
+                        changedNotify.set(!changedNotify.get());
                     }
                 }
             });
@@ -108,6 +111,7 @@ public class ControlSelectPixels extends ControlSelectPixels_Save {
                 public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                     if (!isSettingValues) {
                         showScope();
+                        changedNotify.set(!changedNotify.get());
                     }
                 }
             });
@@ -173,6 +177,7 @@ public class ControlSelectPixels extends ControlSelectPixels_Save {
                 public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                     if (!isSettingValues) {
                         showScope();
+                        changedNotify.set(!changedNotify.get());
                     }
                 }
             });
@@ -186,6 +191,7 @@ public class ControlSelectPixels extends ControlSelectPixels_Save {
                         return;
                     }
                     showScope();
+                    changedNotify.set(!changedNotify.get());
                 }
             });
 
@@ -216,6 +222,7 @@ public class ControlSelectPixels extends ControlSelectPixels_Save {
                     clearColorsButton.setDisable(size == 0);
                     if (!isSettingValues) {
                         showScope();
+                        changedNotify.set(!changedNotify.get());
                     }
                 }
             });
@@ -224,11 +231,12 @@ public class ControlSelectPixels extends ControlSelectPixels_Save {
             deleteColorsButton.disableProperty().bind(colorsList.getSelectionModel().selectedItemProperty().isNull());
             saveColorsButton.disableProperty().bind(colorsList.getSelectionModel().selectedItemProperty().isNull());
 
-            colorController.init(this, baseName + "Color", Color.THISTLE);
+            colorController.init(this, baseName + "Color", Color.GOLD);
             colorController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
                 @Override
                 public void changed(ObservableValue<? extends Paint> observable, Paint oldValue, Paint newValue) {
                     addColor((Color) newValue);
+                    changedNotify.set(!changedNotify.get());
                 }
             });
 
@@ -237,6 +245,7 @@ public class ControlSelectPixels extends ControlSelectPixels_Save {
                 public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                     if (!isSettingValues) {
                         showScope();
+                        changedNotify.set(!changedNotify.get());
                     }
                 }
             });
@@ -246,6 +255,7 @@ public class ControlSelectPixels extends ControlSelectPixels_Save {
                 public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                     if (!isSettingValues) {
                         showScope();
+                        changedNotify.set(!changedNotify.get());
                     }
                 }
             });
@@ -262,6 +272,7 @@ public class ControlSelectPixels extends ControlSelectPixels_Save {
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     if (!isSettingValues) {
                         showScope();
+                        changedNotify.set(!changedNotify.get());
                     }
                 }
             });
@@ -287,6 +298,7 @@ public class ControlSelectPixels extends ControlSelectPixels_Save {
                         return;
                     }
                     loadOutlineSource(newValue);
+                    changedNotify.set(!changedNotify.get());
                 }
             });
 
@@ -295,29 +307,26 @@ public class ControlSelectPixels extends ControlSelectPixels_Save {
         }
     }
 
-    public void setParameters(BasePixelsController parent) {
+    public void setParameters(BaseImageController parent) {
         try {
             this.parentController = parent;
-            handler = parent;
-            imageController = handler.imageController;
+            imageController = parent;
 
-            imageController.loadNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
-                    loadImage();
-                }
-            });
+            toolbar.getChildren().removeAll(selectFileButton, fileMenuButton);
 
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
     }
 
-    protected void loadImage() {
-        if (imageController == null || !imageController.isShowing()) {
-            return;
+    public void setEditor(ImageScopeEditor parent) {
+        try {
+            this.parentController = parent;
+            editor = parent;
+
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
         }
-        loadImage(srcImage());
     }
 
     @Override
@@ -332,6 +341,15 @@ public class ControlSelectPixels extends ControlSelectPixels_Save {
                 isSettingValues = true;
                 colorsList.getItems().clear();
                 isSettingValues = false;
+            }
+
+            if (editor != null) {
+                if (editor.sourceFile == null || !editor.sourceFile.equals(sourceFile)) {
+                    editor.sourceFile = sourceFile;
+                    editor.srcImage = image;
+                    loadScope();
+                    return true;
+                }
             }
 
             applyScope();
@@ -367,9 +385,10 @@ public class ControlSelectPixels extends ControlSelectPixels_Save {
             return;
         }
         if (tabPane.getTabs().contains(colorsTab) && isPickingColor) {
-            Color color = ImageViewTools.imagePixel(p, imageController.imageView);
+            Color color = ImageViewTools.imagePixel(p, imageView);
             if (color != null) {
                 addColor(color);
+                changedNotify.set(!changedNotify.get());
             }
         } else if (event.getClickCount() == 1) {
             if (event.getButton() == MouseButton.PRIMARY) {
@@ -381,11 +400,13 @@ public class ControlSelectPixels extends ControlSelectPixels_Save {
                         pointsController.addPoint(x, y);
                         isSettingValues = false;
                         showScope();
+                        changedNotify.set(!changedNotify.get());
 
                     } else if (scope.getScopeType() == ScopeType.Polygon
                             && !maskControlDragged) {
                         maskPolygonData.add(p.getX(), p.getY());
                         maskShapeDataChanged();
+                        changedNotify.set(!changedNotify.get());
                     }
                 }
 
@@ -418,7 +439,7 @@ public class ControlSelectPixels extends ControlSelectPixels_Save {
     @FXML
     @Override
     public boolean popAction() {
-        ImageScopeViewsController.open(handler);
+        ImageScopeViewsController.open(this);
         return true;
     }
 
@@ -447,6 +468,10 @@ public class ControlSelectPixels extends ControlSelectPixels_Save {
         }
     }
 
+//    @Override
+//    public void sourceFileChanged(File file) {
+//
+//    }
     @Override
     public void maskShapeDataChanged() {
         try {
@@ -482,6 +507,7 @@ public class ControlSelectPixels extends ControlSelectPixels_Save {
                     scope.setRectangle(maskRectangleData.copy());
             }
             showScope();
+            changedNotify.set(!changedNotify.get());
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
