@@ -1,0 +1,115 @@
+<html dir="ltr"><head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>图像的范围</title>
+        <style>
+            table {
+                max-width:95%;
+                margin : 10px;
+                border-style: solid;
+                border-width:2px;
+                border-collapse: collapse;
+            }
+            th, td {
+                border-style: solid;
+                border-width:1px;
+                padding: 8px;
+                border-collapse: collapse;
+            }
+            th {
+                font-weight:bold;
+                text-align:center;
+            }
+            tr {
+                height: 1.2em;
+            }
+            .center {
+                text-align:center;
+                max-width:95%;
+            }
+            .valueBox {
+                border-style: solid;
+                border-width:1px;
+                border-color:black;
+                padding: 5px;
+                border-radius:5px;
+            }
+            .boldText {
+                font-weight:bold;
+            }
+            body {
+                margin:0 auto;
+                width: 900px;
+            }
+            img {
+                max-width: 900px;
+            }
+            .valueText {
+                color:#2e598a;
+            }
+        </style>
+    </head>
+    <body ><h1 align="center">图像的范围</h1>
+        <h2>1. 作用</h2>
+        <p>在处理图像时，可以利用图像的范围来选择需要处理的像素，即设置局部处理的条件。</p>
+        <h2>2. 定义范围</h2>
+        <h3>2.1 区域</h3>
+        <ol>
+            <li>“区域”限制像素的坐标。</li>
+            <li>选项“区域反选”表示区域以外的像素。</li>
+        </ol>
+        <h3>2.2 颜色</h3>
+        <ol>
+            <li>“颜色”匹配“区域”所选的像素。</li>
+            <li>添加颜色：点击颜色按钮以弹出调色板，或者选择“取色”然后点击图像。</li>
+            <li>选项“颜色反选”表示不匹配列表中任何颜色的像素。</li>
+            <li>如何匹配颜色的选项。</li>
+        </ol>
+        <h3>2.3 选择像素的其它选项</h3>
+        <ol>
+            <li>背景图像，可以是任意图像文件也可为空。<br>
+                它不影响范围的使用，即按照一个图像定制的范围，可以应用在任意其它图像上。</li>
+            <li>选项“反选范围” ，表示选择范围之外的像素。</li>
+            <li>选项“处理透明像素”。</li>
+        </ol>
+        <h2>3. 范围的类型</h2>
+        <h3>3.1 矩形、圆形、椭圆、多边形</h3>
+        <ol>
+            <li>拖动锚点以调整形状。</li>
+            <li>拖动形状以平移它。</li>
+            <li>右键点击图像以弹出形状的菜单。</li>
+            <li>设置颜色列表及其匹配选项。空的颜色列表表示不限制颜色。</li>
+            <li>对于多边形，左键点击图像以给多边形添加顶点。</li>
+        </ol>
+        <h3>3.2 抠图</h3>
+        <ol>
+            <li>“区域”是用于抠图的起始点的列表。</li>
+            <li>点击图像以添加点。</li>
+            <li>算法只匹配图像本身的颜色，因此无需颜色列表。</li>
+        </ol>
+        <h3>3.3 颜色</h3>
+        <ol>
+            <li>“区域”是所有像素。</li>
+            <li>按颜色列表匹配像素。</li>
+        </ol>
+        <h3>3.4 轮廓</h3>
+        <ol>
+            <li>选择一个带有透明背景的图像，它的轮廓被提取出来作为“区域”。</li>
+            <li>不匹配颜色，因此无需颜色列表。</li>
+        </ol>
+        <h2>4. 显示范围</h2>
+        <p>“蒙板图”用于突出显示选择的像素：</p>
+        <ol>
+            <li>被选择的像素显示为原色。</li>
+            <li>不被选择的像素显示为混合了原色、蒙板的颜色、和蒙板透明度的颜色。</li>
+            <li>对于深色的图像，建议用浅色作为蒙板的颜色。</li>
+            <li>对于浅色的图像，建议用深色作为蒙板的颜色。</li>
+            <li>点击弹出按钮（CTRL+P）以显示原图、被选择的像素、和蒙板图。</li>
+        </ol>
+        <h2>5. 管理范围</h2>
+        <ol>
+            <li>在处理图像时，可以把选择像素时设置的条件保存为范围。</li>
+            <li>在处理图像时，可以把已保存的范围作为选择像素的条件。</li>
+            <li>范围以树形来保存和管理。</li>
+        </ol>
+    </body>
+</html>

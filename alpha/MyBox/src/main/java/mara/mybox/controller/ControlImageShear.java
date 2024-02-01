@@ -4,6 +4,7 @@ import java.util.Arrays;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ValidationTools;
@@ -21,6 +22,8 @@ public class ControlImageShear extends BaseController {
 
     @FXML
     protected ComboBox<String> xSelector, ySelector;
+    @FXML
+    protected CheckBox cutCheck;
 
     public ControlImageShear() {
         TipsLabelKey = "ImageShearComments";

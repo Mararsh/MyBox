@@ -768,9 +768,19 @@ public class ImagesPlayController extends BaseFileController {
     /*
         static
      */
-    public static ImagesPlayController playImages(List<ImageInformation> infos) {
+    public static ImagesPlayController open() {
         try {
             ImagesPlayController controller = (ImagesPlayController) WindowTools.openStage(Fxmls.ImagesPlayFxml);
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public static ImagesPlayController playImages(List<ImageInformation> infos) {
+        try {
+            ImagesPlayController controller = open();
             controller.loadImages(infos);
             return controller;
         } catch (Exception e) {
@@ -781,10 +791,24 @@ public class ImagesPlayController extends BaseFileController {
 
     public static ImagesPlayController playPDF(File file, String password) {
         try {
-            ImagesPlayController controller = (ImagesPlayController) WindowTools.openStage(Fxmls.ImagesPlayFxml);
+            ImagesPlayController controller = open();
             if (controller != null) {
                 controller.requestMouse();
                 controller.inPassword = password;
+                controller.sourceFileChanged(file);
+            }
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public static ImagesPlayController playFile(File file) {
+        try {
+            ImagesPlayController controller = open();
+            if (controller != null) {
+                controller.requestMouse();
                 controller.sourceFileChanged(file);
             }
             return controller;

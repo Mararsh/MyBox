@@ -39,11 +39,15 @@ License:    Apache License Version 2.0
             <children>
                 <FlowPane alignment="CENTER_LEFT" hgap="2.0" maxWidth="1.7976931348623157E308" vgap="2.0" HBox.hgrow="ALWAYS">
                     <children>
-                        <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../buttons/Red/iconTips.png" />
-                            </image>
+                  <Button fx:id="helpScopeButton" mnemonicParsing="false" onAction="#aboutScope">
+                     <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../buttons/iconClaw.png" />
+                           </image>
                         </ImageView>
+                     </graphic>
+                  </Button>
                         <Label text="%Scope" />
                         <RadioButton fx:id="scopeWholeRadio" layoutX="585.0" layoutY="10.0" mnemonicParsing="false" selected="true">
                             <graphic>
@@ -122,6 +126,24 @@ License:    Apache License Version 2.0
                         </RadioButton>
                     </children>
                 </FlowPane>
+            <Button fx:id="saveScopeButton" mnemonicParsing="false" onAction="#saveScope">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconSave.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="selectButton" mnemonicParsing="false" onAction="#selectAction">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconSelect.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
             </children>
         </HBox>
         <HBox alignment="CENTER_LEFT" spacing="2.0">
@@ -401,7 +423,7 @@ License:    Apache License Version 2.0
                                                                         </ImageView>
                                                                     </graphic>
                                                                 </Button>
-                                                                <CheckBox fx:id="scopeOutlineKeepRatioCheck" mnemonicParsing="false">
+                                                                <CheckBox fx:id="scopeOutlineKeepRatioCheck" mnemonicParsing="false" selected="true">
                                                                     <graphic>
                                                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                                             <image>
@@ -432,7 +454,7 @@ License:    Apache License Version 2.0
                                         <Image url="@../buttons/Red/iconDoubleLeft.png" />
                                     </image>
                                 </ImageView>
-                                <FlowPane fx:id="opPane" hgap="2.0" maxWidth="1.7976931348623157E308" prefWrapLength="0.0" vgap="2.0" HBox.hgrow="ALWAYS">
+                                <FlowPane fx:id="opPane" alignment="CENTER_LEFT" hgap="2.0" maxWidth="1.7976931348623157E308" prefWrapLength="0.0" vgap="2.0" HBox.hgrow="ALWAYS">
                                     <children>
                                         <Button fx:id="shapeButton" mnemonicParsing="false" onAction="#showShapeMenu">
                                             <graphic>
@@ -495,24 +517,6 @@ License:    Apache License Version 2.0
                                         </CheckBox>
                                     </children>
                                 </FlowPane>
-                        <Button fx:id="selectFileButton" mnemonicParsing="false" onAction="#pickSourceFile" onMouseEntered="#popSourceFile">
-                           <graphic>
-                              <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../buttons/Red/iconSelectFile.png" />
-                                 </image>
-                              </ImageView>
-                           </graphic>
-                        </Button>
-                        <Button fx:id="fileMenuButton" mnemonicParsing="false" onAction="#showFileMenu" onMouseEntered="#popFileMenu">
-                           <graphic>
-                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../buttons/Red/iconFile.png" />
-                                 </image>
-                              </ImageView>
-                           </graphic>
-                        </Button>
                                 <Button fx:id="viewButton" mnemonicParsing="false" onAction="#showViewMenu" onMouseEntered="#popViewMenu">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -578,6 +582,9 @@ License:    Apache License Version 2.0
                             </content>
                         </ScrollPane>
                     </children>
+               <padding>
+                  <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+               </padding>
                 </VBox>
             </items>
         </SplitPane>

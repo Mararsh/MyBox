@@ -22,7 +22,7 @@ public class WindowsListController extends BaseTableViewController<FxWindow> {
 
     @FXML
     protected TableColumn<FxWindow, String> titleColumn, typeColumn,
-            widthColumn, heightColumn, xColumn, yColumn;
+            widthColumn, heightColumn, xColumn, yColumn, classColumn;
     @FXML
     protected TableColumn<FxWindow, Boolean> showColumn, modalityColumn,
             focusedColumn, topColumn, childColumn,
@@ -41,6 +41,7 @@ public class WindowsListController extends BaseTableViewController<FxWindow> {
 
             titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
             typeColumn.setCellValueFactory(new PropertyValueFactory<>("type"));
+            classColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
             showColumn.setCellValueFactory(new PropertyValueFactory<>("isShowing"));
             showColumn.setCellFactory(new TableBooleanCell());
             modalityColumn.setCellValueFactory(new PropertyValueFactory<>("modality"));

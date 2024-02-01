@@ -1,0 +1,115 @@
+<html dir="ltr"><head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>Image Scope</title>
+        <style>
+            table {
+                max-width:95%;
+                margin : 10px;
+                border-style: solid;
+                border-width:2px;
+                border-collapse: collapse;
+            }
+            th, td {
+                border-style: solid;
+                border-width:1px;
+                padding: 8px;
+                border-collapse: collapse;
+            }
+            th {
+                font-weight:bold;
+                text-align:center;
+            }
+            tr {
+                height: 1.2em;
+            }
+            .center {
+                text-align:center;
+                max-width:95%;
+            }
+            .valueBox {
+                border-style: solid;
+                border-width:1px;
+                border-color:black;
+                padding: 5px;
+                border-radius:5px;
+            }
+            .boldText {
+                font-weight:bold;
+            }
+            body {
+                margin:0 auto;
+                width: 900px;
+            }
+            img {
+                max-width: 900px;
+            }
+            .valueText {
+                color:#2e598a;
+            }
+        </style>
+    </head>
+    <body ><h1 align="center">Image Scope</h1>
+        <h2>1. Usages of Image Scope</h2>
+        <p>When handle image, scope can be used to select pixels to be operated. It is set of conditions to manufacture part of image.</p>
+        <h2>2. Define Scope</h2>
+        <h3>2.1 Area</h3>
+        <ol>
+            <li>"Area" limits coordinates of pixels.</li>
+            <li>Option "Area exclude" means pixels outside the area.</li>
+        </ol>
+        <h3>2.2 Colors</h3>
+        <ol>
+            <li>"Colors" matches pixels selected by "Area".</li>
+            <li>To add colors, click button Color to pop palette, or check "Pick color" and click image.</li>
+            <li>Option "Color exclude" means not matching any color in "Colors" list.</li>
+            <li>Options about how to match colors.</li>
+        </ol>
+        <h3>2.3 Other Options to Select Pixels</h3>
+        <ol>
+            <li>Background image. Can be any image or empty.<br>
+                It does not affect usage of scope. That is, scope defined against an image can be applied to any other image.</li>
+            <li>Option "Scope exclude" means pixels outside the scope.</li>
+            <li>Option "Handle transparent".</li>
+        </ol>
+        <h2>3. Types of Scope</h2>
+        <h3>3.1 Rectangle, Circle, Ellipse, Polygon</h3>
+        <ol>
+            <li>Drag anchors to adjust shape. </li>
+            <li>Drag shape to translate it.</li>
+            <li>Right click image to pop menu of shape.</li>
+            <li>Set Colors list and options about how to match colors. Empty list means not limiting colors.</li>
+            <li>For polygon, left click image to add points for the polygon. </li>
+        </ol>
+        <h3>3.2 Matting</h3>
+        <ol>
+            <li>"Area" is a list of start points for matting. .</li>
+            <li>Click image to add points</li>
+            <li>The algorithm only matches colors in the image itself, so need not colors list. </li>
+        </ol>
+        <h3>3.3 Colors</h3>
+        <ol>
+            <li>"Area" is all pixels.</li>
+            <li>Select pixels by matching the Colors list.</li>
+        </ol>
+        <h3>3.4 Outline</h3>
+        <ol>
+            <li>Select a picture with transparent background and its outline is fetched as "Area".</li>
+            <li>Not matching colors, so need not colors list.</li>
+        </ol>
+        <h2>4. Display Scope</h2>
+        <p>To indicate selected pixels obviously, "masked image" is displayed:</p>
+        <ol>
+            <li>Selected pixels are displayed as their orignial colors.</li>
+            <li>Unselected pixels are displayed as blending colors in orignial colors, mask color, and mask opacity. </li>
+            <li>For image mostly in dark colors, suggest light color as mask color. </li>
+            <li>For image mostly in light colors, suggest dark color as mask color. </li>
+            <li>Click button "Pop"(CTRL+P) to show source image, selected pixels, and masked image.</li>
+        </ol>
+        <h2>5. Manage Scopes</h2>
+        <ol>
+            <li>When handle image, conditions of selecting pixels can be saved as scope.</li>
+            <li>When handle image, saved scope can be applied as conditions to select pixels.</li>
+            <li>Scopes are saved and managed in tree.</li>
+        </ol>
+    </body>
+</html>

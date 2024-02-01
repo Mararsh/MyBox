@@ -166,12 +166,6 @@ public class BaseShapeController extends BaseShapeController_MouseEvents {
     }
 
     @Override
-    public boolean controlAltW() {
-        withdrawAction();
-        return true;
-    }
-
-    @Override
     public void cleanPane() {
         try {
             maskShapeChanged = null;

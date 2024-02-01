@@ -8,7 +8,6 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckMenuItem;
-import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import mara.mybox.dev.MyBoxLog;
@@ -28,9 +27,6 @@ import mara.mybox.value.UserConfig;
 public abstract class BaseFileController extends BaseController {
 
     protected FileSortTools.FileSortMode sortMode;
-
-    @FXML
-    protected Label fileInfoLabel;
 
     @Override
     public void initControls() {

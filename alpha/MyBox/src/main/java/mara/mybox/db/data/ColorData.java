@@ -269,6 +269,17 @@ public class ColorData extends BaseData {
         return this;
     }
 
+    public ColorData cloneValues() {
+        try {
+            ColorData newData = (ColorData) super.clone();
+            newData.setCpid(-1);
+            newData.setPaletteid(-1);
+            return newData;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     public String hsba(Color c) {
         long h = Math.round(c.getHue());
         long s = Math.round(c.getSaturation() * 100);

@@ -35,7 +35,7 @@ public class ImageDemos {
                 path += File.separator + "x";
             }
 
-            BufferedImage bufferedImage = TransformTools.shearImage(demoTask, demoImage, 1f, 0);
+            BufferedImage bufferedImage = TransformTools.shearImage(demoTask, demoImage, 1f, 0, true);
             if (!demoTask.isWorking()) {
                 return;
             }
@@ -48,7 +48,7 @@ public class ImageDemos {
                 return;
             }
 
-            bufferedImage = TransformTools.shearImage(demoTask, demoImage, -1f, 0);
+            bufferedImage = TransformTools.shearImage(demoTask, demoImage, -1f, 0, true);
             if (!demoTask.isWorking()) {
                 return;
             }
@@ -61,7 +61,7 @@ public class ImageDemos {
                 return;
             }
 
-            bufferedImage = TransformTools.shearImage(demoTask, demoImage, 0, 1f);
+            bufferedImage = TransformTools.shearImage(demoTask, demoImage, 0, 1f, true);
             if (!demoTask.isWorking()) {
                 return;
             }
@@ -74,7 +74,7 @@ public class ImageDemos {
                 return;
             }
 
-            bufferedImage = TransformTools.shearImage(demoTask, demoImage, 0, -1f);
+            bufferedImage = TransformTools.shearImage(demoTask, demoImage, 0, -1f, true);
             if (!demoTask.isWorking()) {
                 return;
             }
@@ -87,7 +87,7 @@ public class ImageDemos {
                 return;
             }
 
-            bufferedImage = TransformTools.shearImage(demoTask, demoImage, 1.5f, 2);
+            bufferedImage = TransformTools.shearImage(demoTask, demoImage, 1.5f, 2, true);
             if (!demoTask.isWorking()) {
                 return;
             }
@@ -100,7 +100,7 @@ public class ImageDemos {
                 return;
             }
 
-            bufferedImage = TransformTools.shearImage(demoTask, demoImage, 2, -1.5f);
+            bufferedImage = TransformTools.shearImage(demoTask, demoImage, 2, -1.5f, true);
             if (!demoTask.isWorking()) {
                 return;
             }
@@ -113,7 +113,7 @@ public class ImageDemos {
                 return;
             }
 
-            bufferedImage = TransformTools.shearImage(demoTask, demoImage, -1.5f, 2);
+            bufferedImage = TransformTools.shearImage(demoTask, demoImage, -1.5f, 2, true);
             if (!demoTask.isWorking()) {
                 return;
             }
@@ -126,7 +126,7 @@ public class ImageDemos {
                 return;
             }
 
-            bufferedImage = TransformTools.shearImage(demoTask, demoImage, -2, -1.5f);
+            bufferedImage = TransformTools.shearImage(demoTask, demoImage, -2, -1.5f, true);
             if (!demoTask.isWorking()) {
                 return;
             }

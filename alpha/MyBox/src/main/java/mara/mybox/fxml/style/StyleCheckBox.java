@@ -63,6 +63,10 @@ public class StyleCheckBox {
                 return new StyleData(id, message("FirstLineAsNamesComments"), "", "");
             case "clearDataWhenLoadImageCheck":
                 return new StyleData(id, message("ClearDataWhenLoadImage"), "", "iconClear.png");
+            case "onTopCheck":
+                return new StyleData(id, message("AlwayOnTopComments"), "", "iconTop.png");
+            case "synchronizeSwitchCheck":
+                return new StyleData(id, message("SynchronizeWhenSwitchFormat"), "", "iconSynchronize.png");
         }
         return null;
     }

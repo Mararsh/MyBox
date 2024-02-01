@@ -33,13 +33,13 @@ License:    Apache License Version 2.0
             <children>
                 <SplitPane fx:id="splitPane" dividerPositions="0.6" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                     <items>
-                            <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+                            <ScrollPane fx:id="leftPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
                                 <content> 
                                     <VBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                                         <children>
                               <HBox alignment="CENTER_LEFT" spacing="2.0">
                                  <children>
-                                    <FlowPane alignment="CENTER_RIGHT" hgap="2.0" maxWidth="1.7976931348623157E308" prefWrapLength="0.0" vgap="2.0" HBox.hgrow="ALWAYS">
+                                    <FlowPane fx:id="playPane" alignment="CENTER_RIGHT" hgap="2.0" maxWidth="1.7976931348623157E308" prefWrapLength="0.0" vgap="2.0" HBox.hgrow="ALWAYS">
                                        <children>
                                                       <Label text="%Page" />
                                                       <ComboBox fx:id="pageSelector" editable="true" prefWidth="80" />
@@ -98,13 +98,13 @@ License:    Apache License Version 2.0
                                                               </ImageView>
                                                           </graphic>
                                                       </Button>
-                                          <ImageView fx:id="rightPaneControl" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../buttons/Red/iconDoubleRight.png" />
-                                             </image>
-                                          </ImageView>
                                        </children>
                                     </FlowPane>
+                                    <ImageView fx:id="rightPaneControl" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconDoubleRight.png" />
+                                       </image>
+                                    </ImageView>
                                  </children>
                               </HBox>
                                             <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
@@ -132,7 +132,7 @@ License:    Apache License Version 2.0
                                                                                 <graphic>
                                                                                     <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                                                         <image>
-                                                                                            <Image url="@../buttons/red/iconWrap.png" />
+                                                                                            <Image url="@../buttons/Red/iconWrap.png" />
                                                                                         </image>
                                                                                     </ImageView>
                                                                                 </graphic>
@@ -150,7 +150,7 @@ License:    Apache License Version 2.0
                                                                                 <graphic>
                                                                                     <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                                                         <image>
-                                                                                            <Image url="@../buttons/red/iconRefresh.png" />
+                                                                                            <Image url="@../buttons/Red/iconRefresh.png" />
                                                                                         </image>
                                                                                     </ImageView>
                                                                                 </graphic>
@@ -204,7 +204,7 @@ License:    Apache License Version 2.0
                                                                                 <graphic>
                                                                                     <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                                                         <image>
-                                                                                            <Image url="@../buttons/red/iconRefresh.png" />
+                                                                                            <Image url="@../buttons/Red/iconRefresh.png" />
                                                                                         </image>
                                                                                     </ImageView>
                                                                                 </graphic>
@@ -248,7 +248,7 @@ License:    Apache License Version 2.0
                                                                                 <graphic>
                                                                                     <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                                                         <image>
-                                                                                            <Image url="@../buttons/red/iconWrap.png" />
+                                                                                            <Image url="@../buttons/Red/iconWrap.png" />
                                                                                         </image>
                                                                                     </ImageView>
                                                                                 </graphic>
@@ -266,7 +266,7 @@ License:    Apache License Version 2.0
                                                                                 <graphic>
                                                                                     <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                                                         <image>
-                                                                                            <Image url="@../buttons/red/iconRefresh.png" />
+                                                                                            <Image url="@../buttons/Red/iconRefresh.png" />
                                                                                         </image>
                                                                                     </ImageView>
                                                                                 </graphic>

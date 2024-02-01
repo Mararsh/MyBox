@@ -70,9 +70,9 @@ public class TransformTools {
         return newImage;
     }
 
-    public static Image rotateImage(FxTask task, Image image, int angle) {
+    public static Image rotateImage(FxTask task, Image image, int angle, boolean cutMargins) {
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
-        BufferedImage target = mara.mybox.bufferedimage.TransformTools.rotateImage(task, source, angle);
+        BufferedImage target = mara.mybox.bufferedimage.TransformTools.rotateImage(task, source, angle, cutMargins);
         if (target == null || (task != null && !task.isWorking())) {
             return null;
         }
@@ -80,9 +80,9 @@ public class TransformTools {
         return newImage;
     }
 
-    public static Image shearImage(FxTask task, Image image, float shearX, float shearY) {
+    public static Image shearImage(FxTask task, Image image, float shearX, float shearY, boolean cutMargins) {
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
-        BufferedImage target = mara.mybox.bufferedimage.TransformTools.shearImage(task, source, shearX, shearY);
+        BufferedImage target = mara.mybox.bufferedimage.TransformTools.shearImage(task, source, shearX, shearY, cutMargins);
         if (target == null || (task != null && !task.isWorking())) {
             return null;
         }

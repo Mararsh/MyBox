@@ -27,7 +27,6 @@ import static mara.mybox.bufferedimage.ImageScope.ScopeType.Polygon;
 import static mara.mybox.bufferedimage.ImageScope.ScopeType.Rectangle;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoublePolygon;
-import mara.mybox.data.ImageItem;
 import mara.mybox.db.table.TableColor;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.ScopeTools;
@@ -39,10 +38,8 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-8-13
  * @License Apache License Version 2.0
  */
-public abstract class ControlSelectPixels_Base extends BaseShapeController {
+public abstract class BaseImageScope_Base extends BaseShapeController {
 
-    protected BaseImageController imageController;
-    protected ImageScopeEditor editor;
     protected ImageScope scope;
     protected TableColor tableColor;
     protected java.awt.Color maskColor;
@@ -89,23 +86,7 @@ public abstract class ControlSelectPixels_Base extends BaseShapeController {
     protected HBox pickColorBox;
 
     public Image srcImage() {
-        if (imageController != null) {
-            image = imageController.imageView.getImage();
-            sourceFile = imageController.sourceFile;
-        } else if (editor != null) {
-            if (editor.srcImage == null) {
-                loadExampleImage();
-            }
-            image = editor.srcImage;
-        }
         return image;
-    }
-
-    public void loadExampleImage() {
-        editor.sourceFile = null;
-        editor.srcImage = ImageItem.exampleImage();
-        sourceFile = ImageItem.exampleImageFile();
-        loadImage(editor.srcImage);
     }
 
     public java.awt.Color maskColor() {
@@ -201,7 +182,8 @@ public abstract class ControlSelectPixels_Base extends BaseShapeController {
 
     public boolean pickBaseValues() {
         try {
-            if (srcImage() == null || scope == null) {
+            image = srcImage();
+            if (image == null || scope == null) {
                 return false;
             }
             scope.setImage(image)
@@ -210,7 +192,7 @@ public abstract class ControlSelectPixels_Base extends BaseShapeController {
                     .setEightNeighbor(eightNeighborCheck.isSelected())
                     .setMaskColor(maskColor)
                     .setMaskOpacity(maskOpacity);
-            if (sourceFile != null) {
+            if (sourceFile != null && sourceFile.exists()) {
                 scope.setFile(sourceFile.getAbsolutePath());
             } else {
                 scope.setFile("Unknown");
@@ -229,24 +211,22 @@ public abstract class ControlSelectPixels_Base extends BaseShapeController {
         try {
             List<Color> colors = colorsList.getItems();
             if (colors == null || colors.isEmpty()) {
-                scope.getColors().clear();
+                scope.clearColors();
+                return true;
             } else {
                 for (Color color : colors) {
                     scope.addColor(ColorConvertTools.converColor(color));
                 }
+                boolean valid = matchController.pickValues(scope, 50);
+                if (!valid) {
+                    popError(message("InvalidParameters"));
+                }
+                return valid;
             }
-            boolean valid = matchController.pickValues(scope, 50);
-            if (!valid) {
-                popError(message("InvalidParameters"));
-            }
-            return valid;
         } catch (Exception e) {
             MyBoxLog.error(e);
             return false;
         }
-    }
-
-    public void showScope() {
     }
 
 }

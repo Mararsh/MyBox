@@ -71,12 +71,12 @@ License:    Apache License Version 2.0
                             </graphic>
                         </Button>
                     </children>
-                    <padding>
-                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                    </padding>
                 </HBox>
             <fx:include fx:id="edit" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlHtmlEditor.fxml" VBox.vgrow="ALWAYS" />
             </children>
+         <padding>
+            <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+         </padding>
         </VBox>
     </center>
     <padding>

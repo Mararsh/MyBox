@@ -13,6 +13,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.ScaleTools;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -30,7 +31,7 @@ public class BaseImageEditController extends BaseShapeController {
     protected FxTask demoTask;
 
     @FXML
-    protected CheckBox closeAfterCheck;
+    protected CheckBox closeAfterCheck, onTopCheck;
 
     protected void setParameters(BaseImageController parent) {
         try {
@@ -55,6 +56,15 @@ public class BaseImageEditController extends BaseShapeController {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
                     UserConfig.setBoolean(baseName + "CloseAfterHandle", closeAfterCheck.isSelected());
+                }
+            });
+
+            onTopCheck.setSelected(getMyStage().isAlwaysOnTop());
+            onTopCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                    myStage.setAlwaysOnTop(onTopCheck.isSelected());
+                    popInformation(myStage.isAlwaysOnTop() ? message("AlwayOnTop") : message("DisableAlwayOnTop"));
                 }
             });
 

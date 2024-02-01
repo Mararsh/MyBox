@@ -141,6 +141,7 @@ public class JsonEditorController extends BaseDomEditorController {
     }
 
     @FXML
+    @Override
     protected void exampleAction() {
         File example = HelpTools.jsonExample(Languages.embedFileLang());
         if (example != null && example.exists()) {

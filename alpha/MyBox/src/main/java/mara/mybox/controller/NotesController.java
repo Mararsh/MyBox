@@ -3,7 +3,6 @@ package mara.mybox.controller;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.fxml.FXML;
-import javafx.scene.input.KeyEvent;
 import javafx.stage.Window;
 import mara.mybox.db.data.InfoNode;
 import mara.mybox.db.data.VisitHistory;
@@ -25,7 +24,7 @@ public class NotesController extends InfoTreeManageController {
 
     public NotesController() {
         baseTitle = Languages.message("Notes");
-        TipsLabelKey = "NotesComments";
+        TipsLabelKey = "NotesTips";
         category = InfoNode.Notebook;
         nameMsg = message("Title");
         valueMsg = message("Html");
@@ -37,55 +36,17 @@ public class NotesController extends InfoTreeManageController {
     }
 
     @Override
-    public void initControls() {
+    public void initValues() {
         try {
-            editorController.setParameters(this);
+            super.initValues();
 
-            super.initControls();
+            editor = editorController;
 
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
-    @Override
-    public boolean editNode(InfoNode node) {
-        if (!checkBeforeNextAction()) {
-            return false;
-        }
-        return editorController.editNote(node);
-    }
-
-    @FXML
-    @Override
-    protected void recoverNode() {
-        editorController.recoverNote();
-    }
-
-    @Override
-    public boolean isNodeChanged() {
-        return editorController.fileChanged || editor.nodeChanged;
-    }
-
-    @Override
-    public void nodeSaved() {
-        super.nodeSaved();
-        editorController.updateFileStatus(false);
-    }
-
-    @Override
-    public void newNodeSaved() {
-        super.newNodeSaved();
-        editorController.updateFileStatus(false);
-    }
-
-    @Override
-    public boolean keyEventsFilter(KeyEvent event) {
-        if (editorController.keyEventsFilter(event)) {
-            return true;
-        }
-        return super.keyEventsFilter(event);
-    }
 
     /*
         static methods

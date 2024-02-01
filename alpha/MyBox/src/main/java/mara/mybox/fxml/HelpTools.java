@@ -238,6 +238,18 @@ public class HelpTools {
         }
     }
 
+    public static File aboutImageScope() {
+        try {
+            String lang = Languages.embedFileLang();
+            File file = FxFileTools.getInternalFile("/doc/" + lang + "/mybox_about_image_scope_" + lang + ".html",
+                    "doc", "mybox_about_image_scope_" + lang + ".html");
+            return file;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
     public static void imageStories(BaseController controller) {
         FxTask task = new FxTask<Void>(controller) {
             private File htmFile;
@@ -345,7 +357,7 @@ public class HelpTools {
 
             s.append("<H1>").append(message(lang, "DocumentTools")).append("</H1>\n");
             s.append("    <H3>").append(message(lang, "Notes")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "NotesComments")).append("</PRE>\n");
+            s.append("    <PRE>").append(message(lang, "NotesTips")).append("</PRE>\n");
 
             s.append("    <H3>").append(message(lang, "PdfView")).append("</H3>\n");
             s.append("    <PRE>").append(message(lang, "PdfViewTips")).append("</PRE>\n");
@@ -354,7 +366,7 @@ public class HelpTools {
             s.append("    <PRE>").append(message(lang, "MarkdownEditerTips")).append("</PRE>\n");
 
             s.append("    <H3>").append(message(lang, "HtmlEditor")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "HtmlEditorTips")).append("</PRE>\n");
+            s.append("    <PRE>").append(message(lang, "HtmlFormatTips")).append("</PRE>\n");
 
             s.append("    <H3>").append(message(lang, "HtmlSnap")).append("</H3>\n");
             s.append("    <PRE>").append(message(lang, "HtmlSnapComments")).append("</PRE>\n");
@@ -408,9 +420,6 @@ public class HelpTools {
 
             s.append("    <H3>").append(message(lang, "EditImage")).append("</H3>\n");
             s.append("    <PRE>").append(message(lang, "ImageEditTips")).append("</PRE>\n");
-
-            s.append("    <H3>").append(message(lang, "Scope")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "ScopeTips")).append("</PRE>\n");
 
             s.append("    <H3>").append(message(lang, "SVGEditor")).append("</H3>\n");
             s.append("    <PRE>").append(message(lang, "SVGEditorTips")).append("</PRE>\n");
@@ -736,7 +745,7 @@ public class HelpTools {
     }
 
     public static String htmlZhLink() {
-        return "https://developer.mozilla.org/zh-CN/docs/Web/JavaScript";
+        return "https://developer.mozilla.org/zh-CN/docs/Learn/HTML";
     }
 
     public static String htmlEnLink() {

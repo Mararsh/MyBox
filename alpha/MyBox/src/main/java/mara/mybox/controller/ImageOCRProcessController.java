@@ -251,7 +251,7 @@ public class ImageOCRProcessController extends BaseImageController {
             protected boolean handle() {
                 try {
                     BufferedImage bufferedImage = SwingFXUtils.fromFXImage(imageView.getImage(), null);
-                    bufferedImage = TransformTools.rotateImage(this, bufferedImage, rotate);
+                    bufferedImage = TransformTools.rotateImage(this, bufferedImage, rotate, true);
                     ocrImage = SwingFXUtils.toFXImage(bufferedImage, null);
                     return ocrImage != null;
                 } catch (Exception e) {

@@ -329,7 +329,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
 
             @Override
             protected boolean handle() {
-                newImage = TransformTools.rotateImage(this, imageView.getImage(), rotateAngle);
+                newImage = TransformTools.rotateImage(this, imageView.getImage(), rotateAngle, true);
                 return newImage != null;
             }
 

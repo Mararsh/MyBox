@@ -228,9 +228,12 @@ public class ImageFileReaders {
             if (readInfo == null) {
                 return null;
             }
+            File file = readInfo.getFile();
+            if (file == null) {
+                return null;
+            }
             ImageFileInformation fileInfo = null;
             ImageInformation imageInfo = null;
-            File file = readInfo.getFile();
             int index = readInfo.getIndex();
             int requiredWidth = (int) readInfo.getRequiredWidth();
             if (task != null) {

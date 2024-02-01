@@ -9,7 +9,6 @@ import mara.mybox.data.StringTable;
 import static mara.mybox.db.data.ColumnDefinition.ColumnType.Era;
 import mara.mybox.db.table.BaseTable;
 import mara.mybox.db.table.TableAlarmClock;
-import mara.mybox.db.table.TableBlobValue;
 import mara.mybox.db.table.TableColor;
 import mara.mybox.db.table.TableColorPalette;
 import mara.mybox.db.table.TableColorPaletteName;
@@ -22,7 +21,6 @@ import mara.mybox.db.table.TableFileBackup;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.db.table.TableImageClipboard;
 import mara.mybox.db.table.TableImageEditHistory;
-import mara.mybox.db.table.TableImageScope;
 import mara.mybox.db.table.TableMyBoxLog;
 import mara.mybox.db.table.TableNamedValues;
 import mara.mybox.db.table.TablePathConnection;
@@ -96,9 +94,6 @@ public class BaseDataAdaptor {
         } else if (data instanceof TextClipboard) {
             return new TableTextClipboard();
 
-        } else if (data instanceof ImageScope) {
-            return new TableImageScope();
-
         } else if (data instanceof Data2DDefinition) {
             return new TableData2DDefinition();
 
@@ -107,9 +102,6 @@ public class BaseDataAdaptor {
 
         } else if (data instanceof Data2DCell) {
             return new TableData2DCell();
-
-        } else if (data instanceof BlobValue) {
-            return new TableBlobValue();
 
         } else if (data instanceof Data2DRow) {
             return new TableData2D();
@@ -194,9 +186,6 @@ public class BaseDataAdaptor {
         } else if (data instanceof Data2DCell) {
             return Data2DCell.valid((Data2DCell) data);
 
-        } else if (data instanceof BlobValue) {
-            return BlobValue.valid((BlobValue) data);
-
         } else if (data instanceof Data2DRow) {
             return Data2DRow.valid((Data2DRow) data);
 
@@ -279,9 +268,6 @@ public class BaseDataAdaptor {
         } else if (data instanceof Data2DCell) {
             return Data2DCell.getValue((Data2DCell) data, name);
 
-        } else if (data instanceof BlobValue) {
-            return BlobValue.getValue((BlobValue) data, name);
-
         } else if (data instanceof Data2DRow) {
             return Data2DRow.getValue((Data2DRow) data, name);
 
@@ -360,9 +346,6 @@ public class BaseDataAdaptor {
 
         } else if (data instanceof Data2DCell) {
             return Data2DCell.setValue((Data2DCell) data, name, value);
-
-        } else if (data instanceof BlobValue) {
-            return BlobValue.setValue((BlobValue) data, name, value);
 
         } else if (data instanceof Data2DRow) {
             return Data2DRow.setValue((Data2DRow) data, name, value);

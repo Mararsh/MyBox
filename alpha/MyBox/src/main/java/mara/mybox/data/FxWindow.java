@@ -3,6 +3,7 @@ package mara.mybox.data;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import mara.mybox.controller.BaseController;
+import mara.mybox.controller.BaseController_Attributes.StageType;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -13,8 +14,7 @@ import static mara.mybox.value.Languages.message;
 public class FxWindow {
 
     protected Window window;
-    protected String title, type;
-    protected String modality;
+    protected String title, type, name, modality;
     protected int width, height, x, y;
     protected boolean isShowing, isAlwaysOnTop, isFocused,
             isChild, isFullScreen, isIconified, isMaximized, isResizable;
@@ -28,6 +28,7 @@ public class FxWindow {
         title = null;
         type = null;
         modality = null;
+        name = null;
         isShowing = isAlwaysOnTop = isFocused = isChild
                 = isFullScreen = isIconified = isMaximized = isResizable
                 = false;
@@ -39,7 +40,8 @@ public class FxWindow {
         if (window == null) {
             return;
         }
-        type = window.getClass().toString();
+        type = StageType.Normal.name();
+        name = window.getClass().toString();
         width = (int) window.getWidth();
         height = (int) window.getHeight();
         x = (int) window.getX();
@@ -72,7 +74,9 @@ public class FxWindow {
             isResizable = stage.isResizable();
             Object u = stage.getUserData();
             if (u != null && (u instanceof BaseController)) {
-                type = ((BaseController) u).getClass().toString();
+                BaseController controller = (BaseController) u;
+                name = controller.getClass().toString();
+                type = controller.getStageType().name();
             }
         }
     }
@@ -206,6 +210,14 @@ public class FxWindow {
 
     public void setIsResizable(boolean isResizable) {
         this.isResizable = isResizable;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
 }

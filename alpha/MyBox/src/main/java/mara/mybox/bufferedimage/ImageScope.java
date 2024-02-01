@@ -25,6 +25,8 @@ import static mara.mybox.value.Languages.message;
  */
 public class ImageScope extends BaseData {
 
+    public static String ValueSeparator = ",";
+
     protected String file, name, areaData, colorData, outlineName;
     protected ScopeType scopeType;
     protected ColorScopeType colorScopeType;
@@ -69,6 +71,10 @@ public class ImageScope extends BaseData {
     private void init() {
         scopeType = ScopeType.Whole;
         colorScopeType = ColorScopeType.AllColor;
+        clearValues();
+    }
+
+    public final void clearValues() {
         colors = new ArrayList<>();
         points = new ArrayList<>();
         colorDistance = 50;
@@ -78,20 +84,15 @@ public class ImageScope extends BaseData {
         maskOpacity = 0.5f;
         areaExcluded = colorExcluded = distanceSquareRoot = false;
         eightNeighbor = true;
-        if (image != null) {
-            rectangle = DoubleRectangle.xywh(image.getWidth() / 4, image.getHeight() / 4,
-                    image.getWidth() / 2, image.getHeight() / 2);
-            circle = new DoubleCircle(image.getWidth() / 2, image.getHeight() / 2,
-                    Math.min(image.getWidth(), image.getHeight()) / 4);
-            ellipse = DoubleEllipse.rect(rectangle);
-        } else {
-            rectangle = new DoubleRectangle();
-            circle = new DoubleCircle();
-            ellipse = new DoubleEllipse();
-        }
-        polygon = new DoublePolygon();
-        createTime = new Date();
-
+        rectangle = null;
+        circle = null;
+        ellipse = null;
+        polygon = null;
+        areaData = null;
+        colorData = null;
+        outlineName = null;
+        outlineSource = null;
+        outline = null;
     }
 
     public ImageScope cloneValues() {

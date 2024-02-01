@@ -1,157 +1,186 @@
 <html>
- <head>
-  <title>Row Expression</title>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  <meta charset="UTF-8">
-  <style>
- body { margin:0 auto; } 
- table { max-width:95%; margin : 10px;  border-style: solid; border-width:2px; border-collapse: collapse;} 
- th, td { border-style: solid; border-width:1px; padding: 8px; border-collapse: collapse;} 
- th { font-weight:bold;  text-align:center;} 
- tr { height: 1.2em;  } 
- .center { text-align:center;  max-width:95%; } 
- .valueBox { border-style: solid; border-width:1px; border-color:black; padding: 5px; border-radius:5px;} 
- .boldText { font-weight:bold;  } 
-</style>
- </head>
- <body style="width: 900px; margin:0 auto;" contenteditable="true">
-  <h1 align="center">Row Expression</h1>
-  <h2>1 Usages of Row Expression</h2>
-  <p>JavaScript expression can be data values when manufacture/trim/calculate data or generate chart.</p>
-  <h2>2 Edit Row Expression</h2>
-  <ol>
-   <li><p>If the script is blank, then return empty string.</p></li>
-   <li><p>It can include any valid elments which Nashorn can parse(ECMAScript 5.1).</p></li>
-   <li><p>It should be a value finally.</p></li>
-   <li><p>It can include following placeholders:</p></li>
-   <p>#{TableRowNumber}</p>
-   <p>#{DataRowNumber}</p>
-   <p>#{&lt;column_name&gt;}</p>
-   <p>#{&lt;column_name&gt;- &lt;statistic-name&gt;}</p>
-   <li><p>All valid placeholders are listed in left.</p></li>
-   <li><p>To save the script, click “Edit” button.</p></li>
-   <li><p>Hover or click button “Examples” to paste example codes.</p></li>
-   <li><p>Hover or click button “Histories” to paste codes in histories.</p></li>
-  </ol>
-  <h2>3 Calculate Row Expression</h2>
-  <p>When MyBox evaluates the expression:</p>
-  <ol>
-   <li><p>Placeholders are replaced with actual values of each data row.</p></li>
-   <li><p>Statistic values are calculated by all data.</p></li>
-   <li><p>‘#{xxx}’ is handled as string while #{xxx} is handled as number.</p></li>
-   <li><p>When handles all pages, script fails when it includes “#{TableRowNumber}” .</p></li>
-  </ol>
-  <h2>4 Examples</h2>
-  <table>
-   <thead>
-    <tr>
-     <th>row expression</th>
-     <th>meaning</th>
-    </tr>
-   </thead>
-   <tbody>
-    <tr>
-     <td>#{DataRowNumber} % 2 == 0</td>
-     <td>data row number is even</td>
-    </tr>
-    <tr>
-     <td>#{TableRowNumber} % 2 == 1</td>
-     <td>odd rows in current page</td>
-    </tr>
-    <tr>
-     <td>Math.abs(#{v1}) + Math.PI * Math.sqrt(#{v2})</td>
-     <td>calculation</td>
-    </tr>
-    <tr>
-     <td>‘#{v1}’.replace(/hello/ig, ‘Hello’)</td>
-     <td>replace all “hello”(case-insensitive) as “Hello” in column “v1”</td>
-    </tr>
-    <tr>
-     <td>‘#{v1}’.toLowerCase()</td>
-     <td>lower case of value of column “v1”</td>
-    </tr>
-    <tr>
-     <td>‘#{v1}’.split(‘,’)</td>
-     <td>split value of column “v1” by comma</td>
-    </tr>
-    <tr>
-     <td>#{v1} - #{v1-Mean}</td>
-     <td>difference between value of column “v1” and mean of column “v1”</td>
-    </tr>
-    <tr>
-     <td>new Date(‘#{time}’.replace(/-/g,‘/’)).getFullYear()</td>
-     <td>year of value of column “time”</td>
-    </tr>
-   </tbody>
-  </table>
-  <h1 align="center">Row Filter</h1>
-  <h2>1 Usages of Row Filter</h2>
-  <p>“Row Filter” is special “Row Expression”, and can be condition to filter data rows.</p>
-  <h2>2 Edit Row Filter</h2>
-  <ol>
-   <li><p>It should be boolean value(“true” or “false”) finally.</p></li>
-   <li><p>Can set maximum rows to take.</p></li>
-   <li><p>Can be saved in tree.</p></li>
-  </ol>
-  <h2>3 Exmaples</h2>
-  <table>
-   <thead>
-    <tr>
-     <th>row filter</th>
-     <th>meaning</th>
-    </tr>
-   </thead>
-   <tbody>
-    <tr>
-     <td>#{DataRowNumber} % 2 == 0</td>
-     <td>data row number is even</td>
-    </tr>
-    <tr>
-     <td>#{TableRowNumber} % 2 == 1</td>
-     <td>odd rows in current page</td>
-    </tr>
-    <tr>
-     <td>Math.abs(#{v1}) &gt;= 0</td>
-     <td>value of column “v1” is number</td>
-    </tr>
-    <tr>
-     <td>#{v1}) &gt; 0</td>
-     <td>value of column “v1” is larger than zero</td>
-    </tr>
-    <tr>
-     <td>#{v1} - #{v2} &lt; 100</td>
-     <td>difference between values of “v1” and “v2” is less than 100</td>
-    </tr>
-    <tr>
-     <td>‘#{v1}’ == ''</td>
-     <td>value of column “v1” is null or empty</td>
-    </tr>
-    <tr>
-     <td>‘#{v1}’.length &gt; 0</td>
-     <td>value of column “v1” is not empty</td>
-    </tr>
-    <tr>
-     <td>‘#{v1}’.search(/Hello/ig) &gt;= 0</td>
-     <td>value of column “v1” includes “Hello”(case-insensitive)</td>
-    </tr>
-    <tr>
-     <td>‘#{v1}’.startsWith(‘Hello’)</td>
-     <td>value of column “v1” starts with “Hello”</td>
-    </tr>
-    <tr>
-     <td>var array = [ ‘A’, ‘B’, ‘C’];array.includes(‘#{v1}’)</td>
-     <td>value of column “v1” is one of “A”, “B”, “C”</td>
-    </tr>
-    <tr>
-     <td>#{v1} &lt; #{v1-Mean}</td>
-     <td>value of column “v1” is less than mean of column “v1”</td>
-    </tr>
-    <tr>
-     <td>new Date(‘#{time}’.replace(/-/g,‘/’)).getTime() &gt; new Date(‘2016/05/19 09:23:12’).getTime()</td>
-     <td>value of column “time” is later than ‘2016/05/19 09:23:12’</td>
-    </tr>
-   </tbody>
-  </table>
-<br>
- </body>
+    <head>
+        <title>Row Expression</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta charset="UTF-8">
+        <style>
+            body {
+                margin:0 auto;
+            }
+            table {
+                max-width:95%;
+                margin : 10px;
+                border-style: solid;
+                border-width:2px;
+                border-collapse: collapse;
+            }
+            th, td {
+                border-style: solid;
+                border-width:1px;
+                padding: 8px;
+                border-collapse: collapse;
+            }
+            th {
+                font-weight:bold;
+                text-align:center;
+            }
+            tr {
+                height: 1.2em;
+            }
+            .center {
+                text-align:center;
+                max-width:95%;
+            }
+            .valueBox {
+                border-style: solid;
+                border-width:1px;
+                border-color:black;
+                padding: 5px;
+                border-radius:5px;
+            }
+            .boldText {
+                font-weight:bold;
+            }
+        </style>
+    </head>
+    <body style="width: 900px; margin:0 auto;" contenteditable="true">
+        <h1 align="center">Row Expression</h1>
+        <h2>1 Usages of Row Expression</h2> 
+        <p>JavaScript expression can be data values when manufacture/trim/calculate data or generate chart.</p>
+        <h2>2 Edit Row Expression</h2>
+        <ol>
+            <li><p>If the script is blank, then return empty string.</p></li>
+            <li><p>It can include any valid elments which Nashorn can parse(ECMAScript 5.1).</p></li>
+            <li><p>It should be a value finally.</p></li>
+            <li><p>It can include following placeholders:</p></li>
+            <p>#{TableRowNumber}</p>
+            <p>#{DataRowNumber}</p>
+            <p>#{&lt;column_name&gt;}</p>
+            <p>#{&lt;column_name&gt;- &lt;statistic-name&gt;}</p>
+            <li><p>All valid placeholders are listed in left.</p></li>
+            <li><p>To save the script, click “Edit” button.</p></li>
+            <li><p>Hover or click button “Examples” to paste example codes.</p></li>
+            <li><p>Hover or click button “Histories” to paste codes in histories.</p></li>
+        </ol>
+        <h2>3 Calculate Row Expression</h2>
+        <p>When MyBox evaluates the expression:</p>
+        <ol>
+            <li><p>Placeholders are replaced with actual values of each data row.</p></li>
+            <li><p>Statistic values are calculated by all data.</p></li>
+            <li><p>‘#{xxx}’ is handled as string while #{xxx} is handled as number.</p></li>
+            <li><p>When handles all pages, script fails when it includes “#{TableRowNumber}” .</p></li>
+        </ol>
+        <h2>4 Examples</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>row expression</th>
+                    <th>meaning</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>#{DataRowNumber} % 2 == 0</td>
+                    <td>data row number is even</td>
+                </tr>
+                <tr>
+                    <td>#{TableRowNumber} % 2 == 1</td>
+                    <td>odd rows in current page</td>
+                </tr>
+                <tr>
+                    <td>Math.abs(#{v1}) + Math.PI * Math.sqrt(#{v2})</td>
+                    <td>calculation</td>
+                </tr>
+                <tr>
+                    <td>‘#{v1}’.replace(/hello/ig, ‘Hello’)</td>
+                    <td>replace all “hello”(case-insensitive) as “Hello” in column “v1”</td>
+                </tr>
+                <tr>
+                    <td>‘#{v1}’.toLowerCase()</td>
+                    <td>lower case of value of column “v1”</td>
+                </tr>
+                <tr>
+                    <td>‘#{v1}’.split(‘,’)</td>
+                    <td>split value of column “v1” by comma</td>
+                </tr>
+                <tr>
+                    <td>#{v1} - #{v1-Mean}</td>
+                    <td>difference between value of column “v1” and mean of column “v1”</td>
+                </tr>
+                <tr>
+                    <td>new Date(‘#{time}’.replace(/-/g,‘/’)).getFullYear()</td>
+                    <td>year of value of column “time”</td>
+                </tr>
+            </tbody>
+        </table>
+        <h1 align="center">Row Filter</h1>
+        <h2>1 Usages of Row Filter</h2>
+        <p>“Row Filter” is special “Row Expression”, and can be condition to filter data rows.</p>
+        <h2>2 Edit Row Filter</h2>
+        <ol>
+            <li><p>It should be boolean value(“true” or “false”) finally.</p></li>
+            <li><p>Can set maximum rows to take.</p></li>
+            <li><p>Can be saved in tree.</p></li>
+        </ol>
+        <h2>3 Exmaples</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>row filter</th>
+                    <th>meaning</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>#{DataRowNumber} % 2 == 0</td>
+                    <td>data row number is even</td>
+                </tr>
+                <tr>
+                    <td>#{TableRowNumber} % 2 == 1</td>
+                    <td>odd rows in current page</td>
+                </tr>
+                <tr>
+                    <td>Math.abs(#{v1}) &gt;= 0</td>
+                    <td>value of column “v1” is number</td>
+                </tr>
+                <tr>
+                    <td>#{v1}) &gt; 0</td>
+                    <td>value of column “v1” is larger than zero</td>
+                </tr>
+                <tr>
+                    <td>#{v1} - #{v2} &lt; 100</td>
+                    <td>difference between values of “v1” and “v2” is less than 100</td>
+                </tr>
+                <tr>
+                    <td>‘#{v1}’ == ''</td>
+                    <td>value of column “v1” is null or empty</td>
+                </tr>
+                <tr>
+                    <td>‘#{v1}’.length &gt; 0</td>
+                    <td>value of column “v1” is not empty</td>
+                </tr>
+                <tr>
+                    <td>‘#{v1}’.search(/Hello/ig) &gt;= 0</td>
+                    <td>value of column “v1” includes “Hello”(case-insensitive)</td>
+                </tr>
+                <tr>
+                    <td>‘#{v1}’.startsWith(‘Hello’)</td>
+                    <td>value of column “v1” starts with “Hello”</td>
+                </tr>
+                <tr>
+                    <td>var array = [ ‘A’, ‘B’, ‘C’];array.includes(‘#{v1}’)</td>
+                    <td>value of column “v1” is one of “A”, “B”, “C”</td>
+                </tr>
+                <tr>
+                    <td>#{v1} &lt; #{v1-Mean}</td>
+                    <td>value of column “v1” is less than mean of column “v1”</td>
+                </tr>
+                <tr>
+                    <td>new Date(‘#{time}’.replace(/-/g,‘/’)).getTime() &gt; new Date(‘2016/05/19 09:23:12’).getTime()</td>
+                    <td>value of column “time” is later than ‘2016/05/19 09:23:12’</td>
+                </tr>
+            </tbody>
+        </table>
+        <br>
+    </body>
 </html>

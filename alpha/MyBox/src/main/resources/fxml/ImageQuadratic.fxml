@@ -143,7 +143,7 @@ License:    Apache License Version 2.0
                                         </AnchorPane>
                                     </content>
                                 </ScrollPane>
-                        <Label fx:id="commentsLabel" minHeight="-Infinity" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%ShapeDragMoveTips" wrapText="true" />
+                                <Label fx:id="commentsLabel" minHeight="-Infinity" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%ShapeDragMoveTips" wrapText="true" />
                             </children>
                         </VBox>
                     </content>
@@ -152,24 +152,24 @@ License:    Apache License Version 2.0
                     <content>
                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                             <children>
-                        <FlowPane alignment="CENTER_LEFT" hgap="2.0" vgap="2.0">
-                           <children>
-                              <Button fx:id="goButton" mnemonicParsing="false" onAction="#goAction">
-                                 <graphic>
-                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../buttons/Red/iconGo.png" />
-                                       </image>
-                                    </ImageView>
-                                 </graphic>
-                              </Button>
-                              <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../buttons/Red/iconTips.png" />
-                                 </image>
-                              </ImageView>
-                           </children>
-                        </FlowPane>
+                                <FlowPane alignment="CENTER_LEFT" hgap="2.0" vgap="2.0">
+                                    <children>
+                                        <Button fx:id="goButton" mnemonicParsing="false" onAction="#goAction">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/Red/iconGo.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                        <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/Red/iconTips.png" />
+                                            </image>
+                                        </ImageView>
+                                    </children>
+                                </FlowPane>
                                 <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
                                     <tabs>
                                         <Tab fx:id="valuesTab" text="%QuadraticCurve">
@@ -224,6 +224,15 @@ License:    Apache License Version 2.0
                                 </TabPane>
                                 <FlowPane alignment="CENTER_RIGHT" hgap="2.0" prefWrapLength="100.0" vgap="2.0">
                                     <children>
+                                        <CheckBox fx:id="onTopCheck" mnemonicParsing="false" selected="true">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/Red/iconTop.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </CheckBox>
                                         <CheckBox fx:id="closeAfterCheck" mnemonicParsing="false" selected="true">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -284,7 +293,7 @@ License:    Apache License Version 2.0
                                         </Button>
                                     </children>
                                 </FlowPane>
-                        <Label minHeight="-Infinity" text="%ImageShapeTips" wrapText="true" />
+                                <Label minHeight="-Infinity" text="%ImageShapeTips" wrapText="true" />
                             </children>
                             <padding>
                                 <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />

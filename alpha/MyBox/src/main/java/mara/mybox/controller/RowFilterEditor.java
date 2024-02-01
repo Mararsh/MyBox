@@ -122,7 +122,7 @@ public class RowFilterEditor extends InfoTreeNodeEditor {
     }
 
     @Override
-    protected void editInfo(InfoNode node) {
+    protected void editValue(InfoNode node) {
         Map<String, String> values = InfoNode.parseInfo(node);
         if (values != null) {
             long max = -1;
@@ -137,7 +137,7 @@ public class RowFilterEditor extends InfoTreeNodeEditor {
     }
 
     @Override
-    protected InfoNode nodeInfo(InfoNode node) {
+    protected InfoNode pickValue(InfoNode node) {
         if (node == null) {
             return null;
         }

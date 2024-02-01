@@ -150,19 +150,19 @@ License:    Apache License Version 2.0
                         <VBox spacing="5.0">
                             <children>
                                 <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="%Size" VBox.vgrow="ALWAYS" />
-                        <FlowPane alignment="CENTER_LEFT" hgap="2.0" vgap="2.0">
-                           <children>
-                              <Button fx:id="previewButton" mnemonicParsing="false" onAction="#previewAction">
-                                 <graphic>
-                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../buttons/Red/iconPreview.png" />
-                                       </image>
-                                    </ImageView>
-                                 </graphic>
-                              </Button>
-                           </children>
-                        </FlowPane>
+                                <FlowPane alignment="CENTER_LEFT" hgap="2.0" vgap="2.0">
+                                    <children>
+                                        <Button fx:id="previewButton" mnemonicParsing="false" onAction="#previewAction">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/Red/iconPreview.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                    </children>
+                                </FlowPane>
                                 <VBox fx:id="typeBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                                     <children>
                                         <RadioButton fx:id="dragRadio" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%AdjustByDragging" wrapText="true">
@@ -193,26 +193,26 @@ License:    Apache License Version 2.0
                                                 </VBox>
                                             </children>
                                         </VBox>
-                              <FlowPane fx:id="scalePane" alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="100.0" vgap="2.0">
-                                 <children>
-                                    <Label minHeight="-Infinity" text="%ZoomScale" wrapText="true" />
-                                              <ComboBox fx:id="scaleSelector" editable="true" prefWidth="100.0" />
-                                 </children>
-                              </FlowPane>
+                                        <FlowPane fx:id="scalePane" alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="100.0" vgap="2.0">
+                                            <children>
+                                                <Label minHeight="-Infinity" text="%ZoomScale" wrapText="true" />
+                                                <ComboBox fx:id="scaleSelector" editable="true" prefWidth="100.0" />
+                                            </children>
+                                        </FlowPane>
                                         <VBox fx:id="pixelBox" alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
                                             <children>
-                                    <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="100.0" vgap="2.0">
-                                       <children>
+                                                <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="100.0" vgap="2.0">
+                                                    <children>
                                                         <Label minHeight="-Infinity" text="%Width" wrapText="true" />
                                                         <TextField fx:id="widthInput" prefWidth="100.0" />
-                                       </children>
-                                    </FlowPane>
-                                    <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="100.0" vgap="2.0">
-                                       <children>
+                                                    </children>
+                                                </FlowPane>
+                                                <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="100.0" vgap="2.0">
+                                                    <children>
                                                         <Label minHeight="-Infinity" text="%Height" wrapText="true" />
                                                         <TextField fx:id="heightInput" prefWidth="100.0" />
-                                       </children>
-                                    </FlowPane>
+                                                    </children>
+                                                </FlowPane>
                                                 <HBox fx:id="buttonsBox" alignment="CENTER_LEFT" spacing="5.0">
                                                     <children>
                                                         <Button fx:id="originalButton" mnemonicParsing="false" onAction="#originalSize">
@@ -250,6 +250,15 @@ License:    Apache License Version 2.0
                                 </VBox>
                                 <FlowPane alignment="CENTER_RIGHT" hgap="2.0" prefWrapLength="100.0" vgap="2.0">
                                     <children>
+                                        <CheckBox fx:id="onTopCheck" mnemonicParsing="false" selected="true">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/Red/iconTop.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </CheckBox>
                                         <CheckBox fx:id="closeAfterCheck" mnemonicParsing="false" selected="true">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -299,15 +308,15 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                             </graphic>
                                         </Button>
-                              <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction">
-                                 <graphic>
-                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../buttons/Red/iconSave.png" />
-                                       </image>
-                                    </ImageView>
-                                 </graphic>
-                              </Button>
+                                        <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/Red/iconSave.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
                                     </children>
                                 </FlowPane>
                             </children>

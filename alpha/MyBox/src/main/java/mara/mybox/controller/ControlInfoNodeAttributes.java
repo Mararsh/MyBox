@@ -220,7 +220,7 @@ public class ControlInfoNodeAttributes extends InfoTreeTagsController {
             }
 
         };
-        start(task, false);
+        start(task);
     }
 
     public void renamed(String newName) {

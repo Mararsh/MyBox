@@ -1,12 +1,15 @@
 package mara.mybox.controller;
 
+import java.io.File;
 import java.util.Date;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyEvent;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.bufferedimage.ImageScopeTools;
+import mara.mybox.data.ImageItem;
 import mara.mybox.db.data.InfoNode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
@@ -21,7 +24,7 @@ public class ImageScopeEditor extends InfoTreeNodeEditor {
     protected Image srcImage;
 
     @FXML
-    protected ControlSelectPixels scopeController;
+    protected ControlImageScope scopeController;
 
     public ImageScopeEditor() {
         defaultExt = "png";
@@ -45,28 +48,49 @@ public class ImageScopeEditor extends InfoTreeNodeEditor {
         }
     }
 
-    protected void setScope(ImageScope scope) {
-        if (isSettingValues || !isNewNode()
-                || scope == null || scope.getScopeType() == null) {
-            return;
-        }
-        attributesController.nameInput.setText(
-                scope.getScopeType() + "_" + DateTools.datetimeToString(new Date()));
-    }
-
     @Override
-    protected void editInfo(InfoNode node) {
-        sourceFile = null;
-        srcImage = null;
+    protected void editValue(InfoNode node) {
         ImageScope scope = null;
         if (node != null) {
             scope = ImageScopeTools.fromXML(null, myController, node.getInfo());
         }
-        scopeController.loadScope(scope);
+        if (scope == null) {
+            scope = new ImageScope();
+        }
+        setScopeControls(scope);
+    }
+
+    protected void loadScope(ImageScope scope) {
+        if (isSettingValues
+                || scope == null || scope.getScopeType() == null) {
+            return;
+        }
+        if (isNewNode()) {
+            attributesController.isSettingValues = true;
+            attributesController.nameInput.setText(
+                    scope.getScopeType() + "_" + DateTools.datetimeToString(new Date()));
+            attributesController.isSettingValues = false;
+        }
+        setScopeControls(scope);
+    }
+
+    protected void setScopeControls(ImageScope scope) {
+        if (scope == null) {
+            return;
+        }
+        scopeController.scope = scope.cloneValues();
+        File file = null;
+        if (scope.getFile() != null) {
+            file = new File(scope.getFile());
+        }
+        if (file == null || !file.exists()) {
+            file = ImageItem.exampleImageFile();
+        }
+        scopeController.sourceFileChanged(file);
     }
 
     @Override
-    protected InfoNode nodeInfo(InfoNode node) {
+    protected InfoNode pickValue(InfoNode node) {
         if (node == null) {
             return null;
         }
@@ -85,7 +109,7 @@ public class ImageScopeEditor extends InfoTreeNodeEditor {
     @FXML
     @Override
     public void clearValue() {
-        scopeController.clearControls();
+        scopeController.resetScope();
     }
 
     @Override
@@ -107,7 +131,15 @@ public class ImageScopeEditor extends InfoTreeNodeEditor {
     @Override
     public void newNodeCreated() {
         super.newNodeCreated();
-        scopeController.applyScope();
+        scopeController.indicateScope();
+    }
+
+    @Override
+    public boolean keyEventsFilter(KeyEvent event) {
+        if (super.keyEventsFilter(event)) {
+            return true;
+        }
+        return scopeController.keyEventsFilter(event); // pass event to editor
     }
 
 }

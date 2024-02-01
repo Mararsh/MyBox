@@ -320,10 +320,9 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
                         colorValueColumn);
 
             } else {
-                tableView.getColumns().addAll(HSBColumn,
+                tableView.getColumns().addAll(rybColumn, hueColumn, saturationColumn, brightnessColumn, opacityColumn,
                         invertColumn, invertRGBColumn, complementaryColumn, complementaryRGBColumn,
-                        rgbaColumn, rgbColumn,
-                        rybColumn, hueColumn, saturationColumn, brightnessColumn, opacityColumn);
+                        HSBColumn, rgbaColumn, rgbColumn);
             }
 
             isSettingValues = false;

@@ -415,7 +415,7 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
                 return null;
             }
             if (rotate != 0) {
-                lastImage = TransformTools.rotateImage(currentTask, lastImage, rotate);
+                lastImage = TransformTools.rotateImage(currentTask, lastImage, rotate, true);
                 if (lastImage == null || currentTask == null || !currentTask.isWorking()) {
                     return null;
                 }

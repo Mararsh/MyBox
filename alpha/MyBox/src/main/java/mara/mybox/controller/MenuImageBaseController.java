@@ -34,7 +34,7 @@ public class MenuImageBaseController extends MenuController {
 
     @FXML
     protected Button imageSizeButton, paneSizeButton, zoomInButton, zoomOutButton,
-            rotateLeftButton, rotateRightButton, turnOverButton;
+            rotateLeftButton, rotateRightButton, turnOverButton, systemMethodButton;
     @FXML
     protected CheckBox pickColorCheck, rulerXCheck, gridCheck, coordinateCheck;
     @FXML
@@ -301,6 +301,11 @@ public class MenuImageBaseController extends MenuController {
                         isSettingValues = false;
                     }
                 });
+            }
+
+            if (systemMethodButton != null) {
+                systemMethodButton.setDisable(imageController.sourceFile == null
+                        || !imageController.sourceFile.exists());
             }
 
             super.setParameters(imageController, imageController.imageView, x, y);

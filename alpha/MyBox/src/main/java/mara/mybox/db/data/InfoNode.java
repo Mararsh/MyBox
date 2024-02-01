@@ -566,7 +566,7 @@ public class InfoNode extends BaseData {
             case InfoNode.ImageScope: {
                 ImageScope scope = ImageScopeTools.fromXML(task, controller, s);
                 if (scope != null) {
-                    html = ImageScopeTools.toHtml(scope);
+                    html = ImageScopeTools.toHtml(task, scope);
                 }
                 break;
             }

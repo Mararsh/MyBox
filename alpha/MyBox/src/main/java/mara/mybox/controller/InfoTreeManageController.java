@@ -63,6 +63,13 @@ public class InfoTreeManageController extends BaseInfoTreeController {
 
     @Override
     public boolean keyEventsFilter(KeyEvent event) {
+        if (editor != null) {
+            if (editor.thisPane.isFocused() || editor.thisPane.isFocusWithin()) {
+                if (editor.keyEventsFilter(event)) {
+                    return true;
+                }
+            }
+        }
         if (super.keyEventsFilter(event)) {
             return true;
         }
@@ -230,7 +237,7 @@ public class InfoTreeManageController extends BaseInfoTreeController {
             return;
         }
         String currentTitle = getTitle();
-        if (editor.nodeChanged) {
+        if (editor.nodeChanged.get()) {
             if (!currentTitle.endsWith(" *")) {
                 setTitle(currentTitle + " *");
             }
@@ -320,7 +327,7 @@ public class InfoTreeManageController extends BaseInfoTreeController {
     }
 
     public boolean isNodeChanged() {
-        return editor.nodeChanged;
+        return editor.nodeChanged.get();
     }
 
     @Override
@@ -348,7 +355,7 @@ public class InfoTreeManageController extends BaseInfoTreeController {
                 saveAction();
                 return false;
             } else if (result.get() == buttonNotSave) {
-                editor.nodeChanged = false;
+                editor.nodeChanged.set(false);
                 return true;
             } else {
                 return false;

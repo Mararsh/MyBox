@@ -19,7 +19,7 @@ import org.jsoup.nodes.Element;
  */
 public class HtmlDomDeleteController extends BaseChildController {
 
-    protected ControlHtmlEditor editor;
+    protected BaseHtmlFormat editor;
     protected TreeTableView<HtmlNode> sourceTree;
     protected BaseHtmlTreeController manageController;
     protected int count;
@@ -31,7 +31,7 @@ public class HtmlDomDeleteController extends BaseChildController {
         baseTitle = message("DeleteNodes");
     }
 
-    public void setParamters(ControlHtmlEditor editor, TreeItem<HtmlNode> sourceItem) {
+    public void setParamters(BaseHtmlFormat editor, TreeItem<HtmlNode> sourceItem) {
         try {
             this.editor = editor;
             if (invalidTarget()) {
@@ -113,7 +113,7 @@ public class HtmlDomDeleteController extends BaseChildController {
     /*
         static methods
      */
-    public static HtmlDomDeleteController open(ControlHtmlEditor editor, TreeItem<HtmlNode> sourceItem) {
+    public static HtmlDomDeleteController open(BaseHtmlFormat editor, TreeItem<HtmlNode> sourceItem) {
         if (editor == null) {
             return null;
         }

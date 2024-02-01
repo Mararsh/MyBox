@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 import java.util.Arrays;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import mara.mybox.bufferedimage.TransformTools;
 import mara.mybox.dev.MyBoxLog;
@@ -22,6 +23,8 @@ public class ImageRotateBatchController extends BaseImageEditBatchController {
 
     @FXML
     protected ComboBox<String> angleSelector;
+    @FXML
+    protected CheckBox cutCheck;
 
     public ImageRotateBatchController() {
         baseTitle = message("ImageBatch") + " - " + message("Rotate");
@@ -67,7 +70,7 @@ public class ImageRotateBatchController extends BaseImageEditBatchController {
 
     @Override
     protected BufferedImage handleImage(FxTask currentTask, BufferedImage source) {
-        return TransformTools.rotateImage(currentTask, source, rotateAngle);
+        return TransformTools.rotateImage(currentTask, source, rotateAngle, cutCheck.isSelected());
     }
 
 }

@@ -79,7 +79,7 @@ public class Data2DDefinitionEditor extends InfoTreeNodeEditor {
     }
 
     @Override
-    protected InfoNode nodeInfo(InfoNode node) {
+    protected InfoNode pickValue(InfoNode node) {
         if (node == null) {
             return null;
         }

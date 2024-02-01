@@ -75,7 +75,7 @@ public class MathFunctionEditor extends InfoTreeNodeEditor {
     }
 
     @Override
-    protected void editInfo(InfoNode node) {
+    protected void editValue(InfoNode node) {
         if (node != null) {
             isSettingValues = true;
             Map<String, String> values = InfoNode.parseInfo(node);
@@ -89,7 +89,7 @@ public class MathFunctionEditor extends InfoTreeNodeEditor {
     }
 
     @Override
-    protected InfoNode nodeInfo(InfoNode node) {
+    protected InfoNode pickValue(InfoNode node) {
         if (node == null) {
             return null;
         }

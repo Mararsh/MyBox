@@ -188,7 +188,7 @@ public class ImagePasteController extends BaseImageEditController {
             protected boolean handle() {
                 try {
                     if (angle != 0) {
-                        currentClip = TransformTools.rotateImage(this, clipSource, angle);
+                        currentClip = TransformTools.rotateImage(this, clipSource, angle, true);
                         if (task == null || isCancelled()) {
                             return false;
                         }

@@ -172,7 +172,7 @@ public class HtmlWriteTools {
             return null;
         }
         String body = stringToHtml(text);
-        return html(null, body);
+        return html(null, "<BODY>\n<DIV>\n" + body + "\n</DIV>\n</BODY>");
     }
 
     public static String htmlToText(String html) {

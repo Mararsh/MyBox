@@ -69,7 +69,8 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
 
         List<MenuItem> items = new ArrayList<>();
         items.addAll(Arrays.asList(
-                EditImage, imageManufactureMenu(), imageBatchMenu(), svgMenu(), imageOptions, new SeparatorMenuItem(),
+                EditImage, imageManufactureMenu(), imageBatchMenu(), svgMenu(),
+                imageScope, imageOptions, new SeparatorMenuItem(),
                 ManageColors, QueryColor, colorSpaceMenu(), new SeparatorMenuItem(),
                 ImagesInMyBoxClipboard, ImagesInSystemClipboard, miscellaneousMenu()));
 
@@ -334,7 +335,7 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
             loadScene(Fxmls.ImageMarginsBatchFxml);
         });
 
-        Menu imagePixelsMenu = new Menu(message("Pixels"));
+        Menu imagePixelsMenu = new Menu(message("Modify"));
         imagePixelsMenu.getItems().addAll(
                 imageSizeMenu, imageMarginsMenu, imageCropMenu, imageRoundMenu,
                 imageRotateMenu, imageMirrorMenu, imageShearMenu,

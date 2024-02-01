@@ -20,7 +20,7 @@ import org.jsoup.nodes.Element;
  */
 public class HtmlDomCopyController extends BaseChildController {
 
-    protected ControlHtmlEditor editor;
+    protected BaseHtmlFormat editor;
     protected BaseHtmlTreeController manageController;
     protected Element targetElement;
     protected int count;
@@ -39,7 +39,7 @@ public class HtmlDomCopyController extends BaseChildController {
         baseTitle = message("CopyNodes");
     }
 
-    public void setParamters(ControlHtmlEditor editor, TreeItem<HtmlNode> sourceItem) {
+    public void setParamters(BaseHtmlFormat editor, TreeItem<HtmlNode> sourceItem) {
         try {
             this.editor = editor;
             if (invalidTarget()) {
@@ -184,7 +184,7 @@ public class HtmlDomCopyController extends BaseChildController {
     /*
         static methods
      */
-    public static HtmlDomCopyController open(ControlHtmlEditor editor, TreeItem<HtmlNode> sourceItem) {
+    public static HtmlDomCopyController open(BaseHtmlFormat editor, TreeItem<HtmlNode> sourceItem) {
         if (editor == null) {
             return null;
         }

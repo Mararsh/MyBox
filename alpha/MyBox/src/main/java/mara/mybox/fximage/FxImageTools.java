@@ -29,6 +29,8 @@ import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.fximage.FxColorTools.toAwtColor;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.imagefile.ImageFileReaders;
+import mara.mybox.imagefile.ImageFileWriters;
+import mara.mybox.tools.FileTmpTools;
 
 /**
  * @Author Mara
@@ -64,6 +66,23 @@ public class FxImageTools {
             return null;
         }
         return SwingFXUtils.toFXImage(bufferedImage, null);
+    }
+
+    public static File writeImage(FxTask task, Image image) {
+        if (image == null) {
+            return null;
+        }
+        BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
+        if (bufferedImage == null) {
+            return null;
+        }
+        File tmpFile = FileTmpTools.getTempFile(".png");
+        if (ImageFileWriters.writeImageFile(task, bufferedImage, "png", tmpFile.getAbsolutePath())
+                && tmpFile.exists()) {
+            return tmpFile;
+        } else {
+            return null;
+        }
     }
 
     public static byte[] bytes(FxTask task, Image image, String format) {

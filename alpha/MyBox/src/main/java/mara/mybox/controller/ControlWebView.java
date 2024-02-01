@@ -531,7 +531,7 @@ public class ControlWebView extends BaseController {
             }
 
             try {
-                executeScript("document.body.contentEditable=" + UserConfig.getBoolean("WebViewEditable", false));
+                executeScript("document.body.contentEditable=" + UserConfig.getBoolean(baseName + "Editable", false));
             } catch (Exception e) {
             }
             if (null == scrollType) {
@@ -1223,6 +1223,7 @@ public class ControlWebView extends BaseController {
     }
 
     @FXML
+    @Override
     public void showFunctionsMenu(Event fevent) {
         try {
             String html = loadedHtml();
@@ -1454,7 +1455,7 @@ public class ControlWebView extends BaseController {
             }
 
             CheckMenuItem editableMenu = new CheckMenuItem(message("Editable"), StyleTools.getIconImageView("iconEdit.png"));
-            editableMenu.setSelected(UserConfig.getBoolean("WebViewEditable", false));
+            editableMenu.setSelected(UserConfig.getBoolean(baseName + "Editable", false));
             editableMenu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
@@ -1491,6 +1492,7 @@ public class ControlWebView extends BaseController {
     }
 
     @FXML
+    @Override
     public void popFunctionsMenu(Event event) {
         if (UserConfig.getBoolean("WebviewFunctionsPopWhenMouseHovering", true)) {
             showFunctionsMenu(event);
@@ -1498,7 +1500,7 @@ public class ControlWebView extends BaseController {
     }
 
     public void setEditable(boolean e) {
-        UserConfig.setBoolean("WebViewEditable", e);
+        UserConfig.setBoolean(baseName + "Editable", e);
         executeScript("document.body.contentEditable=" + e);
         if (e) {
             alertInformation(message("HtmlEditableComments"));

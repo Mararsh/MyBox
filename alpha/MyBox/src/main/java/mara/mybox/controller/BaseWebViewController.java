@@ -106,7 +106,6 @@ public class BaseWebViewController extends BaseFileController {
             popError(message("InvalidAddress"));
             return;
         }
-        checkSystemMethodButton(file);
         if (webViewController != null) {
             webViewController.setSourceFile(file);
         }
@@ -120,7 +119,6 @@ public class BaseWebViewController extends BaseFileController {
             popError(message("InvalidData"));
             return false;
         }
-        checkSystemMethodButton(file);
         if (webViewController != null) {
             boolean ret = webViewController.loadFile(file);
             if (ret) {
@@ -194,10 +192,7 @@ public class BaseWebViewController extends BaseFileController {
     }
 
     public void updateStageTitle() {
-        if (getMyStage() == null) {
-            return;
-        }
-        myStage.setTitle(title());
+        setTitle(title());
     }
 
     public void setWebViewLabel(String string) {
@@ -229,6 +224,7 @@ public class BaseWebViewController extends BaseFileController {
     }
 
     @FXML
+    @Override
     public void popOperationsMenu(Event event) {
         if (webViewController == null) {
             return;
@@ -237,6 +233,7 @@ public class BaseWebViewController extends BaseFileController {
     }
 
     @FXML
+    @Override
     public void showOperationsMenu(Event event) {
         if (webViewController == null) {
             return;
@@ -245,6 +242,7 @@ public class BaseWebViewController extends BaseFileController {
     }
 
     @FXML
+    @Override
     public void popFunctionsMenu(Event event) {
         if (webViewController == null) {
             return;
@@ -253,6 +251,7 @@ public class BaseWebViewController extends BaseFileController {
     }
 
     @FXML
+    @Override
     public void showFunctionsMenu(Event event) {
         if (webViewController == null) {
             return;
