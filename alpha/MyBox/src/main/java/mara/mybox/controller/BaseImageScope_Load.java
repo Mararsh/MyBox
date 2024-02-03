@@ -262,7 +262,7 @@ public abstract class BaseImageScope_Load extends BaseImageScope_Values {
                     tabPane.getTabs().setAll(areaTab, colorsTab, matchTab);
                     areaBox.getChildren().setAll(rectangleBox, goScopeButton);
                     opPane.getChildren().setAll(shapeButton, pickColorBox,
-                            clearDataWhenLoadImageCheck);
+                            shapeCanMoveCheck, clearDataWhenLoadImageCheck);
                     showMaskRectangle();
                     isSettingValues = true;
                     rectLeftTopXInput.setText(scale(maskRectangleData.getX(), 2) + "");
@@ -277,7 +277,7 @@ public abstract class BaseImageScope_Load extends BaseImageScope_Values {
                     tabPane.getTabs().setAll(areaTab, colorsTab, matchTab);
                     areaBox.getChildren().setAll(circleBox, goScopeButton);
                     opPane.getChildren().setAll(shapeButton, pickColorBox,
-                            clearDataWhenLoadImageCheck);
+                            shapeCanMoveCheck, clearDataWhenLoadImageCheck);
                     showMaskCircle();
                     isSettingValues = true;
                     circleCenterXInput.setText(scale(maskCircleData.getCenterX(), 2) + "");
@@ -290,7 +290,7 @@ public abstract class BaseImageScope_Load extends BaseImageScope_Values {
                     tabPane.getTabs().setAll(areaTab, colorsTab, matchTab);
                     areaBox.getChildren().setAll(rectangleBox, goScopeButton);
                     opPane.getChildren().setAll(shapeButton, pickColorBox,
-                            clearDataWhenLoadImageCheck);
+                            shapeCanMoveCheck, clearDataWhenLoadImageCheck);
                     showMaskEllipse();
                     isSettingValues = true;
                     rectLeftTopXInput.setText(scale(maskEllipseData.getX(), 2) + "");
@@ -305,7 +305,7 @@ public abstract class BaseImageScope_Load extends BaseImageScope_Values {
                     tabPane.getTabs().setAll(areaTab, colorsTab, matchTab);
                     areaBox.getChildren().setAll(pointsBox);
                     opPane.getChildren().setAll(shapeButton, clearButton, withdrawButton,
-                            pickColorBox, addPointCheck, clearDataWhenLoadImageCheck);
+                            pickColorBox, addPointCheck, shapeCanMoveCheck, clearDataWhenLoadImageCheck);
                     VBox.setVgrow(areaBox, Priority.ALWAYS);
                     VBox.setVgrow(pointsBox, Priority.ALWAYS);
                     showMaskPolygon();
@@ -314,7 +314,7 @@ public abstract class BaseImageScope_Load extends BaseImageScope_Values {
                 case Colors:
                     tabPane.getTabs().setAll(colorsTab, matchTab);
                     opPane.getChildren().setAll(clearButton, withdrawButton, pickColorBox,
-                            clearDataWhenLoadImageCheck);
+                            shapeCanMoveCheck, clearDataWhenLoadImageCheck);
                     showLeftPane();
                     break;
 

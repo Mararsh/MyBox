@@ -424,8 +424,8 @@ public abstract class BaseHtmlFormat extends BaseWebViewController {
 
             @Override
             protected void whenSucceeded() {
+                setAddress(file.toURI().toString());
                 sourceFile = file;
-                address = sourceFile.toURI().toString();
                 writePanes(html);
             }
 
@@ -478,8 +478,7 @@ public abstract class BaseHtmlFormat extends BaseWebViewController {
         if (!checkBeforeNextAction()) {
             return false;
         }
-        sourceFile = null;
-        address = null;
+        setAddress(null);
         return writePanes(contents);
     }
 
@@ -495,13 +494,19 @@ public abstract class BaseHtmlFormat extends BaseWebViewController {
     private boolean setAddress(String inAddress) {
         try {
             sourceFile = null;
-            address = UrlTools.checkURL(inAddress, Charset.forName("UTF-8"));
-            if (address != null && address.startsWith("file:/")) {
-                File file = new File(address.substring(6));
-                if (file.exists()) {
-                    sourceFile = file;
+            if (inAddress == null) {
+                address = null;
+            } else {
+                address = UrlTools.checkURL(inAddress, Charset.forName("UTF-8"));
+                if (address != null && address.startsWith("file:/")) {
+                    File file = new File(address.substring(6));
+                    if (file.exists()) {
+                        sourceFile = file;
+                    }
                 }
             }
+            webViewController.sourceFile = sourceFile;
+            webViewController.address = address;
             return true;
         } catch (Exception e) {
             return false;
@@ -918,14 +923,16 @@ public abstract class BaseHtmlFormat extends BaseWebViewController {
     }
 
     @FXML
-    public void popPopMenu(Event event) {
-        if (UserConfig.getBoolean("HtmlFormatPopMenuPopWhenMouseHovering", true)) {
-            showPopMenu(event);
+    @Override
+    public void popViewMenu(Event event) {
+        if (UserConfig.getBoolean("HtmlFormatViewMenuPopWhenMouseHovering", true)) {
+            showViewMenu(event);
         }
     }
 
     @FXML
-    public void showPopMenu(Event event) {
+    @Override
+    public void showViewMenu(Event event) {
         List<MenuItem> items = new ArrayList<>();
         String html = currentHtml();
         if (html == null || html.isBlank()) {
@@ -1002,23 +1009,16 @@ public abstract class BaseHtmlFormat extends BaseWebViewController {
         items.add(new SeparatorMenuItem());
 
         CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
-        hoverMenu.setSelected(UserConfig.getBoolean("HtmlFormatPopMenuPopWhenMouseHovering", true));
+        hoverMenu.setSelected(UserConfig.getBoolean("HtmlFormatViewMenuPopWhenMouseHovering", true));
         hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                UserConfig.setBoolean("HtmlFormatPopMenuPopWhenMouseHovering", hoverMenu.isSelected());
+                UserConfig.setBoolean("HtmlFormatViewMenuPopWhenMouseHovering", hoverMenu.isSelected());
             }
         });
         items.add(hoverMenu);
 
         popEventMenu(event, items);
-    }
-
-    @FXML
-    @Override
-    public boolean popAction() {
-        showPopMenu(null);
-        return true;
     }
 
     @FXML

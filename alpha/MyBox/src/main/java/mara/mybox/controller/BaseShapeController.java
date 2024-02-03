@@ -107,6 +107,20 @@ public class BaseShapeController extends BaseShapeController_MouseEvents {
 
             }
 
+            if (shapeCanMoveCheck != null) {
+                shapeCanMoveCheck.setSelected(UserConfig.getBoolean(baseName + "ShapeCanMove", true));
+                shapeCanMoveCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
+                        shapeCanMove = shapeCanMoveCheck.isSelected();
+                        if (!isSettingValues) {
+                            UserConfig.setBoolean(baseName + "ShapeCanMove", shapeCanMoveCheck.isSelected());
+                        }
+                    }
+                });
+
+            }
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

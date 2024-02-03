@@ -479,6 +479,15 @@ License:    Apache License Version 2.0
                                                 </CheckBox>
                                             </children>
                                         </HBox>
+                              <CheckBox fx:id="shapeCanMoveCheck" mnemonicParsing="false" selected="true">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconMove.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </CheckBox>
                                         <CheckBox fx:id="addPointCheck" mnemonicParsing="false" selected="true">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

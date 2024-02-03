@@ -88,10 +88,10 @@ public class IconTools {
             }
             String iconUrl = "https://" + url.getHost() + "/favicon.ico";
             File actualTarget = downloadIcon(task, iconUrl, targetFile);
-            if (actualTarget == null) {
-                iconUrl = "http://" + url.getHost() + "/favicon.ico";
-                actualTarget = downloadIcon(task, iconUrl, targetFile);
-            }
+//            if (actualTarget == null) {
+//                iconUrl = "http://" + url.getHost() + "/favicon.ico";
+//                actualTarget = downloadIcon(task, iconUrl, targetFile);
+//            }
             return actualTarget;
         } catch (Exception e) {
 //            MyBoxLog.debug(e);
@@ -129,8 +129,11 @@ public class IconTools {
             if (suffix != null && !suffix.isBlank()) {
                 actualTarget = new File(FileNameTools.replaceSuffix(targetFile.getAbsolutePath(), suffix));
             }
-            FileTools.override(iconFile, actualTarget);
-            return actualTarget;
+            if (FileTools.override(iconFile, actualTarget, true) && actualTarget.exists()) {
+                return actualTarget;
+            } else {
+                return null;
+            }
         } catch (Exception e) {
 //            MyBoxLog.debug(e);
             return null;

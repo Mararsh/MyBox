@@ -102,11 +102,11 @@ License:    Apache License Version 2.0
                   </ImageView>
                </graphic>
             </Button>
-            <Button fx:id="popHtmlButton" mnemonicParsing="false" onAction="#showPopMenu" onMouseEntered="#popPopMenu">
+            <Button fx:id="viewHtmlButton" mnemonicParsing="false" onAction="#showViewMenu" onMouseEntered="#popViewMenu">
                <graphic>
                   <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../buttons/Red/iconPop.png" />
+                        <Image url="@../buttons/Red/iconView.png" />
                      </image>
                   </ImageView>
                </graphic>

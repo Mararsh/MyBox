@@ -153,12 +153,12 @@ public abstract class BaseImageScope extends BaseImageScope_Load {
                 }
             });
 
-            clearDataWhenLoadImageCheck.setSelected(UserConfig.getBoolean(baseName + "ClearData", true));
+            clearDataWhenLoadImageCheck.setSelected(UserConfig.getBoolean(baseName + "ClearDataWhenLoadImage", true));
             clearDataWhenLoadImageCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
                     if (!isSettingValues) {
-                        UserConfig.setBoolean(baseName + "ClearData", clearDataWhenLoadImageCheck.isSelected());
+                        UserConfig.setBoolean(baseName + "ClearDataWhenLoadImage", clearDataWhenLoadImageCheck.isSelected());
                     }
                 }
             });
@@ -310,7 +310,7 @@ public abstract class BaseImageScope extends BaseImageScope_Load {
     @Override
     public boolean afterImageLoaded() {
         if (super.afterImageLoaded()) {
-            if (clearDataWhenLoadImageCheck.isSelected()) {
+            if (UserConfig.getBoolean(baseName + "ClearDataWhenLoadImage", true)) {
 
                 pointsController.isSettingValues = true;
                 pointsController.tableData.clear();

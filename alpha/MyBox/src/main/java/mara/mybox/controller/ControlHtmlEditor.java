@@ -35,14 +35,7 @@ public class ControlHtmlEditor extends BaseHtmlFormat {
         if (getMyStage() == null || htmlEditor == null) {
             return;
         }
-        title = htmlEditor.getBaseTitle();
-        if (address != null) {
-            title += " - " + address;
-        }
-        if (htmChanged.get()) {
-            title += " *";
-        }
-        myStage.setTitle(title);
+        htmlEditor.updateStatus(changed);
     }
 
 }

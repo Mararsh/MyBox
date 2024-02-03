@@ -141,7 +141,7 @@ License:    Apache License Version 2.0
                         <VBox spacing="5.0">
                             <children>
                                 <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="%Rotate" VBox.vgrow="ALWAYS" />
-                                <Slider fx:id="angleSlider" blockIncrement="1.0" max="360.0" showTickLabels="true" showTickMarks="true" />
+                                <Slider fx:id="angleSlider" blockIncrement="1.0" max="360.0" min="-360.0" showTickLabels="true" showTickMarks="true" />
                                 <FlowPane hgap="5.0" layoutX="12.0" layoutY="135.0" prefWidth="200.0" vgap="5.0">
                                     <children>
                                         <ComboBox fx:id="angleSelector" editable="true" prefWidth="100.0" />

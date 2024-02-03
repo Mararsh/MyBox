@@ -270,20 +270,27 @@ public abstract class BaseImageScope_Values extends BaseImageScope_Base {
         List<MenuItem> items = new ArrayList<>();
         MenuItem menu;
 
+        items.add(moveShapeMenu());
+
+        CheckMenuItem clearMenuItem = new CheckMenuItem(message("ClearDataWhenLoadImage"), StyleTools.getIconImageView("iconClear.png"));
+        clearMenuItem.setSelected(UserConfig.getBoolean(baseName + "ClearDataWhenLoadImage", true));
+        clearMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent cevent) {
+                if (clearDataWhenLoadImageCheck != null) {
+                    clearDataWhenLoadImageCheck.setSelected(clearMenuItem.isSelected());
+                } else {
+                    UserConfig.setBoolean(baseName + "ClearDataWhenLoadImage", clearMenuItem.isSelected());
+                }
+            }
+        });
+        items.add(clearMenuItem);
+
         if (!canDeleteAnchor()) {
             return null;
         }
 
-        CheckMenuItem pointMenuItem = new CheckMenuItem(message("AddPointWhenLeftClick"), StyleTools.getIconImageView("iconNewItem.png"));
-        pointMenuItem.setSelected(UserConfig.getBoolean(baseName + "AddPointWhenLeftClick", true));
-        pointMenuItem.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent cevent) {
-                UserConfig.setBoolean(baseName + "AddPointWhenLeftClick", pointMenuItem.isSelected());
-                addPointWhenClick = pointMenuItem.isSelected();
-            }
-        });
-        items.add(pointMenuItem);
+        items.add(addPointMenu());
 
         if (p != null) {
             menu = new MenuItem(message("AddPointInShape"), StyleTools.getIconImageView("iconAdd.png"));
@@ -386,7 +393,7 @@ public abstract class BaseImageScope_Values extends BaseImageScope_Base {
     @Override
     protected void stopPickingColor() {
         imageView.setCursor(Cursor.DEFAULT);
-        setShapesCursor(Cursor.MOVE);
+        setShapesCursor(defaultShapeCursor());
     }
 
     public boolean addColor(Color color) {
