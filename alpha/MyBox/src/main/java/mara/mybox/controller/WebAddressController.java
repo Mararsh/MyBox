@@ -126,6 +126,7 @@ public class WebAddressController extends BaseWebViewController {
                                 }
                             }
                         } catch (Exception e) {
+                            MyBoxLog.console(e);
                         }
                     }
                     if (tabImage == null) {

@@ -119,7 +119,6 @@ public class PopTools {
             } catch (Exception e) {
                 MyBoxLog.debug(e);
             }
-            return;
         }
         if (!uri.getScheme().equals("file") || new File(uri.getPath()).isFile()) {
             ControllerTools.openTarget(uri.toString());
