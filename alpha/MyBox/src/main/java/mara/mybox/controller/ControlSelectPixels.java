@@ -24,6 +24,7 @@ public class ControlSelectPixels extends BaseImageScope {
 
             toolbar.getChildren().removeAll(selectFileButton, fileMenuButton);
 
+            needFixSize = true;
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
