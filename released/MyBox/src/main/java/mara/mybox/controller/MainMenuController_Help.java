@@ -93,6 +93,11 @@ public abstract class MainMenuController_Help extends MainMenuController_Develop
     }
 
     @FXML
+    protected void aboutImageScope(ActionEvent event) {
+        openHtml(HelpTools.aboutImageScope());
+    }
+
+    @FXML
     protected void SomeLinks(ActionEvent event) {
         openHtml(HelpTools.usefulLinks(AppVariables.CurrentLangName));
     }

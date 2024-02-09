@@ -6,12 +6,15 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import javafx.application.Platform;
 import mara.mybox.bufferedimage.ImageAttributes;
 import mara.mybox.bufferedimage.ImageConvertTools;
+import mara.mybox.bufferedimage.ImageScope;
+import mara.mybox.bufferedimage.ImageScopeTools;
 import mara.mybox.data.GeoCoordinateSystem;
 import static mara.mybox.data2d.Data2D_Convert.createTable;
 import mara.mybox.data2d.DataTable;
@@ -174,6 +177,9 @@ public class DataMigration {
                 if (lastVersion < 6007008) {
                     updateIn678(conn);
                 }
+                if (lastVersion < 6008000) {
+                    updateIn68(conn);
+                }
 
             }
             TableStringValues.add(conn, "InstalledVersions", AppValues.AppVersion);
@@ -182,6 +188,78 @@ public class DataMigration {
             MyBoxLog.debug(e);
         }
         return true;
+    }
+
+    private static void updateIn68(Connection conn) {
+        try (Statement statement = conn.createStatement()) {
+            MyBoxLog.info("Updating tables in 6.8...");
+
+            conn.setAutoCommit(true);
+            TableTreeNode tableTreeNode = new TableTreeNode();
+            InfoNode rootNode = tableTreeNode.findAndCreateRoot(conn, InfoNode.ImageScope);
+            if (rootNode == null) {
+                return;
+            }
+            long rootid = rootNode.getNodeid(), parentid;
+            ResultSet query = statement.executeQuery("SELECT * FROM image_scope");
+            HashMap<String, Long> parents = new HashMap<>();
+            conn.setAutoCommit(false);
+            while (query.next()) {
+                ImageScope scope = new ImageScope();
+                try {
+                    ImageScope.ScopeType type = ImageScopeTools.scopeType(query.getString("scope_type"));
+                    if (ImageScopeTools.decodeAreaData(type, query.getString("area_data"), scope)
+                            && ImageScopeTools.decodeColorData(type, query.getString("color_data"), scope)
+                            && ImageScopeTools.decodeOutline(null, type, query.getString("outline"), scope)) {
+                        scope.setFile(query.getString("image_location"));
+                        scope.setName(query.getString("name"));
+                        scope.setScopeType(type);
+                        scope.setColorScopeType(ImageScope.ColorScopeType.valueOf(query.getString("color_scope_type")));
+                        scope.setColorDistance(query.getInt("color_distance"));
+                        scope.setHsbDistance((float) query.getDouble("hsb_distance"));
+                        scope.setAreaExcluded(query.getBoolean("area_excluded"));
+                        scope.setColorExcluded(query.getBoolean("color_excluded"));
+                        scope.setCreateTime(query.getTimestamp("create_time"));
+                        scope.setModifyTime(query.getTimestamp("modify_time"));
+                    } else {
+                        continue;
+                    }
+                } catch (Exception e) {
+                    MyBoxLog.console(e);
+                    continue;
+                }
+                String file = scope.getFile();
+                InfoNode scopeNode = new InfoNode()
+                        .setCategory(InfoNode.ImageScope)
+                        .setTitle(scope.getName())
+                        .setInfo(ImageScopeTools.toXML(scope, ""))
+                        .setUpdateTime(scope.getModifyTime());
+                parentid = rootid;
+                if (file != null && !file.isBlank()) {
+                    if (parents.containsKey(file)) {
+                        parentid = parents.get(file);
+                    } else {
+                        InfoNode parentNode = new InfoNode()
+                                .setCategory(InfoNode.ImageScope)
+                                .setParentid(rootid)
+                                .setTitle(file)
+                                .setUpdateTime(scope.getModifyTime());
+                        parentNode = tableTreeNode.insertData(parentNode);
+                        parentid = parentNode.getNodeid();
+                        parents.put(file, parentid);
+                    }
+                }
+                scopeNode.setParentid(parentid);
+                tableTreeNode.insertData(scopeNode);
+            }
+            conn.commit();
+            conn.setAutoCommit(true);
+
+            statement.executeUpdate("DROP TABLE image_scope");
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
     private static void updateIn678(Connection conn) {

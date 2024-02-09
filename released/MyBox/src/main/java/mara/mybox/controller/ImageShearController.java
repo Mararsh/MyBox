@@ -50,7 +50,8 @@ public class ImageShearController extends BaseImageEditController {
         opInfo = message("XRatio") + ":" + shearController.shearX + " "
                 + message("YRatio") + ":" + shearController.shearY;
         handledImage = TransformTools.shearImage(currentTask, imageView.getImage(),
-                shearController.shearX, shearController.shearY);
+                shearController.shearX, shearController.shearY,
+                shearController.cutCheck.isSelected());
     }
 
     @Override

@@ -47,6 +47,7 @@ License:    Apache License Version 2.0
                                                   <children>
                                           <Label text="%RotateAngle" />
                                                       <ComboBox fx:id="angleSelector" editable="true" prefWidth="100.0" />
+                                          <CheckBox fx:id="cutCheck" mnemonicParsing="false" text="%CutMargins" />
                                                   </children>
                                               </FlowPane>
                                               <Button fx:id="previewButton" mnemonicParsing="false" onAction="#previewAction">

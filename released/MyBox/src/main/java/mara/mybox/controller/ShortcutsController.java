@@ -156,6 +156,8 @@ public class ShortcutsController extends BaseTablePagesController<ShortCut> {
             tableData.add(new ShortCut("CTRL", "2", message(lang, "PaneSize"), "ALT+2", "iconPaneSize.png"));
             tableData.add(new ShortCut("CTRL", "3", message(lang, "ZoomIn"), "ALT+3", "iconZoomIn.png"));
             tableData.add(new ShortCut("CTRL", "4", message(lang, "ZoomOut"), "ALT+4", "iconZoomOut.png"));
+            tableData.add(new ShortCut("CTRL", "9", message(lang, "SnapshotWindow"), "ALT+9", "iconSnapshot.png"));
+            tableData.add(new ShortCut("CTRL", "0", message(lang, "AlwayOnTop"), "ALT+0", "iconTop.png"));
             tableData.add(new ShortCut("CTRL", "-", message(lang, "DecreaseFontSize"), "", "iconMinus.png"));
             tableData.add(new ShortCut("CTRL", "=", message(lang, "IncreaseFontSize"), "", "iconPlus.png"));
 

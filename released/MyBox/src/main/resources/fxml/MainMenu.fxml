@@ -23,14 +23,14 @@ License:    Apache License Version 2.0
                                 <MenuItem mnemonicParsing="false" onAction="#showHome" text="%Home" />
                                 <MenuItem mnemonicParsing="false" onAction="#WindowsList" text="%WindowsList" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
-                                <MenuItem mnemonicParsing="false" onAction="#SnapshotWindow" text="%SnapshotWindow" />
+                                <MenuItem mnemonicParsing="false" onAction="#SnapshotWindow" text="%SnapshotWindowComments" />
                                 <MenuItem mnemonicParsing="false" onAction="#SnapshotPane" text="%SnapshotPane" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#refreshInterfaceAndFile" text="%RefreshWindow" />
                                 <MenuItem mnemonicParsing="false" onAction="#reload" text="%Reload" />
                                 <MenuItem mnemonicParsing="false" onAction="#fullScreen" text="%FullScreen" />
                                 <MenuItem mnemonicParsing="false" onAction="#resetWindows" text="%ResetWindows" />
-                                <CheckMenuItem fx:id="alwayOnTopCheck" mnemonicParsing="false" onAction="#AlwayOnTop" text="%AlwayOnTop" />
+                                <CheckMenuItem fx:id="alwayOnTopCheck" mnemonicParsing="false" onAction="#AlwayOnTop" text="%AlwayOnTopComments" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#closeWindow" text="%CloseWindow" />
                                 <MenuItem fx:id="closeOtherMenu" mnemonicParsing="false" onAction="#closeOtherWindows" text="%CloseOtherWindows" />
@@ -230,7 +230,7 @@ License:    Apache License Version 2.0
                                         <MenuItem mnemonicParsing="false" onAction="#ImageToSvg" text="%ImageToSvg" /> 
                                     </items>
                                 </Menu>
-                                <!--<MenuItem mnemonicParsing="false" onAction="#imageScope" text="%ImageScope" />-->
+                                <MenuItem mnemonicParsing="false" onAction="#imageScope" text="%ImageScope" />
                                 <MenuItem mnemonicParsing="false" onAction="#imageOptions" text="%ImageOptions" />
                                 <!--<SeparatorMenuItem mnemonicParsing="false" />-->
                                 <!--<MenuItem mnemonicParsing="false" onAction="#ImageMaterial" text="%ImageMaterial" />-->
@@ -580,6 +580,7 @@ License:    Apache License Version 2.0
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#InterfaceTips" text="%InterfaceTips" />
                                 <MenuItem mnemonicParsing="false" onAction="#aboutTreeInformation" text="%AboutTreeInformation" />
+                                <MenuItem mnemonicParsing="false" onAction="#aboutImageScope" text="%AboutImageScope" />
                                 <MenuItem mnemonicParsing="false" onAction="#AboutData2D" text="%AboutData2D" />
                                 <MenuItem mnemonicParsing="false" onAction="#AboutRowExpression" text="%AboutRowExpression" />
                                 <MenuItem mnemonicParsing="false" onAction="#AboutGroupingRows" text="%AboutGroupingRows" />

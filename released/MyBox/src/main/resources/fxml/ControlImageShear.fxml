@@ -6,6 +6,7 @@ License:    Apache License Version 2.0
             http://www.apache.org/licenses/LICENSE-2.0
 -->
 
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.Image?>
@@ -32,5 +33,6 @@ License:    Apache License Version 2.0
             <ComboBox fx:id="ySelector" editable="true" prefWidth="100.0" />
          </children>
       </FlowPane>
+      <CheckBox fx:id="cutCheck" mnemonicParsing="false" text="%CutMargins" />
     </children>
 </VBox>

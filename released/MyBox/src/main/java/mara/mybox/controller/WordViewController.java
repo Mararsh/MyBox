@@ -6,7 +6,6 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
-import mara.mybox.tools.FileTools;
 import mara.mybox.tools.MicrosoftDocumentTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
@@ -55,10 +54,8 @@ public class WordViewController extends BaseWebViewController {
             @Override
             protected void whenSucceeded() {
                 sourceFile = file;
-                checkSystemMethodButton(sourceFile);
                 getMyStage().setTitle(getBaseTitle() + " " + sourceFile.getAbsolutePath());
                 webViewController.loadFile(htmlFile);
-                fileInfoLabel.setText(FileTools.fileInformation(sourceFile));
             }
 
         };

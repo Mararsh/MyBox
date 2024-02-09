@@ -210,7 +210,7 @@ public class ImagePasteBatchController extends BaseImageEditBatchController {
             return false;
         }
         if (clipSource != null) {
-            clipSource = TransformTools.rotateImage(currentTask, clipSource, rotateAngle);
+            clipSource = TransformTools.rotateImage(currentTask, clipSource, rotateAngle, true);
         }
         return clipSource != null;
     }

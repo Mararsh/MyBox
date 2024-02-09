@@ -228,9 +228,12 @@ public class ImageFileReaders {
             if (readInfo == null) {
                 return null;
             }
+            File file = readInfo.getFile();
+            if (file == null) {
+                return null;
+            }
             ImageFileInformation fileInfo = null;
             ImageInformation imageInfo = null;
-            File file = readInfo.getFile();
             int index = readInfo.getIndex();
             int requiredWidth = (int) readInfo.getRequiredWidth();
             if (task != null) {
@@ -345,7 +348,7 @@ public class ImageFileReaders {
 
     public static BufferedImage readIcon(FxTask task, File srcFile, int index) {
         try {
-            if (srcFile == null) {
+            if (srcFile == null || !srcFile.exists()) {
                 return null;
             }
             List<BufferedImage> frames = ICODecoder.read(srcFile);
@@ -354,10 +357,11 @@ public class ImageFileReaders {
             }
             return frames.get(index >= 0 && index < frames.size() ? index : 0);
         } catch (Exception e) {
+            String ex = e.toString() + ": " + srcFile;
             if (task != null) {
-                task.setError(e.toString());
+                task.setError(ex);
             } else {
-                MyBoxLog.error(e.toString());
+                MyBoxLog.error(ex);
             }
             return null;
         }
@@ -383,6 +387,9 @@ public class ImageFileReaders {
     // call this only when region and scale is not handled when create bufferedImage
     public static BufferedImage adjust(FxTask task, ImageInformation imageInfo, BufferedImage bufferedImage) {
         try {
+            if (imageInfo == null || bufferedImage == null) {
+                return bufferedImage;
+            }
             int requiredWidth = (int) imageInfo.getRequiredWidth();
             int bmWidth = bufferedImage.getWidth();
             int xscale = imageInfo.getXscale();

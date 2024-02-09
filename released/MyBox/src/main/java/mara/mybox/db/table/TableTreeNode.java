@@ -57,7 +57,7 @@ public class TableTreeNode extends BaseTable<InfoNode> {
             = "SELECT * FROM Tree_Node WHERE nodeid=?";
 
     public static final String QueryRoot
-            = "SELECT * FROM Tree_Node WHERE category=? ORDER BY nodeid ASC";
+            = "SELECT * FROM Tree_Node WHERE category=? AND nodeid=parentid ORDER BY nodeid ASC";
 
     public static final String QueryChildren
             = "SELECT * FROM Tree_Node WHERE parentid=? AND nodeid<>parentid  ORDER BY nodeid ASC";

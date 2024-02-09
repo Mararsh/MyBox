@@ -7,13 +7,14 @@ This is compute application to provide simple and easy functions. It's free and 
 2024-2-9 v6.8                
        
 * Improve:                                     
-     - New shortcut CTRL/ALT+0: set/disable "Always on top". not work for popup window.                                                                                                           
-     - New shortcut CTRL/ALT+9: Snapshot window.                                                                                                           
+     - New shortcut CTRL/ALT+0: set/disable "Always on top". Not work for popup window.                                                                                                           
+     - New shortcut CTRL/ALT+9: Snapshot current window.                                                                                                           
      - Save and manage "Image Scope" in tree.                                                                                                           
      - Simplify interface of editing html.                               
 * Solved problems:                                   
      - Manage colors: "Copy colors" fails to work.                                                                                                           
      - Edit html: Contents are lost when switch from "texts" mode.        
+     - Button "play" does not work in interface of "View PPT".        
 
 Happy Chinese Loong Year!                                                                                                                
                                               
@@ -32,7 +33,7 @@ Without enough testings, MyBox has low reliability and bad stability. When use M
 ## Source Codes          
 | Download | Size | Developement Guide | Packing Steps |           
 | --- | --- | --- | --- | 
-| [MyBox-src.zip](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-src.zip)  |  75M- | [pdf](https://mara-mybox.sourceforge.io/guide/MyBox-DevGuide-en.pdf) | [html](https://mara-mybox.sourceforge.io/pack_steps_en.html) |
+| [MyBox-src.zip](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-src.zip)  |  80M- | [pdf](https://mara-mybox.sourceforge.io/guide/MyBox-DevGuide-en.pdf) | [html](https://mara-mybox.sourceforge.io/pack_steps_en.html) |
            
 ## Self-contain packages
 Self-contain packages include all files and need not java env nor installation.      
@@ -220,7 +221,7 @@ MyBox is based on following open sources:
 | XZ for Java                         | archive/compress                | <https://tukaani.org/xz/java.html>                                                                                                                                                                                                  |
 | ffmpeg                              | convert/create medias           | [http://ffmpeg.org](http://ffmpeg.org/)                                                                                                                                                                                             |
 | image4j                             | ico format                      | <https://github.com/imcdonagh/image4j>                                                                                                                                                                                              |
-| AutoCommitCell                      | Submit updates                  | <https://stackoverflow.com/questions/24694616>[（Ogmios](https://stackoverflow.com/questions/24694616)[）](https://stackoverflow.com/questions/24694616)                                                                              |
+| AutoCommitCell                      | Submit updates                  | <https://stackoverflow.com/questions/24694616>[(Ogmios](https://stackoverflow.com/questions/24694616)[)](https://stackoverflow.com/questions/24694616)                                                                              |
 | GaoDe                               | Map                             | <https://lbs.amap.com/api/javascript-api/summary>                                                                                                                                                                                   |
 | GaoDe                               | Coordinate                      | <https://lbs.amap.com/api/webservice/guide/api/georegeo>                                                                                                                                                                            |
 | WeiBo                               | Image materials                 | <https://weibo.com/3876734080/InmB1aPiL?type=comment#_rnd1582211299665>                                                                                                                                                             |

@@ -681,7 +681,7 @@ public class ImagesBrowserController extends ControlImagesTable {
                         if (bufferedImage == null || task == null || !isWorking()) {
                             continue;
                         }
-                        bufferedImage = TransformTools.rotateImage(this, bufferedImage, rotateAngle);
+                        bufferedImage = TransformTools.rotateImage(this, bufferedImage, rotateAngle, true);
                         if (bufferedImage == null || task == null || !isWorking()) {
                             continue;
                         }

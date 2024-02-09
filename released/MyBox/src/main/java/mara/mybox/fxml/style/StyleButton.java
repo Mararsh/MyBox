@@ -56,8 +56,8 @@ public class StyleButton {
                     return new StyleData(id, message("SaveAsTiff"), "", "iconTIF.png");
                 case "savePdfButton":
                     return new StyleData(id, message("SaveAsPDF"), "", "iconPDF.png");
-                case "savedScopesButton":
-                    return new StyleData(id, message("SavedScopes"), "", "iconBackup.png");
+                case "saveScopeButton":
+                    return new StyleData(id, message("SaveScope"), "", "iconSave.png");
                 default:
                     return new StyleData(id, message("Save"), "", "iconSave.png");
             }
@@ -773,10 +773,10 @@ public class StyleButton {
             }
         }
         if (id.startsWith("onTop")) {
-            return new StyleData(id, message("AlwayOnTop"), "", "iconDoubleUp.png");
+            return new StyleData(id, message("AlwayOnTop"), "", "iconTop.png");
         }
         if (id.startsWith("disableOnTop")) {
-            return new StyleData(id, message("DisableAlwayOnTop"), "", "iconDown.png");
+            return new StyleData(id, message("DisableAlwayOnTop"), "", "iconTopDisable.png");
         }
 
         return null;

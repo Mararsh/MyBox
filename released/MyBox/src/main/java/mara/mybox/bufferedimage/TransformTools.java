@@ -15,7 +15,8 @@ import mara.mybox.value.Colors;
  */
 public class TransformTools {
 
-    public static BufferedImage rotateImage(FxTask task, BufferedImage source, int inAngle) {
+    public static BufferedImage rotateImage(FxTask task, BufferedImage source,
+            int inAngle, boolean cutMargins) {
         int angle = inAngle % 360;
         if (angle == 0) {
             return source;
@@ -48,11 +49,14 @@ public class TransformTools {
         }
         g.drawImage(source, null, null);
         g.dispose();
-        target = MarginTools.cutMarginsByColor(task, target, bgColor, true, true, true, true);
+        if (cutMargins) {
+            target = MarginTools.cutMarginsByColor(task, target, bgColor, true, true, true, true);
+        }
         return target;
     }
 
-    public static BufferedImage shearImage(FxTask task, BufferedImage source, float shearX, float shearY) {
+    public static BufferedImage shearImage(FxTask task, BufferedImage source,
+            float shearX, float shearY, boolean cutMargins) {
         try {
             int width = source.getWidth();
             int height = source.getHeight();
@@ -84,7 +88,9 @@ public class TransformTools {
                 return null;
             }
             g.dispose();
-            target = MarginTools.cutMarginsByColor(task, target, bgColor, true, true, true, true);
+            if (cutMargins) {
+                target = MarginTools.cutMarginsByColor(task, target, bgColor, true, true, true, true);
+            }
             return target;
         } catch (Exception e) {
             MyBoxLog.error(e);

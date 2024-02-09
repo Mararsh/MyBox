@@ -18,6 +18,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
@@ -52,6 +53,8 @@ public abstract class BaseFileImagesController extends BaseFileController {
     protected Label pageLabel;
     @FXML
     protected ControlImageView imageController;
+    @FXML
+    protected FlowPane playPane;
 
     @Override
     public void setFileType() {
@@ -64,6 +67,8 @@ public abstract class BaseFileImagesController extends BaseFileController {
             super.initControls();
 
             initImageView();
+
+            playPane.disableProperty().bind(imageController.imageView.imageProperty().isNull());
 
             if (pageSelector != null) {
                 pageSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -254,7 +259,6 @@ public abstract class BaseFileImagesController extends BaseFileController {
     @Override
     public void setSourceFile(File file) {
         sourceFile = file;
-        checkSystemMethodButton(file);
         if (imageView != null) {
             imageView.setImage(null);
             imageView.setTranslateX(0);

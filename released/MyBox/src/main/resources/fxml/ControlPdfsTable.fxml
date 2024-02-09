@@ -118,7 +118,7 @@ License:    Apache License Version 2.0
                <graphic>
                   <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../buttons/red/iconInput.png" />
+                        <Image url="@../buttons/Red/iconInput.png" />
                      </image>
                   </ImageView>
                </graphic>

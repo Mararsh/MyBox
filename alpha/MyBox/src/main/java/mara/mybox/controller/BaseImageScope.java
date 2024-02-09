@@ -309,6 +309,7 @@ public abstract class BaseImageScope extends BaseImageScope_Load {
 
     @Override
     public boolean afterImageLoaded() {
+        boolean firstView = needFixSize;
         if (super.afterImageLoaded()) {
             if (UserConfig.getBoolean(baseName + "ClearDataWhenLoadImage", true)) {
 
@@ -327,7 +328,8 @@ public abstract class BaseImageScope extends BaseImageScope_Load {
                 outlinesList.getSelectionModel().clearSelection();
             }
 
-            imageLoaded();
+            needFixSize = firstView;
+            pickScope();
             return true;
         } else {
             return false;
@@ -340,10 +342,6 @@ public abstract class BaseImageScope extends BaseImageScope_Load {
             paneSize();
             needFixSize = false;
         }
-    }
-
-    public void imageLoaded() {
-        pickScope();
     }
 
     @FXML

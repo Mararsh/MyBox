@@ -9,13 +9,13 @@
                                
 * 改进：                                     
      - 新增快捷键CTRL/ALT+0：设置/解除“总是在上面”，对弹出窗口无效。                                                                                                           
-     - 新增快捷键CTRL/ALT+9：截图窗口。                                                                                                           
+     - 新增快捷键CTRL/ALT+9：截图当前窗口。                                                                                                           
      - 以树形保存和管理“图片的范围”。                                                                                                           
      - 简化编辑网页的界面。                                                                                                          
 * 解决问题：                                     
      - 管理颜色：复制颜色失效了。                                                                                                           
      - 编辑网页：从文本模式切换时内容丢失了。                                                                                                                                                                                                              
-     - 播放PPT失效了。                                                                                                                                                                                                              
+     - 在查看PPT界面中“播放”按钮失效了。                                                                                                                                                                                                              
                                                                                                            
 中国龙年快乐！ 
                                                                                                        
@@ -35,7 +35,7 @@ MyBox未经足够测试，可靠性低、稳定性差。使用MyBox，可能出�
 ## 源码
 | 下载 | 大小 | 开发指南 | 打包步骤 |           
 | --- | --- | --- | --- | 
-| [MyBox-src.zip](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-src.zip)   |  75M-  | [pdf](https://mara-mybox.sourceforge.io/guide/MyBox-DevGuide-zh.pdf) | [html](https://mara-mybox.sourceforge.io/pack_steps_zh.html) |
+| [MyBox-src.zip](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-src.zip)   |  80M-  | [pdf](https://mara-mybox.sourceforge.io/guide/MyBox-DevGuide-zh.pdf) | [html](https://mara-mybox.sourceforge.io/pack_steps_zh.html) |
            
 ## 自包含程序包
 自包含的程序包无需java环境、无需安装、解包可用。     

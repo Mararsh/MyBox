@@ -14,7 +14,6 @@ import java.util.Locale;
 import mara.mybox.controller.MyBoxLoadingController;
 import mara.mybox.db.data.GeographyCodeTools;
 import mara.mybox.db.table.TableAlarmClock;
-import mara.mybox.db.table.TableBlobValue;
 import mara.mybox.db.table.TableColor;
 import mara.mybox.db.table.TableColorPalette;
 import mara.mybox.db.table.TableColorPaletteName;
@@ -28,7 +27,6 @@ import mara.mybox.db.table.TableFloatMatrix;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.db.table.TableImageClipboard;
 import mara.mybox.db.table.TableImageEditHistory;
-import mara.mybox.db.table.TableImageScope;
 import mara.mybox.db.table.TableMedia;
 import mara.mybox.db.table.TableMediaList;
 import mara.mybox.db.table.TableMyBoxLog;
@@ -441,10 +439,6 @@ public class DerbyBase {
                 new TableStringValues().createTable(conn);
                 loadingController.info("String_Values");
             }
-            if (!tables.contains("image_scope".toLowerCase())) {
-                new TableImageScope().createTable(conn);
-                loadingController.info("image_scope");
-            }
             if (!tables.contains("Alarm_Clock".toLowerCase())) {
                 new TableAlarmClock().createTable(conn);
                 loadingController.info("Alarm_Clock");
@@ -521,10 +515,6 @@ public class DerbyBase {
             if (!tables.contains("Data2D_Cell".toLowerCase())) {
                 new TableData2DCell().createTable(conn);
                 loadingController.info("Data2D_Cell");
-            }
-            if (!tables.contains("Blob_Value".toLowerCase())) {
-                new TableBlobValue().createTable(conn);
-                loadingController.info("Blob_Value");
             }
             if (!tables.contains("Named_Values".toLowerCase())) {
                 new TableNamedValues().createTable(conn);

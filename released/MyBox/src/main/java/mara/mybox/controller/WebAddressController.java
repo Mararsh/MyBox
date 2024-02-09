@@ -81,17 +81,15 @@ public class WebAddressController extends BaseWebViewController {
     @Override
     public void addressChanged() {
         if (addressInput != null) {
-            Platform.runLater(() -> {
-                addressInput.setStyle(null);
-                String address;
-                if (webViewController != null) {
-                    address = webViewController.address;
-                    addressInput.setText(address);
-                } else {
-                    address = addressInput.getText();
-                }
-                writeHis(address);
-            });
+            addressInput.setStyle(null);
+            String address;
+            if (webViewController != null) {
+                address = webViewController.address;
+                addressInput.setText(address);
+            } else {
+                address = addressInput.getText();
+            }
+            writeHis(address);
         }
     }
 
@@ -128,6 +126,7 @@ public class WebAddressController extends BaseWebViewController {
                                 }
                             }
                         } catch (Exception e) {
+                            MyBoxLog.console(e);
                         }
                     }
                     if (tabImage == null) {

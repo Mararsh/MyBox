@@ -17,7 +17,7 @@ import org.jsoup.nodes.Element;
  */
 public class HtmlDomAddController extends BaseChildController {
 
-    protected ControlHtmlEditor editor;
+    protected BaseHtmlFormat editor;
     protected TreeItem<HtmlNode> targetItem;
 
     @FXML
@@ -29,7 +29,7 @@ public class HtmlDomAddController extends BaseChildController {
         baseTitle = message("AddNode");
     }
 
-    public void setParamters(ControlHtmlEditor editor, TreeItem<HtmlNode> targetItem) {
+    public void setParamters(BaseHtmlFormat editor, TreeItem<HtmlNode> targetItem) {
         try {
             if (targetItem == null) {
                 popError(message("SelectToHandle"));
@@ -76,7 +76,7 @@ public class HtmlDomAddController extends BaseChildController {
     /*
         static methods
      */
-    public static HtmlDomAddController open(ControlHtmlEditor editor, TreeItem<HtmlNode> targetItem) {
+    public static HtmlDomAddController open(BaseHtmlFormat editor, TreeItem<HtmlNode> targetItem) {
         if (editor == null) {
             return null;
         }

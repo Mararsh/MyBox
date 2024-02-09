@@ -15,7 +15,6 @@ import mara.mybox.db.table.TableColorPalette;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -111,15 +110,20 @@ public class ColorCopyController extends BaseChildController {
             popError(message("SelectColorsCopy"));
             return;
         }
-        if (task != null && !task.isQuit()) {
-            return;
+        if (task != null) {
+            task.cancel();
         }
         task = new FxSingletonTask<Void>(this) {
             private int count;
 
             @Override
             protected boolean handle() {
-                List<ColorPalette> cpList = tableColorPalette.write(palette.getCpnid(), selectedColors, false, false);
+                List<ColorData> colorsList = new ArrayList<>();
+                for (ColorData color : selectedColors) {
+                    colorsList.add(color.cloneValues());
+                }
+                List<ColorPalette> cpList = tableColorPalette.write(palette.getCpnid(),
+                        colorsList, false, false);
                 if (cpList == null) {
                     return false;
                 }
@@ -139,8 +143,8 @@ public class ColorCopyController extends BaseChildController {
         if (colors == null || palette == null) {
             return;
         }
-        if (task != null && !task.isQuit()) {
-            return;
+        if (task != null) {
+            task.cancel();
         }
         task = new FxSingletonTask<Void>(this) {
 
@@ -154,12 +158,12 @@ public class ColorCopyController extends BaseChildController {
                 }
                 try (Connection conn = DerbyBase.getConnection()) {
                     List<ColorPalette> cpList
-                            = tableColorPalette.write(conn, palette.getCpnid(), colorsList, false, false);
+                            = tableColorPalette.write(conn,
+                                    palette.getCpnid(), colorsList, false, false);
                     if (cpList == null) {
                         return false;
                     }
                     count = cpList.size();
-                    UserConfig.setString(baseName + "Palette", palette.getName());
                 } catch (Exception e) {
                     error = e.toString();
                     return false;

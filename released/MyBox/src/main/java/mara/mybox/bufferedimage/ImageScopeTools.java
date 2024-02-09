@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import javafx.scene.image.Image;
 import mara.mybox.bufferedimage.ImageScope.ColorScopeType;
 import mara.mybox.bufferedimage.ImageScope.ScopeType;
 import mara.mybox.controller.BaseController;
@@ -16,10 +17,12 @@ import mara.mybox.data.DoubleEllipse;
 import mara.mybox.data.DoublePolygon;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.data.DoubleShape;
+import mara.mybox.data.ImageItem;
 import mara.mybox.data.IntPoint;
 import mara.mybox.data.StringTable;
-import mara.mybox.db.table.TableImageScope;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fximage.FxImageTools;
+import mara.mybox.fximage.ScopeTools;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.imagefile.ImageFileWriters;
@@ -87,10 +90,10 @@ public class ImageScopeTools {
                 ncolors.addAll(sourceScope.getColors());
             }
             targetScope.setColors(ncolors);
-            targetScope.setRectangle(sourceScope.getRectangle().copy());
-            targetScope.setCircle(sourceScope.getCircle().copy());
-            targetScope.setEllipse(sourceScope.getEllipse().copy());
-            targetScope.setPolygon(sourceScope.getPolygon().copy());
+            targetScope.setRectangle(sourceScope.getRectangle() != null ? sourceScope.getRectangle().copy() : null);
+            targetScope.setCircle(sourceScope.getCircle() != null ? sourceScope.getCircle().copy() : null);
+            targetScope.setEllipse(sourceScope.getEllipse() != null ? sourceScope.getEllipse().copy() : null);
+            targetScope.setPolygon(sourceScope.getPolygon() != null ? sourceScope.getPolygon().copy() : null);
             targetScope.setColorDistance(sourceScope.getColorDistance());
             targetScope.setColorDistanceSquare(sourceScope.getColorDistanceSquare());
             targetScope.setHsbDistance(sourceScope.getHsbDistance());
@@ -517,7 +520,7 @@ public class ImageScopeTools {
         }
     }
 
-    public static String toHtml(ImageScope scope) {
+    public static String toHtml(FxTask task, ImageScope scope) {
         try {
             if (scope == null || scope.getScopeType() == null) {
                 return null;
@@ -525,6 +528,26 @@ public class ImageScopeTools {
             ScopeType type = scope.getScopeType();
             if (type == null) {
                 return null;
+            }
+            String html = "";
+            try {
+                File file = null;
+                if (scope.getFile() != null) {
+                    file = new File(scope.getFile());
+                }
+                if (file == null || !file.exists()) {
+                    file = ImageItem.exampleImageFile();
+                }
+                Image image = FxImageTools.readImage(task, file);
+                image = ScopeTools.maskScope(task, image, scope, false, true);
+                if (image != null) {
+                    File imgFile = FxImageTools.writeImage(task, image);
+                    if (imgFile != null) {
+                        html = "<P align=\"center\"><Img src='"
+                                + imgFile.toURI().toString() + "' width=500></P><BR>";
+                    }
+                }
+            } catch (Exception e) {
             }
             StringTable htmlTable = new StringTable();
             List<String> row = new ArrayList<>();
@@ -583,7 +606,7 @@ public class ImageScopeTools {
             row = new ArrayList<>();
             row.addAll(Arrays.asList(message("ModifyTime"), DateTools.dateToString(scope.getModifyTime())));
             htmlTable.add(row);
-            return htmlTable.div();
+            return html + htmlTable.div();
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;
@@ -613,7 +636,7 @@ public class ImageScopeTools {
                 case Polygon: {
                     List<Color> colors = new ArrayList<>();
                     if (!colorData.isBlank()) {
-                        String[] items = colorData.split(TableImageScope.DataSeparator);
+                        String[] items = colorData.split(ImageScope.ValueSeparator);
                         for (String item : items) {
                             try {
                                 colors.add(new Color(Integer.parseInt(item), true));
@@ -678,10 +701,10 @@ public class ImageScopeTools {
                     List<Color> colors = scope.getColors();
                     if (colors != null) {
                         for (Color color : colors) {
-                            s += color.getRGB() + TableImageScope.DataSeparator;
+                            s += color.getRGB() + ImageScope.ValueSeparator;
                         }
-                        if (s.endsWith(TableImageScope.DataSeparator)) {
-                            s = s.substring(0, s.length() - TableImageScope.DataSeparator.length());
+                        if (s.endsWith(ImageScope.ValueSeparator)) {
+                            s = s.substring(0, s.length() - ImageScope.ValueSeparator.length());
                         }
                     }
             }
@@ -697,7 +720,6 @@ public class ImageScopeTools {
         if (scope == null || scope.getScopeType() == null) {
             return "";
         }
-        MyBoxLog.console(scope.getScopeType());
         String s = "";
         try {
             switch (scope.getScopeType()) {
@@ -705,10 +727,10 @@ public class ImageScopeTools {
                     List<IntPoint> points = scope.getPoints();
                     if (points != null) {
                         for (IntPoint p : points) {
-                            s += p.getX() + TableImageScope.DataSeparator + p.getY() + TableImageScope.DataSeparator;
+                            s += p.getX() + ImageScope.ValueSeparator + p.getY() + ImageScope.ValueSeparator;
                         }
-                        if (s.endsWith(TableImageScope.DataSeparator)) {
-                            s = s.substring(0, s.length() - TableImageScope.DataSeparator.length());
+                        if (s.endsWith(ImageScope.ValueSeparator)) {
+                            s = s.substring(0, s.length() - ImageScope.ValueSeparator.length());
                         }
                     }
                 }
@@ -717,34 +739,33 @@ public class ImageScopeTools {
                 case Outline:
                     DoubleRectangle rect = scope.getRectangle();
                     if (rect != null) {
-                        s = (int) rect.getX() + TableImageScope.DataSeparator + (int) rect.getY() + TableImageScope.DataSeparator + (int) rect.getMaxX() + TableImageScope.DataSeparator + (int) rect.getMaxY();
+                        s = (int) rect.getX() + ImageScope.ValueSeparator + (int) rect.getY() + ImageScope.ValueSeparator + (int) rect.getMaxX() + ImageScope.ValueSeparator + (int) rect.getMaxY();
                     }
                     break;
                 case Circle:
                     DoubleCircle circle = scope.getCircle();
                     if (circle != null) {
-                        s = (int) circle.getCenterX() + TableImageScope.DataSeparator + (int) circle.getCenterY() + TableImageScope.DataSeparator + (int) circle.getRadius();
+                        s = (int) circle.getCenterX() + ImageScope.ValueSeparator + (int) circle.getCenterY() + ImageScope.ValueSeparator + (int) circle.getRadius();
                     }
                     break;
                 case Ellipse:
                     DoubleEllipse ellipse = scope.getEllipse();
                     if (ellipse != null) {
-                        s = (int) ellipse.getX() + TableImageScope.DataSeparator + (int) ellipse.getY() + TableImageScope.DataSeparator + (int) ellipse.getMaxX() + TableImageScope.DataSeparator + (int) ellipse.getMaxY();
+                        s = (int) ellipse.getX() + ImageScope.ValueSeparator + (int) ellipse.getY() + ImageScope.ValueSeparator + (int) ellipse.getMaxX() + ImageScope.ValueSeparator + (int) ellipse.getMaxY();
                     }
                     break;
                 case Polygon:
                     DoublePolygon polygon = scope.getPolygon();
                     if (polygon != null) {
                         for (Double d : polygon.getData()) {
-                            s += Math.round(d) + TableImageScope.DataSeparator;
+                            s += Math.round(d) + ImageScope.ValueSeparator;
                         }
-                        if (s.endsWith(TableImageScope.DataSeparator)) {
-                            s = s.substring(0, s.length() - TableImageScope.DataSeparator.length());
+                        if (s.endsWith(ImageScope.ValueSeparator)) {
+                            s = s.substring(0, s.length() - ImageScope.ValueSeparator.length());
                         }
                     }
                     break;
             }
-            MyBoxLog.console(s);
             scope.setAreaData(s);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -767,7 +788,7 @@ public class ImageScopeTools {
         try {
             switch (type) {
                 case Matting: {
-                    String[] items = areaData.split(TableImageScope.DataSeparator);
+                    String[] items = areaData.split(ImageScope.ValueSeparator);
                     for (int i = 0; i < items.length / 2; ++i) {
                         int x = (int) Double.parseDouble(items[i * 2]);
                         int y = (int) Double.parseDouble(items[i * 2 + 1]);
@@ -777,22 +798,20 @@ public class ImageScopeTools {
                 break;
                 case Rectangle:
                 case Outline: {
-                    MyBoxLog.console(areaData);
-                    String[] items = areaData.split(TableImageScope.DataSeparator);
+                    String[] items = areaData.split(ImageScope.ValueSeparator);
                     if (items.length == 4) {
                         DoubleRectangle rect = DoubleRectangle.xy12(Double.parseDouble(items[0]),
                                 Double.parseDouble(items[1]),
                                 Double.parseDouble(items[2]),
                                 Double.parseDouble(items[3]));
                         scope.setRectangle(rect);
-                        MyBoxLog.console(rect.elementAbs());
                     } else {
                         return false;
                     }
                 }
                 break;
                 case Circle: {
-                    String[] items = areaData.split(TableImageScope.DataSeparator);
+                    String[] items = areaData.split(ImageScope.ValueSeparator);
                     if (items.length == 3) {
                         DoubleCircle circle = new DoubleCircle(Double.parseDouble(items[0]),
                                 Double.parseDouble(items[1]),
@@ -804,7 +823,7 @@ public class ImageScopeTools {
                 }
                 break;
                 case Ellipse: {
-                    String[] items = areaData.split(TableImageScope.DataSeparator);
+                    String[] items = areaData.split(ImageScope.ValueSeparator);
                     if (items.length == 4) {
                         DoubleEllipse ellipse = DoubleEllipse.xy12(Double.parseDouble(items[0]),
                                 Double.parseDouble(items[1]),
@@ -817,7 +836,7 @@ public class ImageScopeTools {
                 }
                 break;
                 case Polygon: {
-                    String[] items = areaData.split(TableImageScope.DataSeparator);
+                    String[] items = areaData.split(ImageScope.ValueSeparator);
                     DoublePolygon polygon = new DoublePolygon();
                     for (int i = 0; i < items.length / 2; ++i) {
                         int x = (int) Double.parseDouble(items[i * 2]);

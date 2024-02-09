@@ -4,6 +4,7 @@ import java.util.Arrays;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Slider;
 import mara.mybox.dev.MyBoxLog;
@@ -25,6 +26,8 @@ public class ImageRotateController extends BaseImageEditController {
     protected ComboBox<String> angleSelector;
     @FXML
     protected Slider angleSlider;
+    @FXML
+    protected CheckBox cutCheck;
 
     public ImageRotateController() {
         baseTitle = message("Rotate");
@@ -100,7 +103,8 @@ public class ImageRotateController extends BaseImageEditController {
     protected void handleImage(FxTask currentTask) {
         UserConfig.setInt(baseName + "RotateAngle", currentAngle);
         opInfo = currentAngle + "";
-        handledImage = TransformTools.rotateImage(currentTask, currentImage(), currentAngle);
+        handledImage = TransformTools.rotateImage(currentTask, currentImage(),
+                currentAngle, cutCheck.isSelected());
     }
 
     /*

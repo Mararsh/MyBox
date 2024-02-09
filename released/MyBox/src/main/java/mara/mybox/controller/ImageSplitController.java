@@ -8,7 +8,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
@@ -604,7 +603,7 @@ public class ImageSplitController extends BaseShapeController {
         line.setLayoutX(imageView.getLayoutX());
         line.setLayoutY(imageView.getLayoutY());
         maskPane.getChildren().add(line);
-        line.setCursor(Cursor.MOVE);
+        line.setCursor(defaultShapeCursor());
         line.setOnMousePressed(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {

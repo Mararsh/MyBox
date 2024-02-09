@@ -317,7 +317,7 @@ License:    Apache License Version 2.0
                                                          <graphic>
                                                             <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                                <image>
-                                                                  <Image url="@../buttons/red/iconWrap.png" />
+                                                                  <Image url="@../buttons/Red/iconWrap.png" />
                                                                </image>
                                                             </ImageView>
                                                          </graphic>

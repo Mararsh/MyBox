@@ -2,6 +2,7 @@ package mara.mybox.controller;
 
 import java.io.File;
 import java.nio.charset.Charset;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.Event;
@@ -32,7 +33,7 @@ public class InfoTreeNodeEditor extends BaseController {
 
     protected InfoTreeManageController manager;
     protected String defaultExt;
-    protected boolean nodeChanged;
+    protected final SimpleBooleanProperty nodeChanged;
 
     @FXML
     protected Tab attributesTab, valueTab;
@@ -47,6 +48,7 @@ public class InfoTreeNodeEditor extends BaseController {
 
     public InfoTreeNodeEditor() {
         defaultExt = "txt";
+        nodeChanged = new SimpleBooleanProperty(false);
     }
 
     @Override
@@ -102,7 +104,7 @@ public class InfoTreeNodeEditor extends BaseController {
     protected boolean editNode(InfoNode node) {
         updateEditorTitle(node);
         attributesController.editNode(node);
-        editInfo(node);
+        editValue(node);
         showEditorPane();
         nodeChanged(false);
         return true;
@@ -117,7 +119,7 @@ public class InfoTreeNodeEditor extends BaseController {
         }
     }
 
-    protected void editInfo(InfoNode node) {
+    protected void editValue(InfoNode node) {
         if (valueInput == null) {
             return;
         }
@@ -138,10 +140,10 @@ public class InfoTreeNodeEditor extends BaseController {
         InfoNode node = InfoNode.create()
                 .setCategory(manager.category)
                 .setTitle(title);
-        return nodeInfo(node);
+        return pickValue(node);
     }
 
-    protected InfoNode nodeInfo(InfoNode node) {
+    protected InfoNode pickValue(InfoNode node) {
         if (node == null) {
             return null;
         }
@@ -188,7 +190,7 @@ public class InfoTreeNodeEditor extends BaseController {
         if (isSettingValues) {
             return;
         }
-        this.nodeChanged = changed;
+        nodeChanged.set(changed);
         if (!changed) {
             if (valueTab != null) {
                 valueTab.setText(manager.valueMsg);
@@ -279,7 +281,7 @@ public class InfoTreeNodeEditor extends BaseController {
             }
 
         };
-        start(task);
+        start(task, thisPane);
     }
 
     public void pasteNode(InfoNode node) {

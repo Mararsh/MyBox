@@ -4,11 +4,16 @@ import javafx.event.EventTarget;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextInputControl;
 import javafx.scene.input.KeyCode;
+import static javafx.scene.input.KeyCode.DIGIT1;
+import static javafx.scene.input.KeyCode.DIGIT3;
+import static javafx.scene.input.KeyCode.DIGIT4;
+import static javafx.scene.input.KeyCode.DIGIT5;
 import javafx.scene.input.KeyEvent;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -227,6 +232,9 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
                 setSceneFontSize(AppVariables.sceneFontSize + 1);
                 return true;
 
+            case DIGIT0:
+                return controlAlt0();
+
             case DIGIT1:
                 return controlAlt1();
 
@@ -241,6 +249,18 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
 
             case DIGIT5:
                 return controlAlt5();
+
+            case DIGIT6:
+                return controlAlt6();
+
+            case DIGIT7:
+                return controlAlt7();
+
+            case DIGIT8:
+                return controlAlt8();
+
+            case DIGIT9:
+                return controlAlt9();
 
         }
         return false;
@@ -488,9 +508,8 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
     public boolean controlAltW() {
         if (withdrawButton != null) {
             if (!withdrawButton.isDisabled() && withdrawButton.isVisible()) {
-                withdrawAction();
+                return withdrawAction();
             }
-            return true;
         }
         return false;
     }
@@ -537,6 +556,19 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
         return false;
     }
 
+    public boolean controlAlt0() {
+        if (isPopup()) {
+            return false;
+        }
+        myStage = getMyStage();
+        if (myStage != null && myStage.isShowing()) {
+            myStage.setAlwaysOnTop(!myStage.isAlwaysOnTop());
+            popInformation(myStage.isAlwaysOnTop() ? message("AlwayOnTop") : message("DisableAlwayOnTop"));
+            return true;
+        }
+        return false;
+    }
+
     public boolean controlAlt1() {
         return false;
     }
@@ -554,6 +586,26 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
     }
 
     public boolean controlAlt5() {
+        return false;
+    }
+
+    public boolean controlAlt6() {
+        return false;
+    }
+
+    public boolean controlAlt7() {
+        return false;
+    }
+
+    public boolean controlAlt8() {
+        return false;
+    }
+
+    public boolean controlAlt9() {
+        if (thisPane != null) {
+            ImageEditorController.openImage(NodeTools.snap(thisPane));
+            return true;
+        }
         return false;
     }
 

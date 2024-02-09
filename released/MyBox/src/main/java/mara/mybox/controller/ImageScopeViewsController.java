@@ -20,7 +20,7 @@ import static mara.mybox.value.Languages.message;
  */
 public class ImageScopeViewsController extends BaseChildController {
 
-    protected ControlSelectPixels scopeController;
+    protected BaseImageScope scopeController;
 
     @FXML
     protected ControlImageView selectedController, sourceController, maskController;
@@ -33,7 +33,7 @@ public class ImageScopeViewsController extends BaseChildController {
         baseTitle = message("Scope");
     }
 
-    protected void setParameters(ControlSelectPixels parent) {
+    protected void setParameters(BaseImageScope parent) {
         try {
             scopeController = parent;
 
@@ -134,7 +134,7 @@ public class ImageScopeViewsController extends BaseChildController {
     /*
         static methods
      */
-    public static ImageScopeViewsController open(ControlSelectPixels parent) {
+    public static ImageScopeViewsController open(BaseImageScope parent) {
         try {
             if (parent == null || !parent.isShowing()) {
                 return null;

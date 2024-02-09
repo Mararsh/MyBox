@@ -9,51 +9,24 @@
   <h1>MyBox：简易工具集</h1>
   <p>这是图形化计算机应用，目标是提供简单易用的功能。免费开源。</p>
   <h2>新内容</h2>
-  <p>2024-1-15 版本6.7.8</p>
+  <p>2024-2-9 版本6.8</p>
   <ul>
-   <li>改进界面： 
+   <li>改进： 
     <ul>
-     <li>简化界面，将选项和操作收纳在菜单里。</li>
-     <li>重新定义快捷键。</li>
-     <li>分支窗口：总是在上面；不阻塞调用者；可以图标化；当调用者关闭时也被关闭。</li>
-     <li>点击“小提示”图标可以弹出它的文本窗口。</li>
+     <li>新增快捷键CTRL/ALT+0：设置/解除“总是在上面”，对弹出窗口无效。</li>
+     <li>新增快捷键CTRL/ALT+9：截图当前窗口。</li>
+     <li>以树形保存和管理“图片的范围”。</li>
+     <li>简化编辑网页的界面。</li>
     </ul></li>
-   <li>改进功能： 
-    <ul>
-     <li>对图像可以“选择像素”（即定义图像的范围）。</li>
-     <li>选择像素时可以设置蒙板的颜色。</li>
-     <li>可以针对饱和度、亮度、或灰度来处理图像对比度。</li>
-     <li>图像转换为黑白时可以忽略透明色。</li>
-     <li>更多的操作演示和数据示例。</li>
-    </ul></li>
-   <li>改进算法： 
-    <ul>
-     <li>引用任务时采用参数而不是变量。</li>
-     <li>在新线程中加载缩略图。</li>
-     <li>任务取消时应立即中断处理。</li>
-     <li>判断是否需要采样大图像时只读取图像元数据。</li>
-     <li>新增转换图像为SVG的算法。</li>
-    </ul></li>
-   <li>更新至：JDK 21；javaFX 21；Derby 10.17.1.0。</li>
    <li>解决问题： 
     <ul>
-     <li>当本机缺省语言不是内置的语言（中文或英文）时MyBox无法启动。（存在了很多版本的问题）</li>
-     <li>批处理过程中不应统计源文件表。</li>
-     <li>执行SQL的结果未能显示。</li>
-     <li>拼接数据的界面上一些按键失效。</li>
-     <li>数据图的最多显示个数应允许设置为不限制。</li>
-     <li>在移动、复制、选择树节点的界面中标签和时间未能加载。</li>
-     <li>图像OCR界面中按钮“选择文件”无法使用。</li>
-     <li>斜拉图片时可能会切去一部分。</li>
-     <li>批量剪切图像时参数拾取得不正确。</li>
-     <li>在图像上添加文字时边框未能生效。</li>
-     <li>编辑图像时“忽略透明像素”处理得可能不正确。</li>
-     <li>导出颜色列表的网页时弹出错误。</li>
-     <li>一些界面的一些快捷键未生效。</li>
-     <li>“图片的故事”中有错误信息。</li>
+     <li>管理颜色：复制颜色失效了。</li>
+     <li>编辑网页：从文本模式切换时内容丢失了。</li>
+     <li>在查看PPT界面中“播放”按钮失效了。</li>
     </ul></li>
   </ul>
-  <p><a target=_blank href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.7.8">此版本关闭的需求/问题列表</a></p>
+  <p>中国龙年快乐！</p>
+  <p><a target=_blank href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.8">此版本关闭的需求/问题列表</a></p>
   <h2>注意</h2>
   <p>MyBox未经足够测试，可靠性低、稳定性差。使用MyBox，可能出现以下情况：</p>
   <ul>
@@ -76,7 +49,7 @@
    <tbody>
     <tr>
      <td><a target=_blank href="https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-src.zip">MyBox-src.zip</a></td>
-     <td>68M-</td>
+     <td>80M-</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-DevGuide-zh.pdf">pdf</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/pack_steps_zh.html">html</a></td>
     </tr>
@@ -451,22 +424,22 @@
    <tbody>
     <tr>
      <td>开发日志</td>
-     <td>6.7.8</td>
-     <td>2024-1-15</td>
+     <td>6.8</td>
+     <td>2024-2-9</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_devLogs_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_devLogs_zh.html">html</a></td>
     </tr>
     <tr>
      <td>快捷键与图标</td>
-     <td>6.7.8</td>
-     <td>2024-1-15</td>
+     <td>6.8</td>
+     <td>2024-2-9</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_shortcuts_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_shortcuts_zh.html">html</a></td>
     </tr>
     <tr>
      <td>功能列表</td>
-     <td>6.7.8</td>
-     <td>2024-1-15</td>
+     <td>6.8</td>
+     <td>2024-2-9</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_functions_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_functions_zh.html">html</a></td>
     </tr>
@@ -486,8 +459,8 @@
     </tr>
     <tr>
      <td>用户手册-综述</td>
-     <td>6.7.8</td>
-     <td>2024-1-15</td>
+     <td>6.8</td>
+     <td>2024-2-9</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/guide/en/MyBox-Overview-en/MyBox-Overview-en.html">html</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-en.pdf">PDF</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-en.odt">odt</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/guide/zh/MyBox-Overview-zh/MyBox-Overview-zh.html">html</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-zh.pdf">PDF</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-zh.odt">odt</a></td>
     </tr>
@@ -542,15 +515,15 @@
     </tr>
     <tr>
      <td>界面中的提示信息</td>
-     <td>6.7.8</td>
-     <td>2024-1-15</td>
+     <td>6.8</td>
+     <td>2024-2-9</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_interface_tips_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_interface_tips_zh.html">html</a></td>
     </tr>
     <tr>
      <td>关于-树形信息</td>
-     <td>6.7.8</td>
-     <td>2024-1-15</td>
+     <td>6.8</td>
+     <td>2024-2-9</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_about_tree_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_about_tree_zh.html">html</a></td>
     </tr>
@@ -595,6 +568,13 @@
      <td>2022-11-16</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_about_color_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_about_color_zh.html">html</a></td>
+    </tr>
+    <tr>
+     <td>关于-图像的范围</td>
+     <td>6.8</td>
+     <td>2024-2-9</td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_about_image_scope_en.html">html</a></td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_about_image_scope_zh.html">html</a></td>
     </tr>
     <tr>
      <td>关于-媒体</td>
@@ -787,8 +767,8 @@
     </tr>
     <tr>
      <td>图片的故事</td>
-     <td>6.7.8</td>
-     <td>2024-1-15</td>
+     <td>6.8</td>
+     <td>2024-2-9</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-en.html">html</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-en.pdf">PDF</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-en.odt">odt</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-zh.html">html</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-zh.pdf">PDF</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-zh.odt">odt</a></td>
     </tr>

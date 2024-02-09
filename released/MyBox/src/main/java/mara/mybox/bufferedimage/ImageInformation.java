@@ -82,7 +82,7 @@ public class ImageInformation extends ImageFileInformation {
         index = 0;
         duration = 500;
         dpi = 72;
-        requiredWidth = 0;
+        requiredWidth = -1;
         sampleScale = xscale = yscale = 1;
         image = null;
         thumbnail = null;

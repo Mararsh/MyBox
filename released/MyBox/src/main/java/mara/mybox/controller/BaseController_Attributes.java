@@ -97,7 +97,7 @@ public abstract class BaseController_Attributes {
             renameButton, tipsButton, setButton, allButton, menuButton, synchronizeButton,
             firstButton, lastButton, previousButton, nextButton,
             pageFirstButton, pageLastButton, pagePreviousButton, pageNextButton,
-            infoButton, metaButton, openSourceButton, systemMethodButton,
+            infoButton, metaButton, openSourceButton,
             transparentButton, whiteButton, blackButton, withdrawButton;
     @FXML
     protected VBox paraBox, mainAreaBox;
@@ -235,6 +235,10 @@ public abstract class BaseController_Attributes {
     }
 
     public boolean isPopup() {
+        if (stageType == StageType.Pop
+                || stageType == StageType.Popup) {
+            return true;
+        }
         Window win = getMyWindow();
         return win != null && (win instanceof Popup);
     }

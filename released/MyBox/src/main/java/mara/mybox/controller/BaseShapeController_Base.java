@@ -72,7 +72,7 @@ public abstract class BaseShapeController_Base extends BaseImageController {
     protected DoubleArc maskArcData;
     protected DoublePath maskPathData;
     protected boolean maskControlDragged, showAnchors, popItemMenu, popShapeMenu,
-            addPointWhenClick;
+            addPointWhenClick, shapeCanMove;
     protected AnchorShape anchorShape;
     protected Polyline currentLine;
     protected List<DoublePoint> currentLineData;
@@ -107,7 +107,7 @@ public abstract class BaseShapeController_Base extends BaseImageController {
     @FXML
     protected SVGPath maskSVGPath;
     @FXML
-    protected CheckBox fillCheck, dashCheck, anchorCheck,
+    protected CheckBox fillCheck, dashCheck, anchorCheck, shapeCanMoveCheck,
             popAnchorMenuCheck, popLineMenuCheck, addPointCheck;
 
     /*
@@ -242,7 +242,7 @@ public abstract class BaseShapeController_Base extends BaseImageController {
             if (isPickingColor) {
                 shape.setCursor(Cursor.HAND);
             } else {
-                shape.setCursor(Cursor.MOVE);
+                shape.setCursor(defaultShapeCursor());
             }
 
         } catch (Exception e) {
@@ -420,7 +420,7 @@ public abstract class BaseShapeController_Base extends BaseImageController {
      */
     public Node addMaskAnchor(int index, DoublePoint p, double x, double y) {
         return addMaskAnchor(index, "p" + (index + 1) + "", message("Point") + " " + (index + 1),
-                p, x, y, Cursor.MOVE);
+                p, x, y, defaultShapeCursor());
     }
 
     public Node addMaskAnchor(int index, String name, String title,
@@ -607,6 +607,23 @@ public abstract class BaseShapeController_Base extends BaseImageController {
             }
         });
         return menu;
+    }
+
+    public MenuItem moveShapeMenu() {
+        CheckMenuItem moveMenuItem = new CheckMenuItem(message("ShapeCanMove"), StyleTools.getIconImageView("iconMove.png"));
+        moveMenuItem.setSelected(UserConfig.getBoolean(baseName + "ShapeCanMove", true));
+        moveMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent cevent) {
+                if (shapeCanMoveCheck != null) {
+                    shapeCanMoveCheck.setSelected(moveMenuItem.isSelected());
+                } else {
+                    UserConfig.setBoolean(baseName + "ShapeCanMove", moveMenuItem.isSelected());
+                    shapeCanMove = moveMenuItem.isSelected();
+                }
+            }
+        });
+        return moveMenuItem;
     }
 
     public MenuItem addPointMenu() {
@@ -1516,7 +1533,7 @@ public abstract class BaseShapeController_Base extends BaseImageController {
                         if (isPickingColor) {
                             line.setCursor(Cursor.HAND);
                         } else {
-                            line.setCursor(Cursor.MOVE);
+                            line.setCursor(defaultShapeCursor());
                             if (popItemMenu) {
                                 popNodeMenu(line, lineMenu(line, points));
                             }
@@ -1527,6 +1544,14 @@ public abstract class BaseShapeController_Base extends BaseImageController {
 
         } catch (Exception e) {
             MyBoxLog.error(e);
+        }
+    }
+
+    protected Cursor defaultShapeCursor() {
+        if (UserConfig.getBoolean(baseName + "ShapeCanMove", true)) {
+            return Cursor.MOVE;
+        } else {
+            return Cursor.DEFAULT;
         }
     }
 

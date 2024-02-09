@@ -34,7 +34,8 @@ public class ImageShearBatchController extends BaseImageEditBatchController {
     @Override
     protected BufferedImage handleImage(FxTask currentTask, BufferedImage source) {
         return TransformTools.shearImage(currentTask, source,
-                shearController.shearX, shearController.shearY);
+                shearController.shearX, shearController.shearY,
+                shearController.cutCheck.isSelected());
     }
 
     @Override

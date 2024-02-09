@@ -76,7 +76,7 @@ public class JexlEditor extends JShellEditor {
     }
 
     @Override
-    protected void editInfo(InfoNode node) {
+    protected void editValue(InfoNode node) {
         if (node != null) {
             Map<String, String> values = InfoNode.parseInfo(node);
             valueInput.setText(values.get("Script"));
@@ -86,7 +86,7 @@ public class JexlEditor extends JShellEditor {
     }
 
     @Override
-    protected InfoNode nodeInfo(InfoNode node) {
+    protected InfoNode pickValue(InfoNode node) {
         if (node == null) {
             return null;
         }

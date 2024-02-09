@@ -285,7 +285,7 @@ public class ImageOCRBatchController extends BaseBatchImageController {
             }
 
             if (rotate != 0) {
-                lastImage = TransformTools.rotateImage(currentTask, lastImage, rotate);
+                lastImage = TransformTools.rotateImage(currentTask, lastImage, rotate, true);
                 if (currentTask == null || !currentTask.isWorking()) {
                     return null;
                 }

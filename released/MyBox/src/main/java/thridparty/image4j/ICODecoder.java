@@ -8,159 +8,115 @@
  */
 package thridparty.image4j;
 
-import thridparty.image4j.BMPDecoder;
-import thridparty.image4j.ColorEntry;
-import thridparty.image4j.InfoHeader;
 import java.awt.image.*;
 import java.io.*;
 import java.util.*;
-import java.util.logging.*;
+import mara.mybox.dev.MyBoxLog;
 
 /**
  * Decodes images in ICO format.
  *
  * @author Ian McDonagh
  */
+// ##### Updated by mara. To avoid crash when the file is invalid
 public class ICODecoder {
-
-    private static Logger log = Logger.getLogger(ICODecoder.class.getName());
 
     private static final int PNG_MAGIC = 0x89504E47;
     private static final int PNG_MAGIC_LE = 0x474E5089;
     private static final int PNG_MAGIC2 = 0x0D0A1A0A;
     private static final int PNG_MAGIC2_LE = 0x0A1A0A0D;
 
-    // private java.util.List<BufferedImage> img;
+    // private List<BufferedImage> img;
     private ICODecoder() {
     }
 
     /**
-     * Reads and decodes the given ICO file. Convenience method equivalent to      {@link #read(java.io.InputStream) read(new
-	 * java.io.FileInputStream(file))}.
+     * Reads and decodes the given ICO file. Convenience method equivalent to
+     * null null null null null null null null null null null null null null
+     * null null null null null null null null null null null null null null
+     * null null null null null null null null null null null null null null
+     * null null null     {@link #read(java.io.InputStream) read(new
+	 * FileInputStream(file))}.
      *
      * @param file the source file to read
      * @return the list of images decoded from the ICO data
-     * @throws java.io.IOException if an error occurs
+     *
      */
-    public static java.util.List<BufferedImage> read(java.io.File file)
-            throws IOException {
-        java.io.FileInputStream fin = new java.io.FileInputStream(file);
+    public static List<BufferedImage> read(File file) {
         try {
-            return read(new BufferedInputStream(fin));
-        } finally {
-            try {
-                fin.close();
-            } catch (IOException ex) {
-                log.log(Level.FINE, "Failed to close file input for file "
-                        + file);
+            List<ICOImage> icoList = readExt(file);
+            if (icoList == null) {
+                return null;
             }
+            List<BufferedImage> bgList = new ArrayList<>(icoList.size());
+            for (int i = 0; i < icoList.size(); i++) {
+                ICOImage icoImage = icoList.get(i);
+                BufferedImage image = icoImage.getImage();
+                bgList.add(image);
+            }
+            return bgList;
+        } catch (Exception e) {
+            MyBoxLog.console(e);
+            return null;
         }
     }
 
     /**
      * Reads and decodes the given ICO file, together with all metadata.
-     * Convenience method equivalent to {@link #readExt(java.io.InputStream)
-     * readExt(new java.io.FileInputStream(file))}.
+     * Convenience method equivalent to null null null null null null null null
+     * null null null null null null null null null null null null null null
+     * null null null null null null null     {@link #readExt(java.io.InputStream)
+     * readExt(new FileInputStream(file))}.
      *
      * @param file the source file to read
      * @return the list of images decoded from the ICO data
-     * @throws java.io.IOException if an error occurs
      * @since 0.7
      */
-    public static java.util.List<ICOImage> readExt(java.io.File file)
-            throws IOException {
-        java.io.FileInputStream fin = new java.io.FileInputStream(file);
-        try {
+    public static List<ICOImage> readExt(File file) {
+        if (file == null || !file.exists()) {
+            return null;
+        }
+        try (FileInputStream fin = new FileInputStream(file)) {
             return readExt(new BufferedInputStream(fin));
-        } finally {
-            try {
-                fin.close();
-            } catch (IOException ex) {
-                log.log(Level.WARNING, "Failed to close file input for file "
-                        + file, ex);
+        } catch (Exception e) {
+            MyBoxLog.console(e);
+            return null;
+        }
+    }
+
+    public static List<ICOImage> readExt(java.io.InputStream is) {
+        if (is == null) {
+            return null;
+        }
+        try (LittleEndianInputStream in
+                = new LittleEndianInputStream(new CountingInputStream(is))) {
+            // Count 2 byte Number of Icons in this file
+            short sCount = in.readShortLE();
+            if (sCount < 1) {
+                return null;
             }
-        }
-    }
 
-    /**
-     * Reads and decodes ICO data from the given source. The returned list of
-     * images is in the order in which they appear in the source ICO data.
-     *
-     * @param is the source <tt>InputStream</tt> to read
-     * @return the list of images decoded from the ICO data
-     * @throws java.io.IOException if an error occurs
-     */
-    public static java.util.List<BufferedImage> read(java.io.InputStream is)
-            throws IOException {
-        java.util.List<ICOImage> list = readExt(is);
-        java.util.List<BufferedImage> ret = new java.util.ArrayList<BufferedImage>(
-                list.size());
-        for (int i = 0; i < list.size(); i++) {
-            ICOImage icoImage = list.get(i);
-            BufferedImage image = icoImage.getImage();
-            ret.add(image);
-        }
-        return ret;
-    }
-
-    private static IconEntry[] sortByFileOffset(IconEntry[] entries) {
-        List<IconEntry> list = Arrays.asList(entries);
-        Collections.sort(list, new Comparator<IconEntry>() {
-
-            @Override
-            public int compare(IconEntry o1, IconEntry o2) {
-                return o1.iFileOffset - o2.iFileOffset;
+            // Entries Count * 16 list of icons
+            IconEntry[] entries = new IconEntry[sCount];
+            for (short s = 0; s < sCount; s++) {
+                entries[s] = new IconEntry(in);
             }
-        });
-        return list.toArray(new IconEntry[list.size()]);
-    }
+            // Seems like we don't need this, but you never know!
+            // entries = sortByFileOffset(entries);
 
-    /**
-     * Reads and decodes ICO data from the given source, together with all
-     * metadata. The returned list of images is in the order in which they
-     * appear in the source ICO data.
-     *
-     * @param is the source <tt>InputStream</tt> to read
-     * @return the list of images decoded from the ICO data
-     * @throws java.io.IOException if an error occurs
-     * @since 0.7
-     */
-    public static java.util.List<ICOImage> readExt(java.io.InputStream is)
-            throws IOException {
-        // long t = System.currentTimeMillis();
+            // images list of bitmap structures in BMP/PNG format
+            List<ICOImage> ret = new ArrayList<>(sCount);
 
-        LittleEndianInputStream in = new LittleEndianInputStream(
-                new CountingInputStream(is));
-
-        // Reserved 2 byte =0
-        short sReserved = in.readShortLE();
-        // Type 2 byte =1
-        short sType = in.readShortLE();
-        // Count 2 byte Number of Icons in this file
-        short sCount = in.readShortLE();
-
-        // Entries Count * 16 list of icons
-        IconEntry[] entries = new IconEntry[sCount];
-        for (short s = 0; s < sCount; s++) {
-            entries[s] = new IconEntry(in);
-        }
-        // Seems like we don't need this, but you never know!
-        // entries = sortByFileOffset(entries);
-
-        int i = 0;
-        // images list of bitmap structures in BMP/PNG format
-        List<ICOImage> ret = new ArrayList<ICOImage>(sCount);
-
-        try {
-            for (i = 0; i < sCount; i++) {
+            for (int i = 0; i < sCount; i++) {
                 // Make sure we're at the right file offset!
                 int fileOffset = in.getCount();
                 if (fileOffset != entries[i].iFileOffset) {
-                    throw new IOException("Cannot read image #" + i
+                    MyBoxLog.error("Cannot read image #" + i
                             + " starting at unexpected file offset.");
+                    return null;
                 }
                 int info = in.readIntLE();
-                log.log(Level.FINE, "Image #" + i + " @ " + in.getCount()
+                MyBoxLog.console("Image #" + i + " @ " + in.getCount()
                         + " info = " + EndianUtils.toInfoString(info));
                 if (info == 40) {
 
@@ -288,8 +244,8 @@ public class ICODecoder {
                     int info2 = in.readIntLE();
 
                     if (info2 != PNG_MAGIC2_LE) {
-                        throw new IOException(
-                                "Unrecognized icon format for image #" + i);
+                        MyBoxLog.error("Unrecognized icon format for image #" + i);
+                        return null;
                     }
 
                     IconEntry e = entries[i];
@@ -323,8 +279,8 @@ public class ICODecoder {
                     icoImage.setIconIndex(i);
                     ret.add(icoImage);
                 } else {
-                    throw new IOException(
-                            "Unrecognized icon format for image #" + i);
+                    MyBoxLog.error("Unrecognized icon format for image #" + i);
+                    return null;
                 }
 
                 /*
@@ -335,15 +291,38 @@ public class ICODecoder {
 				 * andInfoHeader.iWidth = xorInfoHeader.
                  */
             }
-        } catch (IOException ex) {
-            throw new IOException("Failed to read image # " + i, ex);
-        }
 
-        // long t2 = System.currentTimeMillis();
-        // System.out.println("Loaded ICO file in "+(t2 - t)+"ms");
-        return ret;
+            // long t2 = System.currentTimeMillis();
+            // System.out.println("Loaded ICO file in "+(t2 - t)+"ms");
+            return ret;
+        } catch (Exception e) {
+            MyBoxLog.console(e);
+            return null;
+        }
     }
 
+    private static IconEntry[] sortByFileOffset(IconEntry[] entries) {
+        List<IconEntry> list = Arrays.asList(entries);
+        Collections.sort(list, new Comparator<IconEntry>() {
+
+            @Override
+            public int compare(IconEntry o1, IconEntry o2) {
+                return o1.iFileOffset - o2.iFileOffset;
+            }
+        });
+        return list.toArray(new IconEntry[list.size()]);
+    }
+
+    /**
+     * Reads and decodes ICO data from the given source, together with all
+     * metadata. The returned list of images is in the order in which they
+     * appear in the source ICO data.
+     *
+     * @param is the source <tt>InputStream</tt> to read
+     * @return the list of images decoded from the ICO data
+     * @throws java.io.IOException if an error occurs
+     * @since 0.7
+     */
     private static javax.imageio.ImageReader getPNGImageReader() {
         javax.imageio.ImageReader ret = null;
         java.util.Iterator<javax.imageio.ImageReader> itr = javax.imageio.ImageIO

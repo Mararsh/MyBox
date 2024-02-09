@@ -72,7 +72,7 @@ public class ControlInfoTreeHandler extends BaseInfoTreeController {
             }
 
         };
-        start(task);
+        start(task, viewController.thisPane);
     }
 
 }

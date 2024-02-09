@@ -171,12 +171,22 @@ public class ImagePopController extends BaseImageController {
     /*
         static methods
      */
+    public static ImagePopController open(BaseController parent) {
+        try {
+            ImagePopController controller = (ImagePopController) WindowTools.popStage(parent, Fxmls.ImagePopFxml);
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
     public static ImagePopController openImage(BaseController parent, Image image) {
         try {
             if (image == null) {
                 return null;
             }
-            ImagePopController controller = (ImagePopController) WindowTools.popStage(parent, Fxmls.ImagePopFxml);
+            ImagePopController controller = open(parent);
             controller.setImage(parent, image);
             return controller;
         } catch (Exception e) {
@@ -190,7 +200,7 @@ public class ImagePopController extends BaseImageController {
             if (parent == null || imageView == null) {
                 return null;
             }
-            ImagePopController controller = (ImagePopController) WindowTools.popStage(parent, Fxmls.ImagePopFxml);
+            ImagePopController controller = open(parent);
             controller.setSourceImageView(parent, imageView);
             return controller;
         } catch (Exception e) {
@@ -201,7 +211,7 @@ public class ImagePopController extends BaseImageController {
 
     public static ImagePopController openFile(BaseController parent, String filename) {
         try {
-            ImagePopController controller = (ImagePopController) WindowTools.popStage(parent, Fxmls.ImagePopFxml);
+            ImagePopController controller = open(parent);
             controller.setFile(parent, filename);
             return controller;
         } catch (Exception e) {
@@ -212,7 +222,7 @@ public class ImagePopController extends BaseImageController {
 
     public static ImagePopController openSource(BaseImageController parent) {
         try {
-            ImagePopController controller = (ImagePopController) WindowTools.popStage(parent, Fxmls.ImagePopFxml);
+            ImagePopController controller = open(parent);
             controller.setSourceController(parent);
             return controller;
         } catch (Exception e) {

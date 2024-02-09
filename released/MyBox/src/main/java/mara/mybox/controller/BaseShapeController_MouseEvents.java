@@ -175,6 +175,8 @@ public abstract class BaseShapeController_MouseEvents extends BaseShapeControlle
             List<MenuItem> items = new ArrayList<>();
             MenuItem menu;
 
+            items.add(moveShapeMenu());
+
             if (isMaskPolygonShown() || isMaskPolylineShown()) {
                 items.add(addPointMenu());
             }
@@ -347,82 +349,84 @@ public abstract class BaseShapeController_MouseEvents extends BaseShapeControlle
         List<MenuItem> items = new ArrayList<>();
         MenuItem menu;
 
-        Menu translateMenu = new Menu(message("TranslateShape"), StyleTools.getIconImageView("iconMove.png"));
-        items.add(translateMenu);
+        if (UserConfig.getBoolean(baseName + "MoveEnable", true)) {
+            Menu translateMenu = new Menu(message("TranslateShape"), StyleTools.getIconImageView("iconMove.png"));
+            items.add(translateMenu);
 
-        menu = new MenuItem(message("ImageCenter"), StyleTools.getIconImageView("iconMove.png"));
-        menu.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent mevent) {
-                DoublePoint center = DoubleShape.getCenter(shapeData);
-                if (center == null) {
-                    return;
+            menu = new MenuItem(message("ImageCenter"), StyleTools.getIconImageView("iconMove.png"));
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent mevent) {
+                    DoublePoint center = DoubleShape.getCenter(shapeData);
+                    if (center == null) {
+                        return;
+                    }
+                    double offsetX = imageView.getImage().getWidth() * 0.5 - center.getX();
+                    double offsetY = imageView.getImage().getHeight() * 0.5 - center.getY();
+                    shapeData.translateRel(offsetX, offsetY);
+                    maskShapeDataChanged();
                 }
-                double offsetX = imageView.getImage().getWidth() * 0.5 - center.getX();
-                double offsetY = imageView.getImage().getHeight() * 0.5 - center.getY();
-                shapeData.translateRel(offsetX, offsetY);
-                maskShapeDataChanged();
-            }
-        });
-        translateMenu.getItems().add(menu);
+            });
+            translateMenu.getItems().add(menu);
 
-        menu = new MenuItem(message("LeftTop"), StyleTools.getIconImageView("iconMove.png"));
-        menu.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent mevent) {
-                double offsetX = -bound.getMinX();
-                double offsetY = -bound.getMinY();
-                shapeData.translateRel(offsetX, offsetY);
-                maskShapeDataChanged();
-            }
-        });
-        translateMenu.getItems().add(menu);
+            menu = new MenuItem(message("LeftTop"), StyleTools.getIconImageView("iconMove.png"));
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent mevent) {
+                    double offsetX = -bound.getMinX();
+                    double offsetY = -bound.getMinY();
+                    shapeData.translateRel(offsetX, offsetY);
+                    maskShapeDataChanged();
+                }
+            });
+            translateMenu.getItems().add(menu);
 
-        menu = new MenuItem(message("RightBottom"), StyleTools.getIconImageView("iconMove.png"));
-        menu.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent mevent) {
+            menu = new MenuItem(message("RightBottom"), StyleTools.getIconImageView("iconMove.png"));
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent mevent) {
 
-                double offsetX = imageView.getImage().getWidth() - bound.getMaxX();
-                double offsetY = imageView.getImage().getHeight() - bound.getMaxY();
-                shapeData.translateRel(offsetX, offsetY);
-                maskShapeDataChanged();
-            }
-        });
-        translateMenu.getItems().add(menu);
+                    double offsetX = imageView.getImage().getWidth() - bound.getMaxX();
+                    double offsetY = imageView.getImage().getHeight() - bound.getMaxY();
+                    shapeData.translateRel(offsetX, offsetY);
+                    maskShapeDataChanged();
+                }
+            });
+            translateMenu.getItems().add(menu);
 
-        menu = new MenuItem(message("LeftBottom"), StyleTools.getIconImageView("iconMove.png"));
-        menu.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent mevent) {
-                double offsetX = -bound.getMinX();
-                double offsetY = imageView.getImage().getHeight() - bound.getMaxY();
-                shapeData.translateRel(offsetX, offsetY);
-                maskShapeDataChanged();
-            }
-        });
-        translateMenu.getItems().add(menu);
+            menu = new MenuItem(message("LeftBottom"), StyleTools.getIconImageView("iconMove.png"));
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent mevent) {
+                    double offsetX = -bound.getMinX();
+                    double offsetY = imageView.getImage().getHeight() - bound.getMaxY();
+                    shapeData.translateRel(offsetX, offsetY);
+                    maskShapeDataChanged();
+                }
+            });
+            translateMenu.getItems().add(menu);
 
-        menu = new MenuItem(message("RightTop"), StyleTools.getIconImageView("iconMove.png"));
-        menu.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent mevent) {
-                double offsetX = imageView.getImage().getWidth() - bound.getMaxX();
-                double offsetY = -bound.getMinY();
-                shapeData.translateRel(offsetX, offsetY);
-                maskShapeDataChanged();
-            }
-        });
-        translateMenu.getItems().add(menu);
+            menu = new MenuItem(message("RightTop"), StyleTools.getIconImageView("iconMove.png"));
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent mevent) {
+                    double offsetX = imageView.getImage().getWidth() - bound.getMaxX();
+                    double offsetY = -bound.getMinY();
+                    shapeData.translateRel(offsetX, offsetY);
+                    maskShapeDataChanged();
+                }
+            });
+            translateMenu.getItems().add(menu);
 
-        menu = new MenuItem(message("Set") + "...", StyleTools.getIconImageView("iconMove.png"));
-        menu.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent mevent) {
-                ShapeTranslateInputController.open((BaseShapeController) myController, shapeData, p);
-            }
-        });
-        translateMenu.getItems().add(menu);
+            menu = new MenuItem(message("Set") + "...", StyleTools.getIconImageView("iconMove.png"));
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent mevent) {
+                    ShapeTranslateInputController.open((BaseShapeController) myController, shapeData, p);
+                }
+            });
+            translateMenu.getItems().add(menu);
+        }
 
         Menu scaleMenu = new Menu(message("ScaleShape"), StyleTools.getIconImageView("iconExpand.png"));
         items.add(scaleMenu);
@@ -575,7 +579,8 @@ public abstract class BaseShapeController_MouseEvents extends BaseShapeControlle
     @FXML
     public void translateShape(MouseEvent event) {
         scrollPane.setPannable(true);
-        if (isPickingColor) {
+        if (isPickingColor || !UserConfig.getBoolean(baseName + "ShapeCanMove", true)) {
+            maskControlDragged = false;
             return;
         }
         DoubleShape shapeData = currentMaskShapeData();
@@ -711,7 +716,7 @@ public abstract class BaseShapeController_MouseEvents extends BaseShapeControlle
     @Override
     protected void stopPickingColor() {
         super.stopPickingColor();
-        setShapesCursor(Cursor.MOVE);
+        setShapesCursor(defaultShapeCursor());
     }
 
 }

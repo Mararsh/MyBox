@@ -3,8 +3,6 @@ package mara.mybox.controller;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -54,12 +52,7 @@ public class HtmlEditorController extends WebAddressController {
         try {
             super.initControls();
 
-            editController.loadNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldv, Boolean newv) {
-                    panesLoad();
-                }
-            });
+            editController.setParameters(this);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -91,8 +84,8 @@ public class HtmlEditorController extends WebAddressController {
         return editController.loadContents(address, contents);
     }
 
-    public void panesLoad() {
-        sourceFile = editController.sourceFile;
+    @Override
+    public void updateStageTitle() {
     }
 
     @FXML
@@ -104,8 +97,25 @@ public class HtmlEditorController extends WebAddressController {
     }
 
     @FXML
-    public boolean synchronizeViewAction() {
-        return editController.synchronizeViewAction();
+    @Override
+    public void refreshAction() {
+        editController.refreshAction();
+    }
+
+    protected void updateStatus(boolean changed) {
+        sourceFile = editController.sourceFile;
+        if (getMyStage() == null) {
+            return;
+        }
+        String title = getBaseTitle();
+        if (editController.address != null) {
+            title += " - " + editController.address;
+        }
+        if (editController.htmChanged.get()) {
+            title += " *";
+        }
+        myStage.setTitle(title);
+        addressChanged();
     }
 
     @Override
@@ -203,10 +213,10 @@ public class HtmlEditorController extends WebAddressController {
 
     @Override
     public boolean keyEventsFilter(KeyEvent event) {
-        if (editController.keyEventsFilter(event)) {
+        if (super.keyEventsFilter(event)) {
             return true;
         }
-        return super.keyEventsFilter(event);
+        return editController.keyEventsFilter(event);
     }
 
     @Override

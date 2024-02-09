@@ -148,11 +148,6 @@ License:    Apache License Version 2.0
                                           <Image url="@../buttons/Red/iconDoubleLeft.png" />
                                        </image>
                                     </ImageView>
-                                                <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/Red/iconTips.png" />
-                                                    </image>
-                                                </ImageView>
                                                 <FlowPane alignment="CENTER_RIGHT" hgap="2.0" maxWidth="1.7976931348623157E308" vgap="2.0" HBox.hgrow="ALWAYS">
                                                     <children>
                                                         <Button fx:id="recoverNodeButton" mnemonicParsing="false" onAction="#recoverNode">

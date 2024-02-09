@@ -224,6 +224,12 @@ public class PptViewController extends BaseFileImagesController {
         return true;
     }
 
+    @FXML
+    @Override
+    public void playAction() {
+        ImagesPlayController.playFile(sourceFile);
+    }
+
     /*
         static
      */

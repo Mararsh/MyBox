@@ -98,14 +98,14 @@ public class TableColorPalette extends BaseTable<ColorPalette> {
         return true;
     }
 
-    public ColorPalette find(Connection conn, ColorData color, boolean noDuplicate) {
+    public ColorPalette find(Connection conn, ColorData color, boolean asValue) {
         if (conn == null || color == null) {
             return null;
         }
         ColorPalette data = null;
         try (PreparedStatement qid = conn.prepareStatement(QueryID);
                 PreparedStatement qvalue = conn.prepareStatement(QueryValue)) {
-            data = find(qid, qvalue, color, noDuplicate);
+            data = find(qid, qvalue, color, asValue);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -113,7 +113,7 @@ public class TableColorPalette extends BaseTable<ColorPalette> {
     }
 
     public ColorPalette find(PreparedStatement qid, PreparedStatement qvalue,
-            ColorData color, boolean noDuplicate) {
+            ColorData color, boolean asValue) {
         if (color == null || qid == null || qvalue == null) {
             return null;
         }
@@ -129,7 +129,7 @@ public class TableColorPalette extends BaseTable<ColorPalette> {
                     }
                 }
             }
-            if (data == null && noDuplicate) {
+            if (data == null && asValue) {
                 qvalue.setLong(1, color.getPaletteid());
                 qvalue.setInt(2, color.getColorValue());
                 qvalue.setMaxRows(1);
@@ -259,7 +259,7 @@ public class TableColorPalette extends BaseTable<ColorPalette> {
                     ColorData color = data.getData();
                     color.setColorName(data.getName());
                     color.setOrderNumner(data.getOrderNumber());
-                    color.setPaletteid(data.getCpid());
+                    color.setPaletteid(data.getPaletteid());
                     color.setCpid(data.getCpid());
                     colors.add(color);
                 }

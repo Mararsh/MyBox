@@ -78,7 +78,8 @@ public class ColorDataTools {
                     ColorData color = data.getData();
                     color.setColorName(data.getName());
                     color.setOrderNumner(data.getOrderNumber());
-                    color.setPaletteid(data.getCpid());
+                    color.setPaletteid(data.getPaletteid());
+                    color.setCpid(data.getCpid());
                     printRow(printer, row, color, true);
                 }
             } catch (Exception e) {

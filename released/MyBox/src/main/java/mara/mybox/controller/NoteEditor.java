@@ -1,94 +1,84 @@
 package mara.mybox.controller;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.Tab;
+import javafx.scene.input.KeyEvent;
 import mara.mybox.db.data.InfoNode;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.WebViewTools;
-import mara.mybox.fxml.style.HtmlStyles;
-import mara.mybox.tools.HtmlReadTools;
 
 /**
  * @Author Mara
  * @CreateDate 2021-8-11
  * @License Apache License Version 2.0
  */
-public class NoteEditor extends ControlHtmlEditor {
-
-    protected NotesController notesController;
-    protected boolean tagsChanged;
+public class NoteEditor extends InfoTreeNodeEditor {
 
     @FXML
-    protected Tab attributesTab;
-    @FXML
-    protected NoteAttributes infoController;
+    protected ControlNoteEditor valueController;
 
-    public void setParameters(NotesController notesController) {
+    @Override
+    public void initControls() {
         try {
-            this.notesController = notesController;
-            this.baseName = notesController.baseName;
-            saveButton = notesController.saveButton;
+            super.initControls();
 
-            infoController.setEditor(this);
-            notesController.editor = infoController;
-
-            webViewController.linkInNewTab = true;
-            webViewController.defaultStyle = HtmlStyles.TableStyle;
-            webViewController.initStyle(HtmlStyles.TableStyle);
-
+            valueController.setParameters(this);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
     @Override
-    public void tabChanged() {
-        try {
-            TextClipboardPopController.closeAll();
-            Tab tab = tabPane.getSelectionModel().getSelectedItem();
-            clearButton.setDisable(tab == viewTab || tab == attributesTab);
-            popButton.setDisable(tab == domTab || tab == attributesTab);
-            menuButton.setDisable(tab == richEditorTab || tab == attributesTab);
-            synchronizeButton.setDisable(tab == attributesTab);
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
+    public void nodeChanged(boolean changed) {
+        if (isSettingValues) {
+            return;
+        }
+        super.nodeChanged(changed);
+        if (!changed) {
+            valueController.updateStatus(false);
         }
     }
 
-    protected boolean editNote(InfoNode note) {
-        return infoController.editNode(note);
-    }
-
-    protected void recoverNote() {
-        editNote(infoController.attributesController.currentNode);
+    @Override
+    protected void editValue(InfoNode node) {
+        if (node != null) {
+            valueController.loadContents(node.getInfo());
+        } else {
+            valueController.loadContents(null);
+        }
+        valueController.updateStatus(false);
     }
 
     @Override
-    public void updateStageTitle() {
-    }
-
-    @FXML
-    @Override
-    public void saveAction() {
-        notesController.saveAction();
-    }
-
-    /*
-        html
-     */
-    @Override
-    public String htmlCodes(String html) {
-        return HtmlReadTools.body(html, false);
+    protected InfoNode pickValue(InfoNode node) {
+        if (node == null) {
+            return null;
+        }
+        return node.setInfo(valueController.currentHtml());
     }
 
     @Override
-    public String htmlInWebview() {
-        return HtmlReadTools.body(WebViewTools.getHtml(webEngine), false);
+    public void pasteNode(InfoNode node) {
+        if (node == null) {
+            return;
+        }
+        valueController.pasteText(node.getInfo());
     }
 
     @Override
-    public String htmlByRichEditor() {
-        return HtmlReadTools.body(richEditorController.getContents(), false);
+    public boolean keyEventsFilter(KeyEvent event) {
+        if (valueController.thisPane.isFocused() || valueController.thisPane.isFocusWithin()) {
+            if (valueController.keyEventsFilter(event)) {
+                return true;
+            }
+        }
+        if (attributesController.thisPane.isFocused() || attributesController.thisPane.isFocusWithin()) {
+            if (attributesController.keyEventsFilter(event)) {
+                return true;
+            }
+        }
+        if (super.keyEventsFilter(event)) {
+            return true;
+        }
+        return valueController.keyEventsFilter(event);
     }
 
 }

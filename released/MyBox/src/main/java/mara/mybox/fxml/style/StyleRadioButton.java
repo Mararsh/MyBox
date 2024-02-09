@@ -114,7 +114,18 @@ public class StyleRadioButton {
                 return new StyleData(id, message("ThumbnailsList"), "", "iconThumbsList.png");
             case "gridRadio":
                 return new StyleData(id, message("Grid"), "", "iconBrowse.png");
-
+            case "codesRaido":
+                return new StyleData(id, message("HtmlCodes"), "", "iconMeta.png");
+            case "treeRadio":
+                return new StyleData(id, message("Tree"), "", "iconTree.png");
+            case "richRadio":
+                return new StyleData(id, message("RichText"), "", "iconEdit.png");
+            case "mdRadio":
+                return new StyleData(id, "Markdown", "", "iconMarkdown.png");
+            case "textsRadio":
+                return new StyleData(id, message("HtmlTextsFormatComment"), "", "iconTxt.png");
+            case "htmlRadio":
+                return new StyleData(id, message("Html"), "", "iconHtml.png");
         }
         return null;
     }

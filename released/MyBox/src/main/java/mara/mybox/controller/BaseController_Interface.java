@@ -215,9 +215,6 @@ public abstract class BaseController_Interface extends BaseController_Files {
             if (openSourceButton != null) {
                 openSourceButton.setDisable(true);
             }
-            if (systemMethodButton != null) {
-                systemMethodButton.setDisable(true);
-            }
 
             initMainArea();
 
@@ -748,7 +745,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
             if (file != null) {
                 title += " - " + file.getAbsolutePath();
             }
-            getMyStage().setTitle(title);
+            setTitle(title);
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }

@@ -112,13 +112,6 @@ public abstract class BaseController_Files extends BaseController_Attributes {
 
     public void sourceFileChanged(File file) {
         sourceFile = file;
-        checkSystemMethodButton(file);
-    }
-
-    public void checkSystemMethodButton(File file) {
-        if (systemMethodButton != null) {
-            systemMethodButton.setDisable(file == null || !file.exists());
-        }
     }
 
     public void recordFileOpened(String file) {
