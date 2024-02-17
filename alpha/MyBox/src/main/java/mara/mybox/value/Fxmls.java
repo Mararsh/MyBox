@@ -343,7 +343,8 @@ public class Fxmls {
     public static final String JavaScriptFxml = "/fxml/JavaScript.fxml";
 
     public static final String MathFunctionFxml = "/fxml/MathFunction.fxml";
-    public static final String MathFunctionCalculatorFxml = "/fxml/MathFunctionCalculator.fxml";
+    public static final String MathFunctionDataFxml = "/fxml/MathFunctionData.fxml";
+    public static final String MathFunctionChartFxml = "/fxml/MathFunctionChart.fxml";
     public static final String ControlDataSplitFxml = "/fxml/ControlDataSplit.fxml";
     public static final String MathFunctionXYChartFxml = "/fxml/MathFunctionXYChart.fxml";
 

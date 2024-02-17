@@ -35,13 +35,13 @@ public abstract class BaseChildController extends BaseController {
             super.initControls();
 
             if (closeAfterCheck != null) {
+                closeAfterCheck.setSelected(UserConfig.getBoolean(interfaceName + "SaveClose", false));
                 closeAfterCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
                         UserConfig.setBoolean(interfaceName + "SaveClose", closeAfterCheck.isSelected());
                     }
                 });
-                closeAfterCheck.setSelected(UserConfig.getBoolean(interfaceName + "SaveClose", false));
             }
 
         } catch (Exception e) {

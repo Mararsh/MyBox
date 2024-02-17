@@ -9,12 +9,16 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.db.data.InfoNode;
 import static mara.mybox.db.data.InfoNode.ValueSeparater;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.ExpressionCalculator;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.tools.StringTools;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -26,6 +30,7 @@ public class MathFunctionEditor extends InfoTreeNodeEditor {
 
     protected MathFunctionController functionController;
     protected String outputs = "";
+    protected ExpressionCalculator calculator;
 
     @FXML
     protected TextField variablesInput, functionNameInput;
@@ -38,6 +43,8 @@ public class MathFunctionEditor extends InfoTreeNodeEditor {
     public void setManager(InfoTreeManageController treeController) {
         try {
             super.setManager(treeController);
+
+            calculator = new ExpressionCalculator();
 
             functionController = (MathFunctionController) treeController;
 
@@ -54,7 +61,7 @@ public class MathFunctionEditor extends InfoTreeNodeEditor {
                     if (isSettingValues || nv) {
                         return;
                     }
-                    functionController.calculateController.variablesChanged();
+                    functionController.variablesChanged();
                 }
             });
 
@@ -85,7 +92,7 @@ public class MathFunctionEditor extends InfoTreeNodeEditor {
             moreInput.setText(values.get("FunctionDomain"));
             isSettingValues = false;
         }
-        functionController.calculateController.variablesChanged();
+        functionController.variablesChanged();
     }
 
     @Override
@@ -125,6 +132,104 @@ public class MathFunctionEditor extends InfoTreeNodeEditor {
                 }
             }
             return names;
+        }
+    }
+
+    public String script() {
+        return valueInput.getText();
+    }
+
+    public String domain() {
+        String d = moreInput.getText();
+        if (d == null || d.isBlank()) {
+            return null;
+        }
+        return StringTools.replaceLineBreak(d);
+    }
+
+    public String functionName() {
+        String name = functionNameInput.getText();
+        return name == null || name.isBlank() ? "f" : name;
+    }
+
+    public String titleName() {
+        String name = attributesController.nameInput.getText();
+        return name == null || name.isBlank() ? message("MathFunction") : name;
+    }
+
+    public String eval(String script) {
+        return calculator.calculate(script);
+    }
+
+    public boolean inDomain(String domain) {
+        if (domain == null || domain.isBlank()) {
+            return true;
+        }
+        return calculator.condition(domain);
+    }
+
+    public String fillDummy(String script) {
+        try {
+            List<String> variables = variableNames();
+            if (script == null || script.isBlank() || variables == null) {
+                return script;
+            }
+            String vars = "";
+            for (int i = 0; i < variables.size(); i++) {
+                vars += "var " + variables.get(i) + "=" + 1 + ";\n";
+            }
+            return vars + script;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public boolean checkScripts() {
+        String script = script();
+        if (script == null || script.isBlank()) {
+            popError(message("InvalidParameters") + ": " + message("Expression"));
+            return false;
+        }
+        script = script.trim();
+        String ret = eval(fillDummy(script));
+        if (ret == null) {
+            if (calculator.getError() != null) {
+                popError(calculator.getError());
+            } else {
+                popError(message("InvalidParameters") + ": " + message("Expression"));
+            }
+            return false;
+        }
+        String edomain = domain();
+        if (edomain == null) {
+            return true;
+        }
+        ret = eval(fillDummy(edomain));
+        if (ret == null) {
+            if (calculator.getError() != null) {
+                popError(calculator.getError());
+            } else {
+                popError(message("InvalidParameters") + ": " + message("FunctionDomain"));
+            }
+            return false;
+        }
+        return true;
+    }
+
+    public int checkScale(ComboBox<String> selector) {
+        try {
+            int v = Integer.parseInt(selector.getValue());
+            if (v >= 0) {
+                selector.getEditor().setStyle(null);
+                return v;
+            } else {
+                selector.getEditor().setStyle(UserConfig.badStyle());
+                return -1;
+            }
+        } catch (Exception e) {
+            selector.getEditor().setStyle(UserConfig.badStyle());
+            return -2;
         }
     }
 
