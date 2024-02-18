@@ -693,7 +693,7 @@ public class HelpTools {
     }
 
     public static String javaFxCssLink() {
-        return "https://docs.oracle.com/javafx/2/api/javafx/scene/doc-files/cssref.html";
+        return "https://openjfx.io/javadoc/21/javafx.graphics/javafx/scene/doc-files/cssref.html";
     }
 
     public static String derbyLink() {

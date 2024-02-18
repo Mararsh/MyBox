@@ -43,8 +43,6 @@ public class MathFunctionChart extends MathFunctionData {
             xyzController.colorGradientRadio.setSelected(true);
             xyzController.colorColumnsRadio.setDisable(true);
 
-            thisPane.getChildren().remove(xyzChartBox);
-
             if (variablesSize == 2) {
                 Tab tab = new Tab(message("Chart"));
                 tab.setClosable(false);

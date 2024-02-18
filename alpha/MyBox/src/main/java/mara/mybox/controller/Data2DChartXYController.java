@@ -7,6 +7,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import mara.mybox.db.data.Data2DColumn;
@@ -223,6 +224,14 @@ public class Data2DChartXYController extends BaseData2DChartController {
             return;
         }
         chartController.writeXYChart(outputColumns, chartData, categoryIndex, valueIndices);
+    }
+
+    @Override
+    public boolean keyEventsFilter(KeyEvent event) {
+        if (super.keyEventsFilter(event)) {
+            return true;
+        }
+        return chartController.keyEventsFilter(event);
     }
 
     /*

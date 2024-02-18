@@ -36,7 +36,7 @@ public class XYChartOptions<X, Y> extends ChartOptions<X, Y> {
 
     protected ChartCoordinate categoryCoordinate, numberCoordinate, sizeCoordinate,
             xCoordinate, yCoordinate;
-    protected int lineWidth, categoryFontSize, categoryMargin, categoryTickRotation,
+    protected int lineWidth, symbolSize, categoryFontSize, categoryMargin, categoryTickRotation,
             numberFontSize, numberTickRotation;
     protected boolean isXY, categoryIsNumbers,
             displayCategoryMark, displayCategoryTick, displayNumberMark, displayNumberTick,
@@ -116,6 +116,7 @@ public class XYChartOptions<X, Y> extends ChartOptions<X, Y> {
             numberFontSize = UserConfig.getInt(conn, chartName + "NumberFontSize", 10);
             numberTickRotation = UserConfig.getInt(conn, chartName + "NumberTickRotation", 0);
             lineWidth = UserConfig.getInt(conn, chartName + "LineWidth", 2);
+            symbolSize = UserConfig.getInt(conn, chartName + "SymbolSize", 10);
             barGap = UserConfig.getDouble(conn, chartName + "BarGap", 2d);
             categoryGap = chartType == ChartType.StackedBar ? 1
                     : UserConfig.getDouble(conn, chartName + "CategoryBarGap", 1d);
@@ -243,13 +244,27 @@ public class XYChartOptions<X, Y> extends ChartOptions<X, Y> {
     }
 
     public int getLineWidth() {
-        lineWidth = lineWidth <= 0 ? 2 : lineWidth;
+        if (lineWidth <= 0) {
+            lineWidth = 2;
+        }
         return lineWidth;
     }
 
     public void setLineWidth(int lineWidth) {
         this.lineWidth = lineWidth;
         UserConfig.setInt(chartName + "LineWidth", getLineWidth());
+    }
+
+    public int getSymbolSize() {
+        if (symbolSize <= 0) {
+            symbolSize = 10;
+        }
+        return symbolSize;
+    }
+
+    public void setSymbolSize(int symbolSize) {
+        this.symbolSize = symbolSize;
+        UserConfig.setInt(chartName + "SymbolSize", getSymbolSize());
     }
 
     @Override
@@ -608,7 +623,7 @@ public class XYChartOptions<X, Y> extends ChartOptions<X, Y> {
         this.bubbleStyle = bubbleStyle;
         UserConfig.setString(chartName + "BubbleStyle", bubbleStyle);
         if (bubbleChart != null) {
-            ChartTools.setBubbleChart​Colors(bubbleChart, getBubbleStyle(), palette, legendSide != null);
+            ChartTools.setBubbleChartStyle(bubbleChart, getBubbleStyle(), palette, legendSide != null);
         }
     }
 

@@ -5,11 +5,13 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.geometry.Side;
+import javafx.scene.chart.AreaChart;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.BubbleChart;
 import javafx.scene.chart.Chart;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.ScatterChart;
+import javafx.scene.chart.StackedAreaChart;
 import javafx.scene.chart.StackedBarChart;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -25,6 +27,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.chart.BoxWhiskerChart;
 import mara.mybox.fxml.chart.ResidualChart;
 import mara.mybox.fxml.chart.SimpleRegressionChart;
 import mara.mybox.fxml.chart.XYChartMaker;
@@ -51,7 +54,7 @@ public class Data2DChartXYOptionsController extends BaseData2DChartFxOptionsCont
     @FXML
     protected VBox plotBox, xyPlotBox, bubbleBox, categoryBox, categoryNumbersBox;
     @FXML
-    protected HBox barGapBox, categoryGapBox, lineWidthBox;
+    protected HBox barGapBox, categoryGapBox, lineWidthBox, symbolSizeBox;
     @FXML
     protected ToggleGroup titleSideGroup, labelLocaionGroup, sortGroup,
             categorySideGroup, categoryCoordinateGroup, categoryValuesGroup,
@@ -66,7 +69,7 @@ public class Data2DChartXYOptionsController extends BaseData2DChartFxOptionsCont
             sizeCartesianRadio, sizeSquareRootRadio, sizeLogarithmicERadio, sizeLogarithmic10Radio,
             sortVertivalRadio, sortHorizontalRadio;
     @FXML
-    protected ComboBox<String> labelFontSizeSelector, lineWidthSelector, tickFontSizeSelector,
+    protected ComboBox<String> labelFontSizeSelector, lineWidthSelector, symbolSizeSelector, tickFontSizeSelector,
             categoryFontSizeSelector, categoryTickRotationSelector, barGapSelector, categoryGapSelector,
             numberFontSizeSelector, numberTickRotationSelector;
     @FXML
@@ -121,6 +124,20 @@ public class Data2DChartXYOptionsController extends BaseData2DChartFxOptionsCont
                 categoryBox.getChildren().removeAll(barGapBox, categoryGapBox);
 
             }
+
+            if (chart instanceof LineChart
+                    || chart instanceof AreaChart
+                    || chart instanceof StackedAreaChart
+                    || chart instanceof BoxWhiskerChart) {
+            } else {
+                xyPlotBox.getChildren().removeAll(lineWidthBox);
+
+                if (!(chart instanceof ScatterChart)) {
+                    xyPlotBox.getChildren().removeAll(symbolSizeBox);
+                }
+
+            }
+
             isSettingValues = false;
 
         } catch (Exception e) {
@@ -229,23 +246,47 @@ public class Data2DChartXYOptionsController extends BaseData2DChartFxOptionsCont
                 }
             });
 
-            int lineWidth = chartMaker.getLineWidth();
             lineWidthSelector.getItems().addAll(Arrays.asList(
                     "4", "1", "2", "3", "5", "6", "7", "8", "9", "10"
             ));
-            lineWidthSelector.getSelectionModel().select(lineWidth + "");
-            lineWidthSelector.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
-                try {
-                    int v = Integer.parseInt(newValue);
-                    if (v >= 0) {
-                        chartMaker.setLineWidth(v);
-                        lineWidthSelector.getEditor().setStyle(null);
-                        chartController.redraw();
-                    } else {
+            lineWidthSelector.getSelectionModel().select(chartMaker.getLineWidth() + "");
+            lineWidthSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    try {
+                        int v = Integer.parseInt(newValue);
+                        if (v >= 0) {
+                            chartMaker.setLineWidth(v);
+                            lineWidthSelector.getEditor().setStyle(null);
+                            chartController.redraw();
+                        } else {
+                            lineWidthSelector.getEditor().setStyle(UserConfig.badStyle());
+                        }
+                    } catch (Exception e) {
                         lineWidthSelector.getEditor().setStyle(UserConfig.badStyle());
                     }
-                } catch (Exception e) {
-                    lineWidthSelector.getEditor().setStyle(UserConfig.badStyle());
+                }
+            });
+
+            symbolSizeSelector.getItems().addAll(Arrays.asList(
+                    "10", "8", "6", "4", "2", "1", "20", "16", "18", "30"
+            ));
+            symbolSizeSelector.getSelectionModel().select(chartMaker.getSymbolSize() + "");
+            symbolSizeSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    try {
+                        int v = Integer.parseInt(newValue);
+                        if (v >= 0) {
+                            chartMaker.setSymbolSize(v);
+                            symbolSizeSelector.getEditor().setStyle(null);
+                            chartController.redraw();
+                        } else {
+                            symbolSizeSelector.getEditor().setStyle(UserConfig.badStyle());
+                        }
+                    } catch (Exception e) {
+                        symbolSizeSelector.getEditor().setStyle(UserConfig.badStyle());
+                    }
                 }
             });
 

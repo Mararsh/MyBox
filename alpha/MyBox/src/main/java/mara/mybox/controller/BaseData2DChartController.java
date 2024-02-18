@@ -348,7 +348,12 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
     public boolean checkMax() {
         if (chartMaxInput != null) {
             try {
-                chartMaxData = Integer.parseInt(chartMaxInput.getText());
+                String s = chartMaxInput.getText();
+                if (s == null || s.isBlank()) {
+                    chartMaxData = -1;
+                } else {
+                    chartMaxData = Integer.parseInt(s);
+                }
                 UserConfig.setInt(baseName + "ChartMaxData", chartMaxData);
                 return true;
             } catch (Exception ex) {

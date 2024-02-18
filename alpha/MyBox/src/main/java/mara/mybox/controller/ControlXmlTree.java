@@ -11,6 +11,7 @@ import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.cell.TreeItemPropertyValueFactory;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.data.XmlTreeNode;
 import mara.mybox.dev.MyBoxLog;
@@ -51,6 +52,14 @@ public class ControlXmlTree extends BaseTreeTableViewController<XmlTreeNode> {
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+    }
+
+    @Override
+    public boolean keyEventsFilter(KeyEvent event) {
+        if (super.keyEventsFilter(event)) {
+            return true;
+        }
+        return nodeController.keyEventsFilter(event);
     }
 
     /*
