@@ -5,6 +5,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import mara.mybox.dev.MyBoxLog;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -15,7 +16,7 @@ import mara.mybox.value.UserConfig;
 public abstract class BaseChildController extends BaseController {
 
     @FXML
-    protected CheckBox closeAfterCheck;
+    protected CheckBox onTopCheck, closeAfterCheck;
 
     @Override
     public void initValues() {
@@ -34,6 +35,21 @@ public abstract class BaseChildController extends BaseController {
         try {
             super.initControls();
 
+            if (onTopCheck != null) {
+                if (getMyStage() != null) {
+                    onTopCheck.setSelected(getMyStage().isAlwaysOnTop());
+                }
+                onTopCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                        if (getMyStage() == null) {
+                            return;
+                        }
+                        myStage.setAlwaysOnTop(onTopCheck.isSelected());
+                        popInformation(myStage.isAlwaysOnTop() ? message("AlwayOnTop") : message("DisableAlwayOnTop"));
+                    }
+                });
+            }
             if (closeAfterCheck != null) {
                 closeAfterCheck.setSelected(UserConfig.getBoolean(interfaceName + "SaveClose", false));
                 closeAfterCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {

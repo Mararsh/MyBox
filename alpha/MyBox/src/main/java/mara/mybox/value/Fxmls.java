@@ -291,6 +291,11 @@ public class Fxmls {
     public static final String DataManufactureSaveFxml = "/fxml/DataManufactureSave.fxml";
     public static final String Data2DSpliceFxml = "/fxml/Data2DSplice.fxml";
 
+    public static final String Data2DAttributesFxml = "/fxml/Data2DAttributes.fxml";
+    public static final String Data2DColumnsFxml = "/fxml/Data2DColumns.fxml";
+    public static final String Data2DCSVFxml = "/fxml/Data2DCSV.fxml";
+    public static final String Data2DPageCSVFxml = "/fxml/Data2DPageCSV.fxml";
+    public static final String Data2DPageHtmlFxml = "/fxml/Data2DPageHtml.fxml";
     public static final String Data2DAddRowsFxml = "/fxml/Data2DAddRows.fxml";
     public static final String Data2DRowEditFxml = "/fxml/Data2DRowEdit.fxml";
     public static final String Data2DColumnEditFxml = "/fxml/Data2DColumnEdit.fxml";

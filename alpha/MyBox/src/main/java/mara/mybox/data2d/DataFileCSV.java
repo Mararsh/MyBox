@@ -54,7 +54,7 @@ public class DataFileCSV extends DataFileText {
     }
 
     @Override
-    public boolean savePageData(Data2D targetData) {
+    public boolean savePageDataAs(Data2D targetData) {
         if (targetData == null || !(targetData instanceof DataFileCSV)) {
             return false;
         }
@@ -193,7 +193,7 @@ public class DataFileCSV extends DataFileText {
             DataFileCSV targetData = (DataFileCSV) this.cloneAll();
             File csvFile = tmpFile(dname, "save", "csv");
             targetData.setFile(csvFile).setDataName(dname);
-            savePageData(targetData);
+            savePageDataAs(targetData);
             return targetData;
         } catch (Exception e) {
             MyBoxLog.error(e);

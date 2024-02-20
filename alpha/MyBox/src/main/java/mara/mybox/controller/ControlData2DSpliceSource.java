@@ -24,9 +24,12 @@ public class ControlData2DSpliceSource extends BaseData2DSourceController {
     }
 
     @Override
-    public void loadDef(Data2DDefinition def) {
-        super.loadDef(def);
+    public boolean loadDef(Data2DDefinition def) {
+        if (!super.loadDef(def)) {
+            return false;
+        }
         filterController.setData2D(data2D);
+        return true;
     }
 
     @Override

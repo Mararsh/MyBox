@@ -47,7 +47,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
 
     public abstract List<String> readColumnNames();
 
-    public abstract boolean savePageData(Data2D targetData);
+    public abstract boolean savePageDataAs(Data2D targetData);
 
     /*
         read

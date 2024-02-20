@@ -58,13 +58,9 @@ import mara.mybox.value.UserConfig;
 public abstract class BaseData2DColumnsController extends BaseTablePagesController<Data2DColumn> {
 
     protected TableData2DColumn tableData2DColumn;
-    protected Status status;
     protected Data2D data2D;
     protected ChangeListener<Boolean> getListener;
-
-    public enum Status {
-        Loaded, Modified, Applied
-    }
+    protected boolean changed;
 
     @FXML
     protected TableColumn<Data2DColumn, String> nameColumn, typeColumn, defaultColumn, descColumn, formatColumn;
@@ -139,7 +135,7 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
                     }
                     if (!v.equals(column.getColumnName())) {
                         column.setColumnName(v);
-                        status(Status.Modified);
+                        changed(true);
                     }
                 }
             });
@@ -179,7 +175,7 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
                                     if (value != column.isEditable()) {
                                         isChanging = true;
                                         column.setEditable(value);
-                                        status(Status.Modified);
+                                        changed(true);
                                         isChanging = false;
                                     }
                                 } catch (Exception e) {
@@ -229,7 +225,7 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
                                     if (value != column.isNotNull()) {
                                         isChanging = true;
                                         column.setNotNull(value);
-                                        status(Status.Modified);
+                                        changed(true);
                                         isChanging = false;
                                     }
                                 } catch (Exception e) {
@@ -268,7 +264,7 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
                             v = StringMaxLength;
                         }
                         column.setLength(v);
-                        status(Status.Modified);
+                        changed(true);
                     }
                 }
             });
@@ -290,7 +286,7 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
                     }
                     if (v != column.getWidth()) {
                         column.setWidth(v);
-                        status(Status.Modified);
+                        changed(true);
                     }
                 }
             });
@@ -312,7 +308,7 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
                                 return;
                             }
                             tableData.get(index).setColor(color);
-                            status(Status.Modified);
+                            changed(true);
                         }
                     };
                     return cell;
@@ -337,7 +333,7 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
                     if ((v == null && column.getDefaultValue() != null)
                             || (v != null && !v.equals(column.getDefaultValue()))) {
                         column.setDefaultValue(v);
-                        status(Status.Modified);
+                        changed(true);
                     }
                 }
             });
@@ -359,7 +355,7 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
                     Data2DColumn column = tableData.get(colIndex);
                     column.setDescription(e.getNewValue());
                     tableData.set(colIndex, column);
-                    status(Status.Modified);
+                    changed(true);
                 }
             });
             descColumn.setEditable(true);
@@ -372,7 +368,8 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
         }
     }
 
-    public void status(ControlData2DColumns.Status newStatus) {
+    public void changed(boolean changed) {
+        this.changed = changed;
     }
 
     @Override
@@ -381,9 +378,7 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
             return;
         }
         if (changed) {
-            status(Status.Modified);
-        } else {
-            status(Status.Loaded);
+            changed(true);
         }
         checkButtons();
     }
@@ -397,7 +392,7 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
     }
 
     public boolean isChanged() {
-        return status == Status.Modified || status == Status.Applied;
+        return changed;
     }
 
     public int newColumnIndex() {
@@ -485,7 +480,7 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
             tableView.refresh();
             isSettingValues = false;
             popDone();
-            status(Status.Modified);
+            changed(true);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -502,7 +497,7 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
             tableView.refresh();
             isSettingValues = false;
             popDone();
-            status(Status.Modified);
+            changed(true);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -517,9 +512,7 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
         isSettingValues = true;
         tableData.set(index, column);
         isSettingValues = false;
-        if (status == null || status == Status.Loaded) {
-            status(Status.Applied);
-        }
+        changed(true);
     }
 
     public void setNames(List<String> names) {
@@ -533,7 +526,7 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
             }
             tableView.refresh();
             isSettingValues = false;
-            status = Status.Modified;
+            changed(true);
             okAction();
         } catch (Exception e) {
             MyBoxLog.error(e);

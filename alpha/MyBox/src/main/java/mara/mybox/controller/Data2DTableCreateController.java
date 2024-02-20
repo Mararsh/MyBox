@@ -3,8 +3,6 @@ package mara.mybox.controller;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Tab;
@@ -25,8 +23,7 @@ import mara.mybox.value.Fxmls;
  */
 public class Data2DTableCreateController extends BaseTaskController {
 
-    protected ControlData2DEditTable editController;
-    protected ChangeListener<Boolean> columnStatusListener;
+    protected ControlData2D editController;
     protected InvalidAs invalidAs = InvalidAs.Blank;
 
     @FXML
@@ -40,18 +37,10 @@ public class Data2DTableCreateController extends BaseTaskController {
     @FXML
     protected RadioButton zeroNonnumericRadio, blankNonnumericRadio;
 
-    public void setParameters(ControlData2DEditTable editController) {
+    public void setParameters(ControlData2D controller) {
         try {
-            this.editController = editController;
+            editController = controller;
             attributesController.setParameters(this, editController.data2D);
-
-            columnStatusListener = new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    refreshControls();
-                }
-            };
-            editController.columnChangedNotify.addListener(columnStatusListener);
 
             refreshControls();
 
@@ -131,7 +120,7 @@ public class Data2DTableCreateController extends BaseTaskController {
         try {
             SoundTools.miao3();
             if (editController != null) {
-                editController.dataController.setData(attributesController.dataTable);
+                editController.setData(attributesController.dataTable);
                 editController.dataSaved();
             }
         } catch (Exception e) {
@@ -155,8 +144,6 @@ public class Data2DTableCreateController extends BaseTaskController {
     public void cleanPane() {
         try {
             if (editController != null) {
-                editController.columnChangedNotify.removeListener(columnStatusListener);
-                columnStatusListener = null;
                 editController = null;
             }
 
@@ -168,7 +155,7 @@ public class Data2DTableCreateController extends BaseTaskController {
     /*
         static
      */
-    public static Data2DTableCreateController open(ControlData2DEditTable tableController) {
+    public static Data2DTableCreateController open(ControlData2D tableController) {
         try {
             Data2DTableCreateController controller = (Data2DTableCreateController) WindowTools.childStage(
                     tableController, Fxmls.Data2DTableCreateFxml);

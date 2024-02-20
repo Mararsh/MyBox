@@ -259,7 +259,7 @@ public class Data2DSetStylesController extends BaseController {
         if (tableController == null || !tableController.checkBeforeNextAction()) {
             return;
         }
-        tableController.dataController.goPage();
+        tableController.goPage();
         tableController.requestMouse();
     }
 

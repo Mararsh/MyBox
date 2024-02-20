@@ -72,7 +72,7 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
         MenuItem EditExcel = new MenuItem(message("EditExcel"));
         EditExcel.setOnAction((ActionEvent event1) -> {
             DataFileExcelController c = (DataFileExcelController) loadScene(Fxmls.DataFileExcelFxml);
-            c.dataController.create();
+            c.dataController.createAction();
         });
 
         MenuItem ExcelConvert = new MenuItem(message("ExcelConvert"));

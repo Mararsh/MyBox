@@ -589,7 +589,7 @@ public class ImagesBrowserController extends ControlImagesTable {
     }
 
     @Override
-    protected int selectedIndix() {
+    public int selectedIndix() {
         try {
             return Integer.parseInt(selectedIndexes.get(0));
         } catch (Exception e) {

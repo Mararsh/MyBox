@@ -238,12 +238,14 @@ public abstract class BaseData2DFileController extends BaseData2DController {
         return false;
     }
 
-    public void saveAs() {
+    @FXML
+    @Override
+    public void saveAsAction() {
         Data2D targetData = saveAsTarget();
         if (targetData == null) {
             return;
         }
-        dataController.saveAs(targetData, saveAsType);
+        dataController.saveAsAction(targetData, saveAsType);
     }
 
     @FXML
@@ -262,15 +264,6 @@ public abstract class BaseData2DFileController extends BaseData2DController {
         TextEditorController controller = (TextEditorController) WindowTools.openStage(Fxmls.TextEditorFxml);
         controller.sourceFileChanged(dataController.data2D.getFile());
         controller.requestMouse();
-    }
-
-    @Override
-    public boolean controlAltB() {
-        if (dataController == null || data2D == null) {
-            return false;
-        }
-        saveAsAction();
-        return true;
     }
 
 }

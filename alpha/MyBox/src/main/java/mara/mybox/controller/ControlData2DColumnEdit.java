@@ -82,10 +82,10 @@ public class ControlData2DColumnEdit extends BaseChildController {
         }
     }
 
-    protected void init(BaseData2DColumnsController columnsController) {
+    @Override
+    public void initControls() {
         try {
-            this.columnsController = columnsController;
-            columnIndex = -1;
+            super.initControls();
 
             colorController.init(this, baseName + "Color");
             colorController.setColor(FxColorTools.randomColor());
@@ -98,6 +98,15 @@ public class ControlData2DColumnEdit extends BaseChildController {
             });
 
             centuryPane.disableProperty().bind(fixYearCheck.selectedProperty().not());
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
+    }
+
+    protected void init(BaseData2DColumnsController columnsController) {
+        try {
+            this.columnsController = columnsController;
+            columnIndex = -1;
 
             rightTipsView.setVisible(columnsController.data2D != null && columnsController.data2D.isTable());
 
@@ -107,13 +116,13 @@ public class ControlData2DColumnEdit extends BaseChildController {
     }
 
     protected void setParameters(BaseData2DColumnsController columnsController) {
-        init(columnsController);
-        loadColumn(-1);
+        setParameters(columnsController, -1);
+
     }
 
     public void setParameters(BaseData2DColumnsController columnsController, int index) {
         init(columnsController);
-        loadColumn(index);
+        loadColumn(-1);
     }
 
     public void checkType() {

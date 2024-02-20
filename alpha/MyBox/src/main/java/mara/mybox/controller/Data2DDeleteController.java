@@ -131,7 +131,7 @@ public class Data2DDeleteController extends BaseData2DTargetsController {
             protected void whenSucceeded() {
                 selectedRowsIndices = null;
                 tableController.dataSizeLoaded = false;
-                tableController.dataController.goPage();
+                tableController.goPage();
                 tableController.requestMouse();
                 tabPane.getSelectionModel().select(dataTab);
                 alertInformation(message("DeletedRowsNumber") + ": " + count);

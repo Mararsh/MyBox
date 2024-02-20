@@ -192,8 +192,8 @@ public class MatricesBinaryCalculationController extends BaseController {
     @FXML
     @Override
     public void createAction() {
-        dataAController.create();
-        dataBController.create();
+        dataAController.createAction();
+        dataBController.createAction();
     }
 
     @FXML

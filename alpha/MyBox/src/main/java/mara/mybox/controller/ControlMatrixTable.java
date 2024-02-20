@@ -12,8 +12,8 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.cell.TableDateCell;
 import mara.mybox.fxml.style.StyleTools;
 import static mara.mybox.value.Languages.message;
@@ -158,11 +158,9 @@ public class ControlMatrixTable extends BaseSysTableController<Data2DDefinition>
                 tableData.set(index, def);
                 if (def.getD2did() == manageController.dataAMatrix.getD2did()) {
                     manageController.dataAMatrix.setDataName(newName);
-                    manageController.dataAController.attributesController.updateDataName();
                 }
                 if (def.getD2did() == manageController.dataBMatrix.getD2did()) {
                     manageController.dataBMatrix.setDataName(newName);
-                    manageController.dataBController.attributesController.updateDataName();
                 }
             }
 

@@ -144,7 +144,7 @@ public class DataFileCSVController extends BaseData2DFileController {
     @FXML
     @Override
     public void saveAsAction() {
-        if (!dataFileCSV.hasData() || !dataController.tableController.verifyData()) {
+        if (!dataFileCSV.hasData() || !dataController.verifyData()) {
             return;
         }
         DataFileCSVSaveAsController.open(this);

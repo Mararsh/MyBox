@@ -3,9 +3,9 @@ package mara.mybox.controller;
 import java.io.File;
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -17,6 +17,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.input.Clipboard;
 import javafx.util.Callback;
 import mara.mybox.data.StringTable;
 import mara.mybox.data2d.Data2D;
@@ -32,6 +33,10 @@ import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
+import static mara.mybox.db.data.Data2DDefinition.Type.CSV;
+import static mara.mybox.db.data.Data2DDefinition.Type.Excel;
+import static mara.mybox.db.data.Data2DDefinition.Type.MyBoxClipboard;
+import static mara.mybox.db.data.Data2DDefinition.Type.Texts;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableColor;
 import mara.mybox.db.table.TableData2DColumn;
@@ -63,8 +68,8 @@ import mara.mybox.value.UserConfig;
  */
 public class ControlData2DLoad extends BaseTablePagesController<List<String>> {
 
-    protected ControlData2D dataController;
     protected Data2D data2D;
+    protected Data2D.Type dataType;
     protected TableData2DDefinition tableData2DDefinition;
     protected TableData2DColumn tableData2DColumn;
     protected char copyDelimiter = ',';
@@ -145,12 +150,35 @@ public class ControlData2DLoad extends BaseTablePagesController<List<String>> {
         }
     }
 
+    /*
+        data
+     */
     public void setData(Data2D data) {
         try {
-            data2D = data;
+            if (data2D == null || data2D == data || data2D.getType() != data.getType()) {
+                data2D = data;
+            } else {
+                data2D.resetData();
+                data2D.cloneAll(data);
+            }
             if (data2D != null) {
                 tableData2DDefinition = data2D.getTableData2DDefinition();
                 tableData2DColumn = data2D.getTableData2DColumn();
+
+                switch (data2D.getType()) {
+                    case CSV:
+                    case MyBoxClipboard:
+                        setFileType(VisitHistory.FileType.CSV);
+                        break;
+                    case Excel:
+                        setFileType(VisitHistory.FileType.Excel);
+                        break;
+                    case Texts:
+                        setFileType(VisitHistory.FileType.Text);
+                        break;
+                    default:
+                        setFileType(VisitHistory.FileType.CSV);
+                }
 
                 if (paginationPane != null) {
                     showPaginationPane(!data2D.isTmpData() && !data2D.isMatrix());
@@ -165,9 +193,6 @@ public class ControlData2DLoad extends BaseTablePagesController<List<String>> {
         }
     }
 
-    /*
-        data
-     */
     public void resetData() {
         resetStatus();
         dataSizeLoaded = true;
@@ -191,22 +216,21 @@ public class ControlData2DLoad extends BaseTablePagesController<List<String>> {
     }
 
     public void loadNull() {
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                if (dataController != null) {
-                    dataController.loadNull();
-                } else {
-                    resetData();
-                }
-            }
-        });
+        if (dataType != null) {
+            loadData(Data2D.create(dataType));
+        } else {
+            resetData();
+        }
     }
 
-    public void loadDef(Data2DDefinition def) {
+    public boolean loadDef(Data2DDefinition def) {
+        if (!checkBeforeNextAction()) {
+            return false;
+        }
+        resetStatus();
         if (def == null) {
             loadNull();
-            return;
+            return true;
         }
         if (data2D == null || data2D.getType() != def.getType()) {
             setData(Data2D.create(def.getType()));
@@ -215,6 +239,7 @@ public class ControlData2DLoad extends BaseTablePagesController<List<String>> {
         }
         data2D.cloneAll(def);
         readDefinition();
+        return true;
     }
 
     public synchronized void readDefinition() {
@@ -225,11 +250,7 @@ public class ControlData2DLoad extends BaseTablePagesController<List<String>> {
         if (!checkInvalidFile()) {
             return;
         }
-        if (dataController != null) {
-            dataController.resetStatus();
-        } else {
-            resetStatus();
-        }
+        resetStatus();
         task = new FxSingletonTask<Void>(this) {
 
             @Override
@@ -259,11 +280,7 @@ public class ControlData2DLoad extends BaseTablePagesController<List<String>> {
                 data2D = null;
                 resetView(false);
                 data2D = s;
-                if (dataController != null) {
-                    dataController.loadData(data2D);   // Load data whatever
-                } else {
-                    loadData();
-                }
+                loadData();
             }
 
         };
@@ -323,11 +340,7 @@ public class ControlData2DLoad extends BaseTablePagesController<List<String>> {
             if (data2D == null) {
                 return;
             }
-            if (dataController != null) {
-                dataController.resetStatus();
-            } else {
-                resetStatus();
-            }
+            resetStatus();
             data2D.resetData();
             List<Data2DColumn> columns = new ArrayList<>();
             if (cols == null || cols.isEmpty()) {
@@ -361,14 +374,8 @@ public class ControlData2DLoad extends BaseTablePagesController<List<String>> {
             data2D.checkForLoad();
             data2D.setDataName(name);
             resetView(false);
-            if (dataController != null) {
-                dataController.setData(data2D);
-            }
+            setData(data2D);
             displayTmpData(rows);
-            if (dataController != null) {
-                dataController.attributesController.loadData();
-                dataController.columnsController.loadData();
-            }
             if (validateTable != null && !validateTable.isEmpty()) {
                 validateTable.htmlTable();
             }
@@ -459,13 +466,26 @@ public class ControlData2DLoad extends BaseTablePagesController<List<String>> {
             @Override
             protected void whenSucceeded() {
                 loadDef(targetData);
-                if (dataController != null && dataController.manageController != null) {
-                    dataController.manageController.refreshAction();
-                }
             }
 
         };
         start(task, thisPane);
+    }
+
+    public void loadCSVFile(DataFileCSV csvData) {
+        try {
+            if (csvData == null) {
+                popError("Nonexistent");
+                return;
+            }
+            if (!checkBeforeNextAction()) {
+                return;
+            }
+            setData(Data2D.create(dataType));
+            loadCSVData(csvData);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
     public void loadTableData(DataTable dataTable) {
@@ -521,9 +541,6 @@ public class ControlData2DLoad extends BaseTablePagesController<List<String>> {
             @Override
             protected void whenSucceeded() {
                 loadDef(targetData);
-                if (dataController != null && dataController.manageController != null) {
-                    dataController.manageController.refreshAction();
-                }
             }
         };
         start(task, thisPane);
@@ -576,16 +593,10 @@ public class ControlData2DLoad extends BaseTablePagesController<List<String>> {
         if (statusNotify != null) {
             statusNotify.set(!statusNotify.get());
         }
-        if (dataController != null) {
-            dataController.notifyStatus();
-        }
     }
 
     public void notifySaved() {
         notifyStatus();
-        if (dataController != null) {
-            dataController.notifySaved();
-        }
     }
 
     @Override
@@ -598,11 +609,11 @@ public class ControlData2DLoad extends BaseTablePagesController<List<String>> {
         if (data2D != null && data2D.getFile() != null) {
             recordFileOpened(data2D.getFile());
         }
-        if (dataController != null) {
-            dataController.notifyLoaded();
-        }
     }
 
+    /*
+        action
+     */
     @FXML
     public void renameAction(BaseTablePagesController parent, int index, Data2DDefinition targetData) {
         String newName = PopTools.askValue(getTitle(), message("CurrentName") + ":" + targetData.getDataName(),
@@ -631,9 +642,6 @@ public class ControlData2DLoad extends BaseTablePagesController<List<String>> {
                 }
                 if (def.getD2did() == data2D.getD2did()) {
                     data2D.setDataName(newName);
-                    if (dataController != null) {
-                        dataController.attributesController.updateDataName();
-                    }
                     if (parent != null) {
                         parent.updateStatus();
                     }
@@ -720,6 +728,103 @@ public class ControlData2DLoad extends BaseTablePagesController<List<String>> {
         }
     }
 
+    @FXML
+    @Override
+    public void myBoxClipBoard() {
+        Data2DPasteContentInMyBoxClipboardController.open(this);
+    }
+
+    @FXML
+    @Override
+    public void loadContentInSystemClipboard() {
+        try {
+            if (data2D == null || !checkBeforeNextAction()) {
+                return;
+            }
+            String text = Clipboard.getSystemClipboard().getString();
+            if (text == null || text.isBlank()) {
+                popError(message("NoTextInClipboard"));
+            }
+            Data2DLoadContentInSystemClipboardController.open(this, text);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    @FXML
+    @Override
+    public void pasteContentInSystemClipboard() {
+        try {
+            if (data2D == null) {
+                return;
+            }
+            String text = Clipboard.getSystemClipboard().getString();
+            if (text == null || text.isBlank()) {
+                popError(message("NoTextInClipboard"));
+            }
+            Data2DPasteContentInSystemClipboardController.open(this, text);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    @FXML
+    public void pasteContentInMyboxClipboard() {
+        try {
+            if (data2D == null) {
+                return;
+            }
+            Data2DPasteContentInMyBoxClipboardController.open(this);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    @FXML
+    public void verifyAction() {
+        StringTable results = verifyResults();
+        if (results.isEmpty()) {
+            popInformation(message("AllValuesValid"), 5000);
+            return;
+        }
+        results.htmlTable();
+    }
+
+    public StringTable verifyResults() {
+        try {
+            List<String> names = new ArrayList<>();
+            names.addAll(Arrays.asList(message("Row"), message("Column"), message("Invalid")));
+            StringTable stringTable = new StringTable(names, data2D.displayName());
+            for (int r = 0; r < tableData.size(); r++) {
+                List<String> dataRow = tableData.get(r);
+                for (int c = 0; c < data2D.columnsNumber(); c++) {
+                    Data2DColumn column = data2D.column(c);
+                    if (column.isAuto()) {
+                        continue;
+                    }
+                    String value = dataRow.get(c + 1);
+                    String item = null;
+                    if (column.isNotNull() && (value == null || value.isBlank())) {
+                        item = message("Null");
+                    } else if (!column.validValue(value)) {
+                        item = message(column.getType().name());
+                    } else if (!data2D.validValue(value)) {
+                        item = message("TextDataComments");
+                    }
+                    if (item == null) {
+                        continue;
+                    }
+                    List<String> invalid = new ArrayList<>();
+                    invalid.addAll(Arrays.asList((r + 1) + "", column.getColumnName(), item));
+                    stringTable.add(invalid);
+                }
+            }
+            return stringTable;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
 
     /*
         table
@@ -827,17 +932,6 @@ public class ControlData2DLoad extends BaseTablePagesController<List<String>> {
                         return dataColumn.compare(v1, v2);
                     }
                 });
-
-                if (dataController != null) {
-                    tableColumn.widthProperty().addListener(new ChangeListener<Number>() {
-                        @Override
-                        public void changed(ObservableValue<? extends Number> o, Number ov, Number nv) {
-                            int w = nv.intValue();
-                            dataColumn.setWidth(w);
-                            dataController.columnsController.setWidth(colIndex - 1, w);
-                        }
-                    });
-                }
 
                 if (dataColumn.isAuto()) {
                     tableColumn.getStyleClass().clear();
@@ -1024,27 +1118,14 @@ public class ControlData2DLoad extends BaseTablePagesController<List<String>> {
             return;
         }
         paginationPane.setVisible(show);
-        if (dataController != null) {
-            if (show) {
-                if (!dataController.thisPane.getChildren().contains(paginationPane)) {
-                    dataController.thisPane.getChildren().add(paginationPane);
-                    NodeStyleTools.refreshStyle(paginationPane);
-                }
-            } else {
-                if (dataController.thisPane.getChildren().contains(paginationPane)) {
-                    dataController.thisPane.getChildren().remove(paginationPane);
-                }
+        if (show) {
+            if (!thisPane.getChildren().contains(paginationPane)) {
+                thisPane.getChildren().add(paginationPane);
+                NodeStyleTools.refreshStyle(paginationPane);
             }
         } else {
-            if (show) {
-                if (!thisPane.getChildren().contains(paginationPane)) {
-                    thisPane.getChildren().add(paginationPane);
-                    NodeStyleTools.refreshStyle(paginationPane);
-                }
-            } else {
-                if (thisPane.getChildren().contains(paginationPane)) {
-                    thisPane.getChildren().remove(paginationPane);
-                }
+            if (thisPane.getChildren().contains(paginationPane)) {
+                thisPane.getChildren().remove(paginationPane);
             }
         }
     }
@@ -1084,11 +1165,30 @@ public class ControlData2DLoad extends BaseTablePagesController<List<String>> {
     }
 
     @Override
+    public boolean controlAltC() {
+        if (targetIsTextInput()) {
+            return false;
+        }
+        copyToSystemClipboard();
+        return true;
+    }
+
+    @Override
+    public boolean controlAltV() {
+        if (targetIsTextInput()) {
+            return false;
+        }
+        pasteContentInSystemClipboard();
+        return true;
+    }
+
+    @Override
     public void cleanPane() {
         try {
             statusNotify = null;
-            dataController = null;
             data2D = null;
+            tableData2DDefinition = null;
+            tableData2DColumn = null;
         } catch (Exception e) {
         }
         super.cleanPane();

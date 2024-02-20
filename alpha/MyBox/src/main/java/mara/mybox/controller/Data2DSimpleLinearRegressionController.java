@@ -368,7 +368,7 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DRegression
             s.append("<P>").append(message("DependentVariable")).append(": ").append(selectedValue).append(" = \n");
             s.append("<INPUT id=\"outputY\"  type=\"text\" style=\"width:200px\"/></P>\n");
 //            s.append("<P>").append(message("ConfidenceIntervals")).append(" = \n");
-//            s.append("<INPUT id=\"ConfidenceIntervals\"  type=\"text\" style=\"width:300px\"/></P>\n");
+//            s.append("<INPUT id=\"ConfidenceIntervals\"  dataType=\"text\" style=\"width:300px\"/></P>\n");
             s.append("</DIV>\n<HR/>\n");
 
             s.append("<H3 align=center>").append(message("LastStatus")).append("</H3>\n");

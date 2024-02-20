@@ -261,11 +261,11 @@ public abstract class BaseTableViewController<P> extends BaseController {
         }
     }
 
-    protected boolean isNoneSelected() {
+    public boolean isNoneSelected() {
         return tableView.getSelectionModel().getSelectedIndices().isEmpty();
     }
 
-    protected List<P> selectedItems() {
+    public List<P> selectedItems() {
         try {
             List<P> selectedItems = tableView.getSelectionModel().getSelectedItems();
             if (selectedItems != null && !selectedItems.isEmpty()) {
@@ -289,7 +289,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
         return null;
     }
 
-    protected int selectedIndix() {
+    public int selectedIndix() {
         try {
             int index = tableView.getSelectionModel().getSelectedIndex();
             if (index >= 0 && index < tableData.size()) {
@@ -305,7 +305,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
         return -1;
     }
 
-    protected P selectedItem() {
+    public P selectedItem() {
         try {
             int index = selectedIndix();
             if (index >= 0 && index < tableData.size()) {

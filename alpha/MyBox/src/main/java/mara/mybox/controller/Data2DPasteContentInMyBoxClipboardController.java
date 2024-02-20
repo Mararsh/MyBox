@@ -43,7 +43,7 @@ public class Data2DPasteContentInMyBoxClipboardController extends DataInMyBoxCli
         }
     }
 
-    public void setParameters(ControlData2DEditTable target) {
+    public void setParameters(ControlData2DLoad target) {
         try {
             sourceController.setParameters(this);
             pasteController.setParameters(sourceController, target);
@@ -76,7 +76,7 @@ public class Data2DPasteContentInMyBoxClipboardController extends DataInMyBoxCli
         }
     }
 
-    public static Data2DPasteContentInMyBoxClipboardController open(ControlData2DEditTable target) {
+    public static Data2DPasteContentInMyBoxClipboardController open(ControlData2DLoad target) {
         try {
             if (target == null) {
                 return null;

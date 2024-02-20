@@ -92,7 +92,7 @@ public class DataFileExcelController extends BaseData2DFileController {
     @FXML
     @Override
     public void saveAsAction() {
-        if (!dataFileExcel.hasData() || !dataController.tableController.verifyData()) {
+        if (!dataFileExcel.hasData() || !dataController.verifyData()) {
             return;
         }
         DataFileExcelSaveAsController.open(this);

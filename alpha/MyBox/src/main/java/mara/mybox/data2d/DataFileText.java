@@ -206,7 +206,7 @@ public class DataFileText extends DataFile {
     }
 
     @Override
-    public boolean savePageData(Data2D targetData) {
+    public boolean savePageDataAs(Data2D targetData) {
         if (targetData == null || !(targetData instanceof DataFileText)) {
             return false;
         }

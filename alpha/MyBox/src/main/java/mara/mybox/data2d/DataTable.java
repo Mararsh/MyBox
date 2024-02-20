@@ -330,7 +330,7 @@ public class DataTable extends Data2D {
     }
 
     @Override
-    public boolean savePageData(Data2D targetData) {
+    public boolean savePageDataAs(Data2D targetData) {
         try (Connection conn = DerbyBase.getConnection()) {
             updateTable(conn);
             List<Data2DRow> dbRows = tableData2D.query(conn, pageQuery());

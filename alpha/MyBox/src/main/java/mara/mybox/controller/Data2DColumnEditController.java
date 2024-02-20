@@ -21,7 +21,11 @@ public class Data2DColumnEditController extends BaseChildController {
     @FXML
     protected ControlData2DColumnEdit columnEditController;
     @FXML
-    protected Label titleLabel;
+    protected Label nameLabel;
+
+    public Data2DColumnEditController() {
+        baseTitle = message("Column");
+    }
 
     public void setParameters(BaseData2DColumnsController columnsController, int index) {
         try {
@@ -29,8 +33,9 @@ public class Data2DColumnEditController extends BaseChildController {
             this.index = index;
 
             columnEditController.setParameters(columnsController, index);
-            String t = columnsController.data2D == null ? "" : (columnsController.data2D.displayName() + "\n");
-            titleLabel.setText(t + message("Column") + " " + (index + 1));
+            nameLabel.setText((columnsController.data2D == null ? ""
+                    : (message("Data") + ": " + columnsController.data2D.displayName() + " "))
+                    + message("Column") + ": " + (index + 1));
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -47,13 +52,22 @@ public class Data2DColumnEditController extends BaseChildController {
             }
             columnsController.tableData.set(index, column);
             columnsController.tableView.scrollTo(index - 3);
-            popSuccessful();
-            close();
+            columnsController.popSuccessful();
+            if (closeAfterCheck.isSelected()) {
+                close();
+            }
 
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
+
+    @FXML
+    @Override
+    public void recoverAction() {
+        columnEditController.loadColumn(index);
+    }
+
 
     /*
         static

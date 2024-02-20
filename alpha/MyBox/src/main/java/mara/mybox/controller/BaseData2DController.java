@@ -99,7 +99,7 @@ public abstract class BaseData2DController extends BaseFileController {
             this.type = type;
             if (dataController != null) {
                 dataController.setDataType(this, type);
-                loadController = dataController.editController.tableController;
+                loadController = dataController;
 
             } else if (loadController != null) {
                 loadController.setData(Data2D.create(type));
@@ -181,7 +181,7 @@ public abstract class BaseData2DController extends BaseFileController {
         if (dataController == null) {
             return;
         }
-        dataController.create();
+        dataController.createAction();
     }
 
     @FXML
@@ -190,7 +190,7 @@ public abstract class BaseData2DController extends BaseFileController {
         if (dataController == null) {
             return;
         }
-        dataController.recover();
+        dataController.recoverAction();
     }
 
     @FXML
@@ -222,7 +222,7 @@ public abstract class BaseData2DController extends BaseFileController {
         if (dataController == null) {
             return;
         }
-        dataController.save();
+        dataController.saveAction();
     }
 
     @FXML
@@ -543,7 +543,25 @@ public abstract class BaseData2DController extends BaseFileController {
         if (dataController == null) {
             return false;
         }
-        dataController.save();
+        dataController.saveAction();
+        return true;
+    }
+
+    @Override
+    public boolean controlAltB() {
+        if (dataController == null || data2D == null) {
+            return false;
+        }
+        saveAsAction();
+        return true;
+    }
+
+    @Override
+    public boolean controlAltI() {
+        if (dataController == null || data2D == null) {
+            return false;
+        }
+        infoAction();
         return true;
     }
 

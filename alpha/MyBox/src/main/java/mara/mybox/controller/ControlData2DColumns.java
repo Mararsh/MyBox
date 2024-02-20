@@ -2,7 +2,6 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -32,13 +31,8 @@ import static mara.mybox.value.Languages.message;
  */
 public class ControlData2DColumns extends BaseData2DColumnsController {
 
-    protected ControlData2D dataController;
-    protected ControlData2DLoad tableController;
+    protected ControlData2DLoad dataController;
     protected TableData2DDefinition tableData2DDefinition;
-    protected Data2DConvertToDataBaseController convertController;
-
-    public ControlData2DColumns() {
-    }
 
     @Override
     public void initColumns() {
@@ -54,31 +48,23 @@ public class ControlData2DColumns extends BaseData2DColumnsController {
         }
     }
 
-    protected void setParameters(ControlData2D dataController) {
+    protected void setParameters(ControlData2DLoad controller) {
         try {
-            this.dataController = dataController;
-            tableController = dataController.tableController;
+            this.dataController = controller;
+
+            loadValues();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
-    protected void setParameters(Data2DConvertToDataBaseController convertController) {
+    protected void loadValues() {
         try {
-            this.convertController = convertController;
-            tableController = convertController.tableController;
-            buttonsPane.getChildren().removeAll(cancelButton, okButton);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    protected void setData(Data2D data) {
-        try {
-            data2D = data;
-            tableData2DDefinition = tableController.tableData2DDefinition;
-            tableData2DColumn = tableController.tableData2DColumn;
+            data2D = dataController.data2D;
+            tableData2DDefinition = dataController.tableData2DDefinition;
+            tableData2DColumn = dataController.tableData2DColumn;
             setData2DColumns();
+            loadColumns();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -150,7 +136,7 @@ public class ControlData2DColumns extends BaseData2DColumnsController {
                                         if (value != column.isNotNull()) {
                                             isChanging = true;
                                             column.setNotNull(value);
-                                            status(Status.Modified);
+                                            changed(true);
                                             isChanging = false;
                                         }
                                     } catch (Exception e) {
@@ -187,17 +173,11 @@ public class ControlData2DColumns extends BaseData2DColumnsController {
         }
     }
 
-    public void loadData() {
-        if (isSettingValues) {
-            return;
-        }
-        status = null;
-        loadColumns();
-        status(Status.Loaded);
-    }
-
     public void loadColumns() {
         try {
+            if (isSettingValues) {
+                return;
+            }
             isSettingValues = true;
             tableData.clear();
             tableView.refresh();
@@ -213,6 +193,7 @@ public class ControlData2DColumns extends BaseData2DColumnsController {
                 isSettingValues = false;
             }
             postLoadedTableData();
+            changed(false);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -226,47 +207,18 @@ public class ControlData2DColumns extends BaseData2DColumnsController {
         deleteRowsButton.setDisable(data2D == null || data2D.isInternalTable() || isNoneSelected());
     }
 
-    @Override
-    public void status(Status newStatus) {
-        if (status == newStatus) {
-            return;
-        }
-        status = newStatus;
-        if (dataController != null) {
-            dataController.checkStatus();
-        }
-    }
-
     @FXML
     @Override
     public void okAction() {
-        if (status != Status.Modified) {
-            return;
-        }
-        if (pickValues()) {
-            status(Status.Applied);
-        }
-    }
-
-    public boolean pickValues() {
         try {
-            if (convertController != null || tableController == null) {
-                return false;
-            }
             StringTable validateTable = Data2DTools.validate(tableData);
             if (validateTable != null && !validateTable.isEmpty()) {
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        dataController.tabPane.getSelectionModel().select(dataController.columnsTab);
-                        validateTable.htmlTable();
-                    }
-                });
-                return false;
+                validateTable.htmlTable();
+                return;
             }
             List<List<String>> newTableData = new ArrayList<>();
             if (!tableData.isEmpty()) {
-                for (List<String> rowValues : tableController.tableData) {
+                for (List<String> rowValues : dataController.tableData) {
                     List<String> newRow = new ArrayList<>();
                     newRow.add(rowValues.get(0));
                     for (Data2DColumn row : tableData) {
@@ -285,20 +237,16 @@ public class ControlData2DColumns extends BaseData2DColumnsController {
                 columns.add(tableData.get(i).cloneAll());
             }
             data2D.setColumns(columns);
-            return tableController.updateData(newTableData, true);
+            dataController.updateData(newTableData, true);
         } catch (Exception e) {
             MyBoxLog.error(e);
-            return false;
         }
     }
 
     @FXML
     @Override
-    public void cancelAction() {
-        if (status == Status.Modified) {
-            loadColumns();
-            status(Status.Applied);
-        }
+    public void recoverAction() {
+        loadValues();
     }
 
     @FXML

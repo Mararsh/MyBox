@@ -93,7 +93,7 @@ public class DataFileTextController extends BaseData2DFileController {
     @FXML
     @Override
     public void saveAsAction() {
-        if (!dataFileText.hasData() || !dataController.tableController.verifyData()) {
+        if (!dataFileText.hasData() || !dataController.verifyData()) {
             return;
         }
         DataFileTextSaveAsController.open(this);

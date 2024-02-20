@@ -19,15 +19,10 @@ License:    Apache License Version 2.0
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
 
-<VBox fx:id="thisPane" prefHeight="600.0" prefWidth="700.0" spacing="5.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.Data2DAddRowsController">
+<VBox fx:id="thisPane" prefHeight="500.0" prefWidth="700.0" spacing="2.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.Data2DAddRowsController">
     <children>
-        <Label fx:id="titleLabel" alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="%AddRows" textAlignment="CENTER" VBox.vgrow="NEVER">
-            <font>
-                <Font name="System Bold"  />
-            </font>
-        </Label> 
+      <Label fx:id="nameLabel" minHeight="-Infinity" wrapText="true" /> 
         <VBox spacing="10.0">
             <children>
                 <HBox alignment="CENTER_LEFT" spacing="2.0">
@@ -40,12 +35,15 @@ License:    Apache License Version 2.0
                         <RadioButton fx:id="endRadio" layoutX="129.0" layoutY="10.0" mnemonicParsing="false" text="%End" toggleGroup="$locationGroup" />
                         <RadioButton fx:id="aboveRadio" mnemonicParsing="false" text="%Above" toggleGroup="$locationGroup" />
                         <RadioButton fx:id="belowRadio" layoutX="63.0" layoutY="10.0" mnemonicParsing="false" text="%Below" toggleGroup="$locationGroup" />
-                    </children>
-                </HBox>
-                <HBox fx:id="rowBox" alignment="CENTER_LEFT" spacing="2.0">
-                    <children>
-                        <Label text="%TableRow" />
-                        <ComboBox fx:id="rowSelector" prefWidth="150.0" />
+                      <HBox fx:id="rowBox" alignment="CENTER_LEFT" spacing="2.0">
+                          <children>
+                              <Label text="%TableRow" />
+                              <ComboBox fx:id="rowSelector" prefWidth="150.0" />
+                          </children>
+                     <HBox.margin>
+                        <Insets left="20.0" />
+                     </HBox.margin>
+                      </HBox>
                     </children>
                 </HBox>
             </children>
@@ -111,6 +109,6 @@ License:    Apache License Version 2.0
         </HBox>
     </children>
     <padding>
-        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
     </padding>
 </VBox>

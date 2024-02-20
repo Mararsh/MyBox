@@ -554,11 +554,10 @@ public class StyleButton {
             return new StyleData(id, "", "", "iconNumber.png");
         }
         if (id.startsWith("trim")) {
-            switch (id) {
-                case "trimData":
-                    return new StyleData(id, message("Trim"), "", "iconClean.png");
-                default:
-                    return new StyleData(id, "", "", "iconNumber.png");
+            if (id.startsWith("trimData")) {
+                return new StyleData(id, message("Trim"), "", "iconClean.png");
+            } else {
+                return new StyleData(id, "", "", "iconNumber.png");
             }
         }
         if (id.startsWith("lowerLetter")) {

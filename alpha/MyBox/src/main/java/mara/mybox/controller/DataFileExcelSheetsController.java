@@ -164,7 +164,6 @@ public class DataFileExcelSheetsController extends BaseChildController {
             @Override
             protected void whenSucceeded() {
                 fileController.loadController.updateName();
-                fileController.dataController.attributesController.updateDataName();
                 refreshAction();
             }
 

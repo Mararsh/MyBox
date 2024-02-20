@@ -48,7 +48,7 @@ public class DataFileTextSaveAsController extends BaseChildController {
             if (closeAfterCheck.isSelected()) {
                 close();
             }
-            fileController.saveAs();
+            fileController.saveAsAction();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

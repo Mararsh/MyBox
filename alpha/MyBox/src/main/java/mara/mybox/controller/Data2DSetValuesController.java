@@ -180,7 +180,7 @@ public class Data2DSetValuesController extends BaseData2DTargetsController {
 
             @Override
             protected void whenSucceeded() {
-                tableController.dataController.goPage();
+                tableController.goPage();
                 tableController.requestMouse();
                 tableController.popDone();
                 tabPane.getSelectionModel().select(dataTab);

@@ -14,7 +14,7 @@ import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
-import mara.mybox.controller.ControlData2D;
+import mara.mybox.controller.ControlData2DLoad;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.db.data.Data2DColumn;
@@ -35,7 +35,7 @@ import mara.mybox.value.UserConfig;
  */
 public class Data2DExampleTools {
 
-    public static List<MenuItem> examplesMenu(ControlData2D controller) {
+    public static List<MenuItem> examplesMenu(ControlData2DLoad controller) {
         try {
             List<MenuItem> items = new ArrayList<>();
             String fileLang = Languages.embedFileLang();
@@ -71,7 +71,7 @@ public class Data2DExampleTools {
         }
     }
 
-    public static Menu myData(String fileLang, boolean isChinese, ControlData2D controller) {
+    public static Menu myData(String fileLang, boolean isChinese, ControlData2DLoad controller) {
         try {
             Menu myMenu = new Menu(message("MyData"), StyleTools.getIconImageView("iconCat.png"));
 
@@ -156,7 +156,7 @@ public class Data2DExampleTools {
         }
     }
 
-    public static Menu statisticDataOfChina(String fileLang, boolean isChinese, ControlData2D controller) {
+    public static Menu statisticDataOfChina(String fileLang, boolean isChinese, ControlData2DLoad controller) {
         try {
             // https://data.stats.gov.cn/index.htm
             Menu chinaMenu = new Menu(message("StatisticDataOfChina"), StyleTools.getIconImageView("iconChina.png"));
@@ -285,7 +285,7 @@ public class Data2DExampleTools {
         }
     }
 
-    public static Menu regression(String fileLang, boolean isChinese, ControlData2D controller) {
+    public static Menu regression(String fileLang, boolean isChinese, ControlData2DLoad controller) {
         try {
             Menu regressionMenu = new Menu(message("RegressionData"), StyleTools.getIconImageView("iconLinearPgression.png"));
 
@@ -404,7 +404,7 @@ public class Data2DExampleTools {
         }
     }
 
-    public static Menu location(String fileLang, boolean isChinese, ControlData2D controller) {
+    public static Menu location(String fileLang, boolean isChinese, ControlData2DLoad controller) {
         try {
             Menu locationMenu = new Menu(message("LocationData"), StyleTools.getIconImageView("iconLocation.png"));
 
@@ -451,7 +451,7 @@ public class Data2DExampleTools {
         }
     }
 
-    public static Menu projectManagement(String fileLang, boolean isChinese, ControlData2D controller) {
+    public static Menu projectManagement(String fileLang, boolean isChinese, ControlData2DLoad controller) {
         try {
             Menu pmMenu = new Menu(message("ProjectManagement"), StyleTools.getIconImageView("iconCalculator.png"));
 

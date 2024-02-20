@@ -49,7 +49,7 @@ import mara.mybox.value.UserConfig;
  */
 public class ControlData2DRowEdit extends BaseController {
 
-    protected ControlData2DEditTable editController;
+    protected ControlData2DLoad editController;
     protected int rowIndex;
     protected Map<Data2DColumn, Object> inputs;
     protected TableColor tableColor;
@@ -61,7 +61,7 @@ public class ControlData2DRowEdit extends BaseController {
     @FXML
     protected Button locationButton;
 
-    public void setParameters(ControlData2DEditTable editController) {
+    public void setParameters(ControlData2DLoad editController) {
         try {
             this.editController = editController;
             rowIndex = -1;
@@ -72,7 +72,7 @@ public class ControlData2DRowEdit extends BaseController {
         }
     }
 
-    public void setParameters(ControlData2DEditTable editController, int index) {
+    public void setParameters(ControlData2DLoad editController, int index) {
         try {
             this.editController = editController;
             rowIndex = index;
@@ -91,6 +91,7 @@ public class ControlData2DRowEdit extends BaseController {
             }
             locationButton.setVisible(editController.data2D.includeCoordinate());
 
+            valuesBox.getChildren().clear();
             inputs = new HashMap<>();
             List<Data2DColumn> columns = editController.data2D.getColumns();
 

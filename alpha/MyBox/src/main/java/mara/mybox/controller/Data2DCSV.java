@@ -13,7 +13,9 @@ import mara.mybox.data2d.Data2D;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.TextTools;
+import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -22,19 +24,12 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-10-18
  * @License Apache License Version 2.0
  */
-public class ControlData2DEditCSV extends BaseController {
+public class Data2DCSV extends BaseChildController {
 
-    protected ControlData2D dataController;
-    protected ControlData2DEdit editController;
-    protected ControlData2DEditTable tableController;
+    protected ControlData2DLoad dataController;
     protected Data2D data2D;
     protected String delimiterName;
-    protected Status status;
     protected ChangeListener<Boolean> delimiterListener;
-
-    public enum Status {
-        Loaded, Modified, Applied
-    }
 
     @FXML
     protected TextArea textArea;
@@ -42,6 +37,12 @@ public class ControlData2DEditCSV extends BaseController {
     protected Label columnsLabel;
     @FXML
     protected CheckBox wrapCheck;
+    @FXML
+    protected Label nameLabel;
+
+    public Data2DCSV() {
+        baseTitle = message("EditPageDataInCSVFormat");
+    }
 
     @Override
     public void setFileType() {
@@ -55,17 +56,8 @@ public class ControlData2DEditCSV extends BaseController {
 
             delimiterName = UserConfig.getString(baseName + "EditDelimiter", ",");
 
-            textArea.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    if (isSettingValues) {
-                        return;
-                    }
-                    status(Status.Modified);
-                }
-            });
-
             wrapCheck.setSelected(UserConfig.getBoolean(baseName + "EditTextWrap", true));
+            textArea.setWrapText(wrapCheck.isSelected());
             wrapCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) {
@@ -73,47 +65,34 @@ public class ControlData2DEditCSV extends BaseController {
                     textArea.setWrapText(newValue);
                 }
             });
-            textArea.setWrapText(wrapCheck.isSelected());
 
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
-    protected void setParameters(ControlData2DEdit editController) {
+    protected void setParameters(ControlData2DLoad controller) {
         try {
-            this.editController = editController;
-            dataController = editController.dataController;
-            tableController = editController.tableController;
-            baseTitle = dataController.baseTitle;
+            dataController = controller;
 
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
+            loadData();
 
-    public void setData(Data2D data) {
-        try {
-            data2D = data;
-            checkData();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
     public void loadData() {
-        if (isSettingValues) {
+        if (dataController == null || !dataController.isShowing()) {
+            close();
             return;
         }
-        status = null;
-        loadText();
-        status(data2D.isTableChanged() ? Status.Applied : Status.Loaded);
-    }
-
-    public void loadText() {
-        if (!checkData()) {
-            return;
+        data2D = dataController.data2D;
+        if (data2D == null || !data2D.isColumnsValid()) {
+            popError(message("InvalidData"));
+            close();
         }
+        nameLabel.setText(message("Data") + ": " + data2D.displayName());
         if (task != null) {
             task.cancel();
         }
@@ -146,41 +125,11 @@ public class ControlData2DEditCSV extends BaseController {
         start(task, thisPane);
     }
 
-    public void status(Status newStatus) {
-        checkData();
-        if (status == newStatus) {
-            return;
-        }
-        status = newStatus;
-        dataController.checkStatus();
-    }
-
-    public boolean checkData() {
-        boolean invalid = data2D == null || !data2D.isColumnsValid();
-        if (invalid) {
-            columnsLabel.setText("");
-            isSettingValues = true;
-            textArea.setText("");
-            isSettingValues = false;
-        }
-        thisPane.setDisable(invalid);
-        return !invalid;
-    }
-
-    public boolean isChanged() {
-        return status == Status.Modified || status == Status.Applied;
-    }
-
     @FXML
     @Override
     public void okAction() {
-        if (status != Status.Modified) {
-            popInformation(message("Unchanged"));
-            return;
-        }
-        if (!checkData() || delimiterName == null) {
-            popError(message("InvalidData"));
-            return;
+        if (delimiterName == null) {
+            delimiterName = ",";
         }
         if (task != null) {
             task.cancel();
@@ -226,10 +175,12 @@ public class ControlData2DEditCSV extends BaseController {
             @Override
             protected void whenSucceeded() {
                 isSettingValues = true;
-                tableController.updateData(rows, false);
+                dataController.updateData(rows, false);
                 isSettingValues = false;
-                status(Status.Applied);
-                popInformation(message("UpdateSuccessfully"));
+                if (closeAfterCheck.isSelected()) {
+                    close();
+                }
+                dataController.popInformation(message("UpdateSuccessfully"));
             }
 
         };
@@ -238,23 +189,8 @@ public class ControlData2DEditCSV extends BaseController {
 
     @FXML
     @Override
-    public void cancelAction() {
-        if (status == Status.Modified) {
-            loadText();
-            status(Status.Applied);
-        }
-    }
-
-    public void loadText(String text) {
-        try {
-            editController.tabPane.getSelectionModel().select(editController.textTab);
-            isSettingValues = true;
-            textArea.setText(text);
-            isSettingValues = false;
-            okAction();
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
+    public void recoverAction() {
+        loadData();
     }
 
     @FXML
@@ -295,12 +231,26 @@ public class ControlData2DEditCSV extends BaseController {
             delimiterListener = null;
             data2D = null;
             delimiterName = null;
-            tableController = null;
-            editController = null;
             dataController = null;
         } catch (Exception e) {
         }
         super.cleanPane();
+    }
+
+    /*
+        static
+     */
+    public static Data2DCSV open(ControlData2DLoad tableController) {
+        try {
+            Data2DCSV controller = (Data2DCSV) WindowTools.branchStage(
+                    tableController, Fxmls.Data2DCSVFxml);
+            controller.setParameters(tableController);
+            controller.requestMouse();
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
     }
 
 }

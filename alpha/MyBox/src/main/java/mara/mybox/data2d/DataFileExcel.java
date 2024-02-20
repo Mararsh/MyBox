@@ -126,7 +126,7 @@ public class DataFileExcel extends DataFile {
     }
 
     @Override
-    public boolean savePageData(Data2D targetData) {
+    public boolean savePageDataAs(Data2D targetData) {
         if (targetData == null || !(targetData instanceof DataFileExcel)) {
             return false;
         }
