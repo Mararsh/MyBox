@@ -27,11 +27,10 @@ public class ControlData2DSpliceList extends ControlData2DList {
     public ControlData2DSpliceList() {
     }
 
-    @Override
-    public void setParameters(BaseData2DController manageController) {
+    public void setParameters(Data2DSpliceController controller) {
         try {
-            this.spliceController = (Data2DSpliceController) manageController;
-            super.setParameters(manageController);
+            this.spliceController = controller;
+            super.setParameters(spliceController);
 
         } catch (Exception e) {
             MyBoxLog.error(e);

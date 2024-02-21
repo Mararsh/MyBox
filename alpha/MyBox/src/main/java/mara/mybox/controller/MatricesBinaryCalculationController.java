@@ -36,8 +36,6 @@ public class MatricesBinaryCalculationController extends BaseController {
     protected double[][] result;
 
     @FXML
-    protected ControlMatrixTable listController;
-    @FXML
     protected Tab dataATab, dataBTab, resultTab;
     @FXML
     protected ControlData2D dataAController, dataBController, resultController;
@@ -60,17 +58,15 @@ public class MatricesBinaryCalculationController extends BaseController {
         try {
             super.initValues();
 
-            dataAController.setDataType(null, Data2D.Type.Matrix);
-            dataAMatrix = (DataMatrix) dataAController.data2D;
+            dataAController.setParameters(this, Data2D.Type.Matrix);
             dataAController.createAction();
+            dataAMatrix = (DataMatrix) dataAController.data2D;
 
-            dataBController.setDataType(null, Data2D.Type.Matrix);
-            dataBMatrix = (DataMatrix) dataBController.data2D;
+            dataBController.setParameters(null, Data2D.Type.Matrix);
             dataBController.createAction();
+            dataBMatrix = (DataMatrix) dataBController.data2D;
 
-            listController.setParameters(this);
-
-            resultController.setDataType(null, Data2D.Type.Matrix);
+            resultController.setParameters(null, Data2D.Type.Matrix);
             resultMatrix = (DataMatrix) resultController.data2D;
 
         } catch (Exception e) {
@@ -96,27 +92,6 @@ public class MatricesBinaryCalculationController extends BaseController {
                 public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
                     tabPane.getSelectionModel().select(dataBTab);
                     checkMatrices();
-                }
-            });
-
-            dataAController.savedNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
-                    listController.refreshAction();
-                }
-            });
-
-            dataBController.savedNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
-                    listController.refreshAction();
-                }
-            });
-
-            resultController.savedNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
-                    listController.refreshAction();
                 }
             });
 

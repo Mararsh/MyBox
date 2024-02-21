@@ -36,21 +36,23 @@ public class DataFileTextController extends BaseData2DFileController {
     public DataFileTextController() {
         baseTitle = message("EditTextDataFile");
         TipsLabelKey = "DataFileTextTips";
-    }
-
-    @Override
-    public void initData() {
-        try {
-            setDataType(Data2D.Type.Texts);
-            dataFileText = (DataFileText) dataController.data2D;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
+        dataType = Data2DDefinition.Type.Texts;
     }
 
     @Override
     public void setFileType() {
         setFileType(VisitHistory.FileType.Text);
+    }
+
+    @Override
+    public void initControls() {
+        try {
+            super.initControls();
+
+            dataFileText = (DataFileText) dataController.data2D;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
     @Override

@@ -20,7 +20,7 @@ public class DataInMyBoxClipboardController extends BaseData2DController {
 
     public DataInMyBoxClipboardController() {
         baseTitle = message("DataInMyBoxClipboard");
-        type = Data2DDefinition.Type.MyBoxClipboard;
+        dataType = Data2DDefinition.Type.MyBoxClipboard;
     }
 
     /*

@@ -17,7 +17,7 @@ public class MyBoxTablesController extends DataTablesController {
 
     public MyBoxTablesController() {
         baseTitle = message("MyBoxTables");
-        type = Data2DDefinition.Type.InternalTable;
+        dataType = Data2DDefinition.Type.InternalTable;
     }
 
     /*

@@ -27,7 +27,7 @@ public class DataTablesController extends BaseData2DController {
     public DataTablesController() {
         baseTitle = message("DatabaseTable");
         TipsLabelKey = "DataTableTips";
-        type = Data2DDefinition.Type.DatabaseTable;
+        dataType = Data2DDefinition.Type.DatabaseTable;
     }
 
     @Override

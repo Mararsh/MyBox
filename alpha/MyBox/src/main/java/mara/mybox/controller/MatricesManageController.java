@@ -20,7 +20,7 @@ public class MatricesManageController extends BaseData2DController {
 
     public MatricesManageController() {
         baseTitle = Languages.message("MatricesManage");
-        type = Data2DDefinition.Type.Matrix;
+        dataType = Data2DDefinition.Type.Matrix;
     }
 
 

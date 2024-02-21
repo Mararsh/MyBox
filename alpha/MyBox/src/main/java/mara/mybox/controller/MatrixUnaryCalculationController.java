@@ -19,8 +19,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Window;
 import mara.mybox.data2d.Data2D;
-import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.data2d.DataMatrix;
+import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
@@ -37,13 +37,15 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2020-12-17
  * @License Apache License Version 2.0
  */
-public class MatrixUnaryCalculationController extends MatricesManageController {
+public class MatrixUnaryCalculationController extends BaseController {
 
     protected DataMatrix dataMatrix, resultMatrix;
     protected int column, row, power;
     protected double number, resultValue;
     protected double[][] result;
 
+    @FXML
+    protected ControlData2D dataController, resultController;
     @FXML
     protected Tab resultTab;
     @FXML
@@ -66,8 +68,6 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
     @FXML
     protected Label resultLabel, checkLabel;
     @FXML
-    protected ControlData2D resultController;
-    @FXML
     protected TextArea resultArea;
     @FXML
     protected ScrollPane resultTablePane;
@@ -81,9 +81,10 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
         try {
             super.initValues();
 
+            dataController.setParameters(this, Data2D.Type.Matrix);
             dataMatrix = (DataMatrix) dataController.data2D;
 
-            resultController.setDataType(null, Data2D.Type.Matrix);
+            resultController.setParameters(this, Data2D.Type.Matrix);
             resultMatrix = (DataMatrix) resultController.data2D;
 
         } catch (Exception e) {
@@ -100,13 +101,6 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
                     checkMatrix();
-                }
-            });
-
-            resultController.savedNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
-                    listController.refreshAction();
                 }
             });
 

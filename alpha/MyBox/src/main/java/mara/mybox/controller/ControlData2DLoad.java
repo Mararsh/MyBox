@@ -12,15 +12,24 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.input.Clipboard;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
 import javafx.util.Callback;
 import mara.mybox.data.StringTable;
 import mara.mybox.data2d.Data2D;
+import mara.mybox.data2d.Data2DExampleTools;
 import mara.mybox.data2d.Data2DTools;
 import mara.mybox.data2d.DataClipboard;
 import mara.mybox.data2d.DataFileCSV;
@@ -56,6 +65,7 @@ import mara.mybox.fxml.cell.TableDataDateEditCell;
 import mara.mybox.fxml.cell.TableDataDisplayCell;
 import mara.mybox.fxml.cell.TableDataEditCell;
 import mara.mybox.fxml.style.NodeStyleTools;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.DoubleMatrixTools;
 import mara.mybox.tools.TextTools;
 import static mara.mybox.value.Languages.message;
@@ -68,6 +78,7 @@ import mara.mybox.value.UserConfig;
  */
 public class ControlData2DLoad extends BaseTablePagesController<List<String>> {
 
+    protected BaseController manageController;
     protected Data2D data2D;
     protected Data2D.Type dataType;
     protected TableData2DDefinition tableData2DDefinition;
@@ -81,6 +92,12 @@ public class ControlData2DLoad extends BaseTablePagesController<List<String>> {
     protected TableColumn<List<String>, Integer> dataRowColumn;
     @FXML
     protected Label dataLabel;
+    @FXML
+    protected FlowPane buttonsPane;
+    @FXML
+    protected HBox buttonsBox;
+    @FXML
+    protected Button fileMenuButton;
 
     public ControlData2DLoad() {
         statusNotify = new SimpleBooleanProperty(false);
@@ -150,6 +167,18 @@ public class ControlData2DLoad extends BaseTablePagesController<List<String>> {
         }
     }
 
+    public void setParameters(BaseController controller, Data2D.Type type) {
+        try {
+            manageController = controller;
+            baseName = manageController.baseName;
+            dataType = type;
+            loadNull();
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
     /*
         data
      */
@@ -184,6 +213,31 @@ public class ControlData2DLoad extends BaseTablePagesController<List<String>> {
                     showPaginationPane(!data2D.isTmpData() && !data2D.isMatrix());
                 }
                 data2D.setLoadController(this);
+
+                if (selectFileButton != null && buttonsBox != null) {
+                    if (data2D.isDataFile()) {
+                        if (!buttonsBox.getChildren().contains(selectFileButton)) {
+                            buttonsBox.getChildren().add(0, selectFileButton);
+                        }
+                    } else {
+                        if (buttonsBox.getChildren().contains(selectFileButton)) {
+                            buttonsBox.getChildren().remove(selectFileButton);
+                        }
+                    }
+                }
+
+                if (toolbar != null && fileMenuButton != null) {
+                    if (data2D.isDataFile()) {
+                        if (!toolbar.getChildren().contains(fileMenuButton)) {
+                            toolbar.getChildren().add(0, fileMenuButton);
+                        }
+                    } else {
+                        if (toolbar.getChildren().contains(fileMenuButton)) {
+                            toolbar.getChildren().remove(fileMenuButton);
+                        }
+                    }
+                }
+
             }
 
             validateData();
@@ -203,7 +257,6 @@ public class ControlData2DLoad extends BaseTablePagesController<List<String>> {
         tableData.clear();
         isSettingValues = false;
         notifyLoaded();
-        thisPane.setDisable(true);
     }
 
     public void loadData(Data2D data) {
@@ -570,9 +623,32 @@ public class ControlData2DLoad extends BaseTablePagesController<List<String>> {
         }
     }
 
+    @Override
+    public void sourceFileChanged(File file) {
+        try {
+            if (!checkBeforeNextAction()) {
+                return;
+            }
+            resetStatus();
+            setData(Data2D.create(Data2DDefinition.type(file)));
+            data2D.initFile(file);
+            readDefinition();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    /*
+        status
+     */
     public boolean validateData() {
         boolean valid = data2D != null && data2D.isValid();
-        thisPane.setDisable(!valid);
+        if (mainAreaBox != null) {
+            mainAreaBox.setDisable(!valid);
+        }
+        if (buttonsPane != null) {
+            buttonsPane.setDisable(!valid);
+        }
         return valid;
     }
 
@@ -614,6 +690,32 @@ public class ControlData2DLoad extends BaseTablePagesController<List<String>> {
     /*
         action
      */
+    @FXML
+    @Override
+    public void createAction() {
+        try {
+            if (!checkBeforeNextAction()) {
+                return;
+            }
+            data2D = Data2D.create(dataType);
+            loadTmpData(null, data2D.tmpColumns(3), data2D.tmpData(3, 3));
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    @FXML
+    @Override
+    public void editAction() {
+        Data2DDefinition.open(data2D);
+    }
+
+    @FXML
+    @Override
+    public void selectAction() {
+
+    }
+
     @FXML
     public void renameAction(BaseTablePagesController parent, int index, Data2DDefinition targetData) {
         String newName = PopTools.askValue(getTitle(), message("CurrentName") + ":" + targetData.getDataName(),
@@ -1180,6 +1282,37 @@ public class ControlData2DLoad extends BaseTablePagesController<List<String>> {
         }
         pasteContentInSystemClipboard();
         return true;
+    }
+
+    @FXML
+    protected void popExamplesMenu(Event event) {
+        if (UserConfig.getBoolean("Data2DExamplesPopWhenMouseHovering", true)) {
+            showExamplesMenu(event);
+        }
+    }
+
+    @FXML
+    protected void showExamplesMenu(Event event) {
+        try {
+            List<MenuItem> items = new ArrayList<>();
+            items.addAll(Data2DExampleTools.examplesMenu(this));
+
+            items.add(new SeparatorMenuItem());
+
+            CheckMenuItem pMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
+            pMenu.setSelected(UserConfig.getBoolean("Data2DExamplesPopWhenMouseHovering", true));
+            pMenu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean("Data2DExamplesPopWhenMouseHovering", pMenu.isSelected());
+                }
+            });
+            items.add(pMenu);
+
+            popEventMenu(event, items);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
     @Override

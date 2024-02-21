@@ -284,7 +284,7 @@ public abstract class BaseData2DChartHtmlController extends BaseData2DChartContr
             popError(message("NoData"));
             return;
         }
-        DataManufactureController.open(outputColumns, outputData);
+        DataFileCSVController.open(null, outputColumns, outputData);
     }
 
     @FXML

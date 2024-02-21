@@ -39,7 +39,6 @@ import mara.mybox.value.UserConfig;
  */
 public class ControlData2D extends ControlData2DLoad {
 
-    protected BaseData2DController manageController;
     protected final SimpleBooleanProperty savedNotify;
 
     public ControlData2D() {
@@ -47,49 +46,9 @@ public class ControlData2D extends ControlData2DLoad {
         savedNotify = new SimpleBooleanProperty(false);
     }
 
-    public void setParameters(BaseData2DController topController) {
-        try {
-            this.manageController = topController;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
     /*
         data
      */
-    public void setDataType(BaseController parent, Data2D.Type type) {
-        try {
-            parentController = parent;
-            if (parent != null) {
-                saveButton = parent.saveButton;
-                recoverButton = parent.recoverButton;
-                baseTitle = parent.baseTitle;
-                baseName = parent.baseName;
-            }
-            this.dataType = type;
-            loadNull();
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    @Override
-    public void sourceFileChanged(File file) {
-        try {
-            if (!checkBeforeNextAction()) {
-                return;
-            }
-            resetStatus();
-            setData(Data2D.create(dataType));
-            data2D.initFile(file);
-            readDefinition();
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
     @Override
     public void notifySaved() {
         notifyStatus();
@@ -199,6 +158,7 @@ public class ControlData2D extends ControlData2DLoad {
     }
 
     @FXML
+    @Override
     public void popDataMenu(Event event) {
         if (UserConfig.getBoolean(baseName + "DataPopWhenMouseHovering", true)) {
             showDataMenu(event);
@@ -206,6 +166,7 @@ public class ControlData2D extends ControlData2DLoad {
     }
 
     @FXML
+    @Override
     public void showDataMenu(Event mevent) {
         try {
             List<MenuItem> items = Data2DMenuTools.dataMenus(this);
@@ -360,10 +321,6 @@ public class ControlData2D extends ControlData2DLoad {
         if (!verifyData() || checkBeforeSave() < 0) {
             return;
         }
-        if (manageController != null && manageController instanceof DataManufactureController) {
-            DataManufactureSaveController.open(this);
-            return;
-        }
         if (data2D.isTable() && data2D.getSheet() == null) {
             Data2DTableCreateController.open(this);
             return;
@@ -504,27 +461,13 @@ public class ControlData2D extends ControlData2DLoad {
         start(task);
     }
 
-    @FXML
-    @Override
-    public void createAction() {
-        try {
-            if (!checkBeforeNextAction()) {
-                return;
-            }
-            setData(Data2D.create(dataType));
-            loadTmpData(null, data2D.tmpColumns(3), data2D.tmpData(3, 3));
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
     @Override
     public synchronized void loadTmpData(String name, List<Data2DColumn> cols, List<List<String>> data) {
         try {
             if (!checkBeforeNextAction()) {
                 return;
             }
-            setData(Data2D.create(dataType));
+            data2D = Data2D.create(dataType);
             super.loadTmpData(name, cols, data);
         } catch (Exception e) {
             MyBoxLog.error(e);

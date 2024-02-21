@@ -40,12 +40,14 @@ public class DataFileCSVController extends BaseData2DFileController {
     public DataFileCSVController() {
         baseTitle = message("EditCSV");
         TipsLabelKey = "DataFileCSVTips";
+        dataType = Data2DDefinition.Type.CSV;
     }
 
     @Override
-    public void initData() {
+    public void initControls() {
         try {
-            setDataType(Data2D.Type.CSV);
+            super.initControls();
+
             dataFileCSV = (DataFileCSV) dataController.data2D;
         } catch (Exception e) {
             MyBoxLog.error(e);

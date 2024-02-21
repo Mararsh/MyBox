@@ -62,7 +62,7 @@ public class ControlData2DHtml extends BaseController {
             popError(message("NoData"));
             return;
         }
-        DataManufactureController.open(columns, data);
+        DataFileCSVController.open(null, columns, data);
     }
 
     @FXML

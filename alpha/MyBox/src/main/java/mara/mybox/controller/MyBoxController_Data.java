@@ -32,12 +32,6 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
 
     @FXML
     protected void showDataMenu(Event event) {
-        MenuItem DataManufacture = new MenuItem(message("DataManufacture"));
-        DataManufacture.setOnAction((ActionEvent event1) -> {
-            DataManufactureController c = (DataManufactureController) loadScene(Fxmls.DataManufactureFxml);
-            c.createAction();
-        });
-
         MenuItem ManageData = new MenuItem(message("ManageData"));
         ManageData.setOnAction((ActionEvent event1) -> {
             loadScene(Fxmls.Data2DManageFxml);
@@ -85,6 +79,9 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
             loadScene(Fxmls.DataFileExcelMergeFxml);
         });
 
+        Menu excel = new Menu("Excel");
+        excel.getItems().addAll(EditExcel, ExcelConvert, ExcelMerge);
+
         MenuItem EditCSV = new MenuItem(message("EditCSV"));
         EditCSV.setOnAction((ActionEvent event1) -> {
             DataFileCSVController c = (DataFileCSVController) loadScene(Fxmls.DataFileCSVFxml);
@@ -100,6 +97,9 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
         CsvMerge.setOnAction((ActionEvent event1) -> {
             loadScene(Fxmls.DataFileCSVMergeFxml);
         });
+
+        Menu csv = new Menu("CSV");
+        csv.getItems().addAll(EditCSV, CsvConvert, CsvMerge);
 
         MenuItem TextData = new MenuItem(message("EditTextDataFile"));
         TextData.setOnAction((ActionEvent event1) -> {
@@ -117,12 +117,8 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
             loadScene(Fxmls.DataFileTextMergeFxml);
         });
 
-        Menu DataFile = new Menu(message("DataFile"));
-        DataFile.getItems().addAll(
-                EditCSV, CsvConvert, CsvMerge, new SeparatorMenuItem(),
-                EditExcel, ExcelConvert, ExcelMerge, new SeparatorMenuItem(),
-                TextData, TextDataConvert, TextDataMerge
-        );
+        Menu texts = new Menu(message("Texts"));
+        texts.getItems().addAll(TextData, TextDataConvert, TextDataMerge);
 
         MenuItem GeographyCode = new MenuItem(message("GeographyCode"));
         GeographyCode.setOnAction((ActionEvent event1) -> {
@@ -246,8 +242,9 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
 
         List<MenuItem> items = new ArrayList<>();
         items.addAll(Arrays.asList(
-                DataManufacture, DataFile, matrix, database, ManageData, SpliceData,
-                Data2DDefinition, RowFilter, DataInSystemClipboard, DataInMyBoxClipboard, new SeparatorMenuItem(),
+                csv, excel, texts, matrix, database, new SeparatorMenuItem(),
+                ManageData, SpliceData, Data2DDefinition, RowFilter,
+                DataInSystemClipboard, DataInMyBoxClipboard, new SeparatorMenuItem(),
                 calculation, MathFunction, new SeparatorMenuItem(),
                 Location, miscellaneousMenu));
 

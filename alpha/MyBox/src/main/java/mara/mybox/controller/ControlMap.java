@@ -29,9 +29,9 @@ import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.NodeTools;
-import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.DateTools;
@@ -697,7 +697,7 @@ public class ControlMap extends BaseController {
 
             @Override
             protected void whenSucceeded() {
-                DataManufactureController.open(columns, data);
+                DataFileCSVController.open(null, columns, data);
             }
 
         };

@@ -8,11 +8,9 @@ License:    Apache License Version 2.0
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextArea?>
@@ -25,220 +23,149 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.MatrixUnaryCalculationController">
+<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.MatrixUnaryCalculationController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
     <center>
         <VBox fx:id="mainPane" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" BorderPane.alignment="CENTER">
             <children>
-                <SplitPane fx:id="splitPane" dividerPositions="0.3" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
-                    <items>
-                        <ScrollPane fx:id="leftPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
-                            <content>
-                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
-                                    <children>
-                                        <fx:include fx:id="list" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DList.fxml" VBox.vgrow="ALWAYS" />
-                                    </children>
-                                </VBox>
-                            </content>
-                        </ScrollPane>
-                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
-                            <children>
-                                <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="NEVER">
-                                    <children>
-                                        <Label fx:id="matrixLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                        <CheckBox fx:id="leftPaneCheck" minWidth="-Infinity" mnemonicParsing="false">
-                                            <graphic>
-                                                <ImageView  fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/Red/iconDoubleLeft.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </CheckBox>
-                                    </children>
-                                </HBox>
-                                <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
-                                    <tabs>
-                                        <Tab fx:id="dataTab" text="%Data">
-                                            <content>
-                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
-                                                    <children>
-                                                        <HBox alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" spacing="2.0">
-                                                            <children>
-                                                                <Button fx:id="loadContentInSystemClipboard2Button" mnemonicParsing="false" onAction="#loadContentInSystemClipboard">
-                                                                    <graphic>
-                                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                                            <image>
-                                                                                <Image url="@../buttons/iconImageSystem.png" />
-                                                                            </image>
-                                                                        </ImageView>
-                                                                    </graphic>
-                                                                </Button>
-                                                                <Button fx:id="createDataButton" mnemonicParsing="false" onAction="#createAction">
-                                                                    <graphic>
-                                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                                            <image>
-                                                                                <Image url="@../buttons/Red/iconAdd.png" />
-                                                                            </image>
-                                                                        </ImageView>
-                                                                    </graphic>
-                                                                </Button>
-                                                                <Button fx:id="recoverButton" mnemonicParsing="false" onAction="#recoverAction">
-                                                                    <graphic>
-                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                            <image>
-                                                                                <Image url="@../buttons/Red/iconRecover.png" />
-                                                                            </image>
-                                                                        </ImageView>
-                                                                    </graphic>
-                                                                </Button>
-                                                                <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction">
-                                                                    <graphic>
-                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                            <image>
-                                                                                <Image url="@../buttons/Red/iconSave.png" />
-                                                                            </image>
-                                                                        </ImageView>
-                                                                    </graphic>
-                                                                </Button>
-                                                            </children>
-                                                        </HBox>
-                                                        <fx:include fx:id="data" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2D.fxml" VBox.vgrow="ALWAYS" />
-                                                    </children>
-                                                    <padding>
-                                                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                                                    </padding>
-                                                </VBox>
-                                            </content>
-                                        </Tab>
-                                        <Tab fx:id="calculateTab" text="%Calculation">
-                                            <content>
-                                                <VBox fx:id="calBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                                    <children>
-                                                        <VBox minHeight="-Infinity" spacing="5.0">
-                                                            <children>
-                                                                <FlowPane hgap="5.0" minHeight="-Infinity" vgap="5.0">
-                                                                    <children>
-                                                                        <RadioButton fx:id="transposeRadio" mnemonicParsing="false" selected="true" text="%Transpose">
-                                                                            <toggleGroup>
-                                                                                <ToggleGroup fx:id="opGroup" />
-                                                                            </toggleGroup>
-                                                                        </RadioButton>
-                                                                        <RadioButton layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%RowEchelonForm" toggleGroup="$opGroup" />
-                                                                        <RadioButton layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%ReducedRowEchelonForm" toggleGroup="$opGroup" />
-                                                                        <RadioButton fx:id="ComplementMinorRadio" layoutX="117.0" layoutY="10.0" mnemonicParsing="false" text="%ComplementMinor" toggleGroup="$opGroup" />
-                                                                        <RadioButton fx:id="normalizeRadio" layoutX="224.0" layoutY="10.0" mnemonicParsing="false" text="%Normalize" toggleGroup="$opGroup" />
-                                                                        <RadioButton fx:id="MultiplyNumberRadio" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%MultiplyNumber" toggleGroup="$opGroup" />
-                                                                        <RadioButton fx:id="DivideNumberRadio" layoutX="10.0" layoutY="133.0" mnemonicParsing="false" text="%DivideNumber" toggleGroup="$opGroup" />
-                                                                    </children>
-                                                                </FlowPane>
-                                                                <FlowPane fx:id="squarePane" hgap="5.0" layoutX="10.0" layoutY="45.0" minHeight="-Infinity" vgap="5.0">
-                                                                    <children>
-                                                                        <RadioButton fx:id="DeterminantByEliminationRadio" mnemonicParsing="false" text="%DeterminantByElimination" toggleGroup="$opGroup" />
-                                                                        <RadioButton fx:id="DeterminantByComplementMinorRadio" mnemonicParsing="false" text="%DeterminantByComplementMinor" toggleGroup="$opGroup" />
-                                                                        <RadioButton fx:id="InverseMatrixByEliminationRadio" mnemonicParsing="false" text="%InverseMatrixByElimination" toggleGroup="$opGroup" />
-                                                                        <RadioButton fx:id="InverseMatrixByAdjointRadio" mnemonicParsing="false" text="%InverseMatrixByAdjoint" toggleGroup="$opGroup" />
-                                                                        <RadioButton fx:id="MatrixRankRadio" mnemonicParsing="false" text="%MatrixRank" toggleGroup="$opGroup" />
-                                                                        <RadioButton fx:id="AdjointMatrixRadio" mnemonicParsing="false" text="%AdjointMatrix" toggleGroup="$opGroup" />
-                                                                        <RadioButton fx:id="PowerRadio" layoutX="171.0" layoutY="174.0" mnemonicParsing="false" text="%Power" toggleGroup="$opGroup" />
-                                                                    </children>
-                                                                </FlowPane>
-                                                            </children>
-                                                        </VBox>
-                                                        <VBox fx:id="setBox" spacing="5.0">
-                                                            <children>
-                                                                <VBox spacing="5.0" fx:id="xyBox">
-                                                                    <children>
-                                                                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                                                            <children>
-                                                                                <Label text="%Row" />
-                                                                                <TextField fx:id="rowInput" prefWidth="80.0" />
-                                                                            </children>
-                                                                        </HBox>
-                                                                        <HBox alignment="CENTER_LEFT" layoutX="32.0" layoutY="401.0" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                                                            <children>
-                                                                                <Label text="%Column" />
-                                                                                <TextField fx:id="columnInput" prefWidth="80.0" />
-                                                                            </children>
-                                                                        </HBox>
-                                                                    </children>
-                                                                </VBox>
-                                                                <HBox fx:id="numberBox" alignment="CENTER_LEFT" layoutX="32.0" layoutY="459.0" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                                                    <children>
-                                                                        <Label text="%Number" />
-                                                                        <TextField fx:id="numberInput" prefWidth="160.0" />
-                                                                    </children>
-                                                                </HBox>
-                                                                <HBox fx:id="powerBox" alignment="CENTER_LEFT" layoutX="10.0" layoutY="126.0" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                                                    <children>
-                                                                        <Label text="%Power" />
-                                                                        <TextField fx:id="powerInput" prefWidth="80.0" />
-                                                                    </children>
-                                                                </HBox>
-                                                                <VBox fx:id="normalizeBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
-                                                                    <children>
-                                                                        <fx:include fx:id="normalize" source="ControlData2DNormalize.fxml" />
-                                                                    </children>
-                                                                </VBox>
-                                                            </children>
-                                                        </VBox>
-                                                        <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
-                                                            <children>
-                                                                <Button fx:id="calculateButton" defaultButton="true" mnemonicParsing="false" onAction="#calculateAction">
-                                                                    <graphic>
-                                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                                            <image>
-                                                                                <Image url="@../buttons/Red/iconCalculator.png" />
-                                                                            </image>
-                                                                        </ImageView>
-                                                                    </graphic>
-                                                                </Button>
-                                                                <Label fx:id="checkLabel" minHeight="-Infinity" wrapText="true" />
-                                                            </children>
-                                                        </HBox>
-                                                    </children>
-                                                    <padding>
-                                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                                                    </padding>
-                                                </VBox>
-                                            </content>
-                                        </Tab>
-                                        <Tab fx:id="resultTab" text="%Result">
-                                            <content>
-                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
-                                                    <children>
-                                                        <Label fx:id="resultLabel" minHeight="-Infinity" VBox.vgrow="NEVER" />
-                                                        <VBox fx:id="resultBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
-                                                            <children>
-                                                                <TextArea fx:id="resultArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
-                                                                <ScrollPane fx:id="resultTablePane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
-                                                                    <content>
-                                                                        <fx:include fx:id="result" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2D.fxml" />
-                                                                    </content>
-                                                                </ScrollPane>
-                                                            </children>
-                                                        </VBox>
-                                                    </children>
-                                                    <padding>
-                                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                                                    </padding>
-                                                </VBox>
-                                            </content>
-                                        </Tab>
-                                    </tabs>
-                                </TabPane>
-                            </children>
-                        </VBox>
-                    </items>
-                </SplitPane>
+                    <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+                        <tabs>
+                            <Tab fx:id="dataTab" text="%Data">
+                                <content>
+                                    <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                        <children>
+                                            <fx:include fx:id="data" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2D.fxml" VBox.vgrow="ALWAYS" />
+                                        </children>
+                                        <padding>
+                                            <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                        </padding>
+                                    </VBox>
+                                </content>
+                            </Tab>
+                            <Tab fx:id="calculateTab" text="%Calculation">
+                                <content>
+                                    <VBox fx:id="calBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                        <children>
+                                            <VBox minHeight="-Infinity" spacing="5.0">
+                                                <children>
+                                                    <FlowPane hgap="5.0" minHeight="-Infinity" vgap="5.0">
+                                                        <children>
+                                                            <RadioButton fx:id="transposeRadio" mnemonicParsing="false" selected="true" text="%Transpose">
+                                                                <toggleGroup>
+                                                                    <ToggleGroup fx:id="opGroup" />
+                                                                </toggleGroup>
+                                                            </RadioButton>
+                                                            <RadioButton layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%RowEchelonForm" toggleGroup="$opGroup" />
+                                                            <RadioButton layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%ReducedRowEchelonForm" toggleGroup="$opGroup" />
+                                                            <RadioButton fx:id="ComplementMinorRadio" layoutX="117.0" layoutY="10.0" mnemonicParsing="false" text="%ComplementMinor" toggleGroup="$opGroup" />
+                                                            <RadioButton fx:id="normalizeRadio" layoutX="224.0" layoutY="10.0" mnemonicParsing="false" text="%Normalize" toggleGroup="$opGroup" />
+                                                            <RadioButton fx:id="MultiplyNumberRadio" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%MultiplyNumber" toggleGroup="$opGroup" />
+                                                            <RadioButton fx:id="DivideNumberRadio" layoutX="10.0" layoutY="133.0" mnemonicParsing="false" text="%DivideNumber" toggleGroup="$opGroup" />
+                                                        </children>
+                                                    </FlowPane>
+                                                    <FlowPane fx:id="squarePane" hgap="5.0" layoutX="10.0" layoutY="45.0" minHeight="-Infinity" vgap="5.0">
+                                                        <children>
+                                                            <RadioButton fx:id="DeterminantByEliminationRadio" mnemonicParsing="false" text="%DeterminantByElimination" toggleGroup="$opGroup" />
+                                                            <RadioButton fx:id="DeterminantByComplementMinorRadio" mnemonicParsing="false" text="%DeterminantByComplementMinor" toggleGroup="$opGroup" />
+                                                            <RadioButton fx:id="InverseMatrixByEliminationRadio" mnemonicParsing="false" text="%InverseMatrixByElimination" toggleGroup="$opGroup" />
+                                                            <RadioButton fx:id="InverseMatrixByAdjointRadio" mnemonicParsing="false" text="%InverseMatrixByAdjoint" toggleGroup="$opGroup" />
+                                                            <RadioButton fx:id="MatrixRankRadio" mnemonicParsing="false" text="%MatrixRank" toggleGroup="$opGroup" />
+                                                            <RadioButton fx:id="AdjointMatrixRadio" mnemonicParsing="false" text="%AdjointMatrix" toggleGroup="$opGroup" />
+                                                            <RadioButton fx:id="PowerRadio" layoutX="171.0" layoutY="174.0" mnemonicParsing="false" text="%Power" toggleGroup="$opGroup" />
+                                                        </children>
+                                                    </FlowPane>
+                                                </children>
+                                            </VBox>
+                                            <VBox fx:id="setBox" spacing="5.0">
+                                                <children>
+                                                    <VBox spacing="5.0" fx:id="xyBox">
+                                                        <children>
+                                                            <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                                                <children>
+                                                                    <Label text="%Row" />
+                                                                    <TextField fx:id="rowInput" prefWidth="80.0" />
+                                                                </children>
+                                                            </HBox>
+                                                            <HBox alignment="CENTER_LEFT" layoutX="32.0" layoutY="401.0" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                                                <children>
+                                                                    <Label text="%Column" />
+                                                                    <TextField fx:id="columnInput" prefWidth="80.0" />
+                                                                </children>
+                                                            </HBox>
+                                                        </children>
+                                                    </VBox>
+                                                    <HBox fx:id="numberBox" alignment="CENTER_LEFT" layoutX="32.0" layoutY="459.0" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                                        <children>
+                                                            <Label text="%Number" />
+                                                            <TextField fx:id="numberInput" prefWidth="160.0" />
+                                                        </children>
+                                                    </HBox>
+                                                    <HBox fx:id="powerBox" alignment="CENTER_LEFT" layoutX="10.0" layoutY="126.0" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                                        <children>
+                                                            <Label text="%Power" />
+                                                            <TextField fx:id="powerInput" prefWidth="80.0" />
+                                                        </children>
+                                                    </HBox>
+                                                    <VBox fx:id="normalizeBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                                        <children>
+                                                            <fx:include fx:id="normalize" source="ControlData2DNormalize.fxml" />
+                                                        </children>
+                                                    </VBox>
+                                                </children>
+                                            </VBox>
+                                            <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
+                                                <children>
+                                                    <Button fx:id="calculateButton" defaultButton="true" mnemonicParsing="false" onAction="#calculateAction">
+                                                        <graphic>
+                                                            <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                <image>
+                                                                    <Image url="@../buttons/Red/iconCalculator.png" />
+                                                                </image>
+                                                            </ImageView>
+                                                        </graphic>
+                                                    </Button>
+                                                    <Label fx:id="checkLabel" minHeight="-Infinity" wrapText="true" />
+                                                </children>
+                                            </HBox>
+                                        </children>
+                                        <padding>
+                                            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                        </padding>
+                                    </VBox>
+                                </content>
+                            </Tab>
+                            <Tab fx:id="resultTab" text="%Result">
+                                <content>
+                                    <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                        <children>
+                                            <Label fx:id="resultLabel" minHeight="-Infinity" VBox.vgrow="NEVER" />
+                                            <VBox fx:id="resultBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="ALWAYS">
+                                                <children>
+                                                    <TextArea fx:id="resultArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
+                                                    <ScrollPane fx:id="resultTablePane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
+                                                        <content>
+                                                            <fx:include fx:id="result" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2D.fxml" />
+                                                        </content>
+                                                    </ScrollPane>
+                                                </children>
+                                            </VBox>
+                                        </children>
+                                        <padding>
+                                            <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                        </padding>
+                                    </VBox>
+                                </content>
+                            </Tab>
+                        </tabs>
+                    </TabPane>
             </children>
             <BorderPane.margin>
                 <Insets />
             </BorderPane.margin>
             <padding>
-                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
             </padding>
         </VBox>
     </center>

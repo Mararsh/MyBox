@@ -18,7 +18,6 @@ import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.Data2DRow;
-import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableData2D;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
@@ -33,7 +32,7 @@ import org.apache.commons.csv.CSVRecord;
  * @CreateDate 2022-2-21
  * @License Apache License Version 2.0
  */
-public abstract class BaseData2DController extends BaseFileController {
+public class ControlData2DQuery extends BaseData2DController {
 
     protected Data2D.Type dataType;
     protected TableData2DDefinition tableData2DDefinition;
@@ -43,20 +42,9 @@ public abstract class BaseData2DController extends BaseFileController {
     @FXML
     protected ControlData2DList listController;
     @FXML
-    protected ControlData2D dataController;
-    @FXML
     protected ControlData2DLoad loadController;
     @FXML
     protected Label nameLabel;
-
-    public BaseData2DController() {
-        dataType = Data2DDefinition.Type.Texts;
-    }
-
-    @Override
-    public void setFileType() {
-        setFileType(VisitHistory.FileType.Text);
-    }
 
     @Override
     public void initControls() {
@@ -79,25 +67,17 @@ public abstract class BaseData2DController extends BaseFileController {
 
     public void initData() {
         try {
-            if (dataController != null) {
-                loadController = dataController;
-            }
+            loadController.setData(Data2D.create(dataType));
 
-            if (loadController == null) {
-                return;
+            if (listController != null) {
+                listController.setParameters(this);
             }
-
-            loadController.setParameters(this, dataType);
 
             tableData2DDefinition = loadController.tableData2DDefinition;
             data2D = loadController.data2D;
 
             loadController.dataLabel = nameLabel;
             loadController.baseTitle = baseTitle;
-
-            if (listController != null) {
-                listController.setParameters(this);
-            }
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -146,19 +126,19 @@ public abstract class BaseData2DController extends BaseFileController {
     @FXML
     @Override
     public void createAction() {
-        if (loadController == null) {
+        if (dataController == null) {
             return;
         }
-        loadController.createAction();
+        dataController.createAction();
     }
 
     @FXML
     @Override
     public void recoverAction() {
-        if (loadController == null) {
+        if (dataController == null) {
             return;
         }
-        loadController.recoverAction();
+        dataController.recoverAction();
     }
 
     @FXML
@@ -173,10 +153,10 @@ public abstract class BaseData2DController extends BaseFileController {
     @FXML
     @Override
     public void loadContentInSystemClipboard() {
-        if (loadController == null) {
+        if (dataController == null) {
             return;
         }
-        loadController.loadContentInSystemClipboard();
+        dataController.loadContentInSystemClipboard();
     }
 
     @FXML
@@ -187,16 +167,16 @@ public abstract class BaseData2DController extends BaseFileController {
     @FXML
     @Override
     public void saveAction() {
-        if (loadController == null) {
+        if (dataController == null) {
             return;
         }
-        loadController.saveAction();
+        dataController.saveAction();
     }
 
     @Override
     public boolean checkBeforeNextAction() {
-        if (loadController != null) {
-            return loadController.checkBeforeNextAction();
+        if (dataController != null) {
+            return dataController.checkBeforeNextAction();
         } else {
             return true;
         }
@@ -204,7 +184,9 @@ public abstract class BaseData2DController extends BaseFileController {
 
     @Override
     public void myBoxClipBoard() {
-        if (loadController != null) {
+        if (dataController != null) {
+            dataController.myBoxClipBoard();
+        } else if (loadController != null) {
             loadController.myBoxClipBoard();
         }
 
@@ -455,8 +437,8 @@ public abstract class BaseData2DController extends BaseFileController {
         if (super.keyEventsFilter(event)) {
             return true;
         }
-        if (listController != null) {
-            if (listController.keyEventsFilter(event)) {
+        if (dataController != null) {
+            if (dataController.keyEventsFilter(event)) {
                 return true;
             }
         }
@@ -470,16 +452,16 @@ public abstract class BaseData2DController extends BaseFileController {
 
     @Override
     public boolean controlAltS() {
-        if (loadController == null) {
+        if (dataController == null) {
             return false;
         }
-        loadController.saveAction();
+        dataController.saveAction();
         return true;
     }
 
     @Override
     public boolean controlAltB() {
-        if (loadController == null || data2D == null) {
+        if (dataController == null || data2D == null) {
             return false;
         }
         saveAsAction();
@@ -488,7 +470,7 @@ public abstract class BaseData2DController extends BaseFileController {
 
     @Override
     public boolean controlAltI() {
-        if (loadController == null || data2D == null) {
+        if (dataController == null || data2D == null) {
             return false;
         }
         infoAction();

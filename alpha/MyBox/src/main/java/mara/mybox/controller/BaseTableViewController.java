@@ -40,7 +40,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2023-7-7
  * @License Apache License Version 2.0
  */
-public abstract class BaseTableViewController<P> extends BaseController {
+public abstract class BaseTableViewController<P> extends BaseFileController {
 
     protected ObservableList<P> tableData;
     protected boolean isSettingTable;

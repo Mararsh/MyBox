@@ -88,13 +88,13 @@ public class BaseData2DSourceController extends ControlData2DLoad {
         }
     }
 
-    public void setParameters(BaseController parent, ControlData2DLoad tableController) {
+    public void setParameters(BaseController parent, ControlData2DLoad controller) {
         try {
-            if (tableController == null) {
+            if (controller == null) {
                 return;
             }
             this.parentController = parent;
-            this.tableController = tableController;
+            this.tableController = controller;
 
             filterController.setParameters(this);
 
@@ -714,11 +714,13 @@ public class BaseData2DSourceController extends ControlData2DLoad {
     @Override
     public void cleanPane() {
         try {
-            tableController.loadedNotify.removeListener(tableLoadListener);
-            tableLoadListener = null;
-            tableController.statusNotify.removeListener(tableStatusListener);
-            tableStatusListener = null;
-            tableController = null;
+            if (tableController != null) {
+                tableController.loadedNotify.removeListener(tableLoadListener);
+                tableLoadListener = null;
+                tableController.statusNotify.removeListener(tableStatusListener);
+                tableStatusListener = null;
+                tableController = null;
+            }
         } catch (Exception e) {
         }
         super.cleanPane();

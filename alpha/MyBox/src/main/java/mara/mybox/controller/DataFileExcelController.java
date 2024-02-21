@@ -33,21 +33,23 @@ public class DataFileExcelController extends BaseData2DFileController {
     public DataFileExcelController() {
         baseTitle = message("EditExcel");
         TipsLabelKey = "DataFileExcelTips";
-    }
-
-    @Override
-    public void initData() {
-        try {
-            setDataType(Data2D.Type.Excel);
-            dataFileExcel = (DataFileExcel) dataController.data2D;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
+        dataType = Data2DDefinition.Type.Excel;
     }
 
     @Override
     public void setFileType() {
         setFileType(VisitHistory.FileType.Excel);
+    }
+
+    @Override
+    public void initControls() {
+        try {
+            super.initControls();
+
+            dataFileExcel = (DataFileExcel) dataController.data2D;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
     @Override
