@@ -147,11 +147,11 @@ public class DataFileExcelMergeController extends FilesMergeController {
             try (Connection conn = DerbyBase.getConnection()) {
                 TableData2DDefinition tableData2DDefinition = new TableData2DDefinition();
                 for (String sheet : sheetsIndex.keySet()) {
-                    Data2DDefinition def = tableData2DDefinition.queryFileSheet(conn, Data2DDefinition.Type.Excel, targetFile, sheet);
+                    Data2DDefinition def = tableData2DDefinition.queryFileSheet(conn, Data2DDefinition.DataType.Excel, targetFile, sheet);
                     if (def == null) {
                         def = Data2DDefinition.create();
                     }
-                    def.setType(Data2DDefinition.Type.Excel)
+                    def.setType(Data2DDefinition.DataType.Excel)
                             .setFile(targetFile)
                             .setDelimiter(sheet)
                             .setDataName(targetFile.getName())

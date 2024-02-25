@@ -204,12 +204,12 @@ public class ControlNewDataTable extends BaseController {
             conn.setAutoCommit(false);
             count = 0;
             if (rows == null || rows.isEmpty()) {
-                for (List<String> pageRow : data2D.tableData()) {
+                for (List<String> pageRow : data2D.getPageData()) {
                     importRow(conn, pageRow, invalidAs);
                 }
             } else {
                 for (Integer row : rows) {
-                    importRow(conn, data2D.tableData().get(row), invalidAs);
+                    importRow(conn, data2D.getPageData().get(row), invalidAs);
                 }
             }
             dataTable.setRowsNumber(count);

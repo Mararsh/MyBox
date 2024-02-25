@@ -54,7 +54,7 @@ public class DatabaseSqlEditor extends InfoTreeNodeEditor {
     @FXML
     protected Button listButton, tableDefinitionButton;
     @FXML
-    protected ControlData2DResults dataController;
+    protected ControlData2DView dataController;
     @FXML
     protected CheckBox wrapOutputsCheck;
 

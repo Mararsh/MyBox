@@ -44,7 +44,7 @@ public class Data2DChartGroupXYController extends Data2DChartXYController {
     /*
         static
      */
-    public static Data2DChartGroupXYController open(ControlData2DLoad tableController) {
+    public static Data2DChartGroupXYController open(BaseData2DLoadController tableController) {
         try {
             Data2DChartGroupXYController controller = (Data2DChartGroupXYController) WindowTools.branchStage(
                     tableController, Fxmls.Data2DChartGroupXYFxml);

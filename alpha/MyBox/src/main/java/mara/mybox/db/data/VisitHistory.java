@@ -103,6 +103,10 @@ public class VisitHistory extends BaseData {
                 FileType.MultipleFrames, FileType.PDF, FileType.PPT};
             return types;
 
+        } else if (fileType == FileType.DataFile) {
+            int[] types = {FileType.DataFile, FileType.CSV, FileType.Excel, FileType.Text};
+            return types;
+
         } else {
             return null;
         }

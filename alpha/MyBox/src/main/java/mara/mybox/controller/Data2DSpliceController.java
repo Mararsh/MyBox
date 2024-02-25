@@ -27,12 +27,12 @@ import org.apache.commons.csv.CSVRecord;
  * @CreateDate 2022-5-21
  * @License Apache License Version 2.0
  */
-public class Data2DSpliceController extends BaseData2DController {
+public class Data2DSpliceController extends BaseController {
 
     @FXML
     protected Tab aTab, bTab, spliceTab;
     @FXML
-    protected ControlData2DSpliceSource dataAController, dataBController;
+    protected ControlData2DSource dataAController, dataBController;
     @FXML
     protected RadioButton horizontalRadio, aRadio, bRadio, longerRadio, shorterRadio;
     @FXML
@@ -47,8 +47,10 @@ public class Data2DSpliceController extends BaseData2DController {
     }
 
     @Override
-    public void initData() {
+    public void initControls() {
         try {
+            super.initControls();
+
             dataAController.setParameters(this);
             dataBController.setParameters(this);
 

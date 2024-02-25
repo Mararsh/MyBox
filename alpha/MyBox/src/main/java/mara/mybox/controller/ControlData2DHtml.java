@@ -2,87 +2,266 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import javafx.event.Event;
+import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
+import javafx.geometry.Point2D;
+import javafx.scene.control.CheckBox;
 import mara.mybox.data.StringTable;
-import mara.mybox.db.data.Data2DColumn;
+import mara.mybox.data2d.Data2D;
+import mara.mybox.data2d.DataFilter;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.WebViewTools;
+import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.style.HtmlStyles;
+import mara.mybox.tools.HtmlWriteTools;
+import mara.mybox.tools.StringTools;
+import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
- * @CreateDate 2022-5-8
+ * @CreateDate 2021-10-18
  * @License Apache License Version 2.0
  */
 public class ControlData2DHtml extends BaseController {
 
-    protected List<List<String>> data;
-    protected List<Data2DColumn> columns;
+    protected BaseData2DLoadController dataController;
+    protected Data2D data2D;
+    protected DataFilter styleFilter;
 
     @FXML
-    protected ControlWebView webViewController;
+    protected CheckBox formCheck, titleCheck, columnCheck, rowCheck;
+    @FXML
+    protected ControlWebView htmlController;
 
-    public void setParameters(BaseController parent) {
+    public ControlData2DHtml() {
+        baseTitle = message("ViewPageDataInHtml");
+        styleFilter = new DataFilter();
+    }
+
+    protected void setParameters(BaseData2DLoadController controller) {
         try {
-            webViewController.setParent(parent);
+            dataController = controller;
+
+            titleCheck.setSelected(UserConfig.getBoolean(baseName + "DisplayTitle", true));
+            titleCheck.selectedProperty().addListener((ChangeListener<Boolean>) (observable, oldValue, newValue) -> {
+                UserConfig.setBoolean(baseName + "DisplayTitle", newValue);
+                updatePage();
+            });
+
+            columnCheck.setSelected(UserConfig.getBoolean(baseName + "DisplayColumn", false));
+            columnCheck.selectedProperty().addListener((ChangeListener<Boolean>) (observable, oldValue, newValue) -> {
+                UserConfig.setBoolean(baseName + "DisplayColumn", newValue);
+                updatePage();
+            });
+
+            rowCheck.setSelected(UserConfig.getBoolean(baseName + "DisplayRow", false));
+            rowCheck.selectedProperty().addListener((ChangeListener<Boolean>) (observable, oldValue, newValue) -> {
+                UserConfig.setBoolean(baseName + "DisplayRow", newValue);
+                updatePage();
+            });
+
+            formCheck.setSelected(UserConfig.getBoolean(baseName + "DisplayForm", false));
+            formCheck.selectedProperty().addListener((ChangeListener<Boolean>) (observable, oldValue, newValue) -> {
+                UserConfig.setBoolean(baseName + "DisplayForm", newValue);
+                updatePage();
+            });
+
+            initMore();
+
+            loadData();
 
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            MyBoxLog.console(e.toString());
         }
     }
 
-    public void loadData(List<Data2DColumn> columns, List<List<String>> data) {
-        try {
-            this.columns = columns;
-            this.data = data;
-            if (data == null || data.isEmpty()) {
-                webViewController.clear();
-                return;
-            }
-            List<String> names = new ArrayList<>();
-            if (columns != null) {
-                for (Data2DColumn c : columns) {
-                    names.add(c.getColumnName());
-                }
-            }
-            StringTable table = new StringTable(names);
-            for (List<String> row : data) {
-                table.add(row);
-            }
-            webViewController.loadContents(table.html());
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
+    protected void initMore() {
+        htmlController.setParent(parentController);
     }
 
-    @FXML
-    public void dataAction() {
-        if (data == null || data.isEmpty()) {
-            popError(message("NoData"));
+    public void loadData() {
+        if (dataController == null || !dataController.isShowing()) {
+            close();
             return;
         }
-        DataFileCSVController.open(null, columns, data);
+        data2D = dataController.data2D;
+        updatePage();
+    }
+
+    protected void updatePage() {
+        if (formCheck.isSelected()) {
+            htmlInForm();
+        } else {
+            htmlInTable();
+        }
+    }
+
+    protected void htmlInTable() {
+        try {
+            int rNumber = data2D.tableRowsNumber();
+            int cNumber = data2D.tableColsNumber();
+            if (rNumber <= 0 || cNumber <= 0) {
+                htmlController.clear();
+                return;
+            }
+            List<String> names;
+            if (columnCheck.isSelected()) {
+                names = new ArrayList<>();
+                if (rowCheck.isSelected()) {
+                    names.add(message("RowNumber"));
+                }
+                for (int i = 0; i < cNumber; i++) {
+                    names.add(data2D.columnName(i));
+                }
+            } else {
+                names = null;
+            }
+            String title = null;
+            if (titleCheck.isSelected()) {
+                title = data2D.titleName();
+            }
+            StringTable table = new StringTable(names, title);
+
+            for (int i = 0; i < rNumber; i++) {
+                List<String> htmlRow = new ArrayList<>();
+                if (rowCheck.isSelected()) {
+                    htmlRow.add(data2D.rowName(i));
+                }
+                List<String> dataRow = data2D.getPageData().get(i);
+                for (int col = 0; col < cNumber; col++) {
+                    String value = dataRow.get(col + 1);
+                    if (value == null) {
+                        value = "";
+                    } else {
+                        value = data2D.column(col).format(value);
+                    }
+                    value = StringTools.replaceHtmlLineBreak(value);
+                    String style = data2D.cellStyle(styleFilter, i, data2D.columnName(col));
+                    if (style != null && !style.isBlank()) {
+                        style = style.replace("-fx-font-size:", "font-size:")
+                                .replace("-fx-text-fill:", "color:")
+                                .replace("-fx-background-color:", "background-color:")
+                                .replace("-fx-font-weight: bolder", "font-weight:bold");
+                        value = "<SPAN style=\"" + style + "\">" + value + "</SPAN>";
+                    }
+                    htmlRow.add(value);
+                }
+                table.add(htmlRow);
+            }
+            htmlController.loadContents(table.html());
+        } catch (Exception e) {
+            MyBoxLog.console(e);
+        }
+    }
+
+    protected void htmlInForm() {
+        try {
+            int rNumber = data2D.tableRowsNumber();
+            int cNumber = data2D.tableColsNumber();
+            if (rNumber <= 0 || cNumber <= 0) {
+                htmlController.clear();
+                return;
+            }
+            StringBuilder s = new StringBuilder();
+            if (titleCheck.isSelected()) {
+                s.append("<H2>").append(data2D.titleName()).append("</H2>\n");
+            }
+            for (int r = 0; r < rNumber; r++) {
+                StringTable table = new StringTable();
+                if (rowCheck.isSelected()) {
+                    List<String> row = new ArrayList<>();
+                    row.add(data2D.rowName(r));
+                    if (columnCheck.isSelected()) {
+                        row.add(null);
+                    }
+                    table.add(row);
+                }
+                List<String> dataRow = data2D.getPageData().get(r);
+                for (int col = 0; col < cNumber; col++) {
+                    List<String> htmlRow = new ArrayList<>();
+                    if (columnCheck.isSelected()) {
+                        htmlRow.add(data2D.columnName(col));
+                    }
+                    String value = dataRow.get(col + 1);
+                    if (value == null) {
+                        value = "";
+                    } else {
+                        value = data2D.column(col).format(value);
+                    }
+                    value = StringTools.replaceHtmlLineBreak(value);
+                    String style = data2D.cellStyle(styleFilter, r, data2D.columnName(col));
+                    if (style != null && !style.isBlank()) {
+                        style = style.replace("-fx-font-size:", "font-size:")
+                                .replace("-fx-text-fill:", "color:")
+                                .replace("-fx-background-color:", "background-color:")
+                                .replace("-fx-font-weight: bolder", "font-weight:bold");
+                        value = "<SPAN style=\"" + style + "\">" + value + "</SPAN>";
+                    }
+                    htmlRow.add(value);
+                    table.add(htmlRow);
+                }
+                s.append(table.div()).append("\n<BR><BR>\n");
+            }
+            htmlController.loadContents(HtmlWriteTools.html(data2D.titleName(),
+                    "utf-8", HtmlStyles.DefaultStyle, s.toString()));
+        } catch (Exception e) {
+            MyBoxLog.console(e);
+        }
     }
 
     @FXML
     public void editAction() {
-        webViewController.editAction();
+        HtmlEditorController.openHtml(WebViewTools.getHtml(htmlController.webEngine));
     }
 
     @FXML
-    public void popFunctionsMenu(Event event) {
-        if (UserConfig.getBoolean("WebviewFunctionsPopWhenMouseHovering", true)) {
-            showFunctionsMenu(event);
-        }
+    @Override
+    public void refreshAction() {
+        loadData();
     }
 
     @FXML
-    public void showFunctionsMenu(Event event) {
-        if (webViewController == null) {
-            return;
+    @Override
+    public boolean popAction() {
+        HtmlPopController.openWebView(this, htmlController.webView);
+        return true;
+    }
+
+    @FXML
+    @Override
+    public boolean menuAction() {
+        closePopup();
+        Point2D localToScreen = htmlController.webView.localToScreen(htmlController.webView.getWidth() - 80, 80);
+        MenuWebviewController.webviewMenu(htmlController, null, localToScreen.getX(), localToScreen.getY());
+        return true;
+    }
+
+    @Override
+    public void cleanPane() {
+        try {
+            data2D = null;
+            dataController = null;
+        } catch (Exception e) {
         }
-        webViewController.showFunctionsMenu(event);
+        super.cleanPane();
+    }
+
+    /*
+        static
+     */
+    public static ControlData2DHtml open(BaseData2DLoadController tableController) {
+        try {
+            ControlData2DHtml controller = (ControlData2DHtml) WindowTools.branchStage(
+                    tableController, Fxmls.Data2DPageHtmlFxml);
+            controller.setParameters(tableController);
+            controller.requestMouse();
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
     }
 
 }

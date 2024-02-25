@@ -52,7 +52,7 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
     @FXML
     protected ControlStatisticSelection statisticController;
     @FXML
-    protected ControlData2DResults statisticDataController, chartDataController;
+    protected ControlData2DView statisticDataController, chartDataController;
     @FXML
     protected ControlData2DChartPie pieChartController;
     @FXML
@@ -215,9 +215,9 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
 
             @Override
             protected void whenSucceeded() {
-                chartDataController.loadData(dataFile.cloneAll());
-                groupDataController.loadData(group.getTargetData().cloneAll());
-                statisticDataController.loadData(statistic.getStatisticData().cloneAll());
+                chartDataController.loadDef(dataFile);
+                groupDataController.loadDef(group.getTargetData());
+                statisticDataController.loadDef(statistic.getStatisticData());
             }
 
             @Override
@@ -525,7 +525,7 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
     /*
         static
      */
-    public static Data2DGroupStatisticController open(ControlData2DLoad tableController) {
+    public static Data2DGroupStatisticController open(BaseData2DLoadController tableController) {
         try {
             Data2DGroupStatisticController controller = (Data2DGroupStatisticController) WindowTools.branchStage(
                     tableController, Fxmls.Data2DGroupStatisticFxml);

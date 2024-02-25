@@ -7,85 +7,39 @@ License:    Apache License Version 2.0
 -->
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
-<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SplitPane?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" prefHeight="500.0" prefWidth="800.0" spacing="5.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.Data2DPasteContentInMyBoxClipboardController">
+<VBox fx:id="thisPane" prefHeight="500.0" prefWidth="800.0" spacing="5.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.Data2DPasteContentInMyBoxClipboardController">
     <padding>
         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
     </padding>
     <children>
-        <SplitPane fx:id="splitPane" dividerPositions="0.3" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
-            <items>
-                <ScrollPane fx:id="leftPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
-                    <content>
-                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
-                            <children>
-                                <fx:include fx:id="list" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlDataClipboardTable.fxml" VBox.vgrow="ALWAYS" />
-                            </children>
-                        </VBox>
-                    </content>
-                </ScrollPane>
-                <ScrollPane fx:id="rightPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
-                    <content>
-                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-                            <children>
-                        <SplitPane dividerPositions="0.7" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
-                           <items>
-                              <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-                                 <children>
-                                            <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="NEVER">
-                                                <children>
-                                                    <Label fx:id="nameLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" HBox.hgrow="ALWAYS" />
-                                                    <CheckBox fx:id="leftPaneCheck" minWidth="-Infinity" mnemonicParsing="false">
-                                                        <graphic>
-                                                            <ImageView  fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                <image>
-                                                                    <Image url="@../buttons/Red/iconDoubleLeft.png" />
-                                                                </image>
-                                                            </ImageView>
-                                                        </graphic>
-                                                    </CheckBox>
-                                                    <Button fx:id="editButton" mnemonicParsing="false" onAction="#editAction">
-                                                        <graphic>
-                                                            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                <image>
-                                                                    <Image url="@../buttons/Red/iconEdit.png" />
-                                                                </image>
-                                                            </ImageView>
-                                                        </graphic>
-                                                    </Button>
-                                                </children>
-                                            </HBox>
-                                            <fx:include fx:id="source" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DSource.fxml" VBox.vgrow="ALWAYS" />
-                                 </children>
-                              </VBox>
-                                  <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
-                                      <content>
-                                          <VBox fx:id="pairBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
-                                              <padding>
-                                                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                                              </padding>
-                                              <children>
-                                          <fx:include fx:id="paste" source="ControlData2DPaste.fxml" />
-                                              </children>
-                                          </VBox>
-                                      </content>
-                                  </ScrollPane>
-                           </items>
-                        </SplitPane>
-                            </children>
-                        </VBox>
-                    </content>
-                </ScrollPane>
-            </items>
-        </SplitPane>
+          <ScrollPane fx:id="rightPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+              <content>
+                    <SplitPane dividerPositions="0.7" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                        <items>
+                            <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                     <children>
+                                <fx:include fx:id="list" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DSource.fxml" VBox.vgrow="ALWAYS" />
+                     </children>
+                            </VBox>
+                            <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+                                <content>
+                                    <VBox fx:id="pairBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
+                                        <padding>
+                                            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                        </padding>
+                                        <children>
+                                            <fx:include fx:id="paste" source="ControlData2DPaste.fxml" />
+                                        </children>
+                                    </VBox>
+                                </content>
+                            </ScrollPane>
+                        </items>
+                    </SplitPane>
+              </content>
+          </ScrollPane>
     </children>
 </VBox>

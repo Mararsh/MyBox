@@ -154,7 +154,7 @@ public class Data2DChartPieController extends BaseData2DChartController {
     /*
         static
      */
-    public static Data2DChartPieController open(ControlData2DLoad tableController) {
+    public static Data2DChartPieController open(BaseData2DLoadController tableController) {
         try {
             Data2DChartPieController controller = (Data2DChartPieController) WindowTools.branchStage(
                     tableController, Fxmls.Data2DChartPieFxml);

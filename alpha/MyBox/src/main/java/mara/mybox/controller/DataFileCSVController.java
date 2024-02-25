@@ -40,7 +40,7 @@ public class DataFileCSVController extends BaseData2DFileController {
     public DataFileCSVController() {
         baseTitle = message("EditCSV");
         TipsLabelKey = "DataFileCSVTips";
-        dataType = Data2DDefinition.Type.CSV;
+
     }
 
     @Override
@@ -48,7 +48,7 @@ public class DataFileCSVController extends BaseData2DFileController {
         try {
             super.initControls();
 
-            dataFileCSV = (DataFileCSV) dataController.data2D;
+            dataFileCSV = (DataFileCSV) data2D;
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -93,7 +93,7 @@ public class DataFileCSVController extends BaseData2DFileController {
         }
         dataFileCSV.initFile(file);
         dataFileCSV.setOptions(withName, charset, delimiter + "");
-        dataController.readDefinition();
+        readDefinition();
     }
 
     public void loadData(List<StringTable> tables) {
@@ -146,7 +146,7 @@ public class DataFileCSVController extends BaseData2DFileController {
     @FXML
     @Override
     public void saveAsAction() {
-        if (!dataFileCSV.hasData() || !dataController.verifyData()) {
+        if (!dataFileCSV.hasData() || !verifyData()) {
             return;
         }
         DataFileCSVSaveAsController.open(this);
@@ -196,7 +196,7 @@ public class DataFileCSVController extends BaseData2DFileController {
     public static DataFileCSVController open(String name, List<Data2DColumn> cols, List<List<String>> data) {
         DataFileCSVController controller = open();
         if (controller != null) {
-            controller.dataController.loadTmpData(name, cols, data);
+            controller.loadData(name, cols, data);
         }
         return controller;
     }

@@ -2,7 +2,7 @@ package mara.mybox.fxml.cell;
 
 import java.util.List;
 import javafx.util.converter.DefaultStringConverter;
-import mara.mybox.controller.ControlData2DLoad;
+import mara.mybox.controller.BaseData2DTableController;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 
@@ -13,16 +13,16 @@ import mara.mybox.dev.MyBoxLog;
  */
 public class TableDataCell extends TableAutoCommitCell<List<String>, String> {
 
-    protected ControlData2DLoad dataControl;
+    protected BaseData2DTableController dataTable;
     protected Data2DColumn dataColumn;
     protected final int trucSize = 200;
     protected boolean supportMultipleLine;
 
-    public TableDataCell(ControlData2DLoad dataControl, Data2DColumn dataColumn) {
+    public TableDataCell(BaseData2DTableController dataTable, Data2DColumn dataColumn) {
         super(new DefaultStringConverter());
-        this.dataControl = dataControl;
+        this.dataTable = dataTable;
         this.dataColumn = dataColumn;
-        supportMultipleLine = dataControl.getData2D().supportMultipleLine() && dataColumn.supportMultipleLine();
+        supportMultipleLine = dataTable.getData2D().supportMultipleLine() && dataColumn.supportMultipleLine();
     }
 
     protected String getCellValue() {
@@ -46,7 +46,7 @@ public class TableDataCell extends TableAutoCommitCell<List<String>, String> {
     @Override
     public boolean valid(String value) {
         try {
-            return dataColumn.validValue(value) && dataControl.getData2D().validValue(value);
+            return dataColumn.validValue(value) && dataTable.getData2D().validValue(value);
         } catch (Exception e) {
             return false;
         }
@@ -67,7 +67,7 @@ public class TableDataCell extends TableAutoCommitCell<List<String>, String> {
 
     public void setDataStyle() {
         try {
-            setStyle(dataControl.getData2D().cellStyle(dataControl.getStyleFilter(),
+            setStyle(dataTable.getData2D().cellStyle(dataTable.getStyleFilter(),
                     rowIndex(), dataColumn.getColumnName()));
         } catch (Exception e) {
         }

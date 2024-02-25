@@ -45,7 +45,7 @@ public abstract class BaseData2DTargetsController extends BaseData2DHandleContro
     }
 
     @Override
-    public void setParameters(ControlData2DLoad tableController) {
+    public void setParameters(BaseData2DLoadController tableController) {
         try {
             super.setParameters(tableController);
 
@@ -309,20 +309,14 @@ public abstract class BaseData2DTargetsController extends BaseData2DHandleContro
             case "myBoxClipboard":
                 tableController.toMyBoxClipboard(name, outputColumns, outputData);
                 break;
-            case "csv":
-                DataFileCSVController.open(name, outputColumns, outputData);
-                break;
-            case "excel":
-                DataFileExcelController.open(name, outputColumns, outputData);
-                break;
-            case "texts":
-                DataFileTextController.open(name, outputColumns, outputData);
-                break;
             case "matrix":
                 MatricesManageController.open(name, outputColumns, outputData);
                 break;
+            case "csv":
+            case "excel":
+            case "texts":
             case "table":
-                DataTablesController.open(name, outputColumns, outputData);
+                Data2DManufactureController.openData(name, outputColumns, outputData);
                 break;
             default:
                 Data2DTargetExportController.open(outputColumns, outputData, targetController.target, name);

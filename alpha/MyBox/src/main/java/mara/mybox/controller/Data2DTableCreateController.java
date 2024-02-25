@@ -23,7 +23,7 @@ import mara.mybox.value.Fxmls;
  */
 public class Data2DTableCreateController extends BaseTaskController {
 
-    protected ControlData2D editController;
+    protected Data2DManufactureController editController;
     protected InvalidAs invalidAs = InvalidAs.Blank;
 
     @FXML
@@ -37,7 +37,7 @@ public class Data2DTableCreateController extends BaseTaskController {
     @FXML
     protected RadioButton zeroNonnumericRadio, blankNonnumericRadio;
 
-    public void setParameters(ControlData2D controller) {
+    public void setParameters(Data2DManufactureController controller) {
         try {
             editController = controller;
             attributesController.setParameters(this, editController.data2D);
@@ -155,7 +155,7 @@ public class Data2DTableCreateController extends BaseTaskController {
     /*
         static
      */
-    public static Data2DTableCreateController open(ControlData2D tableController) {
+    public static Data2DTableCreateController open(Data2DManufactureController tableController) {
         try {
             Data2DTableCreateController controller = (Data2DTableCreateController) WindowTools.childStage(
                     tableController, Fxmls.Data2DTableCreateFxml);

@@ -216,7 +216,7 @@ public class Data2DMultipleLinearRegressionCombinationController extends BaseDat
     /*
         static
      */
-    public static Data2DMultipleLinearRegressionCombinationController open(ControlData2DLoad tableController) {
+    public static Data2DMultipleLinearRegressionCombinationController open(BaseData2DLoadController tableController) {
         try {
             Data2DMultipleLinearRegressionCombinationController controller = (Data2DMultipleLinearRegressionCombinationController) WindowTools.branchStage(
                     tableController, Fxmls.Data2DMultipleLinearRegressionCombinationFxml);

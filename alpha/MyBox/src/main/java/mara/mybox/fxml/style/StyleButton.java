@@ -335,8 +335,12 @@ public class StyleButton {
             return new StyleData(id, message("Validate"), "", "iconVerify.png");
         }
         if (id.startsWith("data")) {
-            if (id.startsWith("database")) {
+            if (id.startsWith("dataManufacture")) {
+                return new StyleData(id, message("DataManufacture"), "", "iconData.png");
+            } else if (id.startsWith("database")) {
                 return new StyleData(id, message("DatabaseTable"), "", "iconDatabase.png");
+            } else if (id.startsWith("dataDefinition")) {
+                return new StyleData(id, message("DataDefinition"), "", "iconMeta.png");
             } else if (id.startsWith("dataImport")) {
                 return new StyleData(id, message("Import"), "", "iconImport.png");
             } else if (id.startsWith("dataExport")) {

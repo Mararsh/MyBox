@@ -27,12 +27,12 @@ public class DataMatrix extends Data2D {
     protected TableData2DCell tableData2DCell;
 
     public DataMatrix() {
-        type = Type.Matrix;
+        dataType = DataType.Matrix;
         tableData2DCell = new TableData2DCell();
     }
 
     public int type() {
-        return type(Type.Matrix);
+        return type(DataType.Matrix);
     }
 
     public void cloneAll(DataMatrix d) {

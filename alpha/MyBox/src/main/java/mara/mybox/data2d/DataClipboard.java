@@ -19,11 +19,11 @@ import mara.mybox.value.AppPaths;
 public class DataClipboard extends DataFileCSV {
 
     public DataClipboard() {
-        type = Type.MyBoxClipboard;
+        dataType = DataType.MyBoxClipboard;
     }
 
     public int type() {
-        return type(Type.MyBoxClipboard);
+        return type(DataType.MyBoxClipboard);
     }
 
     @Override

@@ -269,7 +269,7 @@ public class Data2DChartXYZController extends BaseData2DHandleController {
     /*
         static
      */
-    public static Data2DChartXYZController open(ControlData2DLoad tableController) {
+    public static Data2DChartXYZController open(BaseData2DLoadController tableController) {
         try {
             Data2DChartXYZController controller = (Data2DChartXYZController) WindowTools.branchStage(
                     tableController, Fxmls.Data2DChartXYZFxml);

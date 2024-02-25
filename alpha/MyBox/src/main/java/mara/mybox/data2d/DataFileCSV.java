@@ -30,11 +30,11 @@ import org.apache.commons.csv.CSVRecord;
 public class DataFileCSV extends DataFileText {
 
     public DataFileCSV() {
-        type = Type.CSV;
+        dataType = DataType.CSV;
     }
 
     public DataFileCSV(File file) {
-        type = Type.CSV;
+        dataType = DataType.CSV;
         this.file = file;
         this.delimiter = guessDelimiter();
     }

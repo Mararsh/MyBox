@@ -22,7 +22,7 @@ public class Data2DChartGroupBoxWhiskerController extends Data2DChartBoxWhiskerC
     protected DataTable statisticData;
 
     @FXML
-    protected ControlData2DResults statisticDataController;
+    protected ControlData2DView statisticDataController;
 
     public Data2DChartGroupBoxWhiskerController() {
         baseTitle = message("GroupData") + " - " + message("BoxWhiskerChart");
@@ -70,7 +70,7 @@ public class Data2DChartGroupBoxWhiskerController extends Data2DChartBoxWhiskerC
 
     @Override
     protected void loadChartData() {
-        statisticDataController.loadData(statisticData.cloneAll());
+        statisticDataController.loadDef(statisticData);
         super.loadChartData();
     }
 
@@ -107,7 +107,7 @@ public class Data2DChartGroupBoxWhiskerController extends Data2DChartBoxWhiskerC
     /*
         static
      */
-    public static Data2DChartGroupBoxWhiskerController open(ControlData2DLoad tableController) {
+    public static Data2DChartGroupBoxWhiskerController open(BaseData2DLoadController tableController) {
         try {
             Data2DChartGroupBoxWhiskerController controller = (Data2DChartGroupBoxWhiskerController) WindowTools.branchStage(
                     tableController, Fxmls.Data2DChartGroupBoxWhiskerFxml);

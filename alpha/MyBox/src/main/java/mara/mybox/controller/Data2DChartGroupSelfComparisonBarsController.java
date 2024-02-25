@@ -33,7 +33,7 @@ public class Data2DChartGroupSelfComparisonBarsController extends Data2DChartSel
     /*
         static
      */
-    public static Data2DChartGroupSelfComparisonBarsController open(ControlData2DLoad tableController) {
+    public static Data2DChartGroupSelfComparisonBarsController open(BaseData2DLoadController tableController) {
         try {
             Data2DChartGroupSelfComparisonBarsController controller = (Data2DChartGroupSelfComparisonBarsController) WindowTools.branchStage(
                     tableController, Fxmls.Data2DChartGroupSelfComparisonBarsFxml);

@@ -17,18 +17,18 @@ import static mara.mybox.value.Languages.message;
  */
 public class Data2DLoadContentInSystemClipboardController extends BaseChildController {
 
-    protected ControlData2DLoad targetController;
+    protected BaseData2DLoadController targetController;
 
     @FXML
     protected ControlData2DSystemClipboard boardController;
     @FXML
-    protected BaseData2DSourceController sourceController;
+    protected BaseData2DSelectRowsController sourceController;
 
     public Data2DLoadContentInSystemClipboardController() {
         baseTitle = message("LoadContentInSystemClipboard");
     }
 
-    public void setParameters(ControlData2DLoad target, String text) {
+    public void setParameters(BaseData2DLoadController target, String text) {
         try {
             targetController = target;
 
@@ -37,7 +37,7 @@ public class Data2DLoadContentInSystemClipboardController extends BaseChildContr
             boardController.loadNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    sourceController.loadData(boardController.textData);
+                    sourceController.loadDef(boardController.textData);
                 }
             });
             boardController.load(text);
@@ -73,7 +73,7 @@ public class Data2DLoadContentInSystemClipboardController extends BaseChildContr
             @Override
             protected void whenSucceeded() {
                 try {
-                    targetController.loadTmpData(sourceController.checkedColsNames, data);
+                    targetController.loadData(sourceController.checkedColsNames, data);
                     close();
                 } catch (Exception e) {
                     MyBoxLog.error(e);
@@ -92,7 +92,7 @@ public class Data2DLoadContentInSystemClipboardController extends BaseChildContr
     /*
         static
      */
-    public static Data2DLoadContentInSystemClipboardController open(ControlData2DLoad parent, String text) {
+    public static Data2DLoadContentInSystemClipboardController open(BaseData2DLoadController parent, String text) {
         try {
             Data2DLoadContentInSystemClipboardController controller
                     = (Data2DLoadContentInSystemClipboardController) WindowTools.childStage(

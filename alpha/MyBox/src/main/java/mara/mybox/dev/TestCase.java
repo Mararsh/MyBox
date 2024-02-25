@@ -163,7 +163,7 @@ public class TestCase {
             cases.add(new TestCase(index++, message("PixelsCalculator"), Fxmls.PixelsCalculatorFxml));
             cases.add(new TestCase(index++, message("ImageBase64"), Fxmls.ImageBase64Fxml));
 
-            cases.add(new TestCase(index++, message("DataManufacture"), Fxmls.DataManufactureFxml));
+            cases.add(new TestCase(index++, message("DataManufacture"), Fxmls.Data2DManufactureFxml));
             cases.add(new TestCase(index++, message("ManageData"), Fxmls.Data2DManageFxml));
             cases.add(new TestCase(index++, message("EditCSV"), Fxmls.DataFileCSVFxml));
             cases.add(new TestCase(index++, message("CsvConvert"), Fxmls.DataFileCSVConvertFxml));

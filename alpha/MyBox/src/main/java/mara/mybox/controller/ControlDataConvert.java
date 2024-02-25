@@ -685,7 +685,7 @@ public class ControlDataConvert extends BaseController {
                 csvPrinter.close();
                 parent.targetFileGenerated(csvFile, VisitHistory.FileType.CSV);
                 csvPrinter = null;
-                Data2D d = Data2D.create(Data2DDefinition.Type.CSV);
+                Data2D d = Data2D.create(Data2DDefinition.DataType.CSV);
                 d.setTask(task).setFile(csvFile)
                         .setCharset(csvWriteController.charset)
                         .setDelimiter(csvDelimiter)
@@ -702,7 +702,7 @@ public class ControlDataConvert extends BaseController {
                 textWriter.close();
                 parent.targetFileGenerated(textFile, VisitHistory.FileType.Text);
                 textWriter = null;
-                Data2D d = Data2D.create(Data2DDefinition.Type.Texts);
+                Data2D d = Data2D.create(Data2DDefinition.DataType.Texts);
                 d.setTask(task).setFile(textFile)
                         .setCharset(textWriteOptionsController.charset)
                         .setDelimiter(textDelimiter)
@@ -759,7 +759,7 @@ public class ControlDataConvert extends BaseController {
                 xssfBook.close();
                 parent.targetFileGenerated(xlsxFile, VisitHistory.FileType.Excel);
                 xssfBook = null;
-                Data2D d = Data2D.create(Data2DDefinition.Type.Excel);
+                Data2D d = Data2D.create(Data2DDefinition.DataType.Excel);
                 d.setTask(task).setFile(xlsxFile).setSheet("sheet1")
                         .setHasHeader(excelWithNamesCheck.isSelected())
                         .setDataName(d.dataName())
@@ -774,7 +774,7 @@ public class ControlDataConvert extends BaseController {
                 dataClipboardPrinter.close();
                 parent.targetFileGenerated(dataClipboardFile, VisitHistory.FileType.CSV);
                 dataClipboardPrinter = null;
-                Data2D d = Data2D.create(Data2DDefinition.Type.MyBoxClipboard);
+                Data2D d = Data2D.create(Data2DDefinition.DataType.MyBoxClipboard);
                 d.setTask(task).setFile(dataClipboardFile)
                         .setCharset(Charset.forName("UTF-8"))
                         .setDelimiter(",")

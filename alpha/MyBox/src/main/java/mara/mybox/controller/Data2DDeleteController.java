@@ -150,7 +150,7 @@ public class Data2DDeleteController extends BaseData2DTargetsController {
     /*
         static
      */
-    public static Data2DDeleteController open(ControlData2DLoad tableController) {
+    public static Data2DDeleteController open(BaseData2DLoadController tableController) {
         try {
             Data2DDeleteController controller = (Data2DDeleteController) WindowTools.branchStage(
                     tableController, Fxmls.Data2DDeleteFxml);

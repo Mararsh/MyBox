@@ -16,7 +16,7 @@ import static mara.mybox.value.Languages.message;
  */
 public class Data2DAddRowsController extends TableAddRowsController {
 
-    protected ControlData2DLoad dataController;
+    protected BaseData2DLoadController dataController;
 
     @FXML
     protected ControlData2DRowEdit rowEditController;
@@ -27,7 +27,7 @@ public class Data2DAddRowsController extends TableAddRowsController {
         baseTitle = message("AddRows");
     }
 
-    public void setParameters(ControlData2DLoad controller) {
+    public void setParameters(BaseData2DLoadController controller) {
         try {
             super.setParameters(controller);
             this.dataController = controller;
@@ -65,7 +65,7 @@ public class Data2DAddRowsController extends TableAddRowsController {
     /*
         static
      */
-    public static Data2DAddRowsController open(ControlData2DLoad tableViewController) {
+    public static Data2DAddRowsController open(BaseData2DLoadController tableViewController) {
         try {
             Data2DAddRowsController controller = (Data2DAddRowsController) WindowTools.branchStage(
                     tableViewController, Fxmls.Data2DAddRowsFxml);

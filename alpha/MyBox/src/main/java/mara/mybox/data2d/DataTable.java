@@ -39,12 +39,12 @@ public class DataTable extends Data2D {
     protected TableData2D tableData2D;
 
     public DataTable() {
-        type = Type.DatabaseTable;
+        dataType = DataType.DatabaseTable;
         tableData2D = new TableData2D();
     }
 
     public int type() {
-        return type(Type.DatabaseTable);
+        return type(DataType.DatabaseTable);
     }
 
     public void cloneAll(DataTable d) {
@@ -138,7 +138,7 @@ public class DataTable extends Data2D {
 
     @Override
     public Data2DDefinition queryDefinition(Connection conn) {
-        return tableData2DDefinition.queryTable(conn, sheet, type);
+        return tableData2DDefinition.queryTable(conn, sheet, dataType);
     }
 
     @Override
@@ -335,7 +335,6 @@ public class DataTable extends Data2D {
             updateTable(conn);
             List<Data2DRow> dbRows = tableData2D.query(conn, pageQuery());
             List<Data2DRow> pageRows = new ArrayList<>();
-            List<List<String>> pageData = tableData();
             conn.setAutoCommit(false);
             if (pageData != null) {
                 for (int i = 0; i < pageData.size(); i++) {

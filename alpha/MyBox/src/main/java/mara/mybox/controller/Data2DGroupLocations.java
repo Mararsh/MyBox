@@ -19,7 +19,7 @@ public class Data2DGroupLocations extends Data2DLocationDistributionController {
     /*
         static
      */
-    public static Data2DGroupLocations open(ControlData2DLoad tableController) {
+    public static Data2DGroupLocations open(BaseData2DLoadController tableController) {
         try {
             Data2DGroupLocations controller = (Data2DGroupLocations) WindowTools.branchStage(
                     tableController, Fxmls.Data2DChartGroupXYFxml);

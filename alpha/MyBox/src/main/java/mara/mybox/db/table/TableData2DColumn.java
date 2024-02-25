@@ -133,7 +133,7 @@ public class TableData2DColumn extends BaseTable<Data2DColumn> {
         }
     }
 
-    public List<Data2DColumn> queryFile(Connection conn, Data2DDefinition.Type type, File file) {
+    public List<Data2DColumn> queryFile(Connection conn, Data2DDefinition.DataType type, File file) {
         if (file == null) {
             return null;
         }
@@ -165,7 +165,7 @@ public class TableData2DColumn extends BaseTable<Data2DColumn> {
         }
     }
 
-    public boolean clearFile(Data2DDefinition.Type type, File file) {
+    public boolean clearFile(Data2DDefinition.DataType type, File file) {
         if (file == null) {
             return false;
         }
@@ -177,7 +177,7 @@ public class TableData2DColumn extends BaseTable<Data2DColumn> {
         }
     }
 
-    public boolean clearFile(Connection conn, Data2DDefinition.Type type, File file) {
+    public boolean clearFile(Connection conn, Data2DDefinition.DataType type, File file) {
         if (conn == null || file == null) {
             return false;
         }

@@ -127,7 +127,7 @@ public class Data2DFrequencyController extends BaseData2DTargetsController {
     /*
         static
      */
-    public static Data2DFrequencyController open(ControlData2DLoad tableController) {
+    public static Data2DFrequencyController open(BaseData2DLoadController tableController) {
         try {
             Data2DFrequencyController controller = (Data2DFrequencyController) WindowTools.branchStage(
                     tableController, Fxmls.Data2DFrequencyFxml);

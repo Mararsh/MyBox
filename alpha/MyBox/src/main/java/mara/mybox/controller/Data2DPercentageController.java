@@ -342,7 +342,7 @@ public class Data2DPercentageController extends BaseData2DTargetsController {
     /*
         static
      */
-    public static Data2DPercentageController open(ControlData2DLoad tableController) {
+    public static Data2DPercentageController open(BaseData2DLoadController tableController) {
         try {
             Data2DPercentageController controller = (Data2DPercentageController) WindowTools.branchStage(
                     tableController, Fxmls.Data2DPercentageFxml);

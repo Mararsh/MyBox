@@ -38,7 +38,9 @@ public class MatricesBinaryCalculationController extends BaseController {
     @FXML
     protected Tab dataATab, dataBTab, resultTab;
     @FXML
-    protected ControlData2D dataAController, dataBController, resultController;
+    protected ControlData2DMatrix dataAController, dataBController;
+    @FXML
+    protected ControlData2DView resultController;
     @FXML
     protected ToggleGroup opGroup;
     @FXML
@@ -58,15 +60,10 @@ public class MatricesBinaryCalculationController extends BaseController {
         try {
             super.initValues();
 
-            dataAController.setParameters(this, Data2D.Type.Matrix);
-            dataAController.createAction();
-            dataAMatrix = (DataMatrix) dataAController.data2D;
+            dataAMatrix = dataAController.dataMatrix;
+            dataBMatrix = dataBController.dataMatrix;
 
-            dataBController.setParameters(null, Data2D.Type.Matrix);
-            dataBController.createAction();
-            dataBMatrix = (DataMatrix) dataBController.data2D;
-
-            resultController.setParameters(null, Data2D.Type.Matrix);
+            resultController.createData(Data2D.DataType.Matrix);
             resultMatrix = (DataMatrix) resultController.data2D;
 
         } catch (Exception e) {

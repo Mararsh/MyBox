@@ -26,7 +26,7 @@ import mara.mybox.value.UserConfig;
  */
 public class Data2DSetStylesController extends BaseController {
 
-    protected ControlData2DLoad tableController;
+    protected BaseData2DLoadController tableController;
     protected Data2DStyle currentStyle;
     protected ChangeListener<Boolean> tableStatusListener;
     protected DataFilter filter;
@@ -101,7 +101,7 @@ public class Data2DSetStylesController extends BaseController {
         }
     }
 
-    public void setParameters(ControlData2DLoad tableController) {
+    public void setParameters(BaseData2DLoadController tableController) {
         try {
             this.tableController = tableController;
             listController.setParameters(this);
@@ -412,7 +412,7 @@ public class Data2DSetStylesController extends BaseController {
     /*
         static
      */
-    public static Data2DSetStylesController open(ControlData2DLoad tableController) {
+    public static Data2DSetStylesController open(BaseData2DLoadController tableController) {
         try {
             Data2DSetStylesController controller = (Data2DSetStylesController) WindowTools.branchStage(
                     tableController, Fxmls.Data2DSetStylesFxml);

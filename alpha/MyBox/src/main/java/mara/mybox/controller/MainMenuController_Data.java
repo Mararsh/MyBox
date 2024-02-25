@@ -12,6 +12,11 @@ import mara.mybox.value.Fxmls;
 public abstract class MainMenuController_Data extends MainMenuController_Network {
 
     @FXML
+    protected void DataManufacture(ActionEvent event) {
+        loadScene(Fxmls.Data2DManufactureFxml);
+    }
+
+    @FXML
     protected void manageData(ActionEvent event) {
         loadScene(Fxmls.Data2DManageFxml);
     }

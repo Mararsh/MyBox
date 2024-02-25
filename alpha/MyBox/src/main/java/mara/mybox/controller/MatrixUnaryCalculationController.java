@@ -45,7 +45,9 @@ public class MatrixUnaryCalculationController extends BaseController {
     protected double[][] result;
 
     @FXML
-    protected ControlData2D dataController, resultController;
+    protected ControlData2DMatrix dataController;
+    @FXML
+    protected ControlData2DView resultController;
     @FXML
     protected Tab resultTab;
     @FXML
@@ -81,10 +83,9 @@ public class MatrixUnaryCalculationController extends BaseController {
         try {
             super.initValues();
 
-            dataController.setParameters(this, Data2D.Type.Matrix);
-            dataMatrix = (DataMatrix) dataController.data2D;
+            dataMatrix = dataController.dataMatrix;
 
-            resultController.setParameters(this, Data2D.Type.Matrix);
+            resultController.createData(Data2D.DataType.Matrix);
             resultMatrix = (DataMatrix) resultController.data2D;
 
         } catch (Exception e) {

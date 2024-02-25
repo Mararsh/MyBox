@@ -18,7 +18,7 @@ public class Data2DPasteContentInSystemClipboardController extends BaseChildCont
     @FXML
     protected ControlData2DSystemClipboard boardController;
     @FXML
-    protected BaseData2DSourceController sourceController;
+    protected BaseData2DSelectRowsController sourceController;
     @FXML
     protected ControlData2DPaste pasteController;
 
@@ -26,7 +26,7 @@ public class Data2DPasteContentInSystemClipboardController extends BaseChildCont
         baseTitle = message("PasteContentInSystemClipboard");
     }
 
-    public void setParameters(ControlData2DLoad target, String text) {
+    public void setParameters(BaseData2DLoadController target, String text) {
         try {
             this.parentController = target;
 
@@ -35,7 +35,7 @@ public class Data2DPasteContentInSystemClipboardController extends BaseChildCont
             boardController.loadNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    sourceController.loadData(boardController.textData);
+                    sourceController.loadDef(boardController.textData);
                 }
             });
             boardController.load(text);
@@ -55,7 +55,7 @@ public class Data2DPasteContentInSystemClipboardController extends BaseChildCont
     /*
         static
      */
-    public static Data2DPasteContentInSystemClipboardController open(ControlData2DLoad parent, String text) {
+    public static Data2DPasteContentInSystemClipboardController open(BaseData2DLoadController parent, String text) {
         try {
             Data2DPasteContentInSystemClipboardController controller = (Data2DPasteContentInSystemClipboardController) WindowTools.branchStage(
                     parent, Fxmls.Data2DPasteContentInSystemClipboardFxml);

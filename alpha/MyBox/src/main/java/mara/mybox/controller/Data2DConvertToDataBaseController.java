@@ -95,7 +95,7 @@ public class Data2DConvertToDataBaseController extends BaseData2DHandleControlle
     /*
         static
      */
-    public static Data2DConvertToDataBaseController open(ControlData2DLoad tableController) {
+    public static Data2DConvertToDataBaseController open(BaseData2DLoadController tableController) {
         try {
             Data2DConvertToDataBaseController controller = (Data2DConvertToDataBaseController) WindowTools.branchStage(
                     tableController, Fxmls.Data2DConvertToDatabaseFxml);

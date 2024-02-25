@@ -13,7 +13,7 @@ import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Data2DDefinition;
-import mara.mybox.db.data.Data2DDefinition.Type;
+import mara.mybox.db.data.Data2DDefinition.DataType;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.fxml.WindowTools.recordError;
 import static mara.mybox.fxml.WindowTools.recordInfo;
@@ -110,7 +110,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
         }
     }
 
-    public Data2DDefinition queryFile(Type type, File file) {
+    public Data2DDefinition queryFile(DataType type, File file) {
         if (file == null) {
             return null;
         }
@@ -122,7 +122,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
         }
     }
 
-    public Data2DDefinition queryFile(Connection conn, Type type, File file) {
+    public Data2DDefinition queryFile(Connection conn, DataType type, File file) {
         if (conn == null || file == null) {
             return null;
         }
@@ -136,7 +136,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
         }
     }
 
-    public int deleteFile(Connection conn, Type type, File file) {
+    public int deleteFile(Connection conn, DataType type, File file) {
         if (conn == null || file == null) {
             return -1;
         }
@@ -150,7 +150,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
         }
     }
 
-    public Data2DDefinition queryName(Type type, String name) {
+    public Data2DDefinition queryName(DataType type, String name) {
         if (name == null || name.isBlank()) {
             return null;
         }
@@ -162,7 +162,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
         }
     }
 
-    public Data2DDefinition queryName(Connection conn, Type type, String name) {
+    public Data2DDefinition queryName(Connection conn, DataType type, String name) {
         if (conn == null || name == null || name.isBlank()) {
             return null;
         }
@@ -176,7 +176,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
         }
     }
 
-    public int deleteName(Connection conn, Type type, String name) {
+    public int deleteName(Connection conn, DataType type, String name) {
         if (conn == null || name == null || name.isBlank()) {
             return -1;
         }
@@ -190,7 +190,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
         }
     }
 
-    public Data2DDefinition queryFileSheet(Connection conn, Type type, File file, String sheet) {
+    public Data2DDefinition queryFileSheet(Connection conn, DataType type, File file, String sheet) {
         if (conn == null || file == null) {
             return null;
         }
@@ -208,7 +208,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
         }
     }
 
-    public Data2DDefinition queryTable(Connection conn, String tname, Type type) {
+    public Data2DDefinition queryTable(Connection conn, String tname, DataType type) {
         if (conn == null || tname == null) {
             return null;
         }
@@ -262,7 +262,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
             return null;
         }
         try (PreparedStatement statement = conn.prepareStatement(Query_TypeFile)) {
-            statement.setShort(1, Data2DDefinition.type(Type.MyBoxClipboard));
+            statement.setShort(1, Data2DDefinition.type(DataType.MyBoxClipboard));
             statement.setString(2, DerbyBase.stringValue(file.getAbsolutePath()));
             return query(conn, statement);
         } catch (Exception e) {
@@ -287,7 +287,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
             return -1;
         }
         try (PreparedStatement statement = conn.prepareStatement(Delete_TypeFile)) {
-            statement.setShort(1, Data2DDefinition.type(Type.MyBoxClipboard));
+            statement.setShort(1, Data2DDefinition.type(DataType.MyBoxClipboard));
             statement.setString(2, DerbyBase.stringValue(file.getAbsolutePath()));
             return statement.executeUpdate();
         } catch (Exception e) {
@@ -389,7 +389,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
         int rowCount = 0, invalidCount = 0;
         try {
             String sql = "SELECT * FROM Data2D_Definition WHERE data_type ="
-                    + Data2D.type(Data2DDefinition.Type.DatabaseTable);
+                    + Data2D.type(Data2DDefinition.DataType.DatabaseTable);
             recordInfo(taskController, sql);
             conn.setAutoCommit(true);
             try (ResultSet results = conn.prepareStatement(sql).executeQuery();
@@ -441,7 +441,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
         try {
             conn.setAutoCommit(true);
             String sql = "SELECT * FROM Data2D_Definition WHERE data_type="
-                    + Data2D.type(Data2DDefinition.Type.DatabaseTable)
+                    + Data2D.type(Data2DDefinition.DataType.DatabaseTable)
                     + " AND ( sheet like '" + TmpTable.TmpTablePrefix + "%'"
                     + " OR sheet like '" + TmpTable.TmpTablePrefix.toLowerCase() + "%' )";
             recordInfo(taskController, sql);

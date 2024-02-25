@@ -31,7 +31,7 @@ import static mara.mybox.value.Languages.message;
  */
 public class ControlData2DColumns extends BaseData2DColumnsController {
 
-    protected ControlData2DLoad dataController;
+    protected BaseData2DLoadController dataController;
     protected TableData2DDefinition tableData2DDefinition;
 
     @Override
@@ -48,7 +48,7 @@ public class ControlData2DColumns extends BaseData2DColumnsController {
         }
     }
 
-    protected void setParameters(ControlData2DLoad controller) {
+    protected void setParameters(BaseData2DLoadController controller) {
         try {
             this.dataController = controller;
 
@@ -237,7 +237,7 @@ public class ControlData2DColumns extends BaseData2DColumnsController {
                 columns.add(tableData.get(i).cloneAll());
             }
             data2D.setColumns(columns);
-            dataController.updateData(newTableData, true);
+            dataController.updatePage(newTableData, true);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

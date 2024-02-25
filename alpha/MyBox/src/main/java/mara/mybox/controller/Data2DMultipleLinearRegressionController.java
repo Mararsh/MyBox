@@ -257,7 +257,8 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DRegressi
     }
 
     public void writeRegressionData() {
-        regressionDataController.loadData(regression.makeColumns(), regression.makeRegressionData());
+        regressionDataController.loadData(baseTitle,
+                regression.makeColumns(), regression.makeRegressionData());
     }
 
     @FXML
@@ -269,7 +270,7 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DRegressi
     /*
         static
      */
-    public static Data2DMultipleLinearRegressionController open(ControlData2DLoad tableController) {
+    public static Data2DMultipleLinearRegressionController open(BaseData2DLoadController tableController) {
         try {
             Data2DMultipleLinearRegressionController controller = (Data2DMultipleLinearRegressionController) WindowTools.branchStage(
                     tableController, Fxmls.Data2DMultipleLinearRegressionFxml);

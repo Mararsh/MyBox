@@ -18,7 +18,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-4-21
  * @License Apache License Version 2.0
  */
-public class ControlData2DSimpleLinearRegressionTable extends ControlData2DResults {
+public class ControlData2DSimpleLinearRegressionTable extends ControlData2DView {
 
     protected BaseData2DRegressionController regressController;
     protected TableColumn sortColumn;
@@ -27,7 +27,7 @@ public class ControlData2DSimpleLinearRegressionTable extends ControlData2DResul
     public void initValues() {
         try {
             super.initValues();
-            data2D = Data2D.create(Data2DDefinition.Type.Texts);
+            data2D = Data2D.create(Data2DDefinition.DataType.Texts);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -71,10 +71,6 @@ public class ControlData2DSimpleLinearRegressionTable extends ControlData2DResul
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
-    }
-
-    public void clear() {
-        tableData.clear();
     }
 
     public void addRow(List<String> row) {

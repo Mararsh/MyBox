@@ -91,14 +91,14 @@ public abstract class Data2D_Data extends Data2D_Attributes {
     }
 
     public boolean supportMultipleLine() {
-        return type != Type.Texts && type != Type.Matrix;
+        return dataType != DataType.Texts && dataType != DataType.Matrix;
     }
 
     /*
         matrix
      */
     public boolean isSquareMatrix() {
-        return type == Type.Matrix && tableColsNumber() == tableRowsNumber();
+        return dataType == DataType.Matrix && tableColsNumber() == tableRowsNumber();
     }
 
     /*
@@ -117,16 +117,12 @@ public abstract class Data2D_Data extends Data2D_Attributes {
     /*
         table data
      */
-    public List<List<String>> tableData() {
-        return loadController == null ? null : loadController.getTableData();
-    }
-
     public void setTableChanged(boolean changed) {
         tableChanged = changed;
     }
 
     public int tableRowsNumber() {
-        return loadController == null ? 0 : tableData().size();
+        return pageData == null ? 0 : pageData.size();
     }
 
     public int tableColsNumber() {
@@ -178,7 +174,7 @@ public abstract class Data2D_Data extends Data2D_Attributes {
 
     public List<String> tableRow(int rowIndex, boolean withRowNumber, boolean formatValues) {
         try {
-            List<String> trow = tableData().get(rowIndex);
+            List<String> trow = pageData.get(rowIndex);
             List<String> row = new ArrayList<>();
             if (withRowNumber) {
                 row.add(trow.get(0));
@@ -201,7 +197,7 @@ public abstract class Data2D_Data extends Data2D_Attributes {
     public List<List<String>> tableRows(boolean withRowNumber, boolean formatValues) {
         try {
             List<List<String>> rows = new ArrayList<>();
-            for (int i = 0; i < tableData().size(); i++) {
+            for (int i = 0; i < pageData.size(); i++) {
                 List<String> row = tableRow(i, withRowNumber, formatValues);
                 rows.add(row);
             }
@@ -243,11 +239,11 @@ public abstract class Data2D_Data extends Data2D_Attributes {
     }
 
     public boolean hasData() {
-        return isValid() && tableData() != null && !tableData().isEmpty();
+        return isValid() && pageData != null && !pageData.isEmpty();
     }
 
     public boolean isTmpData() {
-        switch (type) {
+        switch (dataType) {
             case CSV:
             case Excel:
             case Texts:
@@ -266,7 +262,7 @@ public abstract class Data2D_Data extends Data2D_Attributes {
         for (int i = 0; i < rows; i++) {
             List<String> row = new ArrayList<>();
             for (int j = 0; j < cols; j++) {
-                if (type == Type.Matrix) {
+                if (dataType == DataType.Matrix) {
                     row.add(randomDouble(random, true));
                 } else {
                     row.add(randomString(random));
@@ -283,7 +279,7 @@ public abstract class Data2D_Data extends Data2D_Attributes {
 
     public List<String> rowNames() {
         try {
-            return rowNames(tableData().size());
+            return rowNames(pageData.size());
         } catch (Exception e) {
             return null;
         }
@@ -311,7 +307,9 @@ public abstract class Data2D_Data extends Data2D_Attributes {
 
     public boolean verifyData() {
         try {
-            List<List<String>> pageData = tableData();
+            if (pageData == null || pageData.isEmpty()) {
+                return true;
+            }
             List<String> names = new ArrayList<>();
             names.addAll(Arrays.asList(message("Row"), message("Column"), message("Invalid")));
             StringTable stringTable = new StringTable(names, displayName());
@@ -345,25 +343,25 @@ public abstract class Data2D_Data extends Data2D_Attributes {
     }
 
     /*
-        table view
+        page
      */
-    public List<String> tableViewRow(int row) {
-        if (loadController == null || row < 0 || row > tableData().size() - 1) {
+    public List<String> pageRow(int row) {
+        if (pageData == null || row < 0 || row > pageData.size() - 1) {
             return null;
         }
         try {
-            return tableData().get(row);
+            return pageData.get(row);
         } catch (Exception e) {
             return null;
         }
     }
 
-    public long tableViewRowIndex(int row) {
-        if (loadController == null || row < 0 || row > tableData().size() - 1) {
+    public long pageRowIndex(int row) {
+        if (pageData == null || row < 0 || row > pageData.size() - 1) {
             return -1;
         }
         try {
-            return Long.parseLong(tableData().get(row).get(0));
+            return Long.parseLong(pageData.get(row).get(0));
         } catch (Exception e) {
             return -1;
         }

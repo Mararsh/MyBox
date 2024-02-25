@@ -171,7 +171,7 @@ public class Data2DNormalizeController extends BaseData2DTargetsController {
     /*
         static
      */
-    public static Data2DNormalizeController open(ControlData2DLoad tableController) {
+    public static Data2DNormalizeController open(BaseData2DLoadController tableController) {
         try {
             Data2DNormalizeController controller = (Data2DNormalizeController) WindowTools.branchStage(
                     tableController, Fxmls.Data2DNormalizeFxml);

@@ -42,7 +42,7 @@ public class Data2DCopyController extends BaseData2DTargetsController {
     /*
         static
      */
-    public static Data2DCopyController open(ControlData2DLoad tableController) {
+    public static Data2DCopyController open(BaseData2DLoadController tableController) {
         try {
             Data2DCopyController controller = (Data2DCopyController) WindowTools.branchStage(
                     tableController, Fxmls.Data2DCopyFxml);

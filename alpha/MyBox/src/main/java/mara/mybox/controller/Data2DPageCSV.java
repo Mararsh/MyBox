@@ -180,7 +180,7 @@ public class Data2DPageCSV extends Data2DPageHtml {
     /*
         static
      */
-    public static Data2DPageCSV open(ControlData2DLoad tableController) {
+    public static Data2DPageCSV open(BaseData2DLoadController tableController) {
         try {
             Data2DPageCSV controller = (Data2DPageCSV) WindowTools.branchStage(
                     tableController, Fxmls.Data2DPageCSVFxml);

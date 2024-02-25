@@ -15,7 +15,7 @@ import static mara.mybox.value.Languages.message;
  */
 public class Data2DRowEditController extends BaseChildController {
 
-    protected ControlData2DLoad dataController;
+    protected Data2DManufactureController dataController;
     protected int index;
 
     @FXML
@@ -27,7 +27,7 @@ public class Data2DRowEditController extends BaseChildController {
         baseTitle = message("EditSelectedRow");
     }
 
-    public void setParameters(ControlData2DLoad controller, int index) {
+    public void setParameters(Data2DManufactureController controller, int index) {
         try {
             this.dataController = controller;
             this.index = index;
@@ -70,7 +70,7 @@ public class Data2DRowEditController extends BaseChildController {
     /*
         static
      */
-    public static Data2DRowEditController open(ControlData2D tableViewController, int index) {
+    public static Data2DRowEditController open(Data2DManufactureController tableViewController, int index) {
         try {
             Data2DRowEditController controller = (Data2DRowEditController) WindowTools.branchStage(
                     tableViewController, Fxmls.Data2DRowEditFxml);

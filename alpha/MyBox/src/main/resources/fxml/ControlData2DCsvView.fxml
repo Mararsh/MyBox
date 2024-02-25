@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlData2DCsvView">
+    <children>
+        <FlowPane fx:id="buttonsPane" alignment="CENTER_RIGHT" hgap="2.0" prefWrapLength="0.0" vgap="2.0">
+            <children>
+                <CheckBox fx:id="formCheck" layoutX="377.0" layoutY="16.0" mnemonicParsing="false" text="%Form" />
+                <CheckBox fx:id="titleCheck" mnemonicParsing="false" text="%Title" />
+                <CheckBox fx:id="columnCheck" mnemonicParsing="false" text="%ColumnName" />
+                <CheckBox fx:id="rowCheck" mnemonicParsing="false" text="%RowNumber" />
+            <CheckBox fx:id="wrapCheck" mnemonicParsing="false">
+               <graphic>
+                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconWrap.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </CheckBox>
+            <Button fx:id="delimiterButton" mnemonicParsing="false" onAction="#delimiterActon">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconDelimiter.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+                <Button fx:id="menuButton" mnemonicParsing="false" onAction="#menuAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconMenu.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="popButton" mnemonicParsing="false" onAction="#popAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconPop.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="editButton" mnemonicParsing="false" onAction="#editAction">
+                    <graphic>
+                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconEdit.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+            <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#refreshAction">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconRefresh.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            </children>
+            <VBox.margin>
+                <Insets />
+            </VBox.margin>
+        </FlowPane>
+              <TextArea fx:id="textArea" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="displayArea" stylesheets="@../styles/MyBox.css" VBox.vgrow="ALWAYS" />
+    </children>
+</VBox>

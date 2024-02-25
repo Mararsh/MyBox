@@ -4,7 +4,7 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.image.ImageView;
 import javafx.util.Callback;
-import mara.mybox.controller.ControlData2DLoad;
+import mara.mybox.controller.BaseData2DTableController;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.StringTools;
@@ -18,8 +18,8 @@ public class TableDataBooleanDisplayCell extends TableDataCell {
 
     protected ImageView imageview;
 
-    public TableDataBooleanDisplayCell(ControlData2DLoad dataControl, Data2DColumn dataColumn) {
-        super(dataControl, dataColumn);
+    public TableDataBooleanDisplayCell(BaseData2DTableController dataTable, Data2DColumn dataColumn) {
+        super(dataTable, dataColumn);
         imageview = StyleTools.getIconImageView("iconYes.png");
         imageview.setPreserveRatio(true);
     }
@@ -31,11 +31,11 @@ public class TableDataBooleanDisplayCell extends TableDataCell {
     }
 
     public static Callback<TableColumn, TableCell>
-            create(ControlData2DLoad dataControl, Data2DColumn dataColumn) {
+            create(BaseData2DTableController dataTable, Data2DColumn dataColumn) {
         return new Callback<TableColumn, TableCell>() {
             @Override
             public TableCell call(TableColumn param) {
-                return new TableDataBooleanDisplayCell(dataControl, dataColumn);
+                return new TableDataBooleanDisplayCell(dataTable, dataColumn);
             }
         };
     }

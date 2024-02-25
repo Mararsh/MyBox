@@ -26,34 +26,34 @@ License:    Apache License Version 2.0
     <center>
         <VBox fx:id="mainPane" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" BorderPane.alignment="CENTER">
             <children>
-            <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
-              <tabs>
-                <Tab fx:id="aTab" text="%DataA">
-                     <content>
-                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
-                           <children>
-                                          <fx:include fx:id="dataA" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DSpliceSource.fxml" VBox.vgrow="ALWAYS" />
-                           </children>
-                           <padding>
-                              <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                           </padding>
-                        </VBox>
-                     </content>
-                  </Tab>
-                <Tab fx:id="bTab" text="%DataB">
-                     <content>
-                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
-                           <children>
-                                          <fx:include fx:id="dataB" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DSpliceSource.fxml" VBox.vgrow="ALWAYS" />
-                           </children>
-                           <padding>
-                              <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                           </padding>
-                        </VBox>
-                     </content>
-                  </Tab>
-                  <Tab fx:id="spliceTab" text="%SpliceData">
-                     <content>
+                <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+                    <tabs>
+                        <Tab fx:id="aTab" text="%DataA">
+                            <content>
+                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                    <children>
+                                        <fx:include fx:id="dataA" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DSource.fxml" VBox.vgrow="ALWAYS" />
+                                    </children>
+                                    <padding>
+                                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                    </padding>
+                                </VBox>
+                            </content>
+                        </Tab>
+                        <Tab fx:id="bTab" text="%DataB">
+                            <content>
+                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                    <children>
+                                        <fx:include fx:id="dataB" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DSource.fxml" VBox.vgrow="ALWAYS" />
+                                    </children>
+                                    <padding>
+                                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                    </padding>
+                                </VBox>
+                            </content>
+                        </Tab>
+                        <Tab fx:id="spliceTab" text="%SpliceData">
+                            <content>
                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                                     <padding>
                                         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
@@ -79,7 +79,7 @@ License:    Apache License Version 2.0
                                                 <Label fx:id="numberLabel" text="%RowsNumber" />
                                                 <FlowPane hgap="2.0" vgap="2.0">
                                                     <children>
-                                          <Label text="%By" />
+                                                        <Label text="%By" />
                                                         <RadioButton fx:id="aRadio" mnemonicParsing="false" selected="true" text="%DataA">
                                                             <toggleGroup>
                                                                 <ToggleGroup fx:id="rowsNumberGroup" />
@@ -108,10 +108,10 @@ License:    Apache License Version 2.0
                                         </Button>
                                     </children>
                                 </VBox>
-                     </content>
-                  </Tab>
-              </tabs>
-            </TabPane>
+                            </content>
+                        </Tab>
+                    </tabs>
+                </TabPane>
             </children>
             <BorderPane.margin>
                 <Insets />

@@ -24,7 +24,7 @@ import mara.mybox.value.UserConfig;
  */
 public class ControlData2DTarget extends BaseController {
 
-    protected ControlData2DLoad tableController;
+    protected BaseData2DLoadController tableController;
     protected String target;
     protected boolean notInTable;
     protected ChangeListener<Boolean> tableStatusListener;
@@ -44,7 +44,7 @@ public class ControlData2DTarget extends BaseController {
     @FXML
     protected TextField nameInput;
 
-    public void setParameters(BaseController parent, ControlData2DLoad tableController) {
+    public void setParameters(BaseController parent, BaseData2DLoadController tableController) {
         try {
             baseName = parent.baseName;
             this.tableController = tableController;

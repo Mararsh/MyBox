@@ -196,12 +196,12 @@ public abstract class Data2D_Edit extends Data2D_Filter {
             return null;
         }
         reader.setTask(task).start();
-        List<List<String>> rows = reader.getRows();
-        if (rows != null) {
-            endRowOfCurrentPage = startRowOfCurrentPage + rows.size();
+        pageData = reader.getRows();
+        if (pageData != null) {
+            endRowOfCurrentPage = startRowOfCurrentPage + pageData.size();
         }
         readPageStyles(conn);
-        return rows;
+        return pageData;
     }
 
     public void readPageStyles(Connection conn) {
@@ -298,8 +298,11 @@ public abstract class Data2D_Edit extends Data2D_Filter {
 
     public String encodeCSV(FxTask task, String delimiterName,
             boolean displayRowNames, boolean displayColNames, boolean formatValues) {
-        if (!isColumnsValid() || delimiterName == null) {
+        if (!isColumnsValid()) {
             return "";
+        }
+        if (delimiterName == null) {
+            delimiterName = ",";
         }
         try {
             File tmpFile = getTempFile(".csv");

@@ -26,7 +26,7 @@ import mara.mybox.value.UserConfig;
  */
 public class Data2DCSV extends BaseChildController {
 
-    protected ControlData2DLoad dataController;
+    protected BaseData2DLoadController dataController;
     protected Data2D data2D;
     protected String delimiterName;
     protected ChangeListener<Boolean> delimiterListener;
@@ -71,7 +71,7 @@ public class Data2DCSV extends BaseChildController {
         }
     }
 
-    protected void setParameters(ControlData2DLoad controller) {
+    protected void setParameters(BaseData2DLoadController controller) {
         try {
             dataController = controller;
 
@@ -175,7 +175,7 @@ public class Data2DCSV extends BaseChildController {
             @Override
             protected void whenSucceeded() {
                 isSettingValues = true;
-                dataController.updateData(rows, false);
+                dataController.updatePage(rows, false);
                 isSettingValues = false;
                 if (closeAfterCheck.isSelected()) {
                     close();
@@ -240,7 +240,7 @@ public class Data2DCSV extends BaseChildController {
     /*
         static
      */
-    public static Data2DCSV open(ControlData2DLoad tableController) {
+    public static Data2DCSV open(BaseData2DLoadController tableController) {
         try {
             Data2DCSV controller = (Data2DCSV) WindowTools.branchStage(
                     tableController, Fxmls.Data2DCSVFxml);

@@ -10,7 +10,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Callback;
 import mara.mybox.controller.ColorPalettePopupController;
-import mara.mybox.controller.ControlData2DLoad;
+import mara.mybox.controller.BaseData2DTableController;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.table.TableColor;
 import mara.mybox.fximage.FxColorTools;
@@ -28,8 +28,8 @@ public class TableDataColorEditCell extends TableDataEditCell {
     protected Rectangle rectangle;
     protected String msgPrefix;
 
-    public TableDataColorEditCell(ControlData2DLoad dataControl, Data2DColumn dataColumn, TableColor tableColor) {
-        super(dataControl, dataColumn);
+    public TableDataColorEditCell(BaseData2DTableController dataTable, Data2DColumn dataColumn, TableColor tableColor) {
+        super(dataTable, dataColumn);
         this.tableColor = tableColor;
         setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
         rectangle = new Rectangle(30, 20);
@@ -44,7 +44,7 @@ public class TableDataColorEditCell extends TableDataEditCell {
         if (g == null || !(g instanceof Rectangle)) {
             return;
         }
-        ColorPalettePopupController inputController = ColorPalettePopupController.open(dataControl, rectangle);
+        ColorPalettePopupController inputController = ColorPalettePopupController.open(dataTable, rectangle);
         inputController.getSetNotify().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
@@ -72,12 +72,12 @@ public class TableDataColorEditCell extends TableDataEditCell {
         setGraphic(rectangle);
     }
 
-    public static Callback<TableColumn, TableCell> create(ControlData2DLoad dataControl,
+    public static Callback<TableColumn, TableCell> create(BaseData2DTableController dataTable,
             Data2DColumn dataColumn, TableColor tableColor) {
         return new Callback<TableColumn, TableCell>() {
             @Override
             public TableCell call(TableColumn param) {
-                return new TableDataColorEditCell(dataControl, dataColumn, tableColor);
+                return new TableDataColorEditCell(dataTable, dataColumn, tableColor);
             }
         };
     }

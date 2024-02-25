@@ -33,7 +33,7 @@ public class Data2DSetValuesController extends BaseData2DTargetsController {
     }
 
     @Override
-    public void setParameters(ControlData2DLoad tableController) {
+    public void setParameters(BaseData2DLoadController tableController) {
         try {
             super.setParameters(tableController);
 
@@ -511,7 +511,7 @@ public class Data2DSetValuesController extends BaseData2DTargetsController {
     /*
         static
      */
-    public static Data2DSetValuesController open(ControlData2DLoad tableController) {
+    public static Data2DSetValuesController open(BaseData2DLoadController tableController) {
         try {
             Data2DSetValuesController controller = (Data2DSetValuesController) WindowTools.branchStage(
                     tableController, Fxmls.Data2DSetValuesFxml);

@@ -15,9 +15,11 @@ import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
+import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.FileTools;
+import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.JsonTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.tools.XmlTools;
@@ -847,6 +849,183 @@ public class Data2DTools {
             MyBoxLog.error(e.toString());
             return null;
         }
+    }
+
+    /*
+        data
+     */
+    public static String dataToHtml(Data2D data2d, DataFilter styleFilter,
+            boolean isForm, boolean showColumns, boolean showRowNumber, boolean showTitle) {
+        if (isForm) {
+            return dataToHtmlForm(data2d, styleFilter, showColumns, showRowNumber, showTitle);
+        } else {
+            return dataToHtmlTable(data2d, styleFilter, showColumns, showRowNumber, showTitle);
+        }
+    }
+
+    public static String dataToHtmlTable(Data2D data2d, DataFilter styleFilter,
+            boolean showColumns, boolean showRowNumber, boolean showTitle) {
+        try {
+            int rNumber = data2d.tableRowsNumber();
+            int cNumber = data2d.tableColsNumber();
+            if (rNumber <= 0 || cNumber <= 0) {
+                return null;
+            }
+            List<String> names;
+            if (showColumns) {
+                names = new ArrayList<>();
+                if (showRowNumber) {
+                    names.add(message("RowNumber"));
+                }
+                for (int i = 0; i < cNumber; i++) {
+                    names.add(data2d.columnName(i));
+                }
+            } else {
+                names = null;
+            }
+            String title = null;
+            if (showTitle) {
+                title = data2d.titleName();
+            }
+            StringTable table = new StringTable(names, title);
+
+            for (int i = 0; i < rNumber; i++) {
+                List<String> htmlRow = new ArrayList<>();
+                if (showRowNumber) {
+                    htmlRow.add(data2d.rowName(i));
+                }
+                List<String> dataRow = data2d.getPageData().get(i);
+                for (int col = 0; col < cNumber; col++) {
+                    String value = dataRow.get(col + 1);
+                    if (value == null) {
+                        value = "";
+                    } else {
+                        value = data2d.column(col).format(value);
+                    }
+                    value = StringTools.replaceHtmlLineBreak(value);
+                    String style = data2d.cellStyle(styleFilter, i, data2d.columnName(col));
+                    if (style != null && !style.isBlank()) {
+                        style = style.replace("-fx-font-size:", "font-size:")
+                                .replace("-fx-text-fill:", "color:")
+                                .replace("-fx-background-color:", "background-color:")
+                                .replace("-fx-font-weight: bolder", "font-weight:bold");
+                        value = "<SPAN style=\"" + style + "\">" + value + "</SPAN>";
+                    }
+                    htmlRow.add(value);
+                }
+                table.add(htmlRow);
+            }
+            return table.html();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public static String dataToHtmlForm(Data2D data2d, DataFilter styleFilter,
+            boolean showColumns, boolean showRowNumber, boolean showTitle) {
+        try {
+            int rNumber = data2d.tableRowsNumber();
+            int cNumber = data2d.tableColsNumber();
+            if (rNumber <= 0 || cNumber <= 0) {
+                return null;
+            }
+            StringBuilder s = new StringBuilder();
+            if (showTitle) {
+                s.append("<H2>").append(data2d.titleName()).append("</H2>\n");
+            }
+            for (int r = 0; r < rNumber; r++) {
+                StringTable table = new StringTable();
+                if (showRowNumber) {
+                    List<String> row = new ArrayList<>();
+                    row.add(data2d.rowName(r));
+                    if (showColumns) {
+                        row.add(null);
+                    }
+                    table.add(row);
+                }
+                List<String> dataRow = data2d.getPageData().get(r);
+                for (int col = 0; col < cNumber; col++) {
+                    List<String> htmlRow = new ArrayList<>();
+                    if (showColumns) {
+                        htmlRow.add(data2d.columnName(col));
+                    }
+                    String value = dataRow.get(col + 1);
+                    if (value == null) {
+                        value = "";
+                    } else {
+                        value = data2d.column(col).format(value);
+                    }
+                    value = StringTools.replaceHtmlLineBreak(value);
+                    String style = data2d.cellStyle(styleFilter, r, data2d.columnName(col));
+                    if (style != null && !style.isBlank()) {
+                        style = style.replace("-fx-font-size:", "font-size:")
+                                .replace("-fx-text-fill:", "color:")
+                                .replace("-fx-background-color:", "background-color:")
+                                .replace("-fx-font-weight: bolder", "font-weight:bold");
+                        value = "<SPAN style=\"" + style + "\">" + value + "</SPAN>";
+                    }
+                    htmlRow.add(value);
+                    table.add(htmlRow);
+                }
+                s.append(table.div()).append("\n<BR><BR>\n");
+            }
+            return HtmlWriteTools.html(data2d.titleName(),
+                    "utf-8", HtmlStyles.DefaultStyle, s.toString());
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public static String dataToTexts(Data2D data2d, String delimiterName,
+            boolean isForm, boolean showColumns, boolean showRowNumber, boolean showTitle) {
+        if (isForm) {
+            return dataToTextsForm(data2d, showColumns, showRowNumber, showTitle);
+        } else {
+            return dataToTextsTable(data2d, delimiterName, showColumns, showRowNumber, showTitle);
+        }
+    }
+
+    public static String dataToTextsTable(Data2D data2d, String delimiterName,
+            boolean showColumns, boolean showRowNumber, boolean showTitle) {
+        String texts = data2d.encodeCSV(null, delimiterName,
+                showRowNumber, showColumns, true);
+        String title = showTitle ? data2d.titleName() : null;
+        if (title != null && !title.isBlank()) {
+            return title + "\n\n" + texts;
+        } else {
+            return texts;
+        }
+    }
+
+    public static String dataToTextsForm(Data2D data2d,
+            boolean showColumns, boolean showRowNumber, boolean showTitle) {
+        StringBuilder s = new StringBuilder();
+        if (showTitle) {
+            s.append(data2d.titleName()).append("\n\n");
+        }
+        for (int r = 0; r < data2d.tableRowsNumber(); r++) {
+            if (showRowNumber) {
+                s.append(data2d.rowName(r)).append("\n");
+            }
+            List<String> drow = data2d.tableRow(r, false, true);
+            if (drow == null) {
+                continue;
+            }
+            for (int col = 0; col < data2d.columnsNumber(); col++) {
+                if (showColumns) {
+                    s.append(data2d.columnName(col)).append(": ");
+                }
+                String v = drow.get(col);
+                if (v == null) {
+                    continue;
+                }
+                s.append(StringTools.replaceLineBreak(v, "\\\\n")).append("\n");
+            }
+            s.append("\n");
+        }
+        return s.toString();
     }
 
 }

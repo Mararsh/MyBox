@@ -22,7 +22,7 @@ import mara.mybox.value.UserConfig;
  */
 public class Data2DManageQueryController extends BaseChildController {
 
-    protected ControlData2DList listController;
+    protected BaseData2DListController listController;
 
     @FXML
     protected ToggleGroup orderGroup;
@@ -123,7 +123,7 @@ public class Data2DManageQueryController extends BaseChildController {
         }
     }
 
-    public void setParameters(ControlData2DList manageController) {
+    public void setParameters(BaseData2DListController manageController) {
         this.listController = manageController;
     }
 
@@ -150,7 +150,7 @@ public class Data2DManageQueryController extends BaseChildController {
             if (databaseCheck.isSelected()) {
                 condition += (condition.isEmpty() ? "" : " OR ") + " data_type=5 ";
             }
-            condition += " AND data_type != " + Data2D.type(Data2DDefinition.Type.InternalTable);
+            condition += " AND data_type != " + Data2D.type(Data2DDefinition.DataType.InternalTable);
             String orderColumns = null;
             if (idRadio.isSelected()) {
                 orderColumns = " d2did ";
@@ -179,7 +179,7 @@ public class Data2DManageQueryController extends BaseChildController {
     /*
         static
      */
-    public static Data2DManageQueryController open(ControlData2DList manageController) {
+    public static Data2DManageQueryController open(BaseData2DListController manageController) {
         try {
             Data2DManageQueryController controller = (Data2DManageQueryController) WindowTools.branchStage(
                     manageController, Fxmls.Data2DManageQueryFxml);

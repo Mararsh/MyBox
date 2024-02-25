@@ -132,7 +132,7 @@ public class Data2DSimpleLinearRegressionCombinationController extends BaseData2
     /*
         static
      */
-    public static Data2DSimpleLinearRegressionCombinationController open(ControlData2DLoad tableController) {
+    public static Data2DSimpleLinearRegressionCombinationController open(BaseData2DLoadController tableController) {
         try {
             Data2DSimpleLinearRegressionCombinationController controller
                     = (Data2DSimpleLinearRegressionCombinationController) WindowTools.branchStage(

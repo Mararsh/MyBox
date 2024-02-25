@@ -57,7 +57,7 @@ public class DataTableQueryEditor extends InfoTreeNodeEditor {
         }
     }
 
-    public void setParameters(ControlData2DLoad tableController) {
+    public void setParameters(BaseData2DLoadController tableController) {
         try {
             setDataTable(tableController.data2D);
 

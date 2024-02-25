@@ -155,7 +155,7 @@ public class Data2DTransposeController extends BaseData2DTargetsController {
     /*
         static
      */
-    public static Data2DTransposeController open(ControlData2DLoad tableController) {
+    public static Data2DTransposeController open(BaseData2DLoadController tableController) {
         try {
             Data2DTransposeController controller = (Data2DTransposeController) WindowTools.branchStage(
                     tableController, Fxmls.Data2DTransposeFxml);

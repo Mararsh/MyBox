@@ -76,13 +76,12 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             }
             int colLen = cols.size();
             DoubleStatistic[] sData = new DoubleStatistic[colLen];
-            List<List<String>> tableData = tableData();
-            int rNumber = tableData.size();
+            int rNumber = pageData.size();
             for (int c = 0; c < colLen; c++) {
                 int colIndex = cols.get(c);
                 String[] colData = new String[rNumber];
                 for (int r = 0; r < rNumber; r++) {
-                    colData[r] = tableData.get(r).get(colIndex + 1);
+                    colData[r] = pageData.get(r).get(colIndex + 1);
                 }
                 DoubleStatistic colStatistic = new DoubleStatistic();
                 colStatistic.invalidAs = selections.invalidAs;

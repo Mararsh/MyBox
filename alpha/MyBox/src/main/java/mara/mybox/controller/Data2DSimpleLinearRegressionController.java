@@ -403,7 +403,8 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DRegression
             if (regressionFile != null) {
                 regressionDataController.loadDef(regressionFile);
             } else {
-                regressionDataController.loadData(simpleRegression.getColumns(), regressionData);
+                regressionDataController.loadData(baseTitle,
+                        simpleRegression.getColumns(), regressionData);
             }
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -454,7 +455,7 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DRegression
     /*
         static
      */
-    public static Data2DSimpleLinearRegressionController open(ControlData2DLoad tableController) {
+    public static Data2DSimpleLinearRegressionController open(BaseData2DLoadController tableController) {
         try {
             Data2DSimpleLinearRegressionController controller = (Data2DSimpleLinearRegressionController) WindowTools.branchStage(
                     tableController, Fxmls.Data2DSimpleLinearRegressionFxml);

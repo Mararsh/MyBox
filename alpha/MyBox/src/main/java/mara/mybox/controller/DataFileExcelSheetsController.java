@@ -39,7 +39,7 @@ public class DataFileExcelSheetsController extends BaseChildController {
             baseName = fileController.baseName;
             setFileType(fileController.TargetFileType);
 
-            fileController.dataController.loadedNotify.addListener(new ChangeListener<Boolean>() {
+            fileController.loadedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
                     refreshAction();
@@ -119,7 +119,7 @@ public class DataFileExcelSheetsController extends BaseChildController {
 
             @Override
             protected void whenSucceeded() {
-                fileController.dataController.readDefinition();
+                fileController.readDefinition();
             }
 
             @Override
@@ -163,7 +163,7 @@ public class DataFileExcelSheetsController extends BaseChildController {
 
             @Override
             protected void whenSucceeded() {
-                fileController.loadController.updateName();
+                fileController.updateTitle();
                 refreshAction();
             }
 

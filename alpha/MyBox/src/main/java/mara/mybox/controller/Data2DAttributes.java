@@ -24,13 +24,15 @@ import mara.mybox.value.UserConfig;
  */
 public class Data2DAttributes extends BaseChildController {
 
-    protected ControlData2DLoad dataController;
+    protected BaseData2DLoadController dataController;
     protected TableData2DDefinition tableData2DDefinition;
     protected Data2D data2D;
     protected String dataName;
     protected short scale;
     protected int maxRandom;
 
+    @FXML
+    protected ControlData2DColumns columnsController;
     @FXML
     protected TextArea descInput, infoArea;
     @FXML
@@ -39,7 +41,7 @@ public class Data2DAttributes extends BaseChildController {
     protected ComboBox<String> scaleSelector, randomSelector;
 
     public Data2DAttributes() {
-        baseTitle = message("Attributes");
+        baseTitle = message("DataDefinition");
     }
 
     @Override
@@ -68,7 +70,7 @@ public class Data2DAttributes extends BaseChildController {
         }
     }
 
-    protected void setParameters(ControlData2DLoad controller) {
+    protected void setParameters(BaseData2DLoadController controller) {
         try {
             if (controller == null) {
                 close();
@@ -102,6 +104,8 @@ public class Data2DAttributes extends BaseChildController {
                 close();
                 return;
             }
+
+            columnsController.setParameters(dataController);
 
             idInput.setText(data2D.getD2did() >= 0 ? data2D.getD2did() + "" : message("NewData"));
             timeInput.setText(DateTools.datetimeToString(data2D.getModifyTime()));
@@ -164,7 +168,7 @@ public class Data2DAttributes extends BaseChildController {
         data2D.setMaxRandom(maxRandom);
         data2D.setComments(descInput.getText());
         data2D.setModifyTime(new Date());
-        dataController.tableChanged(true);
+        columnsController.okAction();
         if (closeAfterCheck.isSelected()) {
             close();
         }
@@ -179,7 +183,7 @@ public class Data2DAttributes extends BaseChildController {
     /*
         static
      */
-    public static Data2DAttributes open(ControlData2DLoad tableController) {
+    public static Data2DAttributes open(BaseData2DLoadController tableController) {
         try {
             Data2DAttributes controller = (Data2DAttributes) WindowTools.branchStage(
                     tableController, Fxmls.Data2DAttributesFxml);

@@ -280,7 +280,7 @@ public class Data2DChartComparisonBarsController extends BaseData2DChartHtmlCont
     /*
         static
      */
-    public static Data2DChartComparisonBarsController open(ControlData2DLoad tableController) {
+    public static Data2DChartComparisonBarsController open(BaseData2DLoadController tableController) {
         try {
             Data2DChartComparisonBarsController controller = (Data2DChartComparisonBarsController) WindowTools.branchStage(
                     tableController, Fxmls.Data2DChartComparisonBarsFxml);

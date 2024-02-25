@@ -36,7 +36,6 @@ public class DataFileTextController extends BaseData2DFileController {
     public DataFileTextController() {
         baseTitle = message("EditTextDataFile");
         TipsLabelKey = "DataFileTextTips";
-        dataType = Data2DDefinition.Type.Texts;
     }
 
     @Override
@@ -49,7 +48,7 @@ public class DataFileTextController extends BaseData2DFileController {
         try {
             super.initControls();
 
-            dataFileText = (DataFileText) dataController.data2D;
+            dataFileText = (DataFileText) data2D;
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -89,13 +88,13 @@ public class DataFileTextController extends BaseData2DFileController {
         }
         dataFileText.initFile(file);
         dataFileText.setOptions(withName, charset, delimiter + "");
-        dataController.readDefinition();
+        readDefinition();
     }
 
     @FXML
     @Override
     public void saveAsAction() {
-        if (!dataFileText.hasData() || !dataController.verifyData()) {
+        if (!dataFileText.hasData() || !verifyData()) {
             return;
         }
         DataFileTextSaveAsController.open(this);
@@ -123,7 +122,7 @@ public class DataFileTextController extends BaseData2DFileController {
      */
     public static DataFileTextController open(String name, List<Data2DColumn> cols, List<List<String>> data) {
         DataFileTextController controller = (DataFileTextController) WindowTools.openStage(Fxmls.DataFileTextFxml);
-        controller.dataController.loadTmpData(name, cols, data);
+        controller.loadData(name, cols, data);
         controller.requestMouse();
         return controller;
     }

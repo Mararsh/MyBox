@@ -28,7 +28,7 @@ public abstract class Data2D extends Data2D_Operations {
     }
 
     public String info() {
-        String info = message("Type") + ": " + message(type.name());
+        String info = message("Type") + ": " + message(dataType.name());
         if (file != null) {
             info = message("File") + ": " + file + "\n"
                     + message("FileSize") + ": " + FileTools.showFileSize(file.length()) + "\n"
@@ -66,7 +66,7 @@ public abstract class Data2D extends Data2D_Operations {
     /*
         static
      */
-    public static Data2D create(Type type) {
+    public static Data2D create(DataType type) {
         if (type == null) {
             return null;
         }

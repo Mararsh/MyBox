@@ -3,8 +3,6 @@ package mara.mybox.controller;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.fxml.FXML;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.RadioButton;
 import javafx.stage.Window;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
@@ -16,14 +14,10 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-9-13
  * @License Apache License Version 2.0
  */
-public class Data2DPasteContentInMyBoxClipboardController extends DataInMyBoxClipboardController {
+public class Data2DPasteContentInMyBoxClipboardController extends BaseChildController {
 
     @FXML
-    protected ComboBox<String> rowSelector, colSelector;
-    @FXML
-    protected RadioButton replaceRadio, insertRadio, appendRadio;
-    @FXML
-    protected BaseData2DSourceController sourceController;
+    protected ControlData2DSource sourceController;
     @FXML
     protected ControlData2DPaste pasteController;
 
@@ -31,19 +25,7 @@ public class Data2DPasteContentInMyBoxClipboardController extends DataInMyBoxCli
         baseTitle = message("PasteContentInMyBoxClipboard");
     }
 
-    @Override
-    public void initValues() {
-        try {
-            loadController = sourceController;
-
-            super.initValues();
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    public void setParameters(ControlData2DLoad target) {
+    public void setParameters(BaseData2DLoadController target) {
         try {
             sourceController.setParameters(this);
             pasteController.setParameters(sourceController, target);
@@ -76,7 +58,7 @@ public class Data2DPasteContentInMyBoxClipboardController extends DataInMyBoxCli
         }
     }
 
-    public static Data2DPasteContentInMyBoxClipboardController open(ControlData2DLoad target) {
+    public static Data2DPasteContentInMyBoxClipboardController open(BaseData2DLoadController target) {
         try {
             if (target == null) {
                 return null;

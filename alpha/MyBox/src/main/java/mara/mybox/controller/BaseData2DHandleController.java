@@ -34,7 +34,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-9-4
  * @License Apache License Version 2.0
  */
-public abstract class BaseData2DHandleController extends BaseData2DSourceController {
+public abstract class BaseData2DHandleController extends BaseData2DSelectRowsController {
 
     protected List<List<String>> outputData;
     protected List<Data2DColumn> outputColumns;
@@ -72,8 +72,6 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
     public void initControls() {
         try {
             super.initControls();
-
-            notSelectColumnsInTable(true);
 
             objectType = ObjectType.Columns;
             if (objectGroup != null) {
@@ -160,7 +158,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
         return false;
     }
 
-    public void setParameters(ControlData2DLoad tableController) {
+    public void setParameters(BaseData2DLoadController tableController) {
         try {
             setParameters(this, tableController);
 

@@ -55,7 +55,7 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
     @FXML
     protected CheckBox accumulateCheck, centerCheck, linkCheck;
     @FXML
-    protected ControlData2DResults valuesController;
+    protected ControlData2DView valuesController;
 
     public Data2DLocationDistributionController() {
         baseTitle = message("LocationDistribution");
@@ -306,7 +306,7 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
                 data2D.stopTask();
                 if (ok) {
                     drawPoints();
-                    valuesController.loadData(csvData);
+                    valuesController.loadDef(csvData);
                 }
             }
 
@@ -522,7 +522,7 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
         try {
             playController.clear();
             mapController.clearAction();
-            valuesController.loadData(null);
+            valuesController.loadNull();
         } catch (Exception e) {
         }
         super.cleanPane();
@@ -531,7 +531,7 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
     /*
         static
      */
-    public static Data2DLocationDistributionController open(ControlData2DLoad tableController) {
+    public static Data2DLocationDistributionController open(BaseData2DLoadController tableController) {
         try {
             Data2DLocationDistributionController controller = (Data2DLocationDistributionController) WindowTools.branchStage(
                     tableController, Fxmls.Data2DLocationDistributionFxml);

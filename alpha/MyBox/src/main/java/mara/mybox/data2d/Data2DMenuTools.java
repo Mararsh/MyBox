@@ -8,9 +8,8 @@ import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
-import mara.mybox.controller.ControlData2DLoad;
+import mara.mybox.controller.BaseData2DLoadController;
 import mara.mybox.controller.Data2DAttributes;
-import mara.mybox.controller.Data2DCSV;
 import mara.mybox.controller.Data2DChartBoxWhiskerController;
 import mara.mybox.controller.Data2DChartComparisonBarsController;
 import mara.mybox.controller.Data2DChartGroupBoxWhiskerController;
@@ -22,7 +21,6 @@ import mara.mybox.controller.Data2DChartPieController;
 import mara.mybox.controller.Data2DChartSelfComparisonBarsController;
 import mara.mybox.controller.Data2DChartXYController;
 import mara.mybox.controller.Data2DChartXYZController;
-import mara.mybox.controller.Data2DColumns;
 import mara.mybox.controller.Data2DConvertToDataBaseController;
 import mara.mybox.controller.Data2DDeleteController;
 import mara.mybox.controller.Data2DExportController;
@@ -60,7 +58,7 @@ import mara.mybox.value.UserConfig;
  */
 public class Data2DMenuTools {
 
-    public static List<MenuItem> dataMenus(ControlData2DLoad dataController) {
+    public static List<MenuItem> dataMenus(BaseData2DLoadController dataController) {
         try {
             List<MenuItem> items = new ArrayList<>();
             Data2D data2D = dataController.getData2D();
@@ -68,28 +66,14 @@ public class Data2DMenuTools {
             boolean isTmpData = data2D != null && data2D.isTmpData();
             boolean empty = invalidData || dataController.getTableData().isEmpty();
 
-            MenuItem menu = new MenuItem(message("Attributes"), StyleTools.getIconImageView("iconMeta.png"));
+            MenuItem menu = new MenuItem(message("DataDefinition"), StyleTools.getIconImageView("iconMeta.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DAttributes.open(dataController);
             });
             menu.setDisable(invalidData || !dataController.isDataSizeLoaded());
             items.add(menu);
 
-            menu = new MenuItem(message("Columns"), StyleTools.getIconImageView("iconMeta.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                Data2DColumns.open(dataController);
-            });
-            menu.setDisable(invalidData || !dataController.isDataSizeLoaded());
-            items.add(menu);
-
             items.add(new SeparatorMenuItem());
-
-            menu = new MenuItem(message("EditPageDataInCSVFormat"), StyleTools.getIconImageView("iconCSV.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                Data2DCSV.open(dataController);
-            });
-            menu.setDisable(invalidData || !dataController.isDataSizeLoaded());
-            items.add(menu);
 
             menu = new MenuItem(message("Save"), StyleTools.getIconImageView("iconSave.png"));
             menu.setOnAction((ActionEvent event) -> {
@@ -166,7 +150,7 @@ public class Data2DMenuTools {
         }
     }
 
-    public static List<MenuItem> operateMenus(ControlData2DLoad dataController) {
+    public static List<MenuItem> operateMenus(BaseData2DLoadController dataController) {
         try {
             List<MenuItem> items = new ArrayList<>();
 
@@ -323,7 +307,7 @@ public class Data2DMenuTools {
         }
     }
 
-    public static List<MenuItem> trimMenu(ControlData2DLoad controller) {
+    public static List<MenuItem> trimMenu(BaseData2DLoadController controller) {
         try {
             List<MenuItem> items = new ArrayList<>();
 
@@ -399,7 +383,7 @@ public class Data2DMenuTools {
         }
     }
 
-    public static List<MenuItem> calMenu(ControlData2DLoad controller) {
+    public static List<MenuItem> calMenu(BaseData2DLoadController controller) {
         try {
             List<MenuItem> items = new ArrayList<>();
             MenuItem menu;
@@ -477,7 +461,7 @@ public class Data2DMenuTools {
         }
     }
 
-    public static List<MenuItem> chartsMenu(ControlData2DLoad controller) {
+    public static List<MenuItem> chartsMenu(BaseData2DLoadController controller) {
         try {
             List<MenuItem> items = new ArrayList<>();
             MenuItem menu;
@@ -541,7 +525,7 @@ public class Data2DMenuTools {
         }
     }
 
-    public static List<MenuItem> groupChartsMenu(ControlData2DLoad controller) {
+    public static List<MenuItem> groupChartsMenu(BaseData2DLoadController controller) {
         try {
             List<MenuItem> items = new ArrayList<>();
             MenuItem menu;
@@ -591,7 +575,7 @@ public class Data2DMenuTools {
         }
     }
 
-    public static List<MenuItem> helpMenus(ControlData2DLoad controller) {
+    public static List<MenuItem> helpMenus(BaseData2DLoadController controller) {
         try {
             List<MenuItem> items = new ArrayList<>();
 
@@ -651,7 +635,7 @@ public class Data2DMenuTools {
         }
     }
 
-    public static List<MenuItem> functionsMenus(ControlData2DLoad controller) {
+    public static List<MenuItem> functionsMenus(BaseData2DLoadController controller) {
         List<MenuItem> items = new ArrayList<>();
 
         Menu opMenu = new Menu(message("Operate"), StyleTools.getIconImageView("iconOperation.png"));

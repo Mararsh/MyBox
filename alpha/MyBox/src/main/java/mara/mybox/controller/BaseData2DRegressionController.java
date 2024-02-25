@@ -26,13 +26,13 @@ public class BaseData2DRegressionController extends BaseData2DChartController {
     @FXML
     protected ComboBox<String> alphaSelector;
     @FXML
-    protected ControlData2DResults regressionDataController;
+    protected ControlData2DView regressionDataController;
     @FXML
     protected ControlWebView modelController;
     @FXML
     protected Button dataButton;
     @FXML
-    protected ControlData2DResults resultsController;
+    protected ControlData2DView resultsController;
 
     @Override
     public void initControls() {
@@ -79,9 +79,6 @@ public class BaseData2DRegressionController extends BaseData2DChartController {
 
             if (modelController != null) {
                 modelController.setParent(this);
-            }
-            if (regressionDataController != null) {
-                regressionDataController.setNoRowNumber();
             }
 
         } catch (Exception e) {

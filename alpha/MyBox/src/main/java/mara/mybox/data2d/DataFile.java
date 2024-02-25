@@ -15,10 +15,10 @@ public abstract class DataFile extends Data2D {
 
     @Override
     public Data2DDefinition queryDefinition(Connection conn) {
-        if (conn == null || type == null || file == null || !file.exists()) {
+        if (conn == null || dataType == null || file == null || !file.exists()) {
             return null;
         }
-        return tableData2DDefinition.queryFile(conn, type, file);
+        return tableData2DDefinition.queryFile(conn, dataType, file);
     }
 
     @Override

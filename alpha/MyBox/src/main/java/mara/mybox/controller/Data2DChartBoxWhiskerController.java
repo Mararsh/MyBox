@@ -64,7 +64,7 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
     protected CheckBox q0Check, q1Check, q2Check, q3Check, q4Check, e4Check, e3Check, e2Check, e1Check,
             dottedCheck, outliersCheck, meanCheck, meanLineCheck, xyReverseCheck;
     @FXML
-    protected ControlData2DResults statisticDataController;
+    protected ControlData2DView statisticDataController;
 
     public Data2DChartBoxWhiskerController() {
         baseTitle = message("BoxWhiskerChart");
@@ -532,7 +532,7 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
 
     @Override
     public void outputData() {
-        statisticDataController.loadData(outputColumns, outputData);
+        statisticDataController.loadData(baseTitle, outputColumns, outputData);
         drawChart();
     }
 
@@ -693,7 +693,7 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
     /*
         static
      */
-    public static Data2DChartBoxWhiskerController open(ControlData2DLoad tableController) {
+    public static Data2DChartBoxWhiskerController open(BaseData2DLoadController tableController) {
         try {
             Data2DChartBoxWhiskerController controller = (Data2DChartBoxWhiskerController) WindowTools.branchStage(
                     tableController, Fxmls.Data2DChartBoxWhiskerFxml);

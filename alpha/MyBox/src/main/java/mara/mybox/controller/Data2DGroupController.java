@@ -84,7 +84,7 @@ public class Data2DGroupController extends BaseData2DHandleController {
                 } else {
                     DataTable targetData = group.getTargetData();
                     if (targetData != null) {
-                        DataTablesController.loadTable(targetData);
+                        Data2DManufactureController.openDef(targetData);
                         popInformation(message("GroupsNumber") + ": " + group.groupsNumber());
                     }
                 }
@@ -104,7 +104,7 @@ public class Data2DGroupController extends BaseData2DHandleController {
     /*
         static
      */
-    public static Data2DGroupController open(ControlData2DLoad tableController) {
+    public static Data2DGroupController open(BaseData2DLoadController tableController) {
         try {
             Data2DGroupController controller = (Data2DGroupController) WindowTools.branchStage(
                     tableController, Fxmls.Data2DGroupFxml);

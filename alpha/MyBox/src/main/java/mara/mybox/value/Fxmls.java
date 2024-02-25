@@ -282,15 +282,16 @@ public class Fxmls {
     /*
         data
      */
+    public static final String Data2DManufactureFxml = "/fxml/Data2DManufacture.fxml";
     public static final String Data2DManageFxml = "/fxml/Data2DManage.fxml";
     public static final String Data2DDefinitionFxml = "/fxml/Data2DDefinition.fxml";
     public static final String Data2DManageQueryFxml = "/fxml/Data2DManageQuery.fxml";
     public static final String DataInSystemClipboardFxml = "/fxml/DataInSystemClipboard.fxml";
     public static final String DataInMyBoxClipboardFxml = "/fxml/DataInMyBoxClipboard.fxml";
-    public static final String DataManufactureFxml = "/fxml/DataManufacture.fxml";
-    public static final String DataManufactureSaveFxml = "/fxml/DataManufactureSave.fxml";
+    public static final String Data2DManufactureSaveFxml = "/fxml/Data2DManufactureSave.fxml";
     public static final String Data2DSpliceFxml = "/fxml/Data2DSplice.fxml";
 
+    public static final String Data2DSelectFxml = "/fxml/Data2DSelect.fxml";
     public static final String Data2DAttributesFxml = "/fxml/Data2DAttributes.fxml";
     public static final String Data2DColumnsFxml = "/fxml/Data2DColumns.fxml";
     public static final String Data2DCSVFxml = "/fxml/Data2DCSV.fxml";

@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
@@ -27,7 +26,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2020-12-25
  * @License Apache License Version 2.0
  */
-public abstract class BaseData2DFileController extends BaseData2DController {
+public abstract class BaseData2DFileController extends Data2DManufactureController {
 
     @FXML
     protected TitledPane infoPane, backupPane, formatPane;
@@ -55,7 +54,7 @@ public abstract class BaseData2DFileController extends BaseData2DController {
             initFormatTab();
             initBackupsTab();
 
-            dataController.loadedNotify.addListener(new ChangeListener<Boolean>() {
+            loadedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
                     checkStatus();
@@ -103,14 +102,8 @@ public abstract class BaseData2DFileController extends BaseData2DController {
         }
     }
 
-    @Override
-    public void sourceFileChanged(File file) {
-        dataController.sourceFileChanged(file);
-    }
-
     protected void checkStatus() {
-        if (dataController.data2D != null) {
-            data2D = dataController.data2D;
+        if (data2D != null) {
             sourceFile = data2D.getFile();
         } else {
             sourceFile = null;
@@ -245,24 +238,24 @@ public abstract class BaseData2DFileController extends BaseData2DController {
         if (targetData == null) {
             return;
         }
-        dataController.saveAsAction(targetData, saveAsType);
+//        viewController.saveAsAction(targetData, saveAsType); // ############
     }
 
     @FXML
     public void refreshFile() {
-        dataController.resetStatus();
-        dataController.data2D.initFile(dataController.data2D.getFile());
+        resetStatus();
+        data2D.initFile(data2D.getFile());
         pickRefreshOptions();
-        dataController.readDefinition();
+        readDefinition();
     }
 
     @FXML
     public void editTextFile() {
-        if (dataController.data2D == null || dataController.data2D.getFile() == null) {
+        if (data2D == null || data2D.getFile() == null) {
             return;
         }
         TextEditorController controller = (TextEditorController) WindowTools.openStage(Fxmls.TextEditorFxml);
-        controller.sourceFileChanged(dataController.data2D.getFile());
+        controller.sourceFileChanged(data2D.getFile());
         controller.requestMouse();
     }
 

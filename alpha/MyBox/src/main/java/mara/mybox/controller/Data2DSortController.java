@@ -49,7 +49,7 @@ public class Data2DSortController extends BaseData2DTargetsController {
     /*
         static
      */
-    public static Data2DSortController open(ControlData2DLoad tableController) {
+    public static Data2DSortController open(BaseData2DLoadController tableController) {
         try {
             Data2DSortController controller = (Data2DSortController) WindowTools.branchStage(
                     tableController, Fxmls.Data2DSortFxml);

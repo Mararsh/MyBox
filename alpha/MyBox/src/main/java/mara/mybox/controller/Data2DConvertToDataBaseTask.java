@@ -91,8 +91,7 @@ public class Data2DConvertToDataBaseTask extends Data2DTableCreateController {
     public void afterSuccess() {
         try {
             SoundTools.miao3();
-            DataTablesController c = DataTablesController.open(attributesController.dataTable);
-            c.refreshAction();
+            Data2DManufactureController.openDef(attributesController.dataTable);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

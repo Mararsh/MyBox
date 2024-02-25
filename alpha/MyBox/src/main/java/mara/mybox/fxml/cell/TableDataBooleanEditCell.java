@@ -4,7 +4,7 @@ import java.util.List;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.util.Callback;
-import mara.mybox.controller.ControlData2DLoad;
+import mara.mybox.controller.BaseData2DTableController;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.StringTools;
@@ -16,13 +16,13 @@ import mara.mybox.tools.StringTools;
  */
 public class TableDataBooleanEditCell extends TableCheckboxCell<List<String>, String> {
 
-    protected ControlData2DLoad dataControl;
+    protected BaseData2DTableController dataTable;
     protected Data2DColumn dataColumn;
     protected int colIndex;
 
-    public TableDataBooleanEditCell(ControlData2DLoad dataControl, Data2DColumn dataColumn, int colIndex) {
+    public TableDataBooleanEditCell(BaseData2DTableController dataTable, Data2DColumn dataColumn, int colIndex) {
         super();
-        this.dataControl = dataControl;
+        this.dataTable = dataTable;
         this.dataColumn = dataColumn;
         this.colIndex = colIndex;
     }
@@ -30,10 +30,10 @@ public class TableDataBooleanEditCell extends TableCheckboxCell<List<String>, St
     @Override
     protected boolean getCellValue(int rowIndex) {
         try {
-            if (rowIndex < 0 || rowIndex >= dataControl.getTableData().size()) {
+            if (rowIndex < 0 || rowIndex >= dataTable.getTableData().size()) {
                 return false;
             }
-            List<String> row = dataControl.getTableData().get(rowIndex);
+            List<String> row = dataTable.getTableData().get(rowIndex);
             return StringTools.string2Boolean(row.get(colIndex));
         } catch (Exception e) {
             return false;
@@ -44,16 +44,16 @@ public class TableDataBooleanEditCell extends TableCheckboxCell<List<String>, St
     protected void setCellValue(int rowIndex, boolean value) {
         try {
             if (isChanging || rowIndex < 0
-                    || rowIndex >= dataControl.getTableData().size()) {
+                    || rowIndex >= dataTable.getTableData().size()) {
                 return;
             }
-            List<String> row = dataControl.getTableData().get(rowIndex);
+            List<String> row = dataTable.getTableData().get(rowIndex);
             if ((value + "").equalsIgnoreCase(getItem())) {
                 return;
             }
             isChanging = true;
             row.set(colIndex, value + "");
-            dataControl.getTableData().set(rowIndex, row);
+            dataTable.getTableData().set(rowIndex, row);
             isChanging = false;
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -70,18 +70,18 @@ public class TableDataBooleanEditCell extends TableCheckboxCell<List<String>, St
             return;
         }
         try {
-            setStyle(dataControl.getData2D().cellStyle(dataControl.getStyleFilter(),
+            setStyle(dataTable.getData2D().cellStyle(dataTable.getStyleFilter(),
                     rowIndex(), dataColumn.getColumnName()));
         } catch (Exception e) {
         }
     }
 
     public static Callback<TableColumn, TableCell>
-            create(ControlData2DLoad dataControl, Data2DColumn dataColumn, int colIndex) {
+            create(BaseData2DTableController dataTable, Data2DColumn dataColumn, int colIndex) {
         return new Callback<TableColumn, TableCell>() {
             @Override
             public TableCell call(TableColumn param) {
-                return new TableDataBooleanEditCell(dataControl, dataColumn, colIndex);
+                return new TableDataBooleanEditCell(dataTable, dataColumn, colIndex);
             }
         };
     }

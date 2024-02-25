@@ -237,7 +237,7 @@ public class Data2DChartXYController extends BaseData2DChartController {
     /*
         static
      */
-    public static Data2DChartXYController open(ControlData2DLoad tableController) {
+    public static Data2DChartXYController open(BaseData2DLoadController tableController) {
         try {
             Data2DChartXYController controller = (Data2DChartXYController) WindowTools.branchStage(
                     tableController, Fxmls.Data2DChartXYFxml);

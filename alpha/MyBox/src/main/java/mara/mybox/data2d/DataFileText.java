@@ -26,11 +26,11 @@ public class DataFileText extends DataFile {
     public static final String CommentsMarker = "#";
 
     public DataFileText() {
-        type = Type.Texts;
+        dataType = DataType.Texts;
     }
 
     public DataFileText(File file) {
-        type = Type.Texts;
+        dataType = DataType.Texts;
         this.file = file;
         guessDelimiter();
     }

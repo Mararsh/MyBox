@@ -10,24 +10,30 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import mara.mybox.data.StringTable;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.Data2DMenuTools;
 import mara.mybox.data2d.DataClipboard;
+import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
+import mara.mybox.db.data.Data2DDefinition.DataType;
 import mara.mybox.db.data.FileBackup;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.StyleTools;
+import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -37,36 +43,54 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-10-18
  * @License Apache License Version 2.0
  */
-public class ControlData2D extends ControlData2DLoad {
+public class Data2DManufactureController extends BaseData2DSourceController {
 
     protected final SimpleBooleanProperty savedNotify;
 
-    public ControlData2D() {
+    @FXML
+    protected FlowPane opsPane;
+    @FXML
+    protected Button dataDefinitionButton;
+
+    public Data2DManufactureController() {
+        baseTitle = message("DataManufacture");
         readOnly = false;
         savedNotify = new SimpleBooleanProperty(false);
     }
+
+    @Override
+    public void initControls() {
+        try {
+            super.initControls();
+
+//            createAction();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
 
     /*
         data
      */
     @Override
-    public void notifySaved() {
-        notifyStatus();
-        savedNotify.set(!savedNotify.get());
-        if (manageController != null) {
-            manageController.refreshAction();
-        }
+    public void showTableButtons() {
+        buttonsPane.getChildren().setAll(lostFocusCommitCheck, optionsButton, menuButton,
+                viewDataButton, verifyButton, clearButton, deleteRowsButton, editButton, addRowsButton,
+                recoverButton, saveButton, dataDefinitionButton);
     }
 
     @Override
-    public boolean loadDef(Data2DDefinition def) {
-        if (!super.loadDef(def)) {
-            return false;
-        }
-        if (manageController != null) {
-            manageController.refreshAction();
-        }
-        return true;
+    public boolean validateData() {
+        opsPane.setDisable(data2D == null);
+        mainAreaBox.setDisable(data2D == null);
+        return data2D != null && data2D.isValid();
+    }
+
+    @Override
+    public void notifySaved() {
+        notifyStatus();
+        savedNotify.set(!savedNotify.get());
     }
 
     /*
@@ -313,6 +337,11 @@ public class ControlData2D extends ControlData2DLoad {
         action
      */
     @FXML
+    public void definitonAction() {
+        Data2DAttributes.open(this);
+    }
+
+    @FXML
     @Override
     public synchronized void saveAction() {
         if (task != null && !task.isQuit()) {
@@ -462,13 +491,13 @@ public class ControlData2D extends ControlData2DLoad {
     }
 
     @Override
-    public synchronized void loadTmpData(String name, List<Data2DColumn> cols, List<List<String>> data) {
+    public synchronized void loadData(String name, List<Data2DColumn> cols, List<List<String>> data) {
         try {
             if (!checkBeforeNextAction()) {
                 return;
             }
-            data2D = Data2D.create(dataType);
-            super.loadTmpData(name, cols, data);
+            data2D = Data2D.create(DataType.CSV);
+            super.loadData(name, cols, data);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -589,29 +618,57 @@ public class ControlData2D extends ControlData2DLoad {
     }
 
     @FXML
-    public void showHelps(Event event) {
-        List<MenuItem> items = Data2DMenuTools.helpMenus(this);
-
-        items.add(new SeparatorMenuItem());
-
-        CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
-        hoverMenu.setSelected(UserConfig.getBoolean("Data2DHelpsPopWhenMouseHovering", false));
-        hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                UserConfig.setBoolean("Data2DHelpsPopWhenMouseHovering", hoverMenu.isSelected());
-            }
-        });
-        items.add(hoverMenu);
-
-        popEventMenu(event, items);
+    @Override
+    public void copyAction() {
+        if (!validateData()) {
+            return;
+        }
+        Data2DCopyController.open(this);
     }
 
-    @FXML
-    public void popHelps(Event event) {
-        if (UserConfig.getBoolean("Data2DHelpsPopWhenMouseHovering", false)) {
-            showHelps(event);
+
+    /*
+        static
+     */
+    public static Data2DManufactureController open() {
+        try {
+            Data2DManufactureController controller
+                    = (Data2DManufactureController) WindowTools.openStage(Fxmls.Data2DManufactureFxml);
+            controller.requestMouse();
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
         }
+    }
+
+    public static Data2DManufactureController openDef(Data2DDefinition def) {
+        try {
+            Data2DManufactureController controller = open();
+            controller.loadDef(def);
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public static Data2DManufactureController openData(List<Data2DColumn> columns, List<List<String>> data) {
+        return openData(null, columns, data);
+    }
+
+    public static Data2DManufactureController openData(String name, List<Data2DColumn> cols, List<List<String>> data) {
+        Data2DManufactureController controller = open();
+        controller.loadData(name, cols, data);
+        controller.requestMouse();
+        return controller;
+    }
+
+    public static Data2DManufactureController loadCSV(DataFileCSV csvData) {
+        Data2DManufactureController controller = open();
+        controller.loadCSVData(csvData);
+        controller.requestMouse();
+        return controller;
     }
 
 }

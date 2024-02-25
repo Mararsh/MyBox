@@ -5,11 +5,8 @@ import java.nio.charset.Charset;
 import java.util.Date;
 import mara.mybox.controller.BaseController;
 import mara.mybox.controller.Data2DManageController;
-import mara.mybox.controller.DataFileCSVController;
-import mara.mybox.controller.DataFileExcelController;
-import mara.mybox.controller.DataFileTextController;
+import mara.mybox.controller.Data2DManufactureController;
 import mara.mybox.controller.DataInMyBoxClipboardController;
-import mara.mybox.controller.DataTablesController;
 import mara.mybox.controller.MatricesManageController;
 import mara.mybox.controller.MyBoxTablesController;
 import mara.mybox.dev.MyBoxLog;
@@ -25,7 +22,7 @@ import static mara.mybox.value.Languages.message;
 public class Data2DDefinition extends BaseData {
 
     protected long d2did;
-    protected Type type;
+    protected DataType dataType;
     protected String dataName, sheet, delimiter, comments;
     protected File file;
     protected Charset charset;
@@ -35,7 +32,7 @@ public class Data2DDefinition extends BaseData {
     protected int maxRandom;
     protected Date modifyTime;
 
-    public static enum Type {
+    public static enum DataType {
         Texts, CSV, Excel, MyBoxClipboard, Matrix, DatabaseTable, InternalTable
     }
 
@@ -69,7 +66,7 @@ public class Data2DDefinition extends BaseData {
                 return;
             }
             d2did = d.getD2did();
-            type = d.getType();
+            dataType = d.getType();
             file = d.getFile();
             sheet = d.getSheet();
             modifyTime = d.getModifyTime();
@@ -136,7 +133,7 @@ public class Data2DDefinition extends BaseData {
     }
 
     public String getTypeName() {
-        return message(type.name());
+        return message(dataType.name());
     }
 
     public String getFileName() {
@@ -148,39 +145,39 @@ public class Data2DDefinition extends BaseData {
     }
 
     public boolean isDataFile() {
-        return type == Type.CSV || type == Type.Excel || type == Type.Texts;
+        return dataType == DataType.CSV || dataType == DataType.Excel || dataType == DataType.Texts;
     }
 
     public boolean isExcel() {
-        return type == Type.Excel;
+        return dataType == DataType.Excel;
     }
 
     public boolean isCSV() {
-        return type == Type.CSV;
+        return dataType == DataType.CSV;
     }
 
     public boolean isTexts() {
-        return type == Type.Texts;
+        return dataType == DataType.Texts;
     }
 
     public boolean isMatrix() {
-        return type == Type.Matrix;
+        return dataType == DataType.Matrix;
     }
 
     public boolean isClipboard() {
-        return type == Type.MyBoxClipboard;
+        return dataType == DataType.MyBoxClipboard;
     }
 
     public boolean isTable() {
-        return type == Type.DatabaseTable || type == Type.InternalTable;
+        return dataType == DataType.DatabaseTable || dataType == DataType.InternalTable;
     }
 
     public boolean isUserTable() {
-        return type == Type.DatabaseTable;
+        return dataType == DataType.DatabaseTable;
     }
 
     public boolean isInternalTable() {
-        return type == Type.InternalTable;
+        return dataType == DataType.InternalTable;
     }
 
     public String titleName() {
@@ -203,7 +200,7 @@ public class Data2DDefinition extends BaseData {
 
     public String displayName() {
         String name = titleName();
-        name = message(type.name()) + (d2did >= 0 ? " - " + d2did : "") + (name != null ? " - " + name : "");
+        name = message(dataType.name()) + (d2did >= 0 ? " - " + d2did : "") + (name != null ? " - " + name : "");
         return name;
     }
 
@@ -228,7 +225,7 @@ public class Data2DDefinition extends BaseData {
     }
 
     public boolean validValue(String value) {
-        if (value == null || type != Type.Texts) {
+        if (value == null || dataType != DataType.Texts) {
             return true;
         }
         return !value.contains("\n") && !value.contains(delimiter);
@@ -292,7 +289,7 @@ public class Data2DDefinition extends BaseData {
                     data.setD2did(value == null ? -1 : (long) value);
                     return true;
                 case "data_type":
-                    data.setType(value == null ? Type.Texts : type((short) value));
+                    data.setType(value == null ? DataType.Texts : type((short) value));
                     return true;
                 case "data_name":
                     data.setDataName(value == null ? null : (String) value);
@@ -337,22 +334,22 @@ public class Data2DDefinition extends BaseData {
         return false;
     }
 
-    public static short type(Type type) {
+    public static short type(DataType type) {
         if (type == null) {
             return 0;
         }
         return (short) (type.ordinal());
     }
 
-    public static Type type(short type) {
-        Type[] types = Type.values();
+    public static DataType type(short type) {
+        DataType[] types = DataType.values();
         if (type < 0 || type > types.length) {
-            return Type.Texts;
+            return DataType.Texts;
         }
         return types[type];
     }
 
-    public static Type type(File file) {
+    public static DataType type(File file) {
         if (file == null) {
             return null;
         }
@@ -363,11 +360,11 @@ public class Data2DDefinition extends BaseData {
         switch (suffix) {
             case "xlsx":
             case "xls":
-                return Type.Excel;
+                return DataType.Excel;
             case "csv":
-                return Type.CSV;
+                return DataType.CSV;
         }
-        return Type.Texts;
+        return DataType.Texts;
     }
 
     public static BaseController open(Data2DDefinition def) {
@@ -378,27 +375,24 @@ public class Data2DDefinition extends BaseData {
         }
     }
 
-    public static BaseController openType(Type type) {
+    public static BaseController openType(DataType type) {
         return open(null, type);
     }
 
-    public static BaseController open(Data2DDefinition def, Type type) {
+    public static BaseController open(Data2DDefinition def, DataType type) {
         if (type == null) {
             return Data2DManageController.open(def);
         }
         switch (type) {
             case CSV:
-                return DataFileCSVController.open(def);
             case Excel:
-                return DataFileExcelController.open(def);
             case Texts:
-                return DataFileTextController.open(def);
+            case DatabaseTable:
+                return Data2DManufactureController.openDef(def);
             case MyBoxClipboard:
                 return DataInMyBoxClipboardController.open(def);
             case Matrix:
                 return MatricesManageController.open(def);
-            case DatabaseTable:
-                return DataTablesController.open(def);
             case InternalTable:
                 return MyBoxTablesController.open(def);
             default:
@@ -418,12 +412,12 @@ public class Data2DDefinition extends BaseData {
         this.d2did = d2did;
     }
 
-    public Type getType() {
-        return type;
+    public DataType getType() {
+        return dataType;
     }
 
-    public Data2DDefinition setType(Type type) {
-        this.type = type;
+    public Data2DDefinition setType(DataType type) {
+        this.dataType = type;
         return this;
     }
 

@@ -312,7 +312,7 @@ public class Data2DStatisticController extends BaseData2DTargetsController {
     /*
         static
      */
-    public static Data2DStatisticController open(ControlData2DLoad tableController) {
+    public static Data2DStatisticController open(BaseData2DLoadController tableController) {
         try {
             Data2DStatisticController controller = (Data2DStatisticController) WindowTools.branchStage(
                     tableController, Fxmls.Data2DStatisticFxml);

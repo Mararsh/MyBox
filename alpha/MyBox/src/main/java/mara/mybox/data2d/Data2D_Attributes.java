@@ -2,7 +2,6 @@ package mara.mybox.data2d;
 
 import java.util.List;
 import java.util.Map;
-import mara.mybox.controller.ControlData2DLoad;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.Data2DStyle;
@@ -29,7 +28,7 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
     public long currentPage, startRowOfCurrentPage, endRowOfCurrentPage;   // 0-based, excluded end
     public List<Data2DStyle> styles;
     public DataFilter filter;
-    public ControlData2DLoad loadController;
+    public List<List<String>> pageData;
     public boolean tableChanged;
     public FxTask task, backgroundTask;
     public String error;
@@ -56,7 +55,7 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
         styles = null;
         filter = null;
         error = null;
-        loadController = null;
+        pageData = null;
         task = null;
         backgroundTask = null;
     }
@@ -95,7 +94,7 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
                 return;
             }
             cloneDefinitionAttributes(d);
-            loadController = d.loadController;
+            pageData = d.pageData;
             tableData2DDefinition = d.tableData2DDefinition;
             tableData2DColumn = d.tableData2DColumn;
             columns = d.columns;
@@ -211,12 +210,12 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
         return tableChanged;
     }
 
-    public ControlData2DLoad getLoadController() {
-        return loadController;
+    public List<List<String>> getPageData() {
+        return pageData;
     }
 
-    public void setLoadController(ControlData2DLoad loadController) {
-        this.loadController = loadController;
+    public void setPageData(List<List<String>> pageData) {
+        this.pageData = pageData;
     }
 
     public Map<String, Object> getOptions() {

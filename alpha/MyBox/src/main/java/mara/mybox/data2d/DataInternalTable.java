@@ -28,12 +28,12 @@ public class DataInternalTable extends DataTable {
     };
 
     public DataInternalTable() {
-        type = Type.InternalTable;
+        dataType = DataType.InternalTable;
     }
 
     @Override
     public int type() {
-        return type(Type.InternalTable);
+        return type(DataType.InternalTable);
     }
 
 }

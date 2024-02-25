@@ -27,7 +27,7 @@ import mara.mybox.value.UserConfig;
  */
 public class Data2DPageHtml extends BaseChildController {
 
-    protected ControlData2DLoad dataController;
+    protected BaseData2DLoadController dataController;
     protected Data2D data2D;
     protected DataFilter styleFilter;
 
@@ -43,7 +43,7 @@ public class Data2DPageHtml extends BaseChildController {
         styleFilter = new DataFilter();
     }
 
-    protected void setParameters(ControlData2DLoad controller) {
+    protected void setParameters(BaseData2DLoadController controller) {
         try {
             dataController = controller;
 
@@ -133,7 +133,7 @@ public class Data2DPageHtml extends BaseChildController {
                 if (rowCheck.isSelected()) {
                     htmlRow.add(data2D.rowName(i));
                 }
-                List<String> dataRow = data2D.tableData().get(i);
+                List<String> dataRow = data2D.getPageData().get(i);
                 for (int col = 0; col < cNumber; col++) {
                     String value = dataRow.get(col + 1);
                     if (value == null) {
@@ -182,7 +182,7 @@ public class Data2DPageHtml extends BaseChildController {
                     }
                     table.add(row);
                 }
-                List<String> dataRow = data2D.tableData().get(r);
+                List<String> dataRow = data2D.getPageData().get(r);
                 for (int col = 0; col < cNumber; col++) {
                     List<String> htmlRow = new ArrayList<>();
                     if (columnCheck.isSelected()) {
@@ -255,7 +255,7 @@ public class Data2DPageHtml extends BaseChildController {
     /*
         static
      */
-    public static Data2DPageHtml open(ControlData2DLoad tableController) {
+    public static Data2DPageHtml open(BaseData2DLoadController tableController) {
         try {
             Data2DPageHtml controller = (Data2DPageHtml) WindowTools.branchStage(
                     tableController, Fxmls.Data2DPageHtmlFxml);

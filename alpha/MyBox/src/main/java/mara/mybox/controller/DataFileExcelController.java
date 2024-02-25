@@ -33,7 +33,6 @@ public class DataFileExcelController extends BaseData2DFileController {
     public DataFileExcelController() {
         baseTitle = message("EditExcel");
         TipsLabelKey = "DataFileExcelTips";
-        dataType = Data2DDefinition.Type.Excel;
     }
 
     @Override
@@ -46,7 +45,7 @@ public class DataFileExcelController extends BaseData2DFileController {
         try {
             super.initControls();
 
-            dataFileExcel = (DataFileExcel) dataController.data2D;
+            dataFileExcel = (DataFileExcel) data2D;
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -76,7 +75,7 @@ public class DataFileExcelController extends BaseData2DFileController {
                 return;
             }
             dataFileExcel.initFile(dataFileExcel.getFile(), name);
-            dataController.readDefinition();
+            readDefinition();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -88,13 +87,13 @@ public class DataFileExcelController extends BaseData2DFileController {
         }
         dataFileExcel.initFile(file);
         dataFileExcel.setOptions(withName);
-        dataController.readDefinition();
+        readDefinition();
     }
 
     @FXML
     @Override
     public void saveAsAction() {
-        if (!dataFileExcel.hasData() || !dataController.verifyData()) {
+        if (!dataFileExcel.hasData() || !verifyData()) {
             return;
         }
         DataFileExcelSaveAsController.open(this);
@@ -158,7 +157,7 @@ public class DataFileExcelController extends BaseData2DFileController {
     public static DataFileExcelController open(String name, List<Data2DColumn> cols, List<List<String>> data) {
         DataFileExcelController controller = (DataFileExcelController) WindowTools.openStage(Fxmls.DataFileExcelFxml);
         if (controller != null) {
-            controller.dataController.loadTmpData(name, cols, data);
+            controller.loadData(name, cols, data);
         }
         return controller;
     }

@@ -36,7 +36,7 @@ public class DataFileExcel extends DataFile {
     protected boolean currentSheetOnly;
 
     public DataFileExcel() {
-        type = Type.Excel;
+        dataType = DataType.Excel;
     }
 
     public void cloneAll(DataFileExcel d) {
@@ -78,10 +78,10 @@ public class DataFileExcel extends DataFile {
 
     @Override
     public Data2DDefinition queryDefinition(Connection conn) {
-        if (conn == null || type == null || file == null || sheet == null) {
+        if (conn == null || dataType == null || file == null || sheet == null) {
             return null;
         }
-        return tableData2DDefinition.queryFileSheet(conn, type, file, sheet);
+        return tableData2DDefinition.queryFileSheet(conn, dataType, file, sheet);
     }
 
     public void initFile(File file, String sheetName) {

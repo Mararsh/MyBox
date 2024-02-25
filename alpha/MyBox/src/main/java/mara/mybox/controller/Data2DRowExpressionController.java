@@ -227,7 +227,7 @@ public class Data2DRowExpressionController extends BaseData2DTargetsController {
     /*
         static
      */
-    public static Data2DRowExpressionController open(ControlData2DLoad tableController) {
+    public static Data2DRowExpressionController open(BaseData2DLoadController tableController) {
         try {
             Data2DRowExpressionController controller = (Data2DRowExpressionController) WindowTools.branchStage(
                     tableController, Fxmls.Data2DRowExpressionFxml);

@@ -262,23 +262,15 @@ License:    Apache License Version 2.0
                         </Menu>
                         <Menu mnemonicParsing="false" text="%Data">
                             <items>
-                                <Menu mnemonicParsing="false" text="CSV">
+                                <MenuItem mnemonicParsing="false" onAction="#DataManufacture" text="%DataManufacture" />
+                                <Menu mnemonicParsing="false" text="%DataFile">
                                     <items>
-                                        <MenuItem mnemonicParsing="false" onAction="#openDataCsv" text="%EditCSV" />
                                         <MenuItem mnemonicParsing="false" onAction="#openCsvConvert" text="%CsvConvert" />
                                         <MenuItem mnemonicParsing="false" onAction="#openCsvMerge" text="%CsvMerge" />
-                                    </items>
-                                </Menu>
-                                <Menu mnemonicParsing="false" text="Excel">
-                                    <items>
-                                        <MenuItem mnemonicParsing="false" onAction="#openDataExcel" text="%EditExcel" />
+                                        <SeparatorMenuItem mnemonicParsing="false" />
                                         <MenuItem mnemonicParsing="false" onAction="#openExcelConvert" text="%ExcelConvert" />
                                         <MenuItem mnemonicParsing="false" onAction="#openExcelMerge" text="%ExcelMerge" />
-                                    </items>
-                                </Menu>
-                                <Menu mnemonicParsing="false" text="%Texts">
-                                    <items>
-                                        <MenuItem mnemonicParsing="false" onAction="#openDataText" text="%EditTextDataFile" />
+                                        <SeparatorMenuItem mnemonicParsing="false" />
                                         <MenuItem mnemonicParsing="false" onAction="#openTextDataConvert" text="%TextDataConvert" />
                                         <MenuItem mnemonicParsing="false" onAction="#openTextDataMerge" text="%TextDataMerge" />
                                     </items>

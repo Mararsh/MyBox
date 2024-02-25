@@ -46,7 +46,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
     @FXML
     protected TextField chartMaxInput;
     @FXML
-    protected ControlData2DResults groupDataController;
+    protected ControlData2DView groupDataController;
     @FXML
     protected ControlPlay playController;
 
@@ -464,7 +464,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
 
     protected void loadChartData() {
         if (group.getTargetData() != null) {
-            groupDataController.loadData(group.getTargetData().cloneAll());
+            groupDataController.loadDef(group.getTargetData());
         }
     }
 
@@ -527,7 +527,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
                 playController.clear();
             }
             if (groupDataController != null) {
-                groupDataController.loadData(null);
+                groupDataController.loadNull();
             }
         } catch (Exception e) {
         }
