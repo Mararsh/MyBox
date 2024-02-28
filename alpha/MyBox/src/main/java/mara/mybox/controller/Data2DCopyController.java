@@ -35,7 +35,7 @@ public class Data2DCopyController extends BaseData2DTargetsController {
 
     @Override
     public DataFileCSV generatedFile() {
-        return data2D.copy(targetController.name(), checkedColsIndices,
+        return data2D.copy(null, targetController.file(), targetController.name(), checkedColsIndices,
                 rowNumberCheck.isSelected(), colNameCheck.isSelected(), formatValuesCheck.isSelected());
     }
 

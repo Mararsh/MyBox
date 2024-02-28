@@ -106,11 +106,11 @@ public class Data2DSpliceController extends BaseController {
                         return false;
                     }
                     if (dataAController.isAllPages()) {
-                        csvA = dataAController.data2D.copy(null, dataAController.checkedColsIndices,
-                                false, true, false);
+                        csvA = dataAController.data2D.copy(task, null, null,
+                                dataAController.checkedColsIndices, false, true, false);
                     } else {
-                        csvA = DataFileCSV.save(null, task, ",", dataAController.checkedColumns,
-                                dataAController.tableFiltered(false));
+                        csvA = DataFileCSV.save(task, null, null, ",",
+                                dataAController.checkedColumns, dataAController.tableFiltered(false));
                     }
                     dataAController.data2D.stopTask();
                     if (csvA == null) {
@@ -123,11 +123,11 @@ public class Data2DSpliceController extends BaseController {
                         return false;
                     }
                     if (dataBController.isAllPages()) {
-                        csvB = dataBController.data2D.copy(null, dataBController.checkedColsIndices,
-                                false, true, false);
+                        csvB = dataBController.data2D.copy(task, null, null,
+                                dataBController.checkedColsIndices, false, true, false);
                     } else {
-                        csvB = DataFileCSV.save(null, this, ",", dataBController.checkedColumns,
-                                dataBController.tableFiltered(false));
+                        csvB = DataFileCSV.save(task, null, null, ",",
+                                dataBController.checkedColumns, dataBController.tableFiltered(false));
                     }
                     dataBController.data2D.stopTask();
                     if (csvB == null) {
@@ -151,7 +151,10 @@ public class Data2DSpliceController extends BaseController {
 
             @Override
             protected void whenSucceeded() {
-                DataFileCSV.openCSV(myController, targetCSV, targetController.target);
+                DataFileCSV.createData(myController, targetCSV,
+                        targetController.target,
+                        targetController.name(),
+                        targetController.file());
             }
 
             @Override

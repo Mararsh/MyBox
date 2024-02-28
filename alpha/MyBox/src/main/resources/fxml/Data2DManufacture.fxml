@@ -282,6 +282,15 @@ License:    Apache License Version 2.0
                                     </ImageView>
                                  </graphic>
                               </Button>
+                              <Button fx:id="dataDefinitionButton" layoutX="517.0" layoutY="10.0" mnemonicParsing="false" onAction="#definitonAction">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconMeta.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
                               <Button fx:id="viewDataButton" mnemonicParsing="false" onAction="#showViewMenu" onMouseEntered="#popViewMenu">
                                  <graphic>
                                     <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -323,15 +332,6 @@ License:    Apache License Version 2.0
                                     <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
                                           <Image url="@../buttons/Red/iconVerify.png" />
-                                       </image>
-                                    </ImageView>
-                                 </graphic>
-                              </Button>
-                              <Button fx:id="dataDefinitionButton" layoutX="517.0" layoutY="10.0" mnemonicParsing="false" onAction="#definitonAction">
-                                 <graphic>
-                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../buttons/Red/iconMeta.png" />
                                        </image>
                                     </ImageView>
                                  </graphic>
@@ -449,7 +449,7 @@ License:    Apache License Version 2.0
                         </Tab>
                         <Tab text="texts">
                            <content>
-                              <TextArea fx:id="textsArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="%DataInputComments" />
+                              <TextArea fx:id="textsArea" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="%DataInputComments" />
                            </content>
                         </Tab>
                     </tabs>

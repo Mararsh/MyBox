@@ -35,15 +35,6 @@ License:    Apache License Version 2.0
                         <Image url="@../buttons/Red/iconDoubleLeft.png" />
                      </image>
                   </ImageView>
-                  <Button fx:id="fileMenuButton" mnemonicParsing="false" onAction="#showFileMenu" onMouseEntered="#popFileMenu">
-                     <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../buttons/Red/iconFile.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Button>
                   <RadioButton fx:id="htmlRadio" mnemonicParsing="false" selected="true">
                      <graphic>
                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
@@ -121,17 +112,17 @@ License:    Apache License Version 2.0
                               </ImageView>
                            </graphic>
                         </Button>
+                        <Button fx:id="dataManufactureButton" mnemonicParsing="false" onAction="#dataManufacture">
+                           <graphic>
+                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../buttons/Red/iconData.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
                      </children>
                   </FlowPane>
-                  <Button fx:id="editDataButton" mnemonicParsing="false" onAction="#dataManufacture">
-                     <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../buttons/Red/iconEdit.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Button>
                </children>
             </HBox>
             <VBox fx:id="dataBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="ALWAYS">
@@ -229,7 +220,7 @@ License:    Apache License Version 2.0
                   </Tab>
                   <Tab text="texts">
                      <content>
-                        <TextArea fx:id="textsArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="%DataInputComments" />
+                        <TextArea fx:id="textsArea" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="%DataInputComments" />
                      </content>
                   </Tab>
                </tabs>

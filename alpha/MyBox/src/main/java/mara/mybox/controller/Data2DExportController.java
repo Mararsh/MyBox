@@ -9,6 +9,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Tab;
 import javafx.scene.layout.VBox;
+import mara.mybox.data2d.reader.Data2DExport;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.WindowTools;
@@ -23,6 +24,7 @@ import static mara.mybox.value.Languages.message;
  */
 public class Data2DExportController extends BaseData2DHandleController {
 
+    protected Data2DExport export;
     protected String filePrefix;
 
     @FXML
@@ -86,7 +88,8 @@ public class Data2DExportController extends BaseData2DHandleController {
             if (filePrefix == null || filePrefix.isBlank()) {
                 filePrefix = DateTools.nowFileString();
             }
-            return convertController.initParameters();
+            export = convertController.pickParameters(data2D);
+            return export != null;
         } catch (Exception e) {
             MyBoxLog.error(e);
             return false;
@@ -106,7 +109,9 @@ public class Data2DExportController extends BaseData2DHandleController {
 
     public boolean export() {
         try {
-            convertController.setExport(targetPath, checkedColumns, filePrefix, targetPathController.isSkip());
+            if (!export.initPath(targetPath, checkedColumns, filePrefix, targetPathController.isSkip())) {
+                return false;
+            }
             data2D.startTask(taskController.task, filterController.filter);
             if (!isAllPages() || !data2D.isMutiplePages()) {
                 filteredRowsIndices = filteredRowsIndices();
@@ -116,15 +121,14 @@ public class Data2DExportController extends BaseData2DHandleController {
                     for (Integer col : checkedColsIndices) {
                         exportRow.add(dataRow.get(col + 1));
                     }
-                    convertController.writeRow(exportRow);
+                    export.writeRow(exportRow);
                 }
 
             } else {
-                data2D.export(convertController, checkedColsIndices);
+                export.setCols(checkedColsIndices).setTask(task).start();
             }
             data2D.stopTask();
-
-            convertController.closeWriters();
+            export.closeWriters();
             return true;
         } catch (Exception e) {
             if (taskController.task != null) {
@@ -144,7 +148,8 @@ public class Data2DExportController extends BaseData2DHandleController {
                     @Override
                     public void run() {
                         Platform.runLater(() -> {
-                            convertController.openFiles();
+                            export.openFiles();
+                            export = null;
                         });
                     }
 

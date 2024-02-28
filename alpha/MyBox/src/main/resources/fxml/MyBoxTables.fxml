@@ -141,7 +141,7 @@ License:    Apache License Version 2.0
                      <content>
                         <VBox fx:id="mainBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                            <children>
-                              <fx:include fx:id="view" source="ControlData2DView.fxml" />
+                              <fx:include fx:id="view" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DView.fxml" VBox.vgrow="ALWAYS" />
                            </children>
                         </VBox>
                      </content>

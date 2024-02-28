@@ -34,6 +34,11 @@ public class FileTmpTools {
         return getPathTempFile(AppVariables.MyBoxTempPath.getAbsolutePath(), suffix);
     }
 
+    public static File tmpFile(String prefix, String ext) {
+        return getPathTempFile(AppVariables.MyBoxTempPath.getAbsolutePath(), prefix,
+                ext == null || ext.isBlank() ? null : "." + ext);
+    }
+
     public static File getPathTempFile(String path) {
         if (path == null) {
             return null;

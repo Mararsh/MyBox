@@ -96,14 +96,14 @@ public class DataFileTextConvertController extends BaseDataConvertController {
                             names.add(message("Column") + i);
                         }
                     }
-                    convertController.setParameters(targetPath, names, filePrefix(srcFile), skip);
+                    export.initFiles(targetPath, names, filePrefix(srcFile), skip);
                     if (sourceWithName) {
                         continue;
                     }
                 }
-                convertController.writeRow(rowData);
+                export.writeRow(rowData);
             }
-            convertController.closeWriters();
+            export.closeWriters();
             result = message("Handled");
         } catch (Exception e) {
             result = e.toString();

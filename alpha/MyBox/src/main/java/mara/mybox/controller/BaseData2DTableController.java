@@ -11,9 +11,12 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataFilter;
@@ -26,6 +29,7 @@ import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxBackgroundTask;
 import mara.mybox.fxml.FxTask;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.cell.TableComboBoxCell;
 import mara.mybox.fxml.cell.TableDataBooleanDisplayCell;
 import mara.mybox.fxml.cell.TableDataBooleanEditCell;
@@ -35,6 +39,8 @@ import mara.mybox.fxml.cell.TableDataDateEditCell;
 import mara.mybox.fxml.cell.TableDataDisplayCell;
 import mara.mybox.fxml.cell.TableDataEditCell;
 import mara.mybox.fxml.style.NodeStyleTools;
+import mara.mybox.tools.HtmlWriteTools;
+import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -56,6 +62,10 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
     protected TableColumn<List<String>, Integer> dataRowColumn;
     @FXML
     protected Label dataLabel;
+    @FXML
+    protected VBox dataBox;
+    @FXML
+    protected Button fileMenuButton, dataManufactureButton;
 
     public BaseData2DTableController() {
         statusNotify = new SimpleBooleanProperty(false);
@@ -171,7 +181,11 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
     }
 
     public boolean validateData() {
-        thisPane.setDisable(data2D == null);
+        sourceFile = data2D != null ? data2D.getFile() : null;
+        if (dataManufactureButton != null) {
+            dataManufactureButton.setDisable(data2D == null);
+        }
+        checkSelected();
         return data2D != null && data2D.isValid();
     }
 
@@ -196,6 +210,17 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
         if (data2D != null && data2D.getFile() != null) {
             recordFileOpened(data2D.getFile());
         }
+    }
+
+    @Override
+    public void tableChanged(boolean changed) {
+        if (isSettingValues) {
+            return;
+        }
+        if (data2D != null) {
+            data2D.setTableChanged(changed);
+        }
+        notifyStatus();
     }
 
     /*
@@ -230,15 +255,6 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
             MyBoxLog.error(e);
             return false;
         }
-    }
-
-    @Override
-    public void tableChanged(boolean changed) {
-        if (isSettingValues || data2D == null) {
-            return;
-        }
-        data2D.setTableChanged(changed);
-        validateData();
     }
 
     public void makeColumns() {
@@ -381,6 +397,8 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
     public void postLoadedTableData() {
         super.postLoadedTableData();
         if (data2D != null) {
+            sourceFile = data2D.getFile();
+            data2D.setPageData(tableData);
             data2D.stopTask();
         }
     }
@@ -516,17 +534,31 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
             return;
         }
         paginationPane.setVisible(show);
-        if (show) {
-            if (!thisPane.getChildren().contains(paginationPane)) {
-                thisPane.getChildren().add(paginationPane);
-                NodeStyleTools.refreshStyle(paginationPane);
+        if (dataBox != null) {
+            if (show) {
+                if (!dataBox.getChildren().contains(paginationPane)) {
+                    dataBox.getChildren().add(paginationPane);
+                }
+            } else {
+                if (dataBox.getChildren().contains(paginationPane)) {
+                    dataBox.getChildren().remove(paginationPane);
+                }
             }
+            NodeStyleTools.refreshStyle(dataBox);
         } else {
-            if (thisPane.getChildren().contains(paginationPane)) {
-                thisPane.getChildren().remove(paginationPane);
+            if (show) {
+                if (!thisPane.getChildren().contains(paginationPane)) {
+                    thisPane.getChildren().add(paginationPane);
+                    NodeStyleTools.refreshStyle(paginationPane);
+                }
+            } else {
+                if (thisPane.getChildren().contains(paginationPane)) {
+                    thisPane.getChildren().remove(paginationPane);
+                }
             }
         }
     }
+
 
     /*
         interface
@@ -579,9 +611,9 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
         if (data2D == null) {
             return false;
         }
-        String info = data2D.info();
+        String info = data2D.dataInfo();
         if (info != null && !info.isBlank()) {
-            TextPopController.loadText(info);
+            HtmlPopController.showHtml(this, HtmlWriteTools.table(info));
             return true;
         }
         return false;
@@ -590,6 +622,16 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
     @FXML
     public void dataManufacture() {
         Data2DManufactureController.openDef(data2D);
+    }
+
+    @FXML
+    public void editTextFile() {
+        if (data2D == null || data2D.getFile() == null) {
+            return;
+        }
+        TextEditorController controller = (TextEditorController) WindowTools.openStage(Fxmls.TextEditorFxml);
+        controller.sourceFileChanged(data2D.getFile());
+        controller.requestMouse();
     }
 
     @Override
@@ -610,6 +652,10 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
      */
     public Data2D getData2D() {
         return data2D;
+    }
+
+    public TableView<List<String>> getTableView() {
+        return tableView;
     }
 
     public ObservableList<List<String>> getTableData() {

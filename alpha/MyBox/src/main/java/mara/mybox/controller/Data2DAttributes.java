@@ -8,11 +8,13 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.web.WebView;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.DateTools;
+import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -34,11 +36,13 @@ public class Data2DAttributes extends BaseChildController {
     @FXML
     protected ControlData2DColumns columnsController;
     @FXML
-    protected TextArea descInput, infoArea;
+    protected TextArea descInput;
     @FXML
     protected TextField idInput, timeInput, dataTypeInput, dataNameInput;
     @FXML
     protected ComboBox<String> scaleSelector, randomSelector;
+    @FXML
+    protected WebView webView;
 
     public Data2DAttributes() {
         baseTitle = message("DataDefinition");
@@ -115,7 +119,7 @@ public class Data2DAttributes extends BaseChildController {
             scaleSelector.setValue(data2D.getScale() + "");
             randomSelector.setValue(data2D.getMaxRandom() + "");
             descInput.setText(data2D.getComments());
-            infoArea.setText(data2D.info());
+            webView.getEngine().loadContent(HtmlWriteTools.table(data2D.pageInfo()));
             isSettingValues = false;
         } catch (Exception e) {
             MyBoxLog.error(e);

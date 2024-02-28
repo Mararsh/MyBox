@@ -52,7 +52,7 @@ License:    Apache License Version 2.0
                                     <children>
                                         <CheckBox fx:id="imageMarginsCheck" mnemonicParsing="false" selected="true" text="%CutImageMargins" />
                                         <CheckBox fx:id="copyClipboardCheck" mnemonicParsing="false" text="%PutClipInClipboard" />
-                                        <CheckBox fx:id="clipMarginsCheck" mnemonicParsing="false" selected="true" text="%CutClipMargions" />
+                                        <CheckBox fx:id="clipMarginsCheck" mnemonicParsing="false" selected="true" text="%CutClipMargins" />
                                         <CheckBox fx:id="openClipboardCheck" minHeight="-Infinity" mnemonicParsing="false" text="%OpenClipboardAfterCopy" wrapText="true" />
                                     </children>
                                 </VBox>

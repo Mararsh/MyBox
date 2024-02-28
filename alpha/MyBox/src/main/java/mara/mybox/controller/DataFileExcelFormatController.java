@@ -1,12 +1,13 @@
 package mara.mybox.controller;
 
+import java.util.HashMap;
+import java.util.Map;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -15,15 +16,15 @@ import mara.mybox.value.UserConfig;
  */
 public class DataFileExcelFormatController extends BaseChildController {
 
-    protected DataFileExcelController fileController;
+    protected BaseData2DLoadController fileController;
 
     @FXML
     protected CheckBox sourceWithNamesCheck;
 
-    public void setParameters(DataFileExcelController parent) {
+    public void setParameters(BaseData2DLoadController parent) {
         try {
             fileController = parent;
-            if (fileController == null || fileController.dataFileExcel == null) {
+            if (fileController == null || fileController.data2D == null) {
                 close();
                 return;
             }
@@ -31,7 +32,7 @@ public class DataFileExcelFormatController extends BaseChildController {
             setFileType(fileController.TargetFileType);
             setTitle(message("Format") + " - " + fileController.getTitle());
 
-            sourceWithNamesCheck.setSelected(UserConfig.getBoolean(baseName + "SourceWithNames", true));
+            sourceWithNamesCheck.setSelected(fileController.data2D.isHasHeader());
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -40,8 +41,10 @@ public class DataFileExcelFormatController extends BaseChildController {
     @FXML
     @Override
     public void okAction() {
-        UserConfig.setBoolean(baseName + "SourceWithNames", sourceWithNamesCheck.isSelected());
-        fileController.refreshFile();
+        Map<String, Object> options = new HashMap<>();
+        options.put("hasHeader", sourceWithNamesCheck.isSelected());
+        fileController.reloadFile(options);
+
         if (closeAfterCheck.isSelected()) {
             close();
         }
@@ -51,7 +54,7 @@ public class DataFileExcelFormatController extends BaseChildController {
     /*
         static methods
      */
-    public static DataFileExcelFormatController open(DataFileExcelController parent) {
+    public static DataFileExcelFormatController open(BaseData2DLoadController parent) {
         try {
             if (parent == null) {
                 return null;

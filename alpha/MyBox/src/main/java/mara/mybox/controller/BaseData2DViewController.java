@@ -24,6 +24,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import mara.mybox.data2d.Data2DTools;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.TextTools;
 import static mara.mybox.value.Languages.message;
@@ -55,12 +56,32 @@ public class BaseData2DViewController extends BaseData2DLoadController {
     @FXML
     protected FlowPane buttonsPane;
     @FXML
-    protected VBox dataBox;
-    @FXML
-    protected Button fileMenuButton, verifyButton, optionsButton, delimiterButton,
-            viewDataButton, editDataButton;
+    protected Button verifyButton, optionsButton, delimiterButton, viewDataButton;
     @FXML
     protected CheckBox wrapCheck;
+
+    @Override
+    public void setControlsStyle() {
+        try {
+            super.setControlsStyle();
+
+            if (htmlRadio != null) {
+                StyleTools.setIconTooltips(htmlRadio, "iconHtml.png", message("HtmlReadOnly"));
+            }
+            if (tableRadio != null) {
+                StyleTools.setIconTooltips(tableRadio, "iconGrid.png",
+                        dataManufactureButton != null ? message("Table") : message("TableEdit"));
+            }
+            if (textsRadio != null) {
+                StyleTools.setIconTooltips(textsRadio, "iconTxt.png", message("TextsReadOnly"));
+            }
+            if (csvRadio != null) {
+                StyleTools.setIconTooltips(csvRadio, "iconCSV.png", message("CsvEdit"));
+            }
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
+    }
 
     @Override
     public void initMoreControls() {
@@ -91,56 +112,26 @@ public class BaseData2DViewController extends BaseData2DLoadController {
             formatGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue<? extends Toggle> v, Toggle ov, Toggle nv) {
-                    checkFormat();
+                    checkFormat(ov);
                 }
             });
-            checkFormat();
+            checkFormat(null);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
-    @Override
-    public void setControlsStyle() {
+    public void checkFormat(Toggle ov) {
+        switchFormat();
+    }
+
+    public void switchFormat() {
         try {
-            super.setControlsStyle();
-
-            if (htmlRadio != null) {
-                StyleTools.setIconTooltips(htmlRadio, "iconHtml.png", message("HtmlReadOnly"));
+            if (isSettingValues) {
+                return;
             }
-            if (tableRadio != null) {
-                StyleTools.setIconTooltips(tableRadio, "iconGrid.png",
-                        editDataButton != null ? message("Table") : message("TableEdit"));
-            }
-            if (textsRadio != null) {
-                StyleTools.setIconTooltips(textsRadio, "iconTxt.png", message("CsvReadOnly"));
-            }
-            if (csvRadio != null) {
-                StyleTools.setIconTooltips(csvRadio, "iconCSV.png", message("CsvEdit"));
-            }
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
-    }
-
-    @Override
-    public void makeColumns() {
-        if (tableRadio == null || !tableRadio.isSelected()) {
-            return;
-        }
-        super.makeColumns();
-    }
-
-    @Override
-    protected void setPagination() {
-        super.setPagination();
-        checkFormat();
-    }
-
-    public void checkFormat() {
-        try {
-            toolbar.getChildren().remove(fileMenuButton);
+            isSettingValues = true;
             buttonsPane.getChildren().clear();
             pageBox.getChildren().clear();
             webViewController.loadContents("");
@@ -150,11 +141,9 @@ public class BaseData2DViewController extends BaseData2DLoadController {
                 csvArea.clear();
                 columnsLabel.setText("");
             }
+            isSettingValues = false;
             if (data2D == null) {
                 return;
-            }
-            if (data2D.isDataFile()) {
-                toolbar.getChildren().add(toolbar.getChildren().indexOf(htmlRadio), fileMenuButton);
             }
 
             if (htmlRadio.isSelected()) {
@@ -171,7 +160,11 @@ public class BaseData2DViewController extends BaseData2DLoadController {
 
             }
 
-            refreshStyle(pageBox);
+            if (dataManufactureButton != null) {
+                buttonsPane.getChildren().add(dataManufactureButton);
+            }
+
+            refreshStyle(dataBox);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -180,10 +173,7 @@ public class BaseData2DViewController extends BaseData2DLoadController {
 
     public void showHtml() {
         try {
-            buttonsPane.getChildren().addAll(optionsButton, menuButton, viewDataButton);
-            if (editDataButton != null) {
-                buttonsPane.getChildren().add(editDataButton);
-            }
+            buttonsPane.getChildren().setAll(optionsButton, menuButton, viewDataButton);
             pageBox.getChildren().add(htmlBox);
             VBox.setVgrow(htmlBox, Priority.ALWAYS);
 
@@ -195,27 +185,39 @@ public class BaseData2DViewController extends BaseData2DLoadController {
     }
 
     public void loadHtml() {
-        try {
-            String html = Data2DTools.dataToHtml(data2D, styleFilter,
-                    UserConfig.getBoolean(baseName + "HtmlShowForm", false),
-                    UserConfig.getBoolean(baseName + "HtmlShowColumns", true),
-                    UserConfig.getBoolean(baseName + "HtmlShowRowNumber", true),
-                    UserConfig.getBoolean(baseName + "HtmlShowTitle", true));
-
-            webViewController.loadContents(html);
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
+        if (!data2D.isValid()) {
+            webViewController.loadContents("");
+            return;
         }
+        if (task != null) {
+            task.cancel();
+        }
+        task = new FxSingletonTask<Void>(this) {
+            private String html;
+
+            @Override
+            protected boolean handle() {
+                html = Data2DTools.dataToHtml(data2D, styleFilter,
+                        UserConfig.getBoolean(baseName + "HtmlShowForm", false),
+                        UserConfig.getBoolean(baseName + "HtmlShowColumns", true),
+                        UserConfig.getBoolean(baseName + "HtmlShowRowNumber", true),
+                        UserConfig.getBoolean(baseName + "HtmlShowTitle", true));
+                return html != null;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                webViewController.loadContents(html);
+            }
+
+        };
+        start(task, false);
     }
 
     public void showTexts() {
         try {
-            buttonsPane.getChildren().addAll(wrapCheck, delimiterButton,
+            buttonsPane.getChildren().setAll(wrapCheck, delimiterButton,
                     optionsButton, menuButton, viewDataButton);
-            if (editDataButton != null) {
-                buttonsPane.getChildren().add(editDataButton);
-            }
             pageBox.getChildren().add(textsArea);
             VBox.setVgrow(textsArea, Priority.ALWAYS);
 
@@ -233,18 +235,33 @@ public class BaseData2DViewController extends BaseData2DLoadController {
     }
 
     public void loadTexts() {
-        try {
-            String texts = Data2DTools.dataToTexts(data2D, delimiterName,
-                    UserConfig.getBoolean(baseName + "TextsShowForm", false),
-                    UserConfig.getBoolean(baseName + "TextsShowColumns", true),
-                    UserConfig.getBoolean(baseName + "TextsShowRowNumber", true),
-                    UserConfig.getBoolean(baseName + "TextsShowTitle", true));
-
-            textsArea.setText(texts);
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
+        if (!data2D.isValid()) {
+            textsArea.setText("");
+            return;
         }
+        if (task != null) {
+            task.cancel();
+        }
+        task = new FxSingletonTask<Void>(this) {
+            private String text;
+
+            @Override
+            protected boolean handle() {
+                text = Data2DTools.dataToTexts(data2D, delimiterName,
+                        UserConfig.getBoolean(baseName + "TextsShowForm", false),
+                        UserConfig.getBoolean(baseName + "TextsShowColumns", true),
+                        UserConfig.getBoolean(baseName + "TextsShowRowNumber", true),
+                        UserConfig.getBoolean(baseName + "TextsShowTitle", true));
+                return text != null;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                textsArea.setText(text);
+            }
+
+        };
+        start(task, false);
     }
 
     public void showTable() {
@@ -253,10 +270,11 @@ public class BaseData2DViewController extends BaseData2DLoadController {
             pageBox.getChildren().add(tableBox);
             VBox.setVgrow(tableBox, Priority.ALWAYS);
 
+            List<List<String>> data = new ArrayList<>();
+            data.addAll(tableData);
             super.makeColumns();
             isSettingValues = true;
-            tableData.setAll(data2D.getPageData());
-            tableView.setItems(tableData);
+            tableData.setAll(data);
             isSettingValues = false;
 
         } catch (Exception e) {
@@ -265,7 +283,7 @@ public class BaseData2DViewController extends BaseData2DLoadController {
     }
 
     public void showTableButtons() {
-        buttonsPane.getChildren().setAll(menuButton, viewDataButton, editDataButton);
+        buttonsPane.getChildren().setAll(menuButton, viewDataButton);
     }
 
     public void showCsv() {
@@ -292,27 +310,63 @@ public class BaseData2DViewController extends BaseData2DLoadController {
     }
 
     public void loadCsv() {
-        try {
-            if (!data2D.isValid()) {
-                csvArea.setText("");
-                columnsLabel.setText("");
-                return;
-            }
-            String texts = data2D.encodeCSV(null, delimiterName, false, false, false);
-            csvArea.setText(texts);
-            String label = "";
-            String delimiter = TextTools.delimiterValue(delimiterName);
-            for (String name : data2D.columnNames()) {
-                if (!label.isEmpty()) {
-                    label += delimiter;
-                }
-                label += name;
-            }
-            columnsLabel.setText(label);
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
+        if (!data2D.isValid()) {
+            isSettingValues = true;
+            csvArea.setText("");
+            columnsLabel.setText("");
+            isSettingValues = false;
+            return;
         }
+        if (task != null) {
+            task.cancel();
+        }
+        task = new FxSingletonTask<Void>(this) {
+            private String text;
+
+            @Override
+            protected boolean handle() {
+                text = data2D.encodeCSV(this, delimiterName, false, false, false);
+                return text != null;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                isSettingValues = true;
+                csvArea.setText(text);
+                String label = "";
+                String delimiter = TextTools.delimiterValue(delimiterName);
+                for (String name : data2D.columnNames()) {
+                    if (!label.isEmpty()) {
+                        label += delimiter;
+                    }
+                    label += name;
+                }
+                columnsLabel.setText(label);
+                isSettingValues = false;
+            }
+
+        };
+        start(task, false);
+    }
+
+    @Override
+    public void makeColumns() {
+        if (tableRadio == null || !tableRadio.isSelected()) {
+            return;
+        }
+        super.makeColumns();
+    }
+
+    @Override
+    protected void setPagination() {
+        super.setPagination();
+        switchFormat();
+    }
+
+    @Override
+    public boolean controlAltB() {
+        saveAsAction();
+        return true;
     }
 
     @FXML
@@ -352,14 +406,8 @@ public class BaseData2DViewController extends BaseData2DLoadController {
             if (htmlRadio.isSelected()) {
                 items = htmlOptions(mevent);
 
-            } else if (tableRadio.isSelected()) {
-                items = tableOptions(mevent);
-
             } else if (textsRadio.isSelected()) {
                 items = textsOptions(mevent);
-
-            } else if (csvRadio != null && csvRadio.isSelected()) {
-                items = csvOptions(mevent);
 
             }
 
@@ -441,17 +489,6 @@ public class BaseData2DViewController extends BaseData2DLoadController {
         }
     }
 
-    public List<MenuItem> tableOptions(Event mevent) {
-        try {
-            List<MenuItem> items = new ArrayList<>();
-
-            return items;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
-    }
-
     public List<MenuItem> textsOptions(Event mevent) {
         try {
             List<MenuItem> items = new ArrayList<>();
@@ -507,10 +544,6 @@ public class BaseData2DViewController extends BaseData2DLoadController {
         }
     }
 
-    public List<MenuItem> csvOptions(Event mevent) {
-        return null;
-    }
-
     @Override
     public List<MenuItem> viewMenuItems(Event fevent) {
         try {
@@ -539,6 +572,49 @@ public class BaseData2DViewController extends BaseData2DLoadController {
                 TextPopController.loadText(texts);
             });
             items.add(menu);
+
+            return items;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    @Override
+    public List<MenuItem> dataMenuItems(Event fevent) {
+        try {
+            if (data2D == null || !data2D.isValid() || !data2D.hasData()) {
+                return null;
+            }
+            List<MenuItem> items = new ArrayList<>();
+
+            MenuItem menu = new MenuItem(message("DataManufacture"), StyleTools.getIconImageView("iconEdit.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DManufactureController.openDef(data2D);
+            });
+            items.add(menu);
+
+            if (data2D.hasData()) {
+                menu = new MenuItem(message("Export"), StyleTools.getIconImageView("iconExport.png"));
+                menu.setOnAction((ActionEvent event) -> {
+                    Data2DExportController.open(this);
+                });
+                items.add(menu);
+            }
+
+            menu = new MenuItem(message("ConvertToDatabaseTable"), StyleTools.getIconImageView("iconDatabase.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DConvertToDataBaseController.open(this);
+            });
+            items.add(menu);
+
+            if (tableRadio.isSelected()) {
+                menu = new MenuItem(message("Snapshot"), StyleTools.getIconImageView("iconSnapshot.png"));
+                menu.setOnAction((ActionEvent event) -> {
+                    snapAction();
+                });
+                items.add(menu);
+            }
 
             return items;
         } catch (Exception e) {

@@ -115,6 +115,10 @@ public class HtmlWriteTools {
         return html(null, "utf-8", HtmlStyles.DefaultStyle, body);
     }
 
+    public static String table(String body) {
+        return html(null, "utf-8", HtmlStyles.TableStyle, body);
+    }
+
     public static String style(String html, String styleValue) {
         try {
             Document doc = Jsoup.parse(html);

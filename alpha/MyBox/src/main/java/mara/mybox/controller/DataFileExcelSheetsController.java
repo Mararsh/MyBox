@@ -7,6 +7,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import mara.mybox.data2d.DataFileExcel;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.PopTools;
@@ -21,7 +22,8 @@ import static mara.mybox.value.Languages.message;
  */
 public class DataFileExcelSheetsController extends BaseChildController {
 
-    protected DataFileExcelController fileController;
+    protected BaseData2DLoadController fileController;
+    protected DataFileExcel dataFileExcel;
 
     @FXML
     protected ComboBox<String> sheetSelector;
@@ -29,13 +31,16 @@ public class DataFileExcelSheetsController extends BaseChildController {
     protected Button plusSheetButton, renameSheetButton, deleteSheetButton,
             nextSheetButton, previousSheetButton;
 
-    public void setParameters(DataFileExcelController parent) {
+    public void setParameters(BaseData2DLoadController parent) {
         try {
             fileController = parent;
-            if (fileController == null || fileController.dataFileExcel == null) {
+            if (fileController == null
+                    || fileController.data2D == null
+                    || !(fileController.data2D instanceof DataFileExcel)) {
                 close();
                 return;
             }
+            dataFileExcel = (DataFileExcel) fileController.data2D;
             baseName = fileController.baseName;
             setFileType(fileController.TargetFileType);
 
@@ -58,13 +63,13 @@ public class DataFileExcelSheetsController extends BaseChildController {
         try {
             setTitle(message("Sheet") + " - " + fileController.getTitle());
             sheetSelector.getItems().clear();
-            List<String> sheets = fileController.dataFileExcel.getSheetNames();
+            List<String> sheets = dataFileExcel.getSheetNames();
             int current = -1;
             if (sheets != null && !sheets.isEmpty()) {
                 sheetSelector.getItems().addAll(sheets);
-                current = sheets.indexOf(fileController.dataFileExcel.getSheet());
+                current = sheets.indexOf(dataFileExcel.getSheet());
             }
-            sheetSelector.getSelectionModel().select(fileController.dataFileExcel.getSheet());
+            sheetSelector.getSelectionModel().select(dataFileExcel.getSheet());
             deleteSheetButton.setDisable(sheets == null || sheets.size() <= 1);
             nextSheetButton.setDisable(sheets == null || current >= sheets.size() - 1);
             previousSheetButton.setDisable(current <= 0);
@@ -84,12 +89,12 @@ public class DataFileExcelSheetsController extends BaseChildController {
         if (index > sheets.size() - 1 || index < 0) {
             return;
         }
-        fileController.loadSheetName(sheets.get(index));
+        fileController.loadExcelSheet(sheets.get(index));
     }
 
     @FXML
     protected void plusSheet() {
-        List<String> sheets = fileController.dataFileExcel.getSheetNames();
+        List<String> sheets = dataFileExcel.getSheetNames();
         if (sheets == null) {
             return;
         }
@@ -113,8 +118,8 @@ public class DataFileExcelSheetsController extends BaseChildController {
 
             @Override
             protected boolean handle() {
-                fileController.dataFileExcel.setTask(this);
-                return fileController.dataFileExcel.newSheet(newName);
+                dataFileExcel.setTask(this);
+                return dataFileExcel.newSheet(newName);
             }
 
             @Override
@@ -125,7 +130,7 @@ public class DataFileExcelSheetsController extends BaseChildController {
             @Override
             protected void finalAction() {
                 super.finalAction();
-                fileController.dataFileExcel.stopTask();
+                dataFileExcel.stopTask();
             }
 
         };
@@ -137,11 +142,11 @@ public class DataFileExcelSheetsController extends BaseChildController {
         if (!fileController.checkBeforeNextAction()) {
             return;
         }
-        String currentSheetName = fileController.dataFileExcel.getSheet();
-        List<String> sheets = fileController.dataFileExcel.getSheetNames();
+        String currentSheetName = dataFileExcel.getSheet();
+        List<String> sheets = dataFileExcel.getSheetNames();
         int count = 2;
         String tryName = currentSheetName + "2";
-        while (fileController.dataFileExcel.getSheetNames() != null && sheets.contains(tryName)) {
+        while (dataFileExcel.getSheetNames() != null && sheets.contains(tryName)) {
             tryName = currentSheetName + ++count;
         }
         String newName = PopTools.askValue(null, message("CurrentName") + ": " + currentSheetName, message("NewName"), tryName);
@@ -157,8 +162,8 @@ public class DataFileExcelSheetsController extends BaseChildController {
 
             @Override
             protected boolean handle() {
-                fileController.dataFileExcel.setTask(this);
-                return fileController.dataFileExcel.renameSheet(newName);
+                dataFileExcel.setTask(this);
+                return dataFileExcel.renameSheet(newName);
             }
 
             @Override
@@ -170,7 +175,7 @@ public class DataFileExcelSheetsController extends BaseChildController {
             @Override
             protected void finalAction() {
                 super.finalAction();
-                fileController.dataFileExcel.stopTask();
+                dataFileExcel.stopTask();
             }
 
         };
@@ -179,11 +184,11 @@ public class DataFileExcelSheetsController extends BaseChildController {
 
     @FXML
     protected void deleteSheet() {
-        List<String> sheets = fileController.dataFileExcel.getSheetNames();
+        List<String> sheets = dataFileExcel.getSheetNames();
         if (sheets == null || sheets.size() <= 1) {
             return;
         }
-        String currentSheetName = fileController.dataFileExcel.getSheet();
+        String currentSheetName = dataFileExcel.getSheet();
         if (!PopTools.askSure(getTitle(), currentSheetName, message("SureDelete"))) {
             return;
         }
@@ -195,7 +200,7 @@ public class DataFileExcelSheetsController extends BaseChildController {
 
             @Override
             protected boolean handle() {
-                index = fileController.dataFileExcel.deleteSheet(currentSheetName);
+                index = dataFileExcel.deleteSheet(currentSheetName);
                 return index >= 0;
             }
 
@@ -236,7 +241,7 @@ public class DataFileExcelSheetsController extends BaseChildController {
     /*
         static methods
      */
-    public static DataFileExcelSheetsController open(DataFileExcelController parent) {
+    public static DataFileExcelSheetsController open(BaseData2DLoadController parent) {
         try {
             if (parent == null) {
                 return null;

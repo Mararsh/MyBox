@@ -16,10 +16,9 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" spacing="10.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlData2DTarget">
+<VBox fx:id="thisPane" spacing="10.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlData2DTarget">
     <children>
-        <Label text="%Target" />
-      <VBox fx:id="externalBox" spacing="2.0">
+      <VBox spacing="2.0">
          <children>
             <FlowPane alignment="CENTER_LEFT" hgap="5.0" minWidth="-Infinity" prefWrapLength="200.0" vgap="5.0">
                <children>
@@ -127,12 +126,21 @@ License:    Apache License Version 2.0
                   </RadioButton>
                </children>
             </FlowPane>
-            <HBox fx:id="prefixBox" alignment="CENTER_LEFT" spacing="2.0">
+            <VBox fx:id="externalDefBox">
                <children>
-                  <Label text="%Name" />
-                  <TextField fx:id="nameInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                  <HBox alignment="CENTER_LEFT" spacing="2.0">
+                     <children>
+                        <Label text="%DataName" />
+                        <TextField fx:id="nameInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                     </children>
+                  </HBox>
+                  <VBox fx:id="fileBox">
+                     <children>
+                        <fx:include fx:id="targetFile" source="ControlTargetFile.fxml" />
+                     </children>
+                  </VBox>
                </children>
-            </HBox>
+            </VBox>
          </children>
       </VBox>
     </children>

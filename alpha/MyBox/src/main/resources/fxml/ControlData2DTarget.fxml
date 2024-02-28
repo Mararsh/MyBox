@@ -17,9 +17,9 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" minHeight="-Infinity" spacing="10.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlData2DTarget">
+<VBox fx:id="thisPane" minHeight="-Infinity" spacing="10.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlData2DTarget">
     <children>
-        <Label text="%Target" />
+        <Label text="%Outputs" />
       <VBox fx:id="externalBox" spacing="2.0">
          <children>
               <FlowPane alignment="CENTER_LEFT" hgap="5.0" minWidth="-Infinity" prefWrapLength="500.0" vgap="5.0">
@@ -129,13 +129,30 @@ License:    Apache License Version 2.0
                   </RadioButton>
                   </children>
               </FlowPane>
-            <HBox fx:id="prefixBox" alignment="CENTER_LEFT" spacing="2.0">
+            <VBox fx:id="externalDefBox">
                <children>
-                  <Label text="%External" visible="false" />
-                  <Label text="%Name" />
-                  <TextField fx:id="nameInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                  <HBox alignment="CENTER_LEFT" spacing="2.0">
+                     <children>
+                        <Label text="%External" visible="false" />
+                        <VBox fx:id="externalDefBox" spacing="2.0">
+                           <children>
+                              <HBox alignment="CENTER_LEFT" spacing="2.0">
+                                 <children>
+                                    <Label minHeight="-Infinity" text="%DataName" wrapText="true" />
+                                    <TextField fx:id="nameInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                 </children>
+                              </HBox>
+                              <VBox fx:id="fileBox">
+                                 <children>
+                                    <fx:include fx:id="targetFile" source="ControlTargetFile.fxml" />
+                                 </children>
+                              </VBox>
+                           </children>
+                        </VBox>
+                     </children>
+                  </HBox>
                </children>
-            </HBox>
+            </VBox>
          </children>
       </VBox>
         <VBox fx:id="inTableBox" spacing="2.0">
@@ -153,13 +170,13 @@ License:    Apache License Version 2.0
                   <Label text="%InTable" visible="false" />
                   <VBox maxWidth="1.7976931348623157E308" spacing="2.0" HBox.hgrow="ALWAYS">
                      <children>
-                        <HBox fx:id="prefixBox2" alignment="CENTER_LEFT" spacing="2.0">
+                        <HBox alignment="CENTER_LEFT" spacing="2.0">
                            <children>
                                     <Label minWidth="-Infinity" text="%TableRow" wrapText="true" />
                                     <ComboBox fx:id="rowSelector" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                            </children>
                         </HBox>
-                        <HBox fx:id="prefixBox21" alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" spacing="2.0">
+                        <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" spacing="2.0">
                            <children>
                                     <Label minWidth="-Infinity" text="%Column" />
                                     <ComboBox fx:id="colSelector" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />

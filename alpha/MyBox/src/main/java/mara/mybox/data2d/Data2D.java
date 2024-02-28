@@ -1,5 +1,9 @@
 package mara.mybox.data2d;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileDeleteTools;
@@ -27,41 +31,73 @@ public abstract class Data2D extends Data2D_Operations {
         }
     }
 
-    public String info() {
-        String info = message("Type") + ": " + message(dataType.name());
+    public String pageInfo() {
+        StringTable infoTable = new StringTable();
+        List<String> row = new ArrayList<>();
+        row.addAll(Arrays.asList(message("Type"), message(dataType.name())));
+        infoTable.add(row);
         if (file != null) {
-            info = message("File") + ": " + file + "\n"
-                    + message("FileSize") + ": " + FileTools.showFileSize(file.length()) + "\n"
-                    + message("FileModifyTime") + ": " + DateTools.datetimeToString(file.lastModified()) + "\n";
+            row = new ArrayList<>();
+            row.addAll(Arrays.asList(message("File"), file.getAbsolutePath()));
+            infoTable.add(row);
+            row = new ArrayList<>();
+            row.addAll(Arrays.asList(message("FileSize"), FileTools.showFileSize(file.length()) + ""));
+            infoTable.add(row);
+            row = new ArrayList<>();
+            row.addAll(Arrays.asList(message("FileModifyTime"), DateTools.datetimeToString(file.lastModified())));
+            infoTable.add(row);
             if (isExcel()) {
                 DataFileExcel e = (DataFileExcel) this;
-                info += message("CurrentSheet") + ": " + (sheet == null ? "" : sheet)
-                        + (e.getSheetNames() == null ? "" : " / " + e.getSheetNames().size()) + "\n";
+                row = new ArrayList<>();
+                row.addAll(Arrays.asList(message("CurrentSheet"), (sheet == null ? "" : sheet)
+                        + (e.getSheetNames() == null ? "" : " / " + e.getSheetNames().size())));
+                infoTable.add(row);
             } else {
-                info += message("Charset") + ": " + charset + "\n"
-                        + message("Delimiter") + ": " + TextTools.delimiterMessage(delimiter) + "\n";
+                row = new ArrayList<>();
+                row.addAll(Arrays.asList(message("Charset"), charset.name()));
+                infoTable.add(row);
+                row = new ArrayList<>();
+                row.addAll(Arrays.asList(message("Delimiter"), TextTools.delimiterMessage(delimiter)));
+                infoTable.add(row);
             }
-            info += message("FirstLineAsNames") + ": " + (hasHeader ? message("Yes") : message("No")) + "\n";
+            row = new ArrayList<>();
+            row.addAll(Arrays.asList(message("FirstLineAsNames"), (hasHeader ? message("Yes") : message("No"))));
+            infoTable.add(row);
         }
         int tableRowsNumber = tableRowsNumber();
         if (isMutiplePages()) {
-            info += message("RowsNumberInFile") + ": " + dataSize + "\n";
+            row = new ArrayList<>();
+            row.addAll(Arrays.asList(message("RowsNumberInFile"), dataSize + ""));
+            infoTable.add(row);
         } else {
-            info += message("RowsNumber") + ": " + tableRowsNumber + "\n";
+            row = new ArrayList<>();
+            row.addAll(Arrays.asList(message("RowsNumber"), tableRowsNumber + ""));
+            infoTable.add(row);
         }
-        info += message("ColumnsNumber") + ": " + columnsNumber() + "\n"
-                + message("CurrentPage") + ": " + StringTools.format(currentPage + 1)
-                + " / " + StringTools.format(pagesNumber) + "\n";
+        row = new ArrayList<>();
+        row.addAll(Arrays.asList(message("ColumnsNumber"), columnsNumber() + ""));
+        infoTable.add(row);
+        row = new ArrayList<>();
+        row.addAll(Arrays.asList(message("CurrentPage"), StringTools.format(currentPage + 1)
+                + " / " + StringTools.format(pagesNumber)));
+        infoTable.add(row);
         if (isMutiplePages() && hasData()) {
-            info += message("RowsRangeInPage")
-                    + ": " + StringTools.format(startRowOfCurrentPage + 1) + " - "
+            row = new ArrayList<>();
+            row.addAll(Arrays.asList(message("RowsRangeInPage"),
+                    StringTools.format(startRowOfCurrentPage + 1) + " - "
                     + StringTools.format(startRowOfCurrentPage + tableRowsNumber)
-                    + " ( " + StringTools.format(tableRowsNumber) + " )\n";
+                    + " ( " + StringTools.format(tableRowsNumber) + " )"));
+            infoTable.add(row);
         }
-        info += message("PageModifyTime") + ": " + DateTools.nowString();
-        return info;
+        row = new ArrayList<>();
+        row.addAll(Arrays.asList(message("PageModifyTime"), DateTools.nowString()));
+        infoTable.add(row);
+        return infoTable.div();
     }
 
+    public String dataInfo() {
+        return pageInfo() + "<BR>" + Data2DTools.definitionToHtml(this);
+    }
 
     /*
         static

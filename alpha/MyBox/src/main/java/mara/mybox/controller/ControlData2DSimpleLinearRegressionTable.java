@@ -97,14 +97,6 @@ public class ControlData2DSimpleLinearRegressionTable extends ControlData2DView 
     }
 
     @Override
-    public void tableChanged(boolean changed) {
-        if (isSettingValues) {
-            return;
-        }
-        checkSelected();
-    }
-
-    @Override
     protected void checkButtons() {
         super.checkButtons();
         if (regressController == null) {

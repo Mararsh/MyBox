@@ -28,13 +28,13 @@ import mara.mybox.controller.Data2DFrequencyController;
 import mara.mybox.controller.Data2DGroupController;
 import mara.mybox.controller.Data2DGroupStatisticController;
 import mara.mybox.controller.Data2DLocationDistributionController;
+import mara.mybox.controller.Data2DManufactureController;
 import mara.mybox.controller.Data2DMultipleLinearRegressionCombinationController;
 import mara.mybox.controller.Data2DMultipleLinearRegressionController;
 import mara.mybox.controller.Data2DNormalizeController;
-import mara.mybox.controller.Data2DPageCSV;
-import mara.mybox.controller.Data2DPageHtml;
 import mara.mybox.controller.Data2DPercentageController;
 import mara.mybox.controller.Data2DRowExpressionController;
+import mara.mybox.controller.Data2DSaveAsController;
 import mara.mybox.controller.Data2DSetStylesController;
 import mara.mybox.controller.Data2DSetValuesController;
 import mara.mybox.controller.Data2DSimpleLinearRegressionCombinationController;
@@ -58,69 +58,88 @@ import mara.mybox.value.UserConfig;
  */
 public class Data2DMenuTools {
 
-    public static List<MenuItem> dataMenus(BaseData2DLoadController dataController) {
+    public static List<MenuItem> dataMenus(Data2DManufactureController dataController) {
         try {
-            List<MenuItem> items = new ArrayList<>();
             Data2D data2D = dataController.getData2D();
-            boolean invalidData = data2D == null || !data2D.isValid();
-            boolean isTmpData = data2D != null && data2D.isTmpData();
-            boolean empty = invalidData || dataController.getTableData().isEmpty();
+            if (data2D == null || !data2D.isValid()) {
+                return null;
+            }
+            List<MenuItem> items = new ArrayList<>();
+            boolean tableMode = dataController.isTableMode();
+            boolean isTmpData = data2D.isTmpData();
+            boolean empty = !data2D.hasData();
+            boolean notLoaded = !dataController.isDataSizeLoaded();
+            boolean isFile = data2D.isDataFile() && data2D.getFile() != null;
 
-            MenuItem menu = new MenuItem(message("DataDefinition"), StyleTools.getIconImageView("iconMeta.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                Data2DAttributes.open(dataController);
+            MenuItem menu = new MenuItem(message("Information") + "    Ctrl+I " + message("Or") + " Alt+I",
+                    StyleTools.getIconImageView("iconInfo.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                dataController.infoAction();
             });
-            menu.setDisable(invalidData || !dataController.isDataSizeLoaded());
             items.add(menu);
 
             items.add(new SeparatorMenuItem());
 
-            menu = new MenuItem(message("Save"), StyleTools.getIconImageView("iconSave.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                dataController.saveAction();
-            });
-            menu.setDisable(invalidData || !dataController.isDataSizeLoaded());
-            items.add(menu);
+            if (tableMode) {
+                menu = new MenuItem(message("DataDefinition"), StyleTools.getIconImageView("iconMeta.png"));
+                menu.setOnAction((ActionEvent event) -> {
+                    Data2DAttributes.open(dataController);
+                });
+                menu.setDisable(notLoaded);
+                items.add(menu);
 
-            items.add(new SeparatorMenuItem());
+                menu = new MenuItem(message("Save") + "    Ctrl+S " + message("Or") + " Alt+S",
+                        StyleTools.getIconImageView("iconSave.png"));
+                menu.setOnAction((ActionEvent event) -> {
+                    dataController.saveAction();
+                });
+                menu.setDisable(notLoaded);
+                items.add(menu);
 
-            menu = new MenuItem(message("Recover"), StyleTools.getIconImageView("iconRecover.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                dataController.recoverAction();
-            });
-            menu.setDisable(invalidData || isTmpData);
-            items.add(menu);
+                items.add(new SeparatorMenuItem());
+
+                menu = new MenuItem(message("Recover") + "    Ctrl+R " + message("Or") + " Alt+R",
+                        StyleTools.getIconImageView("iconRecover.png"));
+                menu.setOnAction((ActionEvent event) -> {
+                    dataController.recoverAction();
+                });
+                menu.setDisable(isTmpData);
+                items.add(menu);
+            }
 
             menu = new MenuItem(message("Refresh"), StyleTools.getIconImageView("iconRefresh.png"));
             menu.setOnAction((ActionEvent event) -> {
                 dataController.refreshAction();
             });
-            menu.setDisable(invalidData || isTmpData);
+            menu.setDisable(isTmpData);
             items.add(menu);
 
-            items.add(new SeparatorMenuItem());
+            if (isFile) {
+                CheckMenuItem backItem = new CheckMenuItem(message("BackupWhenSave"));
+                backItem.setSelected(UserConfig.getBoolean(dataController.getBaseName() + "BackupWhenSave", true));
+                backItem.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        UserConfig.setBoolean(dataController.getBaseName() + "BackupWhenSave", backItem.isSelected());
+                    }
+                });
+                items.add(backItem);
 
-            if (data2D != null && data2D.isDataFile()) {
-                menu = new MenuItem(message("Open"), StyleTools.getIconImageView("iconSelectFile.png"));
-                menu.setOnAction((ActionEvent event) -> {
-                    dataController.selectSourceFile();
+                menu = new MenuItem(message("FileBackups"), StyleTools.getIconImageView("iconBackup.png"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    dataController.openBackups();
                 });
                 items.add(menu);
             }
 
-            menu = new MenuItem(message("CreateData"), StyleTools.getIconImageView("iconAdd.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                dataController.createAction();
-            });
-            items.add(menu);
-
-            menu = new MenuItem(message("LoadContentInSystemClipboard"), StyleTools.getIconImageView("iconImageSystem.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                dataController.loadContentInSystemClipboard();
-            });
-            items.add(menu);
-
             items.add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("SaveAs") + "    Ctrl+B " + message("Or") + " Alt+B",
+                    StyleTools.getIconImageView("iconSaveAs.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                Data2DSaveAsController.open(dataController);
+            });
+            items.add(menu);
 
             menu = new MenuItem(message("Export"), StyleTools.getIconImageView("iconExport.png"));
             menu.setOnAction((ActionEvent event) -> {
@@ -133,15 +152,23 @@ public class Data2DMenuTools {
             menu.setOnAction((ActionEvent event) -> {
                 Data2DConvertToDataBaseController.open(dataController);
             });
-            menu.setDisable(invalidData);
             items.add(menu);
 
-            menu = new MenuItem(message("Snapshot"), StyleTools.getIconImageView("iconSnapshot.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                dataController.snapAction();
-            });
-            menu.setDisable(invalidData);
-            items.add(menu);
+            if ((data2D.isTexts() || data2D.isCSV()) && data2D.getFile() != null) {
+                menu = new MenuItem(message("Texts"), StyleTools.getIconImageView("iconTxt.png"));
+                menu.setOnAction((ActionEvent event) -> {
+                    dataController.editTextFile();
+                });
+                items.add(menu);
+            }
+
+            if (tableMode) {
+                menu = new MenuItem(message("Snapshot"), StyleTools.getIconImageView("iconSnapshot.png"));
+                menu.setOnAction((ActionEvent event) -> {
+                    dataController.snapAction();
+                });
+                items.add(menu);
+            }
 
             return items;
         } catch (Exception e) {
@@ -315,22 +342,6 @@ public class Data2DMenuTools {
             Data2D data2D = controller.getData2D();
             boolean invalidData = data2D == null || !data2D.isValid();
             boolean empty = invalidData || controller.getTableData().isEmpty();
-
-            menu = new MenuItem(message("ViewPageDataInHtml"), StyleTools.getIconImageView("iconHtml.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                Data2DPageHtml.open(controller);
-            });
-            menu.setDisable(empty);
-            items.add(menu);
-
-            menu = new MenuItem(message("ViewPageDataInCSV"), StyleTools.getIconImageView("iconCSV.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                Data2DPageCSV.open(controller);
-            });
-            menu.setDisable(empty);
-            items.add(menu);
-
-            items.add(new SeparatorMenuItem());
 
             if (data2D != null && data2D.isTable()) {
                 menu = new MenuItem(message("Query"), StyleTools.getIconImageView("iconQuery.png"));
@@ -642,10 +653,9 @@ public class Data2DMenuTools {
         opMenu.getItems().addAll(operateMenus(controller));
         items.add(opMenu);
 
-        Menu dataMenu = new Menu(message("Data"), StyleTools.getIconImageView("iconData.png"));
-        dataMenu.getItems().addAll(dataMenus(controller));
-        items.add(dataMenu);
-
+//        Menu dataMenu = new Menu(message("Data"), StyleTools.getIconImageView("iconData.png"));
+//        dataMenu.getItems().addAll(dataMenus(controller));
+//        items.add(dataMenu);
         items.add(new SeparatorMenuItem());
 
         Menu trimMenu = new Menu(message("Trim"), StyleTools.getIconImageView("iconTrim.png"));

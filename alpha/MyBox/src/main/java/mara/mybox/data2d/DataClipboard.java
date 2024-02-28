@@ -38,25 +38,26 @@ public class DataClipboard extends DataFileCSV {
         return new File(AppPaths.getDataClipboardPath() + File.separator + DateTools.nowFileString() + ".csv");
     }
 
-    public static DataClipboard create(FxTask task, String dname,
+    public static DataClipboard create(FxTask task, String clipName,
             List<Data2DColumn> cols, List<List<String>> data) {
         if (cols == null || data == null || data.isEmpty()) {
             return null;
         }
-        DataFileCSV csvData = DataFileCSV.save(dname, task, ",", cols, data);
+        DataFileCSV csvData = DataFileCSV.save(task, null, clipName, ",", cols, data);
         if (csvData == null) {
             return null;
         }
         File dFile = newFile();
         if (FileTools.override(csvData.getFile(), dFile, true)) {
-            return create(task, csvData, dFile);
+            return create(task, csvData, clipName, dFile);
         } else {
             MyBoxLog.error("Failed");
             return null;
         }
     }
 
-    public static DataClipboard create(FxTask task, Data2D sourceData, File dFile) {
+    public static DataClipboard create(FxTask task, Data2D sourceData,
+            String clipName, File dFile) {
         if (dFile == null || sourceData == null) {
             return null;
         }
@@ -67,7 +68,6 @@ public class DataClipboard extends DataFileCSV {
             d.setCharset(Charset.forName("UTF-8"));
             d.setDelimiter(",");
             List<Data2DColumn> cols = sourceData.getColumns();
-            String name = sourceData.getDataName();
             long rowsNumber = sourceData.getRowsNumber();
             long colsNumber = sourceData.getColsNumber();
             d.setHasHeader(cols != null && !cols.isEmpty());
@@ -75,8 +75,11 @@ public class DataClipboard extends DataFileCSV {
                 d.setColsNumber(colsNumber);
                 d.setRowsNumber(rowsNumber);
             }
-            if (name != null && !name.isBlank()) {
-                d.setDataName(name);
+            String srcName = sourceData.getDataName();
+            if (clipName != null && !clipName.isBlank()) {
+                d.setDataName(clipName);
+            } else if (srcName != null && !srcName.isBlank()) {
+                d.setDataName(srcName);
             } else if (rowsNumber > 0 && colsNumber > 0) {
                 d.setDataName(rowsNumber + "x" + colsNumber);
             } else {

@@ -10,7 +10,6 @@ import javafx.scene.control.MenuItem;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataFileExcel;
-import mara.mybox.data2d.DataTable;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.VisitHistory;
@@ -52,11 +51,6 @@ public class DataFileExcelController extends BaseData2DFileController {
     }
 
     @Override
-    public void pickRefreshOptions() {
-        dataFileExcel.setOptions(UserConfig.getBoolean(baseName + "SourceWithNames", true));
-    }
-
-    @Override
     public Data2D saveAsTarget() {
         File file = chooseSaveFile(dataFileExcel.dataName());
         if (file == null) {
@@ -86,7 +80,7 @@ public class DataFileExcelController extends BaseData2DFileController {
             return;
         }
         dataFileExcel.initFile(file);
-        dataFileExcel.setOptions(withName);
+//        dataFileExcel.setOptions(withName);
         readDefinition();
     }
 
@@ -173,15 +167,7 @@ public class DataFileExcelController extends BaseData2DFileController {
     public static DataFileExcelController loadCSV(DataFileCSV csvData) {
         DataFileExcelController controller = (DataFileExcelController) WindowTools.openStage(Fxmls.DataFileExcelFxml);
         if (controller != null) {
-            controller.loadCSVData(csvData);
-        }
-        return controller;
-    }
-
-    public static DataFileExcelController loadTable(DataTable dataTable) {
-        DataFileExcelController controller = (DataFileExcelController) WindowTools.openStage(Fxmls.DataFileExcelFxml);
-        if (controller != null) {
-            controller.loadTableData(dataTable);
+            controller.createData(csvData, Data2DDefinition.DataType.Excel, null, null);
         }
         return controller;
     }

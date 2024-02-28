@@ -69,7 +69,10 @@ public class Data2DExportTask extends BaseTaskController {
             task.cancel();
             task = null;
         }
-        exportController.convertController.closeWriters();
+        if (exportController.export != null) {
+            exportController.export.closeWriters();
+            exportController.export = null;
+        }
     }
 
     @Override

@@ -18,11 +18,11 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlTargetFile">
+<VBox fx:id="thisPane" minHeight="-Infinity" spacing="2.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlTargetFile">
     <children>
         <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" spacing="2.0">
             <children>
-                <Label fx:id="label" text="%TargetFile" />
+                <Label fx:id="label" minHeight="-Infinity" text="%TargetFile" wrapText="true" />
                 <TextField fx:id="fileInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                 <Button fx:id="selectFileButton" mnemonicParsing="false" onAction="#pickRecentFiles" onMouseEntered="#popRecentFiles">
                     <graphic>
@@ -35,16 +35,16 @@ License:    Apache License Version 2.0
                 </Button>
             </children>
         </HBox>
-        <CheckBox fx:id="appendTimestampCheck" mnemonicParsing="false" text="%AppendTimestampInFilename" />
+        <CheckBox fx:id="appendTimestampCheck" minHeight="-Infinity" mnemonicParsing="false" text="%AppendTimestampInFilename" wrapText="true" />
         <FlowPane hgap="5.0" prefWrapLength="800.0" vgap="5.0">
             <children>
-                <Label text="%ExistedFiles" />
-                <RadioButton fx:id="targetSkipRadio" mnemonicParsing="false" text="%Skip">
+                <Label minHeight="-Infinity" text="%ExistedFiles" wrapText="true" />
+                <RadioButton fx:id="targetSkipRadio" minHeight="-Infinity" mnemonicParsing="false" text="%Skip" wrapText="true">
                <toggleGroup>
                         <ToggleGroup fx:id="targetExistGroup" />
                </toggleGroup></RadioButton>
-                <RadioButton fx:id="targetReplaceRadio" mnemonicParsing="false" text="%Replace" toggleGroup="$targetExistGroup" />
-                <RadioButton fx:id="targetRenameRadio" mnemonicParsing="false" selected="true" text="%TargetNameAppend" toggleGroup="$targetExistGroup" />
+                <RadioButton fx:id="targetReplaceRadio" minHeight="-Infinity" mnemonicParsing="false" text="%Replace" toggleGroup="$targetExistGroup" wrapText="true" />
+                <RadioButton fx:id="targetRenameRadio" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%TargetNameAppend" toggleGroup="$targetExistGroup" wrapText="true" />
                 <TextField fx:id="targetAppendInput" prefWidth="70.0" text="-m" />
             </children>
         </FlowPane>

@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.io.File;
 import javafx.fxml.FXML;
 import javafx.scene.layout.VBox;
+import mara.mybox.data2d.reader.Data2DExport;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.value.Languages;
@@ -14,6 +15,7 @@ import mara.mybox.value.Languages;
  */
 public abstract class BaseDataConvertController extends BaseBatchFileController {
 
+    protected Data2DExport export;
     protected boolean skip;
 
     @FXML
@@ -38,7 +40,8 @@ public abstract class BaseDataConvertController extends BaseBatchFileController 
 
     @Override
     public boolean makeMoreParameters() {
-        if (!convertController.initParameters()) {
+        export = convertController.pickParameters(null);
+        if (export == null) {
             return false;
         }
         skip = targetPathController.isSkip();

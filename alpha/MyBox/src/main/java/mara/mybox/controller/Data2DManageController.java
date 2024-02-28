@@ -3,9 +3,7 @@ package mara.mybox.controller;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.stage.Window;
-import mara.mybox.data2d.Data2D;
 import mara.mybox.db.data.Data2DDefinition;
-import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -20,16 +18,6 @@ public class Data2DManageController extends BaseData2DListController {
     public Data2DManageController() {
         baseTitle = message("ManageData");
         TipsLabelKey = "DataManageTips";
-    }
-
-    @Override
-    public void setConditions() {
-        try {
-            queryConditions = " data_type != " + Data2D.type(Data2DDefinition.DataType.InternalTable);
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
     }
 
     /*

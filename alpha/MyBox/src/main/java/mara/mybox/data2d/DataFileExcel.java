@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.sql.Connection;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import mara.mybox.data2d.reader.Data2DReadDefinition;
@@ -56,11 +55,6 @@ public class DataFileExcel extends DataFile {
     public void resetData() {
         super.resetData();
         sheetNames = null;
-    }
-
-    public void setOptions(boolean hasHeader) {
-        options = new HashMap<>();
-        options.put("hasHeader", hasHeader);
     }
 
     @Override

@@ -9,9 +9,7 @@ import mara.mybox.calculation.DescriptiveStatistic.StatisticType;
 import mara.mybox.calculation.DoubleStatistic;
 import mara.mybox.calculation.Normalization;
 import mara.mybox.calculation.SimpleLinearRegression;
-import mara.mybox.controller.ControlDataConvert;
 import mara.mybox.data2d.reader.Data2DCopy;
-import mara.mybox.data2d.reader.Data2DExport;
 import mara.mybox.data2d.reader.Data2DFrequency;
 import mara.mybox.data2d.reader.Data2DNormalize;
 import mara.mybox.data2d.reader.Data2DOperator;
@@ -27,8 +25,10 @@ import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.DoubleTools;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.NumberTools;
 import mara.mybox.value.AppValues;
 import static mara.mybox.value.Languages.message;
@@ -44,16 +44,6 @@ public abstract class Data2D_Operations extends Data2D_Convert {
 
     public static enum ObjectType {
         Columns, Rows, All
-    }
-
-    public boolean export(ControlDataConvert convertController, List<Integer> cols) {
-        if (convertController == null || cols == null || cols.isEmpty()) {
-            return false;
-        }
-        Data2DOperator reader = Data2DExport.create(this)
-                .setConvertController(convertController)
-                .setCols(cols).setTask(task).start();
-        return reader != null && !reader.failed();
     }
 
     public List<List<String>> allRows(List<Integer> cols, boolean rowNumber) {
@@ -257,15 +247,17 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         return fixColumnNames(targetColumns);
     }
 
-    public DataFileCSV copy(String dname, List<Integer> cols,
+    public DataFileCSV copy(FxTask task, File dfile, String dname, List<Integer> cols,
             boolean includeRowNumber, boolean includeColName, boolean formatValues) {
         if (cols == null || cols.isEmpty()) {
             return null;
         }
-        File csvFile = tmpFile(dname, "copy", "csv");
+        if (dfile == null) {
+            dfile = FileTmpTools.getTempFile(".csv");
+        }
         Data2DOperator reader;
         List<Data2DColumn> targetColumns = targetColumns(cols, null, includeRowNumber, null);
-        try (CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
+        try (CSVPrinter csvPrinter = CsvTools.csvPrinter(dfile)) {
             List<String> names = new ArrayList<>();
             for (Data2DColumn column : targetColumns) {
                 names.add(column.getColumnName());
@@ -285,10 +277,10 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             MyBoxLog.error(e);
             return null;
         }
-        if (reader != null && !reader.failed() && csvFile != null && csvFile.exists()) {
+        if (reader != null && !reader.failed() && dfile != null && dfile.exists()) {
             DataFileCSV targetData = new DataFileCSV();
             targetData.setColumns(targetColumns)
-                    .setFile(csvFile).setDataName(dname)
+                    .setFile(dfile).setDataName(dname)
                     .setCharset(Charset.forName("UTF-8"))
                     .setDelimiter(",").setHasHeader(includeColName)
                     .setColsNumber(targetColumns.size())

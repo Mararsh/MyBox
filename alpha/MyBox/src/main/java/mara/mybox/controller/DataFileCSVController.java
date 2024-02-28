@@ -14,7 +14,6 @@ import javafx.scene.control.MenuItem;
 import mara.mybox.data.StringTable;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataFileCSV;
-import mara.mybox.data2d.DataTable;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.VisitHistory;
@@ -23,7 +22,6 @@ import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.FileTmpTools;
-import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -60,20 +58,6 @@ public class DataFileCSVController extends BaseData2DFileController {
     }
 
     @Override
-    public void pickRefreshOptions() {
-        Charset charset;
-        if (UserConfig.getBoolean(baseName + "SourceAutoDetermine", true)) {
-            charset = TextFileTools.charset(dataFileCSV.getFile());
-        } else {
-            charset = Charset.forName(UserConfig.getString(baseName + "SourceCharset", "utf-8"));
-        }
-        dataFileCSV.setOptions(
-                UserConfig.getBoolean(baseName + "SourceWithNames", true),
-                charset,
-                UserConfig.getString(baseName + "SourceDelimiter", ","));
-    }
-
-    @Override
     public Data2D saveAsTarget() {
         File file = chooseSaveFile(dataFileCSV.dataName());
         if (file == null) {
@@ -92,7 +76,7 @@ public class DataFileCSVController extends BaseData2DFileController {
             return;
         }
         dataFileCSV.initFile(file);
-        dataFileCSV.setOptions(withName, charset, delimiter + "");
+//        dataFileCSV.setOptions(withName, charset, delimiter + "");
         readDefinition();
     }
 
@@ -220,15 +204,7 @@ public class DataFileCSVController extends BaseData2DFileController {
     public static DataFileCSVController loadCSV(DataFileCSV csvData) {
         DataFileCSVController controller = open();
         if (controller != null) {
-            controller.loadCSVData(csvData);
-        }
-        return controller;
-    }
-
-    public static DataFileCSVController loadTable(DataTable dataTable) {
-        DataFileCSVController controller = open();
-        if (controller != null) {
-            controller.loadTableData(dataTable);
+            controller.createData(csvData, Data2DDefinition.DataType.CSV, null, null);
         }
         return controller;
     }

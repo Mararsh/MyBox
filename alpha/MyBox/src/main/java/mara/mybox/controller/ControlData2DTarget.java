@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.application.Platform;
@@ -14,6 +15,7 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import mara.mybox.db.data.Data2DColumn;
+import mara.mybox.db.data.VisitHistory.FileType;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.UserConfig;
 
@@ -38,9 +40,9 @@ public class ControlData2DTarget extends BaseController {
     @FXML
     protected ComboBox<String> rowSelector, colSelector;
     @FXML
-    protected VBox externalBox, inTableBox;
+    protected VBox externalBox, externalDefBox, fileBox, inTableBox;
     @FXML
-    protected HBox prefixBox, locationBox;
+    protected HBox dataNameBox, locationBox;
     @FXML
     protected TextField nameInput;
 
@@ -92,15 +94,31 @@ public class ControlData2DTarget extends BaseController {
             if (!inTableBox.getChildren().contains(locationBox)) {
                 inTableBox.getChildren().add(locationBox);
             }
-            if (externalBox.getChildren().contains(prefixBox)) {
-                externalBox.getChildren().remove(prefixBox);
+            if (externalBox != null) {
+                if (externalBox.getChildren().contains(externalDefBox)) {
+                    externalBox.getChildren().remove(externalDefBox);
+                }
             }
         } else {
             if (inTableBox != null && inTableBox.getChildren().contains(locationBox)) {
                 inTableBox.getChildren().remove(locationBox);
             }
-            if (!externalBox.getChildren().contains(prefixBox)) {
-                externalBox.getChildren().add(prefixBox);
+            if (externalBox != null) {
+                if (externalBox.getChildren().contains(externalDefBox)) {
+                    externalBox.getChildren().remove(externalDefBox);
+                }
+            }
+            if (matrixRadio.isSelected()
+                    || systemClipboardRadio.isSelected()
+                    || myBoxClipboardRadio.isSelected()
+                    || databaseRadio.isSelected()) {
+                if (externalDefBox.getChildren().contains(fileBox)) {
+                    externalDefBox.getChildren().remove(fileBox);
+                }
+            } else {
+                if (!externalDefBox.getChildren().contains(fileBox)) {
+                    externalDefBox.getChildren().add(fileBox);
+                }
             }
         }
     }
@@ -110,10 +128,13 @@ public class ControlData2DTarget extends BaseController {
             target = "csv";
             if (csvRadio.isSelected()) {
                 target = "csv";
+                targetFileController.type(FileType.CSV).initFile();
             } else if (excelRadio.isSelected()) {
                 target = "excel";
+                targetFileController.type(FileType.Excel).initFile();
             } else if (textsRadio.isSelected()) {
                 target = "texts";
+                targetFileController.type(FileType.Text).initFile();
             } else if (matrixRadio.isSelected()) {
                 target = "matrix";
             } else if (systemClipboardRadio.isSelected()) {
@@ -124,12 +145,16 @@ public class ControlData2DTarget extends BaseController {
                 target = "table";
             } else if (jsonRadio.isSelected()) {
                 target = "json";
+                targetFileController.type(FileType.JSON).initFile();
             } else if (xmlRadio.isSelected()) {
                 target = "xml";
+                targetFileController.type(FileType.XML).initFile();
             } else if (htmlRadio.isSelected()) {
                 target = "html";
+                targetFileController.type(FileType.Html).initFile();
             } else if (pdfRadio.isSelected()) {
                 target = "pdf";
+                targetFileController.type(FileType.PDF).initFile();
             } else if (inTableBox != null) {
                 if (replaceRadio.isSelected()) {
                     if (!notInTable) {
@@ -301,6 +326,10 @@ public class ControlData2DTarget extends BaseController {
 
     public String name() {
         return nameInput.getText().trim();
+    }
+
+    public File file() {
+        return targetFileController.file();
     }
 
     public int row() {

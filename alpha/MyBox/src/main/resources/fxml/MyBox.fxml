@@ -21,7 +21,7 @@ License:    Apache License Version 2.0
     <top>
         <HBox id="MyBoxMenuBar" alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseEntered="#hideMenu" stylesheets="@../styles/MyBox.css" BorderPane.alignment="CENTER_LEFT">
             <children>
-                <ImageView fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
+                <ImageView fitHeight="80.0" fitWidth="80.0" pickOnBounds="true" preserveRatio="true">
                     <image>
                         <Image url="@../img/MyBox.png" />
                     </image>
@@ -31,7 +31,6 @@ License:    Apache License Version 2.0
                         <Font size="18.0" />
                     </font>
                 </Label>
-                <Hyperlink maxWidth="1.7976931348623157E308" minHeight="-Infinity" onAction="#stories" text="%StoriesOfImages" wrapText="true" />
             </children>
             <padding>
                 <Insets left="5.0" right="5.0" />

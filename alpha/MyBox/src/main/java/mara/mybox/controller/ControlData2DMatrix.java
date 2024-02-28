@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import javafx.fxml.FXML;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataMatrix;
 import mara.mybox.dev.MyBoxLog;
@@ -25,12 +24,6 @@ public class ControlData2DMatrix extends BaseData2DSourceController {
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
-    }
-
-    @FXML
-    @Override
-    public void selectAction() {
-        Data2DManageController.oneOpen();
     }
 
 }

@@ -5,7 +5,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
-import mara.mybox.controller.ControlDataConvert;
 import mara.mybox.data.SetValue;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DCell;
@@ -94,7 +93,7 @@ public class DataMatrix extends Data2D {
         List<List<String>> rows = new ArrayList<>();
         if (d2did >= 0 && rowsNumber > 0 && colsNumber > 0) {
             double[][] matrix = new double[(int) rowsNumber][(int) colsNumber];
-            try ( PreparedStatement query = conn.prepareStatement(TableData2DCell.QueryData)) {
+            try (PreparedStatement query = conn.prepareStatement(TableData2DCell.QueryData)) {
                 query.setLong(1, d2did);
                 ResultSet results = query.executeQuery();
                 while (results.next()) {
@@ -124,11 +123,6 @@ public class DataMatrix extends Data2D {
             return false;
         }
         return save(null, (DataMatrix) targetData, columns, tableRows(false));
-    }
-
-    @Override
-    public boolean export(ControlDataConvert convertController, List<Integer> colIndices) {
-        return false;
     }
 
     public boolean isSquare() {
@@ -196,8 +190,8 @@ public class DataMatrix extends Data2D {
     @Override
     public long clearData() {
         long count = -1;
-        try ( Connection conn = DerbyBase.getConnection();
-                 PreparedStatement clear = conn.prepareStatement(TableData2DCell.ClearData)) {
+        try (Connection conn = DerbyBase.getConnection();
+                PreparedStatement clear = conn.prepareStatement(TableData2DCell.ClearData)) {
             clear.setLong(1, d2did);
             count = clear.executeUpdate();
 
@@ -214,7 +208,7 @@ public class DataMatrix extends Data2D {
             return false;
         }
         TableData2DCell tableData2DCell = matrix.tableData2DCell;
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             matrix.setColsNumber(cols.size());
             matrix.setRowsNumber(rows.size());
             Data2D.saveAttributes(conn, matrix, cols);
@@ -222,7 +216,7 @@ public class DataMatrix extends Data2D {
             if (did < 0) {
                 return false;
             }
-            try ( PreparedStatement clear = conn.prepareStatement(TableData2DCell.ClearData)) {
+            try (PreparedStatement clear = conn.prepareStatement(TableData2DCell.ClearData)) {
                 clear.setLong(1, did);
                 clear.executeUpdate();
             } catch (Exception e) {

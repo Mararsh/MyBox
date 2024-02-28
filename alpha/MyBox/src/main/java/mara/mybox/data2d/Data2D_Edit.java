@@ -196,12 +196,12 @@ public abstract class Data2D_Edit extends Data2D_Filter {
             return null;
         }
         reader.setTask(task).start();
-        pageData = reader.getRows();
-        if (pageData != null) {
-            endRowOfCurrentPage = startRowOfCurrentPage + pageData.size();
+        List<List<String>> rows = reader.getRows();
+        if (rows != null) {
+            endRowOfCurrentPage = startRowOfCurrentPage + rows.size();
         }
         readPageStyles(conn);
-        return pageData;
+        return rows;
     }
 
     public void readPageStyles(Connection conn) {
@@ -383,7 +383,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
 
     public static boolean saveAttributes(Data2D source, Data2D target) {
         try (Connection conn = DerbyBase.getConnection()) {
-            target.cloneAttributes(source);
+            target.clonePageAttributes(source);
             if (!saveAttributes(conn, target, source.getColumns())) {
                 return false;
             }

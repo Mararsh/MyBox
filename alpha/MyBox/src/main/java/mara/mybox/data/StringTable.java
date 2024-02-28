@@ -16,7 +16,7 @@ import static mara.mybox.value.Languages.message;
  */
 public class StringTable {
 
-    protected String title, style = HtmlStyles.DefaultStyle, comments;
+    protected String title, style = HtmlStyles.TableStyle, comments;
     protected List<List<String>> data;
     protected List<String> names;
     protected static String indent = "    ";

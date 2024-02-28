@@ -56,18 +56,18 @@ public class DataFileExcelConvertController extends BaseDataConvertController {
                         names = new ArrayList<>();
                         if (withNamesCheck.isSelected()) {
                             names.addAll(rowData);
-                            convertController.setParameters(targetPath, names, filePrefix(srcFile), skip);
+                            export.initFiles(targetPath, names, filePrefix(srcFile), skip);
                             continue;
                         } else {
                             for (int c = 1; c <= rowData.size(); c++) {
                                 names.add(message("Column") + c);
                             }
-                            convertController.setParameters(targetPath, names, filePrefix(srcFile), skip);
+                            export.initFiles(targetPath, names, filePrefix(srcFile), skip);
                         }
                     }
-                    convertController.writeRow(rowData);
+                    export.writeRow(rowData);
                 }
-                convertController.closeWriters();
+                export.closeWriters();
             }
             result = message("Handled");
         } catch (Exception e) {

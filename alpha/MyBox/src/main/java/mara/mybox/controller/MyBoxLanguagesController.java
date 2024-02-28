@@ -30,8 +30,8 @@ import javafx.util.Callback;
 import javafx.util.converter.DefaultStringConverter;
 import mara.mybox.controller.MyBoxLanguagesController.LanguageItem;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
 import mara.mybox.fxml.style.NodeStyleTools;
@@ -152,14 +152,14 @@ public class MyBoxLanguagesController extends BaseTableViewController<LanguageIt
                 return;
             }
         }
-        String name = PopTools.askValue(getTitle(), message("InputLangaugeComments"),
-                message("InputLangaugeName"), null);
+        String name = PopTools.askValue(getTitle(), message("InputLanguageComments"),
+                message("InputLanguageName"), null);
         if (name == null || name.isBlank()) {
             return;
         }
         if ("en".equalsIgnoreCase(name) || "zh".equalsIgnoreCase(name)
                 || name.startsWith("en_") || name.startsWith("zh_")) {
-            popError(message("InputLangaugeComments"));
+            popError(message("InputLanguageComments"));
             return;
         }
         langName = name.trim();

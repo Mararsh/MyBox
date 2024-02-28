@@ -15,7 +15,6 @@ import mara.mybox.controller.BaseController;
 import mara.mybox.controller.Data2DManufactureController;
 import mara.mybox.controller.Data2DTargetExportController;
 import mara.mybox.controller.DataInMyBoxClipboardController;
-import mara.mybox.controller.MatricesManageController;
 import mara.mybox.data2d.reader.Data2DOperator;
 import mara.mybox.data2d.reader.Data2DSingleColumn;
 import mara.mybox.data2d.reader.Data2DWriteTable;
@@ -55,6 +54,9 @@ public abstract class Data2D_Convert extends Data2D_Edit {
         to/from database table
      */
     public DataTable toTable(FxTask task, String targetName) {
+        if (targetName == null || targetName.isBlank()) {
+            return null;
+        }
         DataTable dataTable = null;
         try (Connection conn = DerbyBase.getConnection()) {
             String tableName = DerbyBase.fixedIdentifier(targetName);
@@ -86,7 +88,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
             if (dataTable == null) {
                 return null;
             }
-            dataTable.cloneDefinitionAttributes(this);
+            dataTable.cloneDataAttributes(this);
             dataTable.setDataName(targetName);
             return dataTable;
         } catch (Exception e) {
@@ -155,7 +157,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
             referColumns.add(new Data2DColumn("data", ColumnDefinition.ColumnType.Double));
             DataTable dataTable = createTable(task, conn, TmpTable.tmpTableName(), referColumns, null, comments, null, true);
             dataTable.setDataName(dataName());
-            dataTable.cloneDefinitionAttributes(this);
+            dataTable.cloneDataAttributes(this);
             if (cols == null || cols.isEmpty()) {
                 cols = new ArrayList<>();
                 for (int i = 0; i < columns.size(); i++) {
@@ -463,7 +465,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
             return null;
         }
         DataMatrix matrix = new DataMatrix();
-        matrix.cloneDefinitionAttributes(dataTable);
+        matrix.cloneDataAttributes(dataTable);
         if (DataMatrix.save(task, matrix, dataColumns, rows)) {
             return matrix;
         } else {
@@ -478,7 +480,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
         File clipFile = DataClipboard.newFile();
         DataFileCSV csvData = toCSV(task, dataTable, clipFile, false);
         if (csvData != null && clipFile != null && clipFile.exists()) {
-            return DataClipboard.create(task, csvData, clipFile);
+            return DataClipboard.create(task, csvData, dataTable.getDataName(), clipFile);
         } else {
             return null;
         }
@@ -582,25 +584,37 @@ public abstract class Data2D_Convert extends Data2D_Edit {
         }
     }
 
-    public static void openDataTable(BaseController controller, DataTable dataTable, String target) {
-        if (dataTable == null || target == null) {
-            return;
-        }
-        if ("matrix".equals(target)) {
-            MatricesManageController.loadTable(dataTable);
-        } else if ("systemClipboard".equals(target)) {
-            TextClipboardTools.copyToSystemClipboard(controller, DataTable.toString(null, dataTable));
-        } else if ("myBoxClipboard".equals(target)) {
-            DataInMyBoxClipboardController.loadTable(dataTable);
-        } else if ("table".equals(target)) {
-            Data2DManufactureController.openDef(dataTable);
-        }
-    }
 
     /*  
         to/from CSV
      */
-    public static DataFileExcel toExcel(FxTask task, DataFileCSV csvData) {
+    public static DataFileCSV toCSV(FxTask task, DataFileCSV csvData,
+            String targetName, File targetFile) {
+        if (csvData == null) {
+            return null;
+        }
+        File csvFile = csvData.getFile();
+        if (csvFile == null || !csvFile.exists() || csvFile.length() == 0) {
+            return null;
+        }
+        File tcsvFile = targetFile != null ? targetFile
+                : csvData.tmpFile(csvData.dataName(), null, "csv");
+        if (FileCopyTools.copyFile(csvFile, tcsvFile)) {
+            DataFileCSV targetData = new DataFileCSV();
+            targetData.cloneAttributes(csvData);
+            targetData.setFile(tcsvFile);
+            if (targetName != null) {
+                targetData.setDataName(targetName);
+            }
+            targetData.saveAttributes();
+            return targetData;
+        } else {
+            return null;
+        }
+    }
+
+    public static DataFileExcel toExcel(FxTask task, DataFileCSV csvData,
+            String targetName, File targetFile) {
         if (task == null || csvData == null) {
             return null;
         }
@@ -668,10 +682,20 @@ public abstract class Data2D_Convert extends Data2D_Edit {
         }
         if (excelFile != null && excelFile.exists()) {
             DataFileExcel targetData = new DataFileExcel();
+            targetData.cloneAttributes(csvData);
+            if (targetFile != null) {
+                if (!FileCopyTools.copyFile(excelFile, targetFile)) {
+                    return null;
+                }
+            } else {
+                targetData.setFile(excelFile);
+            }
             targetData.setColumns(csvData.getColumns())
-                    .setFile(excelFile).setSheet(targetSheetName)
-                    .setHasHeader(targetHasHeader)
-                    .cloneDefinitionAttributes(csvData);
+                    .setSheet(targetSheetName)
+                    .setHasHeader(targetHasHeader);
+            if (targetName != null) {
+                targetData.setDataName(targetName);
+            }
             targetData.setColsNumber(tcolsNumber).setRowsNumber(trowsNumber);
             targetData.saveAttributes();
             return targetData;
@@ -680,7 +704,8 @@ public abstract class Data2D_Convert extends Data2D_Edit {
         }
     }
 
-    public static DataFileText toText(DataFileCSV csvData) {
+    public static DataFileText toText(FxTask task, DataFileCSV csvData,
+            String targetName, File targetFile) {
         if (csvData == null) {
             return null;
         }
@@ -688,11 +713,15 @@ public abstract class Data2D_Convert extends Data2D_Edit {
         if (csvFile == null || !csvFile.exists() || csvFile.length() == 0) {
             return null;
         }
-        File txtFile = csvData.tmpFile(csvData.dataName(), null, "txt");
+        File txtFile = targetFile != null ? targetFile
+                : csvData.tmpFile(csvData.dataName(), null, "txt");
         if (FileCopyTools.copyFile(csvFile, txtFile)) {
             DataFileText targetData = new DataFileText();
-            targetData.cloneAll(csvData);
-            targetData.setType(DataType.Texts).setFile(txtFile);
+            targetData.cloneAttributes(csvData);
+            targetData.setFile(txtFile);
+            if (targetName != null) {
+                targetData.setDataName(targetName);
+            }
             targetData.saveAttributes();
             return targetData;
         } else {
@@ -700,20 +729,20 @@ public abstract class Data2D_Convert extends Data2D_Edit {
         }
     }
 
-    public static DataMatrix toMatrix(FxTask task, DataFileCSV csvData) {
-        if (task == null || csvData == null) {
+    public static DataMatrix toMatrix(FxTask task, Data2D sourceData, String targetName) {
+        if (task == null || sourceData == null) {
             return null;
         }
-        File csvFile = csvData.getFile();
+        File csvFile = sourceData.getFile();
         if (csvFile == null || !csvFile.exists() || csvFile.length() == 0) {
             return null;
         }
-        List<List<String>> data = csvData.allRows(false);
-        List<Data2DColumn> cols = csvData.getColumns();
+        List<List<String>> data = sourceData.allRows(false);
+        List<Data2DColumn> cols = sourceData.getColumns();
         if (cols == null || cols.isEmpty()) {
             try (Connection conn = DerbyBase.getConnection()) {
-                csvData.readColumns(conn);
-                cols = csvData.getColumns();
+                sourceData.readColumns(conn);
+                cols = sourceData.getColumns();
                 if (cols == null || cols.isEmpty()) {
                     return null;
                 }
@@ -727,7 +756,10 @@ public abstract class Data2D_Convert extends Data2D_Edit {
             }
         }
         DataMatrix matrix = new DataMatrix();
-        matrix.cloneDefinitionAttributes(csvData);
+        matrix.cloneAttributes(sourceData);
+        if (targetName != null) {
+            matrix.setDataName(targetName);
+        }
         if (DataMatrix.save(task, matrix, cols, data)) {
             return matrix;
         } else {
@@ -735,7 +767,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
         }
     }
 
-    public static DataClipboard toClip(FxTask task, DataFileCSV csvData) {
+    public static DataClipboard toClip(FxTask task, DataFileCSV csvData, String targetName) {
         if (task == null || csvData == null) {
             return null;
         }
@@ -760,32 +792,45 @@ public abstract class Data2D_Convert extends Data2D_Edit {
                 return null;
             }
         }
-        File dFile = DataClipboard.newFile();
-        if (FileCopyTools.copyFile(csvFile, dFile, true, true)) {
-            return DataClipboard.create(task, csvData, dFile);
+        File clipFile = DataClipboard.newFile();
+        if (FileCopyTools.copyFile(csvFile, clipFile, true, true)) {
+            return DataClipboard.create(task, csvData, targetName, clipFile);
         } else {
             return null;
         }
     }
 
-    public static void openCSV(BaseController controller, DataFileCSV csvFile, String target) {
-        if (csvFile == null || target == null) {
+    public static void createData(BaseController controller, DataFileCSV csvFile,
+            String format, String targetName, File targetFile) {
+        if (csvFile == null || format == null) {
             return;
         }
-        if ("csv".equals(target)
-                || "excel".equals(target)
-                || "texts".equals(target)
-                || "table".equals(target)) {
-            Data2DManufactureController.loadCSV(csvFile);
-        } else if ("matrix".equals(target)) {
-            MatricesManageController.loadCSV(csvFile);
-        } else if ("systemClipboard".equals(target)) {
-            TextClipboardTools.copyToSystemClipboard(controller,
-                    TextFileTools.readTexts(null, csvFile.getFile()));
-        } else if ("myBoxClipboard".equals(target)) {
-            DataInMyBoxClipboardController.loadCSV(csvFile);
-        } else {
-            Data2DTargetExportController.open(csvFile, target);
+        switch (format) {
+            case "csv":
+                Data2DManufactureController.loadData(csvFile, DataType.CSV, targetName, targetFile);
+                break;
+            case "excel":
+                Data2DManufactureController.loadData(csvFile, DataType.Excel, targetName, targetFile);
+                break;
+            case "texts":
+                Data2DManufactureController.loadData(csvFile, DataType.Texts, targetName, targetFile);
+                break;
+            case "table":
+                Data2DManufactureController.loadData(csvFile, DataType.DatabaseTable, targetName, targetFile);
+                break;
+            case "matrix":
+                Data2DManufactureController.loadData(csvFile, DataType.Matrix, targetName, targetFile);
+                break;
+            case "systemClipboard":
+                TextClipboardTools.copyToSystemClipboard(controller,
+                        TextFileTools.readTexts(null, csvFile.getFile()));
+                break;
+            case "myBoxClipboard":
+                DataInMyBoxClipboardController.loadData(csvFile, targetName);
+                break;
+            default:
+                Data2DTargetExportController.open(csvFile, targetName);
+                break;
         }
     }
 

@@ -4,7 +4,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.HelpTools;
 import mara.mybox.value.AppValues;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.SystemConfig;
@@ -42,11 +41,6 @@ public class MyBoxController extends MyBoxController_About {
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
-    }
-
-    @FXML
-    public void stories() {
-        HelpTools.imageStories(this);
     }
 
 }

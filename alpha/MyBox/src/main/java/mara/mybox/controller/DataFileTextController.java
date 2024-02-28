@@ -12,14 +12,12 @@ import javafx.stage.Window;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataFileText;
-import mara.mybox.data2d.DataTable;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.StyleTools;
-import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -55,20 +53,6 @@ public class DataFileTextController extends BaseData2DFileController {
     }
 
     @Override
-    public void pickRefreshOptions() {
-        Charset charset;
-        if (UserConfig.getBoolean(baseName + "SourceAutoDetermine", true)) {
-            charset = TextFileTools.charset(dataFileText.getFile());
-        } else {
-            charset = Charset.forName(UserConfig.getString(baseName + "SourceCharset", "utf-8"));
-        }
-        dataFileText.setOptions(
-                UserConfig.getBoolean(baseName + "SourceWithNames", true),
-                charset,
-                UserConfig.getString(baseName + "SourceDelimiter", ","));
-    }
-
-    @Override
     public Data2D saveAsTarget() {
         File file = chooseSaveFile(dataFileText.dataName());
         if (file == null) {
@@ -87,7 +71,7 @@ public class DataFileTextController extends BaseData2DFileController {
             return;
         }
         dataFileText.initFile(file);
-        dataFileText.setOptions(withName, charset, delimiter + "");
+//        dataFileText.setOptions(withName, charset, delimiter + "");
         readDefinition();
     }
 
@@ -157,14 +141,7 @@ public class DataFileTextController extends BaseData2DFileController {
 
     public static DataFileTextController loadCSV(DataFileCSV csvData) {
         DataFileTextController controller = (DataFileTextController) WindowTools.openStage(Fxmls.DataFileTextFxml);
-        controller.loadCSVData(csvData);
-        controller.requestMouse();
-        return controller;
-    }
-
-    public static DataFileTextController loadTable(DataTable dataTable) {
-        DataFileTextController controller = (DataFileTextController) WindowTools.openStage(Fxmls.DataFileTextFxml);
-        controller.loadTableData(dataTable);
+        controller.createData(csvData, Data2DDefinition.DataType.Texts, null, null);
         controller.requestMouse();
         return controller;
     }

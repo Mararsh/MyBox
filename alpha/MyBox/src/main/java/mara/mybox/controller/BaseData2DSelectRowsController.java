@@ -18,7 +18,6 @@ import mara.mybox.data2d.DataFilter;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
-import mara.mybox.fxml.style.NodeStyleTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -27,7 +26,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-10-18
  * @License Apache License Version 2.0
  */
-public class BaseData2DSelectRowsController extends BaseData2DViewController {
+public class BaseData2DSelectRowsController extends BaseData2DLoadController {
 
     protected BaseData2DLoadController tableController;
     protected List<Integer> selectedRowsIndices, filteredRowsIndices, checkedColsIndices, otherColsIndices;
@@ -283,27 +282,6 @@ public class BaseData2DSelectRowsController extends BaseData2DViewController {
 
     }
 
-    @Override
-    protected void showPaginationPane(boolean show) {
-        if (paginationPane == null) {
-            return;
-        }
-        paginationPane.setVisible(show);
-        if (dataBox == null) {
-            return;
-        }
-        if (show) {
-            if (!dataBox.getChildren().contains(paginationPane)) {
-                dataBox.getChildren().add(paginationPane);
-            }
-        } else {
-            if (dataBox.getChildren().contains(paginationPane)) {
-                dataBox.getChildren().remove(paginationPane);
-            }
-        }
-        NodeStyleTools.refreshStyle(dataBox);
-    }
-
     @FXML
     public void selectAllColumns() {
         setColumnsSelected(true);
@@ -391,10 +369,7 @@ public class BaseData2DSelectRowsController extends BaseData2DViewController {
         if (dataBox != null) {
             dataBox.setDisable(data2D == null);
         }
-        if (editButton != null) {
-            editButton.setDisable(data2D == null);
-        }
-        return data2D != null && data2D.isValid();
+        return super.validateData();
     }
 
     /*
@@ -721,7 +696,7 @@ public class BaseData2DSelectRowsController extends BaseData2DViewController {
             }
             List<List<String>> data;
             if (isAllPages()) {
-                DataFileCSV csv = data2D.copy(null, checkedColsIndices,
+                DataFileCSV csv = data2D.copy(null, null, null, checkedColsIndices,
                         false, true, formatValuesCheck != null && formatValuesCheck.isSelected());
                 if (csv == null) {
                     return null;

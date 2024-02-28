@@ -14,6 +14,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.FlowPane;
+import mara.mybox.data2d.reader.Data2DExport;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.BaseData;
 import mara.mybox.db.data.BaseDataAdaptor;
@@ -37,6 +38,7 @@ import mara.mybox.value.UserConfig;
 public class DataExportController extends BaseTaskController {
 
     protected BaseDataManageController dataController;
+    protected Data2DExport export;
     protected BaseTable table;
     protected String currentSQL;
     protected long startTime, dataSize;
@@ -143,7 +145,8 @@ public class DataExportController extends BaseTaskController {
                 queryController.loadList();
             }
         }
-        if (!convertController.initParameters()) {
+        export = convertController.pickParameters(null);
+        if (export == null) {
             tabPane.getSelectionModel().select(formatsTab);
             return false;
         }
@@ -161,7 +164,7 @@ public class DataExportController extends BaseTaskController {
             popError(Languages.message("NoData"));
             return false;
         }
-        convertController.names = names;
+        export.setNames(names);
         return true;
     }
 
@@ -271,7 +274,7 @@ public class DataExportController extends BaseTaskController {
                 try (Connection conn = DerbyBase.getConnection()) {
                     conn.setReadOnly(true);
                     int count = 0;
-                    if (!convertController.setParameters(filePrefix, skip)) {
+                    if (!export.openWriters(filePrefix, skip)) {
                         return false;
                     }
                     try (ResultSet results = conn.createStatement().executeQuery(currentSQL)) {
@@ -295,7 +298,7 @@ public class DataExportController extends BaseTaskController {
                             }
                         }
                     }
-                    convertController.closeWriters();
+                    export.closeWriters();
                 } catch (Exception e) {
                     updateLogs(e.toString());
                     return false;
@@ -317,7 +320,7 @@ public class DataExportController extends BaseTaskController {
                         }
                         row.add(display);
                     }
-                    convertController.writeRow(row);
+                    export.writeRow(row);
                     return true;
                 } catch (Exception e) {
                     updateLogs(e.toString());

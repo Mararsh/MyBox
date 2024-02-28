@@ -2,6 +2,7 @@ package mara.mybox.data2d;
 
 import java.util.List;
 import java.util.Map;
+import javafx.collections.ObservableList;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.Data2DStyle;
@@ -28,7 +29,7 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
     public long currentPage, startRowOfCurrentPage, endRowOfCurrentPage;   // 0-based, excluded end
     public List<Data2DStyle> styles;
     public DataFilter filter;
-    public List<List<String>> pageData;
+    public ObservableList<List<String>> pageData;
     public boolean tableChanged;
     public FxTask task, backgroundTask;
     public String error;
@@ -66,19 +67,29 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
 
     public void cloneAll(Data2D_Attributes d) {
         try {
-            cloneBase(d);
-            cloneAttributes(d);
+            super.cloneBase(d);
+            cloneTaskAttributes(d);
+            clonePageAttributes(d);
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
     }
 
-    public void cloneBase(Data2D_Attributes d) {
+    public void cloneAttributes(Data2D_Attributes d) {
+        try {
+            super.cloneAttributes(d);
+            cloneTaskAttributes(d);
+            clonePageAttributes(d);
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
+    }
+
+    public void cloneTaskAttributes(Data2D_Attributes d) {
         try {
             if (d == null) {
                 return;
             }
-            super.cloneBase(d);
             task = d.task;
             backgroundTask = d.backgroundTask;
             error = d.error;
@@ -88,12 +99,12 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
         }
     }
 
-    public void cloneAttributes(Data2D_Attributes d) {
+    public void clonePageAttributes(Data2D_Attributes d) {
         try {
             if (d == null) {
                 return;
             }
-            cloneDefinitionAttributes(d);
+            cloneDataAttributes(d);
             pageData = d.pageData;
             tableData2DDefinition = d.tableData2DDefinition;
             tableData2DColumn = d.tableData2DColumn;
@@ -210,11 +221,11 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
         return tableChanged;
     }
 
-    public List<List<String>> getPageData() {
+    public ObservableList<List<String>> getPageData() {
         return pageData;
     }
 
-    public void setPageData(List<List<String>> pageData) {
+    public void setPageData(ObservableList<List<String>> pageData) {
         this.pageData = pageData;
     }
 

@@ -5,14 +5,24 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckMenuItem;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.input.Clipboard;
 import mara.mybox.data.StringTable;
 import mara.mybox.data2d.Data2D;
+import mara.mybox.data2d.Data2DExampleTools;
+import mara.mybox.data2d.Data2DMenuTools;
 import mara.mybox.data2d.Data2DTools;
 import mara.mybox.data2d.DataClipboard;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataFileExcel;
+import mara.mybox.data2d.DataFileText;
 import mara.mybox.data2d.DataMatrix;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.data2d.TmpTable;
@@ -30,9 +40,11 @@ import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.TextClipboardTools;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.DoubleMatrixTools;
 import mara.mybox.tools.TextTools;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -255,14 +267,14 @@ public class BaseData2DLoadController extends BaseData2DTableController {
         }
     }
 
-    public void loadCSVData(DataFileCSV csvData) {
-        if (csvData == null || csvData.getFile() == null || !csvData.getFile().exists()) {
+    public void createData(DataFileCSV sourceData, DataType targetType,
+            String targetName, File targetFile) {
+        if (sourceData == null || targetType == null
+                || sourceData.getFile() == null || !sourceData.getFile().exists()) {
             popError("Nonexistent");
             return;
         }
-        if (data2D == null) {
-            data2D = Data2D.create(DataType.CSV);
-        } else if (!checkBeforeNextAction()) {
+        if (!checkBeforeNextAction()) {
             return;
         }
         task = new FxSingletonTask<Void>(this) {
@@ -271,43 +283,46 @@ public class BaseData2DLoadController extends BaseData2DTableController {
             @Override
             protected boolean handle() {
                 try {
-                    switch (data2D.getType()) {
+                    switch (targetType) {
                         case Texts:
-                            targetData = csvData.cloneAll();
-                            targetData.setType(Data2DDefinition.DataType.Texts).setD2did(-1);
-                            targetData.saveAttributes();
-                            recordFileWritten(targetData.getFile(), VisitHistory.FileType.Text);
+                            targetData = DataFileText.toText(this, sourceData, targetName, targetFile);
+                            if (targetData != null) {
+                                recordFileWritten(targetData.getFile(), VisitHistory.FileType.Text);
+                            }
                             break;
                         case CSV:
-                            targetData = csvData;
-                            targetData.saveAttributes();
-                            recordFileWritten(targetData.getFile(), VisitHistory.FileType.CSV);
+                            targetData = DataFileCSV.toCSV(this, sourceData, targetName, targetFile);
+                            if (targetData != null) {
+                                recordFileWritten(targetData.getFile(), VisitHistory.FileType.CSV);
+                            }
                             break;
                         case Excel: {
-                            DataFileExcel excelData = DataFileExcel.toExcel(this, csvData);
-                            if (excelData != null) {
-                                recordFileWritten(excelData.getFile(), VisitHistory.FileType.Excel);
+                            targetData = DataFileExcel.toExcel(this, sourceData, targetName, targetFile);
+                            if (targetData != null) {
+                                recordFileWritten(targetData.getFile(), VisitHistory.FileType.Excel);
                             }
-                            targetData = excelData;
                             break;
                         }
                         case DatabaseTable: {
-                            String name = csvData.dataName();
-                            if (name.startsWith(TmpTable.TmpTablePrefix)
-                                    || name.startsWith(TmpTable.TmpTablePrefix.toLowerCase())) {
-                                name = name.substring(TmpTable.TmpTablePrefix.length());
+                            String name = targetName;
+                            if (name == null || name.isBlank()) {
+                                name = sourceData.dataName();
+                                if (name.startsWith(TmpTable.TmpTablePrefix)
+                                        || name.startsWith(TmpTable.TmpTablePrefix.toLowerCase())) {
+                                    name = name.substring(TmpTable.TmpTablePrefix.length());
+                                }
                             }
-                            DataTable dataTable = csvData.toTable(this, name);
+                            DataTable dataTable = sourceData.toTable(this, name);
                             targetData = dataTable;
                             break;
                         }
                         case MyBoxClipboard: {
-                            DataClipboard clip = DataClipboard.toClip(this, csvData);
+                            DataClipboard clip = DataClipboard.toClip(this, sourceData, targetName);
                             targetData = clip;
                             break;
                         }
                         case Matrix: {
-                            DataMatrix matrix = DataMatrix.toMatrix(this, csvData);
+                            DataMatrix matrix = DataMatrix.toMatrix(this, sourceData, targetName);
                             targetData = matrix;
                             break;
                         }
@@ -325,70 +340,6 @@ public class BaseData2DLoadController extends BaseData2DTableController {
                 loadDef(targetData);
             }
 
-        };
-        start(task, thisPane);
-    }
-
-    public void loadTableData(DataTable dataTable) {
-        if (dataTable == null) {
-            popError("Nonexistent");
-            return;
-        }
-        if (data2D == null) {
-            data2D = Data2D.create(DataType.CSV);
-        } else if (!checkBeforeNextAction()) {
-            return;
-        }
-        task = new FxSingletonTask<Void>(this) {
-            private Data2D targetData;
-
-            @Override
-            protected boolean handle() {
-                try {
-                    switch (data2D.getType()) {
-                        case Texts:
-                            targetData = DataTable.toText(this, dataTable);
-                            if (targetData != null) {
-                                recordFileWritten(targetData.getFile(), VisitHistory.FileType.Text);
-                            }
-                            break;
-                        case CSV:
-                            targetData = DataTable.toCSV(this, dataTable);
-                            if (targetData != null) {
-                                recordFileWritten(targetData.getFile(), VisitHistory.FileType.CSV);
-                            }
-                            break;
-                        case Excel: {
-                            targetData = DataTable.toExcel(this, dataTable);
-                            if (targetData != null) {
-                                recordFileWritten(targetData.getFile(), VisitHistory.FileType.Excel);
-                            }
-                            break;
-                        }
-                        case DatabaseTable: {
-                            targetData = dataTable;
-                            break;
-                        }
-                        case MyBoxClipboard: {
-                            targetData = DataTable.toClip(this, dataTable);
-                            break;
-                        }
-                        case Matrix: {
-                            targetData = DataTable.toMatrix(this, dataTable);
-                            break;
-                        }
-                    }
-                    return targetData != null;
-                } catch (Exception e) {
-                    error = e.toString();
-                    return false;
-                }
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                loadDef(targetData);
-            }
         };
         start(task, thisPane);
     }
@@ -416,9 +367,46 @@ public class BaseData2DLoadController extends BaseData2DTableController {
         }
     }
 
+    public void reloadFile(Map<String, Object> options) {
+        if (data2D == null || !data2D.isDataFile() || sourceFile == null) {
+            return;
+        }
+        resetStatus();
+        data2D.initFile(sourceFile);
+        data2D.setOptions(options);
+        readDefinition();
+    }
+
+    public void loadExcelSheet(String name) {
+        try {
+            if (!(data2D instanceof DataFileExcel)
+                    || !checkBeforeNextAction() || name == null) {
+                return;
+            }
+            DataFileExcel excel = (DataFileExcel) data2D;
+            excel.initFile(excel.getFile(), name);
+            readDefinition();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
     /*
         action
      */
+    @FXML
+    @Override
+    public void createAction() {
+        createData(DataType.CSV);
+        Data2DAttributes.open(this);
+    }
+
+    @FXML
+    @Override
+    public void saveAsAction() {
+        Data2DSaveAsController.open(this);
+    }
+
     @FXML
     public void renameAction(BaseTablePagesController parent, int index, Data2DDefinition targetData) {
         String newName = PopTools.askValue(getTitle(), message("CurrentName") + ":" + targetData.getDataName(),
@@ -554,8 +542,31 @@ public class BaseData2DLoadController extends BaseData2DTableController {
 
     @FXML
     @Override
+    public void loadContentInSystemClipboard() {
+        try {
+            if (data2D == null || !checkBeforeNextAction()) {
+                return;
+            }
+            String text = Clipboard.getSystemClipboard().getString();
+            if (text == null || text.isBlank()) {
+                popError(message("NoTextInClipboard"));
+            }
+            Data2DLoadContentInSystemClipboardController.open(this, text);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    @FXML
+    @Override
     public void myBoxClipBoard() {
         Data2DPasteContentInMyBoxClipboardController.open(this);
+    }
+
+    @FXML
+    @Override
+    public void selectAction() {
+        Data2DSelectController.open(this);
     }
 
     @FXML
@@ -601,6 +612,156 @@ public class BaseData2DLoadController extends BaseData2DTableController {
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;
+        }
+    }
+
+    @Override
+    public List<MenuItem> fileMenuItems(Event fevent) {
+        try {
+            if (data2D == null || !data2D.isDataFile()) {
+                return null;
+            }
+            sourceFile = data2D.getFile();
+            if (sourceFile == null) {
+                return null;
+            }
+            List<MenuItem> items = new ArrayList<>();
+            MenuItem menu;
+
+            if (data2D.isExcel()) {
+                menu = new MenuItem(message("Sheet"), StyleTools.getIconImageView("iconFrame.png"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    DataFileExcelSheetsController.open(this);
+                });
+                items.add(menu);
+            }
+
+            menu = new MenuItem(message("Format"), StyleTools.getIconImageView("iconFormat.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                if (data2D.isCSV()) {
+                    DataFileCSVFormatController.open(this);
+                } else if (data2D.isTexts()) {
+                    DataFileTextFormatController.open(this);
+                } else if (data2D.isExcel()) {
+                    DataFileExcelFormatController.open(this);
+                }
+            });
+            items.add(menu);
+
+            CheckMenuItem backItem = new CheckMenuItem(message("BackupWhenSave"));
+            backItem.setSelected(UserConfig.getBoolean(baseName + "BackupWhenSave", true));
+            backItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean(baseName + "BackupWhenSave", backItem.isSelected());
+                }
+            });
+            items.add(backItem);
+
+            menu = new MenuItem(message("FileBackups"), StyleTools.getIconImageView("iconBackup.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                openBackups();
+            });
+            items.add(menu);
+
+            items.add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("SaveAs") + "    Ctrl+B " + message("Or") + " Alt+B",
+                    StyleTools.getIconImageView("iconSaveAs.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                saveAsAction();
+            });
+            items.add(menu);
+
+            if (data2D.isTexts() || data2D.isCSV()) {
+                menu = new MenuItem(message("Texts"), StyleTools.getIconImageView("iconTxt.png"));
+                menu.setOnAction((ActionEvent event) -> {
+                    editTextFile();
+                });
+                items.add(menu);
+            }
+
+            items.add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("OpenDirectory"), StyleTools.getIconImageView("iconOpenPath.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                openSourcePath();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("BrowseFiles"), StyleTools.getIconImageView("iconList.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                FileBrowseController.open(this);
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("SystemMethod"), StyleTools.getIconImageView("iconSystemOpen.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                systemMethod();
+            });
+            items.add(menu);
+
+            return items;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    @FXML
+    protected void popExamplesMenu(Event event) {
+        if (UserConfig.getBoolean(baseName + "ExamplesPopWhenMouseHovering", true)) {
+            showExamplesMenu(event);
+        }
+    }
+
+    @FXML
+    protected void showExamplesMenu(Event event) {
+        try {
+            List<MenuItem> items = new ArrayList<>();
+            items.addAll(Data2DExampleTools.examplesMenu(this));
+
+            items.add(new SeparatorMenuItem());
+
+            CheckMenuItem pMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
+            pMenu.setSelected(UserConfig.getBoolean(baseName + "ExamplesPopWhenMouseHovering", true));
+            pMenu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean(baseName + "ExamplesPopWhenMouseHovering", pMenu.isSelected());
+                }
+            });
+            items.add(pMenu);
+
+            popEventMenu(event, items);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    @FXML
+    public void showHelps(Event event) {
+        List<MenuItem> items = Data2DMenuTools.helpMenus(this);
+
+        items.add(new SeparatorMenuItem());
+
+        CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
+        hoverMenu.setSelected(UserConfig.getBoolean("Data2DHelpsPopWhenMouseHovering", false));
+        hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                UserConfig.setBoolean("Data2DHelpsPopWhenMouseHovering", hoverMenu.isSelected());
+            }
+        });
+        items.add(hoverMenu);
+
+        popEventMenu(event, items);
+    }
+
+    @FXML
+    public void popHelps(Event event) {
+        if (UserConfig.getBoolean("Data2DHelpsPopWhenMouseHovering", false)) {
+            showHelps(event);
         }
     }
 

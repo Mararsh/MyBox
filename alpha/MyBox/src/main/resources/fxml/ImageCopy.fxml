@@ -49,7 +49,7 @@ License:    Apache License Version 2.0
                                 </VBox>
                                 <VBox layoutX="10.0" layoutY="151.0" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                                     <children>
-                                        <CheckBox fx:id="marginsCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%CutClipMargions" wrapText="true" />
+                                        <CheckBox fx:id="marginsCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%CutClipMargins" wrapText="true" />
                                         <CheckBox fx:id="openClipboardCheck" minHeight="-Infinity" mnemonicParsing="false" text="%OpenClipboardAfterCopy" wrapText="true" />
                                     </children>
                                 </VBox>

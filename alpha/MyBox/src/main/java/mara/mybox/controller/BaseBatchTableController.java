@@ -387,14 +387,6 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
     }
 
     @Override
-    protected void checkSelected() {
-        if (isSettingValues) {
-            return;
-        }
-        checkButtons();
-    }
-
-    @Override
     public void itemDoubleClicked() {
         viewAction();
     }

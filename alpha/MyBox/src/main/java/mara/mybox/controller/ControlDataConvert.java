@@ -1,11 +1,5 @@
 package mara.mybox.controller;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.nio.charset.Charset;
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -18,32 +12,14 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.FlowPane;
 import mara.mybox.data.PaginatedPdfTable;
-import mara.mybox.data.StringTable;
 import mara.mybox.data2d.Data2D;
-import mara.mybox.data2d.Data2DTools;
-import mara.mybox.data2d.DataClipboard;
-import mara.mybox.db.DerbyBase;
-import mara.mybox.db.data.ColumnDefinition;
-import mara.mybox.db.data.Data2DColumn;
-import mara.mybox.db.data.Data2DDefinition;
-import mara.mybox.db.data.VisitHistory;
+import mara.mybox.data2d.reader.Data2DExport;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.style.HtmlStyles;
-import mara.mybox.tools.CsvTools;
-import mara.mybox.tools.JsonTools;
-import mara.mybox.tools.TextFileTools;
-import mara.mybox.tools.TextTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
-import org.apache.commons.csv.CSVPrinter;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFCellStyle;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
  * @Author Mara
@@ -53,19 +29,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 public class ControlDataConvert extends BaseController {
 
     protected BaseTaskController parent;
-    protected List<String> names;
-    protected List<Data2DColumn> columns;
-    protected boolean firstRow, skip;
-    protected File csvFile, textFile, xmlFile, jsonFile, htmlFile, pdfFile, xlsxFile, dataClipboardFile;
-    protected CSVPrinter csvPrinter, dataClipboardPrinter;
-    protected BufferedWriter textWriter, htmlWriter, xmlWriter, jsonWriter;
-    protected XSSFWorkbook xssfBook;
-    protected XSSFSheet xssfSheet;
-    protected String indent = "    ", filePrefix, textDelimiter, csvDelimiter;
-    protected List<Integer> columnWidths;
-    protected PaginatedPdfTable pdfTable;
-    protected List<List<String>> pageRows;
-    protected int maxLines, fileIndex, fileRowIndex, dataRowIndex;
+    protected int maxLines;
 
     @FXML
     protected FlowPane formatsPane;
@@ -103,27 +67,6 @@ public class ControlDataConvert extends BaseController {
         initPDF();
         initHtml();
         initOthers();
-    }
-
-    public void setControls(BaseTaskController parent, String format) {
-        this.parent = parent;
-        baseName = parent.baseName + baseName;
-        isSettingValues = true;
-        selectNoneAction();
-        if ("json".equals(format)) {
-            jsonCheck.setSelected(true);
-        } else if ("xml".equals(format)) {
-            xmlCheck.setSelected(true);
-        } else if ("html".equals(format)) {
-            htmlCheck.setSelected(true);
-            cssArea.setText(HtmlStyles.DefaultStyle);
-        } else if ("pdf".equals(format)) {
-            pdfCheck.setSelected(true);
-            initPDF();
-        }
-        maxLines = -1;
-        rowNumberCheck.setSelected(false);
-        isSettingValues = false;
     }
 
     private void initChecks() {
@@ -322,23 +265,64 @@ public class ControlDataConvert extends BaseController {
     /*
         run task
      */
-    public boolean initParameters() {
+    public boolean checkParameters() {
         try {
-            if (parent == null) {
-                return false;
+            if (csvCheck.isSelected()) {
+                if (csvWriteController.delimiterController.delimiterInput.getStyle().equals(UserConfig.badStyle())) {
+                    return false;
+                }
             }
-            initWriters();
+            if (textsCheck.isSelected()) {
+                if (textWriteOptionsController.delimiterController.delimiterInput.getStyle().equals(UserConfig.badStyle())) {
+                    return false;
+                }
+            }
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
 
-            names = null;
-            columnWidths = null;
-            pdfTable = null;
-            filePrefix = null;
-            fileIndex = 1;
-            fileRowIndex = dataRowIndex = 0;
-            targetPath = parent.targetPath;
-
+    public Data2DExport pickParameters(Data2D data2D) {
+        try {
+            Data2DExport export = data2D != null
+                    ? Data2DExport.create(data2D) : new Data2DExport();
+            export.initParameters();
+            if (parent != null) {
+                export.setTargetPath(parent.targetPath);
+            }
+            export.setRowNumber(rowNumberCheck.isSelected());
+            export.setFormatValues(formatValuesCheck.isSelected());
+            export.setCsv(csvCheck.isSelected());
+            export.setTexts(textsCheck.isSelected());
+            export.setExcel(excelCheck.isSelected());
+            export.setHtml(htmlCheck.isSelected());
+            export.setJson(jsonCheck.isSelected());
+            export.setXml(xmlCheck.isSelected());
+            export.setPdf(pdfCheck.isSelected());
+            export.setMyBoxClipboard(myBoxClipboardCheck.isSelected());
+            if (csvCheck.isSelected()) {
+                if (csvWriteController.delimiterController.delimiterInput.getStyle().equals(UserConfig.badStyle())) {
+                    return null;
+                }
+                export.setCvsCharset(csvWriteController.getCharset());
+                export.setCsvDelimiter(csvWriteController.getDelimiterName());
+                export.setCsvWithNames(csvWriteController.withName());
+            }
+            if (textsCheck.isSelected()) {
+                if (textWriteOptionsController.delimiterController.delimiterInput.getStyle().equals(UserConfig.badStyle())) {
+                    return null;
+                }
+                export.setCvsCharset(textWriteOptionsController.getCharset());
+                export.setCsvDelimiter(textWriteOptionsController.getDelimiterName());
+                export.setCsvWithNames(textWriteOptionsController.withName());
+            }
+            if (excelCheck.isSelected()) {
+                export.setExcelWithNames(excelWithNamesCheck.isSelected());
+            }
             if (pdfCheck.isSelected()) {
-                columnWidths = new ArrayList<>();
+                List<Integer> columnWidths = new ArrayList<>();
                 String[] values = widthList.getText().split(",");
                 for (String value : values) {
                     try {
@@ -349,7 +333,7 @@ public class ControlDataConvert extends BaseController {
                     } catch (Exception e) {
                     }
                 }
-                pdfTable = PaginatedPdfTable.create()
+                export.setPdfTable(PaginatedPdfTable.create()
                         .setPageSize(new PDRectangle(pdfOptionsController.pageWidth, pdfOptionsController.pageHeight))
                         .setTtf(pdfOptionsController.getTtfFile())
                         .setFontSize(pdfOptionsController.fontSize)
@@ -357,474 +341,16 @@ public class ControlDataConvert extends BaseController {
                         .setColumnWidths(columnWidths)
                         .setDefaultZoom(pdfOptionsController.zoom)
                         .setHeader(pdfOptionsController.getHeader())
-                        .setShowPageNumber(pdfOptionsController.showPageNumber);
+                        .setShowPageNumber(pdfOptionsController.showPageNumber));
             }
             if (htmlCheck.isSelected()) {
                 UserConfig.setString(baseName + "Css", cssArea.getText());
             }
-            if (csvCheck.isSelected() && csvWriteController.delimiterController.delimiterInput.getStyle().equals(UserConfig.badStyle())) {
-                return false;
-            }
-            if (textsCheck.isSelected()
-                    && textWriteOptionsController.delimiterController.delimiterInput.getStyle().equals(UserConfig.badStyle())) {
-                return false;
-            }
-            return true;
+            return export;
         } catch (Exception e) {
             MyBoxLog.error(e);
-            return false;
+            return null;
         }
-    }
-
-    public boolean setExport(File path, List<Data2DColumn> cols, String prefix, boolean skip) {
-        targetPath = path;
-        columns = cols;
-        names = new ArrayList<>();
-        for (Data2DColumn c : columns) {
-            names.add(c.getColumnName());
-        }
-        return setParameters(prefix, skip);
-    }
-
-    public boolean setParameters(File path, List<String> cols, String prefix, boolean skip) {
-        targetPath = path;
-        names = cols;
-        return setParameters(prefix, skip);
-    }
-
-    public boolean setParameters(String prefix, boolean skip) {
-        filePrefix = prefix;
-        this.skip = skip;
-        fileIndex = 1;
-        fileRowIndex = dataRowIndex = 0;
-        if (rowNumberCheck.isSelected() && columns != null) {
-            columns.add(0, new Data2DColumn(message("RowNumber"), ColumnDefinition.ColumnType.String));
-        }
-        if (rowNumberCheck.isSelected() && names != null) {
-            names.add(0, message("RowNumber"));
-        }
-        if (columns == null || columns.isEmpty()) {
-            columns = Data2DTools.toColumns(names);
-        }
-        return openWriters();
-    }
-
-    private void initWriters() {
-        csvPrinter = null;
-        textWriter = null;
-        htmlWriter = null;
-        xmlWriter = null;
-        jsonWriter = null;
-        xssfSheet = null;
-        dataClipboardPrinter = null;
-
-        csvFile = null;
-        textFile = null;
-        htmlFile = null;
-        xmlFile = null;
-        xlsxFile = null;
-        jsonFile = null;
-        pdfFile = null;
-        dataClipboardFile = null;
-
-        firstRow = true;
-    }
-
-    private boolean openWriters() {
-        initWriters();
-        if (csvWriteController.charset == null) {
-            csvWriteController.charset = Charset.forName("utf-8");
-        }
-        if (targetPath == null || filePrefix == null || names == null) {
-            updateLogs(message("InvalidParameters"));
-            return false;
-        }
-        String currentPrefix = filePrefix;
-        if (maxLines > 0) {
-            currentPrefix += "_" + fileIndex;
-        }
-        try {
-            if (csvCheck.isSelected()) {
-                csvFile = parent.makeTargetFile(currentPrefix, ".csv", targetPath);
-                if (csvFile != null) {
-                    updateLogs(message("Writing") + " " + csvFile.getAbsolutePath());
-                    csvDelimiter = csvWriteController.delimiterController.getDelimiterName();
-                    csvPrinter = new CSVPrinter(new FileWriter(csvFile, csvWriteController.charset),
-                            CsvTools.csvFormat(csvDelimiter));
-                    if (csvWriteController.withNamesCheck.isSelected()) {
-                        csvPrinter.printRecord(names);
-                    }
-                } else if (skip) {
-                    updateLogs(message("Skipped"));
-                }
-            }
-            if (textsCheck.isSelected()) {
-                textFile = parent.makeTargetFile(currentPrefix, ".txt", targetPath);
-                if (textFile != null) {
-                    updateLogs(message("Writing") + " " + textFile.getAbsolutePath());
-                    textWriter = new BufferedWriter(new FileWriter(textFile, textWriteOptionsController.charset));
-                    textDelimiter = TextTools.delimiterValue(textWriteOptionsController.getDelimiterName());
-                    if (textWriteOptionsController.withNamesCheck.isSelected()) {
-                        TextFileTools.writeLine(task, textWriter, names, textDelimiter);
-                    }
-                } else if (skip) {
-                    updateLogs(message("Skipped"));
-                }
-            }
-            if (htmlCheck.isSelected()) {
-                htmlFile = parent.makeTargetFile(currentPrefix, ".html", targetPath);
-                if (htmlFile != null) {
-                    updateLogs(message("Writing") + " " + htmlFile.getAbsolutePath());
-                    htmlWriter = new BufferedWriter(new FileWriter(htmlFile, csvWriteController.charset));
-                    StringBuilder s = new StringBuilder();
-                    s.append("<!DOCTYPE html><HTML>\n").
-                            append(indent).append("<HEAD>\n").
-                            append(indent).append(indent).
-                            append("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=").append(csvWriteController.charset.name())
-                            .append("\" />\n");
-                    s.append(indent).append(indent).append("<style type=\"text/css\">\n");
-                    s.append(indent).append(indent).append(indent).append(cssArea.getText().trim()).append("\n");
-                    s.append(indent).append(indent).append("</style>\n");
-                    s.append(indent).append("</HEAD>\n").append(indent).append("<BODY>\n");
-                    s.append(StringTable.tablePrefix(new StringTable(names)));
-                    htmlWriter.write(s.toString());
-                } else if (skip) {
-                    updateLogs(message("Skipped"));
-                }
-            }
-            if (xmlCheck.isSelected()) {
-                xmlFile = parent.makeTargetFile(currentPrefix, ".xml", targetPath);
-                if (xmlFile != null) {
-                    updateLogs(message("Writing") + " " + xmlFile.getAbsolutePath());
-                    xmlWriter = new BufferedWriter(new FileWriter(xmlFile, csvWriteController.charset));
-                    StringBuilder s = new StringBuilder();
-                    s.append("<?xml version=\"1.0\" encoding=\"")
-                            .append(csvWriteController.charset.name()).append("\"?>\n")
-                            .append("<Data>\n");
-                    xmlWriter.write(s.toString());
-                } else if (skip) {
-                    updateLogs(message("Skipped"));
-                }
-            }
-            if (jsonCheck.isSelected()) {
-                jsonFile = parent.makeTargetFile(currentPrefix, ".json", targetPath);
-                if (jsonFile != null) {
-                    updateLogs(message("Writing") + " " + jsonFile.getAbsolutePath());
-                    jsonWriter = new BufferedWriter(new FileWriter(jsonFile, Charset.forName("utf-8")));
-                    StringBuilder s = new StringBuilder();
-                    s.append("{\"Data\": [\n");
-                    jsonWriter.write(s.toString());
-                } else if (skip) {
-                    updateLogs(message("Skipped"));
-                }
-            }
-            if (pdfCheck.isSelected() && pdfTable != null) {
-                pdfFile = parent.makeTargetFile(currentPrefix, ".pdf", targetPath);
-                if (pdfFile != null) {
-                    updateLogs(message("Writing") + " " + pdfFile.getAbsolutePath());
-                    pdfTable.setColumns(names).createDoc(pdfFile);
-                } else if (skip) {
-                    updateLogs(message("Skipped"));
-                }
-            }
-            if (excelCheck.isSelected()) {
-                xlsxFile = parent.makeTargetFile(currentPrefix, ".xlsx", targetPath);
-                if (xlsxFile != null) {
-                    updateLogs(message("Writing") + " " + xlsxFile.getAbsolutePath());
-                    xssfBook = new XSSFWorkbook();
-                    xssfSheet = xssfBook.createSheet("sheet1");
-                    xssfSheet.setDefaultColumnWidth(20);
-                    if (excelWithNamesCheck.isSelected()) {
-                        XSSFRow titleRow = xssfSheet.createRow(0);
-                        XSSFCellStyle horizontalCenter = xssfBook.createCellStyle();
-                        horizontalCenter.setAlignment(HorizontalAlignment.CENTER);
-                        for (int i = 0; i < names.size(); i++) {
-                            XSSFCell cell = titleRow.createCell(i);
-                            cell.setCellValue(names.get(i));
-                            cell.setCellStyle(horizontalCenter);
-                        }
-                    }
-                } else if (skip) {
-                    updateLogs(message("Skipped"));
-                }
-            }
-            if (myBoxClipboardCheck.isSelected()) {
-                dataClipboardFile = DataClipboard.newFile();
-                if (dataClipboardFile != null) {
-                    updateLogs(message("Writing") + " " + dataClipboardFile.getAbsolutePath());
-                    dataClipboardPrinter = new CSVPrinter(new FileWriter(dataClipboardFile, Charset.forName("UTF-8")), CsvTools.csvFormat());
-                    dataClipboardPrinter.printRecord(names);
-                } else if (skip) {
-                    updateLogs(message("Skipped"));
-                }
-            }
-            return true;
-        } catch (Exception e) {
-            updateLogs(e.toString());
-            return false;
-        }
-    }
-
-    public void writeRow(List<String> inRow) {
-        try {
-            if (inRow == null) {
-                return;
-            }
-
-            if (maxLines > 0 && fileRowIndex >= maxLines) {
-                closeWriters();
-                fileIndex++;
-                fileRowIndex = 0;
-                openWriters();
-            }
-
-            dataRowIndex++;
-            if (rowNumberCheck.isSelected()) {
-                inRow.add(0, dataRowIndex + "");
-            }
-            List<String> row = inRow;
-            if (formatValuesCheck.isSelected()) {
-                row = new ArrayList<>();
-                for (int i = 0; i < columns.size(); i++) {
-                    String v = inRow.get(i);
-                    if (v != null) {
-                        v = columns.get(i).format(v);
-                    }
-                    row.add(v);
-                }
-            }
-
-            if (csvPrinter != null) {
-                csvPrinter.printRecord(row);
-            }
-
-            if (textWriter != null) {
-                TextFileTools.writeLine(task, textWriter, row, textDelimiter);
-            }
-
-            if (htmlWriter != null) {
-                htmlWriter.write(StringTable.tableRow(row));
-            }
-            if (xmlWriter != null) {
-                StringBuilder s = new StringBuilder();
-                s.append(indent).append("<Row>").append("\n");
-                for (int i = 0; i < names.size(); i++) {
-                    String value = row.get(i);
-                    if (value == null || value.isBlank()) {
-                        continue;
-                    }
-                    s.append(indent).append(indent)
-                            .append("<Col name=\"").append(names.get(i)).append("\" >")
-                            .append("<![CDATA[").append(value).append("]]>")
-                            .append("</Col>").append("\n");
-                }
-                s.append(indent).append("</Row>").append("\n");
-                xmlWriter.write(s.toString());
-            }
-            if (jsonWriter != null) {
-                StringBuilder s = new StringBuilder();
-                if (firstRow) {
-                    firstRow = false;
-                } else {
-                    s.append(",\n");
-                }
-                s.append(indent).append("{").append("\n");
-                boolean firstData = true;
-                for (int i = 0; i < names.size(); i++) {
-                    String value = row.get(i);
-                    if (value == null) {
-                        continue;
-                    }
-                    if (!firstData) {
-                        s.append(",\n");
-                    } else {
-                        firstData = false;
-                    }
-                    s.append(indent).append(indent)
-                            .append("\"").append(names.get(i)).append("\": ")
-                            .append(JsonTools.encode(value));
-                }
-                s.append(indent).append("\n").append(indent).append("}");
-                jsonWriter.write(s.toString());
-            }
-
-            if (pdfFile != null) {
-                if (pageRows == null) {
-                    pageRows = new ArrayList<>();
-                }
-                if (pageRows.size() >= pdfTable.getRowsPerPage()) {
-                    pdfTable.writePage(pageRows);
-                    pageRows = new ArrayList<>();
-                }
-                pageRows.add(row);
-            }
-
-            if (xssfSheet != null) {
-                XSSFRow sheetRow = xssfSheet.createRow(fileRowIndex + 1);
-                for (int i = 0; i < row.size(); i++) {
-                    XSSFCell cell = sheetRow.createCell(i);
-                    cell.setCellValue(row.get(i));
-                }
-            }
-
-            if (dataClipboardPrinter != null) {
-                dataClipboardPrinter.printRecord(row);
-            }
-
-            fileRowIndex++;
-
-        } catch (Exception e) {
-            updateLogs(e.toString());
-        }
-    }
-
-    public void closeWriters() {
-        try (Connection conn = DerbyBase.getConnection()) {
-            if (csvPrinter != null && csvFile != null) {
-                csvPrinter.flush();
-                csvPrinter.close();
-                parent.targetFileGenerated(csvFile, VisitHistory.FileType.CSV);
-                csvPrinter = null;
-                Data2D d = Data2D.create(Data2DDefinition.DataType.CSV);
-                d.setTask(task).setFile(csvFile)
-                        .setCharset(csvWriteController.charset)
-                        .setDelimiter(csvDelimiter)
-                        .setHasHeader(csvWriteController.withNamesCheck.isSelected())
-                        .setDataName(d.dataName())
-                        .setColsNumber(columns.size())
-                        .setRowsNumber(dataRowIndex);
-                Data2D.saveAttributes(conn, d, columns);
-                conn.commit();
-            }
-
-            if (textWriter != null && textFile != null) {
-                textWriter.flush();
-                textWriter.close();
-                parent.targetFileGenerated(textFile, VisitHistory.FileType.Text);
-                textWriter = null;
-                Data2D d = Data2D.create(Data2DDefinition.DataType.Texts);
-                d.setTask(task).setFile(textFile)
-                        .setCharset(textWriteOptionsController.charset)
-                        .setDelimiter(textDelimiter)
-                        .setHasHeader(textWriteOptionsController.withNamesCheck.isSelected())
-                        .setDataName(d.dataName())
-                        .setColsNumber(columns.size())
-                        .setRowsNumber(dataRowIndex);
-                Data2D.saveAttributes(conn, d, columns);
-                conn.commit();
-            }
-
-            if (htmlWriter != null && htmlFile != null) {
-                htmlWriter.write(StringTable.tableSuffix(new StringTable(names)));
-                htmlWriter.write(indent + "<BODY>\n</HTML>\n");
-                htmlWriter.flush();
-                htmlWriter.close();
-                parent.targetFileGenerated(htmlFile, VisitHistory.FileType.Html);
-                htmlWriter = null;
-            }
-
-            if (xmlWriter != null && xmlFile != null) {
-                xmlWriter.write("</Data>\n");
-                xmlWriter.flush();
-                xmlWriter.close();
-                parent.targetFileGenerated(xmlFile, VisitHistory.FileType.XML);
-                xmlWriter = null;
-            }
-
-            if (jsonWriter != null && jsonFile != null) {
-                jsonWriter.write("\n]}\n");
-                jsonWriter.flush();
-                jsonWriter.close();
-                parent.targetFileGenerated(jsonFile, VisitHistory.FileType.JSON);
-                jsonWriter = null;
-            }
-
-            if (pdfFile != null && pdfTable != null) {
-                if (pageRows != null && !pageRows.isEmpty()) {
-                    pdfTable.writePage(pageRows);
-                    pageRows = null;
-                }
-                pdfTable.closeDoc();
-                parent.targetFileGenerated(pdfFile, VisitHistory.FileType.PDF);
-                pdfTable = null;
-            }
-
-            if (xssfBook != null && xssfSheet != null && xlsxFile != null) {
-                for (int i = 0; i < names.size(); i++) {
-                    xssfSheet.autoSizeColumn(i);
-                }
-                try (FileOutputStream fileOut = new FileOutputStream(xlsxFile)) {
-                    xssfBook.write(fileOut);
-                }
-                xssfBook.close();
-                parent.targetFileGenerated(xlsxFile, VisitHistory.FileType.Excel);
-                xssfBook = null;
-                Data2D d = Data2D.create(Data2DDefinition.DataType.Excel);
-                d.setTask(task).setFile(xlsxFile).setSheet("sheet1")
-                        .setHasHeader(excelWithNamesCheck.isSelected())
-                        .setDataName(d.dataName())
-                        .setColsNumber(columns.size())
-                        .setRowsNumber(dataRowIndex);
-                Data2D.saveAttributes(conn, d, columns);
-                conn.commit();
-            }
-
-            if (dataClipboardPrinter != null && dataClipboardFile != null) {
-                dataClipboardPrinter.flush();
-                dataClipboardPrinter.close();
-                parent.targetFileGenerated(dataClipboardFile, VisitHistory.FileType.CSV);
-                dataClipboardPrinter = null;
-                Data2D d = Data2D.create(Data2DDefinition.DataType.MyBoxClipboard);
-                d.setTask(task).setFile(dataClipboardFile)
-                        .setCharset(Charset.forName("UTF-8"))
-                        .setDelimiter(",")
-                        .setHasHeader(true)
-                        .setDataName(d.dataName())
-                        .setColsNumber(columns.size())
-                        .setRowsNumber(dataRowIndex);
-                Data2D.saveAttributes(conn, d, columns);
-                DataInMyBoxClipboardController.update();
-                conn.commit();
-            }
-            conn.close();
-        } catch (Exception e) {
-            updateLogs(e.toString());
-            MyBoxLog.console(e.toString());
-        }
-    }
-
-    public void updateLogs(String logs) {
-        parent.updateLogs(logs);
-    }
-
-    public void openFiles() {
-        if (csvFile != null && csvFile.exists()) {
-            DataFileCSVController.open(csvFile, csvWriteController.charset,
-                    csvWriteController.withNamesCheck.isSelected(), csvDelimiter);
-        }
-        if (xlsxFile != null && xlsxFile.exists()) {
-            DataFileExcelController.open(xlsxFile, excelWithNamesCheck.isSelected());
-        }
-        if (textFile != null && textFile.exists()) {
-            DataFileTextController.open(textFile, textWriteOptionsController.charset,
-                    textWriteOptionsController.withNamesCheck.isSelected(), textDelimiter);
-        }
-        if (pdfFile != null && pdfFile.exists()) {
-            PdfViewController.open(pdfFile);
-        }
-        if (htmlFile != null && htmlFile.exists()) {
-            WebBrowserController.openFile(htmlFile);
-        }
-        if (dataClipboardFile != null && dataClipboardFile.exists()) {
-            DataInMyBoxClipboardController.oneOpen();
-        }
-        if (xmlFile != null && xmlFile.exists()) {
-            XmlEditorController.open(xmlFile);
-        }
-        if (jsonFile != null && jsonFile.exists()) {
-            JsonEditorController.open(jsonFile);
-        }
-
     }
 
 }

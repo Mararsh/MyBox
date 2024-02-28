@@ -13,7 +13,6 @@ import javafx.scene.control.SeparatorMenuItem;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.Fxmls;
-import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -33,23 +32,28 @@ public abstract class MyBoxController_About extends MyBoxController_Settings {
 
     @FXML
     protected void showAboutMenu(Event event) {
-        MenuItem ReadMe = new MenuItem(Languages.message("ReadMe"));
+        MenuItem ReadMe = new MenuItem(message("ReadMe"));
         ReadMe.setOnAction((ActionEvent event1) -> {
             HelpTools.readMe(myController);
         });
 
-        MenuItem FunctionsList = new MenuItem(Languages.message("FunctionsList"));
+        MenuItem FunctionsList = new MenuItem(message("FunctionsList"));
         FunctionsList.setOnAction((ActionEvent event1) -> {
             openStage(Fxmls.FunctionsListFxml);
         });
 
-        MenuItem Shortcuts = new MenuItem(Languages.message("Shortcuts"));
+        MenuItem Shortcuts = new MenuItem(message("Shortcuts"));
         Shortcuts.setOnAction((ActionEvent event1) -> {
             openStage(Fxmls.ShortcutsFxml);
         });
 
+        MenuItem imagesStories = new MenuItem(message("StoriesOfImages"));
+        imagesStories.setOnAction((ActionEvent event1) -> {
+            HelpTools.imageStories(this);
+        });
+
         List<MenuItem> items = new ArrayList<>();
-        items.addAll(Arrays.asList(ReadMe, FunctionsList, Shortcuts));
+        items.addAll(Arrays.asList(ReadMe, FunctionsList, Shortcuts, imagesStories));
 
         items.add(new SeparatorMenuItem());
 

@@ -13,8 +13,8 @@ import mara.mybox.data2d.DataTable;
 import mara.mybox.db.table.TableData2D;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.PopTools;
 import mara.mybox.tools.StringTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -127,7 +127,10 @@ public class DataTableQueryEditor extends InfoTreeNodeEditor {
             @Override
             protected void whenSucceeded() {
                 popDone();
-                DataFileCSV.openCSV(myController, dataCSV, targetController.target);
+                DataFileCSV.createData(myController, dataCSV,
+                        targetController.target,
+                        targetController.name(),
+                        targetController.file());
             }
 
             @Override

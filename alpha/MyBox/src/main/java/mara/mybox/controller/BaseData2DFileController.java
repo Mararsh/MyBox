@@ -15,9 +15,7 @@ import javafx.scene.control.TitledPane;
 import javafx.scene.layout.VBox;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.StyleTools;
-import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -39,8 +37,6 @@ public abstract class BaseData2DFileController extends Data2DManufactureControll
     /*
         abstract
      */
-    public abstract void pickRefreshOptions();
-
     public abstract Data2D saveAsTarget();
 
     /*
@@ -222,41 +218,12 @@ public abstract class BaseData2DFileController extends Data2DManufactureControll
 
     @FXML
     @Override
-    public boolean infoAction() {
-        String info = data2D.info();
-        if (info != null && !info.isBlank()) {
-            TextPopController.loadText(info);
-            return true;
-        }
-        return false;
-    }
-
-    @FXML
-    @Override
     public void saveAsAction() {
         Data2D targetData = saveAsTarget();
         if (targetData == null) {
             return;
         }
 //        viewController.saveAsAction(targetData, saveAsType); // ############
-    }
-
-    @FXML
-    public void refreshFile() {
-        resetStatus();
-        data2D.initFile(data2D.getFile());
-        pickRefreshOptions();
-        readDefinition();
-    }
-
-    @FXML
-    public void editTextFile() {
-        if (data2D == null || data2D.getFile() == null) {
-            return;
-        }
-        TextEditorController controller = (TextEditorController) WindowTools.openStage(Fxmls.TextEditorFxml);
-        controller.sourceFileChanged(data2D.getFile());
-        controller.requestMouse();
     }
 
 }

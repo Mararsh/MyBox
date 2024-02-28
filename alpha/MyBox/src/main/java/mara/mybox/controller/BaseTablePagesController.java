@@ -205,7 +205,6 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
         startRowOfCurrentPage = 0;
         dataSizeLoaded = false;
         tableChanged(changed);
-        checkSelected();
         editNull();
         viewNull();
     }

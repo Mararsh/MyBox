@@ -18,7 +18,6 @@ import javafx.scene.layout.FlowPane;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataInternalTable;
 import mara.mybox.data2d.DataTable;
-import mara.mybox.data2d.TmpTable;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.table.TableData2DDefinition;
@@ -53,11 +52,6 @@ public class BaseData2DListController extends BaseSysTableController<Data2DDefin
     protected FlowPane buttonsPane;
     @FXML
     protected ControlData2DView viewController;
-
-    public BaseData2DListController() {
-        baseTitle = message("ManageData");
-        TipsLabelKey = "DataManageTips";
-    }
 
     @Override
     protected void initColumns() {
@@ -112,9 +106,7 @@ public class BaseData2DListController extends BaseSysTableController<Data2DDefin
 
     public void setConditions() {
         try {
-            queryConditions = " data_type  != " + Data2D.type(Data2DDefinition.DataType.InternalTable)
-                    + " AND NOT( sheet like '" + TmpTable.TmpTablePrefix + "%' "
-                    + " OR sheet like '" + TmpTable.TmpTablePrefix.toLowerCase() + "%' )";
+            queryConditions = " data_type  != " + Data2D.type(Data2DDefinition.DataType.InternalTable);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -286,7 +278,8 @@ public class BaseData2DListController extends BaseSysTableController<Data2DDefin
     @Override
     protected long clearData(FxTask currentTask) {
         String sql = "SELECT d2did, sheet FROM " + tableData2DDefinition.getTableName()
-                + " WHERE  data_type = " + Data2D.type(Data2DDefinition.DataType.DatabaseTable);
+                + " WHERE  data_type = " + Data2D.type(Data2DDefinition.DataType.DatabaseTable)
+                + " AND ( " + queryConditions + " )";
         boolean isCurrent = false;
         try (Connection conn = DerbyBase.getConnection();
                 Statement query = conn.createStatement();

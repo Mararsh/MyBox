@@ -498,6 +498,10 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
     }
 
     public boolean controlAltT() {
+        if (selectButton != null) {
+            selectAction();
+            return true;
+        }
         return false;
     }
 

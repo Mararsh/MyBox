@@ -92,8 +92,9 @@ License:    Apache License Version 2.0
                                                 </FlowPane>
                                             </children>
                                         </VBox>
-                                        <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                        <VBox spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                                             <children>
+                                    <Label text="%Outputs" />
                                                 <fx:include fx:id="target" source="ControlData2DTargetExternal.fxml" />
                                             </children>
                                         </VBox>

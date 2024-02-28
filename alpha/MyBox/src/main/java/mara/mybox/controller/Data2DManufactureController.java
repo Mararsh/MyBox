@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -15,6 +17,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.control.Toggle;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
@@ -43,7 +46,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-10-18
  * @License Apache License Version 2.0
  */
-public class Data2DManufactureController extends BaseData2DSourceController {
+public class Data2DManufactureController extends BaseData2DViewController {
 
     protected final SimpleBooleanProperty savedNotify;
 
@@ -63,7 +66,16 @@ public class Data2DManufactureController extends BaseData2DSourceController {
         try {
             super.initControls();
 
-//            createAction();
+            csvArea.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> v, String ov, String nv) {
+                    if (isSettingValues) {
+                        return;
+                    }
+                    tableChanged();
+                }
+            });
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -73,6 +85,91 @@ public class Data2DManufactureController extends BaseData2DSourceController {
     /*
         data
      */
+    @Override
+    public void checkFormat(Toggle ov) {
+        if (isSettingValues) {
+            return;
+        }
+        if (csvRadio != ov || !isChanged() || !data2D.isValid()) {
+            switchFormat();
+            return;
+        }
+        pickCSV();
+    }
+
+    public void pickCSV() {
+        if (task != null) {
+            task.cancel();
+        }
+        task = new FxSingletonTask<Void>(this) {
+            private List<List<String>> rows;
+
+            @Override
+            protected boolean handle() {
+                rows = pickCSV(this);
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+            }
+
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                if (rows != null) {
+                    tableData.setAll(rows);
+                    data2D.setPageData(tableData);
+                    switchFormat();
+                } else {
+                    isSettingValues = true;
+                    csvRadio.setSelected(true);
+                    isSettingValues = false;
+                    popError(message("InvalidData"));
+                }
+            }
+
+        };
+        start(task);
+    }
+
+    public List<List<String>> pickCSV(FxTask task) {
+        try {
+            if (delimiterName == null) {
+                delimiterName = ",";
+            }
+            List<List<String>> rows = new ArrayList<>();
+            String text = csvArea.getText();
+            if (text != null && !text.isEmpty()) {
+                int colsNumber = data2D.columnsNumber();
+                List<List<String>> data = data2D.decodeCSV(task, text, delimiterName, false);
+                if (data == null) {
+                    return null;
+                }
+                long startindex = data2D.getStartRowOfCurrentPage();
+                for (int i = 0; i < data.size(); i++) {
+                    List<String> drow = data.get(i);
+                    List<String> nrow = new ArrayList<>();
+                    nrow.add((startindex + i) + "");
+                    int len = drow.size();
+                    if (len > colsNumber) {
+                        nrow.addAll(drow.subList(0, colsNumber));
+                    } else {
+                        nrow.addAll(drow);
+                        for (int c = len; c < colsNumber; c++) {
+                            nrow.add(null);
+                        }
+                    }
+                    rows.add(nrow);
+                }
+            }
+            return rows;
+        } catch (Exception e) {
+            displayError(e.toString());
+            return null;
+        }
+    }
+
     @Override
     public void showTableButtons() {
         buttonsPane.getChildren().setAll(lostFocusCommitCheck, optionsButton, menuButton,
@@ -84,7 +181,18 @@ public class Data2DManufactureController extends BaseData2DSourceController {
     public boolean validateData() {
         opsPane.setDisable(data2D == null);
         mainAreaBox.setDisable(data2D == null);
-        return data2D != null && data2D.isValid();
+        recoverButton.setDisable(data2D == null || data2D.isTmpData());
+        saveButton.setDisable(data2D == null || !dataSizeLoaded);
+        if (data2D != null && data2D.isDataFile() && data2D.getFile() != null) {
+            if (!toolbar.getChildren().contains(fileMenuButton)) {
+                toolbar.getChildren().add(0, fileMenuButton);
+            }
+        } else {
+            if (toolbar.getChildren().contains(fileMenuButton)) {
+                toolbar.getChildren().remove(fileMenuButton);
+            }
+        }
+        return super.validateData();
     }
 
     @Override
@@ -93,30 +201,17 @@ public class Data2DManufactureController extends BaseData2DSourceController {
         savedNotify.set(!savedNotify.get());
     }
 
+    public boolean isEditing() {
+        return tableRadio.isSelected() || csvRadio.isSelected();
+    }
+
+    public boolean isTableMode() {
+        return tableRadio.isSelected();
+    }
+
     /*
         table
      */
-    @Override
-    public synchronized void tableChanged(boolean changed) {
-        if (isSettingValues || data2D == null) {
-            return;
-        }
-        data2D.setTableChanged(changed);
-        validateData();
-        if (data2D != null && data2D.isTableChanged()) {
-            // #####
-        }
-
-        if (recoverButton != null) {
-            recoverButton.setDisable(data2D == null || data2D.isTmpData());
-        }
-        if (saveButton != null) {
-            saveButton.setDisable(data2D == null || !dataSizeLoaded);
-        }
-
-        notifyStatus();
-    }
-
     @Override
     public boolean checkBeforeLoadingTableData() {
         return checkBeforeNextAction();
@@ -181,36 +276,9 @@ public class Data2DManufactureController extends BaseData2DSourceController {
         return Data2DMenuTools.operateMenus(this);
     }
 
-    @FXML
     @Override
-    public void popDataMenu(Event event) {
-        if (UserConfig.getBoolean(baseName + "DataPopWhenMouseHovering", true)) {
-            showDataMenu(event);
-        }
-    }
-
-    @FXML
-    @Override
-    public void showDataMenu(Event mevent) {
-        try {
-            List<MenuItem> items = Data2DMenuTools.dataMenus(this);
-            items.add(new SeparatorMenuItem());
-
-            CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"),
-                    StyleTools.getIconImageView("iconPop.png"));
-            popItem.setSelected(UserConfig.getBoolean(baseName + "DataPopWhenMouseHovering", true));
-            popItem.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    UserConfig.setBoolean(baseName + "DataPopWhenMouseHovering", popItem.isSelected());
-                }
-            });
-            items.add(popItem);
-
-            popEventMenu(mevent, items);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
+    public List<MenuItem> dataMenuItems(Event fevent) {
+        return Data2DMenuTools.dataMenus(this);
     }
 
     @FXML
@@ -311,11 +379,6 @@ public class Data2DManufactureController extends BaseData2DSourceController {
     }
 
     @Override
-    public List<MenuItem> functionsMenuItems(Event fevent) {
-        return Data2DMenuTools.functionsMenus(this);
-    }
-
-    @Override
     public boolean controlAltN() {
         addRowsAction();
         return true;
@@ -343,15 +406,20 @@ public class Data2DManufactureController extends BaseData2DSourceController {
 
     @FXML
     @Override
-    public synchronized void saveAction() {
-        if (task != null && !task.isQuit()) {
+    public void saveAction() {
+        if (!dataSizeLoaded) {
+            popError(message("CountingTotalNumber"));
             return;
         }
-        if (!verifyData() || checkBeforeSave() < 0) {
+        if (!verifyData()) {
             return;
         }
-        if (data2D.isTable() && data2D.getSheet() == null) {
-            Data2DTableCreateController.open(this);
+        if (data2D.isTmpData()) {
+            if (data2D.isTable()) {
+                Data2DTableCreateController.open(this);
+            } else {
+                Data2DSaveAsController.open(this);
+            }
             return;
         }
         Data2D targetData = data2D.cloneAll();
@@ -371,6 +439,9 @@ public class Data2DManufactureController extends BaseData2DSourceController {
                 }
                 targetData.setFile(file);
             }
+        }
+        if (task != null) {
+            task.cancel();
         }
         task = new FxSingletonTask<Void>(this) {
 
@@ -418,14 +489,6 @@ public class Data2DManufactureController extends BaseData2DSourceController {
             }
         };
         start(task);
-    }
-
-    public synchronized int checkBeforeSave() {
-        if (!dataSizeLoaded) {
-            popError(message("CountingTotalNumber"));
-            return -1;
-        }
-        return 0;
     }
 
     public void dataSaved() {
@@ -664,9 +727,10 @@ public class Data2DManufactureController extends BaseData2DSourceController {
         return controller;
     }
 
-    public static Data2DManufactureController loadCSV(DataFileCSV csvData) {
+    public static Data2DManufactureController loadData(DataFileCSV csvData,
+            DataType targetType, String targetName, File targetFile) {
         Data2DManufactureController controller = open();
-        controller.loadCSVData(csvData);
+        controller.createData(csvData, targetType, targetName, targetFile);
         controller.requestMouse();
         return controller;
     }

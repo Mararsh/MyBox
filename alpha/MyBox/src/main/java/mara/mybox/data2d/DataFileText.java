@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.nio.charset.Charset;
-import java.util.HashMap;
 import java.util.List;
 import mara.mybox.data.FindReplaceString;
 import mara.mybox.dev.MyBoxLog;
@@ -40,13 +39,6 @@ public class DataFileText extends DataFile {
             "#", ";", ":", "*", "%", "$", "_", "&", "-", "=", "!", "\"",
             "'", "<", ">"};
         return delimiters;
-    }
-
-    public void setOptions(boolean hasHeader, Charset charset, String delimiter) {
-        options = new HashMap<>();
-        options.put("hasHeader", hasHeader);
-        options.put("charset", charset);
-        options.put("delimiter", delimiter);
     }
 
     @Override

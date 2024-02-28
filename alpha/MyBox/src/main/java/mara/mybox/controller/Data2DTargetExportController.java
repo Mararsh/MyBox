@@ -9,6 +9,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Tab;
 import javafx.scene.layout.VBox;
 import mara.mybox.data2d.DataFileCSV;
+import mara.mybox.data2d.reader.Data2DExport;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
@@ -29,6 +30,7 @@ public class Data2DTargetExportController extends BaseTaskController {
     protected List<List<String>> dataRows;
     protected List<Data2DColumn> columns;
     protected String filePrefix, format;
+    protected Data2DExport export;
 
     @FXML
     protected VBox formatVBox, targetVBox;
@@ -68,6 +70,7 @@ public class Data2DTargetExportController extends BaseTaskController {
             targetPath = new File(FileTmpTools.generatePath(format));
             filePrefix = data.getDataName();
 
+            export = Data2DExport.create(csvFile).initParameters(format);
             startAction();
 
         } catch (Exception e) {
@@ -91,6 +94,7 @@ public class Data2DTargetExportController extends BaseTaskController {
             targetPath = new File(FileTmpTools.generatePath("data2d"));
             filePrefix = name;
 
+            export = Data2DExport.create(csvFile).initParameters(format);
             startAction();
 
         } catch (Exception e) {
@@ -105,27 +109,25 @@ public class Data2DTargetExportController extends BaseTaskController {
             filePrefix = DateTools.nowFileString();
         }
         tabPane.getSelectionModel().select(logsTab);
-        convertController.setControls(this, format);
-        convertController.initParameters();
     }
 
     @Override
     public boolean doTask(FxTask currentTask) {
         try {
-            convertController.setExport(targetPath, columns, filePrefix, targetPathController.isSkip());
+            export.initPath(targetPath, columns, filePrefix, targetPathController.isSkip());
             if (csvFile != null) {
                 csvFile.startTask(currentTask, null);
-                csvFile.export(convertController, csvFile.columnIndices());
+                export.setCols(csvFile.columnIndices()).setTask(task).start();
                 csvFile.stopTask();
             } else {
                 for (List<String> row : dataRows) {
                     if (currentTask == null || !currentTask.isWorking()) {
                         break;
                     }
-                    convertController.writeRow(row);
+                    export.writeRow(row);
                 }
             }
-            convertController.closeWriters();
+            export.closeWriters();
             return true;
         } catch (Exception e) {
             this.updateLogs(e.toString());
@@ -141,7 +143,7 @@ public class Data2DTargetExportController extends BaseTaskController {
                 @Override
                 public void run() {
                     Platform.runLater(() -> {
-                        convertController.openFiles();
+                        export.openFiles();
                         close();
                     });
                 }

@@ -80,7 +80,7 @@ public class DataFileCSVConvertController extends BaseDataConvertController {
                 CsvTools.csvFormat(csvReadController.getDelimiterName(), true))) {
             List<String> names = new ArrayList<>();
             names.addAll(parser.getHeaderNames());
-            convertController.setParameters(targetPath, names, filePrefix(srcFile), skip);
+            export.initFiles(targetPath, names, filePrefix(srcFile), skip);
             for (CSVRecord record : parser) {
                 if (currentTask == null || currentTask.isCancelled()) {
                     return message("Cancelled");
@@ -89,9 +89,9 @@ public class DataFileCSVConvertController extends BaseDataConvertController {
                 for (String v : record) {
                     rowData.add(v);
                 }
-                convertController.writeRow(rowData);
+                export.writeRow(rowData);
             }
-            convertController.closeWriters();
+            export.closeWriters();
             result = message("Handled");
         } catch (Exception e) {
             result = e.toString();
@@ -123,15 +123,15 @@ public class DataFileCSVConvertController extends BaseDataConvertController {
                     for (int i = 1; i <= record.size(); i++) {
                         names.add(message("Column") + i);
                     }
-                    convertController.setParameters(targetPath, names, filePrefix(srcFile), skip);
+                    export.initFiles(targetPath, names, filePrefix(srcFile), skip);
                 }
                 List<String> rowData = new ArrayList<>();
                 for (String v : record) {
                     rowData.add(v);
                 }
-                convertController.writeRow(rowData);
+                export.writeRow(rowData);
             }
-            convertController.closeWriters();
+            export.closeWriters();
             result = message("Handled");
         } catch (Exception e) {
             result = e.toString();
