@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.io.File;
 import java.util.List;
 import java.util.Random;
 import javafx.beans.value.ChangeListener;
@@ -85,15 +86,33 @@ public class DataFileExcelSheetsController extends BaseChildController {
     }
 
     public void loadSheetIndex(int index) {
+        if (fileController == null || !fileController.isShowing()
+                || dataFileExcel == null) {
+            close();
+            return;
+        }
+        if (!fileController.checkBeforeNextAction()) {
+            return;
+        }
+        File file = dataFileExcel.getFile();
+        if (file == null || !file.exists()) {
+            close();
+            return;
+        }
         List<String> sheets = sheetSelector.getItems();
         if (index > sheets.size() - 1 || index < 0) {
             return;
         }
-        fileController.loadExcelSheet(sheets.get(index));
+        fileController.loadExcelFile(file, sheets.get(index), dataFileExcel.isHasHeader());
     }
 
     @FXML
     protected void plusSheet() {
+        if (fileController == null || !fileController.isShowing()
+                || dataFileExcel == null) {
+            close();
+            return;
+        }
         List<String> sheets = dataFileExcel.getSheetNames();
         if (sheets == null) {
             return;
@@ -139,6 +158,11 @@ public class DataFileExcelSheetsController extends BaseChildController {
 
     @FXML
     protected void renameSheet() {
+        if (fileController == null || !fileController.isShowing()
+                || dataFileExcel == null) {
+            close();
+            return;
+        }
         if (!fileController.checkBeforeNextAction()) {
             return;
         }
@@ -184,6 +208,11 @@ public class DataFileExcelSheetsController extends BaseChildController {
 
     @FXML
     protected void deleteSheet() {
+        if (fileController == null || !fileController.isShowing()
+                || dataFileExcel == null) {
+            close();
+            return;
+        }
         List<String> sheets = dataFileExcel.getSheetNames();
         if (sheets == null || sheets.size() <= 1) {
             return;

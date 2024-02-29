@@ -128,13 +128,13 @@ public class ControlData2DTarget extends BaseController {
             target = "csv";
             if (csvRadio.isSelected()) {
                 target = "csv";
-                targetFileController.type(FileType.CSV).initFile();
+                setTargetType(FileType.CSV);
             } else if (excelRadio.isSelected()) {
                 target = "excel";
-                targetFileController.type(FileType.Excel).initFile();
+                setTargetType(FileType.Excel);
             } else if (textsRadio.isSelected()) {
                 target = "texts";
-                targetFileController.type(FileType.Text).initFile();
+                setTargetType(FileType.Text);
             } else if (matrixRadio.isSelected()) {
                 target = "matrix";
             } else if (systemClipboardRadio.isSelected()) {
@@ -145,16 +145,16 @@ public class ControlData2DTarget extends BaseController {
                 target = "table";
             } else if (jsonRadio.isSelected()) {
                 target = "json";
-                targetFileController.type(FileType.JSON).initFile();
+                setTargetType(FileType.JSON);
             } else if (xmlRadio.isSelected()) {
                 target = "xml";
-                targetFileController.type(FileType.XML).initFile();
+                setTargetType(FileType.XML);
             } else if (htmlRadio.isSelected()) {
                 target = "html";
-                targetFileController.type(FileType.Html).initFile();
+                setTargetType(FileType.Html);
             } else if (pdfRadio.isSelected()) {
                 target = "pdf";
-                targetFileController.type(FileType.PDF).initFile();
+                setTargetType(FileType.PDF);
             } else if (inTableBox != null) {
                 if (replaceRadio.isSelected()) {
                     if (!notInTable) {
@@ -201,6 +201,11 @@ public class ControlData2DTarget extends BaseController {
             MyBoxLog.error(e);
         }
         return target;
+    }
+
+    public void setTargetType(int type) {
+        targetFileController.defaultFile(null).type(type)
+                .savedName(baseName + "TargetType" + type).initFile();
     }
 
     public void setTarget(String target) {

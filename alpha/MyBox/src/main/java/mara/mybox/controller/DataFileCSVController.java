@@ -2,27 +2,19 @@ package mara.mybox.controller;
 
 import java.io.File;
 import java.nio.charset.Charset;
-import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.MenuItem;
-import mara.mybox.data.StringTable;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.FxSingletonTask;
-import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.StyleTools;
-import mara.mybox.tools.FileTmpTools;
-import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -80,53 +72,6 @@ public class DataFileCSVController extends BaseData2DFileController {
         readDefinition();
     }
 
-    public void loadData(List<StringTable> tables) {
-        if (tables == null || tables.isEmpty()) {
-            return;
-        }
-        if (task != null) {
-            task.cancel();
-        }
-        task = new FxSingletonTask<Void>(this) {
-
-            private File filePath;
-            private LinkedHashMap<File, Boolean> files;
-            private int count;
-
-            @Override
-            protected boolean handle() {
-                filePath = new File(FileTmpTools.generatePath("csv"));
-                files = DataFileCSV.save(this, filePath, "tmp", tables);
-                count = files != null ? files.size() : 0;
-                return count > 0;
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                Iterator<File> iterator = files.keySet().iterator();
-                File csvFile = iterator.next();
-                setFile(csvFile, Charset.forName("UTF-8"), files.get(csvFile), ",");
-                if (count > 1) {
-                    browseURI(filePath.toURI());
-                    String info = MessageFormat.format(message("GeneratedFilesResult"),
-                            count, "\"" + filePath + "\"");
-                    int num = 1;
-                    info += "\n    " + csvFile.getName();
-                    while (iterator.hasNext()) {
-                        info += "\n    " + iterator.next().getName();
-                        if (++num > 10) {
-                            info += "\n    ......";
-                            break;
-                        }
-                    }
-                    alertInformation(info);
-                }
-            }
-
-        };
-        start(task);
-    }
-
     @FXML
     @Override
     public void saveAsAction() {
@@ -156,55 +101,38 @@ public class DataFileCSVController extends BaseData2DFileController {
     /*
         static
      */
-    public static DataFileCSVController open() {
-        try {
-            DataFileCSVController controller = (DataFileCSVController) WindowTools.openStage(Fxmls.DataFileCSVFxml);
-            if (controller != null) {
-                controller.requestMouse();
-            }
-            return controller;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
+    public static DataFileCSVController open2() {
+        return null;
     }
 
-    public static DataFileCSVController open(File file, Charset charset, boolean withNames, String delimiter) {
-        DataFileCSVController controller = open();
+    public static DataFileCSVController open2(File file, Charset charset, boolean withNames, String delimiter) {
+        DataFileCSVController controller = open2();
         if (controller != null) {
             controller.setFile(file, charset, withNames, delimiter);
         }
         return controller;
     }
 
-    public static DataFileCSVController open(String name, List<Data2DColumn> cols, List<List<String>> data) {
-        DataFileCSVController controller = open();
+    public static DataFileCSVController open2(String name, List<Data2DColumn> cols, List<List<String>> data) {
+        DataFileCSVController controller = open2();
         if (controller != null) {
             controller.loadData(name, cols, data);
         }
         return controller;
     }
 
-    public static DataFileCSVController openFile(File file) {
-        DataFileCSVController controller = open();
+    public static DataFileCSVController openFile2(File file) {
+        DataFileCSVController controller = open2();
         if (controller != null) {
             controller.sourceFileChanged(file);
         }
         return controller;
     }
 
-    public static DataFileCSVController open(Data2DDefinition def) {
-        DataFileCSVController controller = open();
+    public static DataFileCSVController open2(Data2DDefinition def) {
+        DataFileCSVController controller = open2();
         if (controller != null) {
             controller.loadDef(def);
-        }
-        return controller;
-    }
-
-    public static DataFileCSVController loadCSV(DataFileCSV csvData) {
-        DataFileCSVController controller = open();
-        if (controller != null) {
-            controller.createData(csvData, Data2DDefinition.DataType.CSV, null, null);
         }
         return controller;
     }

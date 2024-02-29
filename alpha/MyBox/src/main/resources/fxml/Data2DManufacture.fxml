@@ -107,6 +107,15 @@ License:    Apache License Version 2.0
                               </ImageView>
                            </graphic>
                         </Button>
+                        <Button fx:id="verifyButton" mnemonicParsing="false" onAction="#showVerifyMenu" onMouseEntered="#popVerifyMenu">
+                           <graphic>
+                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../buttons/Red/iconVerify.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
                         <Button fx:id="chartsButton" mnemonicParsing="false" onAction="#showChartsMenu" onMouseEntered="#popChartsMenu">
                            <graphic>
                               <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -169,19 +178,7 @@ License:    Apache License Version 2.0
                               </ImageView>
                            </graphic>
                         </Button>
-                        <RadioButton fx:id="htmlRadio" mnemonicParsing="false" selected="true">
-                           <graphic>
-                              <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../buttons/Red/iconHtml.png" />
-                                 </image>
-                              </ImageView>
-                           </graphic>
-                           <toggleGroup>
-                              <ToggleGroup fx:id="formatGroup" />
-                           </toggleGroup>
-                        </RadioButton>
-                        <RadioButton fx:id="tableRadio" mnemonicParsing="false" toggleGroup="$formatGroup">
+                        <RadioButton fx:id="tableRadio" mnemonicParsing="false" selected="true">
                            <graphic>
                               <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -189,12 +186,24 @@ License:    Apache License Version 2.0
                                  </image>
                               </ImageView>
                            </graphic>
+                           <toggleGroup>
+                              <ToggleGroup fx:id="formatGroup" />
+                           </toggleGroup>
                         </RadioButton>
                         <RadioButton fx:id="csvRadio" mnemonicParsing="false" toggleGroup="$formatGroup">
                            <graphic>
                               <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                  <image>
                                     <Image url="@../buttons/Red/iconCSV.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </RadioButton>
+                        <RadioButton fx:id="htmlRadio" mnemonicParsing="false" toggleGroup="$formatGroup">
+                           <graphic>
+                              <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../buttons/Red/iconHtml.png" />
                                  </image>
                               </ImageView>
                            </graphic>
@@ -323,15 +332,6 @@ License:    Apache License Version 2.0
                                     <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
                                           <Image url="@../buttons/Red/iconDelimiter.png" />
-                                       </image>
-                                    </ImageView>
-                                 </graphic>
-                              </Button>
-                              <Button fx:id="verifyButton" mnemonicParsing="false" onAction="#verifyAction">
-                                 <graphic>
-                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../buttons/Red/iconVerify.png" />
                                        </image>
                                     </ImageView>
                                  </graphic>

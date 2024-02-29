@@ -1756,9 +1756,7 @@ public class ControlWebView extends BaseController {
                 if (tables == null || tables.isEmpty()) {
                     popInformation(message("NoData"));
                 } else {
-                    DataFileCSVController c = (DataFileCSVController) WindowTools.openStage(Fxmls.DataFileCSVFxml);
-                    c.loadData(tables);
-                    c.toFront();
+                    Data2DManufactureController.loadTables(title(), tables);
                 }
             }
 

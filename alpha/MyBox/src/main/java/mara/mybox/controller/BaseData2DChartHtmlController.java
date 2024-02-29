@@ -284,7 +284,7 @@ public abstract class BaseData2DChartHtmlController extends BaseData2DChartContr
             popError(message("NoData"));
             return;
         }
-        DataFileCSVController.open(null, outputColumns, outputData);
+        Data2DManufactureController.openData(baseTitle, outputColumns, outputData);
     }
 
     @FXML
@@ -294,6 +294,7 @@ public abstract class BaseData2DChartHtmlController extends BaseData2DChartContr
     }
 
     @FXML
+    @Override
     public void popFunctionsMenu(javafx.event.Event event) {
         if (UserConfig.getBoolean("WebviewFunctionsPopWhenMouseHovering", true)) {
             showFunctionsMenu(event);
@@ -301,6 +302,7 @@ public abstract class BaseData2DChartHtmlController extends BaseData2DChartContr
     }
 
     @FXML
+    @Override
     public void showFunctionsMenu(javafx.event.Event event) {
         webViewController.showFunctionsMenu(event);
     }

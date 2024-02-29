@@ -54,7 +54,7 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
     protected Data2D data2D;
     protected TableData2DDefinition tableData2DDefinition;
     protected TableData2DColumn tableData2DColumn;
-    protected boolean readOnly;
+    protected boolean readOnly, validateEdit, validateSave;
     protected SimpleBooleanProperty statusNotify;
     protected DataFilter styleFilter;
 
@@ -70,6 +70,7 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
     public BaseData2DTableController() {
         statusNotify = new SimpleBooleanProperty(false);
         readOnly = true;
+        validateEdit = validateSave = false;
         styleFilter = new DataFilter();
     }
 
@@ -77,6 +78,9 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
     public void initControls() {
         try {
             super.initControls();
+
+            validateEdit = true;
+            validateSave = true;
 
             if (dataRowColumn != null) {
                 dataRowColumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<List<String>, Integer>, ObservableValue<Integer>>() {
@@ -271,6 +275,7 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
             List<Data2DColumn> columns = data2D.getColumns();
             TableColor tableColor = null;
             boolean includeCoordinate = data2D.includeCoordinate();
+            validateEdit = UserConfig.getBoolean(baseName + "ValidateEdit", true);
             for (int i = 0; i < columns.size(); i++) {
                 Data2DColumn dataColumn = columns.get(i);
                 String name = dataColumn.getColumnName();
@@ -664,6 +669,14 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
 
     public DataFilter getStyleFilter() {
         return styleFilter;
+    }
+
+    public boolean isValidateEdit() {
+        return validateEdit;
+    }
+
+    public boolean isValidateSave() {
+        return validateSave;
     }
 
 }

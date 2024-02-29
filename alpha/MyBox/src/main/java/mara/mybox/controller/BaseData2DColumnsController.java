@@ -570,7 +570,7 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
         }
         task = new FxSingletonTask<Void>(this) {
 
-            DataFileCSV csv;
+            protected DataFileCSV csv;
 
             @Override
             protected boolean handle() {
@@ -724,7 +724,7 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
 
             @Override
             protected void whenSucceeded() {
-                DataFileCSVController.loadCSV(csv);
+                Data2DManufactureController.openDef(csv);
             }
         };
         start(task);
@@ -865,7 +865,7 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
             @Override
             protected void whenSucceeded() {
                 recordFileWritten(file, VisitHistory.FileType.Excel);
-                DataFileExcelController.open(excel);
+                Data2DManufactureController.openDef(excel);
             }
         };
         start(task);

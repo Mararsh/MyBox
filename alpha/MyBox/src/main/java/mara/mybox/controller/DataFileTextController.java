@@ -8,17 +8,11 @@ import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.MenuItem;
-import javafx.stage.Window;
 import mara.mybox.data2d.Data2D;
-import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataFileText;
-import mara.mybox.db.data.Data2DColumn;
-import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.StyleTools;
-import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -104,46 +98,45 @@ public class DataFileTextController extends BaseData2DFileController {
     /*
         static
      */
-    public static DataFileTextController open(String name, List<Data2DColumn> cols, List<List<String>> data) {
-        DataFileTextController controller = (DataFileTextController) WindowTools.openStage(Fxmls.DataFileTextFxml);
-        controller.loadData(name, cols, data);
-        controller.requestMouse();
-        return controller;
-    }
-
-    public static DataFileTextController open(File file, Charset charset, boolean withNames, String delimiter) {
-        DataFileTextController controller = (DataFileTextController) WindowTools.openStage(Fxmls.DataFileTextFxml);
-        controller.setFile(file, charset, withNames, delimiter);
-        controller.requestMouse();
-        return controller;
-    }
-
-    public static DataFileTextController open() {
-        DataFileTextController controller = (DataFileTextController) WindowTools.openStage(Fxmls.DataFileTextFxml);
-        controller.createAction();
-        controller.requestMouse();
-        return controller;
-    }
-
-    public static DataFileTextController load(Window parent) {
-        DataFileTextController controller = (DataFileTextController) WindowTools.replaceStage(parent, Fxmls.DataFileTextFxml);
-        controller.createAction();
-        controller.requestMouse();
-        return controller;
-    }
-
-    public static DataFileTextController open(Data2DDefinition def) {
-        DataFileTextController controller = (DataFileTextController) WindowTools.openStage(Fxmls.DataFileTextFxml);
-        controller.loadDef(def);
-        controller.requestMouse();
-        return controller;
-    }
-
-    public static DataFileTextController loadCSV(DataFileCSV csvData) {
-        DataFileTextController controller = (DataFileTextController) WindowTools.openStage(Fxmls.DataFileTextFxml);
-        controller.createData(csvData, Data2DDefinition.DataType.Texts, null, null);
-        controller.requestMouse();
-        return controller;
-    }
-
+//    public static DataFileTextController open(String name, List<Data2DColumn> cols, List<List<String>> data) {
+//        DataFileTextController controller = (DataFileTextController) WindowTools.openStage(Fxmls.DataFileTextFxml);
+//        controller.loadData(name, cols, data);
+//        controller.requestMouse();
+//        return controller;
+//    }
+//
+//    public static DataFileTextController open(File file, Charset charset, boolean withNames, String delimiter) {
+//        DataFileTextController controller = (DataFileTextController) WindowTools.openStage(Fxmls.DataFileTextFxml);
+//        controller.setFile(file, charset, withNames, delimiter);
+//        controller.requestMouse();
+//        return controller;
+//    }
+//
+//    public static DataFileTextController open() {
+//        DataFileTextController controller = (DataFileTextController) WindowTools.openStage(Fxmls.DataFileTextFxml);
+//        controller.createAction();
+//        controller.requestMouse();
+//        return controller;
+//    }
+//
+//    public static DataFileTextController load(Window parent) {
+//        DataFileTextController controller = (DataFileTextController) WindowTools.replaceStage(parent, Fxmls.DataFileTextFxml);
+//        controller.createAction();
+//        controller.requestMouse();
+//        return controller;
+//    }
+//
+//    public static DataFileTextController open(Data2DDefinition def) {
+//        DataFileTextController controller = (DataFileTextController) WindowTools.openStage(Fxmls.DataFileTextFxml);
+//        controller.loadDef(def);
+//        controller.requestMouse();
+//        return controller;
+//    }
+//
+//    public static DataFileTextController loadCSV(DataFileCSV csvData) {
+//        DataFileTextController controller = (DataFileTextController) WindowTools.openStage(Fxmls.DataFileTextFxml);
+//        controller.createData(csvData, Data2DDefinition.DataType.Texts, null, null);
+//        controller.requestMouse();
+//        return controller;
+//    }
 }

@@ -498,7 +498,7 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
             protected void whenSucceeded() {
                 if (file.exists()) {
                     recordFileWritten(file, FileType.Text);
-                    DataFileCSVController.open(file, Charset.forName("UTF-8"), true, ",");
+                    Data2DManufactureController.openCSVFile(file, Charset.forName("UTF-8"), true, ",");
                 }
             }
         };

@@ -32,11 +32,8 @@ public class ICODecoder {
 
     /**
      * Reads and decodes the given ICO file. Convenience method equivalent to
-     * null null null null null null null null null null null null null null
-     * null null null null null null null null null null null null null null
-     * null null null null null null null null null null null null null null
-     * null null null     {@link #read(java.io.InputStream) read(new
-	 * FileInputStream(file))}.
+     * null null null null     {@link #read(java.io.InputStream) read(new
+	 * java.io.FileInputStream(file))}.
      *
      * @param file the source file to read
      * @return the list of images decoded from the ICO data
@@ -63,10 +60,8 @@ public class ICODecoder {
 
     /**
      * Reads and decodes the given ICO file, together with all metadata.
-     * Convenience method equivalent to null null null null null null null null
-     * null null null null null null null null null null null null null null
-     * null null null null null null null     {@link #readExt(java.io.InputStream)
-     * readExt(new FileInputStream(file))}.
+     * Convenience method equivalent to {@link #readExt(java.io.InputStream)
+     * readExt(new java.io.FileInputStream(file))}.
      *
      * @param file the source file to read
      * @return the list of images decoded from the ICO data
@@ -91,10 +86,12 @@ public class ICODecoder {
         try (LittleEndianInputStream in
                 = new LittleEndianInputStream(new CountingInputStream(is))) {
             // Count 2 byte Number of Icons in this file
+            // Reserved 2 byte =0
+            short sReserved = in.readShortLE();
+            // Type 2 byte =1
+            short sType = in.readShortLE();
+            // Count 2 byte Number of Icons in this file
             short sCount = in.readShortLE();
-            if (sCount < 1) {
-                return null;
-            }
 
             // Entries Count * 16 list of icons
             IconEntry[] entries = new IconEntry[sCount];

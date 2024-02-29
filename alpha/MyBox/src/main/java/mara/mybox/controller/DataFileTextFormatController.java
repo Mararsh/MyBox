@@ -1,10 +1,10 @@
 package mara.mybox.controller;
 
+import java.io.File;
 import java.nio.charset.Charset;
-import java.util.HashMap;
-import java.util.Map;
 import javafx.fxml.FXML;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.Fxmls;
@@ -46,21 +46,51 @@ public class DataFileTextFormatController extends BaseChildController {
     @FXML
     @Override
     public void okAction() {
-        Map<String, Object> options = new HashMap<>();
-        Charset charset;
-        if (optionsController.withNamesCheck.isSelected()) {
-            charset = TextFileTools.charset(sourceFile);
-        } else {
-            charset = optionsController.getCharset();
-        }
-        options.put("hasHeader", optionsController.withNamesCheck.isSelected());
-        options.put("charset", charset);
-        options.put("delimiter", optionsController.getDelimiterValue());
-        fileController.reloadFile(options);
-
-        if (closeAfterCheck.isSelected()) {
+        if (fileController == null || !fileController.isShowing()
+                || fileController.data2D == null
+                || fileController.data2D.getFile() == null) {
             close();
+            return;
         }
+        File file = fileController.data2D.getFile();
+        if (file == null || !file.exists()) {
+            close();
+            return;
+        }
+        if (task != null) {
+            task.cancel();
+        }
+        task = new FxSingletonTask<Void>(this) {
+            Charset charset;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    if (optionsController.withNamesCheck.isSelected()) {
+                        charset = TextFileTools.charset(file);
+                    } else {
+                        charset = optionsController.getCharset();
+                    }
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                fileController.loadTextFile(file, charset,
+                        optionsController.withNamesCheck.isSelected(),
+                        optionsController.getDelimiterValue());
+                if (closeAfterCheck.isSelected()) {
+                    close();
+                }
+            }
+
+        };
+        start(task);
+
     }
 
 

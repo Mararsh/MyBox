@@ -57,7 +57,7 @@ License:    Apache License Version 2.0
                                     <children>
                                         <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="537.0" prefViewportWidth="418.0" VBox.vgrow="ALWAYS">
                                             <content>
-                                                <fx:include fx:id="convert" source="ControlDataConvert.fxml" />
+                                                <fx:include fx:id="convert" source="ControlDataExport.fxml" />
                                             </content>
                                         </ScrollPane>
                                         <Button fx:id="previewButton" disable="true" mnemonicParsing="false" onAction="#previewAction">

@@ -17,11 +17,9 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
-import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TextTools;
-import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -186,8 +184,7 @@ public class DataFileTextMergeController extends FilesMergeController {
         if (file == null) {
             return;
         }
-        DataFileTextController controller = (DataFileTextController) WindowTools.openStage(Fxmls.DataFileTextFxml);
-        controller.sourceFileChanged(file);
+        Data2DManufactureController.openTextFile(file, targetCharset, targetWithName, targetDelimiter);
     }
 
 }

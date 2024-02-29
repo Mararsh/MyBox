@@ -10,6 +10,7 @@ import mara.mybox.calculation.DoubleStatistic;
 import mara.mybox.calculation.Normalization;
 import mara.mybox.calculation.SimpleLinearRegression;
 import mara.mybox.data2d.reader.Data2DCopy;
+import mara.mybox.data2d.reader.Data2DExport;
 import mara.mybox.data2d.reader.Data2DFrequency;
 import mara.mybox.data2d.reader.Data2DNormalize;
 import mara.mybox.data2d.reader.Data2DOperator;
@@ -44,6 +45,15 @@ public abstract class Data2D_Operations extends Data2D_Convert {
 
     public static enum ObjectType {
         Columns, Rows, All
+    }
+
+    public boolean export(Data2DExport export, List<Integer> cols) {
+        if (export == null || cols == null || cols.isEmpty()) {
+            return false;
+        }
+        export.setData(this);
+        export.setCols(cols).setTask(task).start();
+        return !export.failed();
     }
 
     public List<List<String>> allRows(List<Integer> cols, boolean rowNumber) {

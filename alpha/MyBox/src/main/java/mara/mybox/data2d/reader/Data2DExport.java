@@ -8,10 +8,12 @@ import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+import javafx.application.Platform;
+import mara.mybox.controller.BaseController;
 import mara.mybox.controller.BaseTaskController;
-import mara.mybox.controller.DataFileCSVController;
-import mara.mybox.controller.DataFileExcelController;
-import mara.mybox.controller.DataFileTextController;
+import mara.mybox.controller.Data2DManufactureController;
 import mara.mybox.controller.DataInMyBoxClipboardController;
 import mara.mybox.controller.JsonEditorController;
 import mara.mybox.controller.PdfViewController;
@@ -23,12 +25,15 @@ import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.Data2DTools;
 import mara.mybox.data2d.Data2D_Edit;
 import mara.mybox.data2d.DataClipboard;
+import mara.mybox.data2d.DataMatrix;
+import mara.mybox.data2d.TmpTable;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.JsonTools;
 import mara.mybox.tools.TextFileTools;
@@ -48,26 +53,30 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  */
 public class Data2DExport extends Data2DOperator {
 
-    protected BaseTaskController parent;
+    protected BaseTaskController taskController;
     protected List<String> names;
     protected List<Data2DColumn> columns;
     protected boolean firstRow, rowNumber, skip,
-            csv, texts, pdf, html, xml, json, excel, myBoxClipboard,
+            csv, texts, excel, myBoxClipboard, systemClipboard, matrix, table, pdf, html, xml, json,
             csvWithNames, textWithNames, excelWithNames;
-    protected File csvFile, textFile, xmlFile, jsonFile, htmlFile, pdfFile, xlsxFile, dataClipboardFile;
+    protected File csvFile, textFile, xmlFile, jsonFile, htmlFile, pdfFile, xlsxFile,
+            myBoxClipboardFile, systemClipboardFile;
     protected Charset cvsCharset, textCharset;
     protected CSVPrinter dataClipboardPrinter;
     protected BufferedWriter textWriter, htmlWriter, xmlWriter, jsonWriter;
     protected XSSFWorkbook xssfBook;
     protected XSSFSheet xssfSheet;
-    protected String indent = "    ", filePrefix, textDelimiter, csvDelimiter, css;
+    protected String indent = "    ", dataName, filePrefix,
+            textDelimiter, csvDelimiter, css, sheetName, format;
     protected PaginatedPdfTable pdfTable;
     protected List<List<String>> pageRows;
     protected int maxLines, fileIndex, fileRowIndex, dataRowIndex;
     protected File targetPath, targetFile;
+    protected Data2D csvData, excelData, textData, myBoxClipboadData, matrixData, tableData;
 
     public Data2DExport() {
-        csvWithNames = textWithNames = excelWithNames = true;
+        firstRow = csvWithNames = textWithNames = excelWithNames = true;
+        rowNumber = formatValues = false;
         maxLines = -1;
     }
 
@@ -100,6 +109,12 @@ public class Data2DExport extends Data2DOperator {
         }
     }
 
+    @Override
+    public boolean end() {
+        closeWriters();
+        return true;
+    }
+
     /*
         run task
      */
@@ -119,7 +134,15 @@ public class Data2DExport extends Data2DOperator {
         xlsxFile = null;
         jsonFile = null;
         pdfFile = null;
-        dataClipboardFile = null;
+        myBoxClipboardFile = null;
+        systemClipboardFile = null;
+
+        csvData = null;
+        excelData = null;
+        textData = null;
+        myBoxClipboadData = null;
+        matrixData = null;
+        tableData = null;
 
         firstRow = true;
         if (cvsCharset == null) {
@@ -134,12 +157,19 @@ public class Data2DExport extends Data2DOperator {
         if (textDelimiter == null) {
             textDelimiter = ",";
         }
+        if (sheetName == null) {
+            sheetName = "sheet1";
+        }
+        if (pdf && pdfTable == null) {
+            pdfTable = PaginatedPdfTable.create();
+        }
     }
 
     public boolean initParameters() {
         try {
             initWriters();
 
+            format = null;
             names = null;
             pdfTable = null;
             initFiles();
@@ -150,8 +180,9 @@ public class Data2DExport extends Data2DOperator {
         }
     }
 
-    public Data2DExport initParameters(String format) {
+    public Data2DExport initParameters(String inFormat) {
         initParameters();
+        format = inFormat;
         if (format == null) {
             return this;
         }
@@ -161,8 +192,12 @@ public class Data2DExport extends Data2DOperator {
             setTexts(true);
         } else if ("excel".equals(format)) {
             setExcel(true);
-        } else if ("clip".equals(format)) {
+        } else if ("myBoxClipboard".equals(format)) {
             setMyBoxClipboard(true);
+        } else if ("matrix".equals(format)) {
+            setMatrix(true);
+        } else if ("table".equals(format)) {
+            setTable(true);
         } else if ("json".equals(format)) {
             setJson(true);
         } else if ("xml".equals(format)) {
@@ -171,7 +206,8 @@ public class Data2DExport extends Data2DOperator {
             setHtml(true);
         } else if ("pdf".equals(format)) {
             setPdf(true);
-            setPdfTable(PaginatedPdfTable.create());
+        } else if ("systemClipboard".equals(format)) {
+            setSystemClipboard(true);
         }
         return this;
     }
@@ -217,7 +253,12 @@ public class Data2DExport extends Data2DOperator {
         if (columns == null || columns.isEmpty()) {
             columns = Data2DTools.toColumns(names);
         }
-        return Data2DExport.this.openWriters();
+        return openWriters();
+    }
+
+    public File makeTargetFile(String prefix, String suffix) {
+        return targetFile != null ? targetFile
+                : taskController.makeTargetFile(prefix, "." + suffix, targetPath);
     }
 
     public boolean openWriters() {
@@ -233,8 +274,8 @@ public class Data2DExport extends Data2DOperator {
             if (maxLines > 0) {
                 currentPrefix += "_" + fileIndex;
             }
-            if (csv) {
-                csvFile = targetFile != null ? targetFile : parent.makeTargetFile(currentPrefix, ".csv", targetPath);
+            if (csv || matrix || table) {
+                csvFile = makeTargetFile(currentPrefix, "csv");
                 if (csvFile != null) {
                     updateLogs(message("Writing") + " " + csvFile.getAbsolutePath());
                     csvPrinter = new CSVPrinter(new FileWriter(csvFile, cvsCharset), CsvTools.csvFormat(csvDelimiter));
@@ -246,7 +287,7 @@ public class Data2DExport extends Data2DOperator {
                 }
             }
             if (texts) {
-                textFile = targetFile != null ? targetFile : parent.makeTargetFile(currentPrefix, ".txt", targetPath);
+                textFile = makeTargetFile(currentPrefix, "txt");
                 if (textFile != null) {
                     updateLogs(message("Writing") + " " + textFile.getAbsolutePath());
                     textWriter = new BufferedWriter(new FileWriter(textFile, textCharset));
@@ -258,11 +299,11 @@ public class Data2DExport extends Data2DOperator {
                 }
             }
             if (excel) {
-                xlsxFile = targetFile != null ? targetFile : parent.makeTargetFile(currentPrefix, ".xlsx", targetPath);
+                xlsxFile = makeTargetFile(currentPrefix, "xlsx");
                 if (xlsxFile != null) {
                     updateLogs(message("Writing") + " " + xlsxFile.getAbsolutePath());
                     xssfBook = new XSSFWorkbook();
-                    xssfSheet = xssfBook.createSheet("sheet1");
+                    xssfSheet = xssfBook.createSheet(sheetName);
                     xssfSheet.setDefaultColumnWidth(20);
                     if (excelWithNames) {
                         XSSFRow titleRow = xssfSheet.createRow(0);
@@ -279,10 +320,10 @@ public class Data2DExport extends Data2DOperator {
                 }
             }
             if (myBoxClipboard) {
-                dataClipboardFile = DataClipboard.newFile();
-                if (dataClipboardFile != null) {
-                    updateLogs(message("Writing") + " " + dataClipboardFile.getAbsolutePath());
-                    dataClipboardPrinter = new CSVPrinter(new FileWriter(dataClipboardFile,
+                myBoxClipboardFile = DataClipboard.newFile();
+                if (myBoxClipboardFile != null) {
+                    updateLogs(message("Writing") + " " + myBoxClipboardFile.getAbsolutePath());
+                    dataClipboardPrinter = new CSVPrinter(new FileWriter(myBoxClipboardFile,
                             Charset.forName("UTF-8")), CsvTools.csvFormat());
                     dataClipboardPrinter.printRecord(names);
                 } else if (skip) {
@@ -290,7 +331,7 @@ public class Data2DExport extends Data2DOperator {
                 }
             }
             if (html) {
-                htmlFile = targetFile != null ? targetFile : parent.makeTargetFile(currentPrefix, ".html", targetPath);
+                htmlFile = makeTargetFile(currentPrefix, "html");
                 if (htmlFile != null) {
                     updateLogs(message("Writing") + " " + htmlFile.getAbsolutePath());
                     htmlWriter = new BufferedWriter(new FileWriter(htmlFile, Charset.forName("utf-8")));
@@ -312,7 +353,7 @@ public class Data2DExport extends Data2DOperator {
                 }
             }
             if (xml) {
-                xmlFile = targetFile != null ? targetFile : parent.makeTargetFile(currentPrefix, ".xml", targetPath);
+                xmlFile = makeTargetFile(currentPrefix, "xml");
                 if (xmlFile != null) {
                     updateLogs(message("Writing") + " " + xmlFile.getAbsolutePath());
                     xmlWriter = new BufferedWriter(new FileWriter(xmlFile, Charset.forName("UTF-8")));
@@ -325,7 +366,7 @@ public class Data2DExport extends Data2DOperator {
                 }
             }
             if (json) {
-                jsonFile = targetFile != null ? targetFile : parent.makeTargetFile(currentPrefix, ".json", targetPath);
+                jsonFile = makeTargetFile(currentPrefix, "json");
                 if (jsonFile != null) {
                     updateLogs(message("Writing") + " " + jsonFile.getAbsolutePath());
                     jsonWriter = new BufferedWriter(new FileWriter(jsonFile, Charset.forName("UTF-8")));
@@ -337,7 +378,7 @@ public class Data2DExport extends Data2DOperator {
                 }
             }
             if (pdf && pdfTable != null) {
-                pdfFile = targetFile != null ? targetFile : parent.makeTargetFile(currentPrefix, ".pdf", targetPath);
+                pdfFile = makeTargetFile(currentPrefix, "pdf");
                 if (pdfFile != null) {
                     updateLogs(message("Writing") + " " + pdfFile.getAbsolutePath());
                     pdfTable.setColumns(names).createDoc(pdfFile);
@@ -470,82 +511,54 @@ public class Data2DExport extends Data2DOperator {
             if (csvPrinter != null && csvFile != null) {
                 csvPrinter.flush();
                 csvPrinter.close();
-                if (parent != null) {
-                    parent.targetFileGenerated(csvFile, VisitHistory.FileType.CSV);
+                if (taskController != null) {
+                    taskController.targetFileGenerated(csvFile, VisitHistory.FileType.CSV);
                 }
                 csvPrinter = null;
-                Data2D d = Data2D.create(Data2DDefinition.DataType.CSV);
-                d.setTask(task).setFile(csvFile)
+                csvData = Data2D.create(Data2DDefinition.DataType.CSV);
+                csvData.setTask(task).setFile(csvFile)
                         .setCharset(cvsCharset)
                         .setDelimiter(csvDelimiter)
                         .setHasHeader(csvWithNames)
-                        .setDataName(d.dataName())
+                        .setDataName(dataName)
                         .setColsNumber(columns.size())
                         .setRowsNumber(dataRowIndex);
-                Data2D.saveAttributes(conn, d, columns);
+                Data2D.saveAttributes(conn, csvData, columns);
                 conn.commit();
+
+                if (matrix) {
+                    matrixData = DataMatrix.toMatrix(task, conn, csvData, dataName);
+                }
+                if (table) {
+                    if (dataName.startsWith(TmpTable.TmpTablePrefix)
+                            || dataName.startsWith(TmpTable.TmpTablePrefix.toLowerCase())) {
+                        dataName = dataName.substring(TmpTable.TmpTablePrefix.length());
+                    }
+                    tableData = csvData.toTable(task, conn, dataName);
+                }
+                if (systemClipboard) {
+                    systemClipboardFile = csvFile;
+                }
+
             }
 
             if (textWriter != null && textFile != null) {
                 textWriter.flush();
                 textWriter.close();
-                if (parent != null) {
-                    parent.targetFileGenerated(textFile, VisitHistory.FileType.Text);
+                if (taskController != null) {
+                    taskController.targetFileGenerated(textFile, VisitHistory.FileType.Text);
                 }
                 textWriter = null;
-                Data2D d = Data2D.create(Data2DDefinition.DataType.Texts);
-                d.setTask(task).setFile(textFile)
+                textData = Data2D.create(Data2DDefinition.DataType.Texts);
+                textData.setTask(task).setFile(textFile)
                         .setCharset(textCharset)
                         .setDelimiter(textDelimiter)
                         .setHasHeader(textWithNames)
-                        .setDataName(d.dataName())
+                        .setDataName(dataName)
                         .setColsNumber(columns.size())
                         .setRowsNumber(dataRowIndex);
-                Data2D.saveAttributes(conn, d, columns);
+                Data2D.saveAttributes(conn, textData, columns);
                 conn.commit();
-            }
-
-            if (htmlWriter != null && htmlFile != null) {
-                htmlWriter.write(StringTable.tableSuffix(new StringTable(names)));
-                htmlWriter.write(indent + "<BODY>\n</HTML>\n");
-                htmlWriter.flush();
-                htmlWriter.close();
-                if (parent != null) {
-                    parent.targetFileGenerated(htmlFile, VisitHistory.FileType.Html);
-                }
-                htmlWriter = null;
-            }
-
-            if (xmlWriter != null && xmlFile != null) {
-                xmlWriter.write("</Data>\n");
-                xmlWriter.flush();
-                xmlWriter.close();
-                if (parent != null) {
-                    parent.targetFileGenerated(xmlFile, VisitHistory.FileType.XML);
-                }
-                xmlWriter = null;
-            }
-
-            if (jsonWriter != null && jsonFile != null) {
-                jsonWriter.write("\n]}\n");
-                jsonWriter.flush();
-                jsonWriter.close();
-                if (parent != null) {
-                    parent.targetFileGenerated(jsonFile, VisitHistory.FileType.JSON);
-                }
-                jsonWriter = null;
-            }
-
-            if (pdfFile != null && pdfTable != null) {
-                if (pageRows != null && !pageRows.isEmpty()) {
-                    pdfTable.writePage(pageRows);
-                    pageRows = null;
-                }
-                pdfTable.closeDoc();
-                if (parent != null) {
-                    parent.targetFileGenerated(pdfFile, VisitHistory.FileType.PDF);
-                }
-                pdfTable = null;
             }
 
             if (xssfBook != null && xssfSheet != null && xlsxFile != null) {
@@ -556,39 +569,83 @@ public class Data2DExport extends Data2DOperator {
                     xssfBook.write(fileOut);
                 }
                 xssfBook.close();
-                if (parent != null) {
-                    parent.targetFileGenerated(xlsxFile, VisitHistory.FileType.Excel);
+                if (taskController != null) {
+                    taskController.targetFileGenerated(xlsxFile, VisitHistory.FileType.Excel);
                 }
                 xssfBook = null;
-                Data2D d = Data2D.create(Data2DDefinition.DataType.Excel);
-                d.setTask(task).setFile(xlsxFile).setSheet("sheet1")
+                excelData = Data2D.create(Data2DDefinition.DataType.Excel);
+                excelData.setTask(task).setFile(xlsxFile).setSheet(sheetName)
                         .setHasHeader(excelWithNames)
-                        .setDataName(d.dataName())
+                        .setDataName(dataName)
                         .setColsNumber(columns.size())
                         .setRowsNumber(dataRowIndex);
-                Data2D.saveAttributes(conn, d, columns);
+                Data2D.saveAttributes(conn, excelData, columns);
                 conn.commit();
             }
 
-            if (dataClipboardPrinter != null && dataClipboardFile != null) {
+            if (dataClipboardPrinter != null && myBoxClipboardFile != null) {
                 dataClipboardPrinter.flush();
                 dataClipboardPrinter.close();
-                if (parent != null) {
-                    parent.targetFileGenerated(dataClipboardFile, VisitHistory.FileType.CSV);
+                if (taskController != null) {
+                    taskController.targetFileGenerated(myBoxClipboardFile, VisitHistory.FileType.CSV);
                 }
                 dataClipboardPrinter = null;
-                Data2D d = Data2D.create(Data2DDefinition.DataType.MyBoxClipboard);
-                d.setTask(task).setFile(dataClipboardFile)
+                myBoxClipboadData = Data2D.create(Data2DDefinition.DataType.MyBoxClipboard);
+                myBoxClipboadData.setTask(task).setFile(myBoxClipboardFile)
                         .setCharset(Charset.forName("UTF-8"))
                         .setDelimiter(",")
                         .setHasHeader(true)
-                        .setDataName(d.dataName())
+                        .setDataName(dataName)
                         .setColsNumber(columns.size())
                         .setRowsNumber(dataRowIndex);
-                Data2D.saveAttributes(conn, d, columns);
+                Data2D.saveAttributes(conn, myBoxClipboadData, columns);
                 DataInMyBoxClipboardController.update();
                 conn.commit();
             }
+
+            if (htmlWriter != null && htmlFile != null) {
+                htmlWriter.write(StringTable.tableSuffix(new StringTable(names)));
+                htmlWriter.write(indent + "<BODY>\n</HTML>\n");
+                htmlWriter.flush();
+                htmlWriter.close();
+                if (taskController != null) {
+                    taskController.targetFileGenerated(htmlFile, VisitHistory.FileType.Html);
+                }
+                htmlWriter = null;
+            }
+
+            if (xmlWriter != null && xmlFile != null) {
+                xmlWriter.write("</Data>\n");
+                xmlWriter.flush();
+                xmlWriter.close();
+                if (taskController != null) {
+                    taskController.targetFileGenerated(xmlFile, VisitHistory.FileType.XML);
+                }
+                xmlWriter = null;
+            }
+
+            if (jsonWriter != null && jsonFile != null) {
+                jsonWriter.write("\n]}\n");
+                jsonWriter.flush();
+                jsonWriter.close();
+                if (taskController != null) {
+                    taskController.targetFileGenerated(jsonFile, VisitHistory.FileType.JSON);
+                }
+                jsonWriter = null;
+            }
+
+            if (pdfFile != null && pdfTable != null) {
+                if (pageRows != null && !pageRows.isEmpty()) {
+                    pdfTable.writePage(pageRows);
+                    pageRows = null;
+                }
+                pdfTable.closeDoc();
+                if (taskController != null) {
+                    taskController.targetFileGenerated(pdfFile, VisitHistory.FileType.PDF);
+                }
+                pdfTable = null;
+            }
+
             conn.close();
         } catch (Exception e) {
             updateLogs(e.toString());
@@ -597,48 +654,76 @@ public class Data2DExport extends Data2DOperator {
     }
 
     public void updateLogs(String logs) {
-        if (parent != null) {
-            parent.updateLogs(logs);
+        if (taskController != null) {
+            taskController.updateLogs(logs);
+        } else if (task != null) {
+            task.setInfo(logs);
         }
     }
 
-    public void openFiles() {
-        if (csvFile != null && csvFile.exists()) {
-            DataFileCSVController.open(csvFile, cvsCharset, csvWithNames, csvDelimiter);
-        }
-        if (xlsxFile != null && xlsxFile.exists()) {
-            DataFileExcelController.open(xlsxFile, excelWithNames);
-        }
-        if (textFile != null && textFile.exists()) {
-            DataFileTextController.open(textFile, textCharset, textWithNames, textDelimiter);
-        }
-        if (pdfFile != null && pdfFile.exists()) {
-            PdfViewController.open(pdfFile);
-        }
-        if (htmlFile != null && htmlFile.exists()) {
-            WebBrowserController.openFile(htmlFile);
-        }
-        if (dataClipboardFile != null && dataClipboardFile.exists()) {
-            DataInMyBoxClipboardController.oneOpen();
-        }
-        if (xmlFile != null && xmlFile.exists()) {
-            XmlEditorController.open(xmlFile);
-        }
-        if (jsonFile != null && jsonFile.exists()) {
-            JsonEditorController.open(jsonFile);
-        }
+    public void openResults(BaseController controller) {
+        new Timer().schedule(new TimerTask() {
 
+            @Override
+            public void run() {
+                Platform.runLater(() -> {
+
+                    if (excelData != null) {
+                        Data2DManufactureController.openDef(excelData);
+                    }
+                    if (textData != null) {
+                        Data2DManufactureController.openDef(textData);
+                    }
+                    if (myBoxClipboadData != null) {
+                        DataInMyBoxClipboardController.open(myBoxClipboadData);
+                    }
+                    if (systemClipboardFile != null) {
+                        TextClipboardTools.copyToSystemClipboard(controller,
+                                TextFileTools.readTexts(null, systemClipboardFile));
+                    }
+                    if (matrixData != null) {
+                        Data2DManufactureController.openDef(matrixData);
+                    }
+                    if (tableData != null) {
+                        Data2DManufactureController.openDef(tableData);
+                    }
+                    if (pdfFile != null && pdfFile.exists()) {
+                        PdfViewController.open(pdfFile);
+                    }
+                    if (htmlFile != null && htmlFile.exists()) {
+                        WebBrowserController.openFile(htmlFile);
+                    }
+                    if (xmlFile != null && xmlFile.exists()) {
+                        XmlEditorController.open(xmlFile);
+                    }
+                    if (jsonFile != null && jsonFile.exists()) {
+                        JsonEditorController.open(jsonFile);
+                    }
+                    if (csvData != null) {
+                        if (csv) {
+                            Data2DManufactureController.openDef(csvData);
+                        } else {
+                            csvData.drop();
+                        }
+                    }
+
+                    initParameters();
+
+                });
+            }
+
+        }, 1000);
     }
 
     /*
         set
      */
-    public BaseTaskController getParent() {
-        return parent;
+    public BaseTaskController getTaskController() {
+        return taskController;
     }
 
-    public void setParent(BaseTaskController parent) {
-        this.parent = parent;
+    public void setTaskController(BaseTaskController taskController) {
+        this.taskController = taskController;
     }
 
     public List<String> getNames() {
@@ -697,12 +782,36 @@ public class Data2DExport extends Data2DOperator {
         this.texts = texts;
     }
 
+    public boolean isMatrix() {
+        return matrix;
+    }
+
+    public void setMatrix(boolean matrix) {
+        this.matrix = matrix;
+    }
+
+    public boolean isTable() {
+        return table;
+    }
+
+    public void setTable(boolean table) {
+        this.table = table;
+    }
+
     public boolean isPdf() {
         return pdf;
     }
 
     public void setPdf(boolean pdf) {
         this.pdf = pdf;
+    }
+
+    public boolean isSystemClipboard() {
+        return systemClipboard;
+    }
+
+    public void setSystemClipboard(boolean systemClipboard) {
+        this.systemClipboard = systemClipboard;
     }
 
     public boolean isHtml() {
@@ -856,4 +965,17 @@ public class Data2DExport extends Data2DOperator {
     public void setTargetFile(File targetFile) {
         this.targetFile = targetFile;
     }
+
+    public String getDataName() {
+        return dataName;
+    }
+
+    public void setDataName(String dataName) {
+        this.dataName = dataName;
+    }
+
+    public Data2D getCsvData() {
+        return csvData;
+    }
+
 }

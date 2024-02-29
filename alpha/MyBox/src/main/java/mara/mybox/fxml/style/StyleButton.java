@@ -340,7 +340,7 @@ public class StyleButton {
             } else if (id.startsWith("database")) {
                 return new StyleData(id, message("DatabaseTable"), "", "iconDatabase.png");
             } else if (id.startsWith("dataDefinition")) {
-                return new StyleData(id, message("DataDefinition"), "", "iconMeta.png");
+                return new StyleData(id, message("DefineData"), "", "iconMeta.png");
             } else if (id.startsWith("dataImport")) {
                 return new StyleData(id, message("Import"), "", "iconImport.png");
             } else if (id.startsWith("dataExport")) {

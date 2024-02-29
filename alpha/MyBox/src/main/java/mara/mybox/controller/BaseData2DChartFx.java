@@ -236,7 +236,7 @@ public abstract class BaseData2DChartFx extends BaseController {
 
     @FXML
     public void dataAction() {
-        DataFileCSVController.open(null, columns, data);
+        Data2DManufactureController.openData(chart != null ? chart.getTitle() : null, columns, data);
     }
 
     @Override

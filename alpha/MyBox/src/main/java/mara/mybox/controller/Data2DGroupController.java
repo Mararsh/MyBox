@@ -72,7 +72,7 @@ public class Data2DGroupController extends BaseData2DHandleController {
                 if (fileRadio.isSelected()) {
                     DataFileCSV targetFile = group.getTargetFile();
                     if (targetFile != null) {
-                        DataFileCSVController.loadCSV(targetFile);
+                        Data2DManufactureController.openDef(targetFile);
                         popInformation(message("GroupsNumber") + ": " + group.groupsNumber());
                     }
                 } else if (filesRadio.isSelected()) {

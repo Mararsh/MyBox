@@ -176,7 +176,7 @@ public abstract class FindBatchController extends FindReplaceBatchController {
     public void openTarget() {
         try {
             if (mergedData != null) {
-                DataFileCSVController.loadCSV(mergedData);
+                Data2DManufactureController.openDef(mergedData);
             } else {
                 super.openTarget();
             }

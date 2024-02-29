@@ -22,7 +22,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-9-17
  * @License Apache License Version 2.0
  */
-public class DataFileTextConvertController extends BaseDataConvertController {
+public class DataFileTextConvertController extends BaseDataFileConvertController {
 
     protected String sourceDelimiterName;
     protected Charset sourceCharset;

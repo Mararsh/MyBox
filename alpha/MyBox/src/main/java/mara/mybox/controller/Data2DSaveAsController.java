@@ -4,8 +4,9 @@ import java.io.File;
 import javafx.fxml.FXML;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataFileCSV;
+import mara.mybox.data2d.reader.Data2DExport;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -15,86 +16,137 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-4-5
  * @License Apache License Version 2.0
  */
-public class Data2DSaveAsController extends BaseChildController {
+public class Data2DSaveAsController extends BaseDataConvertController {
 
     protected BaseData2DLoadController tableController;
+    protected Data2DExport export;
+    protected Data2D data2D;
+    protected String format;
+    protected DataFileCSV sourceData;
 
     @FXML
     protected ControlData2DTarget targetController;
 
     public Data2DSaveAsController() {
-        baseTitle = message("DataManufacture");
+        baseTitle = message("SaveAs");
     }
 
-    public void setParameters(BaseData2DLoadController tableController) {
+    public void setParameters(BaseData2DLoadController controller) {
         try {
-            this.tableController = tableController;
+            if (controller == null || controller.getData2D() == null) {
+                close();
+                return;
+            }
+            tableController = controller;
 
             targetController.setParameters(this, tableController);
+
+            initControls(baseName);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
-    @FXML
+    public void saveData(DataFileCSV sourceData, String format, String targetName, File targetFile) {
+        try {
+            if (sourceData == null || format == null) {
+                close();
+                return;
+            }
+            data2D = sourceData;
+            export = Data2DExport.create(data2D);
+            export.initParameters(format);
+            export.setDataName(targetName);
+            export.setTargetFile(targetFile);
+            startAction();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
     @Override
-    public void okAction() {
-        Data2D data2D = tableController.data2D;
-        if (data2D == null || !data2D.isValid()) {
-            close();
-            return;
+    public boolean checkOptions() {
+        if (sourceData != null) {
+            return true;
+        } else {
+            return pickParameters();
         }
-        if (task != null) {
-            task.cancel();
-        }
-        task = new FxSingletonTask<Void>(this) {
+    }
 
-            private DataFileCSV dataFileCSV;
-
-            @Override
-            protected boolean handle() {
-                try {
-                    String name = targetController.name();
-                    File file = targetController.file();
-                    if (data2D.isMutiplePages()) {
-                        if (data2D.isTableChanged()) {
-                            data2D.startTask(this, null);
-                            dataFileCSV = ((DataFileCSV) (data2D)).savePageAs(name);
-                            data2D.stopTask();
-                        } else {
-                            dataFileCSV = data2D.copy(task, file, name,
-                                    data2D.columnIndices(), false, true, false);
-                        }
-                    } else {
-                        dataFileCSV = DataFileCSV.save(task, file, name,
-                                ",", data2D.getColumns(), data2D.tableRows(false));
-                    }
-                    dataFileCSV.setDataName(name);
-                    return dataFileCSV != null;
-                } catch (Exception e) {
-                    error = e.toString();
+    public boolean pickParameters() {
+        try {
+            if (tableController == null || !tableController.isShowing()) {
+                close();
+                return false;
+            }
+            data2D = tableController.data2D;
+            if (data2D == null || !data2D.isValid()) {
+                close();
+                return false;
+            }
+            format = targetController.target;
+            if (format == null) {
+                return false;
+            }
+            export = Data2DExport.create(data2D);
+            export.initParameters(format);
+            if ("csv".equals(format) || "matrix".equals(format) || "table".equals(format)) {
+                if (!pickCSV(export)) {
                     return false;
                 }
-
+            } else if ("text".equals(format)) {
+                if (!pickText(export)) {
+                    return false;
+                }
+            } else if ("excel".equals(format)) {
+                if (!pickExcel(export)) {
+                    return false;
+                }
+            } else if ("html".equals(format)) {
+                if (!pickHtml(export)) {
+                    return false;
+                }
+            } else if ("pdf".equals(format)) {
+                if (!pickPDF(export)) {
+                    return false;
+                }
             }
+            export.setDataName(targetController.name());
+            export.setTargetFile(targetController.file());
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
 
-            @Override
-            protected void whenSucceeded() {
-                closeStage();
-                DataFileCSV.createData(tableController, dataFileCSV,
-                        targetController.target,
-                        targetController.name(),
-                        targetController.file());
-            }
+    @Override
+    public boolean doTask(FxTask currentTask) {
+        try {
+            data2D.startTask(currentTask, null);
+            data2D.stopTask();
+            return data2D.export(export, data2D.columnIndices());
+        } catch (Exception e) {
+            error = e.toString();
+            return false;
+        }
+    }
 
-            @Override
-            protected void finalAction() {
-                super.finalAction();
-                data2D.stopTask();
-            }
-        };
-        start(task);
+    @Override
+    public void afterSuccess() {
+        if (export != null) {
+            export.openResults(this);
+            closeStage();
+        }
+    }
+
+    @Override
+    public void afterTask() {
+        if (data2D != null) {
+            data2D.stopTask();
+        }
+        export = null;
     }
 
     /*
@@ -105,6 +157,20 @@ public class Data2DSaveAsController extends BaseChildController {
             Data2DSaveAsController controller = (Data2DSaveAsController) WindowTools.childStage(
                     tableController, Fxmls.Data2DSaveAsFxml);
             controller.setParameters(tableController);
+            controller.requestMouse();
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public static Data2DSaveAsController createData(DataFileCSV sourceData,
+            String format, String targetName, File targetFile) {
+        try {
+            Data2DSaveAsController controller = (Data2DSaveAsController) WindowTools.openStage(
+                    Fxmls.Data2DSaveAsFxml);
+            controller.saveData(sourceData, format, targetName, targetFile);
             controller.requestMouse();
             return controller;
         } catch (Exception e) {

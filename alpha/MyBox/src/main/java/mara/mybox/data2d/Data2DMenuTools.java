@@ -5,7 +5,6 @@ import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.CheckMenuItem;
-import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import mara.mybox.controller.BaseData2DLoadController;
@@ -57,6 +56,53 @@ import mara.mybox.value.UserConfig;
  * @License Apache License Version 2.0
  */
 public class Data2DMenuTools {
+
+    public static List<MenuItem> verifyMenu(Data2DManufactureController dataController) {
+        try {
+            List<MenuItem> items = new ArrayList<>();
+
+            MenuItem menu = new MenuItem(message("VerifyCurrentPage"));
+            menu.setOnAction((ActionEvent event) -> {
+                dataController.verifyCurrentPage();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("VerifyAllData"));
+            menu.setOnAction((ActionEvent event) -> {
+                dataController.verifyAllData();
+            });
+            items.add(menu);
+
+            if (dataController.getData2D().alwayValidate()) {
+                return items;
+            }
+
+            CheckMenuItem validateEditItem = new CheckMenuItem(message("ValidateDataWhenEdit"));
+            validateEditItem.setSelected(dataController.isValidateEdit());
+            validateEditItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    dataController.setValidataEdit(validateEditItem.isSelected());
+                }
+            });
+            items.add(validateEditItem);
+
+            CheckMenuItem validateSaveItem = new CheckMenuItem(message("ValidateDataWhenSave"));
+            validateSaveItem.setSelected(dataController.isValidateSave());
+            validateSaveItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    dataController.setValidataSave(validateSaveItem.isSelected());
+                }
+            });
+            items.add(validateSaveItem);
+
+            return items;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
 
     public static List<MenuItem> dataMenus(Data2DManufactureController dataController) {
         try {
@@ -177,7 +223,7 @@ public class Data2DMenuTools {
         }
     }
 
-    public static List<MenuItem> operateMenus(BaseData2DLoadController dataController) {
+    public static List<MenuItem> rowsMenus(Data2DManufactureController dataController) {
         try {
             List<MenuItem> items = new ArrayList<>();
 
@@ -186,8 +232,9 @@ public class Data2DMenuTools {
             boolean isTmpData = data2D != null && data2D.isTmpData();
             boolean empty = invalidData || dataController.getTableData().isEmpty();
             boolean noneSelected = dataController.isNoneSelected();
+            MenuItem menu;
 
-            MenuItem menu = new MenuItem(message("AddRows") + "   CTRL+N / ALT+N",
+            menu = new MenuItem(message("AddRows") + "   CTRL+N / ALT+N",
                     StyleTools.getIconImageView("iconNewItem.png"));
             menu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -271,15 +318,6 @@ public class Data2DMenuTools {
             menu.setDisable(invalidData);
             items.add(menu);
 
-            menu = new MenuItem(message("VerifyPageData"), StyleTools.getIconImageView("iconVerify.png"));
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    dataController.verifyAction();
-                }
-            });
-            items.add(menu);
-
             items.add(new SeparatorMenuItem());
 
             menu = new MenuItem(message("SetValues"), StyleTools.getIconImageView("iconEqual.png"));
@@ -315,17 +353,6 @@ public class Data2DMenuTools {
                 }
             });
             items.add(focusMenu);
-
-            CheckMenuItem verifyMenu = new CheckMenuItem(message("VerifyDataWhenSave"),
-                    StyleTools.getIconImageView("iconVerify.png"));
-            verifyMenu.setSelected(UserConfig.getBoolean("Data2DVerifyDataWhenSave", false));
-            verifyMenu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    UserConfig.setBoolean("Data2DVerifyDataWhenSave", verifyMenu.isSelected());
-                }
-            });
-            items.add(verifyMenu);
 
             return items;
         } catch (Exception e) {
@@ -644,51 +671,6 @@ public class Data2DMenuTools {
             MyBoxLog.error(e);
             return null;
         }
-    }
-
-    public static List<MenuItem> functionsMenus(BaseData2DLoadController controller) {
-        List<MenuItem> items = new ArrayList<>();
-
-        Menu opMenu = new Menu(message("Operate"), StyleTools.getIconImageView("iconOperation.png"));
-        opMenu.getItems().addAll(operateMenus(controller));
-        items.add(opMenu);
-
-//        Menu dataMenu = new Menu(message("Data"), StyleTools.getIconImageView("iconData.png"));
-//        dataMenu.getItems().addAll(dataMenus(controller));
-//        items.add(dataMenu);
-        items.add(new SeparatorMenuItem());
-
-        Menu trimMenu = new Menu(message("Trim"), StyleTools.getIconImageView("iconTrim.png"));
-        trimMenu.getItems().addAll(trimMenu(controller));
-        items.add(trimMenu);
-
-        Menu calMenu = new Menu(message("Calculation"), StyleTools.getIconImageView("iconCalculator.png"));
-        calMenu.getItems().addAll(calMenu(controller));
-        items.add(calMenu);
-
-        Menu chartMenu = new Menu(message("Charts"), StyleTools.getIconImageView("iconCharts.png"));
-        chartMenu.getItems().addAll(calMenu(controller));
-        items.add(chartMenu);
-
-        Menu gchartMenu = new Menu(message("GroupCharts"), StyleTools.getIconImageView("iconGraph.png"));
-        gchartMenu.getItems().addAll(calMenu(controller));
-        items.add(gchartMenu);
-
-        items.add(new SeparatorMenuItem());
-
-        Data2D data2D = controller.getData2D();
-        if (data2D.isDataFile() || data2D.isUserTable() || data2D.isClipboard()) {
-            Menu examplesMenu = new Menu(message("Examples"), StyleTools.getIconImageView("iconExamples.png"));
-            examplesMenu.getItems().addAll(Data2DExampleTools.examplesMenu(controller));
-            items.add(examplesMenu);
-
-        }
-
-        Menu helpMenu = new Menu(message("Help"), StyleTools.getIconImageView("iconClaw.png"));
-        helpMenu.getItems().addAll(helpMenus(controller));
-        items.add(helpMenu);
-
-        return items;
     }
 
 }

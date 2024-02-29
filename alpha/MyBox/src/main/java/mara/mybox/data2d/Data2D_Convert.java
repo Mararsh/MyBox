@@ -11,10 +11,6 @@ import java.sql.ResultSetMetaData;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import mara.mybox.controller.BaseController;
-import mara.mybox.controller.Data2DManufactureController;
-import mara.mybox.controller.Data2DTargetExportController;
-import mara.mybox.controller.DataInMyBoxClipboardController;
 import mara.mybox.data2d.reader.Data2DOperator;
 import mara.mybox.data2d.reader.Data2DSingleColumn;
 import mara.mybox.data2d.reader.Data2DWriteTable;
@@ -25,7 +21,6 @@ import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.table.TableData2D;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
-import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FileCopyTools;
@@ -59,6 +54,23 @@ public abstract class Data2D_Convert extends Data2D_Edit {
         }
         DataTable dataTable = null;
         try (Connection conn = DerbyBase.getConnection()) {
+            dataTable = toTable(task, conn, targetName);
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
+            }
+        }
+        return dataTable;
+    }
+
+    public DataTable toTable(FxTask task, Connection conn, String targetName) {
+        if (conn == null || targetName == null || targetName.isBlank()) {
+            return null;
+        }
+        DataTable dataTable = null;
+        try {
             String tableName = DerbyBase.fixedIdentifier(targetName);
             int index = 1;
             while (DerbyBase.exist(conn, tableName) > 0) {
@@ -733,6 +745,23 @@ public abstract class Data2D_Convert extends Data2D_Edit {
         if (task == null || sourceData == null) {
             return null;
         }
+        try (Connection conn = DerbyBase.getConnection()) {
+            return toMatrix(task, conn, sourceData, targetName);
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
+            }
+            return null;
+        }
+    }
+
+    public static DataMatrix toMatrix(FxTask task, Connection conn,
+            Data2D sourceData, String targetName) {
+        if (conn == null || task == null || sourceData == null) {
+            return null;
+        }
         File csvFile = sourceData.getFile();
         if (csvFile == null || !csvFile.exists() || csvFile.length() == 0) {
             return null;
@@ -740,7 +769,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
         List<List<String>> data = sourceData.allRows(false);
         List<Data2DColumn> cols = sourceData.getColumns();
         if (cols == null || cols.isEmpty()) {
-            try (Connection conn = DerbyBase.getConnection()) {
+            try {
                 sourceData.readColumns(conn);
                 cols = sourceData.getColumns();
                 if (cols == null || cols.isEmpty()) {
@@ -760,7 +789,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
         if (targetName != null) {
             matrix.setDataName(targetName);
         }
-        if (DataMatrix.save(task, matrix, cols, data)) {
+        if (DataMatrix.save(task, conn, matrix, cols, data)) {
             return matrix;
         } else {
             return null;
@@ -797,40 +826,6 @@ public abstract class Data2D_Convert extends Data2D_Edit {
             return DataClipboard.create(task, csvData, targetName, clipFile);
         } else {
             return null;
-        }
-    }
-
-    public static void createData(BaseController controller, DataFileCSV csvFile,
-            String format, String targetName, File targetFile) {
-        if (csvFile == null || format == null) {
-            return;
-        }
-        switch (format) {
-            case "csv":
-                Data2DManufactureController.loadData(csvFile, DataType.CSV, targetName, targetFile);
-                break;
-            case "excel":
-                Data2DManufactureController.loadData(csvFile, DataType.Excel, targetName, targetFile);
-                break;
-            case "texts":
-                Data2DManufactureController.loadData(csvFile, DataType.Texts, targetName, targetFile);
-                break;
-            case "table":
-                Data2DManufactureController.loadData(csvFile, DataType.DatabaseTable, targetName, targetFile);
-                break;
-            case "matrix":
-                Data2DManufactureController.loadData(csvFile, DataType.Matrix, targetName, targetFile);
-                break;
-            case "systemClipboard":
-                TextClipboardTools.copyToSystemClipboard(controller,
-                        TextFileTools.readTexts(null, csvFile.getFile()));
-                break;
-            case "myBoxClipboard":
-                DataInMyBoxClipboardController.loadData(csvFile, targetName);
-                break;
-            default:
-                Data2DTargetExportController.open(csvFile, targetName);
-                break;
         }
     }
 

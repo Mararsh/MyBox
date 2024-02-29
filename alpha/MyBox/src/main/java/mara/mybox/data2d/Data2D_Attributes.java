@@ -1,7 +1,6 @@
 package mara.mybox.data2d;
 
 import java.util.List;
-import java.util.Map;
 import javafx.collections.ObservableList;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
@@ -23,7 +22,6 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
     public TableData2DColumn tableData2DColumn;
     public TableData2DStyle tableData2DStyle;
     public List<Data2DColumn> columns, savedColumns;
-    public Map<String, Object> options;
     public int pageSize, newColumnIndex;
     public long dataSize, pagesNumber;
     public long currentPage, startRowOfCurrentPage, endRowOfCurrentPage;   // 0-based, excluded end
@@ -52,7 +50,6 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
         savedColumns = null;
         newColumnIndex = -1;
         tableChanged = false;
-        options = null;
         styles = null;
         filter = null;
         error = null;
@@ -93,7 +90,6 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
             task = d.task;
             backgroundTask = d.backgroundTask;
             error = d.error;
-            options = d.options;
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
@@ -227,14 +223,6 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
 
     public void setPageData(ObservableList<List<String>> pageData) {
         this.pageData = pageData;
-    }
-
-    public Map<String, Object> getOptions() {
-        return options;
-    }
-
-    public void setOptions(Map<String, Object> options) {
-        this.options = options;
     }
 
     public List<Data2DColumn> getSavedColumns() {

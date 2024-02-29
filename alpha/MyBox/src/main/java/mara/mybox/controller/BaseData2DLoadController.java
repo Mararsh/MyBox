@@ -1,11 +1,14 @@
 package mara.mybox.controller;
 
 import java.io.File;
+import java.nio.charset.Charset;
 import java.sql.Connection;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -42,6 +45,7 @@ import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.DoubleMatrixTools;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.TextTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -79,23 +83,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
             tableData2DColumn = data2D.getTableData2DColumn();
 
             showPaginationPane(!data2D.isTmpData() && !data2D.isMatrix());
-
-//            switch (data2D.getType()) {
-//                case CSV:
-//                case MyBoxClipboard:
-//                    setFileType(VisitHistory.FileType.CSV);
-//                    break;
-//                case Excel:
-//                    setFileType(VisitHistory.FileType.Excel);
-//                    break;
-//                case Texts:
-//                    setFileType(VisitHistory.FileType.Text);
-//                    break;
-//                default:
-//                    setFileType(VisitHistory.FileType.CSV);
-//            }
             validateData();
-
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -193,6 +181,14 @@ public class BaseData2DLoadController extends BaseData2DTableController {
         };
         start(nullTask, false);
         return false;
+    }
+
+    public void loadType(DataType type, String name, List<Data2DColumn> cols, List<List<String>> data) {
+        if (!checkBeforeNextAction()) {
+            return;
+        }
+        data2D = Data2D.create(type);
+        loadData(name, cols, data);
     }
 
     public void loadData(List<String> cols, List<List<String>> data) {
@@ -360,6 +356,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
             }
             resetStatus();
             setData(Data2D.create(Data2DDefinition.type(file)));
+            beforeOpenFile();
             data2D.initFile(file);
             readDefinition();
         } catch (Exception e) {
@@ -367,28 +364,105 @@ public class BaseData2DLoadController extends BaseData2DTableController {
         }
     }
 
-    public void reloadFile(Map<String, Object> options) {
-        if (data2D == null || !data2D.isDataFile() || sourceFile == null) {
-            return;
-        }
-        resetStatus();
-        data2D.initFile(sourceFile);
-        data2D.setOptions(options);
-        readDefinition();
+    public void beforeOpenFile() {
     }
 
-    public void loadExcelSheet(String name) {
+    public void loadCSVFile(File file, Charset charset, boolean withNames, String delimiter) {
         try {
-            if (!(data2D instanceof DataFileExcel)
-                    || !checkBeforeNextAction() || name == null) {
+            if (file == null || !checkBeforeNextAction()) {
                 return;
             }
-            DataFileExcel excel = (DataFileExcel) data2D;
-            excel.initFile(excel.getFile(), name);
-            readDefinition();
+            DataFileCSV data = new DataFileCSV();
+            data.setFile(file).setCharset(charset).setHasHeader(withNames).setDelimiter(delimiter);
+            loadDef(data);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+    }
+
+    public void loadExcelFile(File file, String sheet, boolean withNames) {
+        try {
+            if (file == null || !checkBeforeNextAction()) {
+                return;
+            }
+            DataFileExcel data = new DataFileExcel();
+            data.setFile(file).setSheet(sheet).setHasHeader(withNames);
+            loadDef(data);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    public void loadTextFile(File file, Charset charset, boolean withNames, String delimiter) {
+        try {
+            if (file == null || !checkBeforeNextAction()) {
+                return;
+            }
+            DataFileText data = new DataFileText();
+            data.setFile(file).setCharset(charset).setHasHeader(withNames).setDelimiter(delimiter);
+            loadDef(data);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    public void loadTableData(String prefix, List<StringTable> tables) {
+        if (tables == null || tables.isEmpty() || !checkBeforeNextAction()) {
+            return;
+        }
+        resetStatus();
+        task = new FxSingletonTask<Void>(this) {
+
+            private File filePath;
+            private int count;
+            private String info;
+            private DataFileCSV firstData;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    filePath = new File(FileTmpTools.generatePath("csv"));
+                    LinkedHashMap<File, Boolean> files = DataFileCSV.save(this, filePath,
+                            prefix == null || prefix.isBlank() ? "tmp" : prefix, tables);
+                    count = files != null ? files.size() : 0;
+                    if (count == 0) {
+                        return false;
+                    }
+                    Iterator<File> iterator = files.keySet().iterator();
+                    File firstFile = iterator.next();
+                    firstData = new DataFileCSV();
+                    firstData.setFile(firstFile).setHasHeader(files.get(firstFile)).setDelimiter(",");
+                    if (count > 1) {
+                        info = MessageFormat.format(message("GeneratedFilesResult"),
+                                count, "\"" + filePath + "\"");
+                        int num = 1;
+                        info += "\n    " + firstFile.getName();
+                        while (iterator.hasNext()) {
+                            info += "\n    " + iterator.next().getName();
+                            if (++num > 10) {
+                                info += "\n    ......";
+                                break;
+                            }
+                        }
+                    }
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                loadDef(firstData);
+                if (count > 1) {
+                    browseURI(filePath.toURI());
+                    alertInformation(info);
+                }
+            }
+
+        };
+        start(task);
     }
 
     /*
@@ -404,6 +478,9 @@ public class BaseData2DLoadController extends BaseData2DTableController {
     @FXML
     @Override
     public void saveAsAction() {
+        if (data2D == null) {
+            return;
+        }
         Data2DSaveAsController.open(this);
     }
 
@@ -570,8 +647,8 @@ public class BaseData2DLoadController extends BaseData2DTableController {
     }
 
     @FXML
-    public void verifyAction() {
-        StringTable results = verifyResults();
+    public void verifyCurrentPage() {
+        StringTable results = verifyTableData();
         if (results.isEmpty()) {
             popInformation(message("AllValuesValid"), 5000);
             return;
@@ -579,7 +656,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
         results.htmlTable();
     }
 
-    public StringTable verifyResults() {
+    public StringTable verifyTableData() {
         try {
             List<String> names = new ArrayList<>();
             names.addAll(Arrays.asList(message("Row"), message("Column"), message("Invalid")));
@@ -613,6 +690,11 @@ public class BaseData2DLoadController extends BaseData2DTableController {
             MyBoxLog.error(e);
             return null;
         }
+    }
+
+    @FXML
+    public void verifyAllData() {
+
     }
 
     @Override

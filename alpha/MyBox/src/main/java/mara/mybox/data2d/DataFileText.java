@@ -42,25 +42,6 @@ public class DataFileText extends DataFile {
     }
 
     @Override
-    public void applyOptions() {
-        try {
-            if (options == null) {
-                return;
-            }
-            if (options.containsKey("hasHeader")) {
-                hasHeader = (boolean) (options.get("hasHeader"));
-            }
-            if (options.containsKey("charset")) {
-                charset = (Charset) (options.get("charset"));
-            }
-            if (options.containsKey("delimiter")) {
-                delimiter = (String) (options.get("delimiter"));
-            }
-        } catch (Exception e) {
-        }
-    }
-
-    @Override
     public boolean checkForLoad() {
         if (charset == null && file != null) {
             charset = TextFileTools.charset(file);

@@ -227,7 +227,7 @@ public class MathFunctionController extends InfoTreeManageController {
 
     @FXML
     public void dataAction() {
-        MathFunctionData.open(editorController);
+        MathFunctionDataController.open(editorController);
     }
 
     @FXML

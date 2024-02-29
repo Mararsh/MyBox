@@ -81,22 +81,6 @@ public abstract class MainMenuController_Data extends MainMenuController_Network
     }
 
     @FXML
-    protected void openDataCsv(ActionEvent event) {
-        DataFileCSVController c = (DataFileCSVController) loadScene(Fxmls.DataFileCSVFxml);
-        if (c != null) {
-            c.createAction();
-        }
-    }
-
-    @FXML
-    protected void openDataExcel(ActionEvent event) {
-        DataFileExcelController c = (DataFileExcelController) loadScene(Fxmls.DataFileExcelFxml);
-        if (c != null) {
-            c.createAction();
-        }
-    }
-
-    @FXML
     protected void openExcelConvert(ActionEvent event) {
         loadScene(Fxmls.DataFileExcelConvertFxml);
     }
@@ -114,14 +98,6 @@ public abstract class MainMenuController_Data extends MainMenuController_Network
     @FXML
     protected void openCsvMerge(ActionEvent event) {
         loadScene(Fxmls.DataFileCSVMergeFxml);
-    }
-
-    @FXML
-    protected void openDataText(ActionEvent event) {
-        DataFileTextController c = (DataFileTextController) loadScene(Fxmls.DataFileTextFxml);
-        if (c != null) {
-            c.createAction();
-        }
     }
 
     @FXML

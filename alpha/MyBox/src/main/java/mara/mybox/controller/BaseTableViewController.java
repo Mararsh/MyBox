@@ -562,7 +562,7 @@ public abstract class BaseTableViewController<P> extends BaseFileController {
 
             @Override
             protected void whenSucceeded() {
-                DataFileCSVController.open(null, Data2DTools.toColumns(names), data);
+                Data2DManufactureController.openData(baseTitle, Data2DTools.toColumns(names), data);
             }
         };
         start(dataTask, false, message("LoadingTableData"));

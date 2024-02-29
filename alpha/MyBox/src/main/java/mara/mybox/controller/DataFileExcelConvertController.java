@@ -19,7 +19,7 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
  * @CreateDate 2020-12-05
  * @License Apache License Version 2.0
  */
-public class DataFileExcelConvertController extends BaseDataConvertController {
+public class DataFileExcelConvertController extends BaseDataFileConvertController {
 
     @FXML
     protected CheckBox withNamesCheck;

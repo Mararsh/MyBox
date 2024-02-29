@@ -19,7 +19,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-9-2
  * @License Apache License Version 2.0
  */
-public class MathFunctionChart extends MathFunctionData {
+public class MathFunctionChart extends MathFunctionDataController {
 
     @FXML
     protected VBox xyzChartBox;

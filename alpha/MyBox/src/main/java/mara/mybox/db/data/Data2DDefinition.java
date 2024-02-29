@@ -251,6 +251,12 @@ public class Data2DDefinition extends BaseData {
         return !value.contains("\n") && !value.contains(delimiter);
     }
 
+    public boolean alwayValidate() {
+        return dataType == DataType.Matrix
+                || dataType == DataType.DatabaseTable
+                || dataType == DataType.InternalTable;
+    }
+
     /*
         static methods
      */

@@ -58,19 +58,6 @@ public class DataFileExcel extends DataFile {
     }
 
     @Override
-    public void applyOptions() {
-        try {
-            if (options == null) {
-                return;
-            }
-            if (options.containsKey("hasHeader")) {
-                hasHeader = (boolean) (options.get("hasHeader"));
-            }
-        } catch (Exception e) {
-        }
-    }
-
-    @Override
     public Data2DDefinition queryDefinition(Connection conn) {
         if (conn == null || dataType == null || file == null || sheet == null) {
             return null;

@@ -7,7 +7,6 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.stage.Window;
 import mara.mybox.data2d.Data2D;
-import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
@@ -125,12 +124,6 @@ public class DataInMyBoxClipboardController extends BaseData2DListController {
     public static DataInMyBoxClipboardController open(Data2DDefinition clip) {
         DataInMyBoxClipboardController c = oneOpen();
         c.viewController.loadDef(clip);
-        return c;
-    }
-
-    public static DataInMyBoxClipboardController loadData(DataFileCSV csvData, String targetName) {
-        DataInMyBoxClipboardController c = oneOpen();
-        c.viewController.createData(csvData, Data2DDefinition.DataType.MyBoxClipboard, targetName, null);
         return c;
     }
 

@@ -142,10 +142,6 @@ public class DataTable extends Data2D {
     }
 
     @Override
-    public void applyOptions() {
-    }
-
-    @Override
     public boolean readColumns(Connection conn) {
         try {
             columns = null;

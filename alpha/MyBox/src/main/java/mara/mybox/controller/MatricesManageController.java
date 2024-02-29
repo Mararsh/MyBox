@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import javafx.stage.Window;
 import mara.mybox.data2d.Data2D;
-import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.dev.MyBoxLog;
@@ -65,13 +64,7 @@ public class MatricesManageController extends BaseData2DListController {
 
     public static MatricesManageController open(String name, List<Data2DColumn> cols, List<List<String>> data) {
         MatricesManageController controller = oneOpen();
-        controller.viewController.loadData(name, cols, data);
-        return controller;
-    }
-
-    public static MatricesManageController createMatrix(DataFileCSV csvData) {
-        MatricesManageController controller = oneOpen();
-        controller.viewController.createData(csvData, Data2DDefinition.DataType.Matrix, null, null);
+        controller.viewController.loadType(Data2DDefinition.DataType.Matrix, name, cols, data);
         return controller;
     }
 

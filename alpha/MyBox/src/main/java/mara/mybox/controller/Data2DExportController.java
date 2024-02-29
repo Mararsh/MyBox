@@ -2,9 +2,6 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Tab;
@@ -30,7 +27,7 @@ public class Data2DExportController extends BaseData2DHandleController {
     @FXML
     protected VBox filterVBox, formatVBox, targetVBox;
     @FXML
-    protected ControlDataConvert convertController;
+    protected ControlDataExport convertController;
     @FXML
     protected CheckBox openCheck;
     @FXML
@@ -59,7 +56,7 @@ public class Data2DExportController extends BaseData2DHandleController {
     @Override
     public void setParameters(BaseData2DLoadController editController) {
         try {
-            convertController.setControls(taskController);
+            convertController.setParameters(taskController);
             taskController.setParameters(this);
 
             super.setParameters(editController);
@@ -143,18 +140,7 @@ public class Data2DExportController extends BaseData2DHandleController {
         try {
             SoundTools.miao3();
             if (openCheck.isSelected()) {
-                new Timer().schedule(new TimerTask() {
-
-                    @Override
-                    public void run() {
-                        Platform.runLater(() -> {
-                            export.openFiles();
-                            export = null;
-                        });
-                    }
-
-                }, 1000);
-
+                export.openResults(this);
             }
             if (targetPath != null && targetPath.exists()) {
                 browseURI(targetPath.toURI());

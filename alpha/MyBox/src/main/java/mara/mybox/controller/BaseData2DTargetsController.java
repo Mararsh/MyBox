@@ -8,6 +8,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.db.data.Data2DColumn;
+import mara.mybox.db.data.Data2DDefinition.DataType;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import static mara.mybox.value.Languages.message;
@@ -151,23 +152,21 @@ public abstract class BaseData2DTargetsController extends BaseData2DHandleContro
         }
         task = new FxSingletonTask<Void>(this) {
 
-            private DataFileCSV csvFile;
+            private DataFileCSV csvData;
 
             @Override
             protected boolean handle() {
                 data2D.startTask(this, filterController.filter);
-                csvFile = generatedFile();
+                csvData = generatedFile();
                 data2D.stopFilter();
-                return csvFile != null;
+                return csvData != null;
             }
 
             @Override
             protected void whenSucceeded() {
                 popDone();
-                DataFileCSV.createData(myController, csvFile,
-                        targetController.target,
-                        targetController.name(),
-                        targetController.file());
+                Data2DSaveAsController.createData(csvData, targetController.target,
+                        targetController.name(), targetController.file());
             }
 
             @Override
@@ -313,13 +312,19 @@ public abstract class BaseData2DTargetsController extends BaseData2DHandleContro
                 tableController.toMyBoxClipboard(name, outputColumns, outputData);
                 break;
             case "matrix":
-                MatricesManageController.open(name, outputColumns, outputData);
+                Data2DManufactureController.openType(DataType.Matrix, name, outputColumns, outputData);
                 break;
             case "csv":
+                Data2DManufactureController.openType(DataType.CSV, name, outputColumns, outputData);
+                break;
             case "excel":
+                Data2DManufactureController.openType(DataType.Excel, name, outputColumns, outputData);
+                break;
             case "texts":
+                Data2DManufactureController.openType(DataType.Texts, name, outputColumns, outputData);
+                break;
             case "table":
-                Data2DManufactureController.openData(name, outputColumns, outputData);
+                Data2DManufactureController.openType(DataType.DatabaseTable, name, outputColumns, outputData);
                 break;
             default:
                 Data2DTargetExportController.open(outputColumns, outputData, targetController.target, name);

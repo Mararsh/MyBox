@@ -41,7 +41,7 @@ public class DataExportController extends BaseTaskController {
     protected Data2DExport export;
     protected BaseTable table;
     protected String currentSQL;
-    protected long startTime, dataSize;
+    protected long dataSize;
     protected boolean currentPage = false;
     protected List<ColumnDefinition> columns;
     protected int top;
@@ -51,7 +51,7 @@ public class DataExportController extends BaseTaskController {
     @FXML
     protected ControlDataQuery queryController;
     @FXML
-    protected ControlDataConvert convertController;
+    protected ControlDataExport convertController;
     @FXML
     protected FlowPane fieldsPane;
     @FXML
@@ -91,7 +91,7 @@ public class DataExportController extends BaseTaskController {
             }
             queryController.setControls(dataController, initCondition, tableDefinition, prefixEditable, supportTop);
 
-            convertController.setControls(this);
+            convertController.setParameters(this);
 
             fieldsPane.getChildren().clear();
             List<ColumnDefinition> tableColumns = table.getColumns();
@@ -207,7 +207,7 @@ public class DataExportController extends BaseTaskController {
         }
         cancelled = false;
         tabPane.getSelectionModel().select(logsTab);
-        startTime = new Date().getTime();
+        startTime = new Date();
         beforeTask();
         task = new FxSingletonTask<Void>(this) {
 

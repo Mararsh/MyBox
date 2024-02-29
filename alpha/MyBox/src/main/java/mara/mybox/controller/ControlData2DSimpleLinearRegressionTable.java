@@ -113,7 +113,8 @@ public class ControlData2DSimpleLinearRegressionTable extends ControlData2DView 
             popError(message("NoData"));
             return;
         }
-        DataFileCSVController.open(null, data2D.getColumns(), data2D.tableRows(false));
+        Data2DManufactureController.openData(data2D.getDataName(),
+                data2D.getColumns(), data2D.tableRows(false));
     }
 
     @FXML

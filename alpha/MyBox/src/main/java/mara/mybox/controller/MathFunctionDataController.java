@@ -5,11 +5,8 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -36,7 +33,7 @@ import org.apache.commons.csv.CSVPrinter;
  * @CreateDate 2022-9-2
  * @License Apache License Version 2.0
  */
-public class MathFunctionData extends BaseChildController {
+public class MathFunctionDataController extends BaseChildController {
 
     protected MathFunctionEditor editorController;
     protected String expression, domain, outputs = "";
@@ -52,10 +49,8 @@ public class MathFunctionData extends BaseChildController {
     protected TabPane dataTabPane;
     @FXML
     protected ComboBox<String> dataScaleSelector;
-    @FXML
-    protected CheckBox onTopCheck;
 
-    public MathFunctionData() {
+    public MathFunctionDataController() {
         baseTitle = message("MathFunction");
     }
 
@@ -73,15 +68,6 @@ public class MathFunctionData extends BaseChildController {
                     Arrays.asList("2", "1", "0", "3", "4", "5", "6", "7", "8", "10", "12", "15")
             );
             dataScaleSelector.getSelectionModel().select(dataScale + "");
-
-            onTopCheck.setSelected(getMyStage().isAlwaysOnTop());
-            onTopCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
-                    myStage.setAlwaysOnTop(onTopCheck.isSelected());
-                    popInformation(myStage.isAlwaysOnTop() ? message("AlwayOnTop") : message("DisableAlwayOnTop"));
-                }
-            });
 
             dataTabPane.getTabs().clear();
             splits.clear();
@@ -288,7 +274,7 @@ public class MathFunctionData extends BaseChildController {
 
             @Override
             protected void whenSucceeded() {
-                DataFileCSVController.loadCSV(data);
+                Data2DManufactureController.openDef(data);
                 if (closeAfterCheck.isSelected()) {
                     close();
                 }
@@ -310,9 +296,9 @@ public class MathFunctionData extends BaseChildController {
     /*
         static
      */
-    public static MathFunctionData open(MathFunctionEditor editorController) {
+    public static MathFunctionDataController open(MathFunctionEditor editorController) {
         try {
-            MathFunctionData controller = (MathFunctionData) WindowTools.branchStage(
+            MathFunctionDataController controller = (MathFunctionDataController) WindowTools.branchStage(
                     editorController, Fxmls.MathFunctionDataFxml);
             controller.setParameters(editorController);
             controller.requestMouse();

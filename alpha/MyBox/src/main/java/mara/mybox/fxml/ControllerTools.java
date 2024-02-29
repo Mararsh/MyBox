@@ -4,8 +4,7 @@ import java.io.File;
 import java.util.Arrays;
 import javafx.stage.Stage;
 import mara.mybox.controller.BaseController;
-import mara.mybox.controller.DataFileCSVController;
-import mara.mybox.controller.DataFileExcelController;
+import mara.mybox.controller.Data2DManufactureController;
 import mara.mybox.controller.FileDecompressUnarchiveController;
 import mara.mybox.controller.HtmlPopController;
 import mara.mybox.controller.ImageEditorController;
@@ -69,9 +68,9 @@ public class ControllerTools {
         } else if ("pdf".equals(suffix)) {
             return PdfViewController.open(file);
         } else if ("csv".equals(suffix)) {
-            return DataFileCSVController.openFile(file);
+            return Data2DManufactureController.openCSVFile(file, null, true, ",");
         } else if ("xlsx".equals(suffix) || "xls".equals(suffix)) {
-            return DataFileExcelController.openFile(file);
+            return Data2DManufactureController.openExcelFile(file, null, true);
         } else if ("ppt".equals(suffix) || "pptx".equals(suffix)) {
             return PptViewController.openFile(file);
         } else if ("doc".equals(suffix) || "docx".equals(suffix)) {

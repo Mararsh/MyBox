@@ -2,9 +2,6 @@ package mara.mybox.controller;
 
 import java.io.File;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Tab;
 import javafx.scene.layout.VBox;
@@ -35,7 +32,7 @@ public class Data2DTargetExportController extends BaseTaskController {
     @FXML
     protected VBox formatVBox, targetVBox;
     @FXML
-    protected ControlDataConvert convertController;
+    protected ControlDataExport convertController;
     @FXML
     protected Tab targetTab;
 
@@ -138,17 +135,8 @@ public class Data2DTargetExportController extends BaseTaskController {
     @Override
     public void afterSuccess() {
         try {
-            new Timer().schedule(new TimerTask() {
-
-                @Override
-                public void run() {
-                    Platform.runLater(() -> {
-                        export.openFiles();
-                        close();
-                    });
-                }
-
-            }, 1000);
+            export.openResults(this);
+            close();
 
         } catch (Exception e) {
             MyBoxLog.error(e);

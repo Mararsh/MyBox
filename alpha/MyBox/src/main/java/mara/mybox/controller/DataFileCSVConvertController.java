@@ -21,7 +21,7 @@ import org.apache.commons.csv.CSVRecord;
  * @CreateDate 2020-12-14
  * @License Apache License Version 2.0
  */
-public class DataFileCSVConvertController extends BaseDataConvertController {
+public class DataFileCSVConvertController extends BaseDataFileConvertController {
 
     @FXML
     protected ControlTextOptions csvReadController;

@@ -402,7 +402,7 @@ public abstract class BaseSvgShapeController extends BaseShapeController {
                     shapeElement.removeAttribute("fill-opacity");
                 }
             } else {
-                shapeElement.removeAttribute("fill");
+                shapeElement.setAttribute("fill", "none");
                 shapeElement.removeAttribute("fill-opacity");
             }
 

@@ -46,7 +46,13 @@ public class TableDataCell extends TableAutoCommitCell<List<String>, String> {
     @Override
     public boolean valid(String value) {
         try {
-            return dataColumn.validValue(value) && dataTable.getData2D().validValue(value);
+            if (!dataTable.getData2D().validValue(value)) {
+                return false;
+            }
+            if (!dataTable.isValidateEdit()) {
+                return true;
+            }
+            return dataColumn.validValue(value);
         } catch (Exception e) {
             return false;
         }

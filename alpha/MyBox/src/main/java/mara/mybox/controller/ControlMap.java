@@ -697,7 +697,9 @@ public class ControlMap extends BaseController {
 
             @Override
             protected void whenSucceeded() {
-                DataFileCSVController.open(null, columns, data);
+                Data2DManufactureController.openData(
+                        mapTitle == null ? titleLabel.getText() : mapTitle,
+                        columns, data);
             }
 
         };

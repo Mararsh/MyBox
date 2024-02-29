@@ -68,12 +68,6 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
             c.createAction();
         });
 
-        MenuItem EditExcel = new MenuItem(message("EditExcel"));
-        EditExcel.setOnAction((ActionEvent event1) -> {
-            DataFileExcelController c = (DataFileExcelController) loadScene(Fxmls.DataFileExcelFxml);
-            c.createAction();
-        });
-
         MenuItem ExcelConvert = new MenuItem(message("ExcelConvert"));
         ExcelConvert.setOnAction((ActionEvent event1) -> {
             loadScene(Fxmls.DataFileExcelConvertFxml);
@@ -84,12 +78,6 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
             loadScene(Fxmls.DataFileExcelMergeFxml);
         });
 
-        MenuItem EditCSV = new MenuItem(message("EditCSV"));
-        EditCSV.setOnAction((ActionEvent event1) -> {
-            DataFileCSVController c = (DataFileCSVController) loadScene(Fxmls.DataFileCSVFxml);
-            c.createAction();
-        });
-
         MenuItem CsvConvert = new MenuItem(message("CsvConvert"));
         CsvConvert.setOnAction((ActionEvent event1) -> {
             loadScene(Fxmls.DataFileCSVConvertFxml);
@@ -98,12 +86,6 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
         MenuItem CsvMerge = new MenuItem(message("CsvMerge"));
         CsvMerge.setOnAction((ActionEvent event1) -> {
             loadScene(Fxmls.DataFileCSVMergeFxml);
-        });
-
-        MenuItem TextData = new MenuItem(message("EditTextDataFile"));
-        TextData.setOnAction((ActionEvent event1) -> {
-            DataFileTextController c = (DataFileTextController) loadScene(Fxmls.DataFileTextFxml);
-            c.createAction();
         });
 
         MenuItem TextDataConvert = new MenuItem(message("TextDataConvert"));

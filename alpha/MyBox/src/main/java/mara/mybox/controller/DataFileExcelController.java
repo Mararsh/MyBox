@@ -8,15 +8,10 @@ import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.MenuItem;
 import mara.mybox.data2d.Data2D;
-import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataFileExcel;
-import mara.mybox.db.data.Data2DColumn;
-import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.StyleTools;
-import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -119,57 +114,47 @@ public class DataFileExcelController extends BaseData2DFileController {
     /*
         static
      */
-    public static DataFileExcelController open() {
-        try {
-            DataFileExcelController controller = (DataFileExcelController) WindowTools.openStage(Fxmls.DataFileExcelFxml);
-            if (controller != null) {
-                controller.requestMouse();
-            }
-            return controller;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
-    }
-
-    public static DataFileExcelController openFile(File file) {
-        DataFileExcelController controller = open();
-        if (controller != null) {
-            controller.sourceFileChanged(file);
-        }
-        return controller;
-    }
-
-    public static DataFileExcelController open(File file, boolean withNames) {
-        DataFileExcelController controller = open();
-        if (controller != null) {
-            controller.setFile(file, withNames);
-        }
-        return controller;
-    }
-
-    public static DataFileExcelController open(String name, List<Data2DColumn> cols, List<List<String>> data) {
-        DataFileExcelController controller = (DataFileExcelController) WindowTools.openStage(Fxmls.DataFileExcelFxml);
-        if (controller != null) {
-            controller.loadData(name, cols, data);
-        }
-        return controller;
-    }
-
-    public static DataFileExcelController open(Data2DDefinition def) {
-        DataFileExcelController controller = (DataFileExcelController) WindowTools.openStage(Fxmls.DataFileExcelFxml);
-        if (controller != null) {
-            controller.loadDef(def);
-        }
-        return controller;
-    }
-
-    public static DataFileExcelController loadCSV(DataFileCSV csvData) {
-        DataFileExcelController controller = (DataFileExcelController) WindowTools.openStage(Fxmls.DataFileExcelFxml);
-        if (controller != null) {
-            controller.createData(csvData, Data2DDefinition.DataType.Excel, null, null);
-        }
-        return controller;
-    }
-
+//    public static DataFileExcelController open() {
+//        return null;
+//    }
+//
+//    public static DataFileExcelController openFile(File file) {
+//        DataFileExcelController controller = open();
+//        if (controller != null) {
+//            controller.sourceFileChanged(file);
+//        }
+//        return controller;
+//    }
+//
+//    public static DataFileExcelController open(File file, boolean withNames) {
+//        DataFileExcelController controller = open();
+//        if (controller != null) {
+//            controller.setFile(file, withNames);
+//        }
+//        return controller;
+//    }
+//
+//    public static DataFileExcelController open(String name, List<Data2DColumn> cols, List<List<String>> data) {
+//        DataFileExcelController controller = (DataFileExcelController) WindowTools.openStage(Fxmls.DataFileExcelFxml);
+//        if (controller != null) {
+//            controller.loadData(name, cols, data);
+//        }
+//        return controller;
+//    }
+//
+//    public static DataFileExcelController open(Data2DDefinition def) {
+//        DataFileExcelController controller = (DataFileExcelController) WindowTools.openStage(Fxmls.DataFileExcelFxml);
+//        if (controller != null) {
+//            controller.loadDef(def);
+//        }
+//        return controller;
+//    }
+//
+//    public static DataFileExcelController loadCSV(DataFileCSV csvData) {
+//        DataFileExcelController controller = (DataFileExcelController) WindowTools.openStage(Fxmls.DataFileExcelFxml);
+//        if (controller != null) {
+//            controller.createData(csvData, Data2DDefinition.DataType.Excel, null, null);
+//        }
+//        return controller;
+//    }
 }

@@ -43,8 +43,6 @@ public abstract class Data2D_Edit extends Data2D_Filter {
 
     public abstract Data2DDefinition queryDefinition(Connection conn);
 
-    public abstract void applyOptions();
-
     public abstract List<String> readColumnNames();
 
     public abstract boolean savePageDataAs(Data2D targetData);
@@ -66,7 +64,6 @@ public abstract class Data2D_Edit extends Data2D_Filter {
             if (definition != null) {
                 cloneAll(definition);
             }
-            applyOptions();
             checkForLoad();
             if (definition == null) {
                 definition = tableData2DDefinition.insertData(conn, this);
@@ -78,7 +75,6 @@ public abstract class Data2D_Edit extends Data2D_Filter {
                 d2did = definition.getD2did();
                 savedColumns = tableData2DColumn.read(conn, d2did);
             }
-            options = null;
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());

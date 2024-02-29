@@ -1,7 +1,6 @@
 package mara.mybox.controller;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.io.File;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import mara.mybox.dev.MyBoxLog;
@@ -41,10 +40,20 @@ public class DataFileExcelFormatController extends BaseChildController {
     @FXML
     @Override
     public void okAction() {
-        Map<String, Object> options = new HashMap<>();
-        options.put("hasHeader", sourceWithNamesCheck.isSelected());
-        fileController.reloadFile(options);
-
+        if (fileController == null || !fileController.isShowing()
+                || fileController.data2D == null
+                || fileController.data2D.getFile() == null) {
+            close();
+            return;
+        }
+        File file = fileController.data2D.getFile();
+        if (file == null || !file.exists()) {
+            close();
+            return;
+        }
+        fileController.loadExcelFile(file,
+                fileController.data2D.getSheet(),
+                sourceWithNamesCheck.isSelected());
         if (closeAfterCheck.isSelected()) {
             close();
         }

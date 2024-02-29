@@ -66,10 +66,6 @@ public class DataMatrix extends Data2D {
     }
 
     @Override
-    public void applyOptions() {
-    }
-
-    @Override
     public long readTotal() {
         return dataSize;
     }
@@ -207,8 +203,24 @@ public class DataMatrix extends Data2D {
         if (matrix == null || cols == null || rows == null) {
             return false;
         }
-        TableData2DCell tableData2DCell = matrix.tableData2DCell;
         try (Connection conn = DerbyBase.getConnection()) {
+            return save(task, conn, matrix, cols, rows);
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
+    public static boolean save(FxTask task, Connection conn, DataMatrix matrix,
+            List<Data2DColumn> cols, List<List<String>> rows) {
+        if (conn == null || matrix == null || cols == null || rows == null) {
+            return false;
+        }
+        TableData2DCell tableData2DCell = matrix.tableData2DCell;
+        try {
             matrix.setColsNumber(cols.size());
             matrix.setRowsNumber(rows.size());
             Data2D.saveAttributes(conn, matrix, cols);

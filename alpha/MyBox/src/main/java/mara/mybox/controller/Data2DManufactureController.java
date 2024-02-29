@@ -1,6 +1,7 @@
 package mara.mybox.controller;
 
 import java.io.File;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -25,7 +26,6 @@ import mara.mybox.data.StringTable;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.Data2DMenuTools;
 import mara.mybox.data2d.DataClipboard;
-import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
@@ -53,7 +53,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
     @FXML
     protected FlowPane opsPane;
     @FXML
-    protected Button dataDefinitionButton;
+    protected Button dataDefinitionButton, operationButton;
 
     public Data2DManufactureController() {
         baseTitle = message("DataManufacture");
@@ -86,10 +86,16 @@ public class Data2DManufactureController extends BaseData2DViewController {
         data
      */
     @Override
+    public void beforeOpenFile() {
+        htmlRadio.setSelected(true);  // In case that file  has too many columns
+    }
+
+    @Override
     public void checkFormat(Toggle ov) {
         if (isSettingValues) {
             return;
         }
+        operationButton.setDisable(!tableRadio.isSelected());
         if (csvRadio != ov || !isChanged() || !data2D.isValid()) {
             switchFormat();
             return;
@@ -172,8 +178,8 @@ public class Data2DManufactureController extends BaseData2DViewController {
 
     @Override
     public void showTableButtons() {
-        buttonsPane.getChildren().setAll(lostFocusCommitCheck, optionsButton, menuButton,
-                viewDataButton, verifyButton, clearButton, deleteRowsButton, editButton, addRowsButton,
+        buttonsPane.getChildren().setAll(lostFocusCommitCheck, menuButton,
+                viewDataButton, clearButton, deleteRowsButton, editButton, addRowsButton,
                 recoverButton, saveButton, dataDefinitionButton);
     }
 
@@ -201,6 +207,16 @@ public class Data2DManufactureController extends BaseData2DViewController {
         savedNotify.set(!savedNotify.get());
     }
 
+    public void setValidataEdit(boolean v) {
+        validateEdit = v;
+        UserConfig.setBoolean(baseName + "ValidateDataWhenEdit", validateEdit);
+    }
+
+    public void setValidataSave(boolean v) {
+        validateSave = v;
+        UserConfig.setBoolean(baseName + "ValidateDataWhenSave", validateSave);
+    }
+
     public boolean isEditing() {
         return tableRadio.isSelected() || csvRadio.isSelected();
     }
@@ -209,12 +225,31 @@ public class Data2DManufactureController extends BaseData2DViewController {
         return tableRadio.isSelected();
     }
 
+
     /*
         table
      */
     @Override
     public boolean checkBeforeLoadingTableData() {
         return checkBeforeNextAction();
+    }
+
+    @Override
+    public void postLoadedTableData() {
+        super.postLoadedTableData();
+        if (data2D == null) {
+            return;
+        }
+        if (data2D.alwayValidate()) {
+            validateEdit = true;
+            validateSave = true;
+        } else {
+            validateEdit = UserConfig.getBoolean(baseName + "ValidateDataWhenEdit", true);
+            validateSave = UserConfig.getBoolean(baseName + "ValidateDataWhenSave", true);
+        }
+        if (!data2D.hasData()) {
+            tableRadio.setSelected(true);
+        }
     }
 
     public boolean isChanged() {
@@ -271,9 +306,44 @@ public class Data2DManufactureController extends BaseData2DViewController {
     /*
         menus
      */
+    @FXML
+    public void popVerifyMenu(Event event) {
+        if (UserConfig.getBoolean(baseName + "VerifyPopWhenMouseHovering", true)) {
+            showVerifyMenu(event);
+        }
+    }
+
+    @FXML
+    public void showVerifyMenu(Event mevent) {
+        try {
+            List<MenuItem> items = new ArrayList<>();
+            items.addAll(Data2DMenuTools.verifyMenu(this));
+
+            items.add(new SeparatorMenuItem());
+
+            CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"),
+                    StyleTools.getIconImageView("iconPop.png"));
+            popItem.setSelected(UserConfig.getBoolean(baseName + "VerifyPopWhenMouseHovering", true));
+            popItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean(baseName + "VerifyPopWhenMouseHovering", popItem.isSelected());
+                }
+            });
+            items.add(popItem);
+
+            popEventMenu(mevent, items);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
     @Override
     public List<MenuItem> operationsMenuItems(Event fevent) {
-        return Data2DMenuTools.operateMenus(this);
+        if (!tableRadio.isSelected()) {
+            return null;
+        }
+        return Data2DMenuTools.rowsMenus(this);
     }
 
     @Override
@@ -630,10 +700,10 @@ public class Data2DManufactureController extends BaseData2DViewController {
     }
 
     public boolean verifyData() {
-        if (!UserConfig.getBoolean("Data2DVerifyDataWhenSave", false)) {
+        if (!validateSave) {
             return true;
         }
-        StringTable results = verifyResults();
+        StringTable results = verifyTableData();
         if (results.isEmpty()) {
             return true;
         }
@@ -727,12 +797,52 @@ public class Data2DManufactureController extends BaseData2DViewController {
         return controller;
     }
 
-    public static Data2DManufactureController loadData(DataFileCSV csvData,
-            DataType targetType, String targetName, File targetFile) {
+    public static Data2DManufactureController openType(DataType type,
+            String name, List<Data2DColumn> cols, List<List<String>> data) {
         Data2DManufactureController controller = open();
-        controller.createData(csvData, targetType, targetName, targetFile);
+        controller.loadData(name, cols, data);
         controller.requestMouse();
         return controller;
+    }
+
+    public static Data2DManufactureController loadTables(String prefix, List<StringTable> tables) {
+        Data2DManufactureController controller = open();
+        controller.loadTableData(prefix, tables);
+        controller.requestMouse();
+        return controller;
+    }
+
+    public static Data2DManufactureController openCSVFile(File file, Charset charset, boolean withNames, String delimiter) {
+        try {
+            Data2DManufactureController controller = open();
+            controller.loadCSVFile(file, charset, withNames, delimiter);
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public static Data2DManufactureController openExcelFile(File file, String sheet, boolean withNames) {
+        try {
+            Data2DManufactureController controller = open();
+            controller.loadExcelFile(file, sheet, withNames);
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public static Data2DManufactureController openTextFile(File file, Charset charset, boolean withNames, String delimiter) {
+        try {
+            Data2DManufactureController controller = open();
+            controller.loadTextFile(file, charset, withNames, delimiter);
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
     }
 
 }

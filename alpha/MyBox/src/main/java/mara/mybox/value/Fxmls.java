@@ -294,9 +294,6 @@ public class Fxmls {
     public static final String Data2DSelectFxml = "/fxml/Data2DSelect.fxml";
     public static final String Data2DAttributesFxml = "/fxml/Data2DAttributes.fxml";
     public static final String Data2DColumnsFxml = "/fxml/Data2DColumns.fxml";
-    public static final String Data2DCSVFxml = "/fxml/Data2DCSV.fxml";
-    public static final String Data2DPageCSVFxml = "/fxml/Data2DPageCSV.fxml";
-    public static final String Data2DPageHtmlFxml = "/fxml/Data2DPageHtml.fxml";
     public static final String Data2DAddRowsFxml = "/fxml/Data2DAddRows.fxml";
     public static final String Data2DRowEditFxml = "/fxml/Data2DRowEdit.fxml";
     public static final String Data2DColumnEditFxml = "/fxml/Data2DColumnEdit.fxml";
@@ -354,20 +351,17 @@ public class Fxmls {
     public static final String ControlDataSplitFxml = "/fxml/ControlDataSplit.fxml";
     public static final String MathFunctionXYChartFxml = "/fxml/MathFunctionXYChart.fxml";
 
-    public static final String DataFileCSVFxml = "/fxml/DataFileCSV.fxml";
     public static final String DataFileCSVFormatFxml = "/fxml/DataFileCSVFormat.fxml";
     public static final String DataFileCSVSaveAsFxml = "/fxml/DataFileCSVSaveAs.fxml";
     public static final String DataFileCSVConvertFxml = "/fxml/DataFileCSVConvert.fxml";
     public static final String DataFileCSVMergeFxml = "/fxml/DataFileCSVMerge.fxml";
 
-    public static final String DataFileExcelFxml = "/fxml/DataFileExcel.fxml";
     public static final String DataFileExcelSheetsFxml = "/fxml/DataFileExcelSheets.fxml";
     public static final String DataFileExcelFormatFxml = "/fxml/DataFileExcelFormat.fxml";
     public static final String DataFileExcelSaveAsFxml = "/fxml/DataFileExcelSaveAs.fxml";
     public static final String DataFileExcelConvertFxml = "/fxml/DataFileExcelConvert.fxml";
     public static final String DataFileExcelMergeFxml = "/fxml/DataFileExcelMerge.fxml";
 
-    public static final String DataFileTextFxml = "/fxml/DataFileText.fxml";
     public static final String DataFileTextFormatFxml = "/fxml/DataFileTextFormat.fxml";
     public static final String DataFileTextSaveAsFxml = "/fxml/DataFileTextSaveAs.fxml";
     public static final String DataFileTextConvertFxml = "/fxml/DataFileTextConvert.fxml";
