@@ -26,7 +26,6 @@ import mara.mybox.data2d.Data2DTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.style.StyleTools;
-import mara.mybox.tools.TextTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -56,7 +55,7 @@ public class BaseData2DViewController extends BaseData2DLoadController {
     @FXML
     protected FlowPane buttonsPane;
     @FXML
-    protected Button verifyButton, optionsButton, delimiterButton, viewDataButton;
+    protected Button delimiterButton, viewDataButton;
     @FXML
     protected CheckBox wrapCheck;
 
@@ -160,10 +159,6 @@ public class BaseData2DViewController extends BaseData2DLoadController {
 
             }
 
-            if (dataManufactureButton != null) {
-                buttonsPane.getChildren().add(dataManufactureButton);
-            }
-
             refreshStyle(dataBox);
 
         } catch (Exception e) {
@@ -173,7 +168,7 @@ public class BaseData2DViewController extends BaseData2DLoadController {
 
     public void showHtml() {
         try {
-            buttonsPane.getChildren().setAll(optionsButton, menuButton, viewDataButton);
+            showHtmlButtons();
             pageBox.getChildren().add(htmlBox);
             VBox.setVgrow(htmlBox, Priority.ALWAYS);
 
@@ -182,6 +177,10 @@ public class BaseData2DViewController extends BaseData2DLoadController {
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+    }
+
+    public void showHtmlButtons() {
+        buttonsPane.getChildren().setAll(menuButton, viewDataButton, dataManufactureButton);
     }
 
     public void loadHtml() {
@@ -216,8 +215,7 @@ public class BaseData2DViewController extends BaseData2DLoadController {
 
     public void showTexts() {
         try {
-            buttonsPane.getChildren().setAll(wrapCheck, delimiterButton,
-                    optionsButton, menuButton, viewDataButton);
+            showTextsButtons();
             pageBox.getChildren().add(textsArea);
             VBox.setVgrow(textsArea, Priority.ALWAYS);
 
@@ -232,6 +230,11 @@ public class BaseData2DViewController extends BaseData2DLoadController {
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+    }
+
+    public void showTextsButtons() {
+        buttonsPane.getChildren().setAll(wrapCheck, delimiterButton,
+                menuButton, viewDataButton, dataManufactureButton);
     }
 
     public void loadTexts() {
@@ -283,70 +286,13 @@ public class BaseData2DViewController extends BaseData2DLoadController {
     }
 
     public void showTableButtons() {
-        buttonsPane.getChildren().setAll(menuButton, viewDataButton);
+        buttonsPane.getChildren().setAll(menuButton, viewDataButton, dataManufactureButton);
     }
 
     public void showCsv() {
-        try {
-            if (csvRadio == null || !csvRadio.isSelected()) {
-                return;
-            }
-            buttonsPane.getChildren().addAll(wrapCheck, delimiterButton, menuButton, viewDataButton);
-            pageBox.getChildren().add(csvBox);
-            VBox.setVgrow(csvBox, Priority.ALWAYS);
-
-            delimiterName = UserConfig.getString(baseName + "CsvDelimiter", ",");
-            isSettingValues = true;
-            wrapCheck.setSelected(UserConfig.getBoolean(baseName + "CsvWrap", true));
-            csvArea.setWrapText(wrapCheck.isSelected());
-            columnsLabel.setWrapText(wrapCheck.isSelected());
-            isSettingValues = false;
-
-            loadCsv();
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
     }
 
     public void loadCsv() {
-        if (!data2D.isValid()) {
-            isSettingValues = true;
-            csvArea.setText("");
-            columnsLabel.setText("");
-            isSettingValues = false;
-            return;
-        }
-        if (task != null) {
-            task.cancel();
-        }
-        task = new FxSingletonTask<Void>(this) {
-            private String text;
-
-            @Override
-            protected boolean handle() {
-                text = data2D.encodeCSV(this, delimiterName, false, false, false);
-                return text != null;
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                isSettingValues = true;
-                csvArea.setText(text);
-                String label = "";
-                String delimiter = TextTools.delimiterValue(delimiterName);
-                for (String name : data2D.columnNames()) {
-                    if (!label.isEmpty()) {
-                        label += delimiter;
-                    }
-                    label += name;
-                }
-                columnsLabel.setText(label);
-                isSettingValues = false;
-            }
-
-        };
-        start(task, false);
     }
 
     @Override

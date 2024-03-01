@@ -274,10 +274,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSelectRowsCon
                 outOptionsError(message("NoData"));
                 return false;
             }
-            if (!checkSelections()) {
-                return false;
-            }
-            return true;
+            return checkSelections();
         } catch (Exception e) {
             MyBoxLog.error(e);
             return false;

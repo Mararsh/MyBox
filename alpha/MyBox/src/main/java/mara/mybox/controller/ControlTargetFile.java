@@ -13,6 +13,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileNameTools;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -133,6 +134,12 @@ public class ControlTargetFile extends ControlFileSelecter {
             targetExistType = TargetExistType.Skip;
         }
         UserConfig.setString(baseName + "TargetExistType", targetExistType.name());
+    }
+
+    public void setFile(int type, String savedName, String prefix, String ext) {
+        targetFileController.defaultFile(null).type(type)
+                .savedName(savedName).initFile()
+                .setFile(FileTmpTools.generateFile(prefix, ext));
     }
 
     @Override

@@ -23,10 +23,21 @@ import mara.mybox.data.PaginatedPdfTable;
 import mara.mybox.data.StringTable;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.Data2DTools;
+import mara.mybox.data2d.Data2D_Attributes.TargetType;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.CSV;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.DatabaseTable;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.Excel;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.HTML;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.JSON;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.Matrix;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.MyBoxClipboard;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.PDF;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.SystemClipboard;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.Text;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.XML;
 import mara.mybox.data2d.Data2D_Edit;
 import mara.mybox.data2d.DataClipboard;
 import mara.mybox.data2d.DataMatrix;
-import mara.mybox.data2d.TmpTable;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
@@ -66,13 +77,14 @@ public class Data2DExport extends Data2DOperator {
     protected BufferedWriter textWriter, htmlWriter, xmlWriter, jsonWriter;
     protected XSSFWorkbook xssfBook;
     protected XSSFSheet xssfSheet;
+    protected TargetType format;
     protected String indent = "    ", dataName, filePrefix,
-            textDelimiter, csvDelimiter, css, sheetName, format;
+            textDelimiter, csvDelimiter, css, sheetName;
     protected PaginatedPdfTable pdfTable;
     protected List<List<String>> pageRows;
     protected int maxLines, fileIndex, fileRowIndex, dataRowIndex;
     protected File targetPath, targetFile;
-    protected Data2D csvData, excelData, textData, myBoxClipboadData, matrixData, tableData;
+    protected Data2D csvData, excelData, textData, myBoxClipboadData, matrixData;
 
     public Data2DExport() {
         firstRow = csvWithNames = textWithNames = excelWithNames = true;
@@ -142,7 +154,6 @@ public class Data2DExport extends Data2DOperator {
         textData = null;
         myBoxClipboadData = null;
         matrixData = null;
-        tableData = null;
 
         firstRow = true;
         if (cvsCharset == null) {
@@ -180,34 +191,46 @@ public class Data2DExport extends Data2DOperator {
         }
     }
 
-    public Data2DExport initParameters(String inFormat) {
+    public Data2DExport initParameters(TargetType inFormat) {
         initParameters();
         format = inFormat;
         if (format == null) {
             return this;
         }
-        if ("csv".equals(format)) {
-            setCsv(true);
-        } else if ("text".equals(format)) {
-            setTexts(true);
-        } else if ("excel".equals(format)) {
-            setExcel(true);
-        } else if ("myBoxClipboard".equals(format)) {
-            setMyBoxClipboard(true);
-        } else if ("matrix".equals(format)) {
-            setMatrix(true);
-        } else if ("table".equals(format)) {
-            setTable(true);
-        } else if ("json".equals(format)) {
-            setJson(true);
-        } else if ("xml".equals(format)) {
-            setXml(true);
-        } else if ("html".equals(format)) {
-            setHtml(true);
-        } else if ("pdf".equals(format)) {
-            setPdf(true);
-        } else if ("systemClipboard".equals(format)) {
-            setSystemClipboard(true);
+        switch (format) {
+            case CSV:
+                setCsv(true);
+                break;
+            case Excel:
+                setExcel(true);
+                break;
+            case Text:
+                setTexts(true);
+                break;
+            case Matrix:
+                setMatrix(true);
+                break;
+            case SystemClipboard:
+                setSystemClipboard(true);
+                break;
+            case MyBoxClipboard:
+                setMyBoxClipboard(true);
+                break;
+            case DatabaseTable:
+                setTable(true);
+                break;
+            case JSON:
+                setJson(true);
+                break;
+            case XML:
+                setXml(true);
+                break;
+            case HTML:
+                setHtml(true);
+                break;
+            case PDF:
+                setPdf(true);
+                break;
         }
         return this;
     }
@@ -529,13 +552,6 @@ public class Data2DExport extends Data2DOperator {
                 if (matrix) {
                     matrixData = DataMatrix.toMatrix(task, conn, csvData, dataName);
                 }
-                if (table) {
-                    if (dataName.startsWith(TmpTable.TmpTablePrefix)
-                            || dataName.startsWith(TmpTable.TmpTablePrefix.toLowerCase())) {
-                        dataName = dataName.substring(TmpTable.TmpTablePrefix.length());
-                    }
-                    tableData = csvData.toTable(task, conn, dataName);
-                }
                 if (systemClipboard) {
                     systemClipboardFile = csvFile;
                 }
@@ -683,9 +699,6 @@ public class Data2DExport extends Data2DOperator {
                     }
                     if (matrixData != null) {
                         Data2DManufactureController.openDef(matrixData);
-                    }
-                    if (tableData != null) {
-                        Data2DManufactureController.openDef(tableData);
                     }
                     if (pdfFile != null && pdfFile.exists()) {
                         PdfViewController.open(pdfFile);

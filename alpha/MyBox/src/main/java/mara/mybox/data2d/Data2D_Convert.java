@@ -14,10 +14,12 @@ import java.util.List;
 import mara.mybox.data2d.reader.Data2DOperator;
 import mara.mybox.data2d.reader.Data2DSingleColumn;
 import mara.mybox.data2d.reader.Data2DWriteTable;
+import mara.mybox.db.Database;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.db.data.Data2DColumn;
+import mara.mybox.db.data.Data2DRow;
 import mara.mybox.db.table.TableData2D;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
@@ -45,6 +47,14 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  */
 public abstract class Data2D_Convert extends Data2D_Edit {
 
+    public static File targetFile(String prefix, TargetType type) {
+        if (type == null) {
+            return null;
+        }
+        return FileTmpTools.generateFile(prefix,
+                type == TargetType.Excel ? "xlsx" : type.name().toLowerCase());
+    }
+
     /*
         to/from database table
      */
@@ -66,18 +76,39 @@ public abstract class Data2D_Convert extends Data2D_Edit {
     }
 
     public DataTable toTable(FxTask task, Connection conn, String targetName) {
-        if (conn == null || targetName == null || targetName.isBlank()) {
+        if (conn == null) {
             return null;
         }
         DataTable dataTable = null;
         try {
-            String tableName = DerbyBase.fixedIdentifier(targetName);
+            dataTable = newTable(task, conn, targetName);
+            importTable(task, conn, dataTable);
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
+            }
+        }
+        return dataTable;
+    }
+
+    public DataTable newTable(FxTask task, Connection conn, String targetName) {
+        if (conn == null) {
+            return null;
+        }
+        DataTable dataTable = null;
+        try {
+            String tableName = targetName;
+            if (tableName == null || tableName.isBlank()) {
+                tableName = "Data2D";
+            }
+            tableName = DerbyBase.fixedIdentifier(tableName);
             int index = 1;
             while (DerbyBase.exist(conn, tableName) > 0) {
                 tableName = DerbyBase.appendIdentifier(tableName, ++index + "");
             }
             dataTable = createTable(task, conn, tableName, false);
-            importTable(task, conn, dataTable);
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
@@ -196,7 +227,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
     }
 
     /* 
-        static
+       static methods for table
      */
     public static DataTable makeTable(FxTask task, String tname,
             List<Data2DColumn> referColumns, List<String> keys, String idName) {
@@ -297,6 +328,56 @@ public abstract class Data2D_Convert extends Data2D_Edit {
 
     public static DataTable createTable(FxTask task, Connection conn, List<Data2DColumn> columns) {
         return createTable(task, conn, null, columns, null, null, null, true);
+    }
+
+    public static DataTable createTable(FxTask task, List<Data2DColumn> cols, List<List<String>> pageRows,
+            String targetName, InvalidAs invalidAs) {
+        if (cols == null || pageRows == null || pageRows.isEmpty()) {
+            return null;
+        }
+        DataTable dataTable = new DataTable();
+        dataTable.setColumns(cols);
+        try (Connection conn = DerbyBase.getConnection()) {
+            dataTable = dataTable.newTable(task, conn, targetName);
+            if (dataTable == null) {
+                return null;
+            }
+            TableData2D tableData2D = dataTable.getTableData2D();
+            Data2DRow data2DRow = tableData2D.newRow();
+            List<Data2DColumn> columns = dataTable.getColumns();
+            conn.setAutoCommit(false);
+            int count = 0;
+            for (List<String> row : pageRows) {
+                for (int i = 0; i < columns.size(); i++) {
+                    Data2DColumn column = columns.get(i);
+                    data2DRow.setColumnValue(column.getColumnName(),
+                            column.fromString(row.get(i + 1), invalidAs));
+                }
+                tableData2D.insertData(conn, data2DRow);
+                if (++count % Database.BatchSize == 0) {
+                    conn.commit();
+                    if (task != null) {
+                        task.setInfo(message("Imported") + ": " + count);
+                    }
+                }
+            }
+            if (count > 0) {
+                dataTable.setRowsNumber(count);
+                dataTable.getTableData2DDefinition().updateData(conn, dataTable);
+                conn.commit();
+                if (task != null) {
+                    task.setInfo(message("Imported") + ": " + count);
+                }
+            }
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
+            }
+            return null;
+        }
+        return dataTable;
     }
 
     public static DataFileCSV toCSV(FxTask task, DataTable dataTable, File file, boolean save) {

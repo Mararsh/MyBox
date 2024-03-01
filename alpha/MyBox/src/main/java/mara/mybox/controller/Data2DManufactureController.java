@@ -15,12 +15,15 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Toggle;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import mara.mybox.data.StringTable;
 import mara.mybox.data2d.Data2D;
@@ -36,6 +39,7 @@ import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.StyleTools;
+import mara.mybox.tools.TextTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
@@ -54,6 +58,8 @@ public class Data2DManufactureController extends BaseData2DViewController {
     protected FlowPane opsPane;
     @FXML
     protected Button dataDefinitionButton, operationButton;
+    @FXML
+    protected CheckBox formCheck, titleCheck, columnCheck, rowCheck;
 
     public Data2DManufactureController() {
         baseTitle = message("DataManufacture");
@@ -101,6 +107,90 @@ public class Data2DManufactureController extends BaseData2DViewController {
             return;
         }
         pickCSV();
+    }
+
+    @Override
+    public void showHtmlButtons() {
+        buttonsPane.getChildren().setAll(formCheck, titleCheck, columnCheck, rowCheck);
+    }
+
+    @Override
+    public void showTextsButtons() {
+        buttonsPane.getChildren().setAll(wrapCheck, delimiterButton,
+                formCheck, titleCheck, columnCheck, rowCheck);
+    }
+
+    @Override
+    public void showTableButtons() {
+        buttonsPane.getChildren().setAll(lostFocusCommitCheck,
+                clearButton, deleteRowsButton, editButton, addRowsButton,
+                recoverButton, saveButton, dataDefinitionButton);
+    }
+
+    @Override
+    public void showCsv() {
+        try {
+            if (csvRadio == null || !csvRadio.isSelected()) {
+                return;
+            }
+            buttonsPane.getChildren().addAll(wrapCheck, delimiterButton,
+                    recoverButton, saveButton, dataDefinitionButton);
+            pageBox.getChildren().add(csvBox);
+            VBox.setVgrow(csvBox, Priority.ALWAYS);
+
+            delimiterName = UserConfig.getString(baseName + "CsvDelimiter", ",");
+            isSettingValues = true;
+            wrapCheck.setSelected(UserConfig.getBoolean(baseName + "CsvWrap", true));
+            csvArea.setWrapText(wrapCheck.isSelected());
+            columnsLabel.setWrapText(wrapCheck.isSelected());
+            isSettingValues = false;
+
+            loadCsv();
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    @Override
+    public void loadCsv() {
+        if (!data2D.isValid()) {
+            isSettingValues = true;
+            csvArea.setText("");
+            columnsLabel.setText("");
+            isSettingValues = false;
+            return;
+        }
+        if (task != null) {
+            task.cancel();
+        }
+        task = new FxSingletonTask<Void>(this) {
+            private String text;
+
+            @Override
+            protected boolean handle() {
+                text = data2D.encodeCSV(this, delimiterName, false, false, false);
+                return text != null;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                isSettingValues = true;
+                csvArea.setText(text);
+                String label = "";
+                String delimiter = TextTools.delimiterValue(delimiterName);
+                for (String name : data2D.columnNames()) {
+                    if (!label.isEmpty()) {
+                        label += delimiter;
+                    }
+                    label += name;
+                }
+                columnsLabel.setText(label);
+                isSettingValues = false;
+            }
+
+        };
+        start(task, false);
     }
 
     public void pickCSV() {
@@ -174,13 +264,6 @@ public class Data2DManufactureController extends BaseData2DViewController {
             displayError(e.toString());
             return null;
         }
-    }
-
-    @Override
-    public void showTableButtons() {
-        buttonsPane.getChildren().setAll(lostFocusCommitCheck, menuButton,
-                viewDataButton, clearButton, deleteRowsButton, editButton, addRowsButton,
-                recoverButton, saveButton, dataDefinitionButton);
     }
 
     @Override

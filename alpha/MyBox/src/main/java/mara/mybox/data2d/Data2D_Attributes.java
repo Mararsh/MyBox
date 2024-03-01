@@ -32,6 +32,11 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
     public FxTask task, backgroundTask;
     public String error;
 
+    public enum TargetType {
+        CSV, Excel, Text, Matrix, DatabaseTable, SystemClipboard, MyBoxClipboard,
+        JSON, XML, HTML, PDF, Replace, Insert, Append
+    }
+
     public Data2D_Attributes() {
         tableData2DDefinition = new TableData2DDefinition();
         tableData2DColumn = new TableData2DColumn();
