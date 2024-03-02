@@ -20,6 +20,7 @@ import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Toggle;
+import javafx.scene.input.Clipboard;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
@@ -29,7 +30,6 @@ import mara.mybox.data.StringTable;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.Data2DMenuTools;
 import mara.mybox.data2d.DataClipboard;
-import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.Data2DDefinition.DataType;
@@ -89,7 +89,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
 
 
     /*
-        data
+        format
      */
     @Override
     public void beforeOpenFile() {
@@ -101,7 +101,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
         if (isSettingValues) {
             return;
         }
-        operationButton.setDisable(!tableRadio.isSelected());
+        operationButton.setDisable(!isEditing());
         if (csvRadio != ov || !isChanged() || !data2D.isValid()) {
             switchFormat();
             return;
@@ -130,7 +130,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
     @Override
     public void showCsv() {
         try {
-            if (csvRadio == null || !csvRadio.isSelected()) {
+            if (!csvRadio.isSelected()) {
                 return;
             }
             buttonsPane.getChildren().addAll(wrapCheck, delimiterButton,
@@ -154,7 +154,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
 
     @Override
     public void loadCsv() {
-        if (!data2D.isValid()) {
+        if (data2D == null || !data2D.isValid() || !data2D.hasData()) {
             isSettingValues = true;
             csvArea.setText("");
             columnsLabel.setText("");
@@ -266,6 +266,15 @@ public class Data2DManufactureController extends BaseData2DViewController {
         }
     }
 
+    public void pageChanged() {
+        if (csvRadio.isSelected()) {
+            loadCsv();
+        }
+    }
+
+    /*
+        status
+     */
     @Override
     public boolean validateData() {
         opsPane.setDisable(data2D == null);
@@ -300,6 +309,10 @@ public class Data2DManufactureController extends BaseData2DViewController {
         UserConfig.setBoolean(baseName + "ValidateDataWhenSave", validateSave);
     }
 
+    public boolean isValidData() {
+        return data2D != null && data2D.isValid();
+    }
+
     public boolean isEditing() {
         return tableRadio.isSelected() || csvRadio.isSelected();
     }
@@ -308,6 +321,13 @@ public class Data2DManufactureController extends BaseData2DViewController {
         return tableRadio.isSelected();
     }
 
+    public boolean isChanged() {
+        return data2D != null && data2D.isTableChanged();
+    }
+
+    public boolean isColumnsChanged() {
+        return data2D != null && data2D.isColumnsChanged();
+    }
 
     /*
         table
@@ -333,10 +353,6 @@ public class Data2DManufactureController extends BaseData2DViewController {
         if (!data2D.hasData()) {
             tableRadio.setSelected(true);
         }
-    }
-
-    public boolean isChanged() {
-        return data2D != null && data2D.isTableChanged();
     }
 
     @Override
@@ -378,17 +394,33 @@ public class Data2DManufactureController extends BaseData2DViewController {
 
     @Override
     public List<String> newData() {
+        if (!isValidData()) {
+            return null;
+        }
         return data2D.newRow();
     }
 
     @Override
     public List<String> dataCopy(List<String> data) {
+        if (!isValidData()) {
+            return null;
+        }
         return data2D.copyRow(data);
     }
 
     /*
         menus
      */
+    @Override
+    public List<MenuItem> fileMenuItems(Event fevent) {
+        return Data2DMenuTools.fileMenus(this);
+    }
+
+    @Override
+    public List<MenuItem> dataMenuItems(Event fevent) {
+        return Data2DMenuTools.dataMenus(this);
+    }
+
     @FXML
     public void popVerifyMenu(Event event) {
         if (UserConfig.getBoolean(baseName + "VerifyPopWhenMouseHovering", true)) {
@@ -400,7 +432,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
     public void showVerifyMenu(Event mevent) {
         try {
             List<MenuItem> items = new ArrayList<>();
-            items.addAll(Data2DMenuTools.verifyMenu(this));
+            items.addAll(Data2DMenuTools.verifyMenus(this));
 
             items.add(new SeparatorMenuItem());
 
@@ -423,15 +455,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
 
     @Override
     public List<MenuItem> operationsMenuItems(Event fevent) {
-        if (!tableRadio.isSelected()) {
-            return null;
-        }
-        return Data2DMenuTools.rowsMenus(this);
-    }
-
-    @Override
-    public List<MenuItem> dataMenuItems(Event fevent) {
-        return Data2DMenuTools.dataMenus(this);
+        return Data2DMenuTools.operationsMenus(this);
     }
 
     @FXML
@@ -444,7 +468,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
     @FXML
     public void showTrimMenu(Event event) {
         try {
-            List<MenuItem> items = Data2DMenuTools.trimMenu(this);
+            List<MenuItem> items = Data2DMenuTools.trimMenus(this);
 
             items.add(new SeparatorMenuItem());
 
@@ -475,7 +499,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
     @FXML
     public void showCalculateMenu(Event event) {
         try {
-            List<MenuItem> items = Data2DMenuTools.calMenu(this);
+            List<MenuItem> items = Data2DMenuTools.calMenus(this);
 
             items.add(new SeparatorMenuItem());
 
@@ -506,11 +530,11 @@ public class Data2DManufactureController extends BaseData2DViewController {
     @FXML
     public void showChartsMenu(Event event) {
         try {
-            List<MenuItem> items = Data2DMenuTools.chartsMenu(this);
+            List<MenuItem> items = Data2DMenuTools.chartMenus(this);
 
             items.add(new SeparatorMenuItem());
 
-            items.addAll(Data2DMenuTools.groupChartsMenu(this));
+            items.addAll(Data2DMenuTools.groupChartMenus(this));
 
             items.add(new SeparatorMenuItem());
 
@@ -531,35 +555,52 @@ public class Data2DManufactureController extends BaseData2DViewController {
         }
     }
 
+    /*
+        action
+     */
     @Override
     public boolean controlAltN() {
-        addRowsAction();
-        return true;
+        if (isValidData() && isEditing()) {
+            addRowsAction();
+            return true;
+        }
+        return false;
     }
 
     @Override
     public boolean controlAltD() {
-        deleteRowsAction();
-        return true;
+        if (targetIsTextInput()) {
+            return false;
+        }
+        if (isValidData() && isTableMode()) {
+            deleteRowsAction();
+            return true;
+        }
+        return false;
     }
 
     @Override
     public boolean controlAltL() {
-        clearAction();
-        return true;
+        if (isValidData() && isEditing()) {
+            clearAction();
+        }
+        return false;
     }
 
-    /*
-        action
-     */
     @FXML
     public void definitonAction() {
-        Data2DAttributes.open(this);
+        if (isValidData()) {
+            Data2DAttributes.open(this);
+        }
     }
 
     @FXML
     @Override
     public void saveAction() {
+        if (!isValidData()) {
+            popError(message("InvalidData"));
+            return;
+        }
         if (!dataSizeLoaded) {
             popError(message("CountingTotalNumber"));
             return;
@@ -728,6 +769,10 @@ public class Data2DManufactureController extends BaseData2DViewController {
     @FXML
     @Override
     public void recoverAction() {
+        if (!isValidData()) {
+            popError(message("InvalidData"));
+            return;
+        }
         resetStatus();
         setData(data2D);
         if (data2D.isDataFile()) {
@@ -739,16 +784,27 @@ public class Data2DManufactureController extends BaseData2DViewController {
     @FXML
     @Override
     public void addAction() {
-        if (!validateData()) {
-            return;
-        }
         addRowsAction();
     }
 
     @FXML
     @Override
     public void addRowsAction() {
+        if (!isValidData()) {
+            popError(message("InvalidData"));
+            return;
+        }
         Data2DAddRowsController.open(this);
+    }
+
+    @Override
+    public int addRows(int index, List<List<String>> list) {
+        int count = super.addRows(index, list);
+        if (count <= 0) {
+            return count;
+        }
+        pageChanged();
+        return count;
     }
 
     @FXML
@@ -770,6 +826,13 @@ public class Data2DManufactureController extends BaseData2DViewController {
     @FXML
     @Override
     public void clearAction() {
+        if (!isValidData()) {
+            popError(message("InvalidData"));
+            return;
+        }
+        if (!tableRadio.isSelected()) {
+            return;
+        }
         if (data2D.isTmpData()) {
             deleteAllRows();
         } else {
@@ -779,7 +842,51 @@ public class Data2DManufactureController extends BaseData2DViewController {
 
     @Override
     protected long clearData(FxTask currentTask) {
+        if (!isValidData()) {
+            return 0;
+        }
         return data2D.clearData();
+    }
+
+    @FXML
+    @Override
+    public void pasteContentInSystemClipboard() {
+        try {
+            if (!isValidData()) {
+                popError(message("InvalidData"));
+                return;
+            }
+            String text = Clipboard.getSystemClipboard().getString();
+            if (text == null || text.isBlank()) {
+                popError(message("NoTextInClipboard"));
+            }
+            Data2DPasteContentInSystemClipboardController.open(this, text);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    @FXML
+    public void pasteContentInMyboxClipboard() {
+        try {
+            if (!isValidData()) {
+                popError(message("InvalidData"));
+                return;
+            }
+            Data2DPasteContentInMyBoxClipboardController.open(this);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    @FXML
+    @Override
+    public void myBoxClipBoard() {
+        if (!isValidData()) {
+            popError(message("InvalidData"));
+            return;
+        }
+        Data2DPasteContentInMyBoxClipboardController.open(this);
     }
 
     public boolean verifyData() {
@@ -808,35 +915,11 @@ public class Data2DManufactureController extends BaseData2DViewController {
         return result != null && result.isPresent() && result.get() == buttonSave;
     }
 
-    public void headerAction() {
-        try {
-            if (data2D == null || tableData.isEmpty()) {
-                popError(message("NoData"));
-                return;
-            }
-            List<String> row = tableData.get(0);
-            if (row == null || row.size() < 2) {
-                popError(message("InvalidData"));
-                return;
-            }
-            List<String> names = new ArrayList<>();
-            for (int i = 1; i < row.size(); i++) {
-                String name = row.get(i);
-                if (name == null || name.isBlank()) {
-                    name = message("Column") + i;
-                }
-                DerbyBase.checkIdentifier(names, name, true);
-            }
-//            dataController.columnsController.setNames(names); #########
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
     @FXML
     @Override
     public void copyAction() {
-        if (!validateData()) {
+        if (!isValidData()) {
+            popError(message("InvalidData"));
             return;
         }
         Data2DCopyController.open(this);

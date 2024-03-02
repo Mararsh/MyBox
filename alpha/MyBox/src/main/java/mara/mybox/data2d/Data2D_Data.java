@@ -120,6 +120,16 @@ public abstract class Data2D_Data extends Data2D_Attributes {
      */
     public void setTableChanged(boolean changed) {
         tableChanged = changed;
+        if (!changed) {
+            columnsChanged = false;
+        }
+    }
+
+    public void setColumnsChanged(boolean changed) {
+        columnsChanged = changed;
+        if (changed) {
+            tableChanged = true;
+        }
     }
 
     public int tableRowsNumber() {

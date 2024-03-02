@@ -26,7 +26,7 @@ public class Data2DPasteContentInSystemClipboardController extends BaseChildCont
         baseTitle = message("PasteContentInSystemClipboard");
     }
 
-    public void setParameters(BaseData2DLoadController target, String text) {
+    public void setParameters(Data2DManufactureController target, String text) {
         try {
             this.parentController = target;
 
@@ -55,7 +55,7 @@ public class Data2DPasteContentInSystemClipboardController extends BaseChildCont
     /*
         static
      */
-    public static Data2DPasteContentInSystemClipboardController open(BaseData2DLoadController parent, String text) {
+    public static Data2DPasteContentInSystemClipboardController open(Data2DManufactureController parent, String text) {
         try {
             Data2DPasteContentInSystemClipboardController controller = (Data2DPasteContentInSystemClipboardController) WindowTools.branchStage(
                     parent, Fxmls.Data2DPasteContentInSystemClipboardFxml);

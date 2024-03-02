@@ -23,6 +23,8 @@ import mara.mybox.value.UserConfig;
  */
 public class Data2DSetValuesController extends BaseData2DTargetsController {
 
+    protected Data2DManufactureController editor;
+
     @FXML
     protected ControlData2DSetValue valueController;
     @FXML
@@ -32,9 +34,9 @@ public class Data2DSetValuesController extends BaseData2DTargetsController {
         baseTitle = message("SetValues");
     }
 
-    @Override
-    public void setParameters(BaseData2DLoadController tableController) {
+    public void setParameters(Data2DManufactureController tableController) {
         try {
+            editor = tableController;
             super.setParameters(tableController);
 
             idExclude(true);
@@ -236,10 +238,12 @@ public class Data2DSetValuesController extends BaseData2DTargetsController {
 
     @Override
     public boolean updateTable() {
+        tableController.isSettingValues = true;
         tableController.tableView.refresh();
         tableController.isSettingValues = false;
         tableController.tableChanged(true);
         tableController.requestMouse();
+        editor.pageChanged();
         tabPane.getSelectionModel().select(dataTab);
         alertInformation(message("ChangedRowsNumber") + ": " + filteredRowsIndices.size());
         return true;
@@ -511,7 +515,7 @@ public class Data2DSetValuesController extends BaseData2DTargetsController {
     /*
         static
      */
-    public static Data2DSetValuesController open(BaseData2DLoadController tableController) {
+    public static Data2DSetValuesController open(Data2DManufactureController tableController) {
         try {
             Data2DSetValuesController controller = (Data2DSetValuesController) WindowTools.branchStage(
                     tableController, Fxmls.Data2DSetValuesFxml);

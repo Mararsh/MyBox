@@ -222,9 +222,14 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
             return;
         }
         if (data2D != null) {
+            data2D.setPageData(tableData);
             data2D.setTableChanged(changed);
         }
         notifyStatus();
+    }
+
+    public void pageDataChanged() {
+        tableChanged(true);
     }
 
     /*
@@ -244,11 +249,10 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
         }
     }
 
-    public synchronized boolean updatePage(List<List<String>> newData, boolean columnsChanged) {
+    public synchronized boolean updatePage(List<List<String>> newData) {
         try {
-            if (columnsChanged) {
-                makeColumns();
-            }
+            data2D.setColumnsChanged(true);
+            makeColumns();
             isSettingValues = true;
             tableData.setAll(newData);
             data2D.setPageData(tableData);
@@ -579,10 +583,11 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
         }
         String title = getRootBaseTitle();
         if (data2D != null) {
-            title += " : " + data2D.displayName();
+            title += " : ";
             if (data2D.isTableChanged()) {
-                title += " *";
+                title += " * ";
             }
+            title += data2D.displayName();
         }
         myStage.setTitle(title);
     }

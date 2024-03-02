@@ -238,6 +238,7 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
         if (index < 0) {
             index = tableData.size();
         }
+        isSettingValues = true;
         tableData.addAll(index, list);
         tableView.scrollTo(index - 5);
         isSettingValues = false;
@@ -505,7 +506,7 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
     public void deleteRowsAction() {
         List<P> selected = selectedItems();
         if (selected == null || selected.isEmpty()) {
-            deleteAllRows();
+            popError(message("SelectToHandle"));
             return;
         }
         isSettingValues = true;

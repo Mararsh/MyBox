@@ -10,6 +10,7 @@ import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.FxTask;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -108,6 +109,14 @@ public abstract class BaseData2DTargetsController extends BaseData2DHandleContro
         UserConfig.setBoolean(baseName + "CopyRowNumber", rowNumberCheck.isSelected());
     }
 
+    @Override
+    public void objectChanged() {
+        super.objectChanged();
+        if (targetController != null) {
+            targetController.setNotInTable(isAllPages());
+        }
+    }
+
     // Check when selections are changed
     @Override
     public boolean checkOptions() {
@@ -115,12 +124,9 @@ public abstract class BaseData2DTargetsController extends BaseData2DHandleContro
             if (isSettingValues) {
                 return true;
             }
-            if (targetController != null) {
-                targetController.setNotInTable(isAllPages());
-                if (targetController.checkTarget() == null) {
-                    outOptionsError(message("SelectToHandle") + ": " + message("Target"));
-                    return false;
-                }
+            if (targetController != null && targetController.target == null) {
+                outOptionsError(message("SelectToHandle") + ": " + message("Target"));
+                return false;
             }
             return super.checkOptions();
         } catch (Exception e) {
@@ -156,7 +162,7 @@ public abstract class BaseData2DTargetsController extends BaseData2DHandleContro
             @Override
             protected boolean handle() {
                 data2D.startTask(this, filterController.filter);
-                csvData = generatedFile();
+                csvData = generatedFile(this);
                 data2D.stopFilter();
                 return csvData != null;
             }
@@ -164,7 +170,7 @@ public abstract class BaseData2DTargetsController extends BaseData2DHandleContro
             @Override
             protected void whenSucceeded() {
                 popDone();
-                Data2DSaveAsController.createData(csvData, targetController.target,
+                Data2DSaveDataController.createData(csvData, targetController.target,
                         targetController.name(), targetController.file());
             }
 
@@ -178,7 +184,7 @@ public abstract class BaseData2DTargetsController extends BaseData2DHandleContro
         start(task);
     }
 
-    public DataFileCSV generatedFile() {
+    public DataFileCSV generatedFile(FxTask currentTask) {
         return null;
     }
 
@@ -302,7 +308,7 @@ public abstract class BaseData2DTargetsController extends BaseData2DHandleContro
             popError(message("NoData"));
             return false;
         }
-        Data2DSaveAsController.createData(targetController.target,
+        Data2DSaveRowsController.createData(targetController.target,
                 outputColumns, outputData, targetController.name());
         popDone();
         return true;

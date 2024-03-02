@@ -590,35 +590,6 @@ public class BaseData2DLoadController extends BaseData2DTableController {
 
     @FXML
     @Override
-    public void pasteContentInSystemClipboard() {
-        try {
-            if (data2D == null) {
-                return;
-            }
-            String text = Clipboard.getSystemClipboard().getString();
-            if (text == null || text.isBlank()) {
-                popError(message("NoTextInClipboard"));
-            }
-            Data2DPasteContentInSystemClipboardController.open(this, text);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    @FXML
-    public void pasteContentInMyboxClipboard() {
-        try {
-            if (data2D == null) {
-                return;
-            }
-            Data2DPasteContentInMyBoxClipboardController.open(this);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    @FXML
-    @Override
     public void loadContentInSystemClipboard() {
         try {
             if (data2D == null || !checkBeforeNextAction()) {
@@ -632,12 +603,6 @@ public class BaseData2DLoadController extends BaseData2DTableController {
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
-    }
-
-    @FXML
-    @Override
-    public void myBoxClipBoard() {
-        Data2DPasteContentInMyBoxClipboardController.open(this);
     }
 
     @FXML
@@ -695,99 +660,6 @@ public class BaseData2DLoadController extends BaseData2DTableController {
     @FXML
     public void verifyAllData() {
 
-    }
-
-    @Override
-    public List<MenuItem> fileMenuItems(Event fevent) {
-        try {
-            if (data2D == null || !data2D.isDataFile()) {
-                return null;
-            }
-            sourceFile = data2D.getFile();
-            if (sourceFile == null) {
-                return null;
-            }
-            List<MenuItem> items = new ArrayList<>();
-            MenuItem menu;
-
-            if (data2D.isExcel()) {
-                menu = new MenuItem(message("Sheet"), StyleTools.getIconImageView("iconFrame.png"));
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    DataFileExcelSheetsController.open(this);
-                });
-                items.add(menu);
-            }
-
-            menu = new MenuItem(message("Format"), StyleTools.getIconImageView("iconFormat.png"));
-            menu.setOnAction((ActionEvent menuItemEvent) -> {
-                if (data2D.isCSV()) {
-                    DataFileCSVFormatController.open(this);
-                } else if (data2D.isTexts()) {
-                    DataFileTextFormatController.open(this);
-                } else if (data2D.isExcel()) {
-                    DataFileExcelFormatController.open(this);
-                }
-            });
-            items.add(menu);
-
-            CheckMenuItem backItem = new CheckMenuItem(message("BackupWhenSave"));
-            backItem.setSelected(UserConfig.getBoolean(baseName + "BackupWhenSave", true));
-            backItem.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    UserConfig.setBoolean(baseName + "BackupWhenSave", backItem.isSelected());
-                }
-            });
-            items.add(backItem);
-
-            menu = new MenuItem(message("FileBackups"), StyleTools.getIconImageView("iconBackup.png"));
-            menu.setOnAction((ActionEvent menuItemEvent) -> {
-                openBackups();
-            });
-            items.add(menu);
-
-            items.add(new SeparatorMenuItem());
-
-            menu = new MenuItem(message("SaveAs") + "    Ctrl+B " + message("Or") + " Alt+B",
-                    StyleTools.getIconImageView("iconSaveAs.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                saveAsAction();
-            });
-            items.add(menu);
-
-            if (data2D.isTexts() || data2D.isCSV()) {
-                menu = new MenuItem(message("Texts"), StyleTools.getIconImageView("iconTxt.png"));
-                menu.setOnAction((ActionEvent event) -> {
-                    editTextFile();
-                });
-                items.add(menu);
-            }
-
-            items.add(new SeparatorMenuItem());
-
-            menu = new MenuItem(message("OpenDirectory"), StyleTools.getIconImageView("iconOpenPath.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                openSourcePath();
-            });
-            items.add(menu);
-
-            menu = new MenuItem(message("BrowseFiles"), StyleTools.getIconImageView("iconList.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                FileBrowseController.open(this);
-            });
-            items.add(menu);
-
-            menu = new MenuItem(message("SystemMethod"), StyleTools.getIconImageView("iconSystemOpen.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                systemMethod();
-            });
-            items.add(menu);
-
-            return items;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
     }
 
     @FXML

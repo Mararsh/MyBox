@@ -106,7 +106,7 @@ public class Data2DSpliceController extends BaseController {
                         return false;
                     }
                     if (dataAController.isAllPages()) {
-                        csvA = dataAController.data2D.copy(task, null, null,
+                        csvA = dataAController.data2D.copy(this,
                                 dataAController.checkedColsIndices, false, true, false);
                     } else {
                         csvA = DataFileCSV.save(task, null, null, ",",
@@ -123,7 +123,7 @@ public class Data2DSpliceController extends BaseController {
                         return false;
                     }
                     if (dataBController.isAllPages()) {
-                        csvB = dataBController.data2D.copy(task, null, null,
+                        csvB = dataBController.data2D.copy(this,
                                 dataBController.checkedColsIndices, false, true, false);
                     } else {
                         csvB = DataFileCSV.save(task, null, null, ",",
@@ -151,7 +151,7 @@ public class Data2DSpliceController extends BaseController {
 
             @Override
             protected void whenSucceeded() {
-                Data2DSaveAsController.createData(targetCSV, targetController.target,
+                Data2DSaveDataController.createData(targetCSV, targetController.target,
                         targetController.name(), targetController.file());
             }
 

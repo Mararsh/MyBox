@@ -19,11 +19,23 @@ import mara.mybox.value.UserConfig;
  */
 public class Data2DDeleteController extends BaseData2DTargetsController {
 
+    protected Data2DManufactureController editor;
+
     @FXML
     protected CheckBox errorContinueCheck;
 
     public Data2DDeleteController() {
         baseTitle = message("Delete");
+    }
+
+    public void setParameters(Data2DManufactureController tableController) {
+        try {
+            editor = tableController;
+            super.setParameters(tableController);
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
     @Override
@@ -73,6 +85,7 @@ public class Data2DDeleteController extends BaseData2DTargetsController {
                     selectedRowsIndices = null;
                     tableController.tableChanged(true);
                     tableController.requestMouse();
+                    editor.pageChanged();
                     tabPane.getSelectionModel().select(dataTab);
                     alertInformation(message("DeletedRowsNumber") + ": " + filteredRowsIndices.size());
                 } catch (Exception e) {
@@ -150,7 +163,7 @@ public class Data2DDeleteController extends BaseData2DTargetsController {
     /*
         static
      */
-    public static Data2DDeleteController open(BaseData2DLoadController tableController) {
+    public static Data2DDeleteController open(Data2DManufactureController tableController) {
         try {
             Data2DDeleteController controller = (Data2DDeleteController) WindowTools.branchStage(
                     tableController, Fxmls.Data2DDeleteFxml);

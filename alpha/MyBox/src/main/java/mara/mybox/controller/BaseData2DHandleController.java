@@ -283,7 +283,6 @@ public abstract class BaseData2DHandleController extends BaseData2DSelectRowsCon
 
     public void outOptionsError(String error) {
         if (error != null && !error.isBlank()) {
-            MyBoxLog.error(error);
             popError(error);
         }
     }

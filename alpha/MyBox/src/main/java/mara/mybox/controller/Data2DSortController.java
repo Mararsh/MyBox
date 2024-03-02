@@ -2,6 +2,7 @@ package mara.mybox.controller;
 
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -42,7 +43,7 @@ public class Data2DSortController extends BaseData2DTargetsController {
     }
 
     @Override
-    public DataFileCSV generatedFile() {
+    public DataFileCSV generatedFile(FxTask currentTask) {
         return sortedFile(targetController.name(), checkedColsIndices, showRowNumber());
     }
 

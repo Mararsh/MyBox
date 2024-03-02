@@ -67,7 +67,7 @@ public class Data2DExport extends Data2DOperator {
     protected BaseTaskController taskController;
     protected List<String> names;
     protected List<Data2DColumn> columns;
-    protected boolean firstRow, rowNumber, skip,
+    protected boolean firstRow, rowNumber, skip, created,
             csv, texts, excel, myBoxClipboard, systemClipboard, matrix, table, pdf, html, xml, json,
             csvWithNames, textWithNames, excelWithNames;
     protected File csvFile, textFile, xmlFile, jsonFile, htmlFile, pdfFile, xlsxFile,
@@ -99,7 +99,11 @@ public class Data2DExport extends Data2DOperator {
 
     @Override
     public boolean checkParameters() {
-        return cols != null && !cols.isEmpty();
+        if (cols != null && !cols.isEmpty()) {
+            return openWriters();
+        } else {
+            return false;
+        }
     }
 
     @Override
@@ -118,6 +122,7 @@ public class Data2DExport extends Data2DOperator {
             }
             writeRow(row);
         } catch (Exception e) {
+            updateLogs(e.toString());
         }
     }
 
@@ -174,6 +179,7 @@ public class Data2DExport extends Data2DOperator {
         if (pdf && pdfTable == null) {
             pdfTable = PaginatedPdfTable.create();
         }
+        created = false;
     }
 
     public boolean initParameters() {
@@ -280,22 +286,26 @@ public class Data2DExport extends Data2DOperator {
     }
 
     public File makeTargetFile(String prefix, String suffix) {
-        return targetFile != null ? targetFile
-                : taskController.makeTargetFile(prefix, "." + suffix, targetPath);
+        if (targetFile != null) {
+            return targetFile;
+        } else {
+            return taskController.makeTargetFile(prefix, "." + suffix, targetPath);
+        }
     }
 
     public boolean openWriters() {
         try {
             initWriters();
+            String currentPrefix = null;
             if (targetFile == null) {
                 if (targetPath == null || filePrefix == null || names == null) {
                     updateLogs(message("InvalidParameters"));
                     return false;
                 }
-            }
-            String currentPrefix = filePrefix;
-            if (maxLines > 0) {
-                currentPrefix += "_" + fileIndex;
+                currentPrefix = filePrefix;
+                if (maxLines > 0) {
+                    currentPrefix += "_" + fileIndex;
+                }
             }
             if (csv || matrix || table) {
                 csvFile = makeTargetFile(currentPrefix, "csv");
@@ -530,6 +540,7 @@ public class Data2DExport extends Data2DOperator {
     }
 
     public void closeWriters() {
+        created = false;
         try (Connection conn = DerbyBase.getConnection()) {
             if (csvPrinter != null && csvFile != null) {
                 csvPrinter.flush();
@@ -555,6 +566,7 @@ public class Data2DExport extends Data2DOperator {
                 if (systemClipboard) {
                     systemClipboardFile = csvFile;
                 }
+                created = true;
 
             }
 
@@ -575,6 +587,7 @@ public class Data2DExport extends Data2DOperator {
                         .setRowsNumber(dataRowIndex);
                 Data2D.saveAttributes(conn, textData, columns);
                 conn.commit();
+                created = true;
             }
 
             if (xssfBook != null && xssfSheet != null && xlsxFile != null) {
@@ -597,6 +610,7 @@ public class Data2DExport extends Data2DOperator {
                         .setRowsNumber(dataRowIndex);
                 Data2D.saveAttributes(conn, excelData, columns);
                 conn.commit();
+                created = true;
             }
 
             if (dataClipboardPrinter != null && myBoxClipboardFile != null) {
@@ -617,6 +631,7 @@ public class Data2DExport extends Data2DOperator {
                 Data2D.saveAttributes(conn, myBoxClipboadData, columns);
                 DataInMyBoxClipboardController.update();
                 conn.commit();
+                created = true;
             }
 
             if (htmlWriter != null && htmlFile != null) {
@@ -628,6 +643,7 @@ public class Data2DExport extends Data2DOperator {
                     taskController.targetFileGenerated(htmlFile, VisitHistory.FileType.Html);
                 }
                 htmlWriter = null;
+                created = true;
             }
 
             if (xmlWriter != null && xmlFile != null) {
@@ -638,6 +654,7 @@ public class Data2DExport extends Data2DOperator {
                     taskController.targetFileGenerated(xmlFile, VisitHistory.FileType.XML);
                 }
                 xmlWriter = null;
+                created = true;
             }
 
             if (jsonWriter != null && jsonFile != null) {
@@ -648,6 +665,7 @@ public class Data2DExport extends Data2DOperator {
                     taskController.targetFileGenerated(jsonFile, VisitHistory.FileType.JSON);
                 }
                 jsonWriter = null;
+                created = true;
             }
 
             if (pdfFile != null && pdfTable != null) {
@@ -660,6 +678,7 @@ public class Data2DExport extends Data2DOperator {
                     taskController.targetFileGenerated(pdfFile, VisitHistory.FileType.PDF);
                 }
                 pdfTable = null;
+                created = true;
             }
 
             conn.close();
@@ -721,15 +740,14 @@ public class Data2DExport extends Data2DOperator {
                     }
 
                     initParameters();
-
                 });
             }
 
-        }, 1000);
+        }, 200);
     }
 
     /*
-        set
+        set / get
      */
     public BaseTaskController getTaskController() {
         return taskController;
@@ -989,6 +1007,10 @@ public class Data2DExport extends Data2DOperator {
 
     public Data2D getCsvData() {
         return csvData;
+    }
+
+    public boolean isCreated() {
+        return created;
     }
 
 }

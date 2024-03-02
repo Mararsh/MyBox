@@ -121,6 +121,9 @@ public class BaseData2DViewController extends BaseData2DLoadController {
         }
     }
 
+    /*
+        format
+     */
     public void checkFormat(Toggle ov) {
         switchFormat();
     }
@@ -273,6 +276,19 @@ public class BaseData2DViewController extends BaseData2DLoadController {
             pageBox.getChildren().add(tableBox);
             VBox.setVgrow(tableBox, Priority.ALWAYS);
 
+            loadTable();
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    public void showTableButtons() {
+        buttonsPane.getChildren().setAll(menuButton, viewDataButton, dataManufactureButton);
+    }
+
+    public void loadTable() {
+        try {
             List<List<String>> data = new ArrayList<>();
             data.addAll(tableData);
             super.makeColumns();
@@ -285,16 +301,15 @@ public class BaseData2DViewController extends BaseData2DLoadController {
         }
     }
 
-    public void showTableButtons() {
-        buttonsPane.getChildren().setAll(menuButton, viewDataButton, dataManufactureButton);
-    }
-
     public void showCsv() {
     }
 
     public void loadCsv() {
     }
 
+    /*
+        page
+     */
     @Override
     public void makeColumns() {
         if (tableRadio == null || !tableRadio.isSelected()) {
@@ -337,159 +352,6 @@ public class BaseData2DViewController extends BaseData2DLoadController {
         }
     }
 
-    @FXML
-    public void popOptionsMenu(Event event) {
-        if (UserConfig.getBoolean(baseName + "OptionsPopWhenMouseHovering", true)) {
-            showOptionsMenu(event);
-        }
-    }
-
-    @FXML
-    public void showOptionsMenu(Event mevent) {
-        try {
-            List<MenuItem> items = null;
-
-            if (htmlRadio.isSelected()) {
-                items = htmlOptions(mevent);
-
-            } else if (textsRadio.isSelected()) {
-                items = textsOptions(mevent);
-
-            }
-
-            if (items == null || items.isEmpty()) {
-                return;
-            }
-
-            items.add(new SeparatorMenuItem());
-
-            CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"),
-                    StyleTools.getIconImageView("iconPop.png"));
-            popItem.setSelected(UserConfig.getBoolean(baseName + "OptionsPopWhenMouseHovering", true));
-            popItem.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    UserConfig.setBoolean(baseName + "OptionsPopWhenMouseHovering", popItem.isSelected());
-                }
-            });
-            items.add(popItem);
-
-            popEventMenu(mevent, items);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    public List<MenuItem> htmlOptions(Event mevent) {
-        try {
-            List<MenuItem> items = new ArrayList<>();
-
-            CheckMenuItem formItem = new CheckMenuItem(message("Form"));
-            formItem.setSelected(UserConfig.getBoolean(baseName + "HtmlShowForm", false));
-            formItem.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    UserConfig.setBoolean(baseName + "HtmlShowForm", formItem.isSelected());
-                    loadHtml();
-                }
-            });
-            items.add(formItem);
-
-            CheckMenuItem titleItem = new CheckMenuItem(message("Title"));
-            titleItem.setSelected(UserConfig.getBoolean(baseName + "HtmlShowTitle", true));
-            titleItem.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    UserConfig.setBoolean(baseName + "HtmlShowTitle", titleItem.isSelected());
-                    loadHtml();
-                }
-            });
-            items.add(titleItem);
-
-            CheckMenuItem columnNameItem = new CheckMenuItem(message("ColumnName"));
-            columnNameItem.setSelected(UserConfig.getBoolean(baseName + "HtmlShowColumns", true));
-            columnNameItem.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    UserConfig.setBoolean(baseName + "HtmlShowColumns", columnNameItem.isSelected());
-                    loadHtml();
-                }
-            });
-            items.add(columnNameItem);
-
-            CheckMenuItem rowNumberItem = new CheckMenuItem(message("RowNumber"));
-            rowNumberItem.setSelected(UserConfig.getBoolean(baseName + "HtmlShowRowNumber", true));
-            rowNumberItem.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    UserConfig.setBoolean(baseName + "HtmlShowRowNumber", rowNumberItem.isSelected());
-                    loadHtml();
-                }
-            });
-            items.add(rowNumberItem);
-
-            return items;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
-    }
-
-    public List<MenuItem> textsOptions(Event mevent) {
-        try {
-            List<MenuItem> items = new ArrayList<>();
-
-            CheckMenuItem formItem = new CheckMenuItem(message("Form"));
-            formItem.setSelected(UserConfig.getBoolean(baseName + "TextsShowForm", false));
-            formItem.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    UserConfig.setBoolean(baseName + "TextsShowForm", formItem.isSelected());
-                    loadTexts();
-                }
-            });
-            items.add(formItem);
-
-            CheckMenuItem titleItem = new CheckMenuItem(message("Title"));
-            titleItem.setSelected(UserConfig.getBoolean(baseName + "TextsShowTitle", true));
-            titleItem.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    UserConfig.setBoolean(baseName + "TextsShowTitle", titleItem.isSelected());
-                    loadTexts();
-                }
-            });
-            items.add(titleItem);
-
-            CheckMenuItem columnNameItem = new CheckMenuItem(message("ColumnName"));
-            columnNameItem.setSelected(UserConfig.getBoolean(baseName + "TextsShowColumns", true));
-            columnNameItem.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    UserConfig.setBoolean(baseName + "TextsShowColumns", columnNameItem.isSelected());
-                    loadTexts();
-                }
-            });
-            items.add(columnNameItem);
-
-            CheckMenuItem rowNumberItem = new CheckMenuItem(message("RowNumber"));
-            rowNumberItem.setSelected(UserConfig.getBoolean(baseName + "TextsShowRowNumber", true));
-            rowNumberItem.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    UserConfig.setBoolean(baseName + "TextsShowRowNumber", rowNumberItem.isSelected());
-                    loadTexts();
-                }
-            });
-            items.add(rowNumberItem);
-
-            return items;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
-    }
-
     @Override
     public List<MenuItem> viewMenuItems(Event fevent) {
         try {
@@ -505,6 +367,8 @@ public class BaseData2DViewController extends BaseData2DLoadController {
             });
             items.add(menu);
 
+            items.add(new SeparatorMenuItem());
+
             menu = new MenuItem(message("Html"), StyleTools.getIconImageView("iconHtml.png"));
             menu.setOnAction((ActionEvent event) -> {
                 String html = Data2DTools.dataToHtml(data2D, styleFilter, false, true, true, true);
@@ -519,6 +383,96 @@ public class BaseData2DViewController extends BaseData2DLoadController {
             });
             items.add(menu);
 
+            items.add(new SeparatorMenuItem());
+
+            CheckMenuItem formItem = new CheckMenuItem(message("Html") + " - " + message("Form"));
+            formItem.setSelected(UserConfig.getBoolean(baseName + "HtmlShowForm", false));
+            formItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean(baseName + "HtmlShowForm", formItem.isSelected());
+                    loadHtml();
+                }
+            });
+            items.add(formItem);
+
+            CheckMenuItem titleItem = new CheckMenuItem(message("Html") + " - " + message("Title"));
+            titleItem.setSelected(UserConfig.getBoolean(baseName + "HtmlShowTitle", true));
+            titleItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean(baseName + "HtmlShowTitle", titleItem.isSelected());
+                    loadHtml();
+                }
+            });
+            items.add(titleItem);
+
+            CheckMenuItem columnNameItem = new CheckMenuItem(message("Html") + " - " + message("ColumnName"));
+            columnNameItem.setSelected(UserConfig.getBoolean(baseName + "HtmlShowColumns", true));
+            columnNameItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean(baseName + "HtmlShowColumns", columnNameItem.isSelected());
+                    loadHtml();
+                }
+            });
+            items.add(columnNameItem);
+
+            CheckMenuItem rowNumberItem = new CheckMenuItem(message("Html") + " - " + message("RowNumber"));
+            rowNumberItem.setSelected(UserConfig.getBoolean(baseName + "HtmlShowRowNumber", true));
+            rowNumberItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean(baseName + "HtmlShowRowNumber", rowNumberItem.isSelected());
+                    loadHtml();
+                }
+            });
+            items.add(rowNumberItem);
+
+            CheckMenuItem textFormItem = new CheckMenuItem(message("Texts") + " - " + message("Form"));
+            textFormItem.setSelected(UserConfig.getBoolean(baseName + "TextsShowForm", false));
+            textFormItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean(baseName + "TextsShowForm", textFormItem.isSelected());
+                    loadTexts();
+                }
+            });
+            items.add(textFormItem);
+
+            CheckMenuItem textTitleItem = new CheckMenuItem(message("Texts") + " - " + message("Title"));
+            textTitleItem.setSelected(UserConfig.getBoolean(baseName + "TextsShowTitle", true));
+            textTitleItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean(baseName + "TextsShowTitle", textTitleItem.isSelected());
+                    loadTexts();
+                }
+            });
+            items.add(textTitleItem);
+
+            CheckMenuItem textColumnItem = new CheckMenuItem(message("Texts") + " - " + message("ColumnName"));
+            textColumnItem.setSelected(UserConfig.getBoolean(baseName + "TextsShowColumns", true));
+            textColumnItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean(baseName + "TextsShowColumns", textColumnItem.isSelected());
+                    loadTexts();
+                }
+            });
+            items.add(textColumnItem);
+
+            CheckMenuItem textRowNumberItem = new CheckMenuItem(message("RowNumber"));
+            textRowNumberItem.setSelected(UserConfig.getBoolean(baseName + "TextsShowRowNumber", true));
+            textRowNumberItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean(baseName + "TextsShowRowNumber", textRowNumberItem.isSelected());
+                    loadTexts();
+                }
+            });
+            items.add(textRowNumberItem);
+
             return items;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -526,47 +480,11 @@ public class BaseData2DViewController extends BaseData2DLoadController {
         }
     }
 
-    @Override
-    public List<MenuItem> dataMenuItems(Event fevent) {
-        try {
-            if (data2D == null || !data2D.isValid() || !data2D.hasData()) {
-                return null;
-            }
-            List<MenuItem> items = new ArrayList<>();
-
-            MenuItem menu = new MenuItem(message("DataManufacture"), StyleTools.getIconImageView("iconEdit.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                Data2DManufactureController.openDef(data2D);
-            });
-            items.add(menu);
-
-            if (data2D.hasData()) {
-                menu = new MenuItem(message("Export"), StyleTools.getIconImageView("iconExport.png"));
-                menu.setOnAction((ActionEvent event) -> {
-                    Data2DExportController.open(this);
-                });
-                items.add(menu);
-            }
-
-            menu = new MenuItem(message("ConvertToDatabaseTable"), StyleTools.getIconImageView("iconDatabase.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                Data2DConvertToDataBaseController.open(this);
-            });
-            items.add(menu);
-
-            if (tableRadio.isSelected()) {
-                menu = new MenuItem(message("Snapshot"), StyleTools.getIconImageView("iconSnapshot.png"));
-                menu.setOnAction((ActionEvent event) -> {
-                    snapAction();
-                });
-                items.add(menu);
-            }
-
-            return items;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
+    /*
+        get
+     */
+    public String getDelimiterName() {
+        return delimiterName;
     }
 
 }

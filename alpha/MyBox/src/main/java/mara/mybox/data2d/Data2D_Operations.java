@@ -51,7 +51,6 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         if (export == null || cols == null || cols.isEmpty()) {
             return false;
         }
-        export.setData(this);
         export.setCols(cols).setTask(task).start();
         return !export.failed();
     }
@@ -257,14 +256,12 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         return fixColumnNames(targetColumns);
     }
 
-    public DataFileCSV copy(FxTask task, File dfile, String dname, List<Integer> cols,
+    public DataFileCSV copy(FxTask task, List<Integer> cols,
             boolean includeRowNumber, boolean includeColName, boolean formatValues) {
         if (cols == null || cols.isEmpty()) {
             return null;
         }
-        if (dfile == null) {
-            dfile = FileTmpTools.getTempFile(".csv");
-        }
+        File dfile = FileTmpTools.getTempFile(".csv");
         Data2DOperator reader;
         List<Data2DColumn> targetColumns = targetColumns(cols, null, includeRowNumber, null);
         try (CSVPrinter csvPrinter = CsvTools.csvPrinter(dfile)) {
@@ -289,8 +286,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         }
         if (reader != null && !reader.failed() && dfile != null && dfile.exists()) {
             DataFileCSV targetData = new DataFileCSV();
-            targetData.setColumns(targetColumns)
-                    .setFile(dfile).setDataName(dname)
+            targetData.setColumns(targetColumns).setFile(dfile)
                     .setCharset(Charset.forName("UTF-8"))
                     .setDelimiter(",").setHasHeader(includeColName)
                     .setColsNumber(targetColumns.size())

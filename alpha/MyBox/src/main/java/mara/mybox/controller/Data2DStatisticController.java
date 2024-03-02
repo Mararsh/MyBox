@@ -15,6 +15,7 @@ import mara.mybox.data2d.DataTable;
 import mara.mybox.data2d.TmpTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -300,7 +301,7 @@ public class Data2DStatisticController extends BaseData2DTargetsController {
     }
 
     @Override
-    public DataFileCSV generatedFile() {
+    public DataFileCSV generatedFile(FxTask currentTask) {
         List<Integer> colsIndices = checkedColsIndices;
         if (rowsRadio.isSelected() && categorysCol >= 0) {
             colsIndices.add(0, categorysCol);

@@ -205,8 +205,10 @@ public class ControlDataExport extends BaseDataConvertController {
 
     public Data2DExport pickParameters(Data2D data2D) {
         try {
-            Data2DExport export = data2D != null
-                    ? Data2DExport.create(data2D) : new Data2DExport();
+            if (data2D == null) {
+                return null;
+            }
+            Data2DExport export = Data2DExport.create(data2D);
             export.initParameters();
             if (taskController != null) {
                 export.setTargetPath(taskController.targetPath);

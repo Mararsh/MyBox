@@ -11,6 +11,7 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.NumberTools;
@@ -316,7 +317,7 @@ public class Data2DPercentageController extends BaseData2DTargetsController {
     }
 
     @Override
-    public DataFileCSV generatedFile() {
+    public DataFileCSV generatedFile(FxTask currentTask) {
         String toNegative;
         if (negativeSkipRadio.isSelected()) {
             toNegative = "skip";

@@ -55,7 +55,7 @@ public class BaseDataConvertController extends BaseTaskController {
     }
 
     private void initHtml() {
-        cssArea.setText(UserConfig.getString(baseName + "Css", HtmlStyles.DefaultStyle));
+        cssArea.setText(UserConfig.getString(baseName + "Css", HtmlStyles.TableStyle));
     }
 
     private void initPDF() {

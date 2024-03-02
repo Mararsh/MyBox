@@ -21,7 +21,7 @@ import static mara.mybox.value.Languages.message;
 public class ControlData2DPaste extends BaseController {
 
     protected BaseData2DSelectRowsController sourceController;
-    protected BaseData2DLoadController targetController;
+    protected Data2DManufactureController targetController;
     protected Data2D dataTarget;
     protected int row, col;
     protected ChangeListener<Boolean> targetStatusListener;
@@ -37,7 +37,7 @@ public class ControlData2DPaste extends BaseController {
         baseTitle = message("PasteContentInSystemClipboard");
     }
 
-    public void setParameters(BaseData2DSelectRowsController source, BaseData2DLoadController target) {
+    public void setParameters(BaseData2DSelectRowsController source, Data2DManufactureController target) {
         try {
             sourceController = source;
             targetController = target;
@@ -146,6 +146,7 @@ public class ControlData2DPaste extends BaseController {
                     targetController.tableView.refresh();
                     targetController.isSettingValues = false;
                     targetController.tableChanged(true);
+                    targetController.pageChanged();
                 } catch (Exception e) {
                     MyBoxLog.error(e);
                 }

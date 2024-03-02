@@ -7,20 +7,24 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.Tooltip;
 import javafx.util.Callback;
 import mara.mybox.data.StringTable;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.Data2DTools;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.InfoNode;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.cell.TableBooleanCell;
 import mara.mybox.fxml.cell.TableCheckboxCell;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
 import static mara.mybox.value.Languages.message;
 
@@ -34,6 +38,9 @@ public class ControlData2DColumns extends BaseData2DColumnsController {
     protected BaseData2DLoadController dataController;
     protected TableData2DDefinition tableData2DDefinition;
 
+    @FXML
+    protected Button headerButton;
+
     @Override
     public void initColumns() {
         try {
@@ -45,6 +52,16 @@ public class ControlData2DColumns extends BaseData2DColumnsController {
 
         } catch (Exception e) {
             MyBoxLog.error(e);
+        }
+    }
+
+    @Override
+    public void setControlsStyle() {
+        try {
+            super.setControlsStyle();
+            NodeStyleTools.setTooltip(headerButton, new Tooltip(message("FirstLineDefineNames")));
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
         }
     }
 
@@ -237,7 +254,7 @@ public class ControlData2DColumns extends BaseData2DColumnsController {
                 columns.add(tableData.get(i).cloneAll());
             }
             data2D.setColumns(columns);
-            dataController.updatePage(newTableData, true);
+            dataController.updatePage(newTableData);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -264,6 +281,32 @@ public class ControlData2DColumns extends BaseData2DColumnsController {
                 controller.close();
             }
         });
+    }
+
+    @FXML
+    public void headerAction() {
+        try {
+            if (dataController.data2D == null || dataController.tableData.isEmpty()) {
+                popError(message("NoData"));
+                return;
+            }
+            List<String> row = dataController.tableData.get(0);
+            if (row == null || row.size() < 2) {
+                popError(message("InvalidData"));
+                return;
+            }
+            List<String> names = new ArrayList<>();
+            for (int i = 1; i < row.size(); i++) {
+                String name = row.get(i);
+                if (name == null || name.isBlank()) {
+                    name = message("Column") + i;
+                }
+                DerbyBase.checkIdentifier(names, name, true);
+            }
+            setNames(names);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
     @Override

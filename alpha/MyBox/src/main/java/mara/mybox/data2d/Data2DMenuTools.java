@@ -1,13 +1,16 @@
 package mara.mybox.data2d;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.CheckMenuItem;
+import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import mara.mybox.controller.BaseData2DLoadController;
+import mara.mybox.controller.BaseData2DViewController;
 import mara.mybox.controller.Data2DAttributes;
 import mara.mybox.controller.Data2DChartBoxWhiskerController;
 import mara.mybox.controller.Data2DChartComparisonBarsController;
@@ -41,7 +44,14 @@ import mara.mybox.controller.Data2DSimpleLinearRegressionController;
 import mara.mybox.controller.Data2DSortController;
 import mara.mybox.controller.Data2DStatisticController;
 import mara.mybox.controller.Data2DTransposeController;
+import mara.mybox.controller.DataFileCSVFormatController;
+import mara.mybox.controller.DataFileExcelFormatController;
+import mara.mybox.controller.DataFileExcelSheetsController;
+import mara.mybox.controller.DataFileTextFormatController;
 import mara.mybox.controller.DataTableQueryController;
+import mara.mybox.controller.FileBrowseController;
+import mara.mybox.controller.HtmlPopController;
+import mara.mybox.controller.TextPopController;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.style.StyleTools;
@@ -57,45 +67,128 @@ import mara.mybox.value.UserConfig;
  */
 public class Data2DMenuTools {
 
-    public static List<MenuItem> verifyMenu(Data2DManufactureController dataController) {
+    public static List<MenuItem> viewMenuItems(BaseData2DViewController controller) {
         try {
+            Data2D data2D = controller.getData2D();
+            if (data2D == null) {
+                return null;
+            }
             List<MenuItem> items = new ArrayList<>();
 
-            MenuItem menu = new MenuItem(message("VerifyCurrentPage"));
+            String baseName = controller.getBaseName();
+
+            MenuItem menu = new MenuItem(message("DataDefinition") + "    Ctrl+i " + message("Or") + " Alt+i",
+                    StyleTools.getIconImageView("iconInfo.png"));
             menu.setOnAction((ActionEvent event) -> {
-                dataController.verifyCurrentPage();
+                controller.infoAction();
             });
             items.add(menu);
 
-            menu = new MenuItem(message("VerifyAllData"));
+            items.add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("Html"), StyleTools.getIconImageView("iconHtml.png"));
             menu.setOnAction((ActionEvent event) -> {
-                dataController.verifyAllData();
+                String html = Data2DTools.dataToHtml(data2D, controller.getStyleFilter(), false, true, true, true);
+                HtmlPopController.openHtml(controller, html);
             });
             items.add(menu);
 
-            if (dataController.getData2D().alwayValidate()) {
-                return items;
-            }
+            menu = new MenuItem(message("Texts"), StyleTools.getIconImageView("iconTxt.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                String texts = Data2DTools.dataToTexts(data2D, controller.getDelimiterName(), false, true, true, true);
+                TextPopController.loadText(texts);
+            });
+            items.add(menu);
 
-            CheckMenuItem validateEditItem = new CheckMenuItem(message("ValidateDataWhenEdit"));
-            validateEditItem.setSelected(dataController.isValidateEdit());
-            validateEditItem.setOnAction(new EventHandler<ActionEvent>() {
+            items.add(new SeparatorMenuItem());
+
+            CheckMenuItem formItem = new CheckMenuItem(message("Html") + " - " + message("Form"));
+            formItem.setSelected(UserConfig.getBoolean(baseName + "HtmlShowForm", false));
+            formItem.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    dataController.setValidataEdit(validateEditItem.isSelected());
+                    UserConfig.setBoolean(baseName + "HtmlShowForm", formItem.isSelected());
+                    controller.loadHtml();
                 }
             });
-            items.add(validateEditItem);
+            items.add(formItem);
 
-            CheckMenuItem validateSaveItem = new CheckMenuItem(message("ValidateDataWhenSave"));
-            validateSaveItem.setSelected(dataController.isValidateSave());
-            validateSaveItem.setOnAction(new EventHandler<ActionEvent>() {
+            CheckMenuItem titleItem = new CheckMenuItem(message("Html") + " - " + message("Title"));
+            titleItem.setSelected(UserConfig.getBoolean(baseName + "HtmlShowTitle", true));
+            titleItem.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    dataController.setValidataSave(validateSaveItem.isSelected());
+                    UserConfig.setBoolean(baseName + "HtmlShowTitle", titleItem.isSelected());
+                    controller.loadHtml();
                 }
             });
-            items.add(validateSaveItem);
+            items.add(titleItem);
+
+            CheckMenuItem columnNameItem = new CheckMenuItem(message("Html") + " - " + message("ColumnName"));
+            columnNameItem.setSelected(UserConfig.getBoolean(baseName + "HtmlShowColumns", true));
+            columnNameItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean(baseName + "HtmlShowColumns", columnNameItem.isSelected());
+                    controller.loadHtml();
+                }
+            });
+            items.add(columnNameItem);
+
+            CheckMenuItem rowNumberItem = new CheckMenuItem(message("Html") + " - " + message("RowNumber"));
+            rowNumberItem.setSelected(UserConfig.getBoolean(baseName + "HtmlShowRowNumber", true));
+            rowNumberItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean(baseName + "HtmlShowRowNumber", rowNumberItem.isSelected());
+                    controller.loadHtml();
+                }
+            });
+            items.add(rowNumberItem);
+
+            CheckMenuItem textFormItem = new CheckMenuItem(message("Texts") + " - " + message("Form"));
+            textFormItem.setSelected(UserConfig.getBoolean(baseName + "TextsShowForm", false));
+            textFormItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean(baseName + "TextsShowForm", textFormItem.isSelected());
+                    controller.loadTexts();
+                }
+            });
+            items.add(textFormItem);
+
+            CheckMenuItem textTitleItem = new CheckMenuItem(message("Texts") + " - " + message("Title"));
+            textTitleItem.setSelected(UserConfig.getBoolean(baseName + "TextsShowTitle", true));
+            textTitleItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean(baseName + "TextsShowTitle", textTitleItem.isSelected());
+                    controller.loadTexts();
+                }
+            });
+            items.add(textTitleItem);
+
+            CheckMenuItem textColumnItem = new CheckMenuItem(message("Texts") + " - " + message("ColumnName"));
+            textColumnItem.setSelected(UserConfig.getBoolean(baseName + "TextsShowColumns", true));
+            textColumnItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean(baseName + "TextsShowColumns", textColumnItem.isSelected());
+                    controller.loadTexts();
+                }
+            });
+            items.add(textColumnItem);
+
+            CheckMenuItem textRowNumberItem = new CheckMenuItem(message("RowNumber"));
+            textRowNumberItem.setSelected(UserConfig.getBoolean(baseName + "TextsShowRowNumber", true));
+            textRowNumberItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean(baseName + "TextsShowRowNumber", textRowNumberItem.isSelected());
+                    controller.loadTexts();
+                }
+            });
+            items.add(textRowNumberItem);
 
             return items;
         } catch (Exception e) {
@@ -115,19 +208,13 @@ public class Data2DMenuTools {
             boolean isTmpData = data2D.isTmpData();
             boolean empty = !data2D.hasData();
             boolean notLoaded = !dataController.isDataSizeLoaded();
-            boolean isFile = data2D.isDataFile() && data2D.getFile() != null;
 
-            MenuItem menu = new MenuItem(message("Information") + "    Ctrl+I " + message("Or") + " Alt+I",
-                    StyleTools.getIconImageView("iconInfo.png"));
-            menu.setOnAction((ActionEvent menuItemEvent) -> {
-                dataController.infoAction();
-            });
-            items.add(menu);
+            MenuItem menu;
 
             items.add(new SeparatorMenuItem());
 
             if (tableMode) {
-                menu = new MenuItem(message("DataDefinition"), StyleTools.getIconImageView("iconMeta.png"));
+                menu = new MenuItem(message("DefineData"), StyleTools.getIconImageView("iconMeta.png"));
                 menu.setOnAction((ActionEvent event) -> {
                     Data2DAttributes.open(dataController);
                 });
@@ -160,24 +247,6 @@ public class Data2DMenuTools {
             menu.setDisable(isTmpData);
             items.add(menu);
 
-            if (isFile) {
-                CheckMenuItem backItem = new CheckMenuItem(message("BackupWhenSave"));
-                backItem.setSelected(UserConfig.getBoolean(dataController.getBaseName() + "BackupWhenSave", true));
-                backItem.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent event) {
-                        UserConfig.setBoolean(dataController.getBaseName() + "BackupWhenSave", backItem.isSelected());
-                    }
-                });
-                items.add(backItem);
-
-                menu = new MenuItem(message("FileBackups"), StyleTools.getIconImageView("iconBackup.png"));
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    dataController.openBackups();
-                });
-                items.add(menu);
-            }
-
             items.add(new SeparatorMenuItem());
 
             menu = new MenuItem(message("SaveAs") + "    Ctrl+B " + message("Or") + " Alt+B",
@@ -200,14 +269,6 @@ public class Data2DMenuTools {
             });
             items.add(menu);
 
-            if ((data2D.isTexts() || data2D.isCSV()) && data2D.getFile() != null) {
-                menu = new MenuItem(message("Texts"), StyleTools.getIconImageView("iconTxt.png"));
-                menu.setOnAction((ActionEvent event) -> {
-                    dataController.editTextFile();
-                });
-                items.add(menu);
-            }
-
             if (tableMode) {
                 menu = new MenuItem(message("Snapshot"), StyleTools.getIconImageView("iconSnapshot.png"));
                 menu.setOnAction((ActionEvent event) -> {
@@ -216,6 +277,12 @@ public class Data2DMenuTools {
                 items.add(menu);
             }
 
+            items.add(new SeparatorMenuItem());
+
+            Menu helpMenu = new Menu(message("Help"), StyleTools.getIconImageView("iconClaw.png"));
+            helpMenu.getItems().addAll(helpMenus(dataController));
+            items.add(helpMenu);
+
             return items;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -223,8 +290,11 @@ public class Data2DMenuTools {
         }
     }
 
-    public static List<MenuItem> rowsMenus(Data2DManufactureController dataController) {
+    public static List<MenuItem> operationsMenus(Data2DManufactureController dataController) {
         try {
+            if (!dataController.isEditing()) {
+                return null;
+            }
             List<MenuItem> items = new ArrayList<>();
 
             Data2D data2D = dataController.getData2D();
@@ -232,6 +302,7 @@ public class Data2DMenuTools {
             boolean isTmpData = data2D != null && data2D.isTmpData();
             boolean empty = invalidData || dataController.getTableData().isEmpty();
             boolean noneSelected = dataController.isNoneSelected();
+            boolean isTableMode = dataController.isTableMode();
             MenuItem menu;
 
             menu = new MenuItem(message("AddRows") + "   CTRL+N / ALT+N",
@@ -244,45 +315,47 @@ public class Data2DMenuTools {
             });
             items.add(menu);
 
-            menu = new MenuItem(message("EditSelectedRow"), StyleTools.getIconImageView("iconEdit.png"));
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    dataController.editAction();
-                }
-            });
-            menu.setDisable(noneSelected);
-            items.add(menu);
+            if (isTableMode) {
+                menu = new MenuItem(message("EditSelectedRow"), StyleTools.getIconImageView("iconEdit.png"));
+                menu.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        dataController.editAction();
+                    }
+                });
+                menu.setDisable(noneSelected);
+                items.add(menu);
 
-            menu = new MenuItem(message("DeleteSelectedRows") + "   DELETE / CTRL+D / ALT+D", StyleTools.getIconImageView("iconDelete.png"));
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    dataController.deleteRowsAction();
-                }
-            });
-            menu.setDisable(noneSelected);
-            items.add(menu);
+                menu = new MenuItem(message("DeleteSelectedRows") + "   DELETE / CTRL+D / ALT+D", StyleTools.getIconImageView("iconDelete.png"));
+                menu.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        dataController.deleteRowsAction();
+                    }
+                });
+                menu.setDisable(noneSelected);
+                items.add(menu);
 
-            menu = new MenuItem(message("MoveDown"), StyleTools.getIconImageView("iconDown.png"));
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    dataController.moveDownAction();
-                }
-            });
-            menu.setDisable(noneSelected);
-            items.add(menu);
+                menu = new MenuItem(message("MoveDown"), StyleTools.getIconImageView("iconDown.png"));
+                menu.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        dataController.moveDownAction();
+                    }
+                });
+                menu.setDisable(noneSelected);
+                items.add(menu);
 
-            menu = new MenuItem(message("MoveUp"), StyleTools.getIconImageView("iconUp.png"));
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    dataController.moveUpAction();
-                }
-            });
-            menu.setDisable(noneSelected);
-            items.add(menu);
+                menu = new MenuItem(message("MoveUp"), StyleTools.getIconImageView("iconUp.png"));
+                menu.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        dataController.moveUpAction();
+                    }
+                });
+                menu.setDisable(noneSelected);
+                items.add(menu);
+            }
 
             menu = new MenuItem(message("Clear") + "   CTRL+L / ALT+L", StyleTools.getIconImageView("iconClear.png"));
             menu.setOnAction(new EventHandler<ActionEvent>() {
@@ -334,25 +407,28 @@ public class Data2DMenuTools {
             menu.setDisable(empty);
             items.add(menu);
 
-            menu = new MenuItem(message("SetStyles"), StyleTools.getIconImageView("iconColor.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                Data2DSetStylesController.open(dataController);
-            });
-            menu.setDisable(empty || isTmpData);
-            items.add(menu);
+            if (isTableMode) {
+                menu = new MenuItem(message("SetStyles"), StyleTools.getIconImageView("iconColor.png"));
+                menu.setOnAction((ActionEvent event) -> {
+                    Data2DSetStylesController.open(dataController);
+                });
+                menu.setDisable(empty || isTmpData);
+                items.add(menu);
 
-            items.add(new SeparatorMenuItem());
+                items.add(new SeparatorMenuItem());
 
-            CheckMenuItem focusMenu = new CheckMenuItem(message("CommitModificationWhenDataCellLoseFocus"),
-                    StyleTools.getIconImageView("iconInput.png"));
-            focusMenu.setSelected(AppVariables.commitModificationWhenDataCellLoseFocus);
-            focusMenu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    AppVariables.lostFocusCommitData(focusMenu.isSelected());
-                }
-            });
-            items.add(focusMenu);
+                CheckMenuItem focusMenu = new CheckMenuItem(message("CommitModificationWhenDataCellLoseFocus"),
+                        StyleTools.getIconImageView("iconInput.png"));
+                focusMenu.setSelected(AppVariables.commitModificationWhenDataCellLoseFocus);
+                focusMenu.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        AppVariables.lostFocusCommitData(focusMenu.isSelected());
+                    }
+                });
+                items.add(focusMenu);
+
+            }
 
             return items;
         } catch (Exception e) {
@@ -361,7 +437,101 @@ public class Data2DMenuTools {
         }
     }
 
-    public static List<MenuItem> trimMenu(BaseData2DLoadController controller) {
+    public static List<MenuItem> fileMenus(Data2DManufactureController dataController) {
+        try {
+            Data2D data2D = dataController.getData2D();
+            if (data2D == null || !data2D.isDataFile()) {
+                return null;
+            }
+            File file = data2D.getFile();
+            if (file == null) {
+                return null;
+            }
+            List<MenuItem> items = new ArrayList<>();
+            MenuItem menu;
+            String baseName = dataController.getBaseName();
+
+            if (data2D.isExcel()) {
+                menu = new MenuItem(message("Sheet"), StyleTools.getIconImageView("iconFrame.png"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    DataFileExcelSheetsController.open(dataController);
+                });
+                items.add(menu);
+            }
+
+            menu = new MenuItem(message("Format"), StyleTools.getIconImageView("iconFormat.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                if (data2D.isCSV()) {
+                    DataFileCSVFormatController.open(dataController);
+                } else if (data2D.isTexts()) {
+                    DataFileTextFormatController.open(dataController);
+                } else if (data2D.isExcel()) {
+                    DataFileExcelFormatController.open(dataController);
+                }
+            });
+            items.add(menu);
+
+            CheckMenuItem backItem = new CheckMenuItem(message("BackupWhenSave"));
+            backItem.setSelected(UserConfig.getBoolean(baseName + "BackupWhenSave", true));
+            backItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean(baseName + "BackupWhenSave", backItem.isSelected());
+                }
+            });
+            items.add(backItem);
+
+            menu = new MenuItem(message("FileBackups"), StyleTools.getIconImageView("iconBackup.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                dataController.openBackups();
+            });
+            items.add(menu);
+
+            items.add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("SaveAs") + "    Ctrl+B " + message("Or") + " Alt+B",
+                    StyleTools.getIconImageView("iconSaveAs.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                dataController.saveAsAction();
+            });
+            items.add(menu);
+
+            if (data2D.isTexts() || data2D.isCSV()) {
+                menu = new MenuItem(message("Texts"), StyleTools.getIconImageView("iconTxt.png"));
+                menu.setOnAction((ActionEvent event) -> {
+                    dataController.editTextFile();
+                });
+                items.add(menu);
+            }
+
+            items.add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("OpenDirectory"), StyleTools.getIconImageView("iconOpenPath.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                dataController.openSourcePath();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("BrowseFiles"), StyleTools.getIconImageView("iconList.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                FileBrowseController.open(dataController);
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("SystemMethod"), StyleTools.getIconImageView("iconSystemOpen.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                dataController.systemMethod();
+            });
+            items.add(menu);
+
+            return items;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public static List<MenuItem> trimMenus(BaseData2DLoadController controller) {
         try {
             List<MenuItem> items = new ArrayList<>();
 
@@ -421,7 +591,7 @@ public class Data2DMenuTools {
         }
     }
 
-    public static List<MenuItem> calMenu(BaseData2DLoadController controller) {
+    public static List<MenuItem> calMenus(BaseData2DLoadController controller) {
         try {
             List<MenuItem> items = new ArrayList<>();
             MenuItem menu;
@@ -499,7 +669,54 @@ public class Data2DMenuTools {
         }
     }
 
-    public static List<MenuItem> chartsMenu(BaseData2DLoadController controller) {
+    public static List<MenuItem> verifyMenus(Data2DManufactureController dataController) {
+        try {
+            List<MenuItem> items = new ArrayList<>();
+
+            MenuItem menu = new MenuItem(message("VerifyCurrentPage"));
+            menu.setOnAction((ActionEvent event) -> {
+                dataController.verifyCurrentPage();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("VerifyAllData"));
+            menu.setOnAction((ActionEvent event) -> {
+                dataController.verifyAllData();
+            });
+            items.add(menu);
+
+            if (dataController.getData2D().alwayValidate()) {
+                return items;
+            }
+
+            CheckMenuItem validateEditItem = new CheckMenuItem(message("ValidateDataWhenEdit"));
+            validateEditItem.setSelected(dataController.isValidateEdit());
+            validateEditItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    dataController.setValidataEdit(validateEditItem.isSelected());
+                }
+            });
+            items.add(validateEditItem);
+
+            CheckMenuItem validateSaveItem = new CheckMenuItem(message("ValidateDataWhenSave"));
+            validateSaveItem.setSelected(dataController.isValidateSave());
+            validateSaveItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    dataController.setValidataSave(validateSaveItem.isSelected());
+                }
+            });
+            items.add(validateSaveItem);
+
+            return items;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public static List<MenuItem> chartMenus(BaseData2DLoadController controller) {
         try {
             List<MenuItem> items = new ArrayList<>();
             MenuItem menu;
@@ -563,7 +780,7 @@ public class Data2DMenuTools {
         }
     }
 
-    public static List<MenuItem> groupChartsMenu(BaseData2DLoadController controller) {
+    public static List<MenuItem> groupChartMenus(BaseData2DLoadController controller) {
         try {
             List<MenuItem> items = new ArrayList<>();
             MenuItem menu;

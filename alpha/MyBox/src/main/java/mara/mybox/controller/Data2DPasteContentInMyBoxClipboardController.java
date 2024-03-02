@@ -25,7 +25,7 @@ public class Data2DPasteContentInMyBoxClipboardController extends BaseChildContr
         baseTitle = message("PasteContentInMyBoxClipboard");
     }
 
-    public void setParameters(BaseData2DLoadController target) {
+    public void setParameters(Data2DManufactureController target) {
         try {
             sourceController.setParameters(this);
             pasteController.setParameters(sourceController, target);
@@ -58,7 +58,7 @@ public class Data2DPasteContentInMyBoxClipboardController extends BaseChildContr
         }
     }
 
-    public static Data2DPasteContentInMyBoxClipboardController open(BaseData2DLoadController target) {
+    public static Data2DPasteContentInMyBoxClipboardController open(Data2DManufactureController target) {
         try {
             if (target == null) {
                 return null;

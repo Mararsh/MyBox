@@ -28,7 +28,7 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
     public List<Data2DStyle> styles;
     public DataFilter filter;
     public ObservableList<List<String>> pageData;
-    public boolean tableChanged;
+    public boolean tableChanged, columnsChanged;
     public FxTask task, backgroundTask;
     public String error;
 
@@ -220,6 +220,10 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
 
     public boolean isTableChanged() {
         return tableChanged;
+    }
+
+    public boolean isColumnsChanged() {
+        return columnsChanged;
     }
 
     public ObservableList<List<String>> getPageData() {

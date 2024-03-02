@@ -479,7 +479,6 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
             }
             tableView.refresh();
             isSettingValues = false;
-            popDone();
             changed(true);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -496,7 +495,6 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
             }
             tableView.refresh();
             isSettingValues = false;
-            popDone();
             changed(true);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -527,7 +525,6 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
             tableView.refresh();
             isSettingValues = false;
             changed(true);
-            okAction();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

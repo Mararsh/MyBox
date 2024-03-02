@@ -7,6 +7,7 @@ import mara.mybox.calculation.Normalization;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.NumberTools;
@@ -120,7 +121,7 @@ public class Data2DNormalizeController extends BaseData2DTargetsController {
     }
 
     @Override
-    public DataFileCSV generatedFile() {
+    public DataFileCSV generatedFile(FxTask currentTask) {
         String name = targetController.name();
         if (normalizeController.rowsRadio.isSelected()) {
             Normalization.Algorithm a;

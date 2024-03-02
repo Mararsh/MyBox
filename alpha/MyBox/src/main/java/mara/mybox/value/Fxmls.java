@@ -289,6 +289,8 @@ public class Fxmls {
     public static final String DataInSystemClipboardFxml = "/fxml/DataInSystemClipboard.fxml";
     public static final String DataInMyBoxClipboardFxml = "/fxml/DataInMyBoxClipboard.fxml";
     public static final String Data2DSaveAsFxml = "/fxml/Data2DSaveAs.fxml";
+    public static final String Data2DSaveDataFxml = "/fxml/Data2DSaveData.fxml";
+    public static final String Data2DSaveRowsFxml = "/fxml/Data2DSaveRows.fxml";
     public static final String Data2DSpliceFxml = "/fxml/Data2DSplice.fxml";
 
     public static final String Data2DSelectFxml = "/fxml/Data2DSelect.fxml";

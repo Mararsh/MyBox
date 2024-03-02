@@ -54,7 +54,7 @@ public class Data2DAddRowsController extends TableAddRowsController {
                 row.addAll(values);
                 list.add(row);
             }
-            return tableViewController.addRows(index, list);
+            return dataController.addRows(index, list);
         } catch (Exception e) {
             MyBoxLog.error(e);
             return -2;

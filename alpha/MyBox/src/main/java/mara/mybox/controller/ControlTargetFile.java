@@ -137,9 +137,11 @@ public class ControlTargetFile extends ControlFileSelecter {
     }
 
     public void setFile(int type, String savedName, String prefix, String ext) {
-        targetFileController.defaultFile(null).type(type)
-                .savedName(savedName).initFile()
-                .setFile(FileTmpTools.generateFile(prefix, ext));
+        defaultFile(null).type(type).savedName(savedName);
+        isSettingValues = true;
+        fileInput.setText(FileTmpTools.generateFile(prefix, ext).getAbsolutePath());
+        isSettingValues = false;
+        checkFileInput();
     }
 
     @Override

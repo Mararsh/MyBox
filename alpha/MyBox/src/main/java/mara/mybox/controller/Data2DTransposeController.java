@@ -115,13 +115,12 @@ public class Data2DTransposeController extends BaseData2DTargetsController {
     }
 
     @Override
-    public DataFileCSV generatedFile() {
+    public DataFileCSV generatedFile(FxTask currentTask) {
         try {
-            FxTask data2DTask = data2D.getTask();
             Data2D tmp2D = data2D.cloneAll();
-            tmp2D.startTask(data2DTask, filterController.filter);
-            if (data2DTask != null) {
-                data2DTask.setInfo(message("Filter") + "...");
+            tmp2D.startTask(currentTask, filterController.filter);
+            if (currentTask != null) {
+                currentTask.setInfo(message("Filter") + "...");
             }
             TmpTable tmpTable = new TmpTable()
                     .setSourceData(tmp2D)
@@ -132,7 +131,7 @@ public class Data2DTransposeController extends BaseData2DTargetsController {
                     .setIncludeColName(showColNames())
                     .setIncludeRowNumber(showRowNumber())
                     .setInvalidAs(invalidAs);
-            tmpTable.setTask(data2DTask);
+            tmpTable.setTask(currentTask);
             if (!tmpTable.createTable()) {
                 tmpTable = null;
             }

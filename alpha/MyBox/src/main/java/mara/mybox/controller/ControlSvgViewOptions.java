@@ -68,7 +68,7 @@ public class ControlSvgViewOptions extends BaseController {
         try {
             super.initControls();
 
-            bgColorController.init(this, baseName + "BackgroundColor", Color.TRANSPARENT);
+            bgColorController.init(this, baseName + "BackgroundColor", Color.WHITE);
 
             bgColorCheck.setSelected(UserConfig.getBoolean(baseName + "ShowBackgroundColor", false));
 

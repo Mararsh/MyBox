@@ -155,7 +155,7 @@ public class BaseData2DSelectRowsController extends BaseData2DLoadController {
 
     public void sourceChanged() {
         try {
-            if (tableController == null) {
+            if (tableController == null || tableController.data2D == null) {
                 return;
             }
             data2D = tableController.data2D.cloneAll();
@@ -696,7 +696,7 @@ public class BaseData2DSelectRowsController extends BaseData2DLoadController {
             }
             List<List<String>> data;
             if (isAllPages()) {
-                DataFileCSV csv = data2D.copy(null, null, null, checkedColsIndices,
+                DataFileCSV csv = data2D.copy(task, checkedColsIndices,
                         false, true, formatValuesCheck != null && formatValuesCheck.isSelected());
                 if (csv == null) {
                     return null;

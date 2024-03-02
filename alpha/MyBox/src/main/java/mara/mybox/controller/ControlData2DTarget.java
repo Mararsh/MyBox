@@ -200,14 +200,10 @@ public class ControlData2DTarget extends BaseController {
 
     public TargetType checkTarget() {
         try {
-            if (tableController == null || tableController.data2D == null) {
-                close();
-                return null;
-            }
-            if (isSettingValues) {
+            target = TargetType.CSV;
+            if (isSettingValues || tableController == null || tableController.data2D == null) {
                 return target;
             }
-            target = TargetType.CSV;
             String name = name();
             if (name == null || name.isBlank()) {
                 name = tableController.data2D.getDataName();
@@ -293,7 +289,6 @@ public class ControlData2DTarget extends BaseController {
             checkControls();
             UserConfig.setString(baseName + "DataTarget", target.name());
             formatNotify.set(!formatNotify.get());
-
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

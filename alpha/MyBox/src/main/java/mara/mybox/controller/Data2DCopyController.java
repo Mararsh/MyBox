@@ -2,6 +2,7 @@ package mara.mybox.controller;
 
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -34,9 +35,10 @@ public class Data2DCopyController extends BaseData2DTargetsController {
     }
 
     @Override
-    public DataFileCSV generatedFile() {
-        return data2D.copy(null, targetController.file(), targetController.name(), checkedColsIndices,
-                rowNumberCheck.isSelected(), colNameCheck.isSelected(), formatValuesCheck.isSelected());
+    public DataFileCSV generatedFile(FxTask currentTask) {
+        return data2D.copy(currentTask, checkedColsIndices,
+                rowNumberCheck.isSelected(), colNameCheck.isSelected(),
+                formatValuesCheck.isSelected());
     }
 
     /*

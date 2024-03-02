@@ -63,10 +63,12 @@ public class ControlFileSelecter extends BaseController {
     public void initControls() {
         super.initControls();
         if (fileInput != null) {
-            fileInput.textProperty().addListener(new ChangeListener<String>() {
+            fileInput.focusedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    checkFileInput();
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    if (!newValue) {
+                        checkFileInput();
+                    }
                 }
             });
         }
@@ -189,7 +191,7 @@ public class ControlFileSelecter extends BaseController {
         setFile(inputfile);
     }
 
-    protected void setFile(File file) {
+    private void setFile(File file) {
         if (file == null) {
             return;
         }
