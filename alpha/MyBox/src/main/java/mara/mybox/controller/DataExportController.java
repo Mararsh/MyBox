@@ -164,7 +164,7 @@ public class DataExportController extends BaseTaskController {
             popError(Languages.message("NoData"));
             return false;
         }
-        export.setNames(names);
+        export.initFiles(targetPathController, names);
         return true;
     }
 
@@ -210,8 +210,6 @@ public class DataExportController extends BaseTaskController {
         startTime = new Date();
         beforeTask();
         task = new FxSingletonTask<Void>(this) {
-
-            private final boolean skip = targetPathController.isSkip();
 
             @Override
             protected boolean handle() {
@@ -274,7 +272,8 @@ public class DataExportController extends BaseTaskController {
                 try (Connection conn = DerbyBase.getConnection()) {
                     conn.setReadOnly(true);
                     int count = 0;
-                    if (!export.openWriters(filePrefix, skip)) {
+
+                    if (!export.setValues(filePrefix) || !export.openWriters()) {
                         return false;
                     }
                     try (ResultSet results = conn.createStatement().executeQuery(currentSQL)) {

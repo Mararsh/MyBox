@@ -100,7 +100,7 @@ public class ControllerTools {
             return null;
         }
         if (filename.startsWith("http") || filename.startsWith("ftp")) {
-            return HtmlPopController.openHtml(parent, filename);
+            return HtmlPopController.openAddress(parent, filename);
         }
         File file = new File(filename);
         if (!file.exists()) {
@@ -118,7 +118,7 @@ public class ControllerTools {
             return ImagePopController.openFile(parent, filename);
 
         } else if ("html".equals(suffix) || "htm".equals(suffix)) {
-            return HtmlPopController.openHtml(parent, filename);
+            return HtmlPopController.openAddress(parent, filename);
 
         } else if ("md".equals(suffix)) {
             return MarkdownPopController.openFile(parent, filename);

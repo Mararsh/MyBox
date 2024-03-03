@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.io.File;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Worker;
@@ -202,6 +203,18 @@ public class HtmlPopController extends BaseWebViewController {
             HtmlPopController controller = (HtmlPopController) WindowTools.popStage(parent, Fxmls.HtmlPopFxml);
             controller.openAddress(parent.baseName, address);
             return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public static HtmlPopController openFile(BaseController parent, File file) {
+        try {
+            if (parent == null || file == null || !file.exists()) {
+                return null;
+            }
+            return openAddress(parent, file.getAbsolutePath());
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;

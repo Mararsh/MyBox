@@ -1446,9 +1446,22 @@ public class ControlWebView extends BaseController {
                 });
                 items.add(menu);
 
-            } else {
-                items.add(new SeparatorMenuItem());
+                if (sourceFile != null) {
+                    menu = new MenuItem(message("OpenDirectory"), StyleTools.getIconImageView("iconOpenPath.png"));
+                    menu.setOnAction((ActionEvent event) -> {
+                        openSourcePath();
+                    });
+                    items.add(menu);
+
+                    menu = new MenuItem(message("BrowseFiles"), StyleTools.getIconImageView("iconList.png"));
+                    menu.setOnAction((ActionEvent event) -> {
+                        FileBrowseController.open(myController);
+                    });
+                    items.add(menu);
+                }
+
             }
+            items.add(new SeparatorMenuItem());
 
             if (!linkInNewTab) {
                 items.add(clickedMenu());

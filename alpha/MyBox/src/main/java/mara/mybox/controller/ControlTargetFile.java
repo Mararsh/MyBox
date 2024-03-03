@@ -150,6 +150,12 @@ public class ControlTargetFile extends ControlFileSelecter {
             if (targetExistType == null) {
                 initTargetExistType();
             }
+            if (namePrefix == null) {
+                namePrefix = "mf";
+            }
+            if (nameSuffix == null) {
+                nameSuffix = "";
+            }
             String targetPrefix = targetPath.getAbsolutePath() + File.separator
                     + FileNameTools.filter(namePrefix);
             if (appendTimestampCheck == null || appendTimestampCheck.isSelected()) {

@@ -239,4 +239,10 @@ public abstract class BaseFileController extends BaseController {
         return false;
     }
 
+    @Override
+    public boolean controlAltI() {
+        infoAction();
+        return true;
+    }
+
 }

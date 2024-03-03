@@ -192,6 +192,8 @@ public class ImagesPlayController extends BaseFileController {
                 }
             });
 
+            viewBox.disableProperty().bind(viewController.imageView.imageProperty().isNull());
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

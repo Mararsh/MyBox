@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.Data2D_Attributes.TargetType;
@@ -21,7 +20,7 @@ public class Data2DSaveRowsController extends BaseData2DSaveAsController {
     protected List<List<String>> dataRows;
     protected List<Data2DColumn> dataColumns;
 
-    public void setParameters(TargetType inFormat,
+    public void setParameters(TargetType inFormat, ControlTargetFile fileController,
             List<Data2DColumn> outputColumns, List<List<String>> outputData, String inTargetName) {
         try {
             if (outputColumns == null || outputColumns.isEmpty()
@@ -35,28 +34,15 @@ public class Data2DSaveRowsController extends BaseData2DSaveAsController {
             dataColumns = outputColumns;
             dataRows = outputData;
             checkTargets();
-            export = new Data2DExport();
+            if (format != TargetType.DatabaseTable) {
+                export = new Data2DExport();
+                export.initParameters(format);
+                export.setDataName(targetName);
+                export.initFile(fileController, dataColumns, targetName);
+            }
             startAction();
         } catch (Exception e) {
             MyBoxLog.error(e);
-        }
-    }
-
-    @Override
-    public void beforeTask() {
-        super.beforeTask();
-        checkTargets();
-        if (format != TargetType.DatabaseTable) {
-            export.initParameters(format);
-            export.setDataName(targetName);
-            export.setTargetFile(targetFile);
-            export.setColumns(dataColumns);
-            List<String> names = new ArrayList<>();
-            for (Data2DColumn c : dataColumns) {
-                names.add(c.getColumnName());
-            }
-            export.setNames(names);
-            export.setSkip(true);
         }
     }
 
@@ -95,12 +81,12 @@ public class Data2DSaveRowsController extends BaseData2DSaveAsController {
     /*
         static
      */
-    public static Data2DSaveRowsController createData(TargetType format,
+    public static Data2DSaveRowsController createData(TargetType format, ControlTargetFile fileController,
             List<Data2DColumn> outputColumns, List<List<String>> outputData, String targetName) {
         try {
             Data2DSaveRowsController controller
                     = (Data2DSaveRowsController) WindowTools.openStage(Fxmls.Data2DSaveRowsFxml);
-            controller.setParameters(format, outputColumns, outputData, targetName);
+            controller.setParameters(format, fileController, outputColumns, outputData, targetName);
             controller.requestMouse();
             return controller;
         } catch (Exception e) {

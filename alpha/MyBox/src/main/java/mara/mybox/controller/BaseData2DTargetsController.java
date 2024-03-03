@@ -171,7 +171,7 @@ public abstract class BaseData2DTargetsController extends BaseData2DHandleContro
             protected void whenSucceeded() {
                 popDone();
                 Data2DSaveDataController.createData(csvData, targetController.target,
-                        targetController.name(), targetController.file());
+                        targetController.name(), targetController.targetFileController);
             }
 
             @Override
@@ -309,6 +309,7 @@ public abstract class BaseData2DTargetsController extends BaseData2DHandleContro
             return false;
         }
         Data2DSaveRowsController.createData(targetController.target,
+                targetController.targetFileController,
                 outputColumns, outputData, targetController.name());
         popDone();
         return true;

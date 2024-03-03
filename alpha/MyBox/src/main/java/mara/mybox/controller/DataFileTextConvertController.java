@@ -96,7 +96,7 @@ public class DataFileTextConvertController extends BaseDataFileConvertController
                             names.add(message("Column") + i);
                         }
                     }
-                    export.initFiles(targetPath, names, filePrefix(srcFile), skip);
+                    export.initFiles(targetPathController, names, filePrefix(srcFile));
                     if (sourceWithName) {
                         continue;
                     }

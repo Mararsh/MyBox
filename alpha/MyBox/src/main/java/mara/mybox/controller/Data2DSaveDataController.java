@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import java.io.File;
 import mara.mybox.data2d.Data2D_Attributes.TargetType;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.reader.Data2DExport;
@@ -17,34 +16,25 @@ import mara.mybox.value.Fxmls;
 public class Data2DSaveDataController extends BaseData2DSaveAsController {
 
     public void setParameters(DataFileCSV csvData, TargetType inFormat,
-            String inTargetName, File inTargetFile) {
+            String inTargetName, ControlTargetFile fileController) {
         try {
-            if (csvData == null || !csvData.isValid() || inTargetFile == null || inFormat == null) {
+            if (csvData == null || !csvData.isValid() || fileController == null || inFormat == null) {
                 close();
                 return;
             }
             data2D = csvData;
             format = inFormat;
             targetName = inTargetName;
-            targetFile = inTargetFile;
-            export = Data2DExport.create(data2D);
+            checkTargets();
+            if (format != TargetType.DatabaseTable) {
+                export = Data2DExport.create(data2D);
+                export.initParameters(format);
+                export.setDataName(targetName);
+                export.initFile(fileController, data2D.getColumns(), targetName);
+            }
             startAction();
         } catch (Exception e) {
             MyBoxLog.error(e);
-        }
-    }
-
-    @Override
-    public void beforeTask() {
-        super.beforeTask();
-        checkTargets();
-        if (format != TargetType.DatabaseTable) {
-            export.initParameters(format);
-            export.setDataName(targetName);
-            export.setTargetFile(targetFile);
-            export.setColumns(data2D.getColumns());
-            export.setNames(data2D.columnNames());
-            export.setSkip(true);
         }
     }
 
@@ -70,11 +60,11 @@ public class Data2DSaveDataController extends BaseData2DSaveAsController {
         static
      */
     public static Data2DSaveDataController createData(DataFileCSV sourceData,
-            TargetType format, String targetName, File targetFile) {
+            TargetType format, String targetName, ControlTargetFile targetFileController) {
         try {
             Data2DSaveDataController controller
                     = (Data2DSaveDataController) WindowTools.openStage(Fxmls.Data2DSaveDataFxml);
-            controller.setParameters(sourceData, format, targetName, targetFile);
+            controller.setParameters(sourceData, format, targetName, targetFileController);
             controller.requestMouse();
             return controller;
         } catch (Exception e) {

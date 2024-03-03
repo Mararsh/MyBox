@@ -360,7 +360,8 @@ public class ControlData2DTarget extends BaseController {
                 case XML:
                 case HTML:
                 case PDF:
-                    if (file() == null) {
+                    File file = targetFileController.file();
+                    if (file == null) {
                         popError(message("InvalidParameter") + ": " + message("FileName"));
                         return false;
                     } else {
@@ -385,10 +386,6 @@ public class ControlData2DTarget extends BaseController {
     public String name() {
         String name = nameInput.getText();
         return name != null ? name.trim() : null;
-    }
-
-    public File file() {
-        return targetFileController.file();
     }
 
     public int row() {

@@ -414,7 +414,7 @@ public class StyleButton {
         if (id.startsWith("view")) {
             switch (id) {
                 case "viewFileButton":
-                    return new StyleData(id, message("Open"), "", "iconDefault.png");
+                    return new StyleData(id, message("Open"), "", "iconView.png");
                 default:
                     return new StyleData(id, message("View"), "", "iconView.png");
             }

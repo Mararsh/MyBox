@@ -112,6 +112,8 @@ public class PdfViewController extends PdfViewController_Html {
                 }
             });
 
+            leftPane.disableProperty().bind(imageController.imageView.imageProperty().isNull());
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

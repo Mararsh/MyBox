@@ -359,4 +359,15 @@ public class ControlFileSelecter extends BaseController {
         super.cleanPane();
     }
 
+    /*
+        get
+     */
+    public boolean isIsSource() {
+        return isSource;
+    }
+
+    public boolean isIsDirectory() {
+        return isDirectory;
+    }
+
 }

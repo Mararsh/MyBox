@@ -169,8 +169,16 @@ public class Data2DSaveAsController extends BaseData2DSaveAsController {
                     }
                     break;
             }
-
-            return true;
+            targetName = targetController.name();
+            checkTargets();
+            if (format != TargetType.DatabaseTable) {
+                export.initParameters(format);
+                export.setDataName(targetName);
+                return export.initPath(targetController.targetFileController,
+                        data2D.getColumns(), targetName);
+            } else {
+                return true;
+            }
         } catch (Exception e) {
             MyBoxLog.error(e);
             return false;
@@ -198,17 +206,7 @@ public class Data2DSaveAsController extends BaseData2DSaveAsController {
         } else {
             invalidAs = ColumnDefinition.InvalidAs.Blank;
         }
-        targetFile = targetController.file();
-        targetName = targetController.name();
-        checkTargets();
-        if (format != TargetType.DatabaseTable) {
-            export.initParameters(format);
-            export.setTargetFile(targetFile);
-            export.setDataName(targetName);
-            export.setColumns(data2D.getColumns());
-            export.setNames(data2D.columnNames());
-            export.setSkip(targetController.targetFileController.isSkip());
-        }
+
         tabPane.getSelectionModel().select(logsTab);
     }
 

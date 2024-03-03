@@ -13,6 +13,7 @@ import java.util.TimerTask;
 import javafx.application.Platform;
 import mara.mybox.controller.BaseController;
 import mara.mybox.controller.BaseTaskController;
+import mara.mybox.controller.ControlTargetFile;
 import mara.mybox.controller.Data2DManufactureController;
 import mara.mybox.controller.DataInMyBoxClipboardController;
 import mara.mybox.controller.JsonEditorController;
@@ -46,8 +47,10 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.tools.CsvTools;
+import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.JsonTools;
 import mara.mybox.tools.TextFileTools;
+import mara.mybox.value.AppPaths;
 import static mara.mybox.value.Languages.message;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
@@ -65,6 +68,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 public class Data2DExport extends Data2DOperator {
 
     protected BaseTaskController taskController;
+    protected ControlTargetFile targetFileController;
     protected List<String> names;
     protected List<Data2DColumn> columns;
     protected boolean firstRow, rowNumber, skip, created,
@@ -253,43 +257,74 @@ public class Data2DExport extends Data2DOperator {
         }
     }
 
-    public boolean initPath(File path, List<Data2DColumn> cols, String prefix, boolean skip) {
-        targetPath = path;
+    public boolean initPath(ControlTargetFile controller, List<Data2DColumn> cols, String prefix) {
+        targetFileController = controller;
+        targetFile = null;
         columns = cols;
-        names = new ArrayList<>();
-        for (Data2DColumn c : columns) {
-            names.add(c.getColumnName());
-        }
-        return openWriters(prefix, skip);
+        names = Data2DTools.toNames(cols);
+        return setValues(prefix);
     }
 
-    public boolean initFiles(File path, List<String> cols, String prefix, boolean skip) {
-        targetPath = path;
+    public boolean initFiles(ControlTargetFile controller, List<String> cols, String prefix) {
+        targetFileController = controller;
+        targetFile = null;
         names = cols;
-        return openWriters(prefix, skip);
+        columns = Data2DTools.toColumns(names);
+        return setValues(prefix) && openWriters();
     }
 
-    public boolean openWriters(String prefix, boolean skip) {
+    public boolean initFile(ControlTargetFile controller, List<Data2DColumn> cols, String prefix) {
+        targetFileController = controller;
+        columns = cols;
+        names = Data2DTools.toNames(cols);
+        return setValues(prefix);
+    }
+
+    public boolean initFiles(ControlTargetFile controller, List<String> cols) {
+        targetFileController = controller;
+        names = cols;
+        columns = Data2DTools.toColumns(names);
+        return true;
+    }
+
+    public boolean setValues(String prefix) {
         initFiles();
-        filePrefix = prefix;
-        this.skip = skip;
-        if (rowNumber && columns != null) {
-            columns.add(0, new Data2DColumn(message("RowNumber"), ColumnDefinition.ColumnType.String));
+        filePrefix = prefix != null ? prefix : "mexport";
+        targetFile = null;
+        File file = targetFileController.file();
+        if (file == null) {
+            targetPath = new File(AppPaths.getGeneratedPath() + File.separator);
+        } else if (file.isDirectory()) {
+            targetPath = file;
+        } else {
+            targetPath = file.getParentFile();
         }
-        if (rowNumber && names != null) {
-            names.add(0, message("RowNumber"));
+        if (!targetFileController.isIsDirectory()) {
+            if (file != null) {
+                if (!file.exists()) {
+                    targetFile = file;
+                } else {
+                    filePrefix = FileNameTools.prefix(file.getName());
+                }
+            }
         }
-        if (columns == null || columns.isEmpty()) {
-            columns = Data2DTools.toColumns(names);
+        skip = targetFileController.isSkip();
+        if (rowNumber) {
+            if (columns != null) {
+                columns.add(0, new Data2DColumn(message("RowNumber"), ColumnDefinition.ColumnType.String));
+            }
+            if (names != null) {
+                names.add(0, message("RowNumber"));
+            }
         }
-        return openWriters();
+        return true;
     }
 
     public File makeTargetFile(String prefix, String suffix) {
         if (targetFile != null) {
             return targetFile;
         } else {
-            return taskController.makeTargetFile(prefix, "." + suffix, targetPath);
+            return targetFileController.makeTargetFile(prefix, "." + suffix, targetPath);
         }
     }
 
@@ -315,8 +350,8 @@ public class Data2DExport extends Data2DOperator {
                     if (csvWithNames) {
                         csvPrinter.printRecord(names);
                     }
-                } else if (skip) {
-                    updateLogs(message("Skipped"));
+                } else {
+                    updateLogs((skip ? message("Skipped") : message("Failed")) + ": " + "csv");
                 }
             }
             if (texts) {
@@ -327,8 +362,8 @@ public class Data2DExport extends Data2DOperator {
                     if (textWithNames) {
                         TextFileTools.writeLine(task, textWriter, names, textDelimiter);
                     }
-                } else if (skip) {
-                    updateLogs(message("Skipped"));
+                } else {
+                    updateLogs((skip ? message("Skipped") : message("Failed")) + ": " + "txt");
                 }
             }
             if (excel) {
@@ -348,8 +383,8 @@ public class Data2DExport extends Data2DOperator {
                             cell.setCellStyle(horizontalCenter);
                         }
                     }
-                } else if (skip) {
-                    updateLogs(message("Skipped"));
+                } else {
+                    updateLogs((skip ? message("Skipped") : message("Failed")) + ": " + "xlsx");
                 }
             }
             if (myBoxClipboard) {
@@ -359,8 +394,8 @@ public class Data2DExport extends Data2DOperator {
                     dataClipboardPrinter = new CSVPrinter(new FileWriter(myBoxClipboardFile,
                             Charset.forName("UTF-8")), CsvTools.csvFormat());
                     dataClipboardPrinter.printRecord(names);
-                } else if (skip) {
-                    updateLogs(message("Skipped"));
+                } else {
+                    updateLogs((skip ? message("Skipped") : message("Failed")) + ": " + message("MyBoxClipboard"));
                 }
             }
             if (html) {
@@ -381,8 +416,8 @@ public class Data2DExport extends Data2DOperator {
                     s.append(indent).append("</HEAD>\n").append(indent).append("<BODY>\n");
                     s.append(StringTable.tablePrefix(new StringTable(names)));
                     htmlWriter.write(s.toString());
-                } else if (skip) {
-                    updateLogs(message("Skipped"));
+                } else {
+                    updateLogs((skip ? message("Skipped") : message("Failed")) + ": " + "html");
                 }
             }
             if (xml) {
@@ -394,8 +429,8 @@ public class Data2DExport extends Data2DOperator {
                     s.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n")
                             .append("<Data>\n");
                     xmlWriter.write(s.toString());
-                } else if (skip) {
-                    updateLogs(message("Skipped"));
+                } else {
+                    updateLogs((skip ? message("Skipped") : message("Failed")) + ": " + "xml");
                 }
             }
             if (json) {
@@ -406,8 +441,8 @@ public class Data2DExport extends Data2DOperator {
                     StringBuilder s = new StringBuilder();
                     s.append("{\"Data\": [\n");
                     jsonWriter.write(s.toString());
-                } else if (skip) {
-                    updateLogs(message("Skipped"));
+                } else {
+                    updateLogs((skip ? message("Skipped") : message("Failed")) + ": " + "json");
                 }
             }
             if (pdf && pdfTable != null) {
@@ -415,8 +450,8 @@ public class Data2DExport extends Data2DOperator {
                 if (pdfFile != null) {
                     updateLogs(message("Writing") + " " + pdfFile.getAbsolutePath());
                     pdfTable.setColumns(names).createDoc(pdfFile);
-                } else if (skip) {
-                    updateLogs(message("Skipped"));
+                } else {
+                    updateLogs((skip ? message("Skipped") : message("Failed")) + ": " + "pdf");
                 }
             }
             return true;

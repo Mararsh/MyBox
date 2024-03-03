@@ -85,7 +85,7 @@ License:    Apache License Version 2.0
                         </VBox>
                      </content>
                   </ScrollPane>
-                        <VBox alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                        <VBox fx:id="imageBox" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                      <children>
                         <HBox alignment="CENTER_LEFT" spacing="2.0">
                            <children>
@@ -202,11 +202,6 @@ License:    Apache License Version 2.0
                                                             </ImageView>
                                                          </graphic>
                                                       </Button>
-                                                      <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                         <image>
-                                                            <Image url="@../buttons/Red/iconTips.png" />
-                                                         </image>
-                                                      </ImageView>
                                                    </children>
                                                 </FlowPane>
                                                 <FlowPane alignment="CENTER_LEFT" hgap="2.0" layoutX="12.0" layoutY="130.0" prefWrapLength="0.0" vgap="2.0">
