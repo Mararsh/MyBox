@@ -573,12 +573,6 @@ public class PdfViewController extends PdfViewController_Html {
         }
     }
 
-    @Override
-    public boolean controlAltI() {
-        infoAction();
-        return true;
-    }
-
     /*
         static
      */

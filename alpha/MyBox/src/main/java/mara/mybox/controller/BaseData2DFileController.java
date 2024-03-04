@@ -47,9 +47,6 @@ public abstract class BaseData2DFileController extends Data2DManufactureControll
         try {
             super.initControls();
 
-            initFormatTab();
-            initBackupsTab();
-
             loadedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
@@ -58,40 +55,6 @@ public abstract class BaseData2DFileController extends Data2DManufactureControll
             });
 
             checkStatus();
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    protected void initFormatTab() {
-        try {
-            if (formatPane == null) {
-                return;
-            }
-            formatPane.setExpanded(UserConfig.getBoolean(baseName + "FormatPane", true));
-            formatPane.expandedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                if (!isSettingValues) {
-                    UserConfig.setBoolean(baseName + "FormatPane", formatPane.isExpanded());
-                }
-            });
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    protected void initBackupsTab() {
-        try {
-            if (backupPane == null) {
-                return;
-            }
-            backupPane.setExpanded(UserConfig.getBoolean(baseName + "BackupPane", true));
-            backupPane.expandedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                if (!isSettingValues) {
-                    UserConfig.setBoolean(baseName + "BackupPane", backupPane.isExpanded());
-                }
-            });
 
         } catch (Exception e) {
             MyBoxLog.error(e);

@@ -32,6 +32,7 @@ public class ColorsCustomizeController extends BaseChildController {
     @FXML
     protected TextField hueFromInput, hueToInput, hueStepInput,
             brightnessFromInput, brightnessToInput, brightnessStepInput,
+            opacityFromInput, opacityToInput, opacityStepInput,
             saturationFromInput, saturationToInput, saturationStepInput;
 
     @Override
@@ -47,6 +48,9 @@ public class ColorsCustomizeController extends BaseChildController {
             NodeStyleTools.setTooltip(saturationFromInput, "1~100");
             NodeStyleTools.setTooltip(saturationToInput, "1~100");
             NodeStyleTools.setTooltip(saturationStepInput, "1~100");
+            NodeStyleTools.setTooltip(opacityFromInput, "1~100");
+            NodeStyleTools.setTooltip(opacityToInput, "1~100");
+            NodeStyleTools.setTooltip(opacityStepInput, "1~100");
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
@@ -108,8 +112,21 @@ public class ColorsCustomizeController extends BaseChildController {
             if (saturationStep <= 0) {
                 return;
             }
+            int opacityFrom = pickValue(opacityFromInput, message("Opacity") + "-" + message("From"), 1, 100);
+            if (opacityFrom < 0) {
+                return;
+            }
+            int opacityTo = pickValue(opacityToInput, message("Opacity") + "-" + message("To"), 1, 100);
+            if (opacityTo < 0) {
+                return;
+            }
+            int opacityStep = pickValue(opacityStepInput, message("Opacity") + "-" + message("ValueStep"), 1, 100);
+            if (opacityStep <= 0) {
+                return;
+            }
             long number = (Math.abs((hueTo - hueFrom) / hueStep) + 1)
                     * (Math.abs((brightnessTo - brightnessFrom) / brightnessStep) + 1)
+                    * (Math.abs((opacityTo - opacityFrom) / opacityStep) + 1)
                     * (Math.abs((saturationTo - saturationFrom) / saturationStep) + 1);
             if (!PopTools.askSure(baseTitle, message("Total") + ": " + number)) {
                 return;
@@ -147,17 +164,39 @@ public class ColorsCustomizeController extends BaseChildController {
                                         conn.close();
                                         return true;
                                     }
-                                    task.setInfo((++count) + "  "
-                                            + (ryb ? message("RYBAngle") : message("Hue")) + ": " + hue + "  "
-                                            + message("Saturation") + ": " + saturation + "  "
-                                            + message("Brightness") + ": " + brightness + "  ");
-                                    Color color = Color.hsb(ryb ? ColorConvertTools.ryb2hue(hue) : hue,
-                                            saturation / 100f, brightness / 100f);
-                                    ColorData colorData = new ColorData(color)
-                                            .calculate().setPaletteid(paletteid);
-                                    tableColorPalette.findAndCreate(conn, colorData, false, false);
-                                    if (count % Database.BatchSize == 0) {
-                                        conn.commit();
+                                    int opacity = opacityFrom;
+                                    while (true) {
+                                        if (task == null || task.isCancelled()) {
+                                            conn.close();
+                                            return true;
+                                        }
+                                        task.setInfo((++count) + "  "
+                                                + (ryb ? message("RYBAngle") : message("Hue")) + ": " + hue + "  "
+                                                + message("Saturation") + ": " + saturation + "  "
+                                                + message("Brightness") + ": " + brightness + "  "
+                                                + message("Opacity") + ": " + brightness + "  ");
+                                        Color color = Color.hsb(ryb ? ColorConvertTools.ryb2hue(hue) : hue,
+                                                saturation / 100f, brightness / 100f);
+                                        color = new Color(color.getRed(), color.getGreen(), color.getBlue(), opacity / 100f);
+                                        ColorData colorData = new ColorData(color)
+                                                .calculate().setPaletteid(paletteid);
+                                        tableColorPalette.findAndCreate(conn, colorData, false, false);
+                                        if (count % Database.BatchSize == 0) {
+                                            conn.commit();
+                                        }
+                                        if (opacityFrom == opacityTo) {
+                                            break;
+                                        } else if (opacityFrom > opacityTo) {
+                                            opacity -= opacityStep;
+                                            if (opacity < opacityTo) {
+                                                break;
+                                            }
+                                        } else {
+                                            opacity += opacityStep;
+                                            if (opacity > opacityTo) {
+                                                break;
+                                            }
+                                        }
                                     }
                                     if (brightnessFrom == brightnessTo) {
                                         break;

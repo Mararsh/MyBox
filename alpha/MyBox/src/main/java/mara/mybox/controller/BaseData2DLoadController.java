@@ -470,13 +470,6 @@ public class BaseData2DLoadController extends BaseData2DTableController {
      */
     @FXML
     @Override
-    public void createAction() {
-        createData(DataType.CSV);
-        Data2DAttributes.open(this);
-    }
-
-    @FXML
-    @Override
     public void saveAsAction() {
         if (data2D == null) {
             return;

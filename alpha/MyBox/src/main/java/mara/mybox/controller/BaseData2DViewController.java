@@ -57,7 +57,7 @@ public class BaseData2DViewController extends BaseData2DLoadController {
     @FXML
     protected Button delimiterButton, viewDataButton;
     @FXML
-    protected CheckBox wrapCheck;
+    protected CheckBox wrapCheck, formCheck, titleCheck, columnCheck, rowCheck;
 
     @Override
     public void setControlsStyle() {
@@ -107,6 +107,78 @@ public class BaseData2DViewController extends BaseData2DLoadController {
                     }
                 }
             });
+
+            if (formCheck != null) {
+                formCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                        if (isSettingValues) {
+                            return;
+                        }
+                        if (textsRadio.isSelected()) {
+                            UserConfig.setBoolean(baseName + "TextsShowForm", nv);
+                            loadTexts(false);
+                        } else if (htmlRadio.isSelected()) {
+                            UserConfig.setBoolean(baseName + "HtmlShowForm", nv);
+                            loadHtml(false);
+                        }
+                    }
+                });
+            }
+
+            if (titleCheck != null) {
+                titleCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                        if (isSettingValues) {
+                            return;
+                        }
+                        if (textsRadio.isSelected()) {
+                            UserConfig.setBoolean(baseName + "TextsShowTitle", nv);
+                            loadTexts(false);
+                        } else if (htmlRadio.isSelected()) {
+                            UserConfig.setBoolean(baseName + "HtmlShowTitle", nv);
+                            loadHtml(false);
+                        }
+                    }
+                });
+            }
+
+            if (columnCheck != null) {
+                columnCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                        if (isSettingValues) {
+                            return;
+                        }
+                        if (textsRadio.isSelected()) {
+                            UserConfig.setBoolean(baseName + "TextsShowColumns", nv);
+                            loadTexts(false);
+                        } else if (htmlRadio.isSelected()) {
+                            UserConfig.setBoolean(baseName + "HtmlShowColumns", nv);
+                            loadHtml(false);
+                        }
+                    }
+                });
+            }
+
+            if (rowCheck != null) {
+                rowCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                        if (isSettingValues) {
+                            return;
+                        }
+                        if (textsRadio.isSelected()) {
+                            UserConfig.setBoolean(baseName + "TextsShowRowNumber", nv);
+                            loadTexts(false);
+                        } else if (htmlRadio.isSelected()) {
+                            UserConfig.setBoolean(baseName + "HtmlShowRowNumber", nv);
+                            loadHtml(false);
+                        }
+                    }
+                });
+            }
 
             formatGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
@@ -175,7 +247,7 @@ public class BaseData2DViewController extends BaseData2DLoadController {
             pageBox.getChildren().add(htmlBox);
             VBox.setVgrow(htmlBox, Priority.ALWAYS);
 
-            loadHtml();
+            loadHtml(false);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -186,9 +258,13 @@ public class BaseData2DViewController extends BaseData2DLoadController {
         buttonsPane.getChildren().setAll(menuButton, viewDataButton, dataManufactureButton);
     }
 
-    public void loadHtml() {
+    public void loadHtml(boolean pop) {
         if (!data2D.isValid()) {
-            webViewController.loadContents("");
+            if (pop) {
+                popError(message("NoData"));
+            } else {
+                webViewController.loadContents("");
+            }
             return;
         }
         if (task != null) {
@@ -199,7 +275,7 @@ public class BaseData2DViewController extends BaseData2DLoadController {
 
             @Override
             protected boolean handle() {
-                html = Data2DTools.dataToHtml(data2D, styleFilter,
+                html = Data2DTools.pageToHtml(data2D, styleFilter,
                         UserConfig.getBoolean(baseName + "HtmlShowForm", false),
                         UserConfig.getBoolean(baseName + "HtmlShowColumns", true),
                         UserConfig.getBoolean(baseName + "HtmlShowRowNumber", true),
@@ -209,7 +285,11 @@ public class BaseData2DViewController extends BaseData2DLoadController {
 
             @Override
             protected void whenSucceeded() {
-                webViewController.loadContents(html);
+                if (pop) {
+                    HtmlPopController.openHtml(myController, html);
+                } else {
+                    webViewController.loadContents(html);
+                }
             }
 
         };
@@ -228,7 +308,7 @@ public class BaseData2DViewController extends BaseData2DLoadController {
             textsArea.setWrapText(wrapCheck.isSelected());
             isSettingValues = false;
 
-            loadTexts();
+            loadTexts(false);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -240,30 +320,38 @@ public class BaseData2DViewController extends BaseData2DLoadController {
                 menuButton, viewDataButton, dataManufactureButton);
     }
 
-    public void loadTexts() {
+    public void loadTexts(boolean pop) {
         if (!data2D.isValid()) {
-            textsArea.setText("");
+            if (pop) {
+                popError(message("NoData"));
+            } else {
+                textsArea.setText("");
+            }
             return;
         }
         if (task != null) {
             task.cancel();
         }
         task = new FxSingletonTask<Void>(this) {
-            private String text;
+            private String texts;
 
             @Override
             protected boolean handle() {
-                text = Data2DTools.dataToTexts(data2D, delimiterName,
+                texts = Data2DTools.pageToTexts(data2D, delimiterName,
                         UserConfig.getBoolean(baseName + "TextsShowForm", false),
                         UserConfig.getBoolean(baseName + "TextsShowColumns", true),
                         UserConfig.getBoolean(baseName + "TextsShowRowNumber", true),
                         UserConfig.getBoolean(baseName + "TextsShowTitle", true));
-                return text != null;
+                return texts != null;
             }
 
             @Override
             protected void whenSucceeded() {
-                textsArea.setText(text);
+                if (pop) {
+                    TextPopController.loadText(texts);
+                } else {
+                    textsArea.setText(texts);
+                }
             }
 
         };
@@ -339,7 +427,7 @@ public class BaseData2DViewController extends BaseData2DLoadController {
                 delimiterName = controller.delimiterName;
                 if (textsRadio.isSelected()) {
                     UserConfig.setString(baseName + "TextsDelimiter", delimiterName);
-                    loadTexts();
+                    loadTexts(false);
                 } else if (csvRadio != null && csvRadio.isSelected()) {
                     UserConfig.setString(baseName + "CsvDelimiter", delimiterName);
                     loadCsv();
@@ -371,15 +459,13 @@ public class BaseData2DViewController extends BaseData2DLoadController {
 
             menu = new MenuItem(message("Html"), StyleTools.getIconImageView("iconHtml.png"));
             menu.setOnAction((ActionEvent event) -> {
-                String html = Data2DTools.dataToHtml(data2D, styleFilter, false, true, true, true);
-                HtmlPopController.openHtml(myController, html);
+                loadHtml(true);
             });
             items.add(menu);
 
             menu = new MenuItem(message("Texts"), StyleTools.getIconImageView("iconTxt.png"));
             menu.setOnAction((ActionEvent event) -> {
-                String texts = Data2DTools.dataToTexts(data2D, delimiterName, false, true, true, true);
-                TextPopController.loadText(texts);
+                loadTexts(true);
             });
             items.add(menu);
 
@@ -390,8 +476,14 @@ public class BaseData2DViewController extends BaseData2DLoadController {
             formItem.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    UserConfig.setBoolean(baseName + "HtmlShowForm", formItem.isSelected());
-                    loadHtml();
+                    if (htmlRadio.isSelected() && formCheck != null) {
+                        formCheck.setSelected(formItem.isSelected());
+                    } else {
+                        UserConfig.setBoolean(baseName + "HtmlShowForm", formItem.isSelected());
+                        if (htmlRadio.isSelected()) {
+                            loadHtml(false);
+                        }
+                    }
                 }
             });
             items.add(formItem);
@@ -401,8 +493,14 @@ public class BaseData2DViewController extends BaseData2DLoadController {
             titleItem.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    UserConfig.setBoolean(baseName + "HtmlShowTitle", titleItem.isSelected());
-                    loadHtml();
+                    if (htmlRadio.isSelected() && titleCheck != null) {
+                        titleCheck.setSelected(titleItem.isSelected());
+                    } else {
+                        UserConfig.setBoolean(baseName + "HtmlShowTitle", titleItem.isSelected());
+                        if (htmlRadio.isSelected()) {
+                            loadHtml(false);
+                        }
+                    }
                 }
             });
             items.add(titleItem);
@@ -412,8 +510,14 @@ public class BaseData2DViewController extends BaseData2DLoadController {
             columnNameItem.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    UserConfig.setBoolean(baseName + "HtmlShowColumns", columnNameItem.isSelected());
-                    loadHtml();
+                    if (htmlRadio.isSelected() && columnCheck != null) {
+                        columnCheck.setSelected(columnNameItem.isSelected());
+                    } else {
+                        UserConfig.setBoolean(baseName + "HtmlShowColumns", columnNameItem.isSelected());
+                        if (htmlRadio.isSelected()) {
+                            loadHtml(false);
+                        }
+                    }
                 }
             });
             items.add(columnNameItem);
@@ -423,8 +527,14 @@ public class BaseData2DViewController extends BaseData2DLoadController {
             rowNumberItem.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    UserConfig.setBoolean(baseName + "HtmlShowRowNumber", rowNumberItem.isSelected());
-                    loadHtml();
+                    if (htmlRadio.isSelected() && rowCheck != null) {
+                        rowCheck.setSelected(rowNumberItem.isSelected());
+                    } else {
+                        UserConfig.setBoolean(baseName + "HtmlShowRowNumber", rowNumberItem.isSelected());
+                        if (htmlRadio.isSelected()) {
+                            loadHtml(false);
+                        }
+                    }
                 }
             });
             items.add(rowNumberItem);
@@ -434,8 +544,14 @@ public class BaseData2DViewController extends BaseData2DLoadController {
             textFormItem.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    UserConfig.setBoolean(baseName + "TextsShowForm", textFormItem.isSelected());
-                    loadTexts();
+                    if (textsRadio.isSelected() && formCheck != null) {
+                        formCheck.setSelected(textFormItem.isSelected());
+                    } else {
+                        UserConfig.setBoolean(baseName + "TextsShowForm", textFormItem.isSelected());
+                        if (textsRadio.isSelected()) {
+                            loadTexts(false);
+                        }
+                    }
                 }
             });
             items.add(textFormItem);
@@ -445,8 +561,14 @@ public class BaseData2DViewController extends BaseData2DLoadController {
             textTitleItem.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    UserConfig.setBoolean(baseName + "TextsShowTitle", textTitleItem.isSelected());
-                    loadTexts();
+                    if (textsRadio.isSelected() && titleCheck != null) {
+                        titleCheck.setSelected(textTitleItem.isSelected());
+                    } else {
+                        UserConfig.setBoolean(baseName + "TextsShowTitle", textTitleItem.isSelected());
+                        if (textsRadio.isSelected()) {
+                            loadTexts(false);
+                        }
+                    }
                 }
             });
             items.add(textTitleItem);
@@ -456,8 +578,14 @@ public class BaseData2DViewController extends BaseData2DLoadController {
             textColumnItem.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    UserConfig.setBoolean(baseName + "TextsShowColumns", textColumnItem.isSelected());
-                    loadTexts();
+                    if (textsRadio.isSelected() && columnCheck != null) {
+                        columnCheck.setSelected(textColumnItem.isSelected());
+                    } else {
+                        UserConfig.setBoolean(baseName + "TextsShowColumns", textColumnItem.isSelected());
+                        if (textsRadio.isSelected()) {
+                            loadTexts(false);
+                        }
+                    }
                 }
             });
             items.add(textColumnItem);
@@ -467,8 +595,14 @@ public class BaseData2DViewController extends BaseData2DLoadController {
             textRowNumberItem.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    UserConfig.setBoolean(baseName + "TextsShowRowNumber", textRowNumberItem.isSelected());
-                    loadTexts();
+                    if (textsRadio.isSelected() && rowCheck != null) {
+                        rowCheck.setSelected(textRowNumberItem.isSelected());
+                    } else {
+                        UserConfig.setBoolean(baseName + "TextsShowRowNumber", textRowNumberItem.isSelected());
+                        if (textsRadio.isSelected()) {
+                            loadTexts(false);
+                        }
+                    }
                 }
             });
             items.add(textRowNumberItem);
@@ -478,13 +612,6 @@ public class BaseData2DViewController extends BaseData2DLoadController {
             MyBoxLog.error(e);
             return null;
         }
-    }
-
-    /*
-        get
-     */
-    public String getDelimiterName() {
-        return delimiterName;
     }
 
 }

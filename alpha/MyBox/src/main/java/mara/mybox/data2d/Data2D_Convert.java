@@ -603,7 +603,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
                 return null;
             }
             File csvFile = dataTable != null ? dataTable.tmpFile(dname, null, "csv")
-                    : FileTmpTools.generateFile(dname, "csv");
+                    : FileTmpTools.tmpFile(dname, "csv");
             long count = 0;
             int colsSize;
             List<Data2DColumn> db2Columns = new ArrayList<>();

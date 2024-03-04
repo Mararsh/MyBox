@@ -220,12 +220,6 @@ public class HtmlEditorController extends WebAddressController {
     }
 
     @Override
-    public boolean controlAltI() {
-        infoAction();
-        return true;
-    }
-
-    @Override
     public boolean controlAltN() {
         createAction();
         return true;

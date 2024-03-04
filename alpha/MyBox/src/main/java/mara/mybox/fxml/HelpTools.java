@@ -503,20 +503,15 @@ public class HelpTools {
             s.append("\n");
 
             s.append("<H1>").append(message(lang, "DataTools")).append("</H1>\n");
+
+            s.append("    <H3>").append(message(lang, "DataManufacture")).append("</H3>\n");
+            s.append("    <PRE>").append(message(lang, "DataManufactureTips")).append("</PRE>\n");
+
             s.append("    <H3>").append(message(lang, "Column")).append("</H3>\n");
             s.append("    <PRE>").append(message(lang, "ColumnComments")).append("</PRE>\n");
 
             s.append("    <H3>").append(message(lang, "ManageData")).append("</H3>\n");
             s.append("    <PRE>").append(message(lang, "DataManageTips")).append("</PRE>\n");
-
-            s.append("    <H3>").append(message(lang, "EditCSV")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "DataFileCSVTips")).append("</PRE>\n");
-
-            s.append("    <H3>").append(message(lang, "EditExcel")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "DataFileExcelTips")).append("</PRE>\n");
-
-            s.append("    <H3>").append(message(lang, "EditTextDataFile")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "DataFileTextTips")).append("</PRE>\n");
 
             s.append("    <H3>").append(message(lang, "DatabaseTable")).append("</H3>\n");
             s.append("    <PRE>").append(message(lang, "DataTableTips")).append("</PRE>\n");

@@ -226,23 +226,28 @@ public abstract class BaseFileController extends BaseController {
         }
     }
 
+    @Override
+    public boolean controlAltI() {
+        return infoAction();
+    }
+
     @FXML
     @Override
     public boolean infoAction() {
-        if (sourceFile != null) {
-            String info = FileTools.fileInformation(sourceFile);
-            if (info != null && !info.isBlank()) {
-                TextPopController.loadText(info);
-                return true;
-            }
+        String info = fileInfo();
+        if (info != null && !info.isBlank()) {
+            TextPopController.loadText(info);
+            return true;
         }
         return false;
     }
 
-    @Override
-    public boolean controlAltI() {
-        infoAction();
-        return true;
+    public String fileInfo() {
+        if (sourceFile != null) {
+            return FileTools.fileInformation(sourceFile);
+        } else {
+            return null;
+        }
     }
 
 }

@@ -14,9 +14,10 @@ import static mara.mybox.db.data.Data2DDefinition.DataType.Texts;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.tools.DoubleTools;
-import static mara.mybox.tools.FileTmpTools.generateFile;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.NumberTools;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -40,16 +41,28 @@ public abstract class Data2D_Data extends Data2D_Attributes {
     }
 
     public File tmpFile(String name, String operation, String ext) {
+        String prefix;
         if (name != null && !name.isBlank()) {
-            return generateFile(name, ext);
+            prefix = name;
+        } else {
+            prefix = shortName();
         }
-        String pname = shortName();
-        if (pname.startsWith(TmpTable.TmpTablePrefix)
-                || pname.startsWith(TmpTable.TmpTablePrefix.toLowerCase())) {
-            pname = pname.substring(TmpTable.TmpTablePrefix.length());
+        if (prefix.startsWith(TmpTable.TmpTablePrefix)
+                || prefix.startsWith(TmpTable.TmpTablePrefix.toLowerCase())) {
+            prefix = prefix.substring(TmpTable.TmpTablePrefix.length());
         }
-        pname = pname + ((operation == null || operation.isBlank()) ? "" : "_" + operation);
-        return generateFile(pname, ext);
+        if (operation != null && !operation.isBlank()) {
+            if (prefix != null && !prefix.isBlank()) {
+                prefix += "_" + operation;
+            } else {
+                prefix = operation;
+            }
+        }
+        if (UserConfig.getBoolean("Data2DTmpDataUnderGeneratedPath", false)) {
+            return FileTmpTools.generateFile(prefix, ext);
+        } else {
+            return FileTmpTools.tmpFile(prefix, ext);
+        }
     }
 
     /*

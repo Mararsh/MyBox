@@ -854,16 +854,16 @@ public class Data2DTools {
     /*
         data
      */
-    public static String dataToHtml(Data2D data2d, DataFilter styleFilter,
+    public static String pageToHtml(Data2D data2d, DataFilter styleFilter,
             boolean isForm, boolean showColumns, boolean showRowNumber, boolean showTitle) {
         if (isForm) {
-            return dataToHtmlForm(data2d, styleFilter, showColumns, showRowNumber, showTitle);
+            return pageToHtmlForm(data2d, styleFilter, showColumns, showRowNumber, showTitle);
         } else {
-            return dataToHtmlTable(data2d, styleFilter, showColumns, showRowNumber, showTitle);
+            return pageToHtmlTable(data2d, styleFilter, showColumns, showRowNumber, showTitle);
         }
     }
 
-    public static String dataToHtmlTable(Data2D data2d, DataFilter styleFilter,
+    public static String pageToHtmlTable(Data2D data2d, DataFilter styleFilter,
             boolean showColumns, boolean showRowNumber, boolean showTitle) {
         try {
             int rNumber = data2d.tableRowsNumber();
@@ -922,7 +922,7 @@ public class Data2DTools {
         }
     }
 
-    public static String dataToHtmlForm(Data2D data2d, DataFilter styleFilter,
+    public static String pageToHtmlForm(Data2D data2d, DataFilter styleFilter,
             boolean showColumns, boolean showRowNumber, boolean showTitle) {
         try {
             int rNumber = data2d.tableRowsNumber();
@@ -978,16 +978,16 @@ public class Data2DTools {
         }
     }
 
-    public static String dataToTexts(Data2D data2d, String delimiterName,
+    public static String pageToTexts(Data2D data2d, String delimiterName,
             boolean isForm, boolean showColumns, boolean showRowNumber, boolean showTitle) {
         if (isForm) {
-            return dataToTextsForm(data2d, showColumns, showRowNumber, showTitle);
+            return pageToTextsForm(data2d, showColumns, showRowNumber, showTitle);
         } else {
-            return dataToTextsTable(data2d, delimiterName, showColumns, showRowNumber, showTitle);
+            return pageToTextsTable(data2d, delimiterName, showColumns, showRowNumber, showTitle);
         }
     }
 
-    public static String dataToTextsTable(Data2D data2d, String delimiterName,
+    public static String pageToTextsTable(Data2D data2d, String delimiterName,
             boolean showColumns, boolean showRowNumber, boolean showTitle) {
         String texts = data2d.encodeCSV(null, delimiterName,
                 showRowNumber, showColumns, true);
@@ -999,7 +999,7 @@ public class Data2DTools {
         }
     }
 
-    public static String dataToTextsForm(Data2D data2d,
+    public static String pageToTextsForm(Data2D data2d,
             boolean showColumns, boolean showRowNumber, boolean showTitle) {
         StringBuilder s = new StringBuilder();
         if (showTitle) {

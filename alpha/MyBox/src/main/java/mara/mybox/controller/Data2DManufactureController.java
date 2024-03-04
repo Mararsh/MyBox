@@ -15,7 +15,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
@@ -58,11 +57,10 @@ public class Data2DManufactureController extends BaseData2DViewController {
     protected FlowPane opsPane;
     @FXML
     protected Button dataDefinitionButton, operationButton;
-    @FXML
-    protected CheckBox formCheck, titleCheck, columnCheck, rowCheck;
 
     public Data2DManufactureController() {
         baseTitle = message("DataManufacture");
+        TipsLabelKey = "DataManufactureTips";
         readOnly = false;
         savedNotify = new SimpleBooleanProperty(false);
     }
@@ -112,12 +110,24 @@ public class Data2DManufactureController extends BaseData2DViewController {
     @Override
     public void showHtmlButtons() {
         buttonsPane.getChildren().setAll(formCheck, titleCheck, columnCheck, rowCheck);
+        isSettingValues = true;
+        formCheck.setSelected(UserConfig.getBoolean(baseName + "HtmlShowForm", false));
+        columnCheck.setSelected(UserConfig.getBoolean(baseName + "HtmlShowColumns", true));
+        rowCheck.setSelected(UserConfig.getBoolean(baseName + "HtmlShowRowNumber", true));
+        titleCheck.setSelected(UserConfig.getBoolean(baseName + "HtmlShowTitle", true));
+        isSettingValues = false;
     }
 
     @Override
     public void showTextsButtons() {
         buttonsPane.getChildren().setAll(wrapCheck, delimiterButton,
                 formCheck, titleCheck, columnCheck, rowCheck);
+        isSettingValues = true;
+        formCheck.setSelected(UserConfig.getBoolean(baseName + "TextsShowForm", false));
+        columnCheck.setSelected(UserConfig.getBoolean(baseName + "TextsShowColumns", true));
+        rowCheck.setSelected(UserConfig.getBoolean(baseName + "TextsShowRowNumber", true));
+        titleCheck.setSelected(UserConfig.getBoolean(baseName + "TextsShowTitle", true));
+        isSettingValues = false;
     }
 
     @Override
@@ -558,6 +568,14 @@ public class Data2DManufactureController extends BaseData2DViewController {
     /*
         action
      */
+    @FXML
+    @Override
+    public void createAction() {
+        createData(DataType.CSV);
+        tableRadio.setSelected(true);
+        Data2DAttributes.open(this);
+    }
+
     @Override
     public boolean controlAltN() {
         if (isValidData() && isEditing()) {
@@ -589,7 +607,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
 
     @FXML
     public void definitonAction() {
-        if (isValidData()) {
+        if (data2D != null) {
             Data2DAttributes.open(this);
         }
     }

@@ -777,15 +777,6 @@ public class BaseImageController extends BaseImageController_Actions {
     }
 
     @Override
-    public boolean controlAltI() {
-        if (imageInformation == null) {
-            return false;
-        }
-        infoAction();
-        return true;
-    }
-
-    @Override
     public boolean controlAltK() {
         if (imageView == null || imageView.getImage() == null) {
             return false;

@@ -610,11 +610,6 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
         return true;
     }
 
-    @Override
-    public boolean controlAltI() {
-        return infoAction();
-    }
-
     @FXML
     @Override
     public boolean infoAction() {

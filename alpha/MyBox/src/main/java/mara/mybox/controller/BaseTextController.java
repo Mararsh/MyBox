@@ -111,17 +111,7 @@ public abstract class BaseTextController extends BaseTextController_Actions {
                 && sourceInformation.getEditType() == Edit_Type.Bytes;
     }
 
-    @FXML
     @Override
-    public boolean infoAction() {
-        String info = fileInfo();
-        if (info != null && !info.isBlank()) {
-            TextPopController.loadText(info);
-            return true;
-        }
-        return false;
-    }
-
     public String fileInfo() {
         try {
             if (!sourceInformation.isTotalNumberRead()) {
@@ -430,12 +420,6 @@ public abstract class BaseTextController extends BaseTextController_Actions {
                 return false;
             }
         }
-    }
-
-    @Override
-    public boolean controlAltI() {
-        infoAction();
-        return true;
     }
 
     @Override
