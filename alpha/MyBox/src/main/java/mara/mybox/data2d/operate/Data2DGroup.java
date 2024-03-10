@@ -1,4 +1,4 @@
-package mara.mybox.data2d.reader;
+package mara.mybox.data2d.operate;
 
 import java.io.File;
 import java.nio.charset.Charset;
@@ -13,13 +13,14 @@ import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.FileTools;
 import static mara.mybox.value.Languages.message;
+import org.apache.commons.csv.CSVPrinter;
 
 /**
  * @Author Mara
  * @CreateDate 2022-2-25
  * @License Apache License Version 2.0
  */
-public class Data2DSplit extends Data2DOperator {
+public class Data2DGroup extends Data2DOperate {
 
     protected long splitSize, startIndex, currentSize;
     protected String prefix;
@@ -27,25 +28,26 @@ public class Data2DSplit extends Data2DOperator {
     protected List<String> names;
     protected File currentFile;
     protected List<DataFileCSV> files;
+    protected CSVPrinter csvPrinter;
 
-    public static Data2DSplit create(Data2D_Edit data) {
-        Data2DSplit op = new Data2DSplit();
-        return op.setData(data) ? op : null;
+    public static Data2DGroup create(Data2D_Edit data) {
+        Data2DGroup op = new Data2DGroup();
+        return op.setSourceData(data) ? op : null;
     }
 
     @Override
     public boolean checkParameters() {
         try {
-            if (cols == null || cols.isEmpty() || splitSize <= 0) {
+            if (!super.checkParameters() || cols == null || cols.isEmpty() || splitSize <= 0) {
                 return false;
             }
             startIndex = 1;
             currentSize = 0;
-            prefix = data2D.dataName();
+            prefix = sourceData.dataName();
             names = new ArrayList<>();
             targetColumns = new ArrayList<>();
             for (int c : cols) {
-                Data2DColumn column = data2D.column(c);
+                Data2DColumn column = sourceData.column(c);
                 names.add(column.getColumnName());
                 targetColumns.add(column.cloneAll().setD2cid(-1).setD2id(-1));
             }
@@ -65,39 +67,45 @@ public class Data2DSplit extends Data2DOperator {
     }
 
     @Override
-    public void handleRow() {
+    public boolean handleRow() {
         try {
-            List<String> row = new ArrayList<>();
+            targetRow = null;
+            if (sourceRow == null) {
+                return false;
+            }
+            targetRow = new ArrayList<>();
             for (int col : cols) {
                 if (col >= 0 && col < sourceRow.size()) {
-                    row.add(sourceRow.get(col));
+                    targetRow.add(sourceRow.get(col));
                 } else {
-                    row.add(null);
+                    targetRow.add(null);
                 }
             }
-            if (row.isEmpty()) {
-                return;
+            if (targetRow.isEmpty()) {
+                return false;
             }
             if (currentFile == null) {
                 currentFile = FileTmpTools.getTempFile(".csv");
                 csvPrinter = CsvTools.csvPrinter(currentFile);
                 csvPrinter.printRecord(names);
-                startIndex = rowIndex;
+                startIndex = sourceRowIndex;
             }
             if (includeRowNumber) {
-                row.add(0, rowIndex + "");
+                targetRow.add(0, sourceRowIndex + "");
             }
-            csvPrinter.printRecord(row);
+            csvPrinter.printRecord(targetRow);
             currentSize++;
             if (currentSize % splitSize == 0) {
                 closeFile();
             }
+            return true;
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
             } else {
                 MyBoxLog.error(e);
             }
+            return false;
         }
     }
 
@@ -109,7 +117,7 @@ public class Data2DSplit extends Data2DOperator {
             csvPrinter.flush();
             csvPrinter.close();
             csvPrinter = null;
-            File file = data2D.tmpFile(prefix + "_" + startIndex + "-" + rowIndex, null, "csv");
+            File file = sourceData.tmpFile(prefix + "_" + startIndex + "-" + sourceRowIndex, null, "csv");
             if (FileTools.override(currentFile, file) && file.exists()) {
                 DataFileCSV dataFileCSV = new DataFileCSV();
                 dataFileCSV.setTask(task);
@@ -144,7 +152,7 @@ public class Data2DSplit extends Data2DOperator {
     /*
         set
      */
-    public Data2DSplit setSplitSize(int splitSize) {
+    public Data2DGroup setSplitSize(int splitSize) {
         this.splitSize = splitSize;
         return this;
     }

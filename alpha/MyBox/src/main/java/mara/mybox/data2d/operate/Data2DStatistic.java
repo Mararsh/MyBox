@@ -1,4 +1,4 @@
-package mara.mybox.data2d.reader;
+package mara.mybox.data2d.operate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +16,7 @@ import org.apache.commons.math3.stat.descriptive.moment.Skewness;
  * @CreateDate 2022-2-25
  * @License Apache License Version 2.0
  */
-public class Data2DStatistic extends Data2DOperator {
+public class Data2DStatistic extends Data2DOperate {
 
     protected Type type;
     protected DoubleStatistic[] statisticData;
@@ -33,12 +33,14 @@ public class Data2DStatistic extends Data2DOperator {
 
     public static Data2DStatistic create(Data2D_Edit data) {
         Data2DStatistic op = new Data2DStatistic();
-        return op.setData(data) ? op : null;
+        return op.setSourceData(data) ? op : null;
     }
 
     @Override
     public boolean checkParameters() {
-        if (cols == null || cols.isEmpty() || type == null || statisticCalculation == null) {
+        if (!super.checkParameters()
+                || cols == null || cols.isEmpty() || type == null
+                || statisticCalculation == null) {
             return false;
         }
         switch (type) {
@@ -77,9 +79,6 @@ public class Data2DStatistic extends Data2DOperator {
                 statisticAll.dTmp = 0;
                 break;
             case Rows:
-                if (csvPrinter == null) {
-                    return false;
-                }
                 break;
             default:
                 return false;
@@ -88,27 +87,23 @@ public class Data2DStatistic extends Data2DOperator {
     }
 
     @Override
-    public void handleRow() {
+    public boolean handleRow() {
         switch (type) {
             case ColumnsPass1:
-                handleStatisticColumnsPass1();
-                break;
+                return handleStatisticColumnsPass1();
             case ColumnsPass2:
-                handleStatisticColumnsPass2();
-                break;
+                return handleStatisticColumnsPass2();
             case AllPass1:
-                handleStatisticAllPass1();
-                break;
+                return handleStatisticAllPass1();
             case AllPass2:
-                handleStatisticAllPass2();
-                break;
+                return handleStatisticAllPass2();
             case Rows:
-                handleStatisticRows();
-                break;
+                return handleStatisticRows();
         }
+        return false;
     }
 
-    public void handleStatisticColumnsPass1() {
+    public boolean handleStatisticColumnsPass1() {
         try {
             for (int i = 0; i < colsLen; i++) {
                 int col = cols.get(i);
@@ -150,12 +145,13 @@ public class Data2DStatistic extends Data2DOperator {
                     skewnessList.get(i).increment(v);
                 }
             }
+            return true;
         } catch (Exception e) {
-
+            return false;
         }
     }
 
-    public void handleStatisticColumnsPass2() {
+    public boolean handleStatisticColumnsPass2() {
         try {
             for (int c = 0; c < colsLen; c++) {
                 if (statisticData[c].count == 0) {
@@ -180,11 +176,13 @@ public class Data2DStatistic extends Data2DOperator {
                 v = v - statisticData[c].mean;
                 statisticData[c].dTmp += v * v;
             }
+            return true;
         } catch (Exception e) {
+            return false;
         }
     }
 
-    public void handleStatisticAllPass1() {
+    public boolean handleStatisticAllPass1() {
         try {
             for (int c = 0; c < colsLen; c++) {
                 int i = cols.get(c);
@@ -222,12 +220,13 @@ public class Data2DStatistic extends Data2DOperator {
                     skewnessAll.increment(v);
                 }
             }
+            return true;
         } catch (Exception e) {
-
+            return false;
         }
     }
 
-    public void handleStatisticAllPass2() {
+    public boolean handleStatisticAllPass2() {
         try {
             for (int c = 0; c < colsLen; c++) {
                 if (statisticAll.count == 0) {
@@ -252,19 +251,25 @@ public class Data2DStatistic extends Data2DOperator {
                 v = v - statisticAll.mean;
                 statisticAll.dTmp += v * v;
             }
+            return true;
         } catch (Exception e) {
+            return false;
         }
     }
 
-    public void handleStatisticRows() {
+    public boolean handleStatisticRows() {
         try {
-            List<String> row = new ArrayList<>();
+            targetRow = null;
+            if (sourceRow == null) {
+                return false;
+            }
+            targetRow = new ArrayList<>();
             int startIndex;
             if (statisticCalculation.getCategoryName() == null) {
-                row.add(message("Row") + " " + rowIndex);
+                targetRow.add(message("Row") + " " + sourceRowIndex);
                 startIndex = 0;
             } else {
-                row.add(sourceRow.get(cols.get(0)));
+                targetRow.add(sourceRow.get(cols.get(0)));
                 startIndex = 1;
             }
             String[] values = new String[colsLen - startIndex];
@@ -276,9 +281,10 @@ public class Data2DStatistic extends Data2DOperator {
                 values[c - startIndex] = sourceRow.get(i);
             }
             DoubleStatistic statistic = new DoubleStatistic(values, statisticCalculation);
-            row.addAll(statistic.toStringList());
-            csvPrinter.printRecord(row);
+            targetRow.addAll(statistic.toStringList());
+            return true;
         } catch (Exception e) {
+            return false;
         }
     }
 

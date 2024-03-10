@@ -1,7 +1,6 @@
-package mara.mybox.data2d.reader;
+package mara.mybox.data2d.operate;
 
 import java.util.ArrayList;
-import java.util.List;
 import mara.mybox.calculation.DoubleStatistic;
 import mara.mybox.calculation.Normalization;
 import mara.mybox.data2d.Data2D_Edit;
@@ -14,7 +13,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-2-25
  * @License Apache License Version 2.0
  */
-public class Data2DNormalize extends Data2DOperator {
+public class Data2DNormalize extends Data2DOperate {
 
     protected Type type;
     protected DoubleStatistic[] statisticData;
@@ -30,12 +29,13 @@ public class Data2DNormalize extends Data2DOperator {
 
     public static Data2DNormalize create(Data2D_Edit data) {
         Data2DNormalize op = new Data2DNormalize();
-        return op.setData(data) ? op : null;
+        return op.setSourceData(data) ? op : null;
     }
 
     @Override
     public boolean checkParameters() {
-        if (cols == null || cols.isEmpty() || type == null || csvPrinter == null || invalidAs == null) {
+        if (!super.checkParameters()
+                || cols == null || cols.isEmpty() || type == null || invalidAs == null) {
             return false;
         }
         switch (type) {
@@ -44,7 +44,7 @@ public class Data2DNormalize extends Data2DOperator {
                 if (statisticData == null) {
                     return false;
                 }
-                if (cols == null || cols.isEmpty() || type == null || csvPrinter == null || invalidAs == null) {
+                if (cols == null || cols.isEmpty() || type == null || invalidAs == null) {
                     return false;
                 }
                 break;
@@ -69,146 +69,153 @@ public class Data2DNormalize extends Data2DOperator {
     }
 
     @Override
-    public void handleRow() {
+    public boolean handleRow() {
         switch (type) {
             case MinMaxColumns:
-                handleNormalizeMinMaxColumns();
-                break;
+                return handleNormalizeMinMaxColumns();
             case SumColumns:
-                handleNormalizeSumColumns();
-                break;
+                return handleNormalizeSumColumns();
             case ZscoreColumns:
-                handleNormalizeZscoreColumns();
-                break;
+                return handleNormalizeZscoreColumns();
             case Rows:
-                handleNormalizeRows(a);
-                break;
+                return handleNormalizeRows(a);
             case MinMaxAll:
-                handleNormalizeMinMaxAll();
-                break;
+                return handleNormalizeMinMaxAll();
             case SumAll:
-                handleNormalizeSumAll();
-                break;
+                return handleNormalizeSumAll();
             case ZscoreAll:
-                handleNormalizeZscoreAll();
-                break;
-
+                return handleNormalizeZscoreAll();
         }
+        return false;
     }
 
-    public void handleNormalizeMinMaxColumns() {
+    public boolean handleNormalizeMinMaxColumns() {
         try {
-            List<String> row = new ArrayList<>();
+            targetRow = null;
+            if (sourceRow == null) {
+                return false;
+            }
+            targetRow = new ArrayList<>();
             if (includeRowNumber) {
-                row.add(message("Row") + rowIndex);
+                targetRow.add(message("Row") + sourceRowIndex);
             }
             for (int c = 0; c < colsLen; c++) {
                 int i = cols.get(c);
                 if (i < 0 || i >= sourceRow.size()) {
-                    row.add(null);
+                    targetRow.add(null);
                 } else {
                     String s = sourceRow.get(i);
                     double v = DoubleTools.toDouble(s, invalidAs);
                     if (DoubleTools.invalidDouble(v)) {
                         switch (invalidAs) {
                             case Blank:
-                                row.add("");
+                                targetRow.add("");
                                 break;
                             case Zero:
-                                row.add("0");
+                                targetRow.add("0");
                                 break;
                             default:
-                                row.add(s);
+                                targetRow.add(s);
                                 break;
                         }
                     } else {
                         v = from + statisticData[c].dTmp * (v - statisticData[c].minimum);
-                        row.add(DoubleTools.scale(v, scale) + "");
+                        targetRow.add(DoubleTools.scale(v, scale) + "");
                     }
                 }
             }
             if (otherCols != null) {
                 for (int c : otherCols) {
                     if (c < 0 || c >= sourceRow.size()) {
-                        row.add(null);
+                        targetRow.add(null);
                     } else {
-                        row.add(sourceRow.get(c));
+                        targetRow.add(sourceRow.get(c));
                     }
                 }
             }
-            csvPrinter.printRecord(row);
+            return true;
         } catch (Exception e) {
+            return false;
         }
     }
 
-    public void handleNormalizeSumColumns() {
+    public boolean handleNormalizeSumColumns() {
         try {
-            List<String> row = new ArrayList<>();
+            targetRow = null;
+            if (sourceRow == null) {
+                return false;
+            }
+            targetRow = new ArrayList<>();
             if (includeRowNumber) {
-                row.add(message("Row") + rowIndex);
+                targetRow.add(message("Row") + sourceRowIndex);
             }
             for (int c = 0; c < colsLen; c++) {
                 int i = cols.get(c);
                 if (i < 0 || i >= sourceRow.size()) {
-                    row.add(null);
+                    targetRow.add(null);
                 } else {
                     String s = sourceRow.get(i);
                     double v = DoubleTools.toDouble(s, invalidAs);
                     if (DoubleTools.invalidDouble(v)) {
                         switch (invalidAs) {
                             case Blank:
-                                row.add("");
+                                targetRow.add("");
                                 break;
                             case Zero:
-                                row.add("0");
+                                targetRow.add("0");
                                 break;
                             default:
-                                row.add(s);
+                                targetRow.add(s);
                                 break;
                         }
                     } else {
                         v = v * colValues[c];
-                        row.add(DoubleTools.scale(v, scale) + "");
+                        targetRow.add(DoubleTools.scale(v, scale) + "");
                     }
                 }
             }
             if (otherCols != null) {
                 for (int c : otherCols) {
                     if (c < 0 || c >= sourceRow.size()) {
-                        row.add(null);
+                        targetRow.add(null);
                     } else {
-                        row.add(sourceRow.get(c));
+                        targetRow.add(sourceRow.get(c));
                     }
                 }
             }
-            csvPrinter.printRecord(row);
+            return true;
         } catch (Exception e) {
+            return false;
         }
     }
 
-    public void handleNormalizeZscoreColumns() {
+    public boolean handleNormalizeZscoreColumns() {
         try {
-            List<String> row = new ArrayList<>();
+            targetRow = null;
+            if (sourceRow == null) {
+                return false;
+            }
+            targetRow = new ArrayList<>();
             if (includeRowNumber) {
-                row.add(message("Row") + rowIndex);
+                targetRow.add(message("Row") + sourceRowIndex);
             }
             for (int c = 0; c < colsLen; c++) {
                 int i = cols.get(c);
                 if (i < 0 || i >= sourceRow.size()) {
-                    row.add(null);
+                    targetRow.add(null);
                 } else {
                     String s = sourceRow.get(i);
                     double v = DoubleTools.toDouble(s, invalidAs);
                     if (DoubleTools.invalidDouble(v)) {
                         switch (invalidAs) {
                             case Blank:
-                                row.add("");
+                                targetRow.add("");
                                 break;
                             case Zero:
-                                row.add("0");
+                                targetRow.add("0");
                                 break;
                             default:
-                                row.add(s);
+                                targetRow.add(s);
                                 break;
                         }
                     } else {
@@ -217,137 +224,152 @@ public class Data2DNormalize extends Data2DOperator {
                             k = AppValues.TinyDouble;
                         }
                         v = (v - statisticData[c].mean) / k;
-                        row.add(DoubleTools.scale(v, scale) + "");
+                        targetRow.add(DoubleTools.scale(v, scale) + "");
                     }
                 }
             }
             if (otherCols != null) {
                 for (int c : otherCols) {
                     if (c < 0 || c >= sourceRow.size()) {
-                        row.add(null);
+                        targetRow.add(null);
                     } else {
-                        row.add(sourceRow.get(c));
+                        targetRow.add(sourceRow.get(c));
                     }
                 }
             }
-            csvPrinter.printRecord(row);
+            return true;
         } catch (Exception e) {
+            return false;
         }
     }
 
-    public void handleNormalizeMinMaxAll() {
+    public boolean handleNormalizeMinMaxAll() {
         try {
-            List<String> row = new ArrayList<>();
+            targetRow = null;
+            if (sourceRow == null) {
+                return false;
+            }
+            targetRow = new ArrayList<>();
             if (includeRowNumber) {
-                row.add(message("Row") + rowIndex);
+                targetRow.add(message("Row") + sourceRowIndex);
             }
             for (int c = 0; c < colsLen; c++) {
                 int i = cols.get(c);
                 if (i < 0 || i >= sourceRow.size()) {
-                    row.add(null);
+                    targetRow.add(null);
                 } else {
                     String s = sourceRow.get(i);
                     double v = DoubleTools.toDouble(s, invalidAs);
                     if (DoubleTools.invalidDouble(v)) {
                         switch (invalidAs) {
                             case Blank:
-                                row.add("");
+                                targetRow.add("");
                                 break;
                             case Zero:
-                                row.add("0");
+                                targetRow.add("0");
                                 break;
                             default:
-                                row.add(s);
+                                targetRow.add(s);
                                 break;
                         }
                     } else {
                         v = from + statisticAll.dTmp * (v - statisticAll.minimum);
-                        row.add(DoubleTools.scale(v, scale) + "");
+                        targetRow.add(DoubleTools.scale(v, scale) + "");
                     }
                 }
             }
             if (otherCols != null) {
                 for (int c : otherCols) {
                     if (c < 0 || c >= sourceRow.size()) {
-                        row.add(null);
+                        targetRow.add(null);
                     } else {
-                        row.add(sourceRow.get(c));
+                        targetRow.add(sourceRow.get(c));
                     }
                 }
             }
-            csvPrinter.printRecord(row);
+            return true;
         } catch (Exception e) {
+            return false;
         }
     }
 
-    public void handleNormalizeSumAll() {
+    public boolean handleNormalizeSumAll() {
         try {
-            List<String> row = new ArrayList<>();
+            targetRow = null;
+            if (sourceRow == null) {
+                return false;
+            }
+            targetRow = new ArrayList<>();
             if (includeRowNumber) {
-                row.add(message("Row") + rowIndex);
+                targetRow.add(message("Row") + sourceRowIndex);
             }
             for (int c = 0; c < colsLen; c++) {
                 int i = cols.get(c);
                 if (i < 0 || i >= sourceRow.size()) {
-                    row.add(null);
+                    targetRow.add(null);
                 } else {
                     String s = sourceRow.get(i);
                     double v = DoubleTools.toDouble(s, invalidAs);
                     if (DoubleTools.invalidDouble(v)) {
                         switch (invalidAs) {
                             case Blank:
-                                row.add("");
+                                targetRow.add("");
                                 break;
                             case Zero:
-                                row.add("0");
+                                targetRow.add("0");
                                 break;
                             default:
-                                row.add(s);
+                                targetRow.add(s);
                                 break;
                         }
                     } else {
                         v = v * tValue;
-                        row.add(DoubleTools.scale(v, scale) + "");
+                        targetRow.add(DoubleTools.scale(v, scale) + "");
                     }
                 }
             }
             if (otherCols != null) {
                 for (int c : otherCols) {
                     if (c < 0 || c >= sourceRow.size()) {
-                        row.add(null);
+                        targetRow.add(null);
                     } else {
-                        row.add(sourceRow.get(c));
+                        targetRow.add(sourceRow.get(c));
                     }
                 }
             }
-            csvPrinter.printRecord(row);
+            return true;
         } catch (Exception e) {
+            return false;
         }
     }
 
-    public void handleNormalizeZscoreAll() {
+    public boolean handleNormalizeZscoreAll() {
         try {
-            List<String> row = new ArrayList<>();
+            targetRow = null;
+            if (sourceRow == null) {
+                return false;
+            }
+            targetRow = new ArrayList<>();
             if (includeRowNumber) {
-                row.add(message("Row") + rowIndex);
+                targetRow.add(message("Row") + sourceRowIndex);
             }
             for (int c = 0; c < colsLen; c++) {
                 int i = cols.get(c);
                 if (i < 0 || i >= sourceRow.size()) {
-                    row.add(null);
+                    targetRow.add(null);
                 } else {
                     String s = sourceRow.get(i);
                     double v = DoubleTools.toDouble(s, invalidAs);
                     if (DoubleTools.invalidDouble(v)) {
                         switch (invalidAs) {
                             case Blank:
-                                row.add("");
+                                targetRow.add("");
                                 break;
                             case Zero:
-                                row.add("0");
+                                targetRow.add("0");
                                 break;
                             default:
-                                row.add(s);
+                                targetRow.add(s);
                                 break;
                         }
                     } else {
@@ -356,29 +378,34 @@ public class Data2DNormalize extends Data2DOperator {
                             k = AppValues.TinyDouble;
                         }
                         v = (v - statisticAll.mean) / k;
-                        row.add(DoubleTools.scale(v, scale) + "");
+                        targetRow.add(DoubleTools.scale(v, scale) + "");
                     }
                 }
             }
             if (otherCols != null) {
                 for (int c : otherCols) {
                     if (c < 0 || c >= sourceRow.size()) {
-                        row.add(null);
+                        targetRow.add(null);
                     } else {
-                        row.add(sourceRow.get(c));
+                        targetRow.add(sourceRow.get(c));
                     }
                 }
             }
-            csvPrinter.printRecord(row);
+            return true;
         } catch (Exception e) {
+            return false;
         }
     }
 
-    public void handleNormalizeRows(Normalization.Algorithm a) {
+    public boolean handleNormalizeRows(Normalization.Algorithm a) {
         try {
-            List<String> row = new ArrayList<>();
+            targetRow = null;
+            if (sourceRow == null) {
+                return false;
+            }
+            targetRow = new ArrayList<>();
             if (includeRowNumber) {
-                row.add(message("Row") + rowIndex);
+                targetRow.add(message("Row") + sourceRowIndex);
             }
             String[] values = new String[colsLen];
             for (int c = 0; c < colsLen; c++) {
@@ -394,37 +421,38 @@ public class Data2DNormalize extends Data2DOperator {
                     .setSourceVector(values)
                     .calculate();
             if (values == null) {
-                return;
+                return false;
             }
             for (String s : values) {
                 double d = DoubleTools.toDouble(s, invalidAs);
                 if (DoubleTools.invalidDouble(d)) {
                     switch (invalidAs) {
                         case Zero:
-                            row.add("0");
+                            targetRow.add("0");
                             break;
                         case Skip:
-                            row.add(s);
+                            targetRow.add(s);
                             break;
                         case Blank:
-                            row.add(null);
+                            targetRow.add(null);
                             break;
                     }
                 } else {
-                    row.add(DoubleTools.scale(d, scale) + "");
+                    targetRow.add(DoubleTools.scale(d, scale) + "");
                 }
             }
             if (otherCols != null) {
                 for (int c : otherCols) {
                     if (c < 0 || c >= sourceRow.size()) {
-                        row.add(null);
+                        targetRow.add(null);
                     } else {
-                        row.add(sourceRow.get(c));
+                        targetRow.add(sourceRow.get(c));
                     }
                 }
             }
-            csvPrinter.printRecord(row);
+            return true;
         } catch (Exception e) {
+            return false;
         }
     }
 

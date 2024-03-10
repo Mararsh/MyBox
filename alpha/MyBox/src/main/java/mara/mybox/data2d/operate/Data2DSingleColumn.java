@@ -1,10 +1,10 @@
-package mara.mybox.data2d.reader;
+package mara.mybox.data2d.operate;
 
 import java.sql.Connection;
-import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.data2d.Data2D_Edit;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.db.Database;
+import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DRow;
 import mara.mybox.db.table.TableData2D;
@@ -15,7 +15,7 @@ import mara.mybox.dev.MyBoxLog;
  * @CreateDate 2022-2-25
  * @License Apache License Version 2.0
  */
-public class Data2DSingleColumn extends Data2DOperator {
+public class Data2DSingleColumn extends Data2DOperate {
 
     protected Connection conn;
     protected DataTable writerTable;
@@ -24,12 +24,14 @@ public class Data2DSingleColumn extends Data2DOperator {
 
     public static Data2DSingleColumn create(Data2D_Edit data) {
         Data2DSingleColumn op = new Data2DSingleColumn();
-        return op.setData(data) ? op : null;
+        return op.setSourceData(data) ? op : null;
     }
 
     @Override
     public boolean checkParameters() {
-        if (cols == null || cols.isEmpty() || conn == null || writerTable == null) {
+        if (!super.checkParameters()
+                || cols == null || cols.isEmpty()
+                || conn == null || writerTable == null) {
             return false;
         }
         writerTableData2D = writerTable.getTableData2D();
@@ -38,8 +40,11 @@ public class Data2DSingleColumn extends Data2DOperator {
     }
 
     @Override
-    public void handleRow() {
+    public boolean handleRow() {
         try {
+            if (sourceRow == null) {
+                return false;
+            }
             int len = sourceRow.size();
             for (int col : cols) {
                 if (col >= 0 && col < len) {
@@ -55,8 +60,14 @@ public class Data2DSingleColumn extends Data2DOperator {
                     }
                 }
             }
+            return true;
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            if (task != null) {
+                task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
+            }
+            return false;
         }
     }
 

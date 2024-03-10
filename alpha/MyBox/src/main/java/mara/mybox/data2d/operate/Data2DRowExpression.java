@@ -1,7 +1,6 @@
-package mara.mybox.data2d.reader;
+package mara.mybox.data2d.operate;
 
 import java.util.ArrayList;
-import java.util.List;
 import mara.mybox.data2d.Data2D_Edit;
 
 /**
@@ -9,51 +8,57 @@ import mara.mybox.data2d.Data2D_Edit;
  * @CreateDate 2022-2-25
  * @License Apache License Version 2.0
  */
-public class Data2DRowExpression extends Data2DOperator {
+public class Data2DRowExpression extends Data2DOperate {
 
     protected String script, name;
-    protected boolean errorContinue;
 
     public static Data2DRowExpression create(Data2D_Edit data) {
         Data2DRowExpression op = new Data2DRowExpression();
-        return op.setData(data) ? op : null;
+        return op.setSourceData(data) ? op : null;
     }
 
     @Override
     public boolean checkParameters() {
-        return cols != null && !cols.isEmpty() && csvPrinter != null
+        return super.checkParameters()
+                && cols != null && !cols.isEmpty()
                 && script != null && name != null;
     }
 
     @Override
-    public void handleRow() {
+    public boolean handleRow() {
         try {
-            List<String> row = new ArrayList<>();
+            targetRow = null;
+            if (sourceRow == null) {
+                return false;
+            }
+            targetRow = new ArrayList<>();
             for (int col : cols) {
                 if (col >= 0 && col < sourceRow.size()) {
-                    row.add(sourceRow.get(col));
+                    targetRow.add(sourceRow.get(col));
                 } else {
-                    row.add(null);
+                    targetRow.add(null);
                 }
             }
-            if (row.isEmpty()) {
-                return;
+            if (targetRow.isEmpty()) {
+                return false;
             }
             if (includeRowNumber) {
-                row.add(0, rowIndex + "");
+                targetRow.add(0, sourceRowIndex + "");
             }
-            if (data2D.calculateDataRowExpression(script, sourceRow, rowIndex)) {
-                row.add(data2D.expressionResult());
+            if (sourceData.calculateDataRowExpression(script, sourceRow, sourceRowIndex)) {
+                targetRow.add(sourceData.expressionResult());
             } else {
                 if (errorContinue) {
-                    row.add(null);
+                    targetRow.add(null);
                 } else {
-                    reader.readerStopped = true;
-                    return;
+                    stop();
+                    return false;
                 }
             }
-            csvPrinter.printRecord(row);
+            return true;
         } catch (Exception e) {
+            showError(e.toString());
+            return false;
         }
     }
 

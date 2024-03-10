@@ -1,8 +1,7 @@
-package mara.mybox.data2d.reader;
+package mara.mybox.data2d.operate;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import mara.mybox.data2d.Data2D_Edit;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.NumberTools;
@@ -14,49 +13,50 @@ import org.apache.commons.math3.stat.Frequency;
  * @CreateDate 2022-2-25
  * @License Apache License Version 2.0
  */
-public class Data2DFrequency extends Data2DOperator {
+public class Data2DFrequency extends Data2DOperate {
 
     protected Frequency frequency;
     protected int colIndex;
-    protected long count;
 
     public static Data2DFrequency create(Data2D_Edit data) {
         Data2DFrequency op = new Data2DFrequency();
-        return op.setData(data) ? op : null;
+        return op.setSourceData(data) ? op : null;
     }
 
     @Override
     public boolean checkParameters() {
-        return frequency != null && csvPrinter != null;
+        return super.checkParameters() && frequency != null;
     }
 
     @Override
-    public void handleRow() {
+    public boolean handleRow() {
         try {
             frequency.addValue(sourceRow.get(colIndex));
+            return true;
         } catch (Exception e) {
+            return false;
         }
     }
 
     @Override
     public boolean end() {
         try {
-            List<String> row = new ArrayList<>();
-            row.add(message("All"));
-            row.add(frequency.getSumFreq() + "");
-            row.add("100");
-            csvPrinter.printRecord(row);
+            targetRow = new ArrayList<>();
+            targetRow.add(message("All"));
+            targetRow.add(frequency.getSumFreq() + "");
+            targetRow.add("100");
+            writeRow();
             count = 1;
             Iterator iterator = frequency.valuesIterator();
             if (iterator != null) {
                 while (iterator.hasNext()) {
                     Object o = iterator.next();
-                    row.clear();
+                    targetRow.clear();
                     String value = o == null ? null : (String) o;
-                    row.add(value);
-                    row.add(frequency.getCount(value) + "");
-                    row.add(NumberTools.format(frequency.getPct(value) * 100, scale));
-                    csvPrinter.printRecord(row);
+                    targetRow.add(value);
+                    targetRow.add(frequency.getCount(value) + "");
+                    targetRow.add(NumberTools.format(frequency.getPct(value) * 100, scale));
+                    writeRow();
                     count++;
                 }
             }

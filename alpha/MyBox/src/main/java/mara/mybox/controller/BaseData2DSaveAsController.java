@@ -4,7 +4,7 @@ import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.Data2D_Attributes.TargetType;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.data2d.TmpTable;
-import mara.mybox.data2d.reader.Data2DExport;
+import mara.mybox.data2d.operate.Data2DExport;
 import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;

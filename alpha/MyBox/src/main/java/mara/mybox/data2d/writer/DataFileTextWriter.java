@@ -1,17 +1,16 @@
 package mara.mybox.data2d.writer;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
-import java.util.List;
-import mara.mybox.data2d.DataFileText;
-import mara.mybox.dev.MyBoxLog;
+import java.nio.charset.Charset;
+import mara.mybox.data2d.Data2D;
+import mara.mybox.db.data.Data2DDefinition;
+import mara.mybox.db.data.VisitHistory;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextFileTools;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -20,101 +19,110 @@ import mara.mybox.tools.TextFileTools;
  */
 public class DataFileTextWriter extends Data2DWriter {
 
-    protected DataFileText sourceText;
-    protected BufferedReader textReader;
-    protected BufferedWriter textWriter;
+    protected BufferedWriter fileWriter;
+    protected Charset charset;
     protected String delimiter;
 
-    public DataFileTextWriter(DataFileText data) {
-        this.sourceText = data;
-        init(data);
-        delimiter = data.getDelimiter();
+    public DataFileTextWriter() {
+        fileSuffix = "txt";
+        charset = Charset.forName("utf-8");
+        delimiter = ",";
     }
 
     @Override
-    public void scanData() {
-        if (!FileTools.hasData(sourceFile)) {
-            return;
-        }
-        File tmpFile = FileTmpTools.getTempFile();
-        File validFile = FileTools.removeBOM(task, sourceFile);
-        if (validFile == null || writerStopped()) {
-            return;
-        }
-        rowIndex = 0;
-        count = 0;
-        try (BufferedReader reader = new BufferedReader(new FileReader(validFile, sourceText.getCharset()));
-                BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, sourceText.getCharset(), false))) {
-            textReader = reader;
-            textWriter = writer;
-            failed = !handleRows();
-            textWriter = null;
-            textReader = null;
-            writer.close();
-            reader.close();
-            if (failed) {
-                FileDeleteTools.delete(tmpFile);
-            } else {
-                failed = !FileTools.override(tmpFile, sourceFile);
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            failed = true;
-        }
-        if (failed) {
-            writerStopped = true;
-        }
-    }
-
-    public boolean handleRows() {
-        if (textReader == null) {
-            return false;
-        }
+    public boolean openWriter() {
         try {
-            List<String> names = data2D.columnNames();
-            if (data2D.isHasHeader() && names != null) {
-                sourceText.readValidLine(textReader);
-                TextFileTools.writeLine(task, textWriter, names, delimiter);
+            targetFile = makeTargetFile();
+            if (targetFile == null) {
+                showInfo((skip ? message("Skipped") : message("Failed")) + ": " + fileSuffix);
+                return false;
             }
-            if (isClearData()) {
-                count = data2D.getDataSize();
-                return true;
+            showInfo(message("Writing") + " " + targetFile.getAbsolutePath());
+            tmpFile = FileTmpTools.getTempFile();
+            if (fileWriter == null) {
+                fileWriter = new BufferedWriter(new FileWriter(tmpFile, charset));
             }
-            String line;
-            while ((line = textReader.readLine()) != null && !writerStopped()) {
-                sourceRow = sourceText.parseFileLine(line);
-                if (sourceRow == null || sourceRow.isEmpty()) {
-                    continue;
-                }
-                ++rowIndex;
-                handleRow();
+            if (writeHeader) {
+                TextFileTools.writeLine(task(), fileWriter, headerNames, delimiter);
             }
+            return true;
         } catch (Exception e) {
-            MyBoxLog.error(e);
-            if (task != null) {
-                task.setError(e.toString());
-            }
+            handleError(e.toString());
             return false;
         }
-        return true;
     }
 
     @Override
-    public void writeRow() {
+    public void printTargetRow() {
         try {
-            if (writerStopped() || targetRow == null) {
+            if (targetRow == null) {
                 return;
             }
-            TextFileTools.writeLine(task, textWriter, targetRow, delimiter);
+            TextFileTools.writeLine(task(), fileWriter, targetRow, delimiter);
         } catch (Exception e) {
-            MyBoxLog.error(e);
-            if (task != null) {
-                task.setError(e.toString());
-            }
+            handleError(e.toString());
         }
+    }
+
+    @Override
+    public void closeWriter() {
+        try {
+            created = false;
+            if (fileWriter == null) {
+                return;
+            }
+            fileWriter.flush();
+            fileWriter.close();
+            fileWriter = null;
+            if (isFailed() || tmpFile == null || !tmpFile.exists()
+                    || !FileTools.override(tmpFile, targetFile)) {
+                FileDeleteTools.delete(tmpFile);
+                return;
+            }
+            if (targetFile == null || targetFile.exists()) {
+                return;
+            }
+            if (recordTargetFile && taskController != null) {
+                taskController.targetFileGenerated(targetFile, VisitHistory.FileType.Text);
+            }
+            if (recordTargetData) {
+                if (targetData == null) {
+                    targetData = Data2D.create(Data2DDefinition.DataType.Texts);
+                }
+                targetData.setTask(task()).setFile(targetFile)
+                        .setCharset(charset)
+                        .setDelimiter(delimiter)
+                        .setHasHeader(writeHeader)
+                        .setDataName(dataName)
+                        .setColsNumber(columns.size())
+                        .setRowsNumber(targetRowIndex);
+                Data2D.saveAttributes(conn, targetData, columns);
+            }
+            created = true;
+        } catch (Exception e) {
+            handleError(e.toString());
+        }
+    }
+
+    /*
+        get/set
+     */
+    public Charset getCharset() {
+        return charset;
+    }
+
+    public DataFileTextWriter setCharset(Charset charset) {
+        this.charset = charset;
+        return this;
+    }
+
+    public String getDelimiter() {
+        return delimiter;
+    }
+
+    public DataFileTextWriter setDelimiter(String delimiter) {
+        this.delimiter = delimiter;
+        return this;
     }
 
 }

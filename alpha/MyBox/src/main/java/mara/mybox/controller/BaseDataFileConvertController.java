@@ -3,7 +3,7 @@ package mara.mybox.controller;
 import java.io.File;
 import javafx.fxml.FXML;
 import javafx.scene.layout.VBox;
-import mara.mybox.data2d.reader.Data2DExport;
+import mara.mybox.data2d.operate.Data2DExport;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.value.Languages;

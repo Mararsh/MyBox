@@ -4,7 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import mara.mybox.data2d.Data2D_Operations.ObjectType;
 import mara.mybox.data2d.DataTable;
-import mara.mybox.data2d.reader.DataTableGroupStatistic;
+import mara.mybox.data2d.DataTableGroupStatistic;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;

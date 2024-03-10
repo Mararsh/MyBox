@@ -6,6 +6,8 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.data.SetValue;
+import mara.mybox.data2d.writer.Data2DWriter;
+import mara.mybox.data2d.writer.MatrixWriter;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DCell;
 import mara.mybox.db.data.Data2DColumn;
@@ -198,6 +200,16 @@ public class DataMatrix extends Data2D {
         return count;
     }
 
+    @Override
+    public Data2DWriter selfWriter() {
+        if (file == null) {
+            return null;
+        }
+        MatrixWriter writer = new MatrixWriter();
+        writer.setRecordTargetFile(false).setRecordTargetData(false);
+        return writer;
+    }
+
     public static boolean save(FxTask task, DataMatrix matrix,
             List<Data2DColumn> cols, List<List<String>> rows) {
         if (matrix == null || cols == null || rows == null) {
@@ -260,6 +272,10 @@ public class DataMatrix extends Data2D {
             return false;
         }
         return true;
+    }
+
+    public TableData2DCell getTableData2DCell() {
+        return tableData2DCell;
     }
 
 }

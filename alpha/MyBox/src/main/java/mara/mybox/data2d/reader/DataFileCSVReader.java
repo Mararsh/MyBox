@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import mara.mybox.data2d.DataFileCSV;
-import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
 import org.apache.commons.csv.CSVParser;
@@ -23,8 +22,8 @@ public class DataFileCSVReader extends Data2DReader {
     protected CSVParser csvParser;
 
     public DataFileCSVReader(DataFileCSV data) {
-        this.readerCSV = data;
-        init(data);
+        readerCSV = data;
+        sourceData = data;
     }
 
     @Override
@@ -33,121 +32,134 @@ public class DataFileCSVReader extends Data2DReader {
             return;
         }
         readerCSV.checkForLoad();
-        File validFile = FileTools.removeBOM(task, sourceFile);
-        if (validFile == null || readerStopped()) {
+        File validFile = FileTools.removeBOM(task(), sourceFile);
+        if (validFile == null || isStopped()) {
             return;
         }
         try (CSVParser parser = CSVParser.parse(validFile, readerCSV.getCharset(), readerCSV.cvsFormat())) {
             csvParser = parser;
             iterator = parser.iterator();
-            operator.handleData();
+            operate.handleData();
             csvParser = null;
             parser.close();
         } catch (Exception e) {
-            MyBoxLog.error(e);
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            failed = true;
+            handleError(e.toString());
+            setFailed();
         }
     }
 
     @Override
     public void readColumnNames() {
-        if (csvParser == null) {
-            return;
-        }
-        sourceRow = null;
-        if (readerHasHeader) {
-            try {
-                List<String> values = csvParser.getHeaderNames();
-                if (StringTools.noDuplicated(values, true)) {
-                    names = new ArrayList<>();
-                    names.addAll(values);
-                    return;
-                } else {
-                    sourceRow = new ArrayList<>();
-                    sourceRow.addAll(values);
+        try {
+            if (csvParser == null) {
+                return;
+            }
+            sourceRow = null;
+            if (readerHasHeader) {
+                try {
+                    List<String> values = csvParser.getHeaderNames();
+                    if (StringTools.noDuplicated(values, true)) {
+                        names = new ArrayList<>();
+                        names.addAll(values);
+                        return;
+                    } else {
+                        sourceRow = new ArrayList<>();
+                        sourceRow.addAll(values);
+                    }
+                } catch (Exception e) {
+                    handleError(e.toString());
                 }
-            } catch (Exception e) {
-                MyBoxLog.error(e);
-                if (task != null) {
-                    task.setError(e.toString());
+            } else {
+                while (iterator.hasNext() && !isStopped()) {
+                    readRecord();
+                    if (sourceRow != null && !sourceRow.isEmpty()) {
+                        break;
+                    }
                 }
             }
-        } else {
-            while (iterator.hasNext() && !readerStopped()) {
-                readRecord();
-                if (sourceRow != null && !sourceRow.isEmpty()) {
-                    break;
-                }
-            }
+            readerHasHeader = false;
+            handleHeader();
+        } catch (Exception e) {
+            handleError(e.toString());
         }
-        readerHasHeader = false;
-        handleHeader();
     }
 
     @Override
     public void readTotal() {
-        if (iterator == null) {
-            return;
-        }
-        rowIndex = 0;
-        while (iterator.hasNext()) {
-            if (readerStopped()) {
-                rowIndex = 0;
+        try {
+            if (iterator == null) {
                 return;
             }
-            readRecord();
-            if (sourceRow != null && !sourceRow.isEmpty()) {
-                ++rowIndex;
+            rowIndex = 0;
+            while (iterator.hasNext()) {
+                if (isStopped()) {
+                    rowIndex = 0;
+                    return;
+                }
+                readRecord();
+                if (sourceRow != null && !sourceRow.isEmpty()) {
+                    ++rowIndex;
+                }
             }
+        } catch (Exception e) {
+            handleError(e.toString());
+            setFailed();
         }
     }
 
-    // rowIndex is 1-base while rowsStart and rowsEnd are 0-based
+    // rowIndex is 1-base while pageStartIndex and pageEndIndex are 0-based
     @Override
     public void readPage() {
-        if (iterator == null) {
-            return;
-        }
-        rowIndex = 0;
-        while (iterator.hasNext() && !readerStopped()) {
-            readRecord();
-            if (sourceRow == null || sourceRow.isEmpty()) {
-                continue;
+        try {
+            if (iterator == null) {
+                return;
             }
-            if (rowIndex++ < rowsStart) {
-                continue;
+            rowIndex = 0;
+            while (iterator.hasNext() && !isStopped()) {
+                readRecord();
+                if (sourceRow == null || sourceRow.isEmpty()) {
+                    continue;
+                }
+                if (rowIndex++ < pageStartIndex) {
+                    continue;
+                }
+                if (rowIndex > pageEndIndex) {
+                    stop();
+                    break;
+                }
+                handlePageRow();
             }
-            if (rowIndex > rowsEnd) {
-                readerStopped = true;
-                break;
-            }
-            handlePageRow();
+        } catch (Exception e) {
+            handleError(e.toString());
+            setFailed();
         }
     }
 
     @Override
     public void readRows() {
-        if (iterator == null) {
-            return;
-        }
-        rowIndex = 0;
-        while (iterator.hasNext() && !readerStopped()) {
-            readRecord();
-            if (sourceRow == null || sourceRow.isEmpty()) {
-                continue;
+        try {
+            if (iterator == null) {
+                return;
             }
-            ++rowIndex;
-            handleRow();
+            rowIndex = 0;
+            while (iterator.hasNext() && !isStopped()) {
+                readRecord();
+                if (sourceRow == null || sourceRow.isEmpty()) {
+                    continue;
+                }
+                ++rowIndex;
+                handleRow();
+            }
+        } catch (Exception e) {
+            handleError(e.toString());
+            setFailed();
         }
     }
 
     public void readRecord() {
         try {
             sourceRow = null;
-            if (readerStopped() || iterator == null) {
+            if (isStopped() || iterator == null) {
                 return;
             }
             CSVRecord csvRecord = iterator.next();
@@ -159,10 +171,7 @@ public class DataFileCSVReader extends Data2DReader {
                 sourceRow.add(v);
             }
         } catch (Exception e) {
-            MyBoxLog.error(e);
-            if (task != null) {
-                task.setError(e.toString());
-            }
+            handleError(e.toString());
         }
     }
 

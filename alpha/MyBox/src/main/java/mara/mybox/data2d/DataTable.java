@@ -13,6 +13,8 @@ import java.util.Random;
 import mara.mybox.calculation.DescriptiveStatistic;
 import mara.mybox.calculation.DescriptiveStatistic.StatisticType;
 import mara.mybox.calculation.DoubleStatistic;
+import mara.mybox.data2d.writer.Data2DWriter;
+import mara.mybox.data2d.writer.DataBaseTableWriter;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.InvalidAs;
@@ -364,6 +366,16 @@ public class DataTable extends Data2D {
             }
         }
         return false;
+    }
+
+    @Override
+    public Data2DWriter selfWriter() {
+        if (file == null) {
+            return null;
+        }
+        DataBaseTableWriter writer = new DataBaseTableWriter();
+        writer.setRecordTargetFile(false).setRecordTargetData(false);
+        return writer;
     }
 
     @Override

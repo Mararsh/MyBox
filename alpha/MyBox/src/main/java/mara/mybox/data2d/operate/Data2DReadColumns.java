@@ -1,26 +1,27 @@
-package mara.mybox.data2d.reader;
+package mara.mybox.data2d.operate;
 
 import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.data2d.Data2D_Edit;
+import mara.mybox.dev.MyBoxLog;
 
 /**
  * @Author Mara
  * @CreateDate 2022-2-25
  * @License Apache License Version 2.0
  */
-public class Data2DReadColumns extends Data2DOperator {
+public class Data2DReadColumns extends Data2DOperate {
 
     protected List<List<String>> rows;
 
     public static Data2DReadColumns create(Data2D_Edit data) {
         Data2DReadColumns op = new Data2DReadColumns();
-        return op.setData(data) ? op : null;
+        return op.setSourceData(data) ? op : null;
     }
 
     @Override
     public boolean checkParameters() {
-        if (cols == null || cols.isEmpty()) {
+        if (!super.checkParameters() || cols == null || cols.isEmpty()) {
             return false;
         }
         rows = new ArrayList<>();
@@ -28,8 +29,11 @@ public class Data2DReadColumns extends Data2DOperator {
     }
 
     @Override
-    public void handleRow() {
+    public boolean handleRow() {
         try {
+            if (sourceRow == null) {
+                return false;
+            }
             List<String> row = new ArrayList<>();
             for (int col : cols) {
                 if (col >= 0 && col < sourceRow.size()) {
@@ -39,13 +43,20 @@ public class Data2DReadColumns extends Data2DOperator {
                 }
             }
             if (row.isEmpty()) {
-                return;
+                return false;
             }
             if (includeRowNumber) {
-                row.add(0, rowIndex + "");
+                row.add(0, sourceRowIndex + "");
             }
             rows.add(row);
+            return true;
         } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
+            }
+            return false;
         }
     }
 

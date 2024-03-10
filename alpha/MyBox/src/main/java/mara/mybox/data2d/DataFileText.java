@@ -8,6 +8,8 @@ import java.io.FileWriter;
 import java.nio.charset.Charset;
 import java.util.List;
 import mara.mybox.data.FindReplaceString;
+import mara.mybox.data2d.writer.Data2DWriter;
+import mara.mybox.data2d.writer.DataFileTextWriter;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.FileTools;
@@ -308,6 +310,21 @@ public class DataFileText extends DataFile {
             }
             return null;
         }
+    }
+
+    @Override
+    public Data2DWriter selfWriter() {
+        if (file == null) {
+            return null;
+        }
+        DataFileTextWriter writer = new DataFileTextWriter();
+        writer.setCharset(charset)
+                .setDelimiter(delimiter)
+                .setWriteHeader(hasHeader)
+                .setTargetFile(file)
+                .setRecordTargetFile(true)
+                .setRecordTargetData(false);
+        return writer;
     }
 
 }

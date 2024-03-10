@@ -8,7 +8,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.layout.FlowPane;
 import mara.mybox.data2d.Data2D;
-import mara.mybox.data2d.reader.Data2DExport;
+import mara.mybox.data2d.operate.Data2DExport;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ValidationTools;
 import static mara.mybox.value.Languages.message;

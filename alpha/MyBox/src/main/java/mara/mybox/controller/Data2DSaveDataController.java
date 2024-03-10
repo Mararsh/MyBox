@@ -2,7 +2,7 @@ package mara.mybox.controller;
 
 import mara.mybox.data2d.Data2D_Attributes.TargetType;
 import mara.mybox.data2d.DataFileCSV;
-import mara.mybox.data2d.reader.Data2DExport;
+import mara.mybox.data2d.operate.Data2DExport;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
@@ -48,7 +48,7 @@ public class Data2DSaveDataController extends BaseData2DSaveAsController {
                 data2D.startTask(currentTask, null);
                 data2D.export(export, data2D.columnIndices());
                 data2D.stopTask();
-                return !export.failed();
+                return !export.isFailed();
             }
         } catch (Exception e) {
             error = e.toString();

@@ -1,8 +1,8 @@
-package mara.mybox.data2d.reader;
+package mara.mybox.data2d.operate;
 
 import java.util.ArrayList;
-import java.util.List;
 import mara.mybox.data2d.Data2D_Edit;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DoubleTools;
 import static mara.mybox.value.Languages.message;
 
@@ -11,7 +11,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-2-25
  * @License Apache License Version 2.0
  */
-public class Data2DPrecentage extends Data2DOperator {
+public class Data2DPrecentage extends Data2DOperate {
 
     protected Type type;
     protected double[] colValues;
@@ -24,12 +24,12 @@ public class Data2DPrecentage extends Data2DOperator {
 
     public static Data2DPrecentage create(Data2D_Edit data) {
         Data2DPrecentage op = new Data2DPrecentage();
-        return op.setData(data) ? op : null;
+        return op.setSourceData(data) ? op : null;
     }
 
     @Override
     public boolean checkParameters() {
-        if (cols == null || cols.isEmpty() || type == null) {
+        if (!super.checkParameters() || cols == null || cols.isEmpty() || type == null) {
             return false;
         }
         switch (type) {
@@ -37,7 +37,7 @@ public class Data2DPrecentage extends Data2DOperator {
                 colValues = new double[colsLen];
                 break;
             case ColumnsPass2:
-                if (colValues == null || csvPrinter == null) {
+                if (colValues == null) {
                     return false;
                 }
                 break;
@@ -45,14 +45,8 @@ public class Data2DPrecentage extends Data2DOperator {
                 tValue = 0d;
                 break;
             case AllPass2:
-                if (csvPrinter == null) {
-                    return false;
-                }
                 break;
             case Rows:
-                if (csvPrinter == null) {
-                    return false;
-                }
                 break;
             default:
                 return false;
@@ -61,28 +55,27 @@ public class Data2DPrecentage extends Data2DOperator {
     }
 
     @Override
-    public void handleRow() {
+    public boolean handleRow() {
         switch (type) {
             case ColumnsPass1:
-                handlePercentageColumnsPass1();
-                break;
+                return handlePercentageColumnsPass1();
             case ColumnsPass2:
-                handlePercentageColumnsPass2();
-                break;
+                return handlePercentageColumnsPass2();
             case AllPass1:
-                handlePercentageAllPass1();
-                break;
+                return handlePercentageAllPass1();
             case AllPass2:
-                handlePercentageAllPass2();
-                break;
+                return handlePercentageAllPass2();
             case Rows:
-                handlePercentageRows();
-                break;
+                return handlePercentageRows();
         }
+        return false;
     }
 
-    public void handlePercentageColumnsPass1() {
+    public boolean handlePercentageColumnsPass1() {
         try {
+            if (sourceRow == null) {
+                return false;
+            }
             for (int c = 0; c < colsLen; c++) {
                 int i = cols.get(c);
                 if (i < 0 || i >= sourceRow.size()) {
@@ -98,14 +91,20 @@ public class Data2DPrecentage extends Data2DOperator {
                     colValues[c] += d;
                 }
             }
+            return true;
         } catch (Exception e) {
+            return false;
         }
     }
 
-    public void handlePercentageColumnsPass2() {
+    public boolean handlePercentageColumnsPass2() {
         try {
-            List<String> row = new ArrayList<>();
-            row.add(message("Row") + rowIndex);
+            targetRow = null;
+            if (sourceRow == null) {
+                return false;
+            }
+            targetRow = new ArrayList<>();
+            targetRow.add(message("Row") + sourceRowIndex);
             for (int c = 0; c < colsLen; c++) {
                 int i = cols.get(c);
                 double d;
@@ -116,11 +115,11 @@ public class Data2DPrecentage extends Data2DOperator {
                 }
                 double s = colValues[c];
                 if (DoubleTools.invalidDouble(d) || s == 0) {
-                    row.add(Double.NaN + "");
+                    targetRow.add(Double.NaN + "");
                 } else {
                     if (d < 0) {
                         if ("skip".equals(toNegative)) {
-                            row.add(Double.NaN + "");
+                            targetRow.add(Double.NaN + "");
                             continue;
                         } else if ("abs".equals(toNegative)) {
                             d = Math.abs(d);
@@ -128,25 +127,34 @@ public class Data2DPrecentage extends Data2DOperator {
                             d = 0;
                         }
                     }
-                    row.add(DoubleTools.percentage(d, s, scale));
+                    targetRow.add(DoubleTools.percentage(d, s, scale));
                 }
             }
             if (otherCols != null) {
                 for (int c : otherCols) {
                     if (c < 0 || c >= sourceRow.size()) {
-                        row.add(null);
+                        targetRow.add(null);
                     } else {
-                        row.add(sourceRow.get(c));
+                        targetRow.add(sourceRow.get(c));
                     }
                 }
             }
-            csvPrinter.printRecord(row);
+            return true;
         } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
+            }
+            return false;
         }
     }
 
-    public void handlePercentageAllPass1() {
+    public boolean handlePercentageAllPass1() {
         try {
+            if (sourceRow == null) {
+                return false;
+            }
             for (int c = 0; c < colsLen; c++) {
                 int i = cols.get(c);
                 if (i < 0 || i >= sourceRow.size()) {
@@ -162,14 +170,20 @@ public class Data2DPrecentage extends Data2DOperator {
                     tValue += d;
                 }
             }
+            return true;
         } catch (Exception e) {
+            return false;
         }
     }
 
-    public void handlePercentageAllPass2() {
+    public boolean handlePercentageAllPass2() {
         try {
-            List<String> row = new ArrayList<>();
-            row.add(message("Row") + rowIndex);
+            targetRow = null;
+            if (sourceRow == null) {
+                return false;
+            }
+            targetRow = new ArrayList<>();
+            targetRow.add(message("Row") + sourceRowIndex);
             for (int c = 0; c < colsLen; c++) {
                 int i = cols.get(c);
                 double d;
@@ -179,11 +193,11 @@ public class Data2DPrecentage extends Data2DOperator {
                     d = DoubleTools.value(invalidAs);
                 }
                 if (DoubleTools.invalidDouble(d) || tValue == 0) {
-                    row.add(Double.NaN + "");
+                    targetRow.add(Double.NaN + "");
                 } else {
                     if (d < 0) {
                         if ("skip".equals(toNegative)) {
-                            row.add(Double.NaN + "");
+                            targetRow.add(Double.NaN + "");
                             continue;
                         } else if ("abs".equals(toNegative)) {
                             d = Math.abs(d);
@@ -191,27 +205,37 @@ public class Data2DPrecentage extends Data2DOperator {
                             d = 0;
                         }
                     }
-                    row.add(DoubleTools.percentage(d, tValue, scale));
+                    targetRow.add(DoubleTools.percentage(d, tValue, scale));
                 }
             }
             if (otherCols != null) {
                 for (int c : otherCols) {
                     if (c < 0 || c >= sourceRow.size()) {
-                        row.add(null);
+                        targetRow.add(null);
                     } else {
-                        row.add(sourceRow.get(c));
+                        targetRow.add(sourceRow.get(c));
                     }
                 }
             }
-            csvPrinter.printRecord(row);
+            return true;
         } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
+            }
+            return false;
         }
     }
 
-    public void handlePercentageRows() {
+    public boolean handlePercentageRows() {
         try {
-            List<String> row = new ArrayList<>();
-            row.add(message("Row") + rowIndex);
+            targetRow = null;
+            if (sourceRow == null) {
+                return false;
+            }
+            targetRow = new ArrayList<>();
+            targetRow.add(message("Row") + sourceRowIndex);
             double sum = 0;
             for (int c = 0; c < colsLen; c++) {
                 int i = cols.get(c);
@@ -227,7 +251,7 @@ public class Data2DPrecentage extends Data2DOperator {
                     }
                 }
             }
-            row.add(DoubleTools.scale(sum, scale) + "");
+            targetRow.add(DoubleTools.scale(sum, scale) + "");
             for (int c = 0; c < colsLen; c++) {
                 int i = cols.get(c);
                 double d = 0;
@@ -235,11 +259,11 @@ public class Data2DPrecentage extends Data2DOperator {
                     d = DoubleTools.toDouble(sourceRow.get(i), invalidAs);
                 }
                 if (DoubleTools.invalidDouble(d) || sum == 0) {
-                    row.add(Double.NaN + "");
+                    targetRow.add(Double.NaN + "");
                 } else {
                     if (d < 0) {
                         if ("skip".equals(toNegative)) {
-                            row.add(Double.NaN + "");
+                            targetRow.add(Double.NaN + "");
                             continue;
                         } else if ("abs".equals(toNegative)) {
                             d = Math.abs(d);
@@ -247,20 +271,26 @@ public class Data2DPrecentage extends Data2DOperator {
                             d = 0;
                         }
                     }
-                    row.add(DoubleTools.percentage(d, sum, scale));
+                    targetRow.add(DoubleTools.percentage(d, sum, scale));
                 }
             }
             if (otherCols != null) {
                 for (int c : otherCols) {
                     if (c < 0 || c >= sourceRow.size()) {
-                        row.add(null);
+                        targetRow.add(null);
                     } else {
-                        row.add(sourceRow.get(c));
+                        targetRow.add(sourceRow.get(c));
                     }
                 }
             }
-            csvPrinter.printRecord(row);
+            return true;
         } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
+            }
+            return false;
         }
     }
 

@@ -10,9 +10,15 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import mara.mybox.data.SetValue;
-import mara.mybox.data2d.reader.Data2DOperator;
-import mara.mybox.data2d.reader.Data2DReadPage;
-import mara.mybox.data2d.reader.Data2DReadTotal;
+import mara.mybox.data2d.modify.Data2DClear;
+import mara.mybox.data2d.modify.Data2DDelete;
+import mara.mybox.data2d.modify.Data2DSetValue;
+import mara.mybox.data2d.modify.DataTableClear;
+import mara.mybox.data2d.modify.DataTableDelete;
+import mara.mybox.data2d.modify.DataTableSetValue;
+import mara.mybox.data2d.operate.Data2DOperate;
+import mara.mybox.data2d.operate.Data2DReadPage;
+import mara.mybox.data2d.operate.Data2DReadTotal;
 import mara.mybox.data2d.writer.Data2DWriter;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
@@ -46,6 +52,9 @@ public abstract class Data2D_Edit extends Data2D_Filter {
     public abstract List<String> readColumnNames();
 
     public abstract boolean savePageDataAs(Data2D targetData);
+
+    public abstract Data2DWriter selfWriter();
+
 
     /*
         read
@@ -160,10 +169,10 @@ public abstract class Data2D_Edit extends Data2D_Filter {
 
     public long readTotal() {
         dataSize = 0;
-        Data2DOperator reader = Data2DReadTotal.create(this)
+        Data2DOperate reader = Data2DReadTotal.create(this)
                 .setTask(backgroundTask).start();
         if (reader != null) {
-            dataSize = reader.getRowIndex();
+            dataSize = reader.getSourceRowIndex();
         }
         rowsNumber = dataSize;
         try (Connection conn = DerbyBase.getConnection()) {
@@ -256,40 +265,64 @@ public abstract class Data2D_Edit extends Data2D_Filter {
         modify
      */
     public long setValue(List<Integer> cols, SetValue setValue, boolean errorContinue) {
-        if (!validData() || cols == null || cols.isEmpty()) {
-            return -1;
+        try {
+            if (!validData() || cols == null || cols.isEmpty()) {
+                return -1;
+            }
+            Data2DSetValue operate = isUserTable()
+                    ? new DataTableSetValue((DataTable) this, setValue)
+                    : Data2DSetValue.create(this, setValue);
+            if (operate == null) {
+                return -2;
+            }
+            operate.setCols(cols).setErrorContinue(errorContinue)
+                    .setTask(task).start();
+            if (operate.isFailed()) {
+                return -3;
+            }
+            return operate.getCount();
+        } catch (Exception e) {
+            return -4;
         }
-        Data2DWriter writer = Data2DWriter.create(this)
-                .setSetValue(setValue).setCols(cols)
-                .setTask(task).start(Data2DWriter.Operation.SetValue);
-        if (writer == null || writer.isFailed()) {
-            return -2;
-        }
-        return writer.getCount();
     }
 
     public long deleteRows(boolean errorContinue) {
-        if (!validData()) {
-            return -1;
+        try {
+            if (!validData()) {
+                return -1;
+            }
+            Data2DDelete operate = isUserTable()
+                    ? new DataTableDelete((DataTable) this)
+                    : Data2DDelete.create(this);
+            if (operate == null) {
+                return -2;
+            }
+            operate.setTask(task).start();
+            if (operate.isFailed()) {
+                return -3;
+            }
+            return operate.getCount();
+        } catch (Exception e) {
+            return -4;
         }
-        Data2DWriter writer = Data2DWriter.create(this)
-                .setTask(task).start(Data2DWriter.Operation.Delete);
-        if (writer == null || writer.isFailed()) {
-            return -2;
-        }
-        return writer.getCount();
     }
 
     public long clearData() {
         if (!validData()) {
             return -1;
         }
-        Data2DWriter writer = Data2DWriter.create(this)
-                .setTask(task).start(Data2DWriter.Operation.ClearData);
-        if (writer == null || writer.isFailed()) {
+        Data2DOperate operate = isUserTable()
+                ? new DataTableClear((DataTable) this)
+                : Data2DClear.create(this);
+
+        if (operate == null) {
             return -2;
         }
-        return dataSize;
+        operate.setTask(task).start();
+        if (operate.isFailed()) {
+            return -3;
+        }
+        return operate.getCount();
     }
 
     public String encodeCSV(FxTask task, String delimiterName,
@@ -411,6 +444,9 @@ public abstract class Data2D_Edit extends Data2D_Filter {
     public static boolean saveAttributes(Connection conn, Data2D d, List<Data2DColumn> inColumns) {
         if (d == null) {
             return false;
+        }
+        if (conn == null) {
+            return saveAttributes(d, inColumns);
         }
         try {
             if (!d.checkForSave() || !d.checkForLoad()) {

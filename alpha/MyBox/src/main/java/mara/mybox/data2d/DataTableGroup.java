@@ -1,4 +1,4 @@
-package mara.mybox.data2d.reader;
+package mara.mybox.data2d;
 
 import java.io.File;
 import java.nio.charset.Charset;
@@ -15,12 +15,7 @@ import javafx.scene.control.IndexRange;
 import mara.mybox.controller.ControlData2DGroup;
 import mara.mybox.data.DataSort;
 import mara.mybox.data.ValueRange;
-import mara.mybox.data2d.Data2D;
 import static mara.mybox.data2d.Data2D_Convert.createTable;
-import mara.mybox.data2d.DataFileCSV;
-import mara.mybox.data2d.DataFilter;
-import mara.mybox.data2d.DataTable;
-import mara.mybox.data2d.TmpTable;
 import mara.mybox.db.Database;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
@@ -965,12 +960,7 @@ public class DataTableGroup {
                         }
                         try {
                             tmpRow = tableTmpData.readData(query);
-                            List<String> rowStrings = new ArrayList<>();
-                            for (Data2DColumn column : tmpColumns) {
-                                String tmpColName = column.getColumnName();
-                                String v = column.toString(tmpRow.getColumnValue(tmpColName));
-                                rowStrings.add(v);
-                            }
+                            List<String> rowStrings = tmpRow.toStrings(tmpColumns);
                             rowIndex = Long.parseLong(rowStrings.get(1));
                             if (filter.filterDataRow(tmpData, rowStrings, rowIndex)) {
                                 if (++groupCurrentSize <= fmax) {

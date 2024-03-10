@@ -6,7 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Tab;
 import javafx.scene.layout.VBox;
-import mara.mybox.data2d.reader.Data2DExport;
+import mara.mybox.data2d.operate.Data2DExport;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.WindowTools;

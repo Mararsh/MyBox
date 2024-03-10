@@ -1,4 +1,4 @@
-package mara.mybox.data2d.reader;
+package mara.mybox.data2d.operate;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -65,7 +65,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  * @CreateDate 2022-2-25
  * @License Apache License Version 2.0
  */
-public class Data2DExport extends Data2DOperator {
+public class Data2DExport extends Data2DOperate {
 
     protected BaseTaskController taskController;
     protected ControlTargetFile targetFileController;
@@ -98,12 +98,12 @@ public class Data2DExport extends Data2DOperator {
 
     public static Data2DExport create(Data2D_Edit data) {
         Data2DExport op = new Data2DExport();
-        return op.setData(data) ? op : null;
+        return op.setSourceData(data) ? op : null;
     }
 
     @Override
     public boolean checkParameters() {
-        if (cols != null && !cols.isEmpty()) {
+        if (super.checkParameters() && cols != null && !cols.isEmpty()) {
             return openWriters();
         } else {
             return false;
@@ -111,22 +111,26 @@ public class Data2DExport extends Data2DOperator {
     }
 
     @Override
-    public void handleRow() {
+    public boolean handleRow() {
         try {
-            List<String> row = new ArrayList<>();
+            targetRow = null;
+            if (sourceRow == null) {
+                return false;
+            }
+            targetRow = new ArrayList<>();
             for (int col : cols) {
                 if (col >= 0 && col < sourceRow.size()) {
-                    row.add(sourceRow.get(col));
+                    targetRow.add(sourceRow.get(col));
                 } else {
-                    row.add(null);
+                    targetRow.add(null);
                 }
             }
-            if (row.isEmpty()) {
-                return;
+            if (targetRow.isEmpty()) {
+                return false;
             }
-            writeRow(row);
+            return true;
         } catch (Exception e) {
-            updateLogs(e.toString());
+            return false;
         }
     }
 
@@ -140,7 +144,6 @@ public class Data2DExport extends Data2DOperator {
         run task
      */
     private void initWriters() {
-        csvPrinter = null;
         textWriter = null;
         htmlWriter = null;
         xmlWriter = null;

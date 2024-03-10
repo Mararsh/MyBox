@@ -15,7 +15,7 @@ import static mara.mybox.data2d.Data2D_Attributes.TargetType.Excel;
 import static mara.mybox.data2d.Data2D_Attributes.TargetType.HTML;
 import static mara.mybox.data2d.Data2D_Attributes.TargetType.PDF;
 import static mara.mybox.data2d.Data2D_Attributes.TargetType.Text;
-import mara.mybox.data2d.reader.Data2DExport;
+import mara.mybox.data2d.operate.Data2DExport;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.dev.MyBoxLog;
@@ -233,7 +233,7 @@ public class Data2DSaveAsController extends BaseData2DSaveAsController {
                 data2D.startTask(currentTask, null);
                 export.setCols(data2D.columnIndices()).setTask(currentTask).start();
                 data2D.stopTask();
-                return !export.failed();
+                return !export.isFailed();
             }
         } catch (Exception e) {
             error = e.toString();

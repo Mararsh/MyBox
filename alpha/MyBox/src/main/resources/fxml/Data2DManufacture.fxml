@@ -187,7 +187,19 @@ License:    Apache License Version 2.0
                                         </ImageView>
                                     </graphic>
                                 </Button>
-                                <RadioButton fx:id="tableRadio" mnemonicParsing="false" selected="true">
+                                <RadioButton fx:id="htmlRadio" mnemonicParsing="false" selected="true">
+                                    <graphic>
+                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/Red/iconHtml.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                           <toggleGroup>
+                                        <ToggleGroup fx:id="formatGroup" />
+                           </toggleGroup>
+                                </RadioButton>
+                                <RadioButton fx:id="tableRadio" mnemonicParsing="false" toggleGroup="$formatGroup">
                                     <graphic>
                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                             <image>
@@ -195,24 +207,12 @@ License:    Apache License Version 2.0
                                             </image>
                                         </ImageView>
                                     </graphic>
-                                    <toggleGroup>
-                                        <ToggleGroup fx:id="formatGroup" />
-                                    </toggleGroup>
                                 </RadioButton>
                                 <RadioButton fx:id="csvRadio" mnemonicParsing="false" toggleGroup="$formatGroup">
                                     <graphic>
                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                             <image>
                                                 <Image url="@../buttons/Red/iconCSV.png" />
-                                            </image>
-                                        </ImageView>
-                                    </graphic>
-                                </RadioButton>
-                                <RadioButton fx:id="htmlRadio" mnemonicParsing="false" toggleGroup="$formatGroup">
-                                    <graphic>
-                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/Red/iconHtml.png" />
                                             </image>
                                         </ImageView>
                                     </graphic>

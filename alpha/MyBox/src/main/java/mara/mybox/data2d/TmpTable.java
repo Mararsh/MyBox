@@ -12,8 +12,8 @@ import java.util.List;
 import mara.mybox.data.DataSort;
 import mara.mybox.data.FindReplaceString;
 import static mara.mybox.data2d.Data2D_Convert.createTable;
-import mara.mybox.data2d.reader.Data2DWriteTmpTable;
-import mara.mybox.data2d.reader.DataTableGroup.TimeType;
+import mara.mybox.data2d.DataTableGroup.TimeType;
+import mara.mybox.data2d.operate.Data2DWriteTmpTable;
 import mara.mybox.db.Database;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
@@ -218,7 +218,7 @@ public class TmpTable extends DataTable {
             reader.setConn(conn).setWriterTable(this)
                     .setIncludeRowNumber(includeRowNumber).setInvalidAs(invalidAs)
                     .setCols(sourcePickIndice).setTask(task).start();
-            if (!reader.failed()) {
+            if (!reader.isFailed()) {
                 conn.commit();
                 return reader.getCount();
             } else {

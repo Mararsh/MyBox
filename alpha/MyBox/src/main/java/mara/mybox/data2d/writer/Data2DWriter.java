@@ -1,19 +1,19 @@
 package mara.mybox.data2d.writer;
 
 import java.io.File;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
-import mara.mybox.data.SetValue;
+import mara.mybox.controller.BaseController;
+import mara.mybox.controller.BaseTaskController;
+import mara.mybox.controller.ControlTargetFile;
+import mara.mybox.controller.Data2DManufactureController;
 import mara.mybox.data2d.Data2D;
-import mara.mybox.data2d.Data2D_Edit;
-import mara.mybox.data2d.DataFileCSV;
-import mara.mybox.data2d.DataFileExcel;
-import mara.mybox.data2d.DataFileText;
-import mara.mybox.data2d.DataTable;
-import mara.mybox.dev.MyBoxLog;
+import mara.mybox.data2d.operate.Data2DOperate;
+import mara.mybox.db.data.ColumnDefinition.InvalidAs;
+import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.fxml.FxTask;
-import mara.mybox.tools.StringTools;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -22,264 +22,439 @@ import mara.mybox.tools.StringTools;
  */
 public abstract class Data2DWriter {
 
-    protected Data2D data2D;
-    protected File sourceFile;
-    protected Operation operation;
-    protected long rowIndex; // 1-based
-    protected long count;
-    protected int columnsNumber, colsLen, scale = -1, colIndex, dataIndex, digit;
-    protected List<String> sourceRow, targetRow;
-    protected List<Integer> cols;
-    protected boolean writerStopped, needCheckTask, errorContinue;
-    protected FxTask task;
-    protected boolean failed;
-    protected SetValue setValue;
-    protected String dataValue;
-    protected Random random = new Random();
+    protected Data2D targetData;
+    protected Data2DOperate operate;
+    protected File targetPath, targetFile, tmpFile;
+    protected BaseTaskController taskController;
+    protected ControlTargetFile targetFileController;
+    protected List<String> headerNames, targetRow;
+    protected List<Data2DColumn> columns;
+    protected boolean isFirstRow, writeRowNumber, writeHeader, skip, created,
+            formatValues, recordTargetFile, recordTargetData;
+    protected String indent = "    ", dataName, filePrefix, fileSuffix;
+    protected int maxLines, fileIndex, fileRowIndex;
+    protected long sourceRowIndex, targetRowIndex;
+    protected Connection conn;
 
-    public static enum Operation {
-        SetValue, Delete, ClearData
+    public Data2DWriter() {
+        try {
+            initBase();
+            initFiles();
+            resetWriter();
+        } catch (Exception e) {
+            handleError(e.toString());
+        }
     }
 
-    public abstract void scanData();
-
-    public abstract void writeRow();
-
-    public static Data2DWriter create(Data2D_Edit data) {
-        if (data == null) {
-            return null;
+    final public void initBase() {
+        try {
+            targetData = null;
+            operate = null;
+            taskController = null;
+            targetFileController = null;
+            writeRowNumber = formatValues = created = false;
+            writeHeader = recordTargetFile = recordTargetData = skip = isFirstRow = true;
+            maxLines = -1;
+            targetRowIndex = 0;
+        } catch (Exception e) {
+            handleError(e.toString());
         }
-        if (data instanceof DataFileExcel) {
-            return new DataFileExcelWriter((DataFileExcel) data);
-        } else if (data instanceof DataFileCSV) {
-            return new DataFileCSVWriter((DataFileCSV) data);
-        } else if (data instanceof DataFileText) {
-            return new DataFileTextWriter((DataFileText) data);
-        } else if (data instanceof DataTable) {
-            return new DataTableWriter((DataTable) data);
-        }
-        return null;
     }
 
-    public void init(Data2D data) {
-        this.data2D = data;
-        task = data2D.getTask();
+    final public void initFiles() {
+        filePrefix = null;
+        fileIndex = 1;
+        fileRowIndex = 0;
+        sourceRowIndex = 0;
     }
 
-    public Data2DWriter start(Operation operation) {
-        if (data2D == null || !data2D.validData() || operation == null) {
-            failed = true;
-            return null;
+    public boolean checkParameters() {
+        if (columns == null) {
+            return false;
         }
-        sourceFile = data2D.getFile();
-        switch (operation) {
-            case SetValue:
-                if (cols == null || cols.isEmpty() || setValue == null) {
-                    failed = true;
-                    return null;
-                }
-                digit = setValue.countFinalDigit(data2D.getDataSize());
-                dataIndex = setValue.getStart();
-                dataValue = setValue.getValue();
-                random = new Random();
-                break;
-            case Delete:
-                break;
-            case ClearData:
-                break;
-
-        }
-        this.operation = operation;
-        writerStopped = false;
-        needCheckTask = task != null;
-        columnsNumber = data2D.columnsNumber();
-        rowIndex = 0;
-        count = 0;
-        if (scale < 0) {
-            scale = data2D.getScale();
-        }
-        data2D.startFilter();
-        scanData();
-        afterScanned();
-        return this;
+        return true;
     }
 
-    public boolean isClearData() {
-        return operation == Operation.ClearData
-                || (operation == Operation.Delete && !data2D.needFilter());
+    final public boolean resetWriter() {
+        isFirstRow = true;
+        created = false;
+        return true;
     }
 
-    public void handleRow() {
+    public boolean openWriter() {
+        if (!checkParameters()) {
+            return false;
+        }
+        resetWriter();
+        return true;
+    }
+
+    public File makeTargetFile() {
+        if (targetFile != null) {
+            return targetFile;
+        } else {
+            if (targetPath == null || filePrefix == null || headerNames == null) {
+                showInfo(message("InvalidParameters"));
+                return null;
+            }
+            String currentPrefix = filePrefix;
+            if (maxLines > 0) {
+                currentPrefix += "_" + fileIndex;
+            }
+            return targetFileController.makeTargetFile(currentPrefix, "." + fileSuffix, targetPath);
+        }
+    }
+
+    public void writeRow(List<String> inRow) {
         try {
             targetRow = null;
-            data2D.filterDataRow(sourceRow, rowIndex);
-            boolean filterPassed = data2D.filterPassed() && !data2D.filterReachMaxPassed();
-            switch (operation) {
-                case SetValue:
-                    handleSetValues(filterPassed);
-                    break;
-                case Delete:
-                    handleDelete(filterPassed);
-                    break;
-                default:
-                    break;
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            if (task != null) {
-                task.setError(e.toString());
-            }
-        }
-    }
-
-    public void handleSetValues(boolean filterPassed) {
-        try {
-            String expResult = null, currentValue;
-            if (filterPassed) {
-                if (setValue.isExpression() && dataValue != null) {
-                    data2D.calculateDataRowExpression(dataValue, sourceRow, rowIndex);
-                    expResult = data2D.expressionResult();
-                    data2D.error = data2D.expressionError();
-                    if (data2D.error != null) {
-                        if (errorContinue) {
-                            return;
-                        } else {
-                            failed = true;
-                            writerStopped = true;
-                            task.setError(data2D.error);
-                            return;
-                        }
-                    }
-                }
-                count++;
-            } else if (data2D instanceof DataTable) {
+            if (inRow == null || inRow.size() != columns.size()) {
                 return;
             }
+            if (maxLines > 0 && fileRowIndex >= maxLines) {
+                closeWriter();
+                fileIndex++;
+                fileRowIndex = 0;
+                openWriter();
+            }
             targetRow = new ArrayList<>();
-            for (int i = 0; i < data2D.columns.size(); i++) {
-                if (i < sourceRow.size()) {
-                    currentValue = sourceRow.get(i);
-                } else {
-                    currentValue = null;
-                }
-                String v;
-                if (filterPassed && cols.contains(i)) {
-                    if (setValue.isBlank()) {
-                        v = "";
-                    } else if (setValue.isZero()) {
-                        v = "0";
-                    } else if (setValue.isOne()) {
-                        v = "1";
-                    } else if (setValue.isRandom()) {
-                        v = data2D.random(random, i, false);
-                    } else if (setValue.isRandom()) {
-                        v = data2D.random(random, i, false);
-                    } else if (setValue.isRandomNonNegative()) {
-                        v = data2D.random(random, i, true);
-                    } else if (setValue.isScale()) {
-                        v = setValue.scale(currentValue);
-                    } else if (setValue.isSuffix()) {
-                        v = currentValue == null ? dataValue : currentValue + dataValue;
-                    } else if (setValue.isPrefix()) {
-                        v = currentValue == null ? dataValue : dataValue + currentValue;
-                    } else if (setValue.isSuffixNumber()) {
-                        String suffix = StringTools.fillLeftZero(dataIndex++, digit);
-                        v = currentValue == null ? suffix : currentValue + suffix;
-                    } else if (setValue.isExpression()) {
-                        v = expResult;
-                    } else {
-                        v = dataValue;
-                    }
-                } else {
-                    v = currentValue;
+            for (int i = 0; i < columns.size(); i++) {
+                String v = inRow.get(i);
+                if (formatValues && v != null) {
+                    v = columns.get(i).format(v);
                 }
                 targetRow.add(v);
             }
-            writeRow();
-        } catch (Exception e) {
-            MyBoxLog.console(e);
-        }
-    }
-
-    public void handleDelete(boolean filterPassed) {
-        try {
-            if (data2D.error != null) {
-                if (errorContinue) {
-                    return;
-                } else {
-                    failed = true;
-                    writerStopped = true;
-                    task.setError(data2D.error);
-                    return;
-                }
+            sourceRowIndex++;
+            if (writeRowNumber) {
+                targetRow.add(0, sourceRowIndex + "");
             }
-            if (filterPassed) {
-                count++;
-            }
-            deleteRow(filterPassed);
-        } catch (Exception e) {
-        }
-    }
 
-    public void deleteRow(boolean needDelete) {
-        if (!needDelete) {
-            targetRow = sourceRow;
-            writeRow();
-        }
-    }
+            printTargetRow();
 
-    public void afterScanned() {
-        try {
-            data2D.stopFilter();
+            fileRowIndex++;
+            targetRowIndex++;
 
         } catch (Exception e) {
-            MyBoxLog.error(e);
-            if (task != null) {
-                task.setError(e.toString());
-            }
+            handleError(e.toString());
         }
     }
 
-    public boolean writerStopped() {
-        return writerStopped || (needCheckTask && (task == null || !task.isWorking()));
+    public void printTargetRow() {
     }
 
-    /*
-        get
-     */
-    public long getCount() {
-        return count;
+    public FxTask task() {
+        if (operate != null) {
+            return operate.getTask();
+        } else {
+            return null;
+        }
+    }
+
+    public InvalidAs invalidAs() {
+        if (operate != null) {
+            return operate.getInvalidAs();
+        } else {
+            return InvalidAs.Skip;
+        }
+    }
+
+    public long sourceRowIndex() {
+        if (operate != null) {
+            return operate.getSourceRowIndex();
+        } else {
+            return -1;
+        }
+    }
+
+    public void closeWriter() {
+        created = false;
+    }
+
+    public void openFile(BaseController controller) {
+        if (targetData == null) {
+            return;
+        }
+        Data2DManufactureController.openDef(targetData);
+    }
+
+    public void showInfo(String info) {
+        if (taskController != null) {
+            taskController.updateLogs(info);
+        } else if (operate != null) {
+            operate.showInfo(info);
+        }
+    }
+
+    final public void handleError(String error) {
+        if (operate != null) {
+            operate.showError(error);
+        }
+    }
+
+    public void stop() {
+        if (operate != null) {
+            operate.stop();
+        }
+    }
+
+    public void setFailed() {
+        if (operate != null) {
+            operate.setFailed();
+        }
     }
 
     public boolean isFailed() {
-        return failed;
+        return operate == null || operate.isFailed();
+    }
+
+    public boolean isStopped() {
+        return operate == null || operate.isStopped();
     }
 
     /*
-        set
+        get/set
      */
-    public Data2DWriter setOperation(Operation operation) {
-        this.operation = operation;
+    public Data2D getTargetData() {
+        return targetData;
+    }
+
+    public Data2DWriter setTargetData(Data2D targetData) {
+        this.targetData = targetData;
         return this;
     }
 
-    public Data2DWriter setCols(List<Integer> cols) {
-        this.cols = cols;
+    public Data2DOperate getOperate() {
+        return operate;
+    }
+
+    public Data2DWriter setOperate(Data2DOperate operate) {
+        this.operate = operate;
         return this;
     }
 
-    public Data2DWriter setErrorContinue(boolean errorContinue) {
-        this.errorContinue = errorContinue;
+    public Connection getConn() {
+        return conn;
+    }
+
+    public Data2DWriter setConn(Connection conn) {
+        this.conn = conn;
         return this;
     }
 
-    public Data2DWriter setTask(FxTask task) {
-        this.task = task;
+    public File getTargetPath() {
+        return targetPath;
+    }
+
+    public Data2DWriter setTargetPath(File targetPath) {
+        this.targetPath = targetPath;
         return this;
     }
 
-    public Data2DWriter setSetValue(SetValue setValue) {
-        this.setValue = setValue;
+    public File getTargetFile() {
+        return targetFile;
+    }
+
+    public Data2DWriter setTargetFile(File targetFile) {
+        this.targetFile = targetFile;
+        return this;
+    }
+
+    public BaseTaskController getTaskController() {
+        return taskController;
+    }
+
+    public Data2DWriter setTaskController(BaseTaskController taskController) {
+        this.taskController = taskController;
+        return this;
+    }
+
+    public ControlTargetFile getTargetFileController() {
+        return targetFileController;
+    }
+
+    public Data2DWriter setTargetFileController(ControlTargetFile targetFileController) {
+        this.targetFileController = targetFileController;
+        return this;
+    }
+
+    public List<String> getHeaderNames() {
+        return headerNames;
+    }
+
+    public Data2DWriter setHeaderNames(List<String> headerNames) {
+        this.headerNames = headerNames;
+        return this;
+    }
+
+    public List<String> getTargetRow() {
+        return targetRow;
+    }
+
+    public Data2DWriter setTargetRow(List<String> targetRow) {
+        this.targetRow = targetRow;
+        return this;
+    }
+
+    public List<Data2DColumn> getColumns() {
+        return columns;
+    }
+
+    public Data2DWriter setColumns(List<Data2DColumn> columns) {
+        this.columns = columns;
+        return this;
+    }
+
+    public boolean isIsFirstRow() {
+        return isFirstRow;
+    }
+
+    public Data2DWriter setFirstRow(boolean firstRow) {
+        this.isFirstRow = firstRow;
+        return this;
+    }
+
+    public boolean isWriteRowNumber() {
+        return writeRowNumber;
+    }
+
+    public Data2DWriter setRowNumber(boolean rowNumber) {
+        this.writeRowNumber = rowNumber;
+        return this;
+    }
+
+    public boolean isWriteHeader() {
+        return writeHeader;
+    }
+
+    public Data2DWriter setWriteHeader(boolean writeHeader) {
+        this.writeHeader = writeHeader;
+        return this;
+    }
+
+    public boolean isSkip() {
+        return skip;
+    }
+
+    public Data2DWriter setSkip(boolean skip) {
+        this.skip = skip;
+        return this;
+    }
+
+    public boolean isCreated() {
+        return created;
+    }
+
+    public Data2DWriter setCreated(boolean created) {
+        this.created = created;
+        return this;
+    }
+
+    public boolean isFormatValues() {
+        return formatValues;
+    }
+
+    public Data2DWriter setFormatValues(boolean formatValues) {
+        this.formatValues = formatValues;
+        return this;
+    }
+
+    public String getIndent() {
+        return indent;
+    }
+
+    public Data2DWriter setIndent(String indent) {
+        this.indent = indent;
+        return this;
+    }
+
+    public String getDataName() {
+        return dataName;
+    }
+
+    public Data2DWriter setDataName(String dataName) {
+        this.dataName = dataName;
+        return this;
+    }
+
+    public String getFilePrefix() {
+        return filePrefix;
+    }
+
+    public Data2DWriter setFilePrefix(String filePrefix) {
+        this.filePrefix = filePrefix;
+        return this;
+    }
+
+    public String getFileSuffix() {
+        return fileSuffix;
+    }
+
+    public Data2DWriter setFileSuffix(String fileSuffix) {
+        this.fileSuffix = fileSuffix;
+        return this;
+    }
+
+    public int getMaxLines() {
+        return maxLines;
+    }
+
+    public Data2DWriter setMaxLines(int maxLines) {
+        this.maxLines = maxLines;
+        return this;
+    }
+
+    public int getFileIndex() {
+        return fileIndex;
+    }
+
+    public Data2DWriter setFileIndex(int fileIndex) {
+        this.fileIndex = fileIndex;
+        return this;
+    }
+
+    public int getFileRowIndex() {
+        return fileRowIndex;
+    }
+
+    public Data2DWriter setFileRowIndex(int fileRowIndex) {
+        this.fileRowIndex = fileRowIndex;
+        return this;
+    }
+
+    public long getSourceRowIndex() {
+        return sourceRowIndex;
+    }
+
+    public Data2DWriter setSourceRowIndex(int dataRowIndex) {
+        this.sourceRowIndex = dataRowIndex;
+        return this;
+    }
+
+    public boolean isRecordTargetFile() {
+        return recordTargetFile;
+    }
+
+    public Data2DWriter setRecordTargetFile(boolean recordTargetFile) {
+        this.recordTargetFile = recordTargetFile;
+        return this;
+    }
+
+    public boolean isRecordTargetData() {
+        return recordTargetData;
+    }
+
+    public Data2DWriter setRecordTargetData(boolean recordTargetData) {
+        this.recordTargetData = recordTargetData;
+        return this;
+    }
+
+    public long getTargetRowIndex() {
+        return targetRowIndex;
+    }
+
+    public Data2DWriter setTargetRowIndex(long targetRowIndex) {
+        this.targetRowIndex = targetRowIndex;
         return this;
     }
 

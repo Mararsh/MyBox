@@ -1,11 +1,11 @@
-package mara.mybox.data2d.reader;
+package mara.mybox.data2d.operate;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.data2d.Data2D_Edit;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.db.Database;
+import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DRow;
 import mara.mybox.db.table.TableData2D;
@@ -17,23 +17,23 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-2-25
  * @License Apache License Version 2.0
  */
-public class Data2DWriteTable extends Data2DOperator {
+public class Data2DWriteTable extends Data2DOperate {
 
     protected Connection conn;
     protected DataTable writerTable;
     protected TableData2D writerTableData2D;
     protected PreparedStatement insert;
-    protected long count;
 
     public static Data2DWriteTable create(Data2D_Edit data) {
         Data2DWriteTable op = new Data2DWriteTable();
-        return op.setData(data) ? op : null;
+        return op.setSourceData(data) ? op : null;
     }
 
     @Override
     public boolean checkParameters() {
         try {
-            if (cols == null || cols.isEmpty() || conn == null
+            if (!super.checkParameters()
+                    || cols == null || cols.isEmpty() || conn == null
                     || writerTable == null || invalidAs == null) {
                 return false;
             }
@@ -70,15 +70,15 @@ public class Data2DWriteTable extends Data2DOperator {
     }
 
     @Override
-    public void handleRow() {
+    public boolean handleRow() {
         try {
             Data2DRow data2DRow = writerTableData2D.newRow();
             makeTableRow(data2DRow);
             if (data2DRow.isEmpty()) {
-                return;
+                return true;
             }
             if (includeRowNumber) {
-                data2DRow.setColumnValue(writerTable.column(1).getColumnName(), rowIndex);
+                data2DRow.setColumnValue(writerTable.column(1).getColumnName(), sourceRowIndex);
             }
             if (writerTableData2D.setInsertStatement(conn, insert, data2DRow)) {
                 insert.addBatch();
@@ -90,8 +90,10 @@ public class Data2DWriteTable extends Data2DOperator {
                     }
                 }
             }
+            return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
+            return false;
         }
     }
 

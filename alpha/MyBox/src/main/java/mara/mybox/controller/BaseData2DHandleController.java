@@ -19,7 +19,7 @@ import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.Data2D_Operations.ObjectType;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.TmpTable;
-import mara.mybox.data2d.reader.DataTableGroup;
+import mara.mybox.data2d.DataTableGroup;
 import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;

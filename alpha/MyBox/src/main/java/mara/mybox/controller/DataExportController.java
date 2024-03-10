@@ -14,7 +14,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.FlowPane;
-import mara.mybox.data2d.reader.Data2DExport;
+import mara.mybox.data2d.operate.Data2DExport;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.BaseData;
 import mara.mybox.db.data.BaseDataAdaptor;

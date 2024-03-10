@@ -1,19 +1,16 @@
 package mara.mybox.data2d.writer;
 
-import java.io.File;
 import java.io.FileWriter;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Iterator;
-import mara.mybox.data2d.DataFileCSV;
-import mara.mybox.dev.MyBoxLog;
+import mara.mybox.data2d.Data2D;
+import mara.mybox.db.data.Data2DDefinition;
+import mara.mybox.db.data.VisitHistory;
+import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.FileTools;
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
+import static mara.mybox.value.Languages.message;
 import org.apache.commons.csv.CSVPrinter;
-import org.apache.commons.csv.CSVRecord;
 
 /**
  * @Author Mara
@@ -22,125 +19,120 @@ import org.apache.commons.csv.CSVRecord;
  */
 public class DataFileCSVWriter extends Data2DWriter {
 
-    protected DataFileCSV sourceCSV;
-    protected Iterator<CSVRecord> iterator;
-    protected CSVParser csvParser;
-    protected CSVPrinter csvPrinter;
+    protected CSVPrinter printer;
+    protected Charset charset;
+    protected String delimiter;
 
-    public DataFileCSVWriter(DataFileCSV data) {
-        this.sourceCSV = data;
-        init(data);
+    public DataFileCSVWriter() {
+        fileSuffix = "csv";
+        charset = Charset.forName("utf-8");
+        delimiter = ",";
     }
 
     @Override
-    public void scanData() {
-        if (!FileTools.hasData(sourceFile)) {
-            return;
+    public boolean openWriter() {
+        try {
+            targetFile = makeTargetFile();
+            if (targetFile == null) {
+                showInfo((skip ? message("Skipped") : message("Failed")) + ": " + fileSuffix);
+                return false;
+            }
+            showInfo(message("Writing") + " " + targetFile.getAbsolutePath());
+            tmpFile = FileTmpTools.getTempFile();
+            if (printer == null) {
+                printer = new CSVPrinter(new FileWriter(tmpFile, charset),
+                        CsvTools.csvFormat(delimiter));
+            }
+            if (writeHeader) {
+                printer.printRecord(headerNames);
+            }
+            return true;
+        } catch (Exception e) {
+            handleError(e.toString());
+            return false;
         }
-        File tmpFile = FileTmpTools.getTempFile();
-        Charset charset = sourceCSV.getCharset();
-        CSVFormat format = sourceCSV.cvsFormat();
-        File validFile = FileTools.removeBOM(task, sourceFile);
-        if (validFile == null || writerStopped()) {
-            return;
+    }
+
+    @Override
+    public void printTargetRow() {
+        try {
+            if (targetRow == null) {
+                return;
+            }
+            printer.printRecord(targetRow);
+        } catch (Exception e) {
+            handleError(e.toString());
         }
-        rowIndex = 0;
-        count = 0;
-        try (CSVParser parser = CSVParser.parse(validFile, charset, format);
-                CSVPrinter printer = new CSVPrinter(new FileWriter(tmpFile, charset), format)) {
-            csvParser = parser;
-            csvPrinter = printer;
-            iterator = parser.iterator();
-            failed = !handleRows();
-            csvPrinter = null;
-            csvParser = null;
+    }
+
+    @Override
+    public void closeWriter() {
+        try {
+            created = false;
+            if (printer == null) {
+                return;
+            }
+            printer.flush();
             printer.close();
-            parser.close();
-            if (failed) {
+            printer = null;
+            if (isFailed() || tmpFile == null || !tmpFile.exists()
+                    || !FileTools.override(tmpFile, targetFile)) {
                 FileDeleteTools.delete(tmpFile);
-            } else {
-                failed = !FileTools.override(tmpFile, sourceFile);
+                return;
             }
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            if (task != null) {
-                task.setError(e.toString());
+            if (targetFile == null || targetFile.exists()) {
+                return;
             }
-            failed = true;
-        }
-        if (failed) {
-            writerStopped = true;
-        }
-    }
-
-    public boolean handleRows() {
-        if (iterator == null) {
-            return false;
-        }
-        try {
-            if (sourceCSV.isHasHeader()) {
-                try {
-                    csvPrinter.printRecord(csvParser.getHeaderNames());
-                } catch (Exception e) {  // skip  bad lines
+            if (recordTargetFile && taskController != null) {
+                taskController.targetFileGenerated(targetFile, VisitHistory.FileType.CSV);
+            }
+            if (recordTargetData) {
+                if (targetData == null) {
+                    targetData = Data2D.create(Data2DDefinition.DataType.CSV);
                 }
+                targetData.setTask(task()).setFile(targetFile)
+                        .setCharset(charset)
+                        .setDelimiter(delimiter)
+                        .setHasHeader(writeHeader)
+                        .setDataName(dataName)
+                        .setColsNumber(columns.size())
+                        .setRowsNumber(targetRowIndex);
+                Data2D.saveAttributes(conn, targetData, columns);
             }
-            if (isClearData()) {
-                count = data2D.getDataSize();
-                return true;
-            }
-            while (iterator.hasNext() && !writerStopped()) {
-                readRow();
-                if (sourceRow == null || sourceRow.isEmpty()) {
-                    continue;
-                }
-                ++rowIndex;
-                handleRow();
-            }
+            created = true;
         } catch (Exception e) {
-            MyBoxLog.error(e);
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            return false;
-        }
-        return true;
-    }
-
-    public void readRow() {
-        try {
-            sourceRow = null;
-            if (writerStopped() || iterator == null) {
-                return;
-            }
-            CSVRecord csvRecord = iterator.next();
-            if (csvRecord == null) {
-                return;
-            }
-            sourceRow = new ArrayList<>();
-            for (String v : csvRecord) {
-                sourceRow.add(v);
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            if (task != null) {
-                task.setError(e.toString());
-            }
+            handleError(e.toString());
         }
     }
 
-    @Override
-    public void writeRow() {
-        try {
-            if (writerStopped() || targetRow == null) {
-                return;
-            }
-            csvPrinter.printRecord(targetRow);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            if (task != null) {
-                task.setError(e.toString());
-            }
-        }
+    /*
+        get/set
+     */
+    public CSVPrinter getPrinter() {
+        return printer;
+    }
+
+    public DataFileCSVWriter setCsvPrinter(CSVPrinter csvPrinter) {
+        this.printer = csvPrinter;
+        return this;
+    }
+
+    public Charset getCharset() {
+        return charset;
+    }
+
+    public DataFileCSVWriter setCharset(Charset cvsCharset) {
+        this.charset = cvsCharset;
+        return this;
+    }
+
+    public String getDelimiter() {
+        return delimiter;
+    }
+
+    public DataFileCSVWriter setDelimiter(String csvDelimiter) {
+        this.delimiter = csvDelimiter;
+        return this;
     }
 
 }

@@ -1,4 +1,4 @@
-package mara.mybox.data2d.reader;
+package mara.mybox.data2d;
 
 import java.io.File;
 import java.nio.charset.Charset;

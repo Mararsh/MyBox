@@ -6,7 +6,9 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import mara.mybox.data2d.reader.Data2DReadDefinition;
+import mara.mybox.data2d.operate.Data2DReadDefinition;
+import mara.mybox.data2d.writer.Data2DWriter;
+import mara.mybox.data2d.writer.DataFileExcelWriter;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
@@ -439,6 +441,20 @@ public class DataFileExcel extends DataFile {
             return -1;
         }
     }
+
+    @Override
+    public Data2DWriter selfWriter() {
+        if (file == null) {
+            return null;
+        }
+        DataFileExcelWriter writer = new DataFileExcelWriter();
+        writer.setSheetName(sheet)
+                .setTargetFile(file)
+                .setRecordTargetFile(true)
+                .setRecordTargetData(false);
+        return writer;
+    }
+
 
     /*
         get/set

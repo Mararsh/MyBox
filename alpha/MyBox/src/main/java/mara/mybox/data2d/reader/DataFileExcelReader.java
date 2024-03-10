@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import mara.mybox.data2d.DataFileExcel;
-import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.MicrosoftDocumentTools;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -25,12 +24,12 @@ public class DataFileExcelReader extends Data2DReader {
     public DataFileExcelReader(DataFileExcel data) {
         this.readerExcel = data;
         readerSheet = data.getSheet();
-        init(data);
+        sourceData = data;
     }
 
     @Override
     public void scanData() {
-        try ( Workbook wb = WorkbookFactory.create(sourceFile)) {
+        try (Workbook wb = WorkbookFactory.create(sourceFile)) {
             Sheet sourceSheet;
             if (readerSheet != null) {
                 sourceSheet = wb.getSheet(readerSheet);
@@ -48,14 +47,11 @@ public class DataFileExcelReader extends Data2DReader {
                 readerExcel.setSheet(readerSheet);
             }
             iterator = sourceSheet.iterator();
-            operator.handleData();
+            operate.handleData();
             wb.close();
         } catch (Exception e) {
-            MyBoxLog.error(e);
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            failed = true;
+            handleError(e.toString());
+            setFailed();
         }
     }
 
@@ -64,7 +60,7 @@ public class DataFileExcelReader extends Data2DReader {
         if (iterator == null) {
             return;
         }
-        while (iterator.hasNext() && !readerStopped()) {
+        while (iterator.hasNext() && !isStopped()) {
             readRecord();
             if (sourceRow == null || sourceRow.isEmpty()) {
                 continue;
@@ -82,7 +78,7 @@ public class DataFileExcelReader extends Data2DReader {
         rowIndex = 0;
         skipHeader();
         while (iterator.hasNext()) {
-            if (readerStopped()) {
+            if (isStopped()) {
                 rowIndex = 0;
                 return;
             }
@@ -97,11 +93,11 @@ public class DataFileExcelReader extends Data2DReader {
         if (!readerHasHeader || iterator == null) {
             return;
         }
-        while (iterator.hasNext() && (iterator.next() == null) && !readerStopped()) {
+        while (iterator.hasNext() && (iterator.next() == null) && !isStopped()) {
         }
     }
 
-    // rowIndex is 1-base while rowsStart and rowsEnd are 0-based
+    // rowIndex is 1-base while pageStartIndex and pageEndIndex are 0-based
     @Override
     public void readPage() {
         if (iterator == null) {
@@ -109,16 +105,16 @@ public class DataFileExcelReader extends Data2DReader {
         }
         skipHeader();
         rowIndex = 0;
-        while (iterator.hasNext() && !readerStopped()) {
+        while (iterator.hasNext() && !isStopped()) {
             readRecord();
             if (sourceRow == null || sourceRow.isEmpty()) {
                 continue;
             }
-            if (rowIndex++ < rowsStart) {
+            if (rowIndex++ < pageStartIndex) {
                 continue;
             }
-            if (rowIndex > rowsEnd) {
-                readerStopped = true;
+            if (rowIndex > pageEndIndex) {
+                stop();
                 break;
             }
             handlePageRow();
@@ -132,7 +128,7 @@ public class DataFileExcelReader extends Data2DReader {
         }
         skipHeader();
         rowIndex = 0;
-        while (iterator.hasNext() && !readerStopped()) {
+        while (iterator.hasNext() && !isStopped()) {
             readRecord();
             if (sourceRow == null || sourceRow.isEmpty()) {
                 continue;
@@ -145,7 +141,7 @@ public class DataFileExcelReader extends Data2DReader {
     public void readRecord() {
         try {
             sourceRow = null;
-            if (readerStopped() || iterator == null) {
+            if (isStopped() || iterator == null) {
                 return;
             }
             Row readerFileRow = iterator.next();
@@ -158,10 +154,7 @@ public class DataFileExcelReader extends Data2DReader {
                 sourceRow.add(v);
             }
         } catch (Exception e) {
-            MyBoxLog.error(e);
-            if (task != null) {
-                task.setError(e.toString());
-            }
+            handleError(e.toString());
         }
     }
 

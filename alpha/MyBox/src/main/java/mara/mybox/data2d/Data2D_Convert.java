@@ -11,9 +11,9 @@ import java.sql.ResultSetMetaData;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import mara.mybox.data2d.reader.Data2DOperator;
-import mara.mybox.data2d.reader.Data2DSingleColumn;
-import mara.mybox.data2d.reader.Data2DWriteTable;
+import mara.mybox.data2d.operate.Data2DOperate;
+import mara.mybox.data2d.operate.Data2DSingleColumn;
+import mara.mybox.data2d.operate.Data2DWriteTable;
 import mara.mybox.db.Database;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
@@ -169,7 +169,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
             }
             reader.setIncludeRowNumber(includeRowNumber).setInvalidAs(invalidAs)
                     .setCols(cols).setTask(task).start();
-            if (!reader.failed()) {
+            if (!reader.isFailed()) {
                 conn.commit();
                 return reader.getCount();
             } else {
@@ -207,10 +207,10 @@ public abstract class Data2D_Convert extends Data2D_Edit {
                     cols.add(i);
                 }
             }
-            Data2DOperator reader = Data2DSingleColumn.create(this)
+            Data2DOperate reader = Data2DSingleColumn.create(this)
                     .setConn(conn).setWriterTable(dataTable)
                     .setCols(cols).setTask(task).start();
-            if (reader != null && !reader.failed()) {
+            if (reader != null && !reader.isFailed()) {
                 conn.commit();
                 return dataTable;
             } else {

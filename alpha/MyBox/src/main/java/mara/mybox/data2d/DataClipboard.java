@@ -4,6 +4,8 @@ import java.io.File;
 import java.nio.charset.Charset;
 import java.util.List;
 import mara.mybox.controller.DataInMyBoxClipboardController;
+import mara.mybox.data2d.writer.Data2DWriter;
+import mara.mybox.data2d.writer.DataFileCSVWriter;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
@@ -32,6 +34,21 @@ public class DataClipboard extends DataFileCSV {
             dataName = rowsNumber + "x" + colsNumber;
         }
         return true;
+    }
+
+    @Override
+    public Data2DWriter selfWriter() {
+        if (file == null) {
+            return null;
+        }
+        DataFileCSVWriter writer = new DataFileCSVWriter();
+        writer.setCharset(charset)
+                .setDelimiter(delimiter)
+                .setWriteHeader(hasHeader)
+                .setTargetFile(file)
+                .setRecordTargetFile(false)
+                .setRecordTargetData(false);
+        return writer;
     }
 
     public static File newFile() {

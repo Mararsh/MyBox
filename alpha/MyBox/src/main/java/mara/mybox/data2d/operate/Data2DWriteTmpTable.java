@@ -1,4 +1,4 @@
-package mara.mybox.data2d.reader;
+package mara.mybox.data2d.operate;
 
 import mara.mybox.data2d.Data2D_Edit;
 import mara.mybox.data2d.TmpTable;
@@ -15,7 +15,7 @@ public class Data2DWriteTmpTable extends Data2DWriteTable {
 
     public static Data2DWriteTmpTable create(Data2D_Edit data) {
         Data2DWriteTmpTable op = new Data2DWriteTmpTable();
-        return op.setData(data) ? op : null;
+        return op.setSourceData(data) ? op : null;
     }
 
     @Override
@@ -29,7 +29,7 @@ public class Data2DWriteTmpTable extends Data2DWriteTable {
 
     @Override
     public void makeTableRow(Data2DRow data2DRow) {
-        tmpTable.makeTmpRow(data2DRow, sourceRow, rowIndex);
+        tmpTable.makeTmpRow(data2DRow, sourceRow, sourceRowIndex);
     }
 
 }

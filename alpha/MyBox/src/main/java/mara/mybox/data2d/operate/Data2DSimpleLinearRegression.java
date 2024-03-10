@@ -1,6 +1,5 @@
-package mara.mybox.data2d.reader;
+package mara.mybox.data2d.operate;
 
-import java.util.List;
 import mara.mybox.calculation.SimpleLinearRegression;
 import mara.mybox.data2d.Data2D_Edit;
 import mara.mybox.dev.MyBoxLog;
@@ -11,32 +10,41 @@ import mara.mybox.tools.DoubleTools;
  * @CreateDate 2022-2-25
  * @License Apache License Version 2.0
  */
-public class Data2DSimpleLinearRegression extends Data2DOperator {
+public class Data2DSimpleLinearRegression extends Data2DOperate {
 
     protected SimpleLinearRegression simpleRegression;
     protected double x, y;
 
     public static Data2DSimpleLinearRegression create(Data2D_Edit data) {
         Data2DSimpleLinearRegression op = new Data2DSimpleLinearRegression();
-        return op.setData(data) ? op : null;
+        return op.setSourceData(data) ? op : null;
     }
 
     @Override
     public boolean checkParameters() {
-        return cols != null && !cols.isEmpty() && simpleRegression != null;
+        return super.checkParameters()
+                && cols != null && !cols.isEmpty()
+                && simpleRegression != null;
     }
 
     @Override
-    public void handleRow() {
+    public boolean handleRow() {
         try {
+            targetRow = null;
+            if (sourceRow == null) {
+                return false;
+            }
             x = DoubleTools.toDouble(sourceRow.get(cols.get(0)), invalidAs);
             y = DoubleTools.toDouble(sourceRow.get(cols.get(1)), invalidAs);
-            List<String> row = simpleRegression.addData(rowIndex, x, y);
-            if (csvPrinter != null) {
-                csvPrinter.printRecord(row);
-            }
+            targetRow = simpleRegression.addData(sourceRowIndex, x, y);
+            return true;
         } catch (Exception e) {
-            MyBoxLog.console(e);
+            if (task != null) {
+                task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
+            }
+            return false;
         }
     }
 
