@@ -217,7 +217,7 @@ public class ControlDataExport extends BaseDataConvertController {
             if (taskController != null) {
                 export.setTargetPath(taskController.targetPath);
             }
-            export.setWriteHeader(rowNumberCheck.isSelected());
+            export.setIncludeRowNumber(rowNumberCheck.isSelected());
             export.setFormatValues(formatValuesCheck.isSelected());
             if (csvCheck.isSelected()) {
                 Data2DWriter writer = pickCSVWriter();
