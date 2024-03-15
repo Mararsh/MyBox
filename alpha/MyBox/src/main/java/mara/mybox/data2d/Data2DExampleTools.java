@@ -23,7 +23,6 @@ import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.FileDeleteTools;
-import mara.mybox.tools.FileTmpTools;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -567,7 +566,7 @@ public class Data2DExampleTools {
                 return false;
             }
             File srcFile = FxFileTools.getInternalFile("/data/examples/" + fileName + ".csv");
-            File targetFile = FileTmpTools.generateFile(fileName, "csv");
+            File targetFile = targetData.tmpFile(fileName, "example", "csv");
             if (targetFile.exists()) {
                 targetFile.delete();
             }

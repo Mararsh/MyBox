@@ -28,6 +28,9 @@ public class MatrixWriter extends Data2DWriter {
     @Override
     public boolean openWriter() {
         try {
+            if (!super.openWriter()) {
+                return false;
+            }
             matrix = new DataMatrix();
             matrix.setTask(task()).setDataName(dataName);
             if (!Data2D.saveAttributes(conn, matrix, columns)) {
@@ -43,7 +46,7 @@ public class MatrixWriter extends Data2DWriter {
             targetData = matrix;
             return true;
         } catch (Exception e) {
-            handleError(e.toString());
+            showError(e.toString());
             return false;
         }
     }
@@ -68,7 +71,7 @@ public class MatrixWriter extends Data2DWriter {
                 }
             }
         } catch (Exception e) {
-            handleError(e.toString());
+            showError(e.toString());
         }
     }
 
@@ -84,7 +87,7 @@ public class MatrixWriter extends Data2DWriter {
             Data2D.saveAttributes(conn, matrix, columns);
             created = true;
         } catch (Exception e) {
-            handleError(e.toString());
+            showError(e.toString());
         }
     }
 

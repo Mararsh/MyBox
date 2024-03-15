@@ -171,7 +171,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
                     .setCols(cols).setTask(task).start();
             if (!reader.isFailed()) {
                 conn.commit();
-                return reader.getCount();
+                return reader.getHandledCount();
             } else {
                 return -4;
             }

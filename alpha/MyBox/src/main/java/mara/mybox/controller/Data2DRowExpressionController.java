@@ -7,7 +7,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
-import mara.mybox.data2d.DataFileCSV;
+import mara.mybox.data2d.writer.Data2DWriter;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.table.TableStringValues;
@@ -207,8 +207,8 @@ public class Data2DRowExpressionController extends BaseData2DTargetsController {
     }
 
     @Override
-    public DataFileCSV generatedFile(FxTask currentTask) {
-        return data2D.rowExpression(targetController.name(), expression,
+    public boolean generatedResult(FxTask currentTask, Data2DWriter writer) {
+        return data2D.rowExpression(currentTask, writer, expression,
                 nameInput.getText().trim(), errorContinueCheck.isSelected(),
                 checkedColsIndices, rowNumberCheck.isSelected(), colNameCheck.isSelected());
     }

@@ -58,7 +58,7 @@ public class ControllerTools {
             PopTools.browseURI(null, file.toURI());
             return null;
         }
-        String suffix = FileNameTools.suffix(file.getName()).toLowerCase();
+        String suffix = FileNameTools.ext(file.getName()).toLowerCase();
         if (FileExtensions.SupportedImages.contains(suffix)) {
             return ImageEditorController.openFile(file);
         } else if ("html".equals(suffix) || "htm".equals(suffix)) {
@@ -113,7 +113,7 @@ public class ControllerTools {
         if (file.length() > 1024 * 1024) {
             return openTarget(filename, true);
         }
-        String suffix = FileNameTools.suffix(file.getName()).toLowerCase();
+        String suffix = FileNameTools.ext(file.getName()).toLowerCase();
         if (FileExtensions.SupportedImages.contains(suffix)) {
             return ImagePopController.openFile(parent, filename);
 

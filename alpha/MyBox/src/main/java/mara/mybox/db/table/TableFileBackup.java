@@ -167,7 +167,7 @@ public class TableFileBackup extends BaseTable<FileBackup> {
             File backupPath = path(conn, file);
             if (backupPath == null) {
                 String fname = file.getName();
-                String ext = FileNameTools.suffix(fname);
+                String ext = FileNameTools.ext(fname);
                 backupPath = new File(getBackupsPath() + File.separator
                         + (ext == null || ext.isBlank() ? "x" : ext) + File.separator
                         + FileNameTools.prefix(fname) + new Date().getTime() + File.separator);

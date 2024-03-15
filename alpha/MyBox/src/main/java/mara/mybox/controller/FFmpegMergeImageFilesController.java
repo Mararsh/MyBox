@@ -113,7 +113,7 @@ public class FFmpegMergeImageFilesController extends FFmpegMergeImagesController
         if (verboseCheck == null || verboseCheck.isSelected()) {
             updateLogs(message("Handling") + ": " + file, true);
         }
-        String format = FileNameTools.suffix(file.getName()).toLowerCase();
+        String format = FileNameTools.ext(file.getName()).toLowerCase();
         if ("ico".equals(format) || "icon".equals(format)) {
             try {
                 List<BufferedImage> imageSrc = ICODecoder.read(file);

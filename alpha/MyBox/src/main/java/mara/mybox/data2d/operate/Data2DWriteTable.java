@@ -41,7 +41,7 @@ public class Data2DWriteTable extends Data2DOperate {
                 invalidAs = InvalidAs.Blank;
             }
             writerTableData2D = writerTable.getTableData2D();
-            count = 0;
+            handledCount = 0;
             String sql = writerTableData2D.insertStatement();
             if (task != null) {
                 task.setInfo(sql);
@@ -62,7 +62,7 @@ public class Data2DWriteTable extends Data2DOperate {
             conn.commit();
             insert.close();
             if (task != null) {
-                task.setInfo(message("Inserted") + ": " + count);
+                task.setInfo(message("Inserted") + ": " + handledCount);
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -82,11 +82,11 @@ public class Data2DWriteTable extends Data2DOperate {
             }
             if (writerTableData2D.setInsertStatement(conn, insert, data2DRow)) {
                 insert.addBatch();
-                if (++count % Database.BatchSize == 0) {
+                if (++handledCount % Database.BatchSize == 0) {
                     insert.executeBatch();
                     conn.commit();
                     if (task != null) {
-                        task.setInfo(message("Inserted") + ": " + count);
+                        task.setInfo(message("Inserted") + ": " + handledCount);
                     }
                 }
             }
@@ -131,8 +131,8 @@ public class Data2DWriteTable extends Data2DOperate {
     /*
         get
      */
-    public long getCount() {
-        return count;
+    public long getHandledCount() {
+        return handledCount;
     }
 
 }

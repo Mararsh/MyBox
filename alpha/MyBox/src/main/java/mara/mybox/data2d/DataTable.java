@@ -1,7 +1,5 @@
 package mara.mybox.data2d;
 
-import java.io.File;
-import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -25,11 +23,7 @@ import mara.mybox.db.table.TableData2D;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.FxTask;
-import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.DoubleTools;
-import static mara.mybox.value.Languages.message;
-import org.apache.commons.csv.CSVPrinter;
-import org.apache.commons.math3.stat.Frequency;
 
 /**
  * @Author Mara
@@ -624,93 +618,6 @@ public class DataTable extends Data2D {
             } else {
                 MyBoxLog.error(e.toString());
             }
-            return null;
-        }
-    }
-
-    @Override
-    public DataFileCSV frequency(String dname, Frequency frequency, String colName, int col, int scale) {
-        if (frequency == null || colName == null || col < 0) {
-            return null;
-        }
-        if (needFilter()) {
-            return super.frequency(dname, frequency, colName, col, scale);
-        }
-        File csvFile = tmpFile(dname, "frequency", "csv");
-        int total = 0, dNumber = 0;
-        try (CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile);
-                Connection conn = DerbyBase.getConnection()) {
-            List<String> row = new ArrayList<>();
-            row.add(colName);
-            row.add(colName + "_" + message("Count"));
-            row.add(colName + "_" + message("CountPercentage"));
-            csvPrinter.printRecord(row);
-
-            String sql = "SELECT count(*) AS mybox99_count FROM " + sheet;
-            if (task != null) {
-                task.setInfo(sql);
-            }
-            try (PreparedStatement statement = conn.prepareStatement(sql);
-                    ResultSet results = statement.executeQuery()) {
-                if (results.next()) {
-                    total = results.getInt("mybox99_count");
-                }
-            } catch (Exception e) {
-            }
-            if (total == 0) {
-                if (task != null) {
-                    task.setError(message("NoData"));
-                }
-                return null;
-            }
-            row.clear();
-            row.add(message("All"));
-            row.add(total + "");
-            row.add("100");
-            dNumber = 1;
-            csvPrinter.printRecord(row);
-            sql = "SELECT " + colName + ", count(*) AS mybox99_count FROM " + sheet
-                    + " GROUP BY " + colName + " ORDER BY mybox99_count DESC";
-            if (task != null) {
-                task.setInfo(sql);
-            }
-            try (PreparedStatement statement = conn.prepareStatement(sql);
-                    ResultSet results = statement.executeQuery()) {
-                String sname = DerbyBase.savedName(colName);
-                while (results.next() && task != null && !task.isCancelled()) {
-                    row.clear();
-                    Object c = results.getObject(sname);
-                    row.add(c != null ? c.toString() : null);
-                    int count = results.getInt("mybox99_count");
-                    row.add(count + "");
-                    row.add(DoubleTools.percentage(count, total, scale));
-                    csvPrinter.printRecord(row);
-                    dNumber++;
-                }
-            } catch (Exception e) {
-                if (task != null) {
-                    task.setError(e.toString());
-                } else {
-                    MyBoxLog.error(e);
-                }
-                return null;
-            }
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            } else {
-                MyBoxLog.error(e);
-            }
-            return null;
-        }
-        if (csvFile != null && csvFile.exists()) {
-            DataFileCSV targetData = new DataFileCSV();
-            targetData.setFile(csvFile).setDataName(dname)
-                    .setCharset(Charset.forName("UTF-8"))
-                    .setDelimiter(",").setHasHeader(true)
-                    .setColsNumber(3).setRowsNumber(dNumber);
-            return targetData;
-        } else {
             return null;
         }
     }

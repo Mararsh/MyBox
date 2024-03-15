@@ -93,7 +93,7 @@ public class FFmpegMergeImagesController extends BaseBatchFFmpegController {
         if (v == null || v.isBlank()) {
             targetFileController.input(FileTmpTools.generateFile(ext).getAbsolutePath());
         } else if (!v.endsWith("." + ext)) {
-            targetFileController.input(FileNameTools.replaceSuffix(v, ext));
+            targetFileController.input(FileNameTools.replaceExt(v, ext));
         }
     }
 
@@ -112,7 +112,7 @@ public class FFmpegMergeImagesController extends BaseBatchFFmpegController {
             }
             String ext = ffmpegOptionsController.extensionInput.getText().trim();
             if (ext.isEmpty() || message("OriginalFormat").equals(ext)) {
-                ext = FileNameTools.suffix(targetFile.getName());
+                ext = FileNameTools.ext(targetFile.getName());
             }
             final File videoFile = makeTargetFile(FileNameTools.prefix(targetFile.getName()),
                     "." + ext, targetFile.getParentFile());

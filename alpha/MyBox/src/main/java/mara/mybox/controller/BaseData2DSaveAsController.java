@@ -8,7 +8,6 @@ import mara.mybox.data2d.operate.Data2DExport;
 import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
-import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -32,7 +31,7 @@ public class BaseData2DSaveAsController extends BaseDataConvertController {
         baseTitle = message("SaveAs");
     }
 
-    public void checkTargets() {
+    public void checkParameters() {
         if (targetName == null || targetName.isBlank()) {
             targetName = data2D.dataName();
         }
@@ -53,7 +52,6 @@ public class BaseData2DSaveAsController extends BaseDataConvertController {
         created = false;
         if (export != null) {
             export.setTaskController(this);
-            export.setCss(HtmlStyles.TableStyle);
         }
     }
 

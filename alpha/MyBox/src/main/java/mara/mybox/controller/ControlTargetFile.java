@@ -14,6 +14,7 @@ import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTmpTools;
+import mara.mybox.value.AppPaths;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -156,6 +157,9 @@ public class ControlTargetFile extends ControlFileSelecter {
             if (nameSuffix == null) {
                 nameSuffix = "";
             }
+            if (targetPath == null) {
+                targetPath = new File(AppPaths.getGeneratedPath());
+            }
             String targetPrefix = targetPath.getAbsolutePath() + File.separator
                     + FileNameTools.filter(namePrefix);
             if (appendTimestampCheck == null || appendTimestampCheck.isSelected()) {
@@ -188,6 +192,21 @@ public class ControlTargetFile extends ControlFileSelecter {
             MyBoxLog.debug(e);
             return null;
         }
+    }
+
+    public File makeTargetFile(File inFile) {
+        if (inFile == null) {
+            return FileTmpTools.getTempFile();
+        }
+        String filename = inFile.getAbsolutePath();
+        return makeTargetFile(FileNameTools.prefix(filename),
+                FileNameTools.suffix(filename),
+                inFile.getParentFile());
+    }
+
+    public File makeTargetFile() {
+        checkFileInput();
+        return makeTargetFile(file);
     }
 
     public boolean isSkip() {

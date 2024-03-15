@@ -379,7 +379,7 @@ public class Data2DDefinition extends BaseData {
         if (file == null) {
             return null;
         }
-        String suffix = FileNameTools.suffix(file.getAbsolutePath());
+        String suffix = FileNameTools.ext(file.getAbsolutePath());
         if (suffix == null) {
             return null;
         }

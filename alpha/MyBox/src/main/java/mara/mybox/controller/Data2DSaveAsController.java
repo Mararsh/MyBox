@@ -16,6 +16,7 @@ import static mara.mybox.data2d.Data2D_Attributes.TargetType.HTML;
 import static mara.mybox.data2d.Data2D_Attributes.TargetType.PDF;
 import static mara.mybox.data2d.Data2D_Attributes.TargetType.Text;
 import mara.mybox.data2d.operate.Data2DExport;
+import mara.mybox.data2d.writer.Data2DWriter;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.dev.MyBoxLog;
@@ -67,7 +68,7 @@ public class Data2DSaveAsController extends BaseData2DSaveAsController {
                     formatChanged();
                 }
             });
-            format = targetController.target;
+            format = targetController.format;
 
             dbController.setParameters(this, data2D);
             dbController.setColumns(data2D.columnIndices());
@@ -90,7 +91,7 @@ public class Data2DSaveAsController extends BaseData2DSaveAsController {
                 return;
             }
             optionsBox.getChildren().clear();
-            format = targetController.target;
+            format = targetController.format;
             if (format == null) {
                 return;
             }
@@ -138,47 +139,21 @@ public class Data2DSaveAsController extends BaseData2DSaveAsController {
             if (!targetController.validateTarget()) {
                 return false;
             }
-            format = targetController.target;
+            format = targetController.format;
             if (format == TargetType.DatabaseTable) {
                 return pickDB();
             }
-            switch (format) {
-                case CSV:
-                    if (!pickCSV(export)) {
-                        return false;
-                    }
-                    break;
-                case Excel:
-                    if (!pickExcel(export)) {
-                        return false;
-                    }
-                    break;
-                case Text:
-                    if (!pickText(export)) {
-                        return false;
-                    }
-                    break;
-                case HTML:
-                    if (!pickHtml(export)) {
-                        return false;
-                    }
-                    break;
-                case PDF:
-                    if (!pickPDF(export)) {
-                        return false;
-                    }
-                    break;
+            Data2DWriter writer = pickWriter(format);
+            if (writer == null) {
+                return false;
             }
             targetName = targetController.name();
-            checkTargets();
-            if (format != TargetType.DatabaseTable) {
-                export.initParameters(format);
-                export.setDataName(targetName);
-                return export.initPath(targetController.targetFileController,
-                        data2D.getColumns(), targetName);
-            } else {
-                return true;
-            }
+            checkParameters();
+            export.initParameters();
+            export.setDataName(targetName);
+            export.addWriter(writer);
+            return export.initPath(targetController.targetFileController,
+                    data2D.getColumns(), targetName);
         } catch (Exception e) {
             MyBoxLog.error(e);
             return false;

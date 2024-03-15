@@ -157,7 +157,7 @@ public class CompressTools {
         if (srcFile == null) {
             return null;
         }
-        String ext = FileNameTools.suffix(srcFile.getName()).toLowerCase();
+        String ext = FileNameTools.ext(srcFile.getName()).toLowerCase();
         return detectCompressor(taskController, srcFile, compressorByExtension(ext));
     }
 
@@ -203,7 +203,7 @@ public class CompressTools {
     }
 
     public static Map<String, Object> decompress(BaseTaskController taskController, File srcFile, File targetFile) {
-        String ext = FileNameTools.suffix(srcFile.getName()).toLowerCase();
+        String ext = FileNameTools.ext(srcFile.getName()).toLowerCase();
         return CompressTools.decompress(taskController, srcFile, CompressTools.compressorByExtension(ext), targetFile);
     }
 
@@ -296,7 +296,7 @@ public class CompressTools {
         if (srcFile == null) {
             return null;
         }
-        String ext = FileNameTools.suffix(srcFile.getName()).toLowerCase();
+        String ext = FileNameTools.ext(srcFile.getName()).toLowerCase();
         return detectArchiver(taskController, srcFile, ext);
     }
 
@@ -335,7 +335,7 @@ public class CompressTools {
         if (srcFile == null) {
             return null;
         }
-        String ext = FileNameTools.suffix(srcFile.getName()).toLowerCase();
+        String ext = FileNameTools.ext(srcFile.getName()).toLowerCase();
         return readEntries(taskController, srcFile, ext, encoding);
     }
 

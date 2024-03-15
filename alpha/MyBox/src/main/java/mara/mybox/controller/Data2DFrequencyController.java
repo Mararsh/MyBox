@@ -5,7 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
-import mara.mybox.data2d.DataFileCSV;
+import mara.mybox.data2d.writer.Data2DWriter;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
@@ -111,8 +111,8 @@ public class Data2DFrequencyController extends BaseData2DTargetsController {
     }
 
     @Override
-    public DataFileCSV generatedFile(FxTask currentTask) {
-        return data2D.frequency(targetController.name(), frequency, freName, freCol, scale);
+    public boolean generatedResult(FxTask currentTask, Data2DWriter writer) {
+        return data2D.frequency(currentTask, writer, frequency, outputColumns, freCol, scale);
     }
 
     @Override

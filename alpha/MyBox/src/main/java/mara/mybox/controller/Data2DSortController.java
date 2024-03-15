@@ -1,6 +1,7 @@
 package mara.mybox.controller;
 
-import mara.mybox.data2d.DataFileCSV;
+import mara.mybox.data2d.TmpTable;
+import mara.mybox.data2d.writer.Data2DWriter;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
@@ -43,8 +44,22 @@ public class Data2DSortController extends BaseData2DTargetsController {
     }
 
     @Override
-    public DataFileCSV generatedFile(FxTask currentTask) {
-        return sortedFile(targetController.name(), checkedColsIndices, showRowNumber());
+    public boolean generatedResult(FxTask currentTask, Data2DWriter writer) {
+        try {
+            TmpTable tmpTable = tmpTable(targetController.name(), checkedColsIndices, showRowNumber());
+            if (tmpTable == null) {
+                return false;
+            }
+            boolean ok = tmpTable.sort(currentTask, writer, maxData);
+            tmpTable.drop();
+            return ok;
+        } catch (Exception e) {
+            if (currentTask != null) {
+                currentTask.setError(e.toString());
+            }
+            MyBoxLog.error(e);
+            return false;
+        }
     }
 
     /*

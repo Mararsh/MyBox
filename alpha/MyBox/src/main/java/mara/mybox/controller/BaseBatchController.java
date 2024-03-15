@@ -724,7 +724,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
             sourceFilesSelector = new String[0];
         }
         String fname = file.getName();
-        String suffix = FileNameTools.suffix(fname);
+        String suffix = FileNameTools.ext(fname);
         switch (fileSelectorType) {
 
             case ExtensionEuqalAny:

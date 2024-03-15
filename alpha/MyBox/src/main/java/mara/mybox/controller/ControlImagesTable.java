@@ -203,7 +203,7 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
             if (info == null || info.getFile() == null) {
                 return;
             }
-            String suffix = FileNameTools.suffix(info.getFile().getName());
+            String suffix = FileNameTools.ext(info.getFile().getName());
             if (suffix == null) {
                 return;
             }
@@ -319,7 +319,7 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
             if (info == null || info.getFile() == null) {
                 return;
             }
-            String suffix = FileNameTools.suffix(info.getFile().getName());
+            String suffix = FileNameTools.ext(info.getFile().getName());
             if (suffix != null && suffix.equalsIgnoreCase("pdf")) {
                 PdfViewController controller = (PdfViewController) openStage(Fxmls.PdfViewFxml);
                 controller.loadFile(info.getFile(), null, info.getIndex());

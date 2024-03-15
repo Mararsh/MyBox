@@ -124,10 +124,10 @@ public class IconTools {
             if (iconFile == null || !iconFile.exists()) {
                 return null;
             }
-            String suffix = FileNameTools.suffix(address);
+            String suffix = FileNameTools.ext(address);
             File actualTarget = targetFile;
             if (suffix != null && !suffix.isBlank()) {
-                actualTarget = new File(FileNameTools.replaceSuffix(targetFile.getAbsolutePath(), suffix));
+                actualTarget = new File(FileNameTools.replaceExt(targetFile.getAbsolutePath(), suffix));
             }
             if (FileTools.override(iconFile, actualTarget, true) && actualTarget.exists()) {
                 return actualTarget;

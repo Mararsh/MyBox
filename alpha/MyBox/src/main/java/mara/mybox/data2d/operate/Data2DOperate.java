@@ -3,6 +3,11 @@ package mara.mybox.data2d.operate;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+import javafx.application.Platform;
+import mara.mybox.controller.BaseController;
+import mara.mybox.controller.BaseTaskController;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.Data2DTools;
 import mara.mybox.data2d.Data2D_Edit;
@@ -13,6 +18,7 @@ import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -21,10 +27,11 @@ import mara.mybox.fxml.FxTask;
  */
 public abstract class Data2DOperate {
 
+    protected BaseTaskController taskController;
     protected Data2DReader reader;
     protected List<Data2DWriter> writers;
     protected Data2D sourceData;
-    protected File sourceFile;
+    protected File sourceFile, targetPath, targetFile;
     protected List<String> sourceRow, targetRow;
     protected FxTask task;
     protected List<Integer> cols, otherCols;
@@ -32,11 +39,11 @@ public abstract class Data2DOperate {
     protected boolean includeRowNumber, writeHeader, formatValues, passFilter, reachMax;
     protected boolean stopped, needCheckTask, errorContinue, failed;
     protected long sourceRowIndex; // 1-based 
-    protected long count;
+    protected long handledCount;
     protected InvalidAs invalidAs;
 
     /*
-        init
+        reader
      */
     public boolean setSourceData(Data2D_Edit data) {
         reader = Data2DReader.create(data);
@@ -44,18 +51,63 @@ public abstract class Data2DOperate {
             return false;
         }
         sourceData = reader.getSourceData();
-        sourceFile = data.getFile();
-        task = data.getTask();
+        sourceFile = sourceData.getFile();
+        task = sourceData.getTask();
         reader.setOperate(this);
         return true;
     }
 
+    /*
+        writers
+     */
     public Data2DOperate addWriter(Data2DWriter writer) {
+        if (writer == null) {
+            return this;
+        }
         if (writers == null) {
             writers = new ArrayList<>();
         }
-        writers.add(writer);
+        writers.add(writer.setOperate(this));
         return this;
+    }
+
+    public void makeTmpWriter() {
+        if (!sourceData.isDataFile()) {
+            return;
+        }
+        List<Data2DColumn> columns = sourceData.makeColumns(cols, includeRowNumber);
+        DataFileCSVWriter writer = new DataFileCSVWriter();
+        writer.setWriteHeader(true).setFormatValues(formatValues)
+                .setRowNumber(includeRowNumber)
+                .setColumns(columns)
+                .setHeaderNames(Data2DTools.toNames(columns));
+        addWriter(writer);
+    }
+
+    public boolean initWriters() {
+        return true;
+    }
+
+    public boolean openWriters() {
+        if (writers == null) {
+            return true;
+        }
+        for (Data2DWriter writer : writers) {
+            if (!writer.openWriter()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean closeWriters() {
+        if (writers == null) {
+            return true;
+        }
+        for (Data2DWriter writer : writers) {
+            writer.closeWriter();
+        }
+        return true;
     }
 
     /*
@@ -70,7 +122,7 @@ public abstract class Data2DOperate {
     }
 
     public boolean checkParameters() {
-        count = 0;
+        handledCount = 0;
         sourceRowIndex = 0;
         sourceRow = null;
         targetRow = null;
@@ -87,24 +139,7 @@ public abstract class Data2DOperate {
         if (invalidAs == null) {
             invalidAs = InvalidAs.Skip;
         }
-        if (writers == null || writers.isEmpty()) {
-            makeTmpWriter();
-        }
-        return true;
-    }
-
-    public void makeTmpWriter() {
-        if (!sourceData.isDataFile()) {
-            return;
-        }
-        List<Data2DColumn> columns = sourceData.makeColumns(cols, includeRowNumber);
-        DataFileCSVWriter writer = new DataFileCSVWriter();
-        writer.setWriteHeader(true).setFormatValues(formatValues)
-                .setRowNumber(includeRowNumber)
-                .setColumns(columns)
-                .setHeaderNames(Data2DTools.toNames(columns));
-        writers = new ArrayList<>();
-        writers.add(writer);
+        return openWriters();
     }
 
     public boolean go() {
@@ -113,10 +148,6 @@ public abstract class Data2DOperate {
 
     public void handleData() {
         reader.readRows();
-    }
-
-    public boolean handleRow() {
-        return false;
     }
 
     public void handleRow(List<String> row, long index) {
@@ -130,9 +161,13 @@ public abstract class Data2DOperate {
         } else if (passFilter) {
             if (handleRow()) {
                 writeRow();
-                count++;
+                handledCount++;
             }
         }
+    }
+
+    public boolean handleRow() {
+        return false;
     }
 
     public void writeRow() {
@@ -140,16 +175,42 @@ public abstract class Data2DOperate {
             return;
         }
         for (Data2DWriter writer : writers) {
-//            writer.writeRow(targetRow);
+            writer.writeRow(targetRow);
         }
     }
 
     public boolean end() {
+        closeWriters();
         return true;
     }
 
+    public void openResults(BaseController controller) {
+        if (writers == null) {
+            return;
+        }
+
+        new Timer().schedule(new TimerTask() {
+
+            @Override
+            public void run() {
+                Platform.runLater(() -> {
+                    for (Data2DWriter writer : writers) {
+                        writer.showResult(controller);
+                    }
+                });
+            }
+
+        }, 200);
+    }
+
+
+    /*
+        status
+     */
     public void showInfo(String info) {
-        if (task != null) {
+        if (taskController != null) {
+            taskController.updateLogs(info);
+        } else if (task != null) {
             task.setInfo(info);
         }
     }
@@ -158,19 +219,18 @@ public abstract class Data2DOperate {
         if (error == null || error.isBlank()) {
             return;
         }
-        MyBoxLog.error(error);
-        if (task != null) {
+        if (taskController != null) {
+            taskController.showLogs(error);
+        } else if (task != null) {
             task.setError(error);
+        } else {
+            MyBoxLog.error(error);
         }
-    }
-
-    public void setStatus(boolean fail, boolean stop) {
-        failed = fail;
-        stopped = stop;
     }
 
     public void stop() {
         stopped = true;
+        showInfo(message("Stopped"));
     }
 
     public boolean isStopped() {
@@ -179,6 +239,7 @@ public abstract class Data2DOperate {
 
     public void setFailed() {
         failed = true;
+        showInfo(message("Failed"));
     }
 
     public void failStop(String error) {
@@ -187,7 +248,7 @@ public abstract class Data2DOperate {
     }
 
     public void fail(String error) {
-        failed = true;
+        setFailed();
         showError(error);
     }
 
@@ -281,9 +342,18 @@ public abstract class Data2DOperate {
         return this;
     }
 
+    public Data2DOperate setTaskController(BaseTaskController taskController) {
+        this.taskController = taskController;
+        return this;
+    }
+
     /*
         get
      */
+    public BaseTaskController getTaskController() {
+        return taskController;
+    }
+
     public FxTask getTask() {
         return task;
     }
@@ -292,8 +362,8 @@ public abstract class Data2DOperate {
         return reader.getRowIndex();
     }
 
-    public long getCount() {
-        return count;
+    public long getHandledCount() {
+        return handledCount;
     }
 
     public InvalidAs getInvalidAs() {

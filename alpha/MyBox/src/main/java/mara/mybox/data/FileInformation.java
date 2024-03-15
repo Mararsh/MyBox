@@ -170,9 +170,9 @@ public class FileInformation {
 
     public String getSuffix() {
         if (file != null) {
-            return FileNameTools.suffix(file.getName());
+            return FileNameTools.ext(file.getName());
         } else if (data != null) {
-            return FileNameTools.suffix(data);
+            return FileNameTools.ext(data);
         } else {
             return null;
         }

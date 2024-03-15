@@ -60,7 +60,7 @@ public class ImageInformation extends ImageFileInformation {
         super(file);
         initImage();
         if (file != null) {
-            imageFormat = FileNameTools.suffix(file.getName());
+            imageFormat = FileNameTools.ext(file.getName());
         }
         if (imageFormat != null) {
             imageFormat = imageFormat.toLowerCase();
@@ -290,7 +290,7 @@ public class ImageInformation extends ImageFileInformation {
             }
             if (targetImage == null && file != null) {
                 BufferedImage bufferedImage;
-                String suffix = FileNameTools.suffix(file.getName());
+                String suffix = FileNameTools.ext(file.getName());
                 if (suffix != null && suffix.equalsIgnoreCase("pdf")) {
                     bufferedImage = readPDF(imageInfo, targetWidth);
                 } else if (suffix != null && (suffix.equalsIgnoreCase("ppt") || suffix.equalsIgnoreCase("pptx"))) {
@@ -496,7 +496,7 @@ public class ImageInformation extends ImageFileInformation {
                 File file = imageInfo.getFile();
                 if (file != null) {
                     BufferedImage bufferedImage;
-                    String suffix = FileNameTools.suffix(file.getName());
+                    String suffix = FileNameTools.ext(file.getName());
                     if (suffix != null && suffix.equalsIgnoreCase("pdf")) {
                         bufferedImage = readPDF(imageInfo, targetWidth);
                     } else if (suffix != null && (suffix.equalsIgnoreCase("ppt") || suffix.equalsIgnoreCase("pptx"))) {

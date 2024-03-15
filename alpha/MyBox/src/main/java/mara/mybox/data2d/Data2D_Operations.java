@@ -22,6 +22,8 @@ import mara.mybox.data2d.operate.Data2DRowExpression;
 import mara.mybox.data2d.operate.Data2DSimpleLinearRegression;
 import mara.mybox.data2d.operate.Data2DSplit;
 import mara.mybox.data2d.operate.Data2DStatistic;
+import mara.mybox.data2d.writer.Data2DWriter;
+import mara.mybox.data2d.writer.DataFileCSVWriter;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.db.data.Data2DColumn;
@@ -29,7 +31,6 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.DoubleTools;
-import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.NumberTools;
 import mara.mybox.value.AppValues;
 import static mara.mybox.value.Languages.message;
@@ -175,35 +176,26 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         }
     }
 
-    public DataFileCSV statisticByRows(String dname, List<String> names, List<Integer> cols, DescriptiveStatistic selections) {
-        if (names == null || names.isEmpty() || cols == null || cols.isEmpty()) {
-            return null;
+    public boolean statisticByRows(FxTask task, Data2DWriter writer,
+            List<String> names, List<Integer> cols, DescriptiveStatistic selections) {
+        if (writer == null || names == null || names.isEmpty() || cols == null || cols.isEmpty()) {
+            return false;
         }
-        File csvFile = tmpFile(dname, "statistic", "csv");
-        Data2DOperate reader = null;
-        try (CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
-            csvPrinter.printRecord(names);
-            reader = Data2DStatistic.create(this)
+        try {
+            writer.setColumns(Data2DTools.toColumns(names))
+                    .setHeaderNames(names);
+            Data2DOperate operate = Data2DStatistic.create(this)
                     .setStatisticCalculation(selections)
                     .setType(Data2DStatistic.Type.Rows)
-                    //                    .setCsvPrinter(csvPrinter)
+                    .addWriter(writer)
                     .setCols(cols).setTask(task).start();
+            return !operate.isFailed() && writer.isCreated();
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
             }
             MyBoxLog.error(e);
-            return null;
-        }
-        if (reader != null && csvFile != null && csvFile.exists()) {
-            DataFileCSV targetData = new DataFileCSV();
-            targetData.setFile(csvFile).setDataName(dname)
-                    .setCharset(Charset.forName("UTF-8"))
-                    .setDelimiter(",").setHasHeader(true)
-                    .setColsNumber(names.size()).setRowsNumber(reader.getSourceRowIndex());
-            return targetData;
-        } else {
-            return null;
+            return false;
         }
     }
 
@@ -261,22 +253,12 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         if (cols == null || cols.isEmpty()) {
             return null;
         }
-        File dfile = FileTmpTools.getTempFile(".csv");
-        Data2DOperate reader;
-        List<Data2DColumn> targetColumns = targetColumns(cols, null, includeRowNumber, null);
-        try (CSVPrinter csvPrinter = CsvTools.csvPrinter(dfile)) {
-            List<String> names = new ArrayList<>();
-            for (Data2DColumn column : targetColumns) {
-                names.add(column.getColumnName());
+        try {
+            DataFileCSVWriter writer = new DataFileCSVWriter();
+            if (!copy(task, writer, cols, includeRowNumber, includeColName, formatValues)) {
+                return null;
             }
-            if (includeColName) {
-                csvPrinter.printRecord(names);
-            }
-            reader = Data2DCopy.create(this)
-                    //                    .setCsvPrinter(csvPrinter)
-                    .setFormatValues(formatValues)
-                    .setIncludeRowNumber(includeRowNumber)
-                    .setCols(cols).setTask(task).start();
+            return (DataFileCSV) writer.getTargetData();
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
@@ -284,17 +266,30 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             MyBoxLog.error(e);
             return null;
         }
-        if (reader != null && !reader.isFailed() && dfile != null && dfile.exists()) {
-            DataFileCSV targetData = new DataFileCSV();
-            targetData.setColumns(targetColumns).setFile(dfile)
-                    .setCharset(Charset.forName("UTF-8"))
-                    .setDelimiter(",").setHasHeader(includeColName)
-                    .setColsNumber(targetColumns.size())
-                    .setRowsNumber(reader.getSourceRowIndex());
-            targetData.saveAttributes();
-            return targetData;
-        } else {
-            return null;
+    }
+
+    public boolean copy(FxTask task, Data2DWriter writer, List<Integer> cols,
+            boolean includeRowNumber, boolean includeColName, boolean formatValues) {
+        try {
+            if (writer == null || cols == null || cols.isEmpty()) {
+                return false;
+            }
+            List<Data2DColumn> targetColumns = targetColumns(cols, null, includeRowNumber, null);
+            writer.setColumns(targetColumns)
+                    .setHeaderNames(Data2DTools.toNames(targetColumns));
+            Data2DOperate operate = Data2DCopy.create(this)
+                    .setFormatValues(formatValues)
+                    .setIncludeRowNumber(includeRowNumber)
+                    .setCols(cols)
+                    .addWriter(writer)
+                    .setTask(task).start();
+            return !operate.isFailed() && writer.isCreated();
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e);
+            return false;
         }
     }
 
@@ -376,47 +371,30 @@ public abstract class Data2D_Operations extends Data2D_Convert {
 
     }
 
-    public DataFileCSV rowExpression(String dname, String script, String name, boolean errorContinue,
+    public boolean rowExpression(FxTask task, Data2DWriter writer,
+            String script, String name, boolean errorContinue,
             List<Integer> cols, boolean includeRowNumber, boolean includeColName) {
-        if (cols == null || cols.isEmpty()) {
-            return null;
-        }
-        File csvFile = tmpFile(dname, "RowExpression", "csv");
-        Data2DOperate reader;
-        List<Data2DColumn> targetColumns = targetColumns(cols, null, includeRowNumber, null);
-        targetColumns.add(new Data2DColumn(name, ColumnDefinition.ColumnType.String));
-        try (CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
-            List<String> names = new ArrayList<>();
-            for (Data2DColumn column : targetColumns) {
-                names.add(column.getColumnName());
+        try {
+            if (writer == null || cols == null || cols.isEmpty()) {
+                return false;
             }
-            if (includeColName) {
-                csvPrinter.printRecord(names);
-            }
-            reader = Data2DRowExpression.create(this)
+            List<Data2DColumn> targetColumns = targetColumns(cols, null, includeRowNumber, null);
+            targetColumns.add(new Data2DColumn(name, ColumnDefinition.ColumnType.String));
+            writer.setColumns(targetColumns)
+                    .setHeaderNames(Data2DTools.toNames(targetColumns))
+                    .setWriteHeader(includeColName);
+            Data2DOperate operate = Data2DRowExpression.create(this)
                     .setScript(script).setName(name)
-                    //                    .setCsvPrinter(csvPrinter)
+                    .addWriter(writer)
                     .setIncludeRowNumber(includeRowNumber)
                     .setCols(cols).setTask(task).start();
+            return !operate.isFailed() && writer.isCreated();
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
             }
             MyBoxLog.error(e);
-            return null;
-        }
-        if (reader != null && !reader.isFailed() && csvFile != null && csvFile.exists()) {
-            DataFileCSV targetData = new DataFileCSV();
-            targetData.setColumns(targetColumns)
-                    .setFile(csvFile).setDataName(dname)
-                    .setCharset(Charset.forName("UTF-8"))
-                    .setDelimiter(",").setHasHeader(includeColName)
-                    .setColsNumber(targetColumns.size())
-                    .setRowsNumber(reader.getSourceRowIndex());
-            targetData.saveAttributes();
-            return targetData;
-        } else {
-            return null;
+            return false;
         }
     }
 
@@ -444,28 +422,22 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         return fixColumnNames(targetColumns);
     }
 
-    public DataFileCSV percentageColumns(String dname, List<Integer> cols, List<Integer> otherCols,
+    public boolean percentageColumns(FxTask task, Data2DWriter writer,
+            List<Integer> cols, List<Integer> otherCols,
             int scale, String toNegative, InvalidAs invalidAs) {
-        if (cols == null || cols.isEmpty()) {
-            return null;
-        }
-        Data2DPrecentage reader = Data2DPrecentage.create(this)
-                .setType(Data2DPrecentage.Type.ColumnsPass1)
-                .setToNegative(toNegative);
-        reader.setInvalidAs(invalidAs).setScale(scale)
-                .setCols(cols).setTask(task).start();
-        if (reader.isFailed()) {
-            return null;
-        }
-        double[] colsSum = reader.getColValues();
-        File csvFile = tmpFile(dname, "percentage", "csv");
-        List<Data2DColumn> targetColumns = makePercentageColumns(cols, otherCols, ObjectType.Columns);
-        try (CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
-            List<String> names = new ArrayList<>();
-            for (Data2DColumn column : targetColumns) {
-                names.add(column.getColumnName());
+        try {
+            if (writer == null || cols == null || cols.isEmpty()) {
+                return false;
             }
-            csvPrinter.printRecord(names);
+            Data2DPrecentage operate = Data2DPrecentage.create(this)
+                    .setType(Data2DPrecentage.Type.ColumnsPass1)
+                    .setToNegative(toNegative);
+            operate.setInvalidAs(invalidAs).setScale(scale)
+                    .setCols(cols).setTask(task).start();
+            if (operate.isFailed()) {
+                return false;
+            }
+            double[] colsSum = operate.getColValues();
             List<String> row = new ArrayList<>();
             row.add(message("Column") + "-" + message("Summation"));
             for (int c = 0; c < cols.size(); c++) {
@@ -476,58 +448,49 @@ public abstract class Data2D_Operations extends Data2D_Convert {
                     row.add(null);
                 }
             }
-            csvPrinter.printRecord(row);
-            reader = Data2DPrecentage.create(this)
+            List<Data2DColumn> targetColumns = makePercentageColumns(cols, otherCols, ObjectType.Columns);
+            writer.setColumns(targetColumns)
+                    .setHeaderNames(Data2DTools.toNames(targetColumns));
+            operate = Data2DPrecentage.create(this)
                     .setType(Data2DPrecentage.Type.ColumnsPass2)
                     .setToNegative(toNegative)
-                    .setColValues(colsSum);
-            reader.setInvalidAs(invalidAs).setScale(scale)
-                    //                    .setCsvPrinter(csvPrinter)
+                    .setColValues(colsSum)
+                    .setFirstRow(row);
+            operate.setInvalidAs(invalidAs).setScale(scale)
+                    .addWriter(writer)
                     .setCols(cols).setOtherCols(otherCols).setTask(task).start();
+            return !operate.isFailed() && writer.isCreated();
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
             }
             MyBoxLog.error(e);
-            return null;
-        }
-        if (!reader.isFailed() && csvFile != null && csvFile.exists()) {
-            DataFileCSV targetData = new DataFileCSV();
-            targetData.setColumns(targetColumns)
-                    .setFile(csvFile).setDataName(dname)
-                    .setCharset(Charset.forName("UTF-8"))
-                    .setDelimiter(",").setHasHeader(true)
-                    .setColsNumber(targetColumns.size()).setRowsNumber(reader.getSourceRowIndex() + 1);
-            return targetData;
-        } else {
-            return null;
+            return false;
         }
     }
 
-    public DataFileCSV percentageAll(String dname, List<Integer> cols, List<Integer> otherCols,
+    public boolean percentageAll(FxTask task, Data2DWriter writer,
+            List<Integer> cols, List<Integer> otherCols,
             int scale, String toNegative, InvalidAs invalidAs) {
-        if (cols == null || cols.isEmpty()) {
-            return null;
-        }
-        Data2DPrecentage reader = Data2DPrecentage.create(this)
-                .setType(Data2DPrecentage.Type.AllPass1)
-                .setToNegative(toNegative);
-        reader.setInvalidAs(invalidAs).setScale(scale)
-                .setCols(cols).setTask(task).start();
-        if (reader.isFailed()) {
-            return null;
-        }
-        File csvFile = tmpFile(dname, "percentage", "csv");
-        List<Data2DColumn> targetColumns = makePercentageColumns(cols, otherCols, ObjectType.All);
-        try (CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
-            List<String> names = new ArrayList<>();
-            for (Data2DColumn column : targetColumns) {
-                names.add(column.getColumnName());
+
+        try {
+            if (writer == null || cols == null || cols.isEmpty()) {
+                return false;
             }
-            csvPrinter.printRecord(names);
+            Data2DPrecentage operate = Data2DPrecentage.create(this)
+                    .setType(Data2DPrecentage.Type.AllPass1)
+                    .setToNegative(toNegative);
+            operate.setInvalidAs(invalidAs).setScale(scale)
+                    .setCols(cols).setTask(task).start();
+            if (operate.isFailed()) {
+                return false;
+            }
+            List<Data2DColumn> targetColumns = makePercentageColumns(cols, otherCols, ObjectType.All);
+            writer.setColumns(targetColumns)
+                    .setHeaderNames(Data2DTools.toNames(targetColumns));
             List<String> row = new ArrayList<>();
             row.add(message("All") + "-" + message("Summation"));
-            double sum = reader.gettValue();
+            double sum = operate.gettValue();
             row.add(NumberTools.format(sum, scale));
             for (int c : cols) {
                 row.add(null);
@@ -537,549 +500,397 @@ public abstract class Data2D_Operations extends Data2D_Convert {
                     row.add(null);
                 }
             }
-            csvPrinter.printRecord(row);
-            reader = Data2DPrecentage.create(this)
+            operate = Data2DPrecentage.create(this)
                     .setType(Data2DPrecentage.Type.AllPass2)
-                    .setToNegative(toNegative).settValue(sum);
-            reader.setInvalidAs(invalidAs).setScale(scale)
-                    //                    .setCsvPrinter(csvPrinter)
+                    .setToNegative(toNegative).settValue(sum)
+                    .setFirstRow(row);
+            operate.setInvalidAs(invalidAs).setScale(scale)
+                    .addWriter(writer)
                     .setCols(cols).setOtherCols(otherCols).setTask(task).start();
+            return !operate.isFailed() && writer.isCreated();
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
             }
             MyBoxLog.error(e);
-            return null;
-        }
-        if (!reader.isFailed() && csvFile != null && csvFile.exists()) {
-            DataFileCSV targetData = new DataFileCSV();
-            targetData.setColumns(targetColumns)
-                    .setFile(csvFile).setDataName(dname)
-                    .setCharset(Charset.forName("UTF-8"))
-                    .setDelimiter(",").setHasHeader(true)
-                    .setColsNumber(targetColumns.size()).setRowsNumber(reader.getSourceRowIndex() + 1);
-            return targetData;
-        } else {
-            return null;
+            return false;
         }
     }
 
-    public DataFileCSV percentageRows(String dname, List<Integer> cols, List<Integer> otherCols,
+    public boolean percentageRows(FxTask task, Data2DWriter writer,
+            List<Integer> cols, List<Integer> otherCols,
             int scale, String toNegative, InvalidAs invalidAs) {
-        if (cols == null || cols.isEmpty()) {
-            return null;
-        }
-        File csvFile = tmpFile(dname, "percentage", "csv");
-        Data2DOperate reader;
-        List<Data2DColumn> targetColumns = makePercentageColumns(cols, otherCols, ObjectType.Rows);
-        try (CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
-            List<String> names = new ArrayList<>();
-            for (Data2DColumn column : targetColumns) {
-                names.add(column.getColumnName());
+
+        try {
+            if (writer == null || cols == null || cols.isEmpty()) {
+                return false;
             }
-            csvPrinter.printRecord(names);
-            reader = Data2DPrecentage.create(this)
+            List<Data2DColumn> targetColumns = makePercentageColumns(cols, otherCols, ObjectType.Rows);
+            writer.setColumns(targetColumns)
+                    .setHeaderNames(Data2DTools.toNames(targetColumns));
+            Data2DOperate operate = Data2DPrecentage.create(this)
                     .setType(Data2DPrecentage.Type.Rows)
                     .setToNegative(toNegative);
-            reader.setInvalidAs(invalidAs).setScale(scale)
-                    //                    .setCsvPrinter(csvPrinter)
+            operate.setInvalidAs(invalidAs).setScale(scale)
+                    .addWriter(writer)
                     .setCols(cols).setOtherCols(otherCols).setTask(task).start();
+            return !operate.isFailed() && writer.isCreated();
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
             }
             MyBoxLog.error(e);
-            return null;
-        }
-        if (!reader.isFailed() && csvFile != null && csvFile.exists()) {
-            DataFileCSV targetData = new DataFileCSV();
-            targetData.setColumns(targetColumns)
-                    .setFile(csvFile).setDataName(dname)
-                    .setCharset(Charset.forName("UTF-8"))
-                    .setDelimiter(",").setHasHeader(true)
-                    .setColsNumber(targetColumns.size()).setRowsNumber(reader.getSourceRowIndex());
-            return targetData;
-        } else {
-            return null;
+            return false;
         }
     }
 
-    public DataFileCSV frequency(String dname, Frequency frequency, String colName, int col, int scale) {
-        if (frequency == null || colName == null || col < 0) {
-            return null;
-        }
-        File csvFile = tmpFile(dname, "frequency", "csv");
-        Data2DFrequency operator;
-        try (CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
-            List<String> row = new ArrayList<>();
-            row.add(colName);
-            row.add(colName + "_" + message("Count"));
-            row.add(colName + "_" + message("CountPercentage"));
-            csvPrinter.printRecord(row);
-
-            operator = Data2DFrequency.create(this)
-                    .setFrequency(frequency).setColIndex(col);
-            operator
-                    //                    .setCsvPrinter(csvPrinter)
-                    .setScale(scale).setTask(task).start();
-
+    public boolean frequency(FxTask task, Data2DWriter writer,
+            Frequency frequency, List<Data2DColumn> outputColumns, int col, int scale) {
+        try {
+            if (writer == null || frequency == null || outputColumns == null || col < 0) {
+                return false;
+            }
+            writer.setColumns(outputColumns)
+                    .setHeaderNames(Data2DTools.toNames(outputColumns));
+            Data2DOperate operate = Data2DFrequency.create(this)
+                    .setFrequency(frequency).setColIndex(col)
+                    .addWriter(writer)
+                    .setScale(scale)
+                    .setTask(task).start();
+            return !operate.isFailed() && writer.isCreated();
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
             }
             MyBoxLog.error(e);
-            return null;
-        }
-        if (!operator.isFailed() && csvFile != null && csvFile.exists()) {
-            DataFileCSV targetData = new DataFileCSV();
-            targetData.setFile(csvFile).setDataName(dname)
-                    .setCharset(Charset.forName("UTF-8"))
-                    .setDelimiter(",").setHasHeader(true)
-                    .setColsNumber(3).setRowsNumber(operator.getCount());
-            return targetData;
-        } else {
-            return null;
+            return false;
         }
     }
 
-    public DataFileCSV normalizeMinMaxColumns(String dname, List<Integer> cols, List<Integer> otherCols,
-            double from, double to, boolean rowNumber, boolean colName, int scale, InvalidAs invalidAs) {
-        if (cols == null || cols.isEmpty()) {
-            return null;
-        }
-        int colLen = cols.size();
-        DoubleStatistic[] sData = new DoubleStatistic[colLen];
-        for (int c = 0; c < colLen; c++) {
-            sData[c] = new DoubleStatistic();
-            sData[c].invalidAs = invalidAs;
-        }
-        DescriptiveStatistic selections = DescriptiveStatistic.all(false)
-                .add(StatisticType.Sum)
-                .add(StatisticType.MaximumQ4)
-                .add(StatisticType.MinimumQ0);
-        Data2DOperate operator = Data2DStatistic.create(this)
-                .setStatisticData(sData)
-                .setStatisticCalculation(selections)
-                .setType(Data2DStatistic.Type.ColumnsPass1)
-                .setInvalidAs(invalidAs)
-                .setCols(cols).setScale(scale).setTask(task).start();
-        if (operator == null || operator.isFailed()) {
-            return null;
-        }
-        for (int c = 0; c < colLen; c++) {
-            double d = sData[c].maximum - sData[c].minimum;
-            sData[c].dTmp = (to - from) / (d == 0 ? AppValues.TinyDouble : d);
-        }
-        File csvFile = tmpFile(dname, "normalizeMinMax", "csv");
-        operator = null;
-        List<Data2DColumn> targetColumns = targetColumns(cols, otherCols, rowNumber, message("Normalize"));
-        try (CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
-            List<String> names = new ArrayList<>();
-            for (Data2DColumn column : targetColumns) {
-                names.add(column.getColumnName());
-            }
-            if (colName) {
-                csvPrinter.printRecord(names);
-            }
-            operator = Data2DNormalize.create(this)
-                    .setType(Data2DNormalize.Type.MinMaxColumns)
-                    .setStatisticData(sData).setFrom(from)
-                    //                    .setCsvPrinter(csvPrinter)
-                    .setInvalidAs(invalidAs).setIncludeRowNumber(rowNumber)
-                    .setCols(cols).setOtherCols(otherCols)
-                    .setScale(scale).setTask(task).start();
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            MyBoxLog.error(e);
-            return null;
-        }
-        if (operator != null && !operator.isFailed() && csvFile != null && csvFile.exists()) {
-            DataFileCSV targetData = new DataFileCSV();
-            targetData.setColumns(targetColumns)
-                    .setFile(csvFile).setDataName(dname)
-                    .setCharset(Charset.forName("UTF-8"))
-                    .setDelimiter(",").setHasHeader(colName)
-                    .setColsNumber(targetColumns.size()).setRowsNumber(operator.getSourceRowIndex());
-            return targetData;
-        } else {
-            return null;
-        }
-    }
-
-    public DataFileCSV normalizeSumColumns(String dname, List<Integer> cols, List<Integer> otherCols,
-            boolean rowNumber, boolean colName, int scale, InvalidAs invalidAs) {
-        if (cols == null || cols.isEmpty()) {
-            return null;
-        }
-        int colLen = cols.size();
-        DoubleStatistic[] sData = new DoubleStatistic[colLen];
-        for (int c = 0; c < colLen; c++) {
-            sData[c] = new DoubleStatistic();
-            sData[c].invalidAs = invalidAs;
-        }
-        DescriptiveStatistic selections = DescriptiveStatistic.all(false);
-        Data2DOperate operator = Data2DStatistic.create(this)
-                .setType(Data2DStatistic.Type.ColumnsPass1)
-                .setStatisticData(sData)
-                .setStatisticCalculation(selections)
-                .setSumAbs(true).setInvalidAs(invalidAs)
-                .setCols(cols).setScale(scale).setTask(task).start();
-        if (operator == null) {
-            return null;
-        }
-        double[] colValues = new double[colLen];
-        for (int c = 0; c < colLen; c++) {
-            if (sData[c].sum == 0) {
-                colValues[c] = 1d / AppValues.TinyDouble;
-            } else {
-                colValues[c] = 1d / sData[c].sum;
-            }
-        }
-        File csvFile = tmpFile(dname, "normalizeSum", "csv");
-        operator = null;
-        List<Data2DColumn> targetColumns = targetColumns(cols, otherCols, rowNumber, message("Normalize"));
-        try (CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
-            List<String> names = new ArrayList<>();
-            for (Data2DColumn column : targetColumns) {
-                names.add(column.getColumnName());
-            }
-            if (colName) {
-                csvPrinter.printRecord(names);
-            }
-            operator = Data2DNormalize.create(this)
-                    .setType(Data2DNormalize.Type.SumColumns)
-                    .setColValues(colValues)
-                    //                    .setCsvPrinter(csvPrinter)
-                    .setInvalidAs(invalidAs).setIncludeRowNumber(rowNumber)
-                    .setCols(cols).setOtherCols(otherCols)
-                    .setScale(scale).setTask(task).start();
-
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            MyBoxLog.error(e);
-            return null;
-        }
-        if (operator != null && !operator.isFailed() && csvFile != null && csvFile.exists()) {
-            DataFileCSV targetData = new DataFileCSV();
-            targetData.setColumns(targetColumns)
-                    .setFile(csvFile).setDataName(dname)
-                    .setCharset(Charset.forName("UTF-8"))
-                    .setDelimiter(",").setHasHeader(colName)
-                    .setColsNumber(targetColumns.size()).setRowsNumber(operator.getSourceRowIndex());
-            return targetData;
-        } else {
-            return null;
-        }
-    }
-
-    public DataFileCSV normalizeZscoreColumns(String dname, List<Integer> cols, List<Integer> otherCols,
-            boolean rowNumber, boolean colName, int scale, InvalidAs invalidAs) {
-        if (cols == null || cols.isEmpty()) {
-            return null;
-        }
-        int colLen = cols.size();
-        DoubleStatistic[] sData = new DoubleStatistic[colLen];
-        for (int c = 0; c < colLen; c++) {
-            sData[c] = new DoubleStatistic();
-            sData[c].invalidAs = invalidAs;
-        }
-        DescriptiveStatistic selections = DescriptiveStatistic.all(false)
-                .add(StatisticType.PopulationStandardDeviation);
-        Data2DOperate operator = Data2DStatistic.create(this)
-                .setStatisticData(sData)
-                .setStatisticCalculation(selections)
-                .setType(Data2DStatistic.Type.ColumnsPass1)
-                .setInvalidAs(invalidAs)
-                .setCols(cols).setScale(scale).setTask(task).start();
-        if (operator == null) {
-            return null;
-        }
-        operator = Data2DStatistic.create(this)
-                .setStatisticData(sData)
-                .setStatisticCalculation(selections)
-                .setType(Data2DStatistic.Type.ColumnsPass2)
-                .setCols(cols).setScale(scale).setTask(task).start();
-        if (operator == null) {
-            return null;
-        }
-        File csvFile = tmpFile(dname, "normalizeZscore", "csv");
-        operator = null;
-        List<Data2DColumn> targetColumns = targetColumns(cols, otherCols, rowNumber, message("Normalize"));
-        try (CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
-            List<String> names = new ArrayList<>();
-            for (Data2DColumn column : targetColumns) {
-                names.add(column.getColumnName());
-            }
-            if (colName) {
-                csvPrinter.printRecord(names);
-            }
-            operator = Data2DNormalize.create(this)
-                    .setType(Data2DNormalize.Type.ZscoreColumns)
-                    .setStatisticData(sData)
-                    //                    .setCsvPrinter(csvPrinter)
-                    .setInvalidAs(invalidAs).setIncludeRowNumber(rowNumber)
-                    .setCols(cols).setOtherCols(otherCols)
-                    .setScale(scale).setTask(task).start();
-
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            MyBoxLog.error(e);
-            return null;
-        }
-        if (operator != null && !operator.isFailed() && csvFile != null && csvFile.exists()) {
-            DataFileCSV targetData = new DataFileCSV();
-            targetData.setColumns(targetColumns)
-                    .setFile(csvFile).setDataName(dname)
-                    .setCharset(Charset.forName("UTF-8"))
-                    .setDelimiter(",").setHasHeader(colName)
-                    .setColsNumber(targetColumns.size()).setRowsNumber(operator.getSourceRowIndex());
-            return targetData;
-        } else {
-            return null;
-        }
-    }
-
-    public DataFileCSV normalizeMinMaxAll(String dname, List<Integer> cols, List<Integer> otherCols,
-            double from, double to, boolean rowNumber, boolean colName, int scale, InvalidAs invalidAs) {
-        if (cols == null || cols.isEmpty()) {
-            return null;
-        }
-        DoubleStatistic sData = new DoubleStatistic();
-        sData.invalidAs = invalidAs;
-        DescriptiveStatistic selections = DescriptiveStatistic.all(false)
-                .add(StatisticType.Sum)
-                .add(StatisticType.MaximumQ4)
-                .add(StatisticType.MinimumQ0);
-        Data2DOperate operator = Data2DStatistic.create(this)
-                .setStatisticAll(sData)
-                .setStatisticCalculation(selections)
-                .setType(Data2DStatistic.Type.AllPass1)
-                .setInvalidAs(invalidAs)
-                .setCols(cols).setScale(scale).setTask(task).start();
-        if (operator == null) {
-            return null;
-        }
-        double d = sData.maximum - sData.minimum;
-        sData.dTmp = (to - from) / (d == 0 ? AppValues.TinyDouble : d);
-        File csvFile = tmpFile(dname, "normalizeMinMax", "csv");
-        operator = null;
-        List<Data2DColumn> targetColumns = targetColumns(cols, otherCols, rowNumber, message("Normalize"));
-        try (CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
-            List<String> names = new ArrayList<>();
-            if (rowNumber) {
-                names.add(message("RowNumber"));
-            }
-            for (int i = 0; i < columns.size(); i++) {
-                if (cols.contains(i)) {
-                    names.add(columns.get(i).getColumnName() + "_" + message("Normalize"));
-                }
-            }
-            if (colName) {
-                csvPrinter.printRecord(names);
-            }
-            operator = Data2DNormalize.create(this)
-                    .setType(Data2DNormalize.Type.MinMaxAll)
-                    .setStatisticAll(sData).setFrom(from)
-                    //                    .setCsvPrinter(csvPrinter)   // #######
-                    .setInvalidAs(invalidAs).setIncludeRowNumber(rowNumber)
-                    .setCols(cols).setOtherCols(otherCols)
-                    .setScale(scale).setTask(task).start();
-
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            MyBoxLog.error(e);
-            return null;
-        }
-        if (operator != null && !operator.isFailed() && csvFile != null && csvFile.exists()) {
-            DataFileCSV targetData = new DataFileCSV();
-            targetData.setColumns(targetColumns)
-                    .setFile(csvFile).setDataName(dname)
-                    .setCharset(Charset.forName("UTF-8"))
-                    .setDelimiter(",").setHasHeader(colName)
-                    .setColsNumber(targetColumns.size()).setRowsNumber(operator.getSourceRowIndex());
-            return targetData;
-        } else {
-            return null;
-        }
-    }
-
-    public DataFileCSV normalizeSumAll(String dname, List<Integer> cols, List<Integer> otherCols,
-            boolean rowNumber, boolean colName, int scale, InvalidAs invalidAs) {
-        if (cols == null || cols.isEmpty()) {
-            return null;
-        }
-        DoubleStatistic sData = new DoubleStatistic();
-        sData.invalidAs = invalidAs;
-        DescriptiveStatistic selections = DescriptiveStatistic.all(false);
-        Data2DOperate operator = Data2DStatistic.create(this)
-                .setStatisticAll(sData)
-                .setStatisticCalculation(selections)
-                .setType(Data2DStatistic.Type.AllPass1)
-                .setSumAbs(true).setInvalidAs(invalidAs)
-                .setCols(cols).setScale(scale).setTask(task).start();
-        if (operator == null) {
-            return null;
-        }
-        double k;
-        if (sData.sum == 0) {
-            k = 1d / AppValues.TinyDouble;
-        } else {
-            k = 1d / sData.sum;
-        }
-        File csvFile = tmpFile(dname, "normalizeSum", "csv");
-        operator = null;
-        List<Data2DColumn> targetColumns = targetColumns(cols, otherCols, rowNumber, message("Normalize"));
-        try (CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
-            List<String> names = new ArrayList<>();
-            for (Data2DColumn column : targetColumns) {
-                names.add(column.getColumnName());
-            }
-            if (colName) {
-                csvPrinter.printRecord(names);
-            }
-            operator = Data2DNormalize.create(this)
-                    .setType(Data2DNormalize.Type.SumAll)
-                    .settValue(k)
-                    //                    .setCsvPrinter(csvPrinter)
-                    .setInvalidAs(invalidAs).setIncludeRowNumber(rowNumber)
-                    .setCols(cols).setOtherCols(otherCols)
-                    .setScale(scale).setTask(task).start();
-
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            MyBoxLog.error(e);
-            return null;
-        }
-        if (operator != null && !operator.isFailed() && csvFile != null && csvFile.exists()) {
-            DataFileCSV targetData = new DataFileCSV();
-            targetData.setColumns(targetColumns)
-                    .setFile(csvFile).setDataName(dname)
-                    .setCharset(Charset.forName("UTF-8"))
-                    .setDelimiter(",").setHasHeader(colName)
-                    .setColsNumber(targetColumns.size()).setRowsNumber(operator.getSourceRowIndex());
-            return targetData;
-        } else {
-            return null;
-        }
-    }
-
-    public DataFileCSV normalizeZscoreAll(String dname, List<Integer> cols, List<Integer> otherCols,
-            boolean rowNumber, boolean colName, int scale, InvalidAs invalidAs) {
-        if (cols == null || cols.isEmpty()) {
-            return null;
-        }
-        DoubleStatistic sData = new DoubleStatistic();
-        sData.invalidAs = invalidAs;
-        DescriptiveStatistic selections = DescriptiveStatistic.all(false)
-                .add(StatisticType.PopulationStandardDeviation);
-        Data2DOperate operator = Data2DStatistic.create(this)
-                .setStatisticAll(sData)
-                .setStatisticCalculation(selections)
-                .setType(Data2DStatistic.Type.AllPass1)
-                .setInvalidAs(invalidAs)
-                .setCols(cols).setScale(scale).setTask(task).start();
-        if (operator == null) {
-            return null;
-        }
-        operator = Data2DStatistic.create(this)
-                .setStatisticAll(sData)
-                .setStatisticCalculation(selections)
-                .setType(Data2DStatistic.Type.AllPass2)
-                .setInvalidAs(invalidAs)
-                .setCols(cols).setScale(scale).setTask(task).start();
-        if (operator == null) {
-            return null;
-        }
-        File csvFile = tmpFile(dname, "normalizeZscore", "csv");
-        operator = null;
-        List<Data2DColumn> targetColumns = targetColumns(cols, otherCols, rowNumber, message("Normalize"));
-        try (CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
-            List<String> names = new ArrayList<>();
-            for (Data2DColumn column : targetColumns) {
-                names.add(column.getColumnName());
-            }
-            if (colName) {
-                csvPrinter.printRecord(names);
-            }
-            operator = Data2DNormalize.create(this)
-                    .setType(Data2DNormalize.Type.ZscoreAll)
-                    .setStatisticAll(sData)
-                    //                    .setCsvPrinter(csvPrinter)
-                    .setInvalidAs(invalidAs).setIncludeRowNumber(rowNumber)
-                    .setCols(cols).setOtherCols(otherCols)
-                    .setScale(scale).setTask(task).start();
-
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            MyBoxLog.error(e);
-            return null;
-        }
-        if (operator != null && !operator.isFailed() && csvFile != null && csvFile.exists()) {
-            DataFileCSV targetData = new DataFileCSV();
-            targetData.setColumns(targetColumns)
-                    .setFile(csvFile).setDataName(dname)
-                    .setCharset(Charset.forName("UTF-8"))
-                    .setDelimiter(",").setHasHeader(colName)
-                    .setColsNumber(targetColumns.size()).setRowsNumber(operator.getSourceRowIndex());
-            return targetData;
-        } else {
-            return null;
-        }
-    }
-
-    public DataFileCSV normalizeRows(String dname, Normalization.Algorithm a,
+    public boolean normalizeMinMaxColumns(FxTask task, Data2DWriter writer,
             List<Integer> cols, List<Integer> otherCols,
             double from, double to, boolean rowNumber, boolean colName, int scale, InvalidAs invalidAs) {
-        if (cols == null || cols.isEmpty()) {
-            return null;
-        }
-        File csvFile = tmpFile(dname, "normalizeSum", "csv");
-        Data2DOperate operator = null;
-        List<Data2DColumn> targetColumns = targetColumns(cols, otherCols, rowNumber, message("Normalize"));
-        try (CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
-            List<String> names = new ArrayList<>();
-            for (Data2DColumn column : targetColumns) {
-                names.add(column.getColumnName());
+        try {
+            if (writer == null || cols == null || cols.isEmpty()) {
+                return false;
             }
-            if (colName) {
-                csvPrinter.printRecord(names);
+            int colLen = cols.size();
+            DoubleStatistic[] sData = new DoubleStatistic[colLen];
+            for (int c = 0; c < colLen; c++) {
+                sData[c] = new DoubleStatistic();
+                sData[c].invalidAs = invalidAs;
             }
-            operator = Data2DNormalize.create(this)
-                    .setType(Data2DNormalize.Type.Rows)
-                    .setA(a).setFrom(from).setTo(to)
-                    //                    .setCsvPrinter(csvPrinter)
+            DescriptiveStatistic selections = DescriptiveStatistic.all(false)
+                    .add(StatisticType.Sum)
+                    .add(StatisticType.MaximumQ4)
+                    .add(StatisticType.MinimumQ0);
+            Data2DOperate operate = Data2DStatistic.create(this)
+                    .setStatisticData(sData)
+                    .setStatisticCalculation(selections)
+                    .setType(Data2DStatistic.Type.ColumnsPass1)
+                    .setInvalidAs(invalidAs)
+                    .setCols(cols).setScale(scale).setTask(task).start();
+            if (operate == null || operate.isFailed()) {
+                return false;
+            }
+            for (int c = 0; c < colLen; c++) {
+                double d = sData[c].maximum - sData[c].minimum;
+                sData[c].dTmp = (to - from) / (d == 0 ? AppValues.TinyDouble : d);
+            }
+            List<Data2DColumn> targetColumns = targetColumns(cols, otherCols, rowNumber, message("Normalize"));
+            writer.setColumns(targetColumns)
+                    .setHeaderNames(Data2DTools.toNames(targetColumns))
+                    .setWriteHeader(colName);
+            operate = Data2DNormalize.create(this)
+                    .setType(Data2DNormalize.Type.MinMaxColumns)
+                    .setStatisticData(sData).setFrom(from)
+                    .addWriter(writer)
                     .setInvalidAs(invalidAs).setIncludeRowNumber(rowNumber)
                     .setCols(cols).setOtherCols(otherCols)
                     .setScale(scale).setTask(task).start();
+            return !operate.isFailed() && writer.isCreated();
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
             }
             MyBoxLog.error(e);
-            return null;
+            return false;
         }
-        if (operator != null && !operator.isFailed() && csvFile != null && csvFile.exists()) {
-            DataFileCSV targetData = new DataFileCSV();
-            targetData.setColumns(targetColumns)
-                    .setFile(csvFile).setDataName(dname)
-                    .setCharset(Charset.forName("UTF-8"))
-                    .setDelimiter(",").setHasHeader(colName)
-                    .setColsNumber(targetColumns.size()).setRowsNumber(operator.getSourceRowIndex());
-            return targetData;
-        } else {
-            return null;
+    }
+
+    public boolean normalizeSumColumns(FxTask task, Data2DWriter writer,
+            List<Integer> cols, List<Integer> otherCols,
+            boolean rowNumber, boolean colName, int scale, InvalidAs invalidAs) {
+
+        try {
+            if (writer == null || cols == null || cols.isEmpty()) {
+                return false;
+            }
+            int colLen = cols.size();
+            DoubleStatistic[] sData = new DoubleStatistic[colLen];
+            for (int c = 0; c < colLen; c++) {
+                sData[c] = new DoubleStatistic();
+                sData[c].invalidAs = invalidAs;
+            }
+            DescriptiveStatistic selections = DescriptiveStatistic.all(false);
+            Data2DOperate operate = Data2DStatistic.create(this)
+                    .setType(Data2DStatistic.Type.ColumnsPass1)
+                    .setStatisticData(sData)
+                    .setStatisticCalculation(selections)
+                    .setSumAbs(true).setInvalidAs(invalidAs)
+                    .setCols(cols).setScale(scale).setTask(task).start();
+            if (operate == null) {
+                return false;
+            }
+            double[] colValues = new double[colLen];
+            for (int c = 0; c < colLen; c++) {
+                if (sData[c].sum == 0) {
+                    colValues[c] = 1d / AppValues.TinyDouble;
+                } else {
+                    colValues[c] = 1d / sData[c].sum;
+                }
+            }
+            List<Data2DColumn> targetColumns = targetColumns(cols, otherCols, rowNumber, message("Normalize"));
+            writer.setColumns(targetColumns)
+                    .setHeaderNames(Data2DTools.toNames(targetColumns))
+                    .setWriteHeader(colName);
+            operate = Data2DNormalize.create(this)
+                    .setType(Data2DNormalize.Type.SumColumns)
+                    .setColValues(colValues)
+                    .addWriter(writer)
+                    .setInvalidAs(invalidAs).setIncludeRowNumber(rowNumber)
+                    .setCols(cols).setOtherCols(otherCols)
+                    .setScale(scale).setTask(task).start();
+            return !operate.isFailed() && writer.isCreated();
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
+    public boolean normalizeZscoreColumns(FxTask task, Data2DWriter writer,
+            List<Integer> cols, List<Integer> otherCols,
+            boolean rowNumber, boolean colName, int scale, InvalidAs invalidAs) {
+        try {
+            if (writer == null || cols == null || cols.isEmpty()) {
+                return false;
+            }
+            int colLen = cols.size();
+            DoubleStatistic[] sData = new DoubleStatistic[colLen];
+            for (int c = 0; c < colLen; c++) {
+                sData[c] = new DoubleStatistic();
+                sData[c].invalidAs = invalidAs;
+            }
+            DescriptiveStatistic selections = DescriptiveStatistic.all(false)
+                    .add(StatisticType.PopulationStandardDeviation);
+            Data2DOperate operate = Data2DStatistic.create(this)
+                    .setStatisticData(sData)
+                    .setStatisticCalculation(selections)
+                    .setType(Data2DStatistic.Type.ColumnsPass1)
+                    .setInvalidAs(invalidAs)
+                    .setCols(cols).setScale(scale).setTask(task).start();
+            if (operate == null) {
+                return false;
+            }
+            operate = Data2DStatistic.create(this)
+                    .setStatisticData(sData)
+                    .setStatisticCalculation(selections)
+                    .setType(Data2DStatistic.Type.ColumnsPass2)
+                    .setCols(cols).setScale(scale).setTask(task).start();
+            if (operate == null) {
+                return false;
+            }
+            List<Data2DColumn> targetColumns = targetColumns(cols, otherCols, rowNumber, message("Normalize"));
+            writer.setColumns(targetColumns)
+                    .setHeaderNames(Data2DTools.toNames(targetColumns))
+                    .setWriteHeader(colName);
+            operate = Data2DNormalize.create(this)
+                    .setType(Data2DNormalize.Type.ZscoreColumns)
+                    .setStatisticData(sData)
+                    .addWriter(writer)
+                    .setInvalidAs(invalidAs).setIncludeRowNumber(rowNumber)
+                    .setCols(cols).setOtherCols(otherCols)
+                    .setScale(scale).setTask(task).start();
+            return !operate.isFailed() && writer.isCreated();
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
+    public boolean normalizeMinMaxAll(FxTask task, Data2DWriter writer,
+            List<Integer> cols, List<Integer> otherCols,
+            double from, double to, boolean rowNumber, boolean colName, int scale, InvalidAs invalidAs) {
+        try {
+            if (writer == null || cols == null || cols.isEmpty()) {
+                return false;
+            }
+            DoubleStatistic sData = new DoubleStatistic();
+            sData.invalidAs = invalidAs;
+            DescriptiveStatistic selections = DescriptiveStatistic.all(false)
+                    .add(StatisticType.Sum)
+                    .add(StatisticType.MaximumQ4)
+                    .add(StatisticType.MinimumQ0);
+            Data2DOperate operate = Data2DStatistic.create(this)
+                    .setStatisticAll(sData)
+                    .setStatisticCalculation(selections)
+                    .setType(Data2DStatistic.Type.AllPass1)
+                    .setInvalidAs(invalidAs)
+                    .setCols(cols).setScale(scale).setTask(task).start();
+            if (operate == null) {
+                return false;
+            }
+            double d = sData.maximum - sData.minimum;
+            sData.dTmp = (to - from) / (d == 0 ? AppValues.TinyDouble : d);
+            List<Data2DColumn> targetColumns = targetColumns(cols, otherCols, rowNumber, message("Normalize"));
+            writer.setColumns(targetColumns)
+                    .setHeaderNames(Data2DTools.toNames(targetColumns))
+                    .setWriteHeader(colName);
+            operate = Data2DNormalize.create(this)
+                    .setType(Data2DNormalize.Type.MinMaxAll)
+                    .setStatisticAll(sData).setFrom(from)
+                    .addWriter(writer)
+                    .setInvalidAs(invalidAs).setIncludeRowNumber(rowNumber)
+                    .setCols(cols).setOtherCols(otherCols)
+                    .setScale(scale).setTask(task).start();
+            return !operate.isFailed() && writer.isCreated();
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
+    public boolean normalizeSumAll(FxTask task, Data2DWriter writer,
+            List<Integer> cols, List<Integer> otherCols,
+            boolean rowNumber, boolean colName, int scale, InvalidAs invalidAs) {
+        try {
+            if (writer == null || cols == null || cols.isEmpty()) {
+                return false;
+            }
+            DoubleStatistic sData = new DoubleStatistic();
+            sData.invalidAs = invalidAs;
+            DescriptiveStatistic selections = DescriptiveStatistic.all(false);
+            Data2DOperate operate = Data2DStatistic.create(this)
+                    .setStatisticAll(sData)
+                    .setStatisticCalculation(selections)
+                    .setType(Data2DStatistic.Type.AllPass1)
+                    .setSumAbs(true).setInvalidAs(invalidAs)
+                    .setCols(cols).setScale(scale).setTask(task).start();
+            if (operate == null) {
+                return false;
+            }
+            double k;
+            if (sData.sum == 0) {
+                k = 1d / AppValues.TinyDouble;
+            } else {
+                k = 1d / sData.sum;
+            }
+            List<Data2DColumn> targetColumns = targetColumns(cols, otherCols, rowNumber, message("Normalize"));
+            writer.setColumns(targetColumns)
+                    .setHeaderNames(Data2DTools.toNames(targetColumns))
+                    .setWriteHeader(colName);
+            operate = Data2DNormalize.create(this)
+                    .setType(Data2DNormalize.Type.SumAll)
+                    .settValue(k)
+                    .addWriter(writer)
+                    .setInvalidAs(invalidAs).setIncludeRowNumber(rowNumber)
+                    .setCols(cols).setOtherCols(otherCols)
+                    .setScale(scale).setTask(task).start();
+            return !operate.isFailed() && writer.isCreated();
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
+    public boolean normalizeZscoreAll(FxTask task, Data2DWriter writer,
+            List<Integer> cols, List<Integer> otherCols,
+            boolean rowNumber, boolean colName, int scale, InvalidAs invalidAs) {
+        try {
+            if (writer == null || cols == null || cols.isEmpty()) {
+                return false;
+            }
+            DoubleStatistic sData = new DoubleStatistic();
+            sData.invalidAs = invalidAs;
+            DescriptiveStatistic selections = DescriptiveStatistic.all(false)
+                    .add(StatisticType.PopulationStandardDeviation);
+            Data2DOperate operate = Data2DStatistic.create(this)
+                    .setStatisticAll(sData)
+                    .setStatisticCalculation(selections)
+                    .setType(Data2DStatistic.Type.AllPass1)
+                    .setInvalidAs(invalidAs)
+                    .setCols(cols).setScale(scale).setTask(task).start();
+            if (operate == null) {
+                return false;
+            }
+            operate = Data2DStatistic.create(this)
+                    .setStatisticAll(sData)
+                    .setStatisticCalculation(selections)
+                    .setType(Data2DStatistic.Type.AllPass2)
+                    .setInvalidAs(invalidAs)
+                    .setCols(cols).setScale(scale).setTask(task).start();
+            if (operate == null) {
+                return false;
+            }
+            List<Data2DColumn> targetColumns = targetColumns(cols, otherCols, rowNumber, message("Normalize"));
+            writer.setColumns(targetColumns)
+                    .setHeaderNames(Data2DTools.toNames(targetColumns))
+                    .setWriteHeader(colName);
+            operate = Data2DNormalize.create(this)
+                    .setType(Data2DNormalize.Type.ZscoreAll)
+                    .setStatisticAll(sData)
+                    .addWriter(writer)
+                    .setInvalidAs(invalidAs).setIncludeRowNumber(rowNumber)
+                    .setCols(cols).setOtherCols(otherCols)
+                    .setScale(scale).setTask(task).start();
+            return !operate.isFailed() && writer.isCreated();
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
+    public boolean normalizeRows(FxTask task, Data2DWriter writer,
+            Normalization.Algorithm a, List<Integer> cols, List<Integer> otherCols,
+            double from, double to, boolean rowNumber, boolean colName,
+            int scale, InvalidAs invalidAs) {
+        try {
+            if (writer == null || cols == null || cols.isEmpty()) {
+                return false;
+            }
+            List<Data2DColumn> targetColumns = targetColumns(cols, otherCols,
+                    rowNumber, message("Normalize"));
+            writer.setColumns(targetColumns)
+                    .setHeaderNames(Data2DTools.toNames(targetColumns));
+            Data2DOperate operate = Data2DNormalize.create(this)
+                    .setType(Data2DNormalize.Type.Rows)
+                    .setA(a).setFrom(from).setTo(to)
+                    .addWriter(writer)
+                    .setInvalidAs(invalidAs).setIncludeRowNumber(rowNumber)
+                    .setCols(cols).setOtherCols(otherCols)
+                    .setScale(scale).setTask(task).start();
+            return !operate.isFailed() && writer.isCreated();
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e);
+            return false;
         }
     }
 

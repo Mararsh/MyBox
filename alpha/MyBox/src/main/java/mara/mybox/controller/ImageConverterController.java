@@ -91,7 +91,7 @@ public class ImageConverterController extends BaseChildController {
         if (imageController.sourceFile != null && imageController.sourceFile.exists()
                 && imageController.framesNumber > 1) {
             formatController.formatPane.getChildren().setAll(formatController.tifRadio, formatController.gifRadio);
-            if ("gif".equalsIgnoreCase(FileNameTools.suffix(imageController.sourceFile.getName()))) {
+            if ("gif".equalsIgnoreCase(FileNameTools.ext(imageController.sourceFile.getName()))) {
                 formatController.gifRadio.setSelected(true);
             } else {
                 formatController.tifRadio.setSelected(true);

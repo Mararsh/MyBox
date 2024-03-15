@@ -13,8 +13,8 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.FlowPane;
-import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataFilter;
+import mara.mybox.data2d.writer.ListWriter;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
@@ -696,12 +696,10 @@ public class BaseData2DSelectRowsController extends BaseData2DLoadController {
             }
             List<List<String>> data;
             if (isAllPages()) {
-                DataFileCSV csv = data2D.copy(task, checkedColsIndices,
+                ListWriter writer = new ListWriter();
+                data2D.copy(task, writer, checkedColsIndices,
                         false, true, formatValuesCheck != null && formatValuesCheck.isSelected());
-                if (csv == null) {
-                    return null;
-                }
-                data = csv.allRows(false);
+                data = writer.getRows();
             } else {
                 data = tableFiltered(false);
             }

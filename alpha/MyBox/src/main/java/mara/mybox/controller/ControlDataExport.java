@@ -9,6 +9,10 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.layout.FlowPane;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.operate.Data2DExport;
+import mara.mybox.data2d.writer.Data2DWriter;
+import mara.mybox.data2d.writer.JsonWriter;
+import mara.mybox.data2d.writer.MyBoxClipboardWriter;
+import mara.mybox.data2d.writer.XmlWriter;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ValidationTools;
 import static mara.mybox.value.Languages.message;
@@ -213,40 +217,59 @@ public class ControlDataExport extends BaseDataConvertController {
             if (taskController != null) {
                 export.setTargetPath(taskController.targetPath);
             }
-            export.setRowNumber(rowNumberCheck.isSelected());
+            export.setWriteHeader(rowNumberCheck.isSelected());
             export.setFormatValues(formatValuesCheck.isSelected());
-            export.setCsv(csvCheck.isSelected());
-            export.setTexts(textsCheck.isSelected());
-            export.setExcel(excelCheck.isSelected());
-            export.setHtml(htmlCheck.isSelected());
-            export.setJson(jsonCheck.isSelected());
-            export.setXml(xmlCheck.isSelected());
-            export.setPdf(pdfCheck.isSelected());
-            export.setMyBoxClipboard(myBoxClipboardCheck.isSelected());
             if (csvCheck.isSelected()) {
-                if (!pickCSV(export)) {
+                Data2DWriter writer = pickCSVWriter();
+                if (writer != null) {
+                    export.addWriter(writer);
+                } else {
                     return null;
                 }
             }
             if (textsCheck.isSelected()) {
-                if (!pickText(export)) {
+                Data2DWriter writer = pickTextWriter();
+                if (writer != null) {
+                    export.addWriter(writer);
+                } else {
                     return null;
                 }
             }
             if (excelCheck.isSelected()) {
-                if (!pickExcel(export)) {
+                Data2DWriter writer = pickExcelWriter();
+                if (writer != null) {
+                    export.addWriter(writer);
+                } else {
                     return null;
                 }
             }
             if (pdfCheck.isSelected()) {
-                if (!pickPDF(export)) {
+                Data2DWriter writer = pickPDFWriter();
+                if (writer != null) {
+                    export.addWriter(writer);
+                } else {
                     return null;
                 }
             }
             if (htmlCheck.isSelected()) {
-                if (!pickHtml(export)) {
+                Data2DWriter writer = pickHtmlWriter();
+                if (writer != null) {
+                    export.addWriter(writer);
+                } else {
                     return null;
                 }
+            }
+            if (jsonCheck.isSelected()) {
+                Data2DWriter writer = new JsonWriter();
+                export.addWriter(writer);
+            }
+            if (xmlCheck.isSelected()) {
+                Data2DWriter writer = new XmlWriter();
+                export.addWriter(writer);
+            }
+            if (myBoxClipboardCheck.isSelected()) {
+                Data2DWriter writer = new MyBoxClipboardWriter();
+                export.addWriter(writer);
             }
             return export;
         } catch (Exception e) {

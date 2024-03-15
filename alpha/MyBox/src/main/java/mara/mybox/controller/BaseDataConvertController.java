@@ -7,9 +7,35 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import mara.mybox.data.PaginatedPdfTable;
-import mara.mybox.data2d.operate.Data2DExport;
+import mara.mybox.data2d.Data2D_Attributes.TargetType;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.Append;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.CSV;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.DatabaseTable;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.Excel;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.HTML;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.Insert;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.JSON;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.Matrix;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.MyBoxClipboard;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.PDF;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.Replace;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.Text;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.XML;
+import mara.mybox.data2d.writer.Data2DWriter;
+import mara.mybox.data2d.writer.DataBaseTableWriter;
+import mara.mybox.data2d.writer.DataFileCSVWriter;
+import mara.mybox.data2d.writer.DataFileExcelWriter;
+import mara.mybox.data2d.writer.DataFileTextWriter;
+import mara.mybox.data2d.writer.HtmlWriter;
+import mara.mybox.data2d.writer.JsonWriter;
+import mara.mybox.data2d.writer.MatrixWriter;
+import mara.mybox.data2d.writer.MyBoxClipboardWriter;
+import mara.mybox.data2d.writer.PdfWriter;
+import mara.mybox.data2d.writer.SystemClipboardWriter;
+import mara.mybox.data2d.writer.XmlWriter;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.style.HtmlStyles;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 
@@ -66,103 +92,161 @@ public class BaseDataConvertController extends BaseTaskController {
         pdfOptionsController.standardSizeRadio.setSelected(true);
     }
 
-    public boolean pickCSV(Data2DExport export) {
+    public DataFileCSVWriter pickCSVWriter() {
         try {
-            if (export == null) {
-                return false;
+            DataFileCSVWriter writer = new DataFileCSVWriter();
+            if (csvWriteController != null) {
+                if (csvWriteController.invalidDelimiter()) {
+                    popError(message("InvalidParameter") + ": " + message("Delimiter"));
+                    return null;
+                }
+                writer.setCharset(csvWriteController.getCharset())
+                        .setDelimiter(csvWriteController.getDelimiterName())
+                        .setWriteHeader(csvWriteController.withName());
             }
-            if (csvWriteController.delimiterController.delimiterInput.getStyle().equals(UserConfig.badStyle())) {
-                return false;
-            }
-            export.setCvsCharset(csvWriteController.getCharset());
-            export.setCsvDelimiter(csvWriteController.getDelimiterName());
-            export.setCsvWithNames(csvWriteController.withName());
-            return true;
+            return writer;
         } catch (Exception e) {
             MyBoxLog.error(e);
-            return false;
+            return null;
         }
     }
 
-    public boolean pickExcel(Data2DExport export) {
+    public DataFileExcelWriter pickExcelWriter() {
         try {
-            if (export == null) {
-                return false;
+            DataFileExcelWriter writer = new DataFileExcelWriter();
+            if (excelWithNamesCheck != null) {
+                UserConfig.setBoolean(baseName + "ExcelTargetWithNames", excelWithNamesCheck.isSelected());
+                writer.setWriteHeader(excelWithNamesCheck.isSelected());
             }
-            UserConfig.setBoolean(baseName + "ExcelTargetWithNames", excelWithNamesCheck.isSelected());
-            export.setExcelWithNames(excelWithNamesCheck.isSelected());
-            return true;
+            return writer;
         } catch (Exception e) {
             MyBoxLog.error(e);
-            return false;
+            return null;
         }
     }
 
-    public boolean pickText(Data2DExport export) {
+    public DataFileTextWriter pickTextWriter() {
         try {
-            if (export == null) {
-                return false;
+            DataFileTextWriter writer = new DataFileTextWriter();
+            if (textWriteOptionsController != null) {
+                if (textWriteOptionsController.invalidDelimiter()) {
+                    popError(message("InvalidParameter") + ": " + message("Delimiter"));
+                    return null;
+                }
+                writer.setCharset(textWriteOptionsController.getCharset())
+                        .setDelimiter(textWriteOptionsController.getDelimiterName())
+                        .setWriteHeader(textWriteOptionsController.withName());
             }
-            if (textWriteOptionsController.delimiterController.delimiterInput.getStyle().equals(UserConfig.badStyle())) {
-                return false;
-            }
-            export.setCvsCharset(textWriteOptionsController.getCharset());
-            export.setCsvDelimiter(textWriteOptionsController.getDelimiterName());
-            export.setCsvWithNames(textWriteOptionsController.withName());
-            return true;
+            return writer;
         } catch (Exception e) {
             MyBoxLog.error(e);
-            return false;
+            return null;
         }
     }
 
-    public boolean pickPDF(Data2DExport export) {
+    public PdfWriter pickPDFWriter() {
         try {
-            if (export == null) {
-                return false;
-            }
-            List<Integer> columnWidths = new ArrayList<>();
-            String w = widthList.getText();
-            if (w != null && !w.isBlank()) {
-                String[] values = w.split(",");
-                for (String value : values) {
-                    try {
-                        int v = Integer.parseInt(value.trim());
-                        if (v > 0) {
-                            columnWidths.add(v);
+            PdfWriter writer = new PdfWriter();
+            if (pdfOptionsController != null) {
+                List<Integer> columnWidths = new ArrayList<>();
+                String w = widthList.getText();
+                if (w != null && !w.isBlank()) {
+                    String[] values = w.split(",");
+                    for (String value : values) {
+                        try {
+                            int v = Integer.parseInt(value.trim());
+                            if (v > 0) {
+                                columnWidths.add(v);
+                            }
+                        } catch (Exception e) {
                         }
-                    } catch (Exception e) {
                     }
                 }
+                writer.setPdfTable(PaginatedPdfTable.create()
+                        .setPageSize(new PDRectangle(pdfOptionsController.pageWidth, pdfOptionsController.pageHeight))
+                        .setTtf(pdfOptionsController.getTtfFile())
+                        .setFontSize(pdfOptionsController.fontSize)
+                        .setMargin(pdfOptionsController.marginSize)
+                        .setColumnWidths(columnWidths)
+                        .setDefaultZoom(pdfOptionsController.zoom)
+                        .setHeader(pdfOptionsController.getHeader())
+                        .setShowPageNumber(pdfOptionsController.showPageNumber));
             }
-            export.setPdfTable(PaginatedPdfTable.create()
-                    .setPageSize(new PDRectangle(pdfOptionsController.pageWidth, pdfOptionsController.pageHeight))
-                    .setTtf(pdfOptionsController.getTtfFile())
-                    .setFontSize(pdfOptionsController.fontSize)
-                    .setMargin(pdfOptionsController.marginSize)
-                    .setColumnWidths(columnWidths)
-                    .setDefaultZoom(pdfOptionsController.zoom)
-                    .setHeader(pdfOptionsController.getHeader())
-                    .setShowPageNumber(pdfOptionsController.showPageNumber));
-            return true;
+            return writer;
         } catch (Exception e) {
             MyBoxLog.error(e);
-            return false;
+            return null;
         }
     }
 
-    public boolean pickHtml(Data2DExport export) {
+    public HtmlWriter pickHtmlWriter() {
         try {
-            if (export == null) {
-                return false;
+            HtmlWriter writer = new HtmlWriter();
+            if (cssArea != null) {
+                String css = cssArea.getText();
+                UserConfig.setString(baseName + "Css", css);
+                writer.setCss(css);
             }
-            String css = cssArea.getText();
-            UserConfig.setString(baseName + "Css", css);
-            export.setCss(css);
-            return true;
+            return writer;
         } catch (Exception e) {
             MyBoxLog.error(e);
-            return false;
+            return null;
+        }
+    }
+
+    public Data2DWriter pickWriter(TargetType format) {
+        try {
+            if (format == null) {
+                return null;
+            }
+            Data2DWriter writer = null;
+            switch (format) {
+                case CSV:
+                    writer = pickCSVWriter();
+                    break;
+                case Excel:
+                    writer = pickExcelWriter();
+                    break;
+                case Text:
+                    writer = pickTextWriter();
+                    break;
+                case DatabaseTable:
+                    writer = new DataBaseTableWriter();
+                    break;
+                case Matrix:
+                    writer = new MatrixWriter();
+                    break;
+                case MyBoxClipboard:
+                    writer = new MyBoxClipboardWriter();
+                    break;
+                case SystemClipboard:
+                    writer = new SystemClipboardWriter();
+                    break;
+                case HTML:
+                    writer = pickHtmlWriter();
+                    break;
+                case PDF:
+                    writer = pickPDFWriter();
+                    break;
+                case JSON:
+                    writer = new JsonWriter();
+                    break;
+                case XML:
+                    writer = new XmlWriter();
+                    break;
+                case Replace:
+                case Insert:
+                case Append:
+                    writer = new SystemClipboardWriter();
+                    break;
+            }
+            if (writer != null) {
+                writer.setFormat(format);
+            }
+            return writer;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
         }
     }
 

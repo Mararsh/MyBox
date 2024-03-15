@@ -32,6 +32,9 @@ public class DataFileTextWriter extends Data2DWriter {
     @Override
     public boolean openWriter() {
         try {
+            if (!super.openWriter()) {
+                return false;
+            }
             targetFile = makeTargetFile();
             if (targetFile == null) {
                 showInfo((skip ? message("Skipped") : message("Failed")) + ": " + fileSuffix);
@@ -47,7 +50,7 @@ public class DataFileTextWriter extends Data2DWriter {
             }
             return true;
         } catch (Exception e) {
-            handleError(e.toString());
+            showError(e.toString());
             return false;
         }
     }
@@ -60,7 +63,7 @@ public class DataFileTextWriter extends Data2DWriter {
             }
             TextFileTools.writeLine(task(), fileWriter, targetRow, delimiter);
         } catch (Exception e) {
-            handleError(e.toString());
+            showError(e.toString());
         }
     }
 
@@ -79,12 +82,10 @@ public class DataFileTextWriter extends Data2DWriter {
                 FileDeleteTools.delete(tmpFile);
                 return;
             }
-            if (targetFile == null || targetFile.exists()) {
+            if (targetFile == null || !targetFile.exists()) {
                 return;
             }
-            if (recordTargetFile && taskController != null) {
-                taskController.targetFileGenerated(targetFile, VisitHistory.FileType.Text);
-            }
+            recordFileGenerated(targetFile, VisitHistory.FileType.Text);
             if (recordTargetData) {
                 if (targetData == null) {
                     targetData = Data2D.create(Data2DDefinition.DataType.Texts);
@@ -100,7 +101,7 @@ public class DataFileTextWriter extends Data2DWriter {
             }
             created = true;
         } catch (Exception e) {
-            handleError(e.toString());
+            showError(e.toString());
         }
     }
 

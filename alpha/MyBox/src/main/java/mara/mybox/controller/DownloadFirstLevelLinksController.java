@@ -744,7 +744,7 @@ public class DownloadFirstLevelLinksController extends BaseTablePagesController<
                 link.setFile(filename);
             }
             File file = new File(filename);
-            String suffix = FileNameTools.suffix(file.getName());
+            String suffix = FileNameTools.ext(file.getName());
             suffix = (suffix != null && !suffix.isBlank()) ? "." + suffix : "";
             String newName = file.getParent() + File.separator + link.pageName(filenameType) + suffix;
             link.setFile(newName);

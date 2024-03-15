@@ -280,10 +280,10 @@ public class FilesRenameController extends BaseBatchFileController {
                     }
                     newName += pageNumber;
                     currentAccum++;
-                    newName += "." + FileNameTools.suffix(currentName);
+                    newName += "." + FileNameTools.ext(currentName);
                     break;
                 case ChangeExtension:
-                    newName = FileNameTools.replaceSuffix(currentName, FileNameTools.filter(newExtInput.getText()));
+                    newName = FileNameTools.replaceExt(currentName, FileNameTools.filter(newExtInput.getText()));
                     break;
             }
             if (newName == null || newName.isBlank()) {

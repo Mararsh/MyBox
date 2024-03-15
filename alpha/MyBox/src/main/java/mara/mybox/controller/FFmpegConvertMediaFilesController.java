@@ -49,7 +49,7 @@ public class FFmpegConvertMediaFilesController extends BaseBatchFFmpegController
         try {
             String ext = ffmpegOptionsController.extensionInput.getText().trim();
             if (ext.isEmpty() || message("OriginalFormat").equals(ext)) {
-                ext = FileNameTools.suffix(srcFile.getName());
+                ext = FileNameTools.ext(srcFile.getName());
             }
             File target = makeTargetFile(FileNameTools.prefix(srcFile.getName()), "." + ext, targetPath);
             if (target == null) {

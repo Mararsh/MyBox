@@ -9,9 +9,25 @@ import mara.mybox.controller.BaseTaskController;
 import mara.mybox.controller.ControlTargetFile;
 import mara.mybox.controller.Data2DManufactureController;
 import mara.mybox.data2d.Data2D;
+import mara.mybox.data2d.Data2D_Attributes.TargetType;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.Append;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.CSV;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.DatabaseTable;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.Excel;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.HTML;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.Insert;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.JSON;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.Matrix;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.MyBoxClipboard;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.PDF;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.Replace;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.SystemClipboard;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.Text;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.XML;
 import mara.mybox.data2d.operate.Data2DOperate;
 import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.db.data.Data2DColumn;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import static mara.mybox.value.Languages.message;
 
@@ -24,8 +40,8 @@ public abstract class Data2DWriter {
 
     protected Data2D targetData;
     protected Data2DOperate operate;
+    protected TargetType format;
     protected File targetPath, targetFile, tmpFile;
-    protected BaseTaskController taskController;
     protected ControlTargetFile targetFileController;
     protected List<String> headerNames, targetRow;
     protected List<Data2DColumn> columns;
@@ -42,7 +58,7 @@ public abstract class Data2DWriter {
             initFiles();
             resetWriter();
         } catch (Exception e) {
-            handleError(e.toString());
+            showError(e.toString());
         }
     }
 
@@ -50,14 +66,13 @@ public abstract class Data2DWriter {
         try {
             targetData = null;
             operate = null;
-            taskController = null;
             targetFileController = null;
             writeRowNumber = formatValues = created = false;
             writeHeader = recordTargetFile = recordTargetData = skip = isFirstRow = true;
             maxLines = -1;
             targetRowIndex = 0;
         } catch (Exception e) {
-            handleError(e.toString());
+            showError(e.toString());
         }
     }
 
@@ -68,16 +83,13 @@ public abstract class Data2DWriter {
         sourceRowIndex = 0;
     }
 
-    public boolean checkParameters() {
-        if (columns == null) {
-            return false;
-        }
-        return true;
-    }
-
     final public boolean resetWriter() {
         isFirstRow = true;
         created = false;
+        return true;
+    }
+
+    public boolean checkParameters() {
         return true;
     }
 
@@ -136,7 +148,7 @@ public abstract class Data2DWriter {
             targetRowIndex++;
 
         } catch (Exception e) {
-            handleError(e.toString());
+            showError(e.toString());
         }
     }
 
@@ -171,7 +183,7 @@ public abstract class Data2DWriter {
         created = false;
     }
 
-    public void openFile(BaseController controller) {
+    public void showResult(BaseController controller) {
         if (targetData == null) {
             return;
         }
@@ -179,14 +191,21 @@ public abstract class Data2DWriter {
     }
 
     public void showInfo(String info) {
-        if (taskController != null) {
-            taskController.updateLogs(info);
-        } else if (operate != null) {
+        if (operate != null) {
             operate.showInfo(info);
         }
     }
 
-    final public void handleError(String error) {
+    public void recordFileGenerated(File file, int type) {
+        if (operate != null && recordTargetFile) {
+            BaseTaskController c = operate.getTaskController();
+            if (c != null) {
+                c.targetFileGenerated(file, type);
+            }
+        }
+    }
+
+    final public void showError(String error) {
         if (operate != null) {
             operate.showError(error);
         }
@@ -213,6 +232,65 @@ public abstract class Data2DWriter {
     }
 
     /*
+        static
+     */
+    public static Data2DWriter getWriter(TargetType targetType) {
+        try {
+            if (targetType == null) {
+                return null;
+            }
+            Data2DWriter writer = null;
+            switch (targetType) {
+                case CSV:
+                    writer = new DataFileCSVWriter();
+                    break;
+                case Excel:
+                    writer = new DataFileExcelWriter();
+                    break;
+                case Text:
+                    writer = new DataFileTextWriter();
+                    break;
+                case DatabaseTable:
+                    writer = new DataBaseTableWriter();
+                    break;
+                case Matrix:
+                    writer = new MatrixWriter();
+                    break;
+                case MyBoxClipboard:
+                    writer = new MyBoxClipboardWriter();
+                    break;
+                case SystemClipboard:
+                    writer = new SystemClipboardWriter();
+                    break;
+                case HTML:
+                    writer = new HtmlWriter();
+                    break;
+                case PDF:
+                    writer = new PdfWriter();
+                    break;
+                case JSON:
+                    writer = new JsonWriter();
+                    break;
+                case XML:
+                    writer = new XmlWriter();
+                    break;
+                case Replace:
+                case Insert:
+                case Append:
+                    writer = new SystemClipboardWriter();
+                    break;
+            }
+            if (writer != null) {
+                writer.setFormat(targetType);
+            }
+            return writer;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    /*
         get/set
      */
     public Data2D getTargetData() {
@@ -230,6 +308,15 @@ public abstract class Data2DWriter {
 
     public Data2DWriter setOperate(Data2DOperate operate) {
         this.operate = operate;
+        return this;
+    }
+
+    public TargetType getFormat() {
+        return format;
+    }
+
+    public Data2DWriter setFormat(TargetType format) {
+        this.format = format;
         return this;
     }
 
@@ -257,15 +344,6 @@ public abstract class Data2DWriter {
 
     public Data2DWriter setTargetFile(File targetFile) {
         this.targetFile = targetFile;
-        return this;
-    }
-
-    public BaseTaskController getTaskController() {
-        return taskController;
-    }
-
-    public Data2DWriter setTaskController(BaseTaskController taskController) {
-        this.taskController = taskController;
         return this;
     }
 
@@ -307,11 +385,6 @@ public abstract class Data2DWriter {
 
     public boolean isIsFirstRow() {
         return isFirstRow;
-    }
-
-    public Data2DWriter setFirstRow(boolean firstRow) {
-        this.isFirstRow = firstRow;
-        return this;
     }
 
     public boolean isWriteRowNumber() {

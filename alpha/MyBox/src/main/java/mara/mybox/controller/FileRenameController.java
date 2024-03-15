@@ -49,7 +49,7 @@ public class FileRenameController extends BaseController {
             this.file = file;
             fileLabel.setText(file.getAbsolutePath());
             pathLabel.setText(file.getParent() + File.separator);
-            suffixLabel.setText("." + FileNameTools.suffix(file.getName()));
+            suffixLabel.setText("." + FileNameTools.ext(file.getName()));
             nameInput.setText(FileNameTools.prefix(file.getName()));
             nameInput.requestFocus();
             nameInput.selectAll();

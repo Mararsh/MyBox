@@ -41,7 +41,7 @@ public class DataTableSetValue extends Data2DSetValue {
 
     @Override
     public boolean go() {
-        count = 0;
+        handledCount = 0;
         tableData2D = sourceTable.getTableData2D();
         tableData2D.setTableName(sourceTable.getSheet());
         String sql = "SELECT * FROM " + sourceTable.getSheet();
@@ -63,7 +63,7 @@ public class DataTableSetValue extends Data2DSetValue {
             }
             update.executeBatch();
             conn.commit();
-            showInfo(message("Updated") + ": " + count);
+            showInfo(message("Updated") + ": " + handledCount);
             conn.close();
             conn = null;
             return true;
@@ -86,10 +86,10 @@ public class DataTableSetValue extends Data2DSetValue {
             }
             if (tableData2D.setUpdateStatement(conn, update, sourceTableRow)) {
                 update.addBatch();
-                if (++count % Database.BatchSize == 0) {
+                if (++handledCount % Database.BatchSize == 0) {
                     update.executeBatch();
                     conn.commit();
-                    showInfo(message("Updated") + ": " + count);
+                    showInfo(message("Updated") + ": " + handledCount);
                 }
             }
         } catch (Exception e) {

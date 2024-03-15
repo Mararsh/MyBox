@@ -322,6 +322,8 @@ public class DataFileText extends DataFile {
                 .setDelimiter(delimiter)
                 .setWriteHeader(hasHeader)
                 .setTargetFile(file)
+                .setColumns(columns)
+                .setHeaderNames(columnNames())
                 .setRecordTargetFile(true)
                 .setRecordTargetData(false);
         return writer;

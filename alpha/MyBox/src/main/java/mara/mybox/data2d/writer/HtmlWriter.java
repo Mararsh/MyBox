@@ -31,6 +31,9 @@ public class HtmlWriter extends Data2DWriter {
     @Override
     public boolean openWriter() {
         try {
+            if (!super.openWriter()) {
+                return false;
+            }
             targetFile = makeTargetFile();
             if (targetFile == null) {
                 showInfo((skip ? message("Skipped") : message("Failed")) + ": " + fileSuffix);
@@ -54,7 +57,7 @@ public class HtmlWriter extends Data2DWriter {
             fileWriter.write(s.toString());
             return true;
         } catch (Exception e) {
-            handleError(e.toString());
+            showError(e.toString());
             return false;
         }
     }
@@ -67,7 +70,7 @@ public class HtmlWriter extends Data2DWriter {
             }
             fileWriter.write(StringTable.tableRow(targetRow));
         } catch (Exception e) {
-            handleError(e.toString());
+            showError(e.toString());
         }
     }
 
@@ -93,20 +96,18 @@ public class HtmlWriter extends Data2DWriter {
                 FileDeleteTools.delete(tmpFile);
                 return;
             }
-            if (targetFile == null || targetFile.exists()) {
+            if (targetFile == null || !targetFile.exists()) {
                 return;
             }
-            if (recordTargetFile && taskController != null) {
-                taskController.targetFileGenerated(targetFile, VisitHistory.FileType.Html);
-            }
+            recordFileGenerated(targetFile, VisitHistory.FileType.Html);
             created = true;
         } catch (Exception e) {
-            handleError(e.toString());
+            showError(e.toString());
         }
     }
 
     @Override
-    public void openFile(BaseController controller) {
+    public void showResult(BaseController controller) {
         if (targetFile == null) {
             return;
         }

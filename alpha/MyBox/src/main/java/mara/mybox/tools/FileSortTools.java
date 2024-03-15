@@ -150,7 +150,7 @@ public class FileSortTools {
                     Collections.sort(files, new Comparator<File>() {
                         @Override
                         public int compare(File f1, File f2) {
-                            return FileNameTools.suffix(f2.getName()).compareTo(FileNameTools.suffix(f1.getName()));
+                            return FileNameTools.ext(f2.getName()).compareTo(FileNameTools.ext(f1.getName()));
                         }
                     });
                     break;
@@ -158,7 +158,7 @@ public class FileSortTools {
                     Collections.sort(files, new Comparator<File>() {
                         @Override
                         public int compare(File f1, File f2) {
-                            return FileNameTools.suffix(f1.getName()).compareTo(FileNameTools.suffix(f2.getName()));
+                            return FileNameTools.ext(f1.getName()).compareTo(FileNameTools.ext(f2.getName()));
                         }
                     });
                     break;
@@ -266,7 +266,7 @@ public class FileSortTools {
                 Collections.sort(files, new Comparator<FileInformation>() {
                     @Override
                     public int compare(FileInformation f1, FileInformation f2) {
-                        return FileNameTools.suffix(f2.getFile().getName()).compareTo(FileNameTools.suffix(f1.getFile().getName()));
+                        return FileNameTools.ext(f2.getFile().getName()).compareTo(FileNameTools.ext(f1.getFile().getName()));
                     }
                 });
                 break;
@@ -274,7 +274,7 @@ public class FileSortTools {
                 Collections.sort(files, new Comparator<FileInformation>() {
                     @Override
                     public int compare(FileInformation f1, FileInformation f2) {
-                        return FileNameTools.suffix(f1.getFile().getName()).compareTo(FileNameTools.suffix(f2.getFile().getName()));
+                        return FileNameTools.ext(f1.getFile().getName()).compareTo(FileNameTools.ext(f2.getFile().getName()));
                     }
                 });
                 break;

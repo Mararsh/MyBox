@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javafx.fxml.FXML;
 import mara.mybox.calculation.Normalization;
-import mara.mybox.data2d.DataFileCSV;
+import mara.mybox.data2d.writer.Data2DWriter;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
@@ -121,8 +121,7 @@ public class Data2DNormalizeController extends BaseData2DTargetsController {
     }
 
     @Override
-    public DataFileCSV generatedFile(FxTask currentTask) {
-        String name = targetController.name();
+    public boolean generatedResult(FxTask currentTask, Data2DWriter writer) {
         if (normalizeController.rowsRadio.isSelected()) {
             Normalization.Algorithm a;
             if (normalizeController.sumRadio.isSelected()) {
@@ -132,41 +131,48 @@ public class Data2DNormalizeController extends BaseData2DTargetsController {
             } else {
                 a = Normalization.Algorithm.MinMax;
             }
-            return data2D.normalizeRows(name, a, checkedColsIndices, otherColsIndices,
+            return data2D.normalizeRows(currentTask, writer,
+                    a, checkedColsIndices, otherColsIndices,
                     normalizeController.from, normalizeController.to,
                     rowNumberCheck.isSelected(), colNameCheck.isSelected(), scale, invalidAs);
 
         } else if (normalizeController.allRadio.isSelected()) {
             if (normalizeController.minmaxRadio.isSelected()) {
-                return data2D.normalizeMinMaxAll(name, checkedColsIndices, otherColsIndices,
+                return data2D.normalizeMinMaxAll(currentTask, writer,
+                        checkedColsIndices, otherColsIndices,
                         normalizeController.from, normalizeController.to,
                         rowNumberCheck.isSelected(), colNameCheck.isSelected(), scale, invalidAs);
 
             } else if (normalizeController.sumRadio.isSelected()) {
-                return data2D.normalizeSumAll(name, checkedColsIndices, otherColsIndices,
+                return data2D.normalizeSumAll(currentTask, writer,
+                        checkedColsIndices, otherColsIndices,
                         rowNumberCheck.isSelected(), colNameCheck.isSelected(), scale, invalidAs);
 
             } else if (normalizeController.zscoreRadio.isSelected()) {
-                return data2D.normalizeZscoreAll(name, checkedColsIndices, otherColsIndices,
+                return data2D.normalizeZscoreAll(currentTask, writer,
+                        checkedColsIndices, otherColsIndices,
                         rowNumberCheck.isSelected(), colNameCheck.isSelected(), scale, invalidAs);
             }
 
         } else {
             if (normalizeController.minmaxRadio.isSelected()) {
-                return data2D.normalizeMinMaxColumns(name, checkedColsIndices, otherColsIndices,
+                return data2D.normalizeMinMaxColumns(currentTask, writer,
+                        checkedColsIndices, otherColsIndices,
                         normalizeController.from, normalizeController.to,
                         rowNumberCheck.isSelected(), colNameCheck.isSelected(), scale, invalidAs);
 
             } else if (normalizeController.sumRadio.isSelected()) {
-                return data2D.normalizeSumColumns(name, checkedColsIndices, otherColsIndices,
+                return data2D.normalizeSumColumns(currentTask, writer,
+                        checkedColsIndices, otherColsIndices,
                         rowNumberCheck.isSelected(), colNameCheck.isSelected(), scale, invalidAs);
 
             } else if (normalizeController.zscoreRadio.isSelected()) {
-                return data2D.normalizeZscoreColumns(name, checkedColsIndices, otherColsIndices,
+                return data2D.normalizeZscoreColumns(currentTask, writer,
+                        checkedColsIndices, otherColsIndices,
                         rowNumberCheck.isSelected(), colNameCheck.isSelected(), scale, invalidAs);
             }
         }
-        return null;
+        return false;
     }
 
     /*

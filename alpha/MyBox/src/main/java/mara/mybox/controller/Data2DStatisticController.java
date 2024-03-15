@@ -10,9 +10,9 @@ import javafx.scene.layout.VBox;
 import mara.mybox.calculation.DescriptiveStatistic;
 import mara.mybox.calculation.DescriptiveStatistic.StatisticObject;
 import mara.mybox.calculation.DoubleStatistic;
-import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.data2d.TmpTable;
+import mara.mybox.data2d.writer.Data2DWriter;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
@@ -301,12 +301,12 @@ public class Data2DStatisticController extends BaseData2DTargetsController {
     }
 
     @Override
-    public DataFileCSV generatedFile(FxTask currentTask) {
+    public boolean generatedResult(FxTask currentTask, Data2DWriter writer) {
         List<Integer> colsIndices = checkedColsIndices;
         if (rowsRadio.isSelected() && categorysCol >= 0) {
             colsIndices.add(0, categorysCol);
         }
-        return data2D.statisticByRows(targetController.name(),
+        return data2D.statisticByRows(currentTask, writer,
                 calculation.getOutputNames(), colsIndices, calculation);
     }
 

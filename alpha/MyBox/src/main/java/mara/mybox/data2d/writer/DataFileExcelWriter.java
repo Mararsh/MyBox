@@ -40,6 +40,9 @@ public class DataFileExcelWriter extends Data2DWriter {
     @Override
     public boolean openWriter() {
         try {
+            if (!super.openWriter()) {
+                return false;
+            }
             targetFile = makeTargetFile();
             if (targetFile == null || sheetName == null) {
                 showInfo((skip ? message("Skipped") : message("Failed")) + ": " + fileSuffix);
@@ -69,7 +72,7 @@ public class DataFileExcelWriter extends Data2DWriter {
                     }
 
                 } catch (Exception e) {
-                    handleError(e.toString());
+                    showError(e.toString());
                     return false;
                 }
             } else {
@@ -89,7 +92,7 @@ public class DataFileExcelWriter extends Data2DWriter {
             }
             return true;
         } catch (Exception e) {
-            handleError(e.toString());
+            showError(e.toString());
             return false;
         }
     }
@@ -106,7 +109,7 @@ public class DataFileExcelWriter extends Data2DWriter {
                 cell.setCellValue(targetRow.get(i));
             }
         } catch (Exception e) {
-            handleError(e.toString());
+            showError(e.toString());
         }
     }
 
@@ -134,12 +137,10 @@ public class DataFileExcelWriter extends Data2DWriter {
                 FileDeleteTools.delete(tmpFile);
                 return;
             }
-            if (targetFile == null || targetFile.exists()) {
+            if (targetFile == null || !targetFile.exists()) {
                 return;
             }
-            if (recordTargetFile && taskController != null) {
-                taskController.targetFileGenerated(targetFile, VisitHistory.FileType.Excel);
-            }
+            recordFileGenerated(targetFile, VisitHistory.FileType.Excel);
             if (recordTargetData) {
                 if (targetData == null) {
                     targetData = Data2D.create(Data2DDefinition.DataType.Excel);
@@ -154,7 +155,7 @@ public class DataFileExcelWriter extends Data2DWriter {
             }
             created = true;
         } catch (Exception e) {
-            handleError(e.toString());
+            showError(e.toString());
         }
     }
 

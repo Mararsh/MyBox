@@ -30,6 +30,9 @@ public class MyBoxClipboardWriter extends Data2DWriter {
     @Override
     public boolean openWriter() {
         try {
+            if (!super.openWriter()) {
+                return false;
+            }
             targetFile = DataClipboard.newFile();
             if (targetFile == null) {
                 showInfo((skip ? message("Skipped") : message("Failed")) + ": " + message("MyBoxClipboard"));
@@ -42,7 +45,7 @@ public class MyBoxClipboardWriter extends Data2DWriter {
             printer.printRecord(headerNames);
             return true;
         } catch (Exception e) {
-            handleError(e.toString());
+            showError(e.toString());
             return false;
         }
     }
@@ -55,7 +58,7 @@ public class MyBoxClipboardWriter extends Data2DWriter {
             }
             printer.printRecord(targetRow);
         } catch (Exception e) {
-            handleError(e.toString());
+            showError(e.toString());
         }
     }
 
@@ -74,7 +77,7 @@ public class MyBoxClipboardWriter extends Data2DWriter {
                 FileDeleteTools.delete(tmpFile);
                 return;
             }
-            if (targetFile == null || targetFile.exists()) {
+            if (targetFile == null || !targetFile.exists()) {
                 return;
             }
             targetData = Data2D.create(Data2DDefinition.DataType.MyBoxClipboard);
@@ -89,12 +92,12 @@ public class MyBoxClipboardWriter extends Data2DWriter {
             DataInMyBoxClipboardController.update();
             created = true;
         } catch (Exception e) {
-            handleError(e.toString());
+            showError(e.toString());
         }
     }
 
     @Override
-    public void openFile(BaseController controller) {
+    public void showResult(BaseController controller) {
         if (targetData == null) {
             return;
         }

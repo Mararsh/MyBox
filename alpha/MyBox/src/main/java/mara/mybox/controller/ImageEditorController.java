@@ -196,7 +196,7 @@ public class ImageEditorController extends BaseImageController {
                         imageHistoriesPath = tableImageEditHistory.path(conn, currentFile);
                         if (imageHistoriesPath == null) {
                             String fname = currentFile.getName();
-                            String subPath = FileNameTools.prefix(fname) + FileNameTools.suffix(fname);
+                            String subPath = FileNameTools.prefix(fname) + FileNameTools.ext(fname);
                             imageHistoriesPath = new File(imageHistoriesRootPath + File.separator
                                     + subPath + (new Date()).getTime());
                         }

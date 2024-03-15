@@ -29,6 +29,9 @@ public class DataBaseTableWriter extends Data2DWriter {
     @Override
     public boolean openWriter() {
         try {
+            if (!super.openWriter()) {
+                return false;
+            }
             table = new DataTable();
             table.setTask(task()).setDataName(dataName);
             if (!Data2D.saveAttributes(conn, table, columns)) {
@@ -46,7 +49,7 @@ public class DataBaseTableWriter extends Data2DWriter {
             targetData = table;
             return true;
         } catch (Exception e) {
-            handleError(e.toString());
+            showError(e.toString());
             return false;
         }
     }
@@ -79,7 +82,7 @@ public class DataBaseTableWriter extends Data2DWriter {
                 }
             }
         } catch (Exception e) {
-            handleError(e.toString());
+            showError(e.toString());
         }
     }
 
@@ -97,7 +100,7 @@ public class DataBaseTableWriter extends Data2DWriter {
             Data2D.saveAttributes(conn, table, columns);
             created = true;
         } catch (Exception e) {
-            handleError(e.toString());
+            showError(e.toString());
         }
     }
 

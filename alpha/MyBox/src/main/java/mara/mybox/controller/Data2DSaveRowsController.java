@@ -4,6 +4,7 @@ import java.util.List;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.Data2D_Attributes.TargetType;
 import mara.mybox.data2d.operate.Data2DExport;
+import mara.mybox.data2d.writer.Data2DWriter;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
@@ -20,25 +21,27 @@ public class Data2DSaveRowsController extends BaseData2DSaveAsController {
     protected List<List<String>> dataRows;
     protected List<Data2DColumn> dataColumns;
 
-    public void setParameters(TargetType inFormat, ControlTargetFile fileController,
-            List<Data2DColumn> outputColumns, List<List<String>> outputData, String inTargetName) {
+    public void setParameters(Data2DWriter writer,
+            List<Data2DColumn> outputColumns, List<List<String>> outputData) {
         try {
             if (outputColumns == null || outputColumns.isEmpty()
                     || outputData == null || outputData.isEmpty()
-                    || inFormat == null) {
+                    || writer == null) {
                 close();
                 return;
             }
-            format = inFormat;
-            targetName = inTargetName;
+            format = writer.getFormat();
+            targetName = writer.getDataName();
             dataColumns = outputColumns;
             dataRows = outputData;
-            checkTargets();
+            checkParameters();
             if (format != TargetType.DatabaseTable) {
                 export = new Data2DExport();
-                export.initParameters(format);
+                export.initParameters();
                 export.setDataName(targetName);
-                export.initFile(fileController, dataColumns, targetName);
+                export.addWriter(writer);
+                export.setColumns(dataColumns);
+                export.setTargetFile(writer.getTargetFile());
             }
             startAction();
         } catch (Exception e) {
@@ -81,12 +84,12 @@ public class Data2DSaveRowsController extends BaseData2DSaveAsController {
     /*
         static
      */
-    public static Data2DSaveRowsController createData(TargetType format, ControlTargetFile fileController,
-            List<Data2DColumn> outputColumns, List<List<String>> outputData, String targetName) {
+    public static Data2DSaveRowsController createData(Data2DWriter writer,
+            List<Data2DColumn> outputColumns, List<List<String>> outputData) {
         try {
             Data2DSaveRowsController controller
                     = (Data2DSaveRowsController) WindowTools.openStage(Fxmls.Data2DSaveRowsFxml);
-            controller.setParameters(format, fileController, outputColumns, outputData, targetName);
+            controller.setParameters(writer, outputColumns, outputData);
             controller.requestMouse();
             return controller;
         } catch (Exception e) {

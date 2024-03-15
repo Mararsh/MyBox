@@ -11,6 +11,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.VBox;
 import mara.mybox.data.SetValue;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.db.data.ColumnDefinition.InvalidAs;
@@ -46,6 +47,8 @@ public class ControlData2DSetValue extends BaseController {
     protected ControlData2DRowExpression expressionController;
     @FXML
     protected CheckBox errorContinueCheck, fillZeroCheck;
+    @FXML
+    protected VBox expBox;
 
     @Override
     public void initControls() {
@@ -158,7 +161,7 @@ public class ControlData2DSetValue extends BaseController {
                 }
             });
 
-            expressionController.thisPane.disableProperty().bind(expressionRadio.selectedProperty().not());
+            expBox.disableProperty().bind(expressionRadio.selectedProperty().not());
             valueInput.disableProperty().bind(valueRadio.selectedProperty().not());
             prefixInput.disableProperty().bind(prefixRadio.selectedProperty().not());
             suffixInput.disableProperty().bind(suffixRadio.selectedProperty().not());

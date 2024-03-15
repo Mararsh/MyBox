@@ -30,31 +30,31 @@ import org.apache.commons.csv.CSVRecord;
  * @License Apache License Version 2.0
  */
 public class DataFileCSV extends DataFileText {
-
+    
     public DataFileCSV() {
         dataType = DataType.CSV;
     }
-
+    
     public DataFileCSV(File file) {
         dataType = DataType.CSV;
         this.file = file;
         this.delimiter = guessDelimiter();
     }
-
+    
     @Override
     public String[] delimters() {
         String[] delimiters = {",", " ", "|", "@", "#", ";", ":", "*",
             "%", "$", "_", "&", "-", "=", "!", "\"", "'", "<", ">"};
         return delimiters;
     }
-
+    
     public CSVFormat cvsFormat() {
         if (delimiter == null || delimiter.isEmpty()) {
             delimiter = ",";
         }
         return CsvTools.csvFormat(delimiter, hasHeader);
     }
-
+    
     @Override
     public boolean savePageDataAs(Data2D targetData) {
         if (targetData == null || !(targetData instanceof DataFileCSV)) {
@@ -131,7 +131,7 @@ public class DataFileCSV extends DataFileText {
         }
         return FileTools.override(tmpFile, tFile);
     }
-
+    
     public boolean writeHeader(CSVPrinter csvPrinter) {
         try {
             if (csvPrinter == null) {
@@ -153,7 +153,7 @@ public class DataFileCSV extends DataFileText {
             return false;
         }
     }
-
+    
     public boolean writePageData(CSVPrinter csvPrinter) {
         try {
             if (csvPrinter == null) {
@@ -177,7 +177,7 @@ public class DataFileCSV extends DataFileText {
             return false;
         }
     }
-
+    
     public void writeFileRow(CSVPrinter csvPrinter, CSVRecord record) {
         try {
             List<String> row = new ArrayList<>();
@@ -189,7 +189,7 @@ public class DataFileCSV extends DataFileText {
             MyBoxLog.error(e);
         }
     }
-
+    
     public DataFileCSV savePageAs(String dname) {
         try {
             DataFileCSV targetData = (DataFileCSV) this.cloneAll();
@@ -202,7 +202,7 @@ public class DataFileCSV extends DataFileText {
             return null;
         }
     }
-
+    
     @Override
     public Data2DWriter selfWriter() {
         if (file == null) {
@@ -213,6 +213,8 @@ public class DataFileCSV extends DataFileText {
                 .setDelimiter(delimiter)
                 .setWriteHeader(hasHeader)
                 .setTargetFile(file)
+                .setColumns(columns)
+                .setHeaderNames(columnNames())
                 .setRecordTargetFile(true)
                 .setRecordTargetData(false);
         return writer;
@@ -235,7 +237,7 @@ public class DataFileCSV extends DataFileText {
             return null;
         }
     }
-
+    
     public static File csvFile(FxTask task, File tmpFile,
             String delimeter, List<String> cols, List<List<String>> data) {
         if (tmpFile == null) {
@@ -272,7 +274,7 @@ public class DataFileCSV extends DataFileText {
         }
         return tmpFile;
     }
-
+    
     public static DataFileCSV save(FxTask task, File dfile, String dname, String delimeter,
             List<Data2DColumn> cols, List<List<String>> data) {
         try {
@@ -317,7 +319,7 @@ public class DataFileCSV extends DataFileText {
             return null;
         }
     }
-
+    
     public static LinkedHashMap<File, Boolean> save(FxTask task, File path,
             String filePrefix, List<StringTable> tables) {
         if (tables == null || tables.isEmpty()) {
@@ -369,7 +371,7 @@ public class DataFileCSV extends DataFileText {
             MyBoxLog.error(e);
             return null;
         }
-
+        
     }
-
+    
 }

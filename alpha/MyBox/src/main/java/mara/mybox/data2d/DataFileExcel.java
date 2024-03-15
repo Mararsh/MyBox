@@ -450,6 +450,9 @@ public class DataFileExcel extends DataFile {
         DataFileExcelWriter writer = new DataFileExcelWriter();
         writer.setSheetName(sheet)
                 .setTargetFile(file)
+                .setWriteHeader(hasHeader)
+                .setColumns(columns)
+                .setHeaderNames(columnNames())
                 .setRecordTargetFile(true)
                 .setRecordTargetData(false);
         return writer;

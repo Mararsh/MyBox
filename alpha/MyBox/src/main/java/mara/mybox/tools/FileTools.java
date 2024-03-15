@@ -76,7 +76,7 @@ public class FileTools {
         if (file == null || !file.isFile()) {
             return false;
         }
-        String suffix = FileNameTools.suffix(file.getName()).toLowerCase();
+        String suffix = FileNameTools.ext(file.getName()).toLowerCase();
         return FileExtensions.SupportedImages.contains(suffix);
     }
 
@@ -108,7 +108,7 @@ public class FileTools {
             if (noEmpty && sourceFile.length() == 0) {
                 return false;
             }
-            synchronized (sourceFile) {
+            synchronized (targetFile) {
                 if (!FileDeleteTools.delete(targetFile)) {
                     return false;
                 }

@@ -34,7 +34,7 @@ public class DataTableDelete extends Data2DDelete {
 
     @Override
     public boolean go() {
-        count = 0;
+        handledCount = 0;
         tableData2D = sourceTable.getTableData2D();
         tableData2D.setTableName(sourceTable.getSheet());
         String sql = "SELECT * FROM " + sourceTable.getSheet();
@@ -56,7 +56,7 @@ public class DataTableDelete extends Data2DDelete {
             }
             delete.executeBatch();
             conn.commit();
-            showInfo(message("Deleted") + ": " + count);
+            showInfo(message("Deleted") + ": " + handledCount);
             conn.close();
             conn = null;
             return true;
@@ -74,10 +74,10 @@ public class DataTableDelete extends Data2DDelete {
             }
             if (tableData2D.setDeleteStatement(conn, delete, sourceTableRow)) {
                 delete.addBatch();
-                if (++count % Database.BatchSize == 0) {
+                if (++handledCount % Database.BatchSize == 0) {
                     delete.executeBatch();
                     conn.commit();
-                    showInfo(message("Deleted") + ": " + count);
+                    showInfo(message("Deleted") + ": " + handledCount);
                 }
             }
         } catch (Exception e) {

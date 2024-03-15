@@ -1,9 +1,14 @@
 package mara.mybox.data2d.operate;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Iterator;
 import mara.mybox.data2d.Data2D_Edit;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.NumberTools;
 import static mara.mybox.value.Languages.message;
 import org.apache.commons.math3.stat.Frequency;
@@ -16,6 +21,7 @@ import org.apache.commons.math3.stat.Frequency;
 public class Data2DFrequency extends Data2DOperate {
 
     protected Frequency frequency;
+    protected String colName;
     protected int colIndex;
 
     public static Data2DFrequency create(Data2D_Edit data) {
@@ -25,7 +31,16 @@ public class Data2DFrequency extends Data2DOperate {
 
     @Override
     public boolean checkParameters() {
-        return super.checkParameters() && frequency != null;
+        return super.checkParameters() && frequency != null && colName != null;
+    }
+
+    @Override
+    public boolean go() {
+        if (!sourceData.isTable() || sourceData.needFilter()) {
+            return reader.start();
+        } else {
+            return goTable();
+        }
     }
 
     @Override
@@ -46,7 +61,7 @@ public class Data2DFrequency extends Data2DOperate {
             targetRow.add(frequency.getSumFreq() + "");
             targetRow.add("100");
             writeRow();
-            count = 1;
+            handledCount = 1;
             Iterator iterator = frequency.valuesIterator();
             if (iterator != null) {
                 while (iterator.hasNext()) {
@@ -57,7 +72,7 @@ public class Data2DFrequency extends Data2DOperate {
                     targetRow.add(frequency.getCount(value) + "");
                     targetRow.add(NumberTools.format(frequency.getPct(value) * 100, scale));
                     writeRow();
-                    count++;
+                    handledCount++;
                 }
             }
             frequency.clear();
@@ -71,6 +86,69 @@ public class Data2DFrequency extends Data2DOperate {
         }
     }
 
+    public boolean goTable() {
+        int total = 0;
+        try (Connection conn = DerbyBase.getConnection()) {
+            String sql = "SELECT count(*) AS mybox99_count FROM " + sourceData.getSheet();
+            if (task != null) {
+                task.setInfo(sql);
+            }
+            try (PreparedStatement statement = conn.prepareStatement(sql);
+                    ResultSet results = statement.executeQuery()) {
+                if (results.next()) {
+                    total = results.getInt("mybox99_count");
+                }
+            } catch (Exception e) {
+            }
+            if (total == 0) {
+                if (task != null) {
+                    task.setError(message("NoData"));
+                }
+                return false;
+            }
+            targetRow = new ArrayList<>();
+            targetRow.add(message("All"));
+            targetRow.add(total + "");
+            targetRow.add("100");
+            writeRow();
+            handledCount = 0;
+            sql = "SELECT " + colName + ", count(*) AS mybox99_count FROM " + sourceData.getSheet()
+                    + " GROUP BY " + colName + " ORDER BY mybox99_count DESC";
+            if (task != null) {
+                task.setInfo(sql);
+            }
+            try (PreparedStatement statement = conn.prepareStatement(sql);
+                    ResultSet results = statement.executeQuery()) {
+                String sname = DerbyBase.savedName(colName);
+                while (results.next() && task != null && !task.isCancelled()) {
+                    targetRow = new ArrayList<>();
+                    Object c = results.getObject(sname);
+                    targetRow.add(c != null ? c.toString() : null);
+                    int count = results.getInt("mybox99_count");
+                    targetRow.add(count + "");
+                    targetRow.add(DoubleTools.percentage(count, total, scale));
+                    writeRow();
+                    handledCount++;
+                }
+            } catch (Exception e) {
+                if (task != null) {
+                    task.setError(e.toString());
+                } else {
+                    MyBoxLog.error(e);
+                }
+                return false;
+            }
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
+            }
+            return false;
+        }
+        return true;
+    }
+
     /*
         set
      */
@@ -79,16 +157,14 @@ public class Data2DFrequency extends Data2DOperate {
         return this;
     }
 
-    public Data2DFrequency setColIndex(int colIndex) {
-        this.colIndex = colIndex;
+    public Data2DFrequency setColName(String colName) {
+        this.colName = colName;
         return this;
     }
 
-    /*
-        get
-     */
-    public long getCount() {
-        return count;
+    public Data2DFrequency setColIndex(int colIndex) {
+        this.colIndex = colIndex;
+        return this;
     }
 
 }

@@ -127,7 +127,7 @@ public class DataTableQueryEditor extends InfoTreeNodeEditor {
             @Override
             protected void whenSucceeded() {
                 popDone();
-                Data2DSaveDataController.createData(dataCSV, targetController.target,
+                Data2DSaveDataController.createData(dataCSV, targetController.format,
                         targetController.name(), targetController.targetFileController);
             }
 

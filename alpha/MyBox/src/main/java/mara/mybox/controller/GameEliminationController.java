@@ -854,7 +854,7 @@ public class GameEliminationController extends BaseController {
 
     public void selectSoundFile(File file) {
         recordFileOpened(file);
-        String suffix = FileNameTools.suffix(file.getName());
+        String suffix = FileNameTools.ext(file.getName());
         if (suffix == null
                 || (!"mp3".equals(suffix.toLowerCase()) && !"wav".equals(suffix.toLowerCase()))) {
             alertError(message("OnlySupportMp3Wav"));

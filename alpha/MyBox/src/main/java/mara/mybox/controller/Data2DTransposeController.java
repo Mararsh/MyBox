@@ -6,8 +6,8 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import mara.mybox.data2d.Data2D;
-import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.TmpTable;
+import mara.mybox.data2d.writer.Data2DWriter;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
@@ -115,7 +115,7 @@ public class Data2DTransposeController extends BaseData2DTargetsController {
     }
 
     @Override
-    public DataFileCSV generatedFile(FxTask currentTask) {
+    public boolean generatedResult(FxTask currentTask, Data2DWriter writer) {
         try {
             Data2D tmp2D = data2D.cloneAll();
             tmp2D.startTask(currentTask, filterController.filter);
@@ -137,17 +137,17 @@ public class Data2DTransposeController extends BaseData2DTargetsController {
             }
             tmp2D.stopFilter();
             if (tmpTable == null) {
-                return null;
+                return false;
             }
-            DataFileCSV csvData = tmpTable.transpose(firstCheck.isSelected());
+            boolean ok = tmpTable.transpose(currentTask, writer, firstCheck.isSelected());
             tmpTable.drop();
-            return csvData;
+            return ok;
         } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
+            if (currentTask != null) {
+                currentTask.setError(e.toString());
             }
             MyBoxLog.error(e);
-            return null;
+            return false;
         }
     }
 

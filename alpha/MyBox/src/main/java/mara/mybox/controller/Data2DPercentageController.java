@@ -9,7 +9,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import mara.mybox.data2d.DataFileCSV;
+import mara.mybox.data2d.writer.Data2DWriter;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
@@ -317,7 +317,7 @@ public class Data2DPercentageController extends BaseData2DTargetsController {
     }
 
     @Override
-    public DataFileCSV generatedFile(FxTask currentTask) {
+    public boolean generatedResult(FxTask currentTask, Data2DWriter writer) {
         String toNegative;
         if (negativeSkipRadio.isSelected()) {
             toNegative = "skip";
@@ -326,16 +326,18 @@ public class Data2DPercentageController extends BaseData2DTargetsController {
         } else {
             toNegative = "zero";
         }
-        String name = targetController.name();
         switch (objectType) {
             case Rows:
-                return data2D.percentageRows(name, checkedColsIndices, otherColsIndices,
+                return data2D.percentageRows(currentTask, writer,
+                        checkedColsIndices, otherColsIndices,
                         scale, toNegative, invalidAs);
             case All:
-                return data2D.percentageAll(name, checkedColsIndices, otherColsIndices,
+                return data2D.percentageAll(currentTask, writer,
+                        checkedColsIndices, otherColsIndices,
                         scale, toNegative, invalidAs);
             default:
-                return data2D.percentageColumns(name, checkedColsIndices, otherColsIndices,
+                return data2D.percentageColumns(currentTask, writer,
+                        checkedColsIndices, otherColsIndices,
                         scale, toNegative, invalidAs);
         }
     }

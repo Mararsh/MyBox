@@ -151,7 +151,7 @@ public class Data2DSpliceController extends BaseController {
 
             @Override
             protected void whenSucceeded() {
-                Data2DSaveDataController.createData(targetCSV, targetController.target,
+                Data2DSaveDataController.createData(targetCSV, targetController.format,
                         targetController.name(), targetController.targetFileController);
             }
 

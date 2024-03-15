@@ -1,6 +1,7 @@
 package mara.mybox.data2d.operate;
 
 import java.util.ArrayList;
+import java.util.List;
 import mara.mybox.data2d.Data2D_Edit;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DoubleTools;
@@ -17,6 +18,7 @@ public class Data2DPrecentage extends Data2DOperate {
     protected double[] colValues;
     protected double tValue;
     protected String toNegative;
+    protected List<String> firstRow;
 
     public static enum Type {
         ColumnsPass1, ColumnsPass2, Rows, AllPass1, AllPass2
@@ -50,6 +52,18 @@ public class Data2DPrecentage extends Data2DOperate {
                 break;
             default:
                 return false;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean openWriters() {
+        if (!super.openWriters()) {
+            return false;
+        }
+        if (firstRow != null) {
+            targetRow = firstRow;
+            writeRow();
         }
         return true;
     }
@@ -314,6 +328,11 @@ public class Data2DPrecentage extends Data2DOperate {
 
     public Data2DPrecentage setToNegative(String toNegative) {
         this.toNegative = toNegative;
+        return this;
+    }
+
+    public Data2DPrecentage setFirstRow(List<String> firstRow) {
+        this.firstRow = firstRow;
         return this;
     }
 

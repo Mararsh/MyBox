@@ -6,7 +6,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
-import mara.mybox.data2d.DataFileCSV;
+import mara.mybox.data2d.writer.Data2DWriter;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
@@ -124,7 +124,7 @@ public abstract class BaseData2DTargetsController extends BaseData2DHandleContro
             if (isSettingValues) {
                 return true;
             }
-            if (targetController != null && targetController.target == null) {
+            if (targetController != null && targetController.format == null) {
                 outOptionsError(message("SelectToHandle") + ": " + message("Target"));
                 return false;
             }
@@ -152,26 +152,28 @@ public abstract class BaseData2DTargetsController extends BaseData2DHandleContro
         if (targetController == null) {
             return;
         }
-        if (task != null && !task.isQuit()) {
+        Data2DWriter writer = targetController.pickWriter();
+        if (writer == null) {
+            popError(message("Invalid") + ": " + message("Target"));
             return;
         }
+        if (task != null) {
+            task.cancel();
+        }
         task = new FxSingletonTask<Void>(this) {
-
-            private DataFileCSV csvData;
 
             @Override
             protected boolean handle() {
                 data2D.startTask(this, filterController.filter);
-                csvData = generatedFile(this);
-                data2D.stopFilter();
-                return csvData != null;
+                return generatedResult(this, writer);
             }
 
             @Override
             protected void whenSucceeded() {
                 popDone();
-                Data2DSaveDataController.createData(csvData, targetController.target,
-                        targetController.name(), targetController.targetFileController);
+                writer.showResult(myController);
+//                Data2DSaveDataController.createData(csvData, targetController.format,
+//                        targetController.name(), targetController.targetFileController);
             }
 
             @Override
@@ -184,8 +186,8 @@ public abstract class BaseData2DTargetsController extends BaseData2DHandleContro
         start(task);
     }
 
-    public DataFileCSV generatedFile(FxTask currentTask) {
-        return null;
+    public boolean generatedResult(FxTask currentTask, Data2DWriter writer) {
+        return false;
     }
 
     public void handleRowsTask() {
@@ -303,14 +305,17 @@ public abstract class BaseData2DTargetsController extends BaseData2DHandleContro
     }
 
     public boolean outputExternal() {
-        if (targetController == null || targetController.target == null
-                || outputData == null || outputData.isEmpty()) {
+        if (outputData == null || outputData.isEmpty()) {
             popError(message("NoData"));
             return false;
         }
-        Data2DSaveRowsController.createData(targetController.target,
-                targetController.targetFileController,
-                outputColumns, outputData, targetController.name());
+        Data2DWriter writer = targetController.pickWriter();
+        if (writer == null) {
+            popError(message("InvalidParamter"));
+            return false;
+        }
+
+        Data2DSaveRowsController.createData(writer, outputColumns, outputData);
         popDone();
         return true;
     }

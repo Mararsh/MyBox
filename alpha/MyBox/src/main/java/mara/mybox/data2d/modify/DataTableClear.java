@@ -35,8 +35,8 @@ public class DataTableClear extends Data2DOperate {
             showInfo(sql);
             TableData2D tableData2D = sourceTable.getTableData2D();
             tableData2D.setTableName(sourceTable.getSheet());
-            count = tableData2D.clearData();
-            return count >= 0;
+            handledCount = tableData2D.clearData();
+            return handledCount >= 0;
         } catch (Exception e) {
             showError(e.toString());
             return false;

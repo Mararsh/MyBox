@@ -280,7 +280,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
             if (operate.isFailed()) {
                 return -3;
             }
-            return operate.getCount();
+            return operate.getHandledCount();
         } catch (Exception e) {
             return -4;
         }
@@ -301,7 +301,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
             if (operate.isFailed()) {
                 return -3;
             }
-            return operate.getCount();
+            return operate.getHandledCount();
         } catch (Exception e) {
             return -4;
         }
@@ -322,7 +322,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
         if (operate.isFailed()) {
             return -3;
         }
-        return operate.getCount();
+        return operate.getHandledCount();
     }
 
     public String encodeCSV(FxTask task, String delimiterName,

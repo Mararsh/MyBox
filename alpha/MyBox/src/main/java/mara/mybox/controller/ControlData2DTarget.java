@@ -16,9 +16,19 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import mara.mybox.data2d.Data2D_Attributes.TargetType;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.CSV;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.Excel;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.HTML;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.JSON;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.MyBoxClipboard;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.PDF;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.Text;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.XML;
+import mara.mybox.data2d.writer.Data2DWriter;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.VisitHistory.FileType;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.tools.FileTmpTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -30,7 +40,7 @@ import mara.mybox.value.UserConfig;
 public class ControlData2DTarget extends BaseController {
 
     protected BaseData2DLoadController tableController;
-    protected TargetType target;
+    protected TargetType format;
     protected boolean notInTable;
     protected ChangeListener<Boolean> tableStatusListener;
     protected SimpleBooleanProperty formatNotify;
@@ -127,12 +137,12 @@ public class ControlData2DTarget extends BaseController {
 
     public void initTarget() {
         try {
-            target = TargetType.valueOf(UserConfig.getString(baseName + "DataTarget", "CSV"));
+            format = TargetType.valueOf(UserConfig.getString(baseName + "DataTarget", "CSV"));
             isSettingValues = true;
-            if (target == null) {
+            if (format == null) {
                 csvRadio.setSelected(true);
             } else {
-                switch (target) {
+                switch (format) {
                     case CSV:
                         csvRadio.setSelected(true);
                         break;
@@ -200,9 +210,9 @@ public class ControlData2DTarget extends BaseController {
 
     public TargetType checkTarget() {
         try {
-            target = TargetType.CSV;
+            format = TargetType.CSV;
             if (isSettingValues || tableController == null || tableController.data2D == null) {
-                return target;
+                return format;
             }
             String name = name();
             if (name == null || name.isBlank()) {
@@ -212,47 +222,47 @@ public class ControlData2DTarget extends BaseController {
                 name = tableController.getTitle();
             }
             if (csvRadio.isSelected()) {
-                target = TargetType.CSV;
+                format = TargetType.CSV;
                 targetFileController.setFile(FileType.CSV,
                         baseName + "TargetType" + FileType.CSV, name, "csv");
             } else if (excelRadio.isSelected()) {
-                target = TargetType.Excel;
+                format = TargetType.Excel;
                 targetFileController.setFile(FileType.Excel,
                         baseName + "TargetType" + FileType.Excel, name, "xlsx");
             } else if (textsRadio.isSelected()) {
-                target = TargetType.Text;
+                format = TargetType.Text;
                 targetFileController.setFile(FileType.Text,
                         baseName + "TargetType" + FileType.Text, name, "txt");
             } else if (matrixRadio.isSelected()) {
-                target = TargetType.Matrix;
+                format = TargetType.Matrix;
             } else if (systemClipboardRadio.isSelected()) {
-                target = TargetType.SystemClipboard;
+                format = TargetType.SystemClipboard;
             } else if (myBoxClipboardRadio.isSelected()) {
-                target = TargetType.MyBoxClipboard;
+                format = TargetType.MyBoxClipboard;
             } else if (databaseRadio.isSelected()) {
-                target = TargetType.DatabaseTable;
+                format = TargetType.DatabaseTable;
             } else if (jsonRadio.isSelected()) {
-                target = TargetType.JSON;
+                format = TargetType.JSON;
                 targetFileController.setFile(FileType.JSON,
                         baseName + "TargetType" + FileType.JSON, name, "json");
             } else if (xmlRadio.isSelected()) {
-                target = TargetType.XML;
+                format = TargetType.XML;
                 targetFileController.setFile(FileType.XML,
                         baseName + "TargetType" + FileType.XML, name, "xml");
             } else if (htmlRadio.isSelected()) {
-                target = TargetType.HTML;
+                format = TargetType.HTML;
                 targetFileController.setFile(FileType.Html,
                         baseName + "TargetType" + FileType.Html, name, "html");
             } else if (pdfRadio.isSelected()) {
-                target = TargetType.PDF;
+                format = TargetType.PDF;
                 targetFileController.setFile(FileType.PDF,
                         baseName + "TargetType" + FileType.PDF, name, "pdf");
             } else if (inTableBox != null) {
                 if (replaceRadio.isSelected()) {
                     if (!notInTable) {
-                        target = TargetType.Replace;
+                        format = TargetType.Replace;
                     } else {
-                        target = TargetType.CSV;
+                        format = TargetType.CSV;
                         Platform.runLater(new Runnable() {
                             @Override
                             public void run() {
@@ -262,9 +272,9 @@ public class ControlData2DTarget extends BaseController {
                     }
                 } else if (insertRadio.isSelected()) {
                     if (!notInTable) {
-                        target = TargetType.Insert;
+                        format = TargetType.Insert;
                     } else {
-                        target = TargetType.CSV;
+                        format = TargetType.CSV;
                         Platform.runLater(new Runnable() {
                             @Override
                             public void run() {
@@ -274,9 +284,9 @@ public class ControlData2DTarget extends BaseController {
                     }
                 } else if (appendRadio.isSelected()) {
                     if (!notInTable) {
-                        target = TargetType.Append;
+                        format = TargetType.Append;
                     } else {
-                        target = TargetType.CSV;
+                        format = TargetType.CSV;
                         Platform.runLater(new Runnable() {
                             @Override
                             public void run() {
@@ -287,12 +297,12 @@ public class ControlData2DTarget extends BaseController {
                 }
             }
             checkControls();
-            UserConfig.setString(baseName + "DataTarget", target.name());
+            UserConfig.setString(baseName + "DataTarget", format.name());
             formatNotify.set(!formatNotify.get());
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
-        return target;
+        return format;
     }
 
     public synchronized void refreshControls() {
@@ -349,10 +359,10 @@ public class ControlData2DTarget extends BaseController {
 
     public boolean validateTarget() {
         try {
-            if (target == null) {
+            if (format == null) {
                 return false;
             }
-            switch (target) {
+            switch (format) {
                 case CSV:
                 case Excel:
                 case Text:
@@ -360,7 +370,7 @@ public class ControlData2DTarget extends BaseController {
                 case XML:
                 case HTML:
                 case PDF:
-                    File file = targetFileController.file();
+                    File file = file();
                     if (file == null) {
                         popError(message("InvalidParameter") + ": " + message("FileName"));
                         return false;
@@ -383,9 +393,21 @@ public class ControlData2DTarget extends BaseController {
         }
     }
 
+    public TargetType format() {
+        return format;
+    }
+
     public String name() {
         String name = nameInput.getText();
-        return name != null ? name.trim() : null;
+        return name != null && !name.isBlank() ? name.trim() : null;
+    }
+
+    public File file() {
+        if (targetFileController == null) {
+            return FileTmpTools.getTempFile();
+        } else {
+            return targetFileController.makeTargetFile();
+        }
     }
 
     public int row() {
@@ -400,6 +422,24 @@ public class ControlData2DTarget extends BaseController {
             return -1;
         }
         return tableController.data2D.colOrder(colSelector.getSelectionModel().getSelectedItem());
+    }
+
+    public Data2DWriter pickWriter() {
+        try {
+            if (format == null) {
+                return null;
+            }
+            Data2DWriter writer = Data2DWriter.getWriter(format);
+            if (writer != null) {
+                writer.setFormat(format)
+                        .setDataName(name())
+                        .setTargetFile(file());
+            }
+            return writer;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
     }
 
     @Override

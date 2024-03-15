@@ -48,7 +48,9 @@ public class Data2DDelete extends Data2DOperate {
     }
 
     public void deleteRow(boolean handle) {
-        if (!handle) {
+        if (handle) {
+            handledCount++;
+        } else {
             targetRow = sourceRow;
             writeRow();
         }

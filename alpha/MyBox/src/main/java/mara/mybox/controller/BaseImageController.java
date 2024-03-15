@@ -301,7 +301,7 @@ public class BaseImageController extends BaseImageController_Actions {
             MenuItem menu;
 
             if (sourceFile != null) {
-                String fileFormat = FileNameTools.suffix(sourceFile.getName()).toLowerCase();
+                String fileFormat = FileNameTools.ext(sourceFile.getName()).toLowerCase();
                 if (FileExtensions.MultiFramesImages.contains(fileFormat)) {
                     menu = new MenuItem(message("Frames"), StyleTools.getIconImageView("iconFrame.png"));
                     menu.setOnAction((ActionEvent menuItemEvent) -> {

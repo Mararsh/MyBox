@@ -35,10 +35,11 @@ public class Data2DSetValue extends Data2DOperate {
         return operate;
     }
 
-    public boolean initParameters(SetValue setValue) {
-        if (sourceData == null || setValue == null) {
+    public boolean initParameters(SetValue v) {
+        if (sourceData == null || v == null) {
             return false;
         }
+        setValue = v;
         digit = setValue.countFinalDigit(sourceData.getDataSize());
         dataIndex = setValue.getStart();
         dataValue = setValue.getValue();
@@ -70,7 +71,7 @@ public class Data2DSetValue extends Data2DOperate {
                         }
                     }
                 }
-                count++;
+                handledCount++;
             } else if (sourceData instanceof DataTable) {
                 return;
             }

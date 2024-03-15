@@ -136,4 +136,8 @@ public class ControlTextOptions extends BaseController {
         return withNamesCheck.isSelected();
     }
 
+    public boolean invalidDelimiter() {
+        return delimiterController.delimiterInput.getStyle().equals(UserConfig.badStyle());
+    }
+
 }

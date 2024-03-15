@@ -32,6 +32,9 @@ public class DataFileCSVWriter extends Data2DWriter {
     @Override
     public boolean openWriter() {
         try {
+            if (!super.openWriter()) {
+                return false;
+            }
             targetFile = makeTargetFile();
             if (targetFile == null) {
                 showInfo((skip ? message("Skipped") : message("Failed")) + ": " + fileSuffix);
@@ -43,12 +46,12 @@ public class DataFileCSVWriter extends Data2DWriter {
                 printer = new CSVPrinter(new FileWriter(tmpFile, charset),
                         CsvTools.csvFormat(delimiter));
             }
-            if (writeHeader) {
+            if (writeHeader && headerNames != null) {
                 printer.printRecord(headerNames);
             }
             return true;
         } catch (Exception e) {
-            handleError(e.toString());
+            showError(e.toString());
             return false;
         }
     }
@@ -61,7 +64,7 @@ public class DataFileCSVWriter extends Data2DWriter {
             }
             printer.printRecord(targetRow);
         } catch (Exception e) {
-            handleError(e.toString());
+            showError(e.toString());
         }
     }
 
@@ -80,12 +83,10 @@ public class DataFileCSVWriter extends Data2DWriter {
                 FileDeleteTools.delete(tmpFile);
                 return;
             }
-            if (targetFile == null || targetFile.exists()) {
+            if (targetFile == null || !targetFile.exists()) {
                 return;
             }
-            if (recordTargetFile && taskController != null) {
-                taskController.targetFileGenerated(targetFile, VisitHistory.FileType.CSV);
-            }
+            recordFileGenerated(targetFile, VisitHistory.FileType.CSV);
             if (recordTargetData) {
                 if (targetData == null) {
                     targetData = Data2D.create(Data2DDefinition.DataType.CSV);
@@ -101,7 +102,7 @@ public class DataFileCSVWriter extends Data2DWriter {
             }
             created = true;
         } catch (Exception e) {
-            handleError(e.toString());
+            showError(e.toString());
         }
     }
 

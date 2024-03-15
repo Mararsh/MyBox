@@ -133,8 +133,8 @@ public class Data2DManufactureController extends BaseData2DViewController {
     @Override
     public void showTableButtons() {
         buttonsPane.getChildren().setAll(lostFocusCommitCheck,
-                clearButton, deleteRowsButton, editButton, addRowsButton,
-                recoverButton, saveButton, dataDefinitionButton);
+                clearButton, deleteRowsButton, moveUpButton, moveDownButton,
+                editButton, addRowsButton, recoverButton, saveButton, dataDefinitionButton);
     }
 
     @Override

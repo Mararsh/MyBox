@@ -264,7 +264,7 @@ public class SvgEditorController extends XmlEditorController {
                 if (exampleFile == null || !exampleFile.exists()) {
                     return;
                 }
-                File tmpFile = FileTmpTools.generateFile(FileNameTools.prefix(filename), FileNameTools.suffix(filename));
+                File tmpFile = FileTmpTools.generateFile(FileNameTools.prefix(filename), FileNameTools.ext(filename));
                 FileCopyTools.copyFile(exampleFile, tmpFile);
                 if (tmpFile == null || !tmpFile.exists()) {
                     return;

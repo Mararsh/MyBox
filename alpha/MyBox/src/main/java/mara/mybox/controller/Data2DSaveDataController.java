@@ -25,11 +25,12 @@ public class Data2DSaveDataController extends BaseData2DSaveAsController {
             data2D = csvData;
             format = inFormat;
             targetName = inTargetName;
-            checkTargets();
+            checkParameters();
             if (format != TargetType.DatabaseTable) {
                 export = Data2DExport.create(data2D);
-                export.initParameters(format);
+                export.initParameters();
                 export.setDataName(targetName);
+                export.addWriter(pickWriter(format));
                 export.initFile(fileController, data2D.getColumns(), targetName);
             }
             startAction();

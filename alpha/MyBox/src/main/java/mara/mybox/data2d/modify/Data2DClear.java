@@ -24,7 +24,7 @@ public class Data2DClear extends Data2DOperate {
 
     @Override
     public void handleData() {
-        count = sourceData.getDataSize();
+        handledCount = sourceData.getDataSize();
     }
 
 }

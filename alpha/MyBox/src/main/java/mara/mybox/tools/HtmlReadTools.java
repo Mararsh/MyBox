@@ -216,9 +216,9 @@ public class HtmlReadTools {
             }
             String suffix = null;
             if (name != null && !name.isBlank()) {
-                suffix = FileNameTools.suffix(name);
+                suffix = FileNameTools.ext(name);
             }
-            String addrSuffix = FileNameTools.suffix(address);
+            String addrSuffix = FileNameTools.ext(address);
             if (addrSuffix != null && !addrSuffix.isBlank()) {
                 if (suffix == null || suffix.isBlank()
                         || !addrSuffix.equalsIgnoreCase(suffix)) {

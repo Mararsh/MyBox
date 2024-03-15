@@ -75,7 +75,7 @@ public class PptSplitController extends BaseBatchFileController {
             }
             targetFilesCount = 0;
             targetFiles = new LinkedHashMap<>();
-            String suffix = FileNameTools.suffix(srcFile.getName());
+            String suffix = FileNameTools.ext(srcFile.getName());
             switch (splitController.splitType) {
                 case Size:
                     splitByPagesSize(currentTask, srcFile, targetPath, total, suffix, splitController.size);

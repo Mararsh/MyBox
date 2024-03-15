@@ -73,7 +73,7 @@ public class FileNameTools {
     }
 
     // not include "."
-    public static String suffix(String filename) {
+    public static String ext(String filename) {
         if (filename == null || filename.endsWith(File.separator)) {
             return null;
         }
@@ -82,7 +82,7 @@ public class FileNameTools {
         return (pos >= 0 && pos < name.length() - 1) ? name.substring(pos + 1) : "";
     }
 
-    public static String replaceSuffix(String file, String newSuffix) {
+    public static String replaceExt(String file, String newSuffix) {
         if (file == null || newSuffix == null) {
             return null;
         }
@@ -102,6 +102,16 @@ public class FileNameTools {
         } else {
             return path + name + "." + newSuffix;
         }
+    }
+
+    //  include "."
+    public static String suffix(String filename) {
+        if (filename == null || filename.endsWith(File.separator)) {
+            return null;
+        }
+        String name = name(filename);
+        int pos = name.lastIndexOf('.');
+        return (pos >= 0 && pos < name.length() - 1) ? name.substring(pos) : "";
     }
 
     public static int compareName(File f1, File f2) {
