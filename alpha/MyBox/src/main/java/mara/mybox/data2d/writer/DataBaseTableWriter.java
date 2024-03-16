@@ -4,7 +4,6 @@ import java.sql.PreparedStatement;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.db.Database;
-import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DRow;
 import mara.mybox.db.table.TableData2D;
@@ -34,13 +33,11 @@ public class DataBaseTableWriter extends Data2DWriter {
             }
             table = new DataTable();
             table.setTask(task()).setDataName(dataName);
-            if (!Data2D.saveAttributes(conn, table, columns)) {
+            conn = conn();
+            if (conn == null || !Data2D.saveAttributes(conn, table, columns)) {
                 return false;
             }
             tableData2D = table.getTableData2D();
-            if (conn == null) {
-                conn = DerbyBase.getConnection();
-            }
             conn.setAutoCommit(false);
             dwCount = 0;
             String sql = tableData2D.insertStatement();
@@ -96,7 +93,7 @@ public class DataBaseTableWriter extends Data2DWriter {
             insert.executeBatch();
             conn.commit();
             insert.close();
-            table.setRowsNumber(fileRowIndex);
+            table.setRowsNumber(targetRowIndex);
             Data2D.saveAttributes(conn, table, columns);
             created = true;
         } catch (Exception e) {

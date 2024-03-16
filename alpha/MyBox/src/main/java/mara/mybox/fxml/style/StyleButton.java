@@ -174,7 +174,7 @@ public class StyleButton {
         }
 
         if (id.startsWith("mybox")) {
-            return new StyleData(id, message("Home"), "", "iconMyBox.png");
+            return new StyleData(id, message("MainPage"), "F8", "iconMyBox.png");
         }
         if (id.startsWith("download")) {
             return new StyleData(id, message("Download"), "", "iconDownload.png");

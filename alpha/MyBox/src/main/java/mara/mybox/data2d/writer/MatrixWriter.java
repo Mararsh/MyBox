@@ -4,7 +4,6 @@ import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataMatrix;
 import static mara.mybox.data2d.DataMatrix.toDouble;
 import mara.mybox.db.Database;
-import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DCell;
 import mara.mybox.db.table.TableData2DCell;
 import mara.mybox.tools.DoubleTools;
@@ -33,14 +32,12 @@ public class MatrixWriter extends Data2DWriter {
             }
             matrix = new DataMatrix();
             matrix.setTask(task()).setDataName(dataName);
-            if (!Data2D.saveAttributes(conn, matrix, columns)) {
+            conn = conn();
+            if (conn == null || !Data2D.saveAttributes(conn, matrix, columns)) {
                 return false;
             }
             tableData2DCell = matrix.getTableData2DCell();
             did = matrix.getD2did();
-            if (conn == null) {
-                conn = DerbyBase.getConnection();
-            }
             conn.setAutoCommit(false);
             dwCount = 0;
             targetData = matrix;
@@ -63,7 +60,7 @@ public class MatrixWriter extends Data2DWriter {
                     continue;
                 }
                 Data2DCell cell = Data2DCell.create().setD2did(did)
-                        .setRow(fileRowIndex).setCol(c).setValue(d + "");
+                        .setRow(targetRowIndex).setCol(c).setValue(d + "");
                 tableData2DCell.insertData(conn, cell);
                 if (++dwCount % Database.BatchSize == 0) {
                     conn.commit();
@@ -83,7 +80,7 @@ public class MatrixWriter extends Data2DWriter {
                 return;
             }
             conn.commit();
-            matrix.setRowsNumber(fileRowIndex);
+            matrix.setRowsNumber(targetRowIndex);
             Data2D.saveAttributes(conn, matrix, columns);
             created = true;
         } catch (Exception e) {

@@ -38,13 +38,13 @@ import mara.mybox.value.UserConfig;
  * @License Apache License Version 2.0
  */
 public class ControlData2DTarget extends BaseController {
-
+    
     protected BaseData2DLoadController tableController;
     protected TargetType format;
     protected boolean notInTable;
     protected ChangeListener<Boolean> tableStatusListener;
     protected SimpleBooleanProperty formatNotify;
-
+    
     @FXML
     protected ToggleGroup targetGroup;
     @FXML
@@ -59,13 +59,13 @@ public class ControlData2DTarget extends BaseController {
     protected HBox dataNameBox, locationBox;
     @FXML
     protected TextField nameInput;
-
+    
     public void setParameters(BaseController parent, BaseData2DLoadController controller) {
         try {
             baseName = parent.baseName + "_" + baseName;
             tableController = controller;
             formatNotify = new SimpleBooleanProperty(false);
-
+            
             checkControls();
             targetGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
@@ -73,7 +73,7 @@ public class ControlData2DTarget extends BaseController {
                     checkTarget();
                 }
             });
-
+            
             if (tableController != null) {
                 refreshControls();
                 tableStatusListener = new ChangeListener<Boolean>() {
@@ -89,7 +89,7 @@ public class ControlData2DTarget extends BaseController {
             MyBoxLog.error(e);
         }
     }
-
+    
     public void checkControls() {
         if (inTableBox != null) {
             if (notInTable) {
@@ -134,7 +134,7 @@ public class ControlData2DTarget extends BaseController {
             }
         }
     }
-
+    
     public void initTarget() {
         try {
             format = TargetType.valueOf(UserConfig.getString(baseName + "DataTarget", "CSV"));
@@ -207,7 +207,7 @@ public class ControlData2DTarget extends BaseController {
             MyBoxLog.error(e);
         }
     }
-
+    
     public TargetType checkTarget() {
         try {
             format = TargetType.CSV;
@@ -304,7 +304,7 @@ public class ControlData2DTarget extends BaseController {
         }
         return format;
     }
-
+    
     public synchronized void refreshControls() {
         try {
             if (tableController == null || tableController.data2D == null) {
@@ -323,7 +323,7 @@ public class ControlData2DTarget extends BaseController {
             }
             rowSelector.getItems().setAll(rows);
             rowSelector.getSelectionModel().select(thisSelect >= 0 ? thisSelect : 0);
-
+            
             String selectedCol = colSelector.getSelectionModel().getSelectedItem();
             if (tableController.data2D.getColumns() != null) {
                 List<String> names = tableController.data2D.columnNames();
@@ -341,22 +341,22 @@ public class ControlData2DTarget extends BaseController {
             } else {
                 colSelector.getItems().clear();
             }
-
+            
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
-
+    
     public void setNotInTable(boolean notInTable) {
         this.notInTable = notInTable;
         checkTarget();
     }
-
+    
     public boolean inTable() {
         return !notInTable && inTableBox != null
                 && (insertRadio.isSelected() || appendRadio.isSelected() || replaceRadio.isSelected());
     }
-
+    
     public boolean validateTarget() {
         try {
             if (format == null) {
@@ -392,16 +392,16 @@ public class ControlData2DTarget extends BaseController {
             return false;
         }
     }
-
+    
     public TargetType format() {
         return format;
     }
-
+    
     public String name() {
         String name = nameInput.getText();
         return name != null && !name.isBlank() ? name.trim() : null;
     }
-
+    
     public File file() {
         if (targetFileController == null) {
             return FileTmpTools.getTempFile();
@@ -409,21 +409,21 @@ public class ControlData2DTarget extends BaseController {
             return targetFileController.makeTargetFile();
         }
     }
-
+    
     public int row() {
         if (!inTable()) {
             return -1;
         }
         return rowSelector.getSelectionModel().getSelectedIndex();
     }
-
+    
     public int col() {
         if (!inTable()) {
             return -1;
         }
         return tableController.data2D.colOrder(colSelector.getSelectionModel().getSelectedItem());
     }
-
+    
     public Data2DWriter pickWriter() {
         try {
             if (format == null) {
@@ -431,7 +431,7 @@ public class ControlData2DTarget extends BaseController {
             }
             Data2DWriter writer = Data2DWriter.getWriter(format);
             if (writer != null) {
-                writer.setFormat(format)
+                writer.setController(this)
                         .setDataName(name())
                         .setTargetFile(file());
             }
@@ -441,7 +441,7 @@ public class ControlData2DTarget extends BaseController {
             return null;
         }
     }
-
+    
     @Override
     public void cleanPane() {
         try {
@@ -454,5 +454,5 @@ public class ControlData2DTarget extends BaseController {
         }
         super.cleanPane();
     }
-
+    
 }

@@ -164,7 +164,7 @@ public class DataExportController extends BaseTaskController {
             popError(Languages.message("NoData"));
             return false;
         }
-        export.initFiles(targetPathController, names);
+        export.setNames(targetPathController, names);
         return true;
     }
 
@@ -215,7 +215,6 @@ public class DataExportController extends BaseTaskController {
             protected boolean handle() {
                 try {
                     String filePrefix = targetNameInput.getText().trim();
-
                     if (currentPage) {
                         currentSQL = dataController.pageQuerySQL;
                         dataSize = dataController.tableData.size();
@@ -272,8 +271,8 @@ public class DataExportController extends BaseTaskController {
                 try (Connection conn = DerbyBase.getConnection()) {
                     conn.setReadOnly(true);
                     int count = 0;
-
-                    if (!export.setValues(filePrefix) || !export.openWriters()) {
+                    export.setFilePrefix(filePrefix);
+                    if (!export.openWriters()) {
                         return false;
                     }
                     try (ResultSet results = conn.createStatement().executeQuery(currentSQL)) {

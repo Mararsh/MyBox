@@ -70,7 +70,7 @@ public class Data2DExportTask extends BaseTaskController {
             task = null;
         }
         if (exportController.export != null) {
-            exportController.export.closeWriters();
+            exportController.export.end();
             exportController.export = null;
         }
     }

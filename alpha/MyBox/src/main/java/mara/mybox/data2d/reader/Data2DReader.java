@@ -11,6 +11,7 @@ import mara.mybox.data2d.DataFileExcel;
 import mara.mybox.data2d.DataFileText;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.data2d.operate.Data2DOperate;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.StringTools;
 
@@ -29,7 +30,6 @@ public abstract class Data2DReader {
     protected List<String> sourceRow, names;
     protected List<List<String>> rows = new ArrayList<>();
     protected Connection conn;
-
     protected boolean readerHasHeader;
 
     public abstract void scanData();
@@ -71,6 +71,7 @@ public abstract class Data2DReader {
         rows = new ArrayList<>();
         sourceRow = new ArrayList<>();
         sourceData.startFilter();
+        conn = conn();
         scanData();
         afterScanned();
         return true;
@@ -78,7 +79,6 @@ public abstract class Data2DReader {
 
     public void handleRow() {
         try {
-
             operate.handleRow(sourceRow, rowIndex);
         } catch (Exception e) {
             handleError(e.toString());
@@ -125,11 +125,22 @@ public abstract class Data2DReader {
         }
     }
 
+    /*
+        status
+     */
     public FxTask task() {
         if (operate != null) {
             return operate.getTask();
         } else {
             return null;
+        }
+    }
+
+    public Connection conn() {
+        if (operate != null) {
+            return operate.conn();
+        } else {
+            return DerbyBase.getConnection();
         }
     }
 
@@ -200,15 +211,6 @@ public abstract class Data2DReader {
 
     public Data2DReader setNames(List<String> names) {
         this.names = names;
-        return this;
-    }
-
-    public Connection getConn() {
-        return conn;
-    }
-
-    public Data2DReader setConn(Connection conn) {
-        this.conn = conn;
         return this;
     }
 

@@ -400,33 +400,27 @@ public class DataTable extends Data2D {
         return tableData2DDefinition.deleteUserTable(conn, name);
     }
 
-    public DataFileCSV query(String dname, FxTask task, String query, String rowNumberName) {
-        return query(dname, task, query, rowNumberName, scale, InvalidAs.Blank);
-    }
-
-    public DataFileCSV query(String dname, FxTask task, String query, String rowNumberName,
-            int dscale, InvalidAs invalidAs) {
-        if (query == null || query.isBlank()) {
-            return null;
+    public boolean query(FxTask task, Data2DWriter writer,
+            String query, String rowNumberName) {
+        if (writer == null || query == null || query.isBlank()) {
+            return false;
         }
-        DataFileCSV targetData = null;
         if (task != null) {
             task.setInfo(query);
         }
         try (Connection conn = DerbyBase.getConnection();
                 PreparedStatement statement = conn.prepareStatement(query);
                 ResultSet results = statement.executeQuery()) {
-            if (results != null) {
-                targetData = DataFileCSV.save(this, dname, task, results, rowNumberName, dscale, invalidAs);
-            }
+            return Data2D.write(task, this, writer, results, rowNumberName,
+                    scale, InvalidAs.Blank);
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
             } else {
                 MyBoxLog.error(e.toString());
             }
+            return false;
         }
-        return targetData;
     }
 
     public Object mode(Connection conn, String colName) {

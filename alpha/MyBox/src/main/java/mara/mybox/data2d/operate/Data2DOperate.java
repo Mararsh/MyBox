@@ -1,21 +1,19 @@
 package mara.mybox.data2d.operate;
 
 import java.io.File;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import javafx.application.Platform;
-import mara.mybox.controller.BaseController;
 import mara.mybox.controller.BaseTaskController;
 import mara.mybox.data2d.Data2D;
-import mara.mybox.data2d.Data2DTools;
 import mara.mybox.data2d.Data2D_Edit;
 import mara.mybox.data2d.reader.Data2DReader;
 import mara.mybox.data2d.writer.Data2DWriter;
-import mara.mybox.data2d.writer.DataFileCSVWriter;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition.InvalidAs;
-import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import static mara.mybox.value.Languages.message;
@@ -41,6 +39,7 @@ public abstract class Data2DOperate {
     protected long sourceRowIndex; // 1-based 
     protected long handledCount;
     protected InvalidAs invalidAs;
+    protected Connection conn;
 
     /*
         reader
@@ -71,33 +70,26 @@ public abstract class Data2DOperate {
         return this;
     }
 
-    public void makeTmpWriter() {
-        if (!sourceData.isDataFile()) {
-            return;
-        }
-        List<Data2DColumn> columns = sourceData.makeColumns(cols, includeRowNumber);
-        DataFileCSVWriter writer = new DataFileCSVWriter();
-        writer.setWriteHeader(true).setFormatValues(formatValues)
-                .setRowNumber(includeRowNumber)
-                .setColumns(columns)
-                .setHeaderNames(Data2DTools.toNames(columns));
-        addWriter(writer);
-    }
-
-    public boolean initWriters() {
-        return true;
-    }
-
     public boolean openWriters() {
         if (writers == null) {
             return true;
         }
+        MyBoxLog.console(failed);
         for (Data2DWriter writer : writers) {
+            setTargetFile(writer);
             if (!writer.openWriter()) {
+                failStop(null);
+                end();
                 return false;
             }
         }
         return true;
+    }
+
+    public void setTargetFile(Data2DWriter writer) {
+        if (writer != null && targetFile != null) {
+            writer.setTargetFile(targetFile);
+        }
     }
 
     public boolean closeWriters() {
@@ -180,33 +172,56 @@ public abstract class Data2DOperate {
     }
 
     public boolean end() {
-        closeWriters();
-        return true;
+        try {
+            closeWriters();
+            if (conn != null) {
+                conn.commit();
+                conn.close();
+                conn = null;
+            }
+            return true;
+        } catch (Exception e) {
+            showError(e.toString());
+            return false;
+        }
     }
 
-    public void openResults(BaseController controller) {
-        if (writers == null) {
-            return;
+    public boolean openResults() {
+        if (writers == null || writers.isEmpty()) {
+            return false;
         }
-
         new Timer().schedule(new TimerTask() {
 
             @Override
             public void run() {
                 Platform.runLater(() -> {
                     for (Data2DWriter writer : writers) {
-                        writer.showResult(controller);
+                        writer.showResult();
                     }
                 });
             }
 
         }, 200);
+        return true;
     }
 
 
     /*
         status
      */
+    public Connection conn() {
+        try {
+            if (conn == null || conn.isClosed()) {
+                conn = DerbyBase.getConnection();
+            }
+            return conn;
+        } catch (Exception e) {
+            showError(e.toString());
+            setFailed();
+            return null;
+        }
+    }
+
     public void showInfo(String info) {
         if (taskController != null) {
             taskController.updateLogs(info);
@@ -238,6 +253,7 @@ public abstract class Data2DOperate {
     }
 
     public void setFailed() {
+        MyBoxLog.debug("here");
         failed = true;
         showInfo(message("Failed"));
     }

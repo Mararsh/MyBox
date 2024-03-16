@@ -86,7 +86,7 @@ public class Data2DExportController extends BaseData2DHandleController {
                 filePrefix = DateTools.nowFileString();
             }
             export = convertController.pickParameters(data2D);
-            return export != null;
+            return export.setColumns(targetPathController, checkedColumns, filePrefix);
         } catch (Exception e) {
             MyBoxLog.error(e);
             return false;
@@ -106,9 +106,6 @@ public class Data2DExportController extends BaseData2DHandleController {
 
     public boolean export() {
         try {
-            if (!export.initPath(targetPathController, checkedColumns, filePrefix)) {
-                return false;
-            }
             data2D.startTask(taskController.task, filterController.filter);
             if (!isAllPages() || !data2D.isMutiplePages()) {
                 filteredRowsIndices = filteredRowsIndices();
@@ -141,7 +138,7 @@ public class Data2DExportController extends BaseData2DHandleController {
         try {
             SoundTools.miao3();
             if (openCheck.isSelected()) {
-                export.openResults(this);
+                export.openResults();
             }
             if (targetPath != null && targetPath.exists()) {
                 browseURI(targetPath.toURI());

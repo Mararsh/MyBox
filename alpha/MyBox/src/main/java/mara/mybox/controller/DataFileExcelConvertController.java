@@ -56,13 +56,13 @@ public class DataFileExcelConvertController extends BaseDataFileConvertControlle
                         names = new ArrayList<>();
                         if (withNamesCheck.isSelected()) {
                             names.addAll(rowData);
-                            export.initFiles(targetPathController, names, filePrefix(srcFile));
+                            export.setNames(targetPathController, names, filePrefix(srcFile));
                             continue;
                         } else {
                             for (int c = 1; c <= rowData.size(); c++) {
                                 names.add(message("Column") + c);
                             }
-                            export.initFiles(targetPathController, names, filePrefix(srcFile));
+                            export.setNames(targetPathController, names, filePrefix(srcFile));
                         }
                     }
                     export.writeRow(rowData);

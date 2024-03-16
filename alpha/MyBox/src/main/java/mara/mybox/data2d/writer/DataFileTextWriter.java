@@ -35,9 +35,8 @@ public class DataFileTextWriter extends Data2DWriter {
             if (!super.openWriter()) {
                 return false;
             }
-            targetFile = makeTargetFile();
             if (targetFile == null) {
-                showInfo((skip ? message("Skipped") : message("Failed")) + ": " + fileSuffix);
+                showInfo(message("InvalidParameter") + ": " + message("TargetFile"));
                 return false;
             }
             showInfo(message("Writing") + " " + targetFile.getAbsolutePath());
@@ -97,7 +96,7 @@ public class DataFileTextWriter extends Data2DWriter {
                         .setDataName(dataName)
                         .setColsNumber(columns.size())
                         .setRowsNumber(targetRowIndex);
-                Data2D.saveAttributes(conn, targetData, columns);
+                Data2D.saveAttributes(conn(), targetData, columns);
             }
             created = true;
         } catch (Exception e) {

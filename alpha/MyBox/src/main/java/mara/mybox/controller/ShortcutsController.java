@@ -115,7 +115,7 @@ public class ShortcutsController extends BaseTablePagesController<ShortCut> {
             tableData.add(new ShortCut("F5", "", message(lang, "SaveAs"), "CTRL+B / ALT+B", "iconSaveAs.png"));
             tableData.add(new ShortCut("F6", "", message(lang, "ContextMenu"), "", "iconMenu.png"));
             tableData.add(new ShortCut("F7", "", message(lang, "Operations"), "", "iconOperation.png"));
-            tableData.add(new ShortCut("F8", "", message(lang, "Home"), "", "iconMyBox.png"));
+            tableData.add(new ShortCut("F8", "", message(lang, "MainPage"), "", "iconMyBox.png"));
             tableData.add(new ShortCut("F9", "", message(lang, "Tips"), "", "iconTips.png"));
             tableData.add(new ShortCut("F10", "", message(lang, "Synchronize"), "", "iconSynchronize.png"));
             tableData.add(new ShortCut("F11", "", message(lang, "ControlLeftPane"), "", "iconDoubleLeft.png"));

@@ -135,7 +135,7 @@ public class DatabaseSqlEditor extends InfoTreeNodeEditor {
                                     outputArea.appendText(DateTools.nowString() + "  " + message("UpdatedCount") + ": " + count);
                                 } else {
                                     ResultSet results = statement.getResultSet();
-                                    data = DataTable.save(this, results);
+                                    data = DataTable.write(this, results);
                                 }
                             }
                             conn.commit();

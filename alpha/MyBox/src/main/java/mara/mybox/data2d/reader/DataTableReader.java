@@ -1,10 +1,8 @@
 package mara.mybox.data2d.reader;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import mara.mybox.data2d.DataTable;
-import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DRow;
 import mara.mybox.db.table.TableData2D;
 
@@ -27,19 +25,7 @@ public class DataTableReader extends Data2DReader {
 
     @Override
     public void scanData() {
-        if (conn == null) {
-            try (Connection dconn = DerbyBase.getConnection()) {
-                conn = dconn;
-                operate.handleData();
-                conn.commit();
-                conn.close();
-                conn = null;
-            } catch (Exception e) {
-                handleError(e.toString());
-            }
-        } else {
-            operate.handleData();
-        }
+        operate.handleData();
     }
 
     @Override
@@ -54,7 +40,7 @@ public class DataTableReader extends Data2DReader {
     @Override
     public void readTotal() {
         try {
-            rowIndex = readerTableData2D.size(conn);
+            rowIndex = readerTableData2D.size(conn());
         } catch (Exception e) {
             handleError(e.toString());
             setFailed();
@@ -66,7 +52,7 @@ public class DataTableReader extends Data2DReader {
         rowIndex = sourceData.startRowOfCurrentPage;
         String sql = readerTable.pageQuery();
         showInfo(sql);
-        try (PreparedStatement statement = conn.prepareStatement(sql);
+        try (PreparedStatement statement = conn().prepareStatement(sql);
                 ResultSet results = statement.executeQuery()) {
             while (results.next()) {
                 makeRecord(readerTableData2D.readData(results));
@@ -84,7 +70,7 @@ public class DataTableReader extends Data2DReader {
         rowIndex = 0;
         String sql = "SELECT * FROM " + readerTable.getSheet();
         showInfo(sql);
-        try (PreparedStatement statement = conn.prepareStatement(sql);
+        try (PreparedStatement statement = conn().prepareStatement(sql);
                 ResultSet results = statement.executeQuery()) {
             while (results.next() && !isStopped()) {
                 makeRecord(readerTableData2D.readData(results));

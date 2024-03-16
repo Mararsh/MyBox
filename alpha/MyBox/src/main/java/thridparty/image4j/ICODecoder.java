@@ -32,7 +32,7 @@ public class ICODecoder {
 
     /**
      * Reads and decodes the given ICO file. Convenience method equivalent to
-     * null null null null     {@link #read(java.io.InputStream) read(new
+     * null null null null null     {@link #read(java.io.InputStream) read(new
 	 * java.io.FileInputStream(file))}.
      *
      * @param file the source file to read
@@ -113,8 +113,8 @@ public class ICODecoder {
                     return null;
                 }
                 int info = in.readIntLE();
-                MyBoxLog.console("Image #" + i + " @ " + in.getCount()
-                        + " info = " + EndianUtils.toInfoString(info));
+//                MyBoxLog.console("Image #" + i + " @ " + in.getCount()
+//                        + " info = " + EndianUtils.toInfoString(info));
                 if (info == 40) {
 
                     // read XOR bitmap

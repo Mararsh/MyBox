@@ -1,5 +1,8 @@
 package mara.mybox.controller;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.Event;
@@ -8,8 +11,10 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import mara.mybox.data2d.Data2D;
-import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataTable;
+import mara.mybox.data2d.writer.Data2DWriter;
+import mara.mybox.db.DerbyBase;
+import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.table.TableData2D;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
@@ -98,8 +103,9 @@ public class DataTableQueryEditor extends InfoTreeNodeEditor {
     @FXML
     @Override
     public void startAction() {
-        if (targetController != null && targetController.checkTarget() == null) {
-            popError(message("SelectToHandle"));
+        Data2DWriter writer = targetController.pickWriter();
+        if (writer == null || writer.getTargetFile() == null) {
+            popError(message("InvalidParameter") + ": " + message("TargetFile"));
             return;
         }
         String s = valueInput.getText();
@@ -113,22 +119,27 @@ public class DataTableQueryEditor extends InfoTreeNodeEditor {
         }
         task = new FxSingletonTask<Void>(this) {
 
-            private DataFileCSV dataCSV;
-
             @Override
             protected boolean handle() {
-                TableStringValues.add("DataTableQueryHistories", query);
-                dataTable.setTask(this);
-                dataCSV = dataTable.query(targetController.name(), task, query,
-                        rowNumberCheck.isSelected() ? message("Row") : null);
-                return dataCSV != null;
+                try (Connection conn = DerbyBase.getConnection();
+                        PreparedStatement statement = conn.prepareStatement(query);
+                        ResultSet results = statement.executeQuery()) {
+                    task.setInfo(query);
+                    TableStringValues.add(conn, "DataTableQueryHistories", query);
+                    dataTable.setTask(this);
+                    return Data2D.write(task, dataTable, writer, results,
+                            rowNumberCheck.isSelected() ? message("Row") : null,
+                            dataTable.getScale(), ColumnDefinition.InvalidAs.Blank);
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
             }
 
             @Override
             protected void whenSucceeded() {
                 popDone();
-                Data2DSaveDataController.createData(dataCSV, targetController.format,
-                        targetController.name(), targetController.targetFileController);
+                writer.showResult();
             }
 
             @Override

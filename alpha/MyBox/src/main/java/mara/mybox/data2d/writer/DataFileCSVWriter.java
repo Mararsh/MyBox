@@ -5,6 +5,7 @@ import java.nio.charset.Charset;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.VisitHistory;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileTmpTools;
@@ -35,9 +36,9 @@ public class DataFileCSVWriter extends Data2DWriter {
             if (!super.openWriter()) {
                 return false;
             }
-            targetFile = makeTargetFile();
+            MyBoxLog.console(operate != null);
             if (targetFile == null) {
-                showInfo((skip ? message("Skipped") : message("Failed")) + ": " + fileSuffix);
+                showInfo(message("InvalidParameter") + ": " + message("TargetFile"));
                 return false;
             }
             showInfo(message("Writing") + " " + targetFile.getAbsolutePath());
@@ -49,6 +50,7 @@ public class DataFileCSVWriter extends Data2DWriter {
             if (writeHeader && headerNames != null) {
                 printer.printRecord(headerNames);
             }
+            MyBoxLog.console(isFailed());
             return true;
         } catch (Exception e) {
             showError(e.toString());
@@ -78,11 +80,13 @@ public class DataFileCSVWriter extends Data2DWriter {
             printer.flush();
             printer.close();
             printer = null;
+            MyBoxLog.console(isFailed() + "  " + tmpFile.exists());
             if (isFailed() || tmpFile == null || !tmpFile.exists()
                     || !FileTools.override(tmpFile, targetFile)) {
                 FileDeleteTools.delete(tmpFile);
                 return;
             }
+            MyBoxLog.console(targetFile);
             if (targetFile == null || !targetFile.exists()) {
                 return;
             }
@@ -98,7 +102,7 @@ public class DataFileCSVWriter extends Data2DWriter {
                         .setDataName(dataName)
                         .setColsNumber(columns.size())
                         .setRowsNumber(targetRowIndex);
-                Data2D.saveAttributes(conn, targetData, columns);
+                Data2D.saveAttributes(conn(), targetData, columns);
             }
             created = true;
         } catch (Exception e) {

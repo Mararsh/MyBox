@@ -171,7 +171,8 @@ public class Data2DSetValuesController extends BaseData2DTargetsController {
                         addBackup(this, data2D.getFile());
                     }
                     data2D.startTask(this, filterController.filter);
-                    count = data2D.setValue(checkedColsIndices, valueController.setValue, valueController.errorContinueCheck.isSelected());
+                    count = data2D.setValue(checkedColsIndices, valueController.setValue,
+                            valueController.errorContinueCheck.isSelected());
                     data2D.stopFilter();
                     return count >= 0;
                 } catch (Exception e) {

@@ -25,7 +25,6 @@ public class BaseData2DSaveAsController extends BaseDataConvertController {
     protected String targetName;
     protected InvalidAs invalidAs = InvalidAs.Blank;
     protected DataTable dataTable;
-    protected boolean created;
 
     public BaseData2DSaveAsController() {
         baseTitle = message("SaveAs");
@@ -49,7 +48,6 @@ public class BaseData2DSaveAsController extends BaseDataConvertController {
     @Override
     public void beforeTask() {
         super.beforeTask();
-        created = false;
         if (export != null) {
             export.setTaskController(this);
         }
@@ -60,11 +58,9 @@ public class BaseData2DSaveAsController extends BaseDataConvertController {
         if (format == TargetType.DatabaseTable) {
             if (dataTable != null) {
                 Data2DManufactureController.openDef(dataTable);
-                created = true;
             }
         } else if (export != null) {
-            export.openResults(this);
-            created = export.isCreated();
+            export.openResults();
         }
     }
 
@@ -74,7 +70,7 @@ public class BaseData2DSaveAsController extends BaseDataConvertController {
             data2D.stopTask();
         }
         export = null;
-        if (created) {
+        if (successed) {
             popInformation(message("Done"));
             close();
         } else {

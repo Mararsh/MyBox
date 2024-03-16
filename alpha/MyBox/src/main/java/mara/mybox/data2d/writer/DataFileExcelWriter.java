@@ -31,6 +31,7 @@ public class DataFileExcelWriter extends Data2DWriter {
     protected XSSFSheet xssfSheet;
     protected String sheetName;
     protected File baseFile;
+    protected int rowIndex;
 
     public DataFileExcelWriter() {
         fileSuffix = "xlsx";
@@ -43,13 +44,13 @@ public class DataFileExcelWriter extends Data2DWriter {
             if (!super.openWriter()) {
                 return false;
             }
-            targetFile = makeTargetFile();
-            if (targetFile == null || sheetName == null) {
-                showInfo((skip ? message("Skipped") : message("Failed")) + ": " + fileSuffix);
+            if (targetFile == null) {
+                showInfo(message("InvalidParameter") + ": " + message("TargetFile"));
                 return false;
             }
             showInfo(message("Writing") + " " + targetFile.getAbsolutePath());
             tmpFile = FileTmpTools.getTempFile();
+            rowIndex = 0;
             if (baseFile != null && baseFile.exists()) {
                 try (Workbook sourceBook = WorkbookFactory.create(baseFile)) {
                     Sheet sourceSheet = sourceBook.getSheetAt(0);
@@ -81,7 +82,7 @@ public class DataFileExcelWriter extends Data2DWriter {
             }
             xssfSheet.setDefaultColumnWidth(20);
             if (writeHeader) {
-                XSSFRow titleRow = xssfSheet.createRow(fileRowIndex++);
+                XSSFRow titleRow = xssfSheet.createRow(rowIndex++);
                 XSSFCellStyle horizontalCenter = xssfBook.createCellStyle();
                 horizontalCenter.setAlignment(HorizontalAlignment.CENTER);
                 for (int i = 0; i < headerNames.size(); i++) {
@@ -103,7 +104,7 @@ public class DataFileExcelWriter extends Data2DWriter {
             if (targetRow == null) {
                 return;
             }
-            XSSFRow sheetRow = xssfSheet.createRow(writeHeader ? fileRowIndex + 1 : fileRowIndex);
+            XSSFRow sheetRow = xssfSheet.createRow(rowIndex++);
             for (int i = 0; i < targetRow.size(); i++) {
                 XSSFCell cell = sheetRow.createCell(i);
                 cell.setCellValue(targetRow.get(i));
@@ -151,7 +152,7 @@ public class DataFileExcelWriter extends Data2DWriter {
                         .setDataName(dataName)
                         .setColsNumber(columns.size())
                         .setRowsNumber(targetRowIndex);
-                Data2D.saveAttributes(conn, targetData, columns);
+                Data2D.saveAttributes(conn(), targetData, columns);
             }
             created = true;
         } catch (Exception e) {

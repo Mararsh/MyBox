@@ -3,7 +3,6 @@ package mara.mybox.data2d.writer;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.nio.charset.Charset;
-import mara.mybox.controller.BaseController;
 import mara.mybox.controller.WebBrowserController;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.data.VisitHistory;
@@ -34,9 +33,8 @@ public class HtmlWriter extends Data2DWriter {
             if (!super.openWriter()) {
                 return false;
             }
-            targetFile = makeTargetFile();
             if (targetFile == null) {
-                showInfo((skip ? message("Skipped") : message("Failed")) + ": " + fileSuffix);
+                showInfo(message("InvalidParameter") + ": " + message("TargetFile"));
                 return false;
             }
             showInfo(message("Writing") + " " + targetFile.getAbsolutePath());
@@ -107,7 +105,7 @@ public class HtmlWriter extends Data2DWriter {
     }
 
     @Override
-    public void showResult(BaseController controller) {
+    public void showResult() {
         if (targetFile == null) {
             return;
         }

@@ -6,6 +6,9 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
+import mara.mybox.data2d.Data2D;
+import mara.mybox.data2d.Data2D_Attributes;
+import mara.mybox.data2d.DataTable;
 import mara.mybox.data2d.writer.Data2DWriter;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
@@ -171,9 +174,7 @@ public abstract class BaseData2DTargetsController extends BaseData2DHandleContro
             @Override
             protected void whenSucceeded() {
                 popDone();
-                writer.showResult(myController);
-//                Data2DSaveDataController.createData(csvData, targetController.format,
-//                        targetController.name(), targetController.targetFileController);
+                writer.showResult();
             }
 
             @Override
@@ -304,20 +305,60 @@ public abstract class BaseData2DTargetsController extends BaseData2DHandleContro
         }
     }
 
-    public boolean outputExternal() {
+    public void outputExternal() {
         if (outputData == null || outputData.isEmpty()) {
             popError(message("NoData"));
-            return false;
+            return;
         }
         Data2DWriter writer = targetController.pickWriter();
-        if (writer == null) {
+        if (writer == null || writer.getTargetFile() == null) {
             popError(message("InvalidParamter"));
-            return false;
+            return;
         }
+        if (task != null) {
+            task.cancel();
+        }
+        task = new FxSingletonTask<Void>(this) {
+            protected DataTable dataTable = null;
 
-        Data2DSaveRowsController.createData(writer, outputColumns, outputData);
-        popDone();
-        return true;
+            @Override
+            protected boolean handle() {
+                data2D.startTask(this, null);
+                if (targetController.format == Data2D_Attributes.TargetType.DatabaseTable) {
+                    dataTable = Data2D.createTable(this,
+                            outputColumns, outputData, writer.getDataName(), invalidAs);
+                    return dataTable != null;
+                } else {
+                    writer.openWriter();
+                    for (List<String> row : outputData) {
+                        if (!isWorking()) {
+                            break;
+                        }
+                        writer.writeRow(row);
+                    }
+                    writer.closeWriter();
+                    return writer.isCreated();
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                popDone();
+                if (dataTable != null) {
+                    Data2DManufactureController.openDef(dataTable);
+                } else {
+                    writer.showResult();
+                }
+            }
+
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                data2D.stopTask();
+            }
+
+        };
+        start(task);
     }
 
 }

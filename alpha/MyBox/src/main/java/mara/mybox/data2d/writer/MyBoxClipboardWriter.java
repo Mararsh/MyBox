@@ -2,7 +2,6 @@ package mara.mybox.data2d.writer;
 
 import java.io.FileWriter;
 import java.nio.charset.Charset;
-import mara.mybox.controller.BaseController;
 import mara.mybox.controller.DataInMyBoxClipboardController;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataClipboard;
@@ -35,7 +34,7 @@ public class MyBoxClipboardWriter extends Data2DWriter {
             }
             targetFile = DataClipboard.newFile();
             if (targetFile == null) {
-                showInfo((skip ? message("Skipped") : message("Failed")) + ": " + message("MyBoxClipboard"));
+                showInfo(message("InvalidParameter") + ": " + message("TargetFile"));
                 return false;
             }
             showInfo(message("Writing") + " " + targetFile.getAbsolutePath());
@@ -88,7 +87,7 @@ public class MyBoxClipboardWriter extends Data2DWriter {
                     .setDataName(dataName)
                     .setColsNumber(columns.size())
                     .setRowsNumber(targetRowIndex);
-            Data2D.saveAttributes(conn, targetData, columns);
+            Data2D.saveAttributes(conn(), targetData, columns);
             DataInMyBoxClipboardController.update();
             created = true;
         } catch (Exception e) {
@@ -97,7 +96,7 @@ public class MyBoxClipboardWriter extends Data2DWriter {
     }
 
     @Override
-    public void showResult(BaseController controller) {
+    public void showResult() {
         if (targetData == null) {
             return;
         }

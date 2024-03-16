@@ -20,7 +20,7 @@ License:    Apache License Version 2.0
                     <menus>
                         <Menu fx:id="homeMenu" mnemonicParsing="false" text="%Window">
                             <items>
-                                <MenuItem mnemonicParsing="false" onAction="#showHome" text="%Home" />
+                                <MenuItem mnemonicParsing="false" onAction="#showHome" text="%MainPageShortcut" />
                                 <MenuItem mnemonicParsing="false" onAction="#WindowsList" text="%WindowsList" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#SnapshotWindow" text="%SnapshotWindowComments" />

@@ -500,7 +500,7 @@ public class BaseImageController extends BaseImageController_Actions {
             items.add(menu);
 
             if (mainMenuController == null) {
-                menu = new MenuItem(message("Home"), StyleTools.getIconImageView("iconMyBox.png"));
+                menu = new MenuItem(message("MainPageShortcut"), StyleTools.getIconImageView("iconMyBox.png"));
                 menu.setOnAction((ActionEvent event) -> {
                     mybox();
                 });

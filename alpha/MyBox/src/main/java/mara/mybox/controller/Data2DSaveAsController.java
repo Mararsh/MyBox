@@ -59,8 +59,6 @@ public class Data2DSaveAsController extends BaseData2DSaveAsController {
             tabPane.getTabs().removeAll(csvTab, excelTab, textTab, htmlTab, pdfTab, dbTab);
             initControls(baseName);
 
-            export = Data2DExport.create(data2D);
-
             targetController.setParameters(this, tableController);
             targetController.formatNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -149,10 +147,10 @@ public class Data2DSaveAsController extends BaseData2DSaveAsController {
             }
             targetName = targetController.name();
             checkParameters();
-            export.initParameters();
+            export = Data2DExport.create(data2D);
             export.setDataName(targetName);
             export.addWriter(writer);
-            return export.initPath(targetController.targetFileController,
+            return export.setColumns(targetController.targetFileController,
                     data2D.getColumns(), targetName);
         } catch (Exception e) {
             MyBoxLog.error(e);

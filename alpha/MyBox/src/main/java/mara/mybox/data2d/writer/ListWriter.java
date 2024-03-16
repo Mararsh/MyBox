@@ -2,7 +2,6 @@ package mara.mybox.data2d.writer;
 
 import java.util.ArrayList;
 import java.util.List;
-import mara.mybox.controller.BaseController;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -44,7 +43,7 @@ public class ListWriter extends Data2DWriter {
     }
 
     @Override
-    public void showResult(BaseController controller) {
+    public void showResult() {
     }
 
     public List<List<String>> getRows() {

@@ -7,9 +7,9 @@ import mara.mybox.controller.ControlTargetFile;
 import mara.mybox.data2d.Data2DTools;
 import mara.mybox.data2d.Data2D_Attributes.TargetType;
 import mara.mybox.data2d.Data2D_Edit;
+import mara.mybox.data2d.writer.Data2DWriter;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
-import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.value.AppPaths;
 import static mara.mybox.value.Languages.message;
@@ -21,24 +21,15 @@ import static mara.mybox.value.Languages.message;
  */
 public class Data2DExport extends Data2DOperate {
 
-    protected ControlTargetFile targetFileController;
-    protected List<String> names;
+    protected ControlTargetFile pathController;
     protected List<Data2DColumn> columns;
-    protected boolean firstRow, skip, created;
+    protected List<String> columnNames;
     protected TargetType format;
     protected String indent = "    ", dataName, filePrefix;
-    protected int maxLines, fileIndex, fileRowIndex, dataRowIndex;
+    protected int maxLines, fileIndex, fileRowIndex;
 
     public Data2DExport() {
-        firstRow = true;
-        formatValues = false;
-        maxLines = -1;
-        format = null;
-        names = null;
-        created = false;
-        filePrefix = null;
-        fileIndex = 1;
-        fileRowIndex = dataRowIndex = 0;
+        resetExport();
     }
 
     public static Data2DExport create(Data2D_Edit data) {
@@ -46,40 +37,43 @@ public class Data2DExport extends Data2DOperate {
         return op.setSourceData(data) ? op : null;
     }
 
-    @Override
-    public boolean checkParameters() {
-        return super.checkParameters() && cols != null && !cols.isEmpty();
+    final public void resetExport() {
+        formatValues = false;
+        maxLines = -1;
+        format = null;
+        columns = null;
+        columnNames = null;
+        filePrefix = null;
+        fileIndex = 1;
+        fileRowIndex = 0;
     }
 
-    public boolean initParameters() {
-        try {
-            format = null;
-            names = null;
-            initWriters();
-            initFiles();
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return false;
+    @Override
+    public boolean checkParameters() {
+        return cols != null && !cols.isEmpty()
+                && writers != null && !writers.isEmpty()
+                && super.checkParameters();
+    }
+
+    @Override
+    public void setTargetFile(Data2DWriter writer) {
+        if (writer == null) {
+            return;
+        }
+        if (targetFile != null) {
+            writer.setTargetFile(targetFile);
+        } else if (pathController != null) {
+            writer.setTargetFile(pathController.makeTargetFile(filePrefix,
+                    "." + writer.getFileSuffix(), targetPath));
         }
     }
 
-    @Override
-    public boolean initWriters() {
-        firstRow = true;
-        created = false;
-        return true;
-    }
-
-    public boolean initFiles() {
-        try {
-            filePrefix = null;
-            fileIndex = 1;
-            fileRowIndex = dataRowIndex = 0;
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return false;
+    public void checkFileSplit() {
+        if (maxLines > 0 && fileRowIndex >= maxLines) {
+            closeWriters();
+            fileIndex++;
+            fileRowIndex = 0;
+            openWriters();
         }
     }
 
@@ -90,12 +84,7 @@ public class Data2DExport extends Data2DOperate {
             if (sourceRow == null) {
                 return false;
             }
-            if (maxLines > 0 && fileRowIndex >= maxLines) {
-                closeWriters();
-                fileIndex++;
-                fileRowIndex = 0;
-                openWriters();
-            }
+            checkFileSplit();
             targetRow = new ArrayList<>();
             for (int col : cols) {
                 if (col >= 0 && col < sourceRow.size()) {
@@ -111,7 +100,7 @@ public class Data2DExport extends Data2DOperate {
             if (targetRow.isEmpty()) {
                 return false;
             }
-            dataRowIndex++;
+            fileRowIndex++;
             if (includeRowNumber) {
                 targetRow.add(0, sourceRowIndex + "");
             }
@@ -124,41 +113,37 @@ public class Data2DExport extends Data2DOperate {
     /*
         control by external method
      */
-    public boolean initPath(ControlTargetFile controller, List<Data2DColumn> cols, String prefix) {
-        targetFileController = controller;
+    public boolean setColumns(ControlTargetFile controller, List<Data2DColumn> cols, String prefix) {
+        pathController = controller;
         targetFile = null;
         columns = cols;
-        names = Data2DTools.toNames(cols);
-        return setValues(prefix);
+        columnNames = Data2DTools.toNames(cols);
+        return initExport(prefix);
     }
 
-    public boolean initFiles(ControlTargetFile controller, List<String> cols, String prefix) {
-        targetFileController = controller;
+    public boolean setNames(ControlTargetFile controller, List<String> cols, String prefix) {
+        pathController = controller;
         targetFile = null;
-        names = cols;
-        columns = Data2DTools.toColumns(names);
-        return setValues(prefix) && openWriters();
+        columnNames = cols;
+        columns = Data2DTools.toColumns(columnNames);
+        return initExport(prefix);
     }
 
-    public boolean initFile(ControlTargetFile controller, List<Data2DColumn> cols, String prefix) {
-        targetFileController = controller;
-        columns = cols;
-        names = Data2DTools.toNames(cols);
-        return setValues(prefix);
+    public boolean setNames(ControlTargetFile controller, List<String> cols) {
+        pathController = controller;
+        columnNames = cols;
+        columns = Data2DTools.toColumns(columnNames);
+        return initExport(null);
     }
 
-    public boolean initFiles(ControlTargetFile controller, List<String> cols) {
-        targetFileController = controller;
-        names = cols;
-        columns = Data2DTools.toColumns(names);
-        return true;
-    }
-
-    public boolean setValues(String prefix) {
-        initFiles();
+    private boolean initExport(String prefix) {
+        if (pathController == null || writers == null || writers.isEmpty()
+                || columns == null || columns.isEmpty()) {
+            return false;
+        }
         filePrefix = prefix != null ? prefix : "mexport";
         targetFile = null;
-        File file = targetFileController.file();
+        File file = pathController.file();
         if (file == null) {
             targetPath = new File(AppPaths.getGeneratedPath() + File.separator);
         } else if (file.isDirectory()) {
@@ -166,7 +151,7 @@ public class Data2DExport extends Data2DOperate {
         } else {
             targetPath = file.getParentFile();
         }
-        if (!targetFileController.isIsDirectory()) {
+        if (!pathController.isIsDirectory()) {
             if (file != null) {
                 if (!file.exists()) {
                     targetFile = file;
@@ -175,24 +160,18 @@ public class Data2DExport extends Data2DOperate {
                 }
             }
         }
-        skip = targetFileController.isSkip();
         if (includeRowNumber) {
             if (columns != null) {
                 columns.add(0, new Data2DColumn(message("RowNumber"), ColumnDefinition.ColumnType.String));
             }
-            if (names != null) {
-                names.add(0, message("RowNumber"));
+            if (columnNames != null) {
+                columnNames.add(0, message("RowNumber"));
             }
         }
-        return true;
-    }
-
-    public File makeTargetFile(String prefix, String suffix) {
-        if (targetFile != null) {
-            return targetFile;
-        } else {
-            return targetFileController.makeTargetFile(prefix, "." + suffix, targetPath);
+        for (Data2DWriter writer : writers) {
+            writer.setColumns(columns).setHeaderNames(columnNames);
         }
+        return true;
     }
 
     public void writeRow(List<String> inRow) {
@@ -200,29 +179,23 @@ public class Data2DExport extends Data2DOperate {
             if (inRow == null) {
                 return;
             }
-            if (maxLines > 0 && fileRowIndex >= maxLines) {
-                closeWriters();
-                fileIndex++;
-                fileRowIndex = 0;
-                Data2DExport.this.openWriters();
-            }
-            dataRowIndex++;
-            if (includeRowNumber) {
-                inRow.add(0, dataRowIndex + "");
-            }
-            targetRow = inRow;
-            if (formatValues) {
-                targetRow = new ArrayList<>();
-                for (int i = 0; i < columns.size(); i++) {
-                    String v = inRow.get(i);
-                    if (v != null) {
+            checkFileSplit();
+            targetRow = new ArrayList<>();
+            for (int i = 0; i < inRow.size(); i++) {
+                String v = inRow.get(i);
+                if (v != null && formatValues) {
+                    try {
                         v = columns.get(i).format(v);
+                    } catch (Exception ex) {
                     }
-                    targetRow.add(v);
                 }
+                targetRow.add(v);
+            }
+            fileRowIndex++;
+            if (includeRowNumber) {
+                targetRow.add(0, fileRowIndex + "");
             }
             writeRow();
-            fileRowIndex++;
         } catch (Exception e) {
             showError(e.toString());
         }
@@ -231,12 +204,16 @@ public class Data2DExport extends Data2DOperate {
     /*
         set / get
      */
-    public List<String> getNames() {
-        return names;
+    public void setPathController(ControlTargetFile pathController) {
+        this.pathController = pathController;
     }
 
-    public void setNames(List<String> names) {
-        this.names = names;
+    public List<String> getColumnNames() {
+        return columnNames;
+    }
+
+    public void setColumnNames(List<String> columnNames) {
+        this.columnNames = columnNames;
     }
 
     public List<Data2DColumn> getColumns() {
@@ -245,22 +222,6 @@ public class Data2DExport extends Data2DOperate {
 
     public void setColumns(List<Data2DColumn> columns) {
         this.columns = columns;
-    }
-
-    public boolean isFirstRow() {
-        return firstRow;
-    }
-
-    public void setFirstRow(boolean firstRow) {
-        this.firstRow = firstRow;
-    }
-
-    public boolean isSkip() {
-        return skip;
-    }
-
-    public void setSkip(boolean skip) {
-        this.skip = skip;
     }
 
     public String getIndent() {
@@ -309,10 +270,6 @@ public class Data2DExport extends Data2DOperate {
 
     public void setDataName(String dataName) {
         this.dataName = dataName;
-    }
-
-    public boolean isCreated() {
-        return created;
     }
 
 }

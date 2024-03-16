@@ -14,6 +14,8 @@ import java.util.List;
 import mara.mybox.data2d.operate.Data2DOperate;
 import mara.mybox.data2d.operate.Data2DSingleColumn;
 import mara.mybox.data2d.operate.Data2DWriteTable;
+import mara.mybox.data2d.writer.Data2DWriter;
+import mara.mybox.data2d.writer.DataFileCSVWriter;
 import mara.mybox.db.Database;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
@@ -592,81 +594,14 @@ public abstract class Data2D_Convert extends Data2D_Edit {
         }
     }
 
-    public static DataFileCSV save(FxTask task, ResultSet results) {
-        return save(null, null, task, results, null, 8, InvalidAs.Blank);
-    }
-
-    public static DataFileCSV save(DataTable dataTable, String dname, FxTask task,
-            ResultSet results, String rowNumberName, int dscale, InvalidAs invalidAs) {
+    public static DataFileCSV write(FxTask task, ResultSet results) {
         try {
-            if (results == null) {
+            DataFileCSVWriter writer = new DataFileCSVWriter();
+            writer.setTargetFile(FileTmpTools.getTempFile(".csv"));
+            if (!Data2D_Convert.write(task, null, writer, results, null, 8, InvalidAs.Blank)) {
                 return null;
             }
-            File csvFile = dataTable != null ? dataTable.tmpFile(dname, null, "csv")
-                    : FileTmpTools.tmpFile(dname, "csv");
-            long count = 0;
-            int colsSize;
-            List<Data2DColumn> db2Columns = new ArrayList<>();
-            List<String> fileRow = new ArrayList<>();
-            try (CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
-                List<String> names = new ArrayList<>();
-                if (rowNumberName != null) {
-                    names.add(rowNumberName);
-                }
-                ResultSetMetaData meta = results.getMetaData();
-                for (int col = 1; col <= meta.getColumnCount(); col++) {
-                    String name = meta.getColumnName(col);
-                    names.add(name);
-                    Data2DColumn dc = null;
-                    if (dataTable != null) {
-                        dc = dataTable.columnByName(name);
-                        if (dc != null) {
-                            dc = dc.cloneAll().setD2cid(-1).setD2id(-1);
-                        }
-                    }
-                    if (dc == null) {
-                        dc = new Data2DColumn(name,
-                                ColumnDefinition.sqlColumnType(meta.getColumnType(col)),
-                                meta.isNullable(col) == ResultSetMetaData.columnNoNulls);
-                    }
-                    db2Columns.add(dc);
-                }
-                csvPrinter.printRecord(names);
-                colsSize = names.size();
-                while (results.next() && task != null && !task.isCancelled()) {
-                    count++;
-                    if (rowNumberName != null) {
-                        fileRow.add(rowNumberName + count);
-                    }
-                    for (Data2DColumn column : db2Columns) {
-                        Object v = column.value(results);
-                        String s = column.toString(v);
-                        if (column.needScale()) {
-                            s = DoubleTools.scaleString(s, invalidAs, dscale);
-                        }
-                        fileRow.add(s);
-                    }
-                    csvPrinter.printRecord(fileRow);
-                    fileRow.clear();
-                }
-            } catch (Exception e) {
-                if (task != null) {
-                    task.setError(e.toString());
-                } else {
-                    MyBoxLog.error(e);
-                }
-                return null;
-            }
-            DataFileCSV targetData = new DataFileCSV();
-            targetData.setFile(csvFile).setDataName(dname)
-                    .setCharset(Charset.forName("UTF-8"))
-                    .setDelimiter(",").setHasHeader(true)
-                    .setColsNumber(colsSize).setRowsNumber(count);
-            if (rowNumberName != null) {
-                db2Columns.add(0, new Data2DColumn(rowNumberName, ColumnDefinition.ColumnType.String));
-            }
-            targetData.setColumns(db2Columns);
-            return targetData;
+            return (DataFileCSV) writer.getTargetData();
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
@@ -674,6 +609,73 @@ public abstract class Data2D_Convert extends Data2D_Edit {
                 MyBoxLog.error(e);
             }
             return null;
+        }
+    }
+
+    public static boolean write(FxTask task, DataTable dataTable, Data2DWriter writer,
+            ResultSet results, String rowNumberName, int dscale, InvalidAs invalidAs) {
+        try {
+            if (writer == null || results == null) {
+                return false;
+            }
+            List<Data2DColumn> db2Columns = new ArrayList<>();
+            List<String> fileRow = new ArrayList<>();
+
+            List<String> names = new ArrayList<>();
+            List<Data2DColumn> targetColumns = new ArrayList<>();
+            if (rowNumberName != null) {
+                names.add(rowNumberName);
+                targetColumns.add(0, new Data2DColumn(rowNumberName, ColumnDefinition.ColumnType.String));
+            }
+            ResultSetMetaData meta = results.getMetaData();
+            for (int col = 1; col <= meta.getColumnCount(); col++) {
+                String name = meta.getColumnName(col);
+                names.add(name);
+                Data2DColumn dc = null;
+                if (dataTable != null) {
+                    dc = dataTable.columnByName(name);
+                    if (dc != null) {
+                        dc = dc.cloneAll().setD2cid(-1).setD2id(-1);
+                    }
+                }
+                if (dc == null) {
+                    dc = new Data2DColumn(name,
+                            ColumnDefinition.sqlColumnType(meta.getColumnType(col)),
+                            meta.isNullable(col) == ResultSetMetaData.columnNoNulls);
+                }
+                db2Columns.add(dc);
+                targetColumns.add(dc);
+            }
+            writer.setColumns(targetColumns).setHeaderNames(names);
+            if (!writer.openWriter()) {
+                return false;
+            }
+            long count = 0;
+            while (results.next() && task != null && !task.isCancelled()) {
+                count++;
+                if (rowNumberName != null) {
+                    fileRow.add(rowNumberName + count);
+                }
+                for (Data2DColumn column : db2Columns) {
+                    Object v = column.value(results);
+                    String s = column.toString(v);
+                    if (column.needScale()) {
+                        s = DoubleTools.scaleString(s, invalidAs, dscale);
+                    }
+                    fileRow.add(s);
+                }
+                writer.writeRow(fileRow);
+                fileRow.clear();
+            }
+            writer.closeWriter();
+            return writer.isCreated();
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
+            }
+            return false;
         }
     }
 

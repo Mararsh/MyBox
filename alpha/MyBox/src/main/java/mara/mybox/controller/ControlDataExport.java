@@ -209,13 +209,11 @@ public class ControlDataExport extends BaseDataConvertController {
 
     public Data2DExport pickParameters(Data2D data2D) {
         try {
+            Data2DExport export;
             if (data2D == null) {
-                return null;
-            }
-            Data2DExport export = Data2DExport.create(data2D);
-            export.initParameters();
-            if (taskController != null) {
-                export.setTargetPath(taskController.targetPath);
+                export = new Data2DExport();
+            } else {
+                export = Data2DExport.create(data2D);
             }
             export.setIncludeRowNumber(rowNumberCheck.isSelected());
             export.setFormatValues(formatValuesCheck.isSelected());
@@ -260,15 +258,15 @@ public class ControlDataExport extends BaseDataConvertController {
                 }
             }
             if (jsonCheck.isSelected()) {
-                Data2DWriter writer = new JsonWriter();
+                Data2DWriter writer = new JsonWriter().setController(this);
                 export.addWriter(writer);
             }
             if (xmlCheck.isSelected()) {
-                Data2DWriter writer = new XmlWriter();
+                Data2DWriter writer = new XmlWriter().setController(this);
                 export.addWriter(writer);
             }
             if (myBoxClipboardCheck.isSelected()) {
-                Data2DWriter writer = new MyBoxClipboardWriter();
+                Data2DWriter writer = new MyBoxClipboardWriter().setController(this);
                 export.addWriter(writer);
             }
             return export;

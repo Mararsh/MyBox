@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -12,14 +11,16 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.Tab;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import mara.mybox.data2d.Data2DTools;
 import mara.mybox.data2d.DataFileCSV;
+import mara.mybox.data2d.writer.Data2DWriter;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.FxTask;
 import static mara.mybox.value.Languages.message;
 import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
 
 /**
@@ -90,12 +91,15 @@ public class Data2DSpliceController extends BaseController {
             return;
         }
         tabPane.getSelectionModel().select(spliceTab);
+        Data2DWriter writer = targetController.pickWriter();
+        if (writer == null || writer.getTargetFile() == null) {
+            popError(message("InvalidParameter") + ": " + message("TargetFile"));
+            return;
+        }
         if (task != null) {
             task.cancel();
         }
         task = new FxSingletonTask<Void>(this) {
-
-            private DataFileCSV targetCSV;
 
             @Override
             protected boolean handle() {
@@ -136,13 +140,14 @@ public class Data2DSpliceController extends BaseController {
                     }
 
                     if (horizontalRadio.isSelected()) {
-                        targetCSV = spliceHorizontally(csvA, csvB);
+                        spliceHorizontally(this, csvA, csvB, writer);
                     } else {
-                        targetCSV = spliceVertically(csvA, csvB);
+                        spliceVertically(this, csvA, csvB, writer);
                     }
+                    writer.closeWriter();
                     csvA.drop();
                     csvB.drop();
-                    return targetCSV != null;
+                    return writer.isCreated();
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -151,8 +156,7 @@ public class Data2DSpliceController extends BaseController {
 
             @Override
             protected void whenSucceeded() {
-                Data2DSaveDataController.createData(targetCSV, targetController.format,
-                        targetController.name(), targetController.targetFileController);
+                writer.showResult();
             }
 
             @Override
@@ -166,9 +170,13 @@ public class Data2DSpliceController extends BaseController {
         start(task);
     }
 
-    protected DataFileCSV spliceVertically(DataFileCSV csvA, DataFileCSV csvB) {
-        List<Data2DColumn> columns = null;
+    protected boolean spliceVertically(FxTask currentTask,
+            DataFileCSV csvA, DataFileCSV csvB, Data2DWriter writer) {
         try {
+            if (csvA == null || csvB == null || writer == null) {
+                return false;
+            }
+            List<Data2DColumn> columns = null;
             List<Data2DColumn> columnsA = csvA.getColumns();
             List<Data2DColumn> columnsB = csvB.getColumns();
             if (aRadio.isSelected()) {
@@ -188,29 +196,21 @@ public class Data2DSpliceController extends BaseController {
                     columns = columnsB;
                 }
             }
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
+            if (columns == null || columns.isEmpty()) {
+                return false;
             }
-            MyBoxLog.error(e);
-        }
-        if (columns == null || columns.isEmpty()) {
-            return null;
-        }
-        DataFileCSV targetCSV = DataFileCSV.tmpCSV(targetController.name());
-        int rowCount = 0;
-        try (CSVPrinter csvPrinter = new CSVPrinter(
-                new FileWriter(targetCSV.getFile(), targetCSV.getCharset()), targetCSV.cvsFormat())) {
+            writer.setColumns(columns)
+                    .setHeaderNames(Data2DTools.toNames(columns));
+            if (!writer.openWriter()) {
+                return false;
+            }
+            int rowCount = 0;
             List<String> row = new ArrayList<>();
-            for (Data2DColumn c : columns) {
-                row.add(c.getColumnName());
-            }
-            csvPrinter.printRecord(row);
             int colLen = columns.size();
             try (CSVParser parser = CSVParser.parse(csvA.getFile(), csvA.getCharset(), csvA.cvsFormat())) {
                 for (CSVRecord record : parser) {
-                    if (task == null || task.isCancelled()) {
-                        return null;
+                    if (currentTask == null || currentTask.isCancelled()) {
+                        return false;
                     }
                     row.clear();
                     int dLen = Math.min(record.size(), colLen);
@@ -220,19 +220,20 @@ public class Data2DSpliceController extends BaseController {
                     for (int i = dLen; i < colLen; i++) {
                         row.add(null);
                     }
-                    csvPrinter.printRecord(row);
+                    writer.writeRow(row);
                     rowCount++;
                 }
             } catch (Exception e) {
-                if (task != null) {
-                    task.setError(e.toString());
+                if (currentTask != null) {
+                    currentTask.setError(e.toString());
                 }
                 MyBoxLog.error(e);
+                return false;
             }
             try (CSVParser parser = CSVParser.parse(csvB.getFile(), csvB.getCharset(), csvB.cvsFormat())) {
                 for (CSVRecord record : parser) {
-                    if (task == null || task.isCancelled()) {
-                        return null;
+                    if (currentTask == null || currentTask.isCancelled()) {
+                        return false;
                     }
                     row.clear();
                     int dLen = Math.min(record.size(), colLen);
@@ -242,33 +243,36 @@ public class Data2DSpliceController extends BaseController {
                     for (int i = dLen; i < colLen; i++) {
                         row.add(null);
                     }
-                    csvPrinter.printRecord(row);
+                    writer.writeRow(row);
                     rowCount++;
                 }
             } catch (Exception e) {
-                if (task != null) {
-                    task.setError(e.toString());
+                if (currentTask != null) {
+                    currentTask.setError(e.toString());
                 }
                 MyBoxLog.error(e);
+                return false;
             }
-
         } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
+            if (currentTask != null) {
+                currentTask.setError(e.toString());
             }
             MyBoxLog.error(e);
+            return false;
         }
-        targetCSV.setColumns(columns).setColsNumber(columns.size()).setRowsNumber(rowCount);
-        targetCSV.saveAttributes();
-        return targetCSV;
+        return true;
     }
 
-    protected DataFileCSV spliceHorizontally(DataFileCSV csvA, DataFileCSV csvB) {
-        long size = 0;
-        List<Data2DColumn> columns = new ArrayList<>();
-        List<Data2DColumn> columnsA = csvA.getColumns();
-        List<Data2DColumn> columnsB = csvB.getColumns();
+    protected boolean spliceHorizontally(FxTask currentTask,
+            DataFileCSV csvA, DataFileCSV csvB, Data2DWriter writer) {
         try {
+            if (csvA == null || csvB == null || writer == null) {
+                return false;
+            }
+            long size = 0;
+            List<Data2DColumn> columns = new ArrayList<>();
+            List<Data2DColumn> columnsA = csvA.getColumns();
+            List<Data2DColumn> columnsB = csvB.getColumns();
             long sizeA = csvA.getRowsNumber();
             long sizeB = csvB.getRowsNumber();
             if (aRadio.isSelected()) {
@@ -290,79 +294,75 @@ public class Data2DSpliceController extends BaseController {
             }
             columns.addAll(columnsA);
             columns.addAll(columnsB);
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
+            int colLen = columns.size(), colLenA = columnsA.size(), colLenB = columnsB.size();
+            if (size <= 0 || colLen == 0) {
+                return false;
             }
-            MyBoxLog.error(e);
-        }
-        int colLen = columns.size(), colLenA = columnsA.size(), colLenB = columnsB.size();
-        if (size <= 0 || colLen == 0) {
-            return null;
-        }
-        DataFileCSV targetCSV = DataFileCSV.tmpCSV(targetController.name());
-        int rowCount = 0;
-        try (CSVPrinter csvPrinter = new CSVPrinter(
-                new FileWriter(targetCSV.getFile(), targetCSV.getCharset()), targetCSV.cvsFormat());
-                CSVParser parserA = CSVParser.parse(csvA.getFile(), csvA.getCharset(), csvA.cvsFormat());
-                CSVParser parserB = CSVParser.parse(csvB.getFile(), csvB.getCharset(), csvB.cvsFormat())) {
-            List<String> row = new ArrayList<>();
-            List<String> validNames = new ArrayList<>();
-            for (Data2DColumn c : columns) {
-                String name = DerbyBase.checkIdentifier(validNames, c.getColumnName(), true);
-                row.add(name);
-                validNames.add(name);
+            writer.setColumns(columns)
+                    .setHeaderNames(Data2DTools.toNames(columns));
+            if (!writer.openWriter()) {
+                return false;
             }
-            csvPrinter.printRecord(row);
+            int rowCount = 0;
+            try (CSVParser parserA = CSVParser.parse(csvA.getFile(), csvA.getCharset(), csvA.cvsFormat());
+                    CSVParser parserB = CSVParser.parse(csvB.getFile(), csvB.getCharset(), csvB.cvsFormat())) {
+                List<String> row = new ArrayList<>();
+                List<String> validNames = new ArrayList<>();
+                for (Data2DColumn c : columns) {
+                    String name = DerbyBase.checkIdentifier(validNames, c.getColumnName(), true);
+                    row.add(name);
+                    validNames.add(name);
+                }
+                writer.writeRow(row);
 
-            Iterator<CSVRecord> iteratorA = parserA.iterator();
-            Iterator<CSVRecord> iteratorB = parserB.iterator();
-            while (rowCount < size && task != null && !task.isCancelled()) {
-                row.clear();
-                if (iteratorA.hasNext()) {
-                    try {
-                        CSVRecord record = iteratorA.next();
-                        if (record != null) {
-                            int dLen = Math.min(record.size(), colLenA);
-                            for (int i = 0; i < dLen; i++) {
-                                row.add(record.get(i));
+                Iterator<CSVRecord> iteratorA = parserA.iterator();
+                Iterator<CSVRecord> iteratorB = parserB.iterator();
+                while (rowCount < size && task != null && !task.isCancelled()) {
+                    row.clear();
+                    if (iteratorA.hasNext()) {
+                        try {
+                            CSVRecord record = iteratorA.next();
+                            if (record != null) {
+                                int dLen = Math.min(record.size(), colLenA);
+                                for (int i = 0; i < dLen; i++) {
+                                    row.add(record.get(i));
+                                }
                             }
-                        }
-                    } catch (Exception e) {  // skip  bad lines
+                        } catch (Exception e) {  // skip  bad lines
 //                            MyBoxLog.debug(e);
+                        }
                     }
-                }
-                for (int i = row.size(); i < colLenA; i++) {
-                    row.add(null);
-                }
-                if (iteratorB.hasNext()) {
-                    try {
-                        CSVRecord record = iteratorB.next();
-                        if (record != null) {
-                            int dLen = Math.min(record.size(), colLenB);
-                            for (int i = 0; i < dLen; i++) {
-                                row.add(record.get(i));
+                    for (int i = row.size(); i < colLenA; i++) {
+                        row.add(null);
+                    }
+                    if (iteratorB.hasNext()) {
+                        try {
+                            CSVRecord record = iteratorB.next();
+                            if (record != null) {
+                                int dLen = Math.min(record.size(), colLenB);
+                                for (int i = 0; i < dLen; i++) {
+                                    row.add(record.get(i));
+                                }
                             }
-                        }
-                    } catch (Exception e) {  // skip  bad lines
+                        } catch (Exception e) {  // skip  bad lines
 //                            MyBoxLog.debug(e);
+                        }
                     }
+                    for (int i = row.size(); i < colLen; i++) {
+                        row.add(null);
+                    }
+                    writer.writeRow(row);
+                    rowCount++;
                 }
-                for (int i = row.size(); i < colLen; i++) {
-                    row.add(null);
-                }
-                csvPrinter.printRecord(row);
-                rowCount++;
             }
+            return true;
         } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
+            if (currentTask != null) {
+                currentTask.setError(e.toString());
             }
             MyBoxLog.error(e);
+            return false;
         }
-        targetCSV.setColumns(columns).setColsNumber(columns.size()).setRowsNumber(rowCount);
-        targetCSV.saveAttributes();
-        return targetCSV;
     }
 
 }
