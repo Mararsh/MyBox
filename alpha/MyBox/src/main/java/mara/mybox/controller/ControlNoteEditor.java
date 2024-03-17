@@ -20,7 +20,6 @@ public class ControlNoteEditor extends BaseHtmlFormat {
 
             webViewController.linkInNewTab = true;
             webViewController.defaultStyle = HtmlStyles.TableStyle;
-            webViewController.initStyle(HtmlStyles.TableStyle);
 
         } catch (Exception e) {
             MyBoxLog.error(e);

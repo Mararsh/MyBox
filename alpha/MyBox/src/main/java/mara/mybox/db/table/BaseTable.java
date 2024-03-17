@@ -1188,7 +1188,6 @@ public abstract class BaseTable<D> {
         }
         String sql = "SELECT * FROM " + DerbyBase.fixedIdentifier(tableName) + c
                 + " OFFSET " + start + " ROWS FETCH NEXT " + size + " ROWS ONLY";
-        MyBoxLog.console(sql);
         return query(conn, sql);
     }
 

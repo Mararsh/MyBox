@@ -19,6 +19,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Worker;
 import static javafx.concurrent.Worker.State.CANCELLED;
 import static javafx.concurrent.Worker.State.FAILED;
+import static javafx.concurrent.Worker.State.RUNNING;
 import static javafx.concurrent.Worker.State.SUCCEEDED;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
@@ -229,6 +230,9 @@ public class ControlWebView extends BaseController {
         Platform.runLater(() -> {
             try {
                 switch (state) {
+                    case READY:
+                        reset();
+                        break;
                     case RUNNING:
                         running();
                         break;
@@ -422,8 +426,7 @@ public class ControlWebView extends BaseController {
         status
      */
     public void clear() {
-        reset();
-        loadContents(null);
+        loadContents("");
     }
 
     private void reset() {
@@ -452,7 +455,7 @@ public class ControlWebView extends BaseController {
 
     private void running() {
         try {
-            reset();
+
             pageLoadingNotify.set(!pageLoadingNotify.get());
             timer = new Timer();
             timer.schedule(new TimerTask() {

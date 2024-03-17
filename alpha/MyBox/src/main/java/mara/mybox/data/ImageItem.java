@@ -155,10 +155,13 @@ public class ImageItem {
                     .setName("exg2.png").setAddress("img/exg2.png")
                     .setComments(message(lang, "exg2ImageTips"));
             preDefined.add(item);
+            item = new ImageItem()
+                    .setName("MyBox.png").setAddress("img/MyBox.png")
+                    .setComments(message(lang, "MyBoxImageTips"));
+            preDefined.add(item);
 
             preDefined.add(new ImageItem().setName("Gadwalls.png").setAddress("img/Gadwalls.png"));
             preDefined.add(new ImageItem().setName("SpermWhale.png").setAddress("img/SpermWhale.png"));
-            preDefined.add(new ImageItem().setName("MyBox.png").setAddress("img/MyBox.png"));
 
             List<String> icons = new ArrayList<>();
             icons.addAll(Arrays.asList("Add", "Analyse", "Anchor", "Cancel", "Cat",
