@@ -4,9 +4,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.controller.ControlTargetFile;
-import mara.mybox.data2d.Data2DTools;
 import mara.mybox.data2d.Data2D_Attributes.TargetType;
 import mara.mybox.data2d.Data2D_Edit;
+import mara.mybox.data2d.tools.Data2DColumnTools;
 import mara.mybox.data2d.writer.Data2DWriter;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
@@ -117,7 +117,7 @@ public class Data2DExport extends Data2DOperate {
         pathController = controller;
         targetFile = null;
         columns = cols;
-        columnNames = Data2DTools.toNames(cols);
+        columnNames = Data2DColumnTools.toNames(cols);
         return initExport(prefix);
     }
 
@@ -125,14 +125,14 @@ public class Data2DExport extends Data2DOperate {
         pathController = controller;
         targetFile = null;
         columnNames = cols;
-        columns = Data2DTools.toColumns(columnNames);
+        columns = Data2DColumnTools.toColumns(columnNames);
         return initExport(prefix);
     }
 
     public boolean setNames(ControlTargetFile controller, List<String> cols) {
         pathController = controller;
         columnNames = cols;
-        columns = Data2DTools.toColumns(columnNames);
+        columns = Data2DColumnTools.toColumns(columnNames);
         return initExport(null);
     }
 

@@ -22,6 +22,7 @@ import mara.mybox.data2d.operate.Data2DRowExpression;
 import mara.mybox.data2d.operate.Data2DSimpleLinearRegression;
 import mara.mybox.data2d.operate.Data2DSplit;
 import mara.mybox.data2d.operate.Data2DStatistic;
+import mara.mybox.data2d.tools.Data2DColumnTools;
 import mara.mybox.data2d.writer.Data2DWriter;
 import mara.mybox.data2d.writer.DataFileCSVWriter;
 import mara.mybox.db.data.ColumnDefinition;
@@ -42,12 +43,12 @@ import org.apache.commons.math3.stat.Frequency;
  * @CreateDate 2022-2-25
  * @License Apache License Version 2.0
  */
-public abstract class Data2D_Operations extends Data2D_Convert {
-
+public abstract class Data2D_Operations extends Data2D_Edit {
+    
     public static enum ObjectType {
         Columns, Rows, All
     }
-
+    
     public boolean export(Data2DExport export, List<Integer> cols) {
         if (export == null || cols == null || cols.isEmpty()) {
             return false;
@@ -55,20 +56,20 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         export.setCols(cols).setTask(task).start();
         return !export.isFailed();
     }
-
+    
     public List<List<String>> allRows(List<Integer> cols, boolean rowNumber) {
         Data2DReadColumns reader = Data2DReadColumns.create(this);
         reader.setIncludeRowNumber(rowNumber)
                 .setCols(cols).setTask(task).start();
         return reader.isFailed() ? null : reader.getRows();
     }
-
+    
     public List<List<String>> allRows(boolean rowNumber) {
         Data2DReadRows reader = Data2DReadRows.create(this);
         reader.setIncludeRowNumber(rowNumber).setTask(task).start();
         return reader.isFailed() ? null : reader.getRows();
     }
-
+    
     public DoubleStatistic[] statisticByColumnsForCurrentPage(List<Integer> cols, DescriptiveStatistic selections) {
         try {
             if (cols == null || cols.isEmpty() || selections == null) {
@@ -175,14 +176,14 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             return null;
         }
     }
-
+    
     public boolean statisticByRows(FxTask task, Data2DWriter writer,
             List<String> names, List<Integer> cols, DescriptiveStatistic selections) {
         if (writer == null || names == null || names.isEmpty() || cols == null || cols.isEmpty()) {
             return false;
         }
         try {
-            writer.setColumns(Data2DTools.toColumns(names))
+            writer.setColumns(Data2DColumnTools.toColumns(names))
                     .setHeaderNames(names);
             Data2DOperate operate = Data2DStatistic.create(this)
                     .setStatisticCalculation(selections)
@@ -226,7 +227,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         }
         return sData;
     }
-
+    
     public List<Data2DColumn> targetColumns(List<Integer> cols, List<Integer> otherCols, boolean rowNumber, String suffix) {
         List<Data2DColumn> targetColumns = new ArrayList<>();
         if (rowNumber) {
@@ -247,7 +248,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         }
         return fixColumnNames(targetColumns);
     }
-
+    
     public DataFileCSV copy(FxTask task, List<Integer> cols,
             boolean includeRowNumber, boolean includeColName, boolean formatValues) {
         if (cols == null || cols.isEmpty()) {
@@ -255,7 +256,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         }
         try {
             DataFileCSVWriter writer = new DataFileCSVWriter();
-            if (!copy(task, writer, cols, includeRowNumber, includeColName, formatValues)) {
+            if (copy(task, writer, cols, includeRowNumber, includeColName, formatValues, InvalidAs.Blank) < 0) {
                 return null;
             }
             return (DataFileCSV) writer.getTargetData();
@@ -267,32 +268,37 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             return null;
         }
     }
-
-    public boolean copy(FxTask task, Data2DWriter writer, List<Integer> cols,
-            boolean includeRowNumber, boolean includeColName, boolean formatValues) {
+    
+    public long copy(FxTask task, Data2DWriter writer, List<Integer> cols,
+            boolean includeRowNumber, boolean includeColName,
+            boolean formatValues, InvalidAs invalidAs) {
         try {
             if (writer == null || cols == null || cols.isEmpty()) {
-                return false;
+                return -1;
             }
             List<Data2DColumn> targetColumns = targetColumns(cols, null, includeRowNumber, null);
             writer.setColumns(targetColumns)
-                    .setHeaderNames(Data2DTools.toNames(targetColumns));
+                    .setHeaderNames(Data2DColumnTools.toNames(targetColumns));
             Data2DOperate operate = Data2DCopy.create(this)
                     .setFormatValues(formatValues)
                     .setIncludeRowNumber(includeRowNumber)
                     .setCols(cols)
+                    .setInvalidAs(invalidAs)
                     .addWriter(writer)
                     .setTask(task).start();
-            return !operate.isFailed() && writer.isCreated();
+            if (operate.isFailed() || !writer.isCreated()) {
+                return -2;
+            }
+            return operate.getHandledCount();
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
             }
             MyBoxLog.error(e);
-            return false;
+            return -3;
         }
     }
-
+    
     public List<DataFileCSV> splitBySize(List<Integer> cols, boolean includeRowNumber, int splitSize) {
         if (cols == null || cols.isEmpty()) {
             return null;
@@ -302,7 +308,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
                 .setCols(cols).setTask(task).start();
         return reader.getFiles();
     }
-
+    
     public List<DataFileCSV> splitByList(List<Integer> cols, boolean includeRowNumber, List<Integer> list) {
         if (cols == null || cols.isEmpty() || list == null || list.isEmpty()) {
             return null;
@@ -368,9 +374,9 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             }
             return null;
         }
-
+        
     }
-
+    
     public boolean rowExpression(FxTask task, Data2DWriter writer,
             String script, String name, boolean errorContinue,
             List<Integer> cols, boolean includeRowNumber, boolean includeColName) {
@@ -381,7 +387,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             List<Data2DColumn> targetColumns = targetColumns(cols, null, includeRowNumber, null);
             targetColumns.add(new Data2DColumn(name, ColumnDefinition.ColumnType.String));
             writer.setColumns(targetColumns)
-                    .setHeaderNames(Data2DTools.toNames(targetColumns))
+                    .setHeaderNames(Data2DColumnTools.toNames(targetColumns))
                     .setWriteHeader(includeColName);
             Data2DOperate operate = Data2DRowExpression.create(this)
                     .setScript(script).setName(name)
@@ -397,7 +403,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             return false;
         }
     }
-
+    
     public List<Data2DColumn> makePercentageColumns(List<Integer> cols, List<Integer> otherCols, ObjectType objectType) {
         if (objectType == null) {
             objectType = ObjectType.Columns;
@@ -421,7 +427,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         }
         return fixColumnNames(targetColumns);
     }
-
+    
     public boolean percentageColumns(FxTask task, Data2DWriter writer,
             List<Integer> cols, List<Integer> otherCols,
             int scale, String toNegative, InvalidAs invalidAs) {
@@ -450,7 +456,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             }
             List<Data2DColumn> targetColumns = makePercentageColumns(cols, otherCols, ObjectType.Columns);
             writer.setColumns(targetColumns)
-                    .setHeaderNames(Data2DTools.toNames(targetColumns));
+                    .setHeaderNames(Data2DColumnTools.toNames(targetColumns));
             operate = Data2DPrecentage.create(this)
                     .setType(Data2DPrecentage.Type.ColumnsPass2)
                     .setToNegative(toNegative)
@@ -468,11 +474,11 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             return false;
         }
     }
-
+    
     public boolean percentageAll(FxTask task, Data2DWriter writer,
             List<Integer> cols, List<Integer> otherCols,
             int scale, String toNegative, InvalidAs invalidAs) {
-
+        
         try {
             if (writer == null || cols == null || cols.isEmpty()) {
                 return false;
@@ -487,7 +493,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             }
             List<Data2DColumn> targetColumns = makePercentageColumns(cols, otherCols, ObjectType.All);
             writer.setColumns(targetColumns)
-                    .setHeaderNames(Data2DTools.toNames(targetColumns));
+                    .setHeaderNames(Data2DColumnTools.toNames(targetColumns));
             List<String> row = new ArrayList<>();
             row.add(message("All") + "-" + message("Summation"));
             double sum = operate.gettValue();
@@ -516,18 +522,18 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             return false;
         }
     }
-
+    
     public boolean percentageRows(FxTask task, Data2DWriter writer,
             List<Integer> cols, List<Integer> otherCols,
             int scale, String toNegative, InvalidAs invalidAs) {
-
+        
         try {
             if (writer == null || cols == null || cols.isEmpty()) {
                 return false;
             }
             List<Data2DColumn> targetColumns = makePercentageColumns(cols, otherCols, ObjectType.Rows);
             writer.setColumns(targetColumns)
-                    .setHeaderNames(Data2DTools.toNames(targetColumns));
+                    .setHeaderNames(Data2DColumnTools.toNames(targetColumns));
             Data2DOperate operate = Data2DPrecentage.create(this)
                     .setType(Data2DPrecentage.Type.Rows)
                     .setToNegative(toNegative);
@@ -543,7 +549,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             return false;
         }
     }
-
+    
     public boolean frequency(FxTask task, Data2DWriter writer,
             Frequency frequency, List<Data2DColumn> outputColumns, int col, int scale) {
         try {
@@ -551,7 +557,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
                 return false;
             }
             writer.setColumns(outputColumns)
-                    .setHeaderNames(Data2DTools.toNames(outputColumns));
+                    .setHeaderNames(Data2DColumnTools.toNames(outputColumns));
             Data2DOperate operate = Data2DFrequency.create(this)
                     .setFrequency(frequency).setColIndex(col)
                     .addWriter(writer)
@@ -566,7 +572,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             return false;
         }
     }
-
+    
     public boolean normalizeMinMaxColumns(FxTask task, Data2DWriter writer,
             List<Integer> cols, List<Integer> otherCols,
             double from, double to, boolean rowNumber, boolean colName, int scale, InvalidAs invalidAs) {
@@ -599,7 +605,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             }
             List<Data2DColumn> targetColumns = targetColumns(cols, otherCols, rowNumber, message("Normalize"));
             writer.setColumns(targetColumns)
-                    .setHeaderNames(Data2DTools.toNames(targetColumns))
+                    .setHeaderNames(Data2DColumnTools.toNames(targetColumns))
                     .setWriteHeader(colName);
             operate = Data2DNormalize.create(this)
                     .setType(Data2DNormalize.Type.MinMaxColumns)
@@ -617,11 +623,11 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             return false;
         }
     }
-
+    
     public boolean normalizeSumColumns(FxTask task, Data2DWriter writer,
             List<Integer> cols, List<Integer> otherCols,
             boolean rowNumber, boolean colName, int scale, InvalidAs invalidAs) {
-
+        
         try {
             if (writer == null || cols == null || cols.isEmpty()) {
                 return false;
@@ -652,7 +658,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             }
             List<Data2DColumn> targetColumns = targetColumns(cols, otherCols, rowNumber, message("Normalize"));
             writer.setColumns(targetColumns)
-                    .setHeaderNames(Data2DTools.toNames(targetColumns))
+                    .setHeaderNames(Data2DColumnTools.toNames(targetColumns))
                     .setWriteHeader(colName);
             operate = Data2DNormalize.create(this)
                     .setType(Data2DNormalize.Type.SumColumns)
@@ -670,7 +676,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             return false;
         }
     }
-
+    
     public boolean normalizeZscoreColumns(FxTask task, Data2DWriter writer,
             List<Integer> cols, List<Integer> otherCols,
             boolean rowNumber, boolean colName, int scale, InvalidAs invalidAs) {
@@ -705,7 +711,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             }
             List<Data2DColumn> targetColumns = targetColumns(cols, otherCols, rowNumber, message("Normalize"));
             writer.setColumns(targetColumns)
-                    .setHeaderNames(Data2DTools.toNames(targetColumns))
+                    .setHeaderNames(Data2DColumnTools.toNames(targetColumns))
                     .setWriteHeader(colName);
             operate = Data2DNormalize.create(this)
                     .setType(Data2DNormalize.Type.ZscoreColumns)
@@ -723,7 +729,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             return false;
         }
     }
-
+    
     public boolean normalizeMinMaxAll(FxTask task, Data2DWriter writer,
             List<Integer> cols, List<Integer> otherCols,
             double from, double to, boolean rowNumber, boolean colName, int scale, InvalidAs invalidAs) {
@@ -750,7 +756,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             sData.dTmp = (to - from) / (d == 0 ? AppValues.TinyDouble : d);
             List<Data2DColumn> targetColumns = targetColumns(cols, otherCols, rowNumber, message("Normalize"));
             writer.setColumns(targetColumns)
-                    .setHeaderNames(Data2DTools.toNames(targetColumns))
+                    .setHeaderNames(Data2DColumnTools.toNames(targetColumns))
                     .setWriteHeader(colName);
             operate = Data2DNormalize.create(this)
                     .setType(Data2DNormalize.Type.MinMaxAll)
@@ -768,7 +774,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             return false;
         }
     }
-
+    
     public boolean normalizeSumAll(FxTask task, Data2DWriter writer,
             List<Integer> cols, List<Integer> otherCols,
             boolean rowNumber, boolean colName, int scale, InvalidAs invalidAs) {
@@ -796,7 +802,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             }
             List<Data2DColumn> targetColumns = targetColumns(cols, otherCols, rowNumber, message("Normalize"));
             writer.setColumns(targetColumns)
-                    .setHeaderNames(Data2DTools.toNames(targetColumns))
+                    .setHeaderNames(Data2DColumnTools.toNames(targetColumns))
                     .setWriteHeader(colName);
             operate = Data2DNormalize.create(this)
                     .setType(Data2DNormalize.Type.SumAll)
@@ -814,7 +820,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             return false;
         }
     }
-
+    
     public boolean normalizeZscoreAll(FxTask task, Data2DWriter writer,
             List<Integer> cols, List<Integer> otherCols,
             boolean rowNumber, boolean colName, int scale, InvalidAs invalidAs) {
@@ -846,7 +852,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             }
             List<Data2DColumn> targetColumns = targetColumns(cols, otherCols, rowNumber, message("Normalize"));
             writer.setColumns(targetColumns)
-                    .setHeaderNames(Data2DTools.toNames(targetColumns))
+                    .setHeaderNames(Data2DColumnTools.toNames(targetColumns))
                     .setWriteHeader(colName);
             operate = Data2DNormalize.create(this)
                     .setType(Data2DNormalize.Type.ZscoreAll)
@@ -864,7 +870,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             return false;
         }
     }
-
+    
     public boolean normalizeRows(FxTask task, Data2DWriter writer,
             Normalization.Algorithm a, List<Integer> cols, List<Integer> otherCols,
             double from, double to, boolean rowNumber, boolean colName,
@@ -876,7 +882,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             List<Data2DColumn> targetColumns = targetColumns(cols, otherCols,
                     rowNumber, message("Normalize"));
             writer.setColumns(targetColumns)
-                    .setHeaderNames(Data2DTools.toNames(targetColumns));
+                    .setHeaderNames(Data2DColumnTools.toNames(targetColumns));
             Data2DOperate operate = Data2DNormalize.create(this)
                     .setType(Data2DNormalize.Type.Rows)
                     .setA(a).setFrom(from).setTo(to)
@@ -893,7 +899,7 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             return false;
         }
     }
-
+    
     public DataFileCSV simpleLinearRegression(String dname, List<Integer> cols,
             SimpleLinearRegression simpleRegression, boolean writeFile) {
         if (cols == null || cols.isEmpty() || simpleRegression == null) {
@@ -911,12 +917,12 @@ public abstract class Data2D_Operations extends Data2D_Convert {
                 }
                 csvPrinter.printRecord(names);
                 tcolsNumber = names.size();
-
+                
                 operator = Data2DSimpleLinearRegression.create(this)
                         .setSimpleRegression(simpleRegression)
                         //                        .setCsvPrinter(csvPrinter)
                         .setCols(cols).setScale(scale).setTask(task).start();
-
+                
             } catch (Exception e) {
                 if (task != null) {
                     task.setError(e.toString());
@@ -941,5 +947,5 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             return null;
         }
     }
-
+    
 }

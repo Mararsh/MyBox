@@ -20,6 +20,7 @@ import org.apache.commons.csv.CSVPrinter;
  */
 public class MyBoxClipboardWriter extends Data2DWriter {
 
+    protected DataClipboard clip;
     protected CSVPrinter printer;
 
     public MyBoxClipboardWriter() {
@@ -32,7 +33,9 @@ public class MyBoxClipboardWriter extends Data2DWriter {
             if (!super.openWriter()) {
                 return false;
             }
-            targetFile = DataClipboard.newFile();
+//            if (targetFile == null) {
+//                targetFile = DataClipboard.newFile();
+//            }
             if (targetFile == null) {
                 showInfo(message("InvalidParameter") + ": " + message("TargetFile"));
                 return false;

@@ -207,7 +207,7 @@ public class Data2DRowExpressionController extends BaseData2DTargetsController {
     }
 
     @Override
-    public boolean generatedResult(FxTask currentTask, Data2DWriter writer) {
+    public boolean handleAllData(FxTask currentTask, Data2DWriter writer) {
         return data2D.rowExpression(currentTask, writer, expression,
                 nameInput.getText().trim(), errorContinueCheck.isSelected(),
                 checkedColsIndices, rowNumberCheck.isSelected(), colNameCheck.isSelected());

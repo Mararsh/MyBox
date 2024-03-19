@@ -11,8 +11,9 @@ import java.util.Random;
 import mara.mybox.calculation.DescriptiveStatistic;
 import mara.mybox.calculation.DescriptiveStatistic.StatisticType;
 import mara.mybox.calculation.DoubleStatistic;
+import mara.mybox.data2d.tools.Data2DTableTools;
 import mara.mybox.data2d.writer.Data2DWriter;
-import mara.mybox.data2d.writer.DataBaseTableWriter;
+import mara.mybox.data2d.writer.DataTableWriter;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.InvalidAs;
@@ -367,9 +368,28 @@ public class DataTable extends Data2D {
         if (file == null) {
             return null;
         }
-        DataBaseTableWriter writer = new DataBaseTableWriter();
-        writer.setRecordTargetFile(false).setRecordTargetData(false);
+        DataTableWriter writer = new DataTableWriter();
+        writer.setTargetTable(this)
+                .setRecordTargetFile(false).setRecordTargetData(false);
         return writer;
+    }
+
+    public Data2DRow makeRow(List<String> values, InvalidAs invalidAs, long rowIndex) {
+        try {
+            if (columns == null || values == null || values.isEmpty()) {
+                return null;
+            }
+            Data2DRow data2DRow = tableData2D.newRow();
+            for (int i = 0; i < Math.min(columns.size() - 1, values.size()); i++) {
+                Data2DColumn column = columns.get(i + 1);
+                String name = column.getColumnName();
+                data2DRow.setColumnValue(name, column.fromString(values.get(i), invalidAs));
+            }
+            return data2DRow;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
     }
 
     @Override
@@ -411,7 +431,7 @@ public class DataTable extends Data2D {
         try (Connection conn = DerbyBase.getConnection();
                 PreparedStatement statement = conn.prepareStatement(query);
                 ResultSet results = statement.executeQuery()) {
-            return Data2D.write(task, this, writer, results, rowNumberName,
+            return Data2DTableTools.write(task, this, writer, results, rowNumberName,
                     scale, InvalidAs.Blank);
         } catch (Exception e) {
             if (task != null) {
@@ -616,23 +636,6 @@ public class DataTable extends Data2D {
         }
     }
 
-    /*
-        static
-     */
-    public static List<String> userTables() {
-        List<String> userTables = new ArrayList<>();
-        try (Connection conn = DerbyBase.getConnection()) {
-            List<String> allTables = DerbyBase.allTables(conn);
-            for (String name : allTables) {
-                if (!DataInternalTable.InternalTables.contains(name.toUpperCase())) {
-                    userTables.add(name);
-                }
-            }
-        } catch (Exception e) {
-            MyBoxLog.console(e);
-        }
-        return userTables;
-    }
 
     /*
         get/set

@@ -2,7 +2,8 @@ package mara.mybox.controller;
 
 import javafx.fxml.FXML;
 import mara.mybox.data2d.Data2D;
-import mara.mybox.data2d.Data2DTools;
+import mara.mybox.data2d.tools.Data2DDefinitionTools;
+import mara.mybox.data2d.tools.Data2DPageTools;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.db.data.InfoNode;
 import mara.mybox.fxml.FxSingletonTask;
@@ -51,7 +52,7 @@ public class Data2DDefinitionEditor extends InfoTreeNodeEditor {
             protected boolean handle() {
                 try {
                     if (node != null) {
-                        data2D = Data2DTools.definitionFromXML(this, myController, node.getInfo());
+                        data2D = Data2DDefinitionTools.definitionFromXML(this, myController, node.getInfo());
                     } else {
                         data2D = null;
                     }
@@ -92,7 +93,7 @@ public class Data2DDefinitionEditor extends InfoTreeNodeEditor {
                 .setMaxRandom(defAttributesController.maxRandom)
                 .setComments(defAttributesController.descInput.getText())
                 .setDataName(nodeTitle());
-        String info = Data2DTools.definitionToXML(data2D, true, "");
+        String info = Data2DDefinitionTools.definitionToXML(data2D, true, "");
         if (info == null) {
             return null;
         }
@@ -119,7 +120,7 @@ public class Data2DDefinitionEditor extends InfoTreeNodeEditor {
             @Override
             protected boolean handle() {
                 try {
-                    data = Data2DTools.definitionFromXML(this, myController, node.getInfo());
+                    data = Data2DDefinitionTools.definitionFromXML(this, myController, node.getInfo());
                     return true;
                 } catch (Exception e) {
                     error = e.toString();

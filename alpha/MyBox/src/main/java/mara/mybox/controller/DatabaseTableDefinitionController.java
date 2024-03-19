@@ -11,6 +11,7 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import mara.mybox.data2d.DataInternalTable;
 import mara.mybox.data2d.DataTable;
+import mara.mybox.data2d.tools.Data2DTableTools;
 import mara.mybox.db.table.TableData2D;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
@@ -72,7 +73,7 @@ public class DatabaseTableDefinitionController extends BaseController {
             if (internalRadio.isSelected()) {
                 names = DataInternalTable.InternalTables;
             } else {
-                names = DataTable.userTables();
+                names = Data2DTableTools.userTables();
             }
             listView.getItems().setAll(names);
 

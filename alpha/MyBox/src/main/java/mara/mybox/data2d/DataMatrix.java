@@ -24,18 +24,18 @@ import mara.mybox.tools.NumberTools;
  * @License Apache License Version 2.0
  */
 public class DataMatrix extends Data2D {
-
+    
     protected TableData2DCell tableData2DCell;
-
+    
     public DataMatrix() {
         dataType = DataType.Matrix;
         tableData2DCell = new TableData2DCell();
     }
-
+    
     public int type() {
         return type(DataType.Matrix);
     }
-
+    
     public void cloneAll(DataMatrix d) {
         try {
             if (d == null) {
@@ -47,13 +47,13 @@ public class DataMatrix extends Data2D {
             MyBoxLog.debug(e);
         }
     }
-
+    
     @Override
     public boolean checkForLoad() {
         hasHeader = false;
         return true;
     }
-
+    
     @Override
     public boolean checkForSave() {
         if (dataName == null || dataName.isBlank()) {
@@ -61,17 +61,17 @@ public class DataMatrix extends Data2D {
         }
         return true;
     }
-
+    
     @Override
     public Data2DDefinition queryDefinition(Connection conn) {
         return tableData2DDefinition.queryID(conn, d2did);
     }
-
+    
     @Override
     public long readTotal() {
         return dataSize;
     }
-
+    
     @Override
     public List<String> readColumnNames() {
         checkForLoad();
@@ -81,7 +81,7 @@ public class DataMatrix extends Data2D {
         }
         return names;
     }
-
+    
     @Override
     public List<List<String>> readPageData(Connection conn) {
         if (startRowOfCurrentPage < 0) {
@@ -114,7 +114,7 @@ public class DataMatrix extends Data2D {
         readPageStyles(conn);
         return rows;
     }
-
+    
     @Override
     public boolean savePageDataAs(Data2D targetData) {
         if (targetData == null || !targetData.isMatrix()) {
@@ -122,11 +122,11 @@ public class DataMatrix extends Data2D {
         }
         return save(null, (DataMatrix) targetData, columns, tableRows(false));
     }
-
+    
     public boolean isSquare() {
         return isValid() && tableColsNumber() == tableRowsNumber();
     }
-
+    
     public String toString(double d) {
         if (DoubleTools.invalidDouble(d)) {
             return Double.NaN + "";
@@ -134,7 +134,7 @@ public class DataMatrix extends Data2D {
             return NumberTools.format(d, scale);
         }
     }
-
+    
     public static double toDouble(String d) {
         try {
             return Double.parseDouble(d.replaceAll(",", ""));
@@ -142,7 +142,7 @@ public class DataMatrix extends Data2D {
             return 0;
         }
     }
-
+    
     public double[][] toMatrix() {
         rowsNumber = tableRowsNumber();
         colsNumber = tableColsNumber();
@@ -158,7 +158,7 @@ public class DataMatrix extends Data2D {
         }
         return data;
     }
-
+    
     public List<List<String>> toTableData(double[][] data) {
         if (data == null) {
             return null;
@@ -174,17 +174,17 @@ public class DataMatrix extends Data2D {
         }
         return rows;
     }
-
+    
     @Override
     public long setValue(List<Integer> cols, SetValue value, boolean errorContinue) {
         return -1;
     }
-
+    
     @Override
     public long deleteRows(boolean errorContinue) {
         return -1;
     }
-
+    
     @Override
     public long clearData() {
         long count = -1;
@@ -192,24 +192,25 @@ public class DataMatrix extends Data2D {
                 PreparedStatement clear = conn.prepareStatement(TableData2DCell.ClearData)) {
             clear.setLong(1, d2did);
             count = clear.executeUpdate();
-
+            
             conn.commit();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
         return count;
     }
-
+    
     @Override
     public Data2DWriter selfWriter() {
         if (file == null) {
             return null;
         }
         MatrixWriter writer = new MatrixWriter();
-        writer.setRecordTargetFile(false).setRecordTargetData(false);
+        writer.setMatrix(this)
+                .setRecordTargetFile(false).setRecordTargetData(false);
         return writer;
     }
-
+    
     public static boolean save(FxTask task, DataMatrix matrix,
             List<Data2DColumn> cols, List<List<String>> rows) {
         if (matrix == null || cols == null || rows == null) {
@@ -225,7 +226,7 @@ public class DataMatrix extends Data2D {
             return false;
         }
     }
-
+    
     public static boolean save(FxTask task, Connection conn, DataMatrix matrix,
             List<Data2DColumn> cols, List<List<String>> rows) {
         if (conn == null || matrix == null || cols == null || rows == null) {
@@ -273,9 +274,9 @@ public class DataMatrix extends Data2D {
         }
         return true;
     }
-
+    
     public TableData2DCell getTableData2DCell() {
         return tableData2DCell;
     }
-
+    
 }

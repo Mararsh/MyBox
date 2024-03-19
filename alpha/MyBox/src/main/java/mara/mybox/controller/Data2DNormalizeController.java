@@ -121,7 +121,7 @@ public class Data2DNormalizeController extends BaseData2DTargetsController {
     }
 
     @Override
-    public boolean generatedResult(FxTask currentTask, Data2DWriter writer) {
+    public boolean handleAllData(FxTask currentTask, Data2DWriter writer) {
         if (normalizeController.rowsRadio.isSelected()) {
             Normalization.Algorithm a;
             if (normalizeController.sumRadio.isSelected()) {

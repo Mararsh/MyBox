@@ -36,11 +36,12 @@ public class JsonWriter extends Data2DWriter {
                 return false;
             }
             showInfo(message("Writing") + " " + targetFile.getAbsolutePath());
-            tmpFile = FileTmpTools.getTempFile();
+            tmpFile = FileTmpTools.getTempFile(".json");
             fileWriter = new BufferedWriter(new FileWriter(tmpFile, Charset.forName("UTF-8")));
             StringBuilder s = new StringBuilder();
             s.append("{\"Data\": [\n");
             fileWriter.write(s.toString());
+            isFirstRow = true;
             return true;
         } catch (Exception e) {
             showError(e.toString());
@@ -61,16 +62,16 @@ public class JsonWriter extends Data2DWriter {
                 s.append(",\n");
             }
             s.append(indent).append("{").append("\n");
-            boolean firstData = true;
+            boolean firstField = true;
             for (int i = 0; i < headerNames.size(); i++) {
                 String value = targetRow.get(i);
                 if (value == null) {
                     continue;
                 }
-                if (!firstData) {
+                if (!firstField) {
                     s.append(",\n");
                 } else {
-                    firstData = false;
+                    firstField = false;
                 }
                 s.append(indent).append(indent)
                         .append("\"").append(headerNames.get(i)).append("\": ")
@@ -116,7 +117,8 @@ public class JsonWriter extends Data2DWriter {
 
     @Override
     public void showResult() {
-        if (targetFile == null) {
+        if (targetFile == null || !targetFile.exists()) {
+            showError(message("Failed"));
             return;
         }
         JsonEditorController.open(targetFile);

@@ -12,6 +12,7 @@ import mara.mybox.calculation.DescriptiveStatistic.StatisticObject;
 import mara.mybox.calculation.DoubleStatistic;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.data2d.TmpTable;
+import mara.mybox.data2d.tools.Data2DConvertTools;
 import mara.mybox.data2d.writer.Data2DWriter;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
@@ -221,7 +222,7 @@ public class Data2DStatisticController extends BaseData2DTargetsController {
                 if (targetController.inTable()) {
                     updateTable();
                 } else {
-                    outputExternal();
+                    outputRowsToExternal();
                 }
             }
 
@@ -248,7 +249,8 @@ public class Data2DStatisticController extends BaseData2DTargetsController {
                     data2D.startTask(this, filterController.filter);
                     calculation.setTask(this);
                     if (calculation.needStored()) {
-                        DataTable dataTable = data2D.singleColumn(this, checkedColsIndices);
+                        DataTable dataTable = Data2DConvertTools.singleColumn(this,
+                                data2D, checkedColsIndices);
                         if (dataTable == null) {
                             return false;
                         }
@@ -282,7 +284,7 @@ public class Data2DStatisticController extends BaseData2DTargetsController {
                 if (targetController.inTable()) {
                     updateTable();
                 } else {
-                    outputExternal();
+                    outputRowsToExternal();
                 }
             }
 
@@ -301,7 +303,7 @@ public class Data2DStatisticController extends BaseData2DTargetsController {
     }
 
     @Override
-    public boolean generatedResult(FxTask currentTask, Data2DWriter writer) {
+    public boolean handleAllData(FxTask currentTask, Data2DWriter writer) {
         List<Integer> colsIndices = checkedColsIndices;
         if (rowsRadio.isSelected() && categorysCol >= 0) {
             colsIndices.add(0, categorysCol);

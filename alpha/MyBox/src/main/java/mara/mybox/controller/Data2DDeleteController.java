@@ -108,7 +108,8 @@ public class Data2DDeleteController extends BaseData2DTargetsController {
 
     @Override
     public void handleAllTask() {
-        if (!data2D.needFilter()) {
+        boolean clearAll = !data2D.needFilter();
+        if (clearAll) {
             if (!PopTools.askSure(getTitle(), message("SureDeleteAll"))) {
                 return;
             }
@@ -131,7 +132,11 @@ public class Data2DDeleteController extends BaseData2DTargetsController {
                         addBackup(this, data2D.getFile());
                     }
                     data2D.startTask(this, filterController.filter);
-                    count = data2D.deleteRows(errorContinueCheck.isSelected());
+                    if (clearAll) {
+                        count = data2D.clearData();
+                    } else {
+                        count = data2D.deleteRows(errorContinueCheck.isSelected());
+                    }
                     data2D.stopFilter();
                     return count >= 0;
                 } catch (Exception e) {

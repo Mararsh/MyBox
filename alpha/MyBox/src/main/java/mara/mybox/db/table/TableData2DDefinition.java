@@ -275,6 +275,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
         if (conn == null || table == null) {
             return null;
         }
+        MyBoxLog.console(table.getSheet() + "  " + table.getType());
         if (queryTable(conn, table.getSheet(), table.getType()) != null) {
             return updateData(conn, table);
         } else {

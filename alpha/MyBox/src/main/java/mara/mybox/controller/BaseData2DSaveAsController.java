@@ -2,9 +2,9 @@ package mara.mybox.controller;
 
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.Data2D_Attributes.TargetType;
-import mara.mybox.data2d.DataTable;
 import mara.mybox.data2d.TmpTable;
 import mara.mybox.data2d.operate.Data2DExport;
+import mara.mybox.data2d.tools.Data2DConvertTools;
 import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
@@ -24,7 +24,6 @@ public class BaseData2DSaveAsController extends BaseDataConvertController {
     protected TargetType format;
     protected String targetName;
     protected InvalidAs invalidAs = InvalidAs.Blank;
-    protected DataTable dataTable;
 
     public BaseData2DSaveAsController() {
         baseTitle = message("SaveAs");
@@ -41,7 +40,7 @@ public class BaseData2DSaveAsController extends BaseDataConvertController {
             targetName = targetName.substring(TmpTable.TmpTablePrefix.length());
         }
         if (targetFile == null) {
-            targetFile = Data2D.targetFile(targetName, format);
+            targetFile = Data2DConvertTools.targetFile(targetName, format);
         }
     }
 
@@ -55,11 +54,7 @@ public class BaseData2DSaveAsController extends BaseDataConvertController {
 
     @Override
     public void afterSuccess() {
-        if (format == TargetType.DatabaseTable) {
-            if (dataTable != null) {
-                Data2DManufactureController.openDef(dataTable);
-            }
-        } else if (export != null) {
+        if (export != null) {
             export.openResults();
         }
     }

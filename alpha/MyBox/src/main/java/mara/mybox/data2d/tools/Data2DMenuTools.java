@@ -1,4 +1,4 @@
-package mara.mybox.data2d;
+package mara.mybox.data2d.tools;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -49,6 +49,7 @@ import mara.mybox.controller.DataFileExcelSheetsController;
 import mara.mybox.controller.DataFileTextFormatController;
 import mara.mybox.controller.DataTableQueryController;
 import mara.mybox.controller.FileBrowseController;
+import mara.mybox.data2d.Data2D;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.style.StyleTools;

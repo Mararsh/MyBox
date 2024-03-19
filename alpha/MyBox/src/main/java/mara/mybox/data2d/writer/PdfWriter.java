@@ -5,6 +5,7 @@ import java.util.List;
 import mara.mybox.controller.PdfViewController;
 import mara.mybox.data.PaginatedPdfTable;
 import mara.mybox.db.data.VisitHistory;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.FileTools;
@@ -31,12 +32,14 @@ public class PdfWriter extends Data2DWriter {
             if (!super.openWriter()) {
                 return false;
             }
+            MyBoxLog.console(targetFile);
             if (targetFile == null) {
                 showInfo(message("InvalidParameter") + ": " + message("TargetFile"));
                 return false;
             }
             showInfo(message("Writing") + " " + targetFile.getAbsolutePath());
-            tmpFile = FileTmpTools.getTempFile();
+            tmpFile = FileTmpTools.getTempFile(".pdf");
+            MyBoxLog.console(tmpFile);
             pdfTable.setColumns(headerNames).createDoc(tmpFile);
             return true;
         } catch (Exception e) {
@@ -71,11 +74,13 @@ public class PdfWriter extends Data2DWriter {
             if (pdfTable == null) {
                 return;
             }
+            MyBoxLog.console(isFailed());
             if (isFailed() || tmpFile == null || !tmpFile.exists()) {
                 pdfTable.closeDoc();
                 pdfTable = null;
                 pageRows = null;
                 FileDeleteTools.delete(tmpFile);
+                MyBoxLog.console(tmpFile);
                 return;
             }
             if (pageRows != null && !pageRows.isEmpty()) {
@@ -84,10 +89,13 @@ public class PdfWriter extends Data2DWriter {
             }
             pdfTable.closeDoc();
             pdfTable = null;
+            MyBoxLog.console(tmpFile);
             if (!FileTools.override(tmpFile, targetFile)) {
                 FileDeleteTools.delete(tmpFile);
+                MyBoxLog.console(tmpFile);
                 return;
             }
+            MyBoxLog.console(targetFile);
             if (targetFile == null || !targetFile.exists()) {
                 return;
             }
@@ -100,7 +108,8 @@ public class PdfWriter extends Data2DWriter {
 
     @Override
     public void showResult() {
-        if (targetFile == null) {
+        if (targetFile == null || !targetFile.exists()) {
+            showError(message("Failed"));
             return;
         }
         PdfViewController.open(targetFile);

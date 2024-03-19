@@ -49,7 +49,7 @@ public class DataFileExcelWriter extends Data2DWriter {
                 return false;
             }
             showInfo(message("Writing") + " " + targetFile.getAbsolutePath());
-            tmpFile = FileTmpTools.getTempFile();
+            tmpFile = FileTmpTools.getTempFile(".xlsx");
             rowIndex = 0;
             if (baseFile != null && baseFile.exists()) {
                 try (Workbook sourceBook = WorkbookFactory.create(baseFile)) {

@@ -38,7 +38,7 @@ public class HtmlWriter extends Data2DWriter {
                 return false;
             }
             showInfo(message("Writing") + " " + targetFile.getAbsolutePath());
-            tmpFile = FileTmpTools.getTempFile();
+            tmpFile = FileTmpTools.getTempFile(".htm");
             fileWriter = new BufferedWriter(new FileWriter(tmpFile, Charset.forName("utf-8")));
             StringBuilder s = new StringBuilder();
             s.append("<!DOCTYPE html><HTML>\n").

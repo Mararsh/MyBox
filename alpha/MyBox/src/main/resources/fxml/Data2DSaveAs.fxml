@@ -33,7 +33,7 @@ License:    Apache License Version 2.0
                             <content>
                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                                     <padding>
-                                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                                     </padding>
                                     <children>
                                         <fx:include fx:id="target" minHeight="-Infinity" source="ControlData2DTargetExternal.fxml" />
@@ -56,6 +56,9 @@ License:    Apache License Version 2.0
                                     <children>
                                         <fx:include fx:id="csvWrite" source="ControlTextWriteOptions.fxml" />
                                     </children>
+                           <padding>
+                              <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                           </padding>
                                 </VBox>
                             </content>
                         </ScrollPane>
@@ -65,11 +68,14 @@ License:    Apache License Version 2.0
                     <content>
                         <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
                             <content>
-                                <VBox fx:id="excelBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                <VBox fx:id="excelBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                                     <children>
                                         <CheckBox fx:id="excelWithNamesCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%FirstLineDefineNames" wrapText="true" />
                                         <CheckBox fx:id="currentSheetOnlyCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%SaveCurrentSheetOnly" wrapText="true" />
                                     </children>
+                           <padding>
+                              <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                           </padding>
                                 </VBox>
                             </content>
                         </ScrollPane>
@@ -83,6 +89,9 @@ License:    Apache License Version 2.0
                                     <children>
                                         <fx:include fx:id="textWriteOptions" source="ControlTextWriteOptions.fxml" />
                                     </children>
+                           <padding>
+                              <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                           </padding>
                                 </VBox>
                             </content>
                         </ScrollPane>
@@ -108,6 +117,9 @@ License:    Apache License Version 2.0
                                 </HBox>
                                 <TextArea fx:id="cssArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
                             </children>
+                     <padding>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </padding>
                         </VBox>
                     </content>
                 </Tab>
@@ -125,6 +137,9 @@ License:    Apache License Version 2.0
                                             </content>
                                         </ScrollPane>
                                     </children>
+                           <padding>
+                              <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                           </padding>
                                 </VBox>
                             </content>
                         </ScrollPane>
@@ -132,7 +147,7 @@ License:    Apache License Version 2.0
                 </Tab>
                 <Tab fx:id="dbTab" text="%DatabaseTable">
                     <content>
-                        <VBox fx:id="dbBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                        <VBox fx:id="dbBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                             <children>
                                 <fx:include fx:id="db" source="ControlNewDataTable.fxml" />
                                 <FlowPane hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">
@@ -148,6 +163,9 @@ License:    Apache License Version 2.0
                                 </FlowPane>
                                 <Label minHeight="-Infinity" text="%NewTableComments" wrapText="true" />
                             </children>
+                     <padding>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </padding>
                         </VBox>
                     </content>
                 </Tab>

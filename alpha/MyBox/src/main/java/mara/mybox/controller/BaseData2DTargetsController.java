@@ -6,9 +6,9 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
-import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.Data2D_Attributes;
 import mara.mybox.data2d.DataTable;
+import mara.mybox.data2d.tools.Data2DTableTools;
 import mara.mybox.data2d.writer.Data2DWriter;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
@@ -168,7 +168,7 @@ public abstract class BaseData2DTargetsController extends BaseData2DHandleContro
             @Override
             protected boolean handle() {
                 data2D.startTask(this, filterController.filter);
-                return generatedResult(this, writer);
+                return handleAllData(this, writer);
             }
 
             @Override
@@ -187,7 +187,7 @@ public abstract class BaseData2DTargetsController extends BaseData2DHandleContro
         start(task);
     }
 
-    public boolean generatedResult(FxTask currentTask, Data2DWriter writer) {
+    public boolean handleAllData(FxTask currentTask, Data2DWriter writer) {
         return false;
     }
 
@@ -252,7 +252,7 @@ public abstract class BaseData2DTargetsController extends BaseData2DHandleContro
         if (targetController == null || targetController.inTable()) {
             updateTable();
         } else {
-            outputExternal();
+            outputRowsToExternal();
         }
     }
 
@@ -305,7 +305,7 @@ public abstract class BaseData2DTargetsController extends BaseData2DHandleContro
         }
     }
 
-    public void outputExternal() {
+    public void outputRowsToExternal() {
         if (outputData == null || outputData.isEmpty()) {
             popError(message("NoData"));
             return;
@@ -325,8 +325,8 @@ public abstract class BaseData2DTargetsController extends BaseData2DHandleContro
             protected boolean handle() {
                 data2D.startTask(this, null);
                 if (targetController.format == Data2D_Attributes.TargetType.DatabaseTable) {
-                    dataTable = Data2D.createTable(this,
-                            outputColumns, outputData, writer.getDataName(), invalidAs);
+                    dataTable = Data2DTableTools.importTable(this, writer.getDataName(),
+                            outputColumns, outputData, invalidAs);
                     return dataTable != null;
                 } else {
                     writer.openWriter();

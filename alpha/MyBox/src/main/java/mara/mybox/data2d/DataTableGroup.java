@@ -15,7 +15,7 @@ import javafx.scene.control.IndexRange;
 import mara.mybox.controller.ControlData2DGroup;
 import mara.mybox.data.DataSort;
 import mara.mybox.data.ValueRange;
-import static mara.mybox.data2d.Data2D_Convert.createTable;
+import mara.mybox.data2d.tools.Data2DTableTools;
 import mara.mybox.db.Database;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
@@ -226,7 +226,7 @@ public class DataTableGroup {
             List<Data2DColumn> parametersColumns = new ArrayList<>();
             parametersColumns.add(new Data2DColumn("group_index", ColumnType.Long));
             parametersColumns.add(new Data2DColumn("group_parameters", ColumnType.String));
-            groupParameters = createTable(task, conn, null, parametersColumns, null, null, null, true);
+            groupParameters = Data2DTableTools.createTable(task, conn, null, parametersColumns, null, null, null, true);
             tableGroupParameters = groupParameters.getTableData2D();
 
             dataComments = message("GroupBy") + ": " + message(groupType.name()) + "\n";
@@ -1029,7 +1029,7 @@ public class DataTableGroup {
                             tableName = DerbyBase.appendIdentifier(originalData.dataName(),
                                     "_" + groupType + "_" + DateTools.nowString3());
                         }
-                        targetData = DataTable.createTable(task, conn,
+                        targetData = Data2DTableTools.createTable(task, conn,
                                 tableName, targetColumns, null, null, null, true);
                         targetData.setComments(dataComments);
                         tableTarget = targetData.getTableData2D();

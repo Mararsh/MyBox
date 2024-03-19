@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import java.sql.Connection;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -17,7 +16,6 @@ import static mara.mybox.data2d.Data2D_Attributes.TargetType.PDF;
 import static mara.mybox.data2d.Data2D_Attributes.TargetType.Text;
 import mara.mybox.data2d.operate.Data2DExport;
 import mara.mybox.data2d.writer.Data2DWriter;
-import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
@@ -34,8 +32,6 @@ public class Data2DSaveAsController extends BaseData2DSaveAsController {
     @FXML
     protected ControlData2DTarget targetController;
     @FXML
-    protected ControlNewDataTable dbController;
-    @FXML
     protected CheckBox currentSheetOnlyCheck;
     @FXML
     protected Tab csvTab, excelTab, textTab, htmlTab, pdfTab, dbTab;
@@ -43,6 +39,8 @@ public class Data2DSaveAsController extends BaseData2DSaveAsController {
     protected RadioButton zeroNonnumericRadio, blankNonnumericRadio;
     @FXML
     protected VBox optionsBox, csvBox, excelBox, textBox, htmlBox, pdfBox, dbBox;
+    @FXML
+    protected ControlNewDataTable dbController;
 
     public void setParameters(BaseData2DLoadController controller) {
         try {
@@ -59,6 +57,10 @@ public class Data2DSaveAsController extends BaseData2DSaveAsController {
             tabPane.getTabs().removeAll(csvTab, excelTab, textTab, htmlTab, pdfTab, dbTab);
             initControls(baseName);
 
+            dbController.setParameters(this, data2D);
+            dbController.setColumns(data2D.columnIndices());
+            dbController.nameInput.setText(data2D.getDataName());
+
             targetController.setParameters(this, tableController);
             targetController.formatNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -66,11 +68,7 @@ public class Data2DSaveAsController extends BaseData2DSaveAsController {
                     formatChanged();
                 }
             });
-            format = targetController.format;
-
-            dbController.setParameters(this, data2D);
-            dbController.setColumns(data2D.columnIndices());
-            dbController.nameInput.setText(targetName);
+            formatChanged();
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -137,11 +135,13 @@ public class Data2DSaveAsController extends BaseData2DSaveAsController {
             if (!targetController.validateTarget()) {
                 return false;
             }
+            Data2DWriter writer;
             format = targetController.format;
             if (format == TargetType.DatabaseTable) {
-                return pickDB();
+                writer = dbController.pickTableWriter();
+            } else {
+                writer = pickWriter(format);
             }
-            Data2DWriter writer = pickWriter(format);
             if (writer == null) {
                 return false;
             }
@@ -152,19 +152,6 @@ public class Data2DSaveAsController extends BaseData2DSaveAsController {
             export.addWriter(writer);
             return export.setColumns(targetController.targetFileController,
                     data2D.getColumns(), targetName);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return false;
-        }
-    }
-
-    public boolean pickDB() {
-        try (Connection conn = DerbyBase.getConnection()) {
-            boolean ok = dbController.checkOptions(conn, false);
-            if (!ok) {
-                tabPane.getSelectionModel().select(dbTab);
-            }
-            return ok;
         } catch (Exception e) {
             MyBoxLog.error(e);
             return false;
@@ -186,28 +173,12 @@ public class Data2DSaveAsController extends BaseData2DSaveAsController {
     @Override
     public boolean doTask(FxTask currentTask) {
         try {
-            if (format == TargetType.DatabaseTable) {
-                dataTable = null;
-                try (Connection conn = DerbyBase.getConnection()) {
-                    if (!dbController.createTable(currentTask, conn)) {
-                        return false;
-                    }
-                    if (data2D.isMutiplePages()) {
-                        dbController.importAllData(currentTask, conn, invalidAs);
-                    } else {
-                        dbController.importData(conn, null, invalidAs);
-                    }
-                    dataTable = dbController.dataTable;
-                } catch (Exception e) {
-                    updateLogs(e.toString());
-                }
-                return dataTable != null;
-            } else {
-                data2D.startTask(currentTask, null);
-                export.setCols(data2D.columnIndices()).setTask(currentTask).start();
-                data2D.stopTask();
-                return !export.isFailed();
-            }
+            data2D.startTask(currentTask, null);
+            export.setCols(data2D.columnIndices())
+                    .setInvalidAs(invalidAs)
+                    .setTask(currentTask).start();
+            data2D.stopTask();
+            return !export.isFailed();
         } catch (Exception e) {
             error = e.toString();
             return false;

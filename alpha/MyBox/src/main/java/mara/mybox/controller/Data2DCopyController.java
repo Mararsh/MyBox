@@ -1,6 +1,7 @@
 package mara.mybox.controller;
 
 import mara.mybox.data2d.writer.Data2DWriter;
+import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
@@ -35,10 +36,10 @@ public class Data2DCopyController extends BaseData2DTargetsController {
     }
 
     @Override
-    public boolean generatedResult(FxTask currentTask, Data2DWriter writer) {
+    public boolean handleAllData(FxTask currentTask, Data2DWriter writer) {
         return data2D.copy(currentTask, writer, checkedColsIndices,
                 rowNumberCheck.isSelected(), colNameCheck.isSelected(),
-                formatValuesCheck.isSelected());
+                formatValuesCheck.isSelected(), ColumnDefinition.InvalidAs.Blank) >= 0;
     }
 
     /*

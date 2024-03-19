@@ -111,7 +111,7 @@ public class Data2DFrequencyController extends BaseData2DTargetsController {
     }
 
     @Override
-    public boolean generatedResult(FxTask currentTask, Data2DWriter writer) {
+    public boolean handleAllData(FxTask currentTask, Data2DWriter writer) {
         return data2D.frequency(currentTask, writer, frequency, outputColumns, freCol, scale);
     }
 

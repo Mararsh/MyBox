@@ -34,7 +34,7 @@ public class XmlWriter extends Data2DWriter {
                 return false;
             }
             showInfo(message("Writing") + " " + targetFile.getAbsolutePath());
-            tmpFile = FileTmpTools.getTempFile();
+            tmpFile = FileTmpTools.getTempFile(".xml");
             fileWriter = new BufferedWriter(new FileWriter(tmpFile, Charset.forName("UTF-8")));
             StringBuilder s = new StringBuilder();
             s.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n")

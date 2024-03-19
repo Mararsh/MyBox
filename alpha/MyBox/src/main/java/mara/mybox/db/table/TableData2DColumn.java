@@ -112,7 +112,7 @@ public class TableData2DColumn extends BaseTable<Data2DColumn> {
         if (d2id < 0) {
             return null;
         }
-        try ( Connection conn = DerbyBase.getConnection();) {
+        try (Connection conn = DerbyBase.getConnection();) {
             return read(conn, d2id);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -153,7 +153,7 @@ public class TableData2DColumn extends BaseTable<Data2DColumn> {
         if (data == null) {
             return false;
         }
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             if (data.getD2did() >= 0) {
                 return clear(conn, data.getD2did());
             } else {
@@ -169,7 +169,7 @@ public class TableData2DColumn extends BaseTable<Data2DColumn> {
         if (file == null) {
             return false;
         }
-        try ( Connection conn = DerbyBase.getConnection();) {
+        try (Connection conn = DerbyBase.getConnection();) {
             return clearFile(conn, type, file);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -192,7 +192,7 @@ public class TableData2DColumn extends BaseTable<Data2DColumn> {
         if (conn == null || d2id < 0) {
             return false;
         }
-        try ( PreparedStatement statement = conn.prepareStatement(ClearData)) {
+        try (PreparedStatement statement = conn.prepareStatement(ClearData)) {
             statement.setLong(1, d2id);
             statement.executeUpdate();
             return true;
@@ -206,7 +206,7 @@ public class TableData2DColumn extends BaseTable<Data2DColumn> {
         if (d2id < 0 || columns.isEmpty()) {
             return false;
         }
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             save(conn, d2id, columns);
         } catch (Exception e) {
             MyBoxLog.error(e);

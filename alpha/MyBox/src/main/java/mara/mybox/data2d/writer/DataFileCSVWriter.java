@@ -36,13 +36,12 @@ public class DataFileCSVWriter extends Data2DWriter {
             if (!super.openWriter()) {
                 return false;
             }
-            MyBoxLog.console(operate != null);
             if (targetFile == null) {
                 showInfo(message("InvalidParameter") + ": " + message("TargetFile"));
                 return false;
             }
             showInfo(message("Writing") + " " + targetFile.getAbsolutePath());
-            tmpFile = FileTmpTools.getTempFile();
+            tmpFile = FileTmpTools.getTempFile(".csv");
             if (printer == null) {
                 printer = new CSVPrinter(new FileWriter(tmpFile, charset),
                         CsvTools.csvFormat(delimiter));

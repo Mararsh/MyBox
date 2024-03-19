@@ -1,4 +1,4 @@
-package mara.mybox.data2d;
+package mara.mybox.data2d.tools;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -15,6 +15,8 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import mara.mybox.controller.BaseData2DLoadController;
+import mara.mybox.data2d.DataFileCSV;
+import mara.mybox.data2d.DataFileText;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.db.data.Data2DColumn;

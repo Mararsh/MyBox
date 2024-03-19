@@ -25,18 +25,12 @@ public class DataTableSetValue extends Data2DSetValue {
     protected TableData2D tableData2D;
     protected int columnsNumber;
     protected Data2DRow sourceTableRow;
-    protected Connection conn;
     protected PreparedStatement update;
     protected List<Data2DColumn> columns;
 
     public DataTableSetValue(DataTable data, SetValue setValue) {
         setSourceData(data);
         sourceTable = data;
-    }
-
-    @Override
-    public boolean checkParameters() {
-        return super.checkParameters() && !initParameters(setValue);
     }
 
     @Override

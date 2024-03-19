@@ -9,11 +9,11 @@ import java.util.Date;
 import java.util.List;
 import mara.mybox.data.DataSort;
 import mara.mybox.data.FindReplaceString;
-import static mara.mybox.data2d.Data2D_Convert.createTable;
 import mara.mybox.data2d.DataTableGroup.TimeType;
-import mara.mybox.data2d.operate.Data2DWriteTmpTable;
+import mara.mybox.data2d.tools.Data2DTableTools;
 import mara.mybox.data2d.writer.Data2DWriter;
 import mara.mybox.data2d.writer.DataFileCSVWriter;
+import mara.mybox.data2d.writer.DataTableWriter;
 import mara.mybox.db.Database;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
@@ -35,10 +35,10 @@ import static mara.mybox.value.Languages.message;
  * @License Apache License Version 2.0
  */
 public class TmpTable extends DataTable {
-
+    
     public static String TmpTablePrefix = "MYBOXTMP__";
     public static String ExpressionColumnName = "MYBOX_GROUP_EXPRESSION__999";
-
+    
     protected Data2D sourceData;
     protected List<Data2DColumn> sourceReferColumns;
     protected List<Integer> sourcePickIndice, sourceReferIndice;
@@ -53,11 +53,11 @@ public class TmpTable extends DataTable {
     protected Calendar calendar;
     protected ExpressionCalculator expressionCalculator;
     protected FindReplaceString findReplace;
-
+    
     public TmpTable() {
         init();
     }
-
+    
     public final void init() {
         sourceData = null;
         sourcePickIndice = null;
@@ -79,7 +79,7 @@ public class TmpTable extends DataTable {
         tmpOrderby = "";
         calendar = Calendar.getInstance();
     }
-
+    
     public boolean createTable() {
         if (sourceData == null) {
             return false;
@@ -123,7 +123,7 @@ public class TmpTable extends DataTable {
                     tmpColumns.add(tableColumn);
                     sourceReferIndice.add(sourceData.colOrder(name));
                 }
-
+                
             } else if (groupRangeColumnName != null && !groupRangeColumnName.isBlank()) {
                 Data2DColumn sourceColumn = sourceData.columnByName(groupRangeColumnName);
                 sourceReferColumns.add(sourceColumn);
@@ -131,7 +131,7 @@ public class TmpTable extends DataTable {
                 tableColumn.setD2cid(-1).setD2id(-1).setType(ColumnType.Double);
                 tmpColumns.add(tableColumn);
                 sourceReferIndice.add(sourceData.colOrder(groupRangeColumnName));
-
+                
             } else if (groupTimeColumnName != null && !groupTimeColumnName.isBlank()) {
                 Data2DColumn sourceColumn = sourceData.columnByName(groupTimeColumnName);
                 sourceReferColumns.add(sourceColumn);
@@ -140,7 +140,7 @@ public class TmpTable extends DataTable {
                 tmpColumns.add(tableColumn);
                 timeIndex = sourceReferIndice.size();
                 sourceReferIndice.add(sourceData.colOrder(groupTimeColumnName));
-
+                
             } else if (groupExpression != null && !groupExpression.isBlank()) {
                 tmpColumns.add(new Data2DColumn(ExpressionColumnName, ColumnType.String));
                 expressionIndex = sourceReferIndice.size();
@@ -148,7 +148,7 @@ public class TmpTable extends DataTable {
                 sourceReferColumns.add(sourceColumn);
                 sourceReferIndice.add(0);
                 expressionCalculator = new ExpressionCalculator();
-
+                
             }
             int sortStartIndex = -1;
             if (orders != null && !orders.isEmpty()) {
@@ -163,7 +163,7 @@ public class TmpTable extends DataTable {
                     sourceReferIndice.add(sourceData.colOrder(name));
                 }
             }
-            DataTable dataTable = createTable(task, conn, null, tmpColumns, null, null, null, true);
+            DataTable dataTable = Data2DTableTools.createTable(task, conn, null, tmpColumns, null, null, null, true);
             if (dataTable == null) {
                 return false;
             }
@@ -201,7 +201,7 @@ public class TmpTable extends DataTable {
         }
         return true;
     }
-
+    
     public long importData(Connection conn) {
         try {
             if (conn == null || columns == null || columns.isEmpty()) {
@@ -210,19 +210,10 @@ public class TmpTable extends DataTable {
             if (importRows != null) {
                 return importRows(conn);
             }
-            Data2DWriteTmpTable reader = Data2DWriteTmpTable.create(sourceData);
-            if (reader == null) {
-                return -2;
-            }
-            reader.setConn(conn).setWriterTable(this)
-                    .setIncludeRowNumber(includeRowNumber).setInvalidAs(invalidAs)
-                    .setCols(sourcePickIndice).setTask(task).start();
-            if (!reader.isFailed()) {
-                conn.commit();
-                return reader.getHandledCount();
-            } else {
-                return -3;
-            }
+            DataTableWriter writer = new DataTableWriter()
+                    .setTargetTable(this);
+            return sourceData.copy(task, writer, sourcePickIndice,
+                    includeRowNumber, true, false, invalidAs);
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
@@ -233,9 +224,14 @@ public class TmpTable extends DataTable {
     }
 
     // sourceRow should include values of all source columns
-    public void makeTmpRow(Data2DRow data2DRow, List<String> sourceRow, long rowIndex) {
+    @Override
+    public Data2DRow makeRow(List<String> values, InvalidAs invalidAs, long rowIndex) {
         try {
-            int len = sourceRow.size();
+            if (columns == null || values == null || values.isEmpty()) {
+                return null;
+            }
+            Data2DRow data2DRow = tableData2D.newRow();
+            int len = values.size();
             for (int i = 0; i < sourceReferIndice.size(); i++) {
                 int col = sourceReferIndice.get(i);
                 if (col < 0 || col >= len) {
@@ -244,11 +240,11 @@ public class TmpTable extends DataTable {
                 Data2DColumn targetColumn = column(i + valueIndexOffset);
                 Object tmpValue;
                 if (i == expressionIndex) {
-                    expressionCalculator.calculateDataRowExpression(sourceData, groupExpression, sourceRow, rowIndex);
+                    expressionCalculator.calculateDataRowExpression(sourceData, groupExpression, values, rowIndex);
                     tmpValue = expressionCalculator.getResult();
                 } else {
                     Data2DColumn sourceColumn = sourceData.column(col);
-                    String sourceValue = sourceRow.get(col);
+                    String sourceValue = values.get(col);
                     switch (targetColumn.getType()) {
                         case String:
                             tmpValue = sourceValue;
@@ -323,11 +319,13 @@ public class TmpTable extends DataTable {
                 }
                 data2DRow.setColumnValue(targetColumn.getColumnName(), tmpValue);
             }
+            return data2DRow;
         } catch (Exception e) {
             MyBoxLog.error(e);
+            return null;
         }
     }
-
+    
     public long importRows(Connection conn) {
         if (conn == null || importRows == null || importRows.isEmpty()) {
             return -1;
@@ -336,18 +334,20 @@ public class TmpTable extends DataTable {
             int count = 0;
             conn.setAutoCommit(false);
             for (List<String> row : importRows) {
-                Data2DRow data2DRow = tableData2D.newRow();
+                
                 List<String> values;
                 long index;
                 if (includeRowNumber) {
                     index = Long.parseLong(row.get(0));
-                    data2DRow.setColumnValue(column(1).getColumnName(), index);
                     values = row.subList(1, row.size());
                 } else {
                     index = -1;
                     values = row;
                 }
-                makeTmpRow(data2DRow, values, index);
+                Data2DRow data2DRow = makeRow(values, invalidAs, index);
+                if (includeRowNumber) {
+                    data2DRow.setColumnValue(column(1).getColumnName(), index);
+                }
                 if (tableData2D.setInsertStatement(conn, insert, data2DRow)) {
                     insert.addBatch();
                     if (++count % Database.BatchSize == 0) {
@@ -375,7 +375,7 @@ public class TmpTable extends DataTable {
             return -4;
         }
     }
-
+    
     public DataFileCSV sort(int maxSortResults) {
         try {
             if (sourceData == null) {
@@ -406,7 +406,7 @@ public class TmpTable extends DataTable {
             return null;
         }
     }
-
+    
     public boolean sort(FxTask currentTask, Data2DWriter writer, int maxSortResults) {
         if (writer == null || sourceData == null) {
             return false;
@@ -451,7 +451,7 @@ public class TmpTable extends DataTable {
         writer.closeWriter();
         return true;
     }
-
+    
     public boolean transpose(FxTask currentTask, Data2DWriter writer, boolean firstColumnAsNames) {
         if (writer == null || sourceData == null) {
             return false;
@@ -543,15 +543,15 @@ public class TmpTable extends DataTable {
         writer.closeWriter();
         return true;
     }
-
+    
     public int parametersOffset() {
         return sourcePickIndice.size() + valueIndexOffset;
     }
-
+    
     public Data2DColumn parameterSourceColumn() {
         return sourceReferColumns.get(sourcePickIndice.size());
     }
-
+    
     public FindReplaceString findReplace() {
         if (findReplace == null) {
             findReplace = FindReplaceString.create().
@@ -560,7 +560,7 @@ public class TmpTable extends DataTable {
         }
         return findReplace;
     }
-
+    
     public String tmpScript(String script) {
         if (script == null || script.isBlank()) {
             return null;
@@ -584,11 +584,11 @@ public class TmpTable extends DataTable {
     public static String tmpTableName() {
         return TmpTablePrefix + DateTools.nowString3();
     }
-
+    
     public static String tmpTableName(String sourceName) {
         return TmpTablePrefix + sourceName + DateTools.nowString3();
     }
-
+    
     public static TmpTable toStatisticTable(Data2D sourceData, FxTask task,
             List<Integer> cols, InvalidAs invalidAs) {
         if (cols == sourceData || cols == null || cols.isEmpty()) {
@@ -615,72 +615,72 @@ public class TmpTable extends DataTable {
         this.sourceData = sourceData;
         return this;
     }
-
+    
     public TmpTable setSourcePickIndice(List<Integer> sourcePickIndice) {
         this.sourcePickIndice = sourcePickIndice;
         return this;
     }
-
+    
     public TmpTable setTargetName(String targetName) {
         this.targetName = targetName;
         return this;
     }
-
+    
     public TmpTable setImportData(boolean importData) {
         this.importData = importData;
         return this;
     }
-
+    
     public TmpTable setForStatistic(boolean forStatistic) {
         this.forStatistic = forStatistic;
         return this;
     }
-
+    
     public TmpTable setIncludeRowNumber(boolean includeRowNumber) {
         this.includeRowNumber = includeRowNumber;
         return this;
     }
-
+    
     public TmpTable setIncludeColName(boolean includeColName) {
         this.includeColName = includeColName;
         return this;
     }
-
+    
     public TmpTable setOrders(List<String> orders) {
         this.orders = orders;
         return this;
     }
-
+    
     public TmpTable setGroupEqualColumnNames(List<String> groupEqualColumnNames) {
         this.groupEqualColumnNames = groupEqualColumnNames;
         return this;
     }
-
+    
     public TmpTable setGroupRangleColumnName(String groupRangleColumnName) {
         this.groupRangeColumnName = groupRangleColumnName;
         return this;
     }
-
+    
     public TmpTable setGroupTimeColumnName(String groupTimeColumnName) {
         this.groupTimeColumnName = groupTimeColumnName;
         return this;
     }
-
+    
     public TmpTable setGroupTimeType(TimeType groupTimeType) {
         this.groupTimeType = groupTimeType;
         return this;
     }
-
+    
     public TmpTable setGroupExpression(String groupExpression) {
         this.groupExpression = groupExpression;
         return this;
     }
-
+    
     public TmpTable setInvalidAs(InvalidAs invalidAs) {
         this.invalidAs = invalidAs;
         return this;
     }
-
+    
     public TmpTable setImportRows(List<List<String>> importRows) {
         this.importRows = importRows;
         return this;
@@ -692,65 +692,65 @@ public class TmpTable extends DataTable {
     public Data2D getSourceData() {
         return sourceData;
     }
-
+    
     public List<Integer> getSourcePickIndice() {
         return sourcePickIndice;
     }
-
+    
     public List<Integer> getSourceReferIndice() {
         return sourceReferIndice;
     }
-
+    
     public void setSourceReferIndice(List<Integer> sourceReferIndice) {
         this.sourceReferIndice = sourceReferIndice;
     }
-
+    
     public List<String> getOrders() {
         return orders;
     }
-
+    
     public String getTmpOrderby() {
         return tmpOrderby;
     }
-
+    
     public List<String> getGroupEqualColumnNames() {
         return groupEqualColumnNames;
     }
-
+    
     public int getValueIndexOffset() {
         return valueIndexOffset;
     }
-
+    
     public String getTargetName() {
         return targetName;
     }
-
+    
     public String getGroupRangeColumnName() {
         return groupRangeColumnName;
     }
-
+    
     public String getGroupExpression() {
         return groupExpression;
     }
-
+    
     public boolean isImportData() {
         return importData;
     }
-
+    
     public boolean isForStatistic() {
         return forStatistic;
     }
-
+    
     public boolean isIncludeRowNumber() {
         return includeRowNumber;
     }
-
+    
     public boolean isIncludeColName() {
         return includeColName;
     }
-
+    
     public InvalidAs getInvalidAs() {
         return invalidAs;
     }
-
+    
 }

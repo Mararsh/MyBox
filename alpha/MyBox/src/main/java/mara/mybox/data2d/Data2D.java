@@ -1,5 +1,6 @@
 package mara.mybox.data2d;
 
+import mara.mybox.data2d.tools.Data2DDefinitionTools;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -96,7 +97,7 @@ public abstract class Data2D extends Data2D_Operations {
     }
 
     public String dataInfo() {
-        return pageInfo() + "<BR>" + Data2DTools.definitionToHtml(this);
+        return pageInfo() + "<BR>" + Data2DDefinitionTools.definitionToHtml(this);
     }
 
     /*

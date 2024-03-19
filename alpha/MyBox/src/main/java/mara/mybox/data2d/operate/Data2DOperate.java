@@ -74,7 +74,6 @@ public abstract class Data2DOperate {
         if (writers == null) {
             return true;
         }
-        MyBoxLog.console(failed);
         for (Data2DWriter writer : writers) {
             setTargetFile(writer);
             if (!writer.openWriter()) {
@@ -129,7 +128,7 @@ public abstract class Data2DOperate {
             scale = sourceData.getScale();
         }
         if (invalidAs == null) {
-            invalidAs = InvalidAs.Skip;
+            invalidAs = InvalidAs.Blank;
         }
         return openWriters();
     }
@@ -366,6 +365,22 @@ public abstract class Data2DOperate {
     /*
         get
      */
+    public Data2DReader getReader() {
+        return reader;
+    }
+
+    public Data2D getSourceData() {
+        return sourceData;
+    }
+
+    public File getSourceFile() {
+        return sourceFile;
+    }
+
+    public int getScale() {
+        return scale;
+    }
+
     public BaseTaskController getTaskController() {
         return taskController;
     }

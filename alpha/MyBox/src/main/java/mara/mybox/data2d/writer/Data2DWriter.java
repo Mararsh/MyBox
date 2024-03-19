@@ -37,7 +37,7 @@ import mara.mybox.fxml.FxTask;
  * @License Apache License Version 2.0
  */
 public abstract class Data2DWriter {
-    
+
     protected BaseController controller;
     protected Data2D targetData;
     protected Data2DOperate operate;
@@ -45,30 +45,30 @@ public abstract class Data2DWriter {
     protected ControlTargetFile targetFileController;
     protected List<String> headerNames, targetRow;
     protected List<Data2DColumn> columns;
-    protected boolean writeRowNumber, writeHeader, created,
+    protected boolean writeHeader, created,
             formatValues, recordTargetFile, recordTargetData;
     protected String indent = "    ", dataName, fileSuffix;
     protected long targetRowIndex;
     protected Connection conn;
-    
+
     public Data2DWriter() {
         operate = null;
         targetFileController = null;
-        writeRowNumber = formatValues = false;
+        formatValues = false;
         writeHeader = recordTargetFile = recordTargetData = true;
     }
-    
+
     final public boolean resetWriter() {
         targetData = null;
         targetRowIndex = 0;
         created = false;
         return true;
     }
-    
+
     public boolean checkParameters() {
         return true;
     }
-    
+
     public boolean openWriter() {
         if (!checkParameters()) {
             return false;
@@ -76,7 +76,7 @@ public abstract class Data2DWriter {
         resetWriter();
         return true;
     }
-    
+
     public void writeRow(List<String> inRow) {
         try {
             targetRow = null;
@@ -93,15 +93,15 @@ public abstract class Data2DWriter {
             }
             printTargetRow();
             targetRowIndex++;
-            
+
         } catch (Exception e) {
             showError(e.toString());
         }
     }
-    
+
     public void printTargetRow() {
     }
-    
+
     public FxTask task() {
         if (operate != null) {
             return operate.getTask();
@@ -111,15 +111,15 @@ public abstract class Data2DWriter {
             return null;
         }
     }
-    
+
     public InvalidAs invalidAs() {
         if (operate != null) {
             return operate.getInvalidAs();
         } else {
-            return InvalidAs.Skip;
+            return InvalidAs.Blank;
         }
     }
-    
+
     public long sourceRowIndex() {
         if (operate != null) {
             return operate.getSourceRowIndex();
@@ -127,14 +127,14 @@ public abstract class Data2DWriter {
             return -1;
         }
     }
-    
+
     public void closeWriter() {
         created = false;
     }
 
 
     /*
-        status
+        value/status
      */
     public Connection conn() {
         if (operate != null) {
@@ -144,14 +144,22 @@ public abstract class Data2DWriter {
         }
         return conn;
     }
-    
+
+    public Data2D sourceData() {
+        if (operate != null) {
+            return operate.getSourceData();
+        } else {
+            return null;
+        }
+    }
+
     public void showResult() {
         if (targetData == null) {
             return;
         }
         Data2DManufactureController.openDef(targetData);
     }
-    
+
     public void showInfo(String info) {
         if (operate != null) {
             operate.showInfo(info);
@@ -159,7 +167,7 @@ public abstract class Data2DWriter {
             controller.displayInfo(info);
         }
     }
-    
+
     public void recordFileGenerated(File file, int type) {
         if (recordTargetFile) {
             return;
@@ -173,7 +181,7 @@ public abstract class Data2DWriter {
             controller.recordFileWritten(conn(), file, type, type);
         }
     }
-    
+
     final public void showError(String error) {
         if (operate != null) {
             operate.showError(error);
@@ -183,23 +191,23 @@ public abstract class Data2DWriter {
             MyBoxLog.error(error);
         }
     }
-    
+
     public void stop() {
         if (operate != null) {
             operate.stop();
         }
     }
-    
+
     public void setFailed() {
         if (operate != null) {
             operate.setFailed();
         }
     }
-    
+
     public boolean isFailed() {
         return operate != null && operate.isFailed();
     }
-    
+
     public boolean isStopped() {
         return operate != null && operate.isStopped();
     }
@@ -224,7 +232,7 @@ public abstract class Data2DWriter {
                     writer = new DataFileTextWriter();
                     break;
                 case DatabaseTable:
-                    writer = new DataBaseTableWriter();
+                    writer = new DataTableWriter();
                     break;
                 case Matrix:
                     writer = new MatrixWriter();
@@ -267,158 +275,149 @@ public abstract class Data2DWriter {
         this.controller = controller;
         return this;
     }
-    
+
     public Data2D getTargetData() {
         return targetData;
     }
-    
+
     public Data2DWriter setTargetData(Data2D targetData) {
         this.targetData = targetData;
         return this;
     }
-    
+
     public Data2DOperate getOperate() {
         return operate;
     }
-    
+
     public Data2DWriter setOperate(Data2DOperate operate) {
         this.operate = operate;
         return this;
     }
-    
+
     public File getTargetFile() {
         return targetFile;
     }
-    
+
     public Data2DWriter setTargetFile(File targetFile) {
         this.targetFile = targetFile;
         return this;
     }
-    
+
     public ControlTargetFile getTargetFileController() {
         return targetFileController;
     }
-    
+
     public Data2DWriter setTargetFileController(ControlTargetFile targetFileController) {
         this.targetFileController = targetFileController;
         return this;
     }
-    
+
     public List<String> getHeaderNames() {
         return headerNames;
     }
-    
+
     public Data2DWriter setHeaderNames(List<String> headerNames) {
         this.headerNames = headerNames;
         return this;
     }
-    
+
     public List<String> getTargetRow() {
         return targetRow;
     }
-    
+
     public Data2DWriter setTargetRow(List<String> targetRow) {
         this.targetRow = targetRow;
         return this;
     }
-    
+
     public List<Data2DColumn> getColumns() {
         return columns;
     }
-    
+
     public Data2DWriter setColumns(List<Data2DColumn> columns) {
         this.columns = columns;
         return this;
     }
-    
-    public boolean isWriteRowNumber() {
-        return writeRowNumber;
-    }
-    
-    public Data2DWriter setRowNumber(boolean rowNumber) {
-        this.writeRowNumber = rowNumber;
-        return this;
-    }
-    
+
     public boolean isWriteHeader() {
         return writeHeader;
     }
-    
+
     public Data2DWriter setWriteHeader(boolean writeHeader) {
         this.writeHeader = writeHeader;
         return this;
     }
-    
+
     public boolean isCreated() {
         return created;
     }
-    
+
     public Data2DWriter setCreated(boolean created) {
         this.created = created;
         return this;
     }
-    
+
     public boolean isFormatValues() {
         return formatValues;
     }
-    
+
     public Data2DWriter setFormatValues(boolean formatValues) {
         this.formatValues = formatValues;
         return this;
     }
-    
+
     public String getIndent() {
         return indent;
     }
-    
+
     public Data2DWriter setIndent(String indent) {
         this.indent = indent;
         return this;
     }
-    
+
     public String getDataName() {
         return dataName;
     }
-    
+
     public Data2DWriter setDataName(String dataName) {
         this.dataName = dataName;
         return this;
     }
-    
+
     public String getFileSuffix() {
         return fileSuffix;
     }
-    
+
     public Data2DWriter setFileSuffix(String fileSuffix) {
         this.fileSuffix = fileSuffix;
         return this;
     }
-    
+
     public boolean isRecordTargetFile() {
         return recordTargetFile;
     }
-    
+
     public Data2DWriter setRecordTargetFile(boolean recordTargetFile) {
         this.recordTargetFile = recordTargetFile;
         return this;
     }
-    
+
     public boolean isRecordTargetData() {
         return recordTargetData;
     }
-    
+
     public Data2DWriter setRecordTargetData(boolean recordTargetData) {
         this.recordTargetData = recordTargetData;
         return this;
     }
-    
+
     public long getTargetRowIndex() {
         return targetRowIndex;
     }
-    
+
     public Data2DWriter setTargetRowIndex(long targetRowIndex) {
         this.targetRowIndex = targetRowIndex;
         return this;
     }
-    
+
 }

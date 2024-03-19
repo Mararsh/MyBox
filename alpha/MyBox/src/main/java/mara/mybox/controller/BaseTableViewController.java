@@ -24,7 +24,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.data.StringTable;
-import mara.mybox.data2d.Data2DTools;
+import mara.mybox.data2d.tools.Data2DColumnTools;
+import mara.mybox.data2d.tools.Data2DPageTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fxml.FxTask;
@@ -562,7 +563,7 @@ public abstract class BaseTableViewController<P> extends BaseFileController {
 
             @Override
             protected void whenSucceeded() {
-                Data2DManufactureController.openData(baseTitle, Data2DTools.toColumns(names), data);
+                Data2DManufactureController.openData(baseTitle, Data2DColumnTools.toColumns(names), data);
             }
         };
         start(dataTask, false, message("LoadingTableData"));

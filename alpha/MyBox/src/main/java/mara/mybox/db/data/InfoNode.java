@@ -22,7 +22,8 @@ import mara.mybox.controller.NotesController;
 import mara.mybox.controller.RowFilterController;
 import mara.mybox.controller.WebFavoritesController;
 import mara.mybox.data.StringTable;
-import mara.mybox.data2d.Data2DTools;
+import mara.mybox.data2d.tools.Data2DDefinitionTools;
+import mara.mybox.data2d.tools.Data2DPageTools;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
@@ -557,9 +558,9 @@ public class InfoNode extends BaseData {
                 break;
             }
             case InfoNode.Data2DDefinition: {
-                DataFileCSV csv = Data2DTools.definitionFromXML(task, controller, s);
+                DataFileCSV csv = Data2DDefinitionTools.definitionFromXML(task, controller, s);
                 if (csv != null) {
-                    html = Data2DTools.definitionToHtml(csv);
+                    html = Data2DDefinitionTools.definitionToHtml(csv);
                 }
                 break;
             }
@@ -637,10 +638,10 @@ public class InfoNode extends BaseData {
         String json = "";
         switch (category) {
             case InfoNode.Data2DDefinition: {
-                DataFileCSV csv = Data2DTools.definitionFromXML(task, controller, s);
+                DataFileCSV csv = Data2DDefinitionTools.definitionFromXML(task, controller, s);
                 if (csv != null) {
                     json = prefix + ",\n"
-                            + Data2DTools.definitionToJSON(csv, true, prefix);
+                            + Data2DDefinitionTools.definitionToJSON(csv, true, prefix);
                 }
                 break;
             }

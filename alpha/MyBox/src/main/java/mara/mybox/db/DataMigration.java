@@ -16,7 +16,7 @@ import mara.mybox.bufferedimage.ImageConvertTools;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.bufferedimage.ImageScopeTools;
 import mara.mybox.data.GeoCoordinateSystem;
-import static mara.mybox.data2d.Data2D_Convert.createTable;
+import mara.mybox.data2d.tools.Data2DTableTools;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.db.data.ColorData;
 import mara.mybox.db.data.ColorPaletteName;
@@ -434,7 +434,7 @@ public class DataMigration {
             columns.add(new Data2DColumn(message("EndTime"), ColumnType.Era));
             columns.add(new Data2DColumn(message("Image"), ColumnType.String));
             columns.add(new Data2DColumn(message("Comments"), ColumnType.String));
-            locations = createTable(null, conn, tableName, columns, null, null, null, false);
+            locations = Data2DTableTools.createTable(null, conn, tableName, columns, null, null, null, false);
             TableData2D tableLocations = locations.getTableData2D();
             long count = 0;
             try (ResultSet query = statement.executeQuery("SELECT * FROM Location_Data_View");
@@ -507,7 +507,7 @@ public class DataMigration {
             columns.add(new Data2DColumn(message("IncreasedDead"), ColumnType.Long));
             columns.add(new Data2DColumn(message("Source"), ColumnType.String)); // 1:predefined 2:added 3:filled 4:statistic others:unknown
             columns.add(new Data2DColumn(message("Comments"), ColumnType.String));
-            DataTable reports = createTable(null, conn, tableName, columns, null, null, null, false);
+            DataTable reports = Data2DTableTools.createTable(null, conn, tableName, columns, null, null, null, false);
             TableData2D tableReports = reports.getTableData2D();
             long count = 0;
             try (ResultSet query = statement.executeQuery("SELECT * FROM Epidemic_Report");

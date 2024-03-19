@@ -19,25 +19,17 @@ import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.input.Clipboard;
 import mara.mybox.data.StringTable;
 import mara.mybox.data2d.Data2D;
-import mara.mybox.data2d.Data2DExampleTools;
-import mara.mybox.data2d.Data2DMenuTools;
-import mara.mybox.data2d.Data2DTools;
 import mara.mybox.data2d.DataClipboard;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataFileExcel;
 import mara.mybox.data2d.DataFileText;
-import mara.mybox.data2d.DataMatrix;
-import mara.mybox.data2d.DataTable;
-import mara.mybox.data2d.TmpTable;
+import mara.mybox.data2d.tools.Data2DColumnTools;
+import mara.mybox.data2d.tools.Data2DExampleTools;
+import mara.mybox.data2d.tools.Data2DMenuTools;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.Data2DDefinition.DataType;
-import static mara.mybox.db.data.Data2DDefinition.DataType.CSV;
-import static mara.mybox.db.data.Data2DDefinition.DataType.Excel;
-import static mara.mybox.db.data.Data2DDefinition.DataType.MyBoxClipboard;
-import static mara.mybox.db.data.Data2DDefinition.DataType.Texts;
-import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
@@ -224,7 +216,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
                 column.setIndex(data2D.newColumnIndex());
             }
             data2D.setColumns(columns);
-            StringTable validateTable = Data2DTools.validate(columns);
+            StringTable validateTable = Data2DColumnTools.validate(columns);
             List<List<String>> rows = new ArrayList<>();
             if (data != null) {
                 for (int i = 0; i < data.size(); i++) {
@@ -261,83 +253,6 @@ public class BaseData2DLoadController extends BaseData2DTableController {
             MyBoxLog.error(e);
             return false;
         }
-    }
-
-    public void createData(DataFileCSV sourceData, DataType targetType,
-            String targetName, File targetFile) {
-        if (sourceData == null || targetType == null
-                || sourceData.getFile() == null || !sourceData.getFile().exists()) {
-            popError("Nonexistent");
-            return;
-        }
-        if (!checkBeforeNextAction()) {
-            return;
-        }
-        task = new FxSingletonTask<Void>(this) {
-            private Data2D targetData;
-
-            @Override
-            protected boolean handle() {
-                try {
-                    switch (targetType) {
-                        case Texts:
-                            targetData = DataFileText.toText(this, sourceData, targetName, targetFile);
-                            if (targetData != null) {
-                                recordFileWritten(targetData.getFile(), VisitHistory.FileType.Text);
-                            }
-                            break;
-                        case CSV:
-                            targetData = DataFileCSV.toCSV(this, sourceData, targetName, targetFile);
-                            if (targetData != null) {
-                                recordFileWritten(targetData.getFile(), VisitHistory.FileType.CSV);
-                            }
-                            break;
-                        case Excel: {
-                            targetData = DataFileExcel.toExcel(this, sourceData, targetName, targetFile);
-                            if (targetData != null) {
-                                recordFileWritten(targetData.getFile(), VisitHistory.FileType.Excel);
-                            }
-                            break;
-                        }
-                        case DatabaseTable: {
-                            String name = targetName;
-                            if (name == null || name.isBlank()) {
-                                name = sourceData.dataName();
-                                if (name.startsWith(TmpTable.TmpTablePrefix)
-                                        || name.startsWith(TmpTable.TmpTablePrefix.toLowerCase())) {
-                                    name = name.substring(TmpTable.TmpTablePrefix.length());
-                                }
-                            }
-                            DataTable dataTable = sourceData.toTable(this, name);
-                            targetData = dataTable;
-                            break;
-                        }
-                        case MyBoxClipboard: {
-                            DataClipboard clip = DataClipboard.toClip(this, sourceData, targetName);
-                            targetData = clip;
-                            break;
-                        }
-                        case Matrix: {
-                            DataMatrix matrix = DataMatrix.toMatrix(this, sourceData, targetName);
-                            targetData = matrix;
-                            break;
-                        }
-                    }
-                    return targetData != null;
-                } catch (Exception e) {
-                    error = e.toString();
-                    MyBoxLog.console(error);
-                    return false;
-                }
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                loadDef(targetData);
-            }
-
-        };
-        start(task, thisPane);
     }
 
     public void loadMatrix(double[][] matrix) {

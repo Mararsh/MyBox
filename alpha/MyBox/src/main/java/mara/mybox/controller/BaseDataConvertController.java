@@ -22,10 +22,10 @@ import static mara.mybox.data2d.Data2D_Attributes.TargetType.Replace;
 import static mara.mybox.data2d.Data2D_Attributes.TargetType.Text;
 import static mara.mybox.data2d.Data2D_Attributes.TargetType.XML;
 import mara.mybox.data2d.writer.Data2DWriter;
-import mara.mybox.data2d.writer.DataBaseTableWriter;
 import mara.mybox.data2d.writer.DataFileCSVWriter;
 import mara.mybox.data2d.writer.DataFileExcelWriter;
 import mara.mybox.data2d.writer.DataFileTextWriter;
+import mara.mybox.data2d.writer.DataTableWriter;
 import mara.mybox.data2d.writer.HtmlWriter;
 import mara.mybox.data2d.writer.JsonWriter;
 import mara.mybox.data2d.writer.MatrixWriter;
@@ -216,7 +216,7 @@ public class BaseDataConvertController extends BaseTaskController {
                     writer = pickTextWriter();
                     break;
                 case DatabaseTable:
-                    writer = new DataBaseTableWriter();
+                    writer = new DataTableWriter();
                     break;
                 case Matrix:
                     writer = new MatrixWriter();

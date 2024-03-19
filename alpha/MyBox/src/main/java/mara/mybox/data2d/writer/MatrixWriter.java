@@ -30,11 +30,16 @@ public class MatrixWriter extends Data2DWriter {
             if (!super.openWriter()) {
                 return false;
             }
-            matrix = new DataMatrix();
-            matrix.setTask(task()).setDataName(dataName);
             conn = conn();
-            if (conn == null || !Data2D.saveAttributes(conn, matrix, columns)) {
+            if (conn == null) {
                 return false;
+            }
+            if (matrix == null) {
+                matrix = new DataMatrix();
+                matrix.setTask(task()).setDataName(dataName);
+                if (!Data2D.saveAttributes(conn, matrix, columns)) {
+                    return false;
+                }
             }
             tableData2DCell = matrix.getTableData2DCell();
             did = matrix.getD2did();
@@ -86,6 +91,18 @@ public class MatrixWriter extends Data2DWriter {
         } catch (Exception e) {
             showError(e.toString());
         }
+    }
+
+    /*
+        set/get
+     */
+    public DataMatrix getMatrix() {
+        return matrix;
+    }
+
+    public MatrixWriter setMatrix(DataMatrix matrix) {
+        this.matrix = matrix;
+        return this;
     }
 
 }

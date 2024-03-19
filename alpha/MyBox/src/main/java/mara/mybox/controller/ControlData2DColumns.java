@@ -16,7 +16,9 @@ import javafx.scene.control.Tooltip;
 import javafx.util.Callback;
 import mara.mybox.data.StringTable;
 import mara.mybox.data2d.Data2D;
-import mara.mybox.data2d.Data2DTools;
+import mara.mybox.data2d.tools.Data2DColumnTools;
+import mara.mybox.data2d.tools.Data2DDefinitionTools;
+import mara.mybox.data2d.tools.Data2DPageTools;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.InfoNode;
@@ -228,7 +230,7 @@ public class ControlData2DColumns extends BaseData2DColumnsController {
     @Override
     public void okAction() {
         try {
-            StringTable validateTable = Data2DTools.validate(tableData);
+            StringTable validateTable = Data2DColumnTools.validate(tableData);
             if (validateTable != null && !validateTable.isEmpty()) {
                 validateTable.htmlTable();
                 return;
@@ -277,7 +279,7 @@ public class ControlData2DColumns extends BaseData2DColumnsController {
                 if (node == null) {
                     return;
                 }
-                addColumns(Data2DTools.definitionFromXML(null, myController, node.getInfo()));
+                addColumns(Data2DDefinitionTools.definitionFromXML(null, myController, node.getInfo()));
                 controller.close();
             }
         });

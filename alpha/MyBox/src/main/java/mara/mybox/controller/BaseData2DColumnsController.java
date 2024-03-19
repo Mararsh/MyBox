@@ -26,7 +26,8 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.paint.Color;
 import javafx.util.Callback;
 import mara.mybox.data2d.Data2D;
-import mara.mybox.data2d.Data2DTools;
+import mara.mybox.data2d.tools.Data2DDefinitionTools;
+import mara.mybox.data2d.tools.Data2DPageTools;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataFileExcel;
 import mara.mybox.db.data.Data2DColumn;
@@ -572,7 +573,7 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
             @Override
             protected boolean handle() {
                 try {
-                    csv = Data2DTools.definitionFromXML(this, myController,
+                    csv = Data2DDefinitionTools.definitionFromXML(this, myController,
                             TextFileTools.readTexts(this, file));
                     return csv != null;
                 } catch (Exception e) {
@@ -706,7 +707,7 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
             @Override
             protected boolean handle() {
                 try {
-                    csv = Data2DTools.definitionToCSVFile(currentData, file);
+                    csv = Data2DDefinitionTools.definitionToCSVFile(currentData, file);
                     if (file != null && file.exists()) {
                         recordFileWritten(file, VisitHistory.FileType.CSV);
                         return true;
@@ -743,7 +744,7 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
             @Override
             protected boolean handle() {
                 try {
-                    String xml = Data2DTools.definitionToXML(currentData,
+                    String xml = Data2DDefinitionTools.definitionToXML(currentData,
                             UserConfig.getBoolean("Data2DDefinitionExportAtributes", true),
                             "");
                     if (xml == null || xml.isBlank()) {
@@ -795,7 +796,7 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
             @Override
             protected boolean handle() {
                 try {
-                    String json = Data2DTools.definitionToJSON(currentData,
+                    String json = Data2DDefinitionTools.definitionToJSON(currentData,
                             UserConfig.getBoolean("Data2DDefinitionExportAtributes", true),
                             "");
                     if (json == null || json.isBlank()) {
@@ -846,7 +847,7 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
             @Override
             protected boolean handle() {
                 try {
-                    excel = Data2DTools.definitionToExcelFile(currentData, file);
+                    excel = Data2DDefinitionTools.definitionToExcelFile(currentData, file);
                     if (file != null && file.exists()) {
                         recordFileWritten(file, VisitHistory.FileType.CSV);
                         return true;

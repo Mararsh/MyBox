@@ -40,7 +40,7 @@ public class DataFileTextWriter extends Data2DWriter {
                 return false;
             }
             showInfo(message("Writing") + " " + targetFile.getAbsolutePath());
-            tmpFile = FileTmpTools.getTempFile();
+            tmpFile = FileTmpTools.getTempFile(".txt");
             if (fileWriter == null) {
                 fileWriter = new BufferedWriter(new FileWriter(tmpFile, charset));
             }

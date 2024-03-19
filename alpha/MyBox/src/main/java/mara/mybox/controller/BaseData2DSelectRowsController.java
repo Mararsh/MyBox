@@ -15,6 +15,7 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.FlowPane;
 import mara.mybox.data2d.DataFilter;
 import mara.mybox.data2d.writer.ListWriter;
+import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
@@ -698,7 +699,9 @@ public class BaseData2DSelectRowsController extends BaseData2DLoadController {
             if (isAllPages()) {
                 ListWriter writer = new ListWriter();
                 data2D.copy(task, writer, checkedColsIndices,
-                        false, true, formatValuesCheck != null && formatValuesCheck.isSelected());
+                        false, true,
+                        formatValuesCheck != null && formatValuesCheck.isSelected(),
+                        InvalidAs.Blank);
                 data = writer.getRows();
             } else {
                 data = tableFiltered(false);

@@ -11,7 +11,8 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.Tab;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import mara.mybox.data2d.Data2DTools;
+import mara.mybox.data2d.tools.Data2DColumnTools;
+import mara.mybox.data2d.tools.Data2DPageTools;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.writer.Data2DWriter;
 import mara.mybox.db.DerbyBase;
@@ -200,7 +201,7 @@ public class Data2DSpliceController extends BaseController {
                 return false;
             }
             writer.setColumns(columns)
-                    .setHeaderNames(Data2DTools.toNames(columns));
+                    .setHeaderNames(Data2DColumnTools.toNames(columns));
             if (!writer.openWriter()) {
                 return false;
             }
@@ -299,7 +300,7 @@ public class Data2DSpliceController extends BaseController {
                 return false;
             }
             writer.setColumns(columns)
-                    .setHeaderNames(Data2DTools.toNames(columns));
+                    .setHeaderNames(Data2DColumnTools.toNames(columns));
             if (!writer.openWriter()) {
                 return false;
             }

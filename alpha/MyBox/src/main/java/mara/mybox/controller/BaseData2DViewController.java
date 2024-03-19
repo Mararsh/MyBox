@@ -22,7 +22,7 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import mara.mybox.data2d.Data2DTools;
+import mara.mybox.data2d.tools.Data2DPageTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.style.StyleTools;
@@ -275,7 +275,7 @@ public class BaseData2DViewController extends BaseData2DLoadController {
 
             @Override
             protected boolean handle() {
-                html = Data2DTools.pageToHtml(data2D, styleFilter,
+                html = Data2DPageTools.pageToHtml(data2D, styleFilter,
                         UserConfig.getBoolean(baseName + "HtmlShowForm", false),
                         UserConfig.getBoolean(baseName + "HtmlShowColumns", true),
                         UserConfig.getBoolean(baseName + "HtmlShowRowNumber", true),
@@ -337,7 +337,7 @@ public class BaseData2DViewController extends BaseData2DLoadController {
 
             @Override
             protected boolean handle() {
-                texts = Data2DTools.pageToTexts(data2D, delimiterName,
+                texts = Data2DPageTools.pageToTexts(data2D, delimiterName,
                         UserConfig.getBoolean(baseName + "TextsShowForm", false),
                         UserConfig.getBoolean(baseName + "TextsShowColumns", true),
                         UserConfig.getBoolean(baseName + "TextsShowRowNumber", true),

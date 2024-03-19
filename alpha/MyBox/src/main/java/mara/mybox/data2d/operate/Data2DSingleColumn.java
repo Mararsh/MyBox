@@ -17,7 +17,6 @@ import mara.mybox.dev.MyBoxLog;
  */
 public class Data2DSingleColumn extends Data2DOperate {
 
-    protected Connection conn;
     protected DataTable writerTable;
     protected TableData2D writerTableData2D;
     protected long count;
