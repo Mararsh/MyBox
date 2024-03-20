@@ -27,8 +27,8 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import mara.mybox.data.StringTable;
 import mara.mybox.data2d.Data2D;
-import mara.mybox.data2d.tools.Data2DMenuTools;
 import mara.mybox.data2d.DataClipboard;
+import mara.mybox.data2d.tools.Data2DMenuTools;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.Data2DDefinition.DataType;
@@ -109,7 +109,8 @@ public class Data2DManufactureController extends BaseData2DViewController {
 
     @Override
     public void showHtmlButtons() {
-        buttonsPane.getChildren().setAll(formCheck, titleCheck, columnCheck, rowCheck);
+        buttonsPane.getChildren().setAll(formCheck, titleCheck, columnCheck, rowCheck,
+                infoButton);
         isSettingValues = true;
         formCheck.setSelected(UserConfig.getBoolean(baseName + "HtmlShowForm", false));
         columnCheck.setSelected(UserConfig.getBoolean(baseName + "HtmlShowColumns", true));
@@ -120,8 +121,8 @@ public class Data2DManufactureController extends BaseData2DViewController {
 
     @Override
     public void showTextsButtons() {
-        buttonsPane.getChildren().setAll(wrapCheck, delimiterButton,
-                formCheck, titleCheck, columnCheck, rowCheck);
+        buttonsPane.getChildren().setAll(formCheck, titleCheck, columnCheck, rowCheck,
+                wrapCheck, delimiterButton, infoButton);
         isSettingValues = true;
         formCheck.setSelected(UserConfig.getBoolean(baseName + "TextsShowForm", false));
         columnCheck.setSelected(UserConfig.getBoolean(baseName + "TextsShowColumns", true));
@@ -132,9 +133,9 @@ public class Data2DManufactureController extends BaseData2DViewController {
 
     @Override
     public void showTableButtons() {
-        buttonsPane.getChildren().setAll(lostFocusCommitCheck,
+        buttonsPane.getChildren().setAll(lostFocusCommitCheck, dataDefinitionButton,
                 clearButton, deleteRowsButton, moveUpButton, moveDownButton,
-                editButton, addRowsButton, recoverButton, saveButton, dataDefinitionButton);
+                editButton, addRowsButton, recoverButton, saveButton);
     }
 
     @Override
@@ -144,7 +145,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
                 return;
             }
             buttonsPane.getChildren().addAll(wrapCheck, delimiterButton,
-                    recoverButton, saveButton, dataDefinitionButton);
+                    dataDefinitionButton, recoverButton, saveButton);
             pageBox.getChildren().add(csvBox);
             VBox.setVgrow(csvBox, Priority.ALWAYS);
 

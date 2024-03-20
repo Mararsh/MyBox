@@ -41,8 +41,7 @@ public class DataFileExcelFormatController extends BaseChildController {
     @Override
     public void okAction() {
         if (fileController == null || !fileController.isShowing()
-                || fileController.data2D == null
-                || fileController.data2D.getFile() == null) {
+                || fileController.data2D == null) {
             close();
             return;
         }

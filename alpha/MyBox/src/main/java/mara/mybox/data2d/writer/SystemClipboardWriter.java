@@ -21,7 +21,9 @@ public class SystemClipboardWriter extends Data2DWriter {
             }
             showInfo(message("Writing") + " " + message("SystemClipboard"));
             builder = new StringBuilder();
-            appendRow(headerNames);
+            if (writeHeader && headerNames != null) {
+                appendRow(headerNames);
+            }
             return true;
         } catch (Exception e) {
             showError(e.toString());

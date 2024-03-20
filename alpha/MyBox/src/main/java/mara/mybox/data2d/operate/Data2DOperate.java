@@ -252,7 +252,6 @@ public abstract class Data2DOperate {
     }
 
     public void setFailed() {
-        MyBoxLog.debug("here");
         failed = true;
         showInfo(message("Failed"));
     }

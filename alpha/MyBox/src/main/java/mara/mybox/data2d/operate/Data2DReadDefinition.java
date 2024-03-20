@@ -1,6 +1,5 @@
 package mara.mybox.data2d.operate;
 
-import mara.mybox.data2d.operate.Data2DOperate;
 import mara.mybox.data2d.Data2D_Edit;
 
 /**

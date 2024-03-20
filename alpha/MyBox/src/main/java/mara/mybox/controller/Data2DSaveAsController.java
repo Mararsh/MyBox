@@ -3,7 +3,6 @@ package mara.mybox.controller;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Tab;
 import javafx.scene.layout.VBox;
@@ -31,8 +30,6 @@ public class Data2DSaveAsController extends BaseData2DSaveAsController {
 
     @FXML
     protected ControlData2DTarget targetController;
-    @FXML
-    protected CheckBox currentSheetOnlyCheck;
     @FXML
     protected Tab csvTab, excelTab, textTab, htmlTab, pdfTab, dbTab;
     @FXML
@@ -166,7 +163,6 @@ public class Data2DSaveAsController extends BaseData2DSaveAsController {
         } else {
             invalidAs = ColumnDefinition.InvalidAs.Blank;
         }
-
         tabPane.getSelectionModel().select(logsTab);
     }
 

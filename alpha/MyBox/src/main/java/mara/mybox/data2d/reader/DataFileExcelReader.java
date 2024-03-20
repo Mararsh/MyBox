@@ -18,12 +18,10 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 public class DataFileExcelReader extends Data2DReader {
 
     protected DataFileExcel readerExcel;
-    protected String readerSheet;
     protected Iterator<Row> iterator;
 
     public DataFileExcelReader(DataFileExcel data) {
         this.readerExcel = data;
-        readerSheet = data.getSheet();
         sourceData = data;
     }
 
@@ -31,11 +29,12 @@ public class DataFileExcelReader extends Data2DReader {
     public void scanData() {
         try (Workbook wb = WorkbookFactory.create(sourceFile)) {
             Sheet sourceSheet;
-            if (readerSheet != null) {
-                sourceSheet = wb.getSheet(readerSheet);
+            String sheetName = sourceData.getSheet();
+            if (sheetName != null) {
+                sourceSheet = wb.getSheet(sheetName);
             } else {
                 sourceSheet = wb.getSheetAt(0);
-                readerSheet = sourceSheet.getSheetName();
+                sheetName = sourceSheet.getSheetName();
             }
             if (readerExcel != null) {
                 int sheetsNumber = wb.getNumberOfSheets();
@@ -44,7 +43,7 @@ public class DataFileExcelReader extends Data2DReader {
                     sheetNames.add(wb.getSheetName(i));
                 }
                 readerExcel.setSheetNames(sheetNames);
-                readerExcel.setSheet(readerSheet);
+                readerExcel.setSheet(sheetName);
             }
             iterator = sourceSheet.iterator();
             operate.handleData();

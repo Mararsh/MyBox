@@ -19,7 +19,7 @@ import static mara.mybox.value.Languages.message;
 public class JsonWriter extends Data2DWriter {
 
     protected BufferedWriter fileWriter;
-    protected boolean isFirstRow;
+    protected boolean isFirstRow, isFirstField;
 
     public JsonWriter() {
         fileSuffix = "json";
@@ -62,16 +62,16 @@ public class JsonWriter extends Data2DWriter {
                 s.append(",\n");
             }
             s.append(indent).append("{").append("\n");
-            boolean firstField = true;
+            isFirstField = true;
             for (int i = 0; i < headerNames.size(); i++) {
                 String value = targetRow.get(i);
                 if (value == null) {
                     continue;
                 }
-                if (!firstField) {
-                    s.append(",\n");
+                if (isFirstField) {
+                    isFirstField = false;
                 } else {
-                    firstField = false;
+                    s.append(",\n");
                 }
                 s.append(indent).append(indent)
                         .append("\"").append(headerNames.get(i)).append("\": ")

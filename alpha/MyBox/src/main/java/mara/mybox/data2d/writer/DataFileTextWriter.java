@@ -25,8 +25,6 @@ public class DataFileTextWriter extends Data2DWriter {
 
     public DataFileTextWriter() {
         fileSuffix = "txt";
-        charset = Charset.forName("utf-8");
-        delimiter = ",";
     }
 
     @Override
@@ -41,6 +39,12 @@ public class DataFileTextWriter extends Data2DWriter {
             }
             showInfo(message("Writing") + " " + targetFile.getAbsolutePath());
             tmpFile = FileTmpTools.getTempFile(".txt");
+            if (charset == null) {
+                charset = Charset.forName("utf-8");
+            }
+            if (delimiter == null) {
+                delimiter = ",";
+            }
             if (fileWriter == null) {
                 fileWriter = new BufferedWriter(new FileWriter(tmpFile, charset));
             }

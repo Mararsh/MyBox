@@ -5,7 +5,6 @@ import java.nio.charset.Charset;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileTmpTools;
@@ -26,8 +25,6 @@ public class DataFileCSVWriter extends Data2DWriter {
 
     public DataFileCSVWriter() {
         fileSuffix = "csv";
-        charset = Charset.forName("utf-8");
-        delimiter = ",";
     }
 
     @Override
@@ -42,6 +39,12 @@ public class DataFileCSVWriter extends Data2DWriter {
             }
             showInfo(message("Writing") + " " + targetFile.getAbsolutePath());
             tmpFile = FileTmpTools.getTempFile(".csv");
+            if (charset == null) {
+                charset = Charset.forName("utf-8");
+            }
+            if (delimiter == null) {
+                delimiter = ",";
+            }
             if (printer == null) {
                 printer = new CSVPrinter(new FileWriter(tmpFile, charset),
                         CsvTools.csvFormat(delimiter));
@@ -49,7 +52,6 @@ public class DataFileCSVWriter extends Data2DWriter {
             if (writeHeader && headerNames != null) {
                 printer.printRecord(headerNames);
             }
-            MyBoxLog.console(isFailed());
             return true;
         } catch (Exception e) {
             showError(e.toString());
@@ -79,13 +81,11 @@ public class DataFileCSVWriter extends Data2DWriter {
             printer.flush();
             printer.close();
             printer = null;
-            MyBoxLog.console(isFailed() + "  " + tmpFile.exists());
             if (isFailed() || tmpFile == null || !tmpFile.exists()
                     || !FileTools.override(tmpFile, targetFile)) {
                 FileDeleteTools.delete(tmpFile);
                 return;
             }
-            MyBoxLog.console(targetFile);
             if (targetFile == null || !targetFile.exists()) {
                 return;
             }

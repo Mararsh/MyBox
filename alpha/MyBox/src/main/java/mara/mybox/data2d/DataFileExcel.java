@@ -105,6 +105,7 @@ public class DataFileExcel extends DataFile {
             return -2;
         }
         reader.setTask(task).start();
+        MyBoxLog.console(sheetNames);
         return super.readDataDefinition(conn);
     }
 
@@ -323,23 +324,21 @@ public class DataFileExcel extends DataFile {
         }
         File tmpFile = FileTmpTools.getTempFile();
         File tmpDataFile = FileTmpTools.getTempFile();
-        if (file.length() > 0) {
-            FileCopyTools.copyFile(file, tmpDataFile);
-        }
+        FileCopyTools.copyFile(file, tmpDataFile);
         try (Workbook targetBook = WorkbookFactory.create(tmpDataFile)) {
             Sheet targetSheet = targetBook.createSheet(sheetName);
-            List<List<String>> data = tmpData(3, 3);
-            for (int r = 0; r < data.size(); r++) {
-                if (task == null || task.isCancelled()) {
-                    break;
-                }
-                List<String> values = data.get(r);
-                Row targetRow = targetSheet.createRow(r);
-                for (int col = 0; col < values.size(); col++) {
-                    Cell targetCell = targetRow.createCell(col, CellType.STRING);
-                    targetCell.setCellValue(values.get(col));
-                }
-            }
+//            List<List<String>> data = tmpData(3, 3);
+//            for (int r = 0; r < data.size(); r++) {
+//                if (task == null || task.isCancelled()) {
+//                    break;
+//                }
+//                List<String> values = data.get(r);
+//                Row targetRow = targetSheet.createRow(r);
+//                for (int col = 0; col < values.size(); col++) {
+//                    Cell targetCell = targetRow.createCell(col, CellType.STRING);
+//                    targetCell.setCellValue(values.get(col));
+//                }
+//            }
             try (FileOutputStream fileOut = new FileOutputStream(tmpFile)) {
                 targetBook.write(fileOut);
             }
@@ -448,7 +447,8 @@ public class DataFileExcel extends DataFile {
             return null;
         }
         DataFileExcelWriter writer = new DataFileExcelWriter();
-        writer.setSheetName(sheet)
+        writer.setBaseFile(file)
+                .setSheetName(sheet)
                 .setTargetFile(file)
                 .setWriteHeader(hasHeader)
                 .setColumns(columns)

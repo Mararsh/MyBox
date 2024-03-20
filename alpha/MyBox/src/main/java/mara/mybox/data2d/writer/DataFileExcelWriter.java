@@ -10,14 +10,14 @@ import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.FileTools;
 import static mara.mybox.value.Languages.message;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFCellStyle;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
@@ -27,15 +27,16 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  */
 public class DataFileExcelWriter extends Data2DWriter {
 
-    protected XSSFWorkbook xssfBook;
-    protected XSSFSheet xssfSheet;
+    protected Workbook xssfBook;
+    protected Sheet xssfSheet;
     protected String sheetName;
+    protected boolean currentSheetOnly;
     protected File baseFile;
     protected int rowIndex;
 
     public DataFileExcelWriter() {
         fileSuffix = "xlsx";
-        sheetName = "sheet1";
+        currentSheetOnly = false;
     }
 
     @Override
@@ -50,19 +51,19 @@ public class DataFileExcelWriter extends Data2DWriter {
             }
             showInfo(message("Writing") + " " + targetFile.getAbsolutePath());
             tmpFile = FileTmpTools.getTempFile(".xlsx");
-            rowIndex = 0;
-            if (baseFile != null && baseFile.exists()) {
+            if (sheetName == null) {
+                sheetName = "sheet1";
+            }
+            if (!currentSheetOnly && baseFile != null && baseFile.exists()) {
                 try (Workbook sourceBook = WorkbookFactory.create(baseFile)) {
-                    Sheet sourceSheet = sourceBook.getSheetAt(0);
-                    sheetName = sourceSheet.getSheetName();
                     int sheetsNumber = sourceBook.getNumberOfSheets();
                     if (sheetsNumber == 1) {
-                        xssfBook = new XSSFWorkbook(tmpFile);
+                        xssfBook = new XSSFWorkbook();
                         xssfSheet = xssfBook.createSheet(sheetName);
                     } else {
                         FileCopyTools.copyFile(baseFile, tmpFile);
-                        xssfBook = new XSSFWorkbook(tmpFile);
-                        int index = xssfBook.getSheetIndex(sheetName);
+                        xssfBook = WorkbookFactory.create(tmpFile);
+                        int index = sourceBook.getSheetIndex(sheetName);
                         if (index >= 0) {
                             xssfBook.removeSheetAt(index);
                             xssfSheet = xssfBook.createSheet(sheetName);
@@ -71,22 +72,22 @@ public class DataFileExcelWriter extends Data2DWriter {
                             xssfSheet = xssfBook.createSheet(sheetName);
                         }
                     }
-
                 } catch (Exception e) {
                     showError(e.toString());
                     return false;
                 }
             } else {
-                xssfBook = new XSSFWorkbook(tmpFile);
+                xssfBook = new XSSFWorkbook();
                 xssfSheet = xssfBook.createSheet(sheetName);
             }
             xssfSheet.setDefaultColumnWidth(20);
-            if (writeHeader) {
-                XSSFRow titleRow = xssfSheet.createRow(rowIndex++);
-                XSSFCellStyle horizontalCenter = xssfBook.createCellStyle();
+            rowIndex = 0;
+            if (writeHeader && headerNames != null) {
+                Row titleRow = xssfSheet.createRow(rowIndex++);
+                CellStyle horizontalCenter = xssfBook.createCellStyle();
                 horizontalCenter.setAlignment(HorizontalAlignment.CENTER);
                 for (int i = 0; i < headerNames.size(); i++) {
-                    XSSFCell cell = titleRow.createCell(i);
+                    Cell cell = titleRow.createCell(i, CellType.STRING);
                     cell.setCellValue(headerNames.get(i));
                     cell.setCellStyle(horizontalCenter);
                 }
@@ -104,9 +105,9 @@ public class DataFileExcelWriter extends Data2DWriter {
             if (targetRow == null) {
                 return;
             }
-            XSSFRow sheetRow = xssfSheet.createRow(rowIndex++);
+            Row sheetRow = xssfSheet.createRow(rowIndex++);
             for (int i = 0; i < targetRow.size(); i++) {
-                XSSFCell cell = sheetRow.createCell(i);
+                Cell cell = sheetRow.createCell(i, CellType.STRING);
                 cell.setCellValue(targetRow.get(i));
             }
         } catch (Exception e) {
@@ -121,11 +122,6 @@ public class DataFileExcelWriter extends Data2DWriter {
             if (xssfBook == null || xssfSheet == null || tmpFile == null) {
                 return;
             }
-            if (isFailed() || !tmpFile.exists()) {
-                xssfBook.close();
-                FileDeleteTools.delete(tmpFile);
-                return;
-            }
             for (int i = 0; i < headerNames.size(); i++) {
                 xssfSheet.autoSizeColumn(i);
             }
@@ -134,7 +130,8 @@ public class DataFileExcelWriter extends Data2DWriter {
             }
             xssfBook.close();
             xssfBook = null;
-            if (!FileTools.override(tmpFile, targetFile)) {
+            if (isFailed() || !tmpFile.exists()
+                    || !FileTools.override(tmpFile, targetFile)) {
                 FileDeleteTools.delete(tmpFile);
                 return;
             }
@@ -178,6 +175,11 @@ public class DataFileExcelWriter extends Data2DWriter {
 
     public DataFileExcelWriter setSheetName(String sheetName) {
         this.sheetName = sheetName;
+        return this;
+    }
+
+    public DataFileExcelWriter setCurrentSheetOnly(boolean currentSheetOnly) {
+        this.currentSheetOnly = currentSheetOnly;
         return this;
     }
 

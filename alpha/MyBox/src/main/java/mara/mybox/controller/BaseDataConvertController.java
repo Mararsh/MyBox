@@ -53,7 +53,7 @@ public class BaseDataConvertController extends BaseTaskController {
     @FXML
     protected ControlTextOptions csvWriteController;
     @FXML
-    protected CheckBox excelWithNamesCheck;
+    protected CheckBox excelWithNamesCheck, currentSheetOnlyCheck;
     @FXML
     protected ControlTextOptions textWriteOptionsController;
     @FXML
@@ -69,27 +69,38 @@ public class BaseDataConvertController extends BaseTaskController {
     }
 
     private void initCSV() {
-        csvWriteController.setControls(baseName + "CSVWrite", false, false);
+        if (csvWriteController != null) {
+            csvWriteController.setControls(baseName + "CSVWrite", false, false);
+        }
     }
 
     private void initExcel() {
-        excelWithNamesCheck.setSelected(UserConfig.getBoolean(baseName + "ExcelTargetWithNames", true));
+        if (excelWithNamesCheck != null) {
+            excelWithNamesCheck.setSelected(UserConfig.getBoolean(baseName + "ExcelTargetWithNames", true));
+        }
+        if (currentSheetOnlyCheck != null) {
+            currentSheetOnlyCheck.setSelected(UserConfig.getBoolean(baseName + "ExcelCurrentSheetOnly", false));
+        }
     }
 
     private void initTexts() {
-        textWriteOptionsController.setControls(baseName + "TextWrite", false, true);
+        if (textWriteOptionsController != null) {
+            textWriteOptionsController.setControls(baseName + "TextWrite", false, true);
+        }
     }
 
     private void initHtml() {
-        cssArea.setText(UserConfig.getString(baseName + "Css", HtmlStyles.TableStyle));
+        if (cssArea != null) {
+            cssArea.setText(UserConfig.getString(baseName + "Css", HtmlStyles.TableStyle));
+        }
     }
 
     private void initPDF() {
         if (pdfOptionsController != null) {
             pdfOptionsController.set(baseName, false);
+            pdfOptionsController.pixSizeRadio.setDisable(true);
+            pdfOptionsController.standardSizeRadio.setSelected(true);
         }
-        pdfOptionsController.pixSizeRadio.setDisable(true);
-        pdfOptionsController.standardSizeRadio.setSelected(true);
     }
 
     public DataFileCSVWriter pickCSVWriter() {
@@ -118,6 +129,10 @@ public class BaseDataConvertController extends BaseTaskController {
             if (excelWithNamesCheck != null) {
                 UserConfig.setBoolean(baseName + "ExcelTargetWithNames", excelWithNamesCheck.isSelected());
                 writer.setWriteHeader(excelWithNamesCheck.isSelected());
+            }
+            if (currentSheetOnlyCheck != null) {
+                UserConfig.setBoolean(baseName + "ExcelCurrentSheetOnly", currentSheetOnlyCheck.isSelected());
+                writer.setCurrentSheetOnly(currentSheetOnlyCheck.isSelected());
             }
             writer.setController(this);
             return writer;

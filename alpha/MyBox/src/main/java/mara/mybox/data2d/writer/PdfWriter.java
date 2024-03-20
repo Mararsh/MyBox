@@ -5,7 +5,6 @@ import java.util.List;
 import mara.mybox.controller.PdfViewController;
 import mara.mybox.data.PaginatedPdfTable;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.FileTools;
@@ -23,7 +22,6 @@ public class PdfWriter extends Data2DWriter {
 
     public PdfWriter() {
         fileSuffix = "pdf";
-        pdfTable = PaginatedPdfTable.create();
     }
 
     @Override
@@ -32,14 +30,15 @@ public class PdfWriter extends Data2DWriter {
             if (!super.openWriter()) {
                 return false;
             }
-            MyBoxLog.console(targetFile);
             if (targetFile == null) {
                 showInfo(message("InvalidParameter") + ": " + message("TargetFile"));
                 return false;
             }
             showInfo(message("Writing") + " " + targetFile.getAbsolutePath());
             tmpFile = FileTmpTools.getTempFile(".pdf");
-            MyBoxLog.console(tmpFile);
+            if (pdfTable == null) {
+                pdfTable = PaginatedPdfTable.create();
+            }
             pdfTable.setColumns(headerNames).createDoc(tmpFile);
             return true;
         } catch (Exception e) {
@@ -74,28 +73,17 @@ public class PdfWriter extends Data2DWriter {
             if (pdfTable == null) {
                 return;
             }
-            MyBoxLog.console(isFailed());
-            if (isFailed() || tmpFile == null || !tmpFile.exists()) {
-                pdfTable.closeDoc();
-                pdfTable = null;
-                pageRows = null;
-                FileDeleteTools.delete(tmpFile);
-                MyBoxLog.console(tmpFile);
-                return;
-            }
             if (pageRows != null && !pageRows.isEmpty()) {
                 pdfTable.writePage(pageRows);
-                pageRows = null;
             }
+            pageRows = null;
             pdfTable.closeDoc();
             pdfTable = null;
-            MyBoxLog.console(tmpFile);
-            if (!FileTools.override(tmpFile, targetFile)) {
+            if (isFailed() || tmpFile == null || !tmpFile.exists()
+                    || !FileTools.override(tmpFile, targetFile)) {
                 FileDeleteTools.delete(tmpFile);
-                MyBoxLog.console(tmpFile);
                 return;
             }
-            MyBoxLog.console(targetFile);
             if (targetFile == null || !targetFile.exists()) {
                 return;
             }

@@ -81,6 +81,21 @@ public class BaseData2DLoadController extends BaseData2DTableController {
         }
     }
 
+    public boolean updateDef(Data2DDefinition def) {
+        if (def == null) {
+            return createData(DataType.CSV);
+        }
+        if (!checkBeforeNextAction()) {
+            return false;
+        }
+        resetStatus();
+        data2D = Data2D.create(def.getType());
+        data2D.cloneAll(def);
+        setData(data2D);
+        readDefinition();
+        return true;
+    }
+
     public boolean loadDef(Data2DDefinition def) {
         if (def == null) {
             return createData(DataType.CSV);
@@ -289,7 +304,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
             }
             DataFileCSV data = new DataFileCSV();
             data.setFile(file).setCharset(charset).setHasHeader(withNames).setDelimiter(delimiter);
-            loadDef(data);
+            applyOptions(data);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -302,7 +317,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
             }
             DataFileExcel data = new DataFileExcel();
             data.setFile(file).setSheet(sheet).setHasHeader(withNames);
-            loadDef(data);
+            applyOptions(data);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -315,10 +330,55 @@ public class BaseData2DLoadController extends BaseData2DTableController {
             }
             DataFileText data = new DataFileText();
             data.setFile(file).setCharset(charset).setHasHeader(withNames).setDelimiter(delimiter);
-            loadDef(data);
+            applyOptions(data);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+    }
+
+    public void applyOptions(Data2D data) {
+        if (data == null) {
+            return;
+        }
+        resetStatus();
+        task = new FxSingletonTask<Void>(this) {
+            Data2DDefinition def;
+
+            @Override
+            protected boolean handle() {
+                try (Connection conn = DerbyBase.getConnection()) {
+                    data2D.startTask(this, null);
+                    def = data.queryDefinition(conn);
+                    if (def == null) {
+                        def = tableData2DDefinition.insertData(conn, data);
+                        conn.commit();
+                    } else {
+                        def.setHasHeader(data.isHasHeader())
+                                .setFile(data.getFile())
+                                .setSheet(data.getSheet())
+                                .setDelimiter(data.getDelimiter());
+                        def = tableData2DDefinition.updateData(conn, def);
+                    }
+                    MyBoxLog.console(def.getSheet());
+                    if (isCancelled()) {
+                        return false;
+                    }
+                    conn.commit();
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                loadDef(def);
+            }
+
+        };
+        start(task, thisPane);
+
     }
 
     public void loadTableData(String prefix, List<StringTable> tables) {
@@ -369,7 +429,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
 
             @Override
             protected void whenSucceeded() {
-                loadDef(firstData);
+                applyOptions(firstData);
                 if (count > 1) {
                     browseURI(filePath.toURI());
                     alertInformation(info);
@@ -377,7 +437,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
             }
 
         };
-        start(task);
+        start(task, thisPane);
     }
 
     /*

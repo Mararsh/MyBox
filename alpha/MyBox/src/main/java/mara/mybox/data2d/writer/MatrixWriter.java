@@ -20,10 +20,6 @@ public class MatrixWriter extends Data2DWriter {
     protected long did, dwCount;
     protected TableData2DCell tableData2DCell;
 
-    public MatrixWriter() {
-        fileSuffix = "pdf";
-    }
-
     @Override
     public boolean openWriter() {
         try {
@@ -45,7 +41,6 @@ public class MatrixWriter extends Data2DWriter {
             did = matrix.getD2did();
             conn.setAutoCommit(false);
             dwCount = 0;
-            targetData = matrix;
             return true;
         } catch (Exception e) {
             showError(e.toString());
@@ -87,6 +82,7 @@ public class MatrixWriter extends Data2DWriter {
             conn.commit();
             matrix.setRowsNumber(targetRowIndex);
             Data2D.saveAttributes(conn, matrix, columns);
+            targetData = matrix;
             created = true;
         } catch (Exception e) {
             showError(e.toString());

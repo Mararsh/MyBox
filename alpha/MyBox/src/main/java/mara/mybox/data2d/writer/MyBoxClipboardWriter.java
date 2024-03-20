@@ -33,9 +33,9 @@ public class MyBoxClipboardWriter extends Data2DWriter {
             if (!super.openWriter()) {
                 return false;
             }
-//            if (targetFile == null) {
-//                targetFile = DataClipboard.newFile();
-//            }
+            if (targetFile == null) {
+                targetFile = DataClipboard.newFile();
+            }
             if (targetFile == null) {
                 showInfo(message("InvalidParameter") + ": " + message("TargetFile"));
                 return false;
@@ -44,7 +44,9 @@ public class MyBoxClipboardWriter extends Data2DWriter {
             tmpFile = FileTmpTools.getTempFile();
             printer = new CSVPrinter(new FileWriter(tmpFile,
                     Charset.forName("UTF-8")), CsvTools.csvFormat());
-            printer.printRecord(headerNames);
+            if (writeHeader && headerNames != null) {
+                printer.printRecord(headerNames);
+            }
             return true;
         } catch (Exception e) {
             showError(e.toString());

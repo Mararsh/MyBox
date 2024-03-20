@@ -28,10 +28,6 @@ public class DataTableWriter extends Data2DWriter {
     protected TableData2D tableData2D;
     protected PreparedStatement insert;
 
-    public DataTableWriter() {
-        fileSuffix = "pdf";
-    }
-
     @Override
     public boolean openWriter() {
         try {
@@ -97,7 +93,7 @@ public class DataTableWriter extends Data2DWriter {
             insert.executeBatch();
             conn.commit();
             insert.close();
-            targetTable.setRowsNumber(targetRowIndex);
+            targetTable.setRowsNumber(dwCount);
             Data2D.saveAttributes(conn, targetTable, columns);
             targetData = targetTable;
             created = true;

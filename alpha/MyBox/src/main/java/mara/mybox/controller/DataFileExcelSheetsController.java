@@ -24,7 +24,6 @@ import static mara.mybox.value.Languages.message;
 public class DataFileExcelSheetsController extends BaseChildController {
 
     protected BaseData2DLoadController fileController;
-    protected DataFileExcel dataFileExcel;
 
     @FXML
     protected ComboBox<String> sheetSelector;
@@ -41,9 +40,19 @@ public class DataFileExcelSheetsController extends BaseChildController {
                 close();
                 return;
             }
-            dataFileExcel = (DataFileExcel) fileController.data2D;
+
             baseName = fileController.baseName;
             setFileType(fileController.TargetFileType);
+
+            sheetSelector.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
+                @Override
+                public void changed(ObservableValue<? extends Number> v, Number oldV, Number newV) {
+                    if (isSettingValues || newV == null) {
+                        return;
+                    }
+                    loadSheetIndex((int) newV);
+                }
+            });
 
             fileController.loadedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -60,59 +69,61 @@ public class DataFileExcelSheetsController extends BaseChildController {
 
     @FXML
     @Override
-    public void refreshAction() {
+    public synchronized void refreshAction() {
         try {
+            isSettingValues = true;
+            DataFileExcel dataFileExcel = (DataFileExcel) fileController.data2D;
             setTitle(message("Sheet") + " - " + fileController.getTitle());
-            sheetSelector.getItems().clear();
             List<String> sheets = dataFileExcel.getSheetNames();
-            int current = -1;
-            if (sheets != null && !sheets.isEmpty()) {
-                sheetSelector.getItems().addAll(sheets);
-                current = sheets.indexOf(dataFileExcel.getSheet());
+            String sheet = dataFileExcel.getSheet();
+            int index = -1;
+            int num = sheets != null ? sheets.size() : 0;
+            if (num > 0) {
+                sheetSelector.getItems().setAll(sheets);
+                index = sheets.indexOf(sheet);
+            } else {
+                sheetSelector.getItems().clear();
             }
-            sheetSelector.getSelectionModel().select(dataFileExcel.getSheet());
-            deleteSheetButton.setDisable(sheets == null || sheets.size() <= 1);
-            nextSheetButton.setDisable(sheets == null || current >= sheets.size() - 1);
-            previousSheetButton.setDisable(current <= 0);
+            sheetSelector.getSelectionModel().select(sheet);
+            deleteSheetButton.setDisable(num <= 1);
+            nextSheetButton.setDisable(num < 1 || index >= num - 1);
+            previousSheetButton.setDisable(index <= 0);
+            isSettingValues = false;
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
-    @FXML
-    @Override
-    public void goAction() {
-        loadSheetIndex(sheetSelector.getSelectionModel().getSelectedIndex());
-    }
-
     public void loadSheetIndex(int index) {
-        if (fileController == null || !fileController.isShowing()
-                || dataFileExcel == null) {
+        if (fileController == null || !fileController.isShowing()) {
             close();
             return;
         }
         if (!fileController.checkBeforeNextAction()) {
             return;
         }
-        File file = dataFileExcel.getFile();
+        File file = fileController.data2D.getFile();
         if (file == null || !file.exists()) {
             close();
             return;
         }
         List<String> sheets = sheetSelector.getItems();
-        if (index > sheets.size() - 1 || index < 0) {
-            return;
+        if (index < 0) {
+            index = sheets.size() - 1;
+        } else if (index > sheets.size() - 1) {
+            index = 0;
         }
-        fileController.loadExcelFile(file, sheets.get(index), dataFileExcel.isHasHeader());
+        fileController.loadExcelFile(file, sheets.get(index),
+                fileController.data2D.isHasHeader());
     }
 
     @FXML
     protected void plusSheet() {
-        if (fileController == null || !fileController.isShowing()
-                || dataFileExcel == null) {
+        if (fileController == null || !fileController.isShowing()) {
             close();
             return;
         }
+        DataFileExcel dataFileExcel = (DataFileExcel) fileController.data2D;
         List<String> sheets = dataFileExcel.getSheetNames();
         if (sheets == null) {
             return;
@@ -158,14 +169,14 @@ public class DataFileExcelSheetsController extends BaseChildController {
 
     @FXML
     protected void renameSheet() {
-        if (fileController == null || !fileController.isShowing()
-                || dataFileExcel == null) {
+        if (fileController == null || !fileController.isShowing()) {
             close();
             return;
         }
         if (!fileController.checkBeforeNextAction()) {
             return;
         }
+        DataFileExcel dataFileExcel = (DataFileExcel) fileController.data2D;
         String currentSheetName = dataFileExcel.getSheet();
         List<String> sheets = dataFileExcel.getSheetNames();
         int count = 2;
@@ -208,11 +219,11 @@ public class DataFileExcelSheetsController extends BaseChildController {
 
     @FXML
     protected void deleteSheet() {
-        if (fileController == null || !fileController.isShowing()
-                || dataFileExcel == null) {
+        if (fileController == null || !fileController.isShowing()) {
             close();
             return;
         }
+        DataFileExcel dataFileExcel = (DataFileExcel) fileController.data2D;
         List<String> sheets = dataFileExcel.getSheetNames();
         if (sheets == null || sheets.size() <= 1) {
             return;

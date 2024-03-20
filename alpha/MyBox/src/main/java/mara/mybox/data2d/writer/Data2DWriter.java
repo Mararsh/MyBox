@@ -169,7 +169,7 @@ public abstract class Data2DWriter {
     }
 
     public void recordFileGenerated(File file, int type) {
-        if (recordTargetFile) {
+        if (!recordTargetFile) {
             return;
         }
         if (operate != null) {

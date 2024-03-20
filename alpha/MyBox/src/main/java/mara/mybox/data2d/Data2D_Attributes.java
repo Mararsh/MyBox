@@ -55,6 +55,7 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
         savedColumns = null;
         newColumnIndex = -1;
         tableChanged = false;
+        columnsChanged = false;
         styles = null;
         filter = null;
         error = null;
@@ -120,6 +121,7 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
             startRowOfCurrentPage = d.startRowOfCurrentPage;
             endRowOfCurrentPage = d.endRowOfCurrentPage;
             tableChanged = d.tableChanged;
+            columnsChanged = d.columnsChanged;
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }

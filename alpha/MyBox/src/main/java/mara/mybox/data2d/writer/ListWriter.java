@@ -21,7 +21,9 @@ public class ListWriter extends Data2DWriter {
             }
             showInfo(message("Writing") + " " + message("SystemClipboard"));
             rows = new ArrayList<>();
-            rows.add(headerNames);
+            if (writeHeader && headerNames != null) {
+                rows.add(headerNames);
+            }
             return true;
         } catch (Exception e) {
             showError(e.toString());
