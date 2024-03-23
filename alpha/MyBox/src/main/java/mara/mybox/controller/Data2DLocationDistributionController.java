@@ -184,7 +184,7 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
             labelCol = labelSelector.getValue();
             int col = data2D.colOrder(labelCol);
             if (col < 0) {
-                outOptionsError(message("SelectToHandle") + ": " + message("Label"));
+                popError(message("SelectToHandle") + ": " + message("Label"));
                 tabPane.getSelectionModel().select(optionsTab);
                 return false;
             }
@@ -193,7 +193,7 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
             longCol = longitudeSelector.getValue();
             col = data2D.colOrder(longCol);
             if (col < 0) {
-                outOptionsError(message("SelectToHandle") + ": " + message("Longitude"));
+                popError(message("SelectToHandle") + ": " + message("Longitude"));
                 tabPane.getSelectionModel().select(optionsTab);
                 return false;
             }
@@ -204,7 +204,7 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
             laCol = latitudeSelector.getValue();
             col = data2D.colOrder(laCol);
             if (col < 0) {
-                outOptionsError(message("SelectToHandle") + ": " + message("Latitude"));
+                popError(message("SelectToHandle") + ": " + message("Latitude"));
                 tabPane.getSelectionModel().select(optionsTab);
                 return false;
             }

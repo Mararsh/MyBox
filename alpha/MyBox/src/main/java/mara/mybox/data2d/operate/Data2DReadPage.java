@@ -1,6 +1,5 @@
 package mara.mybox.data2d.operate;
 
-import mara.mybox.data2d.operate.Data2DOperate;
 import java.sql.Connection;
 import java.util.List;
 import mara.mybox.data2d.Data2D_Edit;
@@ -11,8 +10,6 @@ import mara.mybox.data2d.Data2D_Edit;
  * @License Apache License Version 2.0
  */
 public class Data2DReadPage extends Data2DOperate {
-
-    protected Connection conn;
 
     public static Data2DReadPage create(Data2D_Edit data) {
         Data2DReadPage op = new Data2DReadPage();

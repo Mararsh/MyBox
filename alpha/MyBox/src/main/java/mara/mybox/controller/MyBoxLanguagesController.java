@@ -434,7 +434,7 @@ public class MyBoxLanguagesController extends BaseTableViewController<LanguageIt
 
     @FXML
     public void popCopyMenu(MouseEvent event) {
-        popTableMenu(event);
+        popTableMenu();
     }
 
     @Override

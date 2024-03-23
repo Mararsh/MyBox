@@ -22,7 +22,7 @@ public class BaseData2DSourceController extends BaseData2DSelectRowsController {
     }
 
     @Override
-    public boolean validateData() {
+    public void updateInterface() {
         if (data2D != null && data2D.isDataFile() && data2D.getFile() != null) {
             if (!toolbar.getChildren().contains(fileMenuButton)) {
                 toolbar.getChildren().add(2, fileMenuButton);
@@ -32,7 +32,7 @@ public class BaseData2DSourceController extends BaseData2DSelectRowsController {
                 toolbar.getChildren().remove(fileMenuButton);
             }
         }
-        return super.validateData();
+        super.updateInterface();
     }
 
 }

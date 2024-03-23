@@ -65,14 +65,14 @@ public class BaseData2DViewController extends BaseData2DLoadController {
             super.setControlsStyle();
 
             if (htmlRadio != null) {
-                StyleTools.setIconTooltips(htmlRadio, "iconHtml.png", message("HtmlReadOnly"));
+                StyleTools.setIconTooltips(htmlRadio, "iconHtml.png", message("PageDataInHtml") + " - " + message("ReadOnly"));
             }
             if (tableRadio != null) {
                 StyleTools.setIconTooltips(tableRadio, "iconGrid.png",
                         dataManufactureButton != null ? message("Table") : message("TableEdit"));
             }
             if (textsRadio != null) {
-                StyleTools.setIconTooltips(textsRadio, "iconTxt.png", message("TextsReadOnly"));
+                StyleTools.setIconTooltips(textsRadio, "iconTxt.png", message("PageDataInText") + " - " + message("ReadOnly"));
             }
             if (csvRadio != null) {
                 StyleTools.setIconTooltips(csvRadio, "iconCSV.png", message("CsvEdit"));
@@ -202,7 +202,7 @@ public class BaseData2DViewController extends BaseData2DLoadController {
 
     public void switchFormat() {
         try {
-            if (isSettingValues) {
+            if (isSettingValues || pageBox == null) {
                 return;
             }
             isSettingValues = true;
@@ -235,6 +235,7 @@ public class BaseData2DViewController extends BaseData2DLoadController {
             }
 
             refreshStyle(dataBox);
+            checkSelected();
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -396,7 +397,7 @@ public class BaseData2DViewController extends BaseData2DLoadController {
     }
 
     /*
-        page
+        data
      */
     @Override
     public void makeColumns() {
@@ -412,6 +413,9 @@ public class BaseData2DViewController extends BaseData2DLoadController {
         switchFormat();
     }
 
+    /*
+        action
+     */
     @Override
     public boolean controlAltB() {
         saveAsAction();
@@ -440,10 +444,43 @@ public class BaseData2DViewController extends BaseData2DLoadController {
         }
     }
 
+    @FXML
+    @Override
+    public boolean menuAction() {
+        try {
+            closePopup();
+            if (data2D == null) {
+                return false;
+            }
+
+            if (htmlRadio.isSelected()) {
+                webViewController.menuAction();
+                return true;
+
+            } else if (tableRadio.isSelected()) {
+                popTableMenu();
+                return true;
+
+            } else if (textsRadio.isSelected()) {
+                MenuTextEditController.textMenu(this, textsArea);
+                return true;
+
+            } else if (csvRadio != null && csvRadio.isSelected()) {
+                MenuTextEditController.textMenu(this, csvArea);
+                return true;
+
+            }
+
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
+        return false;
+    }
+
     @Override
     public List<MenuItem> viewMenuItems(Event fevent) {
         try {
-            if (data2D == null) {
+            if (data2D == null || !data2D.isValid()) {
                 return null;
             }
             List<MenuItem> items = new ArrayList<>();
@@ -606,6 +643,76 @@ public class BaseData2DViewController extends BaseData2DLoadController {
                 }
             });
             items.add(textRowNumberItem);
+
+            return items;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    @Override
+    protected List<MenuItem> makeTableContextMenu() {
+        try {
+            if (data2D == null || !data2D.isValid()) {
+                return null;
+            }
+            List<MenuItem> items = new ArrayList<>();
+
+            MenuItem menu = new MenuItem(message("DataDefinition") + "    Ctrl+i " + message("Or") + " Alt+i",
+                    StyleTools.getIconImageView("iconInfo.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                infoAction();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("DataManufacture"), StyleTools.getIconImageView("iconEdit.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                dataManufacture();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("PageDataInHtml") + " - " + message("Pop"), StyleTools.getIconImageView("iconHtml.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                loadHtml(true);
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("PageDataInText") + " - " + message("Pop"), StyleTools.getIconImageView("iconTxt.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                loadTexts(true);
+            });
+            items.add(menu);
+
+            items.add(new SeparatorMenuItem());
+
+            if (data2D.getFile() != null) {
+                menu = new MenuItem(message("TextFile"), StyleTools.getIconImageView("iconTxt.png"));
+                menu.setOnAction((ActionEvent event) -> {
+                    editTextFile();
+                });
+                items.add(menu);
+            }
+
+            items.add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("Snapshot"), StyleTools.getIconImageView("iconSnapshot.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                snapAction();
+            });
+            items.add(menu);
+
+            menu = new MenuItem("Html", StyleTools.getIconImageView("iconHtml.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                htmlAction();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("Data"), StyleTools.getIconImageView("iconData.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                dataAction();
+            });
+            items.add(menu);
 
             return items;
         } catch (Exception e) {

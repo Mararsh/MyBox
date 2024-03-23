@@ -353,18 +353,15 @@ public class Fxmls {
     public static final String MathFunctionXYChartFxml = "/fxml/MathFunctionXYChart.fxml";
 
     public static final String DataFileCSVFormatFxml = "/fxml/DataFileCSVFormat.fxml";
-    public static final String DataFileCSVSaveAsFxml = "/fxml/DataFileCSVSaveAs.fxml";
     public static final String DataFileCSVConvertFxml = "/fxml/DataFileCSVConvert.fxml";
     public static final String DataFileCSVMergeFxml = "/fxml/DataFileCSVMerge.fxml";
 
     public static final String DataFileExcelSheetsFxml = "/fxml/DataFileExcelSheets.fxml";
     public static final String DataFileExcelFormatFxml = "/fxml/DataFileExcelFormat.fxml";
-    public static final String DataFileExcelSaveAsFxml = "/fxml/DataFileExcelSaveAs.fxml";
     public static final String DataFileExcelConvertFxml = "/fxml/DataFileExcelConvert.fxml";
     public static final String DataFileExcelMergeFxml = "/fxml/DataFileExcelMerge.fxml";
 
     public static final String DataFileTextFormatFxml = "/fxml/DataFileTextFormat.fxml";
-    public static final String DataFileTextSaveAsFxml = "/fxml/DataFileTextSaveAs.fxml";
     public static final String DataFileTextConvertFxml = "/fxml/DataFileTextConvert.fxml";
     public static final String DataFileTextMergeFxml = "/fxml/DataFileTextMerge.fxml";
 

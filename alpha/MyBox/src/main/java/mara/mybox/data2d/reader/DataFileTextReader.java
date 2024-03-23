@@ -28,6 +28,7 @@ public class DataFileTextReader extends Data2DReader {
         if (validFile == null || isStopped()) {
             return;
         }
+        readerText.checkForLoad();
         try (BufferedReader reader = new BufferedReader(new FileReader(validFile, readerText.getCharset()))) {
             textReader = reader;
             operate.handleData();

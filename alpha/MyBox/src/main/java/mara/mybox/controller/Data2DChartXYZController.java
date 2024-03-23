@@ -170,7 +170,7 @@ public class Data2DChartXYZController extends BaseData2DHandleController {
             String xName = xSelector.getSelectionModel().getSelectedItem();
             int xCol = data2D.colOrder(xName);
             if (xCol < 0) {
-                outOptionsError(message("SelectToHandle") + ": " + message("AxisX"));
+                popError(message("SelectToHandle") + ": " + message("AxisX"));
                 tabPane.getSelectionModel().select(optionsTab);
                 return false;
             }
@@ -180,7 +180,7 @@ public class Data2DChartXYZController extends BaseData2DHandleController {
             String yName = ySelector.getSelectionModel().getSelectedItem();
             int yCol = data2D.colOrder(yName);
             if (yCol < 0) {
-                outOptionsError(message("SelectToHandle") + ": " + message("AxisY"));
+                popError(message("SelectToHandle") + ": " + message("AxisY"));
                 tabPane.getSelectionModel().select(optionsTab);
                 return false;
             }
@@ -189,7 +189,7 @@ public class Data2DChartXYZController extends BaseData2DHandleController {
 
             if (chartController.scatterRadio.isSelected()) {
                 if (checkedColsIndices == null || checkedColsIndices.isEmpty()) {
-                    outOptionsError(message("SelectToHandle") + ": " + message("AxisZ"));
+                    popError(message("SelectToHandle") + ": " + message("AxisZ"));
                     tabPane.getSelectionModel().select(optionsTab);
                     return false;
                 }
@@ -200,7 +200,7 @@ public class Data2DChartXYZController extends BaseData2DHandleController {
                 String zName = zSelector.getSelectionModel().getSelectedItem();
                 int zCol = data2D.colOrder(zName);
                 if (zCol < 0) {
-                    outOptionsError(message("SelectToHandle") + ": " + message("AxisZ"));
+                    popError(message("SelectToHandle") + ": " + message("AxisZ"));
                     tabPane.getSelectionModel().select(optionsTab);
                     return false;
                 }

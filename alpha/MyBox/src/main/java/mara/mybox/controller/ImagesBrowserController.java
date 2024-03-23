@@ -871,10 +871,10 @@ public class ImagesBrowserController extends ControlImagesTable {
     }
 
     @Override
-    protected void popTableMenu(MouseEvent event) {
+    protected List<MenuItem> makeTableContextMenu() {
         int index = tableView.getSelectionModel().getSelectedIndex();
         if (index < 0) {
-            return;
+            return null;
         }
         List<MenuItem> items = new ArrayList<>();
         MenuItem menu;
@@ -937,10 +937,7 @@ public class ImagesBrowserController extends ControlImagesTable {
         });
         items.add(menu);
 
-        items.add(new SeparatorMenuItem());
-
-        popEventMenu(event, items);
-
+        return items;
     }
 
     public List<ImageInformation> selected() {

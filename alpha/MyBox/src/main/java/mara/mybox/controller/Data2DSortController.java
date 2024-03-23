@@ -26,7 +26,7 @@ public class Data2DSortController extends BaseData2DTargetsController {
                 return false;
             }
             if (orders == null || orders.isEmpty()) {
-                outOptionsError(message("SelectToHandle") + ": " + message("Order"));
+                popError(message("SelectToHandle") + ": " + message("Order"));
                 tabPane.getSelectionModel().select(optionsTab);
                 return false;
             }

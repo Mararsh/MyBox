@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.io.File;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
+import mara.mybox.data2d.DataFileExcel;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -15,23 +16,32 @@ import static mara.mybox.value.Languages.message;
  */
 public class DataFileExcelFormatController extends BaseChildController {
 
-    protected BaseData2DLoadController fileController;
+    protected BaseData2DLoadController dataController;
 
     @FXML
     protected CheckBox sourceWithNamesCheck;
 
+    public boolean isInvalid() {
+        return dataController == null
+                || !dataController.isShowing()
+                || dataController.data2D == null
+                || dataController.data2D.getFile() == null
+                || !dataController.data2D.getFile().exists()
+                || !(dataController.data2D instanceof DataFileExcel);
+    }
+
     public void setParameters(BaseData2DLoadController parent) {
         try {
-            fileController = parent;
-            if (fileController == null || fileController.data2D == null) {
+            dataController = parent;
+            if (isInvalid()) {
                 close();
                 return;
             }
-            baseName = fileController.baseName;
-            setFileType(fileController.TargetFileType);
-            setTitle(message("Format") + " - " + fileController.getTitle());
+            baseName = dataController.baseName;
+            setFileType(dataController.TargetFileType);
+            setTitle(message("Format") + " - " + dataController.getTitle());
 
-            sourceWithNamesCheck.setSelected(fileController.data2D.isHasHeader());
+            sourceWithNamesCheck.setSelected(dataController.data2D.isHasHeader());
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -40,18 +50,17 @@ public class DataFileExcelFormatController extends BaseChildController {
     @FXML
     @Override
     public void okAction() {
-        if (fileController == null || !fileController.isShowing()
-                || fileController.data2D == null) {
+        if (isInvalid()) {
             close();
             return;
         }
-        File file = fileController.data2D.getFile();
+        File file = dataController.data2D.getFile();
         if (file == null || !file.exists()) {
             close();
             return;
         }
-        fileController.loadExcelFile(file,
-                fileController.data2D.getSheet(),
+        dataController.loadExcelFile(file,
+                dataController.data2D.getSheet(),
                 sourceWithNamesCheck.isSelected());
         if (closeAfterCheck.isSelected()) {
             close();

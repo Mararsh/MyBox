@@ -1,10 +1,10 @@
 package mara.mybox.data2d;
 
-import mara.mybox.data2d.tools.Data2DDefinitionTools;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import mara.mybox.data.StringTable;
+import mara.mybox.data2d.tools.Data2DDefinitionTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileDeleteTools;
@@ -82,7 +82,7 @@ public abstract class Data2D extends Data2D_Operations {
         row.addAll(Arrays.asList(message("CurrentPage"), StringTools.format(currentPage + 1)
                 + " / " + StringTools.format(pagesNumber)));
         infoTable.add(row);
-        if (isMutiplePages() && hasData()) {
+        if (isMutiplePages()) {
             row = new ArrayList<>();
             row.addAll(Arrays.asList(message("RowsRangeInPage"),
                     StringTools.format(startRowOfCurrentPage + 1) + " - "

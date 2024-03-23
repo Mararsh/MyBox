@@ -18,7 +18,6 @@ import mara.mybox.data.StringTable;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.tools.Data2DColumnTools;
 import mara.mybox.data2d.tools.Data2DDefinitionTools;
-import mara.mybox.data2d.tools.Data2DPageTools;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.InfoNode;
@@ -204,7 +203,7 @@ public class ControlData2DColumns extends BaseData2DColumnsController {
             if (data2D == null) {
                 return;
             }
-            if (data2D.isColumnsValid()) {
+            if (data2D.isValid()) {
                 isSettingValues = true;
                 for (Data2DColumn column : data2D.getColumns()) {
                     tableData.add(column.cloneAll());
@@ -226,39 +225,21 @@ public class ControlData2DColumns extends BaseData2DColumnsController {
         deleteRowsButton.setDisable(data2D == null || data2D.isInternalTable() || isNoneSelected());
     }
 
-    @FXML
-    @Override
-    public void okAction() {
+    public List<Data2DColumn> pickColumns() {
         try {
             StringTable validateTable = Data2DColumnTools.validate(tableData);
             if (validateTable != null && !validateTable.isEmpty()) {
                 validateTable.htmlTable();
-                return;
-            }
-            List<List<String>> newTableData = new ArrayList<>();
-            if (!tableData.isEmpty()) {
-                for (List<String> rowValues : dataController.tableData) {
-                    List<String> newRow = new ArrayList<>();
-                    newRow.add(rowValues.get(0));
-                    for (Data2DColumn row : tableData) {
-                        int col = data2D.colOrder(row.getIndex()) + 1;
-                        if (col <= 0 || col >= rowValues.size()) {
-                            newRow.add(null);
-                        } else {
-                            newRow.add(rowValues.get(col));
-                        }
-                    }
-                    newTableData.add(newRow);
-                }
+                return null;
             }
             List<Data2DColumn> columns = new ArrayList<>();
             for (int i = 0; i < tableData.size(); i++) {
                 columns.add(tableData.get(i).cloneAll());
             }
-            data2D.setColumns(columns);
-            dataController.updatePage(newTableData);
+            return columns;
         } catch (Exception e) {
             MyBoxLog.error(e);
+            return null;
         }
     }
 

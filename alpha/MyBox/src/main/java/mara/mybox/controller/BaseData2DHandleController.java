@@ -270,20 +270,14 @@ public abstract class BaseData2DHandleController extends BaseData2DSelectRowsCon
             if (isSettingValues) {
                 return true;
             }
-            if (data2D == null || !data2D.hasData()) {
-                outOptionsError(message("NoData"));
+            if (data2D == null || !data2D.isValid()) {
+                popError(message("NoData"));
                 return false;
             }
             return checkSelections();
         } catch (Exception e) {
             MyBoxLog.error(e);
             return false;
-        }
-    }
-
-    public void outOptionsError(String error) {
-        if (error != null && !error.isBlank()) {
-            popError(error);
         }
     }
 

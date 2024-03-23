@@ -303,7 +303,14 @@ public class Data2DTableTools {
         DataFileCSV csvData = toCSV(task, dataTable, txtFile, false);
         if (csvData != null && txtFile != null && txtFile.exists()) {
             DataFileText targetData = new DataFileText();
-            targetData.setColumns(csvData.getColumns()).setFile(txtFile).setDataName(csvData.getDataName()).setCharset(Charset.forName("UTF-8")).setDelimiter(",").setHasHeader(true).setColsNumber(csvData.getColsNumber()).setRowsNumber(csvData.getRowsNumber());
+            targetData.setColumns(csvData.getColumns())
+                    .setFile(txtFile)
+                    .setDataName(csvData.getDataName())
+                    .setCharset(Charset.forName("UTF-8"))
+                    .setDelimiter(",")
+                    .setHasHeader(true)
+                    .setColsNumber(csvData.getColsNumber())
+                    .setRowsNumber(csvData.getRowsNumber());
             targetData.saveAttributes();
             return targetData;
         } else {
@@ -339,7 +346,8 @@ public class Data2DTableTools {
         try (Connection conn = DerbyBase.getConnection();
                 PreparedStatement statement = conn.prepareStatement(sql);
                 ResultSet results = statement.executeQuery();
-                CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(file, Charset.forName("UTF-8")), CsvTools.csvFormat(",", true))) {
+                CSVPrinter csvPrinter = new CSVPrinter(
+                        new FileWriter(file, Charset.forName("UTF-8")), CsvTools.csvFormat(",", true))) {
             csvPrinter.printRecord(dataTable.columnNames());
             while (results.next() && task != null && !task.isCancelled()) {
                 try {

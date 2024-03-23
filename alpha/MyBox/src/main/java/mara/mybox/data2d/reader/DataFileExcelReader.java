@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import mara.mybox.data2d.DataFileExcel;
+import mara.mybox.tools.FileTools;
 import mara.mybox.tools.MicrosoftDocumentTools;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -27,6 +28,9 @@ public class DataFileExcelReader extends Data2DReader {
 
     @Override
     public void scanData() {
+        if (!FileTools.hasData(sourceFile)) {
+            return;
+        }
         try (Workbook wb = WorkbookFactory.create(sourceFile)) {
             Sheet sourceSheet;
             String sheetName = sourceData.getSheet();

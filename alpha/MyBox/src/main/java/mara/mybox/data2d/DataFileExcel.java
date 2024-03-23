@@ -219,7 +219,7 @@ public class DataFileExcel extends DataFile {
     }
 
     public int writeHeader(Sheet targetSheet, int targetRowIndex) {
-        if (!isColumnsValid()) {
+        if (!isValid()) {
             return targetRowIndex;
         }
         int index = targetRowIndex;
@@ -234,7 +234,7 @@ public class DataFileExcel extends DataFile {
     protected int writePageData(Sheet targetSheet, int targetRowIndex) {
         int index = targetRowIndex;
         try {
-            if (!isColumnsValid()) {
+            if (!isValid()) {
                 return index;
             }
             for (int r = 0; r < tableRowsNumber(); r++) {
@@ -327,18 +327,18 @@ public class DataFileExcel extends DataFile {
         FileCopyTools.copyFile(file, tmpDataFile);
         try (Workbook targetBook = WorkbookFactory.create(tmpDataFile)) {
             Sheet targetSheet = targetBook.createSheet(sheetName);
-//            List<List<String>> data = tmpData(3, 3);
-//            for (int r = 0; r < data.size(); r++) {
-//                if (task == null || task.isCancelled()) {
-//                    break;
-//                }
-//                List<String> values = data.get(r);
-//                Row targetRow = targetSheet.createRow(r);
-//                for (int col = 0; col < values.size(); col++) {
-//                    Cell targetCell = targetRow.createCell(col, CellType.STRING);
-//                    targetCell.setCellValue(values.get(col));
-//                }
-//            }
+            List<List<String>> data = tmpData(3, 3);
+            for (int r = 0; r < data.size(); r++) {
+                if (task == null || task.isCancelled()) {
+                    break;
+                }
+                List<String> values = data.get(r);
+                Row targetRow = targetSheet.createRow(r);
+                for (int col = 0; col < values.size(); col++) {
+                    Cell targetCell = targetRow.createCell(col, CellType.STRING);
+                    targetCell.setCellValue(values.get(col));
+                }
+            }
             try (FileOutputStream fileOut = new FileOutputStream(tmpFile)) {
                 targetBook.write(fileOut);
             }

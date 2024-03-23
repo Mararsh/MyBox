@@ -11,8 +11,8 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import mara.mybox.data2d.Data2D;
-import mara.mybox.data2d.tools.Data2DTableTools;
 import mara.mybox.data2d.DataTable;
+import mara.mybox.data2d.tools.Data2DTableTools;
 import mara.mybox.data2d.writer.Data2DWriter;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
@@ -94,7 +94,10 @@ public class DataTableQueryEditor extends InfoTreeNodeEditor {
             if (name != null && !name.isBlank()) {
                 namesList.getItems().add(name);
             }
-            namesList.getItems().addAll(dataTable.columnNames());
+            if (!dataTable.isValid()) {
+                return;
+            }
+            namesList.getItems().setAll(dataTable.columnNames());
 
         } catch (Exception e) {
             MyBoxLog.error(e);

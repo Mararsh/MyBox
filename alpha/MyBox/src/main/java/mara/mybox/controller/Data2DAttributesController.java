@@ -2,6 +2,7 @@ package mara.mybox.controller;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -10,6 +11,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.web.WebView;
 import mara.mybox.data2d.Data2D;
+import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
@@ -24,11 +26,10 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-10-16
  * @License Apache License Version 2.0
  */
-public class Data2DAttributes extends BaseChildController {
+public class Data2DAttributesController extends BaseChildController {
 
     protected BaseData2DLoadController dataController;
     protected TableData2DDefinition tableData2DDefinition;
-    protected Data2D data2D;
     protected String dataName;
     protected short scale;
     protected int maxRandom;
@@ -44,7 +45,7 @@ public class Data2DAttributes extends BaseChildController {
     @FXML
     protected WebView webView;
 
-    public Data2DAttributes() {
+    public Data2DAttributesController() {
         baseTitle = message("DataDefinition");
     }
 
@@ -103,7 +104,7 @@ public class Data2DAttributes extends BaseChildController {
                 close();
                 return;
             }
-            data2D = dataController.data2D;
+            Data2D data2D = dataController.data2D;
             if (data2D == null) {
                 close();
                 return;
@@ -167,12 +168,18 @@ public class Data2DAttributes extends BaseChildController {
         if (!pickValues()) {
             return;
         }
-        data2D.setDataName(dataName);
-        data2D.setScale(scale);
-        data2D.setMaxRandom(maxRandom);
-        data2D.setComments(descInput.getText());
-        data2D.setModifyTime(new Date());
-        columnsController.okAction();
+        List<Data2DColumn> columns = columnsController.pickColumns();
+        if (columns == null || columns.isEmpty()) {
+            popError(message("DataColumnsShouldNotEmpty"));
+            return;
+        }
+        dataController.data2D.setDataName(dataName);
+        dataController.data2D.setScale(scale);
+        dataController.data2D.setMaxRandom(maxRandom);
+        dataController.data2D.setComments(descInput.getText());
+        dataController.data2D.setModifyTime(new Date());
+        dataController.data2D.setColumns(columns);
+        dataController.attributesModified();
         if (closeAfterCheck.isSelected()) {
             close();
         }
@@ -187,9 +194,9 @@ public class Data2DAttributes extends BaseChildController {
     /*
         static
      */
-    public static Data2DAttributes open(BaseData2DLoadController tableController) {
+    public static Data2DAttributesController open(BaseData2DLoadController tableController) {
         try {
-            Data2DAttributes controller = (Data2DAttributes) WindowTools.branchStage(
+            Data2DAttributesController controller = (Data2DAttributesController) WindowTools.branchStage(
                     tableController, Fxmls.Data2DAttributesFxml);
             controller.setParameters(tableController);
             controller.requestMouse();

@@ -128,7 +128,7 @@ public abstract class BaseData2DTargetsController extends BaseData2DHandleContro
                 return true;
             }
             if (targetController != null && targetController.format == null) {
-                outOptionsError(message("SelectToHandle") + ": " + message("Target"));
+                popError(message("SelectToHandle") + ": " + message("Target"));
                 return false;
             }
             return super.checkOptions();

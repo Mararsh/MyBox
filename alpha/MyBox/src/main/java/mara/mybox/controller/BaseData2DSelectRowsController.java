@@ -181,7 +181,7 @@ public class BaseData2DSelectRowsController extends BaseData2DLoadController {
 
     public void refreshControls() {
         try {
-            updateTitle();
+            updateStatus();
             if (data2D == null) {
                 return;
             }
@@ -366,11 +366,11 @@ public class BaseData2DSelectRowsController extends BaseData2DLoadController {
     }
 
     @Override
-    public boolean validateData() {
+    public void updateInterface() {
         if (dataBox != null) {
             dataBox.setDisable(data2D == null);
         }
-        return super.validateData();
+        super.updateInterface();
     }
 
     /*
@@ -390,7 +390,7 @@ public class BaseData2DSelectRowsController extends BaseData2DLoadController {
     @Override
     public void makeColumns() {
         try {
-            if (!validateData()) {
+            if (!isValidData()) {
                 return;
             }
             super.makeColumns();

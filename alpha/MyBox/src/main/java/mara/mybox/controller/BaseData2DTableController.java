@@ -1,6 +1,7 @@
 package mara.mybox.controller;
 
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -9,10 +10,13 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -39,6 +43,7 @@ import mara.mybox.fxml.cell.TableDataDateEditCell;
 import mara.mybox.fxml.cell.TableDataDisplayCell;
 import mara.mybox.fxml.cell.TableDataEditCell;
 import mara.mybox.fxml.style.NodeStyleTools;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -179,29 +184,22 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
 
     @Override
     public void updateStatus() {
-        super.updateStatus();
-        updateTitle();
-        validateData();
+        try {
+            super.updateStatus();
+            updateInterface();
+            if (statusNotify != null) {
+                statusNotify.set(!statusNotify.get());
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
-    public boolean validateData() {
-        sourceFile = data2D != null ? data2D.getFile() : null;
-        if (dataManufactureButton != null) {
-            dataManufactureButton.setDisable(data2D == null);
-        }
-        checkSelected();
+    public boolean isValidData() {
         return data2D != null && data2D.isValid();
     }
 
-    public void notifyStatus() {
-        updateStatus();
-        if (statusNotify != null) {
-            statusNotify.set(!statusNotify.get());
-        }
-    }
-
     public void notifySaved() {
-        notifyStatus();
     }
 
     @Override
@@ -209,7 +207,6 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
         if (loadedNotify == null) {
             return;
         }
-        notifyStatus();
         loadedNotify.set(!loadedNotify.get());
         if (data2D != null && data2D.getFile() != null) {
             recordFileOpened(data2D.getFile());
@@ -225,7 +222,7 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
             data2D.setPageData(tableData);
             data2D.setTableChanged(changed);
         }
-        notifyStatus();
+        updateStatus();
     }
 
     public void pageDataChanged() {
@@ -238,7 +235,7 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
     public void loadPage() {
         try {
             makeColumns();
-            if (!validateData()) {
+            if (!isValidData()) {
                 resetData();
                 return;
             }
@@ -249,12 +246,26 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
         }
     }
 
-    public synchronized boolean updatePage(List<List<String>> newData) {
+    public synchronized boolean attributesModified() {
         try {
             data2D.setColumnsChanged(true);
             makeColumns();
+            List<List<String>> pageData = new ArrayList<>();
+            for (List<String> rowValues : tableData) {
+                List<String> newRow = new ArrayList<>();
+                newRow.add(rowValues.get(0));
+                for (Data2DColumn column : data2D.getColumns()) {
+                    int col = data2D.colOrder(column.getIndex()) + 1;
+                    if (col <= 0 || col >= rowValues.size()) {
+                        newRow.add(null);
+                    } else {
+                        newRow.add(rowValues.get(col));
+                    }
+                }
+                pageData.add(newRow);
+            }
             isSettingValues = true;
-            tableData.setAll(newData);
+            tableData.setAll(pageData);
             data2D.setPageData(tableData);
             isSettingValues = false;
             tableChanged(true);
@@ -273,10 +284,13 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
             tableView.setItems(tableData);
             isSettingValues = false;
 
-            if (!validateData()) {
+            if (!isValidData()) {
                 return;
             }
             List<Data2DColumn> columns = data2D.getColumns();
+            if (columns == null || columns.isEmpty()) {
+                return;
+            }
             TableColor tableColor = null;
             boolean includeCoordinate = data2D.includeCoordinate();
             validateEdit = UserConfig.getBoolean(baseName + "ValidateEdit", true);
@@ -374,7 +388,7 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
 
     @Override
     public boolean checkBeforeLoadingTableData() {
-        return data2D != null && data2D.isValid();
+        return isValidData();
     }
 
     @Override
@@ -417,40 +431,10 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
         return data2D.getDataSize();
     }
 
-    public void correctDataSize() {
-        if (data2D.isTmpData() || !data2D.isValid()) {
-            return;
-        }
-        if (data2D.getColsNumber() != data2D.getColumns().size()
-                || data2D.getRowsNumber() != data2D.getDataSize()) {
-            FxTask updateTask = new FxTask<Void>(this) {
-
-                @Override
-                protected boolean handle() {
-                    data2D.countSize();
-                    return data2D.saveAttributes();
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    notifySaved();
-                }
-
-                @Override
-                protected void whenFailed() {
-                }
-
-            };
-            start(updateTask, false);
-        }
-    }
-
     @Override
     public void loadDataSize() {
-        if (data2D == null) {
-            return;
-        }
-        if (dataSizeLoaded || data2D.isTmpData() || data2D.isMatrix()) {
+        if (!isValidData() || dataSizeLoaded
+                || data2D.isTmpData() || data2D.isMatrix()) {
             afterLoaded(false);
             return;
         }
@@ -518,6 +502,34 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
         notifyLoaded();
     }
 
+    public void correctDataSize() {
+        if (data2D == null || data2D.isTmpData()) {
+            return;
+        }
+        if (data2D.getColsNumber() != data2D.getColumns().size()
+                || data2D.getRowsNumber() != data2D.getDataSize()) {
+            FxTask updateTask = new FxTask<Void>(this) {
+
+                @Override
+                protected boolean handle() {
+                    data2D.countSize();
+                    return data2D.saveAttributes();
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    updateStatus();
+                }
+
+                @Override
+                protected void whenFailed() {
+                }
+
+            };
+            start(updateTask, false);
+        }
+    }
+
     protected void refreshPagination() {
         countPagination(null, null, currentPage);
         setPagination();
@@ -572,24 +584,88 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
     /*
         interface
      */
-    public void updateTitle() {
-        if (dataLabel != null) {
-            dataLabel.setText(data2D != null ? data2D.displayName() : "");
-            return;
-        }
-        myStage = getMyStage();
-        if (myStage == null) {
-            return;
-        }
-        String title = getRootBaseTitle();
-        if (data2D != null) {
-            title += " : ";
-            if (data2D.isTableChanged()) {
-                title += " * ";
+    public void updateInterface() {
+        try {
+            sourceFile = data2D != null ? data2D.getFile() : null;
+            if (dataManufactureButton != null) {
+                dataManufactureButton.setDisable(data2D == null);
             }
-            title += data2D.displayName();
+            checkSelected();
+            if (dataLabel != null) {
+                dataLabel.setText(data2D != null ? data2D.displayName() : "");
+            }
+            myStage = getMyStage();
+            if (myStage == null) {
+                return;
+            }
+            String title = getRootBaseTitle();
+            if (data2D != null) {
+                title += " : ";
+                if (data2D.isTableChanged()) {
+                    title += " * ";
+                }
+                title += data2D.displayName();
+            }
+            myStage.setTitle(title);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
         }
-        myStage.setTitle(title);
+    }
+
+    @Override
+    protected List<MenuItem> makeTableContextMenu() {
+        try {
+            if (data2D == null || !data2D.isValid()) {
+                return null;
+            }
+            List<MenuItem> items = new ArrayList<>();
+
+            MenuItem menu = new MenuItem(message("DataDefinition") + "    Ctrl+i " + message("Or") + " Alt+i",
+                    StyleTools.getIconImageView("iconInfo.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                infoAction();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("DataManufacture"), StyleTools.getIconImageView("iconEdit.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                dataManufacture();
+            });
+            items.add(menu);
+
+            if (data2D.getFile() != null) {
+                menu = new MenuItem(message("TextFile"), StyleTools.getIconImageView("iconTxt.png"));
+                menu.setOnAction((ActionEvent event) -> {
+                    editTextFile();
+                });
+                items.add(menu);
+            }
+
+            items.add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("Snapshot"), StyleTools.getIconImageView("iconSnapshot.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                snapAction();
+            });
+            items.add(menu);
+
+            menu = new MenuItem("Html", StyleTools.getIconImageView("iconHtml.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                htmlAction();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("Data"), StyleTools.getIconImageView("iconData.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                dataAction();
+            });
+            items.add(menu);
+
+            return items;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
     }
 
     @Override

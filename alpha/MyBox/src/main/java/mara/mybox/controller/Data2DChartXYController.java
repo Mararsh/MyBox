@@ -131,7 +131,7 @@ public class Data2DChartXYController extends BaseData2DChartController {
 
             int categoryCol = data2D.colOrder(selectedCategory);
             if (categoryCol < 0) {
-                outOptionsError(message("SelectToHandle") + ": " + message("Column"));
+                popError(message("SelectToHandle") + ": " + message("Column"));
                 tabPane.getSelectionModel().select(optionsTab);
                 return false;
             }
@@ -144,7 +144,7 @@ public class Data2DChartXYController extends BaseData2DChartController {
             if (chartTypesController.isBubbleChart()) {
                 int valueCol = data2D.colOrder(selectedValue);
                 if (valueCol < 0) {
-                    outOptionsError(message("SelectToHandle") + ": " + message("Column"));
+                    popError(message("SelectToHandle") + ": " + message("Column"));
                     tabPane.getSelectionModel().select(optionsTab);
                     return false;
                 }

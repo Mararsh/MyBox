@@ -71,7 +71,6 @@ public abstract class Data2DReader {
         rows = new ArrayList<>();
         sourceRow = new ArrayList<>();
         sourceData.startFilter();
-        conn = conn();
         scanData();
         afterScanned();
         return true;

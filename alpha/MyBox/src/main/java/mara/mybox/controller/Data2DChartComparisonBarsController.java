@@ -90,7 +90,7 @@ public class Data2DChartComparisonBarsController extends BaseData2DChartHtmlCont
             }
             selectedValue2 = valueColumn2Selector.getSelectionModel().getSelectedItem();
             if (selectedValue2 == null) {
-                outOptionsError(message("SelectToHandle") + ": " + message("Column"));
+                popError(message("SelectToHandle") + ": " + message("Column"));
                 tabPane.getSelectionModel().select(optionsTab);
                 return false;
             }

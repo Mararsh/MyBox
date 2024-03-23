@@ -116,7 +116,7 @@ public abstract class BaseTableViewController<P> extends BaseFileController {
                         popMenu.hide();
                     }
                     if (event.getButton() == MouseButton.SECONDARY) {
-                        popTableMenu(event);
+                        popTableMenu();
                     } else if (event.getClickCount() == 1) {
                         itemClicked();
                     } else if (event.getClickCount() > 1) {
@@ -651,7 +651,7 @@ public abstract class BaseTableViewController<P> extends BaseFileController {
         interface
      */
     @FXML
-    protected void popTableMenu(MouseEvent event) {
+    protected void popTableMenu() {
         if (isSettingValues) {
             return;
         }
@@ -661,7 +661,7 @@ public abstract class BaseTableViewController<P> extends BaseFileController {
         }
         items.add(new SeparatorMenuItem());
 
-        popEventMenu(event, items);
+        popNodeMenu(tableView, items);
     }
 
     protected List<MenuItem> makeTableContextMenu() {

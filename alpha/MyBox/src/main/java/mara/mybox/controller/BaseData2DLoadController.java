@@ -56,11 +56,8 @@ public class BaseData2DLoadController extends BaseData2DTableController {
         if (!checkBeforeNextAction()) {
             return false;
         }
-        resetStatus();
         data2D = Data2D.create(type);
-        setData(data2D);
-        dataSizeLoaded = true;
-        postLoadedTableData();
+        loadTmpData(3);
         return true;
     }
 
@@ -75,35 +72,20 @@ public class BaseData2DLoadController extends BaseData2DTableController {
             tableData2DColumn = data2D.getTableData2DColumn();
 
             showPaginationPane(!data2D.isTmpData() && !data2D.isMatrix());
-            validateData();
+            updateInterface();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
-    public boolean updateDef(Data2DDefinition def) {
-        if (def == null) {
-            return createData(DataType.CSV);
-        }
-        if (!checkBeforeNextAction()) {
-            return false;
-        }
-        resetStatus();
-        data2D = Data2D.create(def.getType());
-        data2D.cloneAll(def);
-        setData(data2D);
-        readDefinition();
-        return true;
-    }
-
     public boolean loadDef(Data2DDefinition def) {
-        if (def == null) {
-            return createData(DataType.CSV);
-        }
         if (!checkBeforeNextAction()) {
             return false;
         }
         resetStatus();
+        if (def == null) {
+            return loadNull();
+        }
         data2D = Data2D.create(def.getType());
         data2D.cloneAll(def);
         setData(data2D);
@@ -204,14 +186,15 @@ public class BaseData2DLoadController extends BaseData2DTableController {
 
     public void loadData(String name, List<Data2DColumn> cols, List<List<String>> data) {
         try {
+            if (!checkBeforeNextAction()) {
+                return;
+            }
+            resetStatus();
             if (data2D == null) {
                 data2D = Data2D.create(DataType.CSV);
-            } else if (!checkBeforeNextAction()) {
-                return;
             } else {
                 data2D.resetData();
             }
-            resetStatus();
             List<Data2DColumn> columns = new ArrayList<>();
             if (cols == null || cols.isEmpty()) {
                 data2D.setHasHeader(false);
@@ -245,7 +228,13 @@ public class BaseData2DLoadController extends BaseData2DTableController {
             data2D.setDataName(name);
             resetView(false);
             setData(data2D);
-            displayTmpData(rows);
+            makeColumns();
+            isSettingValues = true;
+            tableData.setAll(rows);
+            data2D.setPageData(tableData);
+            isSettingValues = false;
+            dataSizeLoaded = true;
+            postLoadedTableData();
             if (validateTable != null && !validateTable.isEmpty()) {
                 validateTable.htmlTable();
             }
@@ -254,20 +243,8 @@ public class BaseData2DLoadController extends BaseData2DTableController {
         }
     }
 
-    public boolean displayTmpData(List<List<String>> newData) {
-        try {
-            makeColumns();
-            isSettingValues = true;
-            tableData.setAll(newData);
-            data2D.setPageData(tableData);
-            isSettingValues = false;
-            dataSizeLoaded = true;
-            postLoadedTableData();
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return false;
-        }
+    public void loadTmpData(int size) {
+        loadData(null, data2D.tmpColumns(size), data2D.tmpData(size, 3));
     }
 
     public void loadMatrix(double[][] matrix) {
@@ -359,7 +336,6 @@ public class BaseData2DLoadController extends BaseData2DTableController {
                                 .setDelimiter(data.getDelimiter());
                         def = tableData2DDefinition.updateData(conn, def);
                     }
-                    MyBoxLog.console(def.getSheet());
                     if (isCancelled()) {
                         return false;
                     }
@@ -495,7 +471,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
     @FXML
     @Override
     public void copyToSystemClipboard() {
-        if (!validateData()) {
+        if (!isValidData()) {
             return;
         }
         Data2DCopyController controller = Data2DCopyController.open(this);

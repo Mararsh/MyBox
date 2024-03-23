@@ -41,7 +41,7 @@ public class BaseData implements Cloneable {
         }
     }
 
-    public boolean isEmpty() {
+    public boolean isNoColumn() {
         try {
             return columnValues.keySet().isEmpty();
         } catch (Exception e) {

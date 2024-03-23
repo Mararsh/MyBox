@@ -21,120 +21,120 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.web.WebView?>
 
-<VBox fx:id="thisPane" prefHeight="500.0" prefWidth="700.0" spacing="2.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.Data2DAttributes">
-   <padding>
-      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-   </padding>
-   <children>
-      <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" tabClosingPolicy="UNAVAILABLE">
-         <tabs>
-            <Tab fx:id="valueTab" text="%Columns">
-               <content>
-                  <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" spacing="2.0">
-                     <padding>
-                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                     </padding>
-                     <children>
-                        <fx:include fx:id="columns" source="ControlData2DColumns.fxml" />
-                     </children>
-                  </VBox>
-               </content>
-            </Tab>
-            <Tab fx:id="attributesTab" text="%Attributes">
-               <content>
-                  <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" spacing="2.0">
-                     <padding>
-                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                     </padding>
-                     <children>
-                        <HBox alignment="CENTER_LEFT" spacing="2.0">
-                           <children>
-                              <Label minHeight="-Infinity" text="%ID" wrapText="true" />
-                              <TextField fx:id="idInput" editable="false" maxWidth="1.7976931348623157E308" styleClass="uneditable" stylesheets="@../styles/MyBox.css" HBox.hgrow="ALWAYS" />
-                              <Label minHeight="-Infinity" text="%DataType" wrapText="true" />
-                              <TextField fx:id="dataTypeInput" editable="false" prefWidth="200.0" styleClass="uneditable" stylesheets="@../styles/MyBox.css" />
-                           </children>
-                           <VBox.margin>
-                              <Insets />
-                           </VBox.margin>
-                        </HBox>
-                        <HBox alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
-                           <children>
-                              <Label minHeight="-Infinity" text="%DataName" wrapText="true" />
-                              <TextField fx:id="dataNameInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                           </children>
-                        </HBox>
-                        <HBox alignment="CENTER_LEFT" spacing="2.0">
-                           <children>
-                              <Label minHeight="-Infinity" text="%DecimalScale" wrapText="true" />
-                              <ComboBox fx:id="scaleSelector" editable="true" prefWidth="120.0" />
-                              <Label minHeight="-Infinity" text="%MaxRandom" wrapText="true" />
-                              <ComboBox fx:id="randomSelector" editable="true" prefWidth="160.0" />
-                           </children>
-                        </HBox>
-                        <Label text="%Description" />
-                        <TextArea fx:id="descInput" maxWidth="1.7976931348623157E308" minHeight="60.0" prefHeight="100.0" wrapText="true" />
-                        <HBox alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
-                           <children>
-                              <Label minHeight="-Infinity" text="%UpdateTime" wrapText="true" />
-                              <TextField fx:id="timeInput" editable="false" maxWidth="1.7976931348623157E308" styleClass="uneditable" stylesheets="@../styles/MyBox.css" HBox.hgrow="ALWAYS" />
-                           </children>
-                        </HBox>
-                        <WebView fx:id="webView" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS" />
-                     </children>
-                  </VBox>
-               </content>
-            </Tab>
-         </tabs>
-      </TabPane>
-      <HBox alignment="CENTER_RIGHT" spacing="2.0">
-         <children>
-            <CheckBox fx:id="onTopCheck" mnemonicParsing="false" selected="true">
-               <graphic>
-                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/Red/iconTop.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </CheckBox>
-            <CheckBox fx:id="closeAfterCheck" mnemonicParsing="false" selected="true">
-               <graphic>
-                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/Red/iconClose.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </CheckBox>
-            <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">
-               <graphic>
-                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/Red/iconCancel.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
-            <Button fx:id="recoverButton" mnemonicParsing="false" onAction="#recoverAction">
-               <graphic>
-                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/Red/iconRecover.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
-            <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction">
-               <graphic>
-                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/Red/iconOK.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
-         </children>
-      </HBox>
-   </children>
+<VBox fx:id="thisPane" prefHeight="500.0" prefWidth="700.0" spacing="2.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.Data2DAttributesController">
+    <padding>
+        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+    </padding>
+    <children>
+        <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" tabClosingPolicy="UNAVAILABLE">
+            <tabs>
+                <Tab fx:id="valueTab" text="%Columns">
+                    <content>
+                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" spacing="2.0">
+                            <padding>
+                                <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                            </padding>
+                            <children>
+                                <fx:include fx:id="columns" source="ControlData2DColumns.fxml" />
+                            </children>
+                        </VBox>
+                    </content>
+                </Tab>
+                <Tab fx:id="attributesTab" text="%Attributes">
+                    <content>
+                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" spacing="2.0">
+                            <padding>
+                                <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                            </padding>
+                            <children>
+                                <HBox alignment="CENTER_LEFT" spacing="2.0">
+                                    <children>
+                                        <Label minHeight="-Infinity" text="%ID" wrapText="true" />
+                                        <TextField fx:id="idInput" editable="false" maxWidth="1.7976931348623157E308" styleClass="uneditable" stylesheets="@../styles/MyBox.css" HBox.hgrow="ALWAYS" />
+                                        <Label minHeight="-Infinity" text="%DataType" wrapText="true" />
+                                        <TextField fx:id="dataTypeInput" editable="false" prefWidth="200.0" styleClass="uneditable" stylesheets="@../styles/MyBox.css" />
+                                    </children>
+                                    <VBox.margin>
+                                        <Insets />
+                                    </VBox.margin>
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                    <children>
+                                        <Label minHeight="-Infinity" text="%DataName" wrapText="true" />
+                                        <TextField fx:id="dataNameInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT" spacing="2.0">
+                                    <children>
+                                        <Label minHeight="-Infinity" text="%DecimalScale" wrapText="true" />
+                                        <ComboBox fx:id="scaleSelector" editable="true" prefWidth="120.0" />
+                                        <Label minHeight="-Infinity" text="%MaxRandom" wrapText="true" />
+                                        <ComboBox fx:id="randomSelector" editable="true" prefWidth="160.0" />
+                                    </children>
+                                </HBox>
+                                <Label text="%Description" />
+                                <TextArea fx:id="descInput" maxWidth="1.7976931348623157E308" minHeight="60.0" prefHeight="100.0" wrapText="true" />
+                                <HBox alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                    <children>
+                                        <Label minHeight="-Infinity" text="%UpdateTime" wrapText="true" />
+                                        <TextField fx:id="timeInput" editable="false" maxWidth="1.7976931348623157E308" styleClass="uneditable" stylesheets="@../styles/MyBox.css" HBox.hgrow="ALWAYS" />
+                                    </children>
+                                </HBox>
+                                <WebView fx:id="webView" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS" />
+                            </children>
+                        </VBox>
+                    </content>
+                </Tab>
+            </tabs>
+        </TabPane>
+        <HBox alignment="CENTER_RIGHT" spacing="2.0">
+            <children>
+                <CheckBox fx:id="onTopCheck" mnemonicParsing="false" selected="true">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconTop.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </CheckBox>
+                <CheckBox fx:id="closeAfterCheck" mnemonicParsing="false" selected="true">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconClose.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </CheckBox>
+                <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconCancel.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="recoverButton" mnemonicParsing="false" onAction="#recoverAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconRecover.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconOK.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+            </children>
+        </HBox>
+    </children>
 </VBox>

@@ -10,7 +10,7 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import mara.mybox.controller.BaseData2DLoadController;
-import mara.mybox.controller.Data2DAttributes;
+import mara.mybox.controller.Data2DAttributesController;
 import mara.mybox.controller.Data2DChartBoxWhiskerController;
 import mara.mybox.controller.Data2DChartComparisonBarsController;
 import mara.mybox.controller.Data2DChartGroupBoxWhiskerController;
@@ -74,7 +74,6 @@ public class Data2DMenuTools {
             List<MenuItem> items = new ArrayList<>();
             boolean isEditing = dataController.isEditing();
             boolean isTmpData = data2D.isTmpData();
-            boolean empty = !data2D.hasData();
             boolean notLoaded = !dataController.isDataSizeLoaded();
 
             MenuItem menu;
@@ -84,7 +83,7 @@ public class Data2DMenuTools {
             if (isEditing) {
                 menu = new MenuItem(message("DefineData"), StyleTools.getIconImageView("iconMeta.png"));
                 menu.setOnAction((ActionEvent event) -> {
-                    Data2DAttributes.open(dataController);
+                    Data2DAttributesController.open(dataController);
                 });
                 menu.setDisable(notLoaded);
                 items.add(menu);
@@ -128,7 +127,6 @@ public class Data2DMenuTools {
             menu.setOnAction((ActionEvent event) -> {
                 Data2DExportController.open(dataController);
             });
-            menu.setDisable(empty);
             items.add(menu);
 
             menu = new MenuItem(message("ConvertToDatabaseTable"), StyleTools.getIconImageView("iconDatabase.png"));
@@ -173,12 +171,12 @@ public class Data2DMenuTools {
             if (!dataController.isEditing()) {
                 return null;
             }
-            List<MenuItem> items = new ArrayList<>();
-
             Data2D data2D = dataController.getData2D();
-            boolean invalidData = data2D == null || !data2D.isValid();
-            boolean isTmpData = data2D != null && data2D.isTmpData();
-            boolean empty = invalidData || dataController.getTableData().isEmpty();
+            if (data2D == null || !data2D.isValid()) {
+                return null;
+            }
+            List<MenuItem> items = new ArrayList<>();
+            boolean isTmpData = data2D.isTmpData();
             boolean noneSelected = dataController.isNoneSelected();
             boolean isTableMode = dataController.isTableMode();
             MenuItem menu;
@@ -259,14 +257,12 @@ public class Data2DMenuTools {
             menu.setOnAction((ActionEvent event) -> {
                 dataController.pasteContentInSystemClipboard();
             });
-            menu.setDisable(invalidData);
             items.add(menu);
 
             menu = new MenuItem(message("PasteContentInMyBoxClipboard"), StyleTools.getIconImageView("iconPaste.png"));
             menu.setOnAction((ActionEvent event) -> {
                 dataController.pasteContentInMyboxClipboard();
             });
-            menu.setDisable(invalidData);
             items.add(menu);
 
             items.add(new SeparatorMenuItem());
@@ -275,14 +271,12 @@ public class Data2DMenuTools {
             menu.setOnAction((ActionEvent event) -> {
                 Data2DSetValuesController.open(dataController);
             });
-            menu.setDisable(empty);
             items.add(menu);
 
             menu = new MenuItem(message("DeleteWithConditions"), StyleTools.getIconImageView("iconDelete.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DDeleteController.open(dataController);
             });
-            menu.setDisable(empty);
             items.add(menu);
 
             if (isTableMode) {
@@ -290,7 +284,7 @@ public class Data2DMenuTools {
                 menu.setOnAction((ActionEvent event) -> {
                     Data2DSetStylesController.open(dataController);
                 });
-                menu.setDisable(empty || isTmpData);
+                menu.setDisable(isTmpData);
                 items.add(menu);
 
                 items.add(new SeparatorMenuItem());
@@ -411,19 +405,19 @@ public class Data2DMenuTools {
 
     public static List<MenuItem> trimMenus(BaseData2DLoadController controller) {
         try {
+            Data2D data2D = controller.getData2D();
+            if (data2D == null || !data2D.isValid()) {
+                return null;
+            }
             List<MenuItem> items = new ArrayList<>();
 
             MenuItem menu;
-            Data2D data2D = controller.getData2D();
-            boolean invalidData = data2D == null || !data2D.isValid();
-            boolean empty = invalidData || controller.getTableData().isEmpty();
 
-            if (data2D != null && data2D.isTable()) {
+            if (data2D.isTable()) {
                 menu = new MenuItem(message("Query"), StyleTools.getIconImageView("iconQuery.png"));
                 menu.setOnAction((ActionEvent event) -> {
                     DataTableQueryController.open(controller);
                 });
-                menu.setDisable(empty);
                 items.add(menu);
             }
 
@@ -431,35 +425,30 @@ public class Data2DMenuTools {
             menu.setOnAction((ActionEvent event) -> {
                 controller.copyAction();
             });
-            menu.setDisable(empty);
             items.add(menu);
 
             menu = new MenuItem(message("Sort"), StyleTools.getIconImageView("iconSort.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DSortController.open(controller);
             });
-            menu.setDisable(empty);
             items.add(menu);
 
             menu = new MenuItem(message("Transpose"), StyleTools.getIconImageView("iconRotateRight.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DTransposeController.open(controller);
             });
-            menu.setDisable(empty);
             items.add(menu);
 
             menu = new MenuItem(message("Normalize"), StyleTools.getIconImageView("iconBinary.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DNormalizeController.open(controller);
             });
-            menu.setDisable(empty);
             items.add(menu);
 
             menu = new MenuItem(message("SplitGroup"), StyleTools.getIconImageView("iconSplit.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DGroupController.open(controller);
             });
-            menu.setDisable(empty);
             items.add(menu);
 
             return items;
@@ -471,73 +460,65 @@ public class Data2DMenuTools {
 
     public static List<MenuItem> calMenus(BaseData2DLoadController controller) {
         try {
+            Data2D data2D = controller.getData2D();
+            if (data2D == null || !data2D.isValid()) {
+                return null;
+            }
             List<MenuItem> items = new ArrayList<>();
             MenuItem menu;
-            Data2D data2D = controller.getData2D();
-            boolean invalidData = data2D == null || !data2D.isValid();
-            boolean empty = invalidData || controller.getTableData().isEmpty();
 
             menu = new MenuItem(message("RowExpression"), StyleTools.getIconImageView("iconNewItem.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DRowExpressionController.open(controller);
             });
-            menu.setDisable(empty);
             items.add(menu);
 
             menu = new MenuItem(message("DescriptiveStatistics"), StyleTools.getIconImageView("iconStatistic.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DStatisticController.open(controller);
             });
-            menu.setDisable(empty);
             items.add(menu);
 
             menu = new MenuItem(message("GroupStatistic"), StyleTools.getIconImageView("iconAnalyse.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DGroupStatisticController.open(controller);
             });
-            menu.setDisable(empty);
             items.add(menu);
 
             menu = new MenuItem(message("SimpleLinearRegression"), StyleTools.getIconImageView("iconLinearPgression.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DSimpleLinearRegressionController.open(controller);
             });
-            menu.setDisable(empty);
             items.add(menu);
 
             menu = new MenuItem(message("SimpleLinearRegressionCombination"), StyleTools.getIconImageView("iconLinearPgression.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DSimpleLinearRegressionCombinationController.open(controller);
             });
-            menu.setDisable(empty);
             items.add(menu);
 
             menu = new MenuItem(message("MultipleLinearRegression"), StyleTools.getIconImageView("iconLinearPgression.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DMultipleLinearRegressionController.open(controller);
             });
-            menu.setDisable(empty);
             items.add(menu);
 
             menu = new MenuItem(message("MultipleLinearRegressionCombination"), StyleTools.getIconImageView("iconLinearPgression.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DMultipleLinearRegressionCombinationController.open(controller);
             });
-            menu.setDisable(empty);
             items.add(menu);
 
             menu = new MenuItem(message("FrequencyDistributions"), StyleTools.getIconImageView("iconDistribution.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DFrequencyController.open(controller);
             });
-            menu.setDisable(empty);
             items.add(menu);
 
             menu = new MenuItem(message("ValuePercentage"), StyleTools.getIconImageView("iconPercentage.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DPercentageController.open(controller);
             });
-            menu.setDisable(empty);
             items.add(menu);
 
             return items;
@@ -549,6 +530,11 @@ public class Data2DMenuTools {
 
     public static List<MenuItem> verifyMenus(Data2DManufactureController dataController) {
         try {
+            Data2D data2D = dataController.getData2D();
+            if (data2D == null || !data2D.isValid()) {
+                return null;
+            }
+
             List<MenuItem> items = new ArrayList<>();
 
             MenuItem menu = new MenuItem(message("VerifyCurrentPage"));
@@ -596,59 +582,55 @@ public class Data2DMenuTools {
 
     public static List<MenuItem> chartMenus(BaseData2DLoadController controller) {
         try {
+            Data2D data2D = controller.getData2D();
+            if (data2D == null || !data2D.isValid()) {
+                return null;
+            }
             List<MenuItem> items = new ArrayList<>();
             MenuItem menu;
-            Data2D data2D = controller.getData2D();
-            boolean invalidData = data2D == null || !data2D.isValid();
-            boolean empty = invalidData || controller.getTableData().isEmpty();
 
             menu = new MenuItem(message("XYChart"), StyleTools.getIconImageView("iconXYChart.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DChartXYController.open(controller);
             });
-            menu.setDisable(empty);
             items.add(menu);
 
             menu = new MenuItem(message("PieChart"), StyleTools.getIconImageView("iconPieChart.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DChartPieController.open(controller);
             });
-            menu.setDisable(empty);
             items.add(menu);
 
             menu = new MenuItem(message("BoxWhiskerChart"), StyleTools.getIconImageView("iconBoxWhiskerChart.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DChartBoxWhiskerController.open(controller);
             });
-            menu.setDisable(empty);
             items.add(menu);
 
             menu = new MenuItem(message("SelfComparisonBarsChart"), StyleTools.getIconImageView("iconBarChartH.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DChartSelfComparisonBarsController.open(controller);
             });
-            menu.setDisable(empty);
             items.add(menu);
 
             menu = new MenuItem(message("ComparisonBarsChart"), StyleTools.getIconImageView("iconComparisonBarsChart.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DChartComparisonBarsController.open(controller);
             });
-            menu.setDisable(empty);
             items.add(menu);
 
             menu = new MenuItem(message("XYZChart"), StyleTools.getIconImageView("iconXYZChart.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DChartXYZController.open(controller);
             });
-            menu.setDisable(data2D == null || data2D.columnsNumber() < 3);
+            menu.setDisable(data2D.columnsNumber() < 3);
             items.add(menu);
 
             menu = new MenuItem(message("LocationDistribution"), StyleTools.getIconImageView("iconLocation.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DLocationDistributionController.open(controller);
             });
-            menu.setDisable(data2D == null || !data2D.includeCoordinate());
+            menu.setDisable(!data2D.includeCoordinate());
             items.add(menu);
 
             return items;
@@ -660,45 +642,41 @@ public class Data2DMenuTools {
 
     public static List<MenuItem> groupChartMenus(BaseData2DLoadController controller) {
         try {
+            Data2D data2D = controller.getData2D();
+            if (data2D == null || !data2D.isValid()) {
+                return null;
+            }
             List<MenuItem> items = new ArrayList<>();
             MenuItem menu;
-            Data2D data2D = controller.getData2D();
-            boolean invalidData = data2D == null || !data2D.isValid();
-            boolean empty = invalidData || controller.getTableData().isEmpty();
 
             menu = new MenuItem(message("GroupData") + " - " + message("XYChart"), StyleTools.getIconImageView("iconXYChart.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DChartGroupXYController.open(controller);
             });
-            menu.setDisable(empty);
             items.add(menu);
 
             menu = new MenuItem(message("GroupData") + " - " + message("PieChart"), StyleTools.getIconImageView("iconPieChart.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DChartGroupPieController.open(controller);
             });
-            menu.setDisable(empty);
             items.add(menu);
 
             menu = new MenuItem(message("GroupData") + " - " + message("BoxWhiskerChart"), StyleTools.getIconImageView("iconBoxWhiskerChart.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DChartGroupBoxWhiskerController.open(controller);
             });
-            menu.setDisable(empty);
             items.add(menu);
 
             menu = new MenuItem(message("GroupData") + " - " + message("SelfComparisonBarsChart"), StyleTools.getIconImageView("iconBarChartH.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DChartGroupSelfComparisonBarsController.open(controller);
             });
-            menu.setDisable(empty);
             items.add(menu);
 
             menu = new MenuItem(message("GroupData") + " - " + message("ComparisonBarsChart"), StyleTools.getIconImageView("iconComparisonBarsChart.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DChartGroupComparisonBarsController.open(controller);
             });
-            menu.setDisable(empty);
             items.add(menu);
 
             return items;

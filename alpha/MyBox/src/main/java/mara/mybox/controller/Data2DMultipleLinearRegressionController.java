@@ -48,13 +48,13 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DRegressi
             yName = categoryColumnSelector.getSelectionModel().getSelectedItem();
             yCol = data2D.colOrder(yName);
             if (yCol < 0) {
-                outOptionsError(message("SelectToHandle") + ": " + message("DependentVariable"));
+                popError(message("SelectToHandle") + ": " + message("DependentVariable"));
                 return false;
             }
             dataColsIndices.add(yCol);
 
             if (checkedColsIndices == null || checkedColsIndices.isEmpty()) {
-                outOptionsError(message("SelectToHandle") + ": " + message("IndependentVariable"));
+                popError(message("SelectToHandle") + ": " + message("IndependentVariable"));
                 return false;
             }
             xNames = new ArrayList<>();
@@ -66,7 +66,7 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DRegressi
                 }
             }
             if (xNames.isEmpty()) {
-                outOptionsError(message("SelectToHandle") + ": " + message("IndependentVariable"));
+                popError(message("SelectToHandle") + ": " + message("IndependentVariable"));
                 return false;
             }
             regression = null;

@@ -28,14 +28,11 @@ public class DataFileCSVReader extends Data2DReader {
 
     @Override
     public void scanData() {
-        if (!FileTools.hasData(sourceFile)) {
-            return;
-        }
-        readerCSV.checkForLoad();
         File validFile = FileTools.removeBOM(task(), sourceFile);
         if (validFile == null || isStopped()) {
             return;
         }
+        readerCSV.checkForLoad();
         try (CSVParser parser = CSVParser.parse(validFile, readerCSV.getCharset(), readerCSV.cvsFormat())) {
             csvParser = parser;
             iterator = parser.iterator();
@@ -87,10 +84,10 @@ public class DataFileCSVReader extends Data2DReader {
     @Override
     public void readTotal() {
         try {
+            rowIndex = 0;
             if (iterator == null) {
                 return;
             }
-            rowIndex = 0;
             while (iterator.hasNext()) {
                 if (isStopped()) {
                     rowIndex = 0;

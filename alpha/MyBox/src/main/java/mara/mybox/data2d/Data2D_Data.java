@@ -26,11 +26,6 @@ import mara.mybox.value.UserConfig;
  */
 public abstract class Data2D_Data extends Data2D_Attributes {
 
-    @Override
-    public boolean isValid() {
-        return super.isValid() && columns != null && !columns.isEmpty();
-    }
-
     public Data2D_Data initData(File file, String sheet, long dataSize, long currentPage) {
         resetData();
         this.file = file;
@@ -262,7 +257,7 @@ public abstract class Data2D_Data extends Data2D_Attributes {
         return newRow;
     }
 
-    public boolean hasData() {
+    public boolean hasPageData() {
         return isValid() && pageData != null && !pageData.isEmpty();
     }
 
@@ -429,7 +424,7 @@ public abstract class Data2D_Data extends Data2D_Attributes {
 
     public List<String> columnNames() {
         try {
-            if (!isColumnsValid()) {
+            if (!isValid()) {
                 return null;
             }
             List<String> names = new ArrayList<>();
@@ -489,7 +484,7 @@ public abstract class Data2D_Data extends Data2D_Attributes {
 
     public List<Integer> columnIndices() {
         try {
-            if (!isColumnsValid()) {
+            if (!isValid()) {
                 return null;
             }
             List<Integer> indices = new ArrayList<>();
@@ -525,8 +520,9 @@ public abstract class Data2D_Data extends Data2D_Attributes {
         }
     }
 
-    public boolean isColumnsValid() {
-        return columns != null && !columns.isEmpty();
+    @Override
+    public boolean isValid() {
+        return super.isValid() && columns != null && !columns.isEmpty();
     }
 
     public int newColumnIndex() {

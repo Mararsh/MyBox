@@ -117,6 +117,7 @@ public class ControlData2DGroup extends BaseTablePagesController<DataFilter> {
             columnSelector.getItems().clear();
             tableData.clear();
             isSettingValues = false;
+            expressionController.setData2D(handleController.data2D);
             if (!handleController.data2D.isValid()) {
                 return;
             }
@@ -133,7 +134,6 @@ public class ControlData2DGroup extends BaseTablePagesController<DataFilter> {
             }
             loadColumnNames();
 
-            expressionController.setData2D(handleController.data2D);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

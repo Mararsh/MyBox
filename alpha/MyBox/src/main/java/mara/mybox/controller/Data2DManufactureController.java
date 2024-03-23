@@ -56,7 +56,8 @@ public class Data2DManufactureController extends BaseData2DViewController {
     @FXML
     protected FlowPane opsPane;
     @FXML
-    protected Button dataDefinitionButton, operationButton;
+    protected Button dataDefinitionButton, operationButton, dataMenuButton,
+            verifyButton, chartsButton, calculateButton, trimDataButton;
 
     public Data2DManufactureController() {
         baseTitle = message("DataManufacture");
@@ -165,7 +166,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
 
     @Override
     public void loadCsv() {
-        if (data2D == null || !data2D.isValid() || !data2D.hasData()) {
+        if (data2D == null || !data2D.hasPageData()) {
             isSettingValues = true;
             csvArea.setText("");
             columnsLabel.setText("");
@@ -287,26 +288,30 @@ public class Data2DManufactureController extends BaseData2DViewController {
         status
      */
     @Override
-    public boolean validateData() {
-        opsPane.setDisable(data2D == null);
-        mainAreaBox.setDisable(data2D == null);
-        recoverButton.setDisable(data2D == null || data2D.isTmpData());
-        saveButton.setDisable(data2D == null || !dataSizeLoaded);
-        if (data2D != null && data2D.isDataFile() && data2D.getFile() != null) {
-            if (!toolbar.getChildren().contains(fileMenuButton)) {
-                toolbar.getChildren().add(0, fileMenuButton);
+    public void updateInterface() {
+        try {
+            boolean invalidData = !isValidData();
+            mainAreaBox.setDisable(invalidData);
+            opsPane.setDisable(invalidData);
+            recoverButton.setDisable(invalidData || data2D.isTmpData());
+            saveButton.setDisable(invalidData || !dataSizeLoaded);
+            if (data2D != null && data2D.isDataFile() && data2D.getFile() != null) {
+                if (!toolbar.getChildren().contains(fileMenuButton)) {
+                    toolbar.getChildren().add(0, fileMenuButton);
+                }
+            } else {
+                if (toolbar.getChildren().contains(fileMenuButton)) {
+                    toolbar.getChildren().remove(fileMenuButton);
+                }
             }
-        } else {
-            if (toolbar.getChildren().contains(fileMenuButton)) {
-                toolbar.getChildren().remove(fileMenuButton);
-            }
+            super.updateInterface();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
         }
-        return super.validateData();
     }
 
     @Override
     public void notifySaved() {
-        notifyStatus();
         savedNotify.set(!savedNotify.get());
     }
 
@@ -318,10 +323,6 @@ public class Data2DManufactureController extends BaseData2DViewController {
     public void setValidataSave(boolean v) {
         validateSave = v;
         UserConfig.setBoolean(baseName + "ValidateDataWhenSave", validateSave);
-    }
-
-    public boolean isValidData() {
-        return data2D != null && data2D.isValid();
     }
 
     public boolean isEditing() {
@@ -360,9 +361,6 @@ public class Data2DManufactureController extends BaseData2DViewController {
         } else {
             validateEdit = UserConfig.getBoolean(baseName + "ValidateDataWhenEdit", true);
             validateSave = UserConfig.getBoolean(baseName + "ValidateDataWhenSave", true);
-        }
-        if (!data2D.hasData()) {
-            tableRadio.setSelected(true);
         }
     }
 
@@ -573,8 +571,6 @@ public class Data2DManufactureController extends BaseData2DViewController {
     @Override
     public void createAction() {
         createData(DataType.CSV);
-        tableRadio.setSelected(true);
-        Data2DAttributes.open(this);
     }
 
     @Override
@@ -609,7 +605,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
     @FXML
     public void definitonAction() {
         if (data2D != null) {
-            Data2DAttributes.open(this);
+            Data2DAttributesController.open(this);
         }
     }
 
@@ -788,8 +784,8 @@ public class Data2DManufactureController extends BaseData2DViewController {
     @FXML
     @Override
     public void recoverAction() {
-        if (!isValidData()) {
-            popError(message("InvalidData"));
+        if (data2D == null) {
+            loadNull();
             return;
         }
         resetStatus();

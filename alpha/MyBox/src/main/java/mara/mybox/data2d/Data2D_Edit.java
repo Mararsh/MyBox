@@ -162,11 +162,6 @@ public abstract class Data2D_Edit extends Data2D_Filter {
         }
     }
 
-    public boolean loadColumns() {
-        savedColumns = columns;
-        return readColumns(null);
-    }
-
     public long readTotal() {
         dataSize = 0;
         Data2DOperate reader = Data2DReadTotal.create(this)
@@ -187,7 +182,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
     }
 
     public List<List<String>> readPageData(Connection conn) {
-        if (!isColumnsValid()) {
+        if (!isValid()) {
             startRowOfCurrentPage = endRowOfCurrentPage = 0;
             return null;
         }
@@ -258,6 +253,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
                 hasHeader = false;
             }
         } catch (Exception e) {
+            MyBoxLog.error(e);
         }
     }
 
@@ -327,7 +323,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
 
     public String encodeCSV(FxTask task, String delimiterName,
             boolean displayRowNames, boolean displayColNames, boolean formatValues) {
-        if (!isColumnsValid()) {
+        if (!isValid()) {
             return "";
         }
         if (delimiterName == null) {

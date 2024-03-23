@@ -23,7 +23,8 @@ import static mara.mybox.value.Languages.message;
  */
 public class DataFileExcelSheetsController extends BaseChildController {
 
-    protected BaseData2DLoadController fileController;
+    protected BaseData2DLoadController dataController;
+    protected ChangeListener<Boolean> tableLoadListener;
 
     @FXML
     protected ComboBox<String> sheetSelector;
@@ -31,18 +32,25 @@ public class DataFileExcelSheetsController extends BaseChildController {
     protected Button plusSheetButton, renameSheetButton, deleteSheetButton,
             nextSheetButton, previousSheetButton;
 
+    public boolean isInvalid() {
+        return dataController == null
+                || !dataController.isShowing()
+                || dataController.data2D == null
+                || dataController.data2D.getFile() == null
+                || !dataController.data2D.getFile().exists()
+                || !(dataController.data2D instanceof DataFileExcel);
+    }
+
     public void setParameters(BaseData2DLoadController parent) {
         try {
-            fileController = parent;
-            if (fileController == null
-                    || fileController.data2D == null
-                    || !(fileController.data2D instanceof DataFileExcel)) {
+            dataController = parent;
+            if (isInvalid()) {
                 close();
                 return;
             }
 
-            baseName = fileController.baseName;
-            setFileType(fileController.TargetFileType);
+            baseName = dataController.baseName;
+            setFileType(dataController.TargetFileType);
 
             sheetSelector.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
                 @Override
@@ -54,12 +62,13 @@ public class DataFileExcelSheetsController extends BaseChildController {
                 }
             });
 
-            fileController.loadedNotify.addListener(new ChangeListener<Boolean>() {
+            tableLoadListener = new ChangeListener<Boolean>() {
                 @Override
-                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     refreshAction();
                 }
-            });
+            };
+            dataController.loadedNotify.addListener(tableLoadListener);
 
             refreshAction();
         } catch (Exception e) {
@@ -71,9 +80,13 @@ public class DataFileExcelSheetsController extends BaseChildController {
     @Override
     public synchronized void refreshAction() {
         try {
+            if (isInvalid()) {
+                close();
+                return;
+            }
             isSettingValues = true;
-            DataFileExcel dataFileExcel = (DataFileExcel) fileController.data2D;
-            setTitle(message("Sheet") + " - " + fileController.getTitle());
+            DataFileExcel dataFileExcel = (DataFileExcel) dataController.data2D;
+            setTitle(message("Sheet") + " - " + dataController.getTitle());
             List<String> sheets = dataFileExcel.getSheetNames();
             String sheet = dataFileExcel.getSheet();
             int index = -1;
@@ -95,14 +108,14 @@ public class DataFileExcelSheetsController extends BaseChildController {
     }
 
     public void loadSheetIndex(int index) {
-        if (fileController == null || !fileController.isShowing()) {
+        if (isInvalid()) {
             close();
             return;
         }
-        if (!fileController.checkBeforeNextAction()) {
+        if (!dataController.checkBeforeNextAction()) {
             return;
         }
-        File file = fileController.data2D.getFile();
+        File file = dataController.data2D.getFile();
         if (file == null || !file.exists()) {
             close();
             return;
@@ -113,22 +126,22 @@ public class DataFileExcelSheetsController extends BaseChildController {
         } else if (index > sheets.size() - 1) {
             index = 0;
         }
-        fileController.loadExcelFile(file, sheets.get(index),
-                fileController.data2D.isHasHeader());
+        dataController.loadExcelFile(file, sheets.get(index),
+                dataController.data2D.isHasHeader());
     }
 
     @FXML
     protected void plusSheet() {
-        if (fileController == null || !fileController.isShowing()) {
+        if (isInvalid()) {
             close();
             return;
         }
-        DataFileExcel dataFileExcel = (DataFileExcel) fileController.data2D;
+        DataFileExcel dataFileExcel = (DataFileExcel) dataController.data2D;
         List<String> sheets = dataFileExcel.getSheetNames();
         if (sheets == null) {
             return;
         }
-        if (!fileController.checkBeforeNextAction()) {
+        if (!dataController.checkBeforeNextAction()) {
             return;
         }
         String tryName = message("Sheet") + (sheets.size() + 1);
@@ -154,7 +167,7 @@ public class DataFileExcelSheetsController extends BaseChildController {
 
             @Override
             protected void whenSucceeded() {
-                fileController.readDefinition();
+                dataController.readDefinition();
             }
 
             @Override
@@ -169,14 +182,14 @@ public class DataFileExcelSheetsController extends BaseChildController {
 
     @FXML
     protected void renameSheet() {
-        if (fileController == null || !fileController.isShowing()) {
+        if (isInvalid()) {
             close();
             return;
         }
-        if (!fileController.checkBeforeNextAction()) {
+        if (!dataController.checkBeforeNextAction()) {
             return;
         }
-        DataFileExcel dataFileExcel = (DataFileExcel) fileController.data2D;
+        DataFileExcel dataFileExcel = (DataFileExcel) dataController.data2D;
         String currentSheetName = dataFileExcel.getSheet();
         List<String> sheets = dataFileExcel.getSheetNames();
         int count = 2;
@@ -190,10 +203,10 @@ public class DataFileExcelSheetsController extends BaseChildController {
             popError(message("InvalidData"));
             return;
         }
-        if (fileController.task != null) {
-            fileController.task.cancel();
+        if (dataController.task != null) {
+            dataController.task.cancel();
         }
-        fileController.task = new FxSingletonTask<Void>(this) {
+        dataController.task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -203,7 +216,7 @@ public class DataFileExcelSheetsController extends BaseChildController {
 
             @Override
             protected void whenSucceeded() {
-                fileController.updateTitle();
+                dataController.updateStatus();
                 refreshAction();
             }
 
@@ -214,16 +227,16 @@ public class DataFileExcelSheetsController extends BaseChildController {
             }
 
         };
-        fileController.start(fileController.task);
+        dataController.start(dataController.task);
     }
 
     @FXML
     protected void deleteSheet() {
-        if (fileController == null || !fileController.isShowing()) {
+        if (isInvalid()) {
             close();
             return;
         }
-        DataFileExcel dataFileExcel = (DataFileExcel) fileController.data2D;
+        DataFileExcel dataFileExcel = (DataFileExcel) dataController.data2D;
         List<String> sheets = dataFileExcel.getSheetNames();
         if (sheets == null || sheets.size() <= 1) {
             return;
@@ -232,10 +245,10 @@ public class DataFileExcelSheetsController extends BaseChildController {
         if (!PopTools.askSure(getTitle(), currentSheetName, message("SureDelete"))) {
             return;
         }
-        if (fileController.task != null) {
-            fileController.task.cancel();
+        if (dataController.task != null) {
+            dataController.task.cancel();
         }
-        fileController.task = new FxSingletonTask<Void>(this) {
+        dataController.task = new FxSingletonTask<Void>(this) {
             private int index;
 
             @Override
@@ -254,7 +267,7 @@ public class DataFileExcelSheetsController extends BaseChildController {
             }
 
         };
-        fileController.start(fileController.task);
+        dataController.start(dataController.task);
     }
 
     @FXML
@@ -277,6 +290,17 @@ public class DataFileExcelSheetsController extends BaseChildController {
         loadSheetIndex(current - 1);
     }
 
+    @Override
+    public void cleanPane() {
+        try {
+            if (dataController != null) {
+                dataController.loadedNotify.removeListener(tableLoadListener);
+                tableLoadListener = null;
+            }
+        } catch (Exception e) {
+        }
+        super.cleanPane();
+    }
 
     /*
         static methods

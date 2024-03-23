@@ -12,7 +12,6 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import mara.mybox.data2d.tools.Data2DColumnTools;
-import mara.mybox.data2d.tools.Data2DPageTools;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.writer.Data2DWriter;
 import mara.mybox.db.DerbyBase;
@@ -78,14 +77,14 @@ public class Data2DSpliceController extends BaseController {
     @Override
     public void okAction() {
         tabPane.getSelectionModel().select(aTab);
-        if (dataAController.data2D == null || !dataAController.data2D.hasData()) {
+        if (dataAController.data2D == null || !dataAController.data2D.isValid()) {
             popError(message("DataA") + ": " + message("NoData"));
             return;
         } else if (!dataAController.checkSelections()) {
             return;
         }
         tabPane.getSelectionModel().select(bTab);
-        if (dataBController.data2D == null || !dataBController.data2D.hasData()) {
+        if (dataBController.data2D == null || !dataBController.data2D.isValid()) {
             popError(message("DataB") + ": " + message("NoData"));
             return;
         } else if (!dataBController.checkSelections()) {

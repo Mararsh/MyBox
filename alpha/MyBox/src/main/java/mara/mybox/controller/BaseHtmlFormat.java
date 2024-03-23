@@ -17,7 +17,6 @@ import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.geometry.Point2D;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
@@ -1044,8 +1043,7 @@ public abstract class BaseHtmlFormat extends BaseWebViewController {
                 return true;
 
             } else if (htmlRadio.isSelected()) {
-                Point2D localToScreen = webView.localToScreen(webView.getWidth() - 80, 80);
-                MenuWebviewController.webviewMenu(webViewController, null, localToScreen.getX(), localToScreen.getY());
+                webViewController.menuAction();
                 return true;
 
             }

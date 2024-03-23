@@ -119,7 +119,7 @@ public class ControlData2DRowExpression extends ControlJavaScriptRefer {
 
     public boolean checkExpression(boolean allPages) {
         error = null;
-        if (data2D == null || !data2D.hasData()) {
+        if (data2D == null || !data2D.isValid()) {
             error = message("InvalidData");
             return false;
         }

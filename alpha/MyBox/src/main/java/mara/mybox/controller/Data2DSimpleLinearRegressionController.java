@@ -157,18 +157,18 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DRegression
             }
             int categoryCol = data2D.colOrder(selectedCategory);
             if (categoryCol < 0) {
-                outOptionsError(message("SelectToHandle") + ": " + message("CategoryColumn"));
+                popError(message("SelectToHandle") + ": " + message("CategoryColumn"));
                 tabPane.getSelectionModel().select(optionsTab);
                 return false;
             }
             int valueCol = data2D.colOrder(selectedValue);
             if (valueCol < 0) {
-                outOptionsError(message("SelectToHandle") + ": " + message("ValueColumn"));
+                popError(message("SelectToHandle") + ": " + message("ValueColumn"));
                 tabPane.getSelectionModel().select(optionsTab);
                 return false;
             }
             if (categoryCol == valueCol) {
-                outOptionsError(message("IndependentVariableShouldNotDependentVariable"));
+                popError(message("IndependentVariableShouldNotDependentVariable"));
                 tabPane.getSelectionModel().select(optionsTab);
                 return false;
             }

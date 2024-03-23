@@ -77,7 +77,7 @@ public class Data2DExportController extends BaseData2DHandleController {
             }
             targetPath = targetPathController.file();
             if (targetPath == null) {
-                outOptionsError(message("InvalidParameters") + ": " + message("TargetPath"));
+                popError(message("InvalidParameters") + ": " + message("TargetPath"));
                 tabPane.getSelectionModel().select(targetTab);
                 return false;
             }

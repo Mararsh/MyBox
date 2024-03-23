@@ -189,10 +189,6 @@ public class ControlData2DSystemClipboard extends BaseController {
         start(task);
     }
 
-    public boolean hasData() {
-        return textData != null && textData.isValid();
-    }
-
     public void editAction() {
         if (textData == null || !textData.isValid()) {
             return;

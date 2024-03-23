@@ -261,7 +261,7 @@ public class DataFileText extends DataFile {
             if (writer == null || delimiter == null) {
                 return false;
             }
-            if (!isColumnsValid()) {
+            if (!isValid()) {
                 return true;
             }
             for (int r = 0; r < tableRowsNumber(); r++) {
