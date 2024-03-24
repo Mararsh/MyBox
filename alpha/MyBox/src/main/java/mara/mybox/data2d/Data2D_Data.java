@@ -128,16 +128,6 @@ public abstract class Data2D_Data extends Data2D_Attributes {
      */
     public void setTableChanged(boolean changed) {
         tableChanged = changed;
-        if (!changed) {
-            columnsChanged = false;
-        }
-    }
-
-    public void setColumnsChanged(boolean changed) {
-        columnsChanged = changed;
-        if (changed) {
-            tableChanged = true;
-        }
     }
 
     public int tableRowsNumber() {
@@ -259,6 +249,10 @@ public abstract class Data2D_Data extends Data2D_Attributes {
 
     public boolean hasPageData() {
         return isValid() && pageData != null && !pageData.isEmpty();
+    }
+
+    public boolean isPagesChanged() {
+        return isMutiplePages() && isTableChanged();
     }
 
     public boolean isTmpData() {

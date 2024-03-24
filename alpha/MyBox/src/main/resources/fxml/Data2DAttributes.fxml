@@ -8,7 +8,6 @@ License:    Apache License Version 2.0
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Tab?>
@@ -89,24 +88,6 @@ License:    Apache License Version 2.0
         </TabPane>
         <HBox alignment="CENTER_RIGHT" spacing="2.0">
             <children>
-                <CheckBox fx:id="onTopCheck" mnemonicParsing="false" selected="true">
-                    <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../buttons/Red/iconTop.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </CheckBox>
-                <CheckBox fx:id="closeAfterCheck" mnemonicParsing="false" selected="true">
-                    <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../buttons/Red/iconClose.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </CheckBox>
                 <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

@@ -118,11 +118,11 @@ public class Data2DExportController extends BaseData2DHandleController {
                     }
                     export.writeRow(exportRow);
                 }
-
+                export.closeWriters();
             } else {
                 export.setCols(checkedColsIndices).setTask(task).start();
             }
-            export.closeWriters();
+
             data2D.stopTask();
             return true;
         } catch (Exception e) {

@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -39,18 +40,23 @@ public class Data2DSaveAsController extends BaseData2DSaveAsController {
     @FXML
     protected ControlNewDataTable dbController;
 
+    public boolean isInvalid() {
+        return tableController == null
+                || !tableController.isShowing()
+                || tableController.data2D == null
+                || !tableController.data2D.isValid()
+                || (data2D != null && tableController.data2D.getD2did() != data2D.getD2did());
+    }
+
     public void setParameters(BaseData2DLoadController controller) {
         try {
-            if (controller == null || controller.getData2D() == null) {
-                close();
-                return;
-            }
             tableController = controller;
-            data2D = tableController.data2D;
-            if (data2D == null || !data2D.isValid()) {
+            if (isInvalid()) {
                 close();
                 return;
             }
+            data2D = tableController.data2D.cloneAll();
+
             tabPane.getTabs().removeAll(csvTab, excelTab, textTab, htmlTab, pdfTab, dbTab);
             initControls(baseName);
 
@@ -74,12 +80,7 @@ public class Data2DSaveAsController extends BaseData2DSaveAsController {
 
     public void formatChanged() {
         try {
-            if (tableController == null || !tableController.isShowing()) {
-                close();
-                return;
-            }
-            data2D = tableController.data2D;
-            if (data2D == null || !data2D.isValid()) {
+            if (isInvalid()) {
                 close();
                 return;
             }
@@ -120,12 +121,7 @@ public class Data2DSaveAsController extends BaseData2DSaveAsController {
     @Override
     public boolean checkOptions() {
         try {
-            if (tableController == null || !tableController.isShowing()) {
-                close();
-                return false;
-            }
-            data2D = tableController.data2D;
-            if (data2D == null || !data2D.isValid()) {
+            if (isInvalid()) {
                 close();
                 return false;
             }
@@ -170,9 +166,18 @@ public class Data2DSaveAsController extends BaseData2DSaveAsController {
     public boolean doTask(FxTask currentTask) {
         try {
             data2D.startTask(currentTask, null);
-            export.setCols(data2D.columnIndices())
-                    .setInvalidAs(invalidAs)
-                    .setTask(currentTask).start();
+            if (!data2D.isMutiplePages()) {
+                export.openWriters();
+                for (List<String> row : tableController.tableData) {
+                    List<String> exportRow = row.subList(1, row.size());
+                    export.writeRow(exportRow);
+                }
+                export.closeWriters();
+            } else {
+                export.setCols(data2D.columnIndices())
+                        .setInvalidAs(invalidAs)
+                        .setTask(currentTask).start();
+            }
             data2D.stopTask();
             return !export.isFailed();
         } catch (Exception e) {

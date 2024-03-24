@@ -76,7 +76,7 @@ public class Data2DFrequency extends Data2DOperate {
                 }
             }
             frequency.clear();
-            return true;
+            return super.end();
         } catch (Exception e) {
             MyBoxLog.error(e);
             if (task != null) {

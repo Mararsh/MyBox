@@ -122,7 +122,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
 
     public void setParameters(BaseData2DColumnsController columnsController, int index) {
         init(columnsController);
-        loadColumn(-1);
+        loadColumn(index);
     }
 
     public void checkType() {

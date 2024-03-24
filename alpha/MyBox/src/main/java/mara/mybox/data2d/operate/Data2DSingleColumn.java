@@ -75,6 +75,7 @@ public class Data2DSingleColumn extends Data2DOperate {
      */
     public Data2DSingleColumn setConn(Connection conn) {
         this.conn = conn;
+        closeConn = false;
         return this;
     }
 

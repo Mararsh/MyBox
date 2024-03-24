@@ -146,7 +146,7 @@ public class Data2DGroup extends Data2DOperate {
     @Override
     public boolean end() {
         closeFile();
-        return true;
+        return super.end();
     }
 
     /*

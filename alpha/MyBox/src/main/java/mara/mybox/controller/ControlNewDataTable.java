@@ -146,22 +146,6 @@ public class ControlNewDataTable extends BaseController {
             }
             DataTableWriter writer = new DataTableWriter();
             writer.setTargetTable(dataTable);
-//            List<Data2DColumn> sourceColumns = new ArrayList<>();
-//            for (int index : columnIndices) {
-//                sourceColumns.add(data2D.getColumns().get(index));
-//            }
-//            List<String> keys;
-//            if (autoRadio.isSelected()) {
-//                keys = null;
-//            } else {
-//                keys = columnsController.selectedNames();
-//            }
-//            writer.setTargetTableName(nameInput.getText().trim())
-//                    .setReferColumns(sourceColumns)
-//                    .setKeys(keys)
-//                    .setIdName(idInput.getText().trim())
-//                    .setDropExisted(true)
-//                    .setTargetTableDesciption(data2D.getComments());
             return writer;
         } catch (Exception e) {
             MyBoxLog.error(e);

@@ -35,11 +35,16 @@ public abstract class Data2DOperate {
     protected List<Integer> cols, otherCols;
     protected int colsLen, scale = -1;
     protected boolean includeRowNumber, writeHeader, formatValues, passFilter, reachMax;
-    protected boolean stopped, needCheckTask, errorContinue, failed;
+    protected boolean stopped, needCheckTask, errorContinue, failed, closeConn;
     protected long sourceRowIndex; // 1-based 
     protected long handledCount;
     protected InvalidAs invalidAs;
     protected Connection conn;
+
+    public Data2DOperate() {
+        closeConn = true;
+    }
+
 
     /*
         reader
@@ -175,7 +180,9 @@ public abstract class Data2DOperate {
             closeWriters();
             if (conn != null) {
                 conn.commit();
-                conn.close();
+                if (closeConn) {
+                    conn.close();
+                }
                 conn = null;
             }
             return true;

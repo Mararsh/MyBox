@@ -387,7 +387,7 @@ public class Data2DStatistic extends Data2DOperate {
                     }
                     break;
             }
-            return true;
+            return super.end();
         } catch (Exception e) {
             MyBoxLog.error(e);
             if (task != null) {

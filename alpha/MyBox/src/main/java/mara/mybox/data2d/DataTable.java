@@ -104,9 +104,11 @@ public class DataTable extends Data2D {
             tableData2DDefinition.writeTable(conn, this);
             conn.commit();
 
+            MyBoxLog.console(d2did);
             for (Data2DColumn column : dataColumns) {
                 column.setD2id(d2did);
                 column.setColumnName(DerbyBase.fixedIdentifier(column.getColumnName()));
+                MyBoxLog.console(column.getD2cid() + "  " + column.getColumnName() + "  " + column.getType());
             }
             columns = dataColumns;
             tableData2DColumn.save(conn, d2did, dataColumns);

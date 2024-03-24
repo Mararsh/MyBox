@@ -25,6 +25,10 @@ public class Data2DConvertToDataBaseTask extends Data2DTableCreateController {
             tabPane = convertController.tabPane;
             logsTab = convertController.logsTab;
             attributesTab = convertController.attributesTab;
+            attributesBox = convertController.attributesBox;
+            optionsBox = convertController.attributesBox;
+            zeroNonnumericRadio = convertController.zeroNonnumericRadio;
+            blankNonnumericRadio = convertController.blankNonnumericRadio;
 
             attributesController.setParameters(this);
 
@@ -48,9 +52,7 @@ public class Data2DConvertToDataBaseTask extends Data2DTableCreateController {
             super.beforeTask();
 
             convertController.dataVBox.setDisable(true);
-            convertController.attributesBox.setDisable(true);
             convertController.filterVBox.setDisable(true);
-            convertController.optionsBox.setDisable(true);
 
             if (zeroNonnumericRadio != null && zeroNonnumericRadio.isSelected()) {
                 invalidAs = InvalidAs.Zero;
@@ -103,8 +105,6 @@ public class Data2DConvertToDataBaseTask extends Data2DTableCreateController {
             super.afterTask();
             convertController.dataVBox.setDisable(false);
             convertController.filterVBox.setDisable(false);
-            convertController.attributesBox.setDisable(false);
-            convertController.optionsBox.setDisable(false);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

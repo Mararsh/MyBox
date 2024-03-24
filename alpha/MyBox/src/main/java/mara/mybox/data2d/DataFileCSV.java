@@ -35,12 +35,6 @@ public class DataFileCSV extends DataFileText {
         dataType = DataType.CSV;
     }
 
-    public DataFileCSV(File file) {
-        dataType = DataType.CSV;
-        this.file = file;
-        this.delimiter = guessDelimiter();
-    }
-
     @Override
     public String[] delimters() {
         String[] delimiters = {",", " ", "|", "@", "#", ";", ":", "*",

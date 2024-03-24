@@ -105,7 +105,6 @@ public class DataFileExcel extends DataFile {
             return -2;
         }
         reader.setTask(task).start();
-        MyBoxLog.console(sheetNames);
         return super.readDataDefinition(conn);
     }
 

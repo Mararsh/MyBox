@@ -164,10 +164,6 @@ public class Data2DDefinition extends BaseData {
         }
     }
 
-    public boolean isDataFile() {
-        return dataType == DataType.CSV || dataType == DataType.Excel || dataType == DataType.Texts;
-    }
-
     public boolean isExcel() {
         return dataType == DataType.Excel;
     }
@@ -188,16 +184,27 @@ public class Data2DDefinition extends BaseData {
         return dataType == DataType.MyBoxClipboard;
     }
 
-    public boolean isTable() {
-        return dataType == DataType.DatabaseTable || dataType == DataType.InternalTable;
-    }
-
     public boolean isUserTable() {
         return dataType == DataType.DatabaseTable;
     }
 
     public boolean isInternalTable() {
         return dataType == DataType.InternalTable;
+    }
+
+    public boolean isDataFile() {
+        return dataType == DataType.CSV || dataType == DataType.Excel || dataType == DataType.Texts;
+    }
+
+    public boolean isTable() {
+        return dataType == DataType.DatabaseTable || dataType == DataType.InternalTable;
+    }
+
+    public boolean isTextFile() {
+        return file != null && file.exists()
+                && (dataType == DataType.CSV
+                || dataType == DataType.MyBoxClipboard
+                || dataType == DataType.Texts);
     }
 
     public String titleName() {

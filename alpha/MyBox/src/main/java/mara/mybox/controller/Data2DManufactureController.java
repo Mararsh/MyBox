@@ -101,7 +101,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
             return;
         }
         operationButton.setDisable(!isEditing());
-        if (csvRadio != ov || !isChanged() || !data2D.isValid()) {
+        if (csvRadio != ov || !isDataChanged() || !data2D.isValid()) {
             switchFormat();
             return;
         }
@@ -295,6 +295,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
             opsPane.setDisable(invalidData);
             recoverButton.setDisable(invalidData || data2D.isTmpData());
             saveButton.setDisable(invalidData || !dataSizeLoaded);
+            dataDefinitionButton.setDisable(invalidData || data2D.isPagesChanged());
             if (data2D != null && data2D.isDataFile() && data2D.getFile() != null) {
                 if (!toolbar.getChildren().contains(fileMenuButton)) {
                     toolbar.getChildren().add(0, fileMenuButton);
@@ -333,12 +334,8 @@ public class Data2DManufactureController extends BaseData2DViewController {
         return tableRadio.isSelected();
     }
 
-    public boolean isChanged() {
+    public boolean isDataChanged() {
         return data2D != null && data2D.isTableChanged();
-    }
-
-    public boolean isColumnsChanged() {
-        return data2D != null && data2D.isColumnsChanged();
     }
 
     /*
@@ -367,7 +364,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
     @Override
     public boolean checkBeforeNextAction() {
         boolean goOn;
-        if (!isChanged()) {
+        if (!isDataChanged()) {
             goOn = true;
         } else {
 
@@ -604,7 +601,8 @@ public class Data2DManufactureController extends BaseData2DViewController {
 
     @FXML
     public void definitonAction() {
-        if (data2D != null) {
+        if (data2D != null
+                && (!data2D.isMutiplePages() || checkBeforeNextAction())) {
             Data2DAttributesController.open(this);
         }
     }
@@ -711,55 +709,6 @@ public class Data2DManufactureController extends BaseData2DViewController {
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
-    }
-
-    public synchronized void saveAsAction(Data2D targetData, SaveAsType saveAsType) {
-        if (targetData == null || targetData.getFile() == null) {
-            return;
-        }
-        if (task != null && !task.isQuit()) {
-            return;
-        }
-        task = new FxSingletonTask<Void>(this) {
-
-            @Override
-            protected boolean handle() {
-                try {
-                    data2D.startTask(this, null);
-                    data2D.savePageDataAs(targetData);
-                    data2D.startTask(this, null);
-                    data2D.countSize();
-                    Data2D.saveAttributes(data2D, targetData);
-                    return true;
-                } catch (Exception e) {
-                    error = e.toString();
-                    return false;
-                }
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                popInformation(message("Done"));
-                if (targetData.getFile() != null) {
-                    recordFileWritten(targetData.getFile());
-                }
-                if (saveAsType == SaveAsType.Load) {
-                    data2D.cloneAll(targetData);
-                    resetStatus();
-                    readDefinition();
-                } else if (saveAsType == SaveAsType.Open) {
-                    Data2DDefinition.open(targetData);
-                }
-            }
-
-            @Override
-            protected void finalAction() {
-                super.finalAction();
-                data2D.stopTask();
-                targetData.stopTask();
-            }
-        };
-        start(task);
     }
 
     @Override

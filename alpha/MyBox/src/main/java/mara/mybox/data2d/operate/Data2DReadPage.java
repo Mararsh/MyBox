@@ -30,6 +30,7 @@ public class Data2DReadPage extends Data2DOperate {
      */
     public Data2DReadPage setConn(Connection conn) {
         this.conn = conn;
+        closeConn = false;
         return this;
     }
 

@@ -246,36 +246,6 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
         }
     }
 
-    public synchronized boolean attributesModified() {
-        try {
-            data2D.setColumnsChanged(true);
-            makeColumns();
-            List<List<String>> pageData = new ArrayList<>();
-            for (List<String> rowValues : tableData) {
-                List<String> newRow = new ArrayList<>();
-                newRow.add(rowValues.get(0));
-                for (Data2DColumn column : data2D.getColumns()) {
-                    int col = data2D.colOrder(column.getIndex()) + 1;
-                    if (col <= 0 || col >= rowValues.size()) {
-                        newRow.add(null);
-                    } else {
-                        newRow.add(rowValues.get(col));
-                    }
-                }
-                pageData.add(newRow);
-            }
-            isSettingValues = true;
-            tableData.setAll(pageData);
-            data2D.setPageData(tableData);
-            isSettingValues = false;
-            tableChanged(true);
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return false;
-        }
-    }
-
     public void makeColumns() {
         try {
             isSettingValues = true;
@@ -627,21 +597,31 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
             });
             items.add(menu);
 
-            menu = new MenuItem(message("DataManufacture"), StyleTools.getIconImageView("iconEdit.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                dataManufacture();
-            });
-            items.add(menu);
+            if (this instanceof Data2DManufactureController) {
+                menu = new MenuItem(message("DefineData"), StyleTools.getIconImageView("iconMeta.png"));
+                menu.setOnAction((ActionEvent event) -> {
+                    Data2DAttributesController.open((Data2DManufactureController) this);
+                });
+                menu.setDisable(data2D.isPagesChanged());
+                items.add(menu);
 
-            if (data2D.getFile() != null) {
+            } else {
+                menu = new MenuItem(message("DataManufacture"), StyleTools.getIconImageView("iconEdit.png"));
+                menu.setOnAction((ActionEvent event) -> {
+                    dataManufacture();
+                });
+                items.add(menu);
+            }
+
+            items.add(new SeparatorMenuItem());
+
+            if (data2D.isTextFile()) {
                 menu = new MenuItem(message("TextFile"), StyleTools.getIconImageView("iconTxt.png"));
                 menu.setOnAction((ActionEvent event) -> {
                     editTextFile();
                 });
                 items.add(menu);
             }
-
-            items.add(new SeparatorMenuItem());
 
             menu = new MenuItem(message("Snapshot"), StyleTools.getIconImageView("iconSnapshot.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {

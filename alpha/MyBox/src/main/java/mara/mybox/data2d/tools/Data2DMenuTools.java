@@ -85,7 +85,7 @@ public class Data2DMenuTools {
                 menu.setOnAction((ActionEvent event) -> {
                     Data2DAttributesController.open(dataController);
                 });
-                menu.setDisable(notLoaded);
+                menu.setDisable(data2D.isPagesChanged());
                 items.add(menu);
 
                 menu = new MenuItem(message("Save") + "    Ctrl+S " + message("Or") + " Alt+S",

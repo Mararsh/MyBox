@@ -8,7 +8,6 @@ License:    Apache License Version 2.0
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.image.Image?>
@@ -34,24 +33,6 @@ License:    Apache License Version 2.0
         <HBox alignment="CENTER_LEFT" spacing="5.0">
             <children>
               <Label fx:id="buttomLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%NewColumnComments" wrapText="true" HBox.hgrow="ALWAYS" />
-            <CheckBox fx:id="onTopCheck" mnemonicParsing="false" selected="true">
-               <graphic>
-                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/Red/iconTop.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </CheckBox>
-            <CheckBox fx:id="closeAfterCheck" mnemonicParsing="false" selected="true">
-               <graphic>
-                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/Red/iconClose.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </CheckBox>
                 <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

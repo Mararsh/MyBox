@@ -61,6 +61,10 @@ public class DataFileTextFormatController extends BaseChildController {
             return;
         }
         File file = dataController.data2D.getFile();
+        if (file == null || !file.exists()) {
+            close();
+            return;
+        }
         if (task != null) {
             task.cancel();
         }
@@ -70,7 +74,7 @@ public class DataFileTextFormatController extends BaseChildController {
             @Override
             protected boolean handle() {
                 try {
-                    if (optionsController.withNamesCheck.isSelected()) {
+                    if (optionsController.autoDetermine) {
                         charset = TextFileTools.charset(file);
                     } else {
                         charset = optionsController.getCharset();
@@ -94,7 +98,6 @@ public class DataFileTextFormatController extends BaseChildController {
 
         };
         start(task);
-
     }
 
 

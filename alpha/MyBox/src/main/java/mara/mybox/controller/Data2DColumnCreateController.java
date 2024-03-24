@@ -54,9 +54,7 @@ public class Data2DColumnCreateController extends BaseChildController {
             }
             columnsController.addRow(column);
             columnsController.popSuccessful();
-            if (closeAfterCheck.isSelected()) {
-                close();
-            }
+            close();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

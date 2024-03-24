@@ -225,6 +225,7 @@ public class BaseData2DViewController extends BaseData2DLoadController {
 
             } else if (tableRadio.isSelected()) {
                 showTable();
+                checkSelected();
 
             } else if (textsRadio.isSelected()) {
                 showTexts();
@@ -234,8 +235,7 @@ public class BaseData2DViewController extends BaseData2DLoadController {
 
             }
 
-            refreshStyle(dataBox);
-            checkSelected();
+            refreshStyle(mainAreaBox);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -494,13 +494,13 @@ public class BaseData2DViewController extends BaseData2DLoadController {
 
             items.add(new SeparatorMenuItem());
 
-            menu = new MenuItem(message("Html"), StyleTools.getIconImageView("iconHtml.png"));
+            menu = new MenuItem(message("PageDataInHtml") + " - " + message("Pop"), StyleTools.getIconImageView("iconHtml.png"));
             menu.setOnAction((ActionEvent event) -> {
                 loadHtml(true);
             });
             items.add(menu);
 
-            menu = new MenuItem(message("Texts"), StyleTools.getIconImageView("iconTxt.png"));
+            menu = new MenuItem(message("PageDataInText") + " - " + message("Pop"), StyleTools.getIconImageView("iconTxt.png"));
             menu.setOnAction((ActionEvent event) -> {
                 loadTexts(true);
             });
@@ -627,7 +627,7 @@ public class BaseData2DViewController extends BaseData2DLoadController {
             });
             items.add(textColumnItem);
 
-            CheckMenuItem textRowNumberItem = new CheckMenuItem(message("RowNumber"));
+            CheckMenuItem textRowNumberItem = new CheckMenuItem(message("Texts") + " - " + message("RowNumber"));
             textRowNumberItem.setSelected(UserConfig.getBoolean(baseName + "TextsShowRowNumber", true));
             textRowNumberItem.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -659,26 +659,15 @@ public class BaseData2DViewController extends BaseData2DLoadController {
             }
             List<MenuItem> items = new ArrayList<>();
 
-            MenuItem menu = new MenuItem(message("DataDefinition") + "    Ctrl+i " + message("Or") + " Alt+i",
-                    StyleTools.getIconImageView("iconInfo.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                infoAction();
-            });
-            items.add(menu);
-
-            menu = new MenuItem(message("DataManufacture"), StyleTools.getIconImageView("iconEdit.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                dataManufacture();
-            });
-            items.add(menu);
-
-            menu = new MenuItem(message("PageDataInHtml") + " - " + message("Pop"), StyleTools.getIconImageView("iconHtml.png"));
+            MenuItem menu = new MenuItem(message("PageDataInHtml") + " - " + message("Pop"),
+                    StyleTools.getIconImageView("iconHtml.png"));
             menu.setOnAction((ActionEvent event) -> {
                 loadHtml(true);
             });
             items.add(menu);
 
-            menu = new MenuItem(message("PageDataInText") + " - " + message("Pop"), StyleTools.getIconImageView("iconTxt.png"));
+            menu = new MenuItem(message("PageDataInText") + " - " + message("Pop"),
+                    StyleTools.getIconImageView("iconTxt.png"));
             menu.setOnAction((ActionEvent event) -> {
                 loadTexts(true);
             });
@@ -686,33 +675,7 @@ public class BaseData2DViewController extends BaseData2DLoadController {
 
             items.add(new SeparatorMenuItem());
 
-            if (data2D.getFile() != null) {
-                menu = new MenuItem(message("TextFile"), StyleTools.getIconImageView("iconTxt.png"));
-                menu.setOnAction((ActionEvent event) -> {
-                    editTextFile();
-                });
-                items.add(menu);
-            }
-
-            items.add(new SeparatorMenuItem());
-
-            menu = new MenuItem(message("Snapshot"), StyleTools.getIconImageView("iconSnapshot.png"));
-            menu.setOnAction((ActionEvent menuItemEvent) -> {
-                snapAction();
-            });
-            items.add(menu);
-
-            menu = new MenuItem("Html", StyleTools.getIconImageView("iconHtml.png"));
-            menu.setOnAction((ActionEvent menuItemEvent) -> {
-                htmlAction();
-            });
-            items.add(menu);
-
-            menu = new MenuItem(message("Data"), StyleTools.getIconImageView("iconData.png"));
-            menu.setOnAction((ActionEvent menuItemEvent) -> {
-                dataAction();
-            });
-            items.add(menu);
+            items.addAll(super.makeTableContextMenu());
 
             return items;
         } catch (Exception e) {

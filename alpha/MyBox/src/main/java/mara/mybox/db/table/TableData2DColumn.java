@@ -225,9 +225,12 @@ public class TableData2DColumn extends BaseTable<Data2DColumn> {
             List<Data2DColumn> existed = read(conn, d2id);
             conn.setAutoCommit(true);
             if (existed != null && !existed.isEmpty()) {
+                MyBoxLog.console(existed.size());
                 for (Data2DColumn ecolumn : existed) {
+                    MyBoxLog.console(ecolumn.getD2id() + "  " + ecolumn.getD2cid() + "  " + ecolumn.getColumnName() + "  " + ecolumn.getType());
                     boolean keep = false;
                     for (Data2DColumn icolumn : columns) {
+                        MyBoxLog.console(icolumn.getD2cid());
                         if (ecolumn.getD2cid() == icolumn.getD2cid()) {
                             keep = true;
                             break;
@@ -243,6 +246,7 @@ public class TableData2DColumn extends BaseTable<Data2DColumn> {
                 Data2DColumn column = columns.get(i);
                 column.setD2id(d2id);
                 column.setIndex(i);
+                MyBoxLog.console(column.getColumnName() + "  " + column.getType() + "  " + column.getD2cid());
                 if (column.getD2cid() >= 0) {
                     column = updateData(conn, column);
                 } else {

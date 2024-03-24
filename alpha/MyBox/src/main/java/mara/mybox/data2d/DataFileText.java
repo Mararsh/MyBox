@@ -30,12 +30,6 @@ public class DataFileText extends DataFile {
         dataType = DataType.Texts;
     }
 
-    public DataFileText(File file) {
-        dataType = DataType.Texts;
-        this.file = file;
-        guessDelimiter();
-    }
-
     public String[] delimters() {
         String[] delimiters = {",", " ", "    ", "        ", "\t", "|", "@",
             "#", ";", ":", "*", "%", "$", "_", "&", "-", "=", "!", "\"",

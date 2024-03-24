@@ -6,7 +6,6 @@ import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Tab;
-import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition.InvalidAs;
@@ -32,8 +31,6 @@ public class Data2DTableCreateController extends BaseTaskController {
     protected VBox attributesBox, optionsBox;
     @FXML
     protected ControlNewDataTable attributesController;
-    @FXML
-    protected ToggleGroup objectGroup;
     @FXML
     protected RadioButton zeroNonnumericRadio, blankNonnumericRadio;
 
@@ -132,9 +129,9 @@ public class Data2DTableCreateController extends BaseTaskController {
     public void afterTask() {
         try {
             super.afterTask();
-            attributesBox.setDisable(successed);
-            optionsBox.setDisable(successed);
-            startButton.setDisable(successed);
+            attributesBox.setDisable(false);
+            optionsBox.setDisable(false);
+            startButton.setDisable(false);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

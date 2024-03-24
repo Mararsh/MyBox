@@ -324,13 +324,12 @@ public class BaseData2DLoadController extends BaseData2DTableController {
             @Override
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
-                    data2D.startTask(this, null);
                     def = data.queryDefinition(conn);
                     if (def == null) {
                         def = tableData2DDefinition.insertData(conn, data);
-                        conn.commit();
                     } else {
-                        def.setHasHeader(data.isHasHeader())
+                        def.setCharset(data.getCharset())
+                                .setHasHeader(data.isHasHeader())
                                 .setFile(data.getFile())
                                 .setSheet(data.getSheet())
                                 .setDelimiter(data.getDelimiter());

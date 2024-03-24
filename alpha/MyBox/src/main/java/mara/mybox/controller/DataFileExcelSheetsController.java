@@ -217,6 +217,7 @@ public class DataFileExcelSheetsController extends BaseChildController {
             @Override
             protected void whenSucceeded() {
                 dataController.updateStatus();
+                dataController.popInformation(message("Changed"));
                 refreshAction();
             }
 
