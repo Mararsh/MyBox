@@ -94,7 +94,8 @@ public class DataFileCSVWriter extends Data2DWriter {
                 if (targetData == null) {
                     targetData = Data2D.create(Data2DDefinition.DataType.CSV);
                 }
-                targetData.setTask(task()).setFile(targetFile)
+                targetData.setTask(task())
+                        .setFile(targetFile)
                         .setCharset(charset)
                         .setDelimiter(delimiter)
                         .setHasHeader(writeHeader)

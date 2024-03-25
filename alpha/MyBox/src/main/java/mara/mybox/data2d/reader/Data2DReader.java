@@ -25,14 +25,12 @@ public abstract class Data2DReader {
     protected Data2D sourceData;
     protected File sourceFile;
     protected Data2DOperate operate;
-    protected long rowIndex; // 1-based 
+    protected long sourceIndex; // 1-based 
     protected long pageStartIndex, pageEndIndex; //  0-based
     protected List<String> sourceRow, names;
     protected List<List<String>> rows = new ArrayList<>();
     protected Connection conn;
     protected boolean readerHasHeader;
-
-    public abstract void scanData();
 
     public abstract void readColumnNames();
 
@@ -59,12 +57,12 @@ public abstract class Data2DReader {
     }
 
     public boolean start() {
-        if (sourceData == null || !sourceData.validData() || operate == null) {
+        if (sourceData == null || operate == null) {
             return false;
         }
         sourceFile = sourceData.getFile();
         readerHasHeader = sourceData.isHasHeader();
-        rowIndex = 0;  // 1-based
+        sourceIndex = 0;  // 1-based
         pageStartIndex = sourceData.getStartRowOfCurrentPage();
         pageEndIndex = pageStartIndex + sourceData.getPageSize();
         names = new ArrayList<>();
@@ -76,15 +74,45 @@ public abstract class Data2DReader {
         return true;
     }
 
+    public void scanData() {
+        if (sourceData.isMutiplePages() || sourceData.getPageData() == null) {
+            scanFile();
+        } else {
+            scanPage();
+        }
+    }
+
+    public void scanFile() {
+    }
+
+    public void scanPage() {
+        try {
+            for (int r = 0; r < sourceData.tableRowsNumber(); r++) {
+                if (isStopped()) {
+                    return;
+                }
+                sourceRow = sourceData.tableRow(r, false, false);
+                if (sourceRow == null || sourceRow.isEmpty()) {
+                    continue;
+                }
+                ++sourceIndex;
+                handleRow();
+            }
+        } catch (Exception e) {  // skip  bad lines
+//            handleError(e.toString());
+//            setFailed();
+        }
+    }
+
     public void handleRow() {
         try {
-            operate.handleRow(sourceRow, rowIndex);
+            operate.handleRow(sourceRow, sourceIndex);
         } catch (Exception e) {
             handleError(e.toString());
         }
     }
 
-    public void handleHeader() {
+    public void makeHeader() {
         try {
             names = new ArrayList<>();
             if (readerHasHeader && StringTools.noDuplicated(sourceRow, true)) {
@@ -104,7 +132,7 @@ public abstract class Data2DReader {
         }
     }
 
-    public void handlePageRow() {
+    public void makePageRow() {
         List<String> row = new ArrayList<>();
         for (int i = 0; i < Math.min(sourceRow.size(), sourceData.columnsNumber()); i++) {
             row.add(sourceRow.get(i));
@@ -112,7 +140,7 @@ public abstract class Data2DReader {
         for (int col = row.size(); col < sourceData.columnsNumber(); col++) {
             row.add(sourceData.defaultColValue());
         }
-        row.add(0, "" + rowIndex);
+        row.add(0, "" + sourceIndex);
         rows.add(row);
     }
 
@@ -194,8 +222,8 @@ public abstract class Data2DReader {
         return rows;
     }
 
-    public long getRowIndex() {
-        return rowIndex;
+    public long getSourceIndex() {
+        return sourceIndex;
     }
 
     public Data2DReader setReaderData(Data2D readerData) {

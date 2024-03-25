@@ -24,7 +24,7 @@ public class DataTableReader extends Data2DReader {
     }
 
     @Override
-    public void scanData() {
+    public void scanFile() {
         operate.handleData();
     }
 
@@ -40,7 +40,7 @@ public class DataTableReader extends Data2DReader {
     @Override
     public void readTotal() {
         try {
-            rowIndex = readerTableData2D.size(conn());
+            sourceIndex = readerTableData2D.size(conn());
         } catch (Exception e) {
             handleError(e.toString());
             setFailed();
@@ -49,15 +49,15 @@ public class DataTableReader extends Data2DReader {
 
     @Override
     public void readPage() {
-        rowIndex = sourceData.startRowOfCurrentPage;
+        sourceIndex = sourceData.startRowOfCurrentPage;
         String sql = readerTable.pageQuery();
         showInfo(sql);
         try (PreparedStatement statement = conn().prepareStatement(sql);
                 ResultSet results = statement.executeQuery()) {
             while (results.next()) {
                 makeRecord(readerTableData2D.readData(results));
-                rowIndex++;
-                handlePageRow();
+                sourceIndex++;
+                makePageRow();
             }
         } catch (Exception e) {
             handleError(e.toString());
@@ -67,15 +67,30 @@ public class DataTableReader extends Data2DReader {
 
     @Override
     public void readRows() {
-        rowIndex = 0;
+        sourceIndex = 0;
+        long tableIndex = 0;
+        long startIndex = sourceData.startRowOfCurrentPage;
+        long endIndex = sourceData.endRowOfCurrentPage;
         String sql = "SELECT * FROM " + readerTable.getSheet();
         showInfo(sql);
         try (PreparedStatement statement = conn().prepareStatement(sql);
                 ResultSet results = statement.executeQuery()) {
             while (results.next() && !isStopped()) {
-                makeRecord(readerTableData2D.readData(results));
-                rowIndex++;
-                handleRow();
+                try {
+                    if (tableIndex < startIndex || tableIndex >= endIndex) {
+                        makeRecord(readerTableData2D.readData(results));
+                        ++sourceIndex;
+                        handleRow();
+
+                    } else if (tableIndex == startIndex) {
+                        scanPage();
+                    }
+
+                    tableIndex++;
+                } catch (Exception e) {  // skip  bad lines
+//                    handleError(e.toString());
+//                    setFailed();
+                }
             }
         } catch (Exception e) {
             handleError(e.toString());

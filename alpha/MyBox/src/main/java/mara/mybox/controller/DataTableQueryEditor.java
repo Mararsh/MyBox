@@ -87,14 +87,14 @@ public class DataTableQueryEditor extends InfoTreeNodeEditor {
         try {
             this.dataTable = (DataTable) data2D;
             namesList.getItems().clear();
-            if (dataTable == null || !dataTable.isValid()) {
+            if (dataTable == null || !dataTable.isValidDefinition()) {
                 return;
             }
             String name = dataTable.getSheet();
             if (name != null && !name.isBlank()) {
                 namesList.getItems().add(name);
             }
-            if (!dataTable.isValid()) {
+            if (!dataTable.isValidDefinition()) {
                 return;
             }
             namesList.getItems().setAll(dataTable.columnNames());

@@ -38,6 +38,7 @@ public class DataTableWriter extends Data2DWriter {
             if (conn == null) {
                 return false;
             }
+
             if (targetTable == null) {
                 targetTable = Data2DTableTools.createTable(task(), conn, targetTableName,
                         referColumns, keys, targetTableDesciption, idName, dropExisted);
@@ -45,8 +46,9 @@ public class DataTableWriter extends Data2DWriter {
                     return false;
                 }
             }
-
             tableData2D = targetTable.getTableData2D();
+            columns = targetTable.getColumns();
+            columns = columns.subList(1, columns.size());
             conn.setAutoCommit(false);
             dwCount = 0;
             String sql = tableData2D.insertStatement();
@@ -94,7 +96,7 @@ public class DataTableWriter extends Data2DWriter {
             conn.commit();
             insert.close();
             targetTable.setRowsNumber(dwCount);
-            Data2D.saveAttributes(conn, targetTable, columns);
+            Data2D.saveAttributes(conn, targetTable, targetTable.getColumns());
             targetData = targetTable;
             created = true;
         } catch (Exception e) {

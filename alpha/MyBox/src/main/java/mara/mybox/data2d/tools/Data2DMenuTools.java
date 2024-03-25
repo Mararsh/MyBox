@@ -68,7 +68,7 @@ public class Data2DMenuTools {
     public static List<MenuItem> dataMenus(Data2DManufactureController dataController) {
         try {
             Data2D data2D = dataController.getData2D();
-            if (data2D == null || !data2D.isValid()) {
+            if (data2D == null || !data2D.isValidDefinition()) {
                 return null;
             }
             List<MenuItem> items = new ArrayList<>();
@@ -172,7 +172,7 @@ public class Data2DMenuTools {
                 return null;
             }
             Data2D data2D = dataController.getData2D();
-            if (data2D == null || !data2D.isValid()) {
+            if (data2D == null || !data2D.isValidDefinition()) {
                 return null;
             }
             List<MenuItem> items = new ArrayList<>();
@@ -406,7 +406,7 @@ public class Data2DMenuTools {
     public static List<MenuItem> trimMenus(BaseData2DLoadController controller) {
         try {
             Data2D data2D = controller.getData2D();
-            if (data2D == null || !data2D.isValid()) {
+            if (data2D == null || !data2D.isValidDefinition()) {
                 return null;
             }
             List<MenuItem> items = new ArrayList<>();
@@ -461,7 +461,7 @@ public class Data2DMenuTools {
     public static List<MenuItem> calMenus(BaseData2DLoadController controller) {
         try {
             Data2D data2D = controller.getData2D();
-            if (data2D == null || !data2D.isValid()) {
+            if (data2D == null || !data2D.isValidDefinition()) {
                 return null;
             }
             List<MenuItem> items = new ArrayList<>();
@@ -531,7 +531,7 @@ public class Data2DMenuTools {
     public static List<MenuItem> verifyMenus(Data2DManufactureController dataController) {
         try {
             Data2D data2D = dataController.getData2D();
-            if (data2D == null || !data2D.isValid()) {
+            if (data2D == null || !data2D.isValidDefinition()) {
                 return null;
             }
 
@@ -583,7 +583,7 @@ public class Data2DMenuTools {
     public static List<MenuItem> chartMenus(BaseData2DLoadController controller) {
         try {
             Data2D data2D = controller.getData2D();
-            if (data2D == null || !data2D.isValid()) {
+            if (data2D == null || !data2D.isValidDefinition()) {
                 return null;
             }
             List<MenuItem> items = new ArrayList<>();
@@ -643,7 +643,7 @@ public class Data2DMenuTools {
     public static List<MenuItem> groupChartMenus(BaseData2DLoadController controller) {
         try {
             Data2D data2D = controller.getData2D();
-            if (data2D == null || !data2D.isValid()) {
+            if (data2D == null || !data2D.isValidDefinition()) {
                 return null;
             }
             List<MenuItem> items = new ArrayList<>();

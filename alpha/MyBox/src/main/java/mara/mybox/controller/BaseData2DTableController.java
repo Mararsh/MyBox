@@ -196,7 +196,7 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
     }
 
     public boolean isValidData() {
-        return data2D != null && data2D.isValid();
+        return data2D != null && data2D.isValidDefinition();
     }
 
     public void notifySaved() {
@@ -258,9 +258,6 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
                 return;
             }
             List<Data2DColumn> columns = data2D.getColumns();
-            if (columns == null || columns.isEmpty()) {
-                return;
-            }
             TableColor tableColor = null;
             boolean includeCoordinate = data2D.includeCoordinate();
             validateEdit = UserConfig.getBoolean(baseName + "ValidateEdit", true);
@@ -585,7 +582,7 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
     @Override
     protected List<MenuItem> makeTableContextMenu() {
         try {
-            if (data2D == null || !data2D.isValid()) {
+            if (data2D == null || !data2D.isValidDefinition()) {
                 return null;
             }
             List<MenuItem> items = new ArrayList<>();

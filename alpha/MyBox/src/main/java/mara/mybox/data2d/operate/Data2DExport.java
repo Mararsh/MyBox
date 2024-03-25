@@ -106,6 +106,7 @@ public class Data2DExport extends Data2DOperate {
             }
             return true;
         } catch (Exception e) {
+            showError(e.toString());
             return false;
         }
     }

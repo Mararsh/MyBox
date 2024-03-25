@@ -190,7 +190,7 @@ public class ControlData2DSystemClipboard extends BaseController {
     }
 
     public void editAction() {
-        if (textData == null || !textData.isValid()) {
+        if (textData == null || !textData.isValidDefinition()) {
             return;
         }
         if (textData.getFile() == null) {

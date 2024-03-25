@@ -5,7 +5,6 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.controller.BaseController;
-import mara.mybox.controller.BaseTaskController;
 import mara.mybox.controller.ControlTargetFile;
 import mara.mybox.controller.Data2DManufactureController;
 import mara.mybox.data2d.Data2D;
@@ -38,7 +37,6 @@ import mara.mybox.fxml.FxTask;
  */
 public abstract class Data2DWriter {
 
-    protected BaseController controller;
     protected Data2D targetData;
     protected Data2DOperate operate;
     protected File targetFile, tmpFile;
@@ -105,8 +103,6 @@ public abstract class Data2DWriter {
     public FxTask task() {
         if (operate != null) {
             return operate.getTask();
-        } else if (controller != null) {
-            return controller.getTask();
         } else {
             return null;
         }
@@ -163,30 +159,22 @@ public abstract class Data2DWriter {
     public void showInfo(String info) {
         if (operate != null) {
             operate.showInfo(info);
-        } else if (controller != null) {
-            controller.displayInfo(info);
         }
     }
 
     public void recordFileGenerated(File file, int type) {
-        if (!recordTargetFile) {
+        if (!recordTargetFile || operate == null) {
             return;
         }
-        if (operate != null) {
-            BaseTaskController c = operate.getTaskController();
-            if (c != null) {
-                c.targetFileGenerated(file, type);
-            }
-        } else if (controller != null) {
-            controller.recordFileWritten(conn(), file, type, type);
+        BaseController c = operate.getController();
+        if (c != null) {
+            c.recordFileWritten(file, type);
         }
     }
 
     final public void showError(String error) {
         if (operate != null) {
             operate.showError(error);
-        } else if (controller != null) {
-            controller.displayError(error);
         } else {
             MyBoxLog.error(error);
         }
@@ -271,11 +259,6 @@ public abstract class Data2DWriter {
     /*
         get/set
      */
-    public Data2DWriter setController(BaseController controller) {
-        this.controller = controller;
-        return this;
-    }
-
     public Data2D getTargetData() {
         return targetData;
     }

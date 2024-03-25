@@ -106,8 +106,8 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
         if (!checkBeforeLoadingTableData()) {
             return;
         }
-        if (task != null && !task.isQuit()) {
-            return;
+        if (task != null) {
+            task.cancel();
         }
         task = new FxSingletonTask<Void>(this) {
             private List<P> data;

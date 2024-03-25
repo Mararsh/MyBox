@@ -3,7 +3,6 @@ package mara.mybox.data2d.operate;
 import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.data2d.Data2D_Edit;
-import mara.mybox.dev.MyBoxLog;
 
 /**
  * @Author Mara
@@ -51,11 +50,7 @@ public class Data2DReadColumns extends Data2DOperate {
             rows.add(row);
             return true;
         } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            } else {
-                MyBoxLog.error(e);
-            }
+            showError(e.toString());
             return false;
         }
     }

@@ -174,7 +174,6 @@ public class DataFileText extends DataFile {
         return values;
     }
 
-    @Override
     public boolean savePageDataAs(Data2D targetData) {
         if (targetData == null || !(targetData instanceof DataFileText)) {
             return false;
@@ -255,7 +254,7 @@ public class DataFileText extends DataFile {
             if (writer == null || delimiter == null) {
                 return false;
             }
-            if (!isValid()) {
+            if (!isValidDefinition()) {
                 return true;
             }
             for (int r = 0; r < tableRowsNumber(); r++) {
@@ -315,11 +314,12 @@ public class DataFileText extends DataFile {
         writer.setCharset(charset)
                 .setDelimiter(delimiter)
                 .setWriteHeader(hasHeader)
+                .setTargetData(this)
                 .setTargetFile(file)
                 .setColumns(columns)
                 .setHeaderNames(columnNames())
                 .setRecordTargetFile(true)
-                .setRecordTargetData(false);
+                .setRecordTargetData(true);
         return writer;
     }
 

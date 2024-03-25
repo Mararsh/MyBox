@@ -1,6 +1,5 @@
 package mara.mybox.data2d.operate;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
@@ -87,8 +86,10 @@ public class Data2DFrequency extends Data2DOperate {
     }
 
     public boolean goTable() {
-        int total = 0;
-        try (Connection conn = DerbyBase.getConnection()) {
+
+        try {
+            int total = 0;
+            conn = conn();
             String sql = "SELECT count(*) AS mybox99_count FROM " + sourceData.getSheet();
             if (task != null) {
                 task.setInfo(sql);

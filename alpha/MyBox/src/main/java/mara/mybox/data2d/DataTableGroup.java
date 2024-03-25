@@ -226,7 +226,7 @@ public class DataTableGroup {
             List<Data2DColumn> parametersColumns = new ArrayList<>();
             parametersColumns.add(new Data2DColumn("group_index", ColumnType.Long));
             parametersColumns.add(new Data2DColumn("group_parameters", ColumnType.String));
-            groupParameters = Data2DTableTools.createTable(task, conn, null, parametersColumns, null, null, null, true);
+            groupParameters = Data2DTableTools.createTable(task, conn, null, parametersColumns);
             tableGroupParameters = groupParameters.getTableData2D();
 
             dataComments = message("GroupBy") + ": " + message(groupType.name()) + "\n";

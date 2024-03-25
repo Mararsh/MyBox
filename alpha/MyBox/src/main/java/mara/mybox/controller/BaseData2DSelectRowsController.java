@@ -578,7 +578,7 @@ public class BaseData2DSelectRowsController extends BaseData2DLoadController {
     }
 
     public boolean hasData() {
-        return data2D != null && data2D.isValid() && !tableData.isEmpty();
+        return data2D != null && data2D.isValidDefinition() && !tableData.isEmpty();
     }
 
     /*

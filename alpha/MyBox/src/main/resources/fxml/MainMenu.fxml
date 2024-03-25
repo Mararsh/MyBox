@@ -263,6 +263,8 @@ License:    Apache License Version 2.0
                         <Menu mnemonicParsing="false" text="%Data">
                             <items>
                                 <MenuItem mnemonicParsing="false" onAction="#DataManufacture" text="%DataManufacture" />
+                                <MenuItem mnemonicParsing="false" onAction="#manageData" text="%ManageData" />
+                                <SeparatorMenuItem mnemonicParsing="false" />
                                 <Menu mnemonicParsing="false" text="%DataFile">
                                     <items>
                                         <MenuItem mnemonicParsing="false" onAction="#openCsvConvert" text="%CsvConvert" />
@@ -290,9 +292,8 @@ License:    Apache License Version 2.0
                                     </items>
                                 </Menu>
                                 <SeparatorMenuItem mnemonicParsing="false" />
-                                <MenuItem mnemonicParsing="false" onAction="#manageData" text="%ManageData" />
-                                <MenuItem mnemonicParsing="false" onAction="#SpliceData" text="%SpliceData" />
                                 <MenuItem mnemonicParsing="false" onAction="#Data2DDefinition" text="%Data2DDefinition" />
+                                <MenuItem mnemonicParsing="false" onAction="#SpliceData" text="%SpliceData" />
                                 <MenuItem mnemonicParsing="false" onAction="#RowFilter" text="%RowFilter" />
                                 <MenuItem mnemonicParsing="false" onAction="#dataInSystemClipboard" text="%DataInSystemClipboard" />
                                 <MenuItem mnemonicParsing="false" onAction="#dataInMyBoxClipboard" text="%DataInMyBoxClipboard" />

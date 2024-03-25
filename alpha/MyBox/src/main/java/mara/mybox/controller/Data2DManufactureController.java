@@ -101,7 +101,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
             return;
         }
         operationButton.setDisable(!isEditing());
-        if (csvRadio != ov || !isDataChanged() || !data2D.isValid()) {
+        if (csvRadio != ov || !isDataChanged() || !data2D.isValidDefinition()) {
             switchFormat();
             return;
         }
@@ -629,22 +629,20 @@ public class Data2DManufactureController extends BaseData2DViewController {
             }
             return;
         }
-        Data2D targetData = data2D.cloneAll();
-        if (targetData.isDataFile()) {
-            if (targetData.getFile() == null) {
-                File file = chooseSaveFile(targetData.dataName());
-                if (file == null) {
+        targetFile = data2D.getFile();
+        if (data2D.isDataFile()) {
+            if (targetFile == null) {
+                targetFile = chooseSaveFile(data2D.dataName());
+                if (targetFile == null) {
                     return;
                 }
-                targetData.setFile(file);
             }
-        } else if (targetData.isClipboard()) {
-            if (targetData.getFile() == null) {
-                File file = DataClipboard.newFile();
-                if (file == null) {
+        } else if (data2D.isClipboard()) {
+            if (targetFile == null) {
+                targetFile = DataClipboard.newFile();
+                if (targetFile == null) {
                     return;
                 }
-                targetData.setFile(file);
             }
         }
         if (task != null) {
@@ -664,12 +662,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
                         backup = addBackup(this, data2D.getFile());
                     }
                     data2D.startTask(this, null);
-                    data2D.savePageDataAs(targetData);
-                    data2D.startTask(this, null);
-                    data2D.countSize();
-                    Data2D.saveAttributes(data2D, targetData);
-                    data2D.cloneAll(targetData);
-                    return true;
+                    return data2D.savePageData(targetFile) >= 0;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -701,9 +694,6 @@ public class Data2DManufactureController extends BaseData2DViewController {
     public void dataSaved() {
         try {
             popInformation(message("Saved"));
-            if (data2D.getFile() != null) {
-                recordFileWritten(data2D.getFile());
-            }
             notifySaved();
             readDefinition();
         } catch (Exception e) {

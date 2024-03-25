@@ -27,7 +27,7 @@ public class DataFileCSVReader extends Data2DReader {
     }
 
     @Override
-    public void scanData() {
+    public void scanFile() {
         File validFile = FileTools.removeBOM(task(), sourceFile);
         if (validFile == null || isStopped()) {
             return;
@@ -68,14 +68,14 @@ public class DataFileCSVReader extends Data2DReader {
                 }
             } else {
                 while (iterator.hasNext() && !isStopped()) {
-                    readRecord();
+                    readFileRecord();
                     if (sourceRow != null && !sourceRow.isEmpty()) {
                         break;
                     }
                 }
             }
             readerHasHeader = false;
-            handleHeader();
+            makeHeader();
         } catch (Exception e) {
             handleError(e.toString());
         }
@@ -84,18 +84,18 @@ public class DataFileCSVReader extends Data2DReader {
     @Override
     public void readTotal() {
         try {
-            rowIndex = 0;
+            sourceIndex = 0;
             if (iterator == null) {
                 return;
             }
             while (iterator.hasNext()) {
                 if (isStopped()) {
-                    rowIndex = 0;
+                    sourceIndex = 0;
                     return;
                 }
-                readRecord();
+                readFileRecord();
                 if (sourceRow != null && !sourceRow.isEmpty()) {
-                    ++rowIndex;
+                    ++sourceIndex;
                 }
             }
         } catch (Exception e) {
@@ -104,27 +104,27 @@ public class DataFileCSVReader extends Data2DReader {
         }
     }
 
-    // rowIndex is 1-base while pageStartIndex and pageEndIndex are 0-based
+    // sourceIndex is 1-base while pageStartIndex and pageEndIndex are 0-based
     @Override
     public void readPage() {
         try {
             if (iterator == null) {
                 return;
             }
-            rowIndex = 0;
+            sourceIndex = 0;
             while (iterator.hasNext() && !isStopped()) {
-                readRecord();
+                readFileRecord();
                 if (sourceRow == null || sourceRow.isEmpty()) {
                     continue;
                 }
-                if (rowIndex++ < pageStartIndex) {
+                if (sourceIndex++ < pageStartIndex) {
                     continue;
                 }
-                if (rowIndex > pageEndIndex) {
+                if (sourceIndex > pageEndIndex) {
                     stop();
                     break;
                 }
-                handlePageRow();
+                makePageRow();
             }
         } catch (Exception e) {
             handleError(e.toString());
@@ -132,28 +132,7 @@ public class DataFileCSVReader extends Data2DReader {
         }
     }
 
-    @Override
-    public void readRows() {
-        try {
-            if (iterator == null) {
-                return;
-            }
-            rowIndex = 0;
-            while (iterator.hasNext() && !isStopped()) {
-                readRecord();
-                if (sourceRow == null || sourceRow.isEmpty()) {
-                    continue;
-                }
-                ++rowIndex;
-                handleRow();
-            }
-        } catch (Exception e) {
-            handleError(e.toString());
-            setFailed();
-        }
-    }
-
-    public void readRecord() {
+    public void readFileRecord() {
         try {
             sourceRow = null;
             if (isStopped() || iterator == null) {
@@ -169,6 +148,43 @@ public class DataFileCSVReader extends Data2DReader {
             }
         } catch (Exception e) {
             handleError(e.toString());
+        }
+    }
+
+    @Override
+    public void readRows() {
+        try {
+            if (iterator == null) {
+                return;
+            }
+            sourceIndex = 0;
+            long fileIndex = -1;
+            long startIndex = sourceData.startRowOfCurrentPage;
+            long endIndex = sourceData.endRowOfCurrentPage;
+            while (iterator.hasNext() && !isStopped()) {
+                try {
+                    readFileRecord();
+                    if (sourceRow == null || sourceRow.isEmpty()) {
+                        continue;
+                    }
+                    fileIndex++;
+
+                    if (fileIndex < startIndex || fileIndex >= endIndex) {
+                        ++sourceIndex;
+                        handleRow();
+
+                    } else if (fileIndex == startIndex) {
+                        scanPage();
+                    }
+
+                } catch (Exception e) {  // skip  bad lines
+//                    handleError(e.toString());
+//                    setFailed();
+                }
+            }
+        } catch (Exception e) {
+            handleError(e.toString());
+            setFailed();
         }
     }
 

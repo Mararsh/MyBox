@@ -49,7 +49,6 @@ public class DataFileCSV extends DataFileText {
         return CsvTools.csvFormat(delimiter, hasHeader);
     }
 
-    @Override
     public boolean savePageDataAs(Data2D targetData) {
         if (targetData == null || !(targetData instanceof DataFileCSV)) {
             return false;
@@ -131,7 +130,7 @@ public class DataFileCSV extends DataFileText {
             if (csvPrinter == null) {
                 return false;
             }
-            if (!isValid()) {
+            if (!isValidDefinition()) {
                 return true;
             }
             List<String> names = columnNames();
@@ -153,7 +152,7 @@ public class DataFileCSV extends DataFileText {
             if (csvPrinter == null) {
                 return false;
             }
-            if (!isValid()) {
+            if (!isValidDefinition()) {
                 return true;
             }
             for (int r = 0; r < tableRowsNumber(); r++) {
@@ -184,19 +183,6 @@ public class DataFileCSV extends DataFileText {
         }
     }
 
-    public DataFileCSV savePageAs(String dname) {
-        try {
-            DataFileCSV targetData = (DataFileCSV) this.cloneAll();
-            File csvFile = tmpFile(dname, "save", "csv");
-            targetData.setFile(csvFile).setDataName(dname);
-            savePageDataAs(targetData);
-            return targetData;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
-    }
-
     @Override
     public Data2DWriter selfWriter() {
         if (file == null) {
@@ -206,11 +192,12 @@ public class DataFileCSV extends DataFileText {
         writer.setCharset(charset)
                 .setDelimiter(delimiter)
                 .setWriteHeader(hasHeader)
+                .setTargetData(this)
                 .setTargetFile(file)
                 .setColumns(columns)
                 .setHeaderNames(columnNames())
                 .setRecordTargetFile(true)
-                .setRecordTargetData(false);
+                .setRecordTargetData(true);
         return writer;
     }
 

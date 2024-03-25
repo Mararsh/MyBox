@@ -258,15 +258,15 @@ public class ControlDataExport extends BaseDataConvertController {
                 }
             }
             if (jsonCheck.isSelected()) {
-                Data2DWriter writer = new JsonWriter().setController(this);
+                Data2DWriter writer = new JsonWriter();
                 export.addWriter(writer);
             }
             if (xmlCheck.isSelected()) {
-                Data2DWriter writer = new XmlWriter().setController(this);
+                Data2DWriter writer = new XmlWriter();
                 export.addWriter(writer);
             }
             if (myBoxClipboardCheck.isSelected()) {
-                Data2DWriter writer = new MyBoxClipboardWriter().setController(this);
+                Data2DWriter writer = new MyBoxClipboardWriter();
                 export.addWriter(writer);
             }
             return export;

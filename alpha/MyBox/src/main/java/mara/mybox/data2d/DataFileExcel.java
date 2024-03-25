@@ -108,7 +108,6 @@ public class DataFileExcel extends DataFile {
         return super.readDataDefinition(conn);
     }
 
-    @Override
     public boolean savePageDataAs(Data2D targetData) {
         if (targetData == null || !(targetData instanceof DataFileExcel)) {
             return false;
@@ -218,7 +217,7 @@ public class DataFileExcel extends DataFile {
     }
 
     public int writeHeader(Sheet targetSheet, int targetRowIndex) {
-        if (!isValid()) {
+        if (!isValidDefinition()) {
             return targetRowIndex;
         }
         int index = targetRowIndex;
@@ -233,7 +232,7 @@ public class DataFileExcel extends DataFile {
     protected int writePageData(Sheet targetSheet, int targetRowIndex) {
         int index = targetRowIndex;
         try {
-            if (!isValid()) {
+            if (!isValidDefinition()) {
                 return index;
             }
             for (int r = 0; r < tableRowsNumber(); r++) {
@@ -448,12 +447,13 @@ public class DataFileExcel extends DataFile {
         DataFileExcelWriter writer = new DataFileExcelWriter();
         writer.setBaseFile(file)
                 .setSheetName(sheet)
+                .setTargetData(this)
                 .setTargetFile(file)
                 .setWriteHeader(hasHeader)
                 .setColumns(columns)
                 .setHeaderNames(columnNames())
                 .setRecordTargetFile(true)
-                .setRecordTargetData(false);
+                .setRecordTargetData(true);
         return writer;
     }
 

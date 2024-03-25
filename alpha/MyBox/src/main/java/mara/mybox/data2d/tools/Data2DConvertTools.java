@@ -268,7 +268,7 @@ public class Data2DConvertTools {
         if (targetName != null) {
             matrix.setDataName(targetName);
         }
-        if (DataMatrix.save(task, conn, matrix, cols, data)) {
+        if (DataMatrix.save(task, conn, matrix, cols, data) >= 0) {
             return matrix;
         } else {
             return null;

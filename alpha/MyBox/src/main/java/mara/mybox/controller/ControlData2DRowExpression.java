@@ -68,7 +68,7 @@ public class ControlData2DRowExpression extends ControlJavaScriptRefer {
         try {
             Platform.runLater(() -> {
                 placeholdersList.getItems().clear();
-                if (data2D == null || !data2D.isValid()) {
+                if (data2D == null || !data2D.isValidDefinition()) {
                     return;
                 }
                 List<Data2DColumn> columns = data2D.getColumns();
@@ -106,7 +106,7 @@ public class ControlData2DRowExpression extends ControlJavaScriptRefer {
     @Override
     protected void moreExampleButtons(MenuController controller) {
         try {
-            if (data2D == null || !data2D.isValid()) {
+            if (data2D == null || !data2D.isValidDefinition()) {
                 return;
             }
             String col1 = data2D.columnNames().get(0);
@@ -119,7 +119,7 @@ public class ControlData2DRowExpression extends ControlJavaScriptRefer {
 
     public boolean checkExpression(boolean allPages) {
         error = null;
-        if (data2D == null || !data2D.isValid()) {
+        if (data2D == null || !data2D.isValidDefinition()) {
             error = message("InvalidData");
             return false;
         }

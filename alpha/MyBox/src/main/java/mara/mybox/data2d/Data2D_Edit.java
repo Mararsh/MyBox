@@ -19,6 +19,7 @@ import mara.mybox.data2d.modify.DataTableSetValue;
 import mara.mybox.data2d.operate.Data2DOperate;
 import mara.mybox.data2d.operate.Data2DReadPage;
 import mara.mybox.data2d.operate.Data2DReadTotal;
+import mara.mybox.data2d.operate.Data2DSavePage;
 import mara.mybox.data2d.writer.Data2DWriter;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
@@ -50,8 +51,6 @@ public abstract class Data2D_Edit extends Data2D_Filter {
     public abstract Data2DDefinition queryDefinition(Connection conn);
 
     public abstract List<String> readColumnNames();
-
-    public abstract boolean savePageDataAs(Data2D targetData);
 
     public abstract Data2DWriter selfWriter();
 
@@ -98,7 +97,6 @@ public abstract class Data2D_Edit extends Data2D_Filter {
         try {
             columns = null;
             List<String> colNames = readColumnNames();
-
             if (colNames == null || colNames.isEmpty()) {
                 hasHeader = false;
                 columns = savedColumns;
@@ -182,7 +180,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
     }
 
     public List<List<String>> readPageData(Connection conn) {
-        if (!isValid()) {
+        if (!isValidDefinition()) {
             startRowOfCurrentPage = endRowOfCurrentPage = 0;
             return null;
         }
@@ -260,9 +258,32 @@ public abstract class Data2D_Edit extends Data2D_Filter {
     /*
         modify
      */
+    public long savePageData(File targetFile) {
+        try {
+            if (targetFile == null) {
+                return -1;
+            }
+            Data2DSavePage operate = Data2DSavePage.saveAsFile(this, targetFile);
+            if (operate == null) {
+                return -2;
+            }
+            operate.setTask(task).start();
+            if (operate.isFailed()) {
+                return -3;
+            }
+            return operate.getHandledCount();
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e);
+            return -4;
+        }
+    }
+
     public long setValue(List<Integer> cols, SetValue setValue, boolean errorContinue) {
         try {
-            if (!validData() || cols == null || cols.isEmpty()) {
+            if (!isValidData() || cols == null || cols.isEmpty()) {
                 return -1;
             }
             Data2DSetValue operate = isUserTable()
@@ -278,13 +299,17 @@ public abstract class Data2D_Edit extends Data2D_Filter {
             }
             return operate.getHandledCount();
         } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e);
             return -4;
         }
     }
 
     public long deleteRows(boolean errorContinue) {
         try {
-            if (!validData()) {
+            if (!isValidData()) {
                 return -1;
             }
             Data2DDelete operate = isUserTable()
@@ -299,12 +324,16 @@ public abstract class Data2D_Edit extends Data2D_Filter {
             }
             return operate.getHandledCount();
         } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e);
             return -4;
         }
     }
 
     public long clearData() {
-        if (!validData()) {
+        if (!isValidData()) {
             return -1;
         }
         Data2DOperate operate = isUserTable()
@@ -323,7 +352,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
 
     public String encodeCSV(FxTask task, String delimiterName,
             boolean displayRowNames, boolean displayColNames, boolean formatValues) {
-        if (!isValid()) {
+        if (!isValidDefinition()) {
             return "";
         }
         if (delimiterName == null) {

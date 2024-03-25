@@ -225,8 +225,9 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
 
         List<MenuItem> items = new ArrayList<>();
         items.addAll(Arrays.asList(
-                DataManufacture, dataFile, matrix, database, new SeparatorMenuItem(),
-                ManageData, SpliceData, Data2DDefinition, RowFilter,
+                DataManufacture, ManageData, new SeparatorMenuItem(),
+                dataFile, matrix, database, new SeparatorMenuItem(),
+                SpliceData, Data2DDefinition, RowFilter,
                 DataInSystemClipboard, DataInMyBoxClipboard, new SeparatorMenuItem(),
                 calculation, MathFunction, new SeparatorMenuItem(),
                 Location, miscellaneousMenu));

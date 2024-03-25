@@ -19,15 +19,15 @@ import mara.mybox.value.AppPaths;
  * @License Apache License Version 2.0
  */
 public class DataClipboard extends DataFileCSV {
-
+    
     public DataClipboard() {
         dataType = DataType.MyBoxClipboard;
     }
-
+    
     public int type() {
         return type(DataType.MyBoxClipboard);
     }
-
+    
     @Override
     public boolean checkForSave() {
         if (dataName == null || dataName.isBlank()) {
@@ -35,7 +35,7 @@ public class DataClipboard extends DataFileCSV {
         }
         return true;
     }
-
+    
     @Override
     public Data2DWriter selfWriter() {
         if (file == null) {
@@ -46,15 +46,16 @@ public class DataClipboard extends DataFileCSV {
                 .setDelimiter(delimiter)
                 .setWriteHeader(hasHeader)
                 .setTargetFile(file)
+                .setTargetData(this)
                 .setRecordTargetFile(false)
-                .setRecordTargetData(false);
+                .setRecordTargetData(true);
         return writer;
     }
-
+    
     public static File newFile() {
         return new File(AppPaths.getDataClipboardPath() + File.separator + DateTools.nowFileString() + ".csv");
     }
-
+    
     public static DataClipboard create(FxTask task, String clipName,
             List<Data2DColumn> cols, List<List<String>> data) {
         if (cols == null || data == null || data.isEmpty()) {
@@ -72,7 +73,7 @@ public class DataClipboard extends DataFileCSV {
             return null;
         }
     }
-
+    
     public static DataClipboard create(FxTask task, Data2D sourceData,
             String clipName, File dFile) {
         if (dFile == null || sourceData == null) {
@@ -117,5 +118,5 @@ public class DataClipboard extends DataFileCSV {
             return null;
         }
     }
-
+    
 }

@@ -118,7 +118,7 @@ public class ControlData2DGroup extends BaseTablePagesController<DataFilter> {
             tableData.clear();
             isSettingValues = false;
             expressionController.setData2D(handleController.data2D);
-            if (!handleController.data2D.isValid()) {
+            if (!handleController.data2D.isValidDefinition()) {
                 return;
             }
             List<String> names = handleController.data2D.columnNames();
@@ -140,7 +140,7 @@ public class ControlData2DGroup extends BaseTablePagesController<DataFilter> {
     }
 
     public void loadColumnNames() {
-        if (!handleController.data2D.isValid()) {
+        if (!handleController.data2D.isValidDefinition()) {
             return;
         }
         List<String> names;

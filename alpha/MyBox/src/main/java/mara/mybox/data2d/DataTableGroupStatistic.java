@@ -1,6 +1,5 @@
 package mara.mybox.data2d;
 
-import mara.mybox.data2d.tools.Data2DTableTools;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.sql.Connection;
@@ -11,9 +10,7 @@ import java.util.List;
 import mara.mybox.calculation.DescriptiveStatistic;
 import mara.mybox.calculation.DescriptiveStatistic.StatisticType;
 import mara.mybox.calculation.DoubleStatistic;
-import mara.mybox.data2d.Data2D;
-import mara.mybox.data2d.DataFileCSV;
-import mara.mybox.data2d.DataTable;
+import mara.mybox.data2d.tools.Data2DTableTools;
 import mara.mybox.db.Database;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
@@ -149,7 +146,7 @@ public class DataTableGroupStatistic {
                         ColumnType.Double, 150));
             }
             String dname = DerbyBase.appendIdentifier(groupResults.dataName(), "_" + message("Statistic"));
-            statisticData = Data2DTableTools.createTable(task, conn, dname, valuesColumns, null, null, null, true);
+            statisticData = Data2DTableTools.createTable(task, conn, dname, valuesColumns);
             statisticData.setDataName(dname).setScale(scale);
             tableStatistic = statisticData.getTableData2D();
             statisticInsert = conn.prepareStatement(tableStatistic.insertStatement());
@@ -185,7 +182,7 @@ public class DataTableGroupStatistic {
                 groupColumns.add(c);
             }
             String gname = DerbyBase.appendIdentifier(groupResults.dataName(), "_" + message("Group"));
-            groupData = Data2DTableTools.createTable(task, conn, gname, groupColumns, null, null, null, true);
+            groupData = Data2DTableTools.createTable(task, conn, gname, groupColumns);
             tableGroup = groupData.getTableData2D();
 
             groupid = 0;

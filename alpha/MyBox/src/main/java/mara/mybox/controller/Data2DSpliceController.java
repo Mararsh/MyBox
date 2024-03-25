@@ -77,14 +77,14 @@ public class Data2DSpliceController extends BaseController {
     @Override
     public void okAction() {
         tabPane.getSelectionModel().select(aTab);
-        if (dataAController.data2D == null || !dataAController.data2D.isValid()) {
+        if (dataAController.data2D == null || !dataAController.data2D.isValidDefinition()) {
             popError(message("DataA") + ": " + message("NoData"));
             return;
         } else if (!dataAController.checkSelections()) {
             return;
         }
         tabPane.getSelectionModel().select(bTab);
-        if (dataBController.data2D == null || !dataBController.data2D.isValid()) {
+        if (dataBController.data2D == null || !dataBController.data2D.isValidDefinition()) {
             popError(message("DataB") + ": " + message("NoData"));
             return;
         } else if (!dataBController.checkSelections()) {

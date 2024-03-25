@@ -251,7 +251,7 @@ public abstract class Data2D_Filter extends Data2D_Data {
 
     public String replaceFilterStatistic(FindReplaceString findReplace, String script) {
         try {
-            if (!isValid() || script == null || script.isBlank()) {
+            if (!isValidDefinition() || script == null || script.isBlank()) {
                 return script;
             }
             String filledScript = script;

@@ -130,11 +130,11 @@ public class Data2DDefinition extends BaseData {
         comments = null;
     }
 
-    public boolean isValid() {
+    public boolean isValidDefinition() {
         return valid(this);
     }
 
-    public boolean validData() {
+    public boolean isValidData() {
         if (isDataFile()) {
             return FileTools.hasData(file);
         } else if (isTable()) {

@@ -248,7 +248,7 @@ public abstract class Data2D_Data extends Data2D_Attributes {
     }
 
     public boolean hasPageData() {
-        return isValid() && pageData != null && !pageData.isEmpty();
+        return isValidDefinition() && pageData != null && !pageData.isEmpty();
     }
 
     public boolean isPagesChanged() {
@@ -418,7 +418,7 @@ public abstract class Data2D_Data extends Data2D_Attributes {
 
     public List<String> columnNames() {
         try {
-            if (!isValid()) {
+            if (!isValidDefinition()) {
                 return null;
             }
             List<String> names = new ArrayList<>();
@@ -478,7 +478,7 @@ public abstract class Data2D_Data extends Data2D_Attributes {
 
     public List<Integer> columnIndices() {
         try {
-            if (!isValid()) {
+            if (!isValidDefinition()) {
                 return null;
             }
             List<Integer> indices = new ArrayList<>();
@@ -515,8 +515,8 @@ public abstract class Data2D_Data extends Data2D_Attributes {
     }
 
     @Override
-    public boolean isValid() {
-        return super.isValid() && columns != null && !columns.isEmpty();
+    public boolean isValidDefinition() {
+        return super.isValidDefinition() && columns != null && !columns.isEmpty();
     }
 
     public int newColumnIndex() {
@@ -606,7 +606,7 @@ public abstract class Data2D_Data extends Data2D_Attributes {
     }
 
     public void resetStatistic() {
-        if (!isValid()) {
+        if (!isValidDefinition()) {
             return;
         }
         for (Data2DColumn column : columns) {

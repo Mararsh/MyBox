@@ -1,5 +1,6 @@
 package mara.mybox.data2d;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -116,15 +117,12 @@ public class DataMatrix extends Data2D {
     }
 
     @Override
-    public boolean savePageDataAs(Data2D targetData) {
-        if (targetData == null || !targetData.isMatrix()) {
-            return false;
-        }
-        return save(null, (DataMatrix) targetData, columns, tableRows(false));
+    public long savePageData(File targetFile) {
+        return save(null, this, columns, tableRows(false));
     }
 
     public boolean isSquare() {
-        return isValid() && tableColsNumber() == tableRowsNumber();
+        return isValidDefinition() && tableColsNumber() == tableRowsNumber();
     }
 
     public String toString(double d) {
@@ -207,14 +205,16 @@ public class DataMatrix extends Data2D {
         }
         MatrixWriter writer = new MatrixWriter();
         writer.setMatrix(this)
-                .setRecordTargetFile(false).setRecordTargetData(false);
+                .setTargetData(this)
+                .setRecordTargetFile(false)
+                .setRecordTargetData(true);
         return writer;
     }
 
-    public static boolean save(FxTask task, DataMatrix matrix,
+    public static long save(FxTask task, DataMatrix matrix,
             List<Data2DColumn> cols, List<List<String>> rows) {
         if (matrix == null || cols == null || rows == null) {
-            return false;
+            return -1;
         }
         try (Connection conn = DerbyBase.getConnection()) {
             return save(task, conn, matrix, cols, rows);
@@ -223,14 +223,14 @@ public class DataMatrix extends Data2D {
                 task.setError(e.toString());
             }
             MyBoxLog.error(e);
-            return false;
+            return -2;
         }
     }
 
-    public static boolean save(FxTask task, Connection conn, DataMatrix matrix,
+    public static long save(FxTask task, Connection conn, DataMatrix matrix,
             List<Data2DColumn> cols, List<List<String>> rows) {
         if (conn == null || matrix == null || cols == null || rows == null) {
-            return false;
+            return -1;
         }
         TableData2DCell tableData2DCell = matrix.tableData2DCell;
         try {
@@ -239,7 +239,7 @@ public class DataMatrix extends Data2D {
             Data2D.saveAttributes(conn, matrix, cols);
             long did = matrix.getD2did();
             if (did < 0) {
-                return false;
+                return -2;
             }
             try (PreparedStatement clear = conn.prepareStatement(TableData2DCell.ClearData)) {
                 clear.setLong(1, did);
@@ -252,6 +252,7 @@ public class DataMatrix extends Data2D {
             }
             conn.commit();
             conn.setAutoCommit(false);
+            long num = 0;
             for (int r = 0; r < rows.size(); r++) {
                 List<String> row = rows.get(r);
                 for (int c = 0; c < row.size(); c++) {
@@ -263,16 +264,17 @@ public class DataMatrix extends Data2D {
                             .setRow(r).setCol(c).setValue(d + "");
                     tableData2DCell.insertData(conn, cell);
                 }
+                num++;
             }
             conn.commit();
+            return num;
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
             }
             MyBoxLog.error(e);
-            return false;
+            return -3;
         }
-        return true;
     }
 
     public TableData2DCell getTableData2DCell() {

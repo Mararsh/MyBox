@@ -23,7 +23,7 @@ public class DataFileTextReader extends Data2DReader {
     }
 
     @Override
-    public void scanData() {
+    public void scanFile() {
         File validFile = FileTools.removeBOM(task(), sourceFile);
         if (validFile == null || isStopped()) {
             return;
@@ -57,7 +57,7 @@ public class DataFileTextReader extends Data2DReader {
                 if (sourceRow == null || sourceRow.isEmpty()) {
                     continue;
                 }
-                handleHeader();
+                makeHeader();
                 return;
             }
         } catch (Exception e) {
@@ -69,16 +69,16 @@ public class DataFileTextReader extends Data2DReader {
     public void readTotal() {
         try {
             String line;
-            rowIndex = 0;
+            sourceIndex = 0;
             skipHeader();
             while ((line = textReader.readLine()) != null) {
                 if (isStopped()) {
-                    rowIndex = 0;
+                    sourceIndex = 0;
                     return;
                 }
                 List<String> row = parseFileLine(line);
                 if (row != null && !row.isEmpty()) {
-                    ++rowIndex;
+                    ++sourceIndex;
                 }
             }
         } catch (Exception e) {
@@ -93,7 +93,7 @@ public class DataFileTextReader extends Data2DReader {
         }
     }
 
-    // rowIndex is 1-base while pageStartIndex and pageEndIndex are 0-based
+    // sourceIndex is 1-base while pageStartIndex and pageEndIndex are 0-based
     @Override
     public void readPage() {
         if (textReader == null) {
@@ -101,21 +101,21 @@ public class DataFileTextReader extends Data2DReader {
         }
         try {
             skipHeader();
-            rowIndex = 0;
+            sourceIndex = 0;
             String line;
             while ((line = textReader.readLine()) != null && !isStopped()) {
                 sourceRow = parseFileLine(line);
                 if (sourceRow == null || sourceRow.isEmpty()) {
                     continue;
                 }
-                if (rowIndex++ < pageStartIndex) {
+                if (sourceIndex++ < pageStartIndex) {
                     continue;
                 }
-                if (rowIndex > pageEndIndex) {
+                if (sourceIndex > pageEndIndex) {
                     stop();
                     break;
                 }
-                handlePageRow();
+                makePageRow();
             }
         } catch (Exception e) {
             handleError(e.toString());
@@ -130,15 +130,25 @@ public class DataFileTextReader extends Data2DReader {
                 return;
             }
             skipHeader();
-            rowIndex = 0;
+            sourceIndex = 0;
+            long fileIndex = -1;
+            long startIndex = sourceData.startRowOfCurrentPage;
+            long endIndex = sourceData.endRowOfCurrentPage;
             String line;
             while ((line = textReader.readLine()) != null && !isStopped()) {
                 sourceRow = parseFileLine(line);
                 if (sourceRow == null || sourceRow.isEmpty()) {
                     continue;
                 }
-                ++rowIndex;
-                handleRow();
+                fileIndex++;
+
+                if (fileIndex < startIndex || fileIndex >= endIndex) {
+                    ++sourceIndex;
+                    handleRow();
+
+                } else if (fileIndex == startIndex) {
+                    scanPage();
+                }
             }
         } catch (Exception e) {
             handleError(e.toString());

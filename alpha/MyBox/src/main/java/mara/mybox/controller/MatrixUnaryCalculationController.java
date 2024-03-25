@@ -260,7 +260,7 @@ public class MatrixUnaryCalculationController extends BaseController {
         numberInput.setStyle(null);
         powerInput.setStyle(null);
         checkLabel.setText("");
-        if (dataMatrix == null || !dataMatrix.isValid()) {
+        if (dataMatrix == null || !dataMatrix.isValidDefinition()) {
             return false;
         }
         if (DeterminantByEliminationRadio.isSelected() || DeterminantByComplementMinorRadio.isSelected()

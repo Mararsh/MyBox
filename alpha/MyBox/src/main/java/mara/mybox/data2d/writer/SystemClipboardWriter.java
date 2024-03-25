@@ -1,6 +1,7 @@
 package mara.mybox.data2d.writer;
 
 import java.util.List;
+import mara.mybox.controller.BaseController;
 import mara.mybox.fxml.TextClipboardTools;
 import static mara.mybox.value.Languages.message;
 
@@ -11,6 +12,7 @@ import static mara.mybox.value.Languages.message;
  */
 public class SystemClipboardWriter extends Data2DWriter {
 
+    protected BaseController controller;
     protected StringBuilder builder;
 
     @Override
@@ -58,10 +60,20 @@ public class SystemClipboardWriter extends Data2DWriter {
 
     @Override
     public void showResult() {
-        if (controller == null || builder == null || builder.isEmpty()) {
+        if (builder == null || builder.isEmpty()) {
             return;
         }
-        TextClipboardTools.copyToSystemClipboard(controller, builder.toString());
+        TextClipboardTools.copyToSystemClipboard(
+                controller != null ? controller : operate.getController(),
+                builder.toString());
+    }
+
+    /*
+        set
+     */
+    public SystemClipboardWriter setController(BaseController controller) {
+        this.controller = controller;
+        return this;
     }
 
 }

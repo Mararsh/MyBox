@@ -84,8 +84,11 @@ public class MyBoxClipboardWriter extends Data2DWriter {
             if (targetFile == null || !targetFile.exists()) {
                 return;
             }
-            targetData = Data2D.create(Data2DDefinition.DataType.MyBoxClipboard);
-            targetData.setTask(task()).setFile(targetFile)
+            if (targetData == null) {
+                targetData = Data2D.create(Data2DDefinition.DataType.MyBoxClipboard);
+            }
+            targetData.setTask(task())
+                    .setFile(targetFile)
                     .setCharset(Charset.forName("UTF-8"))
                     .setDelimiter(",")
                     .setHasHeader(true)

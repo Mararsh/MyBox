@@ -145,7 +145,10 @@ public class ControlNewDataTable extends BaseController {
                 return null;
             }
             DataTableWriter writer = new DataTableWriter();
-            writer.setTargetTable(dataTable);
+            writer.setTargetTable(dataTable)
+                    .setTargetData(dataTable)
+                    .setRecordTargetFile(false)
+                    .setRecordTargetData(true);
             return writer;
         } catch (Exception e) {
             MyBoxLog.error(e);

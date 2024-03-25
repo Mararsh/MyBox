@@ -143,7 +143,8 @@ public class DataFileExcelWriter extends Data2DWriter {
                 if (targetData == null) {
                     targetData = Data2D.create(Data2DDefinition.DataType.Excel);
                 }
-                targetData.setTask(task()).setFile(targetFile)
+                targetData.setTask(task())
+                        .setFile(targetFile)
                         .setSheet(sheetName)
                         .setHasHeader(writeHeader)
                         .setDataName(dataName)

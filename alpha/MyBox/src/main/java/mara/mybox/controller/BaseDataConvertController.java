@@ -115,7 +115,7 @@ public class BaseDataConvertController extends BaseTaskController {
                         .setDelimiter(csvWriteController.getDelimiterName())
                         .setWriteHeader(csvWriteController.withName());
             }
-            writer.setController(this);
+
             return writer;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -134,7 +134,7 @@ public class BaseDataConvertController extends BaseTaskController {
                 UserConfig.setBoolean(baseName + "ExcelCurrentSheetOnly", currentSheetOnlyCheck.isSelected());
                 writer.setCurrentSheetOnly(currentSheetOnlyCheck.isSelected());
             }
-            writer.setController(this);
+
             return writer;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -154,7 +154,7 @@ public class BaseDataConvertController extends BaseTaskController {
                         .setDelimiter(textWriteOptionsController.getDelimiterName())
                         .setWriteHeader(textWriteOptionsController.withName());
             }
-            writer.setController(this);
+
             return writer;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -190,7 +190,7 @@ public class BaseDataConvertController extends BaseTaskController {
                         .setHeader(pdfOptionsController.getHeader())
                         .setShowPageNumber(pdfOptionsController.showPageNumber));
             }
-            writer.setController(this);
+
             return writer;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -206,7 +206,7 @@ public class BaseDataConvertController extends BaseTaskController {
                 UserConfig.setString(baseName + "Css", css);
                 writer.setCss(css);
             }
-            writer.setController(this);
+
             return writer;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -261,7 +261,7 @@ public class BaseDataConvertController extends BaseTaskController {
                     break;
             }
             if (writer != null) {
-                writer.setController(this);
+
             }
             return writer;
         } catch (Exception e) {

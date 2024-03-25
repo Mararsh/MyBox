@@ -260,7 +260,7 @@ public class BaseData2DViewController extends BaseData2DLoadController {
     }
 
     public void loadHtml(boolean pop) {
-        if (!data2D.isValid()) {
+        if (!data2D.isValidDefinition()) {
             if (pop) {
                 popError(message("NoData"));
             } else {
@@ -322,7 +322,7 @@ public class BaseData2DViewController extends BaseData2DLoadController {
     }
 
     public void loadTexts(boolean pop) {
-        if (!data2D.isValid()) {
+        if (!data2D.isValidDefinition()) {
             if (pop) {
                 popError(message("NoData"));
             } else {
@@ -480,7 +480,7 @@ public class BaseData2DViewController extends BaseData2DLoadController {
     @Override
     public List<MenuItem> viewMenuItems(Event fevent) {
         try {
-            if (data2D == null || !data2D.isValid()) {
+            if (data2D == null || !data2D.isValidDefinition()) {
                 return null;
             }
             List<MenuItem> items = new ArrayList<>();
@@ -654,7 +654,7 @@ public class BaseData2DViewController extends BaseData2DLoadController {
     @Override
     protected List<MenuItem> makeTableContextMenu() {
         try {
-            if (data2D == null || !data2D.isValid()) {
+            if (data2D == null || !data2D.isValidDefinition()) {
                 return null;
             }
             List<MenuItem> items = new ArrayList<>();

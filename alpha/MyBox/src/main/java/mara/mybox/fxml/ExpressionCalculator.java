@@ -94,7 +94,7 @@ public class ExpressionCalculator {
         try {
             if (script == null || script.isBlank()
                     || dataRow == null || dataRow.isEmpty()
-                    || data2D == null || !data2D.isValid()) {
+                    || data2D == null || !data2D.isValidDefinition()) {
                 return script;
             }
 
@@ -125,7 +125,7 @@ public class ExpressionCalculator {
         try {
             if (script == null || script.isBlank()
                     || tableRow == null || tableRow.isEmpty()
-                    || data2D == null || !data2D.isValid()) {
+                    || data2D == null || !data2D.isValidDefinition()) {
                 return script;
             }
 
@@ -202,7 +202,7 @@ public class ExpressionCalculator {
 
     public String replaceDummyStatistic(Data2D data2D, String script) {
         try {
-            if (data2D == null || !data2D.isValid() || script == null || script.isBlank()) {
+            if (data2D == null || !data2D.isValidDefinition() || script == null || script.isBlank()) {
                 return script;
             }
             String filledScript = script;

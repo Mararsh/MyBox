@@ -240,7 +240,6 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
             return -1;
         }
         String fixedName = DerbyBase.fixedIdentifier(tname);
-        MyBoxLog.console(fixedName);
         try (PreparedStatement statement = conn.prepareStatement("DROP TABLE " + fixedName)) {
             if (statement.executeUpdate() < 0) {
                 return -2;

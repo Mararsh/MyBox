@@ -123,6 +123,7 @@ public class Data2DTableTools {
                 return null;
             }
             TableData2D tableData2D = dataTable.getTableData2D();
+            tableData2D.setTableName(dataTable.getSheet());
             String sql = tableData2D.createTableStatement();
             if (task != null) {
                 task.setInfo(sql);
@@ -296,7 +297,7 @@ public class Data2DTableTools {
     }
 
     public static DataFileText toText(FxTask task, DataTable dataTable) {
-        if (task == null || dataTable == null || !dataTable.isValid()) {
+        if (task == null || dataTable == null || !dataTable.isValidDefinition()) {
             return null;
         }
         File txtFile = dataTable.tmpFile(dataTable.dataName(), null, "txt");
@@ -319,7 +320,7 @@ public class Data2DTableTools {
     }
 
     public static String toString(FxTask task, DataTable dataTable) {
-        if (task == null || dataTable == null || !dataTable.isValid()) {
+        if (task == null || dataTable == null || !dataTable.isValidDefinition()) {
             return null;
         }
         File txtFile = dataTable.tmpFile(dataTable.dataName(), null, "txt");
@@ -332,7 +333,7 @@ public class Data2DTableTools {
     }
 
     public static DataFileCSV toCSV(FxTask task, DataTable dataTable, File file, boolean save) {
-        if (task == null || dataTable == null || !dataTable.isValid() || file == null) {
+        if (task == null || dataTable == null || !dataTable.isValidDefinition() || file == null) {
             return null;
         }
         TableData2D tableData2D = dataTable.getTableData2D();
@@ -390,7 +391,7 @@ public class Data2DTableTools {
     }
 
     public static DataFileExcel toExcel(FxTask task, DataTable dataTable) {
-        if (task == null || dataTable == null || !dataTable.isValid()) {
+        if (task == null || dataTable == null || !dataTable.isValidDefinition()) {
             return null;
         }
         File excelFile = dataTable.tmpFile(dataTable.dataName(), null, "xlsx");
@@ -450,7 +451,7 @@ public class Data2DTableTools {
     }
 
     public static DataClipboard toClip(FxTask task, DataTable dataTable) {
-        if (task == null || dataTable == null || !dataTable.isValid()) {
+        if (task == null || dataTable == null || !dataTable.isValidDefinition()) {
             return null;
         }
         File clipFile = DataClipboard.newFile();
@@ -463,7 +464,7 @@ public class Data2DTableTools {
     }
 
     public static DataMatrix toMatrix(FxTask task, DataTable dataTable) {
-        if (task == null || dataTable == null || !dataTable.isValid()) {
+        if (task == null || dataTable == null || !dataTable.isValidDefinition()) {
             return null;
         }
         List<List<String>> rows = new ArrayList<>();
@@ -501,7 +502,7 @@ public class Data2DTableTools {
         }
         DataMatrix matrix = new DataMatrix();
         matrix.cloneDataAttributes(dataTable);
-        if (DataMatrix.save(task, matrix, dataColumns, rows)) {
+        if (DataMatrix.save(task, matrix, dataColumns, rows) >= 0) {
             return matrix;
         } else {
             return null;

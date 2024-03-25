@@ -1,12 +1,12 @@
 package mara.mybox.controller;
 
-import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Tab;
 import javafx.scene.layout.VBox;
+import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.Data2D_Attributes.TargetType;
 import static mara.mybox.data2d.Data2D_Attributes.TargetType.CSV;
 import static mara.mybox.data2d.Data2D_Attributes.TargetType.DatabaseTable;
@@ -14,20 +14,33 @@ import static mara.mybox.data2d.Data2D_Attributes.TargetType.Excel;
 import static mara.mybox.data2d.Data2D_Attributes.TargetType.HTML;
 import static mara.mybox.data2d.Data2D_Attributes.TargetType.PDF;
 import static mara.mybox.data2d.Data2D_Attributes.TargetType.Text;
+import mara.mybox.data2d.TmpTable;
 import mara.mybox.data2d.operate.Data2DExport;
+import mara.mybox.data2d.operate.Data2DSavePage;
+import mara.mybox.data2d.tools.Data2DConvertTools;
 import mara.mybox.data2d.writer.Data2DWriter;
+import mara.mybox.data2d.writer.SystemClipboardWriter;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
  * @CreateDate 2022-4-5
  * @License Apache License Version 2.0
  */
-public class Data2DSaveAsController extends BaseData2DSaveAsController {
+public class Data2DSaveAsController extends BaseDataConvertController {
+
+    protected BaseData2DLoadController tableController;
+    protected Data2DExport export;
+    protected Data2D data2D;
+    protected TargetType format;
+    protected String targetName;
+    protected ColumnDefinition.InvalidAs invalidAs = ColumnDefinition.InvalidAs.Blank;
+    protected Data2DWriter writer;
 
     @FXML
     protected ControlData2DTarget targetController;
@@ -40,11 +53,15 @@ public class Data2DSaveAsController extends BaseData2DSaveAsController {
     @FXML
     protected ControlNewDataTable dbController;
 
+    public Data2DSaveAsController() {
+        baseTitle = message("SaveAs");
+    }
+
     public boolean isInvalid() {
         return tableController == null
                 || !tableController.isShowing()
                 || tableController.data2D == null
-                || !tableController.data2D.isValid()
+                || !tableController.data2D.isValidDefinition()
                 || (data2D != null && tableController.data2D.getD2did() != data2D.getD2did());
     }
 
@@ -121,6 +138,7 @@ public class Data2DSaveAsController extends BaseData2DSaveAsController {
     @Override
     public boolean checkOptions() {
         try {
+            writer = null;
             if (isInvalid()) {
                 close();
                 return false;
@@ -128,23 +146,43 @@ public class Data2DSaveAsController extends BaseData2DSaveAsController {
             if (!targetController.validateTarget()) {
                 return false;
             }
-            Data2DWriter writer;
+            targetName = targetController.name();
+            if (targetName == null || targetName.isBlank()) {
+                targetName = data2D.dataName();
+            }
+            if (targetName == null || targetName.isBlank()) {
+                targetName = "Data2D";
+            } else if (targetName.startsWith(TmpTable.TmpTablePrefix)
+                    || targetName.startsWith(TmpTable.TmpTablePrefix.toLowerCase())) {
+                targetName = targetName.substring(TmpTable.TmpTablePrefix.length());
+            }
             format = targetController.format;
             if (format == TargetType.DatabaseTable) {
                 writer = dbController.pickTableWriter();
             } else {
+                targetFile = targetController.file();
+                if (targetFile == null) {
+                    targetFile = Data2DConvertTools.targetFile(targetName, format);
+                }
+                if (targetFile == null) {
+                    popError(message("InvalidParameter") + ": " + message("TargetFile"));
+                    return false;
+                }
                 writer = pickWriter(format);
             }
             if (writer == null) {
                 return false;
             }
-            targetName = targetController.name();
-            checkParameters();
-            export = Data2DExport.create(data2D);
-            export.setDataName(targetName);
-            export.addWriter(writer);
-            return export.setColumns(targetController.targetFileController,
-                    data2D.getColumns(), targetName);
+            writer.setColumns(data2D.getColumns())
+                    .setHeaderNames(data2D.columnNames())
+                    .setDataName(targetName)
+                    .setTargetFile(targetFile)
+                    .setRecordTargetFile(true)
+                    .setRecordTargetData(true);
+            if (writer instanceof SystemClipboardWriter) {
+                ((SystemClipboardWriter) writer).setController(tableController);
+            }
+            return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
             return false;
@@ -166,23 +204,35 @@ public class Data2DSaveAsController extends BaseData2DSaveAsController {
     public boolean doTask(FxTask currentTask) {
         try {
             data2D.startTask(currentTask, null);
-            if (!data2D.isMutiplePages()) {
-                export.openWriters();
-                for (List<String> row : tableController.tableData) {
-                    List<String> exportRow = row.subList(1, row.size());
-                    export.writeRow(exportRow);
-                }
-                export.closeWriters();
-            } else {
-                export.setCols(data2D.columnIndices())
-                        .setInvalidAs(invalidAs)
-                        .setTask(currentTask).start();
+            Data2DSavePage operate = Data2DSavePage.writeTo(data2D, writer);
+            if (operate == null) {
+                return false;
             }
-            data2D.stopTask();
-            return !export.isFailed();
+            operate.setController(this)
+                    .setTask(currentTask)
+                    .start();
+            return !operate.isFailed();
         } catch (Exception e) {
             error = e.toString();
             return false;
+        }
+    }
+
+    @Override
+    public void afterSuccess() {
+        writer.showResult();
+    }
+
+    @Override
+    public void afterTask() {
+        if (data2D != null) {
+            data2D.stopTask();
+        }
+        if (successed) {
+            tableController.popInformation(message("Done"));
+            close();
+        } else {
+            popError(message("Failed"));
         }
     }
 

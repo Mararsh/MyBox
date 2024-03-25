@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import javafx.application.Platform;
-import mara.mybox.controller.BaseTaskController;
+import mara.mybox.controller.BaseController;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.Data2D_Edit;
 import mara.mybox.data2d.reader.Data2DReader;
@@ -25,7 +25,7 @@ import static mara.mybox.value.Languages.message;
  */
 public abstract class Data2DOperate {
 
-    protected BaseTaskController taskController;
+    protected BaseController controller;
     protected Data2DReader reader;
     protected List<Data2DWriter> writers;
     protected Data2D sourceData;
@@ -126,7 +126,7 @@ public abstract class Data2DOperate {
         failed = false;
         passFilter = false;
         reachMax = false;
-        if (sourceData == null || !sourceData.validData()) {
+        if (sourceData == null) {
             return false;
         }
         if (scale < 0) {
@@ -228,9 +228,16 @@ public abstract class Data2DOperate {
         }
     }
 
+    public FxTask getTask() {
+        if (task == null && controller != null) {
+            task = controller.getTask();
+        }
+        return task;
+    }
+
     public void showInfo(String info) {
-        if (taskController != null) {
-            taskController.updateLogs(info);
+        if (controller != null) {
+            controller.displayInfo(info);
         } else if (task != null) {
             task.setInfo(info);
         }
@@ -240,8 +247,8 @@ public abstract class Data2DOperate {
         if (error == null || error.isBlank()) {
             return;
         }
-        if (taskController != null) {
-            taskController.showLogs(error);
+        if (controller != null) {
+            controller.displayError(error);
         } else if (task != null) {
             task.setError(error);
         } else {
@@ -363,8 +370,8 @@ public abstract class Data2DOperate {
         return this;
     }
 
-    public Data2DOperate setTaskController(BaseTaskController taskController) {
-        this.taskController = taskController;
+    public Data2DOperate setController(BaseController controller) {
+        this.controller = controller;
         return this;
     }
 
@@ -387,16 +394,12 @@ public abstract class Data2DOperate {
         return scale;
     }
 
-    public BaseTaskController getTaskController() {
-        return taskController;
-    }
-
-    public FxTask getTask() {
-        return task;
+    public BaseController getController() {
+        return controller;
     }
 
     public long getSourceRowIndex() {
-        return reader.getRowIndex();
+        return reader.getSourceIndex();
     }
 
     public long getHandledCount() {

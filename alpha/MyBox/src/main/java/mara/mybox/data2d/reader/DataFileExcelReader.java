@@ -27,7 +27,7 @@ public class DataFileExcelReader extends Data2DReader {
     }
 
     @Override
-    public void scanData() {
+    public void scanFile() {
         if (!FileTools.hasData(sourceFile)) {
             return;
         }
@@ -68,7 +68,7 @@ public class DataFileExcelReader extends Data2DReader {
             if (sourceRow == null || sourceRow.isEmpty()) {
                 continue;
             }
-            handleHeader();
+            makeHeader();
             return;
         }
     }
@@ -78,16 +78,16 @@ public class DataFileExcelReader extends Data2DReader {
         if (iterator == null) {
             return;
         }
-        rowIndex = 0;
+        sourceIndex = 0;
         skipHeader();
         while (iterator.hasNext()) {
             if (isStopped()) {
-                rowIndex = 0;
+                sourceIndex = 0;
                 return;
             }
             readRecord();
             if (sourceRow != null && !sourceRow.isEmpty()) {
-                ++rowIndex;
+                ++sourceIndex;
             }
         }
     }
@@ -100,27 +100,27 @@ public class DataFileExcelReader extends Data2DReader {
         }
     }
 
-    // rowIndex is 1-base while pageStartIndex and pageEndIndex are 0-based
+    // sourceIndex is 1-base while pageStartIndex and pageEndIndex are 0-based
     @Override
     public void readPage() {
         if (iterator == null) {
             return;
         }
         skipHeader();
-        rowIndex = 0;
+        sourceIndex = 0;
         while (iterator.hasNext() && !isStopped()) {
             readRecord();
             if (sourceRow == null || sourceRow.isEmpty()) {
                 continue;
             }
-            if (rowIndex++ < pageStartIndex) {
+            if (sourceIndex++ < pageStartIndex) {
                 continue;
             }
-            if (rowIndex > pageEndIndex) {
+            if (sourceIndex > pageEndIndex) {
                 stop();
                 break;
             }
-            handlePageRow();
+            makePageRow();
         }
     }
 
@@ -130,14 +130,30 @@ public class DataFileExcelReader extends Data2DReader {
             return;
         }
         skipHeader();
-        rowIndex = 0;
+        sourceIndex = 0;
+        long fileIndex = -1;
+        long startIndex = sourceData.startRowOfCurrentPage;
+        long endIndex = sourceData.endRowOfCurrentPage;
         while (iterator.hasNext() && !isStopped()) {
-            readRecord();
-            if (sourceRow == null || sourceRow.isEmpty()) {
-                continue;
+            try {
+                readRecord();
+                if (sourceRow == null || sourceRow.isEmpty()) {
+                    continue;
+                }
+                fileIndex++;
+
+                if (fileIndex < startIndex || fileIndex >= endIndex) {
+                    ++sourceIndex;
+                    handleRow();
+
+                } else if (fileIndex == startIndex) {
+                    scanPage();
+                }
+
+            } catch (Exception e) {  // skip  bad lines
+//                    handleError(e.toString());
+//                    setFailed();
             }
-            ++rowIndex;
-            handleRow();
         }
     }
 

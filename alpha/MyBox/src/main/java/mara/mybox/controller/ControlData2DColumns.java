@@ -203,7 +203,7 @@ public class ControlData2DColumns extends BaseData2DColumnsController {
             if (data2D == null) {
                 return;
             }
-            if (data2D.isValid()) {
+            if (data2D.isValidDefinition()) {
                 isSettingValues = true;
                 for (Data2DColumn column : data2D.getColumns()) {
                     tableData.add(column.cloneAll());

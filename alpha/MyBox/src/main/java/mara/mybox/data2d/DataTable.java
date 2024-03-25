@@ -1,5 +1,6 @@
 package mara.mybox.data2d;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -104,11 +105,9 @@ public class DataTable extends Data2D {
             tableData2DDefinition.writeTable(conn, this);
             conn.commit();
 
-            MyBoxLog.console(d2did);
             for (Data2DColumn column : dataColumns) {
                 column.setD2id(d2did);
                 column.setColumnName(DerbyBase.fixedIdentifier(column.getColumnName()));
-                MyBoxLog.console(column.getD2cid() + "  " + column.getColumnName() + "  " + column.getType());
             }
             columns = dataColumns;
             tableData2DColumn.save(conn, d2did, dataColumns);
@@ -325,7 +324,7 @@ public class DataTable extends Data2D {
     }
 
     @Override
-    public boolean savePageDataAs(Data2D targetData) {
+    public long savePageData(File targetFile) {
         try (Connection conn = DerbyBase.getConnection()) {
             updateTable(conn);
             List<Data2DRow> dbRows = tableData2D.query(conn, pageQuery());
@@ -355,14 +354,15 @@ public class DataTable extends Data2D {
                 }
             }
             conn.commit();
+            return 0;
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
             } else {
                 MyBoxLog.error(e);
             }
+            return -1;
         }
-        return false;
     }
 
     @Override
@@ -372,7 +372,9 @@ public class DataTable extends Data2D {
         }
         DataTableWriter writer = new DataTableWriter();
         writer.setTargetTable(this)
-                .setRecordTargetFile(false).setRecordTargetData(false);
+                .setTargetData(this)
+                .setRecordTargetFile(false)
+                .setRecordTargetData(true);
         return writer;
     }
 

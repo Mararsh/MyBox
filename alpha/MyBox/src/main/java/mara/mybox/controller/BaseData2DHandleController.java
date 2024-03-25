@@ -203,7 +203,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSelectRowsCon
             if (sortController == null) {
                 return;
             }
-            if (!data2D.isValid()) {
+            if (!data2D.isValidDefinition()) {
                 sortController.loadNames(null);
                 return;
             }
@@ -270,7 +270,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSelectRowsCon
             if (isSettingValues) {
                 return true;
             }
-            if (data2D == null || !data2D.isValid()) {
+            if (data2D == null || !data2D.isValidDefinition()) {
                 popError(message("NoData"));
                 return false;
             }
