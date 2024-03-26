@@ -161,15 +161,15 @@ public class BaseData2DSelectRowsController extends BaseData2DLoadController {
             }
             data2D = tableController.data2D.cloneAll();
             makeColumns();
+            updateTable(tableController.tableData);
             isSettingValues = true;
-            tableData.setAll(tableController.tableData);
-            data2D.setPageData(tableData);
             currentPage = tableController.currentPage;
             startRowOfCurrentPage = tableController.startRowOfCurrentPage;
             pageSize = tableController.pageSize;
             pagesNumber = tableController.pagesNumber;
             dataSize = tableController.dataSize;
             dataSizeLoaded = true;
+            data2D.setDataLoaded(true);
             filterController.setData2D(data2D);
             isSettingValues = false;
             refreshControls();

@@ -71,9 +71,6 @@ public class Data2DSetValuesController extends BaseData2DTargetsController {
             if (!super.initData() || !valueController.checkSelection()) {
                 return false;
             }
-            if (isAllPages() && !tableController.checkBeforeNextAction()) {
-                return false;
-            }
             return PopTools.askSure(getTitle(), message("SureOverwriteColumns") + "\n" + checkedColsNames);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -244,7 +241,6 @@ public class Data2DSetValuesController extends BaseData2DTargetsController {
         tableController.isSettingValues = false;
         tableController.tableChanged(true);
         tableController.requestMouse();
-        editor.pageChanged();
         tabPane.getSelectionModel().select(dataTab);
         alertInformation(message("ChangedRowsNumber") + ": " + filteredRowsIndices.size());
         return true;

@@ -21,6 +21,15 @@ License:    Apache License Version 2.0
                     <FlowPane hgap="2.0" vgap="2.0" />
                     <FlowPane hgap="2.0" vgap="2.0">
                         <children>
+                            <Button fx:id="renameSheetButton" layoutX="71.0" layoutY="10.0" mnemonicParsing="false" onAction="#renameSheet">
+                                <graphic>
+                                    <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                        <image>
+                                            <Image url="@../buttons/Red/iconInput.png" />
+                                        </image>
+                                    </ImageView>
+                                </graphic>
+                            </Button>
                             <Button fx:id="deleteSheetButton" mnemonicParsing="false" onAction="#deleteSheet">
                                 <graphic>
                                     <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
@@ -35,15 +44,6 @@ License:    Apache License Version 2.0
                                     <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                         <image>
                                             <Image url="@../buttons/Red/iconPlus.png" />
-                                        </image>
-                                    </ImageView>
-                                </graphic>
-                            </Button>
-                            <Button fx:id="renameSheetButton" layoutX="71.0" layoutY="10.0" mnemonicParsing="false" onAction="#renameSheet">
-                                <graphic>
-                                    <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                        <image>
-                                            <Image url="@../buttons/Red/iconInput.png" />
                                         </image>
                                     </ImageView>
                                 </graphic>

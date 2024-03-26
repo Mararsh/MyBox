@@ -203,7 +203,7 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
         pagesNumber = 1;
         dataSize = 0;
         startRowOfCurrentPage = 0;
-        dataSizeLoaded = false;
+        dataSizeLoaded = true;
         tableChanged(changed);
         editNull();
         viewNull();

@@ -139,7 +139,7 @@ public abstract class Data2DOperate {
     }
 
     public boolean go() {
-        return reader.start();
+        return reader.start(false);
     }
 
     public void handleData() {

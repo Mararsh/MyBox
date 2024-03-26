@@ -15,6 +15,11 @@ public class Data2DReadTotal extends Data2DOperate {
     }
 
     @Override
+    public boolean go() {
+        return reader.start(true);
+    }
+
+    @Override
     public void handleData() {
         reader.readTotal();
     }

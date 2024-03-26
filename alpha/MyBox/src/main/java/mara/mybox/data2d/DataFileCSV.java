@@ -5,7 +5,6 @@ import java.io.FileWriter;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import mara.mybox.data.StringTable;
@@ -17,12 +16,9 @@ import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTmpTools;
-import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextTools;
 import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
-import org.apache.commons.csv.CSVRecord;
 
 /**
  * @Author Mara
@@ -47,140 +43,6 @@ public class DataFileCSV extends DataFileText {
             delimiter = ",";
         }
         return CsvTools.csvFormat(delimiter, hasHeader);
-    }
-
-    public boolean savePageDataAs(Data2D targetData) {
-        if (targetData == null || !(targetData instanceof DataFileCSV)) {
-            return false;
-        }
-        DataFileCSV targetCSVFile = (DataFileCSV) targetData;
-        File tmpFile = FileTmpTools.getTempFile();
-        File tFile = targetCSVFile.getFile();
-        if (tFile == null) {
-            return false;
-        }
-        targetCSVFile.checkForLoad();
-        Charset tCharset = targetCSVFile.getCharset();
-        boolean tHasHeader = targetCSVFile.isHasHeader();
-        CSVFormat tFormat = targetCSVFile.cvsFormat();
-        checkForLoad();
-        if (file != null && file.exists() && file.length() > 0) {
-            File validFile = FileTools.removeBOM(task, file);
-            if (validFile == null || (task != null && !task.isWorking())) {
-                return false;
-            }
-            try (CSVParser parser = CSVParser.parse(validFile, charset, cvsFormat());
-                    CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, tCharset), tFormat)) {
-                if (tHasHeader) {
-                    writeHeader(csvPrinter);
-                }
-                long index = -1;
-                Iterator<CSVRecord> iterator = parser.iterator();
-                if (iterator != null) {
-                    while (iterator.hasNext() && task != null && task.isWorking()) {
-                        try {
-                            CSVRecord record = iterator.next();
-                            if (record != null) {
-                                if (++index < startRowOfCurrentPage || index >= endRowOfCurrentPage) {
-                                    writeFileRow(csvPrinter, record);
-                                } else if (index == startRowOfCurrentPage) {
-                                    if (!writePageData(csvPrinter)) {
-                                        return false;
-                                    }
-                                }
-                            }
-                        } catch (Exception e) {  // skip  bad lines
-//                            MyBoxLog.debug(e);
-                        }
-                    }
-                }
-                if (index < 0) {
-                    if (!writePageData(csvPrinter)) {
-                        return false;
-                    }
-                }
-            } catch (Exception e) {
-                MyBoxLog.error(e);
-                if (task != null) {
-                    task.setError(e.toString());
-                }
-                return false;
-            }
-        } else {
-            try (CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, tCharset), tFormat)) {
-                if (tHasHeader) {
-                    writeHeader(csvPrinter);
-                }
-                if (!writePageData(csvPrinter)) {
-                    return false;
-                }
-            } catch (Exception e) {
-                MyBoxLog.error(e);
-                if (task != null) {
-                    task.setError(e.toString());
-                }
-                return false;
-            }
-        }
-        return FileTools.override(tmpFile, tFile);
-    }
-
-    public boolean writeHeader(CSVPrinter csvPrinter) {
-        try {
-            if (csvPrinter == null) {
-                return false;
-            }
-            if (!isValidDefinition()) {
-                return true;
-            }
-            List<String> names = columnNames();
-            if (names != null) {
-                csvPrinter.printRecord(columnNames());
-            }
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            return false;
-        }
-    }
-
-    public boolean writePageData(CSVPrinter csvPrinter) {
-        try {
-            if (csvPrinter == null) {
-                return false;
-            }
-            if (!isValidDefinition()) {
-                return true;
-            }
-            for (int r = 0; r < tableRowsNumber(); r++) {
-                if (task == null || task.isCancelled()) {
-                    return false;
-                }
-                csvPrinter.printRecord(tableRow(r, false, false));
-            }
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            return false;
-        }
-    }
-
-    public void writeFileRow(CSVPrinter csvPrinter, CSVRecord record) {
-        try {
-            List<String> row = new ArrayList<>();
-            for (String v : record) {
-                row.add(v);
-            }
-            csvPrinter.printRecord(fileRow(row));
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
     }
 
     @Override

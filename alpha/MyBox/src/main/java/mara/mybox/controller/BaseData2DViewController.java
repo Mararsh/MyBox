@@ -380,10 +380,10 @@ public class BaseData2DViewController extends BaseData2DLoadController {
         try {
             List<List<String>> data = new ArrayList<>();
             data.addAll(tableData);
+
             super.makeColumns();
-            isSettingValues = true;
-            tableData.setAll(data);
-            isSettingValues = false;
+
+            updateTable(data);
 
         } catch (Exception e) {
             MyBoxLog.error(e);

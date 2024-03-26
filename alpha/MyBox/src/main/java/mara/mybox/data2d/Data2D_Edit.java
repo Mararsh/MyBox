@@ -162,10 +162,10 @@ public abstract class Data2D_Edit extends Data2D_Filter {
 
     public long readTotal() {
         dataSize = 0;
-        Data2DOperate reader = Data2DReadTotal.create(this)
+        Data2DOperate opearte = Data2DReadTotal.create(this)
                 .setTask(backgroundTask).start();
-        if (reader != null) {
-            dataSize = reader.getSourceRowIndex();
+        if (opearte != null) {
+            dataSize = opearte.getSourceRowIndex();
         }
         rowsNumber = dataSize;
         try (Connection conn = DerbyBase.getConnection()) {
@@ -398,13 +398,18 @@ public abstract class Data2D_Edit extends Data2D_Filter {
             } catch (Exception e) {
                 if (task != null) {
                     task.setError(e.toString());
+                } else {
+                    MyBoxLog.error(e);
                 }
-                MyBoxLog.error(e);
             }
             FileDeleteTools.delete(tmpFile);
             return data;
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            if (task != null) {
+                task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
+            }
             return null;
         }
     }

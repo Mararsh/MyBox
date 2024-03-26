@@ -240,6 +240,7 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
                 return;
             }
             dataSizeLoaded = false;
+            data2D.setDataLoaded(false);
             loadPage(data2D.getCurrentPage());
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -373,6 +374,7 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
             currentPage = 0;
             startRowOfCurrentPage = 0;
             dataSizeLoaded = true;
+            data2D.setDataLoaded(true);
         } else {
             pageSize = UserConfig.getInt(baseName + "PageSize", 50);
             super.countPagination(currentTask, conn, page);
@@ -411,6 +413,7 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
         }
         data2D.setDataSize(0);
         dataSizeLoaded = false;
+        data2D.setDataLoaded(false);
         if (paginationPane != null) {
             paginationPane.setVisible(false);
         }
@@ -454,6 +457,7 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
 
     protected void afterLoaded(boolean paginate) {
         dataSizeLoaded = true;
+        data2D.setDataLoaded(true);
         correctDataSize();
         if (paginationPane != null) {
             if (paginate) {

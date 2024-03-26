@@ -25,6 +25,11 @@ public class Data2DReadColumnNames extends Data2DOperate {
     }
 
     @Override
+    public boolean go() {
+        return reader.start(true);
+    }
+
+    @Override
     public void handleData() {
         reader.readColumnNames();
     }

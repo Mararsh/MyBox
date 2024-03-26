@@ -36,7 +36,7 @@ public class Data2DFrequency extends Data2DOperate {
     @Override
     public boolean go() {
         if (!sourceData.isTable() || sourceData.needFilter()) {
-            return reader.start();
+            return reader.start(false);
         } else {
             return goTable();
         }

@@ -50,6 +50,17 @@ import mara.mybox.value.UserConfig;
 public class BaseData2DLoadController extends BaseData2DTableController {
 
     /*
+        status
+     */
+    public boolean isValidPageData() {
+        if (!isValidData() || tableData == null) {
+            return false;
+        }
+        data2D.setPageData(tableData);
+        return true;
+    }
+
+    /*
         data
      */
     public boolean createData(DataType type) {
@@ -229,15 +240,26 @@ public class BaseData2DLoadController extends BaseData2DTableController {
             resetView(false);
             setData(data2D);
             makeColumns();
-            isSettingValues = true;
-            tableData.setAll(rows);
-            data2D.setPageData(tableData);
-            isSettingValues = false;
+            updateTable(rows);
             dataSizeLoaded = true;
+            data2D.setDataLoaded(true);
             postLoadedTableData();
             if (validateTable != null && !validateTable.isEmpty()) {
                 validateTable.htmlTable();
             }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    public void updateTable(List<List<String>> data) {
+        try {
+            isSettingValues = true;
+            tableData.setAll(data);
+            isSettingValues = false;
+
+            data2D.setPageData(tableData);
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -421,7 +443,8 @@ public class BaseData2DLoadController extends BaseData2DTableController {
     @FXML
     @Override
     public void saveAsAction() {
-        if (data2D == null) {
+        if (!isValidPageData()) {
+            popError(message("InvalidData"));
             return;
         }
         Data2DSaveAsController.open(this);
@@ -470,7 +493,8 @@ public class BaseData2DLoadController extends BaseData2DTableController {
     @FXML
     @Override
     public void copyToSystemClipboard() {
-        if (!isValidData()) {
+        if (!isValidPageData()) {
+            popError(message("InvalidData"));
             return;
         }
         Data2DCopyController controller = Data2DCopyController.open(this);
@@ -551,7 +575,254 @@ public class BaseData2DLoadController extends BaseData2DTableController {
     @FXML
     @Override
     public void selectAction() {
+        if (!isValidPageData()) {
+            popError(message("InvalidData"));
+            return;
+        }
         Data2DSelectController.open(this);
+    }
+
+    @FXML
+    public void sortAction() {
+        if (!isValidPageData()) {
+            popError(message("InvalidData"));
+            return;
+        }
+        Data2DSortController.open(this);
+    }
+
+    @FXML
+    public void transposeAction() {
+        if (!isValidPageData()) {
+            popError(message("InvalidData"));
+            return;
+        }
+        Data2DTransposeController.open(this);
+    }
+
+    @FXML
+    public void normalizeAction() {
+        if (!isValidPageData()) {
+            popError(message("InvalidData"));
+            return;
+        }
+        Data2DNormalizeController.open(this);
+    }
+
+    @FXML
+    public void groupAction() {
+        if (!isValidPageData()) {
+            popError(message("InvalidData"));
+            return;
+        }
+        Data2DGroupController.open(this);
+    }
+
+    @FXML
+    public void rowExpressionAction() {
+        if (!isValidPageData()) {
+            popError(message("InvalidData"));
+            return;
+        }
+        Data2DRowExpressionController.open(this);
+    }
+
+    @FXML
+    public void descriptiveStatisticAction() {
+        if (!isValidPageData()) {
+            popError(message("InvalidData"));
+            return;
+        }
+        Data2DStatisticController.open(this);
+    }
+
+    @FXML
+    public void groupStatisticAction() {
+        if (!isValidPageData()) {
+            popError(message("InvalidData"));
+            return;
+        }
+        Data2DGroupStatisticController.open(this);
+    }
+
+    @FXML
+    public void simpleLinearRegression() {
+        if (!isValidPageData()) {
+            popError(message("InvalidData"));
+            return;
+        }
+        Data2DSimpleLinearRegressionController.open(this);
+    }
+
+    @FXML
+    public void simpleLinearRegressionCombination() {
+        if (!isValidPageData()) {
+            popError(message("InvalidData"));
+            return;
+        }
+        Data2DSimpleLinearRegressionCombinationController.open(this);
+    }
+
+    @FXML
+    public void multipleLinearRegression() {
+        if (!isValidPageData()) {
+            popError(message("InvalidData"));
+            return;
+        }
+        Data2DMultipleLinearRegressionController.open(this);
+    }
+
+    @FXML
+    public void multipleLinearRegressionCombination() {
+        if (!isValidPageData()) {
+            popError(message("InvalidData"));
+            return;
+        }
+        Data2DMultipleLinearRegressionCombinationController.open(this);
+    }
+
+    @FXML
+    public void frequencyDistributions() {
+        if (!isValidPageData()) {
+            popError(message("InvalidData"));
+            return;
+        }
+        Data2DFrequencyController.open(this);
+    }
+
+    @FXML
+    public void valuePercentage() {
+        if (!isValidPageData()) {
+            popError(message("InvalidData"));
+            return;
+        }
+        Data2DPercentageController.open(this);
+    }
+
+    @FXML
+    public void xyChart() {
+        if (!isValidPageData()) {
+            popError(message("InvalidData"));
+            return;
+        }
+        Data2DChartXYController.open(this);
+    }
+
+    @FXML
+    public void pieChart() {
+        if (!isValidPageData()) {
+            popError(message("InvalidData"));
+            return;
+        }
+        Data2DChartPieController.open(this);
+    }
+
+    @FXML
+    public void boxWhiskerChart() {
+        if (!isValidPageData()) {
+            popError(message("InvalidData"));
+            return;
+        }
+        Data2DChartBoxWhiskerController.open(this);
+    }
+
+    @FXML
+    public void selfComparisonBarsChart() {
+        if (!isValidPageData()) {
+            popError(message("InvalidData"));
+            return;
+        }
+        Data2DChartSelfComparisonBarsController.open(this);
+    }
+
+    @FXML
+    public void comparisonBarsChart() {
+        if (!isValidPageData()) {
+            popError(message("InvalidData"));
+            return;
+        }
+        Data2DChartComparisonBarsController.open(this);
+    }
+
+    @FXML
+    public void xyzChart() {
+        if (!isValidPageData()) {
+            popError(message("InvalidData"));
+            return;
+        }
+        Data2DChartXYZController.open(this);
+    }
+
+    @FXML
+    public void locationDistribution() {
+        if (!isValidPageData()) {
+            popError(message("InvalidData"));
+            return;
+        }
+        Data2DLocationDistributionController.open(this);
+    }
+
+    @FXML
+    public void groupXYChart() {
+        if (!isValidPageData()) {
+            popError(message("InvalidData"));
+            return;
+        }
+        Data2DChartGroupXYController.open(this);
+    }
+
+    @FXML
+    public void groupPieChart() {
+        if (!isValidPageData()) {
+            popError(message("InvalidData"));
+            return;
+        }
+        Data2DChartGroupPieController.open(this);
+    }
+
+    @FXML
+    public void groupBoxWhiskerChart() {
+        if (!isValidPageData()) {
+            popError(message("InvalidData"));
+            return;
+        }
+        Data2DChartGroupBoxWhiskerController.open(this);
+    }
+
+    @FXML
+    public void groupSelfComparisonBars() {
+        if (!isValidPageData()) {
+            popError(message("InvalidData"));
+            return;
+        }
+        Data2DChartGroupSelfComparisonBarsController.open(this);
+    }
+
+    @FXML
+    public void groupComparisonBars() {
+        if (!isValidPageData()) {
+            popError(message("InvalidData"));
+            return;
+        }
+        Data2DChartGroupComparisonBarsController.open(this);
+    }
+
+    @FXML
+    public void queryTable() {
+        if (!isValidPageData() || !data2D.isTable()) {
+            popError(message("InvalidData"));
+            return;
+        }
+        DataTableQueryController.open(this);
+    }
+
+    @FXML
+    public void convertToDataBase() {
+        if (!isValidPageData()) {
+            popError(message("InvalidData"));
+            return;
+        }
+        Data2DConvertToDataBaseController.open(this);
     }
 
     @FXML

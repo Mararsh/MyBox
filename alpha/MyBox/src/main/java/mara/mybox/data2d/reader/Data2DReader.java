@@ -56,7 +56,7 @@ public abstract class Data2DReader {
         return null;
     }
 
-    public boolean start() {
+    public boolean start(boolean scanWholeFile) {
         if (sourceData == null || operate == null) {
             return false;
         }
@@ -69,17 +69,13 @@ public abstract class Data2DReader {
         rows = new ArrayList<>();
         sourceRow = new ArrayList<>();
         sourceData.startFilter();
-        scanData();
-        afterScanned();
-        return true;
-    }
-
-    public void scanData() {
-        if (sourceData.isMutiplePages() || sourceData.getPageData() == null) {
+        if (scanWholeFile || sourceData.isMutiplePages() || !sourceData.isDataLoaded()) {
             scanFile();
         } else {
             scanPage();
         }
+        afterScanned();
+        return true;
     }
 
     public void scanFile() {
@@ -224,6 +220,10 @@ public abstract class Data2DReader {
 
     public long getSourceIndex() {
         return sourceIndex;
+    }
+
+    public void setSourceIndex(long sourceIndex) {
+        this.sourceIndex = sourceIndex;
     }
 
     public Data2DReader setReaderData(Data2D readerData) {

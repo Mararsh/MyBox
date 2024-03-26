@@ -39,19 +39,6 @@ public class Data2DDeleteController extends BaseData2DTargetsController {
     }
 
     @Override
-    public boolean initData() {
-        try {
-            if (!super.initData()) {
-                return false;
-            }
-            return !isAllPages() || tableController.checkBeforeNextAction();
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return false;
-        }
-    }
-
-    @Override
     public synchronized void handleRowsTask() {
         task = new FxSingletonTask<Void>(this) {
 
@@ -79,13 +66,10 @@ public class Data2DDeleteController extends BaseData2DTargetsController {
             @Override
             protected void whenSucceeded() {
                 try {
-                    tableController.isSettingValues = true;
-                    tableController.tableData.setAll(data);
-                    tableController.isSettingValues = false;
+                    tableController.updateTable(data);
                     selectedRowsIndices = null;
                     tableController.tableChanged(true);
                     tableController.requestMouse();
-                    editor.pageChanged();
                     tabPane.getSelectionModel().select(dataTab);
                     alertInformation(message("DeletedRowsNumber") + ": " + filteredRowsIndices.size());
                 } catch (Exception e) {

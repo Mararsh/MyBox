@@ -17,6 +17,11 @@ public class Data2DReadPage extends Data2DOperate {
     }
 
     @Override
+    public boolean go() {
+        return reader.start(true);
+    }
+
+    @Override
     public void handleData() {
         reader.readPage();
     }

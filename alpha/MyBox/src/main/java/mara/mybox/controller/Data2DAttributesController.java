@@ -227,10 +227,7 @@ public class Data2DAttributesController extends BaseChildController {
             @Override
             protected void whenSucceeded() {
                 dataController.makeColumns();
-                isSettingValues = true;
-                dataController.tableData.setAll(pageData);
-                data2D.setPageData(dataController.tableData);
-                isSettingValues = false;
+                dataController.updateTable(pageData);
                 if (isMutiplePages) {
                     dataController.saveAction();
                 } else {

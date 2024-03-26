@@ -74,7 +74,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
             csvArea.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> v, String ov, String nv) {
-                    if (isSettingValues) {
+                    if (isSettingValues || isDataChanged()) {
                         return;
                     }
                     tableChanged();
@@ -166,6 +166,9 @@ public class Data2DManufactureController extends BaseData2DViewController {
 
     @Override
     public void loadCsv() {
+        if (!csvRadio.isSelected()) {
+            return;
+        }
         if (data2D == null || !data2D.hasPageData()) {
             isSettingValues = true;
             csvArea.setText("");
@@ -173,10 +176,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
             isSettingValues = false;
             return;
         }
-        if (task != null) {
-            task.cancel();
-        }
-        task = new FxSingletonTask<Void>(this) {
+        FxTask csvTask = new FxSingletonTask<Void>(this) {
             private String text;
 
             @Override
@@ -202,43 +202,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
             }
 
         };
-        start(task, false);
-    }
-
-    public void pickCSV() {
-        if (task != null) {
-            task.cancel();
-        }
-        task = new FxSingletonTask<Void>(this) {
-            private List<List<String>> rows;
-
-            @Override
-            protected boolean handle() {
-                rows = pickCSV(this);
-                return true;
-            }
-
-            @Override
-            protected void whenSucceeded() {
-            }
-
-            @Override
-            protected void finalAction() {
-                super.finalAction();
-                if (rows != null) {
-                    tableData.setAll(rows);
-                    data2D.setPageData(tableData);
-                    switchFormat();
-                } else {
-                    isSettingValues = true;
-                    csvRadio.setSelected(true);
-                    isSettingValues = false;
-                    popError(message("InvalidData"));
-                }
-            }
-
-        };
-        start(task);
+        start(csvTask, false);
     }
 
     public List<List<String>> pickCSV(FxTask task) {
@@ -248,7 +212,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
             }
             List<List<String>> rows = new ArrayList<>();
             String text = csvArea.getText();
-            if (text != null && !text.isEmpty()) {
+            if (text != null && !text.isBlank()) {
                 int colsNumber = data2D.columnsNumber();
                 List<List<String>> data = data2D.decodeCSV(task, text, delimiterName, false);
                 if (data == null) {
@@ -278,10 +242,42 @@ public class Data2DManufactureController extends BaseData2DViewController {
         }
     }
 
-    public void pageChanged() {
-        if (csvRadio.isSelected()) {
-            loadCsv();
+    public void pickCSV() {
+        if (task != null) {
+            task.cancel();
         }
+        task = new FxSingletonTask<Void>(this) {
+            private List<List<String>> rows;
+
+            @Override
+            protected boolean handle() {
+                rows = pickCSV(this);
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+            }
+
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                if (ok && rows != null) {
+                    isSettingValues = true;
+                    tableData.setAll(rows);
+                    isSettingValues = false;
+                    data2D.setPageData(tableData);
+                    switchFormat();
+                } else {
+                    isSettingValues = true;
+                    csvRadio.setSelected(true);
+                    isSettingValues = false;
+                    popError(message("InvalidData"));
+                }
+            }
+
+        };
+        start(task);
     }
 
     /*
@@ -295,7 +291,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
             opsPane.setDisable(invalidData);
             recoverButton.setDisable(invalidData || data2D.isTmpData());
             saveButton.setDisable(invalidData || !dataSizeLoaded);
-            dataDefinitionButton.setDisable(invalidData || data2D.isPagesChanged());
+            dataDefinitionButton.setDisable(invalidData);
             if (data2D != null && data2D.isDataFile() && data2D.getFile() != null) {
                 if (!toolbar.getChildren().contains(fileMenuButton)) {
                     toolbar.getChildren().add(0, fileMenuButton);
@@ -316,14 +312,29 @@ public class Data2DManufactureController extends BaseData2DViewController {
         savedNotify.set(!savedNotify.get());
     }
 
-    public void setValidataEdit(boolean v) {
+    public void setValidateEdit(boolean v) {
         validateEdit = v;
         UserConfig.setBoolean(baseName + "ValidateDataWhenEdit", validateEdit);
     }
 
-    public void setValidataSave(boolean v) {
+    public void setValidateSave(boolean v) {
         validateSave = v;
         UserConfig.setBoolean(baseName + "ValidateDataWhenSave", validateSave);
+    }
+
+    @Override
+    public boolean isValidPageData() {
+        if (!super.isValidPageData()) {
+            return false;
+        }
+        if (csvRadio.isSelected() && isDataChanged()) {
+            List<List<String>> rows = pickCSV(null);
+            if (rows == null) {
+                return false;
+            }
+            super.updateTable(rows);
+        }
+        return true;
     }
 
     public boolean isEditing() {
@@ -412,6 +423,16 @@ public class Data2DManufactureController extends BaseData2DViewController {
             return null;
         }
         return data2D.copyRow(data);
+    }
+
+    @Override
+    public void updateTable(List<List<String>> data) {
+        try {
+            super.updateTable(data);
+            loadCsv();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
     /*
@@ -601,21 +622,22 @@ public class Data2DManufactureController extends BaseData2DViewController {
 
     @FXML
     public void definitonAction() {
-        if (data2D != null
-                && (!data2D.isMutiplePages() || checkBeforeNextAction())) {
-            Data2DAttributesController.open(this);
+        if (!isValidPageData()) {
+            popError(message("InvalidData"));
+            return;
         }
+        Data2DAttributesController.open(this);
     }
 
     @FXML
     @Override
     public void saveAction() {
-        if (!isValidData()) {
-            popError(message("InvalidData"));
-            return;
-        }
         if (!dataSizeLoaded) {
             popError(message("CountingTotalNumber"));
+            return;
+        }
+        if (!isValidPageData()) {
+            popError(message("InvalidData"));
             return;
         }
         if (!verifyData()) {
@@ -656,6 +678,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
             @Override
             protected boolean handle() {
                 try {
+
                     needBackup = data2D.isDataFile() && !data2D.isTmpData()
                             && UserConfig.getBoolean(baseName + "BackupWhenSave", true);
                     if (needBackup) {
@@ -723,16 +746,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
     @FXML
     @Override
     public void recoverAction() {
-        if (data2D == null) {
-            loadNull();
-            return;
-        }
-        resetStatus();
-        setData(data2D);
-        if (data2D.isDataFile()) {
-            data2D.initFile(data2D.getFile());
-        }
-        readDefinition();
+        loadDef(data2D);
     }
 
     @FXML
@@ -757,7 +771,6 @@ public class Data2DManufactureController extends BaseData2DViewController {
         if (count <= 0) {
             return count;
         }
-        pageChanged();
         return count;
     }
 
@@ -872,13 +885,48 @@ public class Data2DManufactureController extends BaseData2DViewController {
     @FXML
     @Override
     public void copyAction() {
-        if (!isValidData()) {
+        if (!isValidPageData()) {
             popError(message("InvalidData"));
             return;
         }
         Data2DCopyController.open(this);
     }
 
+    @FXML
+    public void exportAction() {
+        if (!isValidPageData()) {
+            popError(message("InvalidData"));
+            return;
+        }
+        Data2DExportController.open(this);
+    }
+
+    @FXML
+    public void setValue() {
+        if (!isValidPageData()) {
+            popError(message("InvalidData"));
+            return;
+        }
+        Data2DSetValuesController.open(this);
+    }
+
+    @FXML
+    public void delete() {
+        if (!isValidPageData()) {
+            popError(message("InvalidData"));
+            return;
+        }
+        Data2DDeleteController.open(this);
+    }
+
+    @FXML
+    public void setStyles() {
+        if (!isValidPageData()) {
+            popError(message("InvalidData"));
+            return;
+        }
+        Data2DSetStylesController.open(this);
+    }
 
     /*
         static

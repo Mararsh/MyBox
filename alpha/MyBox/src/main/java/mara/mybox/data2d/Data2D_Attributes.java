@@ -28,7 +28,7 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
     public List<Data2DStyle> styles;
     public DataFilter filter;
     public ObservableList<List<String>> pageData;
-    public boolean tableChanged;
+    public boolean tableChanged, dataLoaded;
     public FxTask task, backgroundTask;
     public String error;
 
@@ -54,6 +54,7 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
         columns = null;
         savedColumns = null;
         newColumnIndex = -1;
+        dataLoaded = true;
         tableChanged = false;
         styles = null;
         filter = null;

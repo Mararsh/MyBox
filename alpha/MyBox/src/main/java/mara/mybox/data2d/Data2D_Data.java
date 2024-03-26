@@ -75,6 +75,15 @@ public abstract class Data2D_Data extends Data2D_Attributes {
         return pagesNumber > 1;
     }
 
+    public boolean isDataLoaded() {
+        return dataLoaded;
+    }
+
+    public Data2D_Data setDataLoaded(boolean dataLoaded) {
+        this.dataLoaded = dataLoaded;
+        return this;
+    }
+
     // file columns are not necessary in order of columns definition.
     // column's index remembers the order of columns
     // when index is less than 0, it is new column
