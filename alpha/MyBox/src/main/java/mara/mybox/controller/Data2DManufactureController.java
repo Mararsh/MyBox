@@ -301,7 +301,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
             boolean invalidData = !isValidData();
             mainAreaBox.setDisable(invalidData);
             opsPane.setDisable(invalidData);
-            recoverButton.setDisable(invalidData || data2D.isTmpData());
+            recoverButton.setDisable(invalidData || data2D.isTmpData() || !data2D.isTableChanged());
             saveButton.setDisable(invalidData || !dataSizeLoaded);
             dataDefinitionButton.setDisable(invalidData);
             if (data2D != null && data2D.isDataFile() && data2D.getFile() != null) {
@@ -706,7 +706,9 @@ public class Data2DManufactureController extends BaseData2DViewController {
 
             @Override
             protected void whenSucceeded() {
-                dataSaved();
+                popInformation(message("Saved"));
+                notifySaved();
+                loadPage(false);
                 if (needBackup) {
                     if (backup != null && backup.getBackup() != null) {
                         popInformation(message("SavedAndBacked"));
@@ -730,7 +732,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
         try {
             popInformation(message("Saved"));
             notifySaved();
-            readDefinition();
+            readData(true);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -758,11 +760,17 @@ public class Data2DManufactureController extends BaseData2DViewController {
     @FXML
     @Override
     public void recoverAction() {
-        data2D.setTableChanged(false);
-        Data2D def = Data2D.create(data2D.getType());
-        def.cloneBase(data2D);
-        def.setCurrentPage(data2D.getCurrentPage());
-        loadDef(def);
+        if (!isValidData() || !data2D.isTableChanged()) {
+            return;
+        }
+        if (data2D.isMutiplePages()) {
+            loadPage(false);
+        } else {
+            Data2D data = Data2D.create(data2D.getType());
+            data.cloneDefBase(data2D);
+            setData(data);
+            readData(true);
+        }
     }
 
     @FXML

@@ -24,7 +24,7 @@ public abstract class Data2D extends Data2D_Operations {
     public Data2D cloneAll() {
         try {
             Data2D newData = (Data2D) super.clone();
-            newData.cloneAll(this);
+            newData.cloneData(this);
             return newData;
         } catch (Exception e) {
             MyBoxLog.debug(e);

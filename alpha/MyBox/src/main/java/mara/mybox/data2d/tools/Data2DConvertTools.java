@@ -310,7 +310,7 @@ public class Data2DConvertTools {
             DataTable dataTable = Data2DTableTools.createTable(task, conn,
                     TmpTable.tmpTableName(), referColumns, null, sourceData.getComments(), null, true);
             dataTable.setDataName(sourceData.dataName());
-            dataTable.cloneDataAttributes(sourceData);
+            dataTable.cloneValueAttributes(sourceData);
             if (cols == null || cols.isEmpty()) {
                 cols = new ArrayList<>();
                 for (int i = 0; i < columns.size(); i++) {

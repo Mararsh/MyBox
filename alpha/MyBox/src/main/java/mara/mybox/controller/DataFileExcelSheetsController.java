@@ -167,7 +167,7 @@ public class DataFileExcelSheetsController extends BaseChildController {
 
             @Override
             protected void whenSucceeded() {
-                dataController.readDefinition();
+                dataController.readData(true);
             }
 
             @Override

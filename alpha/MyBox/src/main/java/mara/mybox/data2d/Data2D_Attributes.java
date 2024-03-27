@@ -68,9 +68,9 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
         initData();
     }
 
-    public void cloneAll(Data2D_Attributes d) {
+    public void cloneData(Data2D_Attributes d) {
         try {
-            super.cloneBase(d);
+            super.cloneDefBase(d);
             cloneTaskAttributes(d);
             clonePageAttributes(d);
         } catch (Exception e) {
@@ -106,7 +106,7 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
             if (d == null) {
                 return;
             }
-            cloneDataAttributes(d);
+            cloneValueAttributes(d);
             pageData = d.pageData;
             tableData2DDefinition = d.tableData2DDefinition;
             tableData2DColumn = d.tableData2DColumn;

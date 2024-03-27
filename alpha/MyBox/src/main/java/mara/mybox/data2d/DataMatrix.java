@@ -42,7 +42,7 @@ public class DataMatrix extends Data2D {
             if (d == null) {
                 return;
             }
-            super.cloneAll(d);
+            super.cloneData(d);
             tableData2DCell = d.tableData2DCell;
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -118,7 +118,13 @@ public class DataMatrix extends Data2D {
 
     @Override
     public long savePageData(File targetFile) {
-        return save(null, this, columns, tableRows(false));
+        long ret = save(null, this, columns, tableRows(false));
+        if (ret >= 0) {
+            dataSize = rowsNumber;
+            return dataSize;
+        } else {
+            return ret;
+        }
     }
 
     public boolean isSquare() {

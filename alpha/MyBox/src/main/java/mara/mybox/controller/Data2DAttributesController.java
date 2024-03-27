@@ -217,7 +217,7 @@ public class Data2DAttributesController extends BaseChildController {
         for (Data2DColumn column : attributes.getColumns()) {
             column.setIndex(colIndex++);
         }
-        dataController.data2D.cloneAll(attributes);
+        dataController.data2D.cloneData(attributes);
         dataController.makeColumns();
         dataController.updateTable(pageData);
         dataController.tableChanged(true);
@@ -259,9 +259,8 @@ public class Data2DAttributesController extends BaseChildController {
             protected void whenSucceeded() {
                 dataController.popInformation(message("Saved"));
                 dataController.notifySaved();
-                sourceData.setTableChanged(false);
-                attributes.setCurrentPage(sourceData.getCurrentPage());
-                dataController.loadDef(attributes);
+                dataController.data2D.cloneData(attributes);
+                dataController.readData(false);
                 if (needBackup) {
                     if (backup != null && backup.getBackup() != null) {
                         dataController.popInformation(message("SavedAndBacked"));

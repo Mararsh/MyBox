@@ -133,7 +133,7 @@ public class Data2DDeleteController extends BaseData2DTargetsController {
             protected void whenSucceeded() {
                 tabPane.getSelectionModel().select(dataTab);
                 selectedRowsIndices = null;
-                tableController.data2D.cloneAll(data2D);
+                tableController.data2D.cloneData(data2D);
                 tableController.dataSizeLoaded = false;
                 tableController.goPage();
                 tableController.requestMouse();

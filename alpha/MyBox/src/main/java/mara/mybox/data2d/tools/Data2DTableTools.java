@@ -501,7 +501,7 @@ public class Data2DTableTools {
             return null;
         }
         DataMatrix matrix = new DataMatrix();
-        matrix.cloneDataAttributes(dataTable);
+        matrix.cloneValueAttributes(dataTable);
         if (DataMatrix.save(task, matrix, dataColumns, rows) >= 0) {
             return matrix;
         } else {

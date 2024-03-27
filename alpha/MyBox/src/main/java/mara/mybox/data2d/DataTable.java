@@ -50,7 +50,7 @@ public class DataTable extends Data2D {
             if (d == null) {
                 return;
             }
-            super.cloneAll(d);
+            super.cloneData(d);
             tableData2D = d.tableData2D;
             if (tableData2D == null) {
                 tableData2D = new TableData2D();
@@ -354,7 +354,8 @@ public class DataTable extends Data2D {
                 }
             }
             conn.commit();
-            return 0;
+            dataSize = tableData2D.size(conn);
+            return dataSize;
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());

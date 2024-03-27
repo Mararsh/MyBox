@@ -377,8 +377,8 @@ public class BaseData2DSelectRowsController extends BaseData2DLoadController {
         page
      */
     @Override
-    public void loadPage() {
-        super.loadPage();
+    public void loadPage(boolean reloadSize) {
+        super.loadPage(reloadSize);
         if (filterController != null) {
             filterController.setData2D(data2D);
         }

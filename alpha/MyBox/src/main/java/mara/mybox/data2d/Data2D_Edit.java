@@ -12,6 +12,8 @@ import java.util.Random;
 import mara.mybox.data.SetValue;
 import mara.mybox.data2d.modify.Data2DClear;
 import mara.mybox.data2d.modify.Data2DDelete;
+import mara.mybox.data2d.modify.Data2DSaveAttributes;
+import mara.mybox.data2d.modify.Data2DSavePage;
 import mara.mybox.data2d.modify.Data2DSetValue;
 import mara.mybox.data2d.modify.DataTableClear;
 import mara.mybox.data2d.modify.DataTableDelete;
@@ -19,8 +21,6 @@ import mara.mybox.data2d.modify.DataTableSetValue;
 import mara.mybox.data2d.operate.Data2DOperate;
 import mara.mybox.data2d.operate.Data2DReadPage;
 import mara.mybox.data2d.operate.Data2DReadTotal;
-import mara.mybox.data2d.modify.Data2DSaveAttributes;
-import mara.mybox.data2d.modify.Data2DSavePage;
 import mara.mybox.data2d.writer.Data2DWriter;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
@@ -71,7 +71,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
         try {
             Data2DDefinition definition = queryDefinition(conn);
             if (definition != null) {
-                cloneAll(definition);
+                cloneDef(definition);
             }
             checkForLoad();
             if (definition == null) {
@@ -272,7 +272,8 @@ public abstract class Data2D_Edit extends Data2D_Filter {
             if (operate.isFailed()) {
                 return -3;
             }
-            return operate.getHandledCount();
+            dataSize = rowsNumber;
+            return dataSize;
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
@@ -296,6 +297,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
                 return -3;
             }
             attributes.tableChanged = false;
+            attributes.currentPage = currentPage;
             return operate.getHandledCount();
         } catch (Exception e) {
             if (task != null) {
@@ -531,7 +533,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
             if (did < 0) {
                 return false;
             }
-            d.cloneAll(def);
+            d.cloneDef(def);
             if (inColumns != null && !inColumns.isEmpty()) {
                 try {
                     List<Data2DColumn> targetColumns = new ArrayList<>();

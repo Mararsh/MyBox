@@ -232,21 +232,6 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
     /*
         table
      */
-    public void loadPage() {
-        try {
-            makeColumns();
-            if (!isValidData()) {
-                resetData();
-                return;
-            }
-            dataSizeLoaded = false;
-            data2D.setDataLoaded(false);
-            loadPage(data2D.getCurrentPage());
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
     public void makeColumns() {
         try {
             isSettingValues = true;
@@ -376,7 +361,7 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
             dataSizeLoaded = true;
             data2D.setDataLoaded(true);
         } else {
-            pageSize = UserConfig.getInt(baseName + "PageSize", 50);
+            pageSize = UserConfig.getInt(conn, baseName + "PageSize", 50);
             super.countPagination(currentTask, conn, page);
         }
         data2D.setPageSize(pageSize);
@@ -462,7 +447,9 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
         if (paginationPane != null) {
             if (paginate) {
                 showPaginationPane(true);
-                refreshPagination();
+                countPagination(null, null, currentPage);
+                setPagination();
+                updateStatus();
             } else {
                 showPaginationPane(false);
             }
@@ -499,12 +486,6 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
             };
             start(updateTask, false);
         }
-    }
-
-    protected void refreshPagination() {
-        countPagination(null, null, currentPage);
-        setPagination();
-        updateStatus();
     }
 
     @Override

@@ -181,7 +181,7 @@ public class Data2DSetValuesController extends BaseData2DTargetsController {
             @Override
             protected void whenSucceeded() {
                 tabPane.getSelectionModel().select(dataTab);
-                tableController.data2D.cloneAll(data2D);
+                tableController.data2D.cloneData(data2D);
                 tableController.goPage();
                 tableController.requestMouse();
                 tableController.alertInformation(message("ChangedRowsNumber") + ": " + count);

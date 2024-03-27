@@ -43,7 +43,7 @@ public class Data2DDefinition extends BaseData {
     public Data2DDefinition cloneAll() {
         try {
             Data2DDefinition newData = new Data2DDefinition();
-            newData.cloneAll(this);
+            newData.cloneDef(this);
             return newData;
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -51,29 +51,29 @@ public class Data2DDefinition extends BaseData {
         }
     }
 
-    public void cloneAll(Data2DDefinition d) {
+    public void cloneDef(Data2DDefinition d) {
         try {
-            cloneBase(d);
-            cloneDataAttributes(d);
+            cloneDefBase(d);
+            cloneValueAttributes(d);
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
     }
 
-    public void cloneBase(Data2DDefinition d) {
+    public void cloneDefBase(Data2DDefinition d) {
         try {
             if (d == null) {
                 return;
             }
             d2did = d.getD2did();
             dataType = d.getType();
-            cloneFileAttributes(d);
+            cloneBaseAttributes(d);
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
     }
 
-    public void cloneFileAttributes(Data2DDefinition d) {
+    public void cloneBaseAttributes(Data2DDefinition d) {
         try {
             if (d == null) {
                 return;
@@ -90,7 +90,7 @@ public class Data2DDefinition extends BaseData {
         }
     }
 
-    public void cloneDataAttributes(Data2DDefinition d) {
+    public void cloneValueAttributes(Data2DDefinition d) {
         try {
             if (d == null) {
                 return;
@@ -108,8 +108,8 @@ public class Data2DDefinition extends BaseData {
 
     public void cloneAttributes(Data2DDefinition d) {
         try {
-            cloneFileAttributes(d);
-            cloneDataAttributes(d);
+            cloneBaseAttributes(d);
+            cloneValueAttributes(d);
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }

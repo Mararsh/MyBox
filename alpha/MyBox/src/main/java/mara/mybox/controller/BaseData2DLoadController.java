@@ -98,9 +98,9 @@ public class BaseData2DLoadController extends BaseData2DTableController {
             return loadNull();
         }
         data2D = Data2D.create(def.getType());
-        data2D.cloneAll(def);
+        data2D.cloneDef(def);
         setData(data2D);
-        readDefinition();
+        readData(true);
         return true;
     }
 
@@ -108,7 +108,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
         return createData(DataType.CSV);
     }
 
-    public synchronized void readDefinition() {
+    public synchronized void readData(boolean reloadSize) {
         if (data2D == null) {
             loadNull();
             return;
@@ -117,6 +117,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
             return;
         }
         resetStatus();
+        resetView(false);
         task = new FxSingletonTask<Void>(this) {
 
             @Override
@@ -142,15 +143,32 @@ public class BaseData2DLoadController extends BaseData2DTableController {
             protected void finalAction() {
                 super.finalAction();
                 data2D.stopTask();
-                Data2D s = data2D;
-                data2D = null;
-                resetView(false);
-                data2D = s;
-                loadPage();
+                loadPage(reloadSize);
             }
 
         };
         start(task, thisPane);
+    }
+
+    public void loadPage(boolean readSize) {
+        try {
+            resetStatus();
+            makeColumns();
+            if (!isValidData()) {
+                resetData();
+                return;
+            }
+            dataSizeLoaded = !readSize;
+            data2D.setDataLoaded(!readSize);
+            data2D.setTableChanged(false);
+            if (readSize) {
+                loadPage(0);
+            } else {
+                loadPage(currentPage);
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
     public boolean checkInvalidFile() {
@@ -287,7 +305,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
             setData(Data2D.create(Data2DDefinition.type(file)));
             beforeOpenFile();
             data2D.initFile(file);
-            readDefinition();
+            readData(true);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
