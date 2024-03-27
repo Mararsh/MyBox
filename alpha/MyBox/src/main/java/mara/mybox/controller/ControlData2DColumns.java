@@ -234,7 +234,8 @@ public class ControlData2DColumns extends BaseData2DColumnsController {
             }
             List<Data2DColumn> columns = new ArrayList<>();
             for (int i = 0; i < tableData.size(); i++) {
-                columns.add(tableData.get(i).cloneAll());
+                Data2DColumn column = tableData.get(i).cloneAll();
+                columns.add(column);
             }
             return columns;
         } catch (Exception e) {

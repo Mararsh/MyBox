@@ -72,7 +72,7 @@ public abstract class Data2D_Data extends Data2D_Attributes {
     }
 
     public boolean isMutiplePages() {
-        return pagesNumber > 1;
+        return dataLoaded && pagesNumber > 1;
     }
 
     public boolean isDataLoaded() {
@@ -135,31 +135,12 @@ public abstract class Data2D_Data extends Data2D_Attributes {
     /*
         table data
      */
-    public void setTableChanged(boolean changed) {
-        tableChanged = changed;
-    }
-
     public int tableRowsNumber() {
         return pageData == null ? 0 : pageData.size();
     }
 
     public int tableColsNumber() {
         return columns == null ? 0 : columns.size();
-    }
-
-    // Column's index, instead of column name or table index, is the key to determine the column.
-    // Columns order of table is synchronized when columns are applied. 
-    // Columns order of file is synchronized when file is saved. 
-    public int colOrder(int colIndex) {
-        try {
-            for (int i = 0; i < columns.size(); i++) {
-                if (colIndex == columns.get(i).getIndex()) {
-                    return i;
-                }
-            }
-        } catch (Exception e) {
-        }
-        return -1;
     }
 
     public int colOrder(String name) {

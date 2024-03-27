@@ -121,6 +121,7 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
             startRowOfCurrentPage = d.startRowOfCurrentPage;
             endRowOfCurrentPage = d.endRowOfCurrentPage;
             tableChanged = d.tableChanged;
+            dataLoaded = d.dataLoaded;
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
@@ -221,6 +222,10 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
 
     public boolean isTableChanged() {
         return tableChanged;
+    }
+
+    public void setTableChanged(boolean tableChanged) {
+        this.tableChanged = tableChanged;
     }
 
     public ObservableList<List<String>> getPageData() {

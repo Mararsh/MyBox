@@ -16,7 +16,7 @@ import static mara.mybox.data2d.Data2D_Attributes.TargetType.PDF;
 import static mara.mybox.data2d.Data2D_Attributes.TargetType.Text;
 import mara.mybox.data2d.TmpTable;
 import mara.mybox.data2d.operate.Data2DExport;
-import mara.mybox.data2d.operate.Data2DSavePage;
+import mara.mybox.data2d.operate.Data2DSaveAs;
 import mara.mybox.data2d.tools.Data2DConvertTools;
 import mara.mybox.data2d.writer.Data2DWriter;
 import mara.mybox.data2d.writer.SystemClipboardWriter;
@@ -204,7 +204,7 @@ public class Data2DSaveAsController extends BaseDataConvertController {
     public boolean doTask(FxTask currentTask) {
         try {
             data2D.startTask(currentTask, null);
-            Data2DSavePage operate = Data2DSavePage.writeTo(data2D, writer);
+            Data2DSaveAs operate = Data2DSaveAs.writeTo(data2D, writer);
             if (operate == null) {
                 return false;
             }

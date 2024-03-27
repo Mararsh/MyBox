@@ -35,7 +35,7 @@ public class Data2DMenuTools {
     public static List<MenuItem> dataMenus(Data2DManufactureController dataController) {
         try {
             Data2D data2D = dataController.getData2D();
-            if (dataController.isValidData()) {
+            if (!dataController.isValidData()) {
                 return null;
             }
             List<MenuItem> items = new ArrayList<>();
@@ -52,7 +52,7 @@ public class Data2DMenuTools {
                 menu.setOnAction((ActionEvent event) -> {
                     dataController.definitonAction();
                 });
-                menu.setDisable(data2D.isPagesChanged());
+                menu.setDisable(notLoaded);
                 items.add(menu);
 
                 menu = new MenuItem(message("Save") + "    Ctrl+S " + message("Or") + " Alt+S",

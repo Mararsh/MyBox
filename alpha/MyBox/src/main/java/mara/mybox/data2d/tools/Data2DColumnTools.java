@@ -110,6 +110,18 @@ public class Data2DColumnTools {
         }
     }
 
+    public static String majorAttributes(Data2DColumn column) {
+        try {
+            if (column == null) {
+                return null;
+            }
+            return column.getIndex() + " " + column.getColumnName() + " " + column.getType();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
     public static List<Data2DColumn> clone(List<Data2DColumn> columns) {
         try {
             if (columns == null) {

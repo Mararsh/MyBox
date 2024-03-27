@@ -603,7 +603,6 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
                 menu.setOnAction((ActionEvent event) -> {
                     Data2DAttributesController.open((Data2DManufactureController) this);
                 });
-                menu.setDisable(data2D.isPagesChanged());
                 items.add(menu);
 
             } else {

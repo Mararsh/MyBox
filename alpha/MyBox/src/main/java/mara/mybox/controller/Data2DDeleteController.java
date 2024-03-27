@@ -66,12 +66,12 @@ public class Data2DDeleteController extends BaseData2DTargetsController {
             @Override
             protected void whenSucceeded() {
                 try {
+                    tabPane.getSelectionModel().select(dataTab);
                     tableController.updateTable(data);
                     selectedRowsIndices = null;
                     tableController.tableChanged(true);
                     tableController.requestMouse();
-                    tabPane.getSelectionModel().select(dataTab);
-                    alertInformation(message("DeletedRowsNumber") + ": " + filteredRowsIndices.size());
+                    tableController.alertInformation(message("DeletedRowsNumber") + ": " + filteredRowsIndices.size());
                 } catch (Exception e) {
                     MyBoxLog.error(e);
                 }
@@ -131,12 +131,13 @@ public class Data2DDeleteController extends BaseData2DTargetsController {
 
             @Override
             protected void whenSucceeded() {
+                tabPane.getSelectionModel().select(dataTab);
                 selectedRowsIndices = null;
+                tableController.data2D.cloneAll(data2D);
                 tableController.dataSizeLoaded = false;
                 tableController.goPage();
                 tableController.requestMouse();
-                tabPane.getSelectionModel().select(dataTab);
-                alertInformation(message("DeletedRowsNumber") + ": " + count);
+                tableController.alertInformation(message("DeletedRowsNumber") + ": " + count);
             }
 
             @Override

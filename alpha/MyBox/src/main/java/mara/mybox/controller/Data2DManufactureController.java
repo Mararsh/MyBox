@@ -52,6 +52,7 @@ import mara.mybox.value.UserConfig;
 public class Data2DManufactureController extends BaseData2DViewController {
 
     protected final SimpleBooleanProperty savedNotify;
+    protected boolean isCSVModified, isCSVpicked;
 
     @FXML
     protected FlowPane opsPane;
@@ -74,9 +75,14 @@ public class Data2DManufactureController extends BaseData2DViewController {
             csvArea.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> v, String ov, String nv) {
-                    if (isSettingValues || isDataChanged()) {
+                    if (isSettingValues) {
                         return;
                     }
+                    isCSVpicked = false;
+                    if (isCSVModified) {
+                        return;
+                    }
+                    isCSVModified = true;
                     tableChanged();
                 }
             });
@@ -101,11 +107,52 @@ public class Data2DManufactureController extends BaseData2DViewController {
             return;
         }
         operationButton.setDisable(!isEditing());
-        if (csvRadio != ov || !isDataChanged() || !data2D.isValidDefinition()) {
+        if (!isValidData() || csvRadio != ov || !isCSVModified || isCSVpicked) {
             switchFormat();
             return;
         }
-        pickCSV();
+        if (task != null) {
+            task.cancel();
+        }
+        task = new FxSingletonTask<Void>(this) {
+            private List<List<String>> rows;
+
+            @Override
+            protected boolean handle() {
+                rows = pickCSV(this);
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+            }
+
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                if (ok && rows != null) {
+                    isSettingValues = true;
+                    tableData.setAll(rows);
+                    isSettingValues = false;
+                    data2D.setPageData(tableData);
+                    switchFormat();
+                } else {
+                    isSettingValues = true;
+                    csvRadio.setSelected(true);
+                    isSettingValues = false;
+                    popError(message("InvalidData"));
+                }
+            }
+
+        };
+        start(task);
+    }
+
+    @Override
+    public void switchFormat() {
+        super.switchFormat();
+        isCSVModified = false;
+        isCSVpicked = false;
     }
 
     @Override
@@ -169,6 +216,8 @@ public class Data2DManufactureController extends BaseData2DViewController {
         if (!csvRadio.isSelected()) {
             return;
         }
+        isCSVModified = false;
+        isCSVpicked = false;
         if (data2D == null || !data2D.hasPageData()) {
             isSettingValues = true;
             csvArea.setText("");
@@ -199,6 +248,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
                 }
                 columnsLabel.setText(label);
                 isSettingValues = false;
+
             }
 
         };
@@ -240,44 +290,6 @@ public class Data2DManufactureController extends BaseData2DViewController {
             displayError(e.toString());
             return null;
         }
-    }
-
-    public void pickCSV() {
-        if (task != null) {
-            task.cancel();
-        }
-        task = new FxSingletonTask<Void>(this) {
-            private List<List<String>> rows;
-
-            @Override
-            protected boolean handle() {
-                rows = pickCSV(this);
-                return true;
-            }
-
-            @Override
-            protected void whenSucceeded() {
-            }
-
-            @Override
-            protected void finalAction() {
-                super.finalAction();
-                if (ok && rows != null) {
-                    isSettingValues = true;
-                    tableData.setAll(rows);
-                    isSettingValues = false;
-                    data2D.setPageData(tableData);
-                    switchFormat();
-                } else {
-                    isSettingValues = true;
-                    csvRadio.setSelected(true);
-                    isSettingValues = false;
-                    popError(message("InvalidData"));
-                }
-            }
-
-        };
-        start(task);
     }
 
     /*
@@ -327,12 +339,13 @@ public class Data2DManufactureController extends BaseData2DViewController {
         if (!super.isValidPageData()) {
             return false;
         }
-        if (csvRadio.isSelected() && isDataChanged()) {
+        if (csvRadio.isSelected() && isCSVModified && !isCSVpicked) {
             List<List<String>> rows = pickCSV(null);
             if (rows == null) {
                 return false;
             }
             super.updateTable(rows);
+            isCSVpicked = true;
         }
         return true;
     }
@@ -678,7 +691,6 @@ public class Data2DManufactureController extends BaseData2DViewController {
             @Override
             protected boolean handle() {
                 try {
-
                     needBackup = data2D.isDataFile() && !data2D.isTmpData()
                             && UserConfig.getBoolean(baseName + "BackupWhenSave", true);
                     if (needBackup) {
@@ -746,7 +758,11 @@ public class Data2DManufactureController extends BaseData2DViewController {
     @FXML
     @Override
     public void recoverAction() {
-        loadDef(data2D);
+        data2D.setTableChanged(false);
+        Data2D def = Data2D.create(data2D.getType());
+        def.cloneBase(data2D);
+        def.setCurrentPage(data2D.getCurrentPage());
+        loadDef(def);
     }
 
     @FXML
@@ -861,6 +877,9 @@ public class Data2DManufactureController extends BaseData2DViewController {
             return true;
         }
         StringTable results = verifyTableData();
+        if (results == null) {
+            return false;
+        }
         if (results.isEmpty()) {
             return true;
         }

@@ -13,6 +13,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.web.WebView;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.db.data.Data2DColumn;
+import mara.mybox.db.data.FileBackup;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
@@ -81,8 +82,7 @@ public class Data2DAttributesController extends BaseChildController {
     public boolean isInvalid() {
         return dataController == null
                 || !dataController.isShowing()
-                || dataController.data2D == null
-                || dataController.data2D.isPagesChanged();
+                || !dataController.isValidPageData();
     }
 
     protected void setParameters(Data2DManufactureController controller) {
@@ -132,7 +132,11 @@ public class Data2DAttributesController extends BaseChildController {
         }
     }
 
-    public boolean pickValues() {
+    public Data2D pickValues() {
+        if (isInvalid()) {
+            close();
+            return null;
+        }
         String name = dataNameInput.getText();
 //        if (name == null || name.isBlank()) {
 //            popError(message("InvalidParameter") + ": " + message("DataName"));
@@ -149,7 +153,7 @@ public class Data2DAttributesController extends BaseChildController {
             scale = (short) v;
         } else {
             popError(message("InvalidParameter") + ": " + message("DecimalScale"));
-            return false;
+            return null;
         }
 
         v = -1;
@@ -161,82 +165,119 @@ public class Data2DAttributesController extends BaseChildController {
             maxRandom = v;
         } else {
             popError(message("InvalidParameter") + ": " + message("MaxRandom"));
-            return false;
+            return null;
         }
 
-        return true;
+        List<Data2DColumn> columns = columnsController.pickColumns();
+        if (columns == null || columns.isEmpty()) {
+            popError(message("DataColumnsShouldNotEmpty"));
+            return null;
+        }
+
+        Data2D data2D = dataController.data2D.cloneAll();
+        data2D.setDataName(dataName);
+        data2D.setScale(scale);
+        data2D.setMaxRandom(maxRandom);
+        data2D.setComments(descInput.getText());
+        data2D.setModifyTime(new Date());
+        data2D.setColumns(columns);
+        return data2D;
     }
 
     @FXML
     @Override
     public void okAction() {
-        if (isInvalid()) {
-            close();
+        Data2D newData = pickValues();
+        if (newData == null) {
             return;
         }
-        if (!pickValues()) {
+        if (newData.isMutiplePages()) {
+            handleMutiplePages(newData);
+        } else {
+            handlePage(newData);
+        }
+    }
+
+    public void handlePage(Data2D attributes) {
+        List<List<String>> pageData = new ArrayList<>();
+        for (List<String> rowValues : dataController.tableData) {
+            List<String> newRow = new ArrayList<>();
+            newRow.add(rowValues.get(0));
+            for (Data2DColumn column : attributes.getColumns()) {
+                int dataIndex = column.getIndex() + 1;
+                if (dataIndex <= 0 || dataIndex >= rowValues.size()) {
+                    newRow.add(null);
+                } else {
+                    newRow.add(rowValues.get(dataIndex));
+                }
+            }
+            pageData.add(newRow);
+        }
+        int colIndex = 0;
+        for (Data2DColumn column : attributes.getColumns()) {
+            column.setIndex(colIndex++);
+        }
+        dataController.data2D.cloneAll(attributes);
+        dataController.makeColumns();
+        dataController.updateTable(pageData);
+        dataController.tableChanged(true);
+        dataController.popInformation(message("Changed"));
+        close();
+    }
+
+    public void handleMutiplePages(Data2D attributes) {
+        if (!PopTools.askSure(getTitle(), message("SureChangeDataAttributes"))) {
             return;
         }
-        List<Data2DColumn> columns = columnsController.pickColumns();
-        if (columns == null || columns.isEmpty()) {
-            popError(message("DataColumnsShouldNotEmpty"));
-            return;
-        }
-        Data2D data2D = dataController.data2D;
-        boolean isMutiplePages = data2D.isMutiplePages();
-        if (isMutiplePages && !PopTools.askSure(getTitle(), message("SureChangeDataAttributes"))) {
-            return;
-        }
+        Data2D sourceData = dataController.data2D;
+        sourceFile = sourceData.getFile();
         if (task != null) {
             task.cancel();
         }
         task = new FxSingletonTask<Void>(this) {
-            List<List<String>> pageData;
+
+            private boolean needBackup = false;
+            private FileBackup backup;
 
             @Override
             protected boolean handle() {
                 try {
-                    pageData = new ArrayList<>();
-                    for (List<String> rowValues : dataController.tableData) {
-                        List<String> newRow = new ArrayList<>();
-                        newRow.add(rowValues.get(0));
-                        for (Data2DColumn column : columns) {
-                            int col = data2D.colOrder(column.getIndex()) + 1;
-                            if (col <= 0 || col >= rowValues.size()) {
-                                newRow.add(null);
-                            } else {
-                                newRow.add(rowValues.get(col));
-                            }
-                        }
-                        pageData.add(newRow);
+                    needBackup = sourceData.isDataFile() && !sourceData.isTmpData()
+                            && UserConfig.getBoolean(baseName + "BackupWhenSave", true);
+                    if (needBackup) {
+                        backup = addBackup(this, sourceFile);
                     }
-                    data2D.setDataName(dataName);
-                    data2D.setScale(scale);
-                    data2D.setMaxRandom(maxRandom);
-                    data2D.setComments(descInput.getText());
-                    data2D.setModifyTime(new Date());
-                    data2D.setColumns(columns);
-                    return true;
+                    sourceData.startTask(this, null);
+                    return sourceData.saveAttributes(attributes) >= 0;
                 } catch (Exception e) {
-                    MyBoxLog.error(e);
+                    error = e.toString();
                     return false;
                 }
-
             }
 
             @Override
             protected void whenSucceeded() {
-                dataController.makeColumns();
-                dataController.updateTable(pageData);
-                if (isMutiplePages) {
-                    dataController.saveAction();
-                } else {
-                    dataController.tableChanged(true);
+                dataController.popInformation(message("Saved"));
+                dataController.notifySaved();
+                sourceData.setTableChanged(false);
+                attributes.setCurrentPage(sourceData.getCurrentPage());
+                dataController.loadDef(attributes);
+                if (needBackup) {
+                    if (backup != null && backup.getBackup() != null) {
+                        dataController.popInformation(message("SavedAndBacked"));
+                        FileBackupController.updateList(sourceFile);
+                    } else {
+                        dataController.popError(message("FailBackup"));
+                    }
                 }
-                dataController.popInformation(message("Changed"));
                 close();
             }
 
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                sourceData.stopTask();
+            }
         };
         start(task);
     }

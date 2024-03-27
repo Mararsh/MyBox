@@ -180,11 +180,11 @@ public class Data2DSetValuesController extends BaseData2DTargetsController {
 
             @Override
             protected void whenSucceeded() {
+                tabPane.getSelectionModel().select(dataTab);
+                tableController.data2D.cloneAll(data2D);
                 tableController.goPage();
                 tableController.requestMouse();
-                tableController.popDone();
-                tabPane.getSelectionModel().select(dataTab);
-                alertInformation(message("ChangedRowsNumber") + ": " + count);
+                tableController.alertInformation(message("ChangedRowsNumber") + ": " + count);
             }
 
             @Override
@@ -236,13 +236,13 @@ public class Data2DSetValuesController extends BaseData2DTargetsController {
 
     @Override
     public boolean updateTable() {
+        tabPane.getSelectionModel().select(dataTab);
         tableController.isSettingValues = true;
         tableController.tableView.refresh();
         tableController.isSettingValues = false;
         tableController.tableChanged(true);
         tableController.requestMouse();
-        tabPane.getSelectionModel().select(dataTab);
-        alertInformation(message("ChangedRowsNumber") + ": " + filteredRowsIndices.size());
+        tableController.alertInformation(message("ChangedRowsNumber") + ": " + filteredRowsIndices.size());
         return true;
     }
 

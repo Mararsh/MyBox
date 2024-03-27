@@ -19,7 +19,8 @@ import mara.mybox.data2d.modify.DataTableSetValue;
 import mara.mybox.data2d.operate.Data2DOperate;
 import mara.mybox.data2d.operate.Data2DReadPage;
 import mara.mybox.data2d.operate.Data2DReadTotal;
-import mara.mybox.data2d.operate.Data2DSavePage;
+import mara.mybox.data2d.modify.Data2DSaveAttributes;
+import mara.mybox.data2d.modify.Data2DSavePage;
 import mara.mybox.data2d.writer.Data2DWriter;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
@@ -281,6 +282,30 @@ public abstract class Data2D_Edit extends Data2D_Filter {
         }
     }
 
+    public long saveAttributes(Data2D attributes) {
+        try {
+            if (attributes == null) {
+                return -1;
+            }
+            Data2DSaveAttributes operate = Data2DSaveAttributes.create(this, attributes);
+            if (operate == null) {
+                return -2;
+            }
+            operate.setTask(task).start();
+            if (operate.isFailed()) {
+                return -3;
+            }
+            attributes.tableChanged = false;
+            return operate.getHandledCount();
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e);
+            return -4;
+        }
+    }
+
     public long setValue(List<Integer> cols, SetValue setValue, boolean errorContinue) {
         try {
             if (!isValidData() || cols == null || cols.isEmpty()) {
@@ -297,6 +322,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
             if (operate.isFailed()) {
                 return -3;
             }
+            tableChanged = false;
             return operate.getHandledCount();
         } catch (Exception e) {
             if (task != null) {
@@ -322,6 +348,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
             if (operate.isFailed()) {
                 return -3;
             }
+            tableChanged = false;
             return operate.getHandledCount();
         } catch (Exception e) {
             if (task != null) {
@@ -347,6 +374,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
         if (operate.isFailed()) {
             return -3;
         }
+        tableChanged = false;
         return operate.getHandledCount();
     }
 
