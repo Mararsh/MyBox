@@ -55,6 +55,7 @@ public abstract class BaseTextController_Base extends BaseFileController {
         taskCanceled();
     }
 
+    @Override
     public void taskCanceled() {
         bottomLabel.setText("");
         if (backgroundTask != null && !backgroundTask.isQuit()) {

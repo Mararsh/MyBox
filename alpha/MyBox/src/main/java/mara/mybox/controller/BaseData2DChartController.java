@@ -170,12 +170,11 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
         }
     }
 
-    @Override
-    public boolean checkOptions() {
+    public boolean checkParameters() {
         if (isSettingValues) {
             return true;
         }
-        boolean ok = super.checkOptions();
+        boolean ok = super.checkParameters();
         noticeMemory();
         return ok;
     }
@@ -288,7 +287,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
     public void readData() {
         try {
             boolean showRowNumber = showRowNumber();
-            outputData = sortedData(dataColsIndices, showRowNumber);
+            outputData = sortPage(dataColsIndices, showRowNumber);
             if (outputData == null || scaleSelector == null) {
                 return;
             }

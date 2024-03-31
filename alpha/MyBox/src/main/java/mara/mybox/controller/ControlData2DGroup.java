@@ -30,7 +30,7 @@ import static mara.mybox.value.Languages.message;
  */
 public class ControlData2DGroup extends BaseTablePagesController<DataFilter> {
 
-    protected BaseData2DHandleController handleController;
+    protected BaseData2DTaskController taskController;
     protected String groupName, timeName, expression, filledExpression;
     protected List<String> groupNames, conditionVariables;
     protected List<DataFilter> groupConditions;
@@ -77,7 +77,7 @@ public class ControlData2DGroup extends BaseTablePagesController<DataFilter> {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     if (!isSettingValues && valueRangeRadio.isSelected()) {
-                        valueSplitController.setColumn(handleController.data2D.columnByName(columnSelector.getValue()));
+                        valueSplitController.setColumn(taskController.data2D.columnByName(columnSelector.getValue()));
                     }
                 }
             });
@@ -101,9 +101,17 @@ public class ControlData2DGroup extends BaseTablePagesController<DataFilter> {
         }
     }
 
-    public void setParameters(BaseData2DHandleController handleController) {
+    public void setParameters(BaseData2DTaskController taskController) {
         try {
-            this.handleController = handleController;
+            this.taskController = taskController;
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    public void setParameters(BaseData2DHandleController taskController) {
+        try {
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -117,13 +125,13 @@ public class ControlData2DGroup extends BaseTablePagesController<DataFilter> {
             columnSelector.getItems().clear();
             tableData.clear();
             isSettingValues = false;
-            expressionController.setData2D(handleController.data2D);
-            if (!handleController.data2D.isValidDefinition()) {
+            expressionController.setData2D(taskController.data2D);
+            if (!taskController.data2D.isValidDefinition()) {
                 return;
             }
-            List<String> names = handleController.data2D.columnNames();
+            List<String> names = taskController.data2D.columnNames();
             columnsController.loadNames(names);
-            List<String> times = handleController.data2D.timeColumnNames();
+            List<String> times = taskController.data2D.timeColumnNames();
             if (times == null || times.isEmpty()) {
                 if (timeRadio.isSelected()) {
                     valuesRadio.setSelected(true);
@@ -140,20 +148,20 @@ public class ControlData2DGroup extends BaseTablePagesController<DataFilter> {
     }
 
     public void loadColumnNames() {
-        if (!handleController.data2D.isValidDefinition()) {
+        if (!taskController.data2D.isValidDefinition()) {
             return;
         }
         List<String> names;
         if (timeRadio.isSelected()) {
-            names = handleController.data2D.timeColumnNames();
+            names = taskController.data2D.timeColumnNames();
         } else {
-            names = handleController.data2D.columnNames();
+            names = taskController.data2D.columnNames();
         }
         isSettingValues = true;
         columnSelector.getItems().setAll(names);
         columnSelector.getSelectionModel().select(0);
         if (valueRangeRadio.isSelected()) {
-            valueSplitController.setColumn(handleController.data2D.columnByName(columnSelector.getValue()));
+            valueSplitController.setColumn(taskController.data2D.columnByName(columnSelector.getValue()));
         }
         isSettingValues = false;
     }
@@ -241,7 +249,7 @@ public class ControlData2DGroup extends BaseTablePagesController<DataFilter> {
                     popError(message("Invalid") + ": " + message("RowExpression"));
                     valid = false;
                 }
-                if (!expressionController.checkExpression(handleController.isAllPages())) {
+                if (!expressionController.checkExpression(taskController.isAllPages())) {
                     alertError(message("Invalid") + ": " + message("RowExpression") + "\n"
                             + expressionController.error);
                     valid = false;
@@ -255,8 +263,8 @@ public class ControlData2DGroup extends BaseTablePagesController<DataFilter> {
             }
 
             if (!valid) {
-                handleController.popError(message("InvalidParameter") + ": " + message("Group"));
-                handleController.tabPane.getSelectionModel().select(handleController.groupTab);
+                taskController.popError(message("InvalidParameter") + ": " + message("Group"));
+                taskController.tabPane.getSelectionModel().select(taskController.groupTab);
                 return false;
             }
             return true;
@@ -485,7 +493,7 @@ public class ControlData2DGroup extends BaseTablePagesController<DataFilter> {
     @FXML
     @Override
     public void addAction() {
-        Data2DRowFilterEdit controller = Data2DRowFilterEdit.open(handleController, null);
+        Data2DRowFilterEdit controller = Data2DRowFilterEdit.open(taskController, null);
         controller.notify.addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
@@ -507,7 +515,7 @@ public class ControlData2DGroup extends BaseTablePagesController<DataFilter> {
             return;
         }
         DataFilter selected = tableData.get(index);
-        Data2DRowFilterEdit controller = Data2DRowFilterEdit.open(handleController, selected);
+        Data2DRowFilterEdit controller = Data2DRowFilterEdit.open(taskController, selected);
         controller.notify.addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {

@@ -25,6 +25,7 @@ import static mara.mybox.data2d.Data2D_Attributes.TargetType.PDF;
 import static mara.mybox.data2d.Data2D_Attributes.TargetType.Text;
 import static mara.mybox.data2d.Data2D_Attributes.TargetType.XML;
 import mara.mybox.data2d.writer.Data2DWriter;
+import mara.mybox.data2d.writer.SystemClipboardWriter;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.VisitHistory.FileType;
 import mara.mybox.dev.MyBoxLog;
@@ -433,6 +434,9 @@ public class ControlData2DTarget extends BaseController {
             if (writer != null) {
                 writer.setDataName(name())
                         .setTargetFile(file());
+                if (writer instanceof SystemClipboardWriter) {
+                    ((SystemClipboardWriter) writer).setController(tableController);
+                }
             }
             return writer;
         } catch (Exception e) {

@@ -42,7 +42,7 @@ public class ImageEmbossController extends BasePixelsController {
     }
 
     @Override
-    protected boolean checkOptions() {
+    public boolean checkOptions() {
         if (!super.checkOptions()) {
             return false;
         }

@@ -62,7 +62,7 @@ public class Data2DConvertTools {
         File txtFile = targetFile != null ? targetFile : csvData.tmpFile(csvData.dataName(), null, "txt");
         if (FileCopyTools.copyFile(csvFile, txtFile)) {
             DataFileText targetData = new DataFileText();
-            targetData.cloneAttributes(csvData);
+            targetData.cloneDataAttributes(csvData);
             targetData.setFile(txtFile);
             if (targetName != null) {
                 targetData.setDataName(targetName);
@@ -118,7 +118,7 @@ public class Data2DConvertTools {
         File tcsvFile = targetFile != null ? targetFile : csvData.tmpFile(csvData.dataName(), null, "csv");
         if (FileCopyTools.copyFile(csvFile, tcsvFile)) {
             DataFileCSV targetData = new DataFileCSV();
-            targetData.cloneAttributes(csvData);
+            targetData.cloneDataAttributes(csvData);
             targetData.setFile(tcsvFile);
             if (targetName != null) {
                 targetData.setDataName(targetName);
@@ -201,7 +201,7 @@ public class Data2DConvertTools {
         }
         if (excelFile != null && excelFile.exists()) {
             DataFileExcel targetData = new DataFileExcel();
-            targetData.cloneAttributes(csvData);
+            targetData.cloneDataAttributes(csvData);
             if (targetFile != null) {
                 if (!FileCopyTools.copyFile(excelFile, targetFile)) {
                     return null;
@@ -264,7 +264,7 @@ public class Data2DConvertTools {
             }
         }
         DataMatrix matrix = new DataMatrix();
-        matrix.cloneAttributes(sourceData);
+        matrix.cloneDataAttributes(sourceData);
         if (targetName != null) {
             matrix.setDataName(targetName);
         }

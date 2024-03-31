@@ -301,9 +301,11 @@ public class Data2DManufactureController extends BaseData2DViewController {
             boolean invalidData = !isValidData();
             mainAreaBox.setDisable(invalidData);
             opsPane.setDisable(invalidData);
-            recoverButton.setDisable(invalidData || data2D.isTmpData() || !data2D.isTableChanged());
+            recoverButton.setDisable(invalidData || !dataSizeLoaded
+                    || data2D.isTmpData() || !data2D.isTableChanged());
             saveButton.setDisable(invalidData || !dataSizeLoaded);
             dataDefinitionButton.setDisable(invalidData);
+            paginationPane.setVisible(dataSizeLoaded);
             if (data2D != null && data2D.isDataFile() && data2D.getFile() != null) {
                 if (!toolbar.getChildren().contains(fileMenuButton)) {
                     toolbar.getChildren().add(0, fileMenuButton);

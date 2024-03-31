@@ -279,10 +279,13 @@ public class Data2DTableTools {
                     cols.add(i);
                 }
             }
-            DataTableWriter writer = new DataTableWriter()
-                    .setTargetTable(targetTable);
-            return sourceData.copy(task, writer, cols,
-                    includeRowNumber, true, false, invalidAs);
+            List<Data2DColumn> targetColumns = sourceData.targetColumns(cols, includeRowNumber);
+            DataTableWriter writer = new DataTableWriter();
+            writer.setTargetTable(targetTable)
+                    .setColumns(targetColumns)
+                    .setHeaderNames(Data2DColumnTools.toNames(targetColumns))
+                    .setWriteHeader(false);
+            return sourceData.copy(task, writer, cols, includeRowNumber, true, invalidAs);
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());

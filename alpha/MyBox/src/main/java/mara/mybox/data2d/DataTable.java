@@ -354,8 +354,8 @@ public class DataTable extends Data2D {
                 }
             }
             conn.commit();
-            dataSize = tableData2D.size(conn);
-            return dataSize;
+            rowsNumber = tableData2D.size(conn);
+            return rowsNumber;
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
@@ -379,7 +379,7 @@ public class DataTable extends Data2D {
         return writer;
     }
 
-    public Data2DRow makeRow(List<String> values, InvalidAs invalidAs, long rowIndex) {
+    public Data2DRow makeRow(List<String> values, InvalidAs invalidAs) {
         try {
             if (columns == null || values == null || values.isEmpty()) {
                 return null;

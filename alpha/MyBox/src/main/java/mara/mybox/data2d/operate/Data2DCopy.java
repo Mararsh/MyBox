@@ -11,6 +11,7 @@ import mara.mybox.data2d.Data2D_Edit;
 public class Data2DCopy extends Data2DOperate {
 
     private String value;
+    private int rowSize;
 
     public static Data2DCopy create(Data2D_Edit data) {
         Data2DCopy op = new Data2DCopy();
@@ -30,16 +31,17 @@ public class Data2DCopy extends Data2DOperate {
                 return false;
             }
             targetRow = new ArrayList<>();
+            rowSize = sourceRow.size();
             for (int col : cols) {
-                if (col >= 0 && col < sourceRow.size()) {
+                if (col >= 0 && col < rowSize) {
                     value = sourceRow.get(col);
                     if (value != null && formatValues) {
                         value = sourceData.column(col).format(value);
                     }
-                    targetRow.add(value);
                 } else {
-                    targetRow.add(null);
+                    value = null;
                 }
+                targetRow.add(value);
             }
             if (targetRow.isEmpty()) {
                 return false;

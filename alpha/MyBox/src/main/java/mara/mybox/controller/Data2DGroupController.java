@@ -21,7 +21,7 @@ import org.apache.commons.csv.CSVPrinter;
  * @CreateDate 2022-9-23
  * @License Apache License Version 2.0
  */
-public class Data2DGroupController extends BaseData2DHandleController {
+public class Data2DGroupController extends BaseData2DTaskController {
 
     protected DataFileCSV resultsFile;
     protected List<DataFileCSV> files;

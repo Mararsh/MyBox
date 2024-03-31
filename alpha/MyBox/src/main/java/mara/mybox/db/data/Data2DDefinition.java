@@ -106,7 +106,7 @@ public class Data2DDefinition extends BaseData {
         }
     }
 
-    public void cloneAttributes(Data2DDefinition d) {
+    public void cloneDefAttributes(Data2DDefinition d) {
         try {
             cloneBaseAttributes(d);
             cloneValueAttributes(d);

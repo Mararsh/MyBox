@@ -19,7 +19,6 @@ License:    Apache License Version 2.0
 
 <VBox fx:id="thisPane" minHeight="-Infinity" spacing="10.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlData2DTarget">
     <children>
-        <Label text="%Outputs" />
       <VBox fx:id="externalBox" spacing="2.0">
          <children>
               <FlowPane alignment="CENTER_LEFT" hgap="5.0" minWidth="-Infinity" prefWrapLength="500.0" vgap="5.0">

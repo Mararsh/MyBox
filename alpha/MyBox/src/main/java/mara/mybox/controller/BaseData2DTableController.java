@@ -354,7 +354,7 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
     protected void countPagination(FxTask currentTask, Connection conn, long page) {
         if (data2D.isMatrix()) {
             pageSize = Integer.MAX_VALUE;
-            dataSize = data2D.getDataSize();
+            dataSize = data2D.getRowsNumber();
             pagesNumber = 1;
             currentPage = 0;
             startRowOfCurrentPage = 0;
@@ -382,7 +382,7 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
 
     @Override
     public long readDataSize(FxTask currentTask, Connection conn) {
-        return data2D.getDataSize();
+        return data2D.getRowsNumber();
     }
 
     @Override
@@ -396,7 +396,7 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
             backgroundTask.cancel();
             backgroundTask = null;
         }
-        data2D.setDataSize(0);
+        data2D.setRowsNumber(-1);
         dataSizeLoaded = false;
         data2D.setDataLoaded(false);
         if (paginationPane != null) {
@@ -404,6 +404,9 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
         }
         if (saveButton != null) {
             saveButton.setDisable(true);
+        }
+        if (recoverButton != null) {
+            recoverButton.setDisable(true);
         }
         backgroundTask = new FxBackgroundTask<Void>(this) {
 
@@ -461,31 +464,29 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
     }
 
     public void correctDataSize() {
-        if (data2D == null || data2D.isTmpData()) {
+        if (data2D == null || data2D.isTmpData()
+                || data2D.getColsNumber() == data2D.getColumns().size()) {
             return;
         }
-        if (data2D.getColsNumber() != data2D.getColumns().size()
-                || data2D.getRowsNumber() != data2D.getDataSize()) {
-            FxTask updateTask = new FxTask<Void>(this) {
+        FxTask updateTask = new FxTask<Void>(this) {
 
-                @Override
-                protected boolean handle() {
-                    data2D.countSize();
-                    return data2D.saveAttributes();
-                }
+            @Override
+            protected boolean handle() {
+                data2D.countPageSize();
+                return data2D.saveAttributes();
+            }
 
-                @Override
-                protected void whenSucceeded() {
-                    updateStatus();
-                }
+            @Override
+            protected void whenSucceeded() {
+                updateStatus();
+            }
 
-                @Override
-                protected void whenFailed() {
-                }
+            @Override
+            protected void whenFailed() {
+            }
 
-            };
-            start(updateTask, false);
-        }
+        };
+        start(updateTask, false);
     }
 
     @Override

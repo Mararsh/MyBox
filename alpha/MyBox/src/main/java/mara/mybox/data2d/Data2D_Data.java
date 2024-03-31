@@ -30,7 +30,7 @@ public abstract class Data2D_Data extends Data2D_Attributes {
         resetData();
         this.file = file;
         this.sheet = sheet;
-        this.dataSize = dataSize;
+        this.rowsNumber = dataSize;
         this.currentPage = currentPage;
         return this;
     }
@@ -65,7 +65,7 @@ public abstract class Data2D_Data extends Data2D_Attributes {
      */
     public Data2D_Data initFile(File file) {
         if (file != null && file.equals(this.file)) {
-            return initData(file, sheet, dataSize, currentPage);
+            return initData(file, sheet, rowsNumber, currentPage);
         } else {
             return initData(file, null, 0, 0);
         }
@@ -235,6 +235,10 @@ public abstract class Data2D_Data extends Data2D_Attributes {
         newRow.addAll(row);
         newRow.set(0, "-1");
         return newRow;
+    }
+
+    public boolean hasPage() {
+        return isValidDefinition() && pageData != null;
     }
 
     public boolean hasPageData() {

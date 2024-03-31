@@ -23,7 +23,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-12-9
  * @License Apache License Version 2.0
  */
-public class Data2DTransposeController extends BaseData2DTargetsController {
+public class Data2DTransposeController extends BaseData2DTaskTargetsController {
 
     @FXML
     protected CheckBox firstCheck;

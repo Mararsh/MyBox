@@ -53,7 +53,7 @@ public class ImageConvolutionController extends BasePixelsController {
     }
 
     @Override
-    protected boolean checkOptions() {
+    public boolean checkOptions() {
         if (!super.checkOptions()) {
             return false;
         }

@@ -95,6 +95,11 @@ public class BaseTaskController extends BaseLogs {
         if (!checkOptions()) {
             return;
         }
+        beforeTask();
+        startTask();
+    }
+
+    public void beforeTask() {
         if (task != null) {
             task.cancel();
         }
@@ -106,16 +111,12 @@ public class BaseTaskController extends BaseLogs {
         if (tabPane != null && logsTab != null) {
             tabPane.getSelectionModel().select(logsTab);
         }
-        beforeTask();
-        startTask();
-    }
-
-    public void beforeTask() {
         cancelled = false;
         successed = false;
         targetFilesCount = 0;
         targetFiles = new LinkedHashMap<>();
         initLogs();
+
     }
 
     public void startTask() {
@@ -142,14 +143,7 @@ public class BaseTaskController extends BaseLogs {
             @Override
             protected void finalAction() {
                 super.finalAction();
-                if (startButton != null) {
-                    StyleTools.setNameIcon(startButton, message("Start"), "iconStart.png");
-                    startButton.applyCss();
-                    startButton.setUserData(null);
-                }
-                updateLogs(message("Completed") + " " + message("Cost")
-                        + " " + DateTools.datetimeMsDuration(endTime, startTime), true);
-                afterTask();
+                closeTask();
             }
         };
         start(task, false, null);
@@ -161,6 +155,32 @@ public class BaseTaskController extends BaseLogs {
 
     public void afterSuccess() {
 
+    }
+
+    public void closeTask() {
+        if (startButton != null) {
+            StyleTools.setNameIcon(startButton, message("Start"), "iconStart.png");
+            startButton.applyCss();
+            startButton.setUserData(null);
+        }
+        if (startTime != null) {
+            if (endTime == null) {
+                endTime = new Date();
+            }
+            updateLogs(message("Completed") + " " + message("Cost")
+                    + " " + DateTools.datetimeMsDuration(endTime, startTime), true);
+        }
+        afterTask();
+    }
+
+    public void afterTask() {
+        recordTargetFiles();
+        if (miaoCheck != null && miaoCheck.isSelected()) {
+            SoundTools.miao3();
+        }
+        if (openCheck != null && openCheck.isSelected()) {
+            openTarget();
+        }
     }
 
     public void cancelTask() {
@@ -227,16 +247,6 @@ public class BaseTaskController extends BaseLogs {
         showLogs(MessageFormat.format(message("FilesGenerated"), lastTargetName) + " "
                 + message("Size") + ": " + FileTools.showFileSize(target.length()));
         return true;
-    }
-
-    public void afterTask() {
-        recordTargetFiles();
-        if (miaoCheck != null && miaoCheck.isSelected()) {
-            SoundTools.miao3();
-        }
-        if (openCheck != null && openCheck.isSelected()) {
-            openTarget();
-        }
     }
 
     public File lastTargetFile() {
@@ -312,6 +322,15 @@ public class BaseTaskController extends BaseLogs {
                 MyBoxLog.error(e);
             }
         }
+    }
+
+    @Override
+    public void writeLogs(String line, boolean showTime, boolean immediate) {
+        super.writeLogs(line, showTime, immediate);
+        if (tabPane == null || logsTab == null) {
+            return;
+        }
+        tabPane.getSelectionModel().select(logsTab);
     }
 
     @Override

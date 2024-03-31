@@ -44,11 +44,11 @@ import org.apache.commons.math3.stat.Frequency;
  * @License Apache License Version 2.0
  */
 public abstract class Data2D_Operations extends Data2D_Edit {
-    
+
     public static enum ObjectType {
         Columns, Rows, All
     }
-    
+
     public boolean export(Data2DExport export, List<Integer> cols) {
         if (export == null || cols == null || cols.isEmpty()) {
             return false;
@@ -56,20 +56,22 @@ public abstract class Data2D_Operations extends Data2D_Edit {
         export.setCols(cols).setTask(task).start();
         return !export.isFailed();
     }
-    
+
     public List<List<String>> allRows(List<Integer> cols, boolean rowNumber) {
         Data2DReadColumns reader = Data2DReadColumns.create(this);
         reader.setIncludeRowNumber(rowNumber)
                 .setCols(cols).setTask(task).start();
         return reader.isFailed() ? null : reader.getRows();
     }
-    
+
     public List<List<String>> allRows(boolean rowNumber) {
-        Data2DReadRows reader = Data2DReadRows.create(this);
-        reader.setIncludeRowNumber(rowNumber).setTask(task).start();
-        return reader.isFailed() ? null : reader.getRows();
+        Data2DReadRows operate = Data2DReadRows.create(this);
+        operate.setIncludeRowNumber(rowNumber)
+                .setWriteHeader(false)
+                .setTask(task).start();
+        return operate.isFailed() ? null : operate.getRows();
     }
-    
+
     public DoubleStatistic[] statisticByColumnsForCurrentPage(List<Integer> cols, DescriptiveStatistic selections) {
         try {
             if (cols == null || cols.isEmpty() || selections == null) {
@@ -94,8 +96,9 @@ public abstract class Data2D_Operations extends Data2D_Edit {
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
             }
-            MyBoxLog.error(e);
             return null;
         }
     }
@@ -141,8 +144,9 @@ public abstract class Data2D_Operations extends Data2D_Edit {
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
             }
-            MyBoxLog.error(e);
             return null;
         }
     }
@@ -171,12 +175,13 @@ public abstract class Data2D_Operations extends Data2D_Edit {
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
             }
-            MyBoxLog.error(e);
             return null;
         }
     }
-    
+
     public boolean statisticByRows(FxTask task, Data2DWriter writer,
             List<String> names, List<Integer> cols, DescriptiveStatistic selections) {
         if (writer == null || names == null || names.isEmpty() || cols == null || cols.isEmpty()) {
@@ -194,8 +199,9 @@ public abstract class Data2D_Operations extends Data2D_Edit {
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
             }
-            MyBoxLog.error(e);
             return false;
         }
     }
@@ -227,7 +233,11 @@ public abstract class Data2D_Operations extends Data2D_Edit {
         }
         return sData;
     }
-    
+
+    public List<Data2DColumn> targetColumns(List<Integer> cols, boolean rowNumber) {
+        return targetColumns(cols, null, rowNumber, null);
+    }
+
     public List<Data2DColumn> targetColumns(List<Integer> cols, List<Integer> otherCols, boolean rowNumber, String suffix) {
         List<Data2DColumn> targetColumns = new ArrayList<>();
         if (rowNumber) {
@@ -248,7 +258,7 @@ public abstract class Data2D_Operations extends Data2D_Edit {
         }
         return fixColumnNames(targetColumns);
     }
-    
+
     public DataFileCSV copy(FxTask task, List<Integer> cols,
             boolean includeRowNumber, boolean includeColName, boolean formatValues) {
         if (cols == null || cols.isEmpty()) {
@@ -256,29 +266,30 @@ public abstract class Data2D_Operations extends Data2D_Edit {
         }
         try {
             DataFileCSVWriter writer = new DataFileCSVWriter();
-            if (copy(task, writer, cols, includeRowNumber, includeColName, formatValues, InvalidAs.Blank) < 0) {
+            List<Data2DColumn> targetColumns = targetColumns(cols, includeRowNumber);
+            writer.setColumns(targetColumns)
+                    .setHeaderNames(Data2DColumnTools.toNames(targetColumns))
+                    .setWriteHeader(includeColName);
+            if (copy(task, writer, cols, includeRowNumber, formatValues, InvalidAs.Blank) < 0) {
                 return null;
             }
             return (DataFileCSV) writer.getTargetData();
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
             }
-            MyBoxLog.error(e);
             return null;
         }
     }
-    
+
     public long copy(FxTask task, Data2DWriter writer, List<Integer> cols,
-            boolean includeRowNumber, boolean includeColName,
-            boolean formatValues, InvalidAs invalidAs) {
+            boolean includeRowNumber, boolean formatValues, InvalidAs invalidAs) {
         try {
             if (writer == null || cols == null || cols.isEmpty()) {
                 return -1;
             }
-            List<Data2DColumn> targetColumns = targetColumns(cols, null, includeRowNumber, null);
-            writer.setColumns(targetColumns)
-                    .setHeaderNames(Data2DColumnTools.toNames(targetColumns));
             Data2DOperate operate = Data2DCopy.create(this)
                     .setFormatValues(formatValues)
                     .setIncludeRowNumber(includeRowNumber)
@@ -293,12 +304,13 @@ public abstract class Data2D_Operations extends Data2D_Edit {
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
             }
-            MyBoxLog.error(e);
             return -3;
         }
     }
-    
+
     public List<DataFileCSV> splitBySize(List<Integer> cols, boolean includeRowNumber, int splitSize) {
         if (cols == null || cols.isEmpty()) {
             return null;
@@ -308,7 +320,7 @@ public abstract class Data2D_Operations extends Data2D_Edit {
                 .setCols(cols).setTask(task).start();
         return reader.getFiles();
     }
-    
+
     public List<DataFileCSV> splitByList(List<Integer> cols, boolean includeRowNumber, List<Integer> list) {
         if (cols == null || cols.isEmpty() || list == null || list.isEmpty()) {
             return null;
@@ -332,8 +344,8 @@ public abstract class Data2D_Operations extends Data2D_Edit {
                 if (start <= 0) {
                     start = 1;
                 }
-                if (end > dataSize) {
-                    end = dataSize;
+                if (end > rowsNumber) {
+                    end = rowsNumber;
                 }
                 if (start > end) {
                     continue;
@@ -348,8 +360,9 @@ public abstract class Data2D_Operations extends Data2D_Edit {
                 } catch (Exception e) {
                     if (task != null) {
                         task.setError(e.toString());
+                    } else {
+                        MyBoxLog.error(e);
                     }
-                    MyBoxLog.error(e);
                     return null;
                 }
                 DataFileCSV dataFileCSV = new DataFileCSV();
@@ -374,9 +387,9 @@ public abstract class Data2D_Operations extends Data2D_Edit {
             }
             return null;
         }
-        
+
     }
-    
+
     public boolean rowExpression(FxTask task, Data2DWriter writer,
             String script, String name, boolean errorContinue,
             List<Integer> cols, boolean includeRowNumber, boolean includeColName) {
@@ -398,12 +411,13 @@ public abstract class Data2D_Operations extends Data2D_Edit {
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
             }
-            MyBoxLog.error(e);
             return false;
         }
     }
-    
+
     public List<Data2DColumn> makePercentageColumns(List<Integer> cols, List<Integer> otherCols, ObjectType objectType) {
         if (objectType == null) {
             objectType = ObjectType.Columns;
@@ -427,7 +441,7 @@ public abstract class Data2D_Operations extends Data2D_Edit {
         }
         return fixColumnNames(targetColumns);
     }
-    
+
     public boolean percentageColumns(FxTask task, Data2DWriter writer,
             List<Integer> cols, List<Integer> otherCols,
             int scale, String toNegative, InvalidAs invalidAs) {
@@ -469,16 +483,17 @@ public abstract class Data2D_Operations extends Data2D_Edit {
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
             }
-            MyBoxLog.error(e);
             return false;
         }
     }
-    
+
     public boolean percentageAll(FxTask task, Data2DWriter writer,
             List<Integer> cols, List<Integer> otherCols,
             int scale, String toNegative, InvalidAs invalidAs) {
-        
+
         try {
             if (writer == null || cols == null || cols.isEmpty()) {
                 return false;
@@ -517,16 +532,17 @@ public abstract class Data2D_Operations extends Data2D_Edit {
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
             }
-            MyBoxLog.error(e);
             return false;
         }
     }
-    
+
     public boolean percentageRows(FxTask task, Data2DWriter writer,
             List<Integer> cols, List<Integer> otherCols,
             int scale, String toNegative, InvalidAs invalidAs) {
-        
+
         try {
             if (writer == null || cols == null || cols.isEmpty()) {
                 return false;
@@ -544,12 +560,13 @@ public abstract class Data2D_Operations extends Data2D_Edit {
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
             }
-            MyBoxLog.error(e);
             return false;
         }
     }
-    
+
     public boolean frequency(FxTask task, Data2DWriter writer,
             Frequency frequency, List<Data2DColumn> outputColumns, int col, int scale) {
         try {
@@ -567,12 +584,13 @@ public abstract class Data2D_Operations extends Data2D_Edit {
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
             }
-            MyBoxLog.error(e);
             return false;
         }
     }
-    
+
     public boolean normalizeMinMaxColumns(FxTask task, Data2DWriter writer,
             List<Integer> cols, List<Integer> otherCols,
             double from, double to, boolean rowNumber, boolean colName, int scale, InvalidAs invalidAs) {
@@ -618,16 +636,17 @@ public abstract class Data2D_Operations extends Data2D_Edit {
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
             }
-            MyBoxLog.error(e);
             return false;
         }
     }
-    
+
     public boolean normalizeSumColumns(FxTask task, Data2DWriter writer,
             List<Integer> cols, List<Integer> otherCols,
             boolean rowNumber, boolean colName, int scale, InvalidAs invalidAs) {
-        
+
         try {
             if (writer == null || cols == null || cols.isEmpty()) {
                 return false;
@@ -671,12 +690,13 @@ public abstract class Data2D_Operations extends Data2D_Edit {
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
             }
-            MyBoxLog.error(e);
             return false;
         }
     }
-    
+
     public boolean normalizeZscoreColumns(FxTask task, Data2DWriter writer,
             List<Integer> cols, List<Integer> otherCols,
             boolean rowNumber, boolean colName, int scale, InvalidAs invalidAs) {
@@ -724,12 +744,13 @@ public abstract class Data2D_Operations extends Data2D_Edit {
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
             }
-            MyBoxLog.error(e);
             return false;
         }
     }
-    
+
     public boolean normalizeMinMaxAll(FxTask task, Data2DWriter writer,
             List<Integer> cols, List<Integer> otherCols,
             double from, double to, boolean rowNumber, boolean colName, int scale, InvalidAs invalidAs) {
@@ -769,12 +790,13 @@ public abstract class Data2D_Operations extends Data2D_Edit {
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
             }
-            MyBoxLog.error(e);
             return false;
         }
     }
-    
+
     public boolean normalizeSumAll(FxTask task, Data2DWriter writer,
             List<Integer> cols, List<Integer> otherCols,
             boolean rowNumber, boolean colName, int scale, InvalidAs invalidAs) {
@@ -815,12 +837,13 @@ public abstract class Data2D_Operations extends Data2D_Edit {
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
             }
-            MyBoxLog.error(e);
             return false;
         }
     }
-    
+
     public boolean normalizeZscoreAll(FxTask task, Data2DWriter writer,
             List<Integer> cols, List<Integer> otherCols,
             boolean rowNumber, boolean colName, int scale, InvalidAs invalidAs) {
@@ -865,12 +888,13 @@ public abstract class Data2D_Operations extends Data2D_Edit {
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
             }
-            MyBoxLog.error(e);
             return false;
         }
     }
-    
+
     public boolean normalizeRows(FxTask task, Data2DWriter writer,
             Normalization.Algorithm a, List<Integer> cols, List<Integer> otherCols,
             double from, double to, boolean rowNumber, boolean colName,
@@ -894,12 +918,13 @@ public abstract class Data2D_Operations extends Data2D_Edit {
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
             }
-            MyBoxLog.error(e);
             return false;
         }
     }
-    
+
     public DataFileCSV simpleLinearRegression(String dname, List<Integer> cols,
             SimpleLinearRegression simpleRegression, boolean writeFile) {
         if (cols == null || cols.isEmpty() || simpleRegression == null) {
@@ -917,17 +942,18 @@ public abstract class Data2D_Operations extends Data2D_Edit {
                 }
                 csvPrinter.printRecord(names);
                 tcolsNumber = names.size();
-                
+
                 operator = Data2DSimpleLinearRegression.create(this)
                         .setSimpleRegression(simpleRegression)
                         //                        .setCsvPrinter(csvPrinter)
                         .setCols(cols).setScale(scale).setTask(task).start();
-                
+
             } catch (Exception e) {
                 if (task != null) {
                     task.setError(e.toString());
+                } else {
+                    MyBoxLog.error(e);
                 }
-                MyBoxLog.error(e);
                 return null;
             }
             if (operator != null && !operator.isFailed() && csvFile != null && csvFile.exists()) {
@@ -947,5 +973,5 @@ public abstract class Data2D_Operations extends Data2D_Edit {
             return null;
         }
     }
-    
+
 }

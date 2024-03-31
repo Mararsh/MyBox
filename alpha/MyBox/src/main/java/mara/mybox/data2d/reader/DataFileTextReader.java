@@ -35,7 +35,7 @@ public class DataFileTextReader extends Data2DReader {
             textReader = null;
             reader.close();
         } catch (Exception e) {
-            handleError(e.toString());
+            showError(e.toString());
             setFailed();
         }
     }
@@ -61,7 +61,7 @@ public class DataFileTextReader extends Data2DReader {
                 return;
             }
         } catch (Exception e) {
-            handleError(e.toString());
+            showError(e.toString());
         }
     }
 
@@ -82,7 +82,7 @@ public class DataFileTextReader extends Data2DReader {
                 }
             }
         } catch (Exception e) {
-            handleError(e.toString());
+            showError(e.toString());
             setFailed();
         }
     }
@@ -118,7 +118,7 @@ public class DataFileTextReader extends Data2DReader {
                 makePageRow();
             }
         } catch (Exception e) {
-            handleError(e.toString());
+            showError(e.toString());
             setFailed();
         }
     }
@@ -151,7 +151,7 @@ public class DataFileTextReader extends Data2DReader {
                 }
             }
         } catch (Exception e) {
-            handleError(e.toString());
+            showError(e.toString());
             setFailed();
         }
     }

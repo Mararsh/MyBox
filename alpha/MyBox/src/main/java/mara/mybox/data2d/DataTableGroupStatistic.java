@@ -299,13 +299,13 @@ public class DataTableGroupStatistic {
 
             groupData.drop(conn);
 
-            statisticData.setDataSize(statisticRowsCount).setRowsNumber(statisticRowsCount);
+            statisticData.setRowsNumber(statisticRowsCount);
             Data2D.saveAttributes(conn, statisticData, statisticData.getColumns());
 
             if (countChart) {
                 chartPrinter.flush();
                 chartPrinter.close();
-                chartData.setDataSize(chartRowsCount).setRowsNumber(chartRowsCount);
+                chartData.setRowsNumber(chartRowsCount);
                 Data2D.saveAttributes(conn, chartData, chartData.getColumns());
             }
 

@@ -68,7 +68,7 @@ public abstract class Data2D extends Data2D_Operations {
         int tableRowsNumber = tableRowsNumber();
         if (isMutiplePages()) {
             row = new ArrayList<>();
-            row.addAll(Arrays.asList(message("RowsNumberInFile"), dataSize + ""));
+            row.addAll(Arrays.asList(message("RowsNumberInFile"), rowsNumber + ""));
             infoTable.add(row);
         } else {
             row = new ArrayList<>();

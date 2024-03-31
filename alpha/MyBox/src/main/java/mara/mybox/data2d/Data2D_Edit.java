@@ -162,13 +162,12 @@ public abstract class Data2D_Edit extends Data2D_Filter {
     }
 
     public long readTotal() {
-        dataSize = 0;
+        rowsNumber = -1;
         Data2DOperate opearte = Data2DReadTotal.create(this)
                 .setTask(backgroundTask).start();
         if (opearte != null) {
-            dataSize = opearte.getSourceRowIndex();
+            rowsNumber = opearte.getSourceRowIndex();
         }
-        rowsNumber = dataSize;
         try (Connection conn = DerbyBase.getConnection()) {
             tableData2DDefinition.updateData(conn, this);
         } catch (Exception e) {
@@ -177,7 +176,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
             }
             MyBoxLog.error(e);
         }
-        return dataSize;
+        return rowsNumber;
     }
 
     public List<List<String>> readPageData(Connection conn) {
@@ -244,9 +243,9 @@ public abstract class Data2D_Edit extends Data2D_Filter {
         }
     }
 
-    public void countSize() {
+    public void countPageSize() {
         try {
-            rowsNumber = dataSize + (tableRowsNumber() - (endRowOfCurrentPage - startRowOfCurrentPage));
+            rowsNumber = rowsNumber + (tableRowsNumber() - (endRowOfCurrentPage - startRowOfCurrentPage));
             colsNumber = tableColsNumber();
             if (colsNumber <= 0) {
                 hasHeader = false;
@@ -272,8 +271,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
             if (operate.isFailed()) {
                 return -3;
             }
-            dataSize = rowsNumber;
-            return dataSize;
+            return rowsNumber;
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());

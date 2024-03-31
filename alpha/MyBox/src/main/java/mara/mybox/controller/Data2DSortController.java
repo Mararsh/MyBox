@@ -13,7 +13,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-12-25
  * @License Apache License Version 2.0
  */
-public class Data2DSortController extends BaseData2DTargetsController {
+public class Data2DSortController extends BaseData2DTaskTargetsController {
 
     public Data2DSortController() {
         baseTitle = message("Sort");
@@ -39,7 +39,7 @@ public class Data2DSortController extends BaseData2DTargetsController {
 
     @Override
     public boolean handleRows() {
-        outputData = sortedData(checkedColsIndices, showRowNumber());
+        outputData = sortPage(checkedColsIndices, showRowNumber());
         return outputData != null && !outputData.isEmpty();
     }
 

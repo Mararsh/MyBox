@@ -33,7 +33,7 @@ public class DataTableReader extends Data2DReader {
         try {
             names = readerTable.columnNames();
         } catch (Exception e) {
-            handleError(e.toString());
+            showError(e.toString());
         }
     }
 
@@ -42,7 +42,7 @@ public class DataTableReader extends Data2DReader {
         try {
             sourceIndex = readerTableData2D.size(conn());
         } catch (Exception e) {
-            handleError(e.toString());
+            showError(e.toString());
             setFailed();
         }
     }
@@ -60,7 +60,7 @@ public class DataTableReader extends Data2DReader {
                 makePageRow();
             }
         } catch (Exception e) {
-            handleError(e.toString());
+            showError(e.toString());
             setFailed();
         }
     }
@@ -88,12 +88,12 @@ public class DataTableReader extends Data2DReader {
 
                     tableIndex++;
                 } catch (Exception e) {  // skip  bad lines
-//                    handleError(e.toString());
+//                    showError(e.toString());
 //                    setFailed();
                 }
             }
         } catch (Exception e) {
-            handleError(e.toString());
+            showError(e.toString());
             setFailed();
         }
     }
@@ -102,7 +102,7 @@ public class DataTableReader extends Data2DReader {
         try {
             sourceRow = row.toStrings(readerTable.getColumns());
         } catch (Exception e) {
-            handleError(e.toString());
+            showError(e.toString());
             setFailed();
         }
     }

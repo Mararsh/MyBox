@@ -1525,7 +1525,7 @@ public class DownloadFirstLevelLinksController extends BaseTablePagesController<
         }
     }
 
-    protected void updateLogs(final String line) {
+    public void updateLogs(final String line) {
         Platform.runLater(() -> {
             try {
                 String newLogs = DateTools.datetimeToString(new Date()) + "  " + line + "\n";
@@ -1542,7 +1542,7 @@ public class DownloadFirstLevelLinksController extends BaseTablePagesController<
     }
 
     @FXML
-    protected void clearLogs() {
+    public void clearLogs() {
         logsTextArea.setText("");
     }
 

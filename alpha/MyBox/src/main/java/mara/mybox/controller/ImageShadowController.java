@@ -43,7 +43,7 @@ public class ImageShadowController extends BaseImageEditController {
     }
 
     @Override
-    protected boolean checkOptions() {
+    public boolean checkOptions() {
         if (!super.checkOptions()) {
             return false;
         }

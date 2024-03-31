@@ -69,7 +69,8 @@ public abstract class Data2DReader {
         rows = new ArrayList<>();
         sourceRow = new ArrayList<>();
         sourceData.startFilter();
-        if (scanWholeFile || sourceData.isMutiplePages() || !sourceData.isDataLoaded()) {
+        if (scanWholeFile || !sourceData.hasPage()
+                || sourceData.isMutiplePages() || !sourceData.isDataLoaded()) {
             scanFile();
         } else {
             scanPage();
@@ -95,7 +96,7 @@ public abstract class Data2DReader {
                 handleRow();
             }
         } catch (Exception e) {  // skip  bad lines
-//            handleError(e.toString());
+//            showError(e.toString());
 //            setFailed();
         }
     }
@@ -104,7 +105,7 @@ public abstract class Data2DReader {
         try {
             operate.handleRow(sourceRow, sourceIndex);
         } catch (Exception e) {
-            handleError(e.toString());
+            showError(e.toString());
         }
     }
 
@@ -124,7 +125,7 @@ public abstract class Data2DReader {
             sourceData.setHasHeader(readerHasHeader);
             stop();
         } catch (Exception e) {
-            handleError(e.toString());
+            showError(e.toString());
         }
     }
 
@@ -144,7 +145,7 @@ public abstract class Data2DReader {
         try {
             sourceData.stopFilter();
         } catch (Exception e) {
-            handleError(e.toString());
+            showError(e.toString());
         }
     }
 
@@ -173,7 +174,7 @@ public abstract class Data2DReader {
         }
     }
 
-    public void handleError(String error) {
+    public void showError(String error) {
         if (operate != null) {
             operate.showError(error);
         }

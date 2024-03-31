@@ -45,9 +45,10 @@ public abstract class Data2DWriter {
     protected List<Data2DColumn> columns;
     protected boolean writeHeader, created,
             formatValues, recordTargetFile, recordTargetData;
-    protected String indent = "    ", dataName, fileSuffix;
+    protected String indent = "    ", dataName, fileSuffix, value;
     protected long targetRowIndex;
     protected Connection conn;
+    protected int rowEnd;
 
     public Data2DWriter() {
         operate = null;
@@ -78,16 +79,21 @@ public abstract class Data2DWriter {
     public void writeRow(List<String> inRow) {
         try {
             targetRow = null;
-            if (inRow == null || inRow.size() != columns.size()) {
+            if (inRow == null || inRow.isEmpty()) {
                 return;
             }
             targetRow = new ArrayList<>();
+            rowEnd = inRow.size() - 1;
             for (int i = 0; i < columns.size(); i++) {
-                String v = inRow.get(i);
-                if (formatValues && v != null) {
-                    v = columns.get(i).format(v);
+                if (i > rowEnd) {
+                    value = null;
+                } else {
+                    value = inRow.get(i);
+                    if (formatValues && value != null) {
+                        value = columns.get(i).format(value);
+                    }
                 }
-                targetRow.add(v);
+                targetRow.add(value);
             }
             printTargetRow();
             targetRowIndex++;

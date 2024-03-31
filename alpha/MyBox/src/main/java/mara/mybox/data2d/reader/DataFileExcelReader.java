@@ -53,7 +53,7 @@ public class DataFileExcelReader extends Data2DReader {
             operate.handleData();
             wb.close();
         } catch (Exception e) {
-            handleError(e.toString());
+            showError(e.toString());
             setFailed();
         }
     }
@@ -151,7 +151,7 @@ public class DataFileExcelReader extends Data2DReader {
                 }
 
             } catch (Exception e) {  // skip  bad lines
-//                    handleError(e.toString());
+//                    showError(e.toString());
 //                    setFailed();
             }
         }
@@ -173,7 +173,7 @@ public class DataFileExcelReader extends Data2DReader {
                 sourceRow.add(v);
             }
         } catch (Exception e) {
-            handleError(e.toString());
+            showError(e.toString());
         }
     }
 

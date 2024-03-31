@@ -40,7 +40,7 @@ public class Data2DSetValue extends Data2DOperate {
             return false;
         }
         setValue = v;
-        digit = setValue.countFinalDigit(sourceData.getDataSize());
+        digit = setValue.countFinalDigit(sourceData.getRowsNumber());
         dataIndex = setValue.getStart();
         dataValue = setValue.getValue();
         random = new Random();

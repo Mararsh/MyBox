@@ -19,26 +19,13 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-12-28
  * @License Apache License Version 2.0
  */
-public class Data2DNormalizeController extends BaseData2DTargetsController {
+public class Data2DNormalizeController extends BaseData2DTaskTargetsController {
 
     @FXML
     protected ControlData2DNormalize normalizeController;
 
     public Data2DNormalizeController() {
         baseTitle = message("Normalize");
-    }
-
-    @Override
-    public boolean initData() {
-        try {
-            checkObject();
-            checkInvalidAs();
-
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return false;
-        }
     }
 
     @Override
@@ -57,7 +44,7 @@ public class Data2DNormalizeController extends BaseData2DTargetsController {
             String[][] matrix = new String[rowsNumber][colsNumber];
             for (int r = 0; r < rowsNumber; r++) {
                 int row = filteredRowsIndices.get(r);
-                List<String> tableRow = tableController.tableData.get(row);
+                List<String> tableRow = dataController.tableData.get(row);
                 for (int c = 0; c < colsNumber; c++) {
                     int col = checkedColsIndices.get(c);
                     matrix[r][c] = tableRow.get(col + 1);
@@ -104,7 +91,7 @@ public class Data2DNormalizeController extends BaseData2DTargetsController {
                 }
                 if (otherColsNumber > 0) {
                     int rowIndex = filteredRowsIndices.get(r);
-                    List<String> tableRow = tableController.tableData.get(rowIndex);
+                    List<String> tableRow = dataController.tableData.get(rowIndex);
                     for (int c = 0; c < otherColsNumber; c++) {
                         row.add(tableRow.get(otherColsIndices.get(c) + 1));
                     }

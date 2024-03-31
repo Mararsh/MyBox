@@ -153,7 +153,7 @@ public class BaseImageEditController extends BaseShapeController {
         }
     }
 
-    protected boolean checkOptions() {
+    public boolean checkOptions() {
         if (imageController == null || !imageController.isShowing()) {
             close();
             return false;

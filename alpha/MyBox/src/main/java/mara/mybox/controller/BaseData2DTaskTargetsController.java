@@ -23,7 +23,9 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-9-4
  * @License Apache License Version 2.0
  */
-public abstract class BaseData2DTargetsController extends BaseData2DHandleController {
+public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskController {
+
+    protected Data2DWriter writer;
 
     @FXML
     protected ControlData2DTarget targetController;
@@ -31,31 +33,12 @@ public abstract class BaseData2DTargetsController extends BaseData2DHandleContro
     protected ComboBox<String> colSelector;
 
     @Override
-    public void initControls() {
+    public void setParameters(BaseData2DLoadController controller) {
         try {
-            super.initControls();
-
-            if (colSelector != null) {
-                colSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                    @Override
-                    public void changed(ObservableValue ov, String oldValue, String newValue) {
-                        checkOptions();
-                    }
-                });
-            }
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    @Override
-    public void setParameters(BaseData2DLoadController tableController) {
-        try {
-            super.setParameters(tableController);
+            super.setParameters(controller);
 
             if (targetController != null) {
-                targetController.setParameters(this, tableController);
+                targetController.setParameters(this, controller);
             }
 
             if (rowNumberCheck != null) {
@@ -77,13 +60,22 @@ public abstract class BaseData2DTargetsController extends BaseData2DHandleContro
                 });
             }
 
+            if (colSelector != null) {
+                colSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                    @Override
+                    public void changed(ObservableValue ov, String oldValue, String newValue) {
+                        checkOptions();
+                    }
+                });
+            }
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
     @Override
-    public void refreshControls() {
+    public void sourceChanged() {
         try {
             if (colSelector != null) {
                 List<String> names = data2D.columnNames();
@@ -102,23 +94,17 @@ public abstract class BaseData2DTargetsController extends BaseData2DHandleContro
                 isSettingValues = false;
             }
 
-            super.refreshControls();
+            super.sourceChanged();
 
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
-    public void rowNumberCheckChanged() {
-        UserConfig.setBoolean(baseName + "CopyRowNumber", rowNumberCheck.isSelected());
-    }
-
     @Override
     public void objectChanged() {
         super.objectChanged();
-        if (targetController != null) {
-            targetController.setNotInTable(isAllPages());
-        }
+        targetController.setNotInTable(isAllPages());
     }
 
     // Check when selections are changed
@@ -128,9 +114,18 @@ public abstract class BaseData2DTargetsController extends BaseData2DHandleContro
             if (isSettingValues) {
                 return true;
             }
-            if (targetController != null && targetController.format == null) {
+            writer = null;
+            if (targetController.format == null) {
                 popError(message("SelectToHandle") + ": " + message("Target"));
                 return false;
+            }
+            if (isAllPages()) {
+                writer = targetController.pickWriter();
+                if (writer == null) {
+                    popError(message("Invalid") + ": " + message("Target"));
+                    return false;
+                }
+                writer.setWriteHeader(showColNames());
             }
             return super.checkParameters();
         } catch (Exception e) {
@@ -153,14 +148,6 @@ public abstract class BaseData2DTargetsController extends BaseData2DHandleContro
     }
 
     public void handleAllTask() {
-        if (targetController == null) {
-            return;
-        }
-        Data2DWriter writer = targetController.pickWriter();
-        if (writer == null) {
-            popError(message("Invalid") + ": " + message("Target"));
-            return;
-        }
         if (task != null) {
             task.cancel();
         }
@@ -187,10 +174,11 @@ public abstract class BaseData2DTargetsController extends BaseData2DHandleContro
             protected void finalAction() {
                 super.finalAction();
                 data2D.stopTask();
+                closeTask();
             }
 
         };
-        start(task);
+        start(task, false, null);
     }
 
     public boolean handleAllData(FxTask currentTask, Data2DWriter writer) {
@@ -198,6 +186,9 @@ public abstract class BaseData2DTargetsController extends BaseData2DHandleContro
     }
 
     public void handleRowsTask() {
+        if (task != null) {
+            task.cancel();
+        }
         task = new FxSingletonTask<Void>(this) {
 
             @Override
@@ -225,10 +216,11 @@ public abstract class BaseData2DTargetsController extends BaseData2DHandleContro
                 if (targetController != null) {
                     targetController.refreshControls();
                 }
+                closeTask();
             }
 
         };
-        start(task);
+        start(task, false, null);
     }
 
     public boolean handleRows() {
@@ -269,26 +261,26 @@ public abstract class BaseData2DTargetsController extends BaseData2DHandleContro
             }
             int row = targetController.row();
             int col = targetController.col();
-            int rowsNumber = tableController.data2D.tableRowsNumber();
-            int colsNumber = tableController.data2D.tableColsNumber();
+            int rowsNumber = dataController.data2D.tableRowsNumber();
+            int colsNumber = dataController.data2D.tableColsNumber();
             if (row < 0 || row >= rowsNumber || col < 0 || col >= colsNumber) {
                 popError(message("InvalidParameters"));
                 return false;
             }
-            tableController.isSettingValues = true;
+            dataController.isSettingValues = true;
             if (targetController.replaceRadio.isSelected()) {
                 for (int r = row; r < Math.min(row + outputData.size(), rowsNumber); r++) {
-                    List<String> tableRow = tableController.tableData.get(r);
+                    List<String> tableRow = dataController.tableData.get(r);
                     List<String> dataRow = outputData.get(r - row);
                     for (int c = col; c < Math.min(col + dataRow.size(), colsNumber); c++) {
                         tableRow.set(c + 1, dataRow.get(c - col));
                     }
-                    tableController.tableData.set(r, tableRow);
+                    dataController.tableData.set(r, tableRow);
                 }
             } else {
                 List<List<String>> newRows = new ArrayList<>();
                 for (int r = 0; r < outputData.size(); r++) {
-                    List<String> newRow = tableController.data2D.newRow();
+                    List<String> newRow = dataController.data2D.newRow();
                     List<String> dataRow = outputData.get(r);
                     for (int c = col; c < Math.min(col + dataRow.size(), colsNumber); c++) {
                         newRow.set(c + 1, dataRow.get(c - col));
@@ -296,12 +288,12 @@ public abstract class BaseData2DTargetsController extends BaseData2DHandleContro
                     newRows.add(newRow);
                 }
                 int index = targetController.insertRadio.isSelected() ? row : row + 1;
-                tableController.tableData.addAll(index, newRows);
+                dataController.tableData.addAll(index, newRows);
             }
-            tableController.tableView.refresh();
-            tableController.isSettingValues = false;
-            tableController.tableChanged(true);
-            tableController.requestMouse();
+            dataController.tableView.refresh();
+            dataController.isSettingValues = false;
+            dataController.tableChanged(true);
+            dataController.requestMouse();
             popDone();
             return true;
         } catch (Exception e) {

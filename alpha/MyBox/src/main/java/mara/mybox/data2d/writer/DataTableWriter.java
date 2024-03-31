@@ -68,7 +68,7 @@ public class DataTableWriter extends Data2DWriter {
             if (targetRow == null || conn == null || targetTable == null) {
                 return;
             }
-            Data2DRow data2DRow = targetTable.makeRow(targetRow, invalidAs(), targetRowIndex);
+            Data2DRow data2DRow = targetTable.makeRow(targetRow, invalidAs());
             if (data2DRow == null || data2DRow.isNoColumn()) {
                 return;
             }

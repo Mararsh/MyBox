@@ -265,7 +265,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSelectRowsCon
     }
 
     // Check when selections are changed
-    public boolean checkOptions() {
+    public boolean checkParameters() {
         try {
             if (isSettingValues) {
                 return true;
@@ -304,10 +304,36 @@ public abstract class BaseData2DHandleController extends BaseData2DSelectRowsCon
         }
     }
 
+    @Override
+    public boolean checkOptions() {
+        return checkParameters() && initData();
+    }
+
+    @FXML
+    @Override
+    public void startAction() {
+        if (!checkOptions() || !initData()) {
+            return;
+        }
+        showRightPane();
+        preprocessStatistic();
+    }
+
+    @Override
+    public void beforeTask() {
+        super.beforeTask();
+        showRightPane();
+    }
+
+    @Override
+    public boolean doTask(FxTask currentTask) {
+        return true;
+    }
+
     @FXML
     @Override
     public void okAction() {
-        if (!checkOptions() || !initData()) {
+        if (!checkOptions()) {
             return;
         }
         showRightPane();
@@ -432,15 +458,12 @@ public abstract class BaseData2DHandleController extends BaseData2DSelectRowsCon
             tmpTable.drop();
             return csvData;
         } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            MyBoxLog.error(e);
+            displayError(e.toString());
             return null;
         }
     }
 
-    public List<List<String>> sortedData(List<Integer> colIndices, boolean needRowNumber) {
+    public List<List<String>> sortPage(List<Integer> colIndices, boolean needRowNumber) {
         try {
             if (data2D == null) {
                 return null;
@@ -460,10 +483,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSelectRowsCon
             outputColumns = csvData.columns;
             return outputData;
         } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            MyBoxLog.error(e);
+            displayError(e.toString());
             return null;
         }
     }
@@ -512,10 +532,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSelectRowsCon
             tmp2D.stopFilter();
             return tmpTable;
         } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            MyBoxLog.error(e);
+            displayError(e.toString());
             return null;
         }
     }
@@ -530,9 +547,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSelectRowsCon
             if (tmpTable == null) {
                 return null;
             }
-            if (task != null) {
-                task.setInfo(message("GroupBy") + "...");
-            }
+            displayInfo(message("GroupBy") + "...");
             DataTableGroup group = new DataTableGroup(data2D, groupController, tmpTable)
                     .setOrders(orders).setMax(max)
                     .setSourcePickIndice(colIndices)
@@ -542,10 +557,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSelectRowsCon
                     .setTargetType(targetType);
             return group;
         } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            MyBoxLog.error(e);
+            displayError(e.toString());
             return null;
         }
     }

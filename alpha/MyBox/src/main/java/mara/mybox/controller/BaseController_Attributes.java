@@ -32,6 +32,7 @@ import javafx.stage.Window;
 import mara.mybox.db.data.VisitHistory.FileType;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.db.table.TableFileBackup;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.PopTools;
@@ -412,6 +413,14 @@ public abstract class BaseController_Attributes {
     /*
         task
      */
+    public boolean taskWorking() {
+        return task != null && task.isWorking();
+    }
+
+    public boolean taskQuit() {
+        return task != null && !task.isWorking();
+    }
+
     public FxTask<Void> getTask() {
         return task;
     }
@@ -555,28 +564,44 @@ public abstract class BaseController_Attributes {
         popWarn(text, UserConfig.textDuration(), UserConfig.textSize());
     }
 
-    public void displayInfo(String text) {
-        if (task != null && !task.isQuit()) {
-            if (this instanceof BaseLogs) {
-                ((BaseLogs) this).updateLogs(text);
-            } else {
-                task.setInfo(text);
-            }
-        } else {
+    public void handleInfo(String text, boolean pop) {
+        if (this instanceof BaseLogs) {
+            ((BaseLogs) this).updateLogs(text);
+        } else if (task != null && task.isWorking()) {
+            task.setInfo(text);
+        } else if (pop) {
             popInformation(text);
+        } else {
+            MyBoxLog.console(text);
         }
     }
 
-    public void displayError(String text) {
-        if (task != null && !task.isQuit()) {
-            if (this instanceof BaseLogs) {
-                ((BaseLogs) this).updateLogs(text, true, true);
-            } else {
-                task.setError(text);
-            }
-        } else {
+    public void handleError(String text, boolean pop) {
+        if (this instanceof BaseLogs) {
+            ((BaseLogs) this).updateLogs(text, true, true);
+        } else if (task != null && task.isWorking()) {
+            task.setError(text);
+        } else if (pop) {
             popError(text);
+        } else {
+            MyBoxLog.error(text);
         }
+    }
+
+    public void setInfo(String text) {
+        handleInfo(text, false);
+    }
+
+    public void displayInfo(String text) {
+        handleInfo(text, true);
+    }
+
+    public void setError(String text) {
+        handleError(text, false);
+    }
+
+    public void displayError(String text) {
+        handleError(text, true);
     }
 
     @FXML

@@ -113,42 +113,50 @@ public class BaseLogs extends BaseController {
     }
 
     public void updateLogs(String line, boolean showTime, boolean immediate) {
-        if (logsTextArea == null || line == null) {
+        if (line == null) {
+            return;
+        }
+        if (logsTextArea == null) {
+            popInformation(line);
             return;
         }
         Platform.runLater(() -> {
-            try {
-                synchronized (lock) {
-                    if (newLogs == null) {
-                        newLogs = new StringBuffer();
-                    }
-                    if (showTime) {
-                        newLogs.append(DateTools.datetimeToString(new Date())).append("  ");
-                    }
-                    newLogs.append(line).append("\n");
-                    logsNewlines++;
-                    long ctime = new Date().getTime();
-                    if (immediate || logsNewlines > 50 || ctime - lastLogTime > 3000) {
-                        String s = newLogs.toString();
-                        logsTotalchars += s.length();
-                        logsTextArea.appendText(s);
-                        newLogs = new StringBuffer();
-                        logsTotalLines += logsNewlines;
-                        logsNewlines = 0;
-                        lastLogTime = ctime;
-                        int extra = (int) (logsTotalchars - logsMaxChars);
-                        if (extra > 0) {
-                            logsTextArea.deleteText(0, extra);
-                            logsTotalchars = logsMaxChars;
-                        }
-                        logsTextArea.selectEnd();
-                        logsTextArea.deselect();
-                    }
-                }
-            } catch (Exception e) {
-                MyBoxLog.debug(e);
-            }
+            writeLogs(line, showTime, immediate);
         });
+    }
+
+    public void writeLogs(String line, boolean showTime, boolean immediate) {
+        try {
+            synchronized (lock) {
+                if (newLogs == null) {
+                    newLogs = new StringBuffer();
+                }
+                if (showTime) {
+                    newLogs.append(DateTools.datetimeToString(new Date())).append("  ");
+                }
+                newLogs.append(line).append("\n");
+                logsNewlines++;
+                long ctime = new Date().getTime();
+                if (immediate || logsNewlines > 50 || ctime - lastLogTime > 3000) {
+                    String s = newLogs.toString();
+                    logsTotalchars += s.length();
+                    logsTextArea.appendText(s);
+                    newLogs = new StringBuffer();
+                    logsTotalLines += logsNewlines;
+                    logsNewlines = 0;
+                    lastLogTime = ctime;
+                    int extra = (int) (logsTotalchars - logsMaxChars);
+                    if (extra > 0) {
+                        logsTextArea.deleteText(0, extra);
+                        logsTotalchars = logsMaxChars;
+                    }
+                    logsTextArea.selectEnd();
+                    logsTextArea.deselect();
+                }
+            }
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
     }
 
 }

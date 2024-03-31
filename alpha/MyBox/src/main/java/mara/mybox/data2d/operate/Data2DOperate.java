@@ -57,6 +57,7 @@ public abstract class Data2DOperate {
         sourceData = reader.getSourceData();
         sourceFile = sourceData.getFile();
         task = sourceData.getTask();
+        controller = sourceData.getController();
         reader.setOperate(this);
         return true;
     }
@@ -237,7 +238,7 @@ public abstract class Data2DOperate {
 
     public void showInfo(String info) {
         if (controller != null) {
-            controller.displayInfo(info);
+            controller.setInfo(info);
         } else if (task != null) {
             task.setInfo(info);
         }
@@ -248,7 +249,7 @@ public abstract class Data2DOperate {
             return;
         }
         if (controller != null) {
-            controller.displayError(error);
+            controller.setError(error);
         } else if (task != null) {
             task.setError(error);
         } else {

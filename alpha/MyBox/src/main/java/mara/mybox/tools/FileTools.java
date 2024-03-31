@@ -202,7 +202,11 @@ public class FileTools {
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e);
+            if (task != null) {
+                task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
+            }
             return null;
         }
         File tmpFile = FileTmpTools.getTempFile();
@@ -220,7 +224,11 @@ public class FileTools {
             }
             outputStream.flush();
         } catch (Exception e) {
-            MyBoxLog.debug(e);
+            if (task != null) {
+                task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
+            }
             return null;
         }
         return tmpFile;

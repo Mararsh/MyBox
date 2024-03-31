@@ -2,6 +2,7 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -13,7 +14,9 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.FlowPane;
+import mara.mybox.data2d.Data2D_Operations.ObjectType;
 import mara.mybox.data2d.DataFilter;
+import mara.mybox.data2d.tools.Data2DColumnTools;
 import mara.mybox.data2d.writer.ListWriter;
 import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.db.data.Data2DColumn;
@@ -30,11 +33,14 @@ import mara.mybox.value.UserConfig;
 public class BaseData2DSelectRowsController extends BaseData2DLoadController {
 
     protected BaseData2DLoadController tableController;
+    protected ObjectType objectType;
+
     protected List<Integer> selectedRowsIndices, filteredRowsIndices, checkedColsIndices, otherColsIndices;
     protected List<String> checkedColsNames, otherColsNames;
     protected List<Data2DColumn> checkedColumns, otherColumns;
     protected boolean idExclude = false, selectColumnsInTable = false, noCheckedColumnsMeansAll = true;
     protected ChangeListener<Boolean> tableLoadListener, tableStatusListener;
+    protected SimpleBooleanProperty refreshNotify;
 
     @FXML
     protected Tab dataTab, filterTab, optionsTab, groupTab;
@@ -48,6 +54,10 @@ public class BaseData2DSelectRowsController extends BaseData2DLoadController {
     protected FlowPane columnsPane, otherColumnsPane;
     @FXML
     protected CheckBox formatValuesCheck;
+
+    public BaseData2DSelectRowsController() {
+        refreshNotify = new SimpleBooleanProperty(false);
+    }
 
     /*
         controls
@@ -142,6 +152,9 @@ public class BaseData2DSelectRowsController extends BaseData2DLoadController {
         }
     }
 
+    /*
+        
+     */
     public void idExclude(boolean idExclude) {
         this.idExclude = idExclude;
     }
@@ -183,6 +196,7 @@ public class BaseData2DSelectRowsController extends BaseData2DLoadController {
         try {
             updateStatus();
             if (data2D == null) {
+                refreshNotify.set(!refreshNotify.get());
                 return;
             }
             isSettingValues = true;
@@ -218,6 +232,8 @@ public class BaseData2DSelectRowsController extends BaseData2DLoadController {
             }
             isSettingValues = false;
             restoreSelections();
+
+            refreshNotify.set(!refreshNotify.get());
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -698,8 +714,11 @@ public class BaseData2DSelectRowsController extends BaseData2DLoadController {
             List<List<String>> data;
             if (isAllPages()) {
                 ListWriter writer = new ListWriter();
-                data2D.copy(task, writer, checkedColsIndices,
-                        false, true,
+                List<Data2DColumn> targetColumns = data2D.targetColumns(checkedColsIndices, false);
+                writer.setColumns(targetColumns)
+                        .setHeaderNames(Data2DColumnTools.toNames(targetColumns))
+                        .setWriteHeader(true);
+                data2D.copy(task, writer, checkedColsIndices, false,
                         formatValuesCheck != null && formatValuesCheck.isSelected(),
                         InvalidAs.Blank);
                 data = writer.getRows();

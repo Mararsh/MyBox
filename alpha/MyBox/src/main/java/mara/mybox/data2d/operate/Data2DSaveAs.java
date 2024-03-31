@@ -1,8 +1,6 @@
 package mara.mybox.data2d.operate;
 
-import java.io.File;
 import mara.mybox.data2d.Data2D_Edit;
-import mara.mybox.data2d.operate.Data2DOperate;
 import mara.mybox.data2d.writer.Data2DWriter;
 
 /**
@@ -11,15 +9,6 @@ import mara.mybox.data2d.writer.Data2DWriter;
  * @License Apache License Version 2.0
  */
 public class Data2DSaveAs extends Data2DOperate {
-
-    public static Data2DSaveAs saveAsFile(Data2D_Edit data, File targetFile) {
-        if (data == null || targetFile == null) {
-            return null;
-        }
-        Data2DWriter writer = data.selfWriter().setTargetFile(targetFile);
-        return writeTo(data, writer);
-
-    }
 
     public static Data2DSaveAs writeTo(Data2D_Edit data, Data2DWriter writer) {
         if (data == null || writer == null) {

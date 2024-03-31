@@ -24,7 +24,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2023-6-13
  * @License Apache License Version 2.0
  */
-public abstract class BaseFileController extends BaseController {
+public abstract class BaseFileController extends BaseTaskController {
 
     protected FileSortTools.FileSortMode sortMode;
 

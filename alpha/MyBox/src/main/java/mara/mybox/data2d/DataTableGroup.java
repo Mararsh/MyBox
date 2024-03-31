@@ -1138,9 +1138,8 @@ public class DataTableGroup {
     private void writeCurrentCSV() {
         try {
             if (csvFile != null && csvFile.exists()) {
-                targetFile.setDataSize(count)
-                        .setDataName(originalData.dataName() + "_" + parameterName
-                                + (targetType == TargetType.MultipleFiles ? "_" + parameterValueForFilename : ""))
+                targetFile.setDataName(originalData.dataName() + "_" + parameterName
+                        + (targetType == TargetType.MultipleFiles ? "_" + parameterValueForFilename : ""))
                         .setRowsNumber(count)
                         .setComments(dataComments);
                 Data2D.saveAttributes(conn, targetFile, finalColumns);
@@ -1181,8 +1180,7 @@ public class DataTableGroup {
                         insert.executeBatch();
                         conn.commit();
                         insert.close();
-                        targetData.setDataSize(count)
-                                .setDataName(originalData.dataName() + "_" + parameterName)
+                        targetData.setDataName(originalData.dataName() + "_" + parameterName)
                                 .setRowsNumber(count).setScale(scale);
                         Data2D.saveAttributes(conn, targetData, targetData.getColumns());
                         if (task != null) {

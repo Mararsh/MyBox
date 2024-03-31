@@ -40,7 +40,7 @@ public class DataFileCSVReader extends Data2DReader {
             csvParser = null;
             parser.close();
         } catch (Exception e) {
-            handleError(e.toString());
+            showError(e.toString());
             setFailed();
         }
     }
@@ -64,7 +64,7 @@ public class DataFileCSVReader extends Data2DReader {
                         sourceRow.addAll(values);
                     }
                 } catch (Exception e) {
-                    handleError(e.toString());
+                    showError(e.toString());
                 }
             } else {
                 while (iterator.hasNext() && !isStopped()) {
@@ -77,7 +77,7 @@ public class DataFileCSVReader extends Data2DReader {
             readerHasHeader = false;
             makeHeader();
         } catch (Exception e) {
-            handleError(e.toString());
+            showError(e.toString());
         }
     }
 
@@ -99,7 +99,7 @@ public class DataFileCSVReader extends Data2DReader {
                 }
             }
         } catch (Exception e) {
-            handleError(e.toString());
+            showError(e.toString());
             setFailed();
         }
     }
@@ -127,7 +127,7 @@ public class DataFileCSVReader extends Data2DReader {
                 makePageRow();
             }
         } catch (Exception e) {
-            handleError(e.toString());
+            showError(e.toString());
             setFailed();
         }
     }
@@ -147,7 +147,7 @@ public class DataFileCSVReader extends Data2DReader {
                 sourceRow.add(v);
             }
         } catch (Exception e) {
-            handleError(e.toString());
+            showError(e.toString());
         }
     }
 
@@ -178,12 +178,12 @@ public class DataFileCSVReader extends Data2DReader {
                     }
 
                 } catch (Exception e) {  // skip  bad lines
-//                    handleError(e.toString());
+//                    showError(e.toString());
 //                    setFailed();
                 }
             }
         } catch (Exception e) {
-            handleError(e.toString());
+            showError(e.toString());
             setFailed();
         }
     }

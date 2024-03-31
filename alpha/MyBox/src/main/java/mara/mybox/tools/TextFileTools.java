@@ -113,7 +113,11 @@ public class TextFileTools {
             }
             writer.flush();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            if (task != null) {
+                task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
+            }
             return false;
         }
         return true;
@@ -141,7 +145,11 @@ public class TextFileTools {
             }
             writer.write(line + "\n");
         } catch (Exception e) {
-            MyBoxLog.console(e);
+            if (task != null) {
+                task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
+            }
         }
     }
 

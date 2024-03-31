@@ -67,12 +67,12 @@ public class Data2DExportController extends BaseData2DHandleController {
     }
 
     @Override
-    public boolean checkOptions() {
+    public boolean checkParameters() {
         try {
             if (isSettingValues) {
                 return true;
             }
-            if (!super.checkOptions()) {
+            if (!super.checkParameters()) {
                 return false;
             }
             targetPath = targetPathController.file();

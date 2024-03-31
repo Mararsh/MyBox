@@ -70,7 +70,7 @@ public class DataMatrix extends Data2D {
 
     @Override
     public long readTotal() {
-        return dataSize;
+        return rowsNumber;
     }
 
     @Override
@@ -110,7 +110,6 @@ public class DataMatrix extends Data2D {
             }
         }
         rowsNumber = rows.size();
-        dataSize = rowsNumber;
         endRowOfCurrentPage = startRowOfCurrentPage + rowsNumber;
         readPageStyles(conn);
         return rows;
@@ -118,13 +117,8 @@ public class DataMatrix extends Data2D {
 
     @Override
     public long savePageData(File targetFile) {
-        long ret = save(null, this, columns, tableRows(false));
-        if (ret >= 0) {
-            dataSize = rowsNumber;
-            return dataSize;
-        } else {
-            return ret;
-        }
+        rowsNumber = save(null, this, columns, tableRows(false));
+        return rowsNumber;
     }
 
     public boolean isSquare() {

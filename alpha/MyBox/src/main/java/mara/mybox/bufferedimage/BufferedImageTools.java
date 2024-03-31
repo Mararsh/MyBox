@@ -133,7 +133,11 @@ public class BufferedImageTools {
             g.dispose();
             return target;
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            if (task != null) {
+                task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
+            }
             return null;
         }
     }
@@ -163,7 +167,11 @@ public class BufferedImageTools {
             g.dispose();
             return target;
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            if (task != null) {
+                task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
+            }
             return null;
         }
     }
@@ -205,7 +213,11 @@ public class BufferedImageTools {
             ImageIO.write(tmpImage, format, stream);
             bytes = stream.toByteArray();
         } catch (Exception e) {
-            MyBoxLog.debug(e);
+            if (task != null) {
+                task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
+            }
         }
         return bytes;
     }
@@ -222,7 +234,11 @@ public class BufferedImageTools {
             }
             return encoder.encodeToString(bytes);
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            if (task != null) {
+                task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
+            }
             return null;
         }
     }
@@ -234,7 +250,11 @@ public class BufferedImageTools {
             }
             return base64(task, ImageFileReaders.readImage(task, file), format == null ? "jpg" : format);
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            if (task != null) {
+                task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
+            }
             return null;
         }
     }

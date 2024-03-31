@@ -161,7 +161,7 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
     }
 
     @Override
-    public boolean checkOptions() {
+    public boolean checkParameters() {
         if (isSettingValues) {
             return true;
         }
@@ -169,7 +169,7 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
             popError(message("MapNotReady"));
             return false;
         }
-        boolean ok = super.checkOptions();
+        boolean ok = super.checkParameters();
         noticeLabel.setVisible(isAllPages());
         return ok;
     }

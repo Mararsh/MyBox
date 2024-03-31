@@ -13,7 +13,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-11-28
  * @License Apache License Version 2.0
  */
-public class Data2DCopyController extends BaseData2DTargetsController {
+public class Data2DCopyController extends BaseData2DTaskTargetsController {
 
     public Data2DCopyController() {
         baseTitle = message("CopyFilterQueryConvert");
@@ -38,7 +38,7 @@ public class Data2DCopyController extends BaseData2DTargetsController {
     @Override
     public boolean handleAllData(FxTask currentTask, Data2DWriter writer) {
         return data2D.copy(currentTask, writer, checkedColsIndices,
-                rowNumberCheck.isSelected(), colNameCheck.isSelected(),
+                rowNumberCheck.isSelected(),
                 formatValuesCheck.isSelected(), ColumnDefinition.InvalidAs.Blank) >= 0;
     }
 
