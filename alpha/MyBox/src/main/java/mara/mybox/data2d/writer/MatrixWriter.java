@@ -41,6 +41,7 @@ public class MatrixWriter extends Data2DWriter {
             did = matrix.getD2did();
             conn.setAutoCommit(false);
             dwCount = 0;
+            showInfo(message("Writing") + " " + matrix.dataName());
             return true;
         } catch (Exception e) {
             showError(e.toString());
@@ -77,12 +78,15 @@ public class MatrixWriter extends Data2DWriter {
         try {
             created = false;
             if (conn == null || matrix == null) {
+                showInfo(message("Failed") + ": " + matrix.dataName());
                 return;
             }
             conn.commit();
             matrix.setRowsNumber(targetRowIndex);
             Data2D.saveAttributes(conn, matrix, columns);
             targetData = matrix;
+            showInfo(message("Generated") + ": " + matrix.dataName());
+            showInfo(message("RowsNumber") + ": " + targetRowIndex);
             created = true;
         } catch (Exception e) {
             showError(e.toString());

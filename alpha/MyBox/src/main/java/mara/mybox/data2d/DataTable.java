@@ -324,7 +324,7 @@ public class DataTable extends Data2D {
     }
 
     @Override
-    public long savePageData(File targetFile) {
+    public long savePageData(FxTask task, File targetFile) {
         try (Connection conn = DerbyBase.getConnection()) {
             updateTable(conn);
             List<Data2DRow> dbRows = tableData2D.query(conn, pageQuery());

@@ -133,9 +133,11 @@ public class DataFileExcelWriter extends Data2DWriter {
             if (isFailed() || !tmpFile.exists()
                     || !FileTools.override(tmpFile, targetFile)) {
                 FileDeleteTools.delete(tmpFile);
+                showInfo(message("Failed") + ": " + targetFile);
                 return;
             }
             if (targetFile == null || !targetFile.exists()) {
+                showInfo(message("Failed") + ": " + targetFile);
                 return;
             }
             recordFileGenerated(targetFile, VisitHistory.FileType.Excel);

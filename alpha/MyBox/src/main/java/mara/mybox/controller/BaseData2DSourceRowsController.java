@@ -6,13 +6,18 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.Tab;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.Data2D_Operations.ObjectType;
 import mara.mybox.data2d.DataFilter;
+import mara.mybox.data2d.tools.Data2DColumnTools;
+import mara.mybox.data2d.writer.ListWriter;
+import mara.mybox.db.data.ColumnDefinition;
+import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
-import static mara.mybox.value.Languages.message;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -24,21 +29,27 @@ public class BaseData2DSourceRowsController extends BaseData2DLoadController {
 
     protected BaseData2DLoadController dataController;
     protected ObjectType objectType;
+    protected List<Integer> selectedRowsIndices, filteredRowsIndices;
+    protected boolean formatValues;
 
-    protected List<Integer> selectedRowsIndices;
-
+    @FXML
+    protected Tab dataTab, filterTab;
     @FXML
     protected ToggleGroup rowsGroup;
     @FXML
     protected RadioButton selectedRadio, allPagesRadio, currentPageRadio;
+    @FXML
+    protected ControlData2DRowFilter filterController;
 
-    public void setParameters(BaseController parent, BaseData2DLoadController controller) {
+    public void setParameters(BaseData2DTaskController taskController) {
         try {
-            if (controller == null) {
+            if (taskController == null) {
                 return;
             }
-            this.parentController = parent;
-            this.dataController = controller;
+            dataController = taskController.dataController;
+            filterController = taskController.filterController;
+            filterTab = taskController.filterTab;
+            dataTab = taskController.sourceTab;
 
             tableView.requestFocus();
 
@@ -167,10 +178,6 @@ public class BaseData2DSourceRowsController extends BaseData2DLoadController {
                     selectedRowsIndices.add(i);
                 }
             }
-            if (!allPagesRadio.isSelected() && selectedRowsIndices.isEmpty()) {
-                popError(message("SelectToHandle") + ": " + message("Rows"));
-                return false;
-            }
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -194,6 +201,142 @@ public class BaseData2DSourceRowsController extends BaseData2DLoadController {
 
     public boolean hasData() {
         return data2D != null && data2D.isValidDefinition() && !tableData.isEmpty();
+    }
+
+    /*
+        filter
+     */
+    public boolean checkRowFilter() {
+        if (filterController != null
+                && !filterController.checkExpression(isAllPages())) {
+            String ferror = filterController.error;
+            if (ferror != null && !ferror.isBlank()) {
+                if (filterTab != null) {
+                    tabPane.getSelectionModel().select(filterTab);
+                }
+                alertError(ferror);
+            }
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public List<Integer> filteredRowsIndices() {
+        try {
+            DataFilter filter = data2D.filter;
+            if (filter == null || !filter.needFilter()
+                    || selectedRowsIndices == null || selectedRowsIndices.isEmpty()) {
+                return selectedRowsIndices;
+            }
+            filteredRowsIndices = new ArrayList<>();
+            int size = tableData.size();
+            for (int row : selectedRowsIndices) {
+                if (row < 0 || row >= size
+                        || !filter.filterTableRow(data2D, tableData.get(row), row)) {
+                    continue;
+                }
+                if (filter.reachMaxPassed()) {
+                    break;
+                }
+                filteredRowsIndices.add(row);
+            }
+            return filteredRowsIndices;
+        } catch (Exception e) {
+            error = e.toString();
+            MyBoxLog.debug(e);
+            return null;
+        }
+    }
+
+    // If none selected then select all
+    public List<List<String>> tableFiltered(List<Integer> cols, boolean showRowNumber) {
+        return tableFiltered(selectedRowsIndices, cols, showRowNumber);
+    }
+
+    public List<List<String>> tableFiltered(List<Integer> rows, List<Integer> cols,
+            boolean showRowNumber) {
+        try {
+            if (rows == null || rows.isEmpty()
+                    || cols == null || cols.isEmpty()) {
+                return null;
+            }
+            List<List<String>> data = new ArrayList<>();
+            int size = tableData.size();
+            filteredRowsIndices = new ArrayList<>();
+            data2D.resetFilterNumber();
+            for (int row : rows) {
+                if (row < 0 || row >= size) {
+                    continue;
+                }
+                List<String> tableRow = tableData.get(row);
+                if (!data2D.filterTableRow(tableRow, row)) {
+                    continue;
+                }
+                if (data2D.filterReachMaxPassed()) {
+                    break;
+                }
+
+                List<String> newRow = new ArrayList<>();
+                if (showRowNumber) {
+                    if (data2D.isTmpData()) {
+                        newRow.add((row + 1) + "");
+                    } else {
+                        newRow.add(tableRow.get(0) + "");
+                    }
+                }
+                for (int col : cols) {
+                    int index = col + 1;
+                    if (index < 0 || index >= tableRow.size()) {
+                        continue;
+                    }
+                    String v = tableRow.get(index);
+                    if (v != null && formatValues) {
+                        v = data2D.column(col).format(v);
+                    }
+                    newRow.add(v);
+                }
+                data.add(newRow);
+                filteredRowsIndices.add(row);
+            }
+            return data;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public List<List<String>> selectedData(FxTask task, List<Integer> cols, boolean formatValues) {
+        try {
+            if (data2D == null || cols == null) {
+                return null;
+            }
+            data2D.startFilter(filterController != null ? filterController.filter : null);
+            if (!data2D.fillFilterStatistic()) {
+                return null;
+            }
+            List<List<String>> data;
+            if (isAllPages()) {
+                ListWriter writer = new ListWriter();
+                List<Data2DColumn> targetColumns = data2D.targetColumns(cols, false);
+                writer.setColumns(targetColumns)
+                        .setHeaderNames(Data2DColumnTools.toNames(targetColumns))
+                        .setWriteHeader(true);
+                data2D.copy(task, writer, cols,
+                        false, formatValues, ColumnDefinition.InvalidAs.Blank);
+                data = writer.getRows();
+            } else {
+                data = tableFiltered(cols, false);
+            }
+            data2D.stopTask();
+            return data;
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.console(e);
+            return null;
+        }
     }
 
 }

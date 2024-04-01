@@ -39,12 +39,14 @@ public class TableAddRowsController extends BaseChildController {
     @FXML
     protected HBox rowBox;
 
+    public TableAddRowsController() {
+        baseTitle = message("AddRows");
+    }
+
     public void setParameters(BaseTablePagesController tableViewController) {
         try {
             this.tableViewController = tableViewController;
             this.baseName = tableViewController.baseName;
-
-            getMyStage().setTitle(tableViewController.getBaseTitle());
 
             String location = UserConfig.getString(baseName + "AddRowsLocation", message("Front"));
             if (location == null || message("Front").equals(location)) {

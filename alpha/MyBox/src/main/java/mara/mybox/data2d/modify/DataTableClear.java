@@ -1,6 +1,5 @@
 package mara.mybox.data2d.modify;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.util.List;
 import mara.mybox.data2d.DataTable;
@@ -19,7 +18,6 @@ public class DataTableClear extends Data2DOperate {
     protected DataTable sourceTable;
     protected int columnsNumber;
     protected Data2DRow sourceTableRow;
-    protected Connection conn;
     protected PreparedStatement delete;
     protected List<Data2DColumn> columns;
 

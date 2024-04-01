@@ -54,7 +54,7 @@ public class Data2DTransposeController extends BaseData2DTaskTargetsController {
     public boolean handleRows() {
         try {
             boolean showRowNumber = showRowNumber();
-            outputData = tableFiltered(showRowNumber);
+            outputData = sourceController.tableFiltered(checkedColsIndices, showRowNumber);
             if (outputData == null) {
                 return false;
             }
@@ -77,12 +77,12 @@ public class Data2DTransposeController extends BaseData2DTaskTargetsController {
                 }
             }
             if (showColNames) {
-                DerbyBase.checkIdentifier(names, message("ColumnName"), true);
+                String name = DerbyBase.checkIdentifier(names, message("ColumnName"), false);
+                names.add(0, name);
             }
             for (int c = 0; c < names.size(); c++) {
                 outputColumns.add(new Data2DColumn(names.get(c), ColumnDefinition.ColumnType.String));
             }
-
             List<List<String>> transposed = new ArrayList<>();
             for (int c = 0; c < columnsNumber; ++c) {
                 List<String> row = new ArrayList<>();

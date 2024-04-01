@@ -17,9 +17,10 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-11-28
  * @License Apache License Version 2.0
  */
-public class Data2DDeleteController extends BaseData2DTargetsController {
+public class Data2DDeleteController extends BaseData2DTaskTargetsController {
 
     protected Data2DManufactureController editor;
+    protected boolean clearAll;
 
     @FXML
     protected CheckBox errorContinueCheck;
@@ -39,24 +40,54 @@ public class Data2DDeleteController extends BaseData2DTargetsController {
     }
 
     @Override
+    public boolean checkOptions() {
+        try {
+            if (!super.checkOptions()) {
+                return false;
+            }
+            clearAll = false;
+            if (sourceController.isAllPages()) {
+                clearAll = !filterController.filter.needFilter();
+                if (clearAll) {
+                    if (!PopTools.askSure(getTitle(), message("SureClearData"))) {
+                        return false;
+                    }
+                } else {
+                    if (!PopTools.askSure(getTitle(), message("SureDelete"))) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
+    @Override
     public synchronized void handleRowsTask() {
+        if (task != null) {
+            task.cancel();
+        }
         task = new FxSingletonTask<Void>(this) {
 
             List<List<String>> data;
+            List<Integer> filteredRowsIndices;
 
             @Override
             protected boolean handle() {
                 try {
                     data2D.startTask(this, filterController.filter);
                     data = new ArrayList<>();
-                    filteredRowsIndices = filteredRowsIndices();
-                    for (int i = 0; i < tableController.tableData.size(); i++) {
+                    filteredRowsIndices = sourceController.filteredRowsIndices();
+                    for (int i = 0; i < dataController.tableData.size(); i++) {
                         if (!filteredRowsIndices.contains(i)) {
-                            data.add(tableController.tableData.get(i));
+                            data.add(dataController.tableData.get(i));
                         }
                     }
                     data2D.stopFilter();
-                    return ok;
+                    return true;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -66,12 +97,12 @@ public class Data2DDeleteController extends BaseData2DTargetsController {
             @Override
             protected void whenSucceeded() {
                 try {
-                    tabPane.getSelectionModel().select(dataTab);
-                    tableController.updateTable(data);
-                    selectedRowsIndices = null;
-                    tableController.tableChanged(true);
-                    tableController.requestMouse();
-                    tableController.alertInformation(message("DeletedRowsNumber") + ": " + filteredRowsIndices.size());
+                    tabPane.getSelectionModel().select(sourceTab);
+                    dataController.updateTable(data);
+                    dataController.tableChanged(true);
+                    dataController.requestMouse();
+                    dataController.alertInformation(message("DeletedRowsNumber") + ": " + filteredRowsIndices.size());
+                    sourceController.selectedRowsIndices = null;
                 } catch (Exception e) {
                     MyBoxLog.error(e);
                 }
@@ -84,23 +115,17 @@ public class Data2DDeleteController extends BaseData2DTargetsController {
                 if (targetController != null) {
                     targetController.refreshControls();
                 }
+                closeTask();
             }
 
         };
-        start(task);
+        start(task, false);
     }
 
     @Override
     public void handleAllTask() {
-        boolean clearAll = !data2D.needFilter();
-        if (clearAll) {
-            if (!PopTools.askSure(getTitle(), message("SureDeleteAll"))) {
-                return;
-            }
-        } else {
-            if (!PopTools.askSure(getTitle(), message("SureDelete"))) {
-                return;
-            }
+        if (task != null) {
+            task.cancel();
         }
         task = new FxSingletonTask<Void>(this) {
 
@@ -117,9 +142,9 @@ public class Data2DDeleteController extends BaseData2DTargetsController {
                     }
                     data2D.startTask(this, filterController.filter);
                     if (clearAll) {
-                        count = data2D.clearData();
+                        count = data2D.clearData(this);
                     } else {
-                        count = data2D.deleteRows(errorContinueCheck.isSelected());
+                        count = data2D.deleteRows(this, errorContinueCheck.isSelected());
                     }
                     data2D.stopFilter();
                     return count >= 0;
@@ -131,23 +156,24 @@ public class Data2DDeleteController extends BaseData2DTargetsController {
 
             @Override
             protected void whenSucceeded() {
-                tabPane.getSelectionModel().select(dataTab);
-                selectedRowsIndices = null;
-                tableController.data2D.cloneData(data2D);
-                tableController.dataSizeLoaded = false;
-                tableController.goPage();
-                tableController.requestMouse();
-                tableController.alertInformation(message("DeletedRowsNumber") + ": " + count);
+                tabPane.getSelectionModel().select(sourceTab);
+                sourceController.selectedRowsIndices = null;
+                dataController.data2D.cloneData(data2D);
+                dataController.dataSizeLoaded = false;
+                dataController.goPage();
+                dataController.requestMouse();
+                dataController.alertInformation(message("DeletedRowsNumber") + ": " + count);
             }
 
             @Override
             protected void finalAction() {
                 super.finalAction();
                 data2D.stopTask();
+                closeTask();
             }
 
         };
-        start(task);
+        start(task, false);
     }
 
     /*

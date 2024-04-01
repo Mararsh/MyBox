@@ -76,17 +76,20 @@ public class DataFileCSVWriter extends Data2DWriter {
         try {
             created = false;
             if (printer == null) {
+                showInfo(message("Failed") + ": " + targetFile);
                 return;
             }
             printer.flush();
             printer.close();
             printer = null;
             if (isFailed() || tmpFile == null || !tmpFile.exists()
-                    || !FileTools.override(tmpFile, targetFile)) {
+                    || !FileTools.override(tmpFile, targetFile, true)) {
                 FileDeleteTools.delete(tmpFile);
+                showInfo(message("Failed") + ": " + targetFile);
                 return;
             }
             if (targetFile == null || !targetFile.exists()) {
+                showInfo(message("Failed") + ": " + targetFile);
                 return;
             }
             recordFileGenerated(targetFile, VisitHistory.FileType.CSV);

@@ -20,13 +20,14 @@ public class Data2DCopyController extends BaseData2DTaskTargetsController {
     }
 
     @Override
-    public boolean initData() {
+    public boolean checkOptions() {
         try {
-            if (!super.initData()) {
+            if (!super.checkOptions()) {
                 return false;
             }
 
-            outputColumns = data2D.targetColumns(checkedColsIndices, otherColsIndices, showRowNumber(), null);
+            outputColumns = data2D.targetColumns(checkedColsIndices,
+                    otherColsIndices, showRowNumber(), null);
 
             return true;
         } catch (Exception e) {

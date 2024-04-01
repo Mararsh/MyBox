@@ -18,7 +18,7 @@ public class Data2DPasteContentInSystemClipboardController extends BaseChildCont
     @FXML
     protected ControlData2DSystemClipboard boardController;
     @FXML
-    protected BaseData2DSelectRowsController sourceController;
+    protected BaseData2DSourceController sourceController;
     @FXML
     protected ControlData2DPaste pasteController;
 

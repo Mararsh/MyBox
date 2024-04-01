@@ -258,7 +258,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
     /*
         modify
      */
-    public long savePageData(File targetFile) {
+    public long savePageData(FxTask task, File targetFile) {
         try {
             if (targetFile == null) {
                 return -1;
@@ -281,7 +281,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
         }
     }
 
-    public long saveAttributes(Data2D attributes) {
+    public long saveAttributes(FxTask task, Data2D attributes) {
         try {
             if (attributes == null) {
                 return -1;
@@ -306,7 +306,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
         }
     }
 
-    public long setValue(List<Integer> cols, SetValue setValue, boolean errorContinue) {
+    public long setValue(FxTask task, List<Integer> cols, SetValue setValue, boolean errorContinue) {
         try {
             if (!isValidData() || cols == null || cols.isEmpty()) {
                 return -1;
@@ -333,7 +333,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
         }
     }
 
-    public long deleteRows(boolean errorContinue) {
+    public long deleteRows(FxTask task, boolean errorContinue) {
         try {
             if (!isValidData()) {
                 return -1;
@@ -359,7 +359,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
         }
     }
 
-    public long clearData() {
+    public long clearData(FxTask task) {
         if (!isValidData()) {
             return -1;
         }

@@ -64,7 +64,7 @@ public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskCont
                 colSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                     @Override
                     public void changed(ObservableValue ov, String oldValue, String newValue) {
-                        checkOptions();
+                        checkParameters();
                     }
                 });
             }
@@ -104,30 +104,29 @@ public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskCont
     @Override
     public void objectChanged() {
         super.objectChanged();
-        targetController.setNotInTable(isAllPages());
+        if (targetController != null) {
+            targetController.setNotInTable(isAllPages());
+        }
     }
 
-    // Check when selections are changed
     @Override
-    public boolean checkParameters() {
+    public boolean checkOptions() {
         try {
-            if (isSettingValues) {
-                return true;
-            }
             writer = null;
-            if (targetController.format == null) {
-                popError(message("SelectToHandle") + ": " + message("Target"));
-                return false;
-            }
-            if (isAllPages()) {
-                writer = targetController.pickWriter();
-                if (writer == null) {
-                    popError(message("Invalid") + ": " + message("Target"));
+            if (targetController != null) {
+                if (targetController.format == null) {
+                    popError(message("SelectToHandle") + ": " + message("Target"));
                     return false;
                 }
-                writer.setWriteHeader(showColNames());
+                if (isAllPages()) {
+                    writer = targetController.pickWriter();
+                    if (writer == null) {
+                        popError(message("Invalid") + ": " + message("Target"));
+                        return false;
+                    }
+                }
             }
-            return super.checkParameters();
+            return super.checkOptions();
         } catch (Exception e) {
             MyBoxLog.error(e);
             return false;
@@ -161,6 +160,7 @@ public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskCont
                 writer.setColumns(targetColumns)
                         .setHeaderNames(Data2DColumnTools.toNames(targetColumns))
                         .setWriteHeader(colNameCheck.isSelected());
+                updateLogs(message("Columns") + ": " + writer.getHeaderNames(), true);
                 return handleAllData(this, writer);
             }
 
@@ -178,7 +178,7 @@ public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskCont
             }
 
         };
-        start(task, false, null);
+        start(task, false);
     }
 
     public boolean handleAllData(FxTask currentTask, Data2DWriter writer) {
@@ -220,23 +220,13 @@ public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskCont
             }
 
         };
-        start(task, false, null);
+        start(task, false);
     }
 
     public boolean handleRows() {
         try {
-            outputData = tableFiltered(showRowNumber());
-            if (outputData == null) {
-                return false;
-            }
-            if (showColNames()) {
-                List<String> names = new ArrayList<>();
-                for (Data2DColumn column : outputColumns) {
-                    names.add(column.getColumnName());
-                }
-                outputData.add(0, names);
-            }
-            return true;
+            outputData = sourceController.tableFiltered(checkedColsIndices, showRowNumber());
+            return outputData != null;
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
@@ -304,11 +294,14 @@ public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskCont
     }
 
     public void outputRowsToExternal() {
+        if (targetController == null) {
+            return;
+        }
         if (outputData == null || outputData.isEmpty()) {
             popError(message("NoData"));
             return;
         }
-        Data2DWriter writer = targetController.pickWriter();
+        writer = targetController.pickWriter();
         if (writer == null || writer.getTargetFile() == null) {
             popError(message("InvalidParamter"));
             return;

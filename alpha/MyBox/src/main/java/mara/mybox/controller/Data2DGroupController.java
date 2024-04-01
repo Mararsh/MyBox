@@ -95,10 +95,11 @@ public class Data2DGroupController extends BaseData2DTaskController {
             protected void finalAction() {
                 super.finalAction();
                 data2D.stopTask();
+                closeTask();
             }
 
         };
-        start(task);
+        start(task, false);
     }
 
     /*

@@ -71,6 +71,7 @@ public class PdfWriter extends Data2DWriter {
         try {
             created = false;
             if (pdfTable == null) {
+                showInfo(message("Failed") + ": " + targetFile);
                 return;
             }
             if (pageRows != null && !pageRows.isEmpty()) {
@@ -82,9 +83,11 @@ public class PdfWriter extends Data2DWriter {
             if (isFailed() || tmpFile == null || !tmpFile.exists()
                     || !FileTools.override(tmpFile, targetFile)) {
                 FileDeleteTools.delete(tmpFile);
+                showInfo(message("Failed") + ": " + targetFile);
                 return;
             }
             if (targetFile == null || !targetFile.exists()) {
+                showInfo(message("Failed") + ": " + targetFile);
                 return;
             }
             recordFileGenerated(targetFile, VisitHistory.FileType.PDF);

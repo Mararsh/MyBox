@@ -38,7 +38,6 @@ public class DataTableWriter extends Data2DWriter {
             if (conn == null) {
                 return false;
             }
-
             if (targetTable == null) {
                 targetTable = Data2DTableTools.createTable(task(), conn, targetTableName,
                         referColumns, keys, targetTableDesciption, idName, dropExisted);
@@ -90,6 +89,7 @@ public class DataTableWriter extends Data2DWriter {
         try {
             created = false;
             if (conn == null || targetTable == null) {
+                showInfo(message("Failed"));
                 return;
             }
             insert.executeBatch();
@@ -98,6 +98,8 @@ public class DataTableWriter extends Data2DWriter {
             targetTable.setRowsNumber(dwCount);
             Data2D.saveAttributes(conn, targetTable, targetTable.getColumns());
             targetData = targetTable;
+            showInfo(message("Generated") + ": " + targetTable.getSheet() + "  "
+                    + message("RowsNumber") + ": " + dwCount);
             created = true;
         } catch (Exception e) {
             showError(e.toString());

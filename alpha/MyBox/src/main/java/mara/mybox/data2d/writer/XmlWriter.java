@@ -56,7 +56,7 @@ public class XmlWriter extends Data2DWriter {
             StringBuilder s = new StringBuilder();
             s.append(indent).append("<Row>").append("\n");
             for (int i = 0; i < headerNames.size(); i++) {
-                String value = targetRow.get(i);
+                value = targetRow.get(i);
                 if (value == null || value.isBlank()) {
                     continue;
                 }
@@ -77,12 +77,14 @@ public class XmlWriter extends Data2DWriter {
         try {
             created = false;
             if (fileWriter == null || targetFile == null) {
+                showInfo(message("Failed") + ": " + targetFile);
                 return;
             }
             if (isFailed() || tmpFile == null || !tmpFile.exists()) {
                 fileWriter.close();
                 fileWriter = null;
                 FileDeleteTools.delete(tmpFile);
+                showInfo(message("Failed") + ": " + targetFile);
                 return;
             }
             fileWriter.write("</Data>\n");
@@ -91,9 +93,11 @@ public class XmlWriter extends Data2DWriter {
             fileWriter = null;
             if (!FileTools.override(tmpFile, targetFile)) {
                 FileDeleteTools.delete(tmpFile);
+                showInfo(message("Failed") + ": " + targetFile);
                 return;
             }
             if (targetFile == null || !targetFile.exists()) {
+                showInfo(message("Failed") + ": " + targetFile);
                 return;
             }
             recordFileGenerated(targetFile, VisitHistory.FileType.XML);

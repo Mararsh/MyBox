@@ -467,12 +467,12 @@ public class TmpTable extends DataTable {
         if (writer == null || sourceData == null) {
             return false;
         }
-        writer.openWriter();
+        writer.setColumns(null).setHeaderNames(null).setWriteHeader(false).openWriter();
         try (Connection conn = DerbyBase.getConnection()) {
             String idName = columns.get(0).getColumnName();
-            int rNumber = 0;
             List<Data2DColumn> targetColumns = new ArrayList<>();
             List<Data2DColumn> dataColumns = new ArrayList<>();
+            // skip id column
             if (firstColumnAsNames && includeRowNumber) {
                 dataColumns.add(columns.get(2));
                 dataColumns.add(columns.get(1));
@@ -484,9 +484,8 @@ public class TmpTable extends DataTable {
                     dataColumns.add(columns.get(i));
                 }
             }
-            // skip id column
             for (int i = 0; i < dataColumns.size(); i++) {
-                if (currentTask == null || currentTask.isCancelled()) {
+                if (currentTask != null && !currentTask.isWorking()) {
                     break;
                 }
                 Data2DColumn column = dataColumns.get(i);
@@ -530,21 +529,19 @@ public class TmpTable extends DataTable {
                         }
                     }
                     if (includeColName) {
-                        DerbyBase.checkIdentifier(names, message("ColumnName"), true);
+                        String name = DerbyBase.checkIdentifier(names, message("ColumnName"), false);
+                        names.add(0, name);
                     }
                     for (int c = 0; c < names.size(); c++) {
                         targetColumns.add(new Data2DColumn(names.get(c), ColumnType.String));
                     }
-                    writer.setColumns(targetColumns).setHeaderNames(names);
-                    if (!firstColumnAsNames) {
-                        writer.writeRow(names);
-                    }
+                    writer.setColumns(targetColumns).setHeaderNames(names).setWriteHeader(true);
+                    writer.writeRow(names);
                 }
                 if (includeColName) {
                     rowValues.add(0, columnName);
                 }
                 writer.writeRow(rowValues);
-                rNumber++;
             }
         } catch (Exception e) {
             if (currentTask != null) {

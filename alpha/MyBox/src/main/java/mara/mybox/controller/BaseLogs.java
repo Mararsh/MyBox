@@ -120,9 +120,13 @@ public class BaseLogs extends BaseController {
             popInformation(line);
             return;
         }
-        Platform.runLater(() -> {
+        if (Platform.isFxApplicationThread()) {
             writeLogs(line, showTime, immediate);
-        });
+        } else {
+            Platform.runLater(() -> {
+                writeLogs(line, showTime, immediate);
+            });
+        }
     }
 
     public void writeLogs(String line, boolean showTime, boolean immediate) {

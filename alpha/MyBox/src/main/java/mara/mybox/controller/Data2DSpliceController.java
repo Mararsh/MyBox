@@ -11,8 +11,8 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.Tab;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import mara.mybox.data2d.tools.Data2DColumnTools;
 import mara.mybox.data2d.DataFileCSV;
+import mara.mybox.data2d.tools.Data2DColumnTools;
 import mara.mybox.data2d.writer.Data2DWriter;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DColumn;
@@ -114,7 +114,8 @@ public class Data2DSpliceController extends BaseController {
                                 dataAController.checkedColsIndices, false, true, false);
                     } else {
                         csvA = DataFileCSV.save(task, null, null, ",",
-                                dataAController.checkedColumns, dataAController.tableFiltered(false));
+                                dataAController.checkedColumns,
+                                dataAController.tableFiltered(false));
                     }
                     dataAController.data2D.stopTask();
                     if (csvA == null) {
@@ -131,7 +132,8 @@ public class Data2DSpliceController extends BaseController {
                                 dataBController.checkedColsIndices, false, true, false);
                     } else {
                         csvB = DataFileCSV.save(task, null, null, ",",
-                                dataBController.checkedColumns, dataBController.tableFiltered(false));
+                                dataBController.checkedColumns,
+                                dataBController.tableFiltered(false));
                     }
                     dataBController.data2D.stopTask();
                     if (csvB == null) {

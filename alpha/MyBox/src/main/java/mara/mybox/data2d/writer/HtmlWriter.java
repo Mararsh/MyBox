@@ -77,12 +77,14 @@ public class HtmlWriter extends Data2DWriter {
         try {
             created = false;
             if (fileWriter == null) {
+                showInfo(message("Failed") + ": " + targetFile);
                 return;
             }
             if (isFailed() || tmpFile == null || !tmpFile.exists()) {
                 fileWriter.close();
                 fileWriter = null;
                 FileDeleteTools.delete(tmpFile);
+                showInfo(message("Failed") + ": " + targetFile);
                 return;
             }
             fileWriter.write(StringTable.tableSuffix(new StringTable(headerNames)));
@@ -92,9 +94,11 @@ public class HtmlWriter extends Data2DWriter {
             fileWriter = null;
             if (!FileTools.override(tmpFile, targetFile)) {
                 FileDeleteTools.delete(tmpFile);
+                showInfo(message("Failed") + ": " + targetFile);
                 return;
             }
             if (targetFile == null || !targetFile.exists()) {
+                showInfo(message("Failed") + ": " + targetFile);
                 return;
             }
             recordFileGenerated(targetFile, VisitHistory.FileType.Html);

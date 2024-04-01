@@ -29,6 +29,7 @@ import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -97,6 +98,9 @@ public abstract class Data2DWriter {
             }
             printTargetRow();
             targetRowIndex++;
+            if (targetRowIndex % 100 == 0) {
+                showInfo(message("Written") + ": " + targetRowIndex);
+            }
 
         } catch (Exception e) {
             showError(e.toString());
@@ -169,12 +173,18 @@ public abstract class Data2DWriter {
     }
 
     public void recordFileGenerated(File file, int type) {
+        if (file == null || !file.exists()) {
+            return;
+        }
+        showInfo(message("Generated") + ": " + file + "  "
+                + message("FileSize") + ": " + file.length());
+        showInfo(message("RowsNumber") + ": " + targetRowIndex);
         if (!recordTargetFile || operate == null) {
             return;
         }
         BaseController c = operate.getController();
         if (c != null) {
-            c.recordFileWritten(file, type);
+            c.recordFileWritten(conn(), file, type, type);
         }
     }
 

@@ -248,7 +248,7 @@ public class Data2DAttributesController extends BaseChildController {
                         backup = addBackup(this, sourceFile);
                     }
                     sourceData.startTask(this, null);
-                    return sourceData.saveAttributes(attributes) >= 0;
+                    return sourceData.saveAttributes(this, attributes) >= 0;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;

@@ -71,6 +71,7 @@ public class MyBoxClipboardWriter extends Data2DWriter {
         try {
             created = false;
             if (printer == null) {
+                showInfo(message("Failed") + ": " + targetFile);
                 return;
             }
             printer.flush();
@@ -79,9 +80,11 @@ public class MyBoxClipboardWriter extends Data2DWriter {
             if (isFailed() || tmpFile == null || !tmpFile.exists()
                     || !FileTools.override(tmpFile, targetFile)) {
                 FileDeleteTools.delete(tmpFile);
+                showInfo(message("Failed") + ": " + targetFile);
                 return;
             }
             if (targetFile == null || !targetFile.exists()) {
+                showInfo(message("Failed") + ": " + targetFile);
                 return;
             }
             if (targetData == null) {
@@ -97,6 +100,9 @@ public class MyBoxClipboardWriter extends Data2DWriter {
                     .setRowsNumber(targetRowIndex);
             Data2D.saveAttributes(conn(), targetData, columns);
             DataInMyBoxClipboardController.update();
+            showInfo(message("Generated") + ": " + targetFile + "  "
+                    + message("FileSize") + ": " + targetFile.length());
+            showInfo(message("RowsNumber") + ": " + targetRowIndex);
             created = true;
         } catch (Exception e) {
             showError(e.toString());

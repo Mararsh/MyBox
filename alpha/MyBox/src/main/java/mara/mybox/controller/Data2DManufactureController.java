@@ -699,7 +699,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
                         backup = addBackup(this, data2D.getFile());
                     }
                     data2D.startTask(this, null);
-                    return data2D.savePageData(targetFile) >= 0;
+                    return data2D.savePageData(this, targetFile) >= 0;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -838,7 +838,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
         if (!isValidData()) {
             return 0;
         }
-        return data2D.clearData();
+        return data2D.clearData(currentTask);
     }
 
     @FXML

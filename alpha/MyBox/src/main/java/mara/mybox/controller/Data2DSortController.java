@@ -20,9 +20,9 @@ public class Data2DSortController extends BaseData2DTaskTargetsController {
     }
 
     @Override
-    public boolean initData() {
+    public boolean checkOptions() {
         try {
-            if (!super.initData()) {
+            if (!super.checkOptions()) {
                 return false;
             }
             if (orders == null || orders.isEmpty()) {

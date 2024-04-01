@@ -116,7 +116,7 @@ public class DataMatrix extends Data2D {
     }
 
     @Override
-    public long savePageData(File targetFile) {
+    public long savePageData(FxTask task, File targetFile) {
         rowsNumber = save(null, this, columns, tableRows(false));
         return rowsNumber;
     }
@@ -174,17 +174,17 @@ public class DataMatrix extends Data2D {
     }
 
     @Override
-    public long setValue(List<Integer> cols, SetValue value, boolean errorContinue) {
+    public long setValue(FxTask task, List<Integer> cols, SetValue value, boolean errorContinue) {
         return -1;
     }
 
     @Override
-    public long deleteRows(boolean errorContinue) {
+    public long deleteRows(FxTask task, boolean errorContinue) {
         return -1;
     }
 
     @Override
-    public long clearData() {
+    public long clearData(FxTask task) {
         long count = -1;
         try (Connection conn = DerbyBase.getConnection();
                 PreparedStatement clear = conn.prepareStatement(TableData2DCell.ClearData)) {

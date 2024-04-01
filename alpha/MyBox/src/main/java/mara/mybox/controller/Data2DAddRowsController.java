@@ -23,10 +23,6 @@ public class Data2DAddRowsController extends TableAddRowsController {
     @FXML
     protected Label nameLabel;
 
-    public Data2DAddRowsController() {
-        baseTitle = message("AddRows");
-    }
-
     public void setParameters(BaseData2DLoadController controller) {
         try {
             super.setParameters(controller);

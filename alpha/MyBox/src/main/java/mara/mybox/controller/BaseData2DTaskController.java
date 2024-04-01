@@ -21,16 +21,14 @@ import mara.mybox.data.DataSort;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.Data2D_Operations.ObjectType;
 import mara.mybox.data2d.DataFileCSV;
-import mara.mybox.data2d.DataFilter;
 import mara.mybox.data2d.DataTableGroup;
 import mara.mybox.data2d.TmpTable;
-import mara.mybox.data2d.tools.Data2DColumnTools;
-import mara.mybox.data2d.writer.ListWriter;
 import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
+import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileDeleteTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -44,7 +42,7 @@ public abstract class BaseData2DTaskController extends BaseTaskController {
 
     protected BaseData2DLoadController dataController;
     protected Data2D data2D;
-    protected List<Integer> checkedColsIndices, otherColsIndices, filteredRowsIndices;
+    protected List<Integer> checkedColsIndices, otherColsIndices;
     protected List<String> checkedColsNames, otherColsNames;
     protected List<Data2DColumn> checkedColumns, otherColumns;
     protected boolean idExclude = false, noCheckedColumnsMeansAll = true;
@@ -122,7 +120,7 @@ public abstract class BaseData2DTaskController extends BaseTaskController {
      */
     public void initSource() {
         try {
-            sourceController.setParameters(this, dataController);
+            sourceController.setParameters(this);
 
             tableLoadListener = new ChangeListener<Boolean>() {
                 @Override
@@ -143,10 +141,9 @@ public abstract class BaseData2DTaskController extends BaseTaskController {
             sourceController.selectedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    checkOptions();
+                    checkParameters();
                 }
             });
-
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -215,7 +212,7 @@ public abstract class BaseData2DTaskController extends BaseTaskController {
                 }
             }
 
-            checkOptions();
+            checkParameters();
             getMyStage().setTitle(baseTitle
                     + (data2D == null ? "" : " - " + data2D.displayName()));
 
@@ -227,150 +224,8 @@ public abstract class BaseData2DTaskController extends BaseTaskController {
     /*
         data
      */
-    public boolean checkSelections() {
-        return checkRowFilter() && sourceController.checkedRows() && checkColumns();
-    }
-
     public boolean isAllPages() {
         return sourceController.isAllPages();
-    }
-
-    private boolean checkRowFilter() {
-        if (filterController != null
-                && !filterController.checkExpression(isAllPages())) {
-            String ferror = filterController.error;
-            if (ferror != null && !ferror.isBlank()) {
-                if (filterTab != null) {
-                    tabPane.getSelectionModel().select(filterTab);
-                }
-                alertError(ferror);
-            }
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    public List<Integer> filteredRowsIndices() {
-        try {
-            DataFilter filter = data2D.filter;
-            if (filter == null || !filter.needFilter()
-                    || sourceController.selectedRowsIndices == null
-                    || sourceController.selectedRowsIndices.isEmpty()) {
-                return sourceController.selectedRowsIndices;
-            }
-            filteredRowsIndices = new ArrayList<>();
-            int size = sourceController.tableData.size();
-            for (int row : sourceController.selectedRowsIndices) {
-                if (row < 0 || row >= size
-                        || !filter.filterTableRow(data2D, sourceController.tableData.get(row), row)) {
-                    continue;
-                }
-                if (filter.reachMaxPassed()) {
-                    break;
-                }
-                filteredRowsIndices.add(row);
-            }
-            return filteredRowsIndices;
-        } catch (Exception e) {
-            error = e.toString();
-            MyBoxLog.debug(e);
-            return null;
-        }
-    }
-
-    // If none selected then select all
-    public List<List<String>> tableFiltered(boolean showRowNumber) {
-        return tableFiltered(checkedColsIndices, showRowNumber);
-    }
-
-    public List<List<String>> tableFiltered(List<Integer> cols, boolean showRowNumber) {
-        return tableFiltered(sourceController.selectedRowsIndices, cols, showRowNumber);
-    }
-
-    public List<List<String>> tableFiltered(List<Integer> rows, List<Integer> cols, boolean showRowNumber) {
-        try {
-            if (rows == null || rows.isEmpty()
-                    || cols == null || cols.isEmpty()) {
-                return null;
-            }
-            List<List<String>> data = new ArrayList<>();
-            int size = sourceController.tableData.size();
-            filteredRowsIndices = new ArrayList<>();
-            data2D.resetFilterNumber();
-            for (int row : rows) {
-                if (row < 0 || row >= size) {
-                    continue;
-                }
-                List<String> tableRow = sourceController.tableData.get(row);
-                if (!data2D.filterTableRow(tableRow, row)) {
-                    continue;
-                }
-                if (data2D.filterReachMaxPassed()) {
-                    break;
-                }
-
-                List<String> newRow = new ArrayList<>();
-                if (showRowNumber) {
-                    if (data2D.isTmpData()) {
-                        newRow.add((row + 1) + "");
-                    } else {
-                        newRow.add(tableRow.get(0) + "");
-                    }
-                }
-                for (int col : cols) {
-                    int index = col + 1;
-                    if (index < 0 || index >= tableRow.size()) {
-                        continue;
-                    }
-                    String v = tableRow.get(index);
-                    if (v != null && formatValuesCheck != null && formatValuesCheck.isSelected()) {
-                        v = data2D.column(col).format(v);
-                    }
-                    newRow.add(v);
-                }
-                data.add(newRow);
-                filteredRowsIndices.add(row);
-            }
-            return data;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
-    }
-
-    public List<List<String>> selectedData(FxTask task) {
-        try {
-            if (data2D == null || checkedColsIndices == null) {
-                return null;
-            }
-            data2D.startFilter(filterController != null ? filterController.filter : null);
-            if (!data2D.fillFilterStatistic()) {
-                return null;
-            }
-            List<List<String>> data;
-            if (isAllPages()) {
-                ListWriter writer = new ListWriter();
-                List<Data2DColumn> targetColumns = data2D.targetColumns(checkedColsIndices, false);
-                writer.setColumns(targetColumns)
-                        .setHeaderNames(Data2DColumnTools.toNames(targetColumns))
-                        .setWriteHeader(true);
-                data2D.copy(task, writer, checkedColsIndices, false,
-                        formatValuesCheck != null && formatValuesCheck.isSelected(),
-                        InvalidAs.Blank);
-                data = writer.getRows();
-            } else {
-                data = tableFiltered(false);
-            }
-            data2D.stopTask();
-            return data;
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            MyBoxLog.console(e);
-            return null;
-        }
     }
 
     /*
@@ -458,11 +313,6 @@ public abstract class BaseData2DTaskController extends BaseTaskController {
         }
     }
 
-    @Override
-    public boolean checkOptions() {
-        return checkParameters() && initData();
-    }
-
     // Check when selections are changed
     public boolean checkParameters() {
         try {
@@ -473,7 +323,12 @@ public abstract class BaseData2DTaskController extends BaseTaskController {
                 popError(message("NoData"));
                 return false;
             }
-            return checkSelections();
+            if (!checkColumns()) {
+                return false;
+            }
+            sourceController.formatValues
+                    = formatValuesCheck != null && formatValuesCheck.isSelected();
+            return sourceController.checkRowFilter() && sourceController.checkedRows();
         } catch (Exception e) {
             MyBoxLog.error(e);
             return false;
@@ -481,8 +336,23 @@ public abstract class BaseData2DTaskController extends BaseTaskController {
     }
 
     // Check when "OK"/"Start" button is clicked
-    public boolean initData() {
+    @Override
+    public boolean checkOptions() {
         try {
+            if (!checkParameters()) {
+                return false;
+            }
+            if (!sourceController.allPagesRadio.isSelected()
+                    && sourceController.selectedRowsIndices.isEmpty()) {
+                popError(message("SelectToHandle") + ": " + message("Rows"));
+                return false;
+            }
+
+            if (columnsPane != null && checkedColsIndices.isEmpty()) {
+                popError(message("SelectToHandle") + ": " + message("Columns"));
+                return false;
+            }
+
             if (groupController != null && !groupController.pickValues()) {
                 return false;
             }
@@ -502,7 +372,6 @@ public abstract class BaseData2DTaskController extends BaseTaskController {
             return false;
         }
     }
-
 
     /*
         status
@@ -600,9 +469,7 @@ public abstract class BaseData2DTaskController extends BaseTaskController {
             List<Integer> allIndices = new ArrayList<>();
             List<String> allNames = new ArrayList<>();
             List<Data2DColumn> allCols = new ArrayList<>();
-            boolean needSelection = false;
             if (columnsPane != null) {
-                needSelection = true;
                 for (Node node : columnsPane.getChildren()) {
                     CheckBox cb = (CheckBox) node;
                     String name = cb.getText();
@@ -619,6 +486,10 @@ public abstract class BaseData2DTaskController extends BaseTaskController {
                         }
                     }
                 }
+            } else {
+                allIndices = data2D.columnIndices();
+                allNames = data2D.columnNames();
+                allCols = data2D.getColumns();
             }
 
             if (noCheckedColumnsMeansAll && checkedColsIndices.isEmpty()) {
@@ -626,10 +497,7 @@ public abstract class BaseData2DTaskController extends BaseTaskController {
                 checkedColsNames = allNames;
                 checkedColumns = allCols;
             }
-            if (needSelection && checkedColsIndices.isEmpty()) {
-                popError(message("SelectToHandle") + ": " + message("Columns"));
-                return false;
-            }
+
             if (otherColumnsPane != null) {
                 for (Node node : otherColumnsPane.getChildren()) {
                     CheckBox cb = (CheckBox) node;
@@ -669,10 +537,6 @@ public abstract class BaseData2DTaskController extends BaseTaskController {
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
-    }
-
-    public void idExclude(boolean idExclude) {
-        this.idExclude = idExclude;
     }
 
     @FXML
@@ -743,6 +607,7 @@ public abstract class BaseData2DTaskController extends BaseTaskController {
     public void startTask() {
         showRightPane();
         startTime = new Date();
+        updateLogs(message("Start") + ": " + DateTools.dateToString(startTime), true);
         preprocessStatistic();
     }
 
@@ -752,12 +617,14 @@ public abstract class BaseData2DTaskController extends BaseTaskController {
         boolean hasFilterScript = filterScript != null && !filterScript.isBlank();
         if (hasFilterScript) {
             scripts.add(filterScript);
+            updateLogs(message("Filter") + ": " + filterScript, true);
         }
         List<String> groupScripts = null;
         if (groupController != null) {
             groupScripts = groupController.scripts();
             if (groupScripts != null) {
                 scripts.addAll(groupScripts);
+                updateLogs(message("Group") + ": " + groupScripts, true);
             }
         }
         boolean hasGroupScripts = groupScripts != null && !groupScripts.isEmpty();
@@ -765,6 +632,7 @@ public abstract class BaseData2DTaskController extends BaseTaskController {
             startOperation();
             return;
         }
+        updateLogs(message("Statistic") + " ... ", true);
         if (task != null) {
             task.cancel();
         }
@@ -804,6 +672,7 @@ public abstract class BaseData2DTaskController extends BaseTaskController {
                 super.finalAction();
                 data2D.stopTask();
                 if (ok) {
+                    updateLogs(baseTitle + " ... ", true);
                     startOperation();
                 } else {
                     closeTask();
@@ -811,7 +680,7 @@ public abstract class BaseData2DTaskController extends BaseTaskController {
             }
 
         };
-        start(task, false, null);
+        start(task, false);
     }
 
     protected void startOperation() {
@@ -823,7 +692,7 @@ public abstract class BaseData2DTaskController extends BaseTaskController {
             if (isAllPages()) {
                 outputData = data2D.allRows(colIndices, needRowNumber);
             } else {
-                outputData = tableFiltered(colIndices, needRowNumber);
+                outputData = sourceController.tableFiltered(colIndices, needRowNumber);
             }
             data2D.stopFilter();
             if (outputData != null) {
@@ -889,9 +758,6 @@ public abstract class BaseData2DTaskController extends BaseTaskController {
                 return null;
             }
             outputData = csvData.allRows(false);
-            if (showColNames()) {
-                outputData.add(0, csvData.columnNames());
-            }
             FileDeleteTools.delete(data2D.getTask(), csvData.getFile());
             outputColumns = csvData.columns;
             return outputData;
@@ -933,7 +799,7 @@ public abstract class BaseData2DTaskController extends BaseTaskController {
             }
             tmpTable.setTask(data2DTask);
             if (!isAllPages()) {
-                outputData = tableFiltered(data2D.columnIndices(), needRowNumber);
+                outputData = sourceController.tableFiltered(data2D.columnIndices(), needRowNumber);
                 if (outputData == null || outputData.isEmpty()) {
                     return null;
                 }

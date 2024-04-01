@@ -120,11 +120,12 @@ public class BaseTaskController extends BaseLogs {
     }
 
     public void startTask() {
+        startTime = new Date();
+        updateLogs(message("Start") + ": " + DateTools.dateToString(startTime), true);
         task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
-                startTime = new Date();
                 return doTask(this);
 
             }

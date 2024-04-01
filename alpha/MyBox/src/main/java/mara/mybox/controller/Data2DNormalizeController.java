@@ -5,7 +5,6 @@ import java.util.List;
 import javafx.fxml.FXML;
 import mara.mybox.calculation.Normalization;
 import mara.mybox.data2d.writer.Data2DWriter;
-import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
@@ -31,7 +30,7 @@ public class Data2DNormalizeController extends BaseData2DTaskTargetsController {
     @Override
     public boolean handleRows() {
         try {
-            filteredRowsIndices = filteredRowsIndices();
+            List<Integer> filteredRowsIndices = sourceController.filteredRowsIndices();
             if (filteredRowsIndices == null || filteredRowsIndices.isEmpty()
                     || checkedColsIndices == null || checkedColsIndices.isEmpty()) {
                 if (task != null) {
@@ -57,13 +56,6 @@ public class Data2DNormalizeController extends BaseData2DTaskTargetsController {
             outputColumns = data2D.targetColumns(checkedColsIndices, otherColsIndices,
                     showRowNumber(), message("Normalize"));
             outputData = new ArrayList<>();
-            if (showColNames()) {
-                List<String> names = new ArrayList<>();
-                for (Data2DColumn column : outputColumns) {
-                    names.add(column.getColumnName());
-                }
-                outputData.add(0, names);
-            }
             int otherColsNumber = otherColsIndices != null ? otherColsIndices.size() : 0;
             for (int r = 0; r < rowsNumber; r++) {
                 List<String> row = new ArrayList<>();
