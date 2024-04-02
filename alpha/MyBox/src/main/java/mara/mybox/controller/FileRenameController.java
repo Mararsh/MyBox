@@ -56,7 +56,7 @@ public class FileRenameController extends BaseController {
 
             getMyStage().setWidth(file.getAbsolutePath().length() * AppVariables.sceneFontSize + 40);
             myStage.setHeight(AppVariables.sceneFontSize * 14 + 80);
-            myStage.setAlwaysOnTop(true);
+            setAlwaysTop(true, false);
 
         } catch (Exception e) {
             MyBoxLog.error(e);

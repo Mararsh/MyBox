@@ -218,6 +218,27 @@ public abstract class BaseController_Interface extends BaseController_Files {
 
             initMainArea();
 
+            if (onTopCheck != null) {
+                onTopCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                        if (isSettingValues || myStage == null) {
+                            return;
+                        }
+                        setAlwaysTop(onTopCheck.isSelected(), true);
+                    }
+                });
+            }
+            if (closeAfterCheck != null) {
+                closeAfterCheck.setSelected(UserConfig.getBoolean(interfaceName + "SaveClose", false));
+                closeAfterCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                        UserConfig.setBoolean(interfaceName + "SaveClose", closeAfterCheck.isSelected());
+                    }
+                });
+            }
+
             if (tipsView != null) {
                 tipsView.setPickOnBounds(true);
                 tipsView.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -436,6 +457,11 @@ public abstract class BaseController_Interface extends BaseController_Files {
                     }
                 }, 1000);
             }
+
+            if (onTopCheck != null) {
+                onTopCheck.setSelected(myStage.isAlwaysOnTop());
+            }
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -560,6 +586,26 @@ public abstract class BaseController_Interface extends BaseController_Files {
                     });
                 }
             }, 500);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    public void setAlwaysTop(boolean onTop, boolean info) {
+        try {
+            myStage = getMyStage();
+            if (myStage == null || !myStage.isShowing()) {
+                return;
+            }
+            myStage.setAlwaysOnTop(onTop);
+            if (info) {
+                popInformation(onTop ? message("AlwayOnTop") : message("DisableAlwayOnTop"));
+            }
+            if (onTopCheck != null) {
+                isSettingValues = true;
+                onTopCheck.setSelected(onTop);
+                isSettingValues = false;
+            }
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

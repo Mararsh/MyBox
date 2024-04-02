@@ -382,10 +382,7 @@ public abstract class BaseController_Actions extends BaseController_Interface {
 
     @FXML
     public void setAlwaysOnTop() {
-        if (getMyStage() == null) {
-            return;
-        }
-        myStage.setAlwaysOnTop(true);
+        setAlwaysTop(true, true);
     }
 
     public void clearUserSettings() {

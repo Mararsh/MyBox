@@ -7,14 +7,14 @@ import mara.mybox.dev.MyBoxLog;
  * @CreateDate 2021-12-25
  * @License Apache License Version 2.0
  */
-public abstract class BaseChildController extends BaseFileController {
+public abstract class BaseBranchController extends BaseFileController {
 
     @Override
     public void initValues() {
         try {
             super.initValues();
 
-            stageType = StageType.Child;
+            stageType = StageType.Branch;
 
         } catch (Exception e) {
             MyBoxLog.error(e);

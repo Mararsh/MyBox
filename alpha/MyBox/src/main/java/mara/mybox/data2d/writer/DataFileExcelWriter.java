@@ -131,7 +131,7 @@ public class DataFileExcelWriter extends Data2DWriter {
             xssfBook.close();
             xssfBook = null;
             if (isFailed() || !tmpFile.exists()
-                    || !FileTools.override(tmpFile, targetFile)) {
+                    || !FileTools.override(tmpFile, targetFile, true)) {
                 FileDeleteTools.delete(tmpFile);
                 showInfo(message("Failed") + ": " + targetFile);
                 return;

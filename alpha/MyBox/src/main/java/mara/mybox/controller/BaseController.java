@@ -85,11 +85,11 @@ public abstract class BaseController extends BaseController_MouseEvents implemen
                     }
                 });
                 parent.getMyStage().setFullScreen(false);
-                myStage.setAlwaysOnTop(true);
+                setAlwaysTop(true, false);
                 break;
             }
             case Pop: {
-                myStage.setAlwaysOnTop(true);
+                setAlwaysTop(true, false);
                 if (parent != null) {
                     parent.getMyStage().setFullScreen(false);
                 }

@@ -83,7 +83,7 @@ public class DataFileCSVWriter extends Data2DWriter {
             printer.close();
             printer = null;
             if (isFailed() || tmpFile == null || !tmpFile.exists()
-                    || !FileTools.override(tmpFile, targetFile, true)) {
+                    || !FileTools.override(tmpFile, targetFile)) {
                 FileDeleteTools.delete(tmpFile);
                 showInfo(message("Failed") + ": " + targetFile);
                 return;

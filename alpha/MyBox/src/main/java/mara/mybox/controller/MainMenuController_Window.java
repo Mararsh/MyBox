@@ -132,7 +132,7 @@ public abstract class MainMenuController_Window extends MainMenuController_Base 
         if (getMyStage() == null) {
             return;
         }
-        myStage.setAlwaysOnTop(alwayOnTopCheck.isSelected());
+        setAlwaysTop(alwayOnTopCheck.isSelected(), true);
     }
 
     @FXML

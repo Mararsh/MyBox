@@ -73,16 +73,16 @@ public class ControlImagesBlend extends BaseController {
 
             baseAboveCheck.setSelected(UserConfig.getBoolean(conn, baseName + "BaseAbove", false));
 
-            String v = UserConfig.getString(conn, baseName + "BaseTransparentAs", "Transparent");
-            if ("Another".equals(v)) {
-                baseAsOverlayRadio.setSelected(true);
-                baseTransparentAs = TransparentAs.Another;
+            String v = UserConfig.getString(conn, baseName + "BaseTransparentAs", "Another");
+            if ("Transparent".equals(v)) {
+                baseAsTransparentRadio.setSelected(true);
+                baseTransparentAs = TransparentAs.Transparent;
             } else if ("Blend".equals(v)) {
                 baseBlendRadio.setSelected(true);
                 baseTransparentAs = TransparentAs.Blend;
             } else {
-                baseAsTransparentRadio.setSelected(true);
-                baseTransparentAs = TransparentAs.Transparent;
+                baseAsOverlayRadio.setSelected(true);
+                baseTransparentAs = TransparentAs.Another;
             }
 
             v = UserConfig.getString(conn, baseName + "OverlayTransparentAs", "Another");

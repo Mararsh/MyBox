@@ -74,6 +74,7 @@ public class FxTask<Void> extends BaseTask<Void> {
     protected void whenSucceeded() {
         if (isCancelled()) {
             setInfo(message("Cancelled"));
+            MyBoxLog.debug(getClass());
             return;
         }
         if (controller != null) {
@@ -84,12 +85,14 @@ public class FxTask<Void> extends BaseTask<Void> {
     @Override
     protected void whenCanceled() {
         setInfo(message("Cancelled"));
+        MyBoxLog.debug(getClass());
     }
 
     @Override
     protected void whenFailed() {
         if (isCancelled()) {
             setInfo(message("Cancelled"));
+            MyBoxLog.debug(getClass());
             return;
         }
         if (controller != null) {

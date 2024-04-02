@@ -182,6 +182,9 @@ public class BaseTaskController extends BaseLogs {
         if (openCheck != null && openCheck.isSelected()) {
             openTarget();
         }
+        if (closeAfterCheck != null) {
+            close();
+        }
     }
 
     public void cancelTask() {
@@ -202,7 +205,8 @@ public class BaseTaskController extends BaseLogs {
 
     protected void taskCanceled() {
         cancelled = true;
-        showLogs(message("Cancel"));
+        showLogs(message("Cancelled"));
+        MyBoxLog.debug(getClass());
     }
 
     @FXML

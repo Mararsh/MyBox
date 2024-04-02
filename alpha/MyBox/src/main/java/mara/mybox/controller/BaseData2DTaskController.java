@@ -38,7 +38,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-9-4
  * @License Apache License Version 2.0
  */
-public abstract class BaseData2DTaskController extends BaseTaskController {
+public abstract class BaseData2DTaskController extends BaseBranchController {
 
     protected BaseData2DLoadController dataController;
     protected Data2D data2D;
@@ -345,11 +345,13 @@ public abstract class BaseData2DTaskController extends BaseTaskController {
             if (!sourceController.allPagesRadio.isSelected()
                     && sourceController.selectedRowsIndices.isEmpty()) {
                 popError(message("SelectToHandle") + ": " + message("Rows"));
+                tabPane.getSelectionModel().select(sourceTab);
                 return false;
             }
 
             if (columnsPane != null && checkedColsIndices.isEmpty()) {
                 popError(message("SelectToHandle") + ": " + message("Columns"));
+                tabPane.getSelectionModel().select(optionsTab);
                 return false;
             }
 
