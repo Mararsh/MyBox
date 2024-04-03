@@ -35,9 +35,9 @@ public class BaseData2DRegressionController extends BaseData2DChartController {
     protected ControlData2DView resultsController;
 
     @Override
-    public void initControls() {
+    public void initOptions() {
         try {
-            super.initControls();
+            super.initOptions();
 
             alpha = UserConfig.getDouble(baseName + "Alpha", 0.05);
             if (alpha >= 1 || alpha <= 0) {
@@ -104,13 +104,11 @@ public class BaseData2DRegressionController extends BaseData2DChartController {
     }
 
     @FXML
-    @Override
     public void dataAction() {
         resultsController.dataAction();
     }
 
     @FXML
-    @Override
     public void viewAction() {
         resultsController.editAction();
     }

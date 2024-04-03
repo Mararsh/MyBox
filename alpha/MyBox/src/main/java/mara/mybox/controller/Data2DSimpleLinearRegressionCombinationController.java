@@ -31,9 +31,9 @@ public class Data2DSimpleLinearRegressionCombinationController extends BaseData2
     }
 
     @Override
-    public void initControls() {
+    public void initOptions() {
         try {
-            super.initControls();
+            super.initOptions();
 
             resultsController.setParameters(this);
 
@@ -87,7 +87,7 @@ public class Data2DSimpleLinearRegressionCombinationController extends BaseData2
                     if (isAllPages()) {
                         data2D.simpleLinearRegression(null, dataColsIndices, simpleRegression, false);
                     } else {
-                        simpleRegression.addData(tableFiltered(dataColsIndices, true), invalidAs);
+                        simpleRegression.addData(sourceController.rowsFiltered(dataColsIndices, true), invalidAs);
                     }
                     List<String> row = new ArrayList<>();
                     row.add(yName);

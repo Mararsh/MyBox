@@ -27,7 +27,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-12-12
  * @License Apache License Version 2.0
  */
-public class Data2DStatisticController extends BaseData2DTargetsController {
+public class Data2DStatisticController extends BaseData2DTaskTargetsController {
 
     protected DescriptiveStatistic calculation;
     protected int categorysCol;
@@ -47,9 +47,9 @@ public class Data2DStatisticController extends BaseData2DTargetsController {
     }
 
     @Override
-    public void initControls() {
+    public void initOptions() {
         try {
-            super.initControls();
+            super.initOptions();
 
             categoryColumnSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
@@ -64,11 +64,11 @@ public class Data2DStatisticController extends BaseData2DTargetsController {
     }
 
     @Override
-    public void refreshControls() {
+    public void sourceChanged() {
         try {
-            super.refreshControls();
+            super.sourceChanged();
 
-            List<String> names = tableController.data2D.columnNames();
+            List<String> names = dataController.data2D.columnNames();
             if (names == null || names.isEmpty()) {
                 return;
             }
@@ -104,9 +104,9 @@ public class Data2DStatisticController extends BaseData2DTargetsController {
     }
 
     @Override
-    public boolean initData() {
+    public boolean checkOptions() {
         try {
-            if (!super.initData()) {
+            if (!super.checkOptions()) {
                 return false;
             }
             categorysCol = -1;
@@ -119,7 +119,7 @@ public class Data2DStatisticController extends BaseData2DTargetsController {
             calculation = statisticController.pickValues()
                     .setScale(scale)
                     .setInvalidAs(invalidAs)
-                    .setHandleController(this)
+                    .setTaskController(this)
                     .setData2D(data2D)
                     .setColsIndices(checkedColsIndices)
                     .setColsNames(checkedColsNames)
@@ -176,7 +176,8 @@ public class Data2DStatisticController extends BaseData2DTargetsController {
         if (rowsRadio.isSelected() && categorysCol >= 0) {
             colsIndices.add(0, categorysCol);
         }
-        if (!calculation.statisticData(tableFiltered(colsIndices, rowsRadio.isSelected() && categorysCol < 0))) {
+        if (!calculation.statisticData(sourceController.rowsFiltered(colsIndices,
+                rowsRadio.isSelected() && categorysCol < 0))) {
             return false;
         }
         outputColumns = calculation.getOutputColumns();
@@ -231,13 +232,11 @@ public class Data2DStatisticController extends BaseData2DTargetsController {
                 super.finalAction();
                 data2D.stopTask();
                 calculation.setTask(null);
-                if (targetController != null) {
-                    targetController.refreshControls();
-                }
+                closeTask();
             }
 
         };
-        start(task);
+        start(task, false);
     }
 
     public void handleAllByAllTask() {
@@ -293,13 +292,11 @@ public class Data2DStatisticController extends BaseData2DTargetsController {
                 super.finalAction();
                 data2D.stopTask();
                 calculation.setTask(null);
-                if (targetController != null) {
-                    targetController.refreshControls();
-                }
+                closeTask();
             }
 
         };
-        start(task);
+        start(task, false);
     }
 
     @Override

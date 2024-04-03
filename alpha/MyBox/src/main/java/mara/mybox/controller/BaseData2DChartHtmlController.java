@@ -40,9 +40,9 @@ public abstract class BaseData2DChartHtmlController extends BaseData2DChartContr
     protected ControlWebView webViewController;
 
     @Override
-    public void initControls() {
+    public void initOptions() {
         try {
-            super.initControls();
+            super.initOptions();
 
             webViewController.setParent(this);
 
@@ -142,8 +142,8 @@ public abstract class BaseData2DChartHtmlController extends BaseData2DChartContr
     }
 
     @Override
-    public boolean initData() {
-        if (!super.initData()) {
+    public boolean checkOptions() {
+        if (!super.checkOptions()) {
             return false;
         }
         categorysCol = -1;
@@ -278,7 +278,6 @@ public abstract class BaseData2DChartHtmlController extends BaseData2DChartContr
     }
 
     @FXML
-    @Override
     public void dataAction() {
         if (outputData == null || outputData.isEmpty()) {
             popError(message("NoData"));
@@ -288,7 +287,6 @@ public abstract class BaseData2DChartHtmlController extends BaseData2DChartContr
     }
 
     @FXML
-    @Override
     public void editAction() {
         webViewController.editAction();
     }

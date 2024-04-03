@@ -33,9 +33,9 @@ public class Data2DChartPieController extends BaseData2DChartController {
     }
 
     @Override
-    public void initControls() {
+    public void initOptions() {
         try {
-            super.initControls();
+            super.initOptions();
 
             pieMaker = chartController.pieMaker;
             chartController.redrawNotify.addListener(new ChangeListener<Boolean>() {
@@ -51,9 +51,9 @@ public class Data2DChartPieController extends BaseData2DChartController {
     }
 
     @Override
-    public boolean initData() {
+    public boolean checkOptions() {
         try {
-            if (!super.initData()) {
+            if (!super.checkOptions()) {
                 return false;
             }
             dataColsIndices = new ArrayList<>();

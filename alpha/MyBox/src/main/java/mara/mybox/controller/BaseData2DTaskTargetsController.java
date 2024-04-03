@@ -16,7 +16,6 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -39,25 +38,6 @@ public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskCont
 
             if (targetController != null) {
                 targetController.setParameters(this, controller);
-            }
-
-            if (rowNumberCheck != null) {
-                rowNumberCheck.setSelected(UserConfig.getBoolean(baseName + "CopyRowNumber", false));
-                rowNumberCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                    @Override
-                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        rowNumberCheckChanged();
-                    }
-                });
-            }
-            if (colNameCheck != null) {
-                colNameCheck.setSelected(UserConfig.getBoolean(baseName + "CopyColNames", true));
-                colNameCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                    @Override
-                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        UserConfig.setBoolean(baseName + "CopyColNames", colNameCheck.isSelected());
-                    }
-                });
             }
 
             if (colSelector != null) {
@@ -159,7 +139,7 @@ public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskCont
                         checkedColsIndices, null, rowNumberCheck.isSelected(), null);
                 writer.setColumns(targetColumns)
                         .setHeaderNames(Data2DColumnTools.toNames(targetColumns))
-                        .setWriteHeader(colNameCheck.isSelected());
+                        .setWriteHeader(colNameCheck == null || colNameCheck.isSelected());
                 updateLogs(message("Columns") + ": " + writer.getHeaderNames(), true);
                 return handleAllData(this, writer);
             }
@@ -175,6 +155,13 @@ public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskCont
                 super.finalAction();
                 data2D.stopTask();
                 closeTask();
+                if (ok) {
+                    if (closeAfterCheck != null && closeAfterCheck.isSelected()) {
+                        close();
+                    } else if (targetController != null) {
+                        targetController.refreshControls();
+                    }
+                }
             }
 
         };
@@ -206,17 +193,16 @@ public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskCont
 
             @Override
             protected void whenSucceeded() {
-                ouputRows();
             }
 
             @Override
             protected void finalAction() {
                 super.finalAction();
                 data2D.stopTask();
-                if (targetController != null) {
-                    targetController.refreshControls();
-                }
                 closeTask();
+                if (ok) {
+                    ouputRows();
+                }
             }
 
         };
@@ -225,7 +211,7 @@ public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskCont
 
     public boolean handleRows() {
         try {
-            outputData = sourceController.tableFiltered(checkedColsIndices, showRowNumber());
+            outputData = rowsFiltered();
             return outputData != null;
         } catch (Exception e) {
             if (task != null) {
@@ -284,7 +270,12 @@ public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskCont
             dataController.isSettingValues = false;
             dataController.tableChanged(true);
             dataController.requestMouse();
-            popDone();
+            dataController.popDone();
+            if (closeAfterCheck != null && closeAfterCheck.isSelected()) {
+                close();
+            } else if (targetController != null) {
+                targetController.refreshControls();
+            }
             return true;
         } catch (Exception e) {
             popError(e.toString());
@@ -322,7 +313,7 @@ public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskCont
                 } else {
                     writer.setColumns(outputColumns)
                             .setHeaderNames(Data2DColumnTools.toNames(outputColumns))
-                            .setWriteHeader(colNameCheck.isSelected());
+                            .setWriteHeader(colNameCheck == null || colNameCheck.isSelected());
                     writer.openWriter();
                     for (List<String> row : outputData) {
                         if (!isWorking()) {
@@ -337,7 +328,7 @@ public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskCont
 
             @Override
             protected void whenSucceeded() {
-                popDone();
+                dataController.popDone();
                 if (dataTable != null) {
                     Data2DManufactureController.openDef(dataTable);
                 } else {
@@ -349,6 +340,10 @@ public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskCont
             protected void finalAction() {
                 super.finalAction();
                 data2D.stopTask();
+                closeTask();
+                if (ok && closeAfterCheck != null && closeAfterCheck.isSelected()) {
+                    close();
+                }
             }
 
         };

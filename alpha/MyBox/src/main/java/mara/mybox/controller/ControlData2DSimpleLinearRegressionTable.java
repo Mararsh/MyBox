@@ -125,7 +125,7 @@ public class ControlData2DSimpleLinearRegressionTable extends ControlData2DView 
         }
         List<String> selected = selected();
         if (selected == null) {
-            Data2DSimpleLinearRegressionController.open(regressController.tableController);
+            Data2DSimpleLinearRegressionController.open(regressController.dataController);
         } else {
             try {
                 Data2DSimpleLinearRegressionController controller = (Data2DSimpleLinearRegressionController) WindowTools
@@ -137,7 +137,7 @@ public class ControlData2DSimpleLinearRegressionTable extends ControlData2DView 
                 controller.interceptCheck.setSelected(regressController.interceptCheck.isSelected());
                 controller.alphaSelector.getSelectionModel().select(regressController.alpha + "");
                 controller.cloneOptions(regressController);
-                controller.setParameters(regressController.tableController);
+                controller.setParameters(regressController.dataController);
                 controller.okAction();
                 controller.requestMouse();
             } catch (Exception e) {

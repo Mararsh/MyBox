@@ -76,8 +76,8 @@ public class ImageSelectPixelsController extends BasePixelsController {
             protected void whenSucceeded() {
                 ImagePopController.openImage(myController, handledImage);
                 if (closeAfterCheck.isSelected()) {
-                    close();
                     imageController.popSuccessful();
+                    close();
                 } else {
                     getMyWindow().requestFocus();
                     myStage.toFront();

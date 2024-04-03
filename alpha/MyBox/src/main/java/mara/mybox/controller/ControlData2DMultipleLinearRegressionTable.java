@@ -43,7 +43,7 @@ public class ControlData2DMultipleLinearRegressionTable extends ControlData2DSim
         }
         List<String> selected = selected();
         if (selected == null) {
-            Data2DMultipleLinearRegressionController.open(regressController.tableController);
+            Data2DMultipleLinearRegressionController.open(regressController.dataController);
         } else {
             try {
                 Data2DMultipleLinearRegressionController controller = (Data2DMultipleLinearRegressionController) WindowTools
@@ -57,7 +57,7 @@ public class ControlData2DMultipleLinearRegressionTable extends ControlData2DSim
                 controller.checkedColsIndices = cols;
                 controller.interceptCheck.setSelected(regressController.interceptCheck.isSelected());
                 controller.cloneOptions(regressController);
-                controller.setParameters(regressController.tableController);
+                controller.setParameters(regressController.dataController);
                 controller.okAction();
                 controller.requestMouse();
             } catch (Exception e) {

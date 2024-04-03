@@ -29,9 +29,9 @@ public class Data2DChartGroupBoxWhiskerController extends Data2DChartBoxWhiskerC
     }
 
     @Override
-    public void initControls() {
+    public void initOptions() {
         try {
-            super.initControls();
+            super.initOptions();
 
             objectType = ObjectType.Columns;
 

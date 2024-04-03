@@ -25,7 +25,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2022-7-1
  * @License Apache License Version 2.0
  */
-public class Data2DRowExpressionController extends BaseData2DTargetsController {
+public class Data2DRowExpressionController extends BaseData2DTaskTargetsController {
 
     protected String expression;
 
@@ -43,9 +43,9 @@ public class Data2DRowExpressionController extends BaseData2DTargetsController {
     }
 
     @Override
-    public void initControls() {
+    public void initOptions() {
         try {
-            super.initControls();
+            super.initOptions();
 
             nameInput.setText(UserConfig.getString(interfaceName + "Name", message("Value")));
 
@@ -56,7 +56,7 @@ public class Data2DRowExpressionController extends BaseData2DTargetsController {
 
     @Override
     public void sourceChanged() {
-        if (tableController == null) {
+        if (dataController == null) {
             return;
         }
         super.sourceChanged();
@@ -64,9 +64,9 @@ public class Data2DRowExpressionController extends BaseData2DTargetsController {
     }
 
     @Override
-    public boolean initData() {
+    public boolean checkOptions() {
         try {
-            if (!super.initData()) {
+            if (!super.checkOptions()) {
                 return false;
             }
             expression = expressionController.scriptInput.getText();
@@ -163,16 +163,16 @@ public class Data2DRowExpressionController extends BaseData2DTargetsController {
     @Override
     public boolean handleRows() {
         try {
-            boolean showRowNumber = showRowNumber();
-            outputData = tableFiltered(showRowNumber);
+            outputData = rowsFiltered();
             if (outputData == null) {
                 error = message("SelectToHandle");
                 return false;
             }
-            for (int i = 0; i < filteredRowsIndices.size(); i++) {
-                int rowIndex = filteredRowsIndices.get(i);
+            for (int i = 0; i < sourceController.filteredRowsIndices.size(); i++) {
+                int rowIndex = sourceController.filteredRowsIndices.get(i);
                 List<String> checkedRow = outputData.get(i);
-                if (data2D.calculateTableRowExpression(expression, tableController.tableData.get(rowIndex), rowIndex)) {
+                if (data2D.calculateTableRowExpression(expression,
+                        dataController.tableData.get(rowIndex), rowIndex)) {
                     checkedRow.add(data2D.expressionResult());
                 } else {
                     if (errorContinueCheck.isSelected()) {
@@ -187,15 +187,6 @@ public class Data2DRowExpressionController extends BaseData2DTargetsController {
             outputColumns = data2D.targetColumns(checkedColsIndices, null, showRowNumber(), null);
             String name = nameInput.getText().trim();
             outputColumns.add(new Data2DColumn(name, ColumnDefinition.ColumnType.String));
-
-            if (showColNames()) {
-                List<String> names = new ArrayList<>();
-                for (Data2DColumn column : outputColumns) {
-                    names.add(column.getColumnName());
-                }
-                outputData.add(0, names);
-            }
-
             return true;
         } catch (Exception e) {
             if (task != null) {

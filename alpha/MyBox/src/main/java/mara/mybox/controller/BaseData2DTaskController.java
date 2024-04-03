@@ -221,11 +221,12 @@ public abstract class BaseData2DTaskController extends BaseBranchController {
         }
     }
 
-    /*
-        data
-     */
     public boolean isAllPages() {
         return sourceController.isAllPages();
+    }
+
+    public List<List<String>> rowsFiltered() {
+        return sourceController.rowsFiltered(checkedColsIndices, showRowNumber());
     }
 
     /*
@@ -328,7 +329,7 @@ public abstract class BaseData2DTaskController extends BaseBranchController {
             }
             sourceController.formatValues
                     = formatValuesCheck != null && formatValuesCheck.isSelected();
-            return sourceController.checkRowFilter() && sourceController.checkedRows();
+            return sourceController.checkRowsFilter() && sourceController.checkedRows();
         } catch (Exception e) {
             MyBoxLog.error(e);
             return false;
@@ -694,7 +695,7 @@ public abstract class BaseData2DTaskController extends BaseBranchController {
             if (isAllPages()) {
                 outputData = data2D.allRows(colIndices, needRowNumber);
             } else {
-                outputData = sourceController.tableFiltered(colIndices, needRowNumber);
+                outputData = sourceController.rowsFiltered(colIndices, needRowNumber);
             }
             data2D.stopFilter();
             if (outputData != null) {
@@ -801,7 +802,7 @@ public abstract class BaseData2DTaskController extends BaseBranchController {
             }
             tmpTable.setTask(data2DTask);
             if (!isAllPages()) {
-                outputData = sourceController.tableFiltered(data2D.columnIndices(), needRowNumber);
+                outputData = sourceController.rowsFiltered(data2D.columnIndices(), needRowNumber);
                 if (outputData == null || outputData.isEmpty()) {
                     return null;
                 }

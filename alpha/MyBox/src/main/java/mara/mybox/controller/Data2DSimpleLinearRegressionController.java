@@ -60,9 +60,9 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DRegression
     }
 
     @Override
-    public void initControls() {
+    public void initOptions() {
         try {
-            super.initControls();
+            super.initOptions();
 
             fittingMaker = fittingController.chartMaker;
             fittingMaker.init(ChartType.SimpleRegressionChart, message("SimpleRegressionChart"));
@@ -150,9 +150,9 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DRegression
     }
 
     @Override
-    public boolean initData() {
+    public boolean checkOptions() {
         try {
-            if (!super.initData()) {
+            if (!super.checkOptions()) {
                 return false;
             }
             int categoryCol = data2D.colOrder(selectedCategory);
@@ -197,10 +197,10 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DRegression
                     regressionData = simpleRegression.addData(outputData, invalidAs);
                 } else {
                     regressionFile = data2D.simpleLinearRegression(null, dataColsIndices, simpleRegression, true);
-                    outputData = tableFiltered(dataColsIndices, true);
+                    outputData = sourceController.rowsFiltered(dataColsIndices, true);
                 }
             } else {
-                outputData = tableFiltered(dataColsIndices, true);
+                outputData = sourceController.rowsFiltered(dataColsIndices, true);
                 regressionData = simpleRegression.addData(outputData, invalidAs);
             }
             if (outputData == null) {

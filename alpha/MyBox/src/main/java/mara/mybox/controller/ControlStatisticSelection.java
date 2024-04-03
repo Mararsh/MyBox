@@ -18,7 +18,7 @@ import mara.mybox.value.UserConfig;
  */
 public class ControlStatisticSelection extends BaseController {
 
-    protected BaseData2DHandleController handleController;
+    protected BaseData2DTaskController taskController;
     protected DescriptiveStatistic calculation;
 
     @FXML
@@ -52,10 +52,10 @@ public class ControlStatisticSelection extends BaseController {
         }
     }
 
-    public void setParameters(BaseData2DHandleController handleController) {
+    public void setParameters(BaseData2DTaskController controller) {
         try {
-            this.handleController = handleController;
-            baseName = handleController.baseName;
+            taskController = controller;
+            baseName = taskController.baseName;
 
             countCheck.setSelected(UserConfig.getBoolean(baseName + "Count", true));
             countCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {

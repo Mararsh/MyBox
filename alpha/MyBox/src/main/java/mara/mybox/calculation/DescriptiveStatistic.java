@@ -5,12 +5,12 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import mara.mybox.controller.BaseData2DHandleController;
+import mara.mybox.controller.BaseData2DTaskController;
 import mara.mybox.data2d.Data2D;
-import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
+import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
@@ -29,7 +29,7 @@ public class DescriptiveStatistic {
     public int scale;
     public InvalidAs invalidAs;
 
-    protected BaseData2DHandleController handleController;
+    protected BaseData2DTaskController taskController;
     protected FxTask<Void> task;
     protected Data2D data2D;
     protected Map<StatisticType, List<String>> statisticRows;
@@ -147,7 +147,7 @@ public class DescriptiveStatistic {
     public boolean prepareByColumns(String prefix, List<String> names) {
         try {
             if (names == null || names.isEmpty() || types.size() < 1) {
-                handleController.popError(message("SelectToHandle") + " " + prefix);
+                taskController.popError(message("SelectToHandle") + " " + prefix);
                 return false;
             }
             outputNames = new ArrayList<>();
@@ -173,7 +173,7 @@ public class DescriptiveStatistic {
 
             return true;
         } catch (Exception e) {
-            handleController.popError(e.toString());
+            taskController.popError(e.toString());
             MyBoxLog.error(e);
             return false;
         }
@@ -182,7 +182,7 @@ public class DescriptiveStatistic {
     public boolean prepareByRows() {
         try {
             if (types.size() < 1) {
-                handleController.popError(message("SelectToHandle"));
+                taskController.popError(message("SelectToHandle"));
                 return false;
             }
             outputNames = new ArrayList<>();
@@ -202,13 +202,13 @@ public class DescriptiveStatistic {
             }
 
             if (outputNames.size() < 2) {
-                handleController.popError(message("SelectToHandle"));
+                taskController.popError(message("SelectToHandle"));
                 return false;
             }
 
             return true;
         } catch (Exception e) {
-            handleController.popError(e.toString());
+            taskController.popError(e.toString());
             MyBoxLog.error(e);
             return false;
         }
@@ -498,12 +498,12 @@ public class DescriptiveStatistic {
         return this;
     }
 
-    public BaseData2DHandleController getHandleController() {
-        return handleController;
+    public BaseData2DTaskController getTaskController() {
+        return taskController;
     }
 
-    public DescriptiveStatistic setHandleController(BaseData2DHandleController handleController) {
-        this.handleController = handleController;
+    public DescriptiveStatistic setTaskController(BaseData2DTaskController taskController) {
+        this.taskController = taskController;
         return this;
     }
 

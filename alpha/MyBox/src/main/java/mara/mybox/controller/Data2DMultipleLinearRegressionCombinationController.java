@@ -39,9 +39,9 @@ public class Data2DMultipleLinearRegressionCombinationController extends BaseDat
     }
 
     @Override
-    public void initControls() {
+    public void initOptions() {
         try {
-            super.initControls();
+            super.initOptions();
 
             resultsController.setParameters(this);
 
@@ -51,9 +51,9 @@ public class Data2DMultipleLinearRegressionCombinationController extends BaseDat
     }
 
     @Override
-    public boolean initData() {
+    public boolean checkOptions() {
         try {
-            if (!super.initData()) {
+            if (!super.checkOptions()) {
                 return false;
             }
             invalidAs = InvalidAs.Blank;

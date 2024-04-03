@@ -225,13 +225,24 @@ public class Data2DManufactureController extends BaseData2DViewController {
             isSettingValues = false;
             return;
         }
-        FxTask csvTask = new FxSingletonTask<Void>(this) {
+        if (loadTask != null) {
+            loadTask.cancel();
+        }
+        loadTask = new FxSingletonTask<Void>(this) {
             private String text;
 
             @Override
             protected boolean handle() {
                 text = data2D.encodeCSV(this, delimiterName, false, false, false);
                 return text != null;
+            }
+
+            @Override
+            protected void whenCanceled() {
+            }
+
+            @Override
+            protected void whenFailed() {
             }
 
             @Override
@@ -252,7 +263,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
             }
 
         };
-        start(csvTask, false);
+        start(loadTask, false);
     }
 
     public List<List<String>> pickCSV(FxTask task) {

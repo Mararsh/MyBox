@@ -90,9 +90,9 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
     }
 
     @Override
-    public void initControls() {
+    public void initOptions() {
         try {
-            super.initControls();
+            super.initOptions();
 
             chartMaker = chartController.chartMaker;
             chartMaker.init(ChartType.BoxWhiskerChart, message("BoxWhiskerChart"));
@@ -359,9 +359,9 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
     }
 
     @Override
-    public boolean initData() {
+    public boolean checkOptions() {
         try {
-            if (!super.initData()) {
+            if (!super.checkOptions()) {
                 return false;
             }
             categorysCol = -1;
@@ -399,7 +399,7 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
                     calculation.setStatisticObject(DescriptiveStatistic.StatisticObject.Columns);
                     break;
             }
-            calculation.setHandleController(this).setData2D(data2D)
+            calculation.setTaskController(this).setData2D(data2D)
                     .setColsIndices(checkedColsIndices)
                     .setColsNames(checkedColsNames)
                     .setCategoryName(categorysCol >= 0 ? selectedCategory : null)
@@ -447,7 +447,8 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
 
     public boolean handleSelected() {
         try {
-            outputData = tableFiltered(dataColsIndices, rowsRadio != null && rowsRadio.isSelected() && categorysCol < 0);
+            outputData = sourceController.rowsFiltered(dataColsIndices,
+                    rowsRadio != null && rowsRadio.isSelected() && categorysCol < 0);
             if (outputData == null) {
                 return false;
             }

@@ -74,7 +74,6 @@ public class FxTask<Void> extends BaseTask<Void> {
     protected void whenSucceeded() {
         if (isCancelled()) {
             setInfo(message("Cancelled"));
-            MyBoxLog.debug(getClass());
             return;
         }
         if (controller != null) {
@@ -85,18 +84,18 @@ public class FxTask<Void> extends BaseTask<Void> {
     @Override
     protected void whenCanceled() {
         setInfo(message("Cancelled"));
-        MyBoxLog.debug(getClass());
     }
 
     @Override
     protected void whenFailed() {
         if (isCancelled()) {
             setInfo(message("Cancelled"));
-            MyBoxLog.debug(getClass());
             return;
         }
         if (controller != null) {
+            MyBoxLog.console(controller.getClass());
             if (error != null) {
+                MyBoxLog.debug(controller.getTitle() + ": " + error);
                 if (error.equals(message("Failed"))) {
                     controller.displayError(error);
                 } else {
@@ -105,7 +104,6 @@ public class FxTask<Void> extends BaseTask<Void> {
                     }
                     controller.alertError(error);
                 }
-                MyBoxLog.debug(controller.getTitle() + ": " + error);
             } else {
                 controller.popFailed();
             }

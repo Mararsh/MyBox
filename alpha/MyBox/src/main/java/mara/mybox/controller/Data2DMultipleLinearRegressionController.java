@@ -37,9 +37,9 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DRegressi
     }
 
     @Override
-    public boolean initData() {
+    public boolean checkOptions() {
         try {
-            if (!super.initData()) {
+            if (!super.checkOptions()) {
                 return false;
             }
             invalidAs = InvalidAs.Blank;

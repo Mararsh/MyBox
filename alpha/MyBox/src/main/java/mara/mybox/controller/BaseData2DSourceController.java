@@ -199,11 +199,11 @@ public class BaseData2DSourceController extends BaseData2DSourceRowsController {
         status
      */
     public boolean checkSelections() {
-        return checkRowFilter() && checkedRows() && checkColumns();
+        return checkRowsFilter() && checkedRows() && checkColumns();
     }
 
     public List<List<String>> tableFiltered(boolean showRowNumber) {
-        return tableFiltered(checkedColsIndices, showRowNumber);
+        return rowsFiltered(checkedColsIndices, showRowNumber);
     }
 
     public List<List<String>> selectedData(FxTask task) {

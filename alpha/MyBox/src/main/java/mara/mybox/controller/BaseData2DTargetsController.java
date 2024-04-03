@@ -173,7 +173,7 @@ public abstract class BaseData2DTargetsController extends BaseData2DHandleContro
                         checkedColsIndices, null, rowNumberCheck.isSelected(), null);
                 writer.setColumns(targetColumns)
                         .setHeaderNames(Data2DColumnTools.toNames(targetColumns))
-                        .setWriteHeader(colNameCheck.isSelected());
+                        .setWriteHeader(colNameCheck == null || colNameCheck.isSelected());
                 return handleAllData(this, writer);
             }
 
@@ -337,7 +337,7 @@ public abstract class BaseData2DTargetsController extends BaseData2DHandleContro
                 } else {
                     writer.setColumns(outputColumns)
                             .setHeaderNames(Data2DColumnTools.toNames(outputColumns))
-                            .setWriteHeader(colNameCheck.isSelected());
+                            .setWriteHeader(colNameCheck == null || colNameCheck.isSelected());
                     writer.openWriter();
                     for (List<String> row : outputData) {
                         if (!isWorking()) {

@@ -26,7 +26,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2022-1-19
  * @License Apache License Version 2.0
  */
-public abstract class BaseData2DChartController extends BaseData2DHandleController {
+public abstract class BaseData2DChartController extends BaseData2DTaskController {
 
     protected String selectedCategory, selectedValue, groupParameters;
     protected DataTableGroup group;
@@ -51,9 +51,9 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
     protected ControlPlay playController;
 
     @Override
-    public void initControls() {
+    public void initOptions() {
         try {
-            super.initControls();
+            super.initOptions();
 
             initDataTab();
 
@@ -67,7 +67,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
                     noticeMemory();
                 });
 
-                displayAllCheck.visibleProperty().bind(allPagesRadio.selectedProperty());
+                displayAllCheck.visibleProperty().bind(sourceController.allPagesRadio.selectedProperty());
             }
 
             chartMaxData = UserConfig.getInt(baseName + "ChartMaxData", 100);
@@ -130,9 +130,9 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
     }
 
     @Override
-    public void refreshControls() {
+    public void sourceChanged() {
         try {
-            super.refreshControls();
+            super.sourceChanged();
             makeOptions();
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -141,7 +141,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
 
     public void makeOptions() {
         try {
-            List<String> names = tableController.data2D.columnNames();
+            List<String> names = dataController.data2D.columnNames();
             if (names == null || names.isEmpty()) {
                 return;
             }
@@ -170,6 +170,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
         }
     }
 
+    @Override
     public boolean checkParameters() {
         if (isSettingValues) {
             return true;
@@ -188,9 +189,9 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
     }
 
     @Override
-    public boolean initData() {
+    public boolean checkOptions() {
         try {
-            if (!super.initData()) {
+            if (!super.checkOptions()) {
                 return false;
             }
             if (categoryColumnSelector != null) {

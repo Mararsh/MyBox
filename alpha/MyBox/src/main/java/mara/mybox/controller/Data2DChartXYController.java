@@ -49,9 +49,9 @@ public class Data2DChartXYController extends BaseData2DChartController {
     }
 
     @Override
-    public void initControls() {
+    public void initOptions() {
         try {
-            super.initControls();
+            super.initOptions();
 
             chartMaker = chartController.chartMaker;
             chartController.redrawNotify.addListener(new ChangeListener<Boolean>() {
@@ -122,9 +122,9 @@ public class Data2DChartXYController extends BaseData2DChartController {
     }
 
     @Override
-    public boolean initData() {
+    public boolean checkOptions() {
         try {
-            if (!super.initData()) {
+            if (!super.checkOptions()) {
                 return false;
             }
             dataColsIndices = new ArrayList<>();

@@ -94,6 +94,7 @@ public class BaseData2DSourceRowsController extends BaseData2DLoadController {
             dataSizeLoaded = true;
             data2D.setDataLoaded(true);
             isSettingValues = false;
+            postLoadedTableData();
             refreshControls();
             notifyLoaded();
         } catch (Exception e) {
@@ -206,7 +207,7 @@ public class BaseData2DSourceRowsController extends BaseData2DLoadController {
     /*
         filter
      */
-    public boolean checkRowFilter() {
+    public boolean checkRowsFilter() {
         if (filterController != null
                 && !filterController.checkExpression(isAllPages())) {
             String ferror = filterController.error;
@@ -250,11 +251,11 @@ public class BaseData2DSourceRowsController extends BaseData2DLoadController {
     }
 
     // If none selected then select all
-    public List<List<String>> tableFiltered(List<Integer> cols, boolean showRowNumber) {
-        return tableFiltered(selectedRowsIndices, cols, showRowNumber);
+    public List<List<String>> rowsFiltered(List<Integer> cols, boolean showRowNumber) {
+        return rowsFiltered(selectedRowsIndices, cols, showRowNumber);
     }
 
-    public List<List<String>> tableFiltered(List<Integer> rows, List<Integer> cols,
+    public List<List<String>> rowsFiltered(List<Integer> rows, List<Integer> cols,
             boolean showRowNumber) {
         try {
             if (rows == null || rows.isEmpty()
@@ -326,7 +327,7 @@ public class BaseData2DSourceRowsController extends BaseData2DLoadController {
                         false, formatValues, ColumnDefinition.InvalidAs.Blank);
                 data = writer.getRows();
             } else {
-                data = tableFiltered(cols, false);
+                data = rowsFiltered(cols, false);
             }
             data2D.stopTask();
             return data;

@@ -25,6 +25,7 @@ import javafx.scene.layout.VBox;
 import mara.mybox.data2d.tools.Data2DPageTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.style.StyleTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -36,6 +37,7 @@ import mara.mybox.value.UserConfig;
  */
 public class BaseData2DViewController extends BaseData2DLoadController {
 
+    protected FxTask loadTask;
     protected String delimiterName;
 
     @FXML
@@ -268,10 +270,10 @@ public class BaseData2DViewController extends BaseData2DLoadController {
             }
             return;
         }
-        if (task != null) {
-            task.cancel();
+        if (loadTask != null) {
+            loadTask.cancel();
         }
-        task = new FxSingletonTask<Void>(this) {
+        loadTask = new FxSingletonTask<Void>(this) {
             private String html;
 
             @Override
@@ -285,6 +287,14 @@ public class BaseData2DViewController extends BaseData2DLoadController {
             }
 
             @Override
+            protected void whenCanceled() {
+            }
+
+            @Override
+            protected void whenFailed() {
+            }
+
+            @Override
             protected void whenSucceeded() {
                 if (pop) {
                     HtmlPopController.openHtml(myController, html);
@@ -294,7 +304,7 @@ public class BaseData2DViewController extends BaseData2DLoadController {
             }
 
         };
-        start(task, false);
+        start(loadTask, false);
     }
 
     public void showTexts() {
@@ -330,10 +340,10 @@ public class BaseData2DViewController extends BaseData2DLoadController {
             }
             return;
         }
-        if (task != null) {
-            task.cancel();
+        if (loadTask != null) {
+            loadTask.cancel();
         }
-        task = new FxSingletonTask<Void>(this) {
+        loadTask = new FxSingletonTask<Void>(this) {
             private String texts;
 
             @Override
@@ -347,6 +357,14 @@ public class BaseData2DViewController extends BaseData2DLoadController {
             }
 
             @Override
+            protected void whenCanceled() {
+            }
+
+            @Override
+            protected void whenFailed() {
+            }
+
+            @Override
             protected void whenSucceeded() {
                 if (pop) {
                     TextPopController.loadText(texts);
@@ -356,7 +374,7 @@ public class BaseData2DViewController extends BaseData2DLoadController {
             }
 
         };
-        start(task, false);
+        start(loadTask, false);
     }
 
     public void showTable() {
@@ -467,6 +485,39 @@ public class BaseData2DViewController extends BaseData2DLoadController {
 
             } else if (csvRadio != null && csvRadio.isSelected()) {
                 MenuTextEditController.textMenu(this, csvArea);
+                return true;
+
+            }
+
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
+        return false;
+    }
+
+    @FXML
+    @Override
+    public boolean popAction() {
+        try {
+            closePopup();
+            if (data2D == null) {
+                return false;
+            }
+
+            if (htmlRadio.isSelected()) {
+                HtmlPopController.openWebView(this, webViewController.webView);
+                return true;
+
+            } else if (tableRadio.isSelected()) {
+                loadHtml(true);
+                return true;
+
+            } else if (textsRadio.isSelected()) {
+                TextPopController.openInput(this, textsArea);
+                return true;
+
+            } else if (csvRadio != null && csvRadio.isSelected()) {
+                TextPopController.openInput(this, csvArea);
                 return true;
 
             }

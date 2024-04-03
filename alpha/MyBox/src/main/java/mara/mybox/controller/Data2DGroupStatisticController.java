@@ -9,6 +9,7 @@ import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
@@ -48,7 +49,9 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
     protected int pieMaxData;
 
     @FXML
-    protected Tab xyChartTab, pieChartTab;
+    protected TabPane chartTabPane;
+    @FXML
+    protected Tab groupDataTab, statisticDataTab, chartDataTab, xyChartTab, pieChartTab;
     @FXML
     protected ControlStatisticSelection statisticController;
     @FXML
@@ -69,9 +72,9 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
     }
 
     @Override
-    public void initControls() {
+    public void initOptions() {
         try {
-            super.initControls();
+            super.initOptions();
 
             pieMaker = pieChartController.pieMaker;
             pieChartController.redrawNotify.addListener(new ChangeListener<Boolean>() {
@@ -135,7 +138,7 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
     }
 
     @Override
-    public boolean initData() {
+    public boolean checkOptions() {
         if (!groupController.pickValues()) {
             return false;
         }
@@ -164,7 +167,7 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
                 .setStatisticObject(StatisticObject.Columns)
                 .setScale(scale)
                 .setInvalidAs(invalidAs)
-                .setHandleController(this)
+                .setTaskController(this)
                 .setData2D(data2D)
                 .setColsIndices(checkedColsIndices)
                 .setColsNames(checkedColsNames);
@@ -224,10 +227,14 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
             protected void finalAction() {
                 super.finalAction();
                 data2D.stopTask();
+                closeTask();
+                if (ok && closeAfterCheck != null && closeAfterCheck.isSelected()) {
+                    close();
+                }
             }
 
         };
-        start(task);
+        start(task, false);
     }
 
     @FXML
@@ -521,6 +528,51 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
         drawPieChart();
     }
 
+    @FXML
+    @Override
+    public boolean menuAction() {
+        Tab tab = chartTabPane.getSelectionModel().getSelectedItem();
+        if (tab == groupDataTab) {
+            return groupDataController.menuAction();
+
+        } else if (tab == statisticDataTab) {
+            return statisticDataController.menuAction();
+
+        } else if (tab == chartDataTab) {
+            return chartDataController.menuAction();
+
+        } else if (tab == xyChartTab) {
+            return chartController.menuAction();
+
+        } else if (tab == pieChartTab) {
+            return pieChartController.menuAction();
+
+        }
+        return false;
+    }
+
+    @FXML
+    @Override
+    public boolean popAction() {
+        Tab tab = chartTabPane.getSelectionModel().getSelectedItem();
+        if (tab == groupDataTab) {
+            return groupDataController.popAction();
+
+        } else if (tab == statisticDataTab) {
+            return statisticDataController.popAction();
+
+        } else if (tab == chartDataTab) {
+            return chartDataController.popAction();
+
+        } else if (tab == xyChartTab) {
+            return chartController.popAction();
+
+        } else if (tab == pieChartTab) {
+            return pieChartController.popAction();
+
+        }
+        return false;
+    }
 
     /*
         static

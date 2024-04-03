@@ -33,9 +33,9 @@ public class Data2DTransposeController extends BaseData2DTaskTargetsController {
     }
 
     @Override
-    public void initControls() {
+    public void initOptions() {
         try {
-            super.initControls();
+            super.initOptions();
 
             firstCheck.setSelected(UserConfig.getBoolean(baseName + "FirstAsNames", false));
             firstCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) -> {
@@ -53,14 +53,14 @@ public class Data2DTransposeController extends BaseData2DTaskTargetsController {
     @Override
     public boolean handleRows() {
         try {
-            boolean showRowNumber = showRowNumber();
-            outputData = sourceController.tableFiltered(checkedColsIndices, showRowNumber);
+            outputData = rowsFiltered();
             if (outputData == null) {
                 return false;
             }
             boolean showColNames = showColNames();
             int rowsNumber = outputData.size(), columnsNumber = outputData.get(0).size();
             outputColumns = new ArrayList<>();
+            boolean showRowNumber = showRowNumber();
             int nameIndex = showRowNumber ? 1 : 0;
             List<String> names = new ArrayList<>();
             if (firstCheck.isSelected()) {

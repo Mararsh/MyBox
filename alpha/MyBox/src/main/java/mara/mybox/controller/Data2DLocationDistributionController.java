@@ -62,9 +62,9 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
     }
 
     @Override
-    public void initControls() {
+    public void initOptions() {
         try {
-            super.initControls();
+            super.initOptions();
 
             mapController.mapOptionsController = mapOptionsController;
             mapController.initMap();
@@ -97,9 +97,9 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
     }
 
     @Override
-    public void refreshControls() {
+    public void sourceChanged() {
         try {
-            super.refreshControls();
+            super.sourceChanged();
             isSettingValues = true;
             labelSelector.getItems().clear();
             longitudeSelector.getItems().clear();
@@ -175,9 +175,9 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
     }
 
     @Override
-    public boolean initData() {
+    public boolean checkOptions() {
         try {
-            if (!super.initData()) {
+            if (!super.checkOptions()) {
                 return false;
             }
             dataColsIndices = new ArrayList<>();
