@@ -115,6 +115,14 @@ public abstract class BaseData2DTaskController extends BaseBranchController {
         }
     }
 
+    @Override
+    public void hideLeftPane() {
+        if (rightPane != null && rightPane.isDisabled()) {
+            return;
+        }
+        super.hideLeftPane();
+    }
+
     /*
         source
      */
@@ -454,7 +462,9 @@ public abstract class BaseData2DTaskController extends BaseBranchController {
     }
 
     public void rowNumberCheckChanged() {
-        UserConfig.setBoolean(baseName + "CopyRowNumber", rowNumberCheck.isSelected());
+        if (rowNumberCheck != null) {
+            UserConfig.setBoolean(baseName + "CopyRowNumber", rowNumberCheck.isSelected());
+        }
     }
 
     /*

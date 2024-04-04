@@ -69,6 +69,16 @@ public class Data2DGroupController extends BaseData2DTaskController {
 
             @Override
             protected void whenSucceeded() {
+            }
+
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                data2D.stopTask();
+                closeTask();
+                if (!ok) {
+                    return;
+                }
                 if (fileRadio.isSelected()) {
                     DataFileCSV targetFile = group.getTargetFile();
                     if (targetFile != null) {
@@ -88,14 +98,9 @@ public class Data2DGroupController extends BaseData2DTaskController {
                         popInformation(message("GroupsNumber") + ": " + group.groupsNumber());
                     }
                 }
-
-            }
-
-            @Override
-            protected void finalAction() {
-                super.finalAction();
-                data2D.stopTask();
-                closeTask();
+                if (closeAfterCheck.isSelected()) {
+                    close();
+                }
             }
 
         };

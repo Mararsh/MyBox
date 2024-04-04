@@ -58,7 +58,7 @@ public class ControlData2DMultipleLinearRegressionTable extends ControlData2DSim
                 controller.interceptCheck.setSelected(regressController.interceptCheck.isSelected());
                 controller.cloneOptions(regressController);
                 controller.setParameters(regressController.dataController);
-                controller.okAction();
+                controller.startAction();
                 controller.requestMouse();
             } catch (Exception e) {
                 MyBoxLog.error(e);

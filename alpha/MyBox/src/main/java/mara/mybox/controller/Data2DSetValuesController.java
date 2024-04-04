@@ -179,19 +179,25 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
 
             @Override
             protected void whenSucceeded() {
-                tabPane.getSelectionModel().select(sourceTab);
-                dataController.data2D.cloneData(data2D);
-                dataController.goPage();
-                dataController.requestMouse();
-                dataController.alertInformation(message("ChangedRowsNumber") + ": " + count);
             }
 
             @Override
             protected void finalAction() {
                 super.finalAction();
                 data2D.stopTask();
-                valueController.expressionController.calculator.reset();
                 closeTask();
+                valueController.expressionController.calculator.reset();
+                if (ok) {
+                    dataController.data2D.cloneData(data2D);
+                    dataController.goPage();
+                    dataController.requestMouse();
+                    dataController.alertInformation(message("ChangedRowsNumber") + ": " + count);
+                    if (closeAfterCheck != null && closeAfterCheck.isSelected()) {
+                        close();
+                    } else {
+                        tabPane.getSelectionModel().select(sourceTab);
+                    }
+                }
             }
 
         };
@@ -236,7 +242,6 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
 
     @Override
     public boolean updateTable() {
-        tabPane.getSelectionModel().select(sourceTab);
         dataController.isSettingValues = true;
         dataController.tableView.refresh();
         dataController.isSettingValues = false;
@@ -244,6 +249,11 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
         dataController.requestMouse();
         dataController.alertInformation(message("ChangedRowsNumber") + ": "
                 + sourceController.filteredRowsIndices.size());
+        if (closeAfterCheck.isSelected()) {
+            close();
+        } else {
+            tabPane.getSelectionModel().select(sourceTab);
+        }
         return true;
     }
 

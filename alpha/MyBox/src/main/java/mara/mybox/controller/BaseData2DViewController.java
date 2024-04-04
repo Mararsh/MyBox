@@ -419,7 +419,7 @@ public class BaseData2DViewController extends BaseData2DLoadController {
      */
     @Override
     public void makeColumns() {
-        if (tableRadio == null || !tableRadio.isSelected()) {
+        if (tableRadio != null && !tableRadio.isSelected()) {
             return;
         }
         super.makeColumns();

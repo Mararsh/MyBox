@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.fxml.FXML;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Window;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
@@ -14,7 +15,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-9-13
  * @License Apache License Version 2.0
  */
-public class Data2DPasteContentInMyBoxClipboardController extends BaseChildController {
+public class Data2DPasteContentInMyBoxClipboardController extends BaseBranchController {
 
     @FXML
     protected ControlData2DSource sourceController;
@@ -35,9 +36,14 @@ public class Data2DPasteContentInMyBoxClipboardController extends BaseChildContr
     }
 
     @Override
-    public boolean keyESC() {
-        close();
-        return false;
+    public boolean keyEventsFilter(KeyEvent event) {
+        if (pasteController.keyEventsFilter(event)) {
+            return true;
+        }
+        if (sourceController.keyEventsFilter(event)) {
+            return true;
+        }
+        return super.keyEventsFilter(event);
     }
 
     /*

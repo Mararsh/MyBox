@@ -86,8 +86,10 @@ public class ControlData2DSimpleLinearRegressionTable extends ControlData2DView 
     public void afterRegression() {
         isSettingValues = true;
         tableView.getSortOrder().clear();
-        sortColumn.setSortType(TableColumn.SortType.DESCENDING);
-        tableView.getSortOrder().add(sortColumn);
+        if (sortColumn != null) {
+            sortColumn.setSortType(TableColumn.SortType.DESCENDING);
+            tableView.getSortOrder().add(sortColumn);
+        }
         isSettingValues = false;
         checkButtons();
     }
@@ -138,7 +140,7 @@ public class ControlData2DSimpleLinearRegressionTable extends ControlData2DView 
                 controller.alphaSelector.getSelectionModel().select(regressController.alpha + "");
                 controller.cloneOptions(regressController);
                 controller.setParameters(regressController.dataController);
-                controller.okAction();
+                controller.startAction();
                 controller.requestMouse();
             } catch (Exception e) {
                 MyBoxLog.error(e);

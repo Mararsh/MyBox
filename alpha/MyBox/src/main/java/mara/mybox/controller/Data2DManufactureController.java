@@ -852,6 +852,12 @@ public class Data2DManufactureController extends BaseData2DViewController {
         return data2D.clearData(currentTask);
     }
 
+    @Override
+    protected void afterClear() {
+        resetView(true);
+        setPagination();
+    }
+
     @FXML
     @Override
     public void pasteContentInSystemClipboard() {

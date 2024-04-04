@@ -218,9 +218,6 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
 
             @Override
             protected void whenSucceeded() {
-                chartDataController.loadDef(dataFile);
-                groupDataController.loadDef(group.getTargetData());
-                statisticDataController.loadDef(statistic.getStatisticData());
             }
 
             @Override
@@ -228,8 +225,11 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
                 super.finalAction();
                 data2D.stopTask();
                 closeTask();
-                if (ok && closeAfterCheck != null && closeAfterCheck.isSelected()) {
-                    close();
+                if (ok) {
+                    chartDataController.loadDef(dataFile);
+                    groupDataController.loadDef(group.getTargetData());
+                    statisticDataController.loadDef(statistic.getStatisticData());
+                    rightPane.setDisable(false);
                 }
             }
 
@@ -569,6 +569,45 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
 
         } else if (tab == pieChartTab) {
             return pieChartController.popAction();
+
+        }
+        return false;
+    }
+
+    @Override
+    public boolean controlAlt2() {
+        Tab tab = chartTabPane.getSelectionModel().getSelectedItem();
+        if (tab == xyChartTab) {
+            return chartController.controlAlt2();
+
+        } else if (tab == pieChartTab) {
+            return pieChartController.controlAlt2();
+
+        }
+        return false;
+    }
+
+    @Override
+    public boolean controlAlt3() {
+        Tab tab = chartTabPane.getSelectionModel().getSelectedItem();
+        if (tab == xyChartTab) {
+            return chartController.controlAlt3();
+
+        } else if (tab == pieChartTab) {
+            return pieChartController.controlAlt3();
+
+        }
+        return false;
+    }
+
+    @Override
+    public boolean controlAlt4() {
+        Tab tab = chartTabPane.getSelectionModel().getSelectedItem();
+        if (tab == xyChartTab) {
+            return chartController.controlAlt4();
+
+        } else if (tab == pieChartTab) {
+            return pieChartController.controlAlt4();
 
         }
         return false;

@@ -8,6 +8,8 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import mara.mybox.calculation.SimpleLinearRegression;
@@ -44,6 +46,10 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DRegression
     protected List<Data2DColumn> residualColumns;
     protected Map<String, String> residualPalette;
 
+    @FXML
+    protected TabPane chartTabPane;
+    @FXML
+    protected Tab modelTab, resultsTab, fitTab, residualTab;
     @FXML
     protected CheckBox textCheck, fittedPointsCheck, fittedLineCheck, residualStdCheck;
     @FXML
@@ -443,6 +449,86 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DRegression
     public void makeResidualChart() {
         makeResidualData();
         drawResidualChart();
+    }
+
+//    modelTab, resultsTab, fitTab, residualTab
+    @FXML
+    @Override
+    public boolean menuAction() {
+        Tab tab = chartTabPane.getSelectionModel().getSelectedItem();
+        if (tab == modelTab) {
+            return modelController.menuAction();
+
+        } else if (tab == resultsTab) {
+            return regressionDataController.menuAction();
+
+        } else if (tab == fitTab) {
+            return fittingController.menuAction();
+
+        } else if (tab == residualTab) {
+            return residualController.menuAction();
+
+        }
+        return false;
+    }
+
+    @FXML
+    @Override
+    public boolean popAction() {
+        Tab tab = chartTabPane.getSelectionModel().getSelectedItem();
+        if (tab == modelTab) {
+            return modelController.popAction();
+
+        } else if (tab == resultsTab) {
+            return regressionDataController.popAction();
+
+        } else if (tab == fitTab) {
+            return fittingController.popAction();
+
+        } else if (tab == residualTab) {
+            return residualController.popAction();
+
+        }
+        return false;
+    }
+
+    @Override
+    public boolean controlAlt2() {
+        Tab tab = chartTabPane.getSelectionModel().getSelectedItem();
+        if (tab == fitTab) {
+            return fittingController.controlAlt2();
+
+        } else if (tab == residualTab) {
+            return residualController.controlAlt2();
+
+        }
+        return false;
+    }
+
+    @Override
+    public boolean controlAlt3() {
+        Tab tab = chartTabPane.getSelectionModel().getSelectedItem();
+        if (tab == fitTab) {
+            return fittingController.controlAlt3();
+
+        } else if (tab == residualTab) {
+            return residualController.controlAlt3();
+
+        }
+        return false;
+    }
+
+    @Override
+    public boolean controlAlt4() {
+        Tab tab = chartTabPane.getSelectionModel().getSelectedItem();
+        if (tab == fitTab) {
+            return fittingController.controlAlt4();
+
+        } else if (tab == residualTab) {
+            return residualController.controlAlt4();
+
+        }
+        return false;
     }
 
     /*

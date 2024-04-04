@@ -114,18 +114,21 @@ public class Data2DSimpleLinearRegressionCombinationController extends BaseData2
 
             @Override
             protected void whenSucceeded() {
-                resultsController.afterRegression();
             }
 
             @Override
             protected void finalAction() {
                 super.finalAction();
                 data2D.stopTask();
+                closeTask();
+                if (ok) {
+                    resultsController.afterRegression();
+                    rightPane.setDisable(false);
+                }
             }
 
         };
-        start(task);
-
+        start(task, false);
     }
 
 

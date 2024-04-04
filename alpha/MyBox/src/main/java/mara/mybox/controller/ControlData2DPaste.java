@@ -157,6 +157,11 @@ public class ControlData2DPaste extends BaseController {
     }
 
     @Override
+    public void cancelAction() {
+        close();
+    }
+
+    @Override
     public void cleanPane() {
         try {
             targetController.statusNotify.removeListener(targetStatusListener);

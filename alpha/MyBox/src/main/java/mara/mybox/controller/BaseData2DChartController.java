@@ -96,9 +96,11 @@ public abstract class BaseData2DChartController extends BaseData2DTaskController
                         }
                     }
                 });
-
             }
 
+            if (rightPane != null) {
+                rightPane.setDisable(true);
+            }
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -249,8 +251,8 @@ public abstract class BaseData2DChartController extends BaseData2DTaskController
         no group
      */
     protected void startNoGroup() {
-        if (task != null && !task.isQuit()) {
-            return;
+        if (task != null) {
+            task.cancel();
         }
         task = new FxSingletonTask<Void>(this) {
 
@@ -276,13 +278,17 @@ public abstract class BaseData2DChartController extends BaseData2DTaskController
             protected void finalAction() {
                 super.finalAction();
                 data2D.stopTask();
+                closeTask();
                 if (ok) {
                     outputData();
+                    if (rightPane != null) {
+                        rightPane.setDisable(false);
+                    }
                 }
             }
 
         };
-        start(task);
+        start(task, false);
     }
 
     public void readData() {
@@ -336,6 +342,7 @@ public abstract class BaseData2DChartController extends BaseData2DTaskController
                 return;
             }
             chartMax();
+            rightPane.setDisable(false);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -403,8 +410,8 @@ public abstract class BaseData2DChartController extends BaseData2DTaskController
         group
      */
     protected void startGroup() {
-        if (task != null && !task.isQuit()) {
-            return;
+        if (task != null) {
+            task.cancel();
         }
         playController.clear();
         groupDataController.loadNull();
@@ -448,14 +455,18 @@ public abstract class BaseData2DChartController extends BaseData2DTaskController
             protected void finalAction() {
                 super.finalAction();
                 data2D.stopTask();
+                closeTask();
                 if (ok) {
                     loadChartData();
                     playController.play(framesNumber);
+                    if (rightPane != null) {
+                        rightPane.setDisable(false);
+                    }
                 }
             }
 
         };
-        start(task);
+        start(task, false);
     }
 
     protected boolean initGroups() {

@@ -20,7 +20,6 @@ import org.apache.commons.math3.stat.Frequency;
 public class Data2DFrequency extends Data2DOperate {
 
     protected Frequency frequency;
-    protected String colName;
     protected int colIndex;
 
     public static Data2DFrequency create(Data2D_Edit data) {
@@ -30,7 +29,7 @@ public class Data2DFrequency extends Data2DOperate {
 
     @Override
     public boolean checkParameters() {
-        return super.checkParameters() && frequency != null && colName != null;
+        return super.checkParameters() && frequency != null && colIndex >= 0;
     }
 
     @Override
@@ -86,7 +85,6 @@ public class Data2DFrequency extends Data2DOperate {
     }
 
     public boolean goTable() {
-
         try {
             int total = 0;
             conn = conn();
@@ -113,6 +111,7 @@ public class Data2DFrequency extends Data2DOperate {
             targetRow.add("100");
             writeRow();
             handledCount = 0;
+            String colName = sourceData.columnName(colIndex);
             sql = "SELECT " + colName + ", count(*) AS mybox99_count FROM " + sourceData.getSheet()
                     + " GROUP BY " + colName + " ORDER BY mybox99_count DESC";
             if (task != null) {
@@ -155,11 +154,6 @@ public class Data2DFrequency extends Data2DOperate {
      */
     public Data2DFrequency setFrequency(Frequency frequency) {
         this.frequency = frequency;
-        return this;
-    }
-
-    public Data2DFrequency setColName(String colName) {
-        this.colName = colName;
         return this;
     }
 

@@ -2,8 +2,6 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import mara.mybox.data2d.Data2D_Attributes;
@@ -40,15 +38,14 @@ public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskCont
                 targetController.setParameters(this, controller);
             }
 
-            if (colSelector != null) {
-                colSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                    @Override
-                    public void changed(ObservableValue ov, String oldValue, String newValue) {
-                        checkParameters();
-                    }
-                });
-            }
-
+//            if (colSelector != null) {
+//                colSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+//                    @Override
+//                    public void changed(ObservableValue ov, String oldValue, String newValue) {
+//                        checkParameters();
+//                    }
+//                });
+//            }
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -57,10 +54,15 @@ public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskCont
     @Override
     public void sourceChanged() {
         try {
+            super.sourceChanged();
+
             if (colSelector != null) {
+                colSelector.getItems().clear();
+                if (data2D == null) {
+                    return;
+                }
                 List<String> names = data2D.columnNames();
                 if (names == null || names.isEmpty()) {
-                    colSelector.getItems().clear();
                     return;
                 }
                 String selectedCol = colSelector.getSelectionModel().getSelectedItem();
@@ -73,8 +75,6 @@ public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskCont
                 }
                 isSettingValues = false;
             }
-
-            super.sourceChanged();
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -136,7 +136,8 @@ public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskCont
             protected boolean handle() {
                 data2D.startTask(this, filterController.filter);
                 List<Data2DColumn> targetColumns = data2D.targetColumns(
-                        checkedColsIndices, null, rowNumberCheck.isSelected(), null);
+                        checkedColsIndices, null,
+                        rowNumberCheck != null && rowNumberCheck.isSelected(), null);
                 writer.setColumns(targetColumns)
                         .setHeaderNames(Data2DColumnTools.toNames(targetColumns))
                         .setWriteHeader(colNameCheck == null || colNameCheck.isSelected());
@@ -347,7 +348,7 @@ public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskCont
             }
 
         };
-        start(task);
+        start(task, false);
     }
 
 }

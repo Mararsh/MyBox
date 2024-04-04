@@ -24,7 +24,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-12-13
  * @License Apache License Version 2.0
  */
-public class Data2DPercentageController extends BaseData2DTargetsController {
+public class Data2DPercentageController extends BaseData2DTaskTargetsController {
 
     protected File handleFile;
 
@@ -38,9 +38,9 @@ public class Data2DPercentageController extends BaseData2DTargetsController {
     }
 
     @Override
-    public void initControls() {
+    public void initOptions() {
         try {
-            super.initControls();
+            super.initOptions();
 
             String toNegative = UserConfig.getString(baseName + "ToNegative", "skip");
             if ("zero".equals(toNegative)) {
@@ -69,9 +69,9 @@ public class Data2DPercentageController extends BaseData2DTargetsController {
     }
 
     @Override
-    public boolean initData() {
+    public boolean checkOptions() {
         try {
-            if (!super.initData()) {
+            if (!super.checkOptions()) {
                 return false;
             }
             outputColumns = data2D.makePercentageColumns(checkedColsIndices, otherColsIndices, objectType);
@@ -85,7 +85,7 @@ public class Data2DPercentageController extends BaseData2DTargetsController {
     @Override
     public boolean handleRows() {
         try {
-            filteredRowsIndices = filteredRowsIndices();
+            List<Integer> filteredRowsIndices = sourceController.filteredRowsIndices();
             if (filteredRowsIndices == null || filteredRowsIndices.isEmpty()) {
                 if (task != null) {
                     task.setError(message("NoData"));
@@ -94,11 +94,11 @@ public class Data2DPercentageController extends BaseData2DTargetsController {
             }
             switch (objectType) {
                 case Rows:
-                    return dataByRows();
+                    return dataByRows(filteredRowsIndices);
                 case All:
-                    return dataByAll();
+                    return dataByAll(filteredRowsIndices);
                 default:
-                    return dataByColumns();
+                    return dataByColumns(filteredRowsIndices);
             }
         } catch (Exception e) {
             if (task != null) {
@@ -108,13 +108,13 @@ public class Data2DPercentageController extends BaseData2DTargetsController {
         }
     }
 
-    public boolean dataByColumns() {
+    public boolean dataByColumns(List<Integer> filteredRowsIndices) {
         try {
             List<Integer> colIndices = checkedColsIndices;
             int colsLen = colIndices.size();
             double[] sum = new double[colsLen];
             for (int r : filteredRowsIndices) {
-                List<String> tableRow = tableController.tableData.get(r);
+                List<String> tableRow = dataController.tableData.get(r);
                 for (int c = 0; c < colsLen; c++) {
                     double d = DoubleTools.toDouble(tableRow.get(colIndices.get(c) + 1), invalidAs);
                     if (DoubleTools.invalidDouble(d)) {
@@ -141,7 +141,7 @@ public class Data2DPercentageController extends BaseData2DTargetsController {
             }
             outputData.add(row);
             for (int r : filteredRowsIndices) {
-                List<String> tableRow = tableController.tableData.get(r);
+                List<String> tableRow = dataController.tableData.get(r);
                 row = new ArrayList<>();
                 row.add(message("Row") + (r + 1));
                 for (int c = 0; c < colsLen; c++) {
@@ -182,7 +182,7 @@ public class Data2DPercentageController extends BaseData2DTargetsController {
         }
     }
 
-    public boolean dataByRows() {
+    public boolean dataByRows(List<Integer> filteredRowsIndices) {
         try {
             List<Integer> colIndices = checkedColsIndices;
             outputData = new ArrayList<>();
@@ -191,7 +191,7 @@ public class Data2DPercentageController extends BaseData2DTargetsController {
                 double sum = 0d;
                 List<String> row = new ArrayList<>();
                 row.add(message("Row") + (r + 1));
-                List<String> tableRow = tableController.tableData.get(r);
+                List<String> tableRow = dataController.tableData.get(r);
                 for (int c : colIndices) {
                     double d = DoubleTools.toDouble(tableRow.get(c + 1), invalidAs);
                     if (DoubleTools.invalidDouble(d)) {
@@ -242,12 +242,12 @@ public class Data2DPercentageController extends BaseData2DTargetsController {
         }
     }
 
-    public boolean dataByAll() {
+    public boolean dataByAll(List<Integer> filteredRowsIndices) {
         try {
             List<Integer> colIndices = checkedColsIndices;
             double sum = 0d;
             for (int r : filteredRowsIndices) {
-                List<String> tableRow = tableController.tableData.get(r);
+                List<String> tableRow = dataController.tableData.get(r);
                 for (int c : colIndices) {
                     double d = DoubleTools.toDouble(tableRow.get(c + 1), invalidAs);
                     if (DoubleTools.invalidDouble(d)) {
@@ -275,7 +275,7 @@ public class Data2DPercentageController extends BaseData2DTargetsController {
             }
             outputData.add(row);
             for (int r : filteredRowsIndices) {
-                List<String> tableRow = tableController.tableData.get(r);
+                List<String> tableRow = dataController.tableData.get(r);
                 row = new ArrayList<>();
                 row.add(message("Row") + (r + 1) + "");
                 for (int c : colIndices) {

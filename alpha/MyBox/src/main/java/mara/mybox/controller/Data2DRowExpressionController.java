@@ -56,9 +56,6 @@ public class Data2DRowExpressionController extends BaseData2DTaskTargetsControll
 
     @Override
     public void sourceChanged() {
-        if (dataController == null) {
-            return;
-        }
         super.sourceChanged();
         expressionController.setData2D(data2D);
     }
@@ -152,7 +149,10 @@ public class Data2DRowExpressionController extends BaseData2DTaskTargetsControll
                 super.finalAction();
                 data2D.stopTask();
                 if (ok) {
+                    updateLogs(baseTitle + " ... ", true);
                     startOperation();
+                } else {
+                    closeTask();
                 }
             }
 

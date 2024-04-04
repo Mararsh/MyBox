@@ -97,7 +97,6 @@ public class Data2DDeleteController extends BaseData2DTaskTargetsController {
             @Override
             protected void whenSucceeded() {
                 try {
-                    tabPane.getSelectionModel().select(sourceTab);
                     dataController.updateTable(data);
                     dataController.tableChanged(true);
                     dataController.requestMouse();
@@ -112,10 +111,14 @@ public class Data2DDeleteController extends BaseData2DTaskTargetsController {
             protected void finalAction() {
                 super.finalAction();
                 data2D.stopTask();
-                if (targetController != null) {
-                    targetController.refreshControls();
-                }
                 closeTask();
+                if (ok) {
+                    if (closeAfterCheck.isSelected()) {
+                        close();
+                    } else {
+                        tabPane.getSelectionModel().select(sourceTab);
+                    }
+                }
             }
 
         };

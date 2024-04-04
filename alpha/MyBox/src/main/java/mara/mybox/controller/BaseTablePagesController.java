@@ -207,6 +207,7 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
         tableChanged(changed);
         editNull();
         viewNull();
+        setPagination();
     }
 
     public boolean isDataSizeLoaded() {

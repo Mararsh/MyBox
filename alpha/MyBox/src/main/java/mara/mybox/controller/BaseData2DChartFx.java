@@ -154,7 +154,21 @@ public abstract class BaseData2DChartFx extends BaseController {
         try {
             Bounds bounds = chart.getBoundsInLocal();
             AnchorPane.clearConstraints(chart);
-            chart.setPrefSize(bounds.getWidth() + 40, bounds.getHeight() + 40);
+            chart.setPrefSize(bounds.getWidth() + 20, bounds.getHeight() + 20);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    @FXML
+    public void zoomOut() {
+        if (chartPane == null || chart == null) {
+            return;
+        }
+        try {
+            Bounds bounds = chart.getBoundsInLocal();
+            AnchorPane.clearConstraints(chart);
+            chart.setPrefSize(bounds.getWidth() - 20, bounds.getHeight() - 20);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -248,6 +262,12 @@ public abstract class BaseData2DChartFx extends BaseController {
     @Override
     public boolean controlAlt3() {
         zoomIn();
+        return true;
+    }
+
+    @Override
+    public boolean controlAlt4() {
+        zoomOut();
         return true;
     }
 

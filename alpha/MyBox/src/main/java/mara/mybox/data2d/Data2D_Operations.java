@@ -568,7 +568,8 @@ public abstract class Data2D_Operations extends Data2D_Edit {
     }
 
     public boolean frequency(FxTask task, Data2DWriter writer,
-            Frequency frequency, List<Data2DColumn> outputColumns, int col, int scale) {
+            Frequency frequency, List<Data2DColumn> outputColumns,
+            int col, int scale) {
         try {
             if (writer == null || frequency == null || outputColumns == null || col < 0) {
                 return false;

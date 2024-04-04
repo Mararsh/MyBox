@@ -22,7 +22,7 @@ import org.apache.commons.math3.stat.Frequency;
  * @CreateDate 2022-4-15
  * @License Apache License Version 2.0
  */
-public class Data2DFrequencyController extends BaseData2DTargetsController {
+public class Data2DFrequencyController extends BaseData2DTaskTargetsController {
 
     protected List<String> handledNames;
     protected int freCol;
@@ -39,9 +39,9 @@ public class Data2DFrequencyController extends BaseData2DTargetsController {
     }
 
     @Override
-    public boolean initData() {
+    public boolean checkOptions() {
         try {
-            if (!super.initData()) {
+            if (!super.checkOptions()) {
                 return false;
             }
             freName = colSelector.getSelectionModel().getSelectedItem();
@@ -77,15 +77,13 @@ public class Data2DFrequencyController extends BaseData2DTargetsController {
     public boolean handleRows() {
         try {
             outputData = new ArrayList<>();
-            filteredRowsIndices = filteredRowsIndices();
+            List<Integer> filteredRowsIndices = sourceController.filteredRowsIndices();
             if (filteredRowsIndices == null || filteredRowsIndices.isEmpty()) {
-                if (task != null) {
-                    task.setError(message("NoData"));
-                }
+                setError(message("NoData"));
                 return false;
             }
             for (int r : filteredRowsIndices) {
-                List<String> tableRow = tableController.tableData.get(r);
+                List<String> tableRow = dataController.tableData.get(r);
                 String d = tableRow.get(freCol + 1);
                 frequency.addValue(d);
             }
@@ -103,9 +101,7 @@ public class Data2DFrequencyController extends BaseData2DTargetsController {
             frequency.clear();
             return true;
         } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
+            setError(e.toString());
             return false;
         }
     }
@@ -113,16 +109,6 @@ public class Data2DFrequencyController extends BaseData2DTargetsController {
     @Override
     public boolean handleAllData(FxTask currentTask, Data2DWriter writer) {
         return data2D.frequency(currentTask, writer, frequency, outputColumns, freCol, scale);
-    }
-
-    @Override
-    public void cleanPane() {
-        try {
-            tableController.statusNotify.removeListener(tableStatusListener);
-            tableStatusListener = null;
-        } catch (Exception e) {
-        }
-        super.cleanPane();
     }
 
     /*
