@@ -158,6 +158,7 @@ public abstract class Data2DOperate {
         } else if (passFilter) {
             if (handleRow()) {
                 writeRow();
+                handledCount++;
             }
         }
     }
