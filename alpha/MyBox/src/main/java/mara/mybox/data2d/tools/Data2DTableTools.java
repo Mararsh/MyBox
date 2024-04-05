@@ -128,6 +128,7 @@ public class Data2DTableTools {
             if (task != null) {
                 task.setInfo(sql);
             }
+//            MyBoxLog.console(sql);
             if (conn.createStatement().executeUpdate(sql) < 0) {
                 return null;
             }

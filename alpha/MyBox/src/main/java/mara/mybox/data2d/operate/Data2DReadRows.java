@@ -13,6 +13,7 @@ import mara.mybox.dev.MyBoxLog;
 public class Data2DReadRows extends Data2DOperate {
 
     protected List<List<String>> rows;
+    protected long maxCount = -1;
 
     public static Data2DReadRows create(Data2D_Edit data) {
         Data2DReadRows op = new Data2DReadRows();
@@ -34,12 +35,16 @@ public class Data2DReadRows extends Data2DOperate {
             if (sourceRow == null) {
                 return false;
             }
+
             List<String> row = new ArrayList<>();
             row.addAll(sourceRow);
             if (includeRowNumber) {
                 row.add(0, sourceRowIndex + "");
             }
             rows.add(row);
+            if (maxCount > 0 && handledCount >= maxCount) {
+                stopped = true;
+            }
             return true;
         } catch (Exception e) {
             if (task != null) {
@@ -56,6 +61,11 @@ public class Data2DReadRows extends Data2DOperate {
      */
     public List<List<String>> getRows() {
         return rows;
+    }
+
+    public Data2DReadRows setMaxCount(long maxCount) {
+        this.maxCount = maxCount;
+        return this;
     }
 
 }

@@ -3,6 +3,9 @@ package mara.mybox.controller;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.scene.control.Toggle;
 import javafx.scene.paint.Color;
 import mara.mybox.calculation.Normalization;
 import mara.mybox.db.data.ColumnDefinition.InvalidAs;
@@ -29,6 +32,23 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DChartHtml
     public Data2DChartSelfComparisonBarsController() {
         baseTitle = message("SelfComparisonBarsChart");
         TipsLabelKey = "SelfComparisonBarsChartTips";
+    }
+
+    @Override
+    public void initOptions() {
+        try {
+            super.initOptions();
+
+            objectGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+                @Override
+                public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
+                    startAction();
+                }
+            });
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
     @Override

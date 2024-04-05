@@ -393,9 +393,8 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DRegression
             }
             s.append(table.div());
 
-            s.append("\n<HR/><P align=left style=\"font-size:1em;\">* ")
-                    .append(message("HtmlEditableComments")).append("</P>\n");
-
+//            s.append("\n<HR/><P align=left style=\"font-size:1em;\">* ")
+//                    .append(message("HtmlEditableComments")).append("</P>\n");
             s.append("</BODY>\n");
             modelController.loadContents(HtmlWriteTools.html(s.toString()));
 
@@ -451,7 +450,6 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DRegression
         drawResidualChart();
     }
 
-//    modelTab, resultsTab, fitTab, residualTab
     @FXML
     @Override
     public boolean menuAction() {

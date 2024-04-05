@@ -478,7 +478,7 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
     }
 
     @FXML
-    public void okXYchart() {
+    public void goXYchart() {
         makeCharts(true, false);
     }
 
@@ -491,7 +491,7 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
     @Override
     public void typeChanged() {
         initChart();
-        okXYchart();
+        goXYchart();
     }
 
     @FXML

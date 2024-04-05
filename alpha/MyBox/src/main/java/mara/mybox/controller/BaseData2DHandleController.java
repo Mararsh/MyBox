@@ -101,10 +101,6 @@ public abstract class BaseData2DHandleController extends BaseData2DSelectRowsCon
                 });
             }
 
-            if (groupController != null) {
-                groupController.setParameters(this);
-            }
-
             if (sortController != null) {
                 sortController.setParameters(this, message("Sort"), message("DataSortLabel"));
             }

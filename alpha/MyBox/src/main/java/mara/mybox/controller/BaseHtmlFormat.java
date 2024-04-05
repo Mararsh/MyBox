@@ -401,7 +401,7 @@ public abstract class BaseHtmlFormat extends BaseWebViewController {
             return false;
         }
         if (file == null || !file.exists()) {
-            popError(message("InvalidParemeter") + ": " + message("File"));
+            popError(message("InvalidParameter") + ": " + message("File"));
             return false;
         }
         if (task != null) {
@@ -440,7 +440,7 @@ public abstract class BaseHtmlFormat extends BaseWebViewController {
         }
         String checkedAddress = UrlTools.checkURL(inAddress, Charset.forName("UTF-8"));
         if (checkedAddress == null) {
-            popError(message("InvalidParemeter") + ": " + message("Address"));
+            popError(message("InvalidParameter") + ": " + message("Address"));
             return false;
         }
         String netpath = checkedAddress;

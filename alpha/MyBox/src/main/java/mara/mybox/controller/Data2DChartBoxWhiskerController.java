@@ -13,6 +13,8 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.FlowPane;
@@ -46,6 +48,10 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
     protected DescriptiveStatistic calculation;
     protected Map<String, Node> lines;
 
+    @FXML
+    protected TabPane chartTabPane;
+    @FXML
+    protected Tab chartTab, statisticDataTab;
     @FXML
     protected ControlData2DChartXY chartController;
     @FXML
@@ -690,6 +696,65 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
         isSettingValues = false;
         setLinesStyle();
     }
+
+    @FXML
+    @Override
+    public boolean menuAction() {
+        Tab tab = chartTabPane.getSelectionModel().getSelectedItem();
+        if (tab == chartTab) {
+            return chartController.menuAction();
+
+        } else if (tab == statisticDataTab) {
+            return statisticDataController.menuAction();
+
+        }
+        return false;
+    }
+
+    @FXML
+    @Override
+    public boolean popAction() {
+        Tab tab = chartTabPane.getSelectionModel().getSelectedItem();
+        if (tab == chartTab) {
+            return chartController.popAction();
+
+        } else if (tab == statisticDataTab) {
+            return statisticDataController.popAction();
+
+        }
+        return false;
+    }
+
+    @Override
+    public boolean controlAlt2() {
+        Tab tab = chartTabPane.getSelectionModel().getSelectedItem();
+        if (tab == chartTab) {
+            return chartController.controlAlt2();
+
+        }
+        return false;
+    }
+
+    @Override
+    public boolean controlAlt3() {
+        Tab tab = chartTabPane.getSelectionModel().getSelectedItem();
+        if (tab == chartTab) {
+            return chartController.controlAlt3();
+
+        }
+        return false;
+    }
+
+    @Override
+    public boolean controlAlt4() {
+        Tab tab = chartTabPane.getSelectionModel().getSelectedItem();
+        if (tab == chartTab) {
+            return chartController.controlAlt4();
+
+        }
+        return false;
+    }
+
 
     /*
         static

@@ -110,14 +110,6 @@ public class ControlData2DGroup extends BaseTablePagesController<DataFilter> {
         }
     }
 
-    public void setParameters(BaseData2DHandleController taskController) {
-        try {
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
     public void refreshControls() {
         try {
             columnsController.loadNames(null);

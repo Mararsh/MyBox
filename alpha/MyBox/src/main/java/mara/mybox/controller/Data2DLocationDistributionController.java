@@ -12,6 +12,8 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.IndexRange;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.paint.Color;
@@ -44,8 +46,11 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
     protected int frameid, lastFrameid;
 
     @FXML
+    protected TabPane chartTabPane;
+    @FXML
+    protected Tab chartTab, dataTab;
+    @FXML
     protected ComboBox<String> labelSelector, longitudeSelector, latitudeSelector, sizeSelector;
-
     @FXML
     protected FlowPane csPane;
     @FXML
@@ -118,11 +123,11 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
                 allNames.add(name);
             }
             if (longNames.isEmpty() || laNames.isEmpty()) {
-                okButton.setDisable(true);
+                startButton.setDisable(true);
                 popError(message("NoCoordinateInData"));
                 return;
             }
-            okButton.setDisable(false);
+            startButton.setDisable(false);
             labelSelector.getItems().setAll(allNames);
             labelSelector.getSelectionModel().select(0);
 
@@ -239,7 +244,6 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
                     }
                 }
             }
-
             dataPoints = null;
             framesNumber = -1;
             frameid = -1;
@@ -270,6 +274,7 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
                     }
                     csvData.saveAttributes();
                     outputData = csvData.allRows(false);
+                    MyBoxLog.console(sizeCol != null);
                     if (sizeCol != null) {
                         maxValue = -Double.MAX_VALUE;
                         minValue = Double.MAX_VALUE;
@@ -297,7 +302,6 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
 
             @Override
             protected void whenSucceeded() {
-
             }
 
             @Override
@@ -307,11 +311,14 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
                 if (ok) {
                     drawPoints();
                     valuesController.loadDef(csvData);
+                    rightPane.setDisable(false);
+                } else {
+                    closeTask();
                 }
             }
 
         };
-        start(task);
+        start(task, false);
     }
 
     protected boolean initPoints(DataFileCSV csvData) {
@@ -344,6 +351,7 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
                     } else {
                         code = GeographyCodeTools.toCGCS2000(code, false);
                     }
+                    MyBoxLog.console(code != null);
                 } catch (Exception e) {
                     MyBoxLog.console(e.toString());
                     continue;
@@ -388,6 +396,7 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
         playController.clear();
         mapController.clearAction();
         if (dataPoints == null || dataPoints.isEmpty()) {
+            closeTask();
             return;
         }
         task = new FxSingletonTask<Void>(this) {
@@ -441,6 +450,7 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
             protected void finalAction() {
                 super.finalAction();
                 data2D.stopTask();
+                closeTask();
                 if (ok) {
                     framesNumber = dataPoints.size();
                     lastFrameid = -1;
@@ -450,7 +460,7 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
             }
 
         };
-        start(task);
+        start(task, false);
     }
 
     // maximum marker size of GaoDe Map is 64
@@ -515,6 +525,34 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
     @Override
     public void drawChart() {
         drawPoints();
+    }
+
+    @FXML
+    @Override
+    public boolean menuAction() {
+        Tab tab = chartTabPane.getSelectionModel().getSelectedItem();
+        if (tab == chartTab) {
+            return mapController.menuAction();
+
+        } else if (tab == dataTab) {
+            return valuesController.menuAction();
+
+        }
+        return false;
+    }
+
+    @FXML
+    @Override
+    public boolean popAction() {
+        Tab tab = chartTabPane.getSelectionModel().getSelectedItem();
+        if (tab == chartTab) {
+            return mapController.popAction();
+
+        } else if (tab == dataTab) {
+            return valuesController.popAction();
+
+        }
+        return false;
     }
 
     @Override

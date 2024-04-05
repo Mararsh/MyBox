@@ -1,6 +1,7 @@
 package mara.mybox.data2d.writer;
 
 import java.sql.PreparedStatement;
+import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataTable;
@@ -24,7 +25,6 @@ public class DataTableWriter extends Data2DWriter {
     protected List<String> keys;
     protected String idName;
     protected boolean dropExisted;
-    protected long dwCount;
     protected TableData2D tableData2D;
     protected PreparedStatement insert;
 
@@ -49,7 +49,7 @@ public class DataTableWriter extends Data2DWriter {
             columns = targetTable.getColumns();
             columns = columns.subList(1, columns.size());
             conn.setAutoCommit(false);
-            dwCount = 0;
+            targetRowIndex = 0;
             String sql = tableData2D.insertStatement();
             showInfo(sql);
             insert = conn.prepareStatement(sql);
@@ -62,21 +62,23 @@ public class DataTableWriter extends Data2DWriter {
     }
 
     @Override
-    public void printTargetRow() {
+    public void writeRow(List<String> inRow) {
         try {
-            if (targetRow == null || conn == null || targetTable == null) {
+            targetRow = null;
+            if (inRow == null || inRow.isEmpty() || conn == null || targetTable == null) {
                 return;
             }
-            Data2DRow data2DRow = targetTable.makeRow(targetRow, invalidAs());
+            targetRow = new ArrayList<>();
+            Data2DRow data2DRow = targetTable.makeRow(inRow, invalidAs());
             if (data2DRow == null || data2DRow.isNoColumn()) {
                 return;
             }
             if (tableData2D.setInsertStatement(conn, insert, data2DRow)) {
                 insert.addBatch();
-                if (++dwCount % Database.BatchSize == 0) {
+                if (++targetRowIndex % Database.BatchSize == 0) {
                     insert.executeBatch();
                     conn.commit();
-                    showInfo(message("Inserted") + ": " + dwCount);
+                    showInfo(message("Inserted") + ": " + targetRowIndex);
                 }
             }
         } catch (Exception e) {
@@ -95,11 +97,11 @@ public class DataTableWriter extends Data2DWriter {
             insert.executeBatch();
             conn.commit();
             insert.close();
-            targetTable.setRowsNumber(dwCount);
+            targetTable.setRowsNumber(targetRowIndex);
             Data2D.saveAttributes(conn, targetTable, targetTable.getColumns());
             targetData = targetTable;
             showInfo(message("Generated") + ": " + targetTable.getSheet() + "  "
-                    + message("RowsNumber") + ": " + dwCount);
+                    + message("RowsNumber") + ": " + targetRowIndex);
             created = true;
         } catch (Exception e) {
             showError(e.toString());
@@ -169,15 +171,6 @@ public class DataTableWriter extends Data2DWriter {
 
     public DataTableWriter setDropExisted(boolean dropExisted) {
         this.dropExisted = dropExisted;
-        return this;
-    }
-
-    public long getDwCount() {
-        return dwCount;
-    }
-
-    public DataTableWriter setDwCount(long dwCount) {
-        this.dwCount = dwCount;
         return this;
     }
 

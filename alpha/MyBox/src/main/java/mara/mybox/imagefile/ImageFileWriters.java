@@ -222,7 +222,7 @@ public class ImageFileWriters {
         try {
             if (frameImage == null || sourcefile == null || !sourcefile.exists()
                     || targetFile == null || frameIndex < 0) {
-                return "InvalidParemeters";
+                return "InvalidParameters";
             }
             String targetFormat;
             ImageAttributes targetAttributes = inAttributes;

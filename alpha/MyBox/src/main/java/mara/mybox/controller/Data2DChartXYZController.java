@@ -23,7 +23,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-9-13
  * @License Apache License Version 2.0
  */
-public class Data2DChartXYZController extends BaseData2DHandleController {
+public class Data2DChartXYZController extends BaseData2DTaskController {
 
     protected int seriesSize;
     protected File chartFile;
@@ -90,9 +90,9 @@ public class Data2DChartXYZController extends BaseData2DHandleController {
     }
 
     @Override
-    public void refreshControls() {
+    public void sourceChanged() {
         try {
-            super.refreshControls();
+            super.sourceChanged();
             isSettingValues = true;
             xSelector.getItems().clear();
             ySelector.getItems().clear();
@@ -158,8 +158,11 @@ public class Data2DChartXYZController extends BaseData2DHandleController {
     }
 
     @Override
-    public boolean initData() {
+    public boolean checkOptions() {
         try {
+            if (!super.checkOptions()) {
+                return false;
+            }
             if (!chartController.checkParameters()) {
                 tabPane.getSelectionModel().select(optionsTab);
                 return false;
@@ -252,18 +255,25 @@ public class Data2DChartXYZController extends BaseData2DHandleController {
 
             @Override
             protected void whenSucceeded() {
-                browse(chartFile);
-                browse(chartFile.getParentFile());
             }
 
             @Override
             protected void finalAction() {
                 super.finalAction();
                 data2D.stopTask();
+                closeTask();
+                if (!ok) {
+                    return;
+                }
+                browse(chartFile);
+                browse(chartFile.getParentFile());
+                if (closeAfterCheck.isSelected()) {
+                    close();
+                }
             }
 
         };
-        start(task);
+        start(task, false);
     }
 
     /*

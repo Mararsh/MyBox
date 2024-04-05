@@ -676,8 +676,8 @@ public class ControlInfoTreeListManage extends ControlInfoTreeList {
                         error = e.toString();
                         return false;
                     }
-                    writer.write("\n<HR>\n<TreeNode style=\"font-size:0.8em\">* "
-                            + message("HtmlEditableComments") + "</P>\n");
+//                    writer.write("\n<HR>\n<TreeNode style=\"font-size:0.8em\">* "
+//                            + message("HtmlEditableComments") + "</P>\n");
                     writer.write("</BODY>\n</HTML>\n");
                     writer.flush();
                     return true;

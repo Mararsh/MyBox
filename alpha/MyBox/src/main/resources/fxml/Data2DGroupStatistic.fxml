@@ -327,11 +327,11 @@ License:    Apache License Version 2.0
                                                                                         <RadioButton minHeight="-Infinity" mnemonicParsing="false" text="%GroupID" toggleGroup="$xyCategoryGroup" wrapText="true" />
                                                                                     </children>
                                                                                 </VBox>
-                                                                                <Button fx:id="okXYButton" mnemonicParsing="false" onAction="#okXYchart">
+                                                                                <Button fx:id="goXYButton" mnemonicParsing="false" onAction="#goXYchart">
                                                                                     <graphic>
                                                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                                             <image>
-                                                                                                <Image url="@../buttons/Red/iconOK.png" />
+                                                                                                <Image url="@../buttons/Red/iconGo.png" />
                                                                                             </image>
                                                                                         </ImageView>
                                                                                     </graphic>

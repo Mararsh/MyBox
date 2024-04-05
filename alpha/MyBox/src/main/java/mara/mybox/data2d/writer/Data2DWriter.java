@@ -101,7 +101,6 @@ public abstract class Data2DWriter {
             if (targetRowIndex % 100 == 0) {
                 showInfo(message("Written") + ": " + targetRowIndex);
             }
-
         } catch (Exception e) {
             showError(e.toString());
         }

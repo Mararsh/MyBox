@@ -528,6 +528,9 @@ public abstract class BaseData2DChartController extends BaseData2DTaskController
         return null;
     }
 
+    /*
+        interface
+     */
     @Override
     public void cleanPane() {
         try {

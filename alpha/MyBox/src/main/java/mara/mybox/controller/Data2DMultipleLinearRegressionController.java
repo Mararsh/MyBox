@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javafx.fxml.FXML;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import mara.mybox.calculation.OLSLinearRegression;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.data.ColumnDefinition.InvalidAs;
@@ -28,7 +30,9 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DRegressi
     protected List<String> xNames;
 
     @FXML
-    protected ControlData2DChartPie coefficientsChartController;
+    protected TabPane chartTabPane;
+    @FXML
+    protected Tab modelTab, resultsTab;
 
     public Data2DMultipleLinearRegressionController() {
         baseTitle = message("MultipleLinearRegression");
@@ -270,6 +274,35 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DRegressi
     public void refreshAction() {
         writeModel();
     }
+
+    @FXML
+    @Override
+    public boolean menuAction() {
+        Tab tab = chartTabPane.getSelectionModel().getSelectedItem();
+        if (tab == modelTab) {
+            return modelController.menuAction();
+
+        } else if (tab == resultsTab) {
+            return regressionDataController.menuAction();
+
+        }
+        return false;
+    }
+
+    @FXML
+    @Override
+    public boolean popAction() {
+        Tab tab = chartTabPane.getSelectionModel().getSelectedItem();
+        if (tab == modelTab) {
+            return modelController.popAction();
+
+        } else if (tab == resultsTab) {
+            return regressionDataController.popAction();
+
+        }
+        return false;
+    }
+
 
     /*
         static
