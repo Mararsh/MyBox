@@ -411,6 +411,7 @@ public class ColumnDefinition extends BaseData {
             if (o == null) {
                 return null;
             }
+//            MyBoxLog.console(columnName + " " + type + " " + savedName + "  " + o + " " + o.getClass());
             switch (type) {
                 case String:
                 case Enumeration:

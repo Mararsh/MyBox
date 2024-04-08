@@ -209,7 +209,10 @@ public class FilesArchiveCompressController extends BaseBatchFileController {
             @Override
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                 try {
-                    targetFile = targetFileController.file;
+                    targetFile = makeTargetFile();
+                    if (targetFile == null) {
+                        return;
+                    }
                     if (rootInput.getText().trim().isEmpty()) {
                         String name = targetFile.getName();
                         int pos = name.indexOf('.');

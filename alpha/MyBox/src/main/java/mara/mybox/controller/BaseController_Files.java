@@ -810,7 +810,22 @@ public abstract class BaseController_Files extends BaseController_Attributes {
         } catch (Exception e) {
             return null;
         }
+    }
 
+    public File makeTargetFile() {
+        try {
+            if (targetFileController == null) {
+                return null;
+            }
+            targetFile = targetFileController.file();
+            if (targetFile == null) {
+                return null;
+            }
+            targetFile = makeTargetFile(targetFile, targetFile.getParentFile());
+            return targetFile;
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public File makeTargetFile(File srcFile, File targetPath) {

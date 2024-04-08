@@ -12,15 +12,17 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlFFmpegOptions">
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlFFmpegOptions">
     <children>
               <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
                   <children>
@@ -84,12 +86,19 @@ License:    Apache License Version 2.0
                                         <TextField fx:id="extensionInput" minWidth="-Infinity" prefWidth="150.0" HBox.hgrow="NEVER" />
                                     </children>
                                 </HBox>
+                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
+                           <children>
+                              <Label minHeight="-Infinity" text="%rtbufsize" wrapText="true" HBox.hgrow="NEVER" />
+                              <TextField fx:id="rtbufsizeInput" prefWidth="150.0" promptText="3041280" />
+                           </children>
+                        </HBox>
                         <HBox fx:id="durationBox" alignment="CENTER_LEFT" spacing="5.0">
                            <children>
                               <Label text="%Duration" />
                               <CheckBox fx:id="shortestCheck" mnemonicParsing="false" selected="true" text="%Shortest" />
                            </children>
                         </HBox>
+                        <Label text="%FFmpegFailComments" />
                             </children>
                             <padding>
                                 <Insets bottom="5.0" left="5.0" right="5.0" top="10.0" />
@@ -143,6 +152,18 @@ License:    Apache License Version 2.0
                                         <ComboBox fx:id="crfSelector" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                     </children>
                                 </HBox>
+                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
+                           <children>
+                              <Label minHeight="-Infinity" text="%Rotate" wrapText="true" HBox.hgrow="NEVER" />
+                              <RadioButton fx:id="noRotateRadio" mnemonicParsing="false" selected="true" text="%No">
+                                 <toggleGroup>
+                                    <ToggleGroup fx:id="rotateGroup" />
+                                 </toggleGroup>
+                              </RadioButton>
+                              <RadioButton fx:id="rightRotateRadio" layoutX="39.0" layoutY="10.0" mnemonicParsing="false" text="%Right" toggleGroup="$rotateGroup" />
+                              <RadioButton fx:id="leftRotateRadio" layoutX="137.0" layoutY="10.0" mnemonicParsing="false" text="%Left" toggleGroup="$rotateGroup" />
+                           </children>
+                        </HBox>
                             </children>
                             <padding>
                                 <Insets bottom="5.0" left="5.0" right="5.0" top="10.0" />

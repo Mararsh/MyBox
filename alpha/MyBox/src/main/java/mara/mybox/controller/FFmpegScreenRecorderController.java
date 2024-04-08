@@ -120,16 +120,7 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
                 popError(message("NothingHandled"));
                 return false;
             }
-            return pickTarget();
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return false;
-        }
-    }
-
-    public boolean pickTarget() {
-        try {
-            targetFile = targetFileController.file();
+            targetFile = makeTargetFile();
             if (targetFile == null) {
                 popError(message("InvalidParameter") + ": " + message("TargetFile"));
                 return false;

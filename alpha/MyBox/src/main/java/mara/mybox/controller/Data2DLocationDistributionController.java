@@ -351,7 +351,6 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
                     } else {
                         code = GeographyCodeTools.toCGCS2000(code, false);
                     }
-                    MyBoxLog.console(code != null);
                 } catch (Exception e) {
                     MyBoxLog.console(e.toString());
                     continue;

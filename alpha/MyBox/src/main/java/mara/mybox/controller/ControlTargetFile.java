@@ -204,6 +204,7 @@ public class ControlTargetFile extends ControlFileSelecter {
                 inFile.getParentFile());
     }
 
+    @Override
     public File makeTargetFile() {
         checkFileInput();
         return makeTargetFile(file);

@@ -433,9 +433,10 @@ public abstract class BaseData2DChartController extends BaseData2DTaskController
                             }
                         }
                     }
-                    outputColumns = data2D.makeColumns(cols, showRowNumber());
+                    boolean showRowNumber = showRowNumber();
+                    outputColumns = data2D.makeColumns(cols, showRowNumber);
                     group = groupData(DataTableGroup.TargetType.Table,
-                            cols, showRowNumber(), maxData, scale);
+                            cols, showRowNumber, maxData, scale);
                     if (!group.run()) {
                         return false;
                     }

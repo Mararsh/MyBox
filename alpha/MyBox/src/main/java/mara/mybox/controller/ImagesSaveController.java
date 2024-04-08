@@ -407,7 +407,7 @@ public class ImagesSaveController extends BaseTaskController {
             }
 
         } else if (!spliceRadio.isSelected() && !videoRadio.isSelected()) {
-            targetFile = fileController.file();
+            targetFile = fileController.makeTargetFile();
             if (targetFile == null) {
                 popError(message("InvalidParameter") + ": " + message("TargetFile"));
                 return false;

@@ -44,7 +44,7 @@ public class FxTask<Void> extends BaseTask<Void> {
         } else if (controller != null) {
             controller.setInfo(info);
         } else {
-            MyBoxLog.console(info);
+//            MyBoxLog.console(info);
         }
     }
 

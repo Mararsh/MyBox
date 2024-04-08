@@ -451,7 +451,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
         fileSelectorTime = tableController.fileSelectorTime;
 
         if (targetFileController != null) {
-            targetFile = targetFileController.file();
+            targetFile = makeTargetFile();
             if (targetFile != null) {
                 lastTargetName = targetFile.getAbsolutePath();
                 targetPath = targetFile.getParentFile();

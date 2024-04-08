@@ -455,7 +455,7 @@ public abstract class Data2D_Data extends Data2D_Attributes {
             }
             List<Data2DColumn> targetCcolumns = new ArrayList<>();
             if (rowNumber) {
-                targetCcolumns.add(new Data2DColumn(message("SourceRowNumber"), ColumnDefinition.ColumnType.String));
+                targetCcolumns.add(new Data2DColumn(message("SourceRowNumber"), ColumnDefinition.ColumnType.Long));
             }
             for (Integer i : indices) {
                 Data2DColumn column = sourceColumns.get(i).cloneAll();

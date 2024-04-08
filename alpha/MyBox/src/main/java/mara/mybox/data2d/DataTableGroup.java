@@ -1295,6 +1295,7 @@ public class DataTableGroup {
                         s = DoubleTools.scaleString(s, invalidAs, scale);
                     }
                     row.add(s);
+
                 }
                 data.add(row);
             }

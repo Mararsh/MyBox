@@ -53,13 +53,7 @@ public class HtmlMergeAsPDFController extends BaseBatchFileController {
     @Override
     public boolean makeMoreParameters() {
         try {
-            if (targetFileController != null) {
-                targetFile = targetFileController.file;
-            }
-            if (targetFile == null) {
-                return false;
-            }
-            targetFile = makeTargetFile(targetFile, targetFile.getParentFile());
+            targetFile = makeTargetFile();
             if (targetFile == null) {
                 return false;
             }
