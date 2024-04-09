@@ -190,7 +190,7 @@ License:    Apache License Version 2.0
                               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                            </padding>
                            <children>
-                              <fx:include fx:id="target" source="ControlData2DTarget.fxml" />
+                              <fx:include fx:id="target" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DTarget.fxml" VBox.vgrow="ALWAYS" />
                            </children>
                         </VBox>
                      </content>

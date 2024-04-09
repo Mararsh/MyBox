@@ -15,9 +15,9 @@ import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.tools.Data2DColumnTools;
 import mara.mybox.data2d.writer.Data2DWriter;
 import mara.mybox.db.DerbyBase;
+import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
 import static mara.mybox.value.Languages.message;
 import org.apache.commons.csv.CSVParser;
@@ -28,7 +28,10 @@ import org.apache.commons.csv.CSVRecord;
  * @CreateDate 2022-5-21
  * @License Apache License Version 2.0
  */
-public class Data2DSpliceController extends BaseController {
+public class Data2DSpliceController extends BaseTaskController {
+
+    protected Data2DWriter writer;
+    protected ColumnDefinition.InvalidAs invalidAs;
 
     @FXML
     protected Tab aTab, bTab, spliceTab;
@@ -73,103 +76,90 @@ public class Data2DSpliceController extends BaseController {
         }
     }
 
-    @FXML
     @Override
-    public void okAction() {
-        tabPane.getSelectionModel().select(aTab);
-        if (dataAController.data2D == null || !dataAController.data2D.isValidDefinition()) {
-            popError(message("DataA") + ": " + message("NoData"));
-            return;
-        } else if (!dataAController.checkSelections()) {
-            return;
-        }
-        tabPane.getSelectionModel().select(bTab);
-        if (dataBController.data2D == null || !dataBController.data2D.isValidDefinition()) {
-            popError(message("DataB") + ": " + message("NoData"));
-            return;
-        } else if (!dataBController.checkSelections()) {
-            return;
-        }
-        tabPane.getSelectionModel().select(spliceTab);
-        Data2DWriter writer = targetController.pickWriter();
-        if (writer == null || writer.getTargetFile() == null) {
-            popError(message("InvalidParameter") + ": " + message("TargetFile"));
-            return;
-        }
-        if (task != null) {
-            task.cancel();
-        }
-        task = new FxSingletonTask<Void>(this) {
+    public boolean checkOptions() {
+        try {
+            tabPane.getSelectionModel().select(aTab);
+            if (dataAController.data2D == null || !dataAController.data2D.isValidDefinition()) {
+                popError(message("DataA") + ": " + message("NoData"));
+                return false;
+            } else if (!dataAController.checkSelections()) {
+                return false;
+            }
+            tabPane.getSelectionModel().select(bTab);
+            if (dataBController.data2D == null || !dataBController.data2D.isValidDefinition()) {
+                popError(message("DataB") + ": " + message("NoData"));
+                return false;
+            } else if (!dataBController.checkSelections()) {
+                return false;
+            }
+            tabPane.getSelectionModel().select(spliceTab);
 
-            @Override
-            protected boolean handle() {
-                try {
-                    DataFileCSV csvA, csvB;
-                    dataAController.data2D.startTask(this, dataAController.filterController.filter);
-                    if (!dataAController.data2D.fillFilterStatistic()) {
-                        return false;
-                    }
-                    if (dataAController.isAllPages()) {
-                        csvA = dataAController.data2D.copy(this,
-                                dataAController.checkedColsIndices, false, true, false);
-                    } else {
-                        csvA = DataFileCSV.save(task, null, null, ",",
-                                dataAController.checkedColumns,
-                                dataAController.tableFiltered(false));
-                    }
-                    dataAController.data2D.stopTask();
-                    if (csvA == null) {
-                        error = message("InvalidData") + ": " + message("DataA");
-                        return false;
-                    }
+            writer = targetController.pickWriter();
+            if (writer == null) {
+                return false;
+            }
+            invalidAs = targetController.invalidAs();
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
 
-                    dataBController.data2D.startTask(this, dataBController.filterController.filter);
-                    if (!dataBController.data2D.fillFilterStatistic()) {
-                        return false;
-                    }
-                    if (dataBController.isAllPages()) {
-                        csvB = dataBController.data2D.copy(this,
-                                dataBController.checkedColsIndices, false, true, false);
-                    } else {
-                        csvB = DataFileCSV.save(task, null, null, ",",
-                                dataBController.checkedColumns,
-                                dataBController.tableFiltered(false));
-                    }
-                    dataBController.data2D.stopTask();
-                    if (csvB == null) {
-                        error = message("InvalidData") + ": " + message("DataB");
-                        return false;
-                    }
-
-                    if (horizontalRadio.isSelected()) {
-                        spliceHorizontally(this, csvA, csvB, writer);
-                    } else {
-                        spliceVertically(this, csvA, csvB, writer);
-                    }
-                    writer.closeWriter();
-                    csvA.drop();
-                    csvB.drop();
-                    return writer.isCreated();
-                } catch (Exception e) {
-                    error = e.toString();
-                    return false;
-                }
+    @Override
+    public boolean doTask(FxTask currentTask) {
+        try {
+            DataFileCSV csvA, csvB;
+            dataAController.data2D.startTask(currentTask, dataAController.filterController.filter);
+            if (!dataAController.data2D.fillFilterStatistic()) {
+                return false;
+            }
+            if (dataAController.isAllPages()) {
+                csvA = dataAController.data2D.copy(currentTask,
+                        dataAController.checkedColsIndices, false, true, false);
+            } else {
+                csvA = DataFileCSV.save(task, null, null, ",",
+                        dataAController.checkedColumns,
+                        dataAController.tableFiltered(false));
+            }
+            dataAController.data2D.stopTask();
+            if (csvA == null) {
+                error = message("InvalidData") + ": " + message("DataA");
+                return false;
             }
 
-            @Override
-            protected void whenSucceeded() {
-                writer.showResult();
+            dataBController.data2D.startTask(currentTask, dataBController.filterController.filter);
+            if (!dataBController.data2D.fillFilterStatistic()) {
+                return false;
+            }
+            if (dataBController.isAllPages()) {
+                csvB = dataBController.data2D.copy(currentTask,
+                        dataBController.checkedColsIndices, false, true, false);
+            } else {
+                csvB = DataFileCSV.save(task, null, null, ",",
+                        dataBController.checkedColumns,
+                        dataBController.tableFiltered(false));
+            }
+            dataBController.data2D.stopTask();
+            if (csvB == null) {
+                error = message("InvalidData") + ": " + message("DataB");
+                return false;
             }
 
-            @Override
-            protected void finalAction() {
-                super.finalAction();
-                dataAController.data2D.stopTask();
-                dataBController.data2D.stopTask();
+            if (horizontalRadio.isSelected()) {
+                spliceHorizontally(currentTask, csvA, csvB, writer);
+            } else {
+                spliceVertically(currentTask, csvA, csvB, writer);
             }
-
-        };
-        start(task);
+            writer.closeWriter();
+            csvA.drop();
+            csvB.drop();
+            return writer.isCreated();
+        } catch (Exception e) {
+            error = e.toString();
+            return false;
+        }
     }
 
     protected boolean spliceVertically(FxTask currentTask,
@@ -367,4 +357,14 @@ public class Data2DSpliceController extends BaseController {
         }
     }
 
+    @Override
+    public void afterSuccess() {
+        writer.showResult();
+    }
+
+    @Override
+    public void afterTask() {
+        dataAController.data2D.stopTask();
+        dataBController.data2D.stopTask();
+    }
 }

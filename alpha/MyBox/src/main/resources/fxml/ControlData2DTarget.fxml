@@ -6,9 +6,16 @@ License:    Apache License Version 2.0
             http://www.apache.org/licenses/LICENSE-2.0
 -->
 
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.image.Image?>
@@ -17,143 +24,301 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" minHeight="-Infinity" spacing="10.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlData2DTarget">
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlData2DTarget">
     <children>
-      <VBox fx:id="externalBox" spacing="2.0">
-         <children>
-              <FlowPane alignment="CENTER_LEFT" hgap="5.0" minWidth="-Infinity" prefWrapLength="500.0" vgap="5.0">
-                  <children>
-                      <Label text="%External" />
-                      <RadioButton fx:id="csvRadio" mnemonicParsing="false" selected="true">
-                          <graphic>
-                              <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                  <image>
-                                      <Image url="@../buttons/Red/iconCSV.png" />
-                                  </image>
-                              </ImageView>
-                          </graphic>
-                          <toggleGroup>
-                              <ToggleGroup fx:id="targetGroup" />
-                          </toggleGroup>
-                      </RadioButton>
-                      <RadioButton fx:id="excelRadio" mnemonicParsing="false" toggleGroup="$targetGroup">
-                          <graphic>
-                              <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                  <image>
-                                      <Image url="@../buttons/Red/iconExcel.png" />
-                                  </image>
-                              </ImageView>
-                          </graphic>
-                      </RadioButton>
-                      <RadioButton fx:id="textsRadio" mnemonicParsing="false" toggleGroup="$targetGroup">
-                          <graphic>
-                              <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                  <image>
-                                      <Image url="@../buttons/Red/iconTxt.png" />
-                                  </image>
-                              </ImageView>
-                          </graphic>
-                      </RadioButton>
-                      <RadioButton fx:id="matrixRadio" mnemonicParsing="false" toggleGroup="$targetGroup">
-                          <graphic>
-                              <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                  <image>
-                                      <Image url="@../buttons/Red/iconMatrix.png" />
-                                  </image>
-                              </ImageView>
-                          </graphic>
-                      </RadioButton>
-                      <RadioButton fx:id="systemClipboardRadio" mnemonicParsing="false" toggleGroup="$targetGroup">
-                          <graphic>
-                              <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                  <image>
-                                      <Image url="@../buttons/iconSystemClipboard.png" />
-                                  </image>
-                              </ImageView>
-                          </graphic>
-                      </RadioButton>
-                      <RadioButton fx:id="myBoxClipboardRadio" mnemonicParsing="false" toggleGroup="$targetGroup">
-                          <graphic>
-                              <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                  <image>
-                                      <Image url="@../buttons/Red/iconClipboard.png" />
-                                  </image>
-                              </ImageView>
-                          </graphic>
-                      </RadioButton>
-                  <RadioButton fx:id="databaseRadio" mnemonicParsing="false" toggleGroup="$targetGroup">
-                     <graphic>
-                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../buttons/Red/iconDatabase.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </RadioButton>
-                  <RadioButton fx:id="jsonRadio" layoutX="306.0" layoutY="10.0" mnemonicParsing="false" toggleGroup="$targetGroup">
-                     <graphic>
-                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../buttons/Red/iconJSON.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </RadioButton>
-                  <RadioButton layoutX="10.0" layoutY="35.0" mnemonicParsing="false" toggleGroup="$targetGroup" fx:id="xmlRadio">
-                     <graphic>
-                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../buttons/Red/iconXML.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </RadioButton>
-                  <RadioButton fx:id="htmlRadio" layoutX="51.0" layoutY="35.0" mnemonicParsing="false" toggleGroup="$targetGroup">
-                     <graphic>
-                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../buttons/Red/iconHtml.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </RadioButton>
-                  <RadioButton fx:id="pdfRadio" layoutX="92.0" layoutY="35.0" mnemonicParsing="false" toggleGroup="$targetGroup">
-                     <graphic>
-                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../buttons/Red/iconPDF.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </RadioButton>
-                  </children>
-              </FlowPane>
-            <VBox fx:id="externalDefBox">
+      <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
+         <content>
+            <VBox fx:id="externalBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                <children>
-                  <HBox alignment="CENTER_LEFT" spacing="2.0">
+                    <FlowPane alignment="CENTER_LEFT" hgap="5.0" minWidth="-Infinity" prefWrapLength="500.0" vgap="5.0">
+                        <children>
+                            <Label text="%External" />
+                            <RadioButton fx:id="csvRadio" mnemonicParsing="false" selected="true">
+                                <graphic>
+                                    <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                        <image>
+                                            <Image url="@../buttons/Red/iconCSV.png" />
+                                        </image>
+                                    </ImageView>
+                                </graphic>
+                                <toggleGroup>
+                                    <ToggleGroup fx:id="targetGroup" />
+                                </toggleGroup>
+                            </RadioButton>
+                            <RadioButton fx:id="excelRadio" mnemonicParsing="false" toggleGroup="$targetGroup">
+                                <graphic>
+                                    <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                        <image>
+                                            <Image url="@../buttons/Red/iconExcel.png" />
+                                        </image>
+                                    </ImageView>
+                                </graphic>
+                            </RadioButton>
+                            <RadioButton fx:id="textsRadio" mnemonicParsing="false" toggleGroup="$targetGroup">
+                                <graphic>
+                                    <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                        <image>
+                                            <Image url="@../buttons/Red/iconTxt.png" />
+                                        </image>
+                                    </ImageView>
+                                </graphic>
+                            </RadioButton>
+                            <RadioButton fx:id="matrixRadio" mnemonicParsing="false" toggleGroup="$targetGroup">
+                                <graphic>
+                                    <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                        <image>
+                                            <Image url="@../buttons/Red/iconMatrix.png" />
+                                        </image>
+                                    </ImageView>
+                                </graphic>
+                            </RadioButton>
+                            <RadioButton fx:id="systemClipboardRadio" mnemonicParsing="false" toggleGroup="$targetGroup">
+                                <graphic>
+                                    <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                        <image>
+                                            <Image url="@../buttons/iconSystemClipboard.png" />
+                                        </image>
+                                    </ImageView>
+                                </graphic>
+                            </RadioButton>
+                            <RadioButton fx:id="myBoxClipboardRadio" mnemonicParsing="false" toggleGroup="$targetGroup">
+                                <graphic>
+                                    <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                        <image>
+                                            <Image url="@../buttons/Red/iconClipboard.png" />
+                                        </image>
+                                    </ImageView>
+                                </graphic>
+                            </RadioButton>
+                        <RadioButton fx:id="databaseRadio" mnemonicParsing="false" toggleGroup="$targetGroup">
+                           <graphic>
+                              <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../buttons/Red/iconDatabase.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </RadioButton>
+                        <RadioButton fx:id="jsonRadio" layoutX="306.0" layoutY="10.0" mnemonicParsing="false" toggleGroup="$targetGroup">
+                           <graphic>
+                              <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../buttons/Red/iconJSON.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </RadioButton>
+                        <RadioButton layoutX="10.0" layoutY="35.0" mnemonicParsing="false" toggleGroup="$targetGroup" fx:id="xmlRadio">
+                           <graphic>
+                              <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../buttons/Red/iconXML.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </RadioButton>
+                        <RadioButton fx:id="htmlRadio" layoutX="51.0" layoutY="35.0" mnemonicParsing="false" toggleGroup="$targetGroup">
+                           <graphic>
+                              <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../buttons/Red/iconHtml.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </RadioButton>
+                        <RadioButton fx:id="pdfRadio" layoutX="92.0" layoutY="35.0" mnemonicParsing="false" toggleGroup="$targetGroup">
+                           <graphic>
+                              <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../buttons/Red/iconPDF.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </RadioButton>
+                        </children>
+                    </FlowPane>
+                  <VBox fx:id="externalDefBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                      <children>
-                        <Label text="%External" visible="false" />
-                        <VBox fx:id="externalDefBox" spacing="2.0">
+                        <HBox alignment="CENTER_LEFT" spacing="2.0">
                            <children>
-                              <HBox alignment="CENTER_LEFT" spacing="2.0">
+                              <Label text="%External" visible="false" />
+                              <VBox fx:id="externalDefBox" spacing="2.0">
                                  <children>
-                                    <Label minHeight="-Infinity" text="%DataName" wrapText="true" />
-                                    <TextField fx:id="nameInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                 </children>
-                              </HBox>
-                              <VBox fx:id="fileBox">
-                                 <children>
-                                    <fx:include fx:id="targetFile" source="ControlTargetFile.fxml" />
+                                    <HBox alignment="CENTER_LEFT" spacing="2.0">
+                                       <children>
+                                          <Label minHeight="-Infinity" text="%DataName" wrapText="true" />
+                                          <TextField fx:id="nameInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                       </children>
+                                    </HBox>
+                                    <VBox fx:id="fileBox">
+                                       <children>
+                                          <fx:include fx:id="targetFile" source="ControlTargetFile.fxml" />
+                                       </children>
+                                    </VBox>
                                  </children>
                               </VBox>
                            </children>
-                        </VBox>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="46.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="ALWAYS">
+                           <children>
+                              <Label text="%External" visible="false" />
+                              <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" HBox.hgrow="ALWAYS">
+                                 <content>
+                                    <VBox fx:id="optionsBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                       <children>
+                                          <TabPane fx:id="optionsPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+                                             <tabs>
+                                                <Tab fx:id="csvTab" text="CSV">
+                                                   <content>
+                                                      <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+                                                         <content>
+                                                            <VBox fx:id="csvBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                                               <children>
+                                                                  <fx:include fx:id="csvWrite" source="ControlTextWriteOptions.fxml" />
+                                                               </children>
+                                                               <padding>
+                                                                  <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                                               </padding>
+                                                            </VBox>
+                                                         </content>
+                                                      </ScrollPane>
+                                                   </content>
+                                                </Tab>
+                                                <Tab fx:id="excelTab" text="Excel">
+                                                   <content>
+                                                      <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
+                                                         <content>
+                                                            <VBox fx:id="excelBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                                               <children>
+                                                                  <CheckBox fx:id="excelWithNamesCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%FirstLineDefineNames" wrapText="true" />
+                                                                  <CheckBox fx:id="currentSheetOnlyCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%SaveCurrentSheetOnly" wrapText="true" />
+                                                               </children>
+                                                               <padding>
+                                                                  <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                                               </padding>
+                                                            </VBox>
+                                                         </content>
+                                                      </ScrollPane>
+                                                   </content>
+                                                </Tab>
+                                                <Tab fx:id="textTab" text="%Texts">
+                                                   <content>
+                                                      <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
+                                                         <content>
+                                                            <VBox fx:id="textBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                                               <children>
+                                                                  <fx:include fx:id="textWriteOptions" source="ControlTextWriteOptions.fxml" />
+                                                               </children>
+                                                               <padding>
+                                                                  <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                                               </padding>
+                                                            </VBox>
+                                                         </content>
+                                                      </ScrollPane>
+                                                   </content>
+                                                </Tab>
+                                                <Tab fx:id="htmlTab" text="html">
+                                                   <content>
+                                                      <VBox fx:id="htmlBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                                         <children>
+                                                            <HBox alignment="CENTER_LEFT" spacing="2.0">
+                                                               <children>
+                                                                  <Label maxWidth="1.7976931348623157E308" text="%HtmlStyle" HBox.hgrow="ALWAYS" />
+                                                                  <Button fx:id="helpButton" mnemonicParsing="false" onAction="#showHtmlHelps" onMouseEntered="#popHtmlHelps">
+                                                                     <graphic>
+                                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                           <image>
+                                                                              <Image url="@../buttons/iconClaw.png" />
+                                                                           </image>
+                                                                        </ImageView>
+                                                                     </graphic>
+                                                                  </Button>
+                                                               </children>
+                                                            </HBox>
+                                                            <TextArea fx:id="cssArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
+                                                         </children>
+                                                         <padding>
+                                                            <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                                         </padding>
+                                                      </VBox>
+                                                   </content>
+                                                </Tab>
+                                                <Tab fx:id="pdfTab" text="PDF">
+                                                   <content>
+                                                      <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+                                                         <content>
+                                                            <VBox fx:id="pdfBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                                               <children>
+                                                                  <Label minHeight="-Infinity" text="%PdfColumnsWidthPxList" wrapText="true" />
+                                                                  <TextField fx:id="widthList" maxWidth="1.7976931348623157E308" />
+                                                                  <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+                                                                     <content>
+                                                                        <fx:include fx:id="pdfOptions" source="ControlPdfWriteOptions.fxml" />
+                                                                     </content>
+                                                                  </ScrollPane>
+                                                               </children>
+                                                               <padding>
+                                                                  <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                                               </padding>
+                                                            </VBox>
+                                                         </content>
+                                                      </ScrollPane>
+                                                   </content>
+                                                </Tab>
+                                                <Tab fx:id="dbTab" text="%DatabaseTable">
+                                                   <content>
+                                                      <VBox fx:id="dbBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                                         <children>
+                                                            <fx:include fx:id="db" source="ControlNewDataTable.fxml" />
+                                                         </children>
+                                                         <padding>
+                                                            <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                                         </padding>
+                                                      </VBox>
+                                                   </content>
+                                                </Tab>
+                                                <Tab fx:id="logsTab" text="%Logs">
+                                                   <content>
+                                                      <VBox fx:id="logsBox1" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                                         <padding>
+                                                            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                                         </padding>
+                                                         <children>
+                                                            <TextArea fx:id="logsTextArea" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" wrapText="true" VBox.vgrow="ALWAYS" />
+                                                            <HBox alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" spacing="10.0">
+                                                               <children>
+                                                                  <Label text="%MaxCharacters" />
+                                                                  <TextField fx:id="maxCharsinput" prefWidth="80.0" text="5000" />
+                                                                  <CheckBox fx:id="verboseCheck" mnemonicParsing="false" text="%VerboseLogs" />
+                                                                  <Button fx:id="clearButton1" mnemonicParsing="false" onAction="#clearLogs">
+                                                                     <graphic>
+                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                           <image>
+                                                                              <Image url="@../buttons/Red/iconClear.png" />
+                                                                           </image>
+                                                                        </ImageView>
+                                                                     </graphic>
+                                                                  </Button>
+                                                               </children>
+                                                            </HBox>
+                                                         </children>
+                                                      </VBox>
+                                                   </content>
+                                                </Tab>
+                                             </tabs>
+                                          </TabPane>
+                                       </children>
+                                    </VBox>
+                                 </content>
+                              </ScrollPane>
+                           </children>
+                        </HBox>
                      </children>
-                  </HBox>
+                  </VBox>
                </children>
             </VBox>
-         </children>
-      </VBox>
+         </content>
+      </ScrollPane>
         <VBox fx:id="inTableBox" spacing="2.0">
             <children>
                 <FlowPane hgap="2.0" prefWrapLength="300.0" vgap="2.0">
@@ -187,5 +352,21 @@ License:    Apache License Version 2.0
             </HBox>
             </children>
         </VBox>
+      <FlowPane hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">
+         <children>
+            <Label text="%ToInvalidNumber">
+               <FlowPane.margin>
+                  <Insets />
+               </FlowPane.margin>
+            </Label>
+            <RadioButton fx:id="blankNonnumericRadio" mnemonicParsing="false" selected="true" text="%SetAsBlank">
+               <toggleGroup>
+                  <ToggleGroup fx:id="nonnumericGroup" />
+               </toggleGroup>
+            </RadioButton>
+            <RadioButton fx:id="zeroNonnumericRadio" layoutX="120.0" layoutY="10.0" mnemonicParsing="false" text="%SetAsZero" toggleGroup="$nonnumericGroup" />
+            <RadioButton fx:id="skipNonnumericRadio" mnemonicParsing="false" text="%Skip" toggleGroup="$nonnumericGroup" />
+         </children>
+      </FlowPane>
     </children>
 </VBox>

@@ -15,7 +15,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-10-18
  * @License Apache License Version 2.0
  */
-public class ControlData2DSource extends BaseData2DSourceController {
+public class ControlData2DSource extends BaseData2DRowsColumnsController {
 
     @Override
     public List<MenuItem> fileMenuItems(Event fevent) {

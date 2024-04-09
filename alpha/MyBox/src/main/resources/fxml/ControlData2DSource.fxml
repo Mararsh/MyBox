@@ -12,211 +12,132 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.Tab?>
-<?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.FlowPane?>
-<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
 <VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlData2DSource">
     <children>
-        <HBox fx:id="toolbar" alignment="CENTER_LEFT" spacing="2.0">
-            <children>
-            <Button fx:id="selectButton" mnemonicParsing="false" onAction="#selectAction">
-               <graphic>
-                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/Red/iconSelect.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
-            <Button fx:id="selectFileButton" mnemonicParsing="false" onAction="#pickSourceFile" onMouseEntered="#popSourceFile">
-               <graphic>
-                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/Red/iconSelectFile.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
-            <Button fx:id="fileMenuButton" mnemonicParsing="false" onAction="#showFileMenu" onMouseEntered="#popFileMenu">
-               <graphic>
-                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/Red/iconFile.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
-            <Button fx:id="loadContentInSystemClipboard2Button" mnemonicParsing="false" onAction="#loadContentInSystemClipboard">
-               <graphic>
-                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/iconImageSystem.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
-                <Label fx:id="dataLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" HBox.hgrow="ALWAYS" />
-            <Button fx:id="dataManufactureButton" mnemonicParsing="false" onAction="#dataManufacture">
-               <graphic>
-                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/Red/iconData.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
-            </children>
-        </HBox>
-        <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
-            <tabs>
-                <Tab fx:id="dataTab" text="%Data">
-                    <content>
-                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
-                            <content>
-                                <VBox fx:id="dataBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
-                                    <children>
-                                        <FlowPane fx:id="rowsPane" hgap="2.0" vgap="2.0">
-                                            <children>
-                                                <Label text="%Rows" />
-                                                <RadioButton fx:id="selectedRadio" mnemonicParsing="false" selected="true" text="%Selected">
-                                                    <toggleGroup>
-                                                        <ToggleGroup fx:id="rowsGroup" />
-                                                    </toggleGroup>
-                                                </RadioButton>
-                                                <RadioButton fx:id="currentPageRadio" mnemonicParsing="false" text="%CurrentPage" toggleGroup="$rowsGroup" />
-                                                <RadioButton fx:id="allPagesRadio" mnemonicParsing="false" text="%AllPages" toggleGroup="$rowsGroup" />
-                                            </children>
-                                        </FlowPane>
-                                        <FlowPane hgap="2.0" vgap="2.0">
-                                            <children>
-                                                <Label text="%Columns" />
-                                                <Button fx:id="selectAllColumnsButton" mnemonicParsing="false" onAction="#selectAllColumns">
-                                                    <graphic>
-                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/Red/iconSelectAll.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </Button>
-                                                <Button fx:id="selectNoneColumnsButton" mnemonicParsing="false" onAction="#selectNoneColumn">
-                                                    <graphic>
-                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/Red/iconSelectNone.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </Button>
-                                            </children>
-                                        </FlowPane>
-                                        <TableView fx:id="tableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
-                                            <columns>
-                                                <TableColumn fx:id="rowsSelectionColumn" maxWidth="1.7976931348623157E308" prefWidth="-1.0">
-                                                    <graphic>
-                                                        <CheckBox fx:id="allRowsCheck" mnemonicParsing="false" text="%TableRow" />
-                                                    </graphic>
-                                                </TableColumn>
-                                                <TableColumn fx:id="dataRowColumn" editable="false" maxWidth="1.7976931348623157E308" prefWidth="-1.0" text="%DataRow" />
-                                            </columns>
-                                        </TableView>
-                                        <FlowPane fx:id="paginationPane" alignment="CENTER_RIGHT" hgap="2.0" vgap="2.0">
-                                            <children>
-                                                <Label fx:id="selectedLabel" minHeight="-Infinity" wrapText="true">
-                                                    <FlowPane.margin>
-                                                        <Insets right="20.0" />
-                                                    </FlowPane.margin>
-                                                </Label>
-                                                <Label fx:id="dataSizeLabel" minHeight="-Infinity" wrapText="true">
-                                                    <FlowPane.margin>
-                                                        <Insets right="20.0" />
-                                                    </FlowPane.margin>
-                                                </Label>
-                                                <Label text="%PageSize" />
-                                                <ComboBox fx:id="pageSizeSelector" editable="true" prefWidth="80.0" />
-                                                <Label text="%Page" />
-                                                <ComboBox fx:id="pageSelector" editable="true" prefWidth="80.0" />
-                                                <Label fx:id="pageLabel" />
-                                                <Button fx:id="goPageButton" mnemonicParsing="false" onAction="#goPage">
-                                                    <graphic>
-                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/Red/iconGo.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </Button>
-                                                <Button fx:id="pageFirstButton" mnemonicParsing="false" onAction="#pageFirstAction">
-                                                    <graphic>
-                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/Red/iconFirst.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </Button>
-                                                <Button fx:id="pageLastButton" mnemonicParsing="false" onAction="#pageLastAction">
-                                                    <graphic>
-                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/Red/iconLast.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </Button>
-                                                <Button fx:id="pagePreviousButton" mnemonicParsing="false" onAction="#pagePreviousAction">
-                                                    <graphic>
-                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/Red/iconPrevious.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </Button>
-                                                <Button fx:id="pageNextButton" mnemonicParsing="false" onAction="#pageNextAction">
-                                                    <graphic>
-                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/Red/iconNext.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </Button>
-                                            </children>
-                                        </FlowPane>
-                                    </children>
-                                    <padding>
-                                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                                    </padding>
-                                </VBox>
-                            </content>
-                        </ScrollPane>
-                    </content>
-                </Tab>
-                <Tab fx:id="filterTab" text="%RowFilter">
-                    <content>
-                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
-                            <content>
-                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-                                    <children>
-                                        <fx:include fx:id="filter" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DRowFilter.fxml" VBox.vgrow="ALWAYS" />
-                                    </children>
-                                </VBox>
-                            </content>
-                        </ScrollPane>
-                    </content>
-                </Tab>
-            </tabs>
-        </TabPane>
+              <VBox fx:id="dataBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                  <children>
+                      <FlowPane fx:id="rowsPane" hgap="2.0" vgap="2.0">
+                          <children>
+                              <Label text="%Rows" />
+                              <RadioButton fx:id="selectedRadio" mnemonicParsing="false" selected="true" text="%Selected">
+                                  <toggleGroup>
+                                      <ToggleGroup fx:id="rowsGroup" />
+                                  </toggleGroup>
+                              </RadioButton>
+                              <RadioButton fx:id="currentPageRadio" mnemonicParsing="false" text="%CurrentPage" toggleGroup="$rowsGroup" />
+                              <RadioButton fx:id="allPagesRadio" mnemonicParsing="false" text="%AllPages" toggleGroup="$rowsGroup" />
+                          </children>
+                      </FlowPane>
+                      <FlowPane hgap="2.0" vgap="2.0">
+                          <children>
+                              <Label text="%Columns" />
+                              <Button fx:id="selectAllColumnsButton" mnemonicParsing="false" onAction="#selectAllColumns">
+                                  <graphic>
+                                      <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                          <image>
+                                              <Image url="@../buttons/Red/iconSelectAll.png" />
+                                          </image>
+                                      </ImageView>
+                                  </graphic>
+                              </Button>
+                              <Button fx:id="selectNoneColumnsButton" mnemonicParsing="false" onAction="#selectNoneColumn">
+                                  <graphic>
+                                      <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                          <image>
+                                              <Image url="@../buttons/Red/iconSelectNone.png" />
+                                          </image>
+                                      </ImageView>
+                                  </graphic>
+                              </Button>
+                          </children>
+                      </FlowPane>
+                      <TableView fx:id="tableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
+                          <columns>
+                              <TableColumn fx:id="rowsSelectionColumn" maxWidth="1.7976931348623157E308" prefWidth="-1.0">
+                                  <graphic>
+                                      <CheckBox fx:id="allRowsCheck" mnemonicParsing="false" text="%TableRow" />
+                                  </graphic>
+                              </TableColumn>
+                              <TableColumn fx:id="dataRowColumn" editable="false" maxWidth="1.7976931348623157E308" prefWidth="-1.0" text="%DataRow" />
+                          </columns>
+                      </TableView>
+                      <FlowPane fx:id="paginationPane" alignment="CENTER_RIGHT" hgap="2.0" vgap="2.0">
+                          <children>
+                              <Label fx:id="selectedLabel" minHeight="-Infinity" wrapText="true">
+                                  <FlowPane.margin>
+                                      <Insets right="20.0" />
+                                  </FlowPane.margin>
+                              </Label>
+                              <Label fx:id="dataSizeLabel" minHeight="-Infinity" wrapText="true">
+                                  <FlowPane.margin>
+                                      <Insets right="20.0" />
+                                  </FlowPane.margin>
+                              </Label>
+                              <Label text="%PageSize" />
+                              <ComboBox fx:id="pageSizeSelector" editable="true" prefWidth="80.0" />
+                              <Label text="%Page" />
+                              <ComboBox fx:id="pageSelector" editable="true" prefWidth="80.0" />
+                              <Label fx:id="pageLabel" />
+                              <Button fx:id="goPageButton" mnemonicParsing="false" onAction="#goPage">
+                                  <graphic>
+                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                          <image>
+                                              <Image url="@../buttons/Red/iconGo.png" />
+                                          </image>
+                                      </ImageView>
+                                  </graphic>
+                              </Button>
+                              <Button fx:id="pageFirstButton" mnemonicParsing="false" onAction="#pageFirstAction">
+                                  <graphic>
+                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                          <image>
+                                              <Image url="@../buttons/Red/iconFirst.png" />
+                                          </image>
+                                      </ImageView>
+                                  </graphic>
+                              </Button>
+                              <Button fx:id="pageLastButton" mnemonicParsing="false" onAction="#pageLastAction">
+                                  <graphic>
+                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                          <image>
+                                              <Image url="@../buttons/Red/iconLast.png" />
+                                          </image>
+                                      </ImageView>
+                                  </graphic>
+                              </Button>
+                              <Button fx:id="pagePreviousButton" mnemonicParsing="false" onAction="#pagePreviousAction">
+                                  <graphic>
+                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                          <image>
+                                              <Image url="@../buttons/Red/iconPrevious.png" />
+                                          </image>
+                                      </ImageView>
+                                  </graphic>
+                              </Button>
+                              <Button fx:id="pageNextButton" mnemonicParsing="false" onAction="#pageNextAction">
+                                  <graphic>
+                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                          <image>
+                                              <Image url="@../buttons/Red/iconNext.png" />
+                                          </image>
+                                      </ImageView>
+                                  </graphic>
+                              </Button>
+                          </children>
+                      </FlowPane>
+                  </children>
+                  <padding>
+                      <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                  </padding>
+              </VBox>
 
     </children>
 </VBox>

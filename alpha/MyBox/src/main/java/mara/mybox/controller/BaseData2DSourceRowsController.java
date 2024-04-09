@@ -51,6 +51,15 @@ public class BaseData2DSourceRowsController extends BaseData2DLoadController {
             filterTab = taskController.filterTab;
             dataTab = taskController.sourceTab;
 
+            initParameters();
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    public void initParameters() {
+        try {
             tableView.requestFocus();
 
             String rowsSelectionType = UserConfig.getString(baseName + "RowsSelectionType", "Selected");

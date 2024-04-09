@@ -17,7 +17,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-10-18
  * @License Apache License Version 2.0
  */
-public class BaseData2DSourceController extends BaseData2DSourceRowsController {
+public class BaseData2DRowsColumnsController extends BaseData2DSourceRowsController {
 
     protected List<Integer> checkedColsIndices;
     protected List<String> checkedColsNames;

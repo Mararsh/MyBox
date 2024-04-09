@@ -120,6 +120,10 @@ public class BaseTaskController extends BaseLogs {
     }
 
     public void startTask() {
+        defaultStartTask();
+    }
+
+    public void defaultStartTask() {
         startTime = new Date();
         updateLogs(message("Start") + ": " + DateTools.dateToString(startTime), true);
         task = new FxSingletonTask<Void>(this) {
@@ -147,7 +151,7 @@ public class BaseTaskController extends BaseLogs {
                 closeTask();
             }
         };
-        start(task, false, null);
+        start(task, false);
     }
 
     public boolean doTask(FxTask currentTask) {

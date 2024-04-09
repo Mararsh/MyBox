@@ -22,7 +22,7 @@ public class Data2DLoadContentInSystemClipboardController extends BaseChildContr
     @FXML
     protected ControlData2DSystemClipboard boardController;
     @FXML
-    protected BaseData2DSelectRowsController sourceController;
+    protected BaseData2DRowsColumnsController sourceController;
 
     public Data2DLoadContentInSystemClipboardController() {
         baseTitle = message("LoadContentInSystemClipboard");

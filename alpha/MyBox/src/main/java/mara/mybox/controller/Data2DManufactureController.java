@@ -741,16 +741,6 @@ public class Data2DManufactureController extends BaseData2DViewController {
         start(task);
     }
 
-    public void dataSaved() {
-        try {
-            popInformation(message("Saved"));
-            notifySaved();
-            readData(true);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
     @Override
     public synchronized void loadData(String name, List<Data2DColumn> cols, List<List<String>> data) {
         try {

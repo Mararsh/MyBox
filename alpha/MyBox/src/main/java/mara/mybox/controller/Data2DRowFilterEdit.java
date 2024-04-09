@@ -35,9 +35,6 @@ public class Data2DRowFilterEdit extends BaseInputController {
         }
     }
 
-    public void setParameters(BaseData2DHandleController handleController, DataFilter filter) {
-    }
-
     @Override
     public boolean checkInput() {
         if (!filterController.checkExpression(taskController.isAllPages())) {

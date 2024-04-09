@@ -112,7 +112,7 @@ License:    Apache License Version 2.0
                             <children>
                                 <VBox fx:id="targetBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                                     <children>
-                                        <fx:include fx:id="target" source="ControlData2DTargetExternal.fxml" />
+                                        <fx:include fx:id="target" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DTargetExternal.fxml" VBox.vgrow="ALWAYS" />
                                     </children>
                                 </VBox>
                                   <CheckBox fx:id="rowNumberCheck" mnemonicParsing="false" text="%RowNumber" />

@@ -10,22 +10,34 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.Data2D_Attributes.TargetType;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.Append;
 import static mara.mybox.data2d.Data2D_Attributes.TargetType.CSV;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.DatabaseTable;
 import static mara.mybox.data2d.Data2D_Attributes.TargetType.Excel;
 import static mara.mybox.data2d.Data2D_Attributes.TargetType.HTML;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.Insert;
 import static mara.mybox.data2d.Data2D_Attributes.TargetType.JSON;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.Matrix;
 import static mara.mybox.data2d.Data2D_Attributes.TargetType.MyBoxClipboard;
 import static mara.mybox.data2d.Data2D_Attributes.TargetType.PDF;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.Replace;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.SystemClipboard;
 import static mara.mybox.data2d.Data2D_Attributes.TargetType.Text;
 import static mara.mybox.data2d.Data2D_Attributes.TargetType.XML;
+import mara.mybox.data2d.TmpTable;
+import mara.mybox.data2d.tools.Data2DConvertTools;
 import mara.mybox.data2d.writer.Data2DWriter;
 import mara.mybox.data2d.writer.SystemClipboardWriter;
+import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.VisitHistory.FileType;
 import mara.mybox.dev.MyBoxLog;
@@ -38,13 +50,15 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-12-11
  * @License Apache License Version 2.0
  */
-public class ControlData2DTarget extends BaseController {
+public class ControlData2DTarget extends BaseDataConvertController {
 
     protected BaseData2DLoadController tableController;
     protected TargetType format;
     protected boolean notInTable;
     protected ChangeListener<Boolean> tableStatusListener;
     protected SimpleBooleanProperty formatNotify;
+    protected Data2D data2D;
+    protected String targetName;
 
     @FXML
     protected ToggleGroup targetGroup;
@@ -60,20 +74,61 @@ public class ControlData2DTarget extends BaseController {
     protected HBox dataNameBox, locationBox;
     @FXML
     protected TextField nameInput;
+    @FXML
+    protected TabPane optionsPane;
+    @FXML
+    protected Tab csvTab, excelTab, textTab, htmlTab, pdfTab, dbTab;
+    @FXML
+    protected RadioButton zeroNonnumericRadio, blankNonnumericRadio, skipNonnumericRadio;
+    @FXML
+    protected VBox optionsBox, csvBox, excelBox, textBox, htmlBox, pdfBox, dbBox;
+    @FXML
+    protected ControlNewDataTable dbController;
+
+    public boolean isInvalid() {
+        if (tableController == null) {
+            return true;
+        }
+        return !tableController.isShowing()
+                || tableController.data2D == null
+                || !tableController.data2D.isValidDefinition()
+                || (data2D != null && tableController.data2D.getD2did() != data2D.getD2did());
+    }
 
     public void setParameters(BaseController parent, BaseData2DLoadController controller) {
         try {
-            baseName = parent.baseName + "_" + baseName;
             tableController = controller;
-            formatNotify = new SimpleBooleanProperty(false);
+            if (isInvalid()) {
+                close();
+                return;
+            }
 
-            checkControls();
+            formatNotify = new SimpleBooleanProperty(false);
+            baseName = parent.baseName + "_" + baseName;
+
+            initControls(baseName);
+
+            if (tableController != null) {
+                data2D = tableController.data2D.cloneAll();
+                dbController.setParameters(this, data2D);
+                dbController.setColumns(data2D.columnIndices());
+                dbController.nameInput.setText(data2D.getDataName());
+            } else {
+                data2D = null;
+                dbController.setParameters(this, null);
+            }
+
+            optionsPane.getTabs().clear();
+            optionsBox.getChildren().clear();
+
+            initTarget();
             targetGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
                     checkTarget();
                 }
             });
+            checkTarget();
 
             if (tableController != null) {
                 refreshControls();
@@ -85,54 +140,8 @@ public class ControlData2DTarget extends BaseController {
                 };
                 tableController.statusNotify.addListener(tableStatusListener);
             }
-            initTarget();
         } catch (Exception e) {
             MyBoxLog.error(e);
-        }
-    }
-
-    public void checkControls() {
-        if (inTableBox != null) {
-            if (notInTable) {
-                if (thisPane.getChildren().contains(inTableBox)) {
-                    thisPane.getChildren().remove(inTableBox);
-                }
-            } else {
-                if (!thisPane.getChildren().contains(inTableBox)) {
-                    thisPane.getChildren().add(2, inTableBox);
-                }
-            }
-        }
-        if (inTable()) {
-            if (!inTableBox.getChildren().contains(locationBox)) {
-                inTableBox.getChildren().add(locationBox);
-            }
-            if (externalBox != null) {
-                if (externalBox.getChildren().contains(externalDefBox)) {
-                    externalBox.getChildren().remove(externalDefBox);
-                }
-            }
-        } else {
-            if (inTableBox != null && inTableBox.getChildren().contains(locationBox)) {
-                inTableBox.getChildren().remove(locationBox);
-            }
-            if (externalBox != null) {
-                if (externalBox.getChildren().contains(externalDefBox)) {
-                    externalBox.getChildren().remove(externalDefBox);
-                }
-            }
-            if (matrixRadio.isSelected()
-                    || systemClipboardRadio.isSelected()
-                    || myBoxClipboardRadio.isSelected()
-                    || databaseRadio.isSelected()) {
-                if (externalDefBox.getChildren().contains(fileBox)) {
-                    externalDefBox.getChildren().remove(fileBox);
-                }
-            } else {
-                if (!externalDefBox.getChildren().contains(fileBox)) {
-                    externalDefBox.getChildren().add(fileBox);
-                }
-            }
         }
     }
 
@@ -203,7 +212,6 @@ public class ControlData2DTarget extends BaseController {
                 }
             }
             isSettingValues = false;
-            checkTarget();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -212,52 +220,79 @@ public class ControlData2DTarget extends BaseController {
     public TargetType checkTarget() {
         try {
             format = TargetType.CSV;
-            if (isSettingValues || tableController == null || tableController.data2D == null) {
+            optionsBox.getChildren().clear();
+            if (isSettingValues) {
                 return format;
             }
+
             String name = name();
             if (name == null || name.isBlank()) {
-                name = tableController.data2D.getDataName();
+                if (data2D != null) {
+                    name = data2D.getDataName();
+                }
             }
             if (name == null || name.isBlank()) {
-                name = tableController.getTitle();
+                if (tableController != null) {
+                    name = tableController.getTitle();
+                }
+            }
+            if (name == null || name.isBlank()) {
+                name = "Data2D";
             }
             if (csvRadio.isSelected()) {
                 format = TargetType.CSV;
                 targetFileController.setFile(FileType.CSV,
                         baseName + "TargetType" + FileType.CSV, name, "csv");
+                optionsBox.getChildren().add(csvBox);
+
             } else if (excelRadio.isSelected()) {
                 format = TargetType.Excel;
                 targetFileController.setFile(FileType.Excel,
                         baseName + "TargetType" + FileType.Excel, name, "xlsx");
+                optionsBox.getChildren().add(excelBox);
+                currentSheetOnlyCheck.setVisible(data2D.isExcel());
+
             } else if (textsRadio.isSelected()) {
                 format = TargetType.Text;
                 targetFileController.setFile(FileType.Text,
                         baseName + "TargetType" + FileType.Text, name, "txt");
+                optionsBox.getChildren().add(textBox);
+
             } else if (matrixRadio.isSelected()) {
                 format = TargetType.Matrix;
+
             } else if (systemClipboardRadio.isSelected()) {
                 format = TargetType.SystemClipboard;
+
             } else if (myBoxClipboardRadio.isSelected()) {
                 format = TargetType.MyBoxClipboard;
+
             } else if (databaseRadio.isSelected()) {
                 format = TargetType.DatabaseTable;
+                optionsBox.getChildren().add(dbBox);
+
             } else if (jsonRadio.isSelected()) {
                 format = TargetType.JSON;
                 targetFileController.setFile(FileType.JSON,
                         baseName + "TargetType" + FileType.JSON, name, "json");
+
             } else if (xmlRadio.isSelected()) {
                 format = TargetType.XML;
                 targetFileController.setFile(FileType.XML,
                         baseName + "TargetType" + FileType.XML, name, "xml");
+
             } else if (htmlRadio.isSelected()) {
                 format = TargetType.HTML;
                 targetFileController.setFile(FileType.Html,
                         baseName + "TargetType" + FileType.Html, name, "html");
+                optionsBox.getChildren().add(htmlBox);
+
             } else if (pdfRadio.isSelected()) {
                 format = TargetType.PDF;
                 targetFileController.setFile(FileType.PDF,
                         baseName + "TargetType" + FileType.PDF, name, "pdf");
+                optionsBox.getChildren().add(pdfBox);
+
             } else if (inTableBox != null) {
                 if (replaceRadio.isSelected()) {
                     if (!notInTable) {
@@ -297,13 +332,63 @@ public class ControlData2DTarget extends BaseController {
                     }
                 }
             }
-            checkControls();
+
+            if (inTableBox != null) {
+                if (notInTable) {
+                    if (thisPane.getChildren().contains(inTableBox)) {
+                        thisPane.getChildren().remove(inTableBox);
+                    }
+                } else {
+                    if (!thisPane.getChildren().contains(inTableBox)) {
+                        thisPane.getChildren().add(2, inTableBox);
+                    }
+                }
+            }
+            if (inTable()) {
+                if (!inTableBox.getChildren().contains(locationBox)) {
+                    inTableBox.getChildren().add(locationBox);
+                }
+                if (externalBox != null) {
+                    if (externalBox.getChildren().contains(externalDefBox)) {
+                        externalBox.getChildren().remove(externalDefBox);
+                    }
+                }
+            } else {
+                if (inTableBox != null && inTableBox.getChildren().contains(locationBox)) {
+                    inTableBox.getChildren().remove(locationBox);
+                }
+                if (externalBox != null) {
+                    if (externalBox.getChildren().contains(externalDefBox)) {
+                        externalBox.getChildren().remove(externalDefBox);
+                    }
+                }
+                if (matrixRadio.isSelected()
+                        || systemClipboardRadio.isSelected()
+                        || myBoxClipboardRadio.isSelected()
+                        || databaseRadio.isSelected()) {
+                    if (externalDefBox.getChildren().contains(fileBox)) {
+                        externalDefBox.getChildren().remove(fileBox);
+                    }
+                } else {
+                    if (!externalDefBox.getChildren().contains(fileBox)) {
+                        externalDefBox.getChildren().add(fileBox);
+                    }
+                }
+            }
+
+            refreshStyle(thisPane);
+
             UserConfig.setString(baseName + "DataTarget", format.name());
-            formatNotify.set(!formatNotify.get());
+
+            formatChanged();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
         return format;
+    }
+
+    public void formatChanged() {
+        formatNotify.set(!formatNotify.get());
     }
 
     public synchronized void refreshControls() {
@@ -419,24 +504,72 @@ public class ControlData2DTarget extends BaseController {
     }
 
     public int col() {
-        if (!inTable()) {
+        if (!inTable() || tableController == null) {
             return -1;
         }
         return tableController.data2D.colOrder(colSelector.getSelectionModel().getSelectedItem());
     }
 
+    public InvalidAs invalidAs() {
+        if (zeroNonnumericRadio != null && zeroNonnumericRadio.isSelected()) {
+            return InvalidAs.Zero;
+        } else if (blankNonnumericRadio != null && blankNonnumericRadio.isSelected()) {
+            return InvalidAs.Blank;
+        } else if (skipNonnumericRadio != null && skipNonnumericRadio.isSelected()) {
+            return InvalidAs.Skip;
+        } else {
+            return InvalidAs.Blank;
+        }
+    }
+
     public Data2DWriter pickWriter() {
         try {
-            if (format == null) {
+            if (isInvalid()) {
+                close();
                 return null;
             }
-            Data2DWriter writer = Data2DWriter.getWriter(format);
-            if (writer != null) {
-                writer.setDataName(name())
-                        .setTargetFile(file());
-                if (writer instanceof SystemClipboardWriter) {
-                    ((SystemClipboardWriter) writer).setController(tableController);
+            if (format == null || !validateTarget()) {
+                return null;
+            }
+            targetName = name();
+            if (targetName == null || targetName.isBlank()) {
+                if (data2D != null) {
+                    targetName = data2D.dataName();
                 }
+            }
+            if (targetName == null || targetName.isBlank()) {
+                targetName = "Data2D";
+            } else if (targetName.startsWith(TmpTable.TmpTablePrefix)
+                    || targetName.startsWith(TmpTable.TmpTablePrefix.toLowerCase())) {
+                targetName = targetName.substring(TmpTable.TmpTablePrefix.length());
+            }
+            Data2DWriter writer;
+            if (format == TargetType.DatabaseTable) {
+                writer = dbController.pickTableWriter();
+            } else {
+                targetFile = file();
+                if (targetFile == null) {
+                    targetFile = Data2DConvertTools.targetFile(targetName, format);
+                }
+                if (targetFile == null) {
+                    popError(message("InvalidParameter") + ": " + message("TargetFile"));
+                    return null;
+                }
+                writer = pickWriter(format);
+            }
+            if (writer == null) {
+                return null;
+            }
+            if (data2D != null) {
+                writer.setColumns(data2D.getColumns())
+                        .setHeaderNames(data2D.columnNames());
+            }
+            writer.setDataName(targetName)
+                    .setTargetFile(targetFile)
+                    .setRecordTargetFile(true)
+                    .setRecordTargetData(true);
+            if (writer instanceof SystemClipboardWriter) {
+                ((SystemClipboardWriter) writer).setController(tableController);
             }
             return writer;
         } catch (Exception e) {

@@ -9,7 +9,7 @@ import mara.mybox.dev.MyBoxLog;
  * @CreateDate 2021-10-18
  * @License Apache License Version 2.0
  */
-public class ControlData2DMatrix extends BaseData2DSourceController {
+public class ControlData2DMatrix extends BaseData2DRowsColumnsController {
 
     DataMatrix dataMatrix;
 

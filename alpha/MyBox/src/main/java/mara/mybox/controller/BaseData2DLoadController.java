@@ -108,6 +108,16 @@ public class BaseData2DLoadController extends BaseData2DTableController {
         return createData(DataType.CSV);
     }
 
+    public void dataSaved() {
+        try {
+            popInformation(message("Saved"));
+            notifySaved();
+            readData(true);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
     public synchronized void readData(boolean reloadSize) {
         if (data2D == null) {
             loadNull();

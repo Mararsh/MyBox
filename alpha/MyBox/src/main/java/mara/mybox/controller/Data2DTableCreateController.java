@@ -4,11 +4,9 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.fxml.FXML;
-import javafx.scene.control.RadioButton;
 import javafx.scene.control.Tab;
 import javafx.scene.layout.VBox;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.SoundTools;
@@ -20,10 +18,7 @@ import mara.mybox.value.Fxmls;
  * @CreateDate 2022-2-24
  * @License Apache License Version 2.0
  */
-public class Data2DTableCreateController extends BaseTaskController {
-
-    protected Data2DManufactureController editController;
-    protected InvalidAs invalidAs = InvalidAs.Blank;
+public class Data2DTableCreateController extends BaseData2DTaskController {
 
     @FXML
     protected Tab attributesTab;
@@ -31,33 +26,29 @@ public class Data2DTableCreateController extends BaseTaskController {
     protected VBox attributesBox, optionsBox;
     @FXML
     protected ControlNewDataTable attributesController;
-    @FXML
-    protected RadioButton zeroNonnumericRadio, blankNonnumericRadio;
 
-    public void setParameters(Data2DManufactureController controller) {
+    @Override
+    public void setParameters(BaseData2DLoadController controller) {
         try {
-            editController = controller;
-            attributesController.setParameters(this, editController.data2D);
+            super.setParameters(controller);
 
-            refreshControls();
+            attributesController.setParameters(this, data2D);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
-    public void refreshControls() {
+    @Override
+    public void sourceChanged() {
         try {
-            if (editController == null) {
-                return;
-            }
-            getMyStage().setTitle(editController.getTitle());
+            super.sourceChanged();
 
-            if (editController.data2D.getColumns() == null) {
+            if (data2D == null || data2D.getColumns() == null) {
                 attributesController.setColumns(null);
             } else {
                 List<Integer> indices = new ArrayList<>();
-                for (int i = 0; i < editController.data2D.getColumns().size(); i++) {
+                for (int i = 0; i < data2D.getColumns().size(); i++) {
                     indices.add(i);
                 }
                 attributesController.setColumns(indices);
@@ -87,11 +78,11 @@ public class Data2DTableCreateController extends BaseTaskController {
         attributesBox.setDisable(true);
         optionsBox.setDisable(true);
 
-        if (zeroNonnumericRadio != null && zeroNonnumericRadio.isSelected()) {
-            invalidAs = InvalidAs.Zero;
-        } else {
-            invalidAs = InvalidAs.Blank;
-        }
+    }
+
+    @Override
+    protected void startOperation() {
+        defaultStartTask();
     }
 
     @Override
@@ -100,7 +91,7 @@ public class Data2DTableCreateController extends BaseTaskController {
             if (!attributesController.createTable(currentTask, conn)) {
                 return false;
             }
-            if (editController.data2D.isMutiplePages()) {
+            if (data2D.isMutiplePages()) {
                 attributesController.importAllData(currentTask, conn, invalidAs);
             } else {
                 attributesController.importData(conn, null, invalidAs);
@@ -116,9 +107,9 @@ public class Data2DTableCreateController extends BaseTaskController {
     public void afterSuccess() {
         try {
             SoundTools.miao3();
-            if (editController != null) {
-                editController.setData(attributesController.dataTable);
-                editController.dataSaved();
+            if (dataController != null) {
+                dataController.setData(attributesController.dataTable);
+                dataController.dataSaved();
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -135,18 +126,6 @@ public class Data2DTableCreateController extends BaseTaskController {
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
-    }
-
-    @Override
-    public void cleanPane() {
-        try {
-            if (editController != null) {
-                editController = null;
-            }
-
-        } catch (Exception e) {
-        }
-        super.cleanPane();
     }
 
     /*
