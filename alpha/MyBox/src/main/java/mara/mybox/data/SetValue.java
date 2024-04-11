@@ -1,6 +1,7 @@
 package mara.mybox.data;
 
 import mara.mybox.db.data.ColumnDefinition.InvalidAs;
+import static mara.mybox.db.data.ColumnDefinition.InvalidAs.Empty;
 import mara.mybox.tools.DoubleTools;
 
 /**
@@ -115,6 +116,10 @@ public class SetValue {
                         return "0";
                     case Empty:
                         return "";
+                    case Null:
+                        return null;
+                    case Skip:
+                        return null;
                     default:
                         return value;
                 }

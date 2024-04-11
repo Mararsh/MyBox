@@ -5,6 +5,7 @@ import java.util.List;
 import javafx.fxml.FXML;
 import mara.mybox.calculation.Normalization;
 import mara.mybox.data2d.writer.Data2DWriter;
+import static mara.mybox.db.data.ColumnDefinition.InvalidAs.Empty;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
@@ -71,10 +72,15 @@ public class Data2DNormalizeController extends BaseData2DTaskTargetsController {
                                 row.add("0");
                                 break;
                             case Skip:
-                                row.add(s);
                                 break;
                             case Empty:
+                                row.add("");
+                                break;
+                            case Null:
                                 row.add(null);
+                                break;
+                            default:
+                                row.add(s);
                                 break;
                         }
                     } else {

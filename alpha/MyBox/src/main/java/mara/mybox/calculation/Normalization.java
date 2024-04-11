@@ -1,6 +1,11 @@
 package mara.mybox.calculation;
 
 import mara.mybox.db.data.ColumnDefinition.InvalidAs;
+import static mara.mybox.db.data.ColumnDefinition.InvalidAs.Empty;
+import static mara.mybox.db.data.ColumnDefinition.InvalidAs.Keep;
+import static mara.mybox.db.data.ColumnDefinition.InvalidAs.Null;
+import static mara.mybox.db.data.ColumnDefinition.InvalidAs.Skip;
+import static mara.mybox.db.data.ColumnDefinition.InvalidAs.Zero;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.StringTools;
@@ -124,8 +129,7 @@ public class Normalization {
                         case Zero:
                             d = 0;
                             break;
-                        case Skip:
-                        case Empty:
+                        default:
                             continue;
                     }
                 }
@@ -153,11 +157,17 @@ public class Normalization {
                         case Zero:
                             resultVector[i] = "0";
                             break;
-                        case Skip:
+                        case Keep:
                             resultVector[i] = s;
+                            break;
+                        case Skip:
+                            resultVector[i] = null;
                             break;
                         case Empty:
                             resultVector[i] = "";
+                            break;
+                        case Null:
+                            resultVector[i] = null;
                             break;
                     }
                     continue;
@@ -198,8 +208,7 @@ public class Normalization {
                         case Zero:
                             d = 0;
                             break;
-                        case Skip:
-                        case Empty:
+                        default:
                             continue;
                     }
                 }
@@ -219,11 +228,17 @@ public class Normalization {
                         case Zero:
                             resultVector[i] = "0";
                             break;
-                        case Skip:
+                        case Keep:
                             resultVector[i] = s;
+                            break;
+                        case Skip:
+                            resultVector[i] = null;
                             break;
                         case Empty:
                             resultVector[i] = "";
+                            break;
+                        case Null:
+                            resultVector[i] = null;
                             break;
                     }
                     continue;
@@ -267,11 +282,17 @@ public class Normalization {
                         case Zero:
                             resultVector[i] = "0";
                             break;
-                        case Skip:
+                        case Keep:
                             resultVector[i] = s;
+                            break;
+                        case Skip:
+                            resultVector[i] = null;
                             break;
                         case Empty:
                             resultVector[i] = "";
+                            break;
+                        case Null:
+                            resultVector[i] = null;
                             break;
                     }
                     continue;
@@ -315,11 +336,17 @@ public class Normalization {
                         case Zero:
                             resultVector[i] = "0";
                             break;
-                        case Skip:
+                        case Keep:
                             resultVector[i] = s;
+                            break;
+                        case Skip:
+                            resultVector[i] = null;
                             break;
                         case Empty:
                             resultVector[i] = "";
+                            break;
+                        case Null:
+                            resultVector[i] = null;
                             break;
                     }
                     continue;

@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import mara.mybox.calculation.DoubleStatistic;
 import mara.mybox.calculation.Normalization;
 import mara.mybox.data2d.Data2D_Edit;
+import static mara.mybox.db.data.ColumnDefinition.InvalidAs.Null;
+import static mara.mybox.db.data.ColumnDefinition.InvalidAs.Skip;
+import static mara.mybox.db.data.ColumnDefinition.InvalidAs.Zero;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.value.AppValues;
 import static mara.mybox.value.Languages.message;
@@ -114,6 +117,11 @@ public class Data2DNormalize extends Data2DOperate {
                             case Zero:
                                 targetRow.add("0");
                                 break;
+                            case Skip:
+                                break;
+                            case Null:
+                                targetRow.add(null);
+                                break;
                             default:
                                 targetRow.add(s);
                                 break;
@@ -164,6 +172,11 @@ public class Data2DNormalize extends Data2DOperate {
                             case Zero:
                                 targetRow.add("0");
                                 break;
+                            case Skip:
+                                break;
+                            case Null:
+                                targetRow.add(null);
+                                break;
                             default:
                                 targetRow.add(s);
                                 break;
@@ -213,6 +226,11 @@ public class Data2DNormalize extends Data2DOperate {
                                 break;
                             case Zero:
                                 targetRow.add("0");
+                                break;
+                            case Skip:
+                                break;
+                            case Null:
+                                targetRow.add(null);
                                 break;
                             default:
                                 targetRow.add(s);
@@ -268,6 +286,11 @@ public class Data2DNormalize extends Data2DOperate {
                             case Zero:
                                 targetRow.add("0");
                                 break;
+                            case Skip:
+                                break;
+                            case Null:
+                                targetRow.add(null);
+                                break;
                             default:
                                 targetRow.add(s);
                                 break;
@@ -318,6 +341,11 @@ public class Data2DNormalize extends Data2DOperate {
                             case Zero:
                                 targetRow.add("0");
                                 break;
+                            case Skip:
+                                break;
+                            case Null:
+                                targetRow.add(null);
+                                break;
                             default:
                                 targetRow.add(s);
                                 break;
@@ -367,6 +395,11 @@ public class Data2DNormalize extends Data2DOperate {
                                 break;
                             case Zero:
                                 targetRow.add("0");
+                                break;
+                            case Skip:
+                                break;
+                            case Null:
+                                targetRow.add(null);
                                 break;
                             default:
                                 targetRow.add(s);
@@ -430,12 +463,18 @@ public class Data2DNormalize extends Data2DOperate {
                         case Zero:
                             targetRow.add("0");
                             break;
-                        case Skip:
-                            targetRow.add(s);
-                            break;
                         case Empty:
+                            targetRow.add("");
+                            break;
+                        case Skip:
+                            break;
+                        case Null:
                             targetRow.add(null);
                             break;
+                        default:
+                            targetRow.add(s);
+                            break;
+
                     }
                 } else {
                     targetRow.add(DoubleTools.scale(d, scale) + "");

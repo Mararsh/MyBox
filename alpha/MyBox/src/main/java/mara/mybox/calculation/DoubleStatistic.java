@@ -141,13 +141,12 @@ public class DoubleStatistic {
                 double v = doubles[i];
                 if (Double.isNaN(v)) {
                     switch (invalidAs) {
-                        case Empty:
-                        case Skip:
-                            invalidCount++;
-                            continue;
                         case Zero:
                             v = 0;
                             break;
+                        default:
+                            invalidCount++;
+                            continue;
                     }
                 }
                 count++;
