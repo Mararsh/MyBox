@@ -97,6 +97,7 @@ public class DataFileTextConvertController extends BaseDataFileConvertController
                         }
                     }
                     export.setNames(targetPathController, names, filePrefix(srcFile));
+                    export.openWriters();
                     if (sourceWithName) {
                         continue;
                     }

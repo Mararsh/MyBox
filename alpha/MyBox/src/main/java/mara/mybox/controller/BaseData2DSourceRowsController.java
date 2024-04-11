@@ -333,7 +333,7 @@ public class BaseData2DSourceRowsController extends BaseData2DLoadController {
                         .setHeaderNames(Data2DColumnTools.toNames(targetColumns))
                         .setWriteHeader(true);
                 data2D.copy(task, writer, cols,
-                        false, formatValues, ColumnDefinition.InvalidAs.Blank);
+                        false, formatValues, ColumnDefinition.InvalidAs.Empty);
                 data = writer.getRows();
             } else {
                 data = rowsFiltered(cols, false);

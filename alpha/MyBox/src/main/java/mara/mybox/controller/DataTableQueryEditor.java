@@ -108,7 +108,7 @@ public class DataTableQueryEditor extends InfoTreeNodeEditor {
     @Override
     public void startAction() {
         Data2DWriter writer = targetController.pickWriter();
-        if (writer == null || writer.getTargetFile() == null) {
+        if (writer == null || writer.getPrintFile() == null) {
             popError(message("InvalidParameter") + ": " + message("TargetFile"));
             return;
         }
@@ -133,7 +133,7 @@ public class DataTableQueryEditor extends InfoTreeNodeEditor {
                     dataTable.setTask(this);
                     return Data2DTableTools.write(task, dataTable, writer, results,
                             rowNumberCheck.isSelected() ? message("Row") : null,
-                            dataTable.getScale(), ColumnDefinition.InvalidAs.Blank);
+                            dataTable.getScale(), ColumnDefinition.InvalidAs.Empty);
                 } catch (Exception e) {
                     error = e.toString();
                     return false;

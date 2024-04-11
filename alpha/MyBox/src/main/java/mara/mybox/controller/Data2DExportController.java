@@ -82,6 +82,8 @@ public class Data2DExportController extends BaseData2DTaskController {
                 filePrefix = DateTools.nowFileString();
             }
             export = convertController.pickParameters(data2D);
+            export.setInvalidAs(invalidAs);
+            export.setController(this);
             return export.setColumns(targetPathController, checkedColumns, filePrefix);
         } catch (Exception e) {
             MyBoxLog.error(e);

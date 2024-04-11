@@ -29,11 +29,11 @@ public class XmlWriter extends Data2DWriter {
             if (!super.openWriter()) {
                 return false;
             }
-            if (targetFile == null) {
+            if (printFile == null) {
                 showInfo(message("InvalidParameter") + ": " + message("TargetFile"));
                 return false;
             }
-            showInfo(message("Writing") + " " + targetFile.getAbsolutePath());
+            showInfo(message("Writing") + " " + printFile.getAbsolutePath());
             tmpFile = FileTmpTools.getTempFile(".xml");
             fileWriter = new BufferedWriter(new FileWriter(tmpFile, Charset.forName("UTF-8")));
             StringBuilder s = new StringBuilder();
@@ -50,13 +50,13 @@ public class XmlWriter extends Data2DWriter {
     @Override
     public void printTargetRow() {
         try {
-            if (targetRow == null) {
+            if (printRow == null) {
                 return;
             }
             StringBuilder s = new StringBuilder();
             s.append(indent).append("<Row>").append("\n");
             for (int i = 0; i < headerNames.size(); i++) {
-                value = targetRow.get(i);
+                value = printRow.get(i);
                 if (value == null || value.isBlank()) {
                     continue;
                 }
@@ -76,31 +76,31 @@ public class XmlWriter extends Data2DWriter {
     public void closeWriter() {
         try {
             created = false;
-            if (fileWriter == null || targetFile == null) {
-                showInfo(message("Failed") + ": " + targetFile);
+            if (fileWriter == null || printFile == null) {
+                showInfo(message("Failed") + ": " + printFile);
                 return;
             }
             if (isFailed() || tmpFile == null || !tmpFile.exists()) {
                 fileWriter.close();
                 fileWriter = null;
                 FileDeleteTools.delete(tmpFile);
-                showInfo(message("Failed") + ": " + targetFile);
+                showInfo(message("Failed") + ": " + printFile);
                 return;
             }
             fileWriter.write("</Data>\n");
             fileWriter.flush();
             fileWriter.close();
             fileWriter = null;
-            if (!FileTools.override(tmpFile, targetFile)) {
+            if (!FileTools.override(tmpFile, printFile)) {
                 FileDeleteTools.delete(tmpFile);
-                showInfo(message("Failed") + ": " + targetFile);
+                showInfo(message("Failed") + ": " + printFile);
                 return;
             }
-            if (targetFile == null || !targetFile.exists()) {
-                showInfo(message("Failed") + ": " + targetFile);
+            if (printFile == null || !printFile.exists()) {
+                showInfo(message("Failed") + ": " + printFile);
                 return;
             }
-            recordFileGenerated(targetFile, VisitHistory.FileType.XML);
+            recordFileGenerated(printFile, VisitHistory.FileType.XML);
             created = true;
         } catch (Exception e) {
             showError(e.toString());
@@ -109,10 +109,10 @@ public class XmlWriter extends Data2DWriter {
 
     @Override
     public void showResult() {
-        if (targetFile == null) {
+        if (printFile == null) {
             return;
         }
-        XmlEditorController.open(targetFile);
+        XmlEditorController.open(printFile);
     }
 
 }

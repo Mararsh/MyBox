@@ -56,7 +56,7 @@ public class Data2DMultipleLinearRegressionCombinationController extends BaseDat
             if (!super.checkOptions()) {
                 return false;
             }
-            invalidAs = InvalidAs.Blank;
+            invalidAs = InvalidAs.Empty;
 
             dataColsIndices = new ArrayList<>();
             if (otherColsIndices == null || otherColsIndices.isEmpty()) {

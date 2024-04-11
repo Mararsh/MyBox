@@ -165,6 +165,7 @@ public class DataExportController extends BaseTaskController {
             return false;
         }
         export.setNames(targetPathController, names);
+        export.setController(this);
         return true;
     }
 

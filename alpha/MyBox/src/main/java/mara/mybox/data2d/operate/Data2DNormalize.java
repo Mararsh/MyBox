@@ -108,7 +108,7 @@ public class Data2DNormalize extends Data2DOperate {
                     double v = DoubleTools.toDouble(s, invalidAs);
                     if (DoubleTools.invalidDouble(v)) {
                         switch (invalidAs) {
-                            case Blank:
+                            case Empty:
                                 targetRow.add("");
                                 break;
                             case Zero:
@@ -158,7 +158,7 @@ public class Data2DNormalize extends Data2DOperate {
                     double v = DoubleTools.toDouble(s, invalidAs);
                     if (DoubleTools.invalidDouble(v)) {
                         switch (invalidAs) {
-                            case Blank:
+                            case Empty:
                                 targetRow.add("");
                                 break;
                             case Zero:
@@ -208,7 +208,7 @@ public class Data2DNormalize extends Data2DOperate {
                     double v = DoubleTools.toDouble(s, invalidAs);
                     if (DoubleTools.invalidDouble(v)) {
                         switch (invalidAs) {
-                            case Blank:
+                            case Empty:
                                 targetRow.add("");
                                 break;
                             case Zero:
@@ -262,7 +262,7 @@ public class Data2DNormalize extends Data2DOperate {
                     double v = DoubleTools.toDouble(s, invalidAs);
                     if (DoubleTools.invalidDouble(v)) {
                         switch (invalidAs) {
-                            case Blank:
+                            case Empty:
                                 targetRow.add("");
                                 break;
                             case Zero:
@@ -312,7 +312,7 @@ public class Data2DNormalize extends Data2DOperate {
                     double v = DoubleTools.toDouble(s, invalidAs);
                     if (DoubleTools.invalidDouble(v)) {
                         switch (invalidAs) {
-                            case Blank:
+                            case Empty:
                                 targetRow.add("");
                                 break;
                             case Zero:
@@ -362,7 +362,7 @@ public class Data2DNormalize extends Data2DOperate {
                     double v = DoubleTools.toDouble(s, invalidAs);
                     if (DoubleTools.invalidDouble(v)) {
                         switch (invalidAs) {
-                            case Blank:
+                            case Empty:
                                 targetRow.add("");
                                 break;
                             case Zero:
@@ -433,7 +433,7 @@ public class Data2DNormalize extends Data2DOperate {
                         case Skip:
                             targetRow.add(s);
                             break;
-                        case Blank:
+                        case Empty:
                             targetRow.add(null);
                             break;
                     }

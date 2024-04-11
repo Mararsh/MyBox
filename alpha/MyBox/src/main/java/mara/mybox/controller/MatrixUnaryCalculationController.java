@@ -337,7 +337,7 @@ public class MatrixUnaryCalculationController extends BaseController {
                         result = DoubleMatrixTools.complementMinor(dataMatrix.toMatrix(), row - 1, column - 1);
 
                     } else if (message("Normalize").equals(op)) {
-                        result = normalizeController.calculateDoubles(dataMatrix.toMatrix(), InvalidAs.Blank);
+                        result = normalizeController.calculateDoubles(dataMatrix.toMatrix(), InvalidAs.Empty);
 
                     } else if (message("MultiplyNumber").equals(op)) {
                         result = DoubleMatrixTools.multiply(dataMatrix.toMatrix(), number);

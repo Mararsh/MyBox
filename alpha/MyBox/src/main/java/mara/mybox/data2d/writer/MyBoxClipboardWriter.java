@@ -33,14 +33,14 @@ public class MyBoxClipboardWriter extends Data2DWriter {
             if (!super.openWriter()) {
                 return false;
             }
-            if (targetFile == null) {
-                targetFile = DataClipboard.newFile();
+            if (printFile == null) {
+                printFile = DataClipboard.newFile();
             }
-            if (targetFile == null) {
+            if (printFile == null) {
                 showInfo(message("InvalidParameter") + ": " + message("TargetFile"));
                 return false;
             }
-            showInfo(message("Writing") + " " + targetFile.getAbsolutePath());
+            showInfo(message("Writing") + " " + printFile.getAbsolutePath());
             tmpFile = FileTmpTools.getTempFile();
             printer = new CSVPrinter(new FileWriter(tmpFile,
                     Charset.forName("UTF-8")), CsvTools.csvFormat());
@@ -57,10 +57,10 @@ public class MyBoxClipboardWriter extends Data2DWriter {
     @Override
     public void printTargetRow() {
         try {
-            if (targetRow == null) {
+            if (printRow == null) {
                 return;
             }
-            printer.printRecord(targetRow);
+            printer.printRecord(printRow);
         } catch (Exception e) {
             showError(e.toString());
         }
@@ -71,27 +71,27 @@ public class MyBoxClipboardWriter extends Data2DWriter {
         try {
             created = false;
             if (printer == null) {
-                showInfo(message("Failed") + ": " + targetFile);
+                showInfo(message("Failed") + ": " + printFile);
                 return;
             }
             printer.flush();
             printer.close();
             printer = null;
             if (isFailed() || tmpFile == null || !tmpFile.exists()
-                    || !FileTools.override(tmpFile, targetFile)) {
+                    || !FileTools.override(tmpFile, printFile)) {
                 FileDeleteTools.delete(tmpFile);
-                showInfo(message("Failed") + ": " + targetFile);
+                showInfo(message("Failed") + ": " + printFile);
                 return;
             }
-            if (targetFile == null || !targetFile.exists()) {
-                showInfo(message("Failed") + ": " + targetFile);
+            if (printFile == null || !printFile.exists()) {
+                showInfo(message("Failed") + ": " + printFile);
                 return;
             }
             if (targetData == null) {
                 targetData = Data2D.create(Data2DDefinition.DataType.MyBoxClipboard);
             }
             targetData.setTask(task())
-                    .setFile(targetFile)
+                    .setFile(printFile)
                     .setCharset(Charset.forName("UTF-8"))
                     .setDelimiter(",")
                     .setHasHeader(true)
@@ -100,8 +100,8 @@ public class MyBoxClipboardWriter extends Data2DWriter {
                     .setRowsNumber(targetRowIndex);
             Data2D.saveAttributes(conn(), targetData, columns);
             DataInMyBoxClipboardController.update();
-            showInfo(message("Generated") + ": " + targetFile + "  "
-                    + message("FileSize") + ": " + targetFile.length());
+            showInfo(message("Generated") + ": " + printFile + "  "
+                    + message("FileSize") + ": " + printFile.length());
             showInfo(message("RowsNumber") + ": " + targetRowIndex);
             created = true;
         } catch (Exception e) {

@@ -30,11 +30,11 @@ public class PdfWriter extends Data2DWriter {
             if (!super.openWriter()) {
                 return false;
             }
-            if (targetFile == null) {
+            if (printFile == null) {
                 showInfo(message("InvalidParameter") + ": " + message("TargetFile"));
                 return false;
             }
-            showInfo(message("Writing") + " " + targetFile.getAbsolutePath());
+            showInfo(message("Writing") + " " + printFile.getAbsolutePath());
             tmpFile = FileTmpTools.getTempFile(".pdf");
             if (pdfTable == null) {
                 pdfTable = PaginatedPdfTable.create();
@@ -50,7 +50,7 @@ public class PdfWriter extends Data2DWriter {
     @Override
     public void printTargetRow() {
         try {
-            if (targetRow == null) {
+            if (printRow == null) {
                 return;
             }
             if (pageRows == null) {
@@ -60,7 +60,7 @@ public class PdfWriter extends Data2DWriter {
                 pdfTable.writePage(pageRows);
                 pageRows = new ArrayList<>();
             }
-            pageRows.add(targetRow);
+            pageRows.add(printRow);
         } catch (Exception e) {
             showError(e.toString());
         }
@@ -71,7 +71,7 @@ public class PdfWriter extends Data2DWriter {
         try {
             created = false;
             if (pdfTable == null) {
-                showInfo(message("Failed") + ": " + targetFile);
+                showInfo(message("Failed") + ": " + printFile);
                 return;
             }
             if (pageRows != null && !pageRows.isEmpty()) {
@@ -81,16 +81,16 @@ public class PdfWriter extends Data2DWriter {
             pdfTable.closeDoc();
             pdfTable = null;
             if (isFailed() || tmpFile == null || !tmpFile.exists()
-                    || !FileTools.override(tmpFile, targetFile)) {
+                    || !FileTools.override(tmpFile, printFile)) {
                 FileDeleteTools.delete(tmpFile);
-                showInfo(message("Failed") + ": " + targetFile);
+                showInfo(message("Failed") + ": " + printFile);
                 return;
             }
-            if (targetFile == null || !targetFile.exists()) {
-                showInfo(message("Failed") + ": " + targetFile);
+            if (printFile == null || !printFile.exists()) {
+                showInfo(message("Failed") + ": " + printFile);
                 return;
             }
-            recordFileGenerated(targetFile, VisitHistory.FileType.PDF);
+            recordFileGenerated(printFile, VisitHistory.FileType.PDF);
             created = true;
         } catch (Exception e) {
             showError(e.toString());
@@ -99,11 +99,11 @@ public class PdfWriter extends Data2DWriter {
 
     @Override
     public void showResult() {
-        if (targetFile == null || !targetFile.exists()) {
+        if (printFile == null || !printFile.exists()) {
             showError(message("Failed"));
             return;
         }
-        PdfViewController.open(targetFile);
+        PdfViewController.open(printFile);
     }
 
     /*

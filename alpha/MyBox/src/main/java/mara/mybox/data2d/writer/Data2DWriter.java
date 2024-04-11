@@ -40,9 +40,9 @@ public abstract class Data2DWriter {
 
     protected Data2D targetData;
     protected Data2DOperate operate;
-    protected File targetFile, tmpFile;
+    protected File printFile, tmpFile;
     protected ControlTargetFile targetFileController;
-    protected List<String> headerNames, targetRow;
+    protected List<String> headerNames, printRow;
     protected List<Data2DColumn> columns;
     protected boolean writeHeader, created,
             formatValues, recordTargetFile, recordTargetData;
@@ -50,22 +50,30 @@ public abstract class Data2DWriter {
     protected long targetRowIndex;
     protected Connection conn;
     protected int rowEnd;
+    protected InvalidAs invalidAs;
 
     public Data2DWriter() {
         operate = null;
         targetFileController = null;
         formatValues = false;
         writeHeader = recordTargetFile = recordTargetData = true;
-    }
-
-    final public boolean resetWriter() {
-        targetData = null;
-        targetRowIndex = 0;
-        created = false;
-        return true;
+        invalidAs = null;
     }
 
     public boolean checkParameters() {
+        if (invalidAs == null) {
+            invalidAs = operate.getInvalidAs();
+        }
+        if (invalidAs == null) {
+            invalidAs = InvalidAs.Keep;
+        }
+        return true;
+    }
+
+    public boolean resetWriter() {
+        targetData = null;
+        targetRowIndex = 0;
+        created = false;
         return true;
     }
 
@@ -79,22 +87,28 @@ public abstract class Data2DWriter {
 
     public void writeRow(List<String> inRow) {
         try {
-            targetRow = null;
+            printRow = null;
             if (inRow == null || inRow.isEmpty()) {
                 return;
             }
-            targetRow = new ArrayList<>();
+            printRow = new ArrayList<>();
             rowEnd = inRow.size() - 1;
             for (int i = 0; i < columns.size(); i++) {
                 if (i > rowEnd) {
                     value = null;
                 } else {
                     value = inRow.get(i);
-                    if (formatValues && value != null) {
-                        value = columns.get(i).format(value);
+                }
+                Data2DColumn column = columns.get(i);
+                Object o = column.fromString(value, invalidAs);
+                if (o != null) {
+                    if (formatValues) {
+                        value = column.formatObject(o);
+                    } else {
+                        value = column.toString(o);
                     }
                 }
-                targetRow.add(value);
+                printRow.add(value);
             }
             printTargetRow();
             targetRowIndex++;
@@ -114,14 +128,6 @@ public abstract class Data2DWriter {
             return operate.getTask();
         } else {
             return null;
-        }
-    }
-
-    public InvalidAs invalidAs() {
-        if (operate != null) {
-            return operate.getInvalidAs();
-        } else {
-            return InvalidAs.Blank;
         }
     }
 
@@ -185,6 +191,7 @@ public abstract class Data2DWriter {
         if (c != null) {
             c.recordFileWritten(conn(), file, type, type);
         }
+        operate.addPrintedFile(file);
     }
 
     final public void showError(String error) {
@@ -292,12 +299,12 @@ public abstract class Data2DWriter {
         return this;
     }
 
-    public File getTargetFile() {
-        return targetFile;
+    public File getPrintFile() {
+        return printFile;
     }
 
-    public Data2DWriter setTargetFile(File targetFile) {
-        this.targetFile = targetFile;
+    public Data2DWriter setPrintFile(File printFile) {
+        this.printFile = printFile;
         return this;
     }
 
@@ -319,12 +326,12 @@ public abstract class Data2DWriter {
         return this;
     }
 
-    public List<String> getTargetRow() {
-        return targetRow;
+    public List<String> getPrintRow() {
+        return printRow;
     }
 
     public Data2DWriter setTargetRow(List<String> targetRow) {
-        this.targetRow = targetRow;
+        this.printRow = targetRow;
         return this;
     }
 
@@ -416,6 +423,14 @@ public abstract class Data2DWriter {
     public Data2DWriter setTargetRowIndex(long targetRowIndex) {
         this.targetRowIndex = targetRowIndex;
         return this;
+    }
+
+    public InvalidAs getInvalidAs() {
+        return invalidAs;
+    }
+
+    public void setInvalidAs(InvalidAs invalidAs) {
+        this.invalidAs = invalidAs;
     }
 
 }

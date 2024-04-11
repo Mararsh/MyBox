@@ -297,7 +297,7 @@ public class Data2DTableTools {
     }
 
     public static long importTable(FxTask task, Connection conn, Data2D sourceData, DataTable dataTable) {
-        return Data2DTableTools.importTable(task, conn, sourceData, dataTable, null, false, ColumnDefinition.InvalidAs.Blank);
+        return Data2DTableTools.importTable(task, conn, sourceData, dataTable, null, false, ColumnDefinition.InvalidAs.Empty);
     }
 
     public static DataFileText toText(FxTask task, DataTable dataTable) {

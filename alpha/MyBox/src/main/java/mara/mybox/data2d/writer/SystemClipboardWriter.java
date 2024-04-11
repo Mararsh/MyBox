@@ -35,7 +35,7 @@ public class SystemClipboardWriter extends Data2DWriter {
 
     @Override
     public void printTargetRow() {
-        appendRow(targetRow);
+        appendRow(printRow);
     }
 
     public void appendRow(List<String> row) {

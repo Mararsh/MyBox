@@ -205,7 +205,7 @@ public class MathFunctionDataController extends BaseChildController {
             if (fx == null) {
                 return;
             }
-            double d = DoubleTools.scale(fx, InvalidAs.Blank, dataScale);
+            double d = DoubleTools.scale(fx, InvalidAs.Empty, dataScale);
             row.clear();
             row.addAll(values);
             row.add(d);

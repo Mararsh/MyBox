@@ -31,11 +31,11 @@ public class JsonWriter extends Data2DWriter {
             if (!super.openWriter()) {
                 return false;
             }
-            if (targetFile == null) {
+            if (printFile == null) {
                 showInfo(message("InvalidParameter") + ": " + message("TargetFile"));
                 return false;
             }
-            showInfo(message("Writing") + " " + targetFile.getAbsolutePath());
+            showInfo(message("Writing") + " " + printFile.getAbsolutePath());
             tmpFile = FileTmpTools.getTempFile(".json");
             fileWriter = new BufferedWriter(new FileWriter(tmpFile, Charset.forName("UTF-8")));
             StringBuilder s = new StringBuilder();
@@ -52,7 +52,7 @@ public class JsonWriter extends Data2DWriter {
     @Override
     public void printTargetRow() {
         try {
-            if (targetRow == null) {
+            if (printRow == null) {
                 return;
             }
             StringBuilder s = new StringBuilder();
@@ -64,7 +64,7 @@ public class JsonWriter extends Data2DWriter {
             s.append(indent).append("{").append("\n");
             isFirstField = true;
             for (int i = 0; i < headerNames.size(); i++) {
-                value = targetRow.get(i);
+                value = printRow.get(i);
                 if (value == null) {
                     continue;
                 }
@@ -89,30 +89,30 @@ public class JsonWriter extends Data2DWriter {
         try {
             created = false;
             if (fileWriter == null) {
-                showInfo(message("Failed") + ": " + targetFile);
+                showInfo(message("Failed") + ": " + printFile);
                 return;
             }
             if (isFailed() || tmpFile == null || !tmpFile.exists()) {
                 fileWriter.close();
                 fileWriter = null;
                 FileDeleteTools.delete(tmpFile);
-                showInfo(message("Failed") + ": " + targetFile);
+                showInfo(message("Failed") + ": " + printFile);
                 return;
             }
             fileWriter.write("\n]}\n");
             fileWriter.flush();
             fileWriter.close();
             fileWriter = null;
-            if (!FileTools.override(tmpFile, targetFile)) {
+            if (!FileTools.override(tmpFile, printFile)) {
                 FileDeleteTools.delete(tmpFile);
-                showInfo(message("Failed") + ": " + targetFile);
+                showInfo(message("Failed") + ": " + printFile);
                 return;
             }
-            if (targetFile == null || !targetFile.exists()) {
-                showInfo(message("Failed") + ": " + targetFile);
+            if (printFile == null || !printFile.exists()) {
+                showInfo(message("Failed") + ": " + printFile);
                 return;
             }
-            recordFileGenerated(targetFile, VisitHistory.FileType.JSON);
+            recordFileGenerated(printFile, VisitHistory.FileType.JSON);
             created = true;
         } catch (Exception e) {
             showError(e.toString());
@@ -121,11 +121,11 @@ public class JsonWriter extends Data2DWriter {
 
     @Override
     public void showResult() {
-        if (targetFile == null || !targetFile.exists()) {
+        if (printFile == null || !printFile.exists()) {
             showError(message("Failed"));
             return;
         }
-        JsonEditorController.open(targetFile);
+        JsonEditorController.open(printFile);
     }
 
 }

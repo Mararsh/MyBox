@@ -270,7 +270,7 @@ public abstract class Data2D_Operations extends Data2D_Edit {
             writer.setColumns(targetColumns)
                     .setHeaderNames(Data2DColumnTools.toNames(targetColumns))
                     .setWriteHeader(includeColName);
-            if (copy(task, writer, cols, includeRowNumber, formatValues, InvalidAs.Blank) < 0) {
+            if (copy(task, writer, cols, includeRowNumber, formatValues, InvalidAs.Empty) < 0) {
                 return null;
             }
             return (DataFileCSV) writer.getTargetData();

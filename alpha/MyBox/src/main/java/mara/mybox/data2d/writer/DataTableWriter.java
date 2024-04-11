@@ -64,12 +64,12 @@ public class DataTableWriter extends Data2DWriter {
     @Override
     public void writeRow(List<String> inRow) {
         try {
-            targetRow = null;
+            printRow = null;
             if (inRow == null || inRow.isEmpty() || conn == null || targetTable == null) {
                 return;
             }
-            targetRow = new ArrayList<>();
-            Data2DRow data2DRow = targetTable.makeRow(inRow, invalidAs());
+            printRow = new ArrayList<>();
+            Data2DRow data2DRow = targetTable.makeRow(inRow, invalidAs);
             if (data2DRow == null || data2DRow.isNoColumn()) {
                 return;
             }

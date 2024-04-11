@@ -33,11 +33,11 @@ public class HtmlWriter extends Data2DWriter {
             if (!super.openWriter()) {
                 return false;
             }
-            if (targetFile == null) {
+            if (printFile == null) {
                 showInfo(message("InvalidParameter") + ": " + message("TargetFile"));
                 return false;
             }
-            showInfo(message("Writing") + " " + targetFile.getAbsolutePath());
+            showInfo(message("Writing") + " " + printFile.getAbsolutePath());
             tmpFile = FileTmpTools.getTempFile(".htm");
             fileWriter = new BufferedWriter(new FileWriter(tmpFile, Charset.forName("utf-8")));
             StringBuilder s = new StringBuilder();
@@ -63,10 +63,10 @@ public class HtmlWriter extends Data2DWriter {
     @Override
     public void printTargetRow() {
         try {
-            if (targetRow == null) {
+            if (printRow == null) {
                 return;
             }
-            fileWriter.write(StringTable.tableRow(targetRow));
+            fileWriter.write(StringTable.tableRow(printRow));
         } catch (Exception e) {
             showError(e.toString());
         }
@@ -77,14 +77,14 @@ public class HtmlWriter extends Data2DWriter {
         try {
             created = false;
             if (fileWriter == null) {
-                showInfo(message("Failed") + ": " + targetFile);
+                showInfo(message("Failed") + ": " + printFile);
                 return;
             }
             if (isFailed() || tmpFile == null || !tmpFile.exists()) {
                 fileWriter.close();
                 fileWriter = null;
                 FileDeleteTools.delete(tmpFile);
-                showInfo(message("Failed") + ": " + targetFile);
+                showInfo(message("Failed") + ": " + printFile);
                 return;
             }
             fileWriter.write(StringTable.tableSuffix(new StringTable(headerNames)));
@@ -92,16 +92,16 @@ public class HtmlWriter extends Data2DWriter {
             fileWriter.flush();
             fileWriter.close();
             fileWriter = null;
-            if (!FileTools.override(tmpFile, targetFile)) {
+            if (!FileTools.override(tmpFile, printFile)) {
                 FileDeleteTools.delete(tmpFile);
-                showInfo(message("Failed") + ": " + targetFile);
+                showInfo(message("Failed") + ": " + printFile);
                 return;
             }
-            if (targetFile == null || !targetFile.exists()) {
-                showInfo(message("Failed") + ": " + targetFile);
+            if (printFile == null || !printFile.exists()) {
+                showInfo(message("Failed") + ": " + printFile);
                 return;
             }
-            recordFileGenerated(targetFile, VisitHistory.FileType.Html);
+            recordFileGenerated(printFile, VisitHistory.FileType.Html);
             created = true;
         } catch (Exception e) {
             showError(e.toString());
@@ -110,10 +110,10 @@ public class HtmlWriter extends Data2DWriter {
 
     @Override
     public void showResult() {
-        if (targetFile == null) {
+        if (printFile == null) {
             return;
         }
-        WebBrowserController.openFile(targetFile);
+        WebBrowserController.openFile(printFile);
     }
 
     /*

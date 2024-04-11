@@ -20,7 +20,7 @@ public class Data2DSavePage extends Data2DOperate {
         if (!operate.setSourceData(data)) {
             return null;
         }
-        Data2DWriter writer = data.selfWriter().setTargetFile(targetFile);
+        Data2DWriter writer = data.selfWriter().setPrintFile(targetFile);
         operate.addWriter(writer);
         return operate;
 

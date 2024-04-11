@@ -33,11 +33,11 @@ public class DataFileCSVWriter extends Data2DWriter {
             if (!super.openWriter()) {
                 return false;
             }
-            if (targetFile == null) {
+            if (printFile == null) {
                 showInfo(message("InvalidParameter") + ": " + message("TargetFile"));
                 return false;
             }
-            showInfo(message("Writing") + " " + targetFile.getAbsolutePath());
+            showInfo(message("Writing") + " " + printFile.getAbsolutePath());
             tmpFile = FileTmpTools.getTempFile(".csv");
             if (charset == null) {
                 charset = Charset.forName("utf-8");
@@ -62,10 +62,10 @@ public class DataFileCSVWriter extends Data2DWriter {
     @Override
     public void printTargetRow() {
         try {
-            if (targetRow == null) {
+            if (printRow == null) {
                 return;
             }
-            printer.printRecord(targetRow);
+            printer.printRecord(printRow);
         } catch (Exception e) {
             showError(e.toString());
         }
@@ -76,29 +76,29 @@ public class DataFileCSVWriter extends Data2DWriter {
         try {
             created = false;
             if (printer == null) {
-                showInfo(message("Failed") + ": " + targetFile);
+                showInfo(message("Failed") + ": " + printFile);
                 return;
             }
             printer.flush();
             printer.close();
             printer = null;
             if (isFailed() || tmpFile == null || !tmpFile.exists()
-                    || !FileTools.override(tmpFile, targetFile)) {
+                    || !FileTools.override(tmpFile, printFile)) {
                 FileDeleteTools.delete(tmpFile);
-                showInfo(message("Failed") + ": " + targetFile);
+                showInfo(message("Failed") + ": " + printFile);
                 return;
             }
-            if (targetFile == null || !targetFile.exists()) {
-                showInfo(message("Failed") + ": " + targetFile);
+            if (printFile == null || !printFile.exists()) {
+                showInfo(message("Failed") + ": " + printFile);
                 return;
             }
-            recordFileGenerated(targetFile, VisitHistory.FileType.CSV);
+            recordFileGenerated(printFile, VisitHistory.FileType.CSV);
             if (recordTargetData) {
                 if (targetData == null) {
                     targetData = Data2D.create(Data2DDefinition.DataType.CSV);
                 }
                 targetData.setTask(task())
-                        .setFile(targetFile)
+                        .setFile(printFile)
                         .setCharset(charset)
                         .setDelimiter(delimiter)
                         .setHasHeader(writeHeader)

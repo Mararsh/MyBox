@@ -41,6 +41,7 @@ public abstract class Data2DOperate {
     protected long handledCount;
     protected InvalidAs invalidAs;
     protected Connection conn;
+    protected List<File> printedFiles;
 
     public Data2DOperate() {
         closeConn = true;
@@ -73,6 +74,7 @@ public abstract class Data2DOperate {
         if (writers == null) {
             writers = new ArrayList<>();
         }
+
         writers.add(writer.setOperate(this));
         return this;
     }
@@ -94,8 +96,19 @@ public abstract class Data2DOperate {
 
     public void setTargetFile(Data2DWriter writer) {
         if (writer != null && targetFile != null) {
-            writer.setTargetFile(targetFile);
+            writer.setPrintFile(targetFile);
         }
+    }
+
+    public Data2DOperate addPrintedFile(File file) {
+        if (file == null || !file.exists()) {
+            return this;
+        }
+        if (printedFiles == null) {
+            printedFiles = new ArrayList<>();
+        }
+        printedFiles.add(file);
+        return this;
     }
 
     public boolean closeWriters() {
@@ -135,7 +148,7 @@ public abstract class Data2DOperate {
             scale = sourceData.getScale();
         }
         if (invalidAs == null) {
-            invalidAs = InvalidAs.Blank;
+            invalidAs = InvalidAs.Keep;
         }
         return openWriters();
     }
@@ -212,7 +225,6 @@ public abstract class Data2DOperate {
         }, 200);
         return true;
     }
-
 
     /*
         status
@@ -425,6 +437,10 @@ public abstract class Data2DOperate {
 
     public InvalidAs getInvalidAs() {
         return invalidAs;
+    }
+
+    public List<File> getPrintedFiles() {
+        return printedFiles;
     }
 
 }

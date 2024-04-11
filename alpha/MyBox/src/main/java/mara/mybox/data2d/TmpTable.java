@@ -389,7 +389,7 @@ public class TmpTable extends DataTable {
                 return null;
             }
             DataFileCSVWriter writer = new DataFileCSVWriter();
-            writer.setTargetFile(FileTmpTools.getTempFile(".csv"));
+            writer.setPrintFile(FileTmpTools.getTempFile(".csv"));
             List<Data2DColumn> targetColumns = new ArrayList<>();
             List<String> names = new ArrayList<>();
             if (includeRowNumber) {

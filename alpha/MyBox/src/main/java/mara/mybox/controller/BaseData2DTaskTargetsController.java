@@ -9,7 +9,7 @@ import mara.mybox.data2d.DataTable;
 import mara.mybox.data2d.tools.Data2DColumnTools;
 import mara.mybox.data2d.tools.Data2DTableTools;
 import mara.mybox.data2d.writer.Data2DWriter;
-import mara.mybox.db.data.ColumnDefinition;
+import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
@@ -83,18 +83,13 @@ public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskCont
     }
 
     @Override
-    public void checkInvalidAs() {
+    public InvalidAs checkInvalidAs() {
         if (targetController != null) {
             invalidAs = targetController.invalidAs();
-        } else if (zeroNonnumericRadio != null && zeroNonnumericRadio.isSelected()) {
-            invalidAs = ColumnDefinition.InvalidAs.Zero;
-        } else if (blankNonnumericRadio != null && blankNonnumericRadio.isSelected()) {
-            invalidAs = ColumnDefinition.InvalidAs.Blank;
-        } else if (skipNonnumericRadio != null && skipNonnumericRadio.isSelected()) {
-            invalidAs = ColumnDefinition.InvalidAs.Skip;
         } else {
-            invalidAs = ColumnDefinition.InvalidAs.Blank;
+            invalidAs = super.checkInvalidAs();
         }
+        return invalidAs;
     }
 
     @Override
@@ -112,6 +107,7 @@ public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskCont
                         popError(message("Invalid") + ": " + message("Target"));
                         return false;
                     }
+                    writer.setInvalidAs(checkInvalidAs());
                 }
             }
             return super.checkOptions();
@@ -302,7 +298,7 @@ public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskCont
             return;
         }
         writer = targetController.pickWriter();
-        if (writer == null || writer.getTargetFile() == null) {
+        if (writer == null || writer.getPrintFile() == null) {
             popError(message("InvalidParamter"));
             return;
         }

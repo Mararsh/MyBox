@@ -720,7 +720,7 @@ public class BaseData2DSelectRowsController extends BaseData2DLoadController {
                         .setWriteHeader(true);
                 data2D.copy(task, writer, checkedColsIndices, false,
                         formatValuesCheck != null && formatValuesCheck.isSelected(),
-                        InvalidAs.Blank);
+                        InvalidAs.Empty);
                 data = writer.getRows();
             } else {
                 data = tableFiltered(false);

@@ -50,7 +50,7 @@ public abstract class BaseData2DTaskController extends BaseBranchController {
     protected List<Data2DColumn> outputColumns;
     protected int scale, defaultScale = 2, maxData = -1;
     protected ObjectType objectType;
-    protected InvalidAs invalidAs = InvalidAs.Skip;
+    protected InvalidAs invalidAs = InvalidAs.Keep;
     protected List<Integer> dataColsIndices;
     protected List<String> orders;
     protected ChangeListener<Boolean> tableLoadListener, tableStatusListener;
@@ -75,7 +75,8 @@ public abstract class BaseData2DTaskController extends BaseBranchController {
     protected TextField maxInput;
     @FXML
     protected RadioButton columnsRadio, rowsRadio, allRadio,
-            skipNonnumericRadio, zeroNonnumericRadio, blankNonnumericRadio;
+            skipNonnumericRadio, zeroNonnumericRadio, emptyNonnumericRadio,
+            keepNonnumericRadio, nullNonnumericRadio;
     @FXML
     protected CheckBox rowNumberCheck, colNameCheck;
     @FXML
@@ -441,16 +442,21 @@ public abstract class BaseData2DTaskController extends BaseBranchController {
         }
     }
 
-    public void checkInvalidAs() {
-        if (zeroNonnumericRadio != null && zeroNonnumericRadio.isSelected()) {
+    public InvalidAs checkInvalidAs() {
+        if (keepNonnumericRadio != null && keepNonnumericRadio.isSelected()) {
+            invalidAs = InvalidAs.Keep;
+        } else if (zeroNonnumericRadio != null && zeroNonnumericRadio.isSelected()) {
             invalidAs = InvalidAs.Zero;
-        } else if (blankNonnumericRadio != null && blankNonnumericRadio.isSelected()) {
-            invalidAs = InvalidAs.Blank;
+        } else if (emptyNonnumericRadio != null && emptyNonnumericRadio.isSelected()) {
+            invalidAs = InvalidAs.Empty;
         } else if (skipNonnumericRadio != null && skipNonnumericRadio.isSelected()) {
             invalidAs = InvalidAs.Skip;
+        } else if (nullNonnumericRadio != null && nullNonnumericRadio.isSelected()) {
+            invalidAs = InvalidAs.Null;
         } else {
-            invalidAs = InvalidAs.Blank;
+            invalidAs = InvalidAs.Keep;
         }
+        return invalidAs;
     }
 
     public boolean showColNames() {

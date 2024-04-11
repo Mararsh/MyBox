@@ -34,8 +34,9 @@ public class ControlData2DSetValue extends BaseController {
     protected ToggleGroup valueGroup, nonnumericGroup;
     @FXML
     protected RadioButton zeroRadio, oneRadio, blankRadio, randomRadio, randomNnRadio,
-            valueRadio, scaleRadio, prefixRadio, suffixRadio, numberRadio,
-            expressionRadio, skipNonnumericRadio, zeroNonnumericRadio, blankNonnumericRadio,
+            valueRadio, scaleRadio, prefixRadio, suffixRadio, numberRadio, expressionRadio,
+            skipNonnumericRadio, zeroNonnumericRadio, emptyNonnumericRadio,
+            keepNonnumericRadio, nullNonnumericRadio,
             gaussianDistributionRadio, identifyRadio, upperTriangleRadio, lowerTriangleRadio;
     @FXML
     protected TextField valueInput, prefixInput, suffixInput, startInput, digitInput;
@@ -136,13 +137,17 @@ public class ControlData2DSetValue extends BaseController {
                     checkSelection();
                 }
             });
-            String nonnumeric = UserConfig.getString(baseName + "Nonnumeric", "Skip");
-            if ("Zero".equals(nonnumeric)) {
-                zeroNonnumericRadio.setSelected(true);
-            } else if ("Blank".equals(nonnumeric)) {
-                blankNonnumericRadio.setSelected(true);
-            } else {
+            String nonnumeric = UserConfig.getString(baseName + "Nonnumeric", "Keep");
+            if ("Skip".equals(nonnumeric)) {
                 skipNonnumericRadio.setSelected(true);
+            } else if ("Zero".equals(nonnumeric)) {
+                zeroNonnumericRadio.setSelected(true);
+            } else if ("empty".equals(nonnumeric)) {
+                emptyNonnumericRadio.setSelected(true);
+            } else if ("null".equals(nonnumeric)) {
+                nullNonnumericRadio.setSelected(true);
+            } else {
+                keepNonnumericRadio.setSelected(true);
             }
             nonnumericGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
@@ -227,12 +232,16 @@ public class ControlData2DSetValue extends BaseController {
                     return false;
                 }
                 setValue.setScale(v);
-                if (zeroNonnumericRadio.isSelected()) {
-                    setValue.setInvalidAs(InvalidAs.Zero);
-                } else if (blankNonnumericRadio.isSelected()) {
-                    setValue.setInvalidAs(InvalidAs.Blank);
-                } else {
+                if (skipNonnumericRadio.isSelected()) {
                     setValue.setInvalidAs(InvalidAs.Skip);
+                } else if (zeroNonnumericRadio.isSelected()) {
+                    setValue.setInvalidAs(InvalidAs.Zero);
+                } else if (emptyNonnumericRadio.isSelected()) {
+                    setValue.setInvalidAs(InvalidAs.Empty);
+                } else if (nullNonnumericRadio.isSelected()) {
+                    setValue.setInvalidAs(InvalidAs.Null);
+                } else {
+                    setValue.setInvalidAs(InvalidAs.Keep);
                 }
                 UserConfig.setString(baseName + "Nonnumeric", setValue.getInvalidAs().name());
             } else if (prefixRadio.isSelected()) {

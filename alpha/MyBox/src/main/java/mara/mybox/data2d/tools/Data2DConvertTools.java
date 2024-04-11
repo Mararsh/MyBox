@@ -278,8 +278,8 @@ public class Data2DConvertTools {
     public static DataFileCSV write(FxTask task, ResultSet results) {
         try {
             DataFileCSVWriter writer = new DataFileCSVWriter();
-            writer.setTargetFile(FileTmpTools.getTempFile(".csv"));
-            if (!Data2DTableTools.write(task, null, writer, results, null, 8, ColumnDefinition.InvalidAs.Blank)) {
+            writer.setPrintFile(FileTmpTools.getTempFile(".csv"));
+            if (!Data2DTableTools.write(task, null, writer, results, null, 8, ColumnDefinition.InvalidAs.Empty)) {
                 return null;
             }
             return (DataFileCSV) writer.getTargetData();

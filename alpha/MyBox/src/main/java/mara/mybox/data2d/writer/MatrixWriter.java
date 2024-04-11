@@ -52,11 +52,11 @@ public class MatrixWriter extends Data2DWriter {
     @Override
     public void printTargetRow() {
         try {
-            if (targetRow == null || conn == null) {
+            if (printRow == null || conn == null) {
                 return;
             }
-            for (int c = 0; c < targetRow.size(); c++) {
-                double d = toDouble(targetRow.get(c));
+            for (int c = 0; c < printRow.size(); c++) {
+                double d = toDouble(printRow.get(c));
                 if (d == 0 || DoubleTools.invalidDouble(d)) {
                     continue;
                 }

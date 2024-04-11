@@ -39,8 +39,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSelectRowsCon
     protected List<List<String>> outputData;
     protected List<Data2DColumn> outputColumns;
     protected int scale, defaultScale = 2, maxData = -1;
-    protected ObjectType objectType;
-    protected InvalidAs invalidAs = InvalidAs.Skip;
+    protected InvalidAs invalidAs = InvalidAs.Keep;
     protected List<Integer> dataColsIndices;
     protected List<String> orders;
 
@@ -58,7 +57,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSelectRowsCon
     protected TextField maxInput;
     @FXML
     protected RadioButton columnsRadio, rowsRadio, allRadio,
-            skipNonnumericRadio, zeroNonnumericRadio, blankNonnumericRadio;
+            skipNonnumericRadio, zeroNonnumericRadio, emptyNonnumericRadio;
     @FXML
     protected CheckBox rowNumberCheck, colNameCheck;
     @FXML
@@ -243,12 +242,12 @@ public abstract class BaseData2DHandleController extends BaseData2DSelectRowsCon
     public void checkInvalidAs() {
         if (zeroNonnumericRadio != null && zeroNonnumericRadio.isSelected()) {
             invalidAs = InvalidAs.Zero;
-        } else if (blankNonnumericRadio != null && blankNonnumericRadio.isSelected()) {
-            invalidAs = InvalidAs.Blank;
+        } else if (emptyNonnumericRadio != null && emptyNonnumericRadio.isSelected()) {
+            invalidAs = InvalidAs.Empty;
         } else if (skipNonnumericRadio != null && skipNonnumericRadio.isSelected()) {
             invalidAs = InvalidAs.Skip;
         } else {
-            invalidAs = InvalidAs.Blank;
+            invalidAs = InvalidAs.Empty;
         }
     }
 

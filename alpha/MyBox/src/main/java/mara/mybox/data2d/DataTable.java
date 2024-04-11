@@ -332,7 +332,7 @@ public class DataTable extends Data2D {
             conn.setAutoCommit(false);
             if (pageData != null) {
                 for (int i = 0; i < pageData.size(); i++) {
-                    Data2DRow row = fromTableRow(pageData.get(i), InvalidAs.Blank);
+                    Data2DRow row = fromTableRow(pageData.get(i), InvalidAs.Empty);
                     if (row != null) {
                         pageRows.add(row);
                         tableData2D.writeData(conn, row);
@@ -437,7 +437,7 @@ public class DataTable extends Data2D {
                 PreparedStatement statement = conn.prepareStatement(query);
                 ResultSet results = statement.executeQuery()) {
             return Data2DTableTools.write(task, this, writer, results, rowNumberName,
-                    scale, InvalidAs.Blank);
+                    scale, InvalidAs.Empty);
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());

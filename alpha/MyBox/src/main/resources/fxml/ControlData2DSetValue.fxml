@@ -52,13 +52,15 @@ License:    Apache License Version 2.0
                     <children>
                         <ComboBox fx:id="scaleSelector" editable="true" prefWidth="100.0" />
                         <Label text="%ToInvalidNumber" />
-                        <RadioButton fx:id="skipNonnumericRadio" mnemonicParsing="false" selected="true" text="%Skip">
+                        <RadioButton fx:id="keepNonnumericRadio" layoutX="192.0" layoutY="14.0" mnemonicParsing="false" selected="true" text="%Keep">
                             <toggleGroup>
                                 <ToggleGroup fx:id="nonnumericGroup" />
-                            </toggleGroup>
+                            </toggleGroup> 
                         </RadioButton>
-                        <RadioButton fx:id="zeroNonnumericRadio" mnemonicParsing="false" text="%Zero" toggleGroup="$nonnumericGroup" />
-                        <RadioButton fx:id="blankNonnumericRadio" layoutX="263.0" layoutY="14.0" mnemonicParsing="false" text="%Blank" toggleGroup="$nonnumericGroup" />
+                        <RadioButton fx:id="skipNonnumericRadio" mnemonicParsing="false" text="%Skip" toggleGroup="$nonnumericGroup" />
+                        <RadioButton fx:id="zeroNonnumericRadio" mnemonicParsing="false" text="%CountAsZero" toggleGroup="$nonnumericGroup" />
+                        <RadioButton fx:id="nullNonnumericRadio" mnemonicParsing="false" text="%CountAsNull" toggleGroup="$nonnumericGroup" />
+                        <RadioButton fx:id="emptyNonnumericRadio" mnemonicParsing="false" text="%CountAsEmpty" toggleGroup="$nonnumericGroup" />
                     </children>
                 </FlowPane>
             </children>
@@ -99,10 +101,10 @@ License:    Apache License Version 2.0
                 <CheckBox fx:id="errorContinueCheck" mnemonicParsing="false" selected="true" text="%ContinueWhenError" />
             </children>
         </HBox>
-      <VBox fx:id="expBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
-         <children>
-              <fx:include fx:id="expression" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DRowExpression.fxml" VBox.vgrow="ALWAYS" />
-         </children>
-      </VBox>
+        <VBox fx:id="expBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+            <children>
+                <fx:include fx:id="expression" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DRowExpression.fxml" VBox.vgrow="ALWAYS" />
+            </children>
+        </VBox>
     </children>
 </VBox>

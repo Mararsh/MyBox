@@ -73,7 +73,7 @@ public class Data2DNormalizeController extends BaseData2DTaskTargetsController {
                             case Skip:
                                 row.add(s);
                                 break;
-                            case Blank:
+                            case Empty:
                                 row.add(null);
                                 break;
                         }

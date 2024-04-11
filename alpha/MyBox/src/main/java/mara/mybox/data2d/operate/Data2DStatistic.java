@@ -114,13 +114,12 @@ public class Data2DStatistic extends Data2DOperate {
                 double v = DoubleTools.toDouble(s, invalidAs);
                 if (DoubleTools.invalidDouble(v)) {
                     switch (invalidAs) {
-                        case Blank:
-                        case Skip:
-                            statisticData[i].invalidCount++;
-                            continue;
                         case Zero:
                             v = 0;
                             break;
+                        default:
+                            statisticData[i].invalidCount++;
+                            continue;
                     }
                 }
                 statisticData[i].count++;
@@ -165,12 +164,11 @@ public class Data2DStatistic extends Data2DOperate {
                 double v = DoubleTools.toDouble(s, invalidAs);
                 if (DoubleTools.invalidDouble(v)) {
                     switch (invalidAs) {
-                        case Blank:
-                        case Skip:
-                            continue;
                         case Zero:
                             v = 0;
                             break;
+                        default:
+                            continue;
                     }
                 }
                 v = v - statisticData[c].mean;
@@ -193,13 +191,12 @@ public class Data2DStatistic extends Data2DOperate {
                 double v = DoubleTools.toDouble(s, invalidAs);
                 if (DoubleTools.invalidDouble(v)) {
                     switch (invalidAs) {
-                        case Blank:
-                        case Skip:
-                            statisticAll.invalidCount++;
-                            continue;
                         case Zero:
                             v = 0;
                             break;
+                        default:
+                            statisticAll.invalidCount++;
+                            continue;
                     }
                 }
                 statisticAll.count++;
@@ -240,12 +237,11 @@ public class Data2DStatistic extends Data2DOperate {
                 double v = DoubleTools.toDouble(s, invalidAs);
                 if (DoubleTools.invalidDouble(v)) {
                     switch (invalidAs) {
-                        case Blank:
-                        case Skip:
-                            continue;
                         case Zero:
                             v = 0;
                             break;
+                        default:
+                            continue;
                     }
                 }
                 v = v - statisticAll.mean;

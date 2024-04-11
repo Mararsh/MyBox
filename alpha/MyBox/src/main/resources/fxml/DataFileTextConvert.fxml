@@ -10,18 +10,21 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.DataFileTextConvertController">
+<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.DataFileTextConvertController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
@@ -55,11 +58,29 @@ License:    Apache License Version 2.0
                             <content>
                                 <VBox fx:id="convertVBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                     <children>
-                                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="537.0" prefViewportWidth="418.0" VBox.vgrow="ALWAYS">
-                                            <content>
-                                                <fx:include fx:id="convert" source="ControlDataExport.fxml" />
-                                            </content>
-                                        </ScrollPane>
+                              <FlowPane hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">
+                                 <children>
+                                    <Label text="%ToInvalidValue" />
+                                    <RadioButton fx:id="keepNonnumericRadio" mnemonicParsing="false" selected="true" text="%Keep">
+                                       <toggleGroup>
+                                          <ToggleGroup fx:id="nonnumericGroup" />
+                                       </toggleGroup>
+                                    </RadioButton>
+                                    <RadioButton fx:id="skipNonnumericRadio" mnemonicParsing="false" text="%Skip" toggleGroup="$nonnumericGroup" />
+                                    <RadioButton fx:id="zeroNonnumericRadio" mnemonicParsing="false" text="%CountAsZero" toggleGroup="$nonnumericGroup" />
+                                    <RadioButton fx:id="nullNonnumericRadio" mnemonicParsing="false" text="%CountAsNull" toggleGroup="$nonnumericGroup" />
+                                    <RadioButton fx:id="emptyNonnumericRadio" mnemonicParsing="false" text="%CountAsEmpty" toggleGroup="$nonnumericGroup" />
+                                 </children>
+                              </FlowPane>
+                              <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
+                                 <content>
+                                    <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                       <children>
+                                          <fx:include fx:id="convert" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlDataExport.fxml" VBox.vgrow="ALWAYS" />
+                                       </children>
+                                    </VBox>
+                                 </content>
+                              </ScrollPane>
                                         <Button fx:id="previewButton" disable="true" mnemonicParsing="false" onAction="#previewAction">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -70,6 +91,9 @@ License:    Apache License Version 2.0
                                             </graphic>
                                         </Button>
                                     </children>
+                           <padding>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </padding>
                                 </VBox>
                             </content>
                         </Tab>

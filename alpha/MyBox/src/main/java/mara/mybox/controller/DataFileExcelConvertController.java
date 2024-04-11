@@ -57,6 +57,7 @@ public class DataFileExcelConvertController extends BaseDataFileConvertControlle
                         if (withNamesCheck.isSelected()) {
                             names.addAll(rowData);
                             export.setNames(targetPathController, names, filePrefix(srcFile));
+                            export.openWriters();
                             continue;
                         } else {
                             for (int c = 1; c <= rowData.size(); c++) {
@@ -64,7 +65,9 @@ public class DataFileExcelConvertController extends BaseDataFileConvertControlle
                             }
                             export.setNames(targetPathController, names, filePrefix(srcFile));
                         }
+                        export.openWriters();
                     }
+
                     export.writeRow(rowData);
                 }
                 export.closeWriters();

@@ -33,11 +33,11 @@ public class DataFileTextWriter extends Data2DWriter {
             if (!super.openWriter()) {
                 return false;
             }
-            if (targetFile == null) {
+            if (printFile == null) {
                 showInfo(message("InvalidParameter") + ": " + message("TargetFile"));
                 return false;
             }
-            showInfo(message("Writing") + " " + targetFile.getAbsolutePath());
+            showInfo(message("Writing") + " " + printFile.getAbsolutePath());
             tmpFile = FileTmpTools.getTempFile(".txt");
             if (charset == null) {
                 charset = Charset.forName("utf-8");
@@ -61,10 +61,10 @@ public class DataFileTextWriter extends Data2DWriter {
     @Override
     public void printTargetRow() {
         try {
-            if (targetRow == null) {
+            if (printRow == null) {
                 return;
             }
-            TextFileTools.writeLine(task(), fileWriter, targetRow, delimiter);
+            TextFileTools.writeLine(task(), fileWriter, printRow, delimiter);
         } catch (Exception e) {
             showError(e.toString());
         }
@@ -81,22 +81,22 @@ public class DataFileTextWriter extends Data2DWriter {
             fileWriter.close();
             fileWriter = null;
             if (isFailed() || tmpFile == null || !tmpFile.exists()
-                    || !FileTools.override(tmpFile, targetFile)) {
+                    || !FileTools.override(tmpFile, printFile)) {
                 FileDeleteTools.delete(tmpFile);
-                showInfo(message("Failed") + ": " + targetFile);
+                showInfo(message("Failed") + ": " + printFile);
                 return;
             }
-            if (targetFile == null || !targetFile.exists()) {
-                showInfo(message("Failed") + ": " + targetFile);
+            if (printFile == null || !printFile.exists()) {
+                showInfo(message("Failed") + ": " + printFile);
                 return;
             }
-            recordFileGenerated(targetFile, VisitHistory.FileType.Text);
+            recordFileGenerated(printFile, VisitHistory.FileType.Text);
             if (recordTargetData) {
                 if (targetData == null) {
                     targetData = Data2D.create(Data2DDefinition.DataType.Texts);
                 }
                 targetData.setTask(task())
-                        .setFile(targetFile)
+                        .setFile(printFile)
                         .setCharset(charset)
                         .setDelimiter(delimiter)
                         .setHasHeader(writeHeader)

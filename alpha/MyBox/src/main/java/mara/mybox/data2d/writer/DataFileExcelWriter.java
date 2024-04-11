@@ -45,11 +45,11 @@ public class DataFileExcelWriter extends Data2DWriter {
             if (!super.openWriter()) {
                 return false;
             }
-            if (targetFile == null) {
+            if (printFile == null) {
                 showInfo(message("InvalidParameter") + ": " + message("TargetFile"));
                 return false;
             }
-            showInfo(message("Writing") + " " + targetFile.getAbsolutePath());
+            showInfo(message("Writing") + " " + printFile.getAbsolutePath());
             tmpFile = FileTmpTools.getTempFile(".xlsx");
             if (sheetName == null) {
                 sheetName = "sheet1";
@@ -102,13 +102,13 @@ public class DataFileExcelWriter extends Data2DWriter {
     @Override
     public void printTargetRow() {
         try {
-            if (targetRow == null) {
+            if (printRow == null) {
                 return;
             }
             Row sheetRow = xssfSheet.createRow(rowIndex++);
-            for (int i = 0; i < targetRow.size(); i++) {
+            for (int i = 0; i < printRow.size(); i++) {
                 Cell cell = sheetRow.createCell(i, CellType.STRING);
-                cell.setCellValue(targetRow.get(i));
+                cell.setCellValue(printRow.get(i));
             }
         } catch (Exception e) {
             showError(e.toString());
@@ -131,22 +131,22 @@ public class DataFileExcelWriter extends Data2DWriter {
             xssfBook.close();
             xssfBook = null;
             if (isFailed() || !tmpFile.exists()
-                    || !FileTools.override(tmpFile, targetFile, true)) {
+                    || !FileTools.override(tmpFile, printFile, true)) {
                 FileDeleteTools.delete(tmpFile);
-                showInfo(message("Failed") + ": " + targetFile);
+                showInfo(message("Failed") + ": " + printFile);
                 return;
             }
-            if (targetFile == null || !targetFile.exists()) {
-                showInfo(message("Failed") + ": " + targetFile);
+            if (printFile == null || !printFile.exists()) {
+                showInfo(message("Failed") + ": " + printFile);
                 return;
             }
-            recordFileGenerated(targetFile, VisitHistory.FileType.Excel);
+            recordFileGenerated(printFile, VisitHistory.FileType.Excel);
             if (recordTargetData) {
                 if (targetData == null) {
                     targetData = Data2D.create(Data2DDefinition.DataType.Excel);
                 }
                 targetData.setTask(task())
-                        .setFile(targetFile)
+                        .setFile(printFile)
                         .setSheet(sheetName)
                         .setHasHeader(writeHeader)
                         .setDataName(dataName)

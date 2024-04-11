@@ -121,7 +121,7 @@ public class DoubleTools {
     }
 
     public static int compare(String s1, String s2, boolean desc) {
-        return compare(toDouble(s1, InvalidAs.Blank), toDouble(s2, InvalidAs.Blank), desc);
+        return compare(toDouble(s1, InvalidAs.Empty), toDouble(s2, InvalidAs.Empty), desc);
     }
 
     // invalid values are counted as smaller

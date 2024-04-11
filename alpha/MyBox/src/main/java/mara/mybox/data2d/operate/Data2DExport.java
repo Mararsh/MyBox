@@ -61,9 +61,9 @@ public class Data2DExport extends Data2DOperate {
             return;
         }
         if (targetFile != null) {
-            writer.setTargetFile(targetFile);
+            writer.setPrintFile(targetFile);
         } else if (pathController != null) {
-            writer.setTargetFile(pathController.makeTargetFile(filePrefix,
+            writer.setPrintFile(pathController.makeTargetFile(filePrefix,
                     "." + writer.getFileSuffix(), targetPath));
         }
     }

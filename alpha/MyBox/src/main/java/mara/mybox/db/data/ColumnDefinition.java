@@ -73,7 +73,7 @@ public class ColumnDefinition extends BaseData {
     }
 
     public enum InvalidAs {
-        Zero, Blank, Skip
+        Zero, Empty, Null, Skip, Keep
     }
 
     public final void initColumnDefinition() {
@@ -100,7 +100,7 @@ public class ColumnDefinition extends BaseData {
         displayMap = null;
         description = null;
         century = 2000;
-        invalidAs = InvalidAs.Skip;
+        invalidAs = InvalidAs.Keep;
     }
 
     public ColumnDefinition() {
@@ -529,8 +529,24 @@ public class ColumnDefinition extends BaseData {
             }
             Object o = fromString(string, invalidAs);
             if (o == null) {
-                return string;
+                return null;
             }
+            return formatObject(o, maxLen);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public String formatObject(Object o) {
+        return formatObject(o, -1);
+    }
+
+    public String formatObject(Object o, int maxLen) {
+        try {
+            if (o == null) {
+                return null;
+            }
+            String s = toString(o);
             switch (type) {
                 case Double:
                     return NumberTools.format((double) o, format, scale);
@@ -553,15 +569,14 @@ public class ColumnDefinition extends BaseData {
                             return DateTools.datetimeToString(new Date(lv), format);
                         }
                     } catch (Exception ex) {
-                        return DateTools.datetimeToString(toDate(string), format);
+                        return DateTools.datetimeToString(toDate(s), format);
                     }
                 }
                 case Enumeration:
                 case Longitude:
                 case Latitude:
-                    return string;
+                    return s;
                 default:
-                    String s = o.toString();
                     if (maxLen > 0) {
                         return s.length() > maxLen ? s.substring(0, maxLen) : s;
                     } else {
@@ -569,7 +584,7 @@ public class ColumnDefinition extends BaseData {
                     }
             }
         } catch (Exception e) {
-            return string;
+            return null;
         }
     }
 
@@ -891,12 +906,15 @@ public class ColumnDefinition extends BaseData {
     }
 
     public static Object fromString(ColumnType targetType, String string) {
-        return fromString(targetType, string, InvalidAs.Blank, false, 0);
+        return fromString(targetType, string, InvalidAs.Empty, false, 0);
     }
 
     public static Object fromString(ColumnType targetType, String string,
             InvalidAs invalidAs, boolean fixTwoDigitYear, int century) {
         try {
+            if (targetType == null || invalidAs == null) {
+                return string;
+            }
             switch (targetType) {
                 case Double:
                     return Double.valueOf(string.replaceAll(",", ""));
@@ -923,25 +941,33 @@ public class ColumnDefinition extends BaseData {
             }
         } catch (Exception e) {
         }
-        if (invalidAs == InvalidAs.Zero) {
-            if (isNumberType(targetType)) {
-                switch (targetType) {
-                    case Double:
-                        return 0d;
-                    case Float:
-                        return 0f;
-                    default:
-                        return 0;
+        switch (invalidAs) {
+            case Zero:
+                if (isNumberType(targetType)) {
+                    switch (targetType) {
+                        case Double:
+                            return 0d;
+                        case Float:
+                            return 0f;
+                        default:
+                            return 0;
+                    }
+                } else {
+                    return "0";
                 }
-            } else {
-                return "0";
-            }
-        } else if (invalidAs == InvalidAs.Blank) {
-            if (isDBStringType(targetType)) {
+            case Null:
+                if (isDBStringType(targetType)) {
+                    return "";
+                } else {
+                    return null;
+                }
+            case Empty:
                 return "";
-            }
+            case Skip:
+                return null;
+            default:
+                return string;
         }
-        return null;
     }
 
     public static String toString(ColumnType sourceType, Object value, String format) {

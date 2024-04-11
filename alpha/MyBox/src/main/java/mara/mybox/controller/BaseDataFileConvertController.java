@@ -1,12 +1,15 @@
 package mara.mybox.controller;
 
 import java.io.File;
+import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.layout.VBox;
 import mara.mybox.data2d.operate.Data2DExport;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SoundTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -44,6 +47,7 @@ public abstract class BaseDataFileConvertController extends BaseBatchFileControl
         if (export == null) {
             return false;
         }
+        export.setController(this);
         skip = targetPathController.isSkip();
         return super.makeMoreParameters();
     }
@@ -59,6 +63,32 @@ public abstract class BaseDataFileConvertController extends BaseBatchFileControl
     public void disableControls(boolean disable) {
         super.disableControls(disable);
         convertVBox.setDisable(disable);
+    }
+
+    @Override
+    public void afterTask() {
+        List<File> files = export.getPrintedFiles();
+        targetFilesCount = files != null ? files.size() : 0;
+        showCost();
+        tableView.refresh();
+        if (miaoCheck != null && miaoCheck.isSelected()) {
+            SoundTools.miao3();
+        }
+        if (!isPreview && openCheck != null && !openCheck.isSelected()) {
+            return;
+        }
+        if (targetFilesCount > 0) {
+            File path = files.get(0).getParentFile();
+            browseURI(path.toURI());
+            recordFileOpened(path);
+        } else {
+            popInformation(message("NoFileGenerated"));
+        }
+    }
+
+    @FXML
+    @Override
+    public void openTarget() {
     }
 
 }

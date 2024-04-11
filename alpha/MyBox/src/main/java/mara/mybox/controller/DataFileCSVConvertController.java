@@ -57,6 +57,7 @@ public class DataFileCSVConvertController extends BaseDataFileConvertController 
 
     @Override
     public String handleFile(FxTask currentTask, File srcFile, File targetPath) {
+
         if (csvReadController.withNamesCheck.isSelected()) {
             return withHeader(currentTask, srcFile, targetPath);
         } else {
@@ -81,6 +82,7 @@ public class DataFileCSVConvertController extends BaseDataFileConvertController 
             List<String> names = new ArrayList<>();
             names.addAll(parser.getHeaderNames());
             export.setNames(targetPathController, names, filePrefix(srcFile));
+            export.openWriters();
             for (CSVRecord record : parser) {
                 if (currentTask == null || currentTask.isCancelled()) {
                     return message("Cancelled");
@@ -124,6 +126,7 @@ public class DataFileCSVConvertController extends BaseDataFileConvertController 
                         names.add(message("Column") + i);
                     }
                     export.setNames(targetPathController, names, filePrefix(srcFile));
+                    export.openWriters();
                 }
                 List<String> rowData = new ArrayList<>();
                 for (String v : record) {

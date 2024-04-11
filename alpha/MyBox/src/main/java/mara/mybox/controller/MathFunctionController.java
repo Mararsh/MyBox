@@ -161,7 +161,7 @@ public class MathFunctionController extends InfoTreeManageController {
                 popError(message("Failed"));
                 return;
             }
-            double d = DoubleTools.scale(ret, ColumnDefinition.InvalidAs.Blank, calculateScale);
+            double d = DoubleTools.scale(ret, ColumnDefinition.InvalidAs.Empty, calculateScale);
             ret = DoubleTools.invalidDouble(d) ? ret : (d + "");
             outputs += DateTools.nowString() + "<div class=\"valueText\" >"
                     + HtmlWriteTools.stringToHtml(finalScript)
@@ -192,7 +192,7 @@ public class MathFunctionController extends InfoTreeManageController {
                 FlowPane fp = (FlowPane) nodes.get(i);
                 Label label = (Label) fp.getChildren().get(0);
                 TextField input = (TextField) fp.getChildren().get(1);
-                double d = DoubleTools.toDouble(input.getText(), ColumnDefinition.InvalidAs.Blank);
+                double d = DoubleTools.toDouble(input.getText(), ColumnDefinition.InvalidAs.Empty);
                 vars += "var " + label.getText() + "=" + d + ";\n";
             }
             return vars + script;

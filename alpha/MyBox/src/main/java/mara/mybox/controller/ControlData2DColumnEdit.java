@@ -26,6 +26,7 @@ import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import static mara.mybox.db.data.ColumnDefinition.ColumnType.Color;
 import mara.mybox.db.data.ColumnDefinition.InvalidAs;
+import static mara.mybox.db.data.ColumnDefinition.InvalidAs.Empty;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.table.BaseTable;
 import mara.mybox.dev.MyBoxLog;
@@ -54,7 +55,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
     @FXML
     protected RadioButton stringRadio, doubleRadio, floatRadio, longRadio, intRadio, shortRadio, booleanRadio,
             datetimeRadio, dateRadio, eraRadio, longitudeRadio, latitudeRadio, enumRadio, colorRadio, clobRadio,
-            invalidAsEmptyRadio, invalidAsZeroRadio, invalidAsSkipRadio;
+            skipNonnumericRadio, zeroNonnumericRadio, emptyNonnumericRadio, nullNonnumericRadio, keepNonnumericRadio;
     @FXML
     protected CheckBox notNullCheck, editableCheck, fixYearCheck;
     @FXML
@@ -134,7 +135,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
             defaultInput.clear();
             formatInput.clear();
             fixYearCheck.setSelected(false);
-            invalidAsSkipRadio.setSelected(true);
+            keepNonnumericRadio.setSelected(true);
 
             if (enumRadio.isSelected()) {
                 optionsBox.getChildren().add(enumBox);
@@ -155,7 +156,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
                     || longRadio.isSelected() || intRadio.isSelected() || shortRadio.isSelected()) {
                 optionsBox.getChildren().add(formatBox);
                 formatInput.setText(message("GroupInThousands"));
-                invalidAsZeroRadio.setSelected(true);
+                zeroNonnumericRadio.setSelected(true);
 
             }
 
@@ -278,12 +279,27 @@ public class ControlData2DColumnEdit extends BaseChildController {
             colorController.setColor(column.getColor());
 
             InvalidAs invalidAs = column.getInvalidAs();
-            if (invalidAs == InvalidAs.Blank) {
-                invalidAsEmptyRadio.setSelected(true);
-            } else if (invalidAs == InvalidAs.Zero) {
-                invalidAsZeroRadio.setSelected(true);
+
+            if (null == invalidAs) {
+                keepNonnumericRadio.setSelected(true);
             } else {
-                invalidAsSkipRadio.setSelected(true);
+                switch (invalidAs) {
+                    case Skip:
+                        skipNonnumericRadio.setSelected(true);
+                        break;
+                    case Empty:
+                        emptyNonnumericRadio.setSelected(true);
+                        break;
+                    case Zero:
+                        zeroNonnumericRadio.setSelected(true);
+                        break;
+                    case Null:
+                        nullNonnumericRadio.setSelected(true);
+                        break;
+                    default:
+                        keepNonnumericRadio.setSelected(true);
+                        break;
+                }
             }
 
             boolean canNotChange = columnsController.data2D != null
@@ -359,12 +375,16 @@ public class ControlData2DColumnEdit extends BaseChildController {
                 return null;
             }
             InvalidAs invalidAs;
-            if (invalidAsEmptyRadio.isSelected()) {
-                invalidAs = InvalidAs.Blank;
-            } else if (invalidAsZeroRadio.isSelected()) {
-                invalidAs = InvalidAs.Zero;
-            } else {
+            if (skipNonnumericRadio.isSelected()) {
                 invalidAs = InvalidAs.Skip;
+            } else if (emptyNonnumericRadio.isSelected()) {
+                invalidAs = InvalidAs.Empty;
+            } else if (zeroNonnumericRadio.isSelected()) {
+                invalidAs = InvalidAs.Zero;
+            } else if (nullNonnumericRadio.isSelected()) {
+                invalidAs = InvalidAs.Null;
+            } else {
+                invalidAs = InvalidAs.Keep;
             }
             Data2DColumn column;
             if (columnIndex >= 0) {

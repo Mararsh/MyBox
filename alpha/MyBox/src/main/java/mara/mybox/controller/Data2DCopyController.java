@@ -40,7 +40,7 @@ public class Data2DCopyController extends BaseData2DTaskTargetsController {
     public boolean handleAllData(FxTask currentTask, Data2DWriter writer) {
         return data2D.copy(currentTask, writer, checkedColsIndices,
                 rowNumberCheck.isSelected(),
-                formatValuesCheck.isSelected(), ColumnDefinition.InvalidAs.Blank) >= 0;
+                formatValuesCheck.isSelected(), ColumnDefinition.InvalidAs.Empty) >= 0;
     }
 
     /*

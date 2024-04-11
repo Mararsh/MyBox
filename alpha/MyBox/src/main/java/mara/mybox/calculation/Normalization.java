@@ -125,7 +125,7 @@ public class Normalization {
                             d = 0;
                             break;
                         case Skip:
-                        case Blank:
+                        case Empty:
                             continue;
                     }
                 }
@@ -156,7 +156,7 @@ public class Normalization {
                         case Skip:
                             resultVector[i] = s;
                             break;
-                        case Blank:
+                        case Empty:
                             resultVector[i] = "";
                             break;
                     }
@@ -199,7 +199,7 @@ public class Normalization {
                             d = 0;
                             break;
                         case Skip:
-                        case Blank:
+                        case Empty:
                             continue;
                     }
                 }
@@ -222,7 +222,7 @@ public class Normalization {
                         case Skip:
                             resultVector[i] = s;
                             break;
-                        case Blank:
+                        case Empty:
                             resultVector[i] = "";
                             break;
                     }
@@ -270,7 +270,7 @@ public class Normalization {
                         case Skip:
                             resultVector[i] = s;
                             break;
-                        case Blank:
+                        case Empty:
                             resultVector[i] = "";
                             break;
                     }
@@ -318,7 +318,7 @@ public class Normalization {
                         case Skip:
                             resultVector[i] = s;
                             break;
-                        case Blank:
+                        case Empty:
                             resultVector[i] = "";
                             break;
                     }

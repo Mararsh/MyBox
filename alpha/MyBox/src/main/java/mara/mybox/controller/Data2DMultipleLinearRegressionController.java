@@ -46,7 +46,7 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DRegressi
             if (!super.checkOptions()) {
                 return false;
             }
-            invalidAs = InvalidAs.Blank;
+            invalidAs = InvalidAs.Empty;
 
             dataColsIndices = new ArrayList<>();
             yName = categoryColumnSelector.getSelectionModel().getSelectedItem();

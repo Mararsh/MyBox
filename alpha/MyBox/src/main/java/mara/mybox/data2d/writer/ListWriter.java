@@ -33,10 +33,10 @@ public class ListWriter extends Data2DWriter {
 
     @Override
     public void printTargetRow() {
-        if (targetRow == null) {
+        if (printRow == null) {
             return;
         }
-        rows.add(targetRow);
+        rows.add(printRow);
     }
 
     @Override

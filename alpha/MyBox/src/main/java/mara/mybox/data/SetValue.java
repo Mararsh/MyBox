@@ -33,7 +33,7 @@ public class SetValue {
         scale = 5;
         fillZero = true;
         aotoDigit = true;
-        invalidAs = InvalidAs.Skip;
+        invalidAs = InvalidAs.Keep;
     }
 
     public boolean isZero() {
@@ -113,7 +113,7 @@ public class SetValue {
                 switch (invalidAs) {
                     case Zero:
                         return "0";
-                    case Blank:
+                    case Empty:
                         return "";
                     default:
                         return value;
