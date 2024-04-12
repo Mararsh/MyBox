@@ -25,6 +25,7 @@ import javafx.scene.paint.Color;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import static mara.mybox.db.data.ColumnDefinition.ColumnType.Color;
+import static mara.mybox.db.data.ColumnDefinition.DefaultInvalidAs;
 import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import static mara.mybox.db.data.ColumnDefinition.InvalidAs.Empty;
 import mara.mybox.db.data.Data2DColumn;
@@ -383,8 +384,10 @@ public class ControlData2DColumnEdit extends BaseChildController {
                 invalidAs = InvalidAs.Zero;
             } else if (nullNonnumericRadio.isSelected()) {
                 invalidAs = InvalidAs.Null;
-            } else {
+            } else if (keepNonnumericRadio.isSelected()) {
                 invalidAs = InvalidAs.Keep;
+            } else {
+                invalidAs = DefaultInvalidAs;
             }
             Data2DColumn column;
             if (columnIndex >= 0) {

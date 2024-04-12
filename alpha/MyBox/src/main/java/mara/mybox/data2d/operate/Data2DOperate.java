@@ -147,9 +147,6 @@ public abstract class Data2DOperate {
         if (scale < 0) {
             scale = sourceData.getScale();
         }
-        if (invalidAs == null) {
-            invalidAs = InvalidAs.Keep;
-        }
         return openWriters();
     }
 

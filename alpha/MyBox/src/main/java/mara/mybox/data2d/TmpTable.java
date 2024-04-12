@@ -266,7 +266,7 @@ public class TmpTable extends DataTable {
                             tmpValue = sourceValue;
                             break;
                         case Double:
-                            tmpValue = ColumnDefinition.toDouble(sourceColumn.getType(), sourceValue);
+                            tmpValue = sourceColumn.toDouble(sourceValue);
                             break;
                         case Long:
                             if (timeIndex != i) {

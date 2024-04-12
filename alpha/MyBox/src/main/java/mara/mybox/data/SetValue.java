@@ -1,5 +1,6 @@
 package mara.mybox.data;
 
+import static mara.mybox.db.data.ColumnDefinition.DefaultInvalidAs;
 import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import static mara.mybox.db.data.ColumnDefinition.InvalidAs.Empty;
 import mara.mybox.tools.DoubleTools;
@@ -34,7 +35,7 @@ public class SetValue {
         scale = 5;
         fillZero = true;
         aotoDigit = true;
-        invalidAs = InvalidAs.Keep;
+        invalidAs = DefaultInvalidAs;
     }
 
     public boolean isZero() {

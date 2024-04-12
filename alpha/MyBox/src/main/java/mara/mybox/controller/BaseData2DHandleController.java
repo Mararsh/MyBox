@@ -20,6 +20,7 @@ import mara.mybox.data2d.Data2D_Operations.ObjectType;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataTableGroup;
 import mara.mybox.data2d.TmpTable;
+import static mara.mybox.db.data.ColumnDefinition.DefaultInvalidAs;
 import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
@@ -39,7 +40,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSelectRowsCon
     protected List<List<String>> outputData;
     protected List<Data2DColumn> outputColumns;
     protected int scale, defaultScale = 2, maxData = -1;
-    protected InvalidAs invalidAs = InvalidAs.Keep;
+    protected InvalidAs invalidAs = DefaultInvalidAs;
     protected List<Integer> dataColsIndices;
     protected List<String> orders;
 

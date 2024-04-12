@@ -149,7 +149,7 @@ public abstract class BaseTable<D> {
                         d = Double.NaN;
                     } else {
                         if (!(value instanceof Double)) {
-                            MyBoxLog.console(value + "  " + value.getClass());
+//                            MyBoxLog.console(value + "  " + value.getClass());
                             d = Double.NaN;
                         } else {
                             d = (double) value;

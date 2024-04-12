@@ -559,40 +559,16 @@ public class DateTools {
         }
     }
 
-    public static String randomTimeString(Random r) {
+    public static String randomDateString(Random r, String format) {
         if (r == null) {
             r = new Random();
         }
-        return datetimeToString(randomTime(r));
-    }
-
-    public static String randomDateString(Random r) {
-        if (r == null) {
-            r = new Random();
-        }
-        return dateToString(new Date(randomTime(r)));
+        return datetimeToString(randomTime(r), format);
     }
 
     /*
         others
      */
-    // invalid values are always in the end
-    public static int compare(String s1, String s2, boolean desc) {
-        double d1, d2;
-        SimpleDateFormat df = new SimpleDateFormat();
-        try {
-            d1 = df.parse(s1).getTime();
-        } catch (Exception e) {
-            d1 = Double.NaN;
-        }
-        try {
-            d2 = df.parse(s2).getTime();
-        } catch (Exception e) {
-            d2 = Double.NaN;
-        }
-        return DoubleTools.compare(d1, d2, desc);
-    }
-
     public static void printFormats() {
         MyBoxLog.console(DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, Locale.ENGLISH).format(new Date()));
         MyBoxLog.console(DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, Locale.CHINESE).format(new Date()));

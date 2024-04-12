@@ -64,9 +64,6 @@ public abstract class Data2DWriter {
         if (invalidAs == null) {
             invalidAs = operate.getInvalidAs();
         }
-        if (invalidAs == null) {
-            invalidAs = InvalidAs.Keep;
-        }
         return true;
     }
 
