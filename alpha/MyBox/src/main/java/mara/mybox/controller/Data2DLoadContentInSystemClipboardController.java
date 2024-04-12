@@ -51,6 +51,11 @@ public class Data2DLoadContentInSystemClipboardController extends BaseChildContr
     @Override
     public void okAction() {
         if (!sourceController.hasData()) {
+            popError(message("NoData"));
+            return;
+        }
+        if (!sourceController.checkSelections()) {
+            popError(message("SelectToHanlde"));
             return;
         }
         if (task != null) {
@@ -85,7 +90,7 @@ public class Data2DLoadContentInSystemClipboardController extends BaseChildContr
     }
 
     @FXML
-    public void editAction() {
+    public void dataManufacture() {
         boardController.editAction();
     }
 

@@ -1185,7 +1185,14 @@ public class ControlFFmpegOptions extends BaseController {
         if (command == null || ffmpegController == null) {
             return;
         }
-        ffmpegController.showLogs("\n\n" + command.toString().replaceAll("[\\[|,|\\]]", " "));
+        ffmpegController.showLogs("\n\n" + cmd(command));
+    }
+
+    protected String cmd(List<String> command) {
+        if (command == null) {
+            return null;
+        }
+        return command.toString().replaceAll("[\\[|,|\\]]", " ");
     }
 
 }

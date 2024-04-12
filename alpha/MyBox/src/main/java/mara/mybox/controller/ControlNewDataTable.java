@@ -69,9 +69,14 @@ public class ControlNewDataTable extends BaseController {
     public void setData(Data2D data2D) {
         try {
             this.data2D = data2D;
-            nameInput.setText(data2D.shortName());
-            idInput.setText("id");
-            columnsController.loadNames(data2D.columnNames());
+            String n = idInput.getText();
+            if (n == null || n.isBlank()) {
+                idInput.setText("id");
+            }
+            if (data2D != null) {
+                nameInput.setText(data2D.shortName());
+                columnsController.loadNames(data2D.columnNames());
+            }
 
         } catch (Exception e) {
             MyBoxLog.error(e);

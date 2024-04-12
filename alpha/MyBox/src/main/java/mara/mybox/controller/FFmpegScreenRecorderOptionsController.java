@@ -10,6 +10,7 @@ import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -59,6 +60,8 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
             libx264rgbRadio, h264nvencRadio, libx264Radio, vcodecRadio;
     @FXML
     protected ControlTimeLength durationController, delayController;
+    @FXML
+    protected Button queryVideoDeviceButton, queryAudioDeviceButton;
 
     // http://trac.ffmpeg.org/wiki/Capture/Desktop
     // http://trac.ffmpeg.org/wiki/Encode/H.264
@@ -182,6 +185,8 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
             switch (os) {
                 case "win":
                     videoDevices.add(message("Screen"));
+                    queryVideoDeviceButton.setDisable(false);
+                    queryAudioDeviceButton.setDisable(false);
                     checkDevicesWin();
                     break;
                 case "linux":
@@ -189,10 +194,14 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
                     videoDevices.add(message("Screen"));
                     videoBox.getChildren().remove(windowBox);
                     audioDevices.add("alsa");
+                    queryVideoDeviceButton.setDisable(true);
+                    queryAudioDeviceButton.setDisable(true);
                     break;
                 case "mac":
                     fullscreenRadio.setSelected(true);
                     videoBox.getChildren().removeAll(windowBox, rectBox);
+                    queryVideoDeviceButton.setDisable(false);
+                    queryAudioDeviceButton.setDisable(false);
                     checkDevicesMac();
                     break;
                 default:
@@ -224,6 +233,83 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
 
     protected void checkDevicesWin() {
         try {
+            String s = queryDevicesWin();
+            if (s == null || s.isBlank()) {
+                return;
+            }
+            String[] lines = s.split("\n");
+            String name, prefix = "]  \"";
+            int pos, prefixlen = prefix.length();
+            boolean videoNext = false, audioNext = false;
+            for (String line : lines) {
+                ffmpegController.showLogs(line);
+                if (line.endsWith("\" (audio)")) {
+                    pos = line.indexOf(prefix);
+                    if (pos < 0) {
+                        continue;
+                    }
+                    name = line.substring(pos + prefixlen);
+                    pos = name.indexOf("\"");
+                    if (pos < 0) {
+                        continue;
+                    }
+                    name = name.substring(0, pos);
+                    audioDevices.add(name);
+                } else if (line.endsWith("\" (video)")) {
+                    pos = line.indexOf(prefix);
+                    if (pos < 0) {
+                        continue;
+                    }
+                    name = line.substring(pos + prefixlen);
+                    pos = name.indexOf("\"");
+                    if (pos < 0) {
+                        continue;
+                    }
+                    name = name.substring(0, pos);
+//                        videoDevices.add(name);
+                } else if (line.contains("DirectShow video devices")) {
+                    videoNext = true;
+                    audioNext = false;
+                } else if (line.contains("DirectShow audio devices")) {
+                    videoNext = false;
+                    audioNext = true;
+                } else if (videoNext) {
+                    pos = line.indexOf(prefix);
+                    if (pos < 0) {
+                        continue;
+                    }
+                    name = line.substring(pos + prefixlen);
+                    pos = name.indexOf("\"");
+                    if (pos < 0) {
+                        continue;
+                    }
+                    name = name.substring(0, pos);
+//                        videoDevices.add(name);
+                } else if (audioNext) {
+                    pos = line.indexOf(prefix);
+                    if (pos < 0) {
+                        continue;
+                    }
+                    name = line.substring(pos + prefixlen);
+                    pos = name.indexOf("\"");
+                    if (pos < 0) {
+                        continue;
+                    }
+                    name = name.substring(0, pos);
+                    audioDevices.add(name);
+                }
+            }
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    protected String queryDevicesWin() {
+        try {
+            if (executable == null) {
+                return null;
+            }
             // ffmpeg -list_devices true -f dshow -i dummy
             List<String> command = new ArrayList<>();
             command.add(executable.getAbsolutePath());
@@ -235,75 +321,22 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
             command.add("-i");
             command.add("dummy");
             showCmd(command);
+            StringBuilder s = new StringBuilder();
             ProcessBuilder pb = new ProcessBuilder(command).redirectErrorStream(true);
             final Process process = pb.start();
             try (BufferedReader inReader = process.inputReader(Charset.defaultCharset())) {
-                String line, name, prefix = "]  \"";
-                int pos, prefixlen = prefix.length();
-                boolean videoNext = false, audioNext = false;
+                String line;
+
                 while ((line = inReader.readLine()) != null) {
-                    ffmpegController.showLogs(line);
-                    if (line.endsWith("\" (audio)")) {
-                        pos = line.indexOf(prefix);
-                        if (pos < 0) {
-                            continue;
-                        }
-                        name = line.substring(pos + prefixlen);
-                        pos = name.indexOf("\"");
-                        if (pos < 0) {
-                            continue;
-                        }
-                        name = name.substring(0, pos);
-                        audioDevices.add(name);
-                    } else if (line.endsWith("\" (video)")) {
-                        pos = line.indexOf(prefix);
-                        if (pos < 0) {
-                            continue;
-                        }
-                        name = line.substring(pos + prefixlen);
-                        pos = name.indexOf("\"");
-                        if (pos < 0) {
-                            continue;
-                        }
-                        name = name.substring(0, pos);
-//                        videoDevices.add(name);
-                    } else if (line.contains("DirectShow video devices")) {
-                        videoNext = true;
-                        audioNext = false;
-                    } else if (line.contains("DirectShow audio devices")) {
-                        videoNext = false;
-                        audioNext = true;
-                    } else if (videoNext) {
-                        pos = line.indexOf(prefix);
-                        if (pos < 0) {
-                            continue;
-                        }
-                        name = line.substring(pos + prefixlen);
-                        pos = name.indexOf("\"");
-                        if (pos < 0) {
-                            continue;
-                        }
-                        name = name.substring(0, pos);
-//                        videoDevices.add(name);
-                    } else if (audioNext) {
-                        pos = line.indexOf(prefix);
-                        if (pos < 0) {
-                            continue;
-                        }
-                        name = line.substring(pos + prefixlen);
-                        pos = name.indexOf("\"");
-                        if (pos < 0) {
-                            continue;
-                        }
-                        name = name.substring(0, pos);
-                        audioDevices.add(name);
-                    }
+                    s.append(line).append("\n");
                 }
             }
             process.waitFor();
+            return s.toString();
 
         } catch (Exception e) {
             MyBoxLog.error(e);
+            return null;
         }
     }
 
@@ -311,6 +344,46 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
         try {
             if (executable == null) {
                 return;
+            }
+            String s = queryDevicesWin();
+            if (s == null || s.isBlank()) {
+                return;
+            }
+            String[] lines = s.split("\n");
+            boolean videoNext = false, audioNext = false;
+            for (String line : lines) {
+                ffmpegController.showLogs(line);
+                if (line.contains("AVFoundation video devices")) {
+                    videoNext = true;
+                    audioNext = false;
+                } else if (videoNext) {
+                    int pos1 = line.indexOf("] [");
+                    if (pos1 < 0) {
+                        continue;
+                    }
+                    String name = line.substring(pos1 + 2);
+                    videoDevices.add(name);
+                } else if (line.contains("AVFoundation audio devices")) {
+                    videoNext = false;
+                    audioNext = true;
+                } else if (audioNext) {
+                    int pos1 = line.indexOf("] [");
+                    if (pos1 < 0) {
+                        continue;
+                    }
+                    String name = line.substring(pos1 + 2);
+                    audioDevices.add(name);
+                }
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    protected String queryDevicesMac() {
+        try {
+            if (executable == null) {
+                return null;
             }
             // ffmpeg -f avfoundation -list_devices true -i ""
             List<String> command = new ArrayList<>();
@@ -323,40 +396,20 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
             command.add("-i");
             command.add("\"\"");
             showCmd(command);
+            StringBuilder s = new StringBuilder();
             ProcessBuilder pb = new ProcessBuilder(command).redirectErrorStream(true);
             final Process process = pb.start();
             try (BufferedReader inReader = process.inputReader(Charset.defaultCharset())) {
                 String line;
-                boolean videoNext = false, audioNext = false;
                 while ((line = inReader.readLine()) != null) {
-                    ffmpegController.showLogs(line);
-                    if (line.contains("AVFoundation video devices")) {
-                        videoNext = true;
-                        audioNext = false;
-                    } else if (videoNext) {
-                        int pos1 = line.indexOf("] [");
-                        if (pos1 < 0) {
-                            continue;
-                        }
-                        String name = line.substring(pos1 + 2);
-                        videoDevices.add(name);
-                    } else if (line.contains("AVFoundation audio devices")) {
-                        videoNext = false;
-                        audioNext = true;
-                    } else if (audioNext) {
-                        int pos1 = line.indexOf("] [");
-                        if (pos1 < 0) {
-                            continue;
-                        }
-                        String name = line.substring(pos1 + 2);
-                        audioDevices.add(name);
-                    }
+                    s.append(line).append("\n");
                 }
             }
             process.waitFor();
-
+            return s.toString();
         } catch (Exception e) {
             MyBoxLog.error(e);
+            return null;
         }
     }
 
@@ -502,6 +555,29 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
         delayController.select(5);
         durationController.select(-1);
 
+    }
+
+    @FXML
+    public void queryDevice() {
+        try {
+            String s = null;
+            switch (os) {
+                case "win":
+                    s = queryDevicesWin();
+                    break;
+                case "linux":
+                    break;
+                case "mac":
+                    s = queryDevicesMac();
+                    break;
+            }
+            if (s == null || s.isBlank()) {
+                popError(message("Failed"));
+            }
+            TextPopController.loadText(s);
+        } catch (Exception e) {
+            MyBoxLog.console(e);
+        }
     }
 
     @Override

@@ -49,7 +49,7 @@ public class Data2DPasteContentInSystemClipboardController extends BaseBranchCon
     }
 
     @FXML
-    public void editAction() {
+    public void dataManufacture() {
         boardController.editAction();
     }
 

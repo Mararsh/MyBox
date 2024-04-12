@@ -123,7 +123,16 @@ License:    Apache License Version 2.0
                         <HBox alignment="CENTER_LEFT" spacing="5.0">
                            <children>
                               <Label fx:id="audioComments1" minHeight="-Infinity" text="%VideoDevice" wrapText="true" />
-                              <ComboBox fx:id="videoDeviceSelector" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                              <ComboBox fx:id="videoDeviceSelector" editable="true" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                              <Button fx:id="queryVideoDeviceButton" mnemonicParsing="false" onAction="#queryDevice">
+                                 <graphic>
+                                    <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconQuery.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
                            </children>
                         </HBox>
                                 <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="75.0" spacing="10.0">
@@ -230,7 +239,16 @@ License:    Apache License Version 2.0
                         <HBox alignment="CENTER_LEFT" spacing="5.0">
                            <children>
                                       <Label fx:id="audioComments" minHeight="-Infinity" text="%AudioDevice" wrapText="true" />
-                              <ComboBox fx:id="audioDeviceSelector" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                              <ComboBox fx:id="audioDeviceSelector" editable="true" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                              <Button fx:id="queryAudioDeviceButton" mnemonicParsing="false" onAction="#queryDevice">
+                                 <graphic>
+                                    <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconQuery.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
                            </children>
                         </HBox>
                                 <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="75.0" spacing="5.0">

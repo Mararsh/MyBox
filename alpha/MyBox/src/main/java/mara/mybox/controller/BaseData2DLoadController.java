@@ -603,10 +603,6 @@ public class BaseData2DLoadController extends BaseData2DTableController {
     @FXML
     @Override
     public void selectAction() {
-        if (!isValidPageData()) {
-            popError(message("InvalidData"));
-            return;
-        }
         Data2DSelectController.open(this);
     }
 

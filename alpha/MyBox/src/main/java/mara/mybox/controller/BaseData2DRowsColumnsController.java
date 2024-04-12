@@ -22,7 +22,6 @@ public class BaseData2DRowsColumnsController extends BaseData2DSourceRowsControl
     protected List<Integer> checkedColsIndices;
     protected List<String> checkedColsNames;
     protected List<Data2DColumn> checkedColumns;
-    protected ChangeListener<Boolean> tableLoadListener, tableStatusListener;
 
     public void setParameters(BaseController parent) {
         try {
@@ -30,16 +29,22 @@ public class BaseData2DRowsColumnsController extends BaseData2DSourceRowsControl
                 return;
             }
             this.parentController = parent;
-            loadedNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    filterController.setData2D(data2D);
-                    refreshControls();
-                }
-            });
 
             filterController.setParameters(this);
 
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    @Override
+    public void updateStatus() {
+        try {
+            super.updateStatus();
+            if (filterController != null) {
+                filterController.setData2D(data2D);
+            }
+            refreshControls();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

@@ -83,6 +83,9 @@ public class BaseData2DSourceRowsController extends BaseData2DLoadController {
                     notifySelected();
                 }
             });
+            if (filterController != null) {
+                filterController.setParameters(this);
+            }
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -176,7 +179,9 @@ public class BaseData2DSourceRowsController extends BaseData2DLoadController {
         try {
             selectedRowsIndices = new ArrayList<>();
             DataFilter filter = data2D.filter;
-            filter.start(null, data2D);
+            if (filter != null) {
+                filter.start(null, data2D);
+            }
             List<Integer> selected = tableView.getSelectionModel().getSelectedIndices();
             if (allPagesRadio.isSelected() || currentPageRadio.isSelected()
                     || selected == null || selected.isEmpty()) {

@@ -146,7 +146,6 @@ public class Data2DSpliceController extends BaseTaskController {
                 error = message("InvalidData") + ": " + message("DataB");
                 return false;
             }
-
             if (horizontalRadio.isSelected()) {
                 spliceHorizontally(currentTask, csvA, csvB, writer);
             } else {

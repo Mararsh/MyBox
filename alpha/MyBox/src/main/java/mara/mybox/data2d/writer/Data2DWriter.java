@@ -61,7 +61,7 @@ public abstract class Data2DWriter {
     }
 
     public boolean checkParameters() {
-        if (invalidAs == null) {
+        if (invalidAs == null && operate != null) {
             invalidAs = operate.getInvalidAs();
         }
         return true;

@@ -664,6 +664,9 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
 
     @FXML
     public void dataManufacture() {
+        if (data2D == null) {
+            return;
+        }
         Data2DManufactureController.openDef(data2D);
     }
 
