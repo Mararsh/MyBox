@@ -14,6 +14,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuBar;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
@@ -222,6 +223,14 @@ public abstract class BaseController_Attributes {
             return ((Popup) myWindow).getOwnerWindow();
         } else {
             return getMyStage();
+        }
+    }
+
+    public MenuBar getMainMenu() {
+        if (mainMenuController != null) {
+            return mainMenuController.menuBar;
+        } else {
+            return null;
         }
     }
 

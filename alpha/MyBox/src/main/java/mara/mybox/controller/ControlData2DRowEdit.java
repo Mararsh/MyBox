@@ -48,88 +48,88 @@ import mara.mybox.value.UserConfig;
  * @License Apache License Version 2.0
  */
 public class ControlData2DRowEdit extends BaseController {
-
+    
     protected BaseData2DLoadController editController;
     protected int rowIndex;
     protected Map<Data2DColumn, Object> inputs;
     protected TableColor tableColor;
-
+    
     @FXML
     protected VBox valuesBox;
     @FXML
     protected TextField indexInput;
     @FXML
     protected Button locationButton;
-
+    
     public void setParameters(BaseData2DLoadController editController) {
         try {
             this.editController = editController;
             rowIndex = -1;
-
+            
             makeInputs();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
-
+    
     public void setParameters(BaseData2DLoadController editController, int index) {
         try {
             this.editController = editController;
             rowIndex = index;
-
+            
             makeInputs();
             loadRow(index);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
-
+    
     public void makeInputs() {
         try {
             if (editController == null || editController.data2D == null) {
                 return;
             }
             locationButton.setVisible(editController.data2D.includeCoordinate());
-
+            
             valuesBox.getChildren().clear();
             inputs = new HashMap<>();
             List<Data2DColumn> columns = editController.data2D.getColumns();
-
+            
             for (int i = 0; i < columns.size(); i++) {
                 Data2DColumn column = columns.get(i);
                 ColumnType type = column.getType();
                 if (column.isEnumType()) {
                     makeEnumInput(column);
-
+                    
                 } else if (type == ColumnType.Boolean) {
                     makeBooleanInput(column);
-
+                    
                 } else if (type == ColumnType.Color) {
                     makeColorInput(column);
-
+                    
                 } else if (column.isNumberType()
                         || type == ColumnType.Longitude || type == ColumnType.Latitude) {
                     makeTextField(column);
-
+                    
                 } else if (column.isTimeType()) {
                     makeDateInput(column);
-
+                    
                 } else if (editController.data2D.supportMultipleLine()) {
                     makeTextArea(column);
-
+                    
                 } else {
                     makeTextField(column);
-
+                    
                 }
             }
-
+            
             thisPane.requestFocus();
-
+            
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
-
+    
     public void makeTextField(Data2DColumn column) {
         try {
             HBox line = makeTextField(column.getColumnName(), column.isEditable());
@@ -139,30 +139,30 @@ public class ControlData2DRowEdit extends BaseController {
             MyBoxLog.error(e);
         }
     }
-
+    
     public HBox makeTextField(String name, boolean editable) {
         try {
             HBox line = makeLineBox(name);
-
+            
             TextField input = new TextField();
             input.setMaxWidth(Double.MAX_VALUE);
             HBox.setHgrow(input, Priority.ALWAYS);
             input.setDisable(!editable);
             line.getChildren().add(input);
-
+            
             return line;
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;
         }
     }
-
+    
     public void makeTextArea(Data2DColumn column) {
         try {
             Label label = new Label(column.getColumnName());
             label.setWrapText(true);
             valuesBox.getChildren().add(label);
-
+            
             TextArea input = new TextArea();
             input.setPrefHeight(60);
             input.setMinHeight(60);
@@ -175,35 +175,35 @@ public class ControlData2DRowEdit extends BaseController {
             MyBoxLog.error(e);
         }
     }
-
+    
     public void makeBooleanInput(Data2DColumn column) {
         try {
             HBox line = makeLineBox(column.getColumnName());
-
+            
             RadioButton trueButton = new RadioButton(message("true"));
             RadioButton falseButton = new RadioButton(message("false"));
             ToggleGroup group = new ToggleGroup();
             group.getToggles().addAll(trueButton, falseButton);
             line.getChildren().addAll(trueButton, falseButton);
-
+            
             trueButton.setDisable(!column.isEditable());
             falseButton.setDisable(!column.isEditable());
-
+            
             falseButton.setSelected(true);
-
+            
             inputs.put(column, group);
-
+            
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
-
+    
     public void makeDateInput(Data2DColumn column) {
         try {
             HBox line = makeTextField(column.getColumnName(), column.isEditable());
             TextField input = (TextField) line.getChildren().get(1);
             inputs.put(column, input);
-
+            
             if (column.isEditable()) {
                 Button dateButton = new Button();
                 dateButton.setGraphic(StyleTools.getIconImageView("iconExamples.png"));
@@ -226,16 +226,16 @@ public class ControlData2DRowEdit extends BaseController {
                 });
                 line.getChildren().add(dateButton);
             }
-
+            
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
-
+    
     public void makeColorInput(Data2DColumn column) {
         try {
             HBox line = makeLineBox(column.getColumnName());
-
+            
             Rectangle rectangle = new Rectangle(30, 20);
             Color color = Color.web(UserConfig.getString(baseName, FxColorTools.color2rgba(Color.WHITE)));
             if (tableColor == null) {
@@ -256,7 +256,7 @@ public class ControlData2DRowEdit extends BaseController {
             });
             line.getChildren().add(rectangle);
             inputs.put(column, rectangle);
-
+            
             if (column.isEditable()) {
                 Button paletteButton = new Button();
                 paletteButton.setGraphic(StyleTools.getIconImageView("iconPalette.png"));
@@ -270,7 +270,7 @@ public class ControlData2DRowEdit extends BaseController {
                             Pane pane = fxmlLoader.load();
                             ColorPalettePopupController controller = (ColorPalettePopupController) fxmlLoader.getController();
                             controller.load(myController, rectangle);
-
+                            
                             popup = makePopup();
                             popup.getContent().add(pane);
                             LocateTools.locateCenter(paletteButton, popup);
@@ -281,27 +281,28 @@ public class ControlData2DRowEdit extends BaseController {
                 });
                 line.getChildren().add(paletteButton);
             }
-
+            
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
-
+    
     public void makeEnumInput(Data2DColumn column) {
         try {
             HBox line = makeLineBox(column.getColumnName());
-
+            
             ComboBox<String> selector = new ComboBox<>();
             selector.getItems().addAll(column.enumValues());
+            selector.setEditable(column.getType() == ColumnType.EnumerationEditable);
             line.getChildren().add(selector);
-
+            
             inputs.put(column, selector);
-
+            
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
-
+    
     public HBox makeLineBox(String name) {
         try {
             HBox line = new HBox();
@@ -310,18 +311,18 @@ public class ControlData2DRowEdit extends BaseController {
             line.setSpacing(5);
             HBox.setHgrow(line, Priority.ALWAYS);
             valuesBox.getChildren().add(line);
-
+            
             Label label = new Label(name);
             label.setWrapText(true);
             line.getChildren().addAll(label);
-
+            
             return line;
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;
         }
     }
-
+    
     public void loadRow(int index) {
         try {
             List<String> row = editController.tableData.get(index);
@@ -337,13 +338,13 @@ public class ControlData2DRowEdit extends BaseController {
                 String value = row.get(i + 1);
                 if (input instanceof TextField) {
                     ((TextField) input).setText(value);
-
+                    
                 } else if (input instanceof TextArea) {
                     ((TextArea) input).setText(value);
-
+                    
                 } else if (input instanceof ComboBox) {
                     ((ComboBox) input).setValue(value);
-
+                    
                 } else if (input instanceof ToggleGroup) {
                     try {
                         if (StringTools.isTrue(value)) {
@@ -353,7 +354,7 @@ public class ControlData2DRowEdit extends BaseController {
                         }
                     } catch (Exception e) {
                     }
-
+                    
                 } else if (input instanceof Rectangle) {
                     try {
                         Color color = Color.web(value);
@@ -361,14 +362,14 @@ public class ControlData2DRowEdit extends BaseController {
                         rect.setFill(color);
                     } catch (Exception e) {
                     }
-
+                    
                 }
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
-
+    
     public List<String> pickValues(boolean checkValid) {
         try {
             List<String> row = new ArrayList<>();
@@ -380,13 +381,13 @@ public class ControlData2DRowEdit extends BaseController {
                 String value = null;
                 if (input instanceof TextField) {
                     value = ((TextField) input).getText();
-
+                    
                 } else if (input instanceof TextArea) {
                     value = ((TextArea) input).getText();
-
+                    
                 } else if (input instanceof ComboBox) {
                     value = ((ComboBox<String>) input).getValue();
-
+                    
                 } else if (input instanceof ToggleGroup) {
                     try {
                         if (((RadioButton) ((ToggleGroup) input).getToggles().get(0)).isSelected()) {
@@ -396,13 +397,13 @@ public class ControlData2DRowEdit extends BaseController {
                         }
                     } catch (Exception e) {
                     }
-
+                    
                 } else if (input instanceof Rectangle) {
                     try {
                         value = ((Color) ((Rectangle) input).getFill()).toString();
                     } catch (Exception e) {
                     }
-
+                    
                 }
                 if (checkValid) {
                     if (column.isAuto()
@@ -422,10 +423,10 @@ public class ControlData2DRowEdit extends BaseController {
             return null;
         }
     }
-
+    
     @FXML
     public void locationAction() {
         Data2DCoordinatePickerController.open(this);
     }
-
+    
 }

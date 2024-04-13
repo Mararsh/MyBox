@@ -13,6 +13,8 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Callback;
+import mara.mybox.fxml.style.NodeStyleTools;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -20,16 +22,17 @@ import javafx.util.Callback;
  * @License Apache License Version 2.0
  */
 public class TableComboBoxCell<S, T> extends ComboBoxTableCell<S, T> {
-    
+
     protected int maxVisibleCount;
-    
-    public TableComboBoxCell(ObservableList<T> items, int maxCount) {
+
+    public TableComboBoxCell(ObservableList<T> items, int maxCount, boolean editable) {
         super(items);
+        setComboBoxEditable(editable);
         maxVisibleCount = maxCount;
         if (maxVisibleCount <= 0) {
             maxVisibleCount = 10;
         }
-        
+
         setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
@@ -43,7 +46,7 @@ public class TableComboBoxCell<S, T> extends ComboBoxTableCell<S, T> {
             }
         });
     }
-    
+
     @Override
     public void startEdit() {
         super.startEdit();
@@ -52,9 +55,12 @@ public class TableComboBoxCell<S, T> extends ComboBoxTableCell<S, T> {
             ComboBox cb = (ComboBox) g;
             cb.setVisibleRowCount(maxVisibleCount);
             cb.setValue(getItem());
+            if (isComboBoxEditable()) {
+                NodeStyleTools.setTooltip(cb.getEditor(), message("EditCellComments"));
+            }
         }
     }
-    
+
     public int rowIndex() {
         try {
             TableRow row = getTableRow();
@@ -71,8 +77,8 @@ public class TableComboBoxCell<S, T> extends ComboBoxTableCell<S, T> {
             return -3;
         }
     }
-    
-    public static <S, T> Callback<TableColumn<S, T>, TableCell<S, T>> create(List<T> items, int maxVisibleCount) {
+
+    public static <S, T> Callback<TableColumn<S, T>, TableCell<S, T>> create(List<T> items, int maxVisibleCount, boolean editable) {
         return new Callback<TableColumn<S, T>, TableCell<S, T>>() {
             @Override
             public TableCell<S, T> call(TableColumn<S, T> param) {
@@ -80,9 +86,9 @@ public class TableComboBoxCell<S, T> extends ComboBoxTableCell<S, T> {
                 for (T item : items) {
                     olist.add(item);
                 }
-                return new TableComboBoxCell<>(olist, maxVisibleCount);
+                return new TableComboBoxCell<>(olist, maxVisibleCount, editable);
             }
         };
     }
-    
+
 }

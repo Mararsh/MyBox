@@ -52,7 +52,7 @@ public class ColumnDefinition extends BaseData {
     final public static InvalidAs DefaultInvalidAs = InvalidAs.Keep;
 
     public static enum ColumnType {
-        String, Boolean, Enumeration,
+        String, Boolean, Enumeration, EnumerationEditable,
         Color, // rgba
         File, Image, // string of the path
         Double, Float, Long, Integer, Short,
@@ -227,6 +227,7 @@ public class ColumnDefinition extends BaseData {
             switch (type) {
                 case String:
                 case Enumeration:
+                case EnumerationEditable:
                 case File:
                 case Image:
                     return length <= 0 || value.length() <= length;
@@ -357,7 +358,7 @@ public class ColumnDefinition extends BaseData {
     }
 
     public boolean isEnumType() {
-        return type == ColumnType.Enumeration;
+        return type == ColumnType.Enumeration || type == ColumnType.EnumerationEditable;
     }
 
     public List<String> enumValues() {
@@ -434,6 +435,7 @@ public class ColumnDefinition extends BaseData {
             switch (type) {
                 case String:
                 case Enumeration:
+                case EnumerationEditable:
                 case Color:
                 case File:
                 case Image:
@@ -610,6 +612,7 @@ public class ColumnDefinition extends BaseData {
                     }
                 }
                 case Enumeration:
+                case EnumerationEditable:
                 case Longitude:
                 case Latitude:
                     return s;
@@ -631,6 +634,7 @@ public class ColumnDefinition extends BaseData {
             case Date:
             case Era:
             case Enumeration:
+            case EnumerationEditable:
                 return string;
             default:
                 toString(fromString(string, invalidAs));
@@ -651,6 +655,7 @@ public class ColumnDefinition extends BaseData {
         switch (type) {
             case String:
             case Enumeration:
+            case EnumerationEditable:
             case File:
             case Image:
             case Color:
@@ -701,6 +706,7 @@ public class ColumnDefinition extends BaseData {
         switch (type) {
             case String:
             case Enumeration:
+            case EnumerationEditable:
             case File:
             case Image:
             case Color:
@@ -825,7 +831,8 @@ public class ColumnDefinition extends BaseData {
         List<ColumnType> types = new ArrayList<>();
         types.addAll(Arrays.asList(ColumnType.String, ColumnType.Boolean,
                 ColumnType.Double, ColumnType.Float, ColumnType.Long, ColumnType.Integer, ColumnType.Short,
-                ColumnType.Datetime, ColumnType.Date, ColumnType.Enumeration));
+                ColumnType.Datetime, ColumnType.Date,
+                ColumnType.Enumeration, ColumnType.EnumerationEditable));
         return types;
     }
 
@@ -899,8 +906,11 @@ public class ColumnDefinition extends BaseData {
     }
 
     public static boolean isDBStringType(ColumnType type) {
-        return type == ColumnType.String || type == ColumnType.File
-                || type == ColumnType.Image || type == ColumnType.Enumeration
+        return type == ColumnType.String
+                || type == ColumnType.File
+                || type == ColumnType.Image
+                || type == ColumnType.Enumeration
+                || type == ColumnType.EnumerationEditable
                 || type == ColumnType.Color;
     }
 

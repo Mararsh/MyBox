@@ -23,7 +23,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-9-4
  * @License Apache License Version 2.0
  */
-public class TableAddRowsController extends BaseChildController {
+public class TableAddRowsController extends BaseBranchController {
 
     protected BaseTablePagesController tableViewController;
     protected int number;

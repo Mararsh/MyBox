@@ -55,8 +55,9 @@ public class ControlData2DColumnEdit extends BaseChildController {
     protected ToggleGroup typeGroup;
     @FXML
     protected RadioButton stringRadio, doubleRadio, floatRadio, longRadio, intRadio, shortRadio, booleanRadio,
-            datetimeRadio, dateRadio, eraRadio, longitudeRadio, latitudeRadio, enumRadio, colorRadio, clobRadio,
-            skipNonnumericRadio, zeroNonnumericRadio, emptyNonnumericRadio, nullNonnumericRadio, keepNonnumericRadio;
+            datetimeRadio, dateRadio, eraRadio, longitudeRadio, latitudeRadio, enumRadio, enumEditableRadio,
+            colorRadio, clobRadio, skipNonnumericRadio, zeroNonnumericRadio, emptyNonnumericRadio,
+            nullNonnumericRadio, keepNonnumericRadio;
     @FXML
     protected CheckBox notNullCheck, editableCheck, fixYearCheck;
     @FXML
@@ -138,7 +139,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
             fixYearCheck.setSelected(false);
             keepNonnumericRadio.setSelected(true);
 
-            if (enumRadio.isSelected()) {
+            if (enumRadio.isSelected() || enumEditableRadio.isSelected()) {
                 optionsBox.getChildren().add(enumBox);
 
             } else if (datetimeRadio.isSelected()) {
@@ -231,6 +232,9 @@ public class ControlData2DColumnEdit extends BaseChildController {
                 case Enumeration:
                     enumRadio.setSelected(true);
                     break;
+                case EnumerationEditable:
+                    enumEditableRadio.setSelected(true);
+                    break;
                 case Longitude:
                     longitudeRadio.setSelected(true);
                     break;
@@ -259,7 +263,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
             enumInput.clear();
             String format = column.getFormat();
             if (format != null) {
-                if (enumRadio.isSelected()) {
+                if (enumRadio.isSelected() || enumEditableRadio.isSelected()) {
                     enumInput.setText(format);
 
                 } else if (datetimeRadio.isSelected() || dateRadio.isSelected() || eraRadio.isSelected()) {
@@ -371,7 +375,8 @@ public class ControlData2DColumnEdit extends BaseChildController {
             }
 
             String enumString = enumInput.getText();
-            if (enumRadio.isSelected() && (enumString == null || enumString.isBlank())) {
+            if (enumRadio.isSelected()
+                    && (enumString == null || enumString.isBlank())) {
                 popError(message("InvalidParameter") + ": " + message("EnumerateValues"));
                 return null;
             }
@@ -430,8 +435,9 @@ public class ControlData2DColumnEdit extends BaseChildController {
             } else if (eraRadio.isSelected()) {
                 column.setType(ColumnType.Era).setFormat(format);
             } else if (enumRadio.isSelected()) {
-                column.setType(ColumnType.Enumeration)
-                        .setFormat(enumString);
+                column.setType(ColumnType.Enumeration).setFormat(enumString);
+            } else if (enumEditableRadio.isSelected()) {
+                column.setType(ColumnType.EnumerationEditable).setFormat(enumString);
             } else if (longitudeRadio.isSelected()) {
                 column.setType(ColumnType.Longitude).setFormat(null);
             } else if (latitudeRadio.isSelected()) {

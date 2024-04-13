@@ -15,6 +15,8 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import mara.mybox.controller.BaseData2DLoadController;
+import mara.mybox.data.FunctionsList;
+import mara.mybox.data.StringTable;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataFileText;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
@@ -24,7 +26,9 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.style.StyleTools;
+import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileDeleteTools;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -78,7 +82,7 @@ public class Data2DExampleTools {
 
             MenuItem menu = new MenuItem(message("Notes"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.Notes();
+                DataFileCSV data = Notes();
                 if (makeExampleFile("MyData_notes_" + fileLang, data)) {
                     controller.loadDef(data);
                 }
@@ -87,7 +91,7 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("Contacts"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.Contacts();
+                DataFileCSV data = Contacts();
                 if (makeExampleFile("MyData_contacts_" + fileLang, data)) {
                     controller.loadDef(data);
                 }
@@ -96,7 +100,7 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("CashFlow"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.CashFlow();
+                DataFileCSV data = CashFlow();
                 if (makeExampleFile("MyData_cashflow_" + fileLang, data)) {
                     controller.loadDef(data);
                 }
@@ -105,7 +109,7 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("PrivateProperty"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.PrivateProperty();
+                DataFileCSV data = PrivateProperty();
                 if (makeExampleFile("MyData_property_" + fileLang, data)) {
                     controller.loadDef(data);
                 }
@@ -116,7 +120,7 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("Eyesight"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.Eyesight(isChinese);
+                DataFileCSV data = Eyesight(isChinese);
                 if (makeExampleFile("MyData_eyesight", data)) {
                     controller.loadDef(data);
                 }
@@ -125,7 +129,7 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("Weight"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.Weight();
+                DataFileCSV data = Weight();
                 if (makeExampleFile("MyData_weight", data)) {
                     controller.loadDef(data);
                 }
@@ -134,7 +138,7 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("Height"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.Height();
+                DataFileCSV data = Height();
                 if (makeExampleFile("MyData_height", data)) {
                     controller.loadDef(data);
                 }
@@ -143,7 +147,7 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("Menstruation"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.Menstruation(isChinese);
+                DataFileCSV data = Menstruation(isChinese);
                 if (makeExampleFile("MyData_menstruation", data)) {
                     controller.loadDef(data);
                 }
@@ -164,7 +168,7 @@ public class Data2DExampleTools {
 
             MenuItem menu = new MenuItem(message("ChinaPopulation"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.ChinaPopulation(isChinese);
+                DataFileCSV data = ChinaPopulation(isChinese);
                 if (makeExampleFile("ChinaPopulation", data)) {
                     controller.loadDef(data);
                 }
@@ -173,7 +177,7 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("ChinaCensus"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.ChinaCensus(isChinese);
+                DataFileCSV data = ChinaCensus(isChinese);
                 if (makeExampleFile("ChinaCensus", data)) {
                     controller.loadDef(data);
                 }
@@ -182,7 +186,7 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("ChinaGDP"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.ChinaGDP(isChinese);
+                DataFileCSV data = ChinaGDP(isChinese);
                 if (makeExampleFile("ChinaGDP", data)) {
                     controller.loadDef(data);
                 }
@@ -191,7 +195,7 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("ChinaCPI"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.ChinaCPI(isChinese);
+                DataFileCSV data = ChinaCPI(isChinese);
                 if (makeExampleFile("ChinaCPI", data)) {
                     controller.loadDef(data);
                 }
@@ -200,7 +204,7 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("ChinaFoodConsumption"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.ChinaFoodConsumption(isChinese);
+                DataFileCSV data = ChinaFoodConsumption(isChinese);
                 if (makeExampleFile("ChinaFoods_" + fileLang, data)) {
                     controller.loadDef(data);
                 }
@@ -209,7 +213,7 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("ChinaGraduates"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.ChinaGraduates(isChinese);
+                DataFileCSV data = ChinaGraduates(isChinese);
                 if (makeExampleFile("ChinaGraduates", data)) {
                     controller.loadDef(data);
                 }
@@ -218,7 +222,7 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("ChinaMuseums"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.ChinaMuseums(isChinese);
+                DataFileCSV data = ChinaMuseums(isChinese);
                 if (makeExampleFile("ChinaMuseums", data)) {
                     controller.loadDef(data);
                 }
@@ -227,7 +231,7 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("ChinaHealthPersonnel"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.ChinaHealthPersonnel(isChinese);
+                DataFileCSV data = ChinaHealthPersonnel(isChinese);
                 if (makeExampleFile("ChinaHealthPersonnel", data)) {
                     controller.loadDef(data);
                 }
@@ -236,7 +240,7 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("ChinaMarriage"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.ChinaMarriage(isChinese);
+                DataFileCSV data = ChinaMarriage(isChinese);
                 if (makeExampleFile("ChinaMarriage", data)) {
                     controller.loadDef(data);
                 }
@@ -245,7 +249,7 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("ChinaSportWorldChampions"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.ChinaSportWorldChampions(isChinese);
+                DataFileCSV data = ChinaSportWorldChampions(isChinese);
                 if (makeExampleFile("ChinaSportWorldChampions", data)) {
                     controller.loadDef(data);
                 }
@@ -254,7 +258,7 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("CrimesFiledByChinaPolice"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.CrimesFiledByChinaPolice(isChinese);
+                DataFileCSV data = CrimesFiledByChinaPolice(isChinese);
                 if (makeExampleFile("CrimesFiledByChinaPolice", data)) {
                     controller.loadDef(data);
                 }
@@ -263,7 +267,7 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("CrimesFiledByChinaProcuratorate"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.CrimesFiledByChinaProcuratorate(isChinese);
+                DataFileCSV data = CrimesFiledByChinaProcuratorate(isChinese);
                 if (makeExampleFile("ChinaCrimesFiledByProcuratorate", data)) {
                     controller.loadDef(data);
                 }
@@ -292,7 +296,7 @@ public class Data2DExampleTools {
 
             MenuItem menu = new MenuItem(message("IncomeHappiness"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.IncomeHappiness(isChinese);
+                DataFileCSV data = IncomeHappiness(isChinese);
                 if (makeExampleFile("DataAnalyse_IncomeHappiness", data)) {
                     controller.loadDef(data);
                 }
@@ -301,7 +305,7 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("ExperienceSalary"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.ExperienceSalary(isChinese);
+                DataFileCSV data = ExperienceSalary(isChinese);
                 if (makeExampleFile("DataAnalyse_ExperienceSalary", data)) {
                     controller.loadDef(data);
                 }
@@ -310,7 +314,7 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("IrisSpecies"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.IrisSpecies(isChinese);
+                DataFileCSV data = IrisSpecies(isChinese);
                 if (makeExampleFile("DataAnalyse_IrisSpecies", data)) {
                     controller.loadDef(data);
                 }
@@ -319,7 +323,7 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("DiabetesPrediction"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.DiabetesPrediction(isChinese);
+                DataFileCSV data = DiabetesPrediction(isChinese);
                 if (makeExampleFile("DataAnalyse_DiabetesPrediction", data)) {
                     controller.loadDef(data);
                 }
@@ -328,7 +332,7 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("DiabetesPredictionStandardized"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.DiabetesPredictionStandardized(isChinese);
+                DataFileCSV data = DiabetesPredictionStandardized(isChinese);
                 if (makeExampleFile("DataAnalyse_DiabetesPrediction_standardized", data)) {
                     controller.loadDef(data);
                 }
@@ -337,7 +341,7 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("HeartFailure"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.HeartFailure(isChinese);
+                DataFileCSV data = HeartFailure(isChinese);
                 if (makeExampleFile("DataAnalyse_HeartFailure", data)) {
                     controller.loadDef(data);
                 }
@@ -346,7 +350,7 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("ConcreteCompressiveStrength"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.ConcreteCompressiveStrength(isChinese);
+                DataFileCSV data = ConcreteCompressiveStrength(isChinese);
                 if (makeExampleFile("DataAnalyse_ConcreteCompressiveStrength", data)) {
                     controller.loadDef(data);
                 }
@@ -355,7 +359,7 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("DogRadiographsDataset"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.DogRadiographsDataset(isChinese);
+                DataFileCSV data = DogRadiographsDataset(isChinese);
                 if (makeExampleFile("DataAnalyse_DogRadiographs", data)) {
                     controller.loadDef(data);
                 }
@@ -364,7 +368,7 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("BaseballSalaries"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.BaseballSalaries(isChinese);
+                DataFileCSV data = BaseballSalaries(isChinese);
                 if (makeExampleFile("DataAnalyse_BaseballSalaries", data)) {
                     controller.loadDef(data);
                 }
@@ -373,7 +377,7 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("SouthGermanCredit"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.SouthGermanCredit(isChinese);
+                DataFileCSV data = SouthGermanCredit(isChinese);
                 if (makeExampleFile("DataAnalyse_SouthGermanCredit", data)) {
                     controller.loadDef(data);
                 }
@@ -382,7 +386,7 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("BostonHousingPrices"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.BostonHousingPrices(isChinese);
+                DataFileCSV data = BostonHousingPrices(isChinese);
                 if (makeExampleFile("DataAnalyse_BostonHousingPrices", data)) {
                     controller.loadDef(data);
                 }
@@ -411,7 +415,7 @@ public class Data2DExampleTools {
 
             MenuItem menu = new MenuItem(message("ChineseHistoricalCapitals"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.ChineseHistoricalCapitals(isChinese);
+                DataFileCSV data = ChineseHistoricalCapitals(isChinese);
                 if (makeExampleFile("Location_ChineseHistoricalCapitals_" + fileLang, data)) {
                     controller.loadDef(data);
                 }
@@ -420,7 +424,7 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("AutumnMovementPatternsOfEuropeanGadwalls"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.AutumnMovementPatternsOfEuropeanGadwalls();
+                DataFileCSV data = AutumnMovementPatternsOfEuropeanGadwalls();
                 if (makeExampleFile("Location_EuropeanGadwalls", data)) {
                     controller.loadDef(data);
                 }
@@ -429,7 +433,7 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("SpermWhalesGulfOfMexico"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.SpermWhalesGulfOfMexico();
+                DataFileCSV data = SpermWhalesGulfOfMexico();
                 if (makeExampleFile("Location_SpermWhales", data)) {
                     controller.loadDef(data);
                 }
@@ -438,7 +442,7 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("EpidemicReportsCOVID19"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.EpidemicReportsCOVID19();
+                DataFileCSV data = EpidemicReportsCOVID19();
                 if (makeExampleFile("Location_EpidemicReports", data)) {
                     controller.loadDef(data);
                 }
@@ -458,7 +462,7 @@ public class Data2DExampleTools {
 
             MenuItem menu = new MenuItem(message("ProjectRegister"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.ProjectRegister(isChinese);
+                DataFileCSV data = ProjectRegister(isChinese);
                 if (makeExampleFile("PM_ProjectRegister_" + fileLang, data)) {
                     controller.loadDef(data);
                 }
@@ -467,7 +471,7 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("ProjectStatus"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.ProjectStatus(isChinese);
+                DataFileCSV data = ProjectStatus(isChinese);
                 if (makeExampleFile("PM_ProjectStatus_" + fileLang, data)) {
                     controller.loadDef(data);
                 }
@@ -476,7 +480,7 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("TaskRegister"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.TaskRegister(isChinese);
+                DataFileCSV data = TaskRegister(isChinese);
                 if (makeExampleFile("PM_TaskRegister_" + fileLang, data)) {
                     controller.loadDef(data);
                 }
@@ -485,7 +489,7 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("TaskStatus"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.TaskStatus(isChinese);
+                DataFileCSV data = TaskStatus(isChinese);
                 if (makeExampleFile("PM_TaskStatus_" + fileLang, data)) {
                     controller.loadDef(data);
                 }
@@ -494,7 +498,7 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("PersonRegister"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.PersonRegister(isChinese);
+                DataFileCSV data = PersonRegister(isChinese);
                 if (makeExampleFile("PM_PersonRegister_" + fileLang, data)) {
                     controller.loadDef(data);
                 }
@@ -503,7 +507,7 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("PersonStatus"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.PersonStatus(isChinese);
+                DataFileCSV data = PersonStatus(isChinese);
                 if (makeExampleFile("PM_PersonStatus_" + fileLang, data)) {
                     controller.loadDef(data);
                 }
@@ -512,7 +516,7 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("ResourceRegister"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.ResourceRegister(isChinese);
+                DataFileCSV data = ResourceRegister(isChinese);
                 if (makeExampleFile("PM_ResourceRegister_" + fileLang, data)) {
                     controller.loadDef(data);
                 }
@@ -521,7 +525,7 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("ResourceStatus"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.ResourceStatus(isChinese);
+                DataFileCSV data = ResourceStatus(isChinese);
                 if (makeExampleFile("PM_ResourceStatus_" + fileLang, data)) {
                     controller.loadDef(data);
                 }
@@ -530,7 +534,7 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("RiskAnalysis"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.RiskAnalysis(isChinese);
+                DataFileCSV data = RiskAnalysis(isChinese);
                 if (makeExampleFile("PM_RiskAnalysis_" + fileLang, data)) {
                     controller.loadDef(data);
                 }
@@ -539,7 +543,7 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("CostRecord"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.CostRecord(isChinese);
+                DataFileCSV data = CostRecord(isChinese);
                 if (makeExampleFile("PM_CostRecords_" + fileLang, data)) {
                     controller.loadDef(data);
                 }
@@ -548,10 +552,19 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("VerificationRecord"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = Data2DExampleTools.VerificationRecord(isChinese);
+                DataFileCSV data = VerificationRecord(isChinese);
                 if (makeExampleFile("PM_VerifyRecord_" + fileLang, data)) {
                     controller.loadDef(data);
                 }
+            });
+            pmMenu.getItems().add(menu);
+
+            pmMenu.getItems().add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("MyBoxVerificationList"));
+            menu.setOnAction((ActionEvent event) -> {
+                DataFileCSV data = MyBoxVerificationList(controller, isChinese);
+                controller.loadDef(data);
             });
             pmMenu.getItems().add(menu);
 
@@ -1489,6 +1502,103 @@ public class Data2DExampleTools {
         columns.add(new Data2DColumn(isChinese ? "检验时间" : "Verification time", ColumnType.Datetime));
         data.setColumns(columns).setDataName(isChinese ? "检验记录" : "Verify Record");
         return data;
+    }
+
+    public static DataFileCSV MyBoxVerificationList(BaseData2DLoadController controller, boolean isChinese) {
+        try {
+            String lang = isChinese ? "zh" : "en";
+            FunctionsList list = new FunctionsList(controller.getMainMenu(), false, lang);
+            StringTable table = list.make();
+            if (table == null) {
+                return null;
+            }
+            List<String> names = table.getNames();
+            DataFileCSV targetData = new DataFileCSV();
+            List<Data2DColumn> columns = new ArrayList<>();
+            for (String name : names) {
+                columns.add(new Data2DColumn(name, ColumnType.String));
+            }
+//            String defauleValue = message(lang, "NotTested");
+            String defauleValue = "";
+            String format = defauleValue + "\n" + message(lang, "Success") + "\n" + message(lang, "Fail");
+            columns.add(new Data2DColumn(isChinese ? "打开界面" : "Open interface", ColumnType.Enumeration)
+                    .setFormat(format));
+            columns.add(new Data2DColumn(isChinese ? "正常值" : "Normal values", ColumnType.Enumeration)
+                    .setFormat(format));
+            columns.add(new Data2DColumn(isChinese ? "正常操作" : "Normal operations", ColumnType.Enumeration)
+                    .setFormat(format));
+            columns.add(new Data2DColumn(isChinese ? "正常结果" : "Normal results", ColumnType.Enumeration)
+                    .setFormat(format));
+            columns.add(new Data2DColumn(isChinese ? "边界值" : "Boundary values", ColumnType.Enumeration)
+                    .setFormat(format));
+            columns.add(new Data2DColumn(isChinese ? "异常值" : "Abnormal values", ColumnType.Enumeration)
+                    .setFormat(format));
+            columns.add(new Data2DColumn(isChinese ? "异常操作" : "Abnormal operations", ColumnType.Enumeration)
+                    .setFormat(format));
+            columns.add(new Data2DColumn(isChinese ? "异常结果" : "Exception results", ColumnType.Enumeration)
+                    .setFormat(format));
+            columns.add(new Data2DColumn(isChinese ? "提示" : "Tips", ColumnType.Enumeration)
+                    .setFormat(format));
+            columns.add(new Data2DColumn(isChinese ? "按钮" : "Buttons", ColumnType.Enumeration)
+                    .setFormat(format));
+            columns.add(new Data2DColumn(isChinese ? "快捷键" : "Shortcuts", ColumnType.Enumeration)
+                    .setFormat(format));
+            columns.add(new Data2DColumn(isChinese ? "菜单" : "Menu", ColumnType.Enumeration)
+                    .setFormat(format));
+            columns.add(new Data2DColumn(isChinese ? "响应时间" : "Response time", ColumnType.Enumeration)
+                    .setFormat(format));
+            columns.add(new Data2DColumn(isChinese ? "内存占用" : "Memory occupied", ColumnType.Enumeration)
+                    .setFormat(format));
+
+            String dataName = message(lang, "MyBoxVerificationList") + " - " + DateTools.nowString();
+            targetData.setColumns(columns).setDataName(dataName);
+
+            File srcFile = FxFileTools.getInternalFile("/data/examples/" + dataName + ".csv");
+            File targetFile = FileTmpTools.generateFile(dataName, "csv");
+            if (targetFile.exists()) {
+                targetFile.delete();
+            }
+            Charset charset = Charset.forName("utf-8");
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(targetFile, charset, false))) {
+                String header = null;
+                for (Data2DColumn column : columns) {
+                    String name = "\"" + column.getColumnName() + "\"";
+                    if (header == null) {
+                        header = name;
+                    } else {
+                        header += "," + name;
+                    }
+                }
+                String values = "";
+                for (int i = 0; i < columns.size() - table.getNames().size(); i++) {
+                    values += "," + defauleValue;
+                }
+                writer.write(header + System.lineSeparator());
+                String line;
+                for (List<String> row : table.getData()) {
+                    line = null;
+                    for (String v : row) {
+                        if (line != null) {
+                            line += "," + v;
+                        } else {
+                            line = v;
+                        }
+                    }
+                    writer.write(line + values + System.lineSeparator());
+                }
+                writer.flush();
+            } catch (Exception e) {
+                MyBoxLog.error(e);
+                return null;
+            }
+            targetData.setFile(targetFile).setHasHeader(true).setCharset(charset).setDelimiter(",");
+            targetData.saveAttributes();
+            FileDeleteTools.delete(srcFile);
+            return targetData;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
     }
 
 }

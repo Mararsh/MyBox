@@ -459,7 +459,9 @@ public abstract class BaseController_Interface extends BaseController_Files {
             }
 
             if (onTopCheck != null) {
+                isSettingValues = true;
                 onTopCheck.setSelected(myStage.isAlwaysOnTop());
+                isSettingValues = false;
             }
 
         } catch (Exception e) {

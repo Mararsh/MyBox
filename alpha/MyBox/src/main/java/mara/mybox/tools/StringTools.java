@@ -5,6 +5,7 @@ import java.nio.charset.Charset;
 import java.text.Collator;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -543,11 +544,7 @@ public class StringTools {
                 return null;
             }
             List<String> values = new ArrayList<>();
-            for (String v : a) {
-                if (v != null && !v.isBlank()) {
-                    values.add(v);
-                }
-            }
+            values.addAll(Arrays.asList(a));
             if (values.isEmpty()) {
                 return null;
             } else {

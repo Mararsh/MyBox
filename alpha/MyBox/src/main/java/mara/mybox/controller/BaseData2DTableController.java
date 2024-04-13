@@ -272,7 +272,10 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
                 if (tableColumn.isEditable()) {
 
                     if (type == ColumnType.Enumeration) {
-                        tableColumn.setCellFactory(TableComboBoxCell.create(dataColumn.enumValues(), 12));
+                        tableColumn.setCellFactory(TableComboBoxCell.create(dataColumn.enumValues(), 12, false));
+
+                    } else if (type == ColumnType.EnumerationEditable) {
+                        tableColumn.setCellFactory(TableComboBoxCell.create(dataColumn.enumValues(), 12, true));
 
                     } else if (type == ColumnType.Boolean) {
                         tableColumn.setCellFactory(TableDataBooleanEditCell.create(this, dataColumn, colIndex));

@@ -70,7 +70,7 @@ public class FunctionsListController extends ControlWebView {
         try {
             super.afterSceneLoaded();
 
-            FunctionsList list = new FunctionsList(mainMenuController.menuBar, true, Languages.getLangName());
+            FunctionsList list = new FunctionsList(getMainMenu(), true, Languages.getLangName());
             table = list.make();
             map = list.getMap();
             if (table != null) {
@@ -91,7 +91,7 @@ public class FunctionsListController extends ControlWebView {
                 try {
                     path = new File(AppVariables.MyboxDataPath + "/doc/");
 
-                    FunctionsList list = new FunctionsList(mainMenuController.menuBar, true, lang);
+                    FunctionsList list = new FunctionsList(getMainMenu(), true, lang);
                     StringTable table = list.make();
                     File file = new File(path, "mybox_functions_" + lang + ".html");
                     TextFileTools.writeFile(file, table.html());

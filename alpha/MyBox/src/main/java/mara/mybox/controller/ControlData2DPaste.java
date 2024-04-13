@@ -146,6 +146,9 @@ public class ControlData2DPaste extends BaseController {
                     targetController.tableView.refresh();
                     targetController.isSettingValues = false;
                     targetController.tableChanged(true);
+                    if (closeAfterCheck.isSelected()) {
+                        close();
+                    }
                 } catch (Exception e) {
                     MyBoxLog.error(e);
                 }

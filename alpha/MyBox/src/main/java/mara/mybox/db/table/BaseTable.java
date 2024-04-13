@@ -23,6 +23,7 @@ import mara.mybox.db.data.BaseDataAdaptor;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import static mara.mybox.db.data.ColumnDefinition.ColumnType.Clob;
+import static mara.mybox.db.data.ColumnDefinition.ColumnType.Enumeration;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.tools.DateTools;
@@ -127,6 +128,7 @@ public abstract class BaseTable<D> {
                 case File:
                 case Image:
                 case Enumeration:
+                case EnumerationEditable:
                     if (value == null) {
                         if (notNull) {
                             statement.setString(index, (String) column.defaultValue());
@@ -516,6 +518,7 @@ public abstract class BaseTable<D> {
             case File:
             case Image:
             case Enumeration:
+            case EnumerationEditable:
                 def += "VARCHAR(" + column.getLength() + ")";
                 break;
             case Color:

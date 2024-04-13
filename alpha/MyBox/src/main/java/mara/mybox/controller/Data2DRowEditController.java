@@ -13,7 +13,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-9-4
  * @License Apache License Version 2.0
  */
-public class Data2DRowEditController extends BaseChildController {
+public class Data2DRowEditController extends BaseBranchController {
 
     protected Data2DManufactureController dataController;
     protected int index;
