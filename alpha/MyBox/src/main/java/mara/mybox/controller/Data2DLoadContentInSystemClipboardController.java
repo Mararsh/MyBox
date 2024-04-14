@@ -5,7 +5,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -15,14 +15,13 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-11-27
  * @License Apache License Version 2.0
  */
-public class Data2DLoadContentInSystemClipboardController extends BaseChildController {
+public class Data2DLoadContentInSystemClipboardController extends ControlData2DSource {
 
     protected BaseData2DLoadController targetController;
+    protected List<List<String>> data;
 
     @FXML
     protected ControlData2DSystemClipboard boardController;
-    @FXML
-    protected BaseData2DRowsColumnsController sourceController;
 
     public Data2DLoadContentInSystemClipboardController() {
         baseTitle = message("LoadContentInSystemClipboard");
@@ -32,12 +31,13 @@ public class Data2DLoadContentInSystemClipboardController extends BaseChildContr
         try {
             targetController = target;
 
-            sourceController.setParameters(this);
+            initParameters();
+            filterController.setParameters(this);
 
             boardController.loadNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    sourceController.loadDef(boardController.textData);
+                    loadDef(boardController.textData);
                 }
             });
             boardController.load(text);
@@ -47,51 +47,20 @@ public class Data2DLoadContentInSystemClipboardController extends BaseChildContr
         }
     }
 
-    @FXML
     @Override
-    public void okAction() {
-        if (!sourceController.hasData()) {
-            popError(message("NoData"));
-            return;
-        }
-        if (!sourceController.checkSelections()) {
-            popError(message("SelectToHanlde"));
-            return;
-        }
-        if (task != null) {
-            task.cancel();
-        }
-        task = new FxSingletonTask<Void>(this) {
-            List<List<String>> data;
-
-            @Override
-            protected boolean handle() {
-                try {
-                    data = sourceController.selectedData(this);
-                    return data != null && !data.isEmpty();
-                } catch (Exception e) {
-                    error = e.toString();
-                    return false;
-                }
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                try {
-                    targetController.loadData(sourceController.checkedColsNames, data);
-                    close();
-                } catch (Exception e) {
-                    MyBoxLog.error(e);
-                }
-            }
-
-        };
-        start(task);
+    public boolean doTask(FxTask currentTask) {
+        data = selectedData(currentTask);
+        return data != null && !data.isEmpty();
     }
 
-    @FXML
-    public void dataManufacture() {
-        boardController.editAction();
+    @Override
+    public void afterSuccess() {
+        try {
+            targetController.loadData(checkedColsNames, data);
+            close();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
     /*

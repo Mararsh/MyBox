@@ -215,4 +215,33 @@ public class BaseData2DRowsColumnsController extends BaseData2DSourceRowsControl
         return selectedData(task, checkedColsIndices, false);
     }
 
+    /*
+        task
+     */
+    @Override
+    public boolean checkOptions() {
+        try {
+            if (isSettingValues) {
+                return true;
+            }
+            if (!hasData()) {
+                popError(message("NoData"));
+                return false;
+            }
+            if (!checkColumns() || !checkRowsFilter() || !checkedRows()) {
+                return false;
+            }
+            if (!allPagesRadio.isSelected()
+                    && selectedRowsIndices.isEmpty()) {
+                popError(message("SelectToHandle") + ": " + message("Rows"));
+                tabPane.getSelectionModel().select(dataTab);
+                return false;
+            }
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
 }

@@ -14,14 +14,10 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-11-27
  * @License Apache License Version 2.0
  */
-public class Data2DPasteContentInSystemClipboardController extends BaseBranchController {
+public class Data2DPasteContentInSystemClipboardController extends BaseData2DPasteController {
 
     @FXML
     protected ControlData2DSystemClipboard boardController;
-    @FXML
-    protected BaseData2DRowsColumnsController sourceController;
-    @FXML
-    protected ControlData2DPaste pasteController;
 
     public Data2DPasteContentInSystemClipboardController() {
         baseTitle = message("PasteContentInSystemClipboard");
@@ -31,37 +27,24 @@ public class Data2DPasteContentInSystemClipboardController extends BaseBranchCon
         try {
             this.parentController = target;
 
-            sourceController.setParameters(this);
+            setParameters(target);
 
             boardController.loadNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    sourceController.loadDef(boardController.textData);
+                    loadDef(boardController.textData);
                 }
             });
             boardController.load(text);
-
-            pasteController.setParameters(sourceController, target);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
-    @FXML
-    public void dataManufacture() {
-        boardController.editAction();
-    }
-
     @Override
     public boolean keyEventsFilter(KeyEvent event) {
-        if (pasteController.keyEventsFilter(event)) {
-            return true;
-        }
         if (boardController.keyEventsFilter(event)) {
-            return true;
-        }
-        if (sourceController.keyEventsFilter(event)) {
             return true;
         }
         return super.keyEventsFilter(event);

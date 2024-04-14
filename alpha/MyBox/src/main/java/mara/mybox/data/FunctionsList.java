@@ -28,7 +28,7 @@ public class FunctionsList {
     protected boolean withLink;
     protected int index;
     protected StringTable table;
-    protected String goImageFile, lang, parentNumber, thisNumber;
+    protected String goImageFile, lang;
     protected Map<String, MenuItem> map;
 
     public FunctionsList(MenuBar menuBar, boolean withLink, String lang) {
