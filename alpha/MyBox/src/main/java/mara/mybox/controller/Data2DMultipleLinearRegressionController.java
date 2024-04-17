@@ -126,6 +126,9 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DRegressi
 
             @Override
             protected void whenSucceeded() {
+                writeRegressionData();
+                writeModel();
+                rightPane.setDisable(false);
             }
 
             @Override
@@ -148,13 +151,7 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DRegressi
             @Override
             protected void finalAction() {
                 super.finalAction();
-                data2D.stopTask();
                 closeTask();
-                if (ok) {
-                    writeRegressionData();
-                    writeModel();
-                    rightPane.setDisable(false);
-                }
             }
 
         };

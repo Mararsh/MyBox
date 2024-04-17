@@ -272,19 +272,16 @@ public abstract class BaseData2DChartController extends BaseData2DTaskController
 
             @Override
             protected void whenSucceeded() {
+                outputData();
+                if (rightPane != null) {
+                    rightPane.setDisable(false);
+                }
             }
 
             @Override
             protected void finalAction() {
                 super.finalAction();
-                data2D.stopTask();
                 closeTask();
-                if (ok) {
-                    outputData();
-                    if (rightPane != null) {
-                        rightPane.setDisable(false);
-                    }
-                }
             }
 
         };
@@ -450,20 +447,17 @@ public abstract class BaseData2DChartController extends BaseData2DTaskController
 
             @Override
             protected void whenSucceeded() {
+                loadChartData();
+                playController.play(framesNumber);
+                if (rightPane != null) {
+                    rightPane.setDisable(false);
+                }
             }
 
             @Override
             protected void finalAction() {
                 super.finalAction();
-                data2D.stopTask();
                 closeTask();
-                if (ok) {
-                    loadChartData();
-                    playController.play(framesNumber);
-                    if (rightPane != null) {
-                        rightPane.setDisable(false);
-                    }
-                }
             }
 
         };

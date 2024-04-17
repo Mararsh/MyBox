@@ -149,13 +149,6 @@ public class Data2DExportController extends BaseData2DTaskController {
             protected void finalAction() {
                 super.finalAction();
                 closeTask();
-                data2D.stopTask();
-
-                if (ok) {
-                    if (closeAfterCheck != null && closeAfterCheck.isSelected()) {
-                        close();
-                    }
-                }
             }
 
         };
@@ -184,16 +177,16 @@ public class Data2DExportController extends BaseData2DTaskController {
     @Override
     public void afterTask() {
         try {
+            if (export != null) {
+                export.end();
+                export = null;
+            }
+            data2D.stopTask();
             super.afterTask();
             dataBox.setDisable(false);
             filterVBox.setDisable(false);
             formatVBox.setDisable(false);
             targetVBox.setDisable(false);
-            data2D.stopTask();
-            if (export != null) {
-                export.end();
-                export = null;
-            }
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

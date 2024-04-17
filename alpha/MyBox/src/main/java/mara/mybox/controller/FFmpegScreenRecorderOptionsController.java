@@ -345,7 +345,7 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
             if (executable == null) {
                 return;
             }
-            String s = queryDevicesWin();
+            String s = queryDevicesMac();
             if (s == null || s.isBlank()) {
                 return;
             }
@@ -357,6 +357,7 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
                     videoNext = true;
                     audioNext = false;
                 } else if (videoNext) {
+                    MyBoxLog.console(line);
                     int pos1 = line.indexOf("] [");
                     if (pos1 < 0) {
                         continue;
@@ -761,14 +762,16 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
 
             if (videoCheck.isSelected()) {
                 if (v < 0) {
-                    popError(message("InvalidParameter") + ": " + message("VideoDevice"));
-                    return false;
+//                    popError(message("InvalidParameter") + ": " + message("VideoDevice"));
+//                    return false;                    
+                    v = 0;
                 }
                 parameters.add("-i");
                 if (audioCheck.isSelected()) {
                     if (a < 0) {
-                        popError(message("InvalidParameter") + ": " + message("AudioDevice"));
-                        return false;
+//                        popError(message("InvalidParameter") + ": " + message("AudioDevice"));
+//                        return false;
+                        a = 0;
                     }
                     parameters.add(v + ":" + a);
                 } else {
@@ -776,8 +779,9 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
                 }
             } else {
                 if (a < 0) {
-                    popError(message("InvalidParameter") + ": " + message("AudioDevice"));
-                    return false;
+//                    popError(message("InvalidParameter") + ": " + message("AudioDevice"));
+//                    return false;
+                    a = 0;
                 }
                 if (audioCheck.isSelected()) {
                     parameters.add(":" + a);

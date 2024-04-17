@@ -218,19 +218,16 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
 
             @Override
             protected void whenSucceeded() {
+                chartDataController.loadDef(dataFile);
+                groupDataController.loadDef(group.getTargetData());
+                statisticDataController.loadDef(statistic.getStatisticData());
+                rightPane.setDisable(false);
             }
 
             @Override
             protected void finalAction() {
                 super.finalAction();
-                data2D.stopTask();
                 closeTask();
-                if (ok) {
-                    chartDataController.loadDef(dataFile);
-                    groupDataController.loadDef(group.getTargetData());
-                    statisticDataController.loadDef(statistic.getStatisticData());
-                    rightPane.setDisable(false);
-                }
             }
 
         };

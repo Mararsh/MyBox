@@ -255,21 +255,14 @@ public class Data2DChartXYZController extends BaseData2DTaskController {
 
             @Override
             protected void whenSucceeded() {
+                browse(chartFile);
+                browse(chartFile.getParentFile());
             }
 
             @Override
             protected void finalAction() {
                 super.finalAction();
-                data2D.stopTask();
                 closeTask();
-                if (!ok) {
-                    return;
-                }
-                browse(chartFile);
-                browse(chartFile.getParentFile());
-                if (closeAfterCheck.isSelected()) {
-                    close();
-                }
             }
 
         };

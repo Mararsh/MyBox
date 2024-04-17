@@ -179,25 +179,18 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
 
             @Override
             protected void whenSucceeded() {
+                dataController.data2D.cloneData(data2D);
+                dataController.goPage();
+                dataController.requestMouse();
+                dataController.alertInformation(message("ChangedRowsNumber") + ": " + count);
+                tabPane.getSelectionModel().select(sourceTab);
             }
 
             @Override
             protected void finalAction() {
                 super.finalAction();
-                data2D.stopTask();
-                closeTask();
                 valueController.expressionController.calculator.reset();
-                if (ok) {
-                    dataController.data2D.cloneData(data2D);
-                    dataController.goPage();
-                    dataController.requestMouse();
-                    dataController.alertInformation(message("ChangedRowsNumber") + ": " + count);
-                    if (closeAfterCheck != null && closeAfterCheck.isSelected()) {
-                        close();
-                    } else {
-                        tabPane.getSelectionModel().select(sourceTab);
-                    }
-                }
+                closeTask();
             }
 
         };
@@ -249,11 +242,7 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
         dataController.requestMouse();
         dataController.alertInformation(message("ChangedRowsNumber") + ": "
                 + sourceController.filteredRowsIndices.size());
-        if (closeAfterCheck.isSelected()) {
-            close();
-        } else {
-            tabPane.getSelectionModel().select(sourceTab);
-        }
+        tabPane.getSelectionModel().select(sourceTab);
         return true;
     }
 

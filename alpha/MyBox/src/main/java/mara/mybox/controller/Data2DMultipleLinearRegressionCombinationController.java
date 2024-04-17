@@ -187,17 +187,14 @@ public class Data2DMultipleLinearRegressionCombinationController extends BaseDat
 
             @Override
             protected void whenSucceeded() {
+                resultsController.afterRegression();
+                rightPane.setDisable(false);
             }
 
             @Override
             protected void finalAction() {
                 super.finalAction();
-                data2D.stopTask();
                 closeTask();
-                if (ok) {
-                    resultsController.afterRegression();
-                    rightPane.setDisable(false);
-                }
             }
 
         };

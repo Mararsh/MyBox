@@ -175,6 +175,9 @@ public class BaseTaskController extends BaseLogs {
             updateLogs(message("Completed") + " " + message("Cost")
                     + " " + DateTools.datetimeMsDuration(endTime, startTime), true);
         }
+        if (task != null) {
+            successed = task.isOk();
+        }
         afterTask();
     }
 
@@ -185,6 +188,9 @@ public class BaseTaskController extends BaseLogs {
         }
         if (openCheck != null && openCheck.isSelected()) {
             openTarget();
+        }
+        if (successed && closeAfterCheck != null && closeAfterCheck.isSelected()) {
+            close();
         }
     }
 

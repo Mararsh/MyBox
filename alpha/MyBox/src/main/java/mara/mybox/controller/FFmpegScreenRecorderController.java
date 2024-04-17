@@ -206,7 +206,9 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
                     }
                 }
             }
-            process.waitFor();
+            if (process != null) {
+                process.waitFor();
+            }
             if (process != null) {
                 process.destroy();
                 process = null;
@@ -252,6 +254,15 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
     }
 
     @Override
+    public void afterTask() {
+        super.afterTask();
+        if (process != null) {
+            process.destroy();
+            process = null;
+        }
+    }
+
+    @Override
     public void cancelTask() {
         if (task != null) {
             task.cancel();
@@ -283,7 +294,12 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
     @Override
     public void cleanPane() {
         try {
+            stopping.set(false);
             cancelTask();
+            if (process != null) {
+                process.destroy();
+                process = null;
+            }
         } catch (Exception e) {
         }
         super.cleanPane();

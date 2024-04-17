@@ -102,6 +102,7 @@ public class Data2DDeleteController extends BaseData2DTaskTargetsController {
                     dataController.requestMouse();
                     dataController.alertInformation(message("DeletedRowsNumber") + ": " + filteredRowsIndices.size());
                     sourceController.selectedRowsIndices = null;
+                    tabPane.getSelectionModel().select(sourceTab);
                 } catch (Exception e) {
                     MyBoxLog.error(e);
                 }
@@ -110,15 +111,7 @@ public class Data2DDeleteController extends BaseData2DTaskTargetsController {
             @Override
             protected void finalAction() {
                 super.finalAction();
-                data2D.stopTask();
                 closeTask();
-                if (ok) {
-                    if (closeAfterCheck.isSelected()) {
-                        close();
-                    } else {
-                        tabPane.getSelectionModel().select(sourceTab);
-                    }
-                }
             }
 
         };
@@ -171,7 +164,6 @@ public class Data2DDeleteController extends BaseData2DTaskTargetsController {
             @Override
             protected void finalAction() {
                 super.finalAction();
-                data2D.stopTask();
                 closeTask();
             }
 

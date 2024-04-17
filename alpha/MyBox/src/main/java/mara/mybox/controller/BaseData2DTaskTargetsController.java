@@ -153,20 +153,15 @@ public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskCont
             protected void whenSucceeded() {
                 popDone();
                 writer.showResult();
+                if (targetController != null) {
+                    targetController.refreshControls();
+                }
             }
 
             @Override
             protected void finalAction() {
                 super.finalAction();
-                data2D.stopTask();
                 closeTask();
-                if (ok) {
-                    if (closeAfterCheck != null && closeAfterCheck.isSelected()) {
-                        close();
-                    } else if (targetController != null) {
-                        targetController.refreshControls();
-                    }
-                }
             }
 
         };
@@ -198,16 +193,13 @@ public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskCont
 
             @Override
             protected void whenSucceeded() {
+                ouputRows();
             }
 
             @Override
             protected void finalAction() {
                 super.finalAction();
-                data2D.stopTask();
                 closeTask();
-                if (ok) {
-                    ouputRows();
-                }
             }
 
         };
@@ -276,9 +268,7 @@ public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskCont
             dataController.tableChanged(true);
             dataController.requestMouse();
             dataController.popDone();
-            if (closeAfterCheck != null && closeAfterCheck.isSelected()) {
-                close();
-            } else if (targetController != null) {
+            if (targetController != null) {
                 targetController.refreshControls();
             }
             return true;
@@ -344,11 +334,7 @@ public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskCont
             @Override
             protected void finalAction() {
                 super.finalAction();
-                data2D.stopTask();
                 closeTask();
-                if (ok && closeAfterCheck != null && closeAfterCheck.isSelected()) {
-                    close();
-                }
             }
 
         };

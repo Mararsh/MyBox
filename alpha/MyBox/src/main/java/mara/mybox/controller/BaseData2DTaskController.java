@@ -876,6 +876,14 @@ public abstract class BaseData2DTaskController extends BaseBranchController {
     }
 
     @Override
+    public void closeTask() {
+        if (data2D != null) {
+            data2D.stopTask();
+        }
+        super.closeTask();
+    }
+
+    @Override
     public void cleanPane() {
         try {
             if (dataController != null) {

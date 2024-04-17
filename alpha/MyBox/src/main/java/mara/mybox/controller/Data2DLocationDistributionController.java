@@ -443,19 +443,16 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
 
             @Override
             protected void whenSucceeded() {
+                framesNumber = dataPoints.size();
+                lastFrameid = -1;
+                mapController.initPoints(mapPoints);
+                playController.play(size);
             }
 
             @Override
             protected void finalAction() {
                 super.finalAction();
-                data2D.stopTask();
                 closeTask();
-                if (ok) {
-                    framesNumber = dataPoints.size();
-                    lastFrameid = -1;
-                    mapController.initPoints(mapPoints);
-                    playController.play(size);
-                }
             }
 
         };

@@ -14,6 +14,7 @@ import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
+import mara.mybox.controller.BaseController;
 import mara.mybox.controller.BaseData2DLoadController;
 import mara.mybox.data.FunctionsList;
 import mara.mybox.data.StringTable;
@@ -1504,7 +1505,7 @@ public class Data2DExampleTools {
         return data;
     }
 
-    public static DataFileCSV MyBoxVerificationList(BaseData2DLoadController controller, boolean isChinese) {
+    public static DataFileCSV MyBoxVerificationList(BaseController controller, boolean isChinese) {
         try {
             String lang = isChinese ? "zh" : "en";
             FunctionsList list = new FunctionsList(controller.getMainMenu(), false, lang);
@@ -1549,6 +1550,9 @@ public class Data2DExampleTools {
                     .setFormat(format));
             columns.add(new Data2DColumn(isChinese ? "内存占用" : "Memory occupied", ColumnType.Enumeration)
                     .setFormat(format));
+            columns.add(new Data2DColumn(isChinese ? "检验者" : "Verifier", ColumnType.String));
+            columns.add(new Data2DColumn(message(lang, "ModifyTime"), ColumnType.Datetime));
+            columns.add(new Data2DColumn(message(lang, "Description"), ColumnType.String));
 
             String dataName = message(lang, "MyBoxVerificationList") + " - " + DateTools.nowString();
             targetData.setColumns(columns).setDataName(dataName);

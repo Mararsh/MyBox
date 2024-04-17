@@ -218,23 +218,20 @@ public class Data2DStatisticController extends BaseData2DTaskTargetsController {
 
             @Override
             protected void whenSucceeded() {
+                outputColumns = calculation.getOutputColumns();
+                outputData = calculation.getOutputData();
+                if (targetController.inTable()) {
+                    updateTable();
+                } else {
+                    outputRowsToExternal();
+                }
             }
 
             @Override
             protected void finalAction() {
                 super.finalAction();
-                data2D.stopTask();
                 calculation.setTask(null);
                 closeTask();
-                if (ok) {
-                    outputColumns = calculation.getOutputColumns();
-                    outputData = calculation.getOutputData();
-                    if (targetController.inTable()) {
-                        updateTable();
-                    } else {
-                        outputRowsToExternal();
-                    }
-                }
             }
 
         };
@@ -280,23 +277,20 @@ public class Data2DStatisticController extends BaseData2DTaskTargetsController {
 
             @Override
             protected void whenSucceeded() {
+                outputColumns = calculation.getOutputColumns();
+                outputData = calculation.getOutputData();
+                if (targetController.inTable()) {
+                    updateTable();
+                } else {
+                    outputRowsToExternal();
+                }
             }
 
             @Override
             protected void finalAction() {
                 super.finalAction();
-                data2D.stopTask();
                 calculation.setTask(null);
                 closeTask();
-                if (ok) {
-                    outputColumns = calculation.getOutputColumns();
-                    outputData = calculation.getOutputData();
-                    if (targetController.inTable()) {
-                        updateTable();
-                    } else {
-                        outputRowsToExternal();
-                    }
-                }
             }
 
         };

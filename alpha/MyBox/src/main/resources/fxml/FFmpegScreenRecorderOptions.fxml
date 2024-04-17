@@ -13,6 +13,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextField?>
@@ -107,6 +108,8 @@ License:    Apache License Version 2.0
                               <TextField fx:id="rtbufsizeInput" prefWidth="150.0" promptText="3041280" />
                            </children>
                         </HBox>
+                        <Separator prefWidth="200.0" />
+                        <Label maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%ScreenRecorderComments" wrapText="true" />
                         <Label text="%FFmpegFailComments" />
                             </children>
                             <padding>
@@ -123,7 +126,7 @@ License:    Apache License Version 2.0
                         <HBox alignment="CENTER_LEFT" spacing="5.0">
                            <children>
                               <Label fx:id="audioComments1" minHeight="-Infinity" text="%VideoDevice" wrapText="true" />
-                              <ComboBox fx:id="videoDeviceSelector" editable="true" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                              <ComboBox fx:id="videoDeviceSelector" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                               <Button fx:id="queryVideoDeviceButton" mnemonicParsing="false" onAction="#queryDevice">
                                  <graphic>
                                     <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
@@ -239,7 +242,7 @@ License:    Apache License Version 2.0
                         <HBox alignment="CENTER_LEFT" spacing="5.0">
                            <children>
                                       <Label fx:id="audioComments" minHeight="-Infinity" text="%AudioDevice" wrapText="true" />
-                              <ComboBox fx:id="audioDeviceSelector" editable="true" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                              <ComboBox fx:id="audioDeviceSelector" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                               <Button fx:id="queryAudioDeviceButton" mnemonicParsing="false" onAction="#queryDevice">
                                  <graphic>
                                     <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
