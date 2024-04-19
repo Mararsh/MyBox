@@ -20,23 +20,6 @@ public class Data2DCopyController extends BaseData2DTaskTargetsController {
     }
 
     @Override
-    public boolean checkOptions() {
-        try {
-            if (!super.checkOptions()) {
-                return false;
-            }
-
-            outputColumns = data2D.targetColumns(checkedColsIndices,
-                    otherColsIndices, showRowNumber(), null);
-
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return false;
-        }
-    }
-
-    @Override
     public boolean handleAllData(FxTask currentTask, Data2DWriter writer) {
         return data2D.copy(currentTask, writer, checkedColsIndices,
                 rowNumberCheck.isSelected(),

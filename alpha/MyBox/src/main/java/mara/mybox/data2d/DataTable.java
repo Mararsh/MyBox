@@ -384,9 +384,15 @@ public class DataTable extends Data2D {
             if (columns == null || values == null || values.isEmpty()) {
                 return null;
             }
+            List<Data2DColumn> vColumns = new ArrayList<>();
+            for (Data2DColumn c : columns) {
+                if (!c.isAuto()) {
+                    vColumns.add(c);
+                }
+            }
             Data2DRow data2DRow = tableData2D.newRow();
-            for (int i = 0; i < Math.min(columns.size() - 1, values.size()); i++) {
-                Data2DColumn column = columns.get(i + 1);
+            for (int i = 0; i < values.size(); i++) {
+                Data2DColumn column = vColumns.get(i);
                 String name = column.getColumnName();
                 data2DRow.setColumnValue(name, column.fromString(values.get(i), invalidAs));
             }

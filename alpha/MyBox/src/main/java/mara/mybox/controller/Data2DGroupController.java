@@ -43,6 +43,7 @@ public class Data2DGroupController extends BaseData2DTaskController {
             task.cancel();
         }
         resultsFile = null;
+        taskSuccessed = false;
         task = new FxSingletonTask<Void>(this) {
 
             private DataTableGroup group;
@@ -60,7 +61,8 @@ public class Data2DGroupController extends BaseData2DTaskController {
                         targetType = TargetType.Table;
                     }
                     group = groupData(targetType, checkedColsIndices, showRowNumber(), maxData, scale);
-                    return group.run();
+                    taskSuccessed = group.run();
+                    return taskSuccessed;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;

@@ -841,15 +841,6 @@ public class BaseData2DLoadController extends BaseData2DTableController {
     }
 
     @FXML
-    public void convertToDataBase() {
-        if (!isValidPageData()) {
-            popError(message("InvalidData"));
-            return;
-        }
-        Data2DConvertToDataBaseController.open(this);
-    }
-
-    @FXML
     public void verifyCurrentPage() {
         StringTable results = verifyTableData();
         if (results.isEmpty()) {

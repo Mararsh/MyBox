@@ -1,6 +1,7 @@
 package mara.mybox.db.data;
 
 import javafx.scene.paint.Color;
+import mara.mybox.data2d.tools.Data2DColumnTools;
 import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import static mara.mybox.db.data.ColumnDefinition.columnType;
 import static mara.mybox.db.data.ColumnDefinition.number2String;
@@ -99,6 +100,10 @@ public class Data2DColumn extends ColumnDefinition {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    public String info() {
+        return Data2DColumnTools.toString(this);
     }
 
     /*

@@ -141,7 +141,7 @@ public class RemotePathManageController extends FilesTreeController {
 
             @Override
             protected void whenCanceled() {
-                cancelled = true;
+                taskCancelled = true;
                 showLogs(message("Cancel"));
             }
 
@@ -257,7 +257,7 @@ public class RemotePathManageController extends FilesTreeController {
 
             @Override
             protected void whenCanceled() {
-                cancelled = true;
+                taskCancelled = true;
                 showLogs(message("Cancel"));
             }
 
@@ -331,7 +331,7 @@ public class RemotePathManageController extends FilesTreeController {
 
             @Override
             protected void whenCanceled() {
-                cancelled = true;
+                taskCancelled = true;
                 showLogs(message("Cancel"));
                 disconnect();
             }
@@ -382,7 +382,7 @@ public class RemotePathManageController extends FilesTreeController {
 
             @Override
             protected void whenCanceled() {
-                cancelled = true;
+                taskCancelled = true;
                 showLogs(message("Cancel"));
                 disconnect();
             }
@@ -437,7 +437,7 @@ public class RemotePathManageController extends FilesTreeController {
 
             @Override
             protected void whenCanceled() {
-                cancelled = true;
+                taskCancelled = true;
                 showLogs(message("Cancel"));
                 disconnect();
             }
@@ -551,7 +551,7 @@ public class RemotePathManageController extends FilesTreeController {
     public void cleanPane() {
         try {
             cancelTask();
-            cancelled = true;
+            taskCancelled = true;
             remoteController.disconnect();
         } catch (Exception e) {
         }

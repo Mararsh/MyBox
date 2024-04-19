@@ -146,12 +146,21 @@ public class ControlNewDataTable extends BaseController {
 
     public DataTableWriter pickTableWriter() {
         try (Connection conn = DerbyBase.getConnection()) {
-            if (!checkOptions(conn, false) || !createTable(null, conn)) {
+            if (!checkOptions(conn, false)) {
                 return null;
             }
             DataTableWriter writer = new DataTableWriter();
-            writer.setTargetTable(dataTable)
-                    .setTargetData(dataTable)
+            List<String> keys;
+            if (autoRadio.isSelected()) {
+                keys = null;
+            } else {
+                keys = columnsController.selectedNames();
+            }
+            writer.setTargetTableName(nameInput.getText().trim())
+                    .setKeys(keys)
+                    .setIdName(idInput.getText().trim())
+                    .setTargetTableDesciption(data2D.getComments())
+                    .setDropExisted(true)
                     .setRecordTargetFile(false)
                     .setRecordTargetData(true);
             return writer;

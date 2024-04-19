@@ -508,6 +508,7 @@ public class ColumnDefinition extends BaseData {
                     Clob clob = (Clob) o;
                     return clob.getSubString(1, (int) clob.length());
                 case Blob:
+                    MyBoxLog.console(tableName + " " + columnName + " " + type);
                     Blob blob = (Blob) o;
                     return blob.getBinaryStream();
                 default:
@@ -651,7 +652,7 @@ public class ColumnDefinition extends BaseData {
     }
 
     public String makeDefaultValue() {
-        Object v = fromString(defaultValue, invalidAs);
+        Object v = fromString(defaultValue, InvalidAs.Null);
         switch (type) {
             case String:
             case Enumeration:
@@ -702,7 +703,7 @@ public class ColumnDefinition extends BaseData {
     }
 
     public Object defaultValue() {
-        Object v = fromString(defaultValue, invalidAs);
+        Object v = fromString(defaultValue, InvalidAs.Null);
         switch (type) {
             case String:
             case Enumeration:

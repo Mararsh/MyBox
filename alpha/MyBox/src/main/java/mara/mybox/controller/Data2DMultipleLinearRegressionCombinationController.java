@@ -87,6 +87,7 @@ public class Data2DMultipleLinearRegressionCombinationController extends BaseDat
         }
         resultsController.clear();
         namesMap = new HashMap<>();
+        taskSuccessed = false;
         task = new FxSingletonTask<Void>(this) {
 
             List<List<String>> data;
@@ -119,7 +120,8 @@ public class Data2DMultipleLinearRegressionCombinationController extends BaseDat
                             }
                         }
                     }
-                    return true;
+                    taskSuccessed = true;
+                    return taskSuccessed;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;

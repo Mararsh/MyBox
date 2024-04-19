@@ -7,7 +7,6 @@ import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.data2d.tools.Data2DTableTools;
 import mara.mybox.db.Database;
-import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DRow;
 import mara.mybox.db.table.TableData2D;
 import static mara.mybox.value.Languages.message;
@@ -21,7 +20,6 @@ public class DataTableWriter extends Data2DWriter {
 
     protected DataTable targetTable;
     protected String targetTableName, targetTableDesciption;
-    protected List<Data2DColumn> referColumns;
     protected List<String> keys;
     protected String idName;
     protected boolean dropExisted;
@@ -40,14 +38,14 @@ public class DataTableWriter extends Data2DWriter {
             }
             if (targetTable == null) {
                 targetTable = Data2DTableTools.createTable(task(), conn, targetTableName,
-                        referColumns, keys, targetTableDesciption, idName, dropExisted);
+                        columns, keys, targetTableDesciption, idName, dropExisted);
                 if (targetTable == null) {
                     return false;
                 }
+            } else {
+                columns = targetTable.getColumns();
             }
             tableData2D = targetTable.getTableData2D();
-            columns = targetTable.getColumns();
-            columns = columns.subList(1, columns.size());
             conn.setAutoCommit(false);
             targetRowIndex = 0;
             String sql = tableData2D.insertStatement();
@@ -135,15 +133,6 @@ public class DataTableWriter extends Data2DWriter {
 
     public DataTableWriter setTargetTableDesciption(String targetTableDesciption) {
         this.targetTableDesciption = targetTableDesciption;
-        return this;
-    }
-
-    public List<Data2DColumn> getReferColumns() {
-        return referColumns;
-    }
-
-    public DataTableWriter setReferColumns(List<Data2DColumn> referColumns) {
-        this.referColumns = referColumns;
         return this;
     }
 

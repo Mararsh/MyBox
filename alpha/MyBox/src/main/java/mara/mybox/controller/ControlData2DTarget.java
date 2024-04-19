@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.application.Platform;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -56,7 +55,6 @@ public class ControlData2DTarget extends BaseDataConvertController {
     protected TargetType format;
     protected boolean notInTable;
     protected ChangeListener<Boolean> tableStatusListener;
-    protected SimpleBooleanProperty formatNotify;
     protected Data2D data2D;
     protected String targetName;
 
@@ -104,7 +102,6 @@ public class ControlData2DTarget extends BaseDataConvertController {
                 return;
             }
 
-            formatNotify = new SimpleBooleanProperty(false);
             baseName = parent.baseName + "_" + baseName;
 
             initControls(baseName);
@@ -387,15 +384,10 @@ public class ControlData2DTarget extends BaseDataConvertController {
 
             UserConfig.setString(baseName + "DataTarget", format.name());
 
-            formatChanged();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
         return format;
-    }
-
-    public void formatChanged() {
-        formatNotify.set(!formatNotify.get());
     }
 
     public synchronized void refreshControls() {

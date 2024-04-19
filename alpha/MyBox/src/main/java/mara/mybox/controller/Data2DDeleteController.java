@@ -70,6 +70,7 @@ public class Data2DDeleteController extends BaseData2DTaskTargetsController {
         if (task != null) {
             task.cancel();
         }
+        taskSuccessed = false;
         task = new FxSingletonTask<Void>(this) {
 
             List<List<String>> data;
@@ -87,7 +88,8 @@ public class Data2DDeleteController extends BaseData2DTaskTargetsController {
                         }
                     }
                     data2D.stopFilter();
-                    return true;
+                    taskSuccessed = true;
+                    return taskSuccessed;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -123,6 +125,7 @@ public class Data2DDeleteController extends BaseData2DTaskTargetsController {
         if (task != null) {
             task.cancel();
         }
+        taskSuccessed = false;
         task = new FxSingletonTask<Void>(this) {
 
             private long count;
@@ -143,7 +146,8 @@ public class Data2DDeleteController extends BaseData2DTaskTargetsController {
                         count = data2D.deleteRows(this, errorContinueCheck.isSelected());
                     }
                     data2D.stopFilter();
-                    return count >= 0;
+                    taskSuccessed = count >= 0;
+                    return taskSuccessed;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;

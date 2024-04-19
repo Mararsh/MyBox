@@ -78,7 +78,7 @@ public class Data2DSaveAsController extends BaseTaskController {
         if (targetController.data2D != null) {
             targetController.data2D.stopTask();
         }
-        if (successed) {
+        if (taskSuccessed) {
             targetController.tableController.popInformation(message("Done"));
             close();
         } else {

@@ -357,7 +357,6 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
                     videoNext = true;
                     audioNext = false;
                 } else if (videoNext) {
-                    MyBoxLog.console(line);
                     int pos1 = line.indexOf("] [");
                     if (pos1 < 0) {
                         continue;

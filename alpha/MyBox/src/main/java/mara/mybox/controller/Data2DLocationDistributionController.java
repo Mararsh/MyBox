@@ -260,6 +260,7 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
             task.cancel();
         }
         valuesController.loadNull();
+        taskSuccessed = false;
         task = new FxSingletonTask<Void>(this) {
 
             private DataFileCSV csvData;
@@ -274,7 +275,6 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
                     }
                     csvData.saveAttributes();
                     outputData = csvData.allRows(false);
-                    MyBoxLog.console(sizeCol != null);
                     if (sizeCol != null) {
                         maxValue = -Double.MAX_VALUE;
                         minValue = Double.MAX_VALUE;
@@ -293,7 +293,8 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
                             }
                         }
                     }
-                    return initPoints(csvData);
+                    taskSuccessed = initPoints(csvData);
+                    return taskSuccessed;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -308,7 +309,7 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
             protected void finalAction() {
                 super.finalAction();
                 data2D.stopTask();
-                if (ok) {
+                if (taskSuccessed) {
                     drawPoints();
                     valuesController.loadDef(csvData);
                     rightPane.setDisable(false);
@@ -394,6 +395,7 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
         }
         playController.clear();
         mapController.clearAction();
+        taskSuccessed = false;
         if (dataPoints == null || dataPoints.isEmpty()) {
             closeTask();
             return;
@@ -434,7 +436,8 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
                             break;
                         }
                     }
-                    return true;
+                    taskSuccessed = true;
+                    return taskSuccessed;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;

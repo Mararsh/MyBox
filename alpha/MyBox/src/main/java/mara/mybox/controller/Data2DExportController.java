@@ -25,7 +25,7 @@ public class Data2DExportController extends BaseData2DTaskController {
     protected String filePrefix;
 
     @FXML
-    protected BaseData2DSourceRowsController rowsColumnsController;
+    protected BaseData2DRowsColumnsController rowsColumnsController;
     @FXML
     protected VBox dataBox, filterVBox, formatVBox, targetVBox;
     @FXML
@@ -111,6 +111,7 @@ public class Data2DExportController extends BaseData2DTaskController {
         if (task != null) {
             task.cancel();
         }
+        taskSuccessed = false;
         task = new FxSingletonTask<Void>(this) {
 
             @Override
@@ -132,8 +133,8 @@ public class Data2DExportController extends BaseData2DTaskController {
                     } else {
                         export.setCols(checkedColsIndices).setTask(task).start();
                     }
-
-                    return !export.isFailed();
+                    taskSuccessed = !export.isFailed();
+                    return taskSuccessed;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;

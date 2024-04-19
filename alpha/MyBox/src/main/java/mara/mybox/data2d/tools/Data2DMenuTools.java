@@ -96,12 +96,6 @@ public class Data2DMenuTools {
             });
             items.add(menu);
 
-            menu = new MenuItem(message("ConvertToDatabaseTable"), StyleTools.getIconImageView("iconDatabase.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                dataController.convertToDataBase();
-            });
-            items.add(menu);
-
             if (dataController.isTableMode()) {
                 menu = new MenuItem(message("Snapshot"), StyleTools.getIconImageView("iconSnapshot.png"));
                 menu.setOnAction((ActionEvent event) -> {

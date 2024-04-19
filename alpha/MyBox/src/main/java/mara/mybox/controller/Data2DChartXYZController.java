@@ -231,6 +231,7 @@ public class Data2DChartXYZController extends BaseData2DTaskController {
         if (task != null) {
             task.cancel();
         }
+        taskSuccessed = false;
         task = new FxSingletonTask<Void>(this) {
 
             @Override
@@ -246,7 +247,8 @@ public class Data2DChartXYZController extends BaseData2DTaskController {
                     chartFile = chartController.makeChart(outputColumns, outputData,
                             seriesSize, data2D.dataName(), scale,
                             xCategoryCheck.isSelected(), yCategoryCheck.isSelected(), zCategoryCheck.isSelected());
-                    return chartFile != null && chartFile.exists();
+                    taskSuccessed = chartFile != null && chartFile.exists();
+                    return taskSuccessed;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;

@@ -189,7 +189,7 @@ public class DataExportController extends BaseTaskController {
                 startButton.applyCss();
                 startButton.setUserData("stop");
             } else {
-                cancelled = true;
+                taskCancelled = true;
                 if (task != null) {
                     task.cancel();
                     task = null;
@@ -206,7 +206,7 @@ public class DataExportController extends BaseTaskController {
         if (task != null) {
             task.cancel();
         }
-        cancelled = false;
+        taskCancelled = false;
         tabPane.getSelectionModel().select(logsTab);
         startTime = new Date();
         beforeTask();
@@ -238,7 +238,7 @@ public class DataExportController extends BaseTaskController {
                             + (where == null || where.isBlank() ? "" : " WHERE " + where)
                             + (order == null || order.isBlank() ? "" : " ORDER BY " + order)
                             + (fetch == null || fetch.isBlank() ? "" : " " + fetch);
-                    if (cancelled) {
+                    if (taskCancelled) {
                         updateLogs(Languages.message("Cancelled"));
                         return false;
                     }
@@ -278,7 +278,7 @@ public class DataExportController extends BaseTaskController {
                     }
                     try (ResultSet results = conn.createStatement().executeQuery(currentSQL)) {
                         while (results.next()) {
-                            if (cancelled) {
+                            if (taskCancelled) {
                                 updateLogs(Languages.message("Cancelled") + " " + filePrefix);
                                 return false;
                             }
@@ -377,7 +377,7 @@ public class DataExportController extends BaseTaskController {
 
     @Override
     public void cleanPane() {
-        cancelled = true;
+        taskCancelled = true;
         super.cleanPane();
     }
 

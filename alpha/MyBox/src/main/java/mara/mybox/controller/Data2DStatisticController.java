@@ -186,6 +186,10 @@ public class Data2DStatisticController extends BaseData2DTaskTargetsController {
     }
 
     public void handleAllByColumnsTask() {
+        if (task != null) {
+            task.cancel();
+        }
+        taskSuccessed = false;
         task = new FxSingletonTask<Void>(this) {
 
             @Override
@@ -202,14 +206,14 @@ public class Data2DStatisticController extends BaseData2DTaskTargetsController {
                         calculation.setData2D(tmpTable)
                                 .setColsIndices(tmpTable.columnIndices().subList(1, tmpTable.columnsNumber()))
                                 .setColsNames(tmpTable.columnNames().subList(1, tmpTable.columnsNumber()));
-                        ok = calculation.statisticAllByColumns();
+                        taskSuccessed = calculation.statisticAllByColumns();
                         tmpTable.stopFilter();
                         tmpTable.drop();
                     } else {
-                        ok = calculation.statisticAllByColumnsWithoutStored();
+                        taskSuccessed = calculation.statisticAllByColumnsWithoutStored();
                     }
                     data2D.stopFilter();
-                    return ok;
+                    return taskSuccessed;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -239,6 +243,10 @@ public class Data2DStatisticController extends BaseData2DTaskTargetsController {
     }
 
     public void handleAllByAllTask() {
+        if (task != null) {
+            task.cancel();
+        }
+        taskSuccessed = false;
         task = new FxSingletonTask<Void>(this) {
 
             @Override
@@ -257,18 +265,17 @@ public class Data2DStatisticController extends BaseData2DTaskTargetsController {
                         calculation.setData2D(dataTable)
                                 .setColsIndices(dataTable.columnIndices().subList(1, 2))
                                 .setColsNames(dataTable.columnNames().subList(1, 2));
-                        ok = calculation.statisticAllByColumns();
-                        dataTable.stopFilter();
-                        return ok;
+                        taskSuccessed = calculation.statisticAllByColumns();
                     } else {
                         DoubleStatistic statisticData = data2D.statisticByAllWithoutStored(checkedColsIndices, calculation);
                         if (statisticData == null) {
                             return false;
                         }
                         calculation.statisticByColumnsWrite(statisticData);
-                        data2D.stopFilter();
-                        return true;
+                        taskSuccessed = true;
                     }
+                    data2D.stopFilter();
+                    return taskSuccessed;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;

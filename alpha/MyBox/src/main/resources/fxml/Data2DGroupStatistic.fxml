@@ -144,6 +144,7 @@ License:    Apache License Version 2.0
                                                                                         <RadioButton fx:id="zeroNonnumericRadio" mnemonicParsing="false" text="%CountAsZero" toggleGroup="$nonnumericGroup" />
                                                                                         <RadioButton fx:id="nullNonnumericRadio" mnemonicParsing="false" text="%CountAsNull" toggleGroup="$nonnumericGroup" />
                                                                                         <RadioButton fx:id="emptyNonnumericRadio" mnemonicParsing="false" text="%CountAsEmpty" toggleGroup="$nonnumericGroup" />
+                                                                                    </children>                                                                               
                                                                                 </FlowPane>
                                                                             </children>
                                                                         </VBox>

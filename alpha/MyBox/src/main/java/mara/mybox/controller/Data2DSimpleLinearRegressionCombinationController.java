@@ -48,6 +48,7 @@ public class Data2DSimpleLinearRegressionCombinationController extends BaseData2
             task.cancel();
         }
         resultsController.clear();
+        taskSuccessed = false;
         task = new FxSingletonTask<Void>(this) {
 
             @Override
@@ -69,7 +70,8 @@ public class Data2DSimpleLinearRegressionCombinationController extends BaseData2
                         }
                     }
                     data2D.stopFilter();
-                    return true;
+                    taskSuccessed = true;
+                    return taskSuccessed;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;

@@ -23,6 +23,7 @@ import mara.mybox.data2d.Data2D_Operations.ObjectType;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataTableGroup;
 import mara.mybox.data2d.TmpTable;
+import mara.mybox.data2d.tools.Data2DColumnTools;
 import static mara.mybox.db.data.ColumnDefinition.DefaultInvalidAs;
 import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.db.data.Data2DColumn;
@@ -379,6 +380,10 @@ public abstract class BaseData2DTaskController extends BaseBranchController {
                 orders = null;
             }
 
+            outputColumns = data2D.targetColumns(checkedColsIndices, otherColsIndices,
+                    showRowNumber(), null);
+            updateLogs(message("Columns") + ": " + Data2DColumnTools.toNames(outputColumns), true);
+
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -506,6 +511,14 @@ public abstract class BaseData2DTaskController extends BaseBranchController {
                         }
                     }
                 }
+            } else if (sourceController instanceof BaseData2DRowsColumnsController) {
+                BaseData2DRowsColumnsController c = (BaseData2DRowsColumnsController) sourceController;
+                if (!c.checkColumns()) {
+                    return false;
+                }
+                checkedColsIndices = c.checkedColsIndices;
+                checkedColsNames = c.checkedColsNames;
+                checkedColumns = c.checkedColumns;
             } else {
                 allIndices = data2D.columnIndices();
                 allNames = data2D.columnNames();
@@ -656,6 +669,7 @@ public abstract class BaseData2DTaskController extends BaseBranchController {
         if (task != null) {
             task.cancel();
         }
+        taskSuccessed = false;
         task = new FxSingletonTask<Void>(this) {
 
             @Override
@@ -675,7 +689,8 @@ public abstract class BaseData2DTaskController extends BaseBranchController {
                         groupController.fillScripts(filledScripts);
                     }
                 }
-                return true;
+                taskSuccessed = true;
+                return taskSuccessed;
             }
 
             @Override
@@ -691,7 +706,7 @@ public abstract class BaseData2DTaskController extends BaseBranchController {
             protected void finalAction() {
                 super.finalAction();
                 data2D.stopTask();
-                if (ok) {
+                if (taskSuccessed) {
                     updateLogs(baseTitle + " ... ", true);
                     startOperation();
                 } else {

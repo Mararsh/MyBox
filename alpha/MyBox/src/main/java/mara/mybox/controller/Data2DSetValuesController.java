@@ -93,6 +93,7 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
         if (task != null) {
             task.cancel();
         }
+        taskSuccessed = false;
         task = new FxSingletonTask<Void>(this) {
 
             @Override
@@ -124,7 +125,8 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
                         }
                         valueController.setValue(filledExp);
                     }
-                    return true;
+                    taskSuccessed = true;
+                    return taskSuccessed;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -139,7 +141,7 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
             protected void finalAction() {
                 super.finalAction();
                 data2D.setTask(null);
-                if (ok) {
+                if (taskSuccessed) {
                     updateLogs(baseTitle + " ... ", true);
                     startOperation();
                 } else {
@@ -156,6 +158,7 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
         if (task != null) {
             task.cancel();
         }
+        taskSuccessed = false;
         task = new FxSingletonTask<Void>(this) {
 
             private long count;
@@ -170,7 +173,8 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
                     count = data2D.setValue(this, checkedColsIndices, valueController.setValue,
                             valueController.errorContinueCheck.isSelected());
                     data2D.stopFilter();
-                    return count >= 0;
+                    taskSuccessed = count >= 0;
+                    return taskSuccessed;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;

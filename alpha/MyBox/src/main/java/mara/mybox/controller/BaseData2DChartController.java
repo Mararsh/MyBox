@@ -254,6 +254,7 @@ public abstract class BaseData2DChartController extends BaseData2DTaskController
         if (task != null) {
             task.cancel();
         }
+        taskSuccessed = false;
         task = new FxSingletonTask<Void>(this) {
 
             @Override
@@ -262,7 +263,8 @@ public abstract class BaseData2DChartController extends BaseData2DTaskController
                     data2D.startTask(this, filterController.filter);
                     readData();
                     data2D.stopFilter();
-                    return outputData != null && !outputData.isEmpty();
+                    taskSuccessed = outputData != null && !outputData.isEmpty();
+                    return taskSuccessed;
                 } catch (Exception e) {
                     MyBoxLog.error(e);
                     error = e.toString();
@@ -414,6 +416,7 @@ public abstract class BaseData2DChartController extends BaseData2DTaskController
         groupDataController.loadNull();
         group = null;
         framesNumber = -1;
+        taskSuccessed = false;
         task = new FxSingletonTask<Void>(this) {
 
             @Override
@@ -438,7 +441,8 @@ public abstract class BaseData2DChartController extends BaseData2DTaskController
                         return false;
                     }
                     framesNumber = (int) group.groupsNumber();
-                    return initGroups();
+                    taskSuccessed = initGroups();
+                    return taskSuccessed;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;

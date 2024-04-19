@@ -31,7 +31,7 @@ import mara.mybox.value.UserConfig;
  */
 public class BaseTaskController extends BaseLogs {
 
-    protected boolean cancelled, successed;
+    protected boolean taskCancelled, taskSuccessed;
     protected Date startTime, endTime;
     protected LinkedHashMap<Integer, List<File>> targetFiles;
     protected String lastTargetName;
@@ -111,8 +111,8 @@ public class BaseTaskController extends BaseLogs {
         if (tabPane != null && logsTab != null) {
             tabPane.getSelectionModel().select(logsTab);
         }
-        cancelled = false;
-        successed = false;
+        taskCancelled = false;
+        taskSuccessed = false;
         targetFilesCount = 0;
         targetFiles = new LinkedHashMap<>();
         initLogs();
@@ -126,17 +126,17 @@ public class BaseTaskController extends BaseLogs {
     public void defaultStartTask() {
         startTime = new Date();
         updateLogs(message("Start") + ": " + DateTools.dateToString(startTime), true);
+        taskSuccessed = false;
         task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
-                return doTask(this);
-
+                taskSuccessed = doTask(this);
+                return taskSuccessed;
             }
 
             @Override
             protected void whenSucceeded() {
-                successed = true;
                 afterSuccess();
             }
 
@@ -175,9 +175,6 @@ public class BaseTaskController extends BaseLogs {
             updateLogs(message("Completed") + " " + message("Cost")
                     + " " + DateTools.datetimeMsDuration(endTime, startTime), true);
         }
-        if (task != null) {
-            successed = task.isOk();
-        }
         afterTask();
     }
 
@@ -189,7 +186,7 @@ public class BaseTaskController extends BaseLogs {
         if (openCheck != null && openCheck.isSelected()) {
             openTarget();
         }
-        if (successed && closeAfterCheck != null && closeAfterCheck.isSelected()) {
+        if (taskSuccessed && closeAfterCheck != null && closeAfterCheck.isSelected()) {
             close();
         }
     }
@@ -211,7 +208,7 @@ public class BaseTaskController extends BaseLogs {
     }
 
     protected void taskCanceled() {
-        cancelled = true;
+        taskCancelled = true;
         showLogs(message("Cancelled"));
     }
 
@@ -336,19 +333,10 @@ public class BaseTaskController extends BaseLogs {
     }
 
     @Override
-    public void writeLogs(String line, boolean showTime, boolean immediate) {
-        super.writeLogs(line, showTime, immediate);
-        if (tabPane == null || logsTab == null) {
-            return;
-        }
-        tabPane.getSelectionModel().select(logsTab);
-    }
-
-    @Override
     public void cleanPane() {
         try {
             cancelTask();
-            cancelled = true;
+            taskCancelled = true;
         } catch (Exception e) {
         }
         super.cleanPane();

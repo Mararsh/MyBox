@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import mara.mybox.data.StringTable;
+import mara.mybox.data2d.Data2D;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
@@ -87,6 +88,8 @@ public class Data2DColumnTools {
                 return null;
             }
             StringBuilder s = new StringBuilder();
+            s.append("D2cid").append(": ").append(column.getD2cid()).append("\n");
+            s.append("D2id").append(": ").append(column.getD2id()).append("\n");
             s.append(message("Name")).append(": ").append(column.getColumnName()).append("\n");
             s.append(message("Type")).append(": ").append(column.getType()).append("\n");
             s.append(message("Length")).append(": ").append(column.getLength()).append("\n");
@@ -103,6 +106,23 @@ public class Data2DColumnTools {
             s.append(message("Century")).append(": ").append(column.getCentury()).append("\n");
             s.append(message("FixTwoDigitYears")).append(": ").append(column.isFixTwoDigitYear()).append("\n");
             s.append(message("Description")).append(": ").append(column.getDescription()).append("\n");
+            return s.toString();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public static String toString(Data2D data2D) {
+        try {
+            if (data2D == null) {
+                return null;
+            }
+            StringBuilder s = new StringBuilder();
+            for (Data2DColumn column : data2D.getColumns()) {
+                s.append(toString(column));
+                s.append("----------------------------------");
+            }
             return s.toString();
         } catch (Exception e) {
             MyBoxLog.error(e);

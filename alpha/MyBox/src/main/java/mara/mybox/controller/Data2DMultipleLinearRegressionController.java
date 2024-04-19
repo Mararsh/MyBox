@@ -88,6 +88,7 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DRegressi
             task.cancel();
         }
         modelController.clear();
+        taskSuccessed = false;
         task = new FxSingletonTask<Void>(this) {
 
             @Override
@@ -117,7 +118,8 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DRegressi
                             sx[i][j] = row.get(j + 1);
                         }
                     }
-                    return regression.calculate(sy, sx);
+                    taskSuccessed = regression.calculate(sy, sx);
+                    return taskSuccessed;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;

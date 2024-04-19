@@ -106,6 +106,7 @@ public class Data2DRowExpressionController extends BaseData2DTaskTargetsControll
         if (task != null) {
             task.cancel();
         }
+        taskSuccessed = false;
         task = new FxSingletonTask<Void>(this) {
 
             @Override
@@ -133,7 +134,8 @@ public class Data2DRowExpressionController extends BaseData2DTaskTargetsControll
                         return false;
                     }
                     expression = filledExp;
-                    return true;
+                    taskSuccessed = true;
+                    return taskSuccessed;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -148,7 +150,7 @@ public class Data2DRowExpressionController extends BaseData2DTaskTargetsControll
             protected void finalAction() {
                 super.finalAction();
                 data2D.stopTask();
-                if (ok) {
+                if (taskSuccessed) {
                     updateLogs(baseTitle + " ... ", true);
                     startOperation();
                 } else {
@@ -184,7 +186,7 @@ public class Data2DRowExpressionController extends BaseData2DTaskTargetsControll
                 }
                 outputData.set(i, checkedRow);
             }
-            outputColumns = data2D.targetColumns(checkedColsIndices, null, showRowNumber(), null);
+            outputColumns = data2D.targetColumns(checkedColsIndices, showRowNumber());
             String name = nameInput.getText().trim();
             outputColumns.add(new Data2DColumn(name, ColumnDefinition.ColumnType.String));
             return true;

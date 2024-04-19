@@ -4,13 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
-import mara.mybox.data2d.Data2D_Attributes;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.data2d.tools.Data2DColumnTools;
-import mara.mybox.data2d.tools.Data2DTableTools;
 import mara.mybox.data2d.writer.Data2DWriter;
 import mara.mybox.db.data.ColumnDefinition.InvalidAs;
-import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
@@ -95,22 +92,28 @@ public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskCont
     @Override
     public boolean checkOptions() {
         try {
+            if (!super.checkOptions()) {
+                return false;
+            }
             writer = null;
             if (targetController != null) {
                 if (targetController.format == null) {
                     popError(message("SelectToHandle") + ": " + message("Target"));
                     return false;
                 }
-                if (isAllPages()) {
+                if (!targetController.inTable()) {
                     writer = targetController.pickWriter();
                     if (writer == null) {
                         popError(message("Invalid") + ": " + message("Target"));
                         return false;
                     }
+                    writer.setColumns(outputColumns)
+                            .setHeaderNames(Data2DColumnTools.toNames(outputColumns))
+                            .setWriteHeader(colNameCheck == null || colNameCheck.isSelected());
                     writer.setInvalidAs(checkInvalidAs());
                 }
             }
-            return super.checkOptions();
+            return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
             return false;
@@ -134,19 +137,14 @@ public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskCont
         if (task != null) {
             task.cancel();
         }
+        taskSuccessed = false;
         task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
                 data2D.startTask(this, filterController.filter);
-                List<Data2DColumn> targetColumns = data2D.targetColumns(
-                        checkedColsIndices, null,
-                        rowNumberCheck != null && rowNumberCheck.isSelected(), null);
-                writer.setColumns(targetColumns)
-                        .setHeaderNames(Data2DColumnTools.toNames(targetColumns))
-                        .setWriteHeader(colNameCheck == null || colNameCheck.isSelected());
-                updateLogs(message("Columns") + ": " + writer.getHeaderNames(), true);
-                return handleAllData(this, writer);
+                taskSuccessed = handleAllData(this, writer);
+                return taskSuccessed;
             }
 
             @Override
@@ -176,15 +174,16 @@ public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskCont
         if (task != null) {
             task.cancel();
         }
+        taskSuccessed = false;
         task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
                 try {
                     data2D.startTask(this, filterController.filter);
-                    ok = handleRows();
+                    taskSuccessed = handleRows();
                     data2D.stopFilter();
-                    return ok;
+                    return taskSuccessed;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -280,45 +279,33 @@ public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskCont
     }
 
     public void outputRowsToExternal() {
-        if (targetController == null) {
+        if (writer == null) {
             return;
         }
         if (outputData == null || outputData.isEmpty()) {
             popError(message("NoData"));
             return;
         }
-        writer = targetController.pickWriter();
-        if (writer == null || writer.getPrintFile() == null) {
-            popError(message("InvalidParamter"));
-            return;
-        }
         if (task != null) {
             task.cancel();
         }
+        taskSuccessed = false;
         task = new FxSingletonTask<Void>(this) {
             protected DataTable dataTable = null;
 
             @Override
             protected boolean handle() {
                 data2D.startTask(this, null);
-                if (targetController.format == Data2D_Attributes.TargetType.DatabaseTable) {
-                    dataTable = Data2DTableTools.importTable(this, writer.getDataName(),
-                            outputColumns, outputData, invalidAs);
-                    return dataTable != null;
-                } else {
-                    writer.setColumns(outputColumns)
-                            .setHeaderNames(Data2DColumnTools.toNames(outputColumns))
-                            .setWriteHeader(colNameCheck == null || colNameCheck.isSelected());
-                    writer.openWriter();
-                    for (List<String> row : outputData) {
-                        if (!isWorking()) {
-                            break;
-                        }
-                        writer.writeRow(row);
+                writer.openWriter();
+                for (List<String> row : outputData) {
+                    if (!isWorking()) {
+                        break;
                     }
-                    writer.closeWriter();
-                    return writer.isCreated();
+                    writer.writeRow(row);
                 }
+                writer.closeWriter();
+                taskSuccessed = writer.isCreated();
+                return taskSuccessed;
             }
 
             @Override

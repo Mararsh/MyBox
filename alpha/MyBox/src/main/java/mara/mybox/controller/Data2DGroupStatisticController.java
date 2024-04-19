@@ -179,6 +179,7 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
         for (StatisticType t : calculation.types) {
             valuesDisplayPane.getChildren().add(new CheckBox(message(t.name())));
         }
+        taskSuccessed = false;
         task = new FxSingletonTask<Void>(this) {
 
             private DataTableGroup group;
@@ -209,7 +210,8 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
                         return false;
                     }
                     dataFile = statistic.getChartData();
-                    return dataFile != null;
+                    taskSuccessed = dataFile != null;
+                    return taskSuccessed;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;

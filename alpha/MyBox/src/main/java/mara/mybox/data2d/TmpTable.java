@@ -233,6 +233,7 @@ public class TmpTable extends DataTable {
     @Override
     public Data2DRow makeRow(List<String> sourceRow, InvalidAs invalidAs) {
         try {
+            MyBoxLog.console(sourceRow);
             if (columns == null || sourceRow == null || sourceRow.isEmpty()) {
                 return null;
             }

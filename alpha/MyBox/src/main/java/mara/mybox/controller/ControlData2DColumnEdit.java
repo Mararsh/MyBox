@@ -308,11 +308,16 @@ public class ControlData2DColumnEdit extends BaseChildController {
             }
 
             boolean canNotChange = columnsController.data2D != null
-                    && columnsController.data2D.isTable() && columnIndex >= 0;
+                    && columnsController.data2D.isTable()
+                    && columnsController.data2D.getSheet() != null
+                    && columnIndex >= 0;
             nameInput.setDisable(canNotChange);
             for (int i = 1; i < typesPane.getChildren().size(); i++) {
                 typesPane.getChildren().get(i).setDisable(canNotChange);
             }
+            notNullCheck.setDisable(canNotChange);
+            defaultInput.setDisable(canNotChange);
+            lengthInput.setDisable(canNotChange);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
