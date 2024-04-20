@@ -8,7 +8,6 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.AppValues;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
-import static mara.mybox.value.UserConfig.imageScale;
 
 /**
  * @Author Mara
@@ -20,7 +19,8 @@ public class DoubleTools {
     public static NumberFormat numberFormat;
 
     public static boolean invalidDouble(double value) {
-        return Double.isNaN(value) || Double.isInfinite(value)
+        return Double.isNaN(value)
+                || Double.isInfinite(value)
                 || value == AppValues.InvalidDouble;
     }
 

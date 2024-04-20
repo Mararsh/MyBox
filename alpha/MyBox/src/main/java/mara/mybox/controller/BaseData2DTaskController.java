@@ -23,7 +23,6 @@ import mara.mybox.data2d.Data2D_Operations.ObjectType;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataTableGroup;
 import mara.mybox.data2d.TmpTable;
-import mara.mybox.data2d.tools.Data2DColumnTools;
 import static mara.mybox.db.data.ColumnDefinition.DefaultInvalidAs;
 import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.db.data.Data2DColumn;
@@ -382,7 +381,7 @@ public abstract class BaseData2DTaskController extends BaseBranchController {
 
             outputColumns = data2D.targetColumns(checkedColsIndices, otherColsIndices,
                     showRowNumber(), null);
-            updateLogs(message("Columns") + ": " + Data2DColumnTools.toNames(outputColumns), true);
+//            updateLogs(message("Columns") + ": " + Data2DColumnTools.toNames(outputColumns), true);
 
             return true;
         } catch (Exception e) {

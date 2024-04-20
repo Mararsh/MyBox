@@ -4,7 +4,6 @@ import java.sql.Blob;
 import java.sql.Clob;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -698,59 +697,12 @@ public class ColumnDefinition extends BaseData {
                     return " CURRENT DATE ";
                 }
             default:
-                return null;
+                return "''";
         }
     }
 
     public Object defaultValue() {
-        Object v = fromString(defaultValue, InvalidAs.Null);
-        switch (type) {
-            case String:
-            case Enumeration:
-            case EnumerationEditable:
-            case File:
-            case Image:
-            case Color:
-            case Clob:
-                if (v != null) {
-                    return defaultValue;
-                } else {
-                    return "";
-                }
-            case Double:
-            case Float:
-            case Long:
-            case Integer:
-            case Short:
-            case Longitude:
-            case Latitude:
-            case Era:
-                if (v != null) {
-                    return v;
-                } else {
-                    return 0;
-                }
-            case Boolean:
-                if (v != null) {
-                    return v;
-                } else {
-                    return false;
-                }
-            case Datetime:
-                if (v != null) {
-                    return v;
-                } else {
-                    return new Timestamp(new Date().getTime());
-                }
-            case Date:
-                if (v != null) {
-                    return v;
-                } else {
-                    return new java.sql.Date(new Date().getTime());
-                }
-            default:
-                return null;
-        }
+        return fromString(defaultValue, InvalidAs.Null);
     }
 
     public String getFormatDisplay() {

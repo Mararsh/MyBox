@@ -66,9 +66,11 @@ public class WebFavoriteEditor extends InfoTreeNodeEditor {
         if (values != null) {
             valueInput.setText(values.get("Address"));
             moreInput.setText(values.get("Icon"));
+            updateIcon(values.get("Icon"));
         } else {
             valueInput.setText("");
             moreInput.setText("");
+            updateIcon(null);
         }
     }
 

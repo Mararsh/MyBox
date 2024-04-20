@@ -3,7 +3,6 @@ package mara.mybox.fxml.cell;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.util.Callback;
-import mara.mybox.controller.BaseData2DLoadController;
 import mara.mybox.controller.BaseData2DTableController;
 import mara.mybox.controller.Data2DCoordinatePickerController;
 import mara.mybox.db.data.Data2DColumn;
@@ -24,7 +23,7 @@ public class TableDataCoordinateEditCell extends TableDataEditCell {
         Data2DCoordinatePickerController.open(dataTable, editingRow);
     }
 
-    public static Callback<TableColumn, TableCell> create(BaseData2DLoadController dataControl, Data2DColumn dataColumn) {
+    public static Callback<TableColumn, TableCell> create(BaseData2DTableController dataControl, Data2DColumn dataColumn) {
         return new Callback<TableColumn, TableCell>() {
             @Override
             public TableCell call(TableColumn param) {

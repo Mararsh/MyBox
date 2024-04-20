@@ -25,6 +25,7 @@ import javafx.util.Callback;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataFilter;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
+import static mara.mybox.db.data.ColumnDefinition.isTimeType;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableColor;
@@ -245,7 +246,6 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
             }
             List<Data2DColumn> columns = data2D.getColumns();
             TableColor tableColor = null;
-            boolean includeCoordinate = data2D.includeCoordinate();
             validateEdit = UserConfig.getBoolean(baseName + "ValidateEdit", true);
             for (int i = 0; i < columns.size(); i++) {
                 Data2DColumn dataColumn = columns.get(i);
@@ -286,10 +286,10 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
                         }
                         tableColumn.setCellFactory(TableDataColorEditCell.create(this, dataColumn, tableColor));
 
-                    } else if (dataColumn.isTimeType()) {
+                    } else if (isTimeType(type)) {
                         tableColumn.setCellFactory(TableDataDateEditCell.create(this, dataColumn));
 
-                    } else if (includeCoordinate && (type == ColumnType.Longitude || type == ColumnType.Latitude)) {
+                    } else if (type == ColumnType.Longitude || type == ColumnType.Latitude) {
                         tableColumn.setCellFactory(TableDataCoordinateEditCell.create(this, dataColumn));
 
                     } else {

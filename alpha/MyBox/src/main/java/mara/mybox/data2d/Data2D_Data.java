@@ -36,6 +36,11 @@ public abstract class Data2D_Data extends Data2D_Attributes {
     }
 
     public File tmpFile(String name, String operation, String ext) {
+        return tmpFile(name, operation, ext,
+                UserConfig.getBoolean("Data2DTmpDataUnderGeneratedPath", false));
+    }
+
+    public File tmpFile(String name, String operation, String ext, boolean underGeneratedPath) {
         String prefix;
         if (name != null && !name.isBlank()) {
             prefix = name;
@@ -53,7 +58,7 @@ public abstract class Data2D_Data extends Data2D_Attributes {
                 prefix = operation;
             }
         }
-        if (UserConfig.getBoolean("Data2DTmpDataUnderGeneratedPath", false)) {
+        if (underGeneratedPath) {
             return FileTmpTools.generateFile(prefix, ext);
         } else {
             return FileTmpTools.tmpFile(prefix, ext);

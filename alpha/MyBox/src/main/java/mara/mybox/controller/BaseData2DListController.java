@@ -114,7 +114,6 @@ public class BaseData2DListController extends BaseSysTableController<Data2DDefin
     }
 
     public void loadList() {
-        MyBoxLog.console("here");
         if (task != null) {
             task.cancel();
         }

@@ -143,6 +143,9 @@ public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskCont
             @Override
             protected boolean handle() {
                 data2D.startTask(this, filterController.filter);
+                writer.setColumns(outputColumns)
+                        .setHeaderNames(Data2DColumnTools.toNames(outputColumns))
+                        .setWriteHeader(colNameCheck == null || colNameCheck.isSelected());
                 taskSuccessed = handleAllData(this, writer);
                 return taskSuccessed;
             }
@@ -296,6 +299,9 @@ public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskCont
             @Override
             protected boolean handle() {
                 data2D.startTask(this, null);
+                writer.setColumns(outputColumns)
+                        .setHeaderNames(Data2DColumnTools.toNames(outputColumns))
+                        .setWriteHeader(colNameCheck == null || colNameCheck.isSelected());
                 writer.openWriter();
                 for (List<String> row : outputData) {
                     if (!isWorking()) {

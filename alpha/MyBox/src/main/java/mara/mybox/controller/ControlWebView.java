@@ -92,6 +92,7 @@ public class ControlWebView extends BaseController {
             pageLoadingNotify, pageLoadedNotify;
     protected final String StyleNodeID = "MyBox__Html_Style20211118";
     protected boolean listened, linkInNewTab;
+    public final Object lock = new Object();
 
     @FXML
     protected WebView webView;
@@ -437,7 +438,9 @@ public class ControlWebView extends BaseController {
             framesDoc.clear();
             charset = Charset.defaultCharset();
             clearListener();
-            listened = false;
+            synchronized (lock) {
+                listened = false;
+            }
         } catch (Exception e) {
             MyBoxLog.console(e);
         }
@@ -455,20 +458,22 @@ public class ControlWebView extends BaseController {
 
     private void running() {
         try {
-
             pageLoadingNotify.set(!pageLoadingNotify.get());
             timer = new Timer();
             timer.schedule(new TimerTask() {
                 @Override
                 public void run() {
                     Platform.runLater(() -> {
-                        if (listened) {
-                            if (timer != null) {
-                                timer.cancel();
+                        synchronized (lock) {
+                            if (listened) {
+                                if (timer != null) {
+                                    timer.cancel();
+                                }
+                                return;
                             }
-                            return;
                         }
                         initDoc(webEngine.getDocument());
+
                     });
                 }
             }, 300, 100);
@@ -477,10 +482,12 @@ public class ControlWebView extends BaseController {
         }
     }
 
-    private synchronized boolean initDoc(Document doc) {
+    private boolean initDoc(Document doc) {
         try {
-            if (listened || doc == null) {
-                return false;
+            synchronized (lock) {
+                if (listened || doc == null) {
+                    return false;
+                }
             }
             Object winObject = executeScript("window");
             Object docObject = executeScript("document");
@@ -493,7 +500,9 @@ public class ControlWebView extends BaseController {
             if (timer != null) {
                 timer.cancel();
             }
-            listened = true;
+            synchronized (lock) {
+                listened = true;
+            }
             return true;
         } catch (Exception e) {
             MyBoxLog.console(e);
@@ -556,9 +565,7 @@ public class ControlWebView extends BaseController {
 
             Document doc = webEngine.getDocument();
             if (doc != null) {
-                if (!listened) {
-                    initDoc(doc);
-                }
+                initDoc(doc);
                 NodeList frameList = doc.getElementsByTagName("frame");
                 for (int i = 0; i < frameList.getLength(); i++) {
                     executeScript("if ( window.frames[" + i + "].document.readyState==\"complete\") control.frameIndexReady(" + i + ");");
