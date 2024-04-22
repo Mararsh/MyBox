@@ -550,6 +550,7 @@ public class ControlMap extends BaseController {
                         MyBoxLog.console(e);
                     }
                 });
+                Platform.requestNextPulse();
             }
 
         }, 0, interval);

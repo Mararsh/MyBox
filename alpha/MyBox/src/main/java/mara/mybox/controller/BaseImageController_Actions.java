@@ -416,6 +416,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
                 Platform.runLater(() -> {
                     fileRenamed(newFile);
                 });
+                Platform.requestNextPulse();
             });
         } catch (Exception e) {
             MyBoxLog.error(e);

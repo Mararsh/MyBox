@@ -154,7 +154,7 @@ public class Data2DRowExpressionController extends BaseData2DTaskTargetsControll
                     updateLogs(baseTitle + " ... ", true);
                     startOperation();
                 } else {
-                    closeTask();
+                    closeTask(ok);
                 }
             }
 

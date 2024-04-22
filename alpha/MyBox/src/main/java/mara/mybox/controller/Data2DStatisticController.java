@@ -235,7 +235,7 @@ public class Data2DStatisticController extends BaseData2DTaskTargetsController {
             protected void finalAction() {
                 super.finalAction();
                 calculation.setTask(null);
-                closeTask();
+                closeTask(ok);
             }
 
         };
@@ -297,7 +297,7 @@ public class Data2DStatisticController extends BaseData2DTaskTargetsController {
             protected void finalAction() {
                 super.finalAction();
                 calculation.setTask(null);
-                closeTask();
+                closeTask(ok);
             }
 
         };

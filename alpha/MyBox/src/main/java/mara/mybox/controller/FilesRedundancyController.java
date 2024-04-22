@@ -259,7 +259,7 @@ public class FilesRedundancyController extends BaseBatchFileController {
     }
 
     @Override
-    public void afterTask() {
+    public void afterTask(boolean ok) {
         goAction();
 
         showCost();

@@ -33,8 +33,8 @@ public class DataFileCSV extends DataFileText {
 
     @Override
     public String[] delimters() {
-        String[] delimiters = {",", " ", "|", "@", "#", ";", ":", "*",
-            "%", "$", "_", "&", "-", "=", "!", "\"", "'", "<", ">"};
+        String[] delimiters = {",", " ", "|", "@", ";", ":", "*",
+            "%", "$", "_", "&", "-", "=", "!", "\"", "'", "<", ">", "#"};
         return delimiters;
     }
 

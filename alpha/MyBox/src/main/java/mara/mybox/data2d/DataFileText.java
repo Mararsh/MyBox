@@ -29,8 +29,8 @@ public class DataFileText extends DataFile {
 
     public String[] delimters() {
         String[] delimiters = {",", " ", "    ", "        ", "\t", "|", "@",
-            "#", ";", ":", "*", "%", "$", "_", "&", "-", "=", "!", "\"",
-            "'", "<", ">"};
+            ";", ":", "*", "%", "$", "_", "&", "-", "=", "!", "\"",
+            "'", "<", ">", "#"};
         return delimiters;
     }
 

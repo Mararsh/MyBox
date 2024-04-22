@@ -465,6 +465,7 @@ public class ImagesPlayController extends BaseFileController {
                 synchronized (sourceFile) {
                     sourceFile.wait();
                 }
+                Platform.requestNextPulse();
                 try {
                     pdfDoc = PDDocument.load(sourceFile, pdfPassword, AppVariables.PdfMemUsage);
                 } catch (Exception ee) {

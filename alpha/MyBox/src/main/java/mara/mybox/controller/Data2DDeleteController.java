@@ -113,7 +113,7 @@ public class Data2DDeleteController extends BaseData2DTaskTargetsController {
             @Override
             protected void finalAction() {
                 super.finalAction();
-                closeTask();
+                closeTask(ok);
             }
 
         };
@@ -168,7 +168,7 @@ public class Data2DDeleteController extends BaseData2DTaskTargetsController {
             @Override
             protected void finalAction() {
                 super.finalAction();
-                closeTask();
+                closeTask(ok);
             }
 
         };

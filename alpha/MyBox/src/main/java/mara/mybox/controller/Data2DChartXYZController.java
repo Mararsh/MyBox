@@ -264,7 +264,7 @@ public class Data2DChartXYZController extends BaseData2DTaskController {
             @Override
             protected void finalAction() {
                 super.finalAction();
-                closeTask();
+                closeTask(ok);
             }
 
         };

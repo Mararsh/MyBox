@@ -111,7 +111,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
     }
 
     @Override
-    public void afterTask() {
+    public void afterTask(boolean ok) {
         showCost();
         tableView.refresh();
         recordTargetFiles();
@@ -627,7 +627,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
             protected void finalAction() {
                 super.finalAction();
                 tableController.markFileHandling(-1);
-                afterTask();
+                closeTask(ok);
             }
 
         };
@@ -1111,7 +1111,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
 
             }
         });
-
+        Platform.requestNextPulse();
     }
 
     public double countAverageTime(long cost) {

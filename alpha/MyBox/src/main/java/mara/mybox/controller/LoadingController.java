@@ -75,6 +75,7 @@ public class LoadingController extends BaseLogs {
                         }
                         timeLabel.setText(prefix + DateTools.datetimeMsDuration(new Date(), startTime));
                     });
+                    Platform.requestNextPulse();
                 }
             }, 0, 1000);
         } catch (Exception e) {

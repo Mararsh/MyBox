@@ -118,6 +118,7 @@ public class ImageConvolutionController extends BasePixelsController {
                 }
             }
         });
+        Platform.requestNextPulse();
     }
 
 }

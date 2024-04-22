@@ -162,7 +162,7 @@ public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskCont
             @Override
             protected void finalAction() {
                 super.finalAction();
-                closeTask();
+                closeTask(ok);
             }
 
         };
@@ -201,7 +201,7 @@ public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskCont
             @Override
             protected void finalAction() {
                 super.finalAction();
-                closeTask();
+                closeTask(ok);
             }
 
         };
@@ -327,7 +327,7 @@ public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskCont
             @Override
             protected void finalAction() {
                 super.finalAction();
-                closeTask();
+                closeTask(ok);
             }
 
         };

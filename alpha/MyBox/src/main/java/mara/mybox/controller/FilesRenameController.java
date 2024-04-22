@@ -344,7 +344,7 @@ public class FilesRenameController extends BaseBatchFileController {
     }
 
     @Override
-    public void afterTask() {
+    public void afterTask(boolean ok) {
         try {
             if (names == null || names.isEmpty()) {
                 popError(message("SelectToHandle"));

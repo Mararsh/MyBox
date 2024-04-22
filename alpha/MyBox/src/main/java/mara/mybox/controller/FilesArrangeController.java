@@ -320,7 +320,7 @@ public class FilesArrangeController extends BaseBatchFileController {
             @Override
             protected void finalAction() {
                 super.finalAction();
-                afterTask();
+                closeTask(ok);
             }
 
         };
@@ -443,7 +443,7 @@ public class FilesArrangeController extends BaseBatchFileController {
     }
 
     @Override
-    public void afterTask() {
+    public void afterTask(boolean ok) {
         recordTargetFiles();
         updateLogs(message("StartTime") + ": " + DateTools.datetimeToString(processStartTime) + "   "
                 + message("Cost") + ": " + DateTools.datetimeMsDuration(new Date(), processStartTime), false, true);

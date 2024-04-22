@@ -217,6 +217,7 @@ public abstract class Data2DOperate {
                         writer.showResult();
                     }
                 });
+                Platform.requestNextPulse();
             }
 
         }, 200);

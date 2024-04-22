@@ -117,9 +117,9 @@ public class Data2DTableCreateController extends BaseData2DTaskController {
     }
 
     @Override
-    public void afterTask() {
+    public void afterTask(boolean ok) {
         try {
-            super.afterTask();
+            super.afterTask(ok);
             attributesBox.setDisable(false);
             optionsBox.setDisable(false);
             startButton.setDisable(false);

@@ -79,11 +79,11 @@ public class FilesMergeController extends BaseBatchFileController {
     }
 
     @Override
-    public void afterTask() {
+    public void afterTask(boolean ok) {
         if (closeWriter()) {
             targetFileGenerated(targetFile);
         }
-        super.afterTask();
+        super.afterTask(ok);
     }
 
     protected boolean closeWriter() {

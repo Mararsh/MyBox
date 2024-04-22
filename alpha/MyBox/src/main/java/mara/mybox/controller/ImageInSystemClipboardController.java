@@ -23,10 +23,10 @@ import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
+import static mara.mybox.value.AppVariables.ImageClipMonitor;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
-import static mara.mybox.value.AppVariables.ImageClipMonitor;
 
 /**
  * @Author Mara
@@ -343,6 +343,7 @@ public class ImageInSystemClipboardController extends BaseImageController {
                 controller.updateStatus();
             }
         });
+        Platform.requestNextPulse();
     }
 
 }

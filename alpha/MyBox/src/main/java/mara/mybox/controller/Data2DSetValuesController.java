@@ -145,7 +145,7 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
                     updateLogs(baseTitle + " ... ", true);
                     startOperation();
                 } else {
-                    closeTask();
+                    closeTask(ok);
                 }
             }
 
@@ -194,7 +194,7 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
             protected void finalAction() {
                 super.finalAction();
                 valueController.expressionController.calculator.reset();
-                closeTask();
+                closeTask(ok);
             }
 
         };

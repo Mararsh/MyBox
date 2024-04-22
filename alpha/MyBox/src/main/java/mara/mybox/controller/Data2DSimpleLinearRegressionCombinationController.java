@@ -123,7 +123,7 @@ public class Data2DSimpleLinearRegressionCombinationController extends BaseData2
             @Override
             protected void finalAction() {
                 super.finalAction();
-                closeTask();
+                closeTask(ok);
             }
 
         };

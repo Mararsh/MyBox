@@ -438,10 +438,10 @@ public class FilesArchiveCompressController extends BaseBatchFileController {
     }
 
     @Override
-    public void afterTask() {
+    public void afterTask(boolean ok) {
         tableView.refresh();
         targetPath = targetFile.getParentFile();
-        super.afterTask();
+        super.afterTask(ok);
         if (archive == null) {
             return;
         }

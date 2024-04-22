@@ -151,7 +151,7 @@ public abstract class FindBatchController extends FindReplaceBatchController {
     }
 
     @Override
-    public void afterTask() {
+    public void afterTask(boolean ok) {
         try {
             if (csvPrinter != null) {
                 csvPrinter.close();
@@ -165,7 +165,7 @@ public abstract class FindBatchController extends FindReplaceBatchController {
                     }
                 }
             }
-            super.afterTask();
+            super.afterTask(ok);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

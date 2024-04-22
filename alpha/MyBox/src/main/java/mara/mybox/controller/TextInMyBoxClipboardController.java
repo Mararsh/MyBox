@@ -250,6 +250,7 @@ public class TextInMyBoxClipboardController extends BaseSysTableController<TextC
                 }
             }
         });
+        Platform.requestNextPulse();
     }
 
     public static void updateMyBoxClipboardStatus() {
@@ -269,6 +270,7 @@ public class TextInMyBoxClipboardController extends BaseSysTableController<TextC
                 }
             }
         });
+        Platform.requestNextPulse();
     }
 
 }

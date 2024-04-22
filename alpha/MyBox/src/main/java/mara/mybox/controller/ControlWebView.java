@@ -259,6 +259,7 @@ public class ControlWebView extends BaseController {
                 MyBoxLog.error(e);
             }
         });
+        Platform.requestNextPulse();
     }
 
     public void docEvent(org.w3c.dom.events.Event ev) {
@@ -341,6 +342,7 @@ public class ControlWebView extends BaseController {
                     popElementMenu(element);
                 });
             }
+            Platform.requestNextPulse();
             MenuWebviewController menu = MenuWebviewController.running(webView);
             if (menu != null) {
                 menu.setElement(element);
@@ -473,8 +475,8 @@ public class ControlWebView extends BaseController {
                             }
                         }
                         initDoc(webEngine.getDocument());
-
                     });
+                    Platform.requestNextPulse();
                 }
             }, 300, 100);
         } catch (Exception e) {

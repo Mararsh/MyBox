@@ -148,13 +148,13 @@ public class ClearExpiredDataController extends BaseTaskController {
     }
 
     @Override
-    public void afterTask() {
+    public void afterTask(boolean ok) {
         if (exit) {
             close();
             AppVariables.handlingExit = false;
             WindowTools.handleExit();
         } else {
-            super.afterTask();
+            super.afterTask(ok);
         }
     }
 

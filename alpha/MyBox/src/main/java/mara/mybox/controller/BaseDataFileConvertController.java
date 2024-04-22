@@ -66,7 +66,7 @@ public abstract class BaseDataFileConvertController extends BaseBatchFileControl
     }
 
     @Override
-    public void afterTask() {
+    public void afterTask(boolean ok) {
         List<File> files = export.getPrintedFiles();
         targetFilesCount = files != null ? files.size() : 0;
         showCost();

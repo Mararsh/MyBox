@@ -667,6 +667,7 @@ public abstract class BaseDomEditorController extends BaseFileController {
         Platform.runLater(() -> {
             loadDom(textsByText(), true);
         });
+        Platform.requestNextPulse();
     }
 
     @FXML

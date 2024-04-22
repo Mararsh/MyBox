@@ -254,8 +254,8 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
     }
 
     @Override
-    public void afterTask() {
-        super.afterTask();
+    public void afterTask(boolean ok) {
+        super.afterTask(ok);
         if (process != null) {
             process.destroy();
             process = null;

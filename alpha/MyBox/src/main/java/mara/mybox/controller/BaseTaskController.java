@@ -148,7 +148,7 @@ public class BaseTaskController extends BaseLogs {
             @Override
             protected void finalAction() {
                 super.finalAction();
-                closeTask();
+                closeTask(ok);
             }
         };
         start(task, false);
@@ -162,7 +162,7 @@ public class BaseTaskController extends BaseLogs {
 
     }
 
-    public void closeTask() {
+    public void closeTask(boolean ok) {
         if (startButton != null) {
             StyleTools.setNameIcon(startButton, message("Start"), "iconStart.png");
             startButton.applyCss();
@@ -175,10 +175,10 @@ public class BaseTaskController extends BaseLogs {
             updateLogs(message("Completed") + " " + message("Cost")
                     + " " + DateTools.datetimeMsDuration(endTime, startTime), true);
         }
-        afterTask();
+        afterTask(ok);
     }
 
-    public void afterTask() {
+    public void afterTask(boolean ok) {
         recordTargetFiles();
         if (miaoCheck != null && miaoCheck.isSelected()) {
             SoundTools.miao3();
@@ -186,7 +186,7 @@ public class BaseTaskController extends BaseLogs {
         if (openCheck != null && openCheck.isSelected()) {
             openTarget();
         }
-        if (taskSuccessed && closeAfterCheck != null && closeAfterCheck.isSelected()) {
+        if (ok && closeAfterCheck != null && closeAfterCheck.isSelected()) {
             close();
         }
     }

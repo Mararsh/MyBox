@@ -365,6 +365,7 @@ public class ImagesBrowserController extends ControlImagesTable {
             Platform.runLater(() -> {
                 paneSizeAll();
             });
+            Platform.requestNextPulse();
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -710,6 +711,7 @@ public class ImagesBrowserController extends ControlImagesTable {
                         });
 
                     }
+                    Platform.requestNextPulse();
                     return true;
                 } catch (Exception e) {
                     error = e.toString();

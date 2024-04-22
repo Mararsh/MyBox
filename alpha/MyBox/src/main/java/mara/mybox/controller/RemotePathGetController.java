@@ -142,8 +142,8 @@ public class RemotePathGetController extends RemotePathHandleFilesController {
     }
 
     @Override
-    public void afterTask() {
-        super.afterTask();
+    public void afterTask(boolean ok) {
+        super.afterTask(ok);
         if (openCheck.isSelected()) {
             openTarget();
         }

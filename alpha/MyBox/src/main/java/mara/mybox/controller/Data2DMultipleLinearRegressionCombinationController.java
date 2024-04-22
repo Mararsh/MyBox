@@ -196,7 +196,7 @@ public class Data2DMultipleLinearRegressionCombinationController extends BaseDat
             @Override
             protected void finalAction() {
                 super.finalAction();
-                closeTask();
+                closeTask(ok);
             }
 
         };

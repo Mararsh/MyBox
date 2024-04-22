@@ -260,7 +260,7 @@ public class Data2DExampleTools {
             menu = new MenuItem(message("CrimesFiledByChinaPolice"));
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = CrimesFiledByChinaPolice(isChinese);
-                if (makeExampleFile("CrimesFiledByChinaPolice", data)) {
+                if (makeExampleFile("ChinaCrimesFiledByPolice", data)) {
                     controller.loadDef(data);
                 }
             });
@@ -1573,22 +1573,24 @@ public class Data2DExampleTools {
                         header += "," + name;
                     }
                 }
-                String values = "";
-                for (int i = 0; i < columns.size() - table.getNames().size(); i++) {
-                    values += "," + defauleValue;
-                }
                 writer.write(header + System.lineSeparator());
-                String line;
-                for (List<String> row : table.getData()) {
-                    line = null;
-                    for (String v : row) {
-                        if (line != null) {
-                            line += "," + v;
-                        } else {
-                            line = v;
-                        }
+                if (!UserConfig.getBoolean("Data2DExampleImportDefinitionOnly", false)) {
+                    String values = "";
+                    for (int i = 0; i < columns.size() - table.getNames().size(); i++) {
+                        values += "," + defauleValue;
                     }
-                    writer.write(line + values + System.lineSeparator());
+                    String line;
+                    for (List<String> row : table.getData()) {
+                        line = null;
+                        for (String v : row) {
+                            if (line != null) {
+                                line += "," + v;
+                            } else {
+                                line = v;
+                            }
+                        }
+                        writer.write(line + values + System.lineSeparator());
+                    }
                 }
                 writer.flush();
             } catch (Exception e) {

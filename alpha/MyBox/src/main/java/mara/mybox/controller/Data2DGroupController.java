@@ -95,7 +95,7 @@ public class Data2DGroupController extends BaseData2DTaskController {
             @Override
             protected void finalAction() {
                 super.finalAction();
-                closeTask();
+                closeTask(ok);
             }
 
         };

@@ -149,7 +149,7 @@ public class Data2DExportController extends BaseData2DTaskController {
             @Override
             protected void finalAction() {
                 super.finalAction();
-                closeTask();
+                closeTask(ok);
             }
 
         };
@@ -176,14 +176,14 @@ public class Data2DExportController extends BaseData2DTaskController {
     }
 
     @Override
-    public void afterTask() {
+    public void afterTask(boolean ok) {
         try {
             if (export != null) {
                 export.end();
                 export = null;
             }
             data2D.stopTask();
-            super.afterTask();
+            super.afterTask(ok);
             dataBox.setDisable(false);
             filterVBox.setDisable(false);
             formatVBox.setDisable(false);

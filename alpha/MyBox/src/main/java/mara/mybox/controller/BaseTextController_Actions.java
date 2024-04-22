@@ -56,6 +56,7 @@ public abstract class BaseTextController_Actions extends BaseTextController_File
                     Platform.runLater(() -> {
                         setPageSize();
                     });
+                    Platform.requestNextPulse();
                 }
             });
 

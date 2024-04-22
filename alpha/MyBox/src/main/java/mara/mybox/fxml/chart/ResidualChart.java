@@ -44,6 +44,7 @@ public class ResidualChart<X, Y> extends LabeledScatterChart<X, Y> {
                         makeControls();
                     }
                 });
+                Platform.requestNextPulse();
             }
         }, 100, 100);
     }

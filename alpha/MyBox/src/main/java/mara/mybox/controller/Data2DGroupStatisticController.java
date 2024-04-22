@@ -229,7 +229,7 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
             @Override
             protected void finalAction() {
                 super.finalAction();
-                closeTask();
+                closeTask(ok);
             }
 
         };

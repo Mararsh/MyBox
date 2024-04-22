@@ -159,7 +159,7 @@ public abstract class RemotePathHandleFilesController extends BaseTaskController
     }
 
     @Override
-    public void afterTask() {
+    public void afterTask(boolean ok) {
         showLogs(doneString + ": " + doneCount);
         if (miaoCheck.isSelected()) {
             SoundTools.miao3();

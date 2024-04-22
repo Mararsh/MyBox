@@ -76,7 +76,7 @@ public class FilesDeleteNestedDirectoriesController extends BaseBatchFileControl
     }
 
     @Override
-    public void afterTask() {
+    public void afterTask(boolean ok) {
         tableView.refresh();
 
         if (miaoCheck != null && miaoCheck.isSelected()) {

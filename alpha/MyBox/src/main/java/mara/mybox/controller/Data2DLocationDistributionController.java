@@ -314,7 +314,7 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
                     valuesController.loadDef(csvData);
                     rightPane.setDisable(false);
                 } else {
-                    closeTask();
+                    closeTask(ok);
                 }
             }
 
@@ -397,7 +397,7 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
         mapController.clearAction();
         taskSuccessed = false;
         if (dataPoints == null || dataPoints.isEmpty()) {
-            closeTask();
+            closeTask(false);
             return;
         }
         task = new FxSingletonTask<Void>(this) {
@@ -455,7 +455,7 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
             @Override
             protected void finalAction() {
                 super.finalAction();
-                closeTask();
+                closeTask(ok);
             }
 
         };

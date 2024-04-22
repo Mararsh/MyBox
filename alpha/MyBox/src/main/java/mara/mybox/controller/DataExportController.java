@@ -199,6 +199,7 @@ public class DataExportController extends BaseTaskController {
                 startButton.setUserData(null);
             }
         });
+        Platform.requestNextPulse();
     }
 
     @Override
@@ -336,10 +337,7 @@ public class DataExportController extends BaseTaskController {
             @Override
             protected void finalAction() {
                 super.finalAction();
-                StyleTools.setNameIcon(startButton, Languages.message("Start"), "iconStart.png");
-                startButton.applyCss();
-                startButton.setUserData(null);
-                afterTask();
+                closeTask(ok);
             }
         };
         start(task, false);

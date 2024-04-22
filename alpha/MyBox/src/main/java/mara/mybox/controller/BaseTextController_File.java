@@ -160,6 +160,7 @@ public abstract class BaseTextController_File extends BaseTextController_Main {
                             saveAction();
                         }
                     });
+                    Platform.requestNextPulse();
                 }
             }, interval, interval);
 

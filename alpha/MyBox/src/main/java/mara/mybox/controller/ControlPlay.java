@@ -305,6 +305,7 @@ public class ControlPlay extends BaseController {
                 synchronized (snapNode) {
                     snapNode.wait();
                 }
+                Platform.requestNextPulse();
             }
             if (stopped.get()) {
                 pause();

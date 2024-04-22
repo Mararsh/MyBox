@@ -211,6 +211,7 @@ public class ImageInMyBoxClipboardController extends BaseImageClipController {
                 }
             }
         });
+        Platform.requestNextPulse();
     }
 
     public static void updateClipboardsStatus() {
@@ -234,6 +235,7 @@ public class ImageInMyBoxClipboardController extends BaseImageClipController {
                 }
             }
         });
+        Platform.requestNextPulse();
     }
 
 }

@@ -119,6 +119,7 @@ public class DataInMyBoxClipboardController extends BaseData2DListController {
                 }
             }
         });
+        Platform.requestNextPulse();
     }
 
     public static DataInMyBoxClipboardController open(Data2DDefinition clip) {

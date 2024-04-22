@@ -166,7 +166,7 @@ public class FFmpegMergeImagesController extends BaseBatchFFmpegController {
                 @Override
                 protected void finalAction() {
                     super.finalAction();
-                    afterTask();
+                    closeTask(ok);
                 }
 
             };

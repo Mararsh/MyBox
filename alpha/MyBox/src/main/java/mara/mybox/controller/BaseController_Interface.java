@@ -454,6 +454,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
                                 rightPane.setVvalue(0);
                             }
                         });
+                        Platform.requestNextPulse();
                     }
                 }, 1000);
             }
@@ -586,6 +587,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
                         getMyStage().setIconified(false);
                         myStage.toFront();
                     });
+                    Platform.requestNextPulse();
                 }
             }, 500);
         } catch (Exception e) {
@@ -632,6 +634,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
                 LocateTools.mouseCenter(myStage);
                 closePopup();
             });
+            Platform.requestNextPulse();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

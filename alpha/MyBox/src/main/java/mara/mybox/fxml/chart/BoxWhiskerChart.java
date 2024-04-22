@@ -479,6 +479,7 @@ public class BoxWhiskerChart<X, Y> extends LabeledLineChart<X, Y> {
                         makeBoxWhisker();
                     }
                 });
+                Platform.requestNextPulse();
             }
         }, 100, 100);
     }

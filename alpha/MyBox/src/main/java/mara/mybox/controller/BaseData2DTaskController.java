@@ -709,7 +709,7 @@ public abstract class BaseData2DTaskController extends BaseBranchController {
                     updateLogs(baseTitle + " ... ", true);
                     startOperation();
                 } else {
-                    closeTask();
+                    closeTask(ok);
                 }
             }
 
@@ -890,11 +890,11 @@ public abstract class BaseData2DTaskController extends BaseBranchController {
     }
 
     @Override
-    public void closeTask() {
+    public void closeTask(boolean ok) {
         if (data2D != null) {
             data2D.stopTask();
         }
-        super.closeTask();
+        super.closeTask(ok);
     }
 
     @Override
