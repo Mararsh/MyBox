@@ -65,6 +65,7 @@ License:    Apache License Version 2.0
                                         <SeparatorMenuItem mnemonicParsing="false" />
                                         <MenuItem mnemonicParsing="false" onAction="#openPDFAttributes" text="%PDFAttributes" />
                                         <MenuItem mnemonicParsing="false" onAction="#openPDFAttributesBatch" text="%PDFAttributesBatch" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openPdfAddWatermark" text="%PdfAddWatermark" />
                                     </items>
                                 </Menu>
                                 <Menu mnemonicParsing="false" text="Markdown">

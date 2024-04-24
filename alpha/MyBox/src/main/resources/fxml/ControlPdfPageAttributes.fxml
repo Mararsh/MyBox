@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlPdfPageAttributes">
+      <children>
+      <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+         <children>
+            <HBox alignment="CENTER_LEFT" spacing="5.0">
+               <children>
+                  <CheckBox fx:id="waterTextCheck" mnemonicParsing="false" text="%WatermarkText" />
+                  <TextField fx:id="waterTextInput" HBox.hgrow="ALWAYS" />
+               </children>
+            </HBox>
+            <fx:include fx:id="waterTextFont" source="ControlTTFSelector.fxml" />
+            <HBox alignment="CENTER_LEFT" spacing="5.0">
+               <children>
+                  <Label text="%FontSize" />
+                  <ComboBox fx:id="waterTextSizeSelector" editable="true" prefWidth="100.0" />
+                  <Label text="px">
+                     <padding>
+                        <Insets right="10.0" />
+                     </padding>
+                  </Label>
+                  <Label text="%FontColor" />
+                  <fx:include fx:id="waterTextColor" source="ControlColorSet.fxml" />
+                  <Label text="%BackgroundColor" />
+                  <fx:include fx:id="waterTextBgColor" source="ControlColorSet.fxml" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" layoutX="15.0" layoutY="76.0" spacing="5.0">
+               <children>
+                  <Label layoutX="10.0" layoutY="14.0" text="%Rotate" />
+                  <TextField fx:id="waterTextRotateInput" prefWidth="100.0" />
+                  <Label text="%Opacity" />
+                  <TextField fx:id="waterTextOpacityInput" layoutX="39.0" layoutY="10.0" prefWidth="100.0" />
+                  <Label text="%BlendMode" />
+                  <ComboBox fx:id="waterTextBlendSelector" maxWidth="1.7976931348623157E308" minWidth="120.0" HBox.hgrow="ALWAYS" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" layoutX="15.0" layoutY="133.0" spacing="5.0">
+               <children>
+                  <Label text="%Margin" />
+                  <TextField fx:id="waterTextMarginInput" prefWidth="100.0" />
+                  <Label text="px">
+                     <padding>
+                        <Insets right="10.0" />
+                     </padding>
+                  </Label>
+                  <Label text="%RowsNumber" />
+                  <TextField fx:id="waterTextRowsInput" layoutX="39.0" layoutY="10.0" prefWidth="100.0" />
+                  <Label text="%ColumnsNumber" />
+                  <TextField fx:id="waterTextColumnsInput" layoutX="202.0" layoutY="10.0" prefWidth="100.0" />
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+      <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+         <children>
+            <HBox alignment="CENTER_LEFT" spacing="5.0">
+               <children>
+                  <CheckBox fx:id="waterImageCheck" mnemonicParsing="false" text="%WatermarkImage" />
+                  <TextField fx:id="sourceFileInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                  <Button fx:id="selectFileButton" mnemonicParsing="false" onAction="#pickSourceFile" onMouseEntered="#popSourceFile">
+                     <graphic>
+                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../buttons/Red/iconSelectFile.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" spacing="5.0">
+               <children>
+                  <Label text="%Width" />
+                  <TextField fx:id="waterImageWidthInput" prefWidth="100.0" />
+                  <Label text="px">
+                     <padding>
+                        <Insets right="10.0" />
+                     </padding>
+                  </Label>
+                  <Label layoutX="10.0" layoutY="14.0" text="%Height" />
+                  <TextField fx:id="waterImageHeightInput" layoutX="39.0" layoutY="10.0" prefWidth="100.0" />
+                  <Label layoutX="184.0" layoutY="14.0" text="px">
+                     <padding>
+                        <Insets right="10.0" />
+                     </padding>
+                  </Label>
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" spacing="5.0">
+               <children>
+                  <Label layoutX="10.0" layoutY="14.0" text="%Rotate" />
+                  <TextField fx:id="waterImageRotateInput" prefWidth="100.0" />
+                  <Label text="%Opacity" />
+                  <TextField fx:id="waterImageOpacityInput" layoutX="39.0" layoutY="10.0" prefWidth="100.0" />
+                  <Label text="%BlendMode" />
+                  <ComboBox fx:id="waterImageBlendSelector" maxWidth="1.7976931348623157E308" minWidth="120.0" HBox.hgrow="ALWAYS" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" spacing="5.0">
+               <children>
+                  <Label text="%Margin" />
+                  <TextField fx:id="waterImageMarginInput" prefWidth="100.0" />
+                  <Label text="px">
+                     <padding>
+                        <Insets right="10.0" />
+                     </padding>
+                  </Label>
+                  <Label text="%RowsNumber" />
+                  <TextField fx:id="waterImageRowsInput" layoutX="39.0" layoutY="10.0" prefWidth="100.0" />
+                  <Label text="%ColumnsNumber" />
+                  <TextField fx:id="waterImageColumnsInput" layoutX="202.0" layoutY="10.0" prefWidth="100.0" />
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+      <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+         <children>
+            <HBox alignment="CENTER_LEFT" spacing="5.0">
+               <children>
+                  <CheckBox fx:id="headerCheck" mnemonicParsing="false" text="%PageHeader" />
+                  <TextField fx:id="headerInput" HBox.hgrow="ALWAYS" />
+               </children>
+            </HBox>
+            <fx:include fx:id="headerFont" source="ControlTTFSelector.fxml" />
+            <HBox alignment="CENTER_LEFT" spacing="5.0">
+               <children>
+                  <Label text="%FontSize" />
+                  <ComboBox fx:id="headerSizeSelector" editable="true" prefWidth="100.0" promptText="%Size" />
+                  <Label text="px">
+                     <padding>
+                        <Insets right="10.0" />
+                     </padding>
+                  </Label>
+                  <Label text="%FontColor" />
+                  <fx:include fx:id="headerColor" source="ControlColorSet.fxml" />
+                  <Label text="%BackgroundColor" />
+                  <fx:include fx:id="headerBgColor" source="ControlColorSet.fxml" />
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+      <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+         <children>
+            <HBox alignment="CENTER_LEFT" spacing="5.0">
+               <children>
+                  <CheckBox fx:id="footerCheck" mnemonicParsing="false" text="%PageFooter" />
+                  <TextField fx:id="footerInput" HBox.hgrow="ALWAYS" />
+               </children>
+            </HBox>
+            <fx:include fx:id="footerFont" source="ControlTTFSelector.fxml" />
+            <HBox alignment="CENTER_LEFT" spacing="5.0">
+               <children>
+                  <Label text="%FontSize" />
+                  <ComboBox fx:id="footerSizeSelector" editable="true" prefWidth="100.0" promptText="%Size" />
+                  <Label text="px">
+                     <padding>
+                        <Insets right="10.0" />
+                     </padding>
+                  </Label>
+                  <Label text="%FontColor" />
+                  <fx:include fx:id="footerColor" source="ControlColorSet.fxml" />
+                  <Label text="%BackgroundColor" />
+                  <fx:include fx:id="footerBgColor" source="ControlColorSet.fxml" />
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+      <VBox layoutX="10.0" layoutY="359.0" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+         <children>
+            <CheckBox fx:id="numberCheck" mnemonicParsing="false" text="%PageNumber2" />
+            <fx:include fx:id="numberFont" source="ControlTTFSelector.fxml" />
+            <HBox alignment="CENTER_LEFT" spacing="5.0">
+               <children>
+                  <Label text="%FontSize" />
+                  <ComboBox fx:id="numberSizeSelector" editable="true" prefWidth="100.0" promptText="%Size" />
+                  <Label text="px">
+                     <padding>
+                        <Insets right="10.0" />
+                     </padding>
+                  </Label>
+                  <Label text="%FontColor" />
+                  <fx:include fx:id="numberColor" source="ControlColorSet.fxml" />
+                  <Label text="%BackgroundColor" />
+                  <fx:include fx:id="numberBgColor" source="ControlColorSet.fxml" />
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+      </children>
+  </VBox>

@@ -17,7 +17,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" spacing="2.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlPdfWriteOptions">
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" spacing="2.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlPdfWriteOptions">
     <children>
         <VBox spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
             <children>
@@ -92,6 +92,12 @@ License:    Apache License Version 2.0
                         <TextField fx:id="headerInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                     </children>
                 </HBox>
+            <HBox alignment="CENTER_LEFT" layoutX="15.0" layoutY="96.0" maxWidth="1.7976931348623157E308" spacing="5.0">
+               <children>
+                  <Label minWidth="-Infinity" text="%PageFooter" HBox.hgrow="NEVER" />
+                  <TextField fx:id="footerInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+               </children>
+            </HBox>
                 <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
                     <children>
                         <Label minWidth="-Infinity" text="%Author" />

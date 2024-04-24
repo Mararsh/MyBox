@@ -21,7 +21,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.paint.*?>
 
 <HBox fx:id="thisPane" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" spacing="5.0"
-      xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlTTFSelecter">
+      xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlTTFSelector">
     <children>
         <Label fx:id="label" minWidth="-Infinity" text="%FontFile" HBox.hgrow="NEVER" />
         <ComboBox fx:id="ttfSelector" editable="true" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />

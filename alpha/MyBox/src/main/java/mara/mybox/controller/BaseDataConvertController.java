@@ -45,7 +45,7 @@ import org.apache.pdfbox.pdmodel.common.PDRectangle;
  * @License Apache License Version 2.0
  */
 public class BaseDataConvertController extends BaseTaskController {
-
+    
     @FXML
     protected TextArea cssArea;
     @FXML
@@ -58,7 +58,7 @@ public class BaseDataConvertController extends BaseTaskController {
     protected ControlTextOptions textWriteOptionsController;
     @FXML
     protected ControlPdfWriteOptions pdfOptionsController;
-
+    
     public void initControls(String name) {
         baseName = name + "_" + baseName;
         initCSV();
@@ -67,13 +67,13 @@ public class BaseDataConvertController extends BaseTaskController {
         initPDF();
         initHtml();
     }
-
+    
     private void initCSV() {
         if (csvWriteController != null) {
             csvWriteController.setControls(baseName + "CSVWrite", false, false);
         }
     }
-
+    
     private void initExcel() {
         if (excelWithNamesCheck != null) {
             excelWithNamesCheck.setSelected(UserConfig.getBoolean(baseName + "ExcelTargetWithNames", true));
@@ -82,19 +82,19 @@ public class BaseDataConvertController extends BaseTaskController {
             currentSheetOnlyCheck.setSelected(UserConfig.getBoolean(baseName + "ExcelCurrentSheetOnly", false));
         }
     }
-
+    
     private void initTexts() {
         if (textWriteOptionsController != null) {
             textWriteOptionsController.setControls(baseName + "TextWrite", false, true);
         }
     }
-
+    
     private void initHtml() {
         if (cssArea != null) {
             cssArea.setText(UserConfig.getString(baseName + "Css", HtmlStyles.TableStyle));
         }
     }
-
+    
     private void initPDF() {
         if (pdfOptionsController != null) {
             pdfOptionsController.set(baseName, false);
@@ -102,7 +102,7 @@ public class BaseDataConvertController extends BaseTaskController {
             pdfOptionsController.standardSizeRadio.setSelected(true);
         }
     }
-
+    
     public DataFileCSVWriter pickCSVWriter() {
         try {
             DataFileCSVWriter writer = new DataFileCSVWriter();
@@ -115,14 +115,14 @@ public class BaseDataConvertController extends BaseTaskController {
                         .setDelimiter(csvWriteController.getDelimiterName())
                         .setWriteHeader(csvWriteController.withName());
             }
-
+            
             return writer;
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;
         }
     }
-
+    
     public DataFileExcelWriter pickExcelWriter() {
         try {
             DataFileExcelWriter writer = new DataFileExcelWriter();
@@ -134,14 +134,14 @@ public class BaseDataConvertController extends BaseTaskController {
                 UserConfig.setBoolean(baseName + "ExcelCurrentSheetOnly", currentSheetOnlyCheck.isSelected());
                 writer.setCurrentSheetOnly(currentSheetOnlyCheck.isSelected());
             }
-
+            
             return writer;
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;
         }
     }
-
+    
     public DataFileTextWriter pickTextWriter() {
         try {
             DataFileTextWriter writer = new DataFileTextWriter();
@@ -154,14 +154,14 @@ public class BaseDataConvertController extends BaseTaskController {
                         .setDelimiter(textWriteOptionsController.getDelimiterName())
                         .setWriteHeader(textWriteOptionsController.withName());
             }
-
+            
             return writer;
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;
         }
     }
-
+    
     public PdfWriter pickPDFWriter() {
         try {
             PdfWriter writer = new PdfWriter();
@@ -188,16 +188,17 @@ public class BaseDataConvertController extends BaseTaskController {
                         .setColumnWidths(columnWidths)
                         .setDefaultZoom(pdfOptionsController.zoom)
                         .setHeader(pdfOptionsController.getHeader())
+                        .setFooter(pdfOptionsController.getFooter())
                         .setShowPageNumber(pdfOptionsController.showPageNumber));
             }
-
+            
             return writer;
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;
         }
     }
-
+    
     public HtmlWriter pickHtmlWriter() {
         try {
             HtmlWriter writer = new HtmlWriter();
@@ -206,14 +207,14 @@ public class BaseDataConvertController extends BaseTaskController {
                 UserConfig.setString(baseName + "Css", css);
                 writer.setCss(css);
             }
-
+            
             return writer;
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;
         }
     }
-
+    
     public Data2DWriter pickWriter(TargetType format) {
         try {
             if (format == null) {
@@ -261,7 +262,7 @@ public class BaseDataConvertController extends BaseTaskController {
                     break;
             }
             if (writer != null) {
-
+                
             }
             return writer;
         } catch (Exception e) {
@@ -269,5 +270,5 @@ public class BaseDataConvertController extends BaseTaskController {
             return null;
         }
     }
-
+    
 }

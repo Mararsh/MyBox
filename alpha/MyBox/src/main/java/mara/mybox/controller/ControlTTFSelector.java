@@ -6,9 +6,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.tools.SystemTools;
 import mara.mybox.tools.TTFTools;
-import mara.mybox.value.AppVariables;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -16,14 +14,14 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2020-12-05
  * @License Apache License Version 2.0
  */
-public class ControlTTFSelecter extends BaseController {
+public class ControlTTFSelector extends BaseController {
 
     protected String ttfFile;
 
     @FXML
     protected ComboBox<String> ttfSelector;
 
-    public ControlTTFSelecter() {
+    public ControlTTFSelector() {
     }
 
     @Override
@@ -31,24 +29,14 @@ public class ControlTTFSelecter extends BaseController {
         setFileType(VisitHistory.FileType.TTF);
     }
 
-    public static ControlTTFSelecter create() {
-        return new ControlTTFSelecter();
+    public static ControlTTFSelector create() {
+        return new ControlTTFSelector();
     }
 
-    public ControlTTFSelecter name(String baseName) {
+    public ControlTTFSelector name(String baseName) {
         this.baseName = baseName;
 
         ttfSelector.getItems().addAll(TTFTools.ttfList());
-        ttfSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                if (newValue == null || newValue.isBlank()) {
-                    return;
-                }
-                ttfFile = newValue;
-                UserConfig.setString(baseName + "TTF", newValue);
-            }
-        });
         ttfFile = UserConfig.getString(baseName + "TTF", null);
         if (ttfFile == null) {
             if (!ttfSelector.getItems().isEmpty()) {
@@ -57,12 +45,27 @@ public class ControlTTFSelecter extends BaseController {
         } else {
             ttfSelector.setValue(ttfFile);
         }
+        ttfSelector.valueProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> s, String ov, String nv) {
+                if (nv == null || nv.isBlank()) {
+                    return;
+                }
+                ttfFile = nv;
+                UserConfig.setString(baseName + "TTF", nv);
+            }
+        });
+
         return this;
     }
 
     @Override
     public void sourceFileChanged(File file) {
-        ttfSelector.getSelectionModel().select(file.getAbsolutePath());
+        ttfSelector.setValue(file.getAbsolutePath());
+    }
+
+    public String getTtfFile() {
+        return ttfFile;
     }
 
 }

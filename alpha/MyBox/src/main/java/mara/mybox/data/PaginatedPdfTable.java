@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.PdfTools;
-import mara.mybox.value.AppValues;
 import mara.mybox.value.Languages;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -32,7 +31,7 @@ public class PaginatedPdfTable {
     protected List<List<String>> rows;
 
     protected PDRectangle pageSize;
-    protected String ttf, author, producer, header;
+    protected String ttf, author, producer, header, footer;
     protected PDFont textFont;
     protected float fontSize, margin, cellMargin, contentWidth, contentHeight, rowHeight;
     protected int rowsPerPage, numberOfPages, defaultZoom, currentPageNumber;
@@ -99,7 +98,7 @@ public class PaginatedPdfTable {
             return;
         }
         try {
-            PdfTools.setValues(doc, author, "MyBox v" + AppValues.AppVersion, defaultZoom, 1.0f);
+            PdfTools.setAttributes(doc, author, defaultZoom);
             doc.save(file);
             doc.close();
         } catch (Exception e) {
@@ -184,6 +183,13 @@ public class PaginatedPdfTable {
                     contentStream.beginText();
                     contentStream.newLineAtOffset(margin, page.getTrimBox().getHeight() - margin + 2);
                     contentStream.showText(header.trim());
+                    contentStream.endText();
+                }
+
+                if (footer != null && !footer.trim().isEmpty()) {
+                    contentStream.beginText();
+                    contentStream.newLineAtOffset(margin, margin + 2);
+                    contentStream.showText(footer.trim());
                     contentStream.endText();
                 }
 
@@ -423,6 +429,15 @@ public class PaginatedPdfTable {
 
     public PaginatedPdfTable setHeader(String header) {
         this.header = header;
+        return this;
+    }
+
+    public String getFooter() {
+        return footer;
+    }
+
+    public PaginatedPdfTable setFooter(String footer) {
+        this.footer = footer;
         return this;
     }
 

@@ -223,7 +223,7 @@ public class PdfAttributesBatchController extends BaseBatchPdfController {
             return;
         }
         try {
-            Float f = Float.parseFloat(versionInput.getText());
+            Float f = Float.valueOf(versionInput.getText());
             if (f >= 0) {
                 versionInput.setStyle(null);
                 version = f;

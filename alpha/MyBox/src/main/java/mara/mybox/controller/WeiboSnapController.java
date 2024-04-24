@@ -75,7 +75,7 @@ public class WeiboSnapController extends BaseController {
             pdfMem500MRadio, pdfMem1GRadio, pdfMem2GRadio, pdfMemUnlimitRadio,
             pdfSize500MRadio, pdfSize1GRadio, pdfSize2GRadio, pdfSizeUnlimitRadio;
     @FXML
-    protected ControlTTFSelecter ttfController;
+    protected ControlTTFSelector ttfController;
 
     public WeiboSnapController() {
         baseTitle = Languages.message("WeiboSnap");

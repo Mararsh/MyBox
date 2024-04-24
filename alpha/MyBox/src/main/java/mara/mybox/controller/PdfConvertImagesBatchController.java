@@ -190,6 +190,7 @@ public class PdfConvertImagesBatchController extends BaseBatchPdfController {
         }
     }
 
+    @Override
     public File makeTargetFile() {
         try {
             String namePrefix = FileNameTools.prefix(currentParameters.currentSourceFile.getName())

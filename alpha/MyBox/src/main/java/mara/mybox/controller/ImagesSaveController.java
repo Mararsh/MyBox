@@ -7,7 +7,6 @@ import java.sql.Connection;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -48,16 +47,11 @@ import mara.mybox.tools.FileTools;
 import mara.mybox.tools.MicrosoftDocumentTools;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.tools.StringTools;
-import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDDocumentInformation;
-import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.interactive.action.PDActionGoTo;
-import org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination.PDPageXYZDestination;
 import org.apache.poi.hslf.usermodel.HSLFPictureShape;
 import org.apache.poi.hslf.usermodel.HSLFSlide;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
@@ -566,14 +560,6 @@ public class ImagesSaveController extends BaseTaskController {
     protected boolean saveAsPdf(FxTask currentTask) {
         File tmpFile = FileTmpTools.getTempFile();
         try (PDDocument document = new PDDocument(AppVariables.PdfMemUsage)) {
-            PDDocumentInformation info = new PDDocumentInformation();
-            info.setCreationDate(Calendar.getInstance());
-            info.setModificationDate(Calendar.getInstance());
-            info.setProducer("MyBox v" + AppValues.AppVersion);
-            info.setAuthor(pdfOptionsController.authorInput.getText());
-            document.setDocumentInformation(info);
-            document.setVersion(1.0f);
-
             int count = 0;
             for (int i = 0; i < imageInfos.size(); ++i) {
                 if (currentTask == null || !currentTask.isWorking()) {
@@ -597,14 +583,9 @@ public class ImagesSaveController extends BaseTaskController {
                 updateLogs(msg, true);
             }
 
-            PDPage page = document.getPage(0);
-            PDPageXYZDestination dest = new PDPageXYZDestination();
-            dest.setPage(page);
-            dest.setZoom(pdfOptionsController.zoom / 100.0f);
-            dest.setTop((int) page.getCropBox().getHeight());
-            PDActionGoTo action = new PDActionGoTo();
-            action.setDestination(dest);
-            document.getDocumentCatalog().setOpenAction(action);
+            PdfTools.setAttributes(document,
+                    pdfOptionsController.authorInput.getText(),
+                    pdfOptionsController.zoom);
 
             document.save(tmpFile);
             document.close();

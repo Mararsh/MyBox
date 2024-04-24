@@ -140,7 +140,7 @@ public class DownloadFirstLevelLinksController extends BaseTablePagesController<
     @FXML
     protected VBox optionsBox, htmlOptionsBox, pdfOptionsBox;
     @FXML
-    protected ControlTTFSelecter ttfController;
+    protected ControlTTFSelector ttfController;
     @FXML
     protected TextArea cssArea;
 

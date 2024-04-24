@@ -40,6 +40,7 @@ public class Fxmls {
     public static final String PdfOCRBatchFxml = "/fxml/PdfOCRBatch.fxml";
     public static final String PdfMergeFxml = "/fxml/PdfMerge.fxml";
     public static final String PdfSplitBatchFxml = "/fxml/PdfSplitBatch.fxml";
+    public static final String PdfAddWatermarkBatchFxml = "/fxml/PdfAddWatermarkBatch.fxml";
 
     public static final String HtmlEditorFxml = "/fxml/HtmlEditor.fxml";
     public static final String HtmlDomCopyFxml = "/fxml/HtmlDomCopy.fxml";

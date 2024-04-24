@@ -121,7 +121,10 @@ public abstract class BaseBatchPdfController extends BaseBatchController<PdfInfo
                     }
                 }
                 postHandlePages(currentTask);
-                doc.close();
+                if (doc != null) {
+                    doc.close();
+                    doc = null;
+                }
             }
             currentParameters.startPage = 1;
         } catch (InvalidPasswordException e) {

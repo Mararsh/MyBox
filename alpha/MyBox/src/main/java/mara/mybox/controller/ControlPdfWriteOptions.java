@@ -15,12 +15,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.style.NodeStyleTools;
-import mara.mybox.fxml.NodeTools;
-import mara.mybox.value.UserConfig;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.tools.PdfTools.PdfImageFormat;
-import mara.mybox.value.AppVariables;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -31,7 +27,7 @@ import mara.mybox.value.UserConfig;
  */
 public class ControlPdfWriteOptions extends BaseController {
 
-    protected String ttfFile, author, header;
+    protected String ttfFile, author, header, footer;
     protected boolean isImageSize, includeImageOptions, dithering, showPageNumber;
     protected int marginSize, pageWidth, pageHeight, jpegQuality, threshold, fontSize, zoom;
     protected PdfImageFormat imageFormat;
@@ -39,14 +35,15 @@ public class ControlPdfWriteOptions extends BaseController {
     @FXML
     protected ComboBox<String> marginSelector, standardSizeSelector, jpegQualitySelector, fontSizeSelector, zoomSelector;
     @FXML
-    protected ControlTTFSelecter ttfController;
+    protected ControlTTFSelector ttfController;
     @FXML
     protected ToggleGroup sizeGroup, imageFormatGroup;
     @FXML
     protected RadioButton pixSizeRadio, standardSizeRadio, customSizeRadio,
             pdfMem500MRadio, pdfMem1GRadio, pdfMem2GRadio, pdfMemUnlimitRadio;
     @FXML
-    protected TextField authorInput, headerInput, customWidthInput, customHeightInput, thresholdInput;
+    protected TextField authorInput, headerInput, footerInput,
+            customWidthInput, customHeightInput, thresholdInput;
     @FXML
     protected CheckBox pageNumberCheck, ditherCheck, landscapeCheck;
     @FXML
@@ -206,6 +203,14 @@ public class ControlPdfWriteOptions extends BaseController {
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                     UserConfig.setString(baseName + "PdfHeader", newValue);
+                }
+            });
+
+            footerInput.setText(UserConfig.getString(baseName + "PdfFooter", ""));
+            footerInput.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                    UserConfig.setString(baseName + "PdfFooter", newValue);
                 }
             });
 
@@ -696,6 +701,14 @@ public class ControlPdfWriteOptions extends BaseController {
         this.headerInput = headerInput;
     }
 
+    public TextField getFooterInput() {
+        return footerInput;
+    }
+
+    public void setFooterInput(TextField footerInput) {
+        this.footerInput = footerInput;
+    }
+
     public TextField getCustomWidthInput() {
         return customWidthInput;
     }
@@ -790,6 +803,17 @@ public class ControlPdfWriteOptions extends BaseController {
         this.header = header;
     }
 
+    public String getFooter() {
+        if (footerInput != null) {
+            footer = footerInput.getText();
+        }
+        return footer;
+    }
+
+    public void setFooter(String footer) {
+        this.footer = footer;
+    }
+
     public int getZoom() {
         return zoom;
     }
@@ -806,11 +830,11 @@ public class ControlPdfWriteOptions extends BaseController {
         this.zoomSelector = zoomSelector;
     }
 
-    public ControlTTFSelecter getTtfController() {
+    public ControlTTFSelector getTtfController() {
         return ttfController;
     }
 
-    public void setTtfController(ControlTTFSelecter ttfController) {
+    public void setTtfController(ControlTTFSelector ttfController) {
         this.ttfController = ttfController;
     }
 
