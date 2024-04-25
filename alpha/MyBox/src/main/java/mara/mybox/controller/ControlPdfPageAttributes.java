@@ -8,11 +8,14 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
+import javafx.util.StringConverter;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.PdfTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
+import org.apache.pdfbox.cos.COSName;
+import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.graphics.blend.BlendMode;
 
 /**
@@ -30,8 +33,7 @@ public class ControlPdfPageAttributes extends BaseController {
             waterImageWidth, waterImageHeight, waterImageRotate, waterImageOpacity,
             waterImageMargin, waterImageRows, waterImageColumns;
     protected BlendMode waterTextBlend, waterImageBlend;
-    protected Color waterTextColor, waterTextBgColor, headerColor,
-            headerBgColor, footerColor, footerBgColor, numberColor, numberBgColor;
+    protected Color waterTextColor, headerColor, footerColor, numberColor;
 
     @FXML
     protected CheckBox waterTextCheck, waterImageCheck, headerCheck, footerCheck, numberCheck;
@@ -50,10 +52,8 @@ public class ControlPdfPageAttributes extends BaseController {
     @FXML
     protected ComboBox<BlendMode> waterTextBlendSelector, waterImageBlendSelector;
     @FXML
-    protected ControlColorSet waterTextColorController, waterTextBgColorController,
-            headerColorController, headerBgColorController,
-            footerColorController, footerBgColorController,
-            numberColorController, numberBgColorController;
+    protected ControlColorSet waterTextColorController, headerColorController,
+            footerColorController, numberColorController;
 
     @Override
     public void setFileType() {
@@ -95,8 +95,7 @@ public class ControlPdfPageAttributes extends BaseController {
             waterText = UserConfig.getString(baseName + "WaterText", "");
             waterTextInput.setText(waterText);
 
-            waterTextColorController.init(this, baseName, javafx.scene.paint.Color.BLACK);
-            waterTextBgColorController.init(this, baseName, javafx.scene.paint.Color.TRANSPARENT);
+            waterTextColorController.init(this, baseName + "WaterTextColor", javafx.scene.paint.Color.BLACK);
 
             waterTextMargin = UserConfig.getInt(baseName + "WaterTextMargin", 20);
             waterTextMarginInput.setText(waterTextMargin + "");
@@ -109,6 +108,18 @@ public class ControlPdfPageAttributes extends BaseController {
 
             waterTextBlend = BlendMode.NORMAL;
             waterTextBlendSelector.getItems().addAll(modes);
+            waterTextBlendSelector.setConverter(new StringConverter<BlendMode>() {
+
+                @Override
+                public String toString(BlendMode object) {
+                    return BlendMode.getCOSName(object).getName();
+                }
+
+                @Override
+                public BlendMode fromString(String string) {
+                    return BlendMode.getInstance(COSName.getPDFName(string));
+                }
+            });
             waterTextBlendSelector.setValue(waterTextBlend);
 
             waterTextRows = UserConfig.getInt(baseName + "WaterTextRows", 3);
@@ -148,6 +159,19 @@ public class ControlPdfPageAttributes extends BaseController {
 
             waterImageBlend = BlendMode.NORMAL;
             waterImageBlendSelector.getItems().addAll(modes);
+            waterImageBlendSelector.setConverter(new StringConverter<BlendMode>() {
+
+                @Override
+                public String toString(BlendMode object) {
+                    return BlendMode.getCOSName(object).getName();
+                }
+
+                @Override
+                public BlendMode fromString(String string) {
+                    return BlendMode.getInstance(COSName.getPDFName(string));
+                }
+            });
+
             waterImageBlendSelector.setValue(waterImageBlend);
 
             waterImageRows = UserConfig.getInt(baseName + "WaterImageRows", 3);
@@ -175,8 +199,7 @@ public class ControlPdfPageAttributes extends BaseController {
             header = UserConfig.getString(baseName + "Header", "");
             headerInput.setText(header);
 
-            headerColorController.init(this, baseName, javafx.scene.paint.Color.BLACK);
-            headerBgColorController.init(this, baseName, javafx.scene.paint.Color.TRANSPARENT);
+            headerColorController.init(this, baseName + "HeaderColor", javafx.scene.paint.Color.BLACK);
 
         } catch (Exception e) {
             MyBoxLog.error(e, baseName);
@@ -197,8 +220,7 @@ public class ControlPdfPageAttributes extends BaseController {
             footer = UserConfig.getString(baseName + "Footer", "");
             footerInput.setText(footer);
 
-            footerColorController.init(this, baseName, javafx.scene.paint.Color.BLACK);
-            footerBgColorController.init(this, baseName, javafx.scene.paint.Color.TRANSPARENT);
+            footerColorController.init(this, baseName + "FooterColor", javafx.scene.paint.Color.BLACK);
 
         } catch (Exception e) {
             MyBoxLog.error(e, baseName);
@@ -216,8 +238,7 @@ public class ControlPdfPageAttributes extends BaseController {
             numberSize = UserConfig.getInt(baseName + "NumberSize", 20);
             numberSizeSelector.setValue(numberSize + "");
 
-            numberColorController.init(this, baseName, javafx.scene.paint.Color.BLACK);
-            numberBgColorController.init(this, baseName, javafx.scene.paint.Color.TRANSPARENT);
+            numberColorController.init(this, baseName + "NumberColor", javafx.scene.paint.Color.BLACK);
 
         } catch (Exception e) {
             MyBoxLog.error(e, baseName);
@@ -262,37 +283,29 @@ public class ControlPdfPageAttributes extends BaseController {
             try {
                 iv = Integer.parseInt(waterTextMarginInput.getText());
             } catch (Exception e) {
-                iv = -1;
-            }
-            if (iv > 0) {
-                waterTextMargin = iv;
-                UserConfig.setInt(baseName + "WaterTextMargin", iv);
-            } else {
                 popError(message("InvalidParameter") + ": "
                         + message("WatermarkText") + "-" + message("Margin"));
                 return false;
             }
+            waterTextMargin = iv;
+            UserConfig.setInt(baseName + "WaterTextMargin", iv);
 
             try {
                 iv = Integer.parseInt(waterTextRotateInput.getText());
             } catch (Exception e) {
-                iv = -1;
-            }
-            if (iv > 0) {
-                waterTextRotate = iv;
-                UserConfig.setInt(baseName + "WaterTextRotate", iv);
-            } else {
                 popError(message("InvalidParameter") + ": "
                         + message("WatermarkText") + "-" + message("Rotate"));
                 return false;
             }
+            waterTextRotate = iv;
+            UserConfig.setInt(baseName + "WaterTextRotate", iv);
 
             try {
                 iv = Integer.parseInt(waterTextOpacityInput.getText());
             } catch (Exception e) {
                 iv = -1;
             }
-            if (iv > 0) {
+            if (iv >= 0) {
                 waterTextOpacity = iv;
                 UserConfig.setInt(baseName + "WaterTextOpacity", iv);
             } else {
@@ -331,7 +344,6 @@ public class ControlPdfPageAttributes extends BaseController {
 
             waterTextBlend = waterTextBlendSelector.getValue();
             waterTextColor = waterTextColorController.awtColor();
-            waterTextBgColor = waterTextBgColorController.awtColor();
 
             return true;
         } catch (Exception e) {
@@ -396,42 +408,34 @@ public class ControlPdfPageAttributes extends BaseController {
             try {
                 iv = Integer.parseInt(waterImageMarginInput.getText());
             } catch (Exception e) {
-                iv = -1;
-            }
-            if (iv > 0) {
-                waterImageMargin = iv;
-                UserConfig.setInt(baseName + "WaterImageMargin", iv);
-            } else {
                 popError(message("InvalidParameter") + ": "
-                        + message("WatermarkText") + "-" + message("Margin"));
+                        + message("WatermarkImage") + "-" + message("Margin"));
                 return false;
             }
+            waterImageMargin = iv;
+            UserConfig.setInt(baseName + "WaterImageMargin", iv);
 
             try {
                 iv = Integer.parseInt(waterImageRotateInput.getText());
             } catch (Exception e) {
-                iv = -1;
-            }
-            if (iv > 0) {
-                waterImageRotate = iv;
-                UserConfig.setInt(baseName + "WaterImageRotate", iv);
-            } else {
                 popError(message("InvalidParameter") + ": "
-                        + message("WatermarkText") + "-" + message("Rotate"));
+                        + message("WatermarkImage") + "-" + message("Rotate"));
                 return false;
             }
+            waterImageRotate = iv;
+            UserConfig.setInt(baseName + "WaterImageRotate", iv);
 
             try {
                 iv = Integer.parseInt(waterImageOpacityInput.getText());
             } catch (Exception e) {
                 iv = -1;
             }
-            if (iv > 0) {
+            if (iv >= 0) {
                 waterImageOpacity = iv;
                 UserConfig.setInt(baseName + "WaterImageOpacity", iv);
             } else {
                 popError(message("InvalidParameter") + ": "
-                        + message("WatermarkText") + "-" + message("Opacity"));
+                        + message("WatermarkImage") + "-" + message("Opacity"));
                 return false;
             }
 
@@ -445,7 +449,7 @@ public class ControlPdfPageAttributes extends BaseController {
                 UserConfig.setInt(baseName + "WaterImageRows", iv);
             } else {
                 popError(message("InvalidParameter") + ": "
-                        + message("WatermarkText") + "-" + message("RowsNumber"));
+                        + message("WatermarkImage") + "-" + message("RowsNumber"));
                 return false;
             }
 
@@ -459,7 +463,7 @@ public class ControlPdfPageAttributes extends BaseController {
                 UserConfig.setInt(baseName + "WaterImageColumns", iv);
             } else {
                 popError(message("InvalidParameter") + ": "
-                        + message("WatermarkText") + "-" + message("ColumnsNumber"));
+                        + message("WatermarkImage") + "-" + message("ColumnsNumber"));
                 return false;
             }
 
@@ -508,7 +512,6 @@ public class ControlPdfPageAttributes extends BaseController {
             }
 
             headerColor = headerColorController.awtColor();
-            headerBgColor = headerBgColorController.awtColor();
 
             return true;
         } catch (Exception e) {
@@ -553,7 +556,6 @@ public class ControlPdfPageAttributes extends BaseController {
             }
 
             footerColor = footerColorController.awtColor();
-            footerBgColor = footerBgColorController.awtColor();
 
             return true;
         } catch (Exception e) {
@@ -589,7 +591,6 @@ public class ControlPdfPageAttributes extends BaseController {
             }
 
             numberColor = numberColorController.awtColor();
-            numberBgColor = numberBgColorController.awtColor();
 
             return true;
         } catch (Exception e) {
@@ -614,6 +615,14 @@ public class ControlPdfPageAttributes extends BaseController {
             MyBoxLog.error(e, baseName);
             return false;
         }
+    }
+
+    public float waterTextWidth(PDFont font) {
+        return PdfTools.fontWidth(font, waterText, waterTextSize);
+    }
+
+    public float waterTextHeight(PDFont font) {
+        return PdfTools.fontHeight(font, waterTextSize);
     }
 
 }

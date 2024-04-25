@@ -54,6 +54,7 @@ import org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination.PDPa
 public class PdfTools {
 
     public static int PDF_dpi = 72; // pixels per inch
+    public static int DefaultMargin = 20;
 
     public static enum PdfImageFormat {
         Original, Tiff, Jpeg
@@ -441,6 +442,28 @@ public class PdfTools {
         } catch (Exception e) {
         }
         return font;
+    }
+
+    public static float fontWidth(PDFont font, String text, int fontSize) {
+        try {
+            if (font == null || text == null || fontSize <= 0) {
+                return -1;
+            }
+            return fontSize * font.getStringWidth(text) / 1000;
+        } catch (Exception e) {
+            return -2;
+        }
+    }
+
+    public static float fontHeight(PDFont font, int fontSize) {
+        try {
+            if (font == null || fontSize <= 0) {
+                return -1;
+            }
+            return fontSize * font.getFontDescriptor().getFontBoundingBox().getHeight() / 1000;
+        } catch (Exception e) {
+            return -2;
+        }
     }
 
     public static List<PDImageXObject> getImageListFromPDF(FxTask task, PDDocument document,

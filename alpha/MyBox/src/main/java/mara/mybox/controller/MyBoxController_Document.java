@@ -124,9 +124,9 @@ public abstract class MyBoxController_Document extends MyBoxController_Base {
         pdfMenu.getItems().addAll(
                 pdfView, PdfPlay, new SeparatorMenuItem(),
                 pdfConvertImagesBatch, PdfImagesConvertBatch, pdfConvertHtmlsBatch, pdfCompressImagesBatch, new SeparatorMenuItem(),
-                pdfExtractImagesBatch, pdfExtractTextsBatch, pdfOcrBatch, new SeparatorMenuItem(),
+                pdfExtractImagesBatch, pdfExtractTextsBatch, pdfOcrBatch, PdfAddWatermark, new SeparatorMenuItem(),
                 PdfSplitBatch, pdfMerge, imagesCombinePdf, new SeparatorMenuItem(),
-                PDFAttributes, PDFAttributesBatch, PdfAddWatermark
+                PDFAttributes, PDFAttributesBatch
         );
 
         Menu textsMenu = new Menu(message("Texts"));

@@ -58,6 +58,7 @@ License:    Apache License Version 2.0
                                         <MenuItem mnemonicParsing="false" onAction="#openPdfExtractImagesBatch" text="%PdfExtractImagesBatch" />
                                         <MenuItem mnemonicParsing="false" onAction="#openPdfExtractTextsBatch" text="%PdfExtractTextsBatch" />
                                         <MenuItem mnemonicParsing="false" onAction="#openPdfOCRBatch" text="%PdfOCRBatch" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openPdfAddWatermark" text="%PdfAddWatermark" />
                                         <SeparatorMenuItem mnemonicParsing="false" />
                                         <MenuItem mnemonicParsing="false" onAction="#openPdfSplitBatch" text="%PdfSplitBatch" />
                                         <MenuItem mnemonicParsing="false" onAction="#openMergePdf" text="%MergePdf" />
@@ -65,7 +66,6 @@ License:    Apache License Version 2.0
                                         <SeparatorMenuItem mnemonicParsing="false" />
                                         <MenuItem mnemonicParsing="false" onAction="#openPDFAttributes" text="%PDFAttributes" />
                                         <MenuItem mnemonicParsing="false" onAction="#openPDFAttributesBatch" text="%PDFAttributesBatch" />
-                                        <MenuItem mnemonicParsing="false" onAction="#openPdfAddWatermark" text="%PdfAddWatermark" />
                                     </items>
                                 </Menu>
                                 <Menu mnemonicParsing="false" text="Markdown">

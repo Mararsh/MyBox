@@ -39,8 +39,6 @@ License:    Apache License Version 2.0
                   </Label>
                   <Label text="%FontColor" />
                   <fx:include fx:id="waterTextColor" source="ControlColorSet.fxml" />
-                  <Label text="%BackgroundColor" />
-                  <fx:include fx:id="waterTextBgColor" source="ControlColorSet.fxml" />
                </children>
             </HBox>
             <HBox alignment="CENTER_LEFT" layoutX="15.0" layoutY="76.0" spacing="5.0">
@@ -152,8 +150,6 @@ License:    Apache License Version 2.0
                   </Label>
                   <Label text="%FontColor" />
                   <fx:include fx:id="headerColor" source="ControlColorSet.fxml" />
-                  <Label text="%BackgroundColor" />
-                  <fx:include fx:id="headerBgColor" source="ControlColorSet.fxml" />
                </children>
             </HBox>
          </children>
@@ -178,8 +174,6 @@ License:    Apache License Version 2.0
                   </Label>
                   <Label text="%FontColor" />
                   <fx:include fx:id="footerColor" source="ControlColorSet.fxml" />
-                  <Label text="%BackgroundColor" />
-                  <fx:include fx:id="footerBgColor" source="ControlColorSet.fxml" />
                </children>
             </HBox>
          </children>
@@ -199,8 +193,6 @@ License:    Apache License Version 2.0
                   </Label>
                   <Label text="%FontColor" />
                   <fx:include fx:id="numberColor" source="ControlColorSet.fxml" />
-                  <Label text="%BackgroundColor" />
-                  <fx:include fx:id="numberBgColor" source="ControlColorSet.fxml" />
                </children>
             </HBox>
          </children>

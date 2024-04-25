@@ -35,7 +35,8 @@ public class PdfAddWatermarkBatchController extends BaseBatchPdfController {
     protected File tmpFile;
     protected PDDocument targetDoc;
     protected PDPage pdPage;
-    protected float pageWidth, pageHeight;
+    protected float pageWidth, pageHeight, waterTextFontWidth, waterTextFontHeight,
+            waterTextAngle, waterImageAngle;
     protected int pageRotation;
 
     @FXML
@@ -58,15 +59,21 @@ public class PdfAddWatermarkBatchController extends BaseBatchPdfController {
             if (!super.makeMoreParameters() || !attributesController.pickValues()) {
                 return false;
             }
-            waterTextState = new PDExtendedGraphicsState();
-            waterTextState.setNonStrokingAlphaConstant(attributesController.waterTextOpacity / 100f);
-            waterTextState.setAlphaSourceFlag(true);
-            waterTextState.setBlendMode(attributesController.waterTextBlend);
+            if (attributesController.setWaterText) {
+                waterTextState = new PDExtendedGraphicsState();
+                waterTextState.setNonStrokingAlphaConstant(attributesController.waterTextOpacity / 100f);
+                waterTextState.setAlphaSourceFlag(true);
+                waterTextState.setBlendMode(attributesController.waterTextBlend);
+                waterTextAngle = (float) Math.toRadians(attributesController.waterTextRotate);
+            }
 
-            waterImageState = new PDExtendedGraphicsState();
-            waterImageState.setNonStrokingAlphaConstant(attributesController.waterImageOpacity / 100f);
-            waterImageState.setAlphaSourceFlag(true);
-            waterImageState.setBlendMode(attributesController.waterImageBlend);
+            if (attributesController.setWaterImage) {
+                waterImageState = new PDExtendedGraphicsState();
+                waterImageState.setNonStrokingAlphaConstant(attributesController.waterImageOpacity / 100f);
+                waterImageState.setAlphaSourceFlag(true);
+                waterImageState.setBlendMode(attributesController.waterImageBlend);
+                waterImageAngle = (float) Math.toRadians(attributesController.waterImageRotate);
+            }
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -95,6 +102,8 @@ public class PdfAddWatermarkBatchController extends BaseBatchPdfController {
             waterTextFont = null;
             if (attributesController.setWaterText) {
                 waterTextFont = PdfTools.getFont(doc, attributesController.waterTextFontFile);
+                waterTextFontWidth = attributesController.waterTextWidth(waterTextFont);
+                waterTextFontHeight = attributesController.waterTextHeight(waterTextFont);
             }
             headerFont = null;
             if (attributesController.setHeader) {
@@ -139,64 +148,63 @@ public class PdfAddWatermarkBatchController extends BaseBatchPdfController {
                     cs.transform(Matrix.getRotateInstance(Math.toRadians(270), 0, pageWidth));
                     break;
             }
+
+            if (headerFont != null) {
+                drawHeader(cs);
+            }
+            if (footerFont != null) {
+                drawFooter(cs);
+            }
+            if (numberFont != null) {
+                drawNumber(cs);
+            }
+
         } catch (Exception e) {
             MyBoxLog.error(e);
             return 0;
         }
-
         if (waterImage != null) {
             drawWaterImage();
         }
         if (waterTextFont != null) {
             drawWaterText();
         }
-        if (headerFont != null) {
-            drawHeader();
-        }
-        if (footerFont != null) {
-            drawFooter();
-        }
-        if (numberFont != null) {
-            drawNumber();
-        }
         return 1;
-
     }
 
-    // https://www.jb51.net/article/267446.htm
+    // (0,0) is left-bottom of the page
     public void drawWaterImage() {
         if (pdPage == null || waterImage == null) {
             return;
         }
         try (PDPageContentStream cs = new PDPageContentStream(doc, pdPage,
                 PDPageContentStream.AppendMode.APPEND, true, true)) {
-
             float cellWidth = (pageWidth - attributesController.waterImageMargin * 2)
                     / attributesController.waterImageColumns;
             float cellHeight = (pageHeight - attributesController.waterImageMargin * 2)
                     / attributesController.waterImageRows;
 
+            float scaleWidth = attributesController.waterImageWidth;
+            float scaleHeight = attributesController.waterImageHeight;
+
             float xOffset = attributesController.waterImageMargin
-                    + (cellWidth - attributesController.waterImageWidth) / 2;
+                    + (cellWidth - scaleWidth) / 2;
             float yOffset = attributesController.waterImageMargin
-                    + (cellHeight - attributesController.waterImageHeight) / 2;
+                    + (cellHeight - scaleHeight) / 2;
 
             float x;
             float y;
+            cs.setGraphicsStateParameters(waterImageState);
             for (int i = 0; i < attributesController.waterImageRows; i++) {
                 y = i * cellHeight + yOffset;
 
                 for (int j = 0; j < attributesController.waterImageColumns; j++) {
-                    cs.setGraphicsStateParameters(waterImageState);
-
                     x = j * cellWidth + xOffset;
-                    x += Math.sin(Math.toRadians(attributesController.waterImageRotate))
-                            * attributesController.waterImageHeight;
+                    x += Math.sin(waterImageAngle) * scaleWidth;
                     Matrix matrix = new Matrix();
                     matrix.translate(x, y);
-                    matrix.rotate(Math.toRadians(attributesController.waterImageRotate));
-                    matrix.scale(attributesController.waterImageWidth, attributesController.waterImageHeight);
-
+                    matrix.rotate(waterImageAngle);
+                    matrix.scale(scaleWidth, scaleHeight);
                     cs.drawImage(waterImage, matrix);
                 }
             }
@@ -205,40 +213,41 @@ public class PdfAddWatermarkBatchController extends BaseBatchPdfController {
         }
     }
 
-    // https://blog.csdn.net/cl939974883/article/details/136128194
     public void drawWaterText() {
         if (pdPage == null || waterTextFont == null) {
             return;
         }
         try (PDPageContentStream cs = new PDPageContentStream(doc, pdPage,
                 PDPageContentStream.AppendMode.APPEND, true, true)) {
-
             float cellWidth = (pageWidth - attributesController.waterTextMargin * 2)
                     / attributesController.waterTextColumns;
             float cellHeight = (pageHeight - attributesController.waterTextMargin * 2)
                     / attributesController.waterTextRows;
 
-            float xOffset = attributesController.waterTextMargin;
-            float yOffset = attributesController.waterTextMargin;
+            float xOffset = attributesController.waterTextMargin
+                    + (cellWidth - waterTextFontWidth) / 2;
+            float yOffset = attributesController.waterTextMargin
+                    + (cellHeight - waterTextFontHeight) / 2;
 
             float x;
             float y;
+            cs.setGraphicsStateParameters(waterTextState);
             for (int i = 0; i < attributesController.waterTextRows; i++) {
                 y = i * cellHeight + yOffset;
 
                 for (int j = 0; j < attributesController.waterTextColumns; j++) {
                     x = j * cellWidth + xOffset;
+                    x += Math.sin(waterTextAngle) * waterTextFontHeight;
+
+                    Matrix matrix = new Matrix();
+                    matrix.translate(x, y);
+                    matrix.rotate(waterTextAngle);
 
                     cs.beginText();
                     cs.setFont(waterTextFont, attributesController.waterTextSize);
-                    cs.setNonStrokingColor(attributesController.waterTextBgColor);
                     cs.setStrokingColor(attributesController.waterTextColor);
-                    cs.setGraphicsStateParameters(waterTextState);
-                    Matrix matrix = new Matrix();
-                    matrix.translate(x, y);
-                    matrix.rotate(Math.toRadians(attributesController.waterImageRotate));
+                    cs.setNonStrokingColor(attributesController.waterTextColor);
                     cs.setTextMatrix(matrix);
-                    cs.newLineAtOffset(x, y);
                     cs.showText(attributesController.waterText);
                     cs.endText();
                 }
@@ -248,18 +257,18 @@ public class PdfAddWatermarkBatchController extends BaseBatchPdfController {
         }
     }
 
-    public void drawHeader() {
+    public void drawHeader(PDPageContentStream cs) {
         if (pdPage == null || headerFont == null) {
             return;
         }
-        try (PDPageContentStream cs = new PDPageContentStream(doc, pdPage,
-                PDPageContentStream.AppendMode.APPEND, true, true)) {
-
+        try {
             cs.beginText();
             cs.setFont(headerFont, attributesController.headerSize);
-            cs.setNonStrokingColor(attributesController.headerBgColor);
             cs.setStrokingColor(attributesController.headerColor);
-            cs.newLineAtOffset(20, pageHeight - 20 + 2);
+            cs.setNonStrokingColor(attributesController.headerColor);
+            cs.newLineAtOffset(PdfTools.DefaultMargin,
+                    pageHeight - PdfTools.DefaultMargin
+                    - PdfTools.fontHeight(headerFont, attributesController.headerSize));
             cs.showText(attributesController.header);
             cs.endText();
         } catch (Exception e) {
@@ -267,18 +276,19 @@ public class PdfAddWatermarkBatchController extends BaseBatchPdfController {
         }
     }
 
-    public void drawFooter() {
+    public void drawFooter(PDPageContentStream cs) {
         if (pdPage == null || footerFont == null) {
             return;
         }
-        try (PDPageContentStream cs = new PDPageContentStream(doc, pdPage,
-                PDPageContentStream.AppendMode.APPEND, true, true)) {
-
+        try {
             cs.beginText();
-            cs.setFont(headerFont, attributesController.footerSize);
-            cs.setNonStrokingColor(attributesController.footerBgColor);
+            cs.setFont(footerFont, attributesController.footerSize);
             cs.setStrokingColor(attributesController.footerColor);
-            cs.newLineAtOffset(pageWidth - 20 + 2, 20);
+            cs.setNonStrokingColor(attributesController.footerColor);
+            cs.newLineAtOffset(pageWidth - PdfTools.DefaultMargin
+                    - PdfTools.fontWidth(footerFont, attributesController.footer, attributesController.footerSize),
+                    PdfTools.DefaultMargin
+                    + PdfTools.fontHeight(footerFont, attributesController.footerSize));
             cs.showText(attributesController.footer);
             cs.endText();
         } catch (Exception e) {
@@ -286,19 +296,20 @@ public class PdfAddWatermarkBatchController extends BaseBatchPdfController {
         }
     }
 
-    public void drawNumber() {
+    public void drawNumber(PDPageContentStream cs) {
         if (pdPage == null || numberFont == null) {
             return;
         }
-        try (PDPageContentStream cs = new PDPageContentStream(doc, pdPage,
-                PDPageContentStream.AppendMode.APPEND, true, true)) {
-
+        try {
             cs.beginText();
-            cs.setFont(headerFont, attributesController.numberSize);
-            cs.setNonStrokingColor(attributesController.numberBgColor);
+            cs.setFont(numberFont, attributesController.numberSize);
             cs.setStrokingColor(attributesController.numberColor);
-            cs.newLineAtOffset(pageWidth + 20 - 80, 5);
-            cs.showText(currentParameters.currentPage + " / " + totalPages);
+            cs.setNonStrokingColor(attributesController.numberColor);
+            String num = currentParameters.currentPage + " / " + totalPages;
+            cs.newLineAtOffset(pageWidth - PdfTools.DefaultMargin
+                    - PdfTools.fontWidth(numberFont, num, attributesController.numberSize),
+                    PdfTools.fontHeight(numberFont, attributesController.numberSize));
+            cs.showText(num);
             cs.endText();
         } catch (Exception e) {
             MyBoxLog.error(e);
