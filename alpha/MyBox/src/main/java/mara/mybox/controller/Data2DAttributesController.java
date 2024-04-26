@@ -242,8 +242,7 @@ public class Data2DAttributesController extends BaseChildController {
             @Override
             protected boolean handle() {
                 try {
-                    needBackup = sourceData.isDataFile() && !sourceData.isTmpData()
-                            && UserConfig.getBoolean(baseName + "BackupWhenSave", true);
+                    needBackup = sourceData.needBackup();
                     if (needBackup) {
                         backup = addBackup(this, sourceFile);
                     }

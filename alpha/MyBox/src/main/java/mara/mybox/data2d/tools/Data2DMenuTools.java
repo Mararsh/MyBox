@@ -134,7 +134,7 @@ public class Data2DMenuTools {
             }
             Data2D data2D = dataController.getData2D();
             List<MenuItem> items = new ArrayList<>();
-            boolean isTmpData = data2D.isTmpData();
+            boolean isTmp = data2D.isTmpData() || data2D.isTmpFile();
             boolean noneSelected = dataController.isNoneSelected();
             boolean isTableMode = dataController.isTableMode();
             MenuItem menu;
@@ -242,7 +242,7 @@ public class Data2DMenuTools {
                 menu.setOnAction((ActionEvent event) -> {
                     dataController.setStyles();
                 });
-                menu.setDisable(isTmpData);
+                menu.setDisable(isTmp);
                 items.add(menu);
 
                 items.add(new SeparatorMenuItem());
@@ -301,18 +301,18 @@ public class Data2DMenuTools {
             items.add(menu);
 
             CheckMenuItem backItem = new CheckMenuItem(message("BackupWhenSave"));
-            backItem.setSelected(UserConfig.getBoolean(baseName + "BackupWhenSave", true));
+            backItem.setSelected(UserConfig.getBoolean("Data2DFileBackupWhenSave", true));
             backItem.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    UserConfig.setBoolean(baseName + "BackupWhenSave", backItem.isSelected());
+                    UserConfig.setBoolean("Data2DFileBackupWhenSave", backItem.isSelected());
                 }
             });
             items.add(backItem);
 
             menu = new MenuItem(message("FileBackups"), StyleTools.getIconImageView("iconBackup.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
-                dataController.openBackups();
+                dataController.openBackups("Data2DFileBackupWhenSave");
             });
             items.add(menu);
 

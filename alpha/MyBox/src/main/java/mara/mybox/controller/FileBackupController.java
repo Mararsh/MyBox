@@ -47,6 +47,7 @@ import mara.mybox.value.UserConfig;
 public class FileBackupController extends BaseTableViewController<FileBackup> {
 
     protected int maxBackups;
+    protected String keyName;
 
     @FXML
     protected TableColumn<FileBackup, String> backupColumn;
@@ -97,7 +98,7 @@ public class FileBackupController extends BaseTableViewController<FileBackup> {
         }
     }
 
-    public void setParameters(BaseController parent) {
+    public void setParameters(BaseController parent, String name) {
         try {
             if (parent == null || parent.sourceFile == null) {
                 close();
@@ -105,6 +106,11 @@ public class FileBackupController extends BaseTableViewController<FileBackup> {
             }
             parentController = parent;
             baseName = parent.baseName;
+            if (name == null || name.isBlank()) {
+                keyName = baseName + "BackupWhenSave";
+            } else {
+                keyName = name;
+            }
             sourceFile = parentController.sourceFile;
             tableFileBackup = new TableFileBackup();
             if (parentController instanceof BaseImageController) {
@@ -114,11 +120,11 @@ public class FileBackupController extends BaseTableViewController<FileBackup> {
             fileLabel.setText(sourceFile.getAbsolutePath());
             setTitle(baseTitle + " - " + sourceFile.getAbsolutePath());
 
-            backupCheck.setSelected(UserConfig.getBoolean(baseName + "BackupWhenSave", true));
+            backupCheck.setSelected(UserConfig.getBoolean(keyName, true));
             backupCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
-                    UserConfig.setBoolean(baseName + "BackupWhenSave", backupCheck.isSelected());
+                    UserConfig.setBoolean(keyName, backupCheck.isSelected());
                 }
             });
 
@@ -408,11 +414,11 @@ public class FileBackupController extends BaseTableViewController<FileBackup> {
     /*
         static
      */
-    public static FileBackupController load(BaseController parent) {
+    public static FileBackupController load(BaseController parent, String name) {
         try {
             FileBackupController controller = (FileBackupController) WindowTools.branchStage(
                     parent, Fxmls.FileBackupFxml);
-            controller.setParameters(parent);
+            controller.setParameters(parent, name);
             controller.requestMouse();
             return controller;
         } catch (Exception e) {

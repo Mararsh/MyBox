@@ -428,15 +428,18 @@ public class PdfAttributesBatchController extends BaseBatchPdfController {
                 pd.close();
             }
             if (FileTools.override(tmpFile, srcFile, true)) {
+                targetFileGenerated(srcFile);
                 return message("Successful");
             } else {
                 return message("Failed");
             }
 
         } catch (InvalidPasswordException e) {
+            showLogs(message("PasswordIncorrect"));
             return message("PasswordIncorrect");
         } catch (Exception e) {
-            return e.toString();
+            showLogs(e.toString());
+            return message("Failed");
         }
     }
 

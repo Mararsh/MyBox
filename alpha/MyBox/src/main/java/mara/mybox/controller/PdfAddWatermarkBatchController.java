@@ -44,7 +44,6 @@ public class PdfAddWatermarkBatchController extends BaseBatchPdfController {
 
     public PdfAddWatermarkBatchController() {
         baseTitle = message("PdfAddWatermark");
-        browseTargets = true;
     }
 
     @Override
@@ -328,7 +327,7 @@ public class PdfAddWatermarkBatchController extends BaseBatchPdfController {
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            showLogs(e.toString());
         }
         targetDoc = null;
     }

@@ -14,7 +14,6 @@ import mara.mybox.tools.NumberTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -166,7 +165,7 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
             @Override
             protected boolean handle() {
                 try {
-                    if (!data2D.isTmpData() && UserConfig.getBoolean(dataController.baseName + "BackupWhenSave", true)) {
+                    if (data2D.needBackup()) {
                         addBackup(this, data2D.getFile());
                     }
                     data2D.startTask(this, filterController.filter);

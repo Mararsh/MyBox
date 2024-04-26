@@ -27,6 +27,7 @@ import mara.mybox.data.FileInformation;
 import mara.mybox.data.FileInformation.FileSelectorType;
 import mara.mybox.data.ImageItem;
 import mara.mybox.data.ProcessParameters;
+import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
@@ -55,7 +56,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
     protected TableView<T> tableView;
     protected List<File> sourceFiles;
     protected List<String> filesPassword;
-    protected boolean sourceCheckSubdir, createDirectories, allowPaused, browseTargets, viewTargetPath;
+    protected boolean sourceCheckSubdir, createDirectories, allowPaused, viewTargetPath;
     protected boolean isPreview, paused;
     protected long dirFilesNumber, dirFilesHandled, totalFilesHandled = 0, totalItemsHandled = 0;
     protected long fileSelectorSize, fileSelectorTime;
@@ -84,7 +85,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
 
     public BaseBatchController() {
         targetSubdirKey = "targetSubdirKey";
-        browseTargets = viewTargetPath = false;
+        viewTargetPath = false;
         allowPaused = false;
 
         sourceExtensionFilter = FileFilters.AllExtensionFilter;
@@ -121,7 +122,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
         if (!isPreview && openCheck != null && !openCheck.isSelected()) {
             return;
         }
-        if (targetFilesCount > 0 && viewTargetPath) {
+        if (viewTargetPath && targetFilesCount > 0) {
             openTarget();
         } else if (targetFiles == null || targetFilesCount == 1) {
             if (lastTargetName == null || !new File(lastTargetName).exists()) {
@@ -130,7 +131,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
                 viewTarget(new File(lastTargetName));
             }
         } else if (targetFilesCount > 0) {
-            if (browseTargets) {
+            if (VisitHistory.isImageType(TargetFileType)) {
                 browseAction();
             } else {
                 openTarget();

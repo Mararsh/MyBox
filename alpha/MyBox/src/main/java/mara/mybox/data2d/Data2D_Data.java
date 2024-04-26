@@ -268,6 +268,15 @@ public abstract class Data2D_Data extends Data2D_Attributes {
         }
     }
 
+    public boolean isTmpFile() {
+        return file == null || FileTmpTools.isTmpFile(file);
+    }
+
+    public boolean needBackup() {
+        return isDataFile() && !isTmpFile()
+                && UserConfig.getBoolean("Data2DFileBackupWhenSave", true);
+    }
+
     public List<List<String>> tmpData(int rows, int cols) {
         Random random = new Random();
         List<List<String>> data = new ArrayList<>();

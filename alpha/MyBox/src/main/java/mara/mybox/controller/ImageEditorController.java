@@ -432,7 +432,7 @@ public class ImageEditorController extends BaseImageController {
 
             menu = new MenuItem(message("FileBackups"), StyleTools.getIconImageView("iconBackup.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
-                openBackups();
+                openBackups(baseName + "BackupWhenSave");
             });
             items.add(menu);
 

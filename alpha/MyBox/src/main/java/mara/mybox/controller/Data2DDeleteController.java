@@ -10,7 +10,6 @@ import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -134,8 +133,7 @@ public class Data2DDeleteController extends BaseData2DTaskTargetsController {
             @Override
             protected boolean handle() {
                 try {
-                    needBackup = data2D.isDataFile() && !data2D.isTmpData()
-                            && UserConfig.getBoolean(baseName + "BackupWhenSave", true);
+                    needBackup = data2D.needBackup();
                     if (needBackup) {
                         addBackup(this, data2D.getFile());
                     }

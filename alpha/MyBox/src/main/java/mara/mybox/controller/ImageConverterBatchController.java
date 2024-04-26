@@ -31,7 +31,6 @@ public class ImageConverterBatchController extends BaseBatchImageController {
 
     public ImageConverterBatchController() {
         baseTitle = message("ImageConverterBatch");
-        browseTargets = true;
     }
 
     @Override

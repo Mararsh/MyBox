@@ -40,7 +40,6 @@ import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.value.Fxmls;
-import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -401,38 +400,102 @@ public class Data2DManufactureController extends BaseData2DViewController {
     @Override
     public boolean checkBeforeNextAction() {
         boolean goOn;
+
         if (!isDataChanged()) {
             goOn = true;
         } else {
+            if (data2D != null && data2D.isTmpFile()) {
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle(getTitle());
+                alert.setHeaderText(getTitle());
+                alert.setContentText(message("NeedSaveBeforeAction") + "\n"
+                        + message("Data2DTmpFileNotice"));
+                alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+                ButtonType buttonSave = new ButtonType(message("Save"));
+                ButtonType buttonSaveAs = new ButtonType(message("SaveAs"));
+                ButtonType buttonNotSave = new ButtonType(message("NotSave"));
+                ButtonType buttonCancel = new ButtonType(message("Cancel"));
+                alert.getButtonTypes().setAll(buttonSaveAs, buttonSave, buttonNotSave, buttonCancel);
+                Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+                stage.setAlwaysOnTop(true);
+                stage.toFront();
 
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle(getTitle());
-            alert.setHeaderText(getTitle());
-            alert.setContentText(message("NeedSaveBeforeAction"));
-            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-            ButtonType buttonSave = new ButtonType(Languages.message("Save"));
-            ButtonType buttonNotSave = new ButtonType(Languages.message("NotSave"));
-            ButtonType buttonCancel = new ButtonType(Languages.message("Cancel"));
-            alert.getButtonTypes().setAll(buttonSave, buttonNotSave, buttonCancel);
-            Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-            stage.setAlwaysOnTop(true);
-            stage.toFront();
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result == null || !result.isPresent()) {
+                    return false;
+                }
+                if (result.get() == buttonSaveAs) {
+                    saveAsAction();
+                    goOn = false;
+                } else if (result.get() == buttonSave) {
+                    saveAction();
+                    goOn = false;
+                } else {
+                    goOn = result.get() == buttonNotSave;
+                }
 
-            Optional<ButtonType> result = alert.showAndWait();
-            if (result == null || !result.isPresent()) {
-                return false;
-            }
-            if (result.get() == buttonSave) {
-                saveAction();
-                goOn = false;
             } else {
-                goOn = result.get() == buttonNotSave;
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle(getTitle());
+                alert.setHeaderText(getTitle());
+                alert.setContentText(message("NeedSaveBeforeAction"));
+                alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+                ButtonType buttonSave = new ButtonType(message("Save"));
+                ButtonType buttonNotSave = new ButtonType(message("NotSave"));
+                ButtonType buttonCancel = new ButtonType(message("Cancel"));
+                alert.getButtonTypes().setAll(buttonSave, buttonNotSave, buttonCancel);
+                Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+                stage.setAlwaysOnTop(true);
+                stage.toFront();
+
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result == null || !result.isPresent()) {
+                    return false;
+                }
+                if (result.get() == buttonSave) {
+                    saveAction();
+                    goOn = false;
+                } else {
+                    goOn = result.get() == buttonNotSave;
+                }
             }
+
         }
         if (goOn) {
             resetStatus();
         }
         return goOn;
+    }
+
+    @Override
+    public boolean leavingScene() {
+        if (!isDataChanged() && data2D != null && data2D.isTmpFile()) {
+            if (data2D != null && data2D.isTmpFile()) {
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle(getTitle());
+                alert.setHeaderText(getTitle());
+                alert.setContentText(message("Data2DTmpFileNotice"));
+                alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+                ButtonType buttonSaveAs = new ButtonType(message("SaveAs"));
+                ButtonType buttonNotSave = new ButtonType(message("NotSave"));
+                alert.getButtonTypes().setAll(buttonSaveAs, buttonNotSave);
+                Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+                stage.setAlwaysOnTop(true);
+                stage.toFront();
+
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result == null || !result.isPresent()) {
+                    return false;
+                }
+                if (result.get() == buttonSaveAs) {
+                    saveAsAction();
+                    return false;
+                } else if (result.get() != buttonNotSave) {
+                    return false;
+                }
+            }
+        }
+        return super.leavingScene();
     }
 
     @Override
@@ -704,8 +767,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
             @Override
             protected boolean handle() {
                 try {
-                    needBackup = data2D.isDataFile() && !data2D.isTmpData()
-                            && UserConfig.getBoolean(baseName + "BackupWhenSave", true);
+                    needBackup = data2D.needBackup();
                     if (needBackup) {
                         backup = addBackup(this, data2D.getFile());
                     }

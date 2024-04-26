@@ -253,7 +253,11 @@ public abstract class BaseController_Actions extends BaseController_Interface {
 
     @FXML
     public void openBackups() {
-        FileBackupController.load((BaseController) this);
+        openBackups(baseName + "BackupWhenSave");
+    }
+
+    public void openBackups(String name) {
+        FileBackupController.load((BaseController) this, name);
     }
 
     public FileBackup addBackup(FxTask inTask, File file) {
