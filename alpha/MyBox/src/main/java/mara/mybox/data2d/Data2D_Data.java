@@ -273,7 +273,7 @@ public abstract class Data2D_Data extends Data2D_Attributes {
     }
 
     public boolean needBackup() {
-        return isDataFile() && !isTmpFile()
+        return file != null && isDataFile() && !isTmpFile()
                 && UserConfig.getBoolean("Data2DFileBackupWhenSave", true);
     }
 

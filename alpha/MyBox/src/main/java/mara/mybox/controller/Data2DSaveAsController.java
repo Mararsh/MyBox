@@ -81,6 +81,12 @@ public class Data2DSaveAsController extends BaseTaskController {
         if (taskSuccessed) {
             targetController.tableController.popInformation(message("Done"));
             close();
+//            if (targetController.tableController instanceof Data2DManufactureController) {
+//                Data2DManufactureController c = (Data2DManufactureController) targetController.tableController;
+//                if (c.askedTmp) {
+//                    c.close();
+//                }
+//            }
         } else {
             popError(message("Failed"));
         }

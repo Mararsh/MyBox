@@ -116,6 +116,16 @@ public class Data2DMenuTools {
             });
             items.add(tmpItem);
 
+            CheckMenuItem asktmpItem = new CheckMenuItem(message("PromptTemporaryWhenClose"));
+            asktmpItem.setSelected(UserConfig.getBoolean("Data2DPromptTemporaryWhenClose", true));
+            asktmpItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean("Data2DPromptTemporaryWhenClose", asktmpItem.isSelected());
+                }
+            });
+            items.add(asktmpItem);
+
             Menu helpMenu = new Menu(message("Help"), StyleTools.getIconImageView("iconClaw.png"));
             helpMenu.getItems().addAll(helpMenus(dataController));
             items.add(helpMenu);

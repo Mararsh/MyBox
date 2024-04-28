@@ -411,10 +411,9 @@ public class HtmlReadTools {
         }
     }
 
-    public static String body(String html) {
-        return body(html, true);
-    }
-
+//    public static String body(String html) {
+//        return body(html, false);
+//    }
     public static String body(String html, boolean withTag) {
         try {
             Element body = Jsoup.parse(html).body();

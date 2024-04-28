@@ -127,6 +127,7 @@ public class Data2DAttributesController extends BaseChildController {
             descInput.setText(data2D.getComments());
             webView.getEngine().loadContent(HtmlWriteTools.table(data2D.pageInfo()));
             isSettingValues = false;
+            setTitle(baseTitle + " - " + data2D.displayName());
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

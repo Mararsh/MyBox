@@ -10,7 +10,6 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import mara.mybox.data2d.Data2D;
-import mara.mybox.data2d.Data2D_Operations.ObjectType;
 import mara.mybox.data2d.DataFilter;
 import mara.mybox.data2d.tools.Data2DColumnTools;
 import mara.mybox.data2d.writer.ListWriter;
@@ -28,7 +27,6 @@ import mara.mybox.value.UserConfig;
 public class BaseData2DSourceRowsController extends BaseData2DLoadController {
 
     protected BaseData2DLoadController dataController;
-    protected ObjectType objectType;
     protected List<Integer> selectedRowsIndices, filteredRowsIndices;
     protected boolean formatValues;
 
@@ -80,7 +78,6 @@ public class BaseData2DSourceRowsController extends BaseData2DLoadController {
                     } else {
                         UserConfig.setString(baseName + "RowsSelectionType", "CurrentPage");
                     }
-                    notifySelected();
                 }
             });
             if (filterController != null) {

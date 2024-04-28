@@ -31,6 +31,7 @@ import mara.mybox.value.UserConfig;
  */
 public class ImageRepeatController extends BaseController {
 
+    protected Image sourceImage;
     protected int hValue, vValue, interval, margins;
 
     @FXML
@@ -84,14 +85,22 @@ public class ImageRepeatController extends BaseController {
             checkRepeatType();
 
             goButton.disableProperty().bind(sourceController.imageView.imageProperty().isNull());
+            sourceController.loadNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
+                    sourceLoaded();
+                }
+            });
 
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
-    public Image sourceImage() {
-        return sourceController.imageView.getImage();
+    public void sourceLoaded() {
+        sourceImage = sourceController.imageView.getImage();
+        sourceFile = sourceController.sourceFile;
+        updateStageTitle(sourceFile);
     }
 
     public void checkRepeatType() {
@@ -109,10 +118,9 @@ public class ImageRepeatController extends BaseController {
 
         } else {
             repeatLabel.setText(message("CanvasSize"));
-            Image srcImage = sourceImage();
-            if (srcImage != null) {
-                hValue = (int) srcImage.getWidth() * 3;
-                vValue = (int) srcImage.getHeight() * 3;
+            if (sourceImage != null) {
+                hValue = (int) sourceImage.getWidth() * 3;
+                vValue = (int) sourceImage.getHeight() * 3;
             } else {
                 hValue = UserConfig.getInt(baseName + "CanvasHorizontal", 500);
                 if (hValue <= 0) {
@@ -213,6 +221,10 @@ public class ImageRepeatController extends BaseController {
     }
 
     public void drawRepeat() {
+        if (sourceImage == null) {
+            popError(message("NoData") + ": " + message("Image"));
+            return;
+        }
         if (task != null) {
             task.cancel();
         }
@@ -221,12 +233,8 @@ public class ImageRepeatController extends BaseController {
 
             @Override
             protected boolean handle() {
-                Image srcImage = sourceImage();
-                if (srcImage == null) {
-                    error = message("NoData") + ": " + message("Image");
-                    return false;
-                }
-                BufferedImage bufferedImage = SwingFXUtils.fromFXImage(srcImage, null);
+
+                BufferedImage bufferedImage = SwingFXUtils.fromFXImage(sourceImage, null);
                 if (repeatRadio.isSelected()) {
                     bufferedImage = RepeatTools.repeat(this, bufferedImage,
                             hValue, vValue, interval, margins, colorController.awtColor());

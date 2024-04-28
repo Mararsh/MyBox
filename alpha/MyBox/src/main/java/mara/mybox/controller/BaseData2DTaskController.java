@@ -154,6 +154,7 @@ public abstract class BaseData2DTaskController extends BaseBranchController {
                     checkParameters();
                 }
             });
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

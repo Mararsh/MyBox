@@ -2,8 +2,11 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Toggle;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.data2d.tools.Data2DColumnTools;
 import mara.mybox.data2d.writer.Data2DWriter;
@@ -34,6 +37,13 @@ public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskCont
 
             if (targetController != null) {
                 targetController.setParameters(this, controller);
+
+                sourceController.rowsGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+                    @Override
+                    public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
+                        targetController.setNotInTable(isAllPages());
+                    }
+                });
             }
 
         } catch (Exception e) {
@@ -68,14 +78,6 @@ public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskCont
 
         } catch (Exception e) {
             MyBoxLog.error(e);
-        }
-    }
-
-    @Override
-    public void objectChanged() {
-        super.objectChanged();
-        if (targetController != null) {
-            targetController.setNotInTable(isAllPages());
         }
     }
 

@@ -51,7 +51,7 @@ import mara.mybox.value.UserConfig;
 public class Data2DManufactureController extends BaseData2DViewController {
 
     protected final SimpleBooleanProperty savedNotify;
-    protected boolean isCSVModified, isCSVpicked;
+    protected boolean isCSVModified, isCSVpicked, askedTmp;
 
     @FXML
     protected FlowPane opsPane;
@@ -469,33 +469,36 @@ public class Data2DManufactureController extends BaseData2DViewController {
 
     @Override
     public boolean leavingScene() {
-        if (!isDataChanged() && data2D != null && data2D.isTmpFile()) {
-            if (data2D != null && data2D.isTmpFile()) {
-                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                alert.setTitle(getTitle());
-                alert.setHeaderText(getTitle());
-                alert.setContentText(message("Data2DTmpFileNotice"));
-                alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-                ButtonType buttonSaveAs = new ButtonType(message("SaveAs"));
-                ButtonType buttonNotSave = new ButtonType(message("NotSave"));
-                alert.getButtonTypes().setAll(buttonSaveAs, buttonNotSave);
-                Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-                stage.setAlwaysOnTop(true);
-                stage.toFront();
+        if (data2D != null && data2D.isTmpFile()
+                && !isDataChanged()
+                && !askedTmp
+                && UserConfig.getBoolean("Data2DPromptTemporaryWhenClose", true)) {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle(getTitle());
+            alert.setHeaderText(getTitle());
+            alert.setContentText(message("Data2DTmpFileNotice"));
+            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+            ButtonType buttonSaveAs = new ButtonType(message("SaveAs"));
+            ButtonType buttonNotSave = new ButtonType(message("NotSave"));
+            alert.getButtonTypes().setAll(buttonSaveAs, buttonNotSave);
+            Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+            stage.setAlwaysOnTop(true);
+            stage.toFront();
 
-                Optional<ButtonType> result = alert.showAndWait();
-                if (result == null || !result.isPresent()) {
-                    return false;
-                }
-                if (result.get() == buttonSaveAs) {
-                    saveAsAction();
-                    return false;
-                } else if (result.get() != buttonNotSave) {
-                    return false;
-                }
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result == null || !result.isPresent()) {
+                return false;
+            }
+            if (result.get() == buttonSaveAs) {
+                askedTmp = true;
+                saveAsAction();
+                return false;
+            } else if (result.get() != buttonNotSave) {
+                return false;
             }
         }
-        return super.leavingScene();
+        askedTmp = super.leavingScene();
+        return askedTmp;
     }
 
     @Override
