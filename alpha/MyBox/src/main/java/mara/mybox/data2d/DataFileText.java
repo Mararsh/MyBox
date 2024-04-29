@@ -173,9 +173,6 @@ public class DataFileText extends DataFile {
 
     @Override
     public Data2DWriter selfWriter() {
-        if (file == null) {
-            return null;
-        }
         DataFileTextWriter writer = new DataFileTextWriter();
         writer.setCharset(charset)
                 .setDelimiter(delimiter)

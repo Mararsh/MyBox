@@ -236,8 +236,8 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
         dataController.isSettingValues = false;
     }
 
-    @Override
-    public boolean updateTable() {
+    public boolean updateTable(List<List<String>> data) {
+        dataController.updateTable(data);
         dataController.isSettingValues = true;
         dataController.tableView.refresh();
         dataController.isSettingValues = false;
@@ -251,14 +251,16 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
 
     public void setValue(String value) {
         try {
+            List<List<String>> tableData = new ArrayList<>();
+            tableData.addAll(dataController.tableData);
             for (int row : sourceController.filteredRowsIndices) {
                 List<String> values = dataController.tableData.get(row);
                 for (int col : checkedColsIndices) {
                     values.set(col + 1, value);
                 }
-                dataController.tableData.set(row, values);
+                tableData.set(row, values);
             }
-            updateTable();
+            updateTable(tableData);
         } catch (Exception e) {
             MyBoxLog.error(e);
             popError(message(e.toString()));
@@ -267,6 +269,8 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
 
     public void random(boolean nonNegative) {
         try {
+            List<List<String>> tableData = new ArrayList<>();
+            tableData.addAll(dataController.tableData);
             Random random = new Random();
             for (int row : sourceController.filteredRowsIndices) {
                 List<String> values = dataController.tableData.get(row);
@@ -274,9 +278,9 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
                     String v = dataController.data2D.random(random, col, nonNegative);
                     values.set(col + 1, v);
                 }
-                dataController.tableData.set(row, values);
+                tableData.set(row, values);
             }
-            updateTable();
+            updateTable(tableData);
         } catch (Exception e) {
             MyBoxLog.error(e);
             popError(message(e.toString()));
@@ -285,6 +289,8 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
 
     public void scale() {
         try {
+            List<List<String>> tableData = new ArrayList<>();
+            tableData.addAll(dataController.tableData);
             String currentValue;
             for (int row : sourceController.filteredRowsIndices) {
                 List<String> values = dataController.tableData.get(row);
@@ -292,9 +298,9 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
                     currentValue = values.get(col + 1);
                     values.set(col + 1, valueController.scale(currentValue));
                 }
-                dataController.tableData.set(row, values);
+                tableData.set(row, values);
             }
-            updateTable();
+            updateTable(tableData);
         } catch (Exception e) {
             MyBoxLog.error(e);
             popError(message(e.toString()));
@@ -308,6 +314,8 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
                 popError(message("Invalid") + ": " + message("AddPrefix"));
                 return;
             }
+            List<List<String>> tableData = new ArrayList<>();
+            tableData.addAll(dataController.tableData);
             String currentValue;
             for (int row : sourceController.filteredRowsIndices) {
                 List<String> values = dataController.tableData.get(row);
@@ -315,9 +323,9 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
                     currentValue = values.get(col + 1);
                     values.set(col + 1, currentValue == null ? prefix : prefix + currentValue);
                 }
-                dataController.tableData.set(row, values);
+                tableData.set(row, values);
             }
-            updateTable();
+            updateTable(tableData);
         } catch (Exception e) {
             MyBoxLog.error(e);
             popError(message(e.toString()));
@@ -331,6 +339,8 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
                 popError(message("Invalid") + ": " + message("AppendSuffix"));
                 return;
             }
+            List<List<String>> tableData = new ArrayList<>();
+            tableData.addAll(dataController.tableData);
             String currentValue;
             for (int row : sourceController.filteredRowsIndices) {
                 List<String> values = dataController.tableData.get(row);
@@ -338,9 +348,9 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
                     currentValue = values.get(col + 1);
                     values.set(col + 1, currentValue == null ? suffix : currentValue + suffix);
                 }
-                dataController.tableData.set(row, values);
+                tableData.set(row, values);
             }
-            updateTable();
+            updateTable(tableData);
         } catch (Exception e) {
             MyBoxLog.error(e);
             popError(message(e.toString()));
@@ -349,6 +359,8 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
 
     public void number() {
         try {
+            List<List<String>> tableData = new ArrayList<>();
+            tableData.addAll(dataController.tableData);
             int num = valueController.setValue.getStart();
             int digit = valueController.setValue.countFinalDigit(sourceController.filteredRowsIndices.size());
             String currentValue, suffix;
@@ -359,9 +371,9 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
                     currentValue = values.get(col + 1);
                     values.set(col + 1, currentValue == null ? suffix : currentValue + suffix);
                 }
-                dataController.tableData.set(row, values);
+                tableData.set(row, values);
             }
-            updateTable();
+            updateTable(tableData);
         } catch (Exception e) {
             MyBoxLog.error(e);
             popError(message(e.toString()));
@@ -370,6 +382,8 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
 
     public void expression() {
         try {
+            List<List<String>> tableData = new ArrayList<>();
+            tableData.addAll(dataController.tableData);
             String script = valueController.value();
             for (int row : sourceController.filteredRowsIndices) {
                 List<String> values = dataController.tableData.get(row);
@@ -387,9 +401,9 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
                 for (int col : checkedColsIndices) {
                     values.set(col + 1, v);
                 }
-                dataController.tableData.set(row, values);
+                tableData.set(row, values);
             }
-            updateTable();
+            updateTable(tableData);
         } catch (Exception e) {
             MyBoxLog.error(e);
             popError(message(e.toString()));
@@ -406,6 +420,8 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
                 popError(message("MatricesCannotCalculateShouldOdd"));
                 return;
             }
+            List<List<String>> tableData = new ArrayList<>();
+            tableData.addAll(dataController.tableData);
             float[][] m = ConvolutionKernel.makeGaussMatrix((int) sourceController.filteredRowsIndices.size() / 2);
             int rowIndex = 0, colIndex;
             for (int row : sourceController.filteredRowsIndices) {
@@ -418,10 +434,10 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
                     }
                     colIndex++;
                 }
-                dataController.tableData.set(row, tableRow);
+                tableData.set(row, tableRow);
                 rowIndex++;
             }
-            updateTable();
+            updateTable(tableData);
         } catch (Exception e) {
             MyBoxLog.error(e);
             popError(message(e.toString()));
@@ -434,6 +450,8 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
                 popError(message("MatricesCannotCalculateShouldSqure"));
                 return;
             }
+            List<List<String>> tableData = new ArrayList<>();
+            tableData.addAll(dataController.tableData);
             int rowIndex = 0, colIndex;
             for (int row : sourceController.filteredRowsIndices) {
                 List<String> values = dataController.tableData.get(row);
@@ -446,10 +464,10 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
                     }
                     colIndex++;
                 }
-                dataController.tableData.set(row, values);
+                tableData.set(row, values);
                 rowIndex++;
             }
-            updateTable();
+            updateTable(tableData);
         } catch (Exception e) {
             MyBoxLog.error(e);
             popError(message(e.toString()));
@@ -462,6 +480,8 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
                 popError(message("MatricesCannotCalculateShouldSqure"));
                 return;
             }
+            List<List<String>> tableData = new ArrayList<>();
+            tableData.addAll(dataController.tableData);
             int rowIndex = 0, colIndex;
             for (int row : sourceController.filteredRowsIndices) {
                 List<String> values = dataController.tableData.get(row);
@@ -474,10 +494,10 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
                     }
                     colIndex++;
                 }
-                dataController.tableData.set(row, values);
+                tableData.set(row, values);
                 rowIndex++;
             }
-            updateTable();
+            updateTable(tableData);
         } catch (Exception e) {
             MyBoxLog.error(e);
             popError(message(e.toString()));
@@ -490,6 +510,8 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
                 popError(message("MatricesCannotCalculateShouldSqure"));
                 return;
             }
+            List<List<String>> tableData = new ArrayList<>();
+            tableData.addAll(dataController.tableData);
             int rowIndex = 0, colIndex;
             for (int row : sourceController.filteredRowsIndices) {
                 List<String> values = dataController.tableData.get(row);
@@ -502,10 +524,10 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
                     }
                     colIndex++;
                 }
-                dataController.tableData.set(row, values);
+                tableData.set(row, values);
                 rowIndex++;
             }
-            updateTable();
+            updateTable(tableData);
         } catch (Exception e) {
             MyBoxLog.error(e);
             popError(message(e.toString()));

@@ -47,9 +47,6 @@ public class DataFileCSV extends DataFileText {
 
     @Override
     public Data2DWriter selfWriter() {
-        if (file == null) {
-            return null;
-        }
         DataFileCSVWriter writer = new DataFileCSVWriter();
         writer.setCharset(charset)
                 .setDelimiter(delimiter)

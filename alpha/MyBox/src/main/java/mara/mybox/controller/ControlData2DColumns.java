@@ -205,8 +205,11 @@ public class ControlData2DColumns extends BaseData2DColumnsController {
             }
             if (data2D.isValidDefinition()) {
                 isSettingValues = true;
+                int colIndex = 0;
                 for (Data2DColumn column : data2D.getColumns()) {
-                    tableData.add(column.cloneAll());
+                    Data2DColumn c = column.cloneAll();
+                    c.setIndex(colIndex++);
+                    tableData.add(c);
                 }
                 isSettingValues = false;
             }

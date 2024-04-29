@@ -439,7 +439,7 @@ public class ControlWebView extends BaseController {
             }
             framesDoc.clear();
             charset = Charset.defaultCharset();
-            clearListener();
+            clearListener(webEngine.getDocument());
             synchronized (lock) {
                 listened = false;
             }
@@ -448,12 +448,16 @@ public class ControlWebView extends BaseController {
         }
     }
 
-    private void clearListener() {
+    private synchronized void clearListener(Document doc) {
         try {
-            executeScript("document.onclick=function(){};"
-                    + " document.oncontextmenu=function(){}; "
-                    + "  document.onmouseover=function(){};"
-                    + "  document.onmouseout=function(){};");
+            if (doc == null) {
+                return;
+            }
+            EventTarget t = (EventTarget) doc.getDocumentElement();
+            t.removeEventListener("contextmenu", docListener, false);
+            t.removeEventListener("click", docListener, false);
+            t.removeEventListener("mouseover", docListener, false);
+            t.removeEventListener("mouseout", docListener, false);
         } catch (Exception e) {
         }
     }
@@ -513,11 +517,12 @@ public class ControlWebView extends BaseController {
     }
 
     public void setDocListeners() {
-        clearListener();
-        setDocListeners(webEngine.getDocument());
+        Document doc = webEngine.getDocument();
+        clearListener(doc);
+        setDocListeners(doc);
     }
 
-    private void setDocListeners(Document doc) {
+    private synchronized void setDocListeners(Document doc) {
         try {
             if (doc == null) {
                 return;

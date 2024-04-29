@@ -1,6 +1,5 @@
 package mara.mybox.data2d;
 
-import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -324,7 +323,7 @@ public class DataTable extends Data2D {
     }
 
     @Override
-    public long savePageData(FxTask task, File targetFile) {
+    public long savePageData(FxTask task) {
         try (Connection conn = DerbyBase.getConnection()) {
             updateTable(conn);
             List<Data2DRow> dbRows = tableData2D.query(conn, pageQuery());
@@ -368,9 +367,6 @@ public class DataTable extends Data2D {
 
     @Override
     public Data2DWriter selfWriter() {
-        if (file == null) {
-            return null;
-        }
         DataTableWriter writer = new DataTableWriter();
         writer.setTargetTable(this)
                 .setTargetData(this)

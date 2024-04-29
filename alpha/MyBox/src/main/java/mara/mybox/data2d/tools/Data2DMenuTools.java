@@ -6,7 +6,6 @@ import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.CheckMenuItem;
-import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import mara.mybox.controller.BaseData2DLoadController;
@@ -125,10 +124,6 @@ public class Data2DMenuTools {
                 }
             });
             items.add(asktmpItem);
-
-            Menu helpMenu = new Menu(message("Help"), StyleTools.getIconImageView("iconClaw.png"));
-            helpMenu.getItems().addAll(helpMenus(dataController));
-            items.add(helpMenu);
 
             return items;
         } catch (Exception e) {

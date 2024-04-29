@@ -258,12 +258,9 @@ public abstract class Data2D_Edit extends Data2D_Filter {
     /*
         modify
      */
-    public long savePageData(FxTask task, File targetFile) {
+    public long savePageData(FxTask task) {
         try {
-            if (targetFile == null) {
-                return -1;
-            }
-            Data2DSavePage operate = Data2DSavePage.saveAsFile(this, targetFile);
+            Data2DSavePage operate = Data2DSavePage.save(this);
             if (operate == null) {
                 return -2;
             }

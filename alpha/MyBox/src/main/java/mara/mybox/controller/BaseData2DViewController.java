@@ -401,7 +401,7 @@ public class BaseData2DViewController extends BaseData2DLoadController {
 
             super.makeColumns();
 
-            updateTable(data);
+            super.updateTable(data);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -429,6 +429,16 @@ public class BaseData2DViewController extends BaseData2DLoadController {
     protected void setPagination() {
         super.setPagination();
         switchFormat();
+    }
+
+    @Override
+    public void updateTable(List<List<String>> data) {
+        try {
+            super.updateTable(data);
+            switchFormat();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
     /*

@@ -44,7 +44,7 @@ License:    Apache License Version 2.0
             <content>
                 <VBox fx:id="externalBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                     <children>
-                        <FlowPane fx:id="extFormatPane" alignment="CENTER_LEFT" hgap="5.0" minWidth="-Infinity" prefWrapLength="500.0" vgap="5.0">
+                        <FlowPane fx:id="extFormatPane" alignment="CENTER_LEFT" hgap="2.0" minWidth="-Infinity" prefWrapLength="0.0" vgap="2.0">
                             <children>
                                 <Label text="%External" />
                                 <RadioButton fx:id="csvRadio" mnemonicParsing="false" selected="true">
@@ -335,7 +335,7 @@ License:    Apache License Version 2.0
         </ScrollPane>
         <VBox fx:id="inTableBox" spacing="2.0">
             <children>
-                <FlowPane hgap="2.0" prefWrapLength="300.0" vgap="2.0">
+                <FlowPane fx:id="internalFormatPane" hgap="2.0" prefWrapLength="300.0" vgap="2.0">
                     <children>
                         <Label text="%InTable" />
                         <RadioButton fx:id="insertRadio" minHeight="-Infinity" mnemonicParsing="false" text="%InsertAbove" toggleGroup="$targetGroup" wrapText="true" />

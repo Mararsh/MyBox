@@ -69,7 +69,9 @@ public abstract class Data2DReader {
         rows = new ArrayList<>();
         sourceRow = new ArrayList<>();
         sourceData.startFilter();
-        if (scanWholeFile || !sourceData.hasPage()
+        if (sourceData.isTmpData()) {
+            scanPage();
+        } else if (scanWholeFile || !sourceData.hasPage()
                 || sourceData.isMutiplePages() || !sourceData.isDataLoaded()) {
             scanFile();
         } else {

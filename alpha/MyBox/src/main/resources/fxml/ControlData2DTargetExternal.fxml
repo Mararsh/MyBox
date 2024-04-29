@@ -39,7 +39,7 @@ License:    Apache License Version 2.0
                 <RadioButton fx:id="emptyNonnumericRadio" mnemonicParsing="false" text="%CountAsEmpty" toggleGroup="$nonnumericGroup" />
             </children>
         </FlowPane>
-        <FlowPane alignment="CENTER_LEFT" hgap="5.0" minWidth="-Infinity" prefWrapLength="500.0" vgap="5.0">
+        <FlowPane fx:id="extFormatPane" alignment="CENTER_LEFT" hgap="2.0" minWidth="-Infinity" prefWrapLength="0.0" vgap="2.0">
             <children>
                 <RadioButton fx:id="csvRadio" mnemonicParsing="false" selected="true">
                     <graphic>

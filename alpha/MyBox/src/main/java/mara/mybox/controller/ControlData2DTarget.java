@@ -14,6 +14,7 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import mara.mybox.data2d.Data2D;
@@ -83,6 +84,8 @@ public class ControlData2DTarget extends BaseDataConvertController {
     protected VBox optionsBox, csvBox, excelBox, textBox, htmlBox, pdfBox, dbBox;
     @FXML
     protected ControlNewDataTable dbController;
+    @FXML
+    protected FlowPane extFormatPane, internalFormatPane;
 
     public boolean isInvalid() {
         if (tableController == null) {
@@ -119,7 +122,7 @@ public class ControlData2DTarget extends BaseDataConvertController {
             optionsPane.getTabs().clear();
             optionsBox.getChildren().clear();
 
-            initTarget();
+            initTarget(TargetType.valueOf(UserConfig.getString(baseName + "DataTarget", "CSV")));
             targetGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
@@ -143,14 +146,14 @@ public class ControlData2DTarget extends BaseDataConvertController {
         }
     }
 
-    public void initTarget() {
+    public void initTarget(TargetType type) {
         try {
-            format = TargetType.valueOf(UserConfig.getString(baseName + "DataTarget", "CSV"));
+            format = type;
             isSettingValues = true;
-            if (format == null) {
+            if (type == null) {
                 csvRadio.setSelected(true);
             } else {
-                switch (format) {
+                switch (type) {
                     case CSV:
                         csvRadio.setSelected(true);
                         break;
@@ -228,7 +231,6 @@ public class ControlData2DTarget extends BaseDataConvertController {
             if (isSettingValues) {
                 return format;
             }
-
             String name = name();
             if (name == null || name.isBlank()) {
                 if (data2D != null) {
@@ -388,6 +390,20 @@ public class ControlData2DTarget extends BaseDataConvertController {
             MyBoxLog.error(e);
         }
         return format;
+    }
+
+    public void setTarget(TargetType type) {
+        if (type == null) {
+            return;
+        }
+        initTarget(type);
+        checkTarget();
+        if (extFormatPane != null) {
+            extFormatPane.setDisable(true);
+        }
+        if (internalFormatPane != null) {
+            internalFormatPane.setDisable(true);
+        }
     }
 
     public synchronized void refreshControls() {

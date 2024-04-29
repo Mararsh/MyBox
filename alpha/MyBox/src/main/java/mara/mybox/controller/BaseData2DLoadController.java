@@ -19,6 +19,7 @@ import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.input.Clipboard;
 import mara.mybox.data.StringTable;
 import mara.mybox.data2d.Data2D;
+import mara.mybox.data2d.Data2D_Attributes.TargetType;
 import mara.mybox.data2d.DataClipboard;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataFileExcel;
@@ -67,6 +68,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
         if (!checkBeforeNextAction()) {
             return false;
         }
+        resetStatus();
         data2D = Data2D.create(type);
         loadTmpData(3);
         return true;
@@ -236,7 +238,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
             }
             List<Data2DColumn> columns = new ArrayList<>();
             if (cols == null || cols.isEmpty()) {
-                data2D.setHasHeader(false);
+//                data2D.setHasHeader(false);
                 if (data != null && !data.isEmpty()) {
                     for (int i = 0; i < data.get(0).size(); i++) {
                         Data2DColumn column = new Data2DColumn(data2D.colPrefix() + (i + 1), data2D.defaultColumnType());
@@ -244,7 +246,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
                     }
                 }
             } else {
-                data2D.setHasHeader(true);
+//                data2D.setHasHeader(true);
                 for (Data2DColumn col : cols) {
                     columns.add(col.cloneAll());
                 }
@@ -375,6 +377,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
                     def = data.queryDefinition(conn);
+                    tableData2DDefinition = data.tableData2DDefinition;
                     if (def == null) {
                         def = tableData2DDefinition.insertData(conn, data);
                     } else {
@@ -526,7 +529,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
             return;
         }
         Data2DCopyController controller = Data2DCopyController.open(this);
-        controller.targetController.systemClipboardRadio.setSelected(true);
+        controller.targetController.setTarget(TargetType.SystemClipboard);
     }
 
     public void copyToSystemClipboard(List<String> names, List<List<String>> data) {

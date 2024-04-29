@@ -65,7 +65,6 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
         MenuItem DataInMyBoxClipboard = new MenuItem(message("DataInMyBoxClipboard"));
         DataInMyBoxClipboard.setOnAction((ActionEvent event1) -> {
             DataInMyBoxClipboardController c = DataInMyBoxClipboardController.oneOpen();
-            c.createAction();
         });
 
         MenuItem ExcelConvert = new MenuItem(message("ExcelConvert"));
@@ -126,19 +125,16 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
         MenuItem MatricesManage = new MenuItem(message("MatricesManage"));
         MatricesManage.setOnAction((ActionEvent event1) -> {
             MatricesManageController c = (MatricesManageController) loadScene(Fxmls.MatricesManageFxml);
-            c.createAction();
         });
 
         MenuItem MatrixUnaryCalculation = new MenuItem(message("MatrixUnaryCalculation"));
         MatrixUnaryCalculation.setOnAction((ActionEvent event1) -> {
             MatrixUnaryCalculationController c = (MatrixUnaryCalculationController) loadScene(Fxmls.MatrixUnaryCalculationFxml);
-            c.createAction();
         });
 
         MenuItem MatricesBinaryCalculation = new MenuItem(message("MatricesBinaryCalculation"));
         MatricesBinaryCalculation.setOnAction((ActionEvent event1) -> {
             MatricesBinaryCalculationController c = (MatricesBinaryCalculationController) loadScene(Fxmls.MatricesBinaryCalculationFxml);
-            c.createAction();
         });
 
         Menu matrix = new Menu(message("Matrix"));

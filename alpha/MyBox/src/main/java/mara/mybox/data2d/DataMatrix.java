@@ -1,6 +1,5 @@
 package mara.mybox.data2d;
 
-import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -116,7 +115,7 @@ public class DataMatrix extends Data2D {
     }
 
     @Override
-    public long savePageData(FxTask task, File targetFile) {
+    public long savePageData(FxTask task) {
         rowsNumber = save(null, this, columns, tableRows(false));
         return rowsNumber;
     }
@@ -200,9 +199,6 @@ public class DataMatrix extends Data2D {
 
     @Override
     public Data2DWriter selfWriter() {
-        if (file == null) {
-            return null;
-        }
         MatrixWriter writer = new MatrixWriter();
         writer.setMatrix(this)
                 .setTargetData(this)

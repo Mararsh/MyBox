@@ -27,11 +27,16 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import mara.mybox.data.StringTable;
 import mara.mybox.data2d.Data2D;
-import mara.mybox.data2d.DataClipboard;
+import mara.mybox.data2d.Data2D_Attributes.TargetType;
 import mara.mybox.data2d.tools.Data2DMenuTools;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.Data2DDefinition.DataType;
+import static mara.mybox.db.data.Data2DDefinition.DataType.CSV;
+import static mara.mybox.db.data.Data2DDefinition.DataType.DatabaseTable;
+import static mara.mybox.db.data.Data2DDefinition.DataType.Excel;
+import static mara.mybox.db.data.Data2DDefinition.DataType.Matrix;
+import static mara.mybox.db.data.Data2DDefinition.DataType.Texts;
 import mara.mybox.db.data.FileBackup;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
@@ -71,10 +76,10 @@ public class Data2DManufactureController extends BaseData2DViewController {
         try {
             super.initControls();
 
-            csvArea.textProperty().addListener(new ChangeListener<String>() {
+            csvArea.focusedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
-                public void changed(ObservableValue<? extends String> v, String ov, String nv) {
-                    if (isSettingValues) {
+                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                    if (isSettingValues || nv) {
                         return;
                     }
                     isCSVpicked = false;
@@ -517,16 +522,6 @@ public class Data2DManufactureController extends BaseData2DViewController {
         return data2D.copyRow(data);
     }
 
-    @Override
-    public void updateTable(List<List<String>> data) {
-        try {
-            super.updateTable(data);
-            loadCsv();
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
     /*
         menus
      */
@@ -678,9 +673,80 @@ public class Data2DManufactureController extends BaseData2DViewController {
         action
      */
     @FXML
+    public void popCreateMenu(Event event) {
+        if (UserConfig.getBoolean(baseName + "CreateMenuPopWhenMouseHovering", true)) {
+            showCreateMenu(event);
+        }
+    }
+
+    @FXML
+    public void showCreateMenu(Event fevent) {
+        try {
+            List<MenuItem> items = new ArrayList<>();
+            MenuItem menu;
+
+            menu = new MenuItem("CSV", StyleTools.getIconImageView("iconCSV.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                createData(DataType.CSV);
+            });
+            items.add(menu);
+
+            menu = new MenuItem("Excel", StyleTools.getIconImageView("iconExcel.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                createData(DataType.Excel);
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("Texts"), StyleTools.getIconImageView("iconTxt.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                createData(DataType.CSV);
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("Matrix"), StyleTools.getIconImageView("iconMatrix.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                createData(DataType.Matrix);
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("MyBoxClipboard"), StyleTools.getIconImageView("iconClipboard.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                createData(DataType.MyBoxClipboard);
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("DatabaseTable"), StyleTools.getIconImageView("iconDatabase.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                createData(DataType.DatabaseTable);
+            });
+            items.add(menu);
+
+            items.add(new SeparatorMenuItem());
+
+            CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
+            popItem.setSelected(UserConfig.getBoolean(baseName + "CreateMenuPopWhenMouseHovering", true));
+            popItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean(baseName + "CreateMenuPopWhenMouseHovering", popItem.isSelected());
+                }
+            });
+            items.add(popItem);
+
+            popEventMenu(fevent, items);
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
     @Override
-    public void createAction() {
-        createData(DataType.CSV);
+    public boolean createData(DataType type) {
+        if (!super.createData(type)) {
+            return false;
+        }
+        Data2DAttributesController.open(this);
+        return true;
     }
 
     @Override
@@ -736,28 +802,31 @@ public class Data2DManufactureController extends BaseData2DViewController {
             return;
         }
         if (data2D.isTmpData()) {
-            if (data2D.isTable()) {
-                Data2DTableCreateController.open(this);
-            } else {
-                Data2DSaveAsController.open(this);
+            TargetType ttype;
+            switch (data2D.getType()) {
+                case CSV:
+                    ttype = TargetType.CSV;
+                    break;
+                case Excel:
+                    ttype = TargetType.Excel;
+                    break;
+                case Texts:
+                    ttype = TargetType.Text;
+                    break;
+                case MyBoxClipboard:
+                    ttype = TargetType.MyBoxClipboard;
+                    break;
+                case Matrix:
+                    ttype = TargetType.Matrix;
+                    break;
+                case DatabaseTable:
+                    ttype = TargetType.DatabaseTable;
+                    break;
+                default:
+                    return;
             }
+            Data2DSaveAsController.open(this, ttype);
             return;
-        }
-        targetFile = data2D.getFile();
-        if (data2D.isDataFile()) {
-            if (targetFile == null) {
-                targetFile = chooseSaveFile(data2D.dataName());
-                if (targetFile == null) {
-                    return;
-                }
-            }
-        } else if (data2D.isClipboard()) {
-            if (targetFile == null) {
-                targetFile = DataClipboard.newFile();
-                if (targetFile == null) {
-                    return;
-                }
-            }
         }
         if (task != null) {
             task.cancel();
@@ -775,7 +844,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
                         backup = addBackup(this, data2D.getFile());
                     }
                     data2D.startTask(this, null);
-                    return data2D.savePageData(this, targetFile) >= 0;
+                    return data2D.savePageData(this) >= 0;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -804,19 +873,6 @@ public class Data2DManufactureController extends BaseData2DViewController {
             }
         };
         start(task);
-    }
-
-    @Override
-    public synchronized void loadData(String name, List<Data2DColumn> cols, List<List<String>> data) {
-        try {
-            if (!checkBeforeNextAction()) {
-                return;
-            }
-            data2D = Data2D.create(DataType.CSV);
-            super.loadData(name, cols, data);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
     }
 
     @FXML

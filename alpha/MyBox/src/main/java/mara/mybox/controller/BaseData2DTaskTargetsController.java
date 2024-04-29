@@ -7,7 +7,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Toggle;
-import mara.mybox.data2d.DataTable;
 import mara.mybox.data2d.tools.Data2DColumnTools;
 import mara.mybox.data2d.writer.Data2DWriter;
 import mara.mybox.db.data.ColumnDefinition.InvalidAs;
@@ -44,6 +43,7 @@ public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskCont
                         targetController.setNotInTable(isAllPages());
                     }
                 });
+                targetController.setNotInTable(isAllPages());
             }
 
         } catch (Exception e) {
@@ -245,6 +245,8 @@ public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskCont
                 return false;
             }
             dataController.isSettingValues = true;
+            List<List<String>> tableData = new ArrayList<>();
+            tableData.addAll(dataController.tableData);
             if (targetController.replaceRadio.isSelected()) {
                 for (int r = row; r < Math.min(row + outputData.size(), rowsNumber); r++) {
                     List<String> tableRow = dataController.tableData.get(r);
@@ -252,7 +254,7 @@ public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskCont
                     for (int c = col; c < Math.min(col + dataRow.size(), colsNumber); c++) {
                         tableRow.set(c + 1, dataRow.get(c - col));
                     }
-                    dataController.tableData.set(r, tableRow);
+                    tableData.set(r, tableRow);
                 }
             } else {
                 List<List<String>> newRows = new ArrayList<>();
@@ -265,9 +267,9 @@ public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskCont
                     newRows.add(newRow);
                 }
                 int index = targetController.insertRadio.isSelected() ? row : row + 1;
-                dataController.tableData.addAll(index, newRows);
+                tableData.addAll(index, newRows);
             }
-            dataController.tableView.refresh();
+            dataController.updateTable(tableData);
             dataController.isSettingValues = false;
             dataController.tableChanged(true);
             dataController.requestMouse();
@@ -296,7 +298,6 @@ public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskCont
         }
         taskSuccessed = false;
         task = new FxSingletonTask<Void>(this) {
-            protected DataTable dataTable = null;
 
             @Override
             protected boolean handle() {
@@ -318,11 +319,9 @@ public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskCont
 
             @Override
             protected void whenSucceeded() {
-                dataController.popDone();
-                if (dataTable != null) {
-                    Data2DManufactureController.openDef(dataTable);
-                } else {
-                    writer.showResult();
+                writer.showResult();
+                if (dataController != null) {
+                    dataController.popDone();
                 }
             }
 

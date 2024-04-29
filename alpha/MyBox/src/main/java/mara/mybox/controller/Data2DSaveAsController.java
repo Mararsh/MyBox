@@ -1,6 +1,7 @@
 package mara.mybox.controller;
 
 import javafx.fxml.FXML;
+import mara.mybox.data2d.Data2D_Attributes.TargetType;
 import mara.mybox.data2d.operate.Data2DSaveAs;
 import mara.mybox.data2d.writer.Data2DWriter;
 import mara.mybox.db.data.ColumnDefinition.InvalidAs;
@@ -30,6 +31,15 @@ public class Data2DSaveAsController extends BaseTaskController {
     public void setParameters(BaseData2DLoadController controller) {
         try {
             targetController.setParameters(this, controller);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    public void setParameters(BaseData2DLoadController controller, TargetType targetType) {
+        try {
+            targetController.setParameters(this, controller);
+            targetController.setTarget(targetType);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -100,6 +110,18 @@ public class Data2DSaveAsController extends BaseTaskController {
             Data2DSaveAsController controller
                     = (Data2DSaveAsController) WindowTools.openStage(Fxmls.Data2DSaveAsFxml);
             controller.setParameters(tableController);
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public static Data2DSaveAsController open(BaseData2DLoadController tableController, TargetType targetType) {
+        try {
+            Data2DSaveAsController controller
+                    = (Data2DSaveAsController) WindowTools.openStage(Fxmls.Data2DSaveAsFxml);
+            controller.setParameters(tableController, targetType);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e);

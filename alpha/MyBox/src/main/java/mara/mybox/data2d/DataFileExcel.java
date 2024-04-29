@@ -228,9 +228,6 @@ public class DataFileExcel extends DataFile {
 
     @Override
     public Data2DWriter selfWriter() {
-        if (file == null) {
-            return null;
-        }
         DataFileExcelWriter writer = new DataFileExcelWriter();
         writer.setBaseFile(file)
                 .setSheetName(sheet)

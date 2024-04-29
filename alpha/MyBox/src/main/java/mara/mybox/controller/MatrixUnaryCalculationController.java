@@ -419,7 +419,6 @@ public class MatrixUnaryCalculationController extends BaseController {
 
     public static MatrixUnaryCalculationController open() {
         MatrixUnaryCalculationController controller = oneOpen();
-        controller.createAction();
         return controller;
     }
 

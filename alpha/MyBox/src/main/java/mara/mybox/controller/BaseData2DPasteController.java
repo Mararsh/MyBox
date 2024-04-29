@@ -122,6 +122,8 @@ public class BaseData2DPasteController extends ControlData2DSource {
             int rowsNumber = dataTarget.tableRowsNumber();
             int colsNumber = dataTarget.tableColsNumber();
             targetController.isSettingValues = true;
+            List<List<String>> rows = new ArrayList<>();
+            rows.addAll(targetController.tableData);
             if (replaceRadio.isSelected()) {
                 for (int r = row; r < Math.min(row + data.size(), rowsNumber); r++) {
                     List<String> tableRow = targetController.tableData.get(r);
@@ -129,7 +131,7 @@ public class BaseData2DPasteController extends ControlData2DSource {
                     for (int c = col; c < Math.min(col + dataRow.size(), colsNumber); c++) {
                         tableRow.set(c + 1, dataRow.get(c - col));
                     }
-                    targetController.tableData.set(r, tableRow);
+                    rows.set(r, tableRow);
                 }
             } else {
                 List<List<String>> newRows = new ArrayList<>();
@@ -141,8 +143,9 @@ public class BaseData2DPasteController extends ControlData2DSource {
                     }
                     newRows.add(newRow);
                 }
-                targetController.tableData.addAll(insertRadio.isSelected() ? row : row + 1, newRows);
+                rows.addAll(insertRadio.isSelected() ? row : row + 1, newRows);
             }
+            targetController.updateTable(rows);
             targetController.tableView.refresh();
             targetController.isSettingValues = false;
             targetController.tableChanged(true);
