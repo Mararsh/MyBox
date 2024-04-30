@@ -41,7 +41,7 @@ public class HtmlWriter extends Data2DWriter {
             tmpFile = FileTmpTools.getTempFile(".htm");
             fileWriter = new BufferedWriter(new FileWriter(tmpFile, Charset.forName("utf-8")));
             StringBuilder s = new StringBuilder();
-            s.append("<!DOCTYPE html><HTML>\n").
+            s.append("<HTML>\n").
                     append(indent).append("<HEAD>\n").
                     append(indent).append(indent).
                     append("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\n");

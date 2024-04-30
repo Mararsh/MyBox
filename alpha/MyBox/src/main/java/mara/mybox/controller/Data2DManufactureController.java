@@ -26,17 +26,10 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import mara.mybox.data.StringTable;
-import mara.mybox.data2d.Data2D;
-import mara.mybox.data2d.Data2D_Attributes.TargetType;
 import mara.mybox.data2d.tools.Data2DMenuTools;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.Data2DDefinition.DataType;
-import static mara.mybox.db.data.Data2DDefinition.DataType.CSV;
-import static mara.mybox.db.data.Data2DDefinition.DataType.DatabaseTable;
-import static mara.mybox.db.data.Data2DDefinition.DataType.Excel;
-import static mara.mybox.db.data.Data2DDefinition.DataType.Matrix;
-import static mara.mybox.db.data.Data2DDefinition.DataType.Texts;
 import mara.mybox.db.data.FileBackup;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
@@ -66,7 +59,6 @@ public class Data2DManufactureController extends BaseData2DViewController {
 
     public Data2DManufactureController() {
         baseTitle = message("DataManufacture");
-        TipsLabelKey = "DataManufactureTips";
         readOnly = false;
         savedNotify = new SimpleBooleanProperty(false);
     }
@@ -802,30 +794,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
             return;
         }
         if (data2D.isTmpData()) {
-            TargetType ttype;
-            switch (data2D.getType()) {
-                case CSV:
-                    ttype = TargetType.CSV;
-                    break;
-                case Excel:
-                    ttype = TargetType.Excel;
-                    break;
-                case Texts:
-                    ttype = TargetType.Text;
-                    break;
-                case MyBoxClipboard:
-                    ttype = TargetType.MyBoxClipboard;
-                    break;
-                case Matrix:
-                    ttype = TargetType.Matrix;
-                    break;
-                case DatabaseTable:
-                    ttype = TargetType.DatabaseTable;
-                    break;
-                default:
-                    return;
-            }
-            Data2DSaveAsController.open(this, ttype);
+            Data2DSaveAsController.save(this);
             return;
         }
         if (task != null) {
@@ -890,10 +859,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
         if (data2D.isMutiplePages()) {
             loadPage(false);
         } else {
-            Data2D data = Data2D.create(data2D.getType());
-            data.cloneDefBase(data2D);
-            setData(data);
-            readData(true);
+            loadDef(data2D, false);
         }
     }
 

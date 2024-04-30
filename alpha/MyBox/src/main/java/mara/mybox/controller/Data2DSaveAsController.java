@@ -5,6 +5,12 @@ import mara.mybox.data2d.Data2D_Attributes.TargetType;
 import mara.mybox.data2d.operate.Data2DSaveAs;
 import mara.mybox.data2d.writer.Data2DWriter;
 import mara.mybox.db.data.ColumnDefinition.InvalidAs;
+import static mara.mybox.db.data.Data2DDefinition.DataType.CSV;
+import static mara.mybox.db.data.Data2DDefinition.DataType.DatabaseTable;
+import static mara.mybox.db.data.Data2DDefinition.DataType.Excel;
+import static mara.mybox.db.data.Data2DDefinition.DataType.Matrix;
+import static mara.mybox.db.data.Data2DDefinition.DataType.MyBoxClipboard;
+import static mara.mybox.db.data.Data2DDefinition.DataType.Texts;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
@@ -20,6 +26,7 @@ public class Data2DSaveAsController extends BaseTaskController {
 
     protected Data2DWriter writer;
     protected InvalidAs invalidAs;
+    protected boolean saveTmp;
 
     @FXML
     protected ControlData2DTarget targetController;
@@ -40,6 +47,39 @@ public class Data2DSaveAsController extends BaseTaskController {
         try {
             targetController.setParameters(this, controller);
             targetController.setTarget(targetType);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    public void saveTmp(BaseData2DLoadController controller) {
+        try {
+            targetController.setParameters(this, controller);
+            TargetType ttype;
+            switch (targetController.data2D.getType()) {
+                case CSV:
+                    ttype = TargetType.CSV;
+                    break;
+                case Excel:
+                    ttype = TargetType.Excel;
+                    break;
+                case Texts:
+                    ttype = TargetType.Text;
+                    break;
+                case MyBoxClipboard:
+                    ttype = TargetType.MyBoxClipboard;
+                    break;
+                case Matrix:
+                    ttype = TargetType.Matrix;
+                    break;
+                case DatabaseTable:
+                    ttype = TargetType.DatabaseTable;
+                    break;
+                default:
+                    return;
+            }
+            targetController.setTarget(ttype);
+            saveTmp = true;
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -80,7 +120,11 @@ public class Data2DSaveAsController extends BaseTaskController {
 
     @Override
     public void afterSuccess() {
-        writer.showResult();
+        if (saveTmp) {
+            targetController.tableController.loadDef(writer.getTargetData(), false);
+        } else {
+            writer.showResult();
+        }
     }
 
     @Override
@@ -91,12 +135,7 @@ public class Data2DSaveAsController extends BaseTaskController {
         if (taskSuccessed) {
             targetController.tableController.popInformation(message("Done"));
             close();
-//            if (targetController.tableController instanceof Data2DManufactureController) {
-//                Data2DManufactureController c = (Data2DManufactureController) targetController.tableController;
-//                if (c.askedTmp) {
-//                    c.close();
-//                }
-//            }
+
         } else {
             popError(message("Failed"));
         }
@@ -122,6 +161,18 @@ public class Data2DSaveAsController extends BaseTaskController {
             Data2DSaveAsController controller
                     = (Data2DSaveAsController) WindowTools.openStage(Fxmls.Data2DSaveAsFxml);
             controller.setParameters(tableController, targetType);
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public static Data2DSaveAsController save(BaseData2DLoadController tableController) {
+        try {
+            Data2DSaveAsController controller
+                    = (Data2DSaveAsController) WindowTools.openStage(Fxmls.Data2DSaveAsFxml);
+            controller.saveTmp(tableController);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e);

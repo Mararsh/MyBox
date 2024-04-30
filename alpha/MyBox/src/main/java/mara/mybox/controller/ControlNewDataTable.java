@@ -36,6 +36,7 @@ public class ControlNewDataTable extends BaseController {
     protected TableData2D tableData2D;
     protected List<Integer> columnIndices;
     protected long count;
+    protected String tableName;
 
     @FXML
     protected ControlSelection columnsController;
@@ -103,14 +104,17 @@ public class ControlNewDataTable extends BaseController {
         }
     }
 
-    public boolean checkOptions(Connection conn, boolean onlySQL) {
+    public boolean checkOptions() {
         try {
-            if (nameInput.getText().isBlank()) {
+            tableName = null;
+            String name = nameInput.getText();
+            if (name == null || name.isBlank()) {
                 taskController.popError(message("InvalidParameters") + ": " + message("TableName"));
                 return false;
             }
             if (autoRadio.isSelected()) {
-                if (idInput.getText().isBlank()) {
+                String id = idInput.getText();
+                if (id == null || id.isBlank()) {
                     taskController.popError(message("InvalidParameters") + ": " + message("ID"));
                     return false;
                 }
@@ -118,13 +122,25 @@ public class ControlNewDataTable extends BaseController {
                 taskController.popError(message("SelectToHandle") + ": " + message("PrimaryKey"));
                 return false;
             }
-            String tableName = DerbyBase.fixedIdentifier(nameInput.getText().trim());
+            tableName = DerbyBase.fixedIdentifier(name.trim());
             if ((data2D instanceof DataTable) && tableName.equals(data2D.getSheet())) {
                 alertError(message("CannotConvertToItself") + ": " + tableName);
                 return false;
             }
             if (tableData2D == null) {
                 tableData2D = new TableData2D();
+            }
+            return true;
+        } catch (Exception e) {
+            popError(e.toString());
+            return false;
+        }
+    }
+
+    public boolean checkOptions(Connection conn, boolean onlySQL) {
+        try {
+            if (!checkOptions()) {
+                return false;
             }
             if (DerbyBase.exist(conn, tableName) > 0) {
                 if (onlySQL) {
@@ -172,6 +188,9 @@ public class ControlNewDataTable extends BaseController {
 
     public boolean makeTable(FxTask currentTask) {
         try {
+            if (!checkOptions()) {
+                return false;
+            }
             List<Data2DColumn> sourceColumns = new ArrayList<>();
             for (int index : columnIndices) {
                 sourceColumns.add(data2D.getColumns().get(index));

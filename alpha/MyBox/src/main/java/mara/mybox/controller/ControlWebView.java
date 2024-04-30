@@ -86,7 +86,7 @@ public class ControlWebView extends BaseController {
     protected String address, contents, style, defaultStyle, initStyle;
     protected Charset charset;
     protected Map<Integer, Document> framesDoc;
-    protected EventListener docListener, clickListener;
+    protected EventListener docListener;
     protected Element element;
     protected final SimpleBooleanProperty addressChangedNotify, addressInvalidNotify,
             pageLoadingNotify, pageLoadedNotify;
@@ -232,7 +232,7 @@ public class ControlWebView extends BaseController {
             try {
                 switch (state) {
                     case READY:
-                        reset();
+                        ready();
                         break;
                     case RUNNING:
                         running();
@@ -279,7 +279,7 @@ public class ControlWebView extends BaseController {
             } else {
                 element = null;
             }
-//                        MyBoxLog.console(webView.getId() + " " + domEventType + " " + tag + " " + href);
+//            MyBoxLog.console(webView.getId() + " " + domEventType + " " + tag + " " + href);
             if (webViewLabel != null) {
                 String label;
                 if ("mouseover".equals(domEventType)) {
@@ -433,13 +433,19 @@ public class ControlWebView extends BaseController {
     }
 
     private void reset() {
+        if (timer != null) {
+            timer.cancel();
+        }
+//        clearListener(webEngine.getDocument());
+    }
+
+    private void ready() {
         try {
             if (timer != null) {
                 timer.cancel();
             }
             framesDoc.clear();
             charset = Charset.defaultCharset();
-            clearListener(webEngine.getDocument());
             synchronized (lock) {
                 listened = false;
             }
@@ -448,16 +454,17 @@ public class ControlWebView extends BaseController {
         }
     }
 
+    // Errors popped when call this. Do not call this.
     private synchronized void clearListener(Document doc) {
         try {
             if (doc == null) {
                 return;
             }
             EventTarget t = (EventTarget) doc.getDocumentElement();
-            t.removeEventListener("contextmenu", docListener, false);
-            t.removeEventListener("click", docListener, false);
-            t.removeEventListener("mouseover", docListener, false);
-            t.removeEventListener("mouseout", docListener, false);
+            t.removeEventListener("contextmenu", docListener, true);
+            t.removeEventListener("click", docListener, true);
+            t.removeEventListener("mouseover", docListener, true);
+            t.removeEventListener("mouseout", docListener, true);
         } catch (Exception e) {
         }
     }
@@ -501,13 +508,9 @@ public class ControlWebView extends BaseController {
                 return false;
             }
             ((JSObject) winObject).setMember("control", this);
-            executeScript("if ( document.readyState==\"complete\" || document.readyState==\"interactive\")"
-                    + " { control.setDocListeners(); } ");
+            executeScript("if ( document.addEventListener ) { control.setDocListeners(); } ");
             if (timer != null) {
                 timer.cancel();
-            }
-            synchronized (lock) {
-                listened = true;
             }
             return true;
         } catch (Exception e) {
@@ -517,9 +520,10 @@ public class ControlWebView extends BaseController {
     }
 
     public void setDocListeners() {
-        Document doc = webEngine.getDocument();
-        clearListener(doc);
-        setDocListeners(doc);
+        setDocListeners(webEngine.getDocument());
+        synchronized (lock) {
+            listened = true;
+        }
     }
 
     private synchronized void setDocListeners(Document doc) {
@@ -528,10 +532,10 @@ public class ControlWebView extends BaseController {
                 return;
             }
             EventTarget t = (EventTarget) doc.getDocumentElement();
-            t.addEventListener("contextmenu", docListener, false);
-            t.addEventListener("click", docListener, false);
-            t.addEventListener("mouseover", docListener, false);
-            t.addEventListener("mouseout", docListener, false);
+            t.addEventListener("contextmenu", docListener, true);
+            t.addEventListener("click", docListener, true);
+            t.addEventListener("mouseover", docListener, true);
+            t.addEventListener("mouseout", docListener, true);
         } catch (Exception e) {
             MyBoxLog.console(e);
         }
@@ -731,6 +735,7 @@ public class ControlWebView extends BaseController {
     }
 
     public void writeContents(String contents) {
+        reset();
         this.contents = contents;
         webEngine.getLoadWorker().cancel();
         webEngine.loadContent(contents == null ? "" : contents);
@@ -767,6 +772,7 @@ public class ControlWebView extends BaseController {
             if (!setAddress(value)) {
                 return;
             }
+            reset();
             contents = null;
             setWebViewLabel(message("Loading..."));
             webEngine.getLoadWorker().cancel();

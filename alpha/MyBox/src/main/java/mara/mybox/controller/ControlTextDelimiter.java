@@ -150,7 +150,7 @@ public class ControlTextDelimiter extends BaseController {
             exampleButton.setVisible(isRead && canRegx);
 
             if (!canRegx) {
-                NodeStyleTools.setTooltip(sharpRadio, message("DelimeterSharpComments"));
+                NodeStyleTools.setTooltip(sharpRadio, message("DelimiterSharpComments"));
             } else {
                 NodeStyleTools.removeTooltip(sharpRadio);
             }

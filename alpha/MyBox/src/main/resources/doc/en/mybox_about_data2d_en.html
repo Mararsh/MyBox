@@ -6,96 +6,139 @@
     <body style="width: 900px; margin:0 auto;" contenteditable="false">
         <h1 align="center">Data in Two-dimensional Storage Structure</h1>
         <h2>1. Data Objects</h2>
-        <ol>
-            <li><p>Following objects can be edited in consistent way:</p></li>
-        </ol>
+        <h3>1.1 External Formats</h3>
+        <p>Following objects can be edited in consistent way:</p>
         <ul>
-            <ul>
-                <ul>
-                    <li><p>Data files, including CSV File, Excel file, texts file.</p></li>
-                    <li><p>Data of MyBox Clipboard</p></li>
-                    <li><p>Matrices</p></li>
-                    <li><p>Database tables.</p></li>
-                </ul>
-            </ul>
+            <li>Data files, including CSV File, Excel file, texts file.</li>
+            <li>Data of MyBox Clipboard</li>
+            <li>Matrices</li>
+            <li>Database tables.</li>
         </ul>
-        <ol start="2">
-            <li><p>Data are represented as two-dimensional storage structure:</p></li>
-        </ol>
+        <h3>1.2 Storage Structure</h3>
+        <p>Data are represented as two-dimensional storage structure:</p>
         <ul>
-            <ul>
-                <ul>
-                    <li><p>"Columns" define attributes/fields of data and extend data dimensions in horizontal direction.</p></li>
-                    <li><p>"Rows" store instances of data and extend data set in vertical direction.</p></li>
-                    <li><p>Data should be in same width. That is all rows have equal number of columns.</p></li>
-                </ul>
-            </ul>
+            <li>"Columns" define attributes/fields of data and extend data dimensions in horizontal direction.</li>
+            <li>"Rows" store instances of data and extend data set in vertical direction.</li>
+            <li>Data should be in same width. That is all rows have equal number of columns.</li>
         </ul>
-        <h2>2. Define Columns</h2>
-        <h3>2.1 Interface of Columns Management</h3>
-        <p>Under tab “Columns”, add/delete/change columns in table view:</p>
+        <h2>2. Create Data</h2>
+        <p>Data can be created by one of following ways:</p>
+        <ul>
+            <li>Click or hover button "Create Data", and select data type: CSV, Excel, Texts, MyBox Clipboard, Matrix, Database Table.</li>
+            <li>Click button "Load contents in System Clipboard", and select rows and columns.</li>
+            <li>Click or hover button "Examples", and select example data. Option "Only import definition".</li>
+        </ul>
+        <h2>3. Open Data</h2>
+        <p>Existed data can be opened by one of following ways:</p>
+        <ul>
+            <li>Click or hover button "Select File" to load data in extrenal data file.</li>
+            <li>Click button "Select"(CTRL+T or ALT+T) to load data managed by MyBox.</li>
+        </ul>
+        <h2>4. Four Modes</h2>
+        <h3>4.1 Page data in html - read only</h3>
+        <ul>
+            <li>Display data of current page in html.</li>
+            <li>Can read data while can not modify data.</li>
+            <li>Can view data definition.</li>
+        </ul>
+        <h3>4.2 Table - edit</h3>
+        <ul>
+            <li>Display data of current page in table.</li>
+            <li>Can modify data.</li>
+            <li>Can modify data definition.</li>
+        </ul>
+        <p>Except for texts file, multiple lines can be edited and saved to string values:</p>
+        <ul>
+            <li>When the value is single line(not include line break), 
+                text field is shown when click the data cell; 
+                write "\n" as line break in the value  and commit the change(return or click other place).</li>
+            <li>When the value includes line breaks: 
+                Text field is shown when click the data cell; 
+                Write the text in multiple lines directly.</li>
+        </ul>
+        <h3>4.3 CSV - edit</h3>
+        <ul>
+            <li>Display data of current page in CSV format.</li>
+            <li>Can modify data.</li>
+            <li>Can modify data definition.</li>
+            <li>Click button "Delimiter" to reload data and apply different delimiter. This delimiter does not affect source file.</li>
+            <li>If a value contains delimiter or line break, the value should be surrounded by quotes.</li>
+        </ul>
+        <h3>4.4 Page data in texts - read only</h3>
+        <ul>
+            <li>Display data of current page in texts format.</li>
+            <li>Can read data while can not modify data.</li>
+            <li>Can view data definition.</li>
+            <li>Click button "Delimiter" to reload data and apply different delimiter. This delimiter does not affect source file.</li>
+        </ul>
+        <h2>5. Define Data</h2>
+        <p>In mode "Table - edit" or mode "CSV - edit", click button "Define Data".</p>
+        <h3>5.1 Interface of Columns Management</h3>
+        <p>Under tab "Columns", add/delete/change columns in table view:</p>
         <ol>
             <li><p>Column names should not be null nor duplicated.</p></li>
             <li><p>Click table cell to edit value directly.</p></li>
-            <li><p>Select one row and click button “Edit” to open edit window.</p></li>
+            <li><p>Select one row and click button "Edit" to open edit window.</p></li>
             <li><p>Can rename all columns with sequence numbers.</p></li>
             <li><p>Can set random colors.</p></li>
             <li><p>Can adjust orders of columns.</p></li>
             <li><p>Click button "OK" to apply modifications of columns to "Table" of current data.</p></li>
             <li><p>Click button "Cancel" to discard modifications of columns and pick data from "Table" of current data.</p></li>
-            <li><p>When changes have not been saved, if modifications have not been applied to data, “**” is displayed in tab header, or else “*” is displayed in tab header.</p></li>
+            <li><p>When changes have not been saved, if modifications have not been applied to data, "**" is displayed in tab header, or else "*" is displayed in tab header.</p></li>
         </ol>
-        <h3>2.2 Types of Columns</h3>
+        <h3>5.2 Types of Columns</h3>
         <ol>
             <li value="1"><p>Types of columns include: String, Double, Float, Long, Integer, Short, Boolean, Datetime, Date, Era, Longitude, Latitude, Enumeration, Color.</p></li>
             <li><p>This attribute is used to display, edit, calculate, and save data.</p></li>
             <li><p>Longitutde and Latitude are defined together generally.</p></li>
         </ol>
-        <h3>2.3 Format of Column</h3>
+        <h3>5.3 Format of Column</h3>
         <ol>
             <li><p>This attribute is mainly for display. When data are inputted/edited, formats are not applied automatically and original inputs are kept.</p></li>
             <li><p>In some interfaces, like "Copy" or "Export", options "Save date/time/era and numbers as columns' formats" can be checked.</p><p></p></li>
         </ol>
-        <h4>2.3.1 Format for Numbers</h4>
+        <h4>5.3.1 Format for Numbers</h4>
         <p>To numbers, format can be: group in thousands, group in ten thousands, scientific notation, and no format.</p>
-        <h4>2.3.2 Format for Datetime/Date</h4>
+        <h4>5.3.2 Format for Datetime/Date</h4>
         <p>To Datetime/Date, following are supported in formats: MM/dd/yy, yy-MM-dd, milliseconds, time zone, T separator, patch century, etc..</p>
-        <h4>2.3.3 Format for Era</h4>
-        <p>To Era, following are supported in formats: MM/dd/yy, yy-MM-dd, milliseconds, time zone, T separator, patch century, prefix/suffix of “AD” and “BC” in Chinese and English,etc..</p>
-        <h4>2.3.4 Define Enumeration</h4>
+        <h4>5.3.3 Format for Era</h4>
+        <p>To Era, following are supported in formats: MM/dd/yy, yy-MM-dd, milliseconds, time zone, T separator, patch century, prefix/suffix of "AD" and "BC" in Chinese and English,etc..</p>
+        <h4>5.3.4 Define Enumeration</h4>
         <p>To Enumeration, list of values can be defined.</p>
-        <h3>2.4 Handle Invalid Values</h3>
+        <h3>5.4 Handle Invalid Values</h3>
         <ol>
             <li><p>How columns handle invalid values, including: skip, count as empty, and count as zero.</p></li>
-            <li><p>In some context, “count as empty” equals to “skip”.</p></li>
+            <li><p>In some context, "count as empty" equals to "skip".</p></li>
             <li><p>This attribute is only used for display or calculation. When data are inputted/edited, invalid values are not handled automatically.</p></li>
         </ol>
-        <h2>3. Usages of Columns</h2>
-        <p>Principle of column usages is “Most tolerability and least manufacture”.</p>
-        <h3>3.1 Load Data</h3>
+        <h3>5.5 Attributes of Data</h3>
+        <p>Under tab "Attributes", set: data name, decimal scale, maximum value of random, and description.</p>
+        <h2>6. Usages of Columns</h2>
+        <p>Principle of column usages is "Most tolerability and least manufacture".</p>
+        <h3>6.1 Load Data</h3>
         <p>When load data, types of columns are not checked, and original values are read and imported.</p>
-        <h3>3.2 Display Data</h3>
+        <h3>6.2 Display Data</h3>
         <ol>
             <li><p>Parse values as columns' types.</p></li>
             <li><p>Handle invalid values as columns' definitions.</p></li>
             <li><p>Rewrite values as columns' formats.</p></li>
             <li><p>Displayed values may be different from current actual values.</p></li>
-            <li><p>Example, Column type is Double and value “abc” is read:</p></li>
+            <li><p>Example, Column type is Double and value "abc" is read:</p></li>
         </ol>
         <ul>
             <ul>
-                <li><p>If count invalid as zero, then display it as zero(actual value is still “abc”).</p></li>
-                <li><p>If skip or count invalid as empty, then display it as “abc”.</p></li>
+                <li><p>If count invalid as zero, then display it as zero(actual value is still "abc").</p></li>
+                <li><p>If skip or count invalid as empty, then display it as "abc".</p></li>
             </ul>
         </ul>
-        <h3>3.3 Controls for editing</h3>
+        <h3>6.3 Controls for editing</h3>
         <ul>
             <li><p>To Boolean, checkbox is provided.</p></li>
             <li><p>To Enumeration, list view is provided with selections.</p></li>
             <li><p>To Color, palette is provided.</p></li>
             <li><p>To Longitude and Latitude, map can be popped to locate coordinate.</p></li>
         </ul>
-        <h3>3.4 Edit Data Cell</h3>
+        <h3>6.4 Edit Data Cell</h3>
         <ol>
             <li><p>Click editable cell to start editing.</p></li>
             <li><p>When editing is started, its original value is displayed, while both type and format of column are ignored.</p></li>
@@ -124,34 +167,34 @@
             </ul>
         </ul>
         <ol start="7">
-            <li><p>Example, column type is Double, count invalid as empty, and decimal scale is 2. When read “abc”:</p></li>
+            <li><p>Example, column type is Double, count invalid as empty, and decimal scale is 2. When read "abc":</p></li>
         </ol>
         <ul>
             <ul>
-                <li><p>The data cell is displayed as “abc”.</p></li>
-                <li><p>User modifies it as “abc123”:</p>
+                <li><p>The data cell is displayed as "abc".</p></li>
+                <li><p>User modifies it as "abc123":</p>
                     <ul>
                         <li><p>While user inputs the change, the text field is always in abnormal color.</p></li>
-                        <li><p>After user clicks Enter or other control, this data cell comes back as “abc” in normal color.</p></li>
+                        <li><p>After user clicks Enter or other control, this data cell comes back as "abc" in normal color.</p></li>
                     </ul></li>
-                <li><p>User modifies it as “123.4567”:</p>
+                <li><p>User modifies it as "123.4567":</p>
                     <ul>
                         <li><p>While user inputs the change, the text field is always in normal color.</p></li>
-                        <li><p>After user clicks Enter or other control, this data cell is saved as “123.4567” and displayed as “123.46”.</p></li>
+                        <li><p>After user clicks Enter or other control, this data cell is saved as "123.4567" and displayed as "123.46".</p></li>
                     </ul></li>
             </ul>
         </ul>
         <ol start="8">
             <li><p>Other data cells are not affected. That is, data cells are always in originial values if they are not changed.</p></li>
         </ol>
-        <h3>3.5 Verify Data Values</h3>
+        <h3>6.5 Verify Data Values</h3>
         <ol>
             <li value="1"><p>The verified objects are rows in current page.</p></li>
             <li><p>To start the verification:</p></li>
         </ol>
         <ul>
             <ul>
-                <li><p>Click button “Verify data in current page”.</p></li>
+                <li><p>Click button "Verify data in current page".</p></li>
                 <li><p>Option: Verify values automatically when save data.</p></li>
             </ul>
         </ul>
@@ -160,14 +203,14 @@
         </ol>
         <ul>
             <ul>
-                <li><p>If a column is defined as “not null”, then null values are invalid for this column.</p></li>
+                <li><p>If a column is defined as "not null", then null values are invalid for this column.</p></li>
                 <li><p>If a value is not satisfied with the column type, then the value is invalid.</p></li>
             </ul>
         </ul>
         <ol start="4">
             <li><p>The results of verification are displayed in a html table.</p></li>
         </ol>
-        <h3>3.6 Save Data</h3>
+        <h3>6.6 Save Data</h3>
         <ol>
             <li value="1"><p>Values are written into file of CSV/Texts/Excel as strings.</p></li>
             <li><p>Values are written into database table as nearest types:</p></li>
@@ -258,7 +301,7 @@
         <ol start="3">
             <li><p>All values in Matrix are saved as Double.</p></li>
         </ol>
-        <h3>3.7 Calculate Data</h3>
+        <h3>6.7 Calculate Data</h3>
         <ol>
             <li><p>Data are handled as original values, without concern about types and formats of columns.</p></li>
             <li><p>Values are parsed as need. Example, if the calculation requires double values, then try to convert values as doubles.</p></li>
@@ -270,76 +313,31 @@
         <ul>
             <ul>
                 <li><p>Try to convert each value as double.</p></li>
-                <li><p>If “count invalid value as zero”, then invalid values are calculated into “Count”, and participate in calculations of “Mean” and “Sum”.</p></li>
-                <li><p>If “skip invalid value”, then invalid values are not involved in any calculation.</p></li>
-                <li><p>If “count invalid value as empty”, then invalid values cause results of all calculations as invalid(Double.NaN).</p></li>
+                <li><p>If "count invalid value as zero", then invalid values are calculated into "Count", and participate in calculations of "Mean" and "Sum".</p></li>
+                <li><p>If "skip invalid value", then invalid values are not involved in any calculation.</p></li>
+                <li><p>If "count invalid value as empty", then invalid values cause results of all calculations as invalid(Double.NaN).</p></li>
             </ul>
         </ul>
-        <h3>3.8 Sort Data</h3>
+        <h3>6.8 Sort Data</h3>
         <ol>
             <li><p>For any calculations involved in sorting, data will be translated into a temporary database table, and be sorted by database system.</p></li>
-            <li><p>Results of sorting are related to columns' types. Example, string “124” is smaller than string “18”, while number “124” is bigger than number “18”.</p></li>
+            <li><p>Results of sorting are related to columns' types. Example, string "124" is smaller than string "18", while number "124" is bigger than number "18".</p></li>
         </ol>
-        <h3>3.9 Color of Column</h3>
+        <h3>6.9 Color of Column</h3>
         <p>Column color is mainly used for data charts.</p>
         <p>When chart is generated, elements in it are displayed in colors as their columns' definitions.. Then user can set chart in random colors.</p>
-        <h2>4. Edit Data</h2>
-        <h3>4.1 Mode "Table"</h3>
-        <p>"Table" is the master edit mode:</p>
-        <ol>
-            <ol>
-                <li><p>Its modifications are applied to other panes automatically.</p></li>
-                <li><p>It is the final data to save.</p></li>
-                <li><p>To string values, except for text file, multiple lines can be edited and saved:</p></li>
-            </ol>
-        </ol>
+        <h3>7 Save Data</h3>
         <ul>
-            <ul>
-                <ul>
-                    <li><p>When the value is single line(not contain line break):</p>
-                        <ul>
-                            <ul>
-                                <li><p>Text field is shown when click the data cell.</p></li>
-                                <li><p>Write "\n" as line break in the value and commit the change(return or click other place).</p></li>
-                            </ul>
-                        </ul></li>
-                    <li><p>When the value contains line breaks:</p>
-                        <ul>
-                            <ul>
-                                <li><p>Text area is shown when click the data cell.</p></li>
-                                <li><p>Write the text in multiple lines directly.</p></li>
-                            </ul>
-                        </ul></li>
-                </ul>
-            </ul>
+            <li>Click button "Save"(CTRL+S or ALT+S) to write modification in data.</li>
+            <li>Changes of rows in "Table", including modify/add/delete/sort, affect rows of current page in file.</li>
+            <li>Changes in columns and attributes, including modify/add/delete/sort, affect all rows in file.</li>
+            <li>Changes of attributes and columns are saved in database.</li>
+            <li>Click button "Save As"(F5 or CTRL+B or ALT+B) to write data in other format:
+                CSV, Excel, Texts, MyBox Clipboard, Matrix, Database Table, System Clipboard, JSON, XML, HTML, PDF.</li>
         </ul>
-        <h3>4.2 Mode "CSV"</h3>
-        <p>"CSV" is the assist edit mode.</p>
-        <ol>
-            <ol>
-                <li><p>Click button "OK" to apply its modifications to "Table".</p></li>
-                <li><p>Click button "Cancel" to discard its modifications and pick data from "Table".</p></li>
-                <li><p>Click button "Delimiter" to pick data from "Table" and apply new delimiter while its modifications are discarded.</p></li>
-                <li><p>This delimiter does not affect source file.</p></li>
-                <li><p>If value contains delimeter or line break, it should be surrounded by quotes.</p></li>
-            </ol>
-        </ol>
-        <h3>4.3 Save and Recover</h3>
-        <ol>
-            <li value="1"><p>When changes are not saved, * is displayed in tab header.</p></li>
-            <li><p>Click button "Save" to write modifications to file and database:</p></li>
-        </ol>
-        <ul>
-            <li><p>Changes of rows in "Table", including modify/add/delete/sort, affect rows of current page in file.</p></li>
-            <li><p>Changes in "Columns" tab, including modify/add/delete/sort, affect all rows in file.</p></li>
-            <li><p>Changes of attributes and columns are saved in database.</p></li>
-        </ul>
-        <ol start="3">
-            <li><p>Click button "Recover" to discard all modifications and load data from file and database.</p></li>
-        </ol><br>
-        <h2>5. Manage Data</h2>
+        <h2>8. Manage Data</h2>
         <p>MyBox records definition of data objects in its internal table:</p>
-        <table width="100%" border="1" bordercolor="#000000" cellpadding="4" cellspacing="0">
+        <table width="100%" border="1" cellpadding="4" cellspacing="0">
             <colgroup>
                 <col width="46*">
                 <col width="49*">
@@ -378,6 +376,51 @@
                 </tr>
             </tbody>
         </table> <br>
+        <h2>9. Data File</h2>
+        <p>Data files are external data. MyBox records their definition and keeps their independence.
+            After read/write by MyBox, data files should be able to read/write by other ways properly.</p>
+        <h3>9.1  CSV File</h3>
+        <p>In CSV file:</p>
+        <ul>
+            <li>In general, the first line(header) defines column names, and each of followed lines defines a row of data.</li>
+            <li>Values are separated by "delimiter" which can be string.</li>
+            <li>If a value contains delimiter or line break, it should be surrounded by quotes.</li>
+            <li>If delimiter is not "#", then lines started with "#" will be skipped(as comments).</li>
+        </ul>
+        <p>When MyBox handles CSV file:</p>
+        <ul>
+            <li>When the file is opened for the first time, the tool guesses its delimiter and charset. </li>
+            <li>If file is read abnormally, use menu "File - Format" to change options and click button "OK".</li>
+            <li>Data can be saved as different charsets and delimiters.</li>
+        </ul>
+        <h3>9.2  Excel File</h3>
+        <p>In Excel file:</p>
+        <ul>
+            <li>In general, the first line(header) defines column names, and each of followed lines defines a row of data.</li>
+        </ul>
+        <p>When MyBox handles Excel file:</p>
+        <ul>
+            <li>If file is read abnormally, use menu "File - Format" to change options and click button "OK".</li>
+            <li>With menu "File - Sheet", select one sheet to handle, or add/rename/edlete sheets.</li>
+            <li>Data can be saved with current sheet only or all worksheets.</li>
+        </ul>
+        <p>Notice: Tool can only handle base data in Excel file. 
+            If file includes format, style, formula, or chart, suggest to save changes as new file to avoid data loss.</p>
+        <h3>9.3  Texts File</h3>
+        <p>In texts file:</p>
+        <ul>
+            <li>In general, the first line(header) defines column names, and each of followed lines defines a row of data.</li>
+            <li>Values are separated by "delimiter" which can be string. Regular expression is supported when parse the file.</li>
+            <li>Values should not contain delimiter nor line break.</li>
+            <li>If a line starts with "#", it will be skipped.</li>
+        </ul>
+        <p>When MyBox handles texts file:</p>
+        <ul>
+            <li>When the file is opened for the first time, the tool guesses its delimiter and charset. </li>
+            <li>If file is read abnormally, use menu "File - Format" to change options and click button "OK".</li>
+            <li>Not support multiple lines in values.</li>
+            <li>Data can be saved as different charsets and delimiters.</li>
+        </ul>
         <hr>
         <p>More details can be referred in <a href="https://mara-mybox.sourceforge.io/guide/MyBox-DataTools-en.pdf">"User Guide - Data Tools"</a></p> <br>
     </body>

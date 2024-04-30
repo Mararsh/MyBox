@@ -87,7 +87,7 @@ public class HtmlMergeAsHtmlController extends FilesMergeController {
     protected boolean openWriter() {
         try {
             writer = new FileWriter(targetFile, Charset.forName("utf-8"));
-            writer.write("<!DOCTYPE html><html>\n"
+            writer.write("<html>\n"
                     + headArea.getText().replace("####title####", titleInput.getText()) + "\n"
                     + "    <body>\n");
             return true;

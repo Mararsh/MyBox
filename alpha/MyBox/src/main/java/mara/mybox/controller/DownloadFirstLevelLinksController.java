@@ -1363,7 +1363,7 @@ public class DownloadFirstLevelLinksController extends BaseTablePagesController<
 
             StringBuilder htmlBuilder = new StringBuilder();
             String head
-                    = "<!DOCTYPE html><html>\n"
+                    = "<html>\n"
                     + "    <head>\n"
                     + "        <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n"
                     + "    </head>\n"

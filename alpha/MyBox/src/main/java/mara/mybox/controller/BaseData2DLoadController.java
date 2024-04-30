@@ -73,7 +73,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
         loadTmpData(3);
         return true;
     }
-
+    
     public void setData(Data2D data) {
         try {
             if (data == null) {
@@ -83,33 +83,38 @@ public class BaseData2DLoadController extends BaseData2DTableController {
             }
             tableData2DDefinition = data2D.getTableData2DDefinition();
             tableData2DColumn = data2D.getTableData2DColumn();
-
+            
             showPaginationPane(!data2D.isTmpData() && !data2D.isMatrix());
             updateInterface();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
-
+    
     public boolean loadDef(Data2DDefinition def) {
-        if (!checkBeforeNextAction()) {
+        return loadDef(def, true);
+    }
+    
+    public boolean loadDef(Data2DDefinition def, boolean checkUpdated) {
+        if (checkUpdated && !checkBeforeNextAction()) {
             return false;
         }
         resetStatus();
         if (def == null) {
             return loadNull();
         }
-        data2D = Data2D.create(def.getType());
-        data2D.cloneDef(def);
-        setData(data2D);
+        Data2D data = Data2D.create(def.getType());
+        data.cloneDef(def);
+        data.setTableChanged(false);
+        setData(data);
         readData(true);
         return true;
     }
-
+    
     public boolean loadNull() {
         return createData(DataType.CSV);
     }
-
+    
     public void dataSaved() {
         try {
             popInformation(message("Saved"));
@@ -119,7 +124,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
             MyBoxLog.error(e);
         }
     }
-
+    
     public synchronized void readData(boolean reloadSize) {
         if (data2D == null) {
             loadNull();
@@ -131,7 +136,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
         resetStatus();
         resetView(false);
         task = new FxSingletonTask<Void>(this) {
-
+            
             @Override
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
@@ -146,22 +151,22 @@ public class BaseData2DLoadController extends BaseData2DTableController {
                     return false;
                 }
             }
-
+            
             @Override
             protected void whenSucceeded() {
             }
-
+            
             @Override
             protected void finalAction() {
                 super.finalAction();
                 data2D.stopTask();
                 loadPage(reloadSize);
             }
-
+            
         };
         start(task, thisPane);
     }
-
+    
     public void loadPage(boolean readSize) {
         try {
             resetStatus();
@@ -182,7 +187,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
             MyBoxLog.error(e);
         }
     }
-
+    
     public boolean checkInvalidFile() {
         if (data2D == null) {
             return false;
@@ -202,7 +207,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
                     return false;
                 }
             }
-
+            
             @Override
             protected void finalAction() {
                 super.finalAction();
@@ -212,7 +217,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
         start(nullTask, false);
         return false;
     }
-
+    
     public void loadType(DataType type, String name, List<Data2DColumn> cols, List<List<String>> data) {
         if (!checkBeforeNextAction()) {
             return;
@@ -220,11 +225,11 @@ public class BaseData2DLoadController extends BaseData2DTableController {
         data2D = Data2D.create(type);
         loadData(name, cols, data);
     }
-
+    
     public void loadData(List<String> cols, List<List<String>> data) {
         loadData(null, data2D.toColumns(cols), data);
     }
-
+    
     public void loadData(String name, List<Data2DColumn> cols, List<List<String>> data) {
         try {
             if (!checkBeforeNextAction()) {
@@ -281,24 +286,24 @@ public class BaseData2DLoadController extends BaseData2DTableController {
             MyBoxLog.error(e);
         }
     }
-
+    
     public void updateTable(List<List<String>> data) {
         try {
             isSettingValues = true;
             tableData.setAll(data);
             isSettingValues = false;
-
+            
             data2D.setPageData(tableData);
-
+            
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
-
+    
     public void loadTmpData(int size) {
         loadData(null, data2D.tmpColumns(size), data2D.tmpData(size, 3));
     }
-
+    
     public void loadMatrix(double[][] matrix) {
         if (matrix == null || matrix.length == 0) {
             loadNull();
@@ -306,7 +311,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
         }
         loadData(null, data2D.tmpColumns(matrix[0].length), DoubleMatrixTools.toList(matrix));
     }
-
+    
     @Override
     public void sourceFileChanged(File file) {
         try {
@@ -322,10 +327,10 @@ public class BaseData2DLoadController extends BaseData2DTableController {
             MyBoxLog.error(e);
         }
     }
-
+    
     public void beforeOpenFile() {
     }
-
+    
     public void loadCSVFile(File file, Charset charset, boolean withNames, String delimiter) {
         try {
             if (file == null || !checkBeforeNextAction()) {
@@ -338,7 +343,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
             MyBoxLog.error(e);
         }
     }
-
+    
     public void loadExcelFile(File file, String sheet, boolean withNames) {
         try {
             if (file == null || !checkBeforeNextAction()) {
@@ -351,7 +356,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
             MyBoxLog.error(e);
         }
     }
-
+    
     public void loadTextFile(File file, Charset charset, boolean withNames, String delimiter) {
         try {
             if (file == null || !checkBeforeNextAction()) {
@@ -364,7 +369,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
             MyBoxLog.error(e);
         }
     }
-
+    
     public void applyOptions(Data2D data) {
         if (data == null) {
             return;
@@ -372,7 +377,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
         resetStatus();
         task = new FxSingletonTask<Void>(this) {
             Data2DDefinition def;
-
+            
             @Override
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
@@ -398,29 +403,29 @@ public class BaseData2DLoadController extends BaseData2DTableController {
                     return false;
                 }
             }
-
+            
             @Override
             protected void whenSucceeded() {
                 loadDef(def);
             }
-
+            
         };
         start(task, thisPane);
-
+        
     }
-
+    
     public void loadTableData(String prefix, List<StringTable> tables) {
         if (tables == null || tables.isEmpty() || !checkBeforeNextAction()) {
             return;
         }
         resetStatus();
         task = new FxSingletonTask<Void>(this) {
-
+            
             private File filePath;
             private int count;
             private String info;
             private DataFileCSV firstData;
-
+            
             @Override
             protected boolean handle() {
                 try {
@@ -454,7 +459,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
                     return false;
                 }
             }
-
+            
             @Override
             protected void whenSucceeded() {
                 applyOptions(firstData);
@@ -463,7 +468,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
                     alertInformation(info);
                 }
             }
-
+            
         };
         start(task, thisPane);
     }
@@ -480,7 +485,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
         }
         Data2DSaveAsController.open(this);
     }
-
+    
     @FXML
     public void renameAction(BaseTablePagesController parent, int index, Data2DDefinition targetData) {
         String newName = PopTools.askValue(getTitle(), message("CurrentName") + ":" + targetData.getDataName(),
@@ -493,14 +498,14 @@ public class BaseData2DLoadController extends BaseData2DTableController {
         }
         task = new FxSingletonTask<Void>(this) {
             private Data2DDefinition def;
-
+            
             @Override
             protected boolean handle() {
                 targetData.setDataName(newName);
                 def = tableData2DDefinition.updateData(targetData);
                 return def != null;
             }
-
+            
             @Override
             protected void whenSucceeded() {
                 popSuccessful();
@@ -514,13 +519,13 @@ public class BaseData2DLoadController extends BaseData2DTableController {
                     }
                     updateStatus();
                 }
-
+                
             }
-
+            
         };
         start(task);
     }
-
+    
     @FXML
     @Override
     public void copyToSystemClipboard() {
@@ -531,7 +536,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
         Data2DCopyController controller = Data2DCopyController.open(this);
         controller.targetController.setTarget(TargetType.SystemClipboard);
     }
-
+    
     public void copyToSystemClipboard(List<String> names, List<List<String>> data) {
         try {
             if (data == null || data.isEmpty()) {
@@ -544,7 +549,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
             MyBoxLog.error(e);
         }
     }
-
+    
     public void copyToMyBoxClipboard(List<String> names, List<List<String>> data) {
         try {
             if (data == null || data.isEmpty()) {
@@ -556,7 +561,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
             MyBoxLog.error(e);
         }
     }
-
+    
     public void toMyBoxClipboard(String name, List<Data2DColumn> cols, List<List<String>> data) {
         try {
             if (data == null || data.isEmpty()) {
@@ -564,28 +569,28 @@ public class BaseData2DLoadController extends BaseData2DTableController {
                 return;
             }
             FxTask copyTask = new FxTask<Void>(this) {
-
+                
                 private DataClipboard clip;
-
+                
                 @Override
                 protected boolean handle() {
                     clip = DataClipboard.create(task, name, cols, data);
                     return clip != null;
                 }
-
+                
                 @Override
                 protected void whenSucceeded() {
                     DataInMyBoxClipboardController.open(clip);
                     popDone();
                 }
-
+                
             };
             start(copyTask, false);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
-
+    
     @FXML
     @Override
     public void loadContentInSystemClipboard() {
@@ -602,13 +607,13 @@ public class BaseData2DLoadController extends BaseData2DTableController {
             MyBoxLog.error(e);
         }
     }
-
+    
     @FXML
     @Override
     public void selectAction() {
         Data2DSelectController.open(this);
     }
-
+    
     @FXML
     public void sortAction() {
         if (!isValidPageData()) {
@@ -617,7 +622,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
         }
         Data2DSortController.open(this);
     }
-
+    
     @FXML
     public void transposeAction() {
         if (!isValidPageData()) {
@@ -626,7 +631,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
         }
         Data2DTransposeController.open(this);
     }
-
+    
     @FXML
     public void normalizeAction() {
         if (!isValidPageData()) {
@@ -635,7 +640,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
         }
         Data2DNormalizeController.open(this);
     }
-
+    
     @FXML
     public void groupAction() {
         if (!isValidPageData()) {
@@ -644,7 +649,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
         }
         Data2DGroupController.open(this);
     }
-
+    
     @FXML
     public void rowExpressionAction() {
         if (!isValidPageData()) {
@@ -653,7 +658,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
         }
         Data2DRowExpressionController.open(this);
     }
-
+    
     @FXML
     public void descriptiveStatisticAction() {
         if (!isValidPageData()) {
@@ -662,7 +667,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
         }
         Data2DStatisticController.open(this);
     }
-
+    
     @FXML
     public void groupStatisticAction() {
         if (!isValidPageData()) {
@@ -671,7 +676,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
         }
         Data2DGroupStatisticController.open(this);
     }
-
+    
     @FXML
     public void simpleLinearRegression() {
         if (!isValidPageData()) {
@@ -680,7 +685,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
         }
         Data2DSimpleLinearRegressionController.open(this);
     }
-
+    
     @FXML
     public void simpleLinearRegressionCombination() {
         if (!isValidPageData()) {
@@ -689,7 +694,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
         }
         Data2DSimpleLinearRegressionCombinationController.open(this);
     }
-
+    
     @FXML
     public void multipleLinearRegression() {
         if (!isValidPageData()) {
@@ -698,7 +703,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
         }
         Data2DMultipleLinearRegressionController.open(this);
     }
-
+    
     @FXML
     public void multipleLinearRegressionCombination() {
         if (!isValidPageData()) {
@@ -707,7 +712,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
         }
         Data2DMultipleLinearRegressionCombinationController.open(this);
     }
-
+    
     @FXML
     public void frequencyDistributions() {
         if (!isValidPageData()) {
@@ -716,7 +721,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
         }
         Data2DFrequencyController.open(this);
     }
-
+    
     @FXML
     public void valuePercentage() {
         if (!isValidPageData()) {
@@ -725,7 +730,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
         }
         Data2DPercentageController.open(this);
     }
-
+    
     @FXML
     public void xyChart() {
         if (!isValidPageData()) {
@@ -734,7 +739,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
         }
         Data2DChartXYController.open(this);
     }
-
+    
     @FXML
     public void pieChart() {
         if (!isValidPageData()) {
@@ -743,7 +748,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
         }
         Data2DChartPieController.open(this);
     }
-
+    
     @FXML
     public void boxWhiskerChart() {
         if (!isValidPageData()) {
@@ -752,7 +757,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
         }
         Data2DChartBoxWhiskerController.open(this);
     }
-
+    
     @FXML
     public void selfComparisonBarsChart() {
         if (!isValidPageData()) {
@@ -761,7 +766,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
         }
         Data2DChartSelfComparisonBarsController.open(this);
     }
-
+    
     @FXML
     public void comparisonBarsChart() {
         if (!isValidPageData()) {
@@ -770,7 +775,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
         }
         Data2DChartComparisonBarsController.open(this);
     }
-
+    
     @FXML
     public void xyzChart() {
         if (!isValidPageData()) {
@@ -779,7 +784,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
         }
         Data2DChartXYZController.open(this);
     }
-
+    
     @FXML
     public void locationDistribution() {
         if (!isValidPageData()) {
@@ -788,7 +793,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
         }
         Data2DLocationDistributionController.open(this);
     }
-
+    
     @FXML
     public void groupXYChart() {
         if (!isValidPageData()) {
@@ -797,7 +802,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
         }
         Data2DChartGroupXYController.open(this);
     }
-
+    
     @FXML
     public void groupPieChart() {
         if (!isValidPageData()) {
@@ -806,7 +811,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
         }
         Data2DChartGroupPieController.open(this);
     }
-
+    
     @FXML
     public void groupBoxWhiskerChart() {
         if (!isValidPageData()) {
@@ -815,7 +820,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
         }
         Data2DChartGroupBoxWhiskerController.open(this);
     }
-
+    
     @FXML
     public void groupSelfComparisonBars() {
         if (!isValidPageData()) {
@@ -824,7 +829,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
         }
         Data2DChartGroupSelfComparisonBarsController.open(this);
     }
-
+    
     @FXML
     public void groupComparisonBars() {
         if (!isValidPageData()) {
@@ -833,7 +838,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
         }
         Data2DChartGroupComparisonBarsController.open(this);
     }
-
+    
     @FXML
     public void queryTable() {
         if (!isValidPageData() || !data2D.isTable()) {
@@ -842,7 +847,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
         }
         DataTableQueryController.open(this);
     }
-
+    
     @FXML
     public void verifyCurrentPage() {
         StringTable results = verifyTableData();
@@ -852,7 +857,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
         }
         results.htmlTable();
     }
-
+    
     public StringTable verifyTableData() {
         try {
             List<String> names = new ArrayList<>();
@@ -888,27 +893,27 @@ public class BaseData2DLoadController extends BaseData2DTableController {
             return null;
         }
     }
-
+    
     @FXML
     public void verifyAllData() {
-
+        
     }
-
+    
     @FXML
     protected void popExamplesMenu(Event event) {
         if (UserConfig.getBoolean(baseName + "ExamplesPopWhenMouseHovering", true)) {
             showExamplesMenu(event);
         }
     }
-
+    
     @FXML
     protected void showExamplesMenu(Event event) {
         try {
             List<MenuItem> items = new ArrayList<>();
             items.addAll(Data2DExampleTools.examplesMenu(this));
-
+            
             items.add(new SeparatorMenuItem());
-
+            
             CheckMenuItem pMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
             pMenu.setSelected(UserConfig.getBoolean(baseName + "ExamplesPopWhenMouseHovering", true));
             pMenu.setOnAction(new EventHandler<ActionEvent>() {
@@ -918,19 +923,19 @@ public class BaseData2DLoadController extends BaseData2DTableController {
                 }
             });
             items.add(pMenu);
-
+            
             popEventMenu(event, items);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
-
+    
     @FXML
     public void showHelps(Event event) {
         List<MenuItem> items = Data2DMenuTools.helpMenus(this);
-
+        
         items.add(new SeparatorMenuItem());
-
+        
         CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
         hoverMenu.setSelected(UserConfig.getBoolean("Data2DHelpsPopWhenMouseHovering", false));
         hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
@@ -940,15 +945,15 @@ public class BaseData2DLoadController extends BaseData2DTableController {
             }
         });
         items.add(hoverMenu);
-
+        
         popEventMenu(event, items);
     }
-
+    
     @FXML
     public void popHelps(Event event) {
         if (UserConfig.getBoolean("Data2DHelpsPopWhenMouseHovering", false)) {
             showHelps(event);
         }
     }
-
+    
 }

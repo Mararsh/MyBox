@@ -70,8 +70,7 @@ public class XYZChart {
             String chartName = isScatter ? message("ScatterChart") : message("SurfaceChart");
             String[] colors = new String[seriesSize];
             String[] symbols = new String[seriesSize];
-            String html = "<!DOCTYPE html>\n"
-                    + "<html>\n"
+            String html = "<html>\n"
                     + "  <head>\n"
                     + "    <meta charset=\"utf-8\" />\n"
                     + "    <title>" + title + "</title>\n"

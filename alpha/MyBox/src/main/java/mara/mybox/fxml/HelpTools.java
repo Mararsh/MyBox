@@ -504,9 +504,6 @@ public class HelpTools {
 
             s.append("<H1>").append(message(lang, "DataTools")).append("</H1>\n");
 
-            s.append("    <H3>").append(message(lang, "DataManufacture")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "DataManufactureTips")).append("</PRE>\n");
-
             s.append("    <H3>").append(message(lang, "Column")).append("</H3>\n");
             s.append("    <PRE>").append(message(lang, "ColumnComments")).append("</PRE>\n");
 

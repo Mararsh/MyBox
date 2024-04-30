@@ -233,6 +233,7 @@ public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskCont
 
     public boolean updateTable() {
         try {
+            MyBoxLog.console(targetController == null);
             if (targetController == null || !targetController.inTable() || outputData == null) {
                 return false;
             }

@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -187,7 +190,15 @@ public class BaseTaskController extends BaseLogs {
             openTarget();
         }
         if (ok && closeAfterCheck != null && closeAfterCheck.isSelected()) {
-            close();
+            new Timer().schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    Platform.runLater(() -> {
+                        close();
+                    });
+                }
+            }, 500);
+
         }
     }
 

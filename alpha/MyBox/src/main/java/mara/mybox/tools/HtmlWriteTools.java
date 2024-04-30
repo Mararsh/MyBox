@@ -69,7 +69,7 @@ public class HtmlWriteTools {
 
     public static String htmlPrefix(String title, String charset, String styleValue) {
         StringBuilder s = new StringBuilder();
-        s.append("<!DOCTYPE html><HTML>\n").append(Indent).append("<HEAD>\n");
+        s.append("<HTML>\n").append(Indent).append("<HEAD>\n");
         if (charset == null || charset.isBlank()) {
             charset = "utf-8";
         }

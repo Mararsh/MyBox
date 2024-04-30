@@ -384,7 +384,7 @@ public class InfoTreeNodeExportController extends BaseTaskController {
     protected void writeHtmlHead(FileWriter writer, String title) {
         try {
             StringBuilder s = new StringBuilder();
-            s.append("<!DOCTYPE html><HTML>\n").append(indent).append("<HEAD>\n")
+            s.append("<HTML>\n").append(indent).append("<HEAD>\n")
                     .append(indent).append(indent).append("<title>").append(title).append("</title>\n")
                     .append(indent).append(indent)
                     .append("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=")

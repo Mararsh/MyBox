@@ -69,7 +69,7 @@ public class TextToHtmlController extends BaseBatchFileController {
             }
             String body = HtmlWriteTools.stringToHtml(texts);
             String filePrefix = FileNameTools.prefix(target.getName());
-            String html = "<!DOCTYPE html><html>\n"
+            String html = "<html>\n"
                     + headArea.getText().replace("####title####", filePrefix) + "\n"
                     + "    <body class=\"article\">\n"
                     + body
