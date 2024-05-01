@@ -12,6 +12,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
@@ -36,12 +37,14 @@ import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistory.FileType;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.imagefile.ImageGifFile;
 import mara.mybox.imagefile.ImageTiffFile;
+import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.MicrosoftDocumentTools;
@@ -93,6 +96,8 @@ public class ImagesSaveController extends BaseTaskController {
     protected ControlTargetPath pathController;
     @FXML
     protected ControlTargetFile fileController;
+    @FXML
+    protected Button openTargetButton;
 
     public ImagesSaveController() {
         baseTitle = message("SaveAs");
@@ -124,7 +129,7 @@ public class ImagesSaveController extends BaseTaskController {
         }
     }
 
-    public void setParameters(List<ImageInformation> infos) {
+    public void setParameters(File source, List<ImageInformation> infos) {
         try {
             if (infos == null || infos.isEmpty()) {
                 close();
@@ -133,6 +138,9 @@ public class ImagesSaveController extends BaseTaskController {
             imageInfos = new ArrayList<>();
             for (ImageInformation info : infos) {
                 imageInfos.add(info.cloneAttributes());
+            }
+            if (source != null) {
+                prefixInput.setText(FileNameTools.prefix(source.getName()));
             }
             checkFormatType();
         } catch (Exception e) {
@@ -168,6 +176,7 @@ public class ImagesSaveController extends BaseTaskController {
             pathController.initPathSelecter()
                     .baseName(bname).savedName(bname)
                     .type(TargetPathType).initFile();
+            openTargetButton.setDisable(false);
 
         } else if (!spliceRadio.isSelected() && !videoRadio.isSelected()) {
 
@@ -198,6 +207,9 @@ public class ImagesSaveController extends BaseTaskController {
             fileController.initFileSelecter()
                     .baseName(bname).savedName(bname)
                     .type(TargetFileType).initFile();
+            openTargetButton.setDisable(false);
+        } else {
+            openTargetButton.setDisable(true);
         }
     }
 
@@ -389,6 +401,8 @@ public class ImagesSaveController extends BaseTaskController {
             close();
             return false;
         }
+        targetPath = null;
+        targetFile = null;
         if (imagesRadio.isSelected()) {
             targetPath = pathController.file();
             if (targetPath == null) {
@@ -741,13 +755,35 @@ public class ImagesSaveController extends BaseTaskController {
         ImagesEditorController.openImages(imageInfos);
     }
 
+    @FXML
+    @Override
+    public void openTarget() {
+        if (imagesRadio.isSelected()) {
+            targetPath = pathController.file();
+            if (targetPath == null || !targetPath.exists()) {
+                popInformation(message("NotExist"));
+                return;
+            }
+            browseURI(targetPath.toURI());
+            recordFileOpened(targetPath);
+        } else if (!spliceRadio.isSelected() && !videoRadio.isSelected()) {
+            if (targetFile == null || !targetFile.exists()) {
+                popInformation(message("NotExist"));
+                return;
+            }
+            ControllerTools.popTarget(myController, targetFile.getAbsolutePath(), true);
+        } else {
+            popInformation(message("NoData"));
+        }
+    }
+
     /*
         static methods
      */
     public static ImagesSaveController saveImages(BaseController parent, List<ImageInformation> infos) {
         try {
             ImagesSaveController controller = (ImagesSaveController) WindowTools.childStage(parent, Fxmls.ImagesSaveFxml);
-            controller.setParameters(infos);
+            controller.setParameters(parent != null ? parent.sourceFile : null, infos);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e);

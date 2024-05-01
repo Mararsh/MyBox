@@ -127,7 +127,7 @@ License:    Apache License Version 2.0
                      <children>
                         <VBox fx:id="pathBox">
                            <children>
-                              <HBox fx:id="savedWidthBox1" alignment="CENTER_LEFT" spacing="2.0">
+                              <HBox alignment="CENTER_LEFT" spacing="2.0">
                                  <children>
                                     <Label text="%FileNamePrefix" />
                                     <TextField fx:id="prefixInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
@@ -181,6 +181,24 @@ License:    Apache License Version 2.0
       <HBox alignment="CENTER_LEFT" spacing="2.0">
          <children>
             <Label fx:id="infoLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" styleClass="dark-blue-label" stylesheets="@../styles/MyBox.css" wrapText="true" HBox.hgrow="ALWAYS" />
+            <CheckBox fx:id="closeAfterCheck" mnemonicParsing="false" selected="true">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconClose.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </CheckBox>
+            <Button fx:id="openTargetButton" mnemonicParsing="false" onAction="#openTarget">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconOpenPath.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
             <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">
                <graphic>
                   <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

@@ -2,11 +2,9 @@ package mara.mybox.controller;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.AppValues;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.SystemConfig;
 
 /**
  * @Author Mara
@@ -33,11 +31,10 @@ public class MyBoxController extends MyBoxController_About {
 //            if (scheduledTasks != null && !scheduledTasks.isEmpty()) {
 //                bottomLabel.setText(MessageFormat.format(message("AlarmClocksRunning"), scheduledTasks.size()));
 //            }
-            if (DerbyBase.isStarted() && !SystemConfig.getBoolean("MyBoxWarningDisplayed", false)) {
-                alertInformation(message("MyBoxWarning"));
-                SystemConfig.setBoolean("MyBoxWarningDisplayed", true);
-            }
-
+//            if (DerbyBase.isStarted() && !SystemConfig.getBoolean("MyBoxWarningDisplayed", false)) {
+//                alertInformation(message("MyBoxWarning"));
+//                SystemConfig.setBoolean("MyBoxWarningDisplayed", true);
+//            }
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }

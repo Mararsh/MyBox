@@ -44,7 +44,7 @@ public abstract class Data2DWriter {
     protected ControlTargetFile targetFileController;
     protected List<String> headerNames, printRow;
     protected List<Data2DColumn> columns;
-    protected boolean writeHeader, created,
+    public boolean writeHeader, created,
             formatValues, recordTargetFile, recordTargetData;
     protected String indent = "    ", dataName, fileSuffix, value;
     protected long targetRowIndex;

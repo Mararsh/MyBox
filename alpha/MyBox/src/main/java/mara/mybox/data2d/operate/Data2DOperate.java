@@ -59,7 +59,6 @@ public abstract class Data2DOperate {
         sourceData = reader.getSourceData();
         sourceFile = sourceData.getFile();
         task = sourceData.getTask();
-        controller = sourceData.getController();
         reader.setOperate(this);
         return true;
     }
@@ -147,6 +146,7 @@ public abstract class Data2DOperate {
         if (scale < 0) {
             scale = sourceData.getScale();
         }
+        controller = task != null ? task.getController() : sourceData.getController();
         return openWriters();
     }
 
