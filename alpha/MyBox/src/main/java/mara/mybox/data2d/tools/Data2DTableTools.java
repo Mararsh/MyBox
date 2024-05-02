@@ -286,7 +286,7 @@ public class Data2DTableTools {
                     .setColumns(targetColumns)
                     .setHeaderNames(Data2DColumnTools.toNames(targetColumns))
                     .setWriteHeader(false);
-            return sourceData.copy(task, writer, cols, includeRowNumber, true, invalidAs);
+            return sourceData.copy(task, writer, cols, includeRowNumber, invalidAs);
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());

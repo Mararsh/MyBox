@@ -117,7 +117,7 @@ public class Data2DTransposeController extends BaseData2DTaskTargetsController {
     @Override
     public boolean handleAllData(FxTask currentTask, Data2DWriter writer) {
         try {
-            Data2D tmp2D = data2D.cloneAll();
+            Data2D tmp2D = data2D.cloneAll().setController(this);
             tmp2D.startTask(currentTask, filterController.filter);
             if (currentTask != null) {
                 currentTask.setInfo(message("Filter") + "...");

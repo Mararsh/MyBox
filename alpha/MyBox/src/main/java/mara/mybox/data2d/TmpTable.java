@@ -218,7 +218,7 @@ public class TmpTable extends DataTable {
                     .setHeaderNames(Data2DColumnTools.toNames(columns))
                     .setWriteHeader(false);
             return sourceData.copy(task, writer, sourceData.columnIndices(),
-                    includeRowNumber, true, invalidAs);
+                    includeRowNumber, invalidAs);
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());

@@ -38,7 +38,6 @@ public class Data2DExport extends Data2DOperate {
     }
 
     final public void resetExport() {
-        formatValues = false;
         maxLines = -1;
         format = null;
         columns = null;
@@ -89,9 +88,6 @@ public class Data2DExport extends Data2DOperate {
             for (int col : cols) {
                 if (col >= 0 && col < sourceRow.size()) {
                     String value = sourceRow.get(col);
-                    if (value != null && formatValues) {
-                        value = sourceData.column(col).format(value);
-                    }
                     targetRow.add(value);
                 } else {
                     targetRow.add(null);
@@ -184,12 +180,6 @@ public class Data2DExport extends Data2DOperate {
             targetRow = new ArrayList<>();
             for (int i = 0; i < inRow.size(); i++) {
                 String v = inRow.get(i);
-                if (v != null && formatValues) {
-                    try {
-                        v = columns.get(i).format(v);
-                    } catch (Exception ex) {
-                    }
-                }
                 targetRow.add(v);
             }
             fileRowIndex++;

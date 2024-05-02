@@ -186,9 +186,9 @@ public abstract class Data2D_Data extends Data2D_Attributes {
             for (int i = 0; i < columns.size(); i++) {
                 String v = trow.get(i + 1);
                 if (formatValues) {
-                    v = columns.get(i).format(v);
+                    v = formatValue(i, v);
                 } else {
-                    v = columns.get(i).savedValue(v);
+                    v = savedValue(i, v);
                 }
                 row.add(v);
             }
@@ -517,6 +517,22 @@ public abstract class Data2D_Data extends Data2D_Attributes {
     public String columnName(int col) {
         try {
             return column(col).getColumnName();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public String formatValue(int col, String value) {
+        try {
+            return column(col).format(value, validateEdit());
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public String savedValue(int col, String value) {
+        try {
+            return column(col).savedValue(value, validateEdit());
         } catch (Exception e) {
             return null;
         }

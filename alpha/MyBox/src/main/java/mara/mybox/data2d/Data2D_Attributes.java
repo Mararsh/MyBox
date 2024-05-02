@@ -134,9 +134,9 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
         return controller;
     }
 
-    public Data2D_Attributes setController(BaseController controller) {
+    public Data2D setController(BaseController controller) {
         this.controller = controller;
-        return this;
+        return (Data2D) this;
     }
 
     public TableData2DDefinition getTableData2DDefinition() {

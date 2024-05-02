@@ -35,7 +35,7 @@ public abstract class Data2DOperate {
     protected FxTask task;
     protected List<Integer> cols, otherCols;
     protected int colsLen, scale = -1;
-    protected boolean includeRowNumber, writeHeader, formatValues, passFilter, reachMax;
+    protected boolean includeRowNumber, writeHeader, passFilter, reachMax;
     protected boolean stopped, needCheckTask, errorContinue, failed, closeConn;
     protected long sourceRowIndex; // 1-based 
     protected long handledCount;
@@ -375,11 +375,6 @@ public abstract class Data2DOperate {
 
     public Data2DOperate setInvalidAs(InvalidAs invalidAs) {
         this.invalidAs = invalidAs;
-        return this;
-    }
-
-    public Data2DOperate setFormatValues(boolean formatValues) {
-        this.formatValues = formatValues;
         return this;
     }
 

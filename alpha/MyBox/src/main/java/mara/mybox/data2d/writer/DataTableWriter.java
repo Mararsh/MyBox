@@ -52,6 +52,7 @@ public class DataTableWriter extends Data2DWriter {
             showInfo(sql);
             insert = conn.prepareStatement(sql);
             targetData = targetTable;
+            validateValue = true;
             return true;
         } catch (Exception e) {
             showError(e.toString());

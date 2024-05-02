@@ -35,9 +35,6 @@ public class Data2DCopy extends Data2DOperate {
             for (int col : cols) {
                 if (col >= 0 && col < rowSize) {
                     value = sourceRow.get(col);
-                    if (value != null && formatValues) {
-                        value = sourceData.column(col).format(value);
-                    }
                 } else {
                     value = null;
                 }

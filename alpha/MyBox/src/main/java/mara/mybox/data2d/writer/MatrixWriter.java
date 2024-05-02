@@ -42,6 +42,7 @@ public class MatrixWriter extends Data2DWriter {
             conn.setAutoCommit(false);
             dwCount = 0;
             showInfo(message("Writing") + " " + matrix.dataName());
+            validateValue = true;
             return true;
         } catch (Exception e) {
             showError(e.toString());

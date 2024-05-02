@@ -49,7 +49,7 @@ public class TableDataCell extends TableAutoCommitCell<List<String>, String> {
             if (!dataTable.getData2D().validValue(value)) {
                 return false;
             }
-            if (!dataTable.isValidateEdit()) {
+            if (!dataTable.getData2D().validateEdit()) {
                 return true;
             }
             return dataColumn.validValue(value);
@@ -80,7 +80,9 @@ public class TableDataCell extends TableAutoCommitCell<List<String>, String> {
     }
 
     public void displayData(String item) {
-        setText(dataColumn.format(item, trucSize));
+        setText(dataColumn.format(item, trucSize,
+                dataColumn.getInvalidAs(),
+                dataTable.getData2D().validateEdit()));
     }
 
 }

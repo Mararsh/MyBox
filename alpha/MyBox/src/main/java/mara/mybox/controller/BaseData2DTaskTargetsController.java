@@ -147,7 +147,8 @@ public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskCont
                 data2D.startTask(this, filterController.filter);
                 writer.setColumns(outputColumns)
                         .setHeaderNames(Data2DColumnTools.toNames(outputColumns))
-                        .setWriteHeader(colNameCheck == null || colNameCheck.isSelected());
+                        .setWriteHeader(colNameCheck == null || colNameCheck.isSelected())
+                        .setFormatValues(formatValuesCheck != null && formatValuesCheck.isSelected());
                 taskSuccessed = handleAllData(this, writer);
                 return taskSuccessed;
             }

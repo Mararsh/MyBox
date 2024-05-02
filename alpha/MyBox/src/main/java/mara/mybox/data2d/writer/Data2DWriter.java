@@ -29,6 +29,7 @@ import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
+import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -44,7 +45,7 @@ public abstract class Data2DWriter {
     protected ControlTargetFile targetFileController;
     protected List<String> headerNames, printRow;
     protected List<Data2DColumn> columns;
-    public boolean writeHeader, created,
+    public boolean writeHeader, created, validateValue,
             formatValues, recordTargetFile, recordTargetData;
     protected String indent = "    ", dataName, fileSuffix, value;
     protected long targetRowIndex;
@@ -56,14 +57,18 @@ public abstract class Data2DWriter {
         operate = null;
         targetFileController = null;
         formatValues = false;
+        validateValue = false;
         writeHeader = recordTargetFile = recordTargetData = true;
         invalidAs = null;
     }
 
     public boolean checkParameters() {
-        if (invalidAs == null && operate != null) {
-            invalidAs = operate.getInvalidAs();
+        if (operate != null) {
+            if (invalidAs == null) {
+                invalidAs = operate.getInvalidAs();
+            }
         }
+        validateValue = AppVariables.data2DValidateSave;
         return true;
     }
 
@@ -96,14 +101,8 @@ public abstract class Data2DWriter {
                 } else {
                     value = inRow.get(i);
                 }
-                Data2DColumn column = columns.get(i);
-                Object o = column.fromString(value, invalidAs);
-                if (o != null) {
-                    if (formatValues) {
-                        value = column.formatObject(o);
-                    } else {
-                        value = column.toString(o);
-                    }
+                if (formatValues) {
+                    value = columns.get(i).format(value, invalidAs, validateValue);
                 }
                 printRow.add(value);
             }
@@ -365,6 +364,15 @@ public abstract class Data2DWriter {
 
     public Data2DWriter setFormatValues(boolean formatValues) {
         this.formatValues = formatValues;
+        return this;
+    }
+
+    public boolean isValidateValue() {
+        return validateValue;
+    }
+
+    public Data2DWriter setValidateValue(boolean validateValue) {
+        this.validateValue = validateValue;
         return this;
     }
 

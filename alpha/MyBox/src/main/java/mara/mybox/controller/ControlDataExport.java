@@ -216,11 +216,11 @@ public class ControlDataExport extends BaseDataConvertController {
                 export = Data2DExport.create(data2D);
             }
             export.setIncludeRowNumber(rowNumberCheck.isSelected());
-            export.setFormatValues(formatValuesCheck.isSelected());
+            boolean formatValues = formatValuesCheck.isSelected();
             if (csvCheck.isSelected()) {
                 Data2DWriter writer = pickCSVWriter();
                 if (writer != null) {
-                    export.addWriter(writer);
+                    export.addWriter(writer.setFormatValues(formatValues));
                 } else {
                     return null;
                 }
@@ -228,7 +228,7 @@ public class ControlDataExport extends BaseDataConvertController {
             if (textsCheck.isSelected()) {
                 Data2DWriter writer = pickTextWriter();
                 if (writer != null) {
-                    export.addWriter(writer);
+                    export.addWriter(writer.setFormatValues(formatValues));
                 } else {
                     return null;
                 }
@@ -236,7 +236,7 @@ public class ControlDataExport extends BaseDataConvertController {
             if (excelCheck.isSelected()) {
                 Data2DWriter writer = pickExcelWriter();
                 if (writer != null) {
-                    export.addWriter(writer);
+                    export.addWriter(writer.setFormatValues(formatValues));
                 } else {
                     return null;
                 }
@@ -244,7 +244,7 @@ public class ControlDataExport extends BaseDataConvertController {
             if (pdfCheck.isSelected()) {
                 Data2DWriter writer = pickPDFWriter();
                 if (writer != null) {
-                    export.addWriter(writer);
+                    export.addWriter(writer.setFormatValues(formatValues));
                 } else {
                     return null;
                 }
@@ -252,22 +252,22 @@ public class ControlDataExport extends BaseDataConvertController {
             if (htmlCheck.isSelected()) {
                 Data2DWriter writer = pickHtmlWriter();
                 if (writer != null) {
-                    export.addWriter(writer);
+                    export.addWriter(writer.setFormatValues(formatValues));
                 } else {
                     return null;
                 }
             }
             if (jsonCheck.isSelected()) {
                 Data2DWriter writer = new JsonWriter();
-                export.addWriter(writer);
+                export.addWriter(writer.setFormatValues(formatValues));
             }
             if (xmlCheck.isSelected()) {
                 Data2DWriter writer = new XmlWriter();
-                export.addWriter(writer);
+                export.addWriter(writer.setFormatValues(formatValues));
             }
             if (myBoxClipboardCheck.isSelected()) {
                 Data2DWriter writer = new MyBoxClipboardWriter();
-                export.addWriter(writer);
+                export.addWriter(writer.setFormatValues(formatValues));
             }
             return export;
         } catch (Exception e) {

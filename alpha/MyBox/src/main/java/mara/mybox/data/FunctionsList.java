@@ -23,7 +23,7 @@ import static mara.mybox.value.Languages.message;
  */
 public class FunctionsList {
 
-    protected static final int MaxLevel = 4;
+    public static final int MaxLevel = 4;
     protected MenuBar menuBar;
     protected boolean withLink;
     protected int index;

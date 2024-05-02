@@ -551,6 +551,15 @@ public class Data2DExampleTools {
             });
             pmMenu.getItems().add(menu);
 
+            menu = new MenuItem(message("TestEnvironment"));
+            menu.setOnAction((ActionEvent event) -> {
+                DataFileCSV data = TestEnvironment(isChinese);
+                if (makeExampleFile("PM_TestEnvironment_" + fileLang, data)) {
+                    controller.loadDef(data);
+                }
+            });
+            pmMenu.getItems().add(menu);
+
             menu = new MenuItem(message("VerificationRecord"));
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = VerificationRecord(isChinese);
@@ -1489,6 +1498,21 @@ public class Data2DExampleTools {
         return data;
     }
 
+    public static DataFileCSV TestEnvironment(boolean isChinese) {
+        DataFileCSV data = new DataFileCSV();
+        List<Data2DColumn> columns = new ArrayList<>();
+        columns.add(new Data2DColumn(message("Title"), ColumnType.String));
+        columns.add(new Data2DColumn(message("Hardwares"), ColumnType.String));
+        columns.add(new Data2DColumn("CPU", ColumnType.String));
+        columns.add(new Data2DColumn(message("Memory"), ColumnType.String));
+        columns.add(new Data2DColumn(message("OS"), ColumnType.String));
+        columns.add(new Data2DColumn(message("Softwares"), ColumnType.String));
+        columns.add(new Data2DColumn(message("Target"), ColumnType.String));
+        columns.add(new Data2DColumn(message("Comments"), ColumnType.String));
+        data.setColumns(columns).setDataName(message("TestEnvironment"));
+        return data;
+    }
+
     public static DataFileCSV VerificationRecord(boolean isChinese) {
         DataFileCSV data = new DataFileCSV();
         List<Data2DColumn> columns = new ArrayList<>();
@@ -1513,42 +1537,45 @@ public class Data2DExampleTools {
             if (table == null) {
                 return null;
             }
-            List<String> names = table.getNames();
             DataFileCSV targetData = new DataFileCSV();
             List<Data2DColumn> columns = new ArrayList<>();
-            for (String name : names) {
-                columns.add(new Data2DColumn(name, ColumnType.String));
+            columns.add(new Data2DColumn(message("Index"), ColumnType.Integer));
+            columns.add(new Data2DColumn(message("HierarchyNumber"), ColumnType.String));
+            for (int i = 1; i <= FunctionsList.MaxLevel; i++) {
+                columns.add(new Data2DColumn(message(lang, "Level") + " " + i, ColumnType.String));
             }
-//            String defauleValue = message(lang, "NotTested");
+            for (Data2DColumn c : columns) {
+                c.setEditable(false);
+            }
             String defauleValue = "";
             String format = defauleValue + "\n" + message(lang, "Success") + "\n" + message(lang, "Fail");
-            columns.add(new Data2DColumn(isChinese ? "打开界面" : "Open interface", ColumnType.Enumeration)
+            columns.add(new Data2DColumn(isChinese ? "打开界面" : "Open interface", ColumnType.EnumerationEditable)
                     .setFormat(format));
-            columns.add(new Data2DColumn(isChinese ? "正常值" : "Normal values", ColumnType.Enumeration)
+            columns.add(new Data2DColumn(isChinese ? "正常值" : "Normal values", ColumnType.EnumerationEditable)
                     .setFormat(format));
-            columns.add(new Data2DColumn(isChinese ? "正常操作" : "Normal operations", ColumnType.Enumeration)
+            columns.add(new Data2DColumn(isChinese ? "正常操作" : "Normal operations", ColumnType.EnumerationEditable)
                     .setFormat(format));
-            columns.add(new Data2DColumn(isChinese ? "正常结果" : "Normal results", ColumnType.Enumeration)
+            columns.add(new Data2DColumn(isChinese ? "正常结果" : "Normal results", ColumnType.EnumerationEditable)
                     .setFormat(format));
-            columns.add(new Data2DColumn(isChinese ? "边界值" : "Boundary values", ColumnType.Enumeration)
+            columns.add(new Data2DColumn(isChinese ? "边界值" : "Boundary values", ColumnType.EnumerationEditable)
                     .setFormat(format));
-            columns.add(new Data2DColumn(isChinese ? "异常值" : "Abnormal values", ColumnType.Enumeration)
+            columns.add(new Data2DColumn(isChinese ? "异常值" : "Abnormal values", ColumnType.EnumerationEditable)
                     .setFormat(format));
-            columns.add(new Data2DColumn(isChinese ? "异常操作" : "Abnormal operations", ColumnType.Enumeration)
+            columns.add(new Data2DColumn(isChinese ? "异常操作" : "Abnormal operations", ColumnType.EnumerationEditable)
                     .setFormat(format));
-            columns.add(new Data2DColumn(isChinese ? "异常结果" : "Exception results", ColumnType.Enumeration)
+            columns.add(new Data2DColumn(isChinese ? "异常结果" : "Exception results", ColumnType.EnumerationEditable)
                     .setFormat(format));
-            columns.add(new Data2DColumn(isChinese ? "提示" : "Tips", ColumnType.Enumeration)
+            columns.add(new Data2DColumn(isChinese ? "提示" : "Tips", ColumnType.EnumerationEditable)
                     .setFormat(format));
-            columns.add(new Data2DColumn(isChinese ? "按钮" : "Buttons", ColumnType.Enumeration)
+            columns.add(new Data2DColumn(isChinese ? "按钮" : "Buttons", ColumnType.EnumerationEditable)
                     .setFormat(format));
-            columns.add(new Data2DColumn(isChinese ? "快捷键" : "Shortcuts", ColumnType.Enumeration)
+            columns.add(new Data2DColumn(isChinese ? "快捷键" : "Shortcuts", ColumnType.EnumerationEditable)
                     .setFormat(format));
-            columns.add(new Data2DColumn(isChinese ? "菜单" : "Menu", ColumnType.Enumeration)
+            columns.add(new Data2DColumn(isChinese ? "菜单" : "Menu", ColumnType.EnumerationEditable)
                     .setFormat(format));
-            columns.add(new Data2DColumn(isChinese ? "响应时间" : "Response time", ColumnType.Enumeration)
+            columns.add(new Data2DColumn(isChinese ? "响应时间" : "Response time", ColumnType.EnumerationEditable)
                     .setFormat(format));
-            columns.add(new Data2DColumn(isChinese ? "内存占用" : "Memory occupied", ColumnType.Enumeration)
+            columns.add(new Data2DColumn(isChinese ? "内存占用" : "Memory occupied", ColumnType.EnumerationEditable)
                     .setFormat(format));
             columns.add(new Data2DColumn(isChinese ? "检验者" : "Verifier", ColumnType.String));
             columns.add(new Data2DColumn(message(lang, "ModifyTime"), ColumnType.Datetime));

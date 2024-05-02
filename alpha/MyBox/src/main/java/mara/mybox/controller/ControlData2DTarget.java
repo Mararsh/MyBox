@@ -110,7 +110,7 @@ public class ControlData2DTarget extends BaseDataConvertController {
             initControls(baseName);
 
             if (tableController != null) {
-                data2D = tableController.data2D.cloneAll();
+                data2D = tableController.data2D.cloneAll().setController(parent);
                 dbController.setParameters(this, data2D);
                 dbController.setColumns(data2D.columnIndices());
                 dbController.nameInput.setText(data2D.getDataName());

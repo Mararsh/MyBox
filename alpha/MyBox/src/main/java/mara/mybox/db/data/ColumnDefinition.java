@@ -557,35 +557,29 @@ public class ColumnDefinition extends BaseData {
         }
     }
 
-    public String format(String string) {
-        return format(string, -1);
+    public String format(String string, boolean validate) {
+        return format(string, -1, invalidAs, validate);
     }
 
-    public String format(String string, int maxLen) {
+    public String format(String string, InvalidAs inAs, boolean validate) {
+        return format(string, -1, inAs, validate);
+    }
+
+    public String format(String string, int maxLen, InvalidAs inAs, boolean validate) {
+        Object o = null;
         try {
-            if (string == null) {
-                return null;
+            if (validate) {
+                o = fromString(string, inAs);
+            } else {
+                o = string;
             }
-            Object o = fromString(string, invalidAs);
-            if (o == null) {
-                return null;
-            }
-            return formatObject(o, maxLen);
         } catch (Exception e) {
+        }
+        if (o == null) {
             return null;
         }
-    }
-
-    public String formatObject(Object o) {
-        return formatObject(o, -1);
-    }
-
-    public String formatObject(Object o, int maxLen) {
+        String s = toString(o);
         try {
-            if (o == null) {
-                return null;
-            }
-            String s = toString(o);
             switch (type) {
                 case Double:
                     return NumberTools.format((double) o, format, scale);
@@ -611,24 +605,20 @@ public class ColumnDefinition extends BaseData {
                         return DateTools.datetimeToString(toDate(s), format);
                     }
                 }
-                case Enumeration:
-                case EnumerationEditable:
-                case Longitude:
-                case Latitude:
-                    return s;
-                default:
-                    if (maxLen > 0) {
-                        return s.length() > maxLen ? s.substring(0, maxLen) : s;
-                    } else {
-                        return s;
-                    }
             }
         } catch (Exception e) {
-            return null;
+            if (validate) {
+                return null;
+            }
+        }
+        if (s != null && maxLen > 0) {
+            return s.length() > maxLen ? s.substring(0, maxLen) : s;
+        } else {
+            return s;
         }
     }
 
-    public String savedValue(String string) {
+    public String savedValue(String string, boolean validate) {
         switch (type) {
             case Datetime:
             case Date:
@@ -637,7 +627,9 @@ public class ColumnDefinition extends BaseData {
             case EnumerationEditable:
                 return string;
             default:
-                toString(fromString(string, invalidAs));
+                if (validate) {
+                    return toString(fromString(string, invalidAs));
+                }
         }
         return string;
     }

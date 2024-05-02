@@ -370,7 +370,6 @@ public class Data2DMenuTools {
             if (!dataController.isValidData()) {
                 return null;
             }
-
             List<MenuItem> items = new ArrayList<>();
 
             MenuItem menu = new MenuItem(message("VerifyCurrentPage"));
@@ -390,21 +389,23 @@ public class Data2DMenuTools {
             }
 
             CheckMenuItem validateEditItem = new CheckMenuItem(message("ValidateDataWhenEdit"));
-            validateEditItem.setSelected(dataController.isValidateEdit());
+            validateEditItem.setSelected(AppVariables.data2DValidateEdit);
             validateEditItem.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    dataController.setValidateEdit(validateEditItem.isSelected());
+                    AppVariables.data2DValidateEdit = validateEditItem.isSelected();
+                    UserConfig.setBoolean("Data2DValidateEdit", AppVariables.data2DValidateEdit);
                 }
             });
             items.add(validateEditItem);
 
             CheckMenuItem validateSaveItem = new CheckMenuItem(message("ValidateDataWhenSave"));
-            validateSaveItem.setSelected(dataController.isValidateSave());
+            validateSaveItem.setSelected(AppVariables.data2DValidateSave);
             validateSaveItem.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    dataController.setValidateSave(validateSaveItem.isSelected());
+                    AppVariables.data2DValidateSave = validateSaveItem.isSelected();
+                    UserConfig.setBoolean("Data2DValidateSave", AppVariables.data2DValidateSave);
                 }
             });
             items.add(validateSaveItem);

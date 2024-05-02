@@ -12,6 +12,7 @@ import mara.mybox.controller.MyBoxTablesController;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
+import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -262,6 +263,14 @@ public class Data2DDefinition extends BaseData {
         return dataType == DataType.Matrix
                 || dataType == DataType.DatabaseTable
                 || dataType == DataType.InternalTable;
+    }
+
+    public boolean validateEdit() {
+        return alwayValidate() || AppVariables.data2DValidateEdit;
+    }
+
+    public boolean validateSave() {
+        return alwayValidate() || AppVariables.data2DValidateSave;
     }
 
     /*

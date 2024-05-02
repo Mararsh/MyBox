@@ -64,7 +64,7 @@ public class Data2DPageTools {
                     if (value == null) {
                         value = "";
                     } else {
-                        value = data2d.column(col).format(value);
+                        value = data2d.formatValue(col, value);
                     }
                     value = StringTools.replaceHtmlLineBreak(value);
                     String style = data2d.cellStyle(styleFilter, i, data2d.columnName(col));
@@ -118,7 +118,7 @@ public class Data2DPageTools {
                     if (value == null) {
                         value = "";
                     } else {
-                        value = data2d.column(col).format(value);
+                        value = data2d.formatValue(col, value);
                     }
                     value = StringTools.replaceHtmlLineBreak(value);
                     String style = data2d.cellStyle(styleFilter, r, data2d.columnName(col));

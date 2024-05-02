@@ -333,16 +333,6 @@ public class Data2DManufactureController extends BaseData2DViewController {
         savedNotify.set(!savedNotify.get());
     }
 
-    public void setValidateEdit(boolean v) {
-        validateEdit = v;
-        UserConfig.setBoolean(baseName + "ValidateDataWhenEdit", validateEdit);
-    }
-
-    public void setValidateSave(boolean v) {
-        validateSave = v;
-        UserConfig.setBoolean(baseName + "ValidateDataWhenSave", validateSave);
-    }
-
     @Override
     public boolean isValidPageData() {
         if (!super.isValidPageData()) {
@@ -377,21 +367,6 @@ public class Data2DManufactureController extends BaseData2DViewController {
     @Override
     public boolean checkBeforeLoadingTableData() {
         return checkBeforeNextAction();
-    }
-
-    @Override
-    public void postLoadedTableData() {
-        super.postLoadedTableData();
-        if (data2D == null) {
-            return;
-        }
-        if (data2D.alwayValidate()) {
-            validateEdit = true;
-            validateSave = true;
-        } else {
-            validateEdit = UserConfig.getBoolean(baseName + "ValidateDataWhenEdit", true);
-            validateSave = UserConfig.getBoolean(baseName + "ValidateDataWhenSave", true);
-        }
     }
 
     @Override
@@ -977,7 +952,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
     }
 
     public boolean verifyData() {
-        if (!validateSave) {
+        if (!data2D.validateSave()) {
             return true;
         }
         StringTable results = verifyTableData();

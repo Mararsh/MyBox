@@ -269,8 +269,9 @@ public abstract class Data2D_Operations extends Data2D_Edit {
             List<Data2DColumn> targetColumns = targetColumns(cols, includeRowNumber);
             writer.setColumns(targetColumns)
                     .setHeaderNames(Data2DColumnTools.toNames(targetColumns))
-                    .setWriteHeader(includeColName);
-            if (copy(task, writer, cols, includeRowNumber, formatValues, InvalidAs.Empty) < 0) {
+                    .setWriteHeader(includeColName)
+                    .setFormatValues(formatValues);
+            if (copy(task, writer, cols, includeRowNumber, InvalidAs.Empty) < 0) {
                 return null;
             }
             return (DataFileCSV) writer.getTargetData();
@@ -285,13 +286,12 @@ public abstract class Data2D_Operations extends Data2D_Edit {
     }
 
     public long copy(FxTask task, Data2DWriter writer, List<Integer> cols,
-            boolean includeRowNumber, boolean formatValues, InvalidAs invalidAs) {
+            boolean includeRowNumber, InvalidAs invalidAs) {
         try {
             if (writer == null || cols == null || cols.isEmpty()) {
                 return -1;
             }
             Data2DOperate operate = Data2DCopy.create(this)
-                    .setFormatValues(formatValues)
                     .setIncludeRowNumber(includeRowNumber)
                     .setCols(cols)
                     .setInvalidAs(invalidAs)

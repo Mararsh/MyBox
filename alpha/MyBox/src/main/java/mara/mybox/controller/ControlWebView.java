@@ -92,7 +92,6 @@ public class ControlWebView extends BaseController {
             pageLoadingNotify, pageLoadedNotify;
     protected final String StyleNodeID = "MyBox__Html_Style20211118";
     protected boolean listened, linkInNewTab;
-    public final Object lock = new Object();
 
     @FXML
     protected WebView webView;
@@ -446,9 +445,7 @@ public class ControlWebView extends BaseController {
             }
             framesDoc.clear();
             charset = Charset.defaultCharset();
-            synchronized (lock) {
-                listened = false;
-            }
+            listened = false;
         } catch (Exception e) {
             MyBoxLog.console(e);
         }
@@ -477,13 +474,11 @@ public class ControlWebView extends BaseController {
                 @Override
                 public void run() {
                     Platform.runLater(() -> {
-                        synchronized (lock) {
-                            if (listened) {
-                                if (timer != null) {
-                                    timer.cancel();
-                                }
-                                return;
+                        if (listened) {
+                            if (timer != null) {
+                                timer.cancel();
                             }
+                            return;
                         }
                         initDoc(webEngine.getDocument());
                     });
@@ -497,10 +492,8 @@ public class ControlWebView extends BaseController {
 
     private boolean initDoc(Document doc) {
         try {
-            synchronized (lock) {
-                if (listened || doc == null) {
-                    return false;
-                }
+            if (listened || doc == null) {
+                return false;
             }
             Object winObject = executeScript("window");
             Object docObject = executeScript("document");
@@ -521,9 +514,7 @@ public class ControlWebView extends BaseController {
 
     public void setDocListeners() {
         setDocListeners(webEngine.getDocument());
-        synchronized (lock) {
-            listened = true;
-        }
+        listened = true;
     }
 
     private synchronized void setDocListeners(Document doc) {

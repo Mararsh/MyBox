@@ -3,6 +3,7 @@ package mara.mybox.value;
 import java.io.File;
 import java.sql.Connection;
 import javafx.scene.paint.Color;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.db.table.TableUserConf;
 import static mara.mybox.value.AppVariables.UserConfigValues;
 import org.apache.pdfbox.io.MemoryUsageSetting;
@@ -497,8 +498,8 @@ public class UserConfig {
         return size;
     }
 
-    public static MemoryUsageSetting getPdfMem() {
-        return setPdfMem(UserConfig.getString("PdfMemDefault", "1GB"));
+    public static MemoryUsageSetting getPdfMem(Connection conn) {
+        return setPdfMem(conn, UserConfig.getString(conn, "PdfMemDefault", "1GB"));
     }
 
     public static boolean setSceneFontSize(int size) {
@@ -511,6 +512,15 @@ public class UserConfig {
     }
 
     public static MemoryUsageSetting setPdfMem(String value) {
+        try (Connection conn = DerbyBase.getConnection()) {
+            return setPdfMem(conn, value);
+        } catch (Exception e) {
+//            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public static MemoryUsageSetting setPdfMem(Connection conn, String value) {
         switch (value) {
             case "1GB":
                 UserConfig.setString("PdfMemDefault", "1GB");

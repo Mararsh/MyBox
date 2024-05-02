@@ -200,11 +200,11 @@ public class PaginatedPdfTable {
                     contentStream.endText();
                 }
             } catch (Exception e) {
-                MyBoxLog.error(e);
+                MyBoxLog.console(e);
             }
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            MyBoxLog.console(e);
             return false;
         }
     }

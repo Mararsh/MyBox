@@ -304,7 +304,7 @@ public class BaseData2DSourceRowsController extends BaseData2DLoadController {
                     }
                     String v = tableRow.get(index);
                     if (v != null && formatValues) {
-                        v = data2D.column(col).format(v);
+                        v = data2D.formatValue(col, v);
                     }
                     newRow.add(v);
                 }
@@ -333,9 +333,10 @@ public class BaseData2DSourceRowsController extends BaseData2DLoadController {
                 List<Data2DColumn> targetColumns = data2D.targetColumns(cols, false);
                 writer.setColumns(targetColumns)
                         .setHeaderNames(Data2DColumnTools.toNames(targetColumns))
-                        .setWriteHeader(true);
+                        .setWriteHeader(true)
+                        .setFormatValues(formatValues);
                 data2D.copy(task, writer, cols,
-                        false, formatValues, ColumnDefinition.InvalidAs.Empty);
+                        false, ColumnDefinition.InvalidAs.Empty);
                 data = writer.getRows();
             } else {
                 data = rowsFiltered(cols, false);

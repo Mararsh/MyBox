@@ -166,7 +166,7 @@ public abstract class BaseData2DTaskController extends BaseBranchController {
 
     public void sourceChanged() {
         try {
-            data2D = dataController.data2D.cloneAll();
+            data2D = dataController.data2D.cloneAll().setController(this);
 
             if (groupController != null) {
                 groupController.refreshControls();
@@ -805,7 +805,7 @@ public abstract class BaseData2DTaskController extends BaseBranchController {
     public TmpTable tmpTable(String dname, List<Integer> colIndices, boolean needRowNumber) {
         try {
             FxTask data2DTask = data2D.getTask();
-            Data2D tmp2D = data2D.cloneAll();
+            Data2D tmp2D = data2D.cloneAll().setController(this);
             tmp2D.startTask(data2DTask, filterController.filter);
             if (data2DTask != null) {
                 data2DTask.setInfo(message("Filter") + "...");
