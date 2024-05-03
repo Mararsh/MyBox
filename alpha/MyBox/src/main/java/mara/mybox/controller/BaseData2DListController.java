@@ -165,10 +165,6 @@ public class BaseData2DListController extends BaseSysTableController<Data2DDefin
         viewAction();
     }
 
-    @Override
-    public void itemDoubleClicked() {
-    }
-
     @FXML
     @Override
     public void viewAction() {
@@ -178,6 +174,17 @@ public class BaseData2DListController extends BaseSysTableController<Data2DDefin
             return;
         }
         viewController.loadDef(selected);
+    }
+
+    @FXML
+    @Override
+    public void editAction() {
+        Data2DDefinition selected = selectedItem();
+        if (selected == null) {
+            popError(message("SelectToHandle"));
+            return;
+        }
+        Data2DManufactureController.openDef(selected);
     }
 
     @Override

@@ -2,11 +2,17 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import javafx.event.Event;
+import javafx.fxml.FXML;
+import javafx.scene.control.MenuItem;
 import javafx.stage.Window;
+import mara.mybox.data2d.tools.Data2DMenuTools;
 import mara.mybox.db.data.Data2DDefinition;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -18,6 +24,24 @@ public class Data2DManageController extends BaseData2DListController {
     public Data2DManageController() {
         baseTitle = message("ManageData");
         TipsLabelKey = "DataManageTips";
+    }
+
+    @FXML
+    public void popCreateMenu(Event event) {
+        if (UserConfig.getBoolean(baseName + "CreateMenuPopWhenMouseHovering", true)) {
+            showCreateMenu(event);
+        }
+    }
+
+    @FXML
+    public void showCreateMenu(Event fevent) {
+        try {
+            List<MenuItem> items = Data2DMenuTools.createMenus(baseName);
+            popEventMenu(fevent, items);
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
     /*

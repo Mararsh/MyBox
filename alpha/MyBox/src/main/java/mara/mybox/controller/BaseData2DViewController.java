@@ -546,7 +546,7 @@ public class BaseData2DViewController extends BaseData2DLoadController {
             }
             List<MenuItem> items = new ArrayList<>();
 
-            MenuItem menu = new MenuItem(message("DataDefinition") + "    Ctrl+i " + message("Or") + " Alt+i",
+            MenuItem menu = new MenuItem(message("DataDefinition") + "    Ctrl+I " + message("Or") + " Alt+I",
                     StyleTools.getIconImageView("iconInfo.png"));
             menu.setOnAction((ActionEvent event) -> {
                 infoAction();

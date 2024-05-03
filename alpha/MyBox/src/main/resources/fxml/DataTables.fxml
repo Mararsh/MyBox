@@ -42,11 +42,11 @@ License:    Apache License Version 2.0
                                  <children>
                                     <FlowPane fx:id="buttonsPane" hgap="2.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" vgap="2.0" HBox.hgrow="ALWAYS">
                                        <children>
-                                          <Button fx:id="clearItemsButton" mnemonicParsing="false" onAction="#clearAction">
+                                          <Button fx:id="createButton" mnemonicParsing="false" onAction="#createAction">
                                              <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                    <image>
-                                                      <Image url="@../buttons/Red/iconClear.png" />
+                                                      <Image url="@../buttons/Red/iconAdd.png" />
                                                    </image>
                                                 </ImageView>
                                              </graphic>
@@ -65,6 +65,15 @@ License:    Apache License Version 2.0
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                    <image>
                                                       <Image url="@../buttons/Red/iconInput.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </graphic>
+                                          </Button>
+                                          <Button fx:id="clearItemsButton" mnemonicParsing="false" onAction="#clearAction">
+                                             <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@../buttons/Red/iconClear.png" />
                                                    </image>
                                                 </ImageView>
                                              </graphic>

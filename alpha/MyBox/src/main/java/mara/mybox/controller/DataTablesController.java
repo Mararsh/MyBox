@@ -2,6 +2,7 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import javafx.fxml.FXML;
 import javafx.stage.Window;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.TmpTable;
@@ -33,6 +34,13 @@ public class DataTablesController extends BaseData2DListController {
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+    }
+
+    @FXML
+    @Override
+    public void createAction() {
+        Data2DManufactureController controller = Data2DManufactureController.open();
+        controller.createData(Data2DDefinition.DataType.DatabaseTable);
     }
 
     /*

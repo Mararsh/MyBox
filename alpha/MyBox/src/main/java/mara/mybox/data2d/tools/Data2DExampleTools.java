@@ -551,6 +551,8 @@ public class Data2DExampleTools {
             });
             pmMenu.getItems().add(menu);
 
+            pmMenu.getItems().add(new SeparatorMenuItem());
+
             menu = new MenuItem(message("TestEnvironment"));
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = TestEnvironment(isChinese);
@@ -564,6 +566,15 @@ public class Data2DExampleTools {
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = VerificationRecord(isChinese);
                 if (makeExampleFile("PM_VerifyRecord_" + fileLang, data)) {
+                    controller.loadDef(data);
+                }
+            });
+            pmMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("CompatibilityTesting"));
+            menu.setOnAction((ActionEvent event) -> {
+                DataFileCSV data = CompatibilityTesting(isChinese);
+                if (makeExampleFile("PM_CompatibilityTesting_" + fileLang, data)) {
                     controller.loadDef(data);
                 }
             });
@@ -1507,9 +1518,27 @@ public class Data2DExampleTools {
         columns.add(new Data2DColumn(message("Memory"), ColumnType.String));
         columns.add(new Data2DColumn(message("OS"), ColumnType.String));
         columns.add(new Data2DColumn(message("Softwares"), ColumnType.String));
+        columns.add(new Data2DColumn(message("Language"), ColumnType.String));
         columns.add(new Data2DColumn(message("Target"), ColumnType.String));
         columns.add(new Data2DColumn(message("Comments"), ColumnType.String));
         data.setColumns(columns).setDataName(message("TestEnvironment"));
+        return data;
+    }
+
+    public static DataFileCSV CompatibilityTesting(boolean isChinese) {
+        String lang = isChinese ? "zh" : "en";
+        String format = "\n" + message(lang, "Success") + "\n" + message(lang, "Fail");
+        DataFileCSV data = new DataFileCSV();
+        List<Data2DColumn> columns = new ArrayList<>();
+        columns.add(new Data2DColumn(message("TestEnvironment"), ColumnType.String));
+        columns.add(new Data2DColumn(message("Compile"), ColumnType.EnumerationEditable).setFormat(format));
+        columns.add(new Data2DColumn(message("Package"), ColumnType.EnumerationEditable).setFormat(format));
+        columns.add(new Data2DColumn(message("Execute"), ColumnType.EnumerationEditable).setFormat(format));
+        columns.add(new Data2DColumn(message("Language"), ColumnType.EnumerationEditable).setFormat(format));
+        columns.add(new Data2DColumn(message("Functions"), ColumnType.EnumerationEditable).setFormat(format));
+        columns.add(new Data2DColumn(message(lang, "ModifyTime"), ColumnType.Datetime));
+        columns.add(new Data2DColumn(message(lang, "Description"), ColumnType.String));
+        data.setColumns(columns).setDataName(message("CompatibilityTesting"));
         return data;
     }
 
