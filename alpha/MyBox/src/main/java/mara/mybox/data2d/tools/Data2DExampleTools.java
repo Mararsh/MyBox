@@ -57,6 +57,8 @@ public class Data2DExampleTools {
 
             items.add(projectManagement(fileLang, isChinese, controller));
 
+            items.add(SoftwareTesting(fileLang, isChinese, controller));
+
             items.add(new SeparatorMenuItem());
 
             CheckMenuItem onlyMenu = new CheckMenuItem(message("ImportDefinitionOnly"),
@@ -551,17 +553,6 @@ public class Data2DExampleTools {
             });
             pmMenu.getItems().add(menu);
 
-            pmMenu.getItems().add(new SeparatorMenuItem());
-
-            menu = new MenuItem(message("TestEnvironment"));
-            menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = TestEnvironment(isChinese);
-                if (makeExampleFile("PM_TestEnvironment_" + fileLang, data)) {
-                    controller.loadDef(data);
-                }
-            });
-            pmMenu.getItems().add(menu);
-
             menu = new MenuItem(message("VerificationRecord"));
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = VerificationRecord(isChinese);
@@ -571,25 +562,52 @@ public class Data2DExampleTools {
             });
             pmMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("CompatibilityTesting"));
+            return pmMenu;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public static Menu SoftwareTesting(String fileLang, boolean isChinese, BaseData2DLoadController controller) {
+        try {
+            Menu stMenu = new Menu(message("SoftwareTesting"), StyleTools.getIconImageView("iconVerify.png"));
+
+            MenuItem menu = new MenuItem(message("TestEnvironment"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = CompatibilityTesting(isChinese);
-                if (makeExampleFile("PM_CompatibilityTesting_" + fileLang, data)) {
+                DataFileCSV data = TestEnvironment(isChinese);
+                if (makeExampleFile("ST_TestEnvironment_" + fileLang, data)) {
                     controller.loadDef(data);
                 }
             });
-            pmMenu.getItems().add(menu);
+            stMenu.getItems().add(menu);
 
-            pmMenu.getItems().add(new SeparatorMenuItem());
-
-            menu = new MenuItem(message("MyBoxVerificationList"));
+            menu = new MenuItem(message("CompatibilityTesting"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = MyBoxVerificationList(controller, isChinese);
+                DataFileCSV data = CompatibilityTesting(isChinese);
+                if (makeExampleFile("ST_CompatibilityTesting_" + fileLang, data)) {
+                    controller.loadDef(data);
+                }
+            });
+            stMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("DetailedTesting"));
+            menu.setOnAction((ActionEvent event) -> {
+                DataFileCSV data = DetailedTesting(isChinese);
+                if (makeExampleFile("ST_DetailedTesting_" + fileLang, data)) {
+                    controller.loadDef(data);
+                }
+            });
+            stMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("MyBoxBaseVerificationList"));
+            menu.setOnAction((ActionEvent event) -> {
+                DataFileCSV data = MyBoxBaseVerificationList(controller, isChinese);
                 controller.loadDef(data);
             });
-            pmMenu.getItems().add(menu);
+            stMenu.getItems().add(menu);
 
-            return pmMenu;
+            return stMenu;
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;
@@ -1509,6 +1527,22 @@ public class Data2DExampleTools {
         return data;
     }
 
+    public static DataFileCSV VerificationRecord(boolean isChinese) {
+        DataFileCSV data = new DataFileCSV();
+        List<Data2DColumn> columns = new ArrayList<>();
+        columns.add(new Data2DColumn(isChinese ? "任务编号" : "Task ID", ColumnType.String, true).setWidth(140));
+        columns.add(new Data2DColumn(isChinese ? "事项" : "Item", ColumnType.Integer));
+        columns.add(new Data2DColumn(isChinese ? "通过" : "Pass", ColumnType.Boolean));
+        columns.add(new Data2DColumn(isChinese ? "严重性" : "Severity", ColumnType.Integer));
+        columns.add(new Data2DColumn(message("Description"), ColumnType.String));
+        columns.add(new Data2DColumn(isChinese ? "影响" : "Effects", ColumnType.String));
+        columns.add(new Data2DColumn(isChinese ? "建议" : "Suggestions", ColumnType.String));
+        columns.add(new Data2DColumn(isChinese ? "检验者" : "Verifier", ColumnType.String));
+        columns.add(new Data2DColumn(isChinese ? "检验时间" : "Verification time", ColumnType.Datetime));
+        data.setColumns(columns).setDataName(isChinese ? "检验记录" : "Verify Record");
+        return data;
+    }
+
     public static DataFileCSV TestEnvironment(boolean isChinese) {
         DataFileCSV data = new DataFileCSV();
         List<Data2DColumn> columns = new ArrayList<>();
@@ -1527,38 +1561,17 @@ public class Data2DExampleTools {
 
     public static DataFileCSV CompatibilityTesting(boolean isChinese) {
         String lang = isChinese ? "zh" : "en";
-        String format = "\n" + message(lang, "Success") + "\n" + message(lang, "Fail");
         DataFileCSV data = new DataFileCSV();
         List<Data2DColumn> columns = new ArrayList<>();
-        columns.add(new Data2DColumn(message("TestEnvironment"), ColumnType.String));
-        columns.add(new Data2DColumn(message("Compile"), ColumnType.EnumerationEditable).setFormat(format));
-        columns.add(new Data2DColumn(message("Package"), ColumnType.EnumerationEditable).setFormat(format));
-        columns.add(new Data2DColumn(message("Execute"), ColumnType.EnumerationEditable).setFormat(format));
-        columns.add(new Data2DColumn(message("Language"), ColumnType.EnumerationEditable).setFormat(format));
-        columns.add(new Data2DColumn(message("Functions"), ColumnType.EnumerationEditable).setFormat(format));
+        columns.add(new Data2DColumn(message(lang, "TestEnvironment"), ColumnType.String));
+        columns.add(new Data2DColumn(message(lang, "Item"), ColumnType.String));
         columns.add(new Data2DColumn(message(lang, "ModifyTime"), ColumnType.Datetime));
         columns.add(new Data2DColumn(message(lang, "Description"), ColumnType.String));
         data.setColumns(columns).setDataName(message("CompatibilityTesting"));
         return data;
     }
 
-    public static DataFileCSV VerificationRecord(boolean isChinese) {
-        DataFileCSV data = new DataFileCSV();
-        List<Data2DColumn> columns = new ArrayList<>();
-        columns.add(new Data2DColumn(isChinese ? "任务编号" : "Task ID", ColumnType.String, true).setWidth(140));
-        columns.add(new Data2DColumn(isChinese ? "事项" : "Item", ColumnType.Integer));
-        columns.add(new Data2DColumn(isChinese ? "通过" : "Pass", ColumnType.Boolean));
-        columns.add(new Data2DColumn(isChinese ? "严重性" : "Severity", ColumnType.Integer));
-        columns.add(new Data2DColumn(message("Description"), ColumnType.String));
-        columns.add(new Data2DColumn(isChinese ? "影响" : "Effects", ColumnType.String));
-        columns.add(new Data2DColumn(isChinese ? "建议" : "Suggestions", ColumnType.String));
-        columns.add(new Data2DColumn(isChinese ? "检验者" : "Verifier", ColumnType.String));
-        columns.add(new Data2DColumn(isChinese ? "检验时间" : "Verification time", ColumnType.Datetime));
-        data.setColumns(columns).setDataName(isChinese ? "检验记录" : "Verify Record");
-        return data;
-    }
-
-    public static DataFileCSV MyBoxVerificationList(BaseController controller, boolean isChinese) {
+    public static DataFileCSV MyBoxBaseVerificationList(BaseController controller, boolean isChinese) {
         try {
             String lang = isChinese ? "zh" : "en";
             FunctionsList list = new FunctionsList(controller.getMainMenu(), false, lang);
@@ -1576,6 +1589,8 @@ public class Data2DExampleTools {
             for (Data2DColumn c : columns) {
                 c.setEditable(false);
             }
+            int preSize = columns.size();
+            columns.add(0, new Data2DColumn(message(lang, "TestEnvironment"), ColumnType.String));
             String defauleValue = "";
             String format = defauleValue + "\n" + message(lang, "Success") + "\n" + message(lang, "Fail");
             columns.add(new Data2DColumn(isChinese ? "打开界面" : "Open interface", ColumnType.EnumerationEditable)
@@ -1610,7 +1625,7 @@ public class Data2DExampleTools {
             columns.add(new Data2DColumn(message(lang, "ModifyTime"), ColumnType.Datetime));
             columns.add(new Data2DColumn(message(lang, "Description"), ColumnType.String));
 
-            String dataName = message(lang, "MyBoxVerificationList") + " - " + DateTools.nowString();
+            String dataName = message(lang, "MyBoxBaseVerificationList") + " - " + DateTools.nowString();
             targetData.setColumns(columns).setDataName(dataName);
 
             File srcFile = FxFileTools.getInternalFile("/data/examples/" + dataName + ".csv");
@@ -1632,18 +1647,14 @@ public class Data2DExampleTools {
                 writer.write(header + System.lineSeparator());
                 if (!UserConfig.getBoolean("Data2DExampleImportDefinitionOnly", false)) {
                     String values = "";
-                    for (int i = 0; i < columns.size() - table.getNames().size(); i++) {
+                    for (int i = 0; i < columns.size() - preSize; i++) {
                         values += "," + defauleValue;
                     }
                     String line;
                     for (List<String> row : table.getData()) {
-                        line = null;
+                        line = "win";
                         for (String v : row) {
-                            if (line != null) {
-                                line += "," + v;
-                            } else {
-                                line = v;
-                            }
+                            line += "," + v;
                         }
                         writer.write(line + values + System.lineSeparator());
                     }
@@ -1661,6 +1672,33 @@ public class Data2DExampleTools {
             MyBoxLog.error(e);
             return null;
         }
+    }
+
+    public static DataFileCSV DetailedTesting(boolean isChinese) {
+        String lang = isChinese ? "zh" : "en";
+        DataFileCSV data = new DataFileCSV();
+        List<Data2DColumn> columns = new ArrayList<>();
+        columns.add(new Data2DColumn(message(lang, "TestEnvironment"), ColumnType.String));
+        columns.add(new Data2DColumn(message(lang, "Title"), ColumnType.String));
+        columns.add(new Data2DColumn(message(lang, "Type"), ColumnType.EnumerationEditable)
+                .setFormat("\n" + message(lang, "Function") + "\n"
+                        + message(lang, "UserInterface") + "\n" + message(lang, "Bundary") + "\n"
+                        + message(lang, "InvalidValue") + "\n"
+                        + message(lang, "Data") + "\n" + message(lang, "API") + "\n"
+                        + message(lang, "IO") + "\n" + message(lang, "Exception") + "\n"
+                        + message(lang, "Performance") + "\n" + message(lang, "Robustness") + "\n"
+                        + message(lang, "Usability") + "\n" + message(lang, "Compatibility") + "\n"
+                        + message(lang, "Security") + "\n" + message(lang, "Document")));
+        columns.add(new Data2DColumn(message(lang, "Steps"), ColumnType.String));
+        columns.add(new Data2DColumn(message(lang, "Status"), ColumnType.EnumerationEditable)
+                .setFormat("\n" + message(lang, "NotTested") + "\n"
+                        + message(lang, "Testing") + "\n"
+                        + message(lang, "Success") + "\n"
+                        + message(lang, "Fail")));
+        columns.add(new Data2DColumn(message(lang, "ModifyTime"), ColumnType.Datetime));
+        columns.add(new Data2DColumn(message(lang, "Description"), ColumnType.String));
+        data.setColumns(columns).setDataName(message("DetailedTesting"));
+        return data;
     }
 
 }

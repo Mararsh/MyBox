@@ -33,7 +33,7 @@ public class LocationTools {
         try {
             File map = FxFileTools.getInternalFile("/js/GaoDeMap.html", "js", "GaoDeMap.html");
             String html = TextFileTools.readTexts(null, map);
-            html = html.replace("06b9e078a51325a843dfefd57ffd876c", UserConfig.getString("GaoDeMapWebKey", AppValues.GaoDeMapWebKey));
+            html = html.replace("06b9e078a51325a843dfefd57ffd876c", UserConfig.getString("GaoDeMapWebKey", AppValues.GaoDeMapJavascriptKey));
             return html;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

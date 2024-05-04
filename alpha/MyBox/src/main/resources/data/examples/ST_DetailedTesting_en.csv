@@ -1,0 +1,84 @@
+Test Environment,Title,Type,Steps,Status,Modify Time,Description
+win,Manufacture Data - create data,Function,all data types: CSV/Excel/texts/database table/MyBox clipboard/matrix,,,
+win,Manufacture Data - table - normal values,Function,"1.commit 
+2.cancel",,,
+win,Manufacture Data - table - null,bundary,"1.permit  
+2.not permit",,,
+win,Manufacture Data - table - invalid values,Invalid value,"1.commit 
+2.cancel",,,
+win,Manufacture Data - CSV - normal,Function,"1.commit 
+2.cancel",,,
+win,Manufacture Data - CSV - null,Invalid value,"1.permit 
+2.not permit",,,
+win,Manufacture Data - CSV - invalid,Invalid value,"1.commit 
+2.cancel",,,
+win,Manufacture Data - switch mode - normal values,Function,"1.html to table 
+2.table to html 
+3.html to csv 
+4.csv to texts 
+5.texts to html",,,
+win,Manufacture Data - switch mode - null - permit,Function,"1.html to table 
+2.table to html 
+3.html to csv 
+4.csv to texts 
+5.texts to html",,,
+win,Manufacture Data - switch mode - null - not permit,Invalid value,"1.html to table 
+2.table to html 
+3.html to csv 
+4.csv to texts 
+5.texts to html",,,
+win,Manufacture Data - switch mode - invalid values,Invalid value,"1.html to table 
+2.table to html 
+3.html to csv 
+4.csv to texts 
+5.texts to html",,,
+win,Manufacture Data - switch mode - interfaces,interface,"1.shortcuts 
+2.tips 
+3.layouts 
+4.responses 
+5.menus",,,
+win,Manufacture Data - modify data - temporary data,Function,"1.add/delete/change rows 
+2.move rows 
+3.clear rows",,,
+win,Manufacture Data - modify data - one page,Function,"1.add/delete/change rows 
+2.move rows 
+3.clear rows",,,
+win,Manufacture Data - modify data - multiple pages,Function,"1.add/delete/change rows 
+2.move rows 
+3.clear rows",,,
+win,Manufacture Data - interfaces,interface,"1.shortcuts 
+2.tips 
+3.layouts 
+4.responses 
+5.menus",,,
+win,Manufacture Data - define data - add/delete/change columns,Function,"1.all types 
+2.all formats 
+3.invalid",,,
+win,Manufacture Data - define data - move columns,Function,,,,
+win,Manufacture Data - define data - clear columns,Invalid value,,,,
+win,Manufacture Data - define data - modify attributes - temporary data,Function,,,,
+win,Manufacture Data - define data - modify attributes - save data,Function,,,,
+win,Manufacture Data - define data - modify attributes - cancel data,Function,,,,
+win,Manufacture Data - define data - modify attributes - one page,Function,,,,
+win,Manufacture Data - define data - modify attributes - multiple pages,Function,,,,
+win,Manufacture Data - define data - interfaces,interface,"1.shortcuts 
+2.tips 
+3.layouts 
+4.responses 
+5.menus",,,
+win,Manufacture Data - save data - temporary data,Function,"1.save 
+2.cancel",,,
+win,Manufacture Data - save data - one page,Function,"1.save 
+2.cancel",,,
+win,Manufacture Data - save data - multiple pages,Function,"1.save 
+2.cancel",,,
+win,Manufacture Data - save as - data status,Function,"1.temporary data 
+2.one page 
+3.multiple pages",,,
+win,Manufacture Data - save as - source data types,Function,CSV/Excel/texts/database table/clipboard/matrix,,,
+win,Manufacture Data - save as - target formats,Function,CSV/Excel/texts/database table/MyBox clipboard/matrix/System clipboard/JSON/XML/HTML/PDF,,,
+win,Manufacture Data - save as - interfaces,interface,"1.shortcuts 
+2.tips 
+3.layouts 
+4.responses 
+5.menus",,,

@@ -28,6 +28,7 @@ public class MyBoxController extends MyBoxController_About {
             titleLabel.setText(baseTitle);
             titleLabel.requestFocus();
 
+//            Languages.checkStatus();
 //            if (scheduledTasks != null && !scheduledTasks.isEmpty()) {
 //                bottomLabel.setText(MessageFormat.format(message("AlarmClocksRunning"), scheduledTasks.size()));
 //            }

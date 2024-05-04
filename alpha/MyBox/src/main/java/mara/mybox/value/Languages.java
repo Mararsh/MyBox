@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import mara.mybox.data.UserLanguage;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.AppVariables.CurrentBundle;
 import static mara.mybox.value.AppVariables.CurrentLangName;
 
@@ -16,8 +17,8 @@ import static mara.mybox.value.AppVariables.CurrentLangName;
  */
 public class Languages {
 
-    public static final Locale LocaleZhCN = Locale.CHINESE;
-    public static final Locale LocaleEn = Locale.ENGLISH;
+    public static final Locale LocaleZhCN = Locale.of("zh", "CN");
+    public static final Locale LocaleEn = Locale.of("en");
     //    public static final Locale LocaleFrFR = new Locale("fr", "FR");
     //    public static final Locale LocaleEsES = new Locale("es", "ES");
     //    public static final Locale LocaleRuRU = new Locale("ru", "RU");
@@ -253,6 +254,25 @@ public class Languages {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    public static void checkStatus() {
+        MyBoxLog.console("LocaleEn: " + LocaleEn.getDisplayName());
+        MyBoxLog.console("BundleEn: " + BundleEn.getBaseBundleName());
+        MyBoxLog.console("LocaleZhCN: " + LocaleZhCN.getDisplayName());
+        MyBoxLog.console("BundleZhCN: " + BundleZhCN.getBaseBundleName());
+
+        MyBoxLog.console("CurrentLangName: " + CurrentLangName);
+        MyBoxLog.console("CurrentBundle: " + CurrentBundle.getBaseBundleName());
+
+        MyBoxLog.console("getLangName: " + getLangName());
+        MyBoxLog.console("embedLangName: " + embedLangName());
+        MyBoxLog.console("isChinese: " + isChinese());
+        MyBoxLog.console("getBundle: " + getBundle().getBaseBundleName());
+        MyBoxLog.console("Locale.getDefault().getLanguage().toLowerCase();: " + Locale.getDefault().getLanguage().toLowerCase());
+        MyBoxLog.console("message(\"en\", \"FileInformation\"): " + message("en", "FileInformation"));
+        MyBoxLog.console("message(\"zh\", \"FileInformation\"): " + message("zh", "FileInformation"));
+        MyBoxLog.console("message( \"FileInformation\"): " + message("FileInformation"));
     }
 
 }
