@@ -99,12 +99,13 @@ public class Data2DVerify extends Data2DOperate {
     public static List<List<String>> verify(Data2D data, long rowIndex, List<String> row) {
         try {
             List< List<String>> invalids = new ArrayList<>();
+            int rowSize = row.size();
             for (int c = 0; c < data.columnsNumber(); c++) {
                 Data2DColumn column = data.column(c);
                 if (column.isAuto()) {
                     continue;
                 }
-                String value = row.get(c);
+                String value = c < rowSize ? row.get(c) : null;
                 String item = null;
                 if (column.isNotNull() && (value == null || value.isBlank())) {
                     item = message("Null");

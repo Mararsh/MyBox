@@ -183,7 +183,7 @@ public class RemotePathPermissionController extends RemotePathHandleFilesControl
                         ok = changeFilesInDirectory(currentTask, child);
                     }
                 }
-                if (!ok && !continueCheck.isSelected()) {
+                if (!ok && !errorContinueCheck.isSelected()) {
                     if (currentTask != null) {
                         currentTask.cancel();
                     }

@@ -65,7 +65,7 @@ License:    Apache License Version 2.0
                                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                     </padding>
                                     <children>
-                                        <CheckBox fx:id="errorContinueCheck" mnemonicParsing="false" selected="true" text="%ContinueWhenError" />
+                                        <CheckBox fx:id="errorContinueCheck" mnemonicParsing="false" text="%ContinueWhenError" />
                                     </children>
                                 </VBox>
                             </content>

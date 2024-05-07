@@ -52,7 +52,7 @@
             <li><p>If the script is blank, then return empty string.</p></li>
             <li><p>It can include any valid elments which Nashorn can parse(ECMAScript 5.1).</p></li>
             <li><p>It should be a value finally.</p></li>
-            <li><p>It can include following placeholders:</p>
+            <li><p>It can include following placeholders which can be regarded as variables in the script:</p>
                 <p>#{TableRowNumber}<br>#{DataRowNumber}<br>#{&lt;column_name&gt;}<br>#{&lt;column_name&gt;- &lt;statistic-name&gt;}</p>
             </li>
             <li><p>All valid placeholders are listed in left.</p></li>
@@ -63,9 +63,8 @@
         <h2>3 Calculate Row Expression</h2>
         <p>When MyBox evaluates the expression:</p>
         <ol>
-            <li><p>Placeholders are replaced with actual values of each data row.</p></li>
+            <li><p>Placeholders are replaced with internal variables which are mapped as actual values of each data row.</p></li>
             <li><p>Statistic values are calculated by all data.</p></li>
-            <li><p>'#{xxx}' is handled as string while #{xxx} is handled as number.</p></li>
             <li><p>When handles all pages, script fails when it includes "#{TableRowNumber}" .</p></li>
         </ol>
         <h2>4 Examples</h2>
@@ -90,15 +89,15 @@
                     <td>calculation</td>
                 </tr>
                 <tr>
-                    <td>'#{v1}'.replace(/hello/ig, 'Hello')</td>
+                    <td>#{v1}.replace(/hello/ig, 'Hello')</td>
                     <td>replace all "hello"(case-insensitive) as "Hello" in column "v1"</td>
                 </tr>
                 <tr>
-                    <td>'#{v1}'.toLowerCase()</td>
+                    <td>#{v1}.toLowerCase()</td>
                     <td>lower case of value of column "v1"</td>
                 </tr>
                 <tr>
-                    <td>'#{v1}'.split(',')</td>
+                    <td>#{v1}.split(',')</td>
                     <td>split value of column "v1" by comma</td>
                 </tr>
                 <tr>
@@ -106,7 +105,7 @@
                     <td>difference between value of column "v1" and mean of column "v1"</td>
                 </tr>
                 <tr>
-                    <td>new Date('#{time}'.replace(/-/g,'/')).getFullYear()</td>
+                    <td>new Date(#{time}.replace(/-/g,'/')).getFullYear()</td>
                     <td>year of value of column "time"</td>
                 </tr>
             </tbody>
@@ -150,23 +149,27 @@
                     <td>difference between values of "v1" and "v2" is less than 100</td>
                 </tr>
                 <tr>
-                    <td>'#{v1}' == ''</td>
-                    <td>value of column "v1" is null or empty</td>
+                    <td>#{v1} == ''</td>
+                    <td>value of column "v1" is empty</td>
                 </tr>
                 <tr>
-                    <td>'#{v1}'.length &gt; 0</td>
+                    <td>#{v1} == null</td>
+                    <td>value of column "v1" is null</td>
+                </tr>
+                <tr>
+                    <td>#{v1}.length &gt; 0</td>
                     <td>value of column "v1" is not empty</td>
                 </tr>
                 <tr>
-                    <td>'#{v1}'.search(/Hello/ig) &gt;= 0</td>
+                    <td>#{v1}.search(/Hello/ig) &gt;= 0</td>
                     <td>value of column "v1" includes "Hello"(case-insensitive)</td>
                 </tr>
                 <tr>
-                    <td>'#{v1}'.startsWith('Hello')</td>
+                    <td>#{v1}.startsWith('Hello')</td>
                     <td>value of column "v1" starts with "Hello"</td>
                 </tr>
                 <tr>
-                    <td>var array = [ 'A', 'B', 'C'];array.includes('#{v1}')</td>
+                    <td>var array = [ 'A', 'B', 'C'];array.includes(#{v1})</td>
                     <td>value of column "v1" is one of "A", "B", "C"</td>
                 </tr>
                 <tr>
@@ -174,7 +177,7 @@
                     <td>value of column "v1" is less than mean of column "v1"</td>
                 </tr>
                 <tr>
-                    <td>new Date('#{time}'.replace(/-/g,'/')).getTime() &gt; new Date('2016/05/19 09:23:12').getTime()</td>
+                    <td>new Date(#{time}.replace(/-/g,'/')).getTime() &gt; new Date('2016/05/19 09:23:12').getTime()</td>
                     <td>value of column "time" is later than '2016/05/19 09:23:12'</td>
                 </tr>
             </tbody>

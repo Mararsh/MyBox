@@ -99,7 +99,7 @@ License:    Apache License Version 2.0
                                             <children>
                                                 <CheckBox fx:id="rowNumberCheck" mnemonicParsing="false" text="%RowNumber" />
                                                 <CheckBox fx:id="colNameCheck" mnemonicParsing="false" text="%ColumnName" />
-                                                <CheckBox fx:id="errorContinueCheck" mnemonicParsing="false" selected="true" text="%ContinueWhenError" />
+                                                <CheckBox fx:id="errorContinueCheck" mnemonicParsing="false" text="%ContinueWhenError" />
                                             </children>
                                         </HBox>
                                     </children>

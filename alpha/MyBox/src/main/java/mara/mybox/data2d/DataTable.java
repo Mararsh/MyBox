@@ -387,10 +387,12 @@ public class DataTable extends Data2D {
                 }
             }
             Data2DRow data2DRow = tableData2D.newRow();
+            int rowSize = values.size();
             for (int i = 0; i < values.size(); i++) {
                 Data2DColumn column = vColumns.get(i);
                 String name = column.getColumnName();
-                data2DRow.setColumnValue(name, column.fromString(values.get(i), invalidAs));
+                String value = i < rowSize ? values.get(i) : null;
+                data2DRow.setColumnValue(name, column.fromString(value, invalidAs));
             }
             return data2DRow;
         } catch (Exception e) {

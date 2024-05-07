@@ -388,11 +388,15 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
             for (int row : sourceController.filteredRowsIndices) {
                 List<String> values = dataController.tableData.get(row);
                 if (!data2D.calculateTableRowExpression(script, values, row)) {
+                    error = data2D.getError();
                     if (valueController.errorContinueCheck.isSelected()) {
+                        if (error != null) {
+                            MyBoxLog.console(error);
+                        }
                         continue;
                     } else {
-                        if (data2D.getError() != null) {
-                            popError(data2D.getError());
+                        if (error != null) {
+                            popError(error);
                         }
                         return;
                     }

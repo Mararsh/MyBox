@@ -247,10 +247,10 @@ public class TmpTable extends DataTable {
                 index = -1;
                 values = sourceRow;
             }
-            int len = values.size();
+            int rowSize = values.size();
             for (int i = 0; i < sourceReferIndice.size(); i++) {
                 int col = sourceReferIndice.get(i);
-                if (col < 0 || col >= len) {
+                if (col < 0 || col >= rowSize) {
                     continue;
                 }
                 Data2DColumn targetColumn = column(i + valueIndexOffset);

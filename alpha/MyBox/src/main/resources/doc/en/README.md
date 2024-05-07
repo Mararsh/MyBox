@@ -4,21 +4,24 @@
 This is compute application to provide simple and easy functions. It's free and open sources.
 
 ## What's New                       
-2024-5-5 v6.8.1                
+2024-5-10 v6.8.1                
        
 * Add:                                     
      - Write watermarks in PDF files in batch.                                                                                                           
      - New data column type: Editable enumeration.                               
 * Improve:                                     
      - Redesign and implement "Data manufacture". The base framework is: reader + operate + writers.                                                                                                           
+     - Options: Verify types when edit data; Verify types when save data.                                                                                                            
+     - Implement row expresion with bindings.                                                                                                            
      - Simplify interface of "Data manufacture".                                                                                                           
      - Transparent can be set when customized colors.                                                                                                           
      - "rtbufsize" and rotation can be set for ffmpeg.                               
      - Notes: Node can be any html which can include head.                               
 * Solved problems:                                   
+     - Fail to switch language when default locale is not Chinese.                                                                                                                               
      - Errors popped when edit data row.                                                                                                           
+     - Row expression is messed when value is string of multiple lines.   
      - Icon is displayed as blank.            
-     - Many internal errors when view html in webview.           
      - "Era" is converted wrongly when import data in database table.                
      - Options of "Target file" in some interfaces do not work.                 
      - Transparent background is set wrongly when draw shape in SVG.                  
@@ -27,9 +30,6 @@ This is compute application to provide simple and easy functions. It's free and 
                                               
 [Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.8.1)                                                
 
-## Software Quality       
-[Verification list in this version](https://mara-mybox.sourceforge.io/mybox_verification_list_en.html)             
-              
 
 # Download and Execution
 
@@ -152,6 +152,10 @@ In MyBox:
 | User Guide - Network Tools     | 6.7.2   | 2023-4-16  | [html](https://mara-mybox.sourceforge.io/guide/en/MyBox-NetworkTools-en/MyBox-NetworkTools-en.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-NetworkTools-en.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-NetworkTools-en.odt)     | [html](https://mara-mybox.sourceforge.io/guide/zh/MyBox-NetworkTools-zh/MyBox-NetworkTools-zh.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-NetworkTools-zh.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-NetworkTools-zh.odt)     |
 | User Guide - Media Tools       | 6.7.1   | 2023-3-13  | [html](https://mara-mybox.sourceforge.io/guide/en/MyBox-MediaTools-en/MyBox-MediaTools-en.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-MediaTools-en.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-MediaTools-en.odt)             | [html](https://mara-mybox.sourceforge.io/guide/zh/MyBox-MediaTools-zh/MyBox-MediaTools-zh.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-MediaTools-zh.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-MediaTools-zh.odt)             |
 | User Guide - Development Tools | 6.7.1   | 2023-3-13  | [html](https://mara-mybox.sourceforge.io/guide/en/MyBox-DevTools-en/MyBox-DevTools-en.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-DevTools-en.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-DevTools-en.odt)                     | [html](https://mara-mybox.sourceforge.io/guide/zh/MyBox-DevTools-zh/MyBox-DevTools-zh.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-DevTools-zh.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-DevTools-zh.odt)                     |
+| Software Testing - Test Environment                   | 6.8.1   | 2024-5-10  | [html](https://mara-mybox.sourceforge.io/mybox_TestEnvironment_en.html)                                                                                                                                                                                                                                 | [html](https://mara-mybox.sourceforge.io/mybox_TestEnvironment_zh.html)                                                                                                                                                                                                                                    |
+| Software Testing - Base Functions' Verification List  | 6.8.1   | 2024-5-10  | [html](https://mara-mybox.sourceforge.io/mybox_BaseVerificationList_en.html)                                                                                                                                                                                                                               | [html](https://mara-mybox.sourceforge.io/mybox_BaseVerificationList_zh.html)                                                                                                                                                                                                                                  |
+| Software Testing - Compatibility Testing              | 6.8.1   | 2024-5-10  | [html](https://mara-mybox.sourceforge.io/mybox_CompatibilityTesting_en.html)                                                                                                                                                                                                                               | [html](https://mara-mybox.sourceforge.io/mybox_CompatibilityTesting_zh.html)                                                                                                                                                                                                                                  |
+| Software Testing - Detailed Testing                   | 6.8.1   | 2024-5-10  | [html](https://mara-mybox.sourceforge.io/mybox_DetailedTesting_en.html)                                                                                                                                                                                                                                    | [html](https://mara-mybox.sourceforge.io/mybox_DetailedTesting_zh.html)                                                                                                                                                                                                                                       |
 | Tips in Interfaces             | 6.8.1   | 2024-5-5   | [html](https://mara-mybox.sourceforge.io/mybox_interface_tips_en.html)                                                                                                                                                                                                                           | [html](https://mara-mybox.sourceforge.io/mybox_interface_tips_zh.html)                                                                                                                                                                                                                                    |
 | About - Tree Information       | 6.8.1   | 2024-5-5   | [html](https://mara-mybox.sourceforge.io/mybox_about_tree_en.html)                                                                                                                                                                                                                     | [html](https://mara-mybox.sourceforge.io/mybox_about_tree_zh.html)                                                                                                                                                                                                                                    |
 | About - Data in Two-dimensional Storage Structure | 6.8.1   | 2024-5-5    | [html](https://mara-mybox.sourceforge.io/mybox_about_data2d_en.html)                                                                                                                                                                                                                     | [html](https://mara-mybox.sourceforge.io/mybox_about_data2d_zh.html)                                                                                                                                                                                                                                    |

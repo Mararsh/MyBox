@@ -45,7 +45,7 @@ public class ControlSynchronizeOptions extends BaseController {
     protected CheckBox copySubdirCheck, copyEmptyCheck, copyNewCheck, copyHiddenCheck,
             copyReadonlyCheck, copyExistedCheck, copyModifiedCheck, deleteNonExistedCheck,
             notCopyCheck, copyAttrCheck, copyMtimeCheck, permissionCheck,
-            continueCheck, deleteSourceCheck;
+            deleteSourceCheck;
     @FXML
     protected DatePicker modifyAfterInput;
 
@@ -180,14 +180,6 @@ public class ControlSynchronizeOptions extends BaseController {
                 permissionInput.setText(UserConfig.getString(baseName + "Permissions", "755"));
             }
 
-            continueCheck.setSelected(UserConfig.getBoolean(baseName + "Continue", true));
-            continueCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
-                    UserConfig.setBoolean(baseName + "Continue", nv);
-                }
-            });
-
             deleteSourceCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
@@ -233,7 +225,7 @@ public class ControlSynchronizeOptions extends BaseController {
             } else {
                 copyAttr.setModifyAfter(-Long.MAX_VALUE);
             }
-            copyAttr.setContinueWhenError(continueCheck.isSelected());
+            copyAttr.setContinueWhenError(errorContinueCheck.isSelected());
             copyAttr.setCopyAttrinutes(copyAttrCheck != null ? copyAttrCheck.isSelected() : true);
             copyAttr.setCopyMTime(copyMtimeCheck != null ? copyMtimeCheck.isSelected() : true);
             copyAttr.setSetPermissions(permissionCheck != null ? permissionCheck.isSelected() : false);

@@ -60,7 +60,7 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
     protected Data2D data2D;
     protected TableData2DDefinition tableData2DDefinition;
     protected TableData2DColumn tableData2DColumn;
-    protected boolean readOnly;
+    protected boolean readOnly, widthChanged;
     protected SimpleBooleanProperty statusNotify;
     protected DataFilter styleFilter;
 
@@ -236,6 +236,7 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
             tableView.getColumns().remove(rowsSelectionColumn != null ? 2 : 1, tableView.getColumns().size());
             tableView.setItems(tableData);
             isSettingValues = false;
+            widthChanged = false;
 
             if (!isValidData()) {
                 return;
@@ -330,6 +331,16 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
                 }
 
                 tableView.getColumns().add(tableColumn);
+                tableColumn.widthProperty().addListener(new ChangeListener<Number>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Number> o, Number ov, Number nv) {
+                        if (nv == null) {
+                            return;
+                        }
+                        widthChanged = true;
+                        dataColumn.setWidth(nv.intValue());
+                    }
+                });
             }
 
         } catch (Exception e) {

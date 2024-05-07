@@ -48,6 +48,9 @@ public class BaseData2DSourceRowsController extends BaseData2DLoadController {
             filterController = taskController.filterController;
             filterTab = taskController.filterTab;
             dataTab = taskController.sourceTab;
+            if (tabPane == null) {
+                tabPane = taskController.tabPane;
+            }
 
             initParameters();
 
@@ -223,7 +226,7 @@ public class BaseData2DSourceRowsController extends BaseData2DLoadController {
                 && !filterController.checkExpression(isAllPages())) {
             String ferror = filterController.error;
             if (ferror != null && !ferror.isBlank()) {
-                if (filterTab != null) {
+                if (filterTab != null && tabPane != null) {
                     tabPane.getSelectionModel().select(filterTab);
                 }
                 alertError(ferror);

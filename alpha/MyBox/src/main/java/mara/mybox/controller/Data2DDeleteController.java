@@ -2,8 +2,6 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.PopTools;
@@ -20,9 +18,6 @@ public class Data2DDeleteController extends BaseData2DTaskTargetsController {
 
     protected Data2DManufactureController editor;
     protected boolean clearAll;
-
-    @FXML
-    protected CheckBox errorContinueCheck;
 
     public Data2DDeleteController() {
         baseTitle = message("Delete");

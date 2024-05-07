@@ -17,9 +17,9 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlData2DSetValue">
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlData2DSetValue">
     <children>
-        <FlowPane hgap="5.0" prefWrapLength="300.0" vgap="5.0">
+        <FlowPane hgap="2.0" prefWrapLength="300.0" vgap="2.0">
             <children>
                 <RadioButton fx:id="zeroRadio" mnemonicParsing="false" selected="true" text="0">
                     <toggleGroup>
@@ -36,12 +36,20 @@ License:    Apache License Version 2.0
             <children> 
                 <RadioButton fx:id="valueRadio" minWidth="-Infinity" mnemonicParsing="false" text="%Value" toggleGroup="$valueGroup" />
                 <TextField fx:id="valueInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                <RadioButton fx:id="prefixRadio" minWidth="-Infinity" mnemonicParsing="false" text="%AddPrefix" toggleGroup="$valueGroup" wrapText="true" />
-                <TextField fx:id="prefixInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                <RadioButton fx:id="suffixRadio" minWidth="-Infinity" mnemonicParsing="false" text="%AppendSuffix" toggleGroup="$valueGroup" wrapText="true" />
-                <TextField fx:id="suffixInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
             </children>
         </HBox>
+      <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="642.0" spacing="2.0">
+         <children>
+                <RadioButton fx:id="prefixRadio" minWidth="-Infinity" mnemonicParsing="false" text="%AddPrefix" toggleGroup="$valueGroup" wrapText="true" />
+                <TextField fx:id="prefixInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+         </children>
+      </HBox>
+      <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="647.0" spacing="2.0">
+         <children>
+                <RadioButton fx:id="suffixRadio" minWidth="-Infinity" mnemonicParsing="false" text="%AppendSuffix" toggleGroup="$valueGroup" wrapText="true" />
+                <TextField fx:id="suffixInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+         </children>
+      </HBox>
         <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="59.0" spacing="5.0">
             <children>
                 <RadioButton fx:id="scaleRadio" minWidth="-Infinity" mnemonicParsing="false" text="%DecimalScale" toggleGroup="$valueGroup" wrapText="true" />
@@ -98,10 +106,10 @@ License:    Apache License Version 2.0
         <HBox alignment="CENTER_LEFT" spacing="5.0">
             <children>
                 <RadioButton fx:id="expressionRadio" mnemonicParsing="false" text="%RowExpression" toggleGroup="$valueGroup" />
-                <CheckBox fx:id="errorContinueCheck" mnemonicParsing="false" selected="true" text="%ContinueWhenError" />
+                <CheckBox fx:id="errorContinueCheck" mnemonicParsing="false" text="%ContinueWhenError" />
             </children>
         </HBox>
-        <VBox fx:id="expBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+        <VBox fx:id="expBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="200.0" VBox.vgrow="ALWAYS">
             <children>
                 <fx:include fx:id="expression" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DRowExpression.fxml" VBox.vgrow="ALWAYS" />
             </children>

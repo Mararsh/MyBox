@@ -15,7 +15,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import mara.mybox.data.FileInformation;
 import mara.mybox.data.FindReplaceString;
@@ -45,7 +45,7 @@ public class FilesRenameController extends BaseBatchFileController {
     @FXML
     protected VBox renameOptionsBox, numberBox, replaceBox;
     @FXML
-    protected FlowPane suffixPane, prefixPane, extensionPane;
+    protected HBox suffixBox, prefixBox, extensionPane;
     @FXML
     protected CheckBox fillZeroCheck, originalCheck, stringCheck, accumCheck,
             suffixCheck, descentCheck, recountCheck, regexCheck;
@@ -107,11 +107,11 @@ public class FilesRenameController extends BaseBatchFileController {
 
         } else if (message("AppendSuffix").equals(selected.getText())) {
             renameType = RenameType.AppendSuffix;
-            renameOptionsBox.getChildren().addAll(suffixPane);
+            renameOptionsBox.getChildren().addAll(suffixBox);
 
         } else if (message("AddPrefix").equals(selected.getText())) {
             renameType = RenameType.AddPrefix;
-            renameOptionsBox.getChildren().addAll(prefixPane);
+            renameOptionsBox.getChildren().addAll(prefixBox);
 
         } else if (message("AddSequenceNumber").equals(selected.getText())) {
             renameType = RenameType.AddSequenceNumber;

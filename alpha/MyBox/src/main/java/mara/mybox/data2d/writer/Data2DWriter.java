@@ -50,7 +50,7 @@ public abstract class Data2DWriter {
     protected String indent = "    ", dataName, fileSuffix, value;
     protected long targetRowIndex;
     protected Connection conn;
-    protected int rowEnd;
+    protected int rowSize;
     protected InvalidAs invalidAs;
 
     public Data2DWriter() {
@@ -94,13 +94,9 @@ public abstract class Data2DWriter {
                 return;
             }
             printRow = new ArrayList<>();
-            rowEnd = inRow.size() - 1;
+            rowSize = inRow.size();
             for (int i = 0; i < columns.size(); i++) {
-                if (i > rowEnd) {
-                    value = null;
-                } else {
-                    value = inRow.get(i);
-                }
+                value = i < rowSize ? inRow.get(i) : null;
                 if (formatValues) {
                     value = columns.get(i).format(value, invalidAs, validateValue);
                 }

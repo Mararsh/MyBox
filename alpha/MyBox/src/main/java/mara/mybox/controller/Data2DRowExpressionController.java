@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import javafx.event.Event;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
 import mara.mybox.data2d.writer.Data2DWriter;
@@ -33,8 +32,6 @@ public class Data2DRowExpressionController extends BaseData2DTaskTargetsControll
     protected TextField nameInput;
     @FXML
     protected ControlData2DRowExpression expressionController;
-    @FXML
-    protected CheckBox errorContinueCheck;
     @FXML
     protected Tab valuesTab;
 

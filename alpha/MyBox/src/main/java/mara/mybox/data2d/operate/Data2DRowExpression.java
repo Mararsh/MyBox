@@ -32,8 +32,9 @@ public class Data2DRowExpression extends Data2DOperate {
                 return false;
             }
             targetRow = new ArrayList<>();
+            int rowSize = sourceRow.size();
             for (int col : cols) {
-                if (col >= 0 && col < sourceRow.size()) {
+                if (col >= 0 && col < rowSize) {
                     targetRow.add(sourceRow.get(col));
                 } else {
                     targetRow.add(null);

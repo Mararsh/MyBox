@@ -47,7 +47,7 @@ public class ControlData2DSetValue extends BaseController {
     @FXML
     protected ControlData2DRowExpression expressionController;
     @FXML
-    protected CheckBox errorContinueCheck, fillZeroCheck;
+    protected CheckBox fillZeroCheck;
     @FXML
     protected VBox expBox;
 

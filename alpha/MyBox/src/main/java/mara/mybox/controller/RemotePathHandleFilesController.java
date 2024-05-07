@@ -38,7 +38,7 @@ public abstract class RemotePathHandleFilesController extends BaseTaskController
     @FXML
     protected Label hostLabel;
     @FXML
-    protected CheckBox wrapCheck, continueCheck;
+    protected CheckBox wrapCheck;
 
     public void setParameters(RemotePathManageController manageController) {
         try {
@@ -65,14 +65,6 @@ public abstract class RemotePathHandleFilesController extends BaseTaskController
                 }
             });
             namesArea.setWrapText(wrapCheck.isSelected());
-
-            continueCheck.setSelected(UserConfig.getBoolean("RemotePathFilesErrorContinue", true));
-            continueCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
-                    UserConfig.setBoolean("RemotePathFilesErrorContinue", nv);
-                }
-            });
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -134,7 +126,7 @@ public abstract class RemotePathHandleFilesController extends BaseTaskController
                     showLogs(doneString + ": " + name);
                 } else {
                     showLogs(message("Failed") + ": " + name);
-                    if (!continueCheck.isSelected()) {
+                    if (!errorContinueCheck.isSelected()) {
                         return false;
                     }
                 }

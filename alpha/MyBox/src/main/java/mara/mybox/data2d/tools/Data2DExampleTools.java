@@ -1679,16 +1679,17 @@ public class Data2DExampleTools {
         DataFileCSV data = new DataFileCSV();
         List<Data2DColumn> columns = new ArrayList<>();
         columns.add(new Data2DColumn(message(lang, "TestEnvironment"), ColumnType.String));
-        columns.add(new Data2DColumn(message(lang, "Title"), ColumnType.String));
         columns.add(new Data2DColumn(message(lang, "Type"), ColumnType.EnumerationEditable)
                 .setFormat("\n" + message(lang, "Function") + "\n"
                         + message(lang, "UserInterface") + "\n" + message(lang, "Bundary") + "\n"
-                        + message(lang, "InvalidValue") + "\n"
+                        + message(lang, "Invalid") + "\n"
                         + message(lang, "Data") + "\n" + message(lang, "API") + "\n"
                         + message(lang, "IO") + "\n" + message(lang, "Exception") + "\n"
                         + message(lang, "Performance") + "\n" + message(lang, "Robustness") + "\n"
                         + message(lang, "Usability") + "\n" + message(lang, "Compatibility") + "\n"
                         + message(lang, "Security") + "\n" + message(lang, "Document")));
+        columns.add(new Data2DColumn(message(lang, "Object"), ColumnType.String));
+        columns.add(new Data2DColumn(message(lang, "Title"), ColumnType.String));
         columns.add(new Data2DColumn(message(lang, "Steps"), ColumnType.String));
         columns.add(new Data2DColumn(message(lang, "Status"), ColumnType.EnumerationEditable)
                 .setFormat("\n" + message(lang, "NotTested") + "\n"

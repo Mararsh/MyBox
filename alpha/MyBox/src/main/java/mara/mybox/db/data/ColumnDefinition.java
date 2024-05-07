@@ -634,10 +634,6 @@ public class ColumnDefinition extends BaseData {
         return string;
     }
 
-    public String filterValue(String string) {
-        return toString(fromString(string));
-    }
-
     public boolean valueQuoted() {
         return !isNumberType() && type != ColumnType.Boolean;
     }

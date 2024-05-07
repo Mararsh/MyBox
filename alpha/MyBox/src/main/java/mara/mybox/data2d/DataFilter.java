@@ -129,10 +129,10 @@ public class DataFilter {
     }
 
     public void handleError(String error) {
-        if (task != null) {
-            task.setError(error);
-        }
         if (error != null && AppValues.Alpha) {
+            if (task != null) {
+                task.setError(error);
+            }
             MyBoxLog.debug(error + "\n" + sourceScript);
         }
     }

@@ -127,7 +127,7 @@ public class RemotePathGetController extends RemotePathHandleFilesController {
                 } else {
                     ok = downFile(currentTask, child, attrs, target);
                 }
-                if (!ok && !continueCheck.isSelected()) {
+                if (!ok && !errorContinueCheck.isSelected()) {
                     if (currentTask != null) {
                         currentTask.cancel();
                     }

@@ -22,10 +22,13 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
 import mara.mybox.data2d.tools.Data2DPageTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
+import mara.mybox.fxml.WebViewTools;
 import mara.mybox.fxml.style.StyleTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -39,6 +42,7 @@ public class BaseData2DViewController extends BaseData2DLoadController {
 
     protected FxTask loadTask;
     protected String delimiterName;
+    protected WebEngine webEngine;
 
     @FXML
     protected ToggleGroup formatGroup;
@@ -51,13 +55,13 @@ public class BaseData2DViewController extends BaseData2DLoadController {
     @FXML
     protected TextArea textsArea, csvArea;
     @FXML
-    protected ControlWebView webViewController;
+    protected WebView webView;
     @FXML
     protected Label columnsLabel;
     @FXML
     protected FlowPane buttonsPane;
     @FXML
-    protected Button delimiterButton, viewDataButton;
+    protected Button delimiterButton, viewDataButton, editHtmlButton;
     @FXML
     protected CheckBox wrapCheck, formCheck, titleCheck, columnCheck, rowCheck;
 
@@ -93,6 +97,10 @@ public class BaseData2DViewController extends BaseData2DLoadController {
             mainAreaBox.getChildren().remove(tmpPane);
             toolbar.getChildren().remove(leftPaneControl);
             refreshStyle(mainAreaBox);
+
+            webEngine = webView.getEngine();
+            webView.setCache(false);
+            webEngine.setJavaScriptEnabled(true);
 
             wrapCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -210,7 +218,8 @@ public class BaseData2DViewController extends BaseData2DLoadController {
             isSettingValues = true;
             buttonsPane.getChildren().clear();
             pageBox.getChildren().clear();
-            webViewController.loadContents("");
+            webEngine.getLoadWorker().cancel();
+            webEngine.loadContent("");
             textsArea.clear();
             tableView.setItems(null);
             if (csvRadio != null) {
@@ -258,7 +267,7 @@ public class BaseData2DViewController extends BaseData2DLoadController {
     }
 
     public void showHtmlButtons() {
-        buttonsPane.getChildren().setAll(menuButton, viewDataButton, dataManufactureButton);
+        buttonsPane.getChildren().setAll(editHtmlButton, viewDataButton, dataManufactureButton);
     }
 
     public void loadHtml(boolean pop) {
@@ -266,7 +275,8 @@ public class BaseData2DViewController extends BaseData2DLoadController {
             if (pop) {
                 popError(message("NoData"));
             } else {
-                webViewController.loadContents("");
+                webEngine.getLoadWorker().cancel();
+                webEngine.loadContent("");
             }
             return;
         }
@@ -299,7 +309,8 @@ public class BaseData2DViewController extends BaseData2DLoadController {
                 if (pop) {
                     HtmlPopController.openHtml(myController, html);
                 } else {
-                    webViewController.loadContents(html);
+                    webEngine.getLoadWorker().cancel();
+                    webEngine.loadContent(html);
                 }
             }
 
@@ -441,9 +452,39 @@ public class BaseData2DViewController extends BaseData2DLoadController {
         }
     }
 
+    @Override
+    public boolean checkBeforeLoadingTableData() {
+        return checkBeforeNextAction();
+    }
+
+    @Override
+    public boolean checkBeforeNextAction() {
+        saveWidths();
+        return true;
+    }
+
+    public void saveWidths() {
+        try {
+            if (data2D == null || !dataSizeLoaded
+                    || !isValidPageData() || !widthChanged) {
+                return;
+            }
+            data2D.saveAttributes();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
     /*
         action
      */
+    @FXML
+    public void editHtml() {
+        if (htmlRadio.isSelected()) {
+            HtmlEditorController.openHtml(WebViewTools.getHtml(webEngine));
+        }
+    }
+
     @Override
     public boolean controlAltB() {
         saveAsAction();
@@ -482,8 +523,7 @@ public class BaseData2DViewController extends BaseData2DLoadController {
             }
 
             if (htmlRadio.isSelected()) {
-                webViewController.menuAction();
-                return true;
+                return false;
 
             } else if (tableRadio.isSelected()) {
                 popTableMenu();
@@ -515,7 +555,7 @@ public class BaseData2DViewController extends BaseData2DLoadController {
             }
 
             if (htmlRadio.isSelected()) {
-                HtmlPopController.openWebView(this, webViewController.webView);
+                HtmlPopController.openWebView(this, webView);
                 return true;
 
             } else if (tableRadio.isSelected()) {

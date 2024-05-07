@@ -5,22 +5,25 @@
 
 
 ## 新内容
-2024-5-5 版本6.8.1                
+2024-5-10 版本6.8.1                
                                
 * 新增：                                   
      - 对PDF批量添加水印。                                                                                                      
      - 数据的列类型：可编辑的枚举型。                                                                                                      
 * 改进：                                     
-     - 重新设计和实现"处理数据"，基础框架为：读构件+处理构件+写构件。                                                                                                            
+     - 重新设计和实现"处理数据"，基础框架为：读+处理+写。                                                                                                            
+     - 可选：编辑数据时检验类型、保存数据时检验类型。                                                                                                            
+     - 行表达式的实现：以bindings代入参数值。                                                                                                            
      - 简化"处理数据"的界面。                                                                                                            
      - 定制颜色时可以设置透明度。                                                                                                           
      - ffmpeg可以设置"rtbufsize"和旋转。                                                                                                           
      - 笔记：节点是任何html，可以包含head。                                                                                                     
 * 解决问题：                                     
+     - 缺省locale非中文时无法切换语言。                                                                                                                       
      - 编辑数据行时弹出错误。                                                                                                           
-     - icon图片显示为空白。                                                                                                           
-     - 用webview查看网页时出现大量内部错误。                                                                                                           
+     - 当数据值为多行字串时行表达式会解析混乱。                                                                                                           
      - 对数据库表导入数据时，类型“纪元”转换错误。                                                                                                                                                                                                              
+     - icon图片显示为空白。                                                                                                           
      - 一些界面中“目标文件”的选项未生效。                                                                                                                                                                                                              
      - 对SVG绘制形状时，透明背景未正确设置。                                                                                                                                                                                                              
      - SVG的“查看”选项未生效。                                                                                                                                                                                                              
@@ -28,10 +31,6 @@
                                                                                                            
 [此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.8.1)                         
           
-
-## 软件质量       
-[此版本的检验列表](https://mara-mybox.sourceforge.io/mybox_verification_list_zh.html)             
-              
                   
 # 下载与运行
 
@@ -154,6 +153,10 @@
 | 用户手册-网络工具 | 6.7.2   | 2023-4-16  | [html](https://mara-mybox.sourceforge.io/guide/en/MyBox-NetworkTools-en/MyBox-NetworkTools-en.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-NetworkTools-en.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-NetworkTools-en.odt)     | [html](https://mara-mybox.sourceforge.io/guide/zh/MyBox-NetworkTools-zh/MyBox-NetworkTools-zh.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-NetworkTools-zh.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-NetworkTools-zh.odt)     |
 | 用户手册-媒体工具 | 6.7.1   | 2023-3-13  | [html](https://mara-mybox.sourceforge.io/guide/en/MyBox-MediaTools-en/MyBox-MediaTools-en.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-MediaTools-en.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-MediaTools-en.odt)             | [html](https://mara-mybox.sourceforge.io/guide/zh/MyBox-MediaTools-zh/MyBox-MediaTools-zh.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-MediaTools-zh.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-MediaTools-zh.odt)             |
 | 用户手册-开发工具 | 6.7.1   | 2023-3-13  | [html](https://mara-mybox.sourceforge.io/guide/en/MyBox-DevTools-en/MyBox-DevTools-en.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-DevTools-en.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-DevTools-en.odt)                     | [html](https://mara-mybox.sourceforge.io/guide/zh/MyBox-DevTools-zh/MyBox-DevTools-zh.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-DevTools-zh.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-DevTools-zh.odt)                     |
+| 软件测试-测试环境          | 6.8.1   | 2024-5-10  | [html](https://mara-mybox.sourceforge.io/mybox_TestEnvironment_en.html)                                                                                                                                                                                                                                 | [html](https://mara-mybox.sourceforge.io/mybox_TestEnvironment_zh.html)                                                                                                                                                                                                                                    |
+| 软件测试-基本功能验证列表  | 6.8.1   | 2024-5-10  | [html](https://mara-mybox.sourceforge.io/mybox_BaseVerificationList_en.html)                                                                                                                                                                                                                               | [html](https://mara-mybox.sourceforge.io/mybox_BaseVerificationList_zh.html)                                                                                                                                                                                                                                  |
+| 软件测试-兼容性测试        | 6.8.1   | 2024-5-10  | [html](https://mara-mybox.sourceforge.io/mybox_CompatibilityTesting_en.html)                                                                                                                                                                                                                               | [html](https://mara-mybox.sourceforge.io/mybox_CompatibilityTesting_zh.html)                                                                                                                                                                                                                                  |
+| 软件测试-详细测试          | 6.8.1   | 2024-5-10  | [html](https://mara-mybox.sourceforge.io/mybox_DetailedTesting_en.html)                                                                                                                                                                                                                                    | [html](https://mara-mybox.sourceforge.io/mybox_DetailedTesting_zh.html)                                                                                                                                                                                                                                       |
 | 界面中的提示信息  | 6.8.1   | 2024-5-5   | [html](https://mara-mybox.sourceforge.io/mybox_interface_tips_en.html)                                                                                                                                                                                                                           | [html](https://mara-mybox.sourceforge.io/mybox_interface_tips_zh.html)                                                                                                                                                                                                                                    |
 | 关于-树形信息     | 6.8.1   | 2024-5-5   | [html](https://mara-mybox.sourceforge.io/mybox_about_tree_en.html)                                                                                                                                                                                                                     | [html](https://mara-mybox.sourceforge.io/mybox_about_tree_zh.html)                                                                                                                                                                                                                                    |
 | 关于-二维存储结构的数据     | 6.8.1   | 2024-5-5    | [html](https://mara-mybox.sourceforge.io/mybox_about_data2d_en.html)                                                                                                                                                                                                                     | [html](https://mara-mybox.sourceforge.io/mybox_about_data2d_zh.html)                                                                                                                                                                                                                                    |

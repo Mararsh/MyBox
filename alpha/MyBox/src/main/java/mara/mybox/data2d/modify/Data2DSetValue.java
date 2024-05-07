@@ -59,12 +59,13 @@ public class Data2DSetValue extends Data2DOperate {
             String expResult = null, currentValue;
             if (handle) {
                 if (setValue.isExpression() && dataValue != null) {
-                    sourceData.calculateDataRowExpression(dataValue, sourceRow, sourceRowIndex);
-                    expResult = sourceData.expressionResult();
-                    sourceData.error = sourceData.expressionError();
-                    if (sourceData.error != null) {
+                    if (sourceData.calculateDataRowExpression(dataValue, sourceRow, sourceRowIndex)) {
+                        expResult = sourceData.expressionResult();
+                    } else {
+                        sourceData.error = sourceData.expressionError();
                         if (errorContinue) {
-                            return;
+                            showError(sourceData.error);
+                            handle = false;
                         } else {
                             failStop(sourceData.error);
                             return;
@@ -76,8 +77,9 @@ public class Data2DSetValue extends Data2DOperate {
                 return;
             }
             targetRow = new ArrayList<>();
+            int rowSize = sourceRow.size();
             for (int i = 0; i < sourceData.columns.size(); i++) {
-                if (i < sourceRow.size()) {
+                if (i < rowSize) {
                     currentValue = sourceRow.get(i);
                 } else {
                     currentValue = null;

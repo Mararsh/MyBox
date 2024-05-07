@@ -8,7 +8,6 @@ import mara.mybox.data.SetValue;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.db.Database;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DRow;
 import mara.mybox.db.table.TableData2D;
@@ -76,7 +75,7 @@ public class DataTableSetValue extends Data2DSetValue {
             for (int i = 0; i < columnsNumber; ++i) {
                 Data2DColumn column = columns.get(i);
                 String name = column.getColumnName();
-                sourceTableRow.setColumnValue(name, column.fromString(targetRow.get(i), ColumnDefinition.InvalidAs.Empty));
+                sourceTableRow.setColumnValue(name, column.fromString(targetRow.get(i)));
             }
             if (tableData2D.setUpdateStatement(conn, update, sourceTableRow)) {
                 update.addBatch();

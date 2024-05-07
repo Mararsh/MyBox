@@ -5,7 +5,7 @@
     </head>
     <body style="width: 900px; margin:0 auto;" contenteditable="false">
         <h1 align="center">Data in Two-dimensional Storage Structure</h1>
-        <h2>1. Data Objects</h2>
+        <h2>1 Data Objects</h2>
         <h3>1.1 External Formats</h3>
         <p>Following objects can be edited in consistent way:</p>
         <ul>
@@ -21,20 +21,23 @@
             <li>"Rows" store instances of data and extend data set in vertical direction.</li>
             <li>Data should be in same width. That is all rows have equal number of columns.</li>
         </ul>
-        <h2>2. Create Data</h2>
+
+        <h2>2 Create Data</h2>
         <p>Data can be created by one of following ways:</p>
         <ul>
             <li>Click or hover button "Create Data", and select data type: CSV, Excel, Texts, MyBox Clipboard, Matrix, Database Table.</li>
             <li>Click button "Load contents in System Clipboard", and select rows and columns.</li>
             <li>Click or hover button "Examples", and select example data. Option "Only import definition".</li>
         </ul>
-        <h2>3. Open Data</h2>
+
+        <h2>3 Open Data</h2>
         <p>Existed data can be opened by one of following ways:</p>
         <ul>
             <li>Click or hover button "Select File" to load data in extrenal data file.</li>
             <li>Click button "Select"(CTRL+T or ALT+T) to load data managed by MyBox.</li>
         </ul>
-        <h2>4. Four Modes</h2>
+
+        <h2>4 Four Modes</h2>
         <h3>4.1 Page data in html - read only</h3>
         <ul>
             <li>Display data of current page in html.</li>
@@ -71,8 +74,10 @@
             <li>Can view data definition.</li>
             <li>Click button "Delimiter" to reload data and apply different delimiter. This delimiter does not affect source file.</li>
         </ul>
-        <h2>5. Define Data</h2>
+
+        <h2>5 Define Data</h2>
         <p>In mode "Table - edit" or mode "CSV - edit", click button "Define Data".</p>
+
         <h3>5.1 Interface of Columns Management</h3>
         <p>Under tab "Columns", add/delete/change columns in table view:</p>
         <ol>
@@ -83,15 +88,17 @@
             <li><p>Can set random colors.</p></li>
             <li><p>Can adjust orders of columns.</p></li>
             <li><p>Click button "OK" to apply modifications of columns to "Table" of current data.</p></li>
-            <li><p>Click button "Cancel" to discard modifications of columns and pick data from "Table" of current data.</p></li>
-            <li><p>When changes have not been saved, if modifications have not been applied to data, "**" is displayed in tab header, or else "*" is displayed in tab header.</p></li>
+            <li><p>Click button "Recover" to discard modifications of columns and pick data from "Table" of current data.</p></li>
         </ol>
+
         <h3>5.2 Types of Columns</h3>
         <ol>
-            <li value="1"><p>Types of columns include: String, Double, Float, Long, Integer, Short, Boolean, Datetime, Date, Era, Longitude, Latitude, Enumeration, Color.</p></li>
+            <li value="1"><p>Types of columns include: String, Double, Float, Long, Integer, Short, Boolean, Datetime, Date, Era, Longitude, Latitude, 
+                    Enumeration, Editable Enumeration, Color.</p></li>
             <li><p>This attribute is used to display, edit, calculate, and save data.</p></li>
             <li><p>Longitutde and Latitude are defined together generally.</p></li>
         </ol>
+
         <h3>5.3 Format of Column</h3>
         <ol>
             <li><p>This attribute is mainly for display. When data are inputted/edited, formats are not applied automatically and original inputs are kept.</p></li>
@@ -105,19 +112,60 @@
         <p>To Era, following are supported in formats: MM/dd/yy, yy-MM-dd, milliseconds, time zone, T separator, patch century, prefix/suffix of "AD" and "BC" in Chinese and English,etc..</p>
         <h4>5.3.4 Define Enumeration</h4>
         <p>To Enumeration, list of values can be defined.</p>
+
         <h3>5.4 Handle Invalid Values</h3>
         <ol>
             <li><p>How columns handle invalid values, including: skip, count as empty, and count as zero.</p></li>
             <li><p>In some context, "count as empty" equals to "skip".</p></li>
             <li><p>This attribute is only used for display or calculation. When data are inputted/edited, invalid values are not handled automatically.</p></li>
         </ol>
-        <h3>5.5 Attributes of Data</h3>
+
+        <h3>5.5 Color of Column</h3>
+        <p>Column color is mainly used for data charts.</p>
+        <p>When chart is generated, elements in it are displayed in colors as their columns' definitions. Then user can set chart in random colors.</p>
+
+        <h3>5.6 Attributes of Data</h3>
         <p>Under tab "Attributes", set: data name, decimal scale, maximum value of random, and description.</p>
-        <h2>6. Usages of Columns</h2>
+
+        <h3>6 Verify Data Values</h3>
+        <ol>
+            <li value="1"><p>The verified objects can be either rows in current page or all rows.</p></li>
+        </ol>
+        <ol start="2">
+            <li><p>Following are checked:</p></li>
+        </ol>
+        <ul>
+            <ul>
+                <li><p>If a column is defined as "not null", then null values are invalid for this column.</p></li>
+                <li><p>If a value is not satisfied with the column type, then the value is invalid.</p></li>
+            </ul>
+        </ul>
+        <ul>
+            <ul>
+                <li><p>Click button "Verify data in current page".</p></li>
+                <li><p>Option: Verify values automatically when save data.</p></li>
+            </ul>
+        </ul>
+        <ol start="3">
+            <li>
+                <p>Options:</p>
+                <ul>
+                    <li>
+                        <p>Validate data when edit.</p></li>
+                    <li>
+                        <p>Validate data when save.</p></li>
+                </ul>
+            </li>
+        </ol>
+
+
+        <h2>7 Edit Data</h2>
         <p>Principle of column usages is "Most tolerability and least manufacture".</p>
-        <h3>6.1 Load Data</h3>
+
+        <h3>7.1 Load Data</h3>
         <p>When load data, types of columns are not checked, and original values are read and imported.</p>
-        <h3>6.2 Display Data</h3>
+
+        <h3>7.2 Display Data</h3>
         <ol>
             <li><p>Parse values as columns' types.</p></li>
             <li><p>Handle invalid values as columns' definitions.</p></li>
@@ -131,14 +179,16 @@
                 <li><p>If skip or count invalid as empty, then display it as "abc".</p></li>
             </ul>
         </ul>
-        <h3>6.3 Controls for editing</h3>
+
+        <h3>7.3 Controls for editing</h3>
         <ul>
             <li><p>To Boolean, checkbox is provided.</p></li>
             <li><p>To Enumeration, list view is provided with selections.</p></li>
             <li><p>To Color, palette is provided.</p></li>
             <li><p>To Longitude and Latitude, map can be popped to locate coordinate.</p></li>
         </ul>
-        <h3>6.4 Edit Data Cell</h3>
+
+        <h3>7.4 Edit Data Cell</h3>
         <ol>
             <li><p>Click editable cell to start editing.</p></li>
             <li><p>When editing is started, its original value is displayed, while both type and format of column are ignored.</p></li>
@@ -187,121 +237,105 @@
         <ol start="8">
             <li><p>Other data cells are not affected. That is, data cells are always in originial values if they are not changed.</p></li>
         </ol>
-        <h3>6.5 Verify Data Values</h3>
-        <ol>
-            <li value="1"><p>The verified objects are rows in current page.</p></li>
-            <li><p>To start the verification:</p></li>
+        <ol start="9">
+            <li><p>Option: Validate data when edit. That is, data are not validated when edit if this option is not selected.</p></li>
         </ol>
+
+        <h2>8 Save Data</h2>
+
+        <h3>8.1 Interface</h3>
         <ul>
-            <ul>
-                <li><p>Click button "Verify data in current page".</p></li>
-                <li><p>Option: Verify values automatically when save data.</p></li>
-            </ul>
+            <li>Click button "Save"(CTRL+S or ALT+S) to write modification in data.</li>
+            <li>Changes of rows in "Table", including modify/add/delete/sort, affect rows of current page in file.</li>
+            <li>Changes in columns and attributes, including modify/add/delete/sort, affect all rows in file.</li>
+            <li>Changes of attributes and columns are saved in database.</li>
+            <li>Click button "Save As"(F5 or CTRL+B or ALT+B) to write data in other format:
+                CSV, Excel, Texts, MyBox Clipboard, Matrix, Database Table, System Clipboard, JSON, XML, HTML, PDF.</li>
         </ul>
-        <ol start="3">
-            <li><p>Following are checked:</p></li>
-        </ol>
-        <ul>
-            <ul>
-                <li><p>If a column is defined as "not null", then null values are invalid for this column.</p></li>
-                <li><p>If a value is not satisfied with the column type, then the value is invalid.</p></li>
-            </ul>
-        </ul>
-        <ol start="4">
-            <li><p>The results of verification are displayed in a html table.</p></li>
-        </ol>
-        <h3>6.6 Save Data</h3>
-        <ol>
-            <li value="1"><p>Values are written into file of CSV/Texts/Excel as strings.</p></li>
-            <li><p>Values are written into database table as nearest types:</p></li>
-        </ol>
-        <ol>
-            <p style="margin-bottom: 0cm"></p>
-        </ol>
-        <dl>
-            <dl>
-                <dl>
-                    <dl>
-                        <dd>
-                            <table width="322" border="1" bordercolor="#000000" cellpadding="4" cellspacing="0">
-                                <colgroup>
-                                    <col width="146">
-                                    <col width="158">
-                                </colgroup>
-                                <tbody>
-                                    <tr valign="TOP">
-                                        <td width="146"><p align="CENTER"><b>Column Type of MyBox</b></p></td>
-                                        <td width="158"><p align="CENTER"><b>Data Type of JDBC</b></p></td>
-                                    </tr>
-                                    <tr valign="TOP">
-                                        <td width="146"><p>String</p></td>
-                                        <td width="158"><p>VARCHAR</p></td>
-                                    </tr>
-                                    <tr valign="TOP">
-                                        <td width="146"><p>Double</p></td>
-                                        <td width="158"><p>DOUBLE</p></td>
-                                    </tr>
-                                    <tr valign="TOP">
-                                        <td width="146"><p>Float</p></td>
-                                        <td width="158"><p>FLOAT</p></td>
-                                    </tr>
-                                    <tr valign="TOP">
-                                        <td width="146"><p>Long</p></td>
-                                        <td width="158"><p>BIGINT</p></td>
-                                    </tr>
-                                    <tr valign="TOP">
-                                        <td width="146"><p>Integer</p></td>
-                                        <td width="158"><p>INT</p></td>
-                                    </tr>
-                                    <tr valign="TOP">
-                                        <td width="146"><p>Short</p></td>
-                                        <td width="158"><p>SMALLINT</p></td>
-                                    </tr>
-                                    <tr valign="TOP">
-                                        <td width="146"><p>Boolean</p></td>
-                                        <td width="158"><p>BOOLEAN</p></td>
-                                    </tr>
-                                    <tr valign="TOP">
-                                        <td width="146"><p>Datetime</p></td>
-                                        <td width="158"><p>TIMESTAMP</p></td>
-                                    </tr>
-                                    <tr valign="TOP">
-                                        <td width="146"><p>Date</p></td>
-                                        <td width="158"><p>DATE</p></td>
-                                    </tr>
-                                    <tr valign="TOP">
-                                        <td width="146"><p>Era</p></td>
-                                        <td width="158"><p>BIGINT</p></td>
-                                    </tr>
-                                    <tr valign="TOP">
-                                        <td width="146"><p>Longitude</p></td>
-                                        <td width="158"><p>DOUBLE</p></td>
-                                    </tr>
-                                    <tr valign="TOP">
-                                        <td width="146"><p>Latitude</p></td>
-                                        <td width="158"><p>DOUBLE</p></td>
-                                    </tr>
-                                    <tr valign="TOP">
-                                        <td width="146"><p>Enumeration</p></td>
-                                        <td width="158"><p>VARCHAR</p></td>
-                                    </tr>
-                                    <tr valign="TOP">
-                                        <td width="146"><p>Color</p></td>
-                                        <td width="158"><p>VARCHAR</p></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </dd>
-                    </dl>
-                </dl>
-            </dl>
-        </dl>
-        <p><br><br></p>
+
+        <h3>8.2 Save Data File</h3>
+        <p>Values are written into file of CSV/Texts/Excel as strings.</p>
+        <p>Option: Validate data when save. That is, data are not validated when save if this option is not selected.</p>
+
+        <h3>8.3 Save Database Table</h3>
+        <p>Values in database table are always validated.</p>
+        <p>Values are written into database table as nearest types:</p>
+        <table width="322" border="1"  cellpadding="4" cellspacing="0">
+            <colgroup>
+                <col width="146">
+                <col width="158">
+            </colgroup>
+            <tbody>
+                <tr valign="TOP">
+                    <td width="146"><p align="CENTER"><b>Column Type of MyBox</b></p></td>
+                    <td width="158"><p align="CENTER"><b>Data Type of JDBC</b></p></td>
+                </tr>
+                <tr valign="TOP">
+                    <td width="146"><p>String</p></td>
+                    <td width="158"><p>VARCHAR</p></td>
+                </tr>
+                <tr valign="TOP">
+                    <td width="146"><p>Double</p></td>
+                    <td width="158"><p>DOUBLE</p></td>
+                </tr>
+                <tr valign="TOP">
+                    <td width="146"><p>Float</p></td>
+                    <td width="158"><p>FLOAT</p></td>
+                </tr>
+                <tr valign="TOP">
+                    <td width="146"><p>Long</p></td>
+                    <td width="158"><p>BIGINT</p></td>
+                </tr>
+                <tr valign="TOP">
+                    <td width="146"><p>Integer</p></td>
+                    <td width="158"><p>INT</p></td>
+                </tr>
+                <tr valign="TOP">
+                    <td width="146"><p>Short</p></td>
+                    <td width="158"><p>SMALLINT</p></td>
+                </tr>
+                <tr valign="TOP">
+                    <td width="146"><p>Boolean</p></td>
+                    <td width="158"><p>BOOLEAN</p></td>
+                </tr>
+                <tr valign="TOP">
+                    <td width="146"><p>Datetime</p></td>
+                    <td width="158"><p>TIMESTAMP</p></td>
+                </tr>
+                <tr valign="TOP">
+                    <td width="146"><p>Date</p></td>
+                    <td width="158"><p>DATE</p></td>
+                </tr>
+                <tr valign="TOP">
+                    <td width="146"><p>Era</p></td>
+                    <td width="158"><p>BIGINT</p></td>
+                </tr>
+                <tr valign="TOP">
+                    <td width="146"><p>Longitude</p></td>
+                    <td width="158"><p>DOUBLE</p></td>
+                </tr>
+                <tr valign="TOP">
+                    <td width="146"><p>Latitude</p></td>
+                    <td width="158"><p>DOUBLE</p></td>
+                </tr>
+                <tr valign="TOP">
+                    <td width="146"><p>Enumeration</p></td>
+                    <td width="158"><p>VARCHAR</p></td>
+                </tr>
+                <tr valign="TOP">
+                    <td width="146"><p>Color</p></td>
+                    <td width="158"><p>VARCHAR</p></td>
+                </tr>
+            </tbody>
+        </table>
         <p>Notice: derby does not support negative date, so Ear is saved as long.</p>
-        <ol start="3">
-            <li><p>All values in Matrix are saved as Double.</p></li>
-        </ol>
-        <h3>6.7 Calculate Data</h3>
+
+        <h3>8.4 Save Matrix</h3>
+        <p>Values in matrix are always validated.</p>
+        <p>All values in Matrix are saved as Double.</p>
+
+
+        <h2>9 Calculate Data</h2>
         <ol>
             <li><p>Data are handled as original values, without concern about types and formats of columns.</p></li>
             <li><p>Values are parsed as need. Example, if the calculation requires double values, then try to convert values as doubles.</p></li>
@@ -318,24 +352,15 @@
                 <li><p>If "count invalid value as empty", then invalid values cause results of all calculations as invalid(Double.NaN).</p></li>
             </ul>
         </ul>
-        <h3>6.8 Sort Data</h3>
+
+
+        <h2>10 Sort Data</h2>
         <ol>
             <li><p>For any calculations involved in sorting, data will be translated into a temporary database table, and be sorted by database system.</p></li>
             <li><p>Results of sorting are related to columns' types. Example, string "124" is smaller than string "18", while number "124" is bigger than number "18".</p></li>
         </ol>
-        <h3>6.9 Color of Column</h3>
-        <p>Column color is mainly used for data charts.</p>
-        <p>When chart is generated, elements in it are displayed in colors as their columns' definitions.. Then user can set chart in random colors.</p>
-        <h3>7 Save Data</h3>
-        <ul>
-            <li>Click button "Save"(CTRL+S or ALT+S) to write modification in data.</li>
-            <li>Changes of rows in "Table", including modify/add/delete/sort, affect rows of current page in file.</li>
-            <li>Changes in columns and attributes, including modify/add/delete/sort, affect all rows in file.</li>
-            <li>Changes of attributes and columns are saved in database.</li>
-            <li>Click button "Save As"(F5 or CTRL+B or ALT+B) to write data in other format:
-                CSV, Excel, Texts, MyBox Clipboard, Matrix, Database Table, System Clipboard, JSON, XML, HTML, PDF.</li>
-        </ul>
-        <h2>8. Manage Data</h2>
+
+        <h2>11 Manage Data</h2>
         <p>MyBox records definition of data objects in its internal table:</p>
         <table width="100%" border="1" cellpadding="4" cellspacing="0">
             <colgroup>
@@ -376,10 +401,12 @@
                 </tr>
             </tbody>
         </table> <br>
-        <h2>9. Data File</h2>
-        <p>Data files are external data. MyBox records their definition and keeps their independence.
-            After read/write by MyBox, data files should be able to read/write by other ways properly.</p>
-        <h3>9.1  CSV File</h3>
+
+        <h2>12 Data File</h2>
+        <p>Data files are external data. MyBox records their definition and keeps their independence.</p>
+        <p>After read/write by MyBox, data files should be able to read/write by other ways properly.</p>
+
+        <h3>12.1  CSV File</h3>
         <p>In CSV file:</p>
         <ul>
             <li>In general, the first line(header) defines column names, and each of followed lines defines a row of data.</li>
@@ -393,7 +420,8 @@
             <li>If file is read abnormally, use menu "File - Format" to change options and click button "OK".</li>
             <li>Data can be saved as different charsets and delimiters.</li>
         </ul>
-        <h3>9.2  Excel File</h3>
+
+        <h3>12.2  Excel File</h3>
         <p>In Excel file:</p>
         <ul>
             <li>In general, the first line(header) defines column names, and each of followed lines defines a row of data.</li>
@@ -406,7 +434,8 @@
         </ul>
         <p>Notice: Tool can only handle base data in Excel file. 
             If file includes format, style, formula, or chart, suggest to save changes as new file to avoid data loss.</p>
-        <h3>9.3  Texts File</h3>
+
+        <h3>12.3  Texts File</h3>
         <p>In texts file:</p>
         <ul>
             <li>In general, the first line(header) defines column names, and each of followed lines defines a row of data.</li>
@@ -421,6 +450,7 @@
             <li>Not support multiple lines in values.</li>
             <li>Data can be saved as different charsets and delimiters.</li>
         </ul>
+
         <hr>
         <p>More details can be referred in <a href="https://mara-mybox.sourceforge.io/guide/MyBox-DataTools-en.pdf">"User Guide - Data Tools"</a></p> <br>
     </body>

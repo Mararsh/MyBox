@@ -82,7 +82,6 @@ public class Data2DManufactureController extends BaseData2DViewController {
                     tableChanged();
                 }
             });
-
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -154,7 +153,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
     @Override
     public void showHtmlButtons() {
         buttonsPane.getChildren().setAll(formCheck, titleCheck, columnCheck, rowCheck,
-                infoButton);
+                editHtmlButton, infoButton);
         isSettingValues = true;
         formCheck.setSelected(UserConfig.getBoolean(baseName + "HtmlShowForm", false));
         columnCheck.setSelected(UserConfig.getBoolean(baseName + "HtmlShowColumns", true));
@@ -365,14 +364,8 @@ public class Data2DManufactureController extends BaseData2DViewController {
         table
      */
     @Override
-    public boolean checkBeforeLoadingTableData() {
-        return checkBeforeNextAction();
-    }
-
-    @Override
     public boolean checkBeforeNextAction() {
         boolean goOn;
-
         if (!isDataChanged()) {
             goOn = true;
         } else {
@@ -452,7 +445,8 @@ public class Data2DManufactureController extends BaseData2DViewController {
             alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
             ButtonType buttonSaveAs = new ButtonType(message("SaveAs"));
             ButtonType buttonNotSave = new ButtonType(message("NotSave"));
-            alert.getButtonTypes().setAll(buttonSaveAs, buttonNotSave);
+            ButtonType buttonCancel = new ButtonType(message("Cancel"));
+            alert.getButtonTypes().setAll(buttonSaveAs, buttonNotSave, buttonCancel);
             Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
             stage.setAlwaysOnTop(true);
             stage.toFront();
@@ -738,7 +732,8 @@ public class Data2DManufactureController extends BaseData2DViewController {
                         backup = addBackup(this, data2D.getFile());
                     }
                     data2D.startTask(this, null);
-                    return data2D.savePageData(this) >= 0;
+                    dataSize = data2D.savePageData(this);
+                    return dataSize >= 0;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -816,11 +811,13 @@ public class Data2DManufactureController extends BaseData2DViewController {
     @FXML
     @Override
     public void editAction() {
-        int index = selectedIndix();
-        if (index < 0) {
-            return;
+        if (tableRadio.isSelected()) {
+            int index = selectedIndix();
+            if (index < 0) {
+                return;
+            }
+            Data2DRowEditController.open(this, index);
         }
-        Data2DRowEditController.open(this, index);
     }
 
     @FXML
