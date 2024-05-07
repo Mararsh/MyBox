@@ -45,7 +45,7 @@ public class FilesRenameController extends BaseBatchFileController {
     @FXML
     protected VBox renameOptionsBox, numberBox, replaceBox;
     @FXML
-    protected HBox suffixBox, prefixBox, extensionPane;
+    protected HBox suffixBox, prefixBox, extensionBox;
     @FXML
     protected CheckBox fillZeroCheck, originalCheck, stringCheck, accumCheck,
             suffixCheck, descentCheck, recountCheck, regexCheck;
@@ -119,7 +119,7 @@ public class FilesRenameController extends BaseBatchFileController {
 
         } else if (message("ChangeExtension").equals(selected.getText())) {
             renameType = RenameType.ChangeExtension;
-            renameOptionsBox.getChildren().addAll(extensionPane);
+            renameOptionsBox.getChildren().addAll(extensionBox);
         }
         refreshStyle(renameOptionsBox);
 
