@@ -143,7 +143,7 @@ public abstract class BaseData2DChartController extends BaseData2DTaskController
 
     public void makeOptions() {
         try {
-            List<String> names = dataController.data2D.columnNames();
+            List<String> names = data2D.columnNames();
             if (names == null || names.isEmpty()) {
                 return;
             }

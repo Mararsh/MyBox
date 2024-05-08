@@ -31,7 +31,7 @@ public class Data2DNormalizeController extends BaseData2DTaskTargetsController {
     @Override
     public boolean handleRows() {
         try {
-            List<Integer> filteredRowsIndices = sourceController.filteredRowsIndices();
+            List<Integer> filteredRowsIndices = sourceController.filteredRowsIndices;
             if (filteredRowsIndices == null || filteredRowsIndices.isEmpty()
                     || checkedColsIndices == null || checkedColsIndices.isEmpty()) {
                 if (task != null) {
@@ -44,7 +44,7 @@ public class Data2DNormalizeController extends BaseData2DTaskTargetsController {
             String[][] matrix = new String[rowsNumber][colsNumber];
             for (int r = 0; r < rowsNumber; r++) {
                 int row = filteredRowsIndices.get(r);
-                List<String> tableRow = dataController.tableData.get(row);
+                List<String> tableRow = sourceController.tableData.get(row);
                 for (int c = 0; c < colsNumber; c++) {
                     int col = checkedColsIndices.get(c);
                     matrix[r][c] = tableRow.get(col + 1);
@@ -89,7 +89,7 @@ public class Data2DNormalizeController extends BaseData2DTaskTargetsController {
                 }
                 if (otherColsNumber > 0) {
                     int rowIndex = filteredRowsIndices.get(r);
-                    List<String> tableRow = dataController.tableData.get(rowIndex);
+                    List<String> tableRow = sourceController.tableData.get(rowIndex);
                     for (int c = 0; c < otherColsNumber; c++) {
                         row.add(tableRow.get(otherColsIndices.get(c) + 1));
                     }

@@ -78,7 +78,7 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
         if (valueController.expressionRadio.isSelected()) {
             String expression = valueController.value();
             if (expression == null || expression.isBlank()) {
-                popError(message("Invalid") + ": " + message("RowExpression"));
+                setError(message("Invalid") + ": " + message("RowExpression"));
                 return;
             }
             scripts.add(expression);
@@ -201,235 +201,226 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
     }
 
     @Override
-    public void ouputRows() {
+    public boolean handleRows() {
         try {
-            dataController.isSettingValues = true;
             if (valueController.randomRadio.isSelected()) {
-                random(false);
+                return random(false);
             } else if (valueController.randomNnRadio.isSelected()) {
-                random(true);
+                return random(true);
             } else if (valueController.scaleRadio.isSelected()) {
-                scale();
+                return scale();
             } else if (valueController.prefixRadio.isSelected()) {
-                prefix();
+                return prefix();
             } else if (valueController.suffixRadio.isSelected()) {
-                suffix();
+                return suffix();
             } else if (valueController.numberRadio.isSelected()) {
-                number();
+                return number();
             } else if (valueController.expressionRadio.isSelected()) {
-                expression();
+                return expression();
             } else if (valueController.gaussianDistributionRadio.isSelected()) {
-                gaussianDistribution();
+                return gaussianDistribution();
             } else if (valueController.identifyRadio.isSelected()) {
-                identifyMatrix();
+                return identifyMatrix();
             } else if (valueController.upperTriangleRadio.isSelected()) {
-                upperTriangleMatrix();
+                return upperTriangleMatrix();
             } else if (valueController.lowerTriangleRadio.isSelected()) {
-                lowerTriangleMatrix();
+                return lowerTriangleMatrix();
             } else {
-                setValue(valueController.value());
+                return setValue(valueController.value());
             }
         } catch (Exception e) {
-            MyBoxLog.error(e);
-            popError(message(e.toString()));
+            setError(e.toString());
+            return false;
         }
-        dataController.isSettingValues = false;
     }
 
-    public boolean updateTable(List<List<String>> data) {
-        dataController.updateTable(data);
-        dataController.isSettingValues = true;
-        dataController.tableView.refresh();
-        dataController.isSettingValues = false;
-        dataController.tableChanged(true);
-        dataController.requestMouse();
-        dataController.alertInformation(message("ChangedRowsNumber") + ": "
-                + sourceController.filteredRowsIndices.size());
-        tabPane.getSelectionModel().select(sourceTab);
-        return true;
-    }
-
-    public void setValue(String value) {
+    public boolean setValue(String value) {
         try {
-            List<List<String>> tableData = new ArrayList<>();
-            tableData.addAll(dataController.tableData);
+            outputData.addAll(sourceController.tableData);
             for (int row : sourceController.filteredRowsIndices) {
-                List<String> values = dataController.tableData.get(row);
+                List<String> values = sourceController.tableData.get(row);
                 for (int col : checkedColsIndices) {
                     values.set(col + 1, value);
                 }
-                tableData.set(row, values);
+                outputData.set(row, values);
             }
-            updateTable(tableData);
+            return true;
         } catch (Exception e) {
-            MyBoxLog.error(e);
-            popError(message(e.toString()));
+            setError(e.toString());
+            outputData = null;
+            return false;
         }
     }
 
-    public void random(boolean nonNegative) {
+    public boolean random(boolean nonNegative) {
         try {
-            List<List<String>> tableData = new ArrayList<>();
-            tableData.addAll(dataController.tableData);
+            outputData = new ArrayList<>();
+            outputData.addAll(sourceController.tableData);
             Random random = new Random();
             for (int row : sourceController.filteredRowsIndices) {
-                List<String> values = dataController.tableData.get(row);
+                List<String> values = sourceController.tableData.get(row);
                 for (int col : checkedColsIndices) {
-                    String v = dataController.data2D.random(random, col, nonNegative);
+                    String v = data2D.random(random, col, nonNegative);
                     values.set(col + 1, v);
                 }
-                tableData.set(row, values);
+                outputData.set(row, values);
             }
-            updateTable(tableData);
+            return true;
         } catch (Exception e) {
-            MyBoxLog.error(e);
-            popError(message(e.toString()));
+            setError(e.toString());
+            outputData = null;
+            return false;
         }
     }
 
-    public void scale() {
+    public boolean scale() {
         try {
-            List<List<String>> tableData = new ArrayList<>();
-            tableData.addAll(dataController.tableData);
+            outputData = new ArrayList<>();
+            outputData.addAll(sourceController.tableData);
             String currentValue;
             for (int row : sourceController.filteredRowsIndices) {
-                List<String> values = dataController.tableData.get(row);
+                List<String> values = sourceController.tableData.get(row);
                 for (int col : checkedColsIndices) {
                     currentValue = values.get(col + 1);
                     values.set(col + 1, valueController.scale(currentValue));
                 }
-                tableData.set(row, values);
+                outputData.set(row, values);
             }
-            updateTable(tableData);
+            return true;
         } catch (Exception e) {
-            MyBoxLog.error(e);
-            popError(message(e.toString()));
+            setError(e.toString());
+            outputData = null;
+            return false;
         }
     }
 
-    public void prefix() {
+    public boolean prefix() {
         try {
             String prefix = valueController.value();
             if (prefix == null) {
-                popError(message("Invalid") + ": " + message("AddPrefix"));
-                return;
+                setError(message("Invalid") + ": " + message("AddPrefix"));
+                return false;
             }
-            List<List<String>> tableData = new ArrayList<>();
-            tableData.addAll(dataController.tableData);
+            outputData = new ArrayList<>();
+            outputData.addAll(sourceController.tableData);
             String currentValue;
             for (int row : sourceController.filteredRowsIndices) {
-                List<String> values = dataController.tableData.get(row);
+                List<String> values = sourceController.tableData.get(row);
                 for (int col : checkedColsIndices) {
                     currentValue = values.get(col + 1);
                     values.set(col + 1, currentValue == null ? prefix : prefix + currentValue);
                 }
-                tableData.set(row, values);
+                outputData.set(row, values);
             }
-            updateTable(tableData);
+            return true;
         } catch (Exception e) {
-            MyBoxLog.error(e);
-            popError(message(e.toString()));
+            setError(e.toString());
+            outputData = null;
+            return false;
         }
     }
 
-    public void suffix() {
+    public boolean suffix() {
         try {
             String suffix = valueController.value();
             if (suffix == null) {
-                popError(message("Invalid") + ": " + message("AppendSuffix"));
-                return;
+                setError(message("Invalid") + ": " + message("AppendSuffix"));
+                return false;
             }
-            List<List<String>> tableData = new ArrayList<>();
-            tableData.addAll(dataController.tableData);
+            outputData = new ArrayList<>();
+            outputData.addAll(sourceController.tableData);
             String currentValue;
             for (int row : sourceController.filteredRowsIndices) {
-                List<String> values = dataController.tableData.get(row);
+                List<String> values = sourceController.tableData.get(row);
                 for (int col : checkedColsIndices) {
                     currentValue = values.get(col + 1);
                     values.set(col + 1, currentValue == null ? suffix : currentValue + suffix);
                 }
-                tableData.set(row, values);
+                outputData.set(row, values);
             }
-            updateTable(tableData);
+            return true;
         } catch (Exception e) {
-            MyBoxLog.error(e);
-            popError(message(e.toString()));
+            setError(e.toString());
+            outputData = null;
+            return false;
         }
     }
 
-    public void number() {
+    public boolean number() {
         try {
-            List<List<String>> tableData = new ArrayList<>();
-            tableData.addAll(dataController.tableData);
+            outputData = new ArrayList<>();
+            outputData.addAll(sourceController.tableData);
             int num = valueController.setValue.getStart();
             int digit = valueController.setValue.countFinalDigit(sourceController.filteredRowsIndices.size());
             String currentValue, suffix;
             for (int row : sourceController.filteredRowsIndices) {
-                List<String> values = dataController.tableData.get(row);
+                List<String> values = sourceController.tableData.get(row);
                 suffix = StringTools.fillLeftZero(num++, digit);
                 for (int col : checkedColsIndices) {
                     currentValue = values.get(col + 1);
                     values.set(col + 1, currentValue == null ? suffix : currentValue + suffix);
                 }
-                tableData.set(row, values);
+                outputData.set(row, values);
             }
-            updateTable(tableData);
+            return true;
         } catch (Exception e) {
-            MyBoxLog.error(e);
-            popError(message(e.toString()));
+            setError(message(e.toString()));
+            outputData = null;
+            return false;
         }
     }
 
-    public void expression() {
+    public boolean expression() {
         try {
-            List<List<String>> tableData = new ArrayList<>();
-            tableData.addAll(dataController.tableData);
+            outputData = new ArrayList<>();
+            outputData.addAll(sourceController.tableData);
             String script = valueController.value();
             for (int row : sourceController.filteredRowsIndices) {
-                List<String> values = dataController.tableData.get(row);
+                List<String> values = sourceController.tableData.get(row);
                 if (!data2D.calculateTableRowExpression(script, values, row)) {
-                    error = data2D.getError();
+                    error = data2D.expressionError();
                     if (valueController.errorContinueCheck.isSelected()) {
                         if (error != null) {
-                            MyBoxLog.console(error);
+                            MyBoxLog.console(row + "" + error);
                         }
                         continue;
                     } else {
                         if (error != null) {
-                            popError(error);
+                            setError(error);
                         }
-                        return;
+                        return false;
                     }
                 }
                 String v = data2D.expressionResult();
                 for (int col : checkedColsIndices) {
                     values.set(col + 1, v);
                 }
-                tableData.set(row, values);
+                outputData.set(row, values);
             }
-            updateTable(tableData);
+            return true;
         } catch (Exception e) {
-            MyBoxLog.error(e);
-            popError(message(e.toString()));
+            setError(e.toString());
+            outputData = null;
+            return false;
         }
     }
 
-    public void gaussianDistribution() {
+    public boolean gaussianDistribution() {
         try {
             if (sourceController.filteredRowsIndices.size() != checkedColsIndices.size()) {
-                popError(message("MatricesCannotCalculateShouldSqure"));
-                return;
+                setError(message("MatricesCannotCalculateShouldSqure"));
+                return false;
             }
             if (sourceController.filteredRowsIndices.size() % 2 == 0) {
-                popError(message("MatricesCannotCalculateShouldOdd"));
-                return;
+                setError(message("MatricesCannotCalculateShouldOdd"));
+                return false;
             }
-            List<List<String>> tableData = new ArrayList<>();
-            tableData.addAll(dataController.tableData);
+            outputData = new ArrayList<>();
+            outputData.addAll(sourceController.tableData);
             float[][] m = ConvolutionKernel.makeGaussMatrix((int) sourceController.filteredRowsIndices.size() / 2);
             int rowIndex = 0, colIndex;
             for (int row : sourceController.filteredRowsIndices) {
-                List<String> tableRow = dataController.tableData.get(row);
+                List<String> tableRow = sourceController.tableData.get(row);
                 colIndex = 0;
                 for (int col : checkedColsIndices) {
                     try {
@@ -438,27 +429,28 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
                     }
                     colIndex++;
                 }
-                tableData.set(row, tableRow);
+                outputData.set(row, tableRow);
                 rowIndex++;
             }
-            updateTable(tableData);
+            return true;
         } catch (Exception e) {
-            MyBoxLog.error(e);
-            popError(message(e.toString()));
+            setError(e.toString());
+            outputData = null;
+            return false;
         }
     }
 
-    public void identifyMatrix() {
+    public boolean identifyMatrix() {
         try {
             if (sourceController.filteredRowsIndices.size() != checkedColsIndices.size()) {
-                popError(message("MatricesCannotCalculateShouldSqure"));
-                return;
+                setError(message("MatricesCannotCalculateShouldSqure"));
+                return false;
             }
-            List<List<String>> tableData = new ArrayList<>();
-            tableData.addAll(dataController.tableData);
+            outputData = new ArrayList<>();
+            outputData.addAll(sourceController.tableData);
             int rowIndex = 0, colIndex;
             for (int row : sourceController.filteredRowsIndices) {
-                List<String> values = dataController.tableData.get(row);
+                List<String> values = sourceController.tableData.get(row);
                 colIndex = 0;
                 for (int col : checkedColsIndices) {
                     if (rowIndex == colIndex) {
@@ -468,27 +460,28 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
                     }
                     colIndex++;
                 }
-                tableData.set(row, values);
+                outputData.set(row, values);
                 rowIndex++;
             }
-            updateTable(tableData);
+            return true;
         } catch (Exception e) {
-            MyBoxLog.error(e);
-            popError(message(e.toString()));
+            setError(e.toString());
+            outputData = null;
+            return false;
         }
     }
 
-    public void upperTriangleMatrix() {
+    public boolean upperTriangleMatrix() {
         try {
             if (sourceController.filteredRowsIndices.size() != checkedColsIndices.size()) {
-                popError(message("MatricesCannotCalculateShouldSqure"));
-                return;
+                setError(message("MatricesCannotCalculateShouldSqure"));
+                return false;
             }
-            List<List<String>> tableData = new ArrayList<>();
-            tableData.addAll(dataController.tableData);
+            outputData = new ArrayList<>();
+            outputData.addAll(sourceController.tableData);
             int rowIndex = 0, colIndex;
             for (int row : sourceController.filteredRowsIndices) {
-                List<String> values = dataController.tableData.get(row);
+                List<String> values = sourceController.tableData.get(row);
                 colIndex = 0;
                 for (int col : checkedColsIndices) {
                     if (rowIndex <= colIndex) {
@@ -498,27 +491,28 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
                     }
                     colIndex++;
                 }
-                tableData.set(row, values);
+                outputData.set(row, values);
                 rowIndex++;
             }
-            updateTable(tableData);
+            return true;
         } catch (Exception e) {
-            MyBoxLog.error(e);
-            popError(message(e.toString()));
+            setError(e.toString());
+            outputData = null;
+            return false;
         }
     }
 
-    public void lowerTriangleMatrix() {
+    public boolean lowerTriangleMatrix() {
         try {
             if (sourceController.filteredRowsIndices.size() != checkedColsIndices.size()) {
-                popError(message("MatricesCannotCalculateShouldSqure"));
-                return;
+                setError(message("MatricesCannotCalculateShouldSqure"));
+                return false;
             }
-            List<List<String>> tableData = new ArrayList<>();
-            tableData.addAll(dataController.tableData);
+            outputData = new ArrayList<>();
+            outputData.addAll(sourceController.tableData);
             int rowIndex = 0, colIndex;
             for (int row : sourceController.filteredRowsIndices) {
-                List<String> values = dataController.tableData.get(row);
+                List<String> values = sourceController.tableData.get(row);
                 colIndex = 0;
                 for (int col : checkedColsIndices) {
                     if (rowIndex >= colIndex) {
@@ -528,13 +522,28 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
                     }
                     colIndex++;
                 }
-                tableData.set(row, values);
+                outputData.set(row, values);
                 rowIndex++;
             }
-            updateTable(tableData);
+            return true;
         } catch (Exception e) {
-            MyBoxLog.error(e);
-            popError(message(e.toString()));
+            setError(e.toString());
+            outputData = null;
+            return false;
+        }
+    }
+
+    @Override
+    public void ouputRows() {
+        try {
+            dataController.updateTable(outputData);
+            dataController.tableChanged(true);
+            dataController.requestMouse();
+            dataController.alertInformation(message("ChangedRowsNumber") + ": "
+                    + sourceController.filteredRowsIndices.size());
+            tabPane.getSelectionModel().select(sourceTab);
+        } catch (Exception e) {
+            setError(message(e.toString()));
         }
     }
 

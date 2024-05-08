@@ -171,7 +171,7 @@ public class Data2DRowExpressionController extends BaseData2DTaskTargetsControll
                 int rowIndex = sourceController.filteredRowsIndices.get(i);
                 List<String> checkedRow = outputData.get(i);
                 if (data2D.calculateTableRowExpression(expression,
-                        dataController.tableData.get(rowIndex), rowIndex)) {
+                        sourceController.tableData.get(rowIndex), rowIndex)) {
                     checkedRow.add(data2D.expressionResult());
                 } else {
                     if (errorContinueCheck.isSelected()) {

@@ -85,7 +85,7 @@ public class Data2DPercentageController extends BaseData2DTaskTargetsController 
     @Override
     public boolean handleRows() {
         try {
-            List<Integer> filteredRowsIndices = sourceController.filteredRowsIndices();
+            List<Integer> filteredRowsIndices = sourceController.filteredRowsIndices;
             if (filteredRowsIndices == null || filteredRowsIndices.isEmpty()) {
                 if (task != null) {
                     task.setError(message("NoData"));
@@ -114,7 +114,7 @@ public class Data2DPercentageController extends BaseData2DTaskTargetsController 
             int colsLen = colIndices.size();
             double[] sum = new double[colsLen];
             for (int r : filteredRowsIndices) {
-                List<String> tableRow = dataController.tableData.get(r);
+                List<String> tableRow = sourceController.tableData.get(r);
                 for (int c = 0; c < colsLen; c++) {
                     double d = DoubleTools.toDouble(tableRow.get(colIndices.get(c) + 1), invalidAs);
                     if (DoubleTools.invalidDouble(d)) {
@@ -141,7 +141,7 @@ public class Data2DPercentageController extends BaseData2DTaskTargetsController 
             }
             outputData.add(row);
             for (int r : filteredRowsIndices) {
-                List<String> tableRow = dataController.tableData.get(r);
+                List<String> tableRow = sourceController.tableData.get(r);
                 row = new ArrayList<>();
                 row.add(message("Row") + (r + 1));
                 for (int c = 0; c < colsLen; c++) {
@@ -191,7 +191,7 @@ public class Data2DPercentageController extends BaseData2DTaskTargetsController 
                 double sum = 0d;
                 List<String> row = new ArrayList<>();
                 row.add(message("Row") + (r + 1));
-                List<String> tableRow = dataController.tableData.get(r);
+                List<String> tableRow = sourceController.tableData.get(r);
                 for (int c : colIndices) {
                     double d = DoubleTools.toDouble(tableRow.get(c + 1), invalidAs);
                     if (DoubleTools.invalidDouble(d)) {
@@ -247,7 +247,7 @@ public class Data2DPercentageController extends BaseData2DTaskTargetsController 
             List<Integer> colIndices = checkedColsIndices;
             double sum = 0d;
             for (int r : filteredRowsIndices) {
-                List<String> tableRow = dataController.tableData.get(r);
+                List<String> tableRow = sourceController.tableData.get(r);
                 for (int c : colIndices) {
                     double d = DoubleTools.toDouble(tableRow.get(c + 1), invalidAs);
                     if (DoubleTools.invalidDouble(d)) {
@@ -275,7 +275,7 @@ public class Data2DPercentageController extends BaseData2DTaskTargetsController 
             }
             outputData.add(row);
             for (int r : filteredRowsIndices) {
-                List<String> tableRow = dataController.tableData.get(r);
+                List<String> tableRow = sourceController.tableData.get(r);
                 row = new ArrayList<>();
                 row.add(message("Row") + (r + 1) + "");
                 for (int c : colIndices) {

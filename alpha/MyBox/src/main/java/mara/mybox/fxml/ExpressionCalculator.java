@@ -68,6 +68,7 @@ public class ExpressionCalculator {
             if (o != null) {
                 result = o.toString();
             }
+//            MyBoxLog.console(info());
             return true;
         } catch (Exception e) {
             handleError(e.toString());
@@ -102,6 +103,8 @@ public class ExpressionCalculator {
         for (String variable : variableValues.keySet()) {
             info += "\n" + variable + ": " + variableValues.get(variable);
         }
+        info += "\nresult: " + result;
+        info += "\nerror: " + error;
         return info;
     }
 

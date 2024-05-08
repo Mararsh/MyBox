@@ -77,13 +77,13 @@ public class Data2DFrequencyController extends BaseData2DTaskTargetsController {
     public boolean handleRows() {
         try {
             outputData = new ArrayList<>();
-            List<Integer> filteredRowsIndices = sourceController.filteredRowsIndices();
+            List<Integer> filteredRowsIndices = sourceController.filteredRowsIndices;
             if (filteredRowsIndices == null || filteredRowsIndices.isEmpty()) {
                 setError(message("NoData"));
                 return false;
             }
             for (int r : filteredRowsIndices) {
-                List<String> tableRow = dataController.tableData.get(r);
+                List<String> tableRow = sourceController.tableData.get(r);
                 String d = tableRow.get(freCol + 1);
                 frequency.addValue(d);
             }

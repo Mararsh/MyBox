@@ -32,17 +32,7 @@ public class Data2DDelete extends Data2DOperate {
             targetRow = null;
             passFilter = sourceData.filterDataRow(sourceRow, sourceRowIndex);
             reachMax = sourceData.filterReachMaxPassed();
-            boolean handle = passFilter && !reachMax;
-            if (sourceData.error != null) {
-                if (errorContinue) {
-                    showError(sourceData.error);
-                    handle = false;
-                } else {
-                    failStop(sourceData.error);
-                    return;
-                }
-            }
-            deleteRow(handle);
+            deleteRow(passFilter && !reachMax);
         } catch (Exception e) {
             MyBoxLog.console(e);
         }

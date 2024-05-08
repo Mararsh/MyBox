@@ -66,20 +66,26 @@ public class BaseData2DSourceRowsController extends BaseData2DLoadController {
             String rowsSelectionType = UserConfig.getString(baseName + "RowsSelectionType", "Selected");
             if ("AllPages".equals(rowsSelectionType)) {
                 allPagesRadio.setSelected(true);
+                tableView.setDisable(true);
             } else if ("CurrentPage".equals(rowsSelectionType)) {
                 currentPageRadio.setSelected(true);
+                tableView.setDisable(true);
             } else {
                 selectedRadio.setSelected(true);
+                tableView.setDisable(false);
             }
             rowsGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
                     if (allPagesRadio.isSelected()) {
                         UserConfig.setString(baseName + "RowsSelectionType", "AllPages");
+                        tableView.setDisable(true);
                     } else if (selectedRadio.isSelected()) {
                         UserConfig.setString(baseName + "RowsSelectionType", "Selected");
+                        tableView.setDisable(false);
                     } else {
                         UserConfig.setString(baseName + "RowsSelectionType", "CurrentPage");
+                        tableView.setDisable(true);
                     }
                 }
             });
@@ -193,6 +199,23 @@ public class BaseData2DSourceRowsController extends BaseData2DLoadController {
                     selectedRowsIndices.add(i);
                 }
             }
+            if (filter == null || !filter.needFilter()
+                    || selectedRowsIndices == null || selectedRowsIndices.isEmpty()) {
+                filteredRowsIndices = selectedRowsIndices;
+            } else {
+                filteredRowsIndices = new ArrayList<>();
+                int size = tableData.size();
+                for (int row : selectedRowsIndices) {
+                    if (row < 0 || row >= size
+                            || !filter.filterTableRow(data2D, tableData.get(row), row)) {
+                        continue;
+                    }
+                    if (filter.reachMaxPassed()) {
+                        break;
+                    }
+                    filteredRowsIndices.add(row);
+                }
+            }
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -234,33 +257,6 @@ public class BaseData2DSourceRowsController extends BaseData2DLoadController {
             return false;
         } else {
             return true;
-        }
-    }
-
-    public List<Integer> filteredRowsIndices() {
-        try {
-            DataFilter filter = data2D.filter;
-            if (filter == null || !filter.needFilter()
-                    || selectedRowsIndices == null || selectedRowsIndices.isEmpty()) {
-                return selectedRowsIndices;
-            }
-            filteredRowsIndices = new ArrayList<>();
-            int size = tableData.size();
-            for (int row : selectedRowsIndices) {
-                if (row < 0 || row >= size
-                        || !filter.filterTableRow(data2D, tableData.get(row), row)) {
-                    continue;
-                }
-                if (filter.reachMaxPassed()) {
-                    break;
-                }
-                filteredRowsIndices.add(row);
-            }
-            return filteredRowsIndices;
-        } catch (Exception e) {
-            error = e.toString();
-            MyBoxLog.debug(e);
-            return null;
         }
     }
 

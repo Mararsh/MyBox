@@ -119,7 +119,7 @@ public class Data2DExportController extends BaseData2DTaskController {
                 try {
                     data2D.startTask(task, filterController.filter);
                     if (!isAllPages() || !data2D.isMutiplePages()) {
-                        List<Integer> filteredRowsIndices = sourceController.filteredRowsIndices();
+                        List<Integer> filteredRowsIndices = sourceController.filteredRowsIndices;
                         export.openWriters();
                         for (Integer row : filteredRowsIndices) {
                             List<String> dataRow = sourceController.tableData.get(row);

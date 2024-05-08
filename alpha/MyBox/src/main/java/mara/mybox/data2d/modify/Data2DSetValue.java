@@ -56,24 +56,24 @@ public class Data2DSetValue extends Data2DOperate {
             passFilter = sourceData.filterDataRow(sourceRow, sourceRowIndex);
             reachMax = sourceData.filterReachMaxPassed();
             boolean handle = passFilter && !reachMax;
-            String expResult = null, currentValue;
+            String expResult = null, currentValue, error;
             if (handle) {
                 if (setValue.isExpression() && dataValue != null) {
                     if (sourceData.calculateDataRowExpression(dataValue, sourceRow, sourceRowIndex)) {
                         expResult = sourceData.expressionResult();
                     } else {
-                        sourceData.error = sourceData.expressionError();
+                        error = sourceData.expressionError();
                         if (errorContinue) {
-                            showError(sourceData.error);
+                            showError(error);
                             handle = false;
                         } else {
-                            failStop(sourceData.error);
+                            failStop(error);
                             return;
                         }
                     }
                 }
-                handledCount++;
-            } else if (sourceData instanceof DataTable) {
+            }
+            if (!handle && (sourceData instanceof DataTable)) {
                 return;
             }
             targetRow = new ArrayList<>();
@@ -118,6 +118,7 @@ public class Data2DSetValue extends Data2DOperate {
                 targetRow.add(v);
             }
             writeRow();
+            handledCount++;
         } catch (Exception e) {
             MyBoxLog.console(e);
         }

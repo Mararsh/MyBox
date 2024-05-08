@@ -1,7 +1,6 @@
 package mara.mybox.controller;
 
 import java.util.ArrayList;
-import java.util.List;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.PopTools;
@@ -60,58 +59,35 @@ public class Data2DDeleteController extends BaseData2DTaskTargetsController {
     }
 
     @Override
-    public synchronized void handleRowsTask() {
-        if (task != null) {
-            task.cancel();
+    public boolean handleRows() {
+        try {
+            outputData = new ArrayList<>();
+            for (int i = 0; i < sourceController.tableData.size(); i++) {
+                if (!sourceController.filteredRowsIndices.contains(i)) {
+                    outputData.add(sourceController.tableData.get(i));
+                }
+            }
+            return true;
+        } catch (Exception e) {
+            setError(e.toString());
+            outputData = null;
+            return false;
         }
-        taskSuccessed = false;
-        task = new FxSingletonTask<Void>(this) {
+    }
 
-            List<List<String>> data;
-            List<Integer> filteredRowsIndices;
-
-            @Override
-            protected boolean handle() {
-                try {
-                    data2D.startTask(this, filterController.filter);
-                    data = new ArrayList<>();
-                    filteredRowsIndices = sourceController.filteredRowsIndices();
-                    for (int i = 0; i < dataController.tableData.size(); i++) {
-                        if (!filteredRowsIndices.contains(i)) {
-                            data.add(dataController.tableData.get(i));
-                        }
-                    }
-                    data2D.stopFilter();
-                    taskSuccessed = true;
-                    return taskSuccessed;
-                } catch (Exception e) {
-                    error = e.toString();
-                    return false;
-                }
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                try {
-                    dataController.updateTable(data);
-                    dataController.tableChanged(true);
-                    dataController.requestMouse();
-                    dataController.alertInformation(message("DeletedRowsNumber") + ": " + filteredRowsIndices.size());
-                    sourceController.selectedRowsIndices = null;
-                    tabPane.getSelectionModel().select(sourceTab);
-                } catch (Exception e) {
-                    MyBoxLog.error(e);
-                }
-            }
-
-            @Override
-            protected void finalAction() {
-                super.finalAction();
-                closeTask(ok);
-            }
-
-        };
-        start(task, false);
+    @Override
+    public void ouputRows() {
+        try {
+            sourceController.selectedRowsIndices = null;
+            dataController.updateTable(outputData);
+            dataController.tableChanged(true);
+            dataController.requestMouse();
+            dataController.alertInformation(message("DeletedRowsNumber") + ": "
+                    + sourceController.filteredRowsIndices.size());
+            tabPane.getSelectionModel().select(sourceTab);
+        } catch (Exception e) {
+            popError(message(e.toString()));
+        }
     }
 
     @Override
@@ -149,8 +125,8 @@ public class Data2DDeleteController extends BaseData2DTaskTargetsController {
 
             @Override
             protected void whenSucceeded() {
-                tabPane.getSelectionModel().select(sourceTab);
                 sourceController.selectedRowsIndices = null;
+                tabPane.getSelectionModel().select(sourceTab);
                 dataController.data2D.cloneData(data2D);
                 dataController.dataSizeLoaded = false;
                 dataController.goPage();

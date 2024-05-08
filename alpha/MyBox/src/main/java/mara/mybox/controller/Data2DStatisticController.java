@@ -68,7 +68,7 @@ public class Data2DStatisticController extends BaseData2DTaskTargetsController {
         try {
             super.sourceChanged();
 
-            List<String> names = dataController.data2D.columnNames();
+            List<String> names = data2D.columnNames();
             if (names == null || names.isEmpty()) {
                 return;
             }
