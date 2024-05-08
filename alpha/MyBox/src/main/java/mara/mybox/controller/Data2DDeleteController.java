@@ -112,7 +112,7 @@ public class Data2DDeleteController extends BaseData2DTaskTargetsController {
                     if (clearAll) {
                         count = data2D.clearData(this);
                     } else {
-                        count = data2D.deleteRows(this, errorContinueCheck.isSelected());
+                        count = data2D.deleteRows(this);
                     }
                     data2D.stopFilter();
                     taskSuccessed = count >= 0;

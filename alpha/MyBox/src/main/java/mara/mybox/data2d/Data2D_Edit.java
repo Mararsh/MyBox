@@ -330,7 +330,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
         }
     }
 
-    public long deleteRows(FxTask task, boolean errorContinue) {
+    public long deleteRows(FxTask task) {
         try {
             if (!isValidData()) {
                 return -1;

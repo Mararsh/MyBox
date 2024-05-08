@@ -178,7 +178,7 @@ public class DataMatrix extends Data2D {
     }
 
     @Override
-    public long deleteRows(FxTask task, boolean errorContinue) {
+    public long deleteRows(FxTask task) {
         return -1;
     }
 
