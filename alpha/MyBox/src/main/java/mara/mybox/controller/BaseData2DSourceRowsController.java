@@ -66,26 +66,26 @@ public class BaseData2DSourceRowsController extends BaseData2DLoadController {
             String rowsSelectionType = UserConfig.getString(baseName + "RowsSelectionType", "Selected");
             if ("AllPages".equals(rowsSelectionType)) {
                 allPagesRadio.setSelected(true);
-                tableView.setDisable(true);
+                setSelectable(false);
             } else if ("CurrentPage".equals(rowsSelectionType)) {
                 currentPageRadio.setSelected(true);
-                tableView.setDisable(true);
+                setSelectable(false);
             } else {
                 selectedRadio.setSelected(true);
-                tableView.setDisable(false);
+                setSelectable(true);
             }
             rowsGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
                     if (allPagesRadio.isSelected()) {
                         UserConfig.setString(baseName + "RowsSelectionType", "AllPages");
-                        tableView.setDisable(true);
+                        setSelectable(false);
                     } else if (selectedRadio.isSelected()) {
                         UserConfig.setString(baseName + "RowsSelectionType", "Selected");
-                        tableView.setDisable(false);
+                        setSelectable(true);
                     } else {
                         UserConfig.setString(baseName + "RowsSelectionType", "CurrentPage");
-                        tableView.setDisable(true);
+                        setSelectable(false);
                     }
                 }
             });

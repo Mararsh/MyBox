@@ -1,7 +1,9 @@
 package mara.mybox.controller;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
@@ -149,14 +151,14 @@ public class MathFunctionController extends InfoTreeManageController {
                 popError(message("InvalidParameter") + ": " + message("DecimalScale"));
                 return;
             }
+            Map<String, Object> variableValues = pickVariables();
             expression = script();
             domain = domain();
-            if (!editorController.inDomain(fillInputs(domain))) {
+            if (!editorController.inDomain(domain, variableValues)) {
                 popError(message("NotInDomain"));
                 return;
             }
-            String finalScript = fillInputs(expression);
-            String ret = editorController.eval(finalScript);
+            String ret = editorController.calculate(expression, variableValues);
             if (ret == null) {
                 popError(message("Failed"));
                 return;
@@ -164,8 +166,15 @@ public class MathFunctionController extends InfoTreeManageController {
             double d = DoubleTools.scale(ret, ColumnDefinition.InvalidAs.Empty, calculateScale);
             ret = DoubleTools.invalidDouble(d) ? ret : (d + "");
             outputs += DateTools.nowString() + "<div class=\"valueText\" >"
-                    + HtmlWriteTools.stringToHtml(finalScript)
-                    + "</div>";
+                    + message("Expression") + ": <br>\n"
+                    + HtmlWriteTools.stringToHtml(expression) + "<br>\n";
+            if (variableValues != null && !variableValues.isEmpty()) {
+                outputs += "<br>" + message("Variables") + ": <br>\n";
+                for (String n : variableValues.keySet()) {
+                    outputs += n + "=" + variableValues.get(n) + "<br>";
+                }
+            }
+            outputs += "</div>";
             outputs += "<div class=\"valueBox\">"
                     + HtmlWriteTools.stringToHtml(editorController.functionName() + "=" + ret)
                     + "</div><br><br>";
@@ -180,22 +189,18 @@ public class MathFunctionController extends InfoTreeManageController {
         }
     }
 
-    public String fillInputs(String script) {
+    public Map<String, Object> pickVariables() {
         try {
-            List<String> variables = editorController.variableNames();
-            if (script == null || script.isBlank() || variables == null) {
-                return script;
-            }
-            String vars = "";
+            Map<String, Object> vs = new HashMap<>();
             List<Node> nodes = inputsBox.getChildren();
             for (int i = 0; i < nodes.size(); i++) {
                 FlowPane fp = (FlowPane) nodes.get(i);
                 Label label = (Label) fp.getChildren().get(0);
                 TextField input = (TextField) fp.getChildren().get(1);
                 double d = DoubleTools.toDouble(input.getText(), ColumnDefinition.InvalidAs.Empty);
-                vars += "var " + label.getText() + "=" + d + ";\n";
+                vs.put(label.getText(), d);
             }
-            return vars + script;
+            return vs;
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;

@@ -542,7 +542,6 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
         }
     }
 
-
     /*
         interface
      */

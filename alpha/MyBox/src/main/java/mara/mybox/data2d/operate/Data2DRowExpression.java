@@ -48,15 +48,11 @@ public class Data2DRowExpression extends Data2DOperate {
             }
             if (sourceData.calculateDataRowExpression(script, sourceRow, sourceRowIndex)) {
                 targetRow.add(sourceData.expressionResult());
+                return true;
             } else {
-                if (errorContinue) {
-                    targetRow.add(null);
-                } else {
-                    stop();
-                    return false;
-                }
+                stop();
+                return false;
             }
-            return true;
         } catch (Exception e) {
             showError(e.toString());
             return false;
@@ -73,11 +69,6 @@ public class Data2DRowExpression extends Data2DOperate {
 
     public Data2DRowExpression setName(String name) {
         this.name = name;
-        return this;
-    }
-
-    public Data2DRowExpression setErrorContinue(boolean errorContinue) {
-        this.errorContinue = errorContinue;
         return this;
     }
 

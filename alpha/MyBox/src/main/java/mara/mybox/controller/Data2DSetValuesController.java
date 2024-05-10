@@ -169,8 +169,7 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
                         addBackup(this, data2D.getFile());
                     }
                     data2D.startTask(this, filterController.filter);
-                    count = data2D.setValue(this, checkedColsIndices, valueController.setValue,
-                            valueController.errorContinueCheck.isSelected());
+                    count = data2D.setValue(this, checkedColsIndices, valueController.setValue);
                     data2D.stopFilter();
                     taskSuccessed = count >= 0;
                     return taskSuccessed;
@@ -378,18 +377,8 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
             for (int row : sourceController.filteredRowsIndices) {
                 List<String> values = sourceController.tableData.get(row);
                 if (!data2D.calculateTableRowExpression(script, values, row)) {
-                    error = data2D.expressionError();
-                    if (valueController.errorContinueCheck.isSelected()) {
-                        if (error != null) {
-                            MyBoxLog.console(row + "" + error);
-                        }
-                        continue;
-                    } else {
-                        if (error != null) {
-                            setError(error);
-                        }
-                        return false;
-                    }
+                    setError(data2D.expressionError());
+                    return false;
                 }
                 String v = data2D.expressionResult();
                 for (int col : checkedColsIndices) {

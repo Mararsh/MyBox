@@ -36,7 +36,7 @@ public abstract class Data2DOperate {
     protected List<Integer> cols, otherCols;
     protected int colsLen, scale = -1;
     protected boolean includeRowNumber, writeHeader, passFilter, reachMax;
-    protected boolean stopped, needCheckTask, errorContinue, failed, closeConn;
+    protected boolean stopped, needCheckTask, failed, closeConn;
     protected long sourceRowIndex; // 1-based 
     protected long handledCount;
     protected InvalidAs invalidAs;
@@ -384,11 +384,6 @@ public abstract class Data2DOperate {
 
     public Data2DOperate setWriters(List<Data2DWriter> writers) {
         this.writers = writers;
-        return this;
-    }
-
-    public Data2DOperate setErrorContinue(boolean errorContinue) {
-        this.errorContinue = errorContinue;
         return this;
     }
 

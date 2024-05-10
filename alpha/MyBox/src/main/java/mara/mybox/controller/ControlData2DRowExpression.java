@@ -12,7 +12,7 @@ import mara.mybox.data2d.Data2D;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.ExpressionCalculator;
+import mara.mybox.calculation.ExpressionCalculator;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
 import static mara.mybox.value.Languages.message;

@@ -1,4 +1,4 @@
-package mara.mybox.fxml;
+package mara.mybox.calculation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -76,9 +76,14 @@ public class ExpressionCalculator {
         }
     }
 
-    public String calculate(String script) {
+    public String calculate(String script, Map<String, Object> variables) {
         reset();
         this.expression = script;
+        if (variables != null) {
+            for (String v : variables.keySet()) {
+                variableValues.put(v, variables.get(v));
+            }
+        }
         if (executeScript()) {
             return result;
         } else {
@@ -86,8 +91,8 @@ public class ExpressionCalculator {
         }
     }
 
-    public boolean condition(String script) {
-        calculate(script);
+    public boolean condition(String script, Map<String, Object> variables) {
+        calculate(script, variables);
         return "true".equals(result);
     }
 
@@ -210,7 +215,8 @@ public class ExpressionCalculator {
             }
             List<String> row = new ArrayList<>();
             for (int i = 0; i < data2D.columnsNumber(); i++) {
-                row.add("0");
+                Data2DColumn column = data2D.columns.get(i);
+                row.add(column.makeDefaultValue());
             }
             String filledScript = replaceDummyStatistic(data2D, script);
             if (allPages) {

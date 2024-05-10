@@ -16,6 +16,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -38,7 +39,7 @@ public abstract class RemotePathHandleFilesController extends BaseTaskController
     @FXML
     protected Label hostLabel;
     @FXML
-    protected CheckBox wrapCheck;
+    protected CheckBox wrapCheck, errorContinueCheck;
 
     public void setParameters(RemotePathManageController manageController) {
         try {
@@ -65,6 +66,20 @@ public abstract class RemotePathHandleFilesController extends BaseTaskController
                 }
             });
             namesArea.setWrapText(wrapCheck.isSelected());
+
+            if (errorContinueCheck != null) {
+                errorContinueCheck.setSelected(false);
+                errorContinueCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                        if (errorContinueCheck.isSelected()) {
+                            errorContinueCheck.setStyle(NodeStyleTools.darkRedTextStyle());
+                        } else {
+                            errorContinueCheck.setStyle(null);
+                        }
+                    }
+                });
+            }
 
         } catch (Exception e) {
             MyBoxLog.error(e);

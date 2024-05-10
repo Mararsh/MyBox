@@ -197,6 +197,22 @@ public abstract class BaseTableViewController<P> extends BaseFileController {
         }
     }
 
+    protected void setSelectable(boolean selectable) {
+        tableView.getSelectionModel().clearSelection();
+        if (rowsSelectionColumn == null) {
+            return;
+        }
+        if (selectable) {
+            if (!tableView.getColumns().contains(rowsSelectionColumn)) {
+                tableView.getColumns().add(0, rowsSelectionColumn);
+            }
+        } else {
+            if (tableView.getColumns().contains(rowsSelectionColumn)) {
+                tableView.getColumns().remove(rowsSelectionColumn);
+            }
+        }
+    }
+
     /*
         status
      */

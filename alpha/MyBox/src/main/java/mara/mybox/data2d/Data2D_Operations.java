@@ -391,7 +391,7 @@ public abstract class Data2D_Operations extends Data2D_Edit {
     }
 
     public boolean rowExpression(FxTask task, Data2DWriter writer,
-            String script, String name, boolean errorContinue,
+            String script, String name,
             List<Integer> cols, boolean includeRowNumber, boolean includeColName) {
         try {
             if (writer == null || cols == null || cols.isEmpty()) {

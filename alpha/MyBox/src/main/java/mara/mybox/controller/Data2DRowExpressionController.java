@@ -174,12 +174,8 @@ public class Data2DRowExpressionController extends BaseData2DTaskTargetsControll
                         sourceController.tableData.get(rowIndex), rowIndex)) {
                     checkedRow.add(data2D.expressionResult());
                 } else {
-                    if (errorContinueCheck.isSelected()) {
-                        checkedRow.add(null);
-                    } else {
-                        error = data2D.getError();
-                        return false;
-                    }
+                    error = data2D.getError();
+                    return false;
                 }
                 outputData.set(i, checkedRow);
             }
@@ -199,8 +195,8 @@ public class Data2DRowExpressionController extends BaseData2DTaskTargetsControll
     @Override
     public boolean handleAllData(FxTask currentTask, Data2DWriter writer) {
         return data2D.rowExpression(currentTask, writer, expression,
-                nameInput.getText().trim(), errorContinueCheck.isSelected(),
-                checkedColsIndices, rowNumberCheck.isSelected(), colNameCheck.isSelected());
+                nameInput.getText().trim(), checkedColsIndices,
+                rowNumberCheck.isSelected(), colNameCheck.isSelected());
     }
 
     @FXML

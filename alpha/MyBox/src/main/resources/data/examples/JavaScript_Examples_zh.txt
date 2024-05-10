@@ -169,7 +169,7 @@ JavaScript > 示例 > 表达式
 ##MyBox#
 JavaScript > 示例 > 表达式 > 字符串处理
 比较
-'Hello' == 'hello' || 'a' < 'A' || 'a' != 'A'
+'Hello' === 'hello' || 'a' < 'A' || 'a' != 'A'
 
 ##MyBox#
 JavaScript > 示例 > 表达式 > 字符串处理
@@ -291,8 +291,9 @@ var 数组a =  ['A', 'B', 'C', 'D'];
 
 ##MyBox#
 JavaScript > 示例 > 表达式 > 布尔运算
-是否为数值
-Math.abs(2a) >= 0
+不是数字
+var 值1='你好'
+isNaN(值1 - 1)
 
 ##MyBox#
 JavaScript > 示例 > 表达式 > 布尔运算
@@ -330,6 +331,25 @@ new Date('11/30/2022 10:35:32').toLocaleString() + "\n" +
 new Date('2022-11-30 10:35:32'.replace(/-/g,'/')).toLocaleString() + "\n" + 
 new Date('2022/11/30') + "\n" + 
 new Date('2022-11-30'.replace(/-/g,'/'))
+
+##MyBox#
+JavaScript > 示例 > 表达式 > 时间运算
+格式化时间
+function formatDate(date) {
+     var y = date.getFullYear();
+     var m = date.getMonth() + 1;
+     m = m < 10 ? ('0' + m) : m;
+     var d = date.getDate();
+     d = d < 10 ? ('0' + d) : d;
+     var h =date.getHours();
+     h = h < 10 ? ('0' + h) : h;
+     var M =date.getMinutes();
+     M = M < 10 ? ('0' + M) : M;
+     var s =date.getSeconds();
+     s = s < 10 ? ('0' + s) : s;
+     return y + '-' + m + '-' + d + ' ' + h + ':' + M + ':' + s;
+}
+formatDate(new Date());
 
 ##MyBox#
 JavaScript > 示例 > 表达式 > 时间运算

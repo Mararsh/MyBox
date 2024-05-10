@@ -24,7 +24,7 @@ import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DRow;
 import static mara.mybox.db.table.BaseTable.StringMaxLength;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.ExpressionCalculator;
+import mara.mybox.calculation.ExpressionCalculator;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTmpTools;

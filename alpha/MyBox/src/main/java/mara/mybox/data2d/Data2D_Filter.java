@@ -11,7 +11,7 @@ import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DStyle;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.ExpressionCalculator;
+import mara.mybox.calculation.ExpressionCalculator;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.DoubleTools;
 import static mara.mybox.value.Languages.message;

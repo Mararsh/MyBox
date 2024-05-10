@@ -303,7 +303,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
         }
     }
 
-    public long setValue(FxTask task, List<Integer> cols, SetValue setValue, boolean errorContinue) {
+    public long setValue(FxTask task, List<Integer> cols, SetValue setValue) {
         try {
             if (!isValidData() || cols == null || cols.isEmpty()) {
                 return -1;
@@ -314,8 +314,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
             if (operate == null) {
                 return -2;
             }
-            operate.setCols(cols).setErrorContinue(errorContinue)
-                    .setTask(task).start();
+            operate.setCols(cols).setTask(task).start();
             if (operate.isFailed()) {
                 return -3;
             }

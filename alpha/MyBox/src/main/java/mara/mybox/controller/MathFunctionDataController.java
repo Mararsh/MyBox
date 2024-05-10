@@ -4,7 +4,9 @@ import java.io.File;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ComboBox;
@@ -197,11 +199,11 @@ public class MathFunctionDataController extends BaseChildController {
 
     public void calculateRow(List<Object> values) {
         try {
-            if (!editorController.inDomain(fillValues(domain, values))) {
+            Map<String, Object> variableValues = fillValues(values);
+            if (!editorController.inDomain(domain, variableValues)) {
                 return;
             }
-            String finalScript = fillValues(expression, values);
-            String fx = editorController.eval(finalScript);
+            String fx = editorController.calculate(expression, variableValues);
             if (fx == null) {
                 return;
             }
@@ -219,17 +221,16 @@ public class MathFunctionDataController extends BaseChildController {
         }
     }
 
-    public String fillValues(String script, List<Object> values) {
+    public Map<String, Object> fillValues(List<Object> values) {
         try {
-            if (script == null || script.isBlank()
-                    || variables == null || variables.size() > values.size()) {
-                return script;
+            if (variables == null || variables.size() > values.size()) {
+                return null;
             }
-            String vars = "";
+            Map<String, Object> vs = new HashMap<>();
             for (int i = 0; i < variables.size(); i++) {
-                vars += "var " + variables.get(i) + "=" + values.get(i) + ";\n";
+                vs.put(variables.get(i), values.get(i));
             }
-            return vars + script;
+            return vs;
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;

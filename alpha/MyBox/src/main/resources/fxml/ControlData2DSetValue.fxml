@@ -106,7 +106,6 @@ License:    Apache License Version 2.0
         <HBox alignment="CENTER_LEFT" spacing="5.0">
             <children>
                 <RadioButton fx:id="expressionRadio" mnemonicParsing="false" text="%RowExpression" toggleGroup="$valueGroup" />
-                <CheckBox fx:id="errorContinueCheck" mnemonicParsing="false" text="%ContinueWhenError" />
             </children>
         </HBox>
         <VBox fx:id="expBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="200.0" VBox.vgrow="ALWAYS">

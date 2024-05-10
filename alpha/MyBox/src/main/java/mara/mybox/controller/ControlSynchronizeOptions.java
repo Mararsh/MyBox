@@ -45,7 +45,7 @@ public class ControlSynchronizeOptions extends BaseController {
     protected CheckBox copySubdirCheck, copyEmptyCheck, copyNewCheck, copyHiddenCheck,
             copyReadonlyCheck, copyExistedCheck, copyModifiedCheck, deleteNonExistedCheck,
             notCopyCheck, copyAttrCheck, copyMtimeCheck, permissionCheck,
-            deleteSourceCheck;
+            deleteSourceCheck, errorContinueCheck;
     @FXML
     protected DatePicker modifyAfterInput;
 
@@ -192,6 +192,20 @@ public class ControlSynchronizeOptions extends BaseController {
                 }
             });
             deleteSourceCheck.setSelected(UserConfig.getBoolean(baseName + "DeleteSource", false));
+
+            if (errorContinueCheck != null) {
+                errorContinueCheck.setSelected(false);
+                errorContinueCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                        if (errorContinueCheck.isSelected()) {
+                            errorContinueCheck.setStyle(NodeStyleTools.darkRedTextStyle());
+                        } else {
+                            errorContinueCheck.setStyle(null);
+                        }
+                    }
+                });
+            }
 
         } catch (Exception e) {
             MyBoxLog.debug(e);

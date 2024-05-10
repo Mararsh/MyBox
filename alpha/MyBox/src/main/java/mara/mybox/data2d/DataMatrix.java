@@ -173,7 +173,7 @@ public class DataMatrix extends Data2D {
     }
 
     @Override
-    public long setValue(FxTask task, List<Integer> cols, SetValue value, boolean errorContinue) {
+    public long setValue(FxTask task, List<Integer> cols, SetValue value) {
         return -1;
     }
 

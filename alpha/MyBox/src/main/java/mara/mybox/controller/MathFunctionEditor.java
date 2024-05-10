@@ -2,6 +2,7 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javafx.beans.value.ChangeListener;
@@ -12,10 +13,11 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
+import javax.script.Bindings;
+import mara.mybox.calculation.ExpressionCalculator;
 import mara.mybox.db.data.InfoNode;
 import static mara.mybox.db.data.InfoNode.ValueSeparater;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.ExpressionCalculator;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.tools.StringTools;
 import static mara.mybox.value.Languages.message;
@@ -135,6 +137,14 @@ public class MathFunctionEditor extends InfoTreeNodeEditor {
         }
     }
 
+    public Bindings bindings() {
+        if (calculator == null) {
+            return null;
+        } else {
+            return calculator.variableValues;
+        }
+    }
+
     public String script() {
         return valueInput.getText();
     }
@@ -157,28 +167,27 @@ public class MathFunctionEditor extends InfoTreeNodeEditor {
         return name == null || name.isBlank() ? message("MathFunction") : name;
     }
 
-    public String eval(String script) {
-        return calculator.calculate(script);
+    public String calculate(String script, Map<String, Object> variables) {
+        return calculator.calculate(script, variables);
     }
 
-    public boolean inDomain(String domain) {
+    public boolean inDomain(String domain, Map<String, Object> variables) {
         if (domain == null || domain.isBlank()) {
             return true;
         }
-        return calculator.condition(domain);
+        return calculator.condition(domain, variables);
     }
 
-    public String fillDummy(String script) {
+    public Map<String, Object> dummyBindings() {
         try {
+            Map<String, Object> vs = new HashMap<>();
             List<String> variables = variableNames();
-            if (script == null || script.isBlank() || variables == null) {
-                return script;
+            if (variables != null) {
+                for (int i = 0; i < variables.size(); i++) {
+                    vs.put(variables.get(i), 1);
+                }
             }
-            String vars = "";
-            for (int i = 0; i < variables.size(); i++) {
-                vars += "var " + variables.get(i) + "=" + 1 + ";\n";
-            }
-            return vars + script;
+            return vs;
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;
@@ -191,8 +200,9 @@ public class MathFunctionEditor extends InfoTreeNodeEditor {
             popError(message("InvalidParameters") + ": " + message("Expression"));
             return false;
         }
+        Map<String, Object> variableValues = dummyBindings();
         script = script.trim();
-        String ret = eval(fillDummy(script));
+        String ret = calculate(script, variableValues);
         if (ret == null) {
             if (calculator.getError() != null) {
                 popError(calculator.getError());
@@ -205,7 +215,7 @@ public class MathFunctionEditor extends InfoTreeNodeEditor {
         if (edomain == null) {
             return true;
         }
-        ret = eval(fillDummy(edomain));
+        ret = calculate(edomain, variableValues);
         if (ret == null) {
             if (calculator.getError() != null) {
                 popError(calculator.getError());

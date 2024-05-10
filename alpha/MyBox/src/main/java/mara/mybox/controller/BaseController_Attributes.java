@@ -123,8 +123,6 @@ public abstract class BaseController_Attributes {
     protected ComboBox<String> dpiSelector;
     @FXML
     protected TabPane tabPane;
-    @FXML
-    protected CheckBox errorContinueCheck;
 
     public void setFileType() {
         setFileType(FileType.All);

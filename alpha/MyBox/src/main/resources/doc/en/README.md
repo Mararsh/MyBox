@@ -12,15 +12,16 @@ This is compute application to provide simple and easy functions. It's free and 
 * Improve:                                     
      - Redesign and implement "Data manufacture". The base framework is: reader + operate + writers.                                                                                                           
      - Options: Verify types when edit data; Verify types when save data.                                                                                                            
-     - Implement row expresion with bindings.                                                                                                            
+     - Implement row expresion with bindings. Placeholders are handled as variable names instead of variable values.                                                                                                            
      - Simplify interface of "Data manufacture".                                                                                                           
      - Transparent can be set when customized colors.                                                                                                           
      - "rtbufsize" and rotation can be set for ffmpeg.                               
      - Notes: Node can be any html which can include head.                               
 * Solved problems:                                   
      - Fail to switch language when default locale is not Chinese.                                                                                                                               
-     - Errors popped when edit data row.                                                                                                           
      - Row expression is messed when value is string of multiple lines.   
+     - In data manufacture, "Set Values" should not clear data rows when expression is invalid.                                                                                                           
+     - Errors popped when edit data row.                                                                                                           
      - Icon is displayed as blank.            
      - "Era" is converted wrongly when import data in database table.                
      - Options of "Target file" in some interfaces do not work.                 
