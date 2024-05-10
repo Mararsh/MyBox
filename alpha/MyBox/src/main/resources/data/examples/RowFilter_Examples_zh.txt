@@ -37,7 +37,7 @@ new Date(#{时间列}.replace(/-/g,'/'))
 ##MyBox#
 行过滤 > 示例 > 时间
 时间点
-new Date(#{时间列}.replace(/-/g,'/')) == '2016-05-19 11:34:28'
+new Date(#{时间列}) == '2016-05-19 11:34:28'
 
 ##MyBox#
 行过滤 > 示例 > 时间
@@ -47,12 +47,14 @@ new Date(#{时间列}.replace(/-/g,'/')) == '2016-05-19 11:34:28'
 ##MyBox#
 行过滤 > 示例 > 时间
 比较时间
-new Date(#{时间列}.replace(/-/g,'/')).getTime()  > new Date('2016/05/19 09:23:12').getTime()
-
+new Date(#{时间列}).getTime()  > new Date('2016/05/19 09:23:12').getTime()
+    
 ##MyBox#
 行过滤 > 示例 > 时间
 格式化时间
 function formatDate(date) {
+     if (date == null) 
+        return null;
      var y = date.getFullYear();
      var m = date.getMonth() + 1;
      m = m < 10 ? ('0' + m) : m;
@@ -66,7 +68,7 @@ function formatDate(date) {
      s = s < 10 ? ('0' + s) : s;
      return y + '-' + m + '-' + d + ' ' + h + ':' + M + ':' + s;
 }
-formatDate(#{时间列}.replace(/-/g,'/'));
+formatDate(#{时间列});
 
 ##MyBox#
 行过滤 > 示例
@@ -94,9 +96,9 @@ else
 行过滤 > 示例 > 字符串
 包含子串
 if ( #{字符串列} != null ) 
-    #{字符串列}.search(/昔去雪如花/ig) >= 0
+    #{字符串列}.search(/昔去雪如花/ig)
 else
-    false
+    -1
 
 ##MyBox#
 行过滤 > 示例 > 字符串

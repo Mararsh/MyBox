@@ -16,7 +16,6 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.tools.StringTools;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -162,12 +161,7 @@ public class RowFilterEditor extends InfoTreeNodeEditor {
 
     @FXML
     protected void showScriptExamples(Event event) {
-        try {
-            MenuController controller = PopTools.popJavaScriptExamples(this, event, valueInput, interfaceName + "Examples");
-            PopTools.rowExpressionButtons(controller, valueInput, message("Column") + "1");
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
+        PopTools.popJavaScriptExamples(this, event, valueInput, interfaceName + "Examples", null);
     }
 
     @FXML

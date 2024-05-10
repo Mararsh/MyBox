@@ -19,6 +19,7 @@ import mara.mybox.db.data.InfoNode;
 import static mara.mybox.db.data.InfoNode.ValueSeparater;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
+import static mara.mybox.fxml.PopTools.javaScriptExamples;
 import mara.mybox.tools.StringTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -252,20 +253,7 @@ public class MathFunctionEditor extends InfoTreeNodeEditor {
 
     @FXML
     protected void showScriptExamples(Event event) {
-        try {
-            String menuName = "FunctionScriptExamples";
-            MenuController controller = PopTools.popJavaScriptExamples(this, event, valueInput, menuName);
-
-            PopTools.addButtonsPane(controller, valueInput, Arrays.asList(
-                    "Math.PI", "Math.E", "Math.random()", "Math.abs(x)",
-                    "Math.pow(x,2)", "Math.pow(x,3)", "Math.sqrt(x)", "Math.pow(x,1d/3)",
-                    "Math.pow(3, x)", "Math.exp(x)",
-                    "Math.log(x)", "Math.sin(x)", "Math.cos(x)", "Math.tan(x)"
-            ), 4);
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
+        PopTools.popJavaScriptExamples(this, event, valueInput, "FunctionScriptExamples", null);
     }
 
     @FXML
@@ -299,13 +287,14 @@ public class MathFunctionEditor extends InfoTreeNodeEditor {
 
     protected void domainExamples(Event event) {
         try {
-            String menuName = "FunctionDomainExamples";
-            MenuController controller = PopTools.popJavaScriptExamples(this, event, moreInput, menuName);
-
-            PopTools.addButtonsPane(controller, moreInput, Arrays.asList(
+            List<List<String>> preValues = new ArrayList<>();
+            preValues.add(Arrays.asList(
                     "x > 0", "x >= 0", "x < 0", "x <= 0", "x != 0", "x != 1",
                     "x >= -1 && x <= 1", "( x - Math.PI / 2 ) % Math.PI != 0"
-            ), 4);
+            ));
+            preValues.addAll(javaScriptExamples("x", "stringV", "dateV"));
+
+            PopTools.popJavaScriptExamples(this, event, moreInput, "FunctionDomainExamples", preValues);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
