@@ -638,7 +638,7 @@ public class ColumnDefinition extends BaseData {
         return !isNumberType() && type != ColumnType.Boolean;
     }
 
-    public String makeDefaultValue() {
+    public String dbDefaultValue() {
         Object v = fromString(defaultValue, InvalidAs.Null);
         switch (type) {
             case String:
@@ -696,6 +696,37 @@ public class ColumnDefinition extends BaseData {
     public String getFormatDisplay() {
         return format == null ? null : format.replaceAll(AppValues.MyBoxSeparator, "\n");
     }
+
+    public String dummyValue() {
+        switch (type) {
+            case String:
+            case Enumeration:
+            case EnumerationEditable:
+            case File:
+            case Image:
+            case Color:
+            case Clob:
+                return "";
+            case Double:
+            case Float:
+            case Long:
+            case Integer:
+            case Short:
+            case Longitude:
+            case Latitude:
+            case Era:
+                return "0";
+            case Boolean:
+                return "false";
+            case Datetime:
+                return DateTools.nowString();
+            case Date:
+                return DateTools.nowDate();
+            default:
+                return "''";
+        }
+    }
+
 
     /*
         static methods

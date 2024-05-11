@@ -277,6 +277,10 @@ public class DateTools {
         return datetimeToString(new Date(), TimeFormats.Datetime3);
     }
 
+    public static String nowDate() {
+        return datetimeToString(new Date(), TimeFormats.Date);
+    }
+
     public static String textEra(Era era) {
         if (era == null || era.getValue() == AppValues.InvalidLong) {
             return "";

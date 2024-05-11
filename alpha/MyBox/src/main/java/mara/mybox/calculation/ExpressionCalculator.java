@@ -181,7 +181,6 @@ public class ExpressionCalculator {
             expression = replaceAll(expression, "#{" + message("TableRowNumber") + "}",
                     (tableRowNumber + 1) + "");
             return executeScript();
-
         } catch (Exception e) {
             handleError(e.toString());
             return false;
@@ -216,7 +215,7 @@ public class ExpressionCalculator {
             List<String> row = new ArrayList<>();
             for (int i = 0; i < data2D.columnsNumber(); i++) {
                 Data2DColumn column = data2D.columns.get(i);
-                row.add(column.makeDefaultValue());
+                row.add(column.dummyValue());
             }
             String filledScript = replaceDummyStatistic(data2D, script);
             if (allPages) {

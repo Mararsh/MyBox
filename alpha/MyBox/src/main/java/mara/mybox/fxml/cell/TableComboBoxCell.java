@@ -13,6 +13,8 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Callback;
+import mara.mybox.controller.BaseData2DTableController;
+import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.fxml.style.NodeStyleTools;
 import static mara.mybox.value.Languages.message;
 
@@ -23,15 +25,20 @@ import static mara.mybox.value.Languages.message;
  */
 public class TableComboBoxCell<S, T> extends ComboBoxTableCell<S, T> {
 
+    protected BaseData2DTableController dataTable;
+    protected Data2DColumn dataColumn;
     protected int maxVisibleCount;
 
-    public TableComboBoxCell(ObservableList<T> items, int maxCount, boolean editable) {
+    public TableComboBoxCell(BaseData2DTableController dataTable, Data2DColumn dataColumn,
+            ObservableList<T> items, int maxCount, boolean editable) {
         super(items);
         setComboBoxEditable(editable);
         maxVisibleCount = maxCount;
         if (maxVisibleCount <= 0) {
             maxVisibleCount = 10;
         }
+        this.dataTable = dataTable;
+        this.dataColumn = dataColumn;
 
         setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
@@ -78,7 +85,25 @@ public class TableComboBoxCell<S, T> extends ComboBoxTableCell<S, T> {
         }
     }
 
-    public static <S, T> Callback<TableColumn<S, T>, TableCell<S, T>> create(List<T> items, int maxVisibleCount, boolean editable) {
+    @Override
+    public void updateItem(T item, boolean empty) {
+        super.updateItem(item, empty);
+        setStyle(null);
+        if (empty) {
+            setText(null);
+            setGraphic(null);
+            return;
+        }
+        try {
+            setStyle(dataTable.getData2D().cellStyle(dataTable.getStyleFilter(),
+                    rowIndex(), dataColumn.getColumnName()));
+        } catch (Exception e) {
+        }
+    }
+
+    public static <S, T> Callback<TableColumn<S, T>, TableCell<S, T>> create(
+            BaseData2DTableController dataTable, Data2DColumn dataColumn, List<T> items,
+            int maxVisibleCount, boolean editable) {
         return new Callback<TableColumn<S, T>, TableCell<S, T>>() {
             @Override
             public TableCell<S, T> call(TableColumn<S, T> param) {
@@ -86,7 +111,7 @@ public class TableComboBoxCell<S, T> extends ComboBoxTableCell<S, T> {
                 for (T item : items) {
                     olist.add(item);
                 }
-                return new TableComboBoxCell<>(olist, maxVisibleCount, editable);
+                return new TableComboBoxCell<>(dataTable, dataColumn, olist, maxVisibleCount, editable);
             }
         };
     }

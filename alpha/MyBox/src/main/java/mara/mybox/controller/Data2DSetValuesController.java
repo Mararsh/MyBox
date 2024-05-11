@@ -55,9 +55,15 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
     }
 
     @Override
+    public void sourceTypeChanged() {
+        super.sourceTypeChanged();
+        valueController.setMatrixPane(!isAllPages());
+    }
+
+    @Override
     public boolean checkOptions() {
         try {
-            if (!super.checkOptions() || !valueController.checkSelection()) {
+            if (!super.checkOptions() || !valueController.pickValues()) {
                 return false;
             }
             return PopTools.askSure(getTitle(), message("SureOverwriteColumns") + "\n" + checkedColsNames);
@@ -351,13 +357,28 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
             outputData.addAll(sourceController.tableData);
             int num = valueController.setValue.getStart();
             int digit = valueController.setValue.countFinalDigit(sourceController.filteredRowsIndices.size());
-            String currentValue, suffix;
+            String currentValue, numValue, newValue;
+            String v = valueController.value();
             for (int row : sourceController.filteredRowsIndices) {
                 List<String> values = sourceController.tableData.get(row);
-                suffix = StringTools.fillLeftZero(num++, digit);
+                numValue = StringTools.fillLeftZero(num++, digit);
                 for (int col : checkedColsIndices) {
                     currentValue = values.get(col + 1);
-                    values.set(col + 1, currentValue == null ? suffix : currentValue + suffix);
+                    if (valueController.numberPrefixRadio.isSelected()) {
+                        newValue = currentValue == null ? numValue : numValue + currentValue;
+                    } else if (valueController.numberSuffixRadio.isSelected()) {
+                        newValue = currentValue == null ? numValue : currentValue + numValue;
+                    } else if (valueController.numberReplaceRadio.isSelected()) {
+                        newValue = numValue;
+                    } else if (valueController.numberSuffixStringRadio.isSelected()) {
+                        newValue = v == null ? numValue : v + numValue;
+                    } else if (valueController.numberPrefixStringRadio.isSelected()) {
+                        newValue = v == null ? numValue : numValue + v;
+                    } else {
+                        setError(message("Invalid") + ": " + message("SequenceNumber"));
+                        return false;
+                    }
+                    values.set(col + 1, newValue);
                 }
                 outputData.set(row, values);
             }

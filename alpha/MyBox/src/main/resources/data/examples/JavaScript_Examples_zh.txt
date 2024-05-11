@@ -361,6 +361,11 @@ var 时间b = new Date('11/30/2022 10:35:32');
 
 ##MyBox#
 JavaScript > 示例 > 表达式 > 时间运算
+是否为星期日
+new Date().getDay() == 0
+
+##MyBox#
+JavaScript > 示例 > 表达式 > 时间运算
 比较时间
 new Date('2012/05/19').getTime()  > new Date('2016/05/19 09:23:12').getTime()
 

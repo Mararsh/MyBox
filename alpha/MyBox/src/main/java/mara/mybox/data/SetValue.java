@@ -19,7 +19,9 @@ public class SetValue {
     public InvalidAs invalidAs;
 
     public static enum ValueType {
-        Value, Zero, One, Blank, Random, RandomNonNegative, Scale, Prefix, Suffix, SuffixNumber,
+        Value, Zero, One, Empty, Null, Random, RandomNonNegative,
+        Scale, Prefix, Suffix,
+        NumberSuffix, NumberPrefix, NumberReplace, NumberSuffixString, NumberPrefixString,
         Expression, GaussianDistribution, Identify, UpperTriangle, LowerTriangle
     }
 
@@ -36,62 +38,6 @@ public class SetValue {
         fillZero = true;
         aotoDigit = true;
         invalidAs = DefaultInvalidAs;
-    }
-
-    public boolean isZero() {
-        return type == ValueType.Zero;
-    }
-
-    public boolean isOne() {
-        return type == ValueType.One;
-    }
-
-    public boolean isBlank() {
-        return type == ValueType.Blank;
-    }
-
-    public boolean isRandom() {
-        return type == ValueType.Random;
-    }
-
-    public boolean isRandomNonNegative() {
-        return type == ValueType.RandomNonNegative;
-    }
-
-    public boolean isScale() {
-        return type == ValueType.Scale;
-    }
-
-    public boolean isPrefix() {
-        return type == ValueType.Prefix;
-    }
-
-    public boolean isSuffix() {
-        return type == ValueType.Suffix;
-    }
-
-    public boolean isSuffixNumber() {
-        return type == ValueType.SuffixNumber;
-    }
-
-    public boolean isExpression() {
-        return type == ValueType.Expression;
-    }
-
-    public boolean isGaussianDistribution() {
-        return type == ValueType.GaussianDistribution;
-    }
-
-    public boolean isIdentify() {
-        return type == ValueType.Identify;
-    }
-
-    public boolean isUpperTriangle() {
-        return type == ValueType.UpperTriangle;
-    }
-
-    public boolean isLowerTriangle() {
-        return type == ValueType.LowerTriangle;
     }
 
     public int countFinalDigit(long dataSize) {
@@ -126,7 +72,7 @@ public class SetValue {
                 }
             }
         } else {
-            return DoubleTools.scale(d, scale) + "";
+            return DoubleTools.scaleString(d, scale);
         }
     }
 

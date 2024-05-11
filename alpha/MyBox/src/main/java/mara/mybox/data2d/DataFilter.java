@@ -133,7 +133,7 @@ public class DataFilter {
             if (task != null) {
                 task.setError(error);
             }
-            MyBoxLog.debug(error + "\n" + sourceScript);
+//            MyBoxLog.debug(error + "\n" + sourceScript);
         }
     }
 

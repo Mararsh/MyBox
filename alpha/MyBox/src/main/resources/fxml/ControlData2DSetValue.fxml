@@ -11,107 +11,188 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlData2DSetValue">
+<VBox fx:id="thisPane" spacing="2.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlData2DSetValue">
     <children>
-        <FlowPane hgap="2.0" prefWrapLength="300.0" vgap="2.0">
-            <children>
-                <RadioButton fx:id="zeroRadio" mnemonicParsing="false" selected="true" text="0">
-                    <toggleGroup>
-                        <ToggleGroup fx:id="valueGroup" />
-                    </toggleGroup>
-                </RadioButton>
-                <RadioButton fx:id="oneRadio" mnemonicParsing="false" text="1" toggleGroup="$valueGroup" />
-                <RadioButton fx:id="blankRadio" mnemonicParsing="false" text="%Blank" toggleGroup="$valueGroup" />
-                <RadioButton fx:id="randomRadio" layoutX="94.0" layoutY="14.0" mnemonicParsing="false" text="%Random" toggleGroup="$valueGroup" />
-                <RadioButton fx:id="randomNnRadio" layoutX="134.0" layoutY="10.0" mnemonicParsing="false" text="%RandomNonnegative" toggleGroup="$valueGroup" />
-            </children>
-        </FlowPane>
-        <HBox alignment="CENTER_LEFT" spacing="5.0">
-            <children> 
-                <RadioButton fx:id="valueRadio" minWidth="-Infinity" mnemonicParsing="false" text="%Value" toggleGroup="$valueGroup" />
-                <TextField fx:id="valueInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-            </children>
-        </HBox>
-      <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="642.0" spacing="2.0">
-         <children>
-                <RadioButton fx:id="prefixRadio" minWidth="-Infinity" mnemonicParsing="false" text="%AddPrefix" toggleGroup="$valueGroup" wrapText="true" />
-                <TextField fx:id="prefixInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-         </children>
-      </HBox>
-      <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="647.0" spacing="2.0">
-         <children>
-                <RadioButton fx:id="suffixRadio" minWidth="-Infinity" mnemonicParsing="false" text="%AppendSuffix" toggleGroup="$valueGroup" wrapText="true" />
-                <TextField fx:id="suffixInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-         </children>
-      </HBox>
-        <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="59.0" spacing="5.0">
-            <children>
-                <RadioButton fx:id="scaleRadio" minWidth="-Infinity" mnemonicParsing="false" text="%DecimalScale" toggleGroup="$valueGroup" wrapText="true" />
-                <FlowPane fx:id="scalePane" hgap="5.0" maxWidth="1.7976931348623157E308" vgap="5.0" HBox.hgrow="ALWAYS">
-                    <HBox.margin>
-                        <Insets left="10.0" />
-                    </HBox.margin>
-                    <children>
-                        <ComboBox fx:id="scaleSelector" editable="true" prefWidth="100.0" />
-                        <Label text="%ToInvalidNumber" />
-                        <RadioButton fx:id="keepNonnumericRadio" layoutX="192.0" layoutY="14.0" mnemonicParsing="false" selected="true" text="%Keep">
-                            <toggleGroup>
-                                <ToggleGroup fx:id="nonnumericGroup" />
-                            </toggleGroup> 
-                        </RadioButton>
-                        <RadioButton fx:id="skipNonnumericRadio" mnemonicParsing="false" text="%Skip" toggleGroup="$nonnumericGroup" />
-                        <RadioButton fx:id="zeroNonnumericRadio" mnemonicParsing="false" text="%CountAsZero" toggleGroup="$nonnumericGroup" />
-                        <RadioButton fx:id="nullNonnumericRadio" mnemonicParsing="false" text="%CountAsNull" toggleGroup="$nonnumericGroup" />
-                        <RadioButton fx:id="emptyNonnumericRadio" mnemonicParsing="false" text="%CountAsEmpty" toggleGroup="$nonnumericGroup" />
-                    </children>
-                </FlowPane>
-            </children>
-        </HBox>
-        <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="52.0" spacing="5.0">
-            <children>
-                <RadioButton fx:id="numberRadio" minWidth="-Infinity" mnemonicParsing="false" text="%AddSequenceNumber" toggleGroup="$valueGroup" wrapText="true" />
-                <FlowPane fx:id="numberPane" hgap="5.0" maxWidth="1.7976931348623157E308" vgap="5.0" HBox.hgrow="ALWAYS">
-                    <children>
-                        <Label text="%Start">
-                            <FlowPane.margin>
-                                <Insets />
-                            </FlowPane.margin>
-                        </Label>
-                        <TextField fx:id="startInput" prefWidth="50.0" text="0" />
-                        <CheckBox fx:id="fillZeroCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%FillZero" wrapText="true" />
-                        <Label text="%Digit" />
-                        <TextField fx:id="digitInput" prefWidth="50.0" />
-                        <Label minHeight="-Infinity" text="%AccumDigitComments" wrapText="true" />
-                    </children>
-                    <HBox.margin>
-                        <Insets left="10.0" />
-                    </HBox.margin>
-                </FlowPane>
-            </children>
-        </HBox> 
-        <FlowPane fx:id="matrixPane" hgap="5.0" prefWrapLength="300.0" vgap="5.0">
-            <children>
-                <RadioButton fx:id="gaussianDistributionRadio" mnemonicParsing="false" text="%GaussianDistribution" toggleGroup="$valueGroup" />
-                <RadioButton fx:id="identifyRadio" mnemonicParsing="false" text="%IdentifyMatrix" toggleGroup="$valueGroup" />
-                <RadioButton fx:id="upperTriangleRadio" layoutX="94.0" layoutY="14.0" mnemonicParsing="false" text="%UpperTriangle" toggleGroup="$valueGroup" />
-                <RadioButton fx:id="lowerTriangleRadio" layoutX="10.0" layoutY="31.0" mnemonicParsing="false" text="%LowerTriangle" toggleGroup="$valueGroup" />
-            </children>
-        </FlowPane>
-        <HBox alignment="CENTER_LEFT" spacing="5.0">
-            <children>
-                <RadioButton fx:id="expressionRadio" mnemonicParsing="false" text="%RowExpression" toggleGroup="$valueGroup" />
-            </children>
-        </HBox>
-        <VBox fx:id="expBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="200.0" VBox.vgrow="ALWAYS">
-            <children>
-                <fx:include fx:id="expression" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DRowExpression.fxml" VBox.vgrow="ALWAYS" />
-            </children>
-        </VBox>
+      <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+        <tabs>
+          <Tab text="%Set">
+               <content>
+                  <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+                     <content>
+                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                           <children>
+                                <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                    <children> 
+                                        <RadioButton fx:id="valueRadio" minWidth="-Infinity" mnemonicParsing="false" selected="true" text="%Value">
+                                       <toggleGroup>
+                                                <ToggleGroup fx:id="valueGroup" />
+                                       </toggleGroup>
+                                    </RadioButton>
+                                        <TextField fx:id="valueInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                    </children>
+                                </HBox>
+                                <FlowPane hgap="2.0" prefWrapLength="300.0" vgap="2.0">
+                                    <children>
+                                        <RadioButton fx:id="zeroRadio" mnemonicParsing="false" text="0" toggleGroup="$valueGroup" />
+                                        <RadioButton fx:id="oneRadio" mnemonicParsing="false" text="1" toggleGroup="$valueGroup" />
+                                        <RadioButton fx:id="emptyRadio" mnemonicParsing="false" text="%Empty" toggleGroup="$valueGroup" />
+                                    <RadioButton fx:id="nullRadio" layoutX="71.0" layoutY="10.0" mnemonicParsing="false" text="null" toggleGroup="$valueGroup" />
+                                        <RadioButton fx:id="randomRadio" layoutX="94.0" layoutY="14.0" mnemonicParsing="false" text="%Random" toggleGroup="$valueGroup" />
+                                        <RadioButton fx:id="randomNnRadio" layoutX="134.0" layoutY="10.0" mnemonicParsing="false" text="%RandomNonnegative" toggleGroup="$valueGroup" />
+                                    </children>
+                                </FlowPane> 
+                                <FlowPane fx:id="matrixPane" hgap="5.0" prefWrapLength="300.0" vgap="5.0">
+                                    <children>
+                                        <RadioButton fx:id="gaussianDistributionRadio" mnemonicParsing="false" text="%GaussianDistribution" toggleGroup="$valueGroup" />
+                                        <RadioButton fx:id="identifyRadio" mnemonicParsing="false" text="%IdentifyMatrix" toggleGroup="$valueGroup" />
+                                        <RadioButton fx:id="upperTriangleRadio" layoutX="94.0" layoutY="14.0" mnemonicParsing="false" text="%UpperTriangle" toggleGroup="$valueGroup" />
+                                        <RadioButton fx:id="lowerTriangleRadio" layoutX="10.0" layoutY="31.0" mnemonicParsing="false" text="%LowerTriangle" toggleGroup="$valueGroup" />
+                                    </children>
+                                </FlowPane>
+                           </children>
+                           <padding>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </padding>
+                        </VBox>
+                     </content>
+                  </ScrollPane>
+               </content>
+            </Tab>
+          <Tab text="%Change">
+               <content>
+                  <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+                     <content>
+                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                           <padding>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </padding>
+                           <children>
+                              <HBox alignment="CENTER_LEFT" spacing="2.0">
+                                 <children>
+                                        <RadioButton fx:id="prefixRadio" minWidth="-Infinity" mnemonicParsing="false" text="%AddPrefix" toggleGroup="$valueGroup" wrapText="true" />
+                                        <TextField fx:id="prefixInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER_LEFT" spacing="2.0">
+                                 <children>
+                                        <RadioButton fx:id="suffixRadio" minWidth="-Infinity" mnemonicParsing="false" text="%AppendSuffix" toggleGroup="$valueGroup" wrapText="true" />
+                                        <TextField fx:id="suffixInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                 </children>
+                              </HBox>
+                                <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                    <children>
+                                        <RadioButton fx:id="scaleRadio" minWidth="-Infinity" mnemonicParsing="false" text="%Truncate" toggleGroup="$valueGroup" wrapText="true" />
+                                    </children>
+                                </HBox>
+                              <VBox layoutX="15.0" layoutY="222.0" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                 <children>
+                                    <FlowPane fx:id="scalePane1" hgap="5.0" layoutX="15.0" layoutY="43.0" maxWidth="1.7976931348623157E308" vgap="5.0">
+                                       <children>
+                                          <Label text="%DecimalScale" />
+                                                <ComboBox fx:id="scaleSelector" editable="true" prefWidth="100.0" />
+                                       </children>
+                                    </FlowPane>
+                                        <FlowPane fx:id="scalePane" hgap="5.0" maxWidth="1.7976931348623157E308" vgap="5.0">
+                                            <children>
+                                                <Label minHeight="-Infinity" text="%ToInvalidNumber" wrapText="true" />
+                                                <RadioButton fx:id="keepNonnumericRadio" layoutX="192.0" layoutY="14.0" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%Keep" wrapText="true">
+                                                    <toggleGroup>
+                                                        <ToggleGroup fx:id="nonnumericGroup" />
+                                                    </toggleGroup> 
+                                                </RadioButton>
+                                                <RadioButton fx:id="skipNonnumericRadio" minHeight="-Infinity" mnemonicParsing="false" text="%Skip" toggleGroup="$nonnumericGroup" wrapText="true" />
+                                                <RadioButton fx:id="zeroNonnumericRadio" minHeight="-Infinity" mnemonicParsing="false" text="%CountAsZero" toggleGroup="$nonnumericGroup" wrapText="true" />
+                                                <RadioButton fx:id="nullNonnumericRadio" minHeight="-Infinity" mnemonicParsing="false" text="%CountAsNull" toggleGroup="$nonnumericGroup" wrapText="true" />
+                                                <RadioButton fx:id="emptyNonnumericRadio" minHeight="-Infinity" mnemonicParsing="false" text="%CountAsEmpty" toggleGroup="$nonnumericGroup" wrapText="true" />
+                                            </children>
+                                       <VBox.margin>
+                                          <Insets />
+                                       </VBox.margin>
+                                        </FlowPane>
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets left="20.0" />
+                                 </VBox.margin>
+                              </VBox>
+                                  <RadioButton fx:id="numberRadio" minWidth="-Infinity" mnemonicParsing="false" text="%SequenceNumber" toggleGroup="$valueGroup" wrapText="true" />
+                              <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                 <children>
+                                        <FlowPane fx:id="numberPane" hgap="5.0" maxWidth="1.7976931348623157E308" prefWrapLength="0.0" vgap="5.0">
+                                            <children>
+                                                <Label text="%From">
+                                                    <FlowPane.margin>
+                                                        <Insets />
+                                                    </FlowPane.margin>
+                                                </Label>
+                                                <TextField fx:id="startInput" prefWidth="50.0" text="0" />
+                                                <CheckBox fx:id="fillZeroCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%FillZero" wrapText="true" />
+                                                <Label text="%Digit" />
+                                                <TextField fx:id="digitInput" prefWidth="50.0" />
+                                                <Label minHeight="-Infinity" text="%AccumDigitComments" wrapText="true" />
+                                            </children>
+                                        </FlowPane>
+                                    <FlowPane fx:id="numberPane1" hgap="5.0" maxWidth="1.7976931348623157E308" prefWrapLength="0.0" vgap="5.0">
+                                       <children>
+                                          <RadioButton fx:id="numberSuffixRadio" mnemonicParsing="false" selected="true" text="%AppendOriginal">
+                                             <toggleGroup>
+                                                <ToggleGroup fx:id="numberGroup" />
+                                             </toggleGroup>
+                                          </RadioButton>
+                                          <RadioButton fx:id="numberPrefixRadio" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%PrefixOriginal" toggleGroup="$numberGroup" />
+                                          <RadioButton fx:id="numberReplaceRadio" layoutX="108.0" layoutY="10.0" mnemonicParsing="false" text="%ReplaceOriginal" toggleGroup="$numberGroup" />
+                                       </children>
+                                    </FlowPane>
+                                      <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                       <children>
+                                          <RadioButton fx:id="numberSuffixStringRadio" mnemonicParsing="false" text="%AppendAfterString" toggleGroup="$numberGroup" />
+                                          <TextField fx:id="numberSuffixInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT" layoutX="15.0" layoutY="64.0" spacing="5.0">
+                                       <children>
+                                          <RadioButton fx:id="numberPrefixStringRadio" mnemonicParsing="false" text="%PrefixBeforeString" toggleGroup="$numberGroup" />
+                                          <TextField fx:id="numberPrefixInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                       </children>
+                                    </HBox>
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets left="20.0" />
+                                 </VBox.margin>
+                              </VBox>
+                              <HBox alignment="CENTER_LEFT" layoutX="15.0" layoutY="155.0" spacing="5.0" />
+                           </children>
+                        </VBox>
+                     </content>
+                  </ScrollPane>
+               </content>
+            </Tab>
+            <Tab text="%RowExpression">
+               <content>
+                  <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+                     <content>
+                          <VBox fx:id="expBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                              <children>
+                                  <RadioButton fx:id="expressionRadio" mnemonicParsing="false" text="%RowExpression" toggleGroup="$valueGroup" />
+                                  <fx:include fx:id="expression" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DRowExpression.fxml" VBox.vgrow="ALWAYS" />
+                              </children>
+                           <padding>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </padding>
+                          </VBox>
+                     </content>
+                  </ScrollPane>
+               </content>
+            </Tab>
+        </tabs>
+      </TabPane>
     </children>
 </VBox>

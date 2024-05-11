@@ -36,16 +36,15 @@ public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskCont
 
             if (targetController != null) {
                 targetController.setParameters(this, controller);
-
-                sourceController.rowsGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-                    @Override
-                    public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
-                        targetController.setNotInTable(isAllPages());
-                    }
-                });
-                targetController.setNotInTable(isAllPages());
             }
 
+            sourceController.rowsGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+                @Override
+                public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
+                    sourceTypeChanged();
+                }
+            });
+            sourceTypeChanged();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -78,6 +77,12 @@ public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskCont
 
         } catch (Exception e) {
             MyBoxLog.error(e);
+        }
+    }
+
+    public void sourceTypeChanged() {
+        if (targetController != null) {
+            targetController.setNotInTable(isAllPages());
         }
     }
 

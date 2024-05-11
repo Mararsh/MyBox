@@ -1220,11 +1220,15 @@ public class PopTools {
         if (dateColumn != null) {
             values = Arrays.asList(
                     dateColumn + " == '2016-05-19 11:34:28'",
-                    dateColumn + ".startsWith('2016-05-19 11')",
-                    "new Date(" + dateColumn + ").getTime()  > new Date('2016/05/19 09:23:12').getTime()",
+                    "if ( " + dateColumn + " != null ) \n"
+                    + "    " + dateColumn + ".startsWith('2016-05-19 11')\n"
+                    + "else\n"
+                    + "    undefined",
+                    "if ( " + dateColumn + " != null ) \n"
+                    + "    " + "new Date(" + dateColumn + ").getTime()  > new Date('2016/05/19 09:23:12').getTime()\n"
+                    + "else\n"
+                    + "    undefined",
                     "function formatDate(date) {\n"
-                    + "     if (date == null) \n"
-                    + "        return null;\n"
                     + "     var y = date.getFullYear();\n"
                     + "     var m = date.getMonth() + 1;\n"
                     + "     m = m < 10 ? ('0' + m) : m;\n"
@@ -1238,7 +1242,10 @@ public class PopTools {
                     + "     s = s < 10 ? ('0' + s) : s;\n"
                     + "     return y + '-' + m + '-' + d + ' ' + h + ':' + M + ':' + s;\n"
                     + "}\n"
-                    + "formatDate(" + dateColumn + ");"
+                    + "if (" + dateColumn + " != null)\n"
+                    + "   formatDate(new Date(" + dateColumn + "));\n"
+                    + "else\n"
+                    + "   null;"
             );
             preValues.add(values);
         }

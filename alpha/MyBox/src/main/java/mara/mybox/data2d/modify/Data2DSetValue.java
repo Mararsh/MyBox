@@ -4,6 +4,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import mara.mybox.data.SetValue;
+import mara.mybox.data.SetValue.ValueType;
+import static mara.mybox.data.SetValue.ValueType.Empty;
+import static mara.mybox.data.SetValue.ValueType.Null;
+import static mara.mybox.data.SetValue.ValueType.NumberPrefix;
+import static mara.mybox.data.SetValue.ValueType.NumberReplace;
+import static mara.mybox.data.SetValue.ValueType.NumberSuffix;
+import static mara.mybox.data.SetValue.ValueType.One;
+import static mara.mybox.data.SetValue.ValueType.Prefix;
+import static mara.mybox.data.SetValue.ValueType.RandomNonNegative;
+import static mara.mybox.data.SetValue.ValueType.Scale;
+import static mara.mybox.data.SetValue.ValueType.Suffix;
+import static mara.mybox.data.SetValue.ValueType.Zero;
 import mara.mybox.data2d.Data2D_Edit;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.data2d.operate.Data2DOperate;
@@ -56,9 +68,10 @@ public class Data2DSetValue extends Data2DOperate {
             passFilter = sourceData.filterDataRow(sourceRow, sourceRowIndex);
             reachMax = sourceData.filterReachMaxPassed();
             boolean handle = passFilter && !reachMax;
+            ValueType valueType = setValue.getType();
             String expResult = null, currentValue;
             if (handle) {
-                if (setValue.isExpression() && dataValue != null) {
+                if (valueType == ValueType.Expression && dataValue != null) {
                     if (sourceData.calculateDataRowExpression(dataValue, sourceRow, sourceRowIndex)) {
                         expResult = sourceData.expressionResult();
                     } else {
@@ -80,31 +93,50 @@ public class Data2DSetValue extends Data2DOperate {
                 }
                 String v;
                 if (handle && cols.contains(i)) {
-                    if (setValue.isBlank()) {
-                        v = "";
-                    } else if (setValue.isZero()) {
-                        v = "0";
-                    } else if (setValue.isOne()) {
-                        v = "1";
-                    } else if (setValue.isRandom()) {
-                        v = sourceData.random(random, i, false);
-                    } else if (setValue.isRandom()) {
-                        v = sourceData.random(random, i, false);
-                    } else if (setValue.isRandomNonNegative()) {
-                        v = sourceData.random(random, i, true);
-                    } else if (setValue.isScale()) {
-                        v = setValue.scale(currentValue);
-                    } else if (setValue.isSuffix()) {
-                        v = currentValue == null ? dataValue : currentValue + dataValue;
-                    } else if (setValue.isPrefix()) {
-                        v = currentValue == null ? dataValue : dataValue + currentValue;
-                    } else if (setValue.isSuffixNumber()) {
-                        String suffix = StringTools.fillLeftZero(dataIndex++, digit);
-                        v = currentValue == null ? suffix : currentValue + suffix;
-                    } else if (setValue.isExpression()) {
-                        v = expResult;
-                    } else {
-                        v = dataValue;
+                    switch (valueType) {
+                        case Zero ->
+                            v = "0";
+                        case One ->
+                            v = "1";
+                        case Empty ->
+                            v = "";
+                        case Null ->
+                            v = null;
+                        case Random ->
+                            v = sourceData.random(random, i, false);
+                        case RandomNonNegative ->
+                            v = sourceData.random(random, i, true);
+                        case Scale ->
+                            v = setValue.scale(currentValue);
+                        case Prefix ->
+                            v = currentValue == null ? dataValue : dataValue + currentValue;
+                        case Suffix ->
+                            v = currentValue == null ? dataValue : currentValue + dataValue;
+                        case NumberSuffix -> {
+                            String suffix = StringTools.fillLeftZero(dataIndex++, digit);
+                            v = currentValue == null ? suffix : currentValue + suffix;
+                        }
+                        case NumberPrefix -> {
+                            String prefix = StringTools.fillLeftZero(dataIndex++, digit);
+                            v = currentValue == null ? prefix : prefix + currentValue;
+                        }
+                        case NumberReplace -> {
+                            v = StringTools.fillLeftZero(dataIndex++, digit);
+                        }
+                        case NumberSuffixString -> {
+                            String suffix = StringTools.fillLeftZero(dataIndex++, digit);
+                            v = dataValue;
+                            v = v == null ? suffix : v + suffix;
+                        }
+                        case NumberPrefixString -> {
+                            String prefix = StringTools.fillLeftZero(dataIndex++, digit);
+                            v = dataValue;
+                            v = v == null ? prefix : prefix + v;
+                        }
+                        case Expression ->
+                            v = expResult;
+                        default ->
+                            v = dataValue;
                     }
                     handledCount++;
                 } else {

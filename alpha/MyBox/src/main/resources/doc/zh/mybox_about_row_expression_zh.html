@@ -85,37 +85,82 @@
                     <td>当前页的行号</td>
                 </tr>
                 <tr>
-                    <td>Math.abs(#{字段1}) + Math.PI * Math.sqrt(#{字段2})</td>
+                    <td>Math.abs(#{数字列1}) + Math.PI * Math.sqrt(#{数字列2})</td>
                     <td>数学计算</td>
                 </tr>
                 <tr>
-                    <td>#{字段1}.replace(/hello/ig,'Hello')</td>
-                    <td>把列"字段1"的值中所有"hello"(忽略大小写)替换"Hello"</td>
+                    <td>#{数字列1} - #{数字列2-均值}</td>
+                    <td>"数字列1"的值与"数字列2"的平均值之间的差值</td>
                 </tr>
                 <tr>
-                    <td>#{字段1}.toLowerCase()</td>
-                    <td>列"字段1"的值的小写</td>
+                    <td><pre>if ( #{字符串列} != null ) 
+    #{字符串列}.length
+else
+    -1</pre></td>
+                    <td>"字符串列"值的长度</td>
                 </tr>
                 <tr>
-                    <td>#{字段1}.split(',')</td>
-                    <td>把列"字段1"的值按逗号分隔</td>
+                    <td><pre>if ( #{字符串列} != null ) 
+    #{字符串列}.replace(/hello/ig,'Hello')
+else
+    null</pre></td>
+                    <td>把"字符串列"的值中所有"hello"(忽略大小写)替换"Hello"</td>
                 </tr>
                 <tr>
-                    <td>#{字段1} - #{字段1-均值}</td>
-                    <td>列"字段1"的值与列"字段1"的平均值之间的差值</td>
+                    <td><pre>if ( #{字符串列} != null ) 
+    #{字符串列}.toLowerCase()
+else
+    null</pre></td>
+                    <td>"字符串列"值的小写</td>
                 </tr>
                 <tr>
-                    <td>new Date(#{开始时间}.replace(/-/g,'/')).getFullYear()</td>
-                    <td>列"开始时间"的值的年份</td>
+                    <td><pre>if ( #{字符串列} != null ) 
+    #{字符串列}.split(',')
+else
+    null</pre></td>
+                    <td>把"字符串列"的值按逗号分隔</td>
+                </tr>
+                <tr>
+                    <td><pre>function formatDate(date) {
+     var y = date.getFullYear();
+     var m = date.getMonth() + 1;
+     m = m < 10 ? ('0' + m) : m;
+     var d = date.getDate();
+     d = d < 10 ? ('0' + d) : d;
+     var h =date.getHours();
+     h = h < 10 ? ('0' + h) : h;
+     var M =date.getMinutes();
+     M = M < 10 ? ('0' + M) : M;
+     var s =date.getSeconds();
+     s = s < 10 ? ('0' + s) : s;
+     return y + '-' + m + '-' + d + ' ' + h + ':' + M + ':' + s;
+}
+if (#{时间列} != null)
+   formatDate(new Date(#{时间列}));
+else
+   null;</pre></td>
+                    <td>格式化"时间列"的值</td>
+                </tr>
+                <tr>
+                    <td><pre>if ( #{时间列} != null ) 
+    new Date(#{时间列}).getFullYear()
+else
+    null</pre></td>
+                    <td>"时间列"值的年份</td>
                 </tr>
             </tbody>
         </table>
         <h1 align="center">行过滤</h1>
         <h2>1 行过滤的作用</h2>
-        <p>“行过滤"是特殊的"行表达式”，用来作为过滤数据行的条件。</p>
+        <p>“行过滤"是特殊的"行表达式”，用来作为过滤数据行的条件：</p>
+        <ol>
+            <li><p>当脚本为空时，表示不过滤，所有行都通过。</p></li>
+            <li><p>脚本应当最终是一个布尔值(“true"或"false”)。<br>
+                    用户可以选择当值为true或false时通过行。</p></li>
+            <li><p>若脚本值既不是true也不是false， 如脚本错误的情形，则此行不通过。</p></li>
+        </ol>
         <h2>2 编辑行过滤</h2>
         <ol>
-            <li><p>脚本应当最终是一个布尔值(“true"或"false”)。</p></li>
             <li><p>可以设置取用数据的最多行数。</p></li>
             <li><p>可以保存为树形。</p></li>
         </ol>
@@ -137,48 +182,77 @@
                     <td>当前页的奇数行</td>
                 </tr>
                 <tr>
-                    <td>Math.abs(#{字段1}) &gt;= 0</td>
-                    <td>列"字段1"的值是数值</td>
+                    <td>!isNaN(#{某列} - 1)</td>
+                    <td>"某列"的值是数字</td>
                 </tr>
                 <tr>
-                    <td>#{字段1} &gt; 0</td>
-                    <td>列"字段1"的值大于零</td>
+                    <td>#{数字列} &gt; 7</td>
+                    <td>"数字列"的值大于7</td>
                 </tr>
                 <tr>
-                    <td>#{字段1} - #{字段2} &lt; 100</td>
-                    <td>列"字段1"与"字段2"的值差小于100</td>
+                    <td>#{数字列1} - #{数字列2} &lt; 100</td>
+                    <td>"数字列1"与"数字列2"的值差小于100</td>
                 </tr>
                 <tr>
-                    <td>#{字段1} == ''</td>
-                    <td>列"字段1"的值为empty</td>
+                    <td>#{数字列1} &lt; #{数字列2-均值}</td>
+                    <td>"数字列1"的值小于"数字列2"的平均值</td>
                 </tr>
                 <tr>
-                    <td>#{字段1} != null</td>
-                    <td>列"字段1"的值不为null</td>
+                    <td>#{字符串列} == ''</td>
+                    <td>"字符串列"的值为empty</td>
                 </tr>
                 <tr>
-                    <td>#{字段1}.length &gt; 0</td>
-                    <td>列"字段1"的值不为空值</td>
+                    <td>#{字符串列} != null</td>
+                    <td>"字符串列"的值不为null</td>
                 </tr>
                 <tr>
-                    <td>#{字段1}.search(/Hello/ig) &gt;= 0</td>
-                    <td>列"字段1"的值包含字符串"Hello"（忽略大小写）</td>
+                    <td><pre>if ( #{字符串列} != null ) 
+    #{字符串列}.length > 9
+else
+    undefined</pre></td>
+                    <td>"字符串列"值的长度大于9</td>
                 </tr>
                 <tr>
-                    <td>#{字段1}.startsWith('Hello')</td>
-                    <td>列"字段1"的值以"Hello"开头</td>
+                    <td><pre>if ( #{字符串列} != null ) 
+    #{字符串列}.search(/Hello/ig) &gt;= 0
+else
+    undefined</pre></td>
+                    <td>"字符串列"的值包含字符串"Hello"（忽略大小写）</td>
                 </tr>
                 <tr>
-                    <td>var array = [ 'A', 'B', 'C']; array.includes(#{字段1})</td>
-                    <td>列"字段1"的值为’A’或’B’或’C’</td>
+                    <td><pre>if ( #{字符串列} != null ) 
+    #{字符串列}.startsWith('Hello')
+else
+    undefined</pre></td>
+                    <td>"字符串列"的值以"Hello"开头</td>
                 </tr>
                 <tr>
-                    <td>#{字段1} &lt; #{字段1-均值}</td>
-                    <td>列"字段1"的值小于列"字段1"的平均值</td>
+                    <td><pre>if ( #{字符串列} != null ) 
+    var array = [ 'A', 'B', 'C']; array.includes(#{字符串列})
+else
+    undefined</pre></td>
+                    <td>"字符串列"的值为’A’或’B’或’C’</td>
                 </tr>
                 <tr>
-                    <td>new Date(#{开始时间}.replace(/-/g,'/')).getTime() &gt; new Date('2016/05/19 09:23:12').getTime()</td>
-                    <td>列"开始时间"的值晚于’2016/05/19 09:23:12’</td>
+                    <td><pre>if ( #{时间列} != null ) 
+    #{时间列}.startsWith('2016-05-19 09')
+else
+    undefined</pre></td>
+                    <td>"时间列"值的月份是'2016-05-19 09'</td>
+                </tr>  
+                <tr>
+                    <td><pre>if ( #{时间列} != null ) 
+    new Date(#{时间列}).getTime() &gt; new Date('2016/05/19 09:23:12').getTime()
+else
+    undefined</pre></td>
+                    <td>"时间列"的值晚于’2016/05/19 09:23:12’</td>
+                </tr>
+                <tr>
+                    <td><pre>if ( #{时间列} != null ) 
+    new Date(#{时间列}).getDay() == 0
+else
+    undefined</pre></td>
+                    <td>"时间列"的值是星期日</td>
                 </tr>
             </tbody>
         </table>
