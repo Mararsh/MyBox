@@ -231,7 +231,7 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
             } else if (valueController.lowerTriangleRadio.isSelected()) {
                 return lowerTriangleMatrix();
             } else {
-                return setValue(valueController.value());
+                return setValue();
             }
         } catch (Exception e) {
             setError(e.toString());
@@ -239,8 +239,10 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
         }
     }
 
-    public boolean setValue(String value) {
+    public boolean setValue() {
         try {
+            String value = valueController.value();
+            outputData = new ArrayList<>();
             outputData.addAll(sourceController.tableData);
             for (int row : sourceController.filteredRowsIndices) {
                 List<String> values = sourceController.tableData.get(row);

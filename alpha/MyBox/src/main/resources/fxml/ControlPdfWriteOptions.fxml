@@ -121,14 +121,14 @@ License:    Apache License Version 2.0
         <VBox fx:id="imageOptionsBox" spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
             <children>
                 <Label text="%ImageFormat" />
-                <RadioButton mnemonicParsing="false" selected="true" text="%PNG">
+                <RadioButton fx:id="pngRadio" mnemonicParsing="false" selected="true" text="%PNG">
                     <toggleGroup>
                         <ToggleGroup fx:id="imageFormatGroup" />
                     </toggleGroup>
                 </RadioButton>
                 <FlowPane hgap="5.0" vgap="5.0">
                     <children>
-                        <RadioButton mnemonicParsing="false" text="%JpegQuailty" toggleGroup="$imageFormatGroup" />
+                        <RadioButton fx:id="jpgRadio" mnemonicParsing="false" text="%JpegQuailty" toggleGroup="$imageFormatGroup" />
                         <ComboBox fx:id="jpegQualitySelector" editable="true" prefWidth="120.0" />
                         <Label text="\%">
                             <padding>
@@ -137,7 +137,7 @@ License:    Apache License Version 2.0
                         </Label>
                     </children>
                 </FlowPane>
-                <RadioButton minHeight="-Infinity" mnemonicParsing="false" text="%CCITT4" toggleGroup="$imageFormatGroup" wrapText="true" />
+                <RadioButton fx:id="bwRadio" minHeight="-Infinity" mnemonicParsing="false" text="%CCITT4" toggleGroup="$imageFormatGroup" wrapText="true" />
                 <FlowPane hgap="5.0" vgap="5.0">
                     <children>
                         <TextField fx:id="thresholdInput" prefWidth="100.0" promptText="0~255" />

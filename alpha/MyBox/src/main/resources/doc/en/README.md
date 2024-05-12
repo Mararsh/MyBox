@@ -9,10 +9,13 @@ This is compute application to provide simple and easy functions. It's free and 
 * Add:                                     
      - Write watermarks in PDF files in batch.                                                                                                           
      - New data column type: Editable enumeration.                               
+     - Documents: Test Environment, Base Functions' Verification List, Compatibility Testing, Detailed Testing.                                                                                                      
 * Improve:                                     
      - Redesign and implement "Data manufacture". The base framework is: reader + operate + writers.                                                                                                           
      - Options: Verify types when edit data; Verify types when save data.                                                                                                            
-     - Implement row expresion with bindings. Placeholders are handled as variable names instead of variable values.                                                                                                            
+     - Row expression: Set variable values by bindings. Placeholders are handled as variable names instead of variable values.                                                                                                            
+     - Row filter: When expression is not empty and its value is not true nor false, the row is not taken.                                                                                                            
+     - Data manufacture: Fix and enhance "Set Values".                                                                                                           
      - Simplify interface of "Data manufacture".                                                                                                           
      - Transparent can be set when customized colors.                                                                                                           
      - "rtbufsize" and rotation can be set for ffmpeg.                               

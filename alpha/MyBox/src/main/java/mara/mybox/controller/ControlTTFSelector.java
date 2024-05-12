@@ -1,6 +1,7 @@
 package mara.mybox.controller;
 
 import java.io.File;
+import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -36,15 +37,15 @@ public class ControlTTFSelector extends BaseController {
     public ControlTTFSelector name(String baseName) {
         this.baseName = baseName;
 
-        ttfSelector.getItems().addAll(TTFTools.ttfList());
+        List<String> files = TTFTools.ttfList();
+        ttfSelector.getItems().addAll(files);
         ttfFile = UserConfig.getString(baseName + "TTF", null);
         if (ttfFile == null) {
-            if (!ttfSelector.getItems().isEmpty()) {
-                ttfSelector.getSelectionModel().select(0);
+            if (!files.isEmpty()) {
+                ttfFile = files.get(0);
             }
-        } else {
-            ttfSelector.setValue(ttfFile);
         }
+        ttfSelector.setValue(ttfFile);
         ttfSelector.valueProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> s, String ov, String nv) {

@@ -6,9 +6,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import mara.mybox.data.SetValue;
 import mara.mybox.data.SetValue.ValueType;
@@ -41,18 +41,17 @@ public class ControlData2DSetValue extends BaseController {
             numberSuffixStringRadio, numberPrefixStringRadio,
             gaussianDistributionRadio, identifyRadio, upperTriangleRadio, lowerTriangleRadio;
     @FXML
-    protected TextField valueInput, prefixInput, suffixInput, startInput, digitInput,
-            numberSuffixInput, numberPrefixInput;
+    protected TextField startInput, digitInput;
+    @FXML
+    protected TextArea valueInput, prefixInput, suffixInput, numberSuffixInput, numberPrefixInput;
     @FXML
     protected ComboBox<String> scaleSelector;
-    @FXML
-    protected FlowPane scalePane, numberPane, matrixPane;
     @FXML
     protected ControlData2DRowExpression expressionController;
     @FXML
     protected CheckBox fillZeroCheck;
     @FXML
-    protected VBox expBox;
+    protected VBox expBox, matrixBox;
 
     public void setParameter(Data2DSetValuesController handleController) {
         try {
@@ -182,10 +181,10 @@ public class ControlData2DSetValue extends BaseController {
 
     public void setMatrixPane(boolean isAvailable) {
         if (isAvailable) {
-            matrixPane.setDisable(false);
+            matrixBox.setVisible(true);
 
         } else {
-            matrixPane.setDisable(true);
+            matrixBox.setVisible(false);
             if (gaussianDistributionRadio.isSelected() || identifyRadio.isSelected()
                     || upperTriangleRadio.isSelected() || lowerTriangleRadio.isSelected()) {
                 valueRadio.setSelected(true);
@@ -308,12 +307,36 @@ public class ControlData2DSetValue extends BaseController {
                 UserConfig.setBoolean(conn, baseName + "FillZero", setValue.isFillZero());
                 UserConfig.setBoolean(conn, baseName + "AutoDigit", setValue.isAotoDigit());
             } else if (gaussianDistributionRadio.isSelected()) {
+                if (handleController.sourceController.filteredRowsIndices.size()
+                        != handleController.checkedColsIndices.size()) {
+                    outError(message("MatricesCannotCalculateShouldSqure"));
+                    return false;
+                }
+                if (handleController.sourceController.filteredRowsIndices.size() % 2 == 0) {
+                    outError(message("MatricesCannotCalculateShouldOdd"));
+                    return false;
+                }
                 setValue.setType(ValueType.GaussianDistribution);
             } else if (identifyRadio.isSelected()) {
+                if (handleController.sourceController.filteredRowsIndices.size()
+                        != handleController.checkedColsIndices.size()) {
+                    outError(message("MatricesCannotCalculateShouldSqure"));
+                    return false;
+                }
                 setValue.setType(ValueType.GaussianDistribution);
             } else if (upperTriangleRadio.isSelected()) {
+                if (handleController.sourceController.filteredRowsIndices.size()
+                        != handleController.checkedColsIndices.size()) {
+                    outError(message("MatricesCannotCalculateShouldSqure"));
+                    return false;
+                }
                 setValue.setType(ValueType.UpperTriangle);
             } else if (lowerTriangleRadio.isSelected()) {
+                if (handleController.sourceController.filteredRowsIndices.size()
+                        != handleController.checkedColsIndices.size()) {
+                    outError(message("MatricesCannotCalculateShouldSqure"));
+                    return false;
+                }
                 setValue.setType(ValueType.LowerTriangle);
             } else if (expressionRadio.isSelected()) {
                 if (!expressionController.checkExpression(handleController.isAllPages())) {

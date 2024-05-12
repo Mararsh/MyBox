@@ -58,6 +58,11 @@ public class PptToPdfController extends BaseBatchFileController {
     }
 
     @Override
+    public boolean makeMoreParameters() {
+        return pdfOptionsController.pickValues() && super.makeMoreParameters();
+    }
+
+    @Override
     public String handleFile(FxTask currentTask, File srcFile, File targetPath) {
         File target = makeTargetFile(srcFile, targetPath);
         if (target == null) {
@@ -90,8 +95,8 @@ public class PptToPdfController extends BaseBatchFileController {
                 return message("Canceled");
             }
             PdfTools.setAttributes(document,
-                    pdfOptionsController.authorInput.getText(),
-                    pdfOptionsController.zoom);
+                    pdfOptionsController.getAuthor(),
+                    pdfOptionsController.getZoom());
             document.save(tmpFile);
             document.close();
         } catch (Exception e) {

@@ -426,6 +426,11 @@ public class ImagesSaveController extends BaseTaskController {
                 }
             }
         }
+        if (pdfRadio.isSelected()) {
+            if (!pdfOptionsController.pickValues()) {
+                return false;
+            }
+        }
         try (Connection conn = DerbyBase.getConnection()) {
             UserConfig.setInt(conn, baseName + "savedWidth", savedWidth);
             UserConfig.setInt(conn, baseName + "PptWidth", pptWidth);
