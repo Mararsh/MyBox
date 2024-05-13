@@ -11,13 +11,13 @@ import mara.mybox.data2d.Data2D_Edit;
  */
 public class Data2DSetValue extends Data2DModify {
 
-    public static Data2DSetValue create(Data2D_Edit data, SetValue setValue) {
-        if (data == null || setValue == null) {
+    public static Data2DSetValue create(Data2D_Edit data, SetValue value) {
+        if (data == null || value == null) {
             return null;
         }
         Data2DSetValue operate = new Data2DSetValue();
         if (!operate.setSourceData(data)
-                || !operate.initSetValue(setValue)) {
+                || !operate.initSetValue(value)) {
             return null;
         }
         operate.initWriter();

@@ -458,11 +458,15 @@
             <li>Create data chart.</li>
             <li>Caculate data.</li>
         </ul>
-        <p>Temporary data are saved in CSV format under internal temporary files path of MyBox by default.<br>
-            The temporary files path will be cleared automatically when MyBox exits.<br> 
-            So please save temporary data under other path if need.</p>
-        <p>Option: Save temporary data under "generated" path. 
-            When this option is checked, temporary data files will not be removed automatically。</p>
+        <p>Temporary data are saved in CSV format, under internal temporary files path of MyBox by default.</p>
+        <p>If files are under MyBox temporary files path:</p>
+        <ul>
+            <li>When MyBox exits, this path will be cleared automatically. So please save temporary data under other path if need.</li>
+            <li>They will not be backed up automatically when edit.</li>
+            <li>They will not be recorded when read or write, and will not appear in the list of "Recently accessed files".</li>
+        </ul>
+        <p>Option: Save temporary data under "generated" path.<br> 
+            When this option is checked, temporary data files are not treated as "temporary files"。</p>
 
         <hr>
         <p>More details can be referred in <a href="https://mara-mybox.sourceforge.io/guide/MyBox-DataTools-en.pdf">"User Guide - Data Tools"</a></p> <br>

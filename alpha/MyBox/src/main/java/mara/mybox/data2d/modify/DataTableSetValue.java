@@ -17,11 +17,11 @@ import static mara.mybox.value.Languages.message;
  */
 public class DataTableSetValue extends DataTableModify {
 
-    public DataTableSetValue(DataTable data, SetValue setValue) {
+    public DataTableSetValue(DataTable data, SetValue value) {
         if (!setSourceData(data)) {
             return;
         }
-        initSetValue(setValue);
+        initSetValue(value);
         sourceTable = data;
     }
 
@@ -47,10 +47,12 @@ public class DataTableSetValue extends DataTableModify {
                 sourceRowIndex++;
                 setValue(sourceRow, sourceRowIndex);
             }
-            update.executeBatch();
-            conn.commit();
+            if (!stopped) {
+                update.executeBatch();
+                conn.commit();
+                updateTable();
+            }
             showInfo(message("Updated") + ": " + handledCount);
-            updateTable();
             conn.close();
             conn = null;
             return true;

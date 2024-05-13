@@ -1,9 +1,8 @@
 package mara.mybox.data2d.modify;
 
-import java.util.ArrayList;
+import java.util.List;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.Data2D_Edit;
-import mara.mybox.db.data.Data2DColumn;
 
 /**
  * @Author Mara
@@ -12,42 +11,30 @@ import mara.mybox.db.data.Data2DColumn;
  */
 public class Data2DSaveAttributes extends Data2DModify {
 
-    protected Data2D attributes;
-
-    public static Data2DSaveAttributes create(Data2D_Edit data, Data2D attributes) {
-        if (data == null || attributes == null) {
+    public static Data2DSaveAttributes create(Data2D_Edit data, Data2D attrs) {
+        if (data == null || attrs == null) {
             return null;
         }
         Data2DSaveAttributes operate = new Data2DSaveAttributes();
         if (!operate.setSourceData(data)) {
             return null;
         }
-        operate.attributes = attributes;
+        operate.attributes = attrs;
         operate.initWriter();
         return operate;
     }
 
     @Override
-    public boolean handleRow() {
-        try {
-            targetRow = null;
-            if (sourceRow == null) {
-                return false;
-            }
-            targetRow = new ArrayList<>();
-            for (Data2DColumn column : attributes.columns) {
-                int dataIndex = column.getIndex();
-                if (dataIndex < 0 || dataIndex >= sourceRow.size()) {
-                    targetRow.add(null);
-                } else {
-                    targetRow.add(sourceRow.get(dataIndex));
-                }
-            }
-            return true;
-        } catch (Exception e) {
-            showError(e.toString());
-            return false;
-        }
+    public void initWriter() {
+        writer = sourceData.selfWriter();
+        writer.setColumns(attributes.getColumns())
+                .setHeaderNames(attributes.columnNames());
+        addWriter(writer);
+    }
+
+    @Override
+    public void handleRow(List<String> row, long index) {
+        applyAttributes(row, index);
     }
 
 }

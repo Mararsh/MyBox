@@ -205,6 +205,27 @@ public class Data2DMenuTools {
 
             items.add(new SeparatorMenuItem());
 
+            menu = new MenuItem(message("SetValues"), StyleTools.getIconImageView("iconEqual.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                dataController.setValue();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("DeleteWithConditions"), StyleTools.getIconImageView("iconDelete.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                dataController.delete();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("SetStyles"), StyleTools.getIconImageView("iconColor.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                dataController.setStyles();
+            });
+            menu.setDisable(isTmp);
+            items.add(menu);
+
+            items.add(new SeparatorMenuItem());
+
             menu = new MenuItem(message("CopyToSystemClipboard"), StyleTools.getIconImageView("iconCopySystem.png"));
             menu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -224,27 +245,6 @@ public class Data2DMenuTools {
             menu.setOnAction((ActionEvent event) -> {
                 dataController.pasteContentInMyboxClipboard();
             });
-            items.add(menu);
-
-            items.add(new SeparatorMenuItem());
-
-            menu = new MenuItem(message("SetValues"), StyleTools.getIconImageView("iconEqual.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                dataController.setValue();
-            });
-            items.add(menu);
-
-            menu = new MenuItem(message("DeleteWithConditions"), StyleTools.getIconImageView("iconDelete.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                dataController.delete();
-            });
-            items.add(menu);
-
-            menu = new MenuItem(message("SetStyles"), StyleTools.getIconImageView("iconColor.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                dataController.setStyles();
-            });
-            menu.setDisable(isTmp);
             items.add(menu);
 
             if (isTableMode) {

@@ -152,7 +152,8 @@ public class Data2DManufactureController extends BaseData2DViewController {
     @Override
     public void showHtmlButtons() {
         buttonsPane.getChildren().setAll(formCheck, titleCheck, columnCheck, rowCheck,
-                editHtmlButton, infoButton);
+                dataDefinitionButton, addRowsButton, recoverButton, saveButton,
+                editHtmlButton);
         isSettingValues = true;
         formCheck.setSelected(UserConfig.getBoolean(baseName + "HtmlShowForm", false));
         columnCheck.setSelected(UserConfig.getBoolean(baseName + "HtmlShowColumns", true));
@@ -164,7 +165,8 @@ public class Data2DManufactureController extends BaseData2DViewController {
     @Override
     public void showTextsButtons() {
         buttonsPane.getChildren().setAll(formCheck, titleCheck, columnCheck, rowCheck,
-                wrapCheck, delimiterButton, infoButton);
+                wrapCheck, delimiterButton,
+                dataDefinitionButton, addRowsButton, recoverButton, saveButton);
         isSettingValues = true;
         formCheck.setSelected(UserConfig.getBoolean(baseName + "TextsShowForm", false));
         columnCheck.setSelected(UserConfig.getBoolean(baseName + "TextsShowColumns", true));
@@ -187,7 +189,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
                 return;
             }
             buttonsPane.getChildren().addAll(wrapCheck, delimiterButton,
-                    dataDefinitionButton, recoverButton, saveButton);
+                    dataDefinitionButton, addRowsButton, recoverButton, saveButton);
             pageBox.getChildren().add(csvBox);
             VBox.setVgrow(csvBox, Priority.ALWAYS);
 

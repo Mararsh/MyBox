@@ -228,12 +228,12 @@ public class ControlNewDataTable extends BaseController {
             if (conn == null || !makeTable(currentTask)) {
                 return false;
             }
-            String tableName = tableData2D.getTableName();
+            String tName = tableData2D.getTableName();
             tableData2D = dataTable.getTableData2D();
             String sql = tableData2D.createTableStatement();
             taskController.updateLogs(sql);
-            if (DerbyBase.exist(conn, tableName) > 0) {
-                dataTable.drop(conn, tableName);
+            if (DerbyBase.exist(conn, tName) > 0) {
+                dataTable.drop(conn, tName);
                 conn.commit();
             }
             if (conn.createStatement().executeUpdate(sql) >= 0) {
@@ -242,7 +242,7 @@ public class ControlNewDataTable extends BaseController {
                 taskController.updateLogs(message("Failed"));
                 return false;
             }
-            dataTable.recordTable(conn, tableName,
+            dataTable.recordTable(conn, tName,
                     dataTable.getColumns(), dataTable.getComments());
             taskController.updateLogs(message("Record"));
             return true;

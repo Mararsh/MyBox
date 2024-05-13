@@ -46,10 +46,12 @@ public class DataTableDelete extends DataTableModify {
                 sourceRowIndex++;
                 handleRow(sourceRow, sourceRowIndex);
             }
-            delete.executeBatch();
-            conn.commit();
+            if (!stopped) {
+                delete.executeBatch();
+                conn.commit();
+                updateTable();
+            }
             showInfo(message("Deleted") + ": " + handledCount);
-            updateTable();
             conn.close();
             conn = null;
             return true;

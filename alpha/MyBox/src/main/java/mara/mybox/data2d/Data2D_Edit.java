@@ -17,6 +17,7 @@ import mara.mybox.data2d.modify.Data2DSavePage;
 import mara.mybox.data2d.modify.Data2DSetValue;
 import mara.mybox.data2d.modify.DataTableClear;
 import mara.mybox.data2d.modify.DataTableDelete;
+import mara.mybox.data2d.modify.DataTableSaveAttributes;
 import mara.mybox.data2d.modify.DataTableSetValue;
 import mara.mybox.data2d.operate.Data2DOperate;
 import mara.mybox.data2d.operate.Data2DReadPage;
@@ -283,7 +284,9 @@ public abstract class Data2D_Edit extends Data2D_Filter {
             if (attributes == null) {
                 return -1;
             }
-            Data2DSaveAttributes operate = Data2DSaveAttributes.create(this, attributes);
+            Data2DOperate operate = isUserTable()
+                    ? new DataTableSaveAttributes((DataTable) this, attributes)
+                    : Data2DSaveAttributes.create(this, attributes);
             if (operate == null) {
                 return -2;
             }

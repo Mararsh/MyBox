@@ -566,8 +566,20 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
                     title += " * ";
                 }
                 title += data2D.displayName();
+
+                if (dataSizeLabel != null) {
+                    int tsize = tableData == null ? 0 : tableData.size();
+                    long start = data2D.getStartRowOfCurrentPage();
+                    long end = data2D.getEndRowOfCurrentPage();
+                    dataSizeLabel.setText(message("Rows") + ": "
+                            + "[" + start + "-" + end + "]" + tsize
+                            + (data2D.isTableChanged() ? "*" : "")
+                            + (dataSize > 0 ? "/" + dataSize : ""));
+                }
+
             }
             myStage.setTitle(title);
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

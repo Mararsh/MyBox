@@ -26,7 +26,7 @@ public abstract class DataTableModify extends Data2DModify {
 
     public boolean updateTable() {
         try {
-            if (sourceTable == null || conn == null) {
+            if (stopped || sourceTable == null || conn == null) {
                 return false;
             }
             String sql = "SELECT count(*) FROM " + sourceTable.getSheet();
@@ -37,6 +37,9 @@ public abstract class DataTableModify extends Data2DModify {
                 }
             }
             sourceData.setRowsNumber(rowsNumber);
+            if (stopped) {
+                return false;
+            }
             Data2D.saveAttributes(conn, sourceData, sourceData.getColumns());
             showInfo(message("DataTable") + ": " + sourceData.getSheet() + "  "
                     + message("RowsNumber") + ": " + rowsNumber);

@@ -188,14 +188,14 @@ public class Data2DAttributesController extends BaseChildController {
     @FXML
     @Override
     public void okAction() {
-        Data2D newData = pickValues();
-        if (newData == null) {
+        Data2D attributes = pickValues();
+        if (attributes == null) {
             return;
         }
-        if (newData.isMutiplePages()) {
-            handleMutiplePages(newData);
+        if (attributes.isMutiplePages()) {
+            handleMutiplePages(attributes);
         } else {
-            handlePage(newData);
+            handlePage(attributes);
         }
     }
 
