@@ -3,14 +3,11 @@ package mara.mybox.data2d.modify;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.List;
 import mara.mybox.data.SetValue;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.db.Database;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DColumn;
-import mara.mybox.db.data.Data2DRow;
-import mara.mybox.db.table.TableData2D;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -18,17 +15,13 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-1-29
  * @License Apache License Version 2.0
  */
-public class DataTableSetValue extends Data2DSetValue {
-
-    protected DataTable sourceTable;
-    protected TableData2D tableData2D;
-    protected int columnsNumber;
-    protected Data2DRow sourceTableRow;
-    protected PreparedStatement update;
-    protected List<Data2DColumn> columns;
+public class DataTableSetValue extends DataTableModify {
 
     public DataTableSetValue(DataTable data, SetValue setValue) {
-        setSourceData(data);
+        if (!setSourceData(data)) {
+            return;
+        }
+        initSetValue(setValue);
         sourceTable = data;
     }
 
@@ -52,11 +45,12 @@ public class DataTableSetValue extends Data2DSetValue {
                 sourceTableRow = tableData2D.readData(results);
                 sourceRow = sourceTableRow.toStrings(columns);
                 sourceRowIndex++;
-                handleRow(sourceRow, sourceRowIndex);
+                setValue(sourceRow, sourceRowIndex);
             }
             update.executeBatch();
             conn.commit();
             showInfo(message("Updated") + ": " + handledCount);
+            updateTable();
             conn.close();
             conn = null;
             return true;

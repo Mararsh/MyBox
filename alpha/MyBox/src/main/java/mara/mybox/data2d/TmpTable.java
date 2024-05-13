@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import mara.mybox.calculation.ExpressionCalculator;
 import mara.mybox.data.DataSort;
 import mara.mybox.data.FindReplaceString;
 import mara.mybox.data2d.DataTableGroup.TimeType;
@@ -24,7 +25,6 @@ import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DRow;
 import static mara.mybox.db.table.BaseTable.StringMaxLength;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.calculation.ExpressionCalculator;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTmpTools;
@@ -240,8 +240,9 @@ public class TmpTable extends DataTable {
             long index;
             List<String> values;
             if (includeRowNumber) {
-                index = Long.parseLong(sourceRow.get(0));
-                data2DRow.setColumnValue(column(1).getColumnName(), index);
+                String rowNum = sourceRow.get(0);
+                index = Long.parseLong(rowNum);
+                data2DRow.setColumnValue(column(1).getColumnName(), rowNum);
                 values = sourceRow.subList(1, sourceRow.size());
             } else {
                 index = -1;

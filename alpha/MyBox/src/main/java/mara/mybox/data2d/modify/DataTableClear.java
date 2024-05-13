@@ -1,25 +1,15 @@
 package mara.mybox.data2d.modify;
 
-import java.sql.PreparedStatement;
-import java.util.List;
+import java.sql.Connection;
 import mara.mybox.data2d.DataTable;
-import mara.mybox.data2d.operate.Data2DOperate;
-import mara.mybox.db.data.Data2DColumn;
-import mara.mybox.db.data.Data2DRow;
-import mara.mybox.db.table.TableData2D;
+import mara.mybox.db.DerbyBase;
 
 /**
  * @Author Mara
  * @CreateDate 2022-1-29
  * @License Apache License Version 2.0
  */
-public class DataTableClear extends Data2DOperate {
-
-    protected DataTable sourceTable;
-    protected int columnsNumber;
-    protected Data2DRow sourceTableRow;
-    protected PreparedStatement delete;
-    protected List<Data2DColumn> columns;
+public class DataTableClear extends DataTableModify {
 
     public DataTableClear(DataTable data) {
         setSourceData(data);
@@ -28,13 +18,17 @@ public class DataTableClear extends Data2DOperate {
 
     @Override
     public boolean go() {
-        try {
+        try (Connection dconn = DerbyBase.getConnection()) {
+            conn = dconn;
             String sql = "DELETE FROM " + sourceTable.getSheet();
             showInfo(sql);
-            TableData2D tableData2D = sourceTable.getTableData2D();
+            tableData2D = sourceTable.getTableData2D();
             tableData2D.setTableName(sourceTable.getSheet());
-            handledCount = tableData2D.clearData();
-            return handledCount >= 0;
+            handledCount = tableData2D.clearData(conn);
+            if (handledCount < 0) {
+                return false;
+            }
+            return updateTable();
         } catch (Exception e) {
             showError(e.toString());
             return false;

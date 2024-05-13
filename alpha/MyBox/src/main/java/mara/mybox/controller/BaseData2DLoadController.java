@@ -536,6 +536,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
         }
         Data2DCopyController controller = Data2DCopyController.open(this);
         controller.targetController.setTarget(TargetType.SystemClipboard);
+        controller.setBaseTitle(message("CopyToSystemClipboard"));
     }
 
     public void copyToSystemClipboard(List<String> names, List<List<String>> data) {

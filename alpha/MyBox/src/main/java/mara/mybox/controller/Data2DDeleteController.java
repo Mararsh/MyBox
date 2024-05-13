@@ -78,12 +78,12 @@ public class Data2DDeleteController extends BaseData2DTaskTargetsController {
     @Override
     public void ouputRows() {
         try {
+            int count = sourceController.tableData.size() - outputData.size();
             sourceController.selectedRowsIndices = null;
-            dataController.updateTable(outputData);
-            dataController.tableChanged(true);
-            dataController.requestMouse();
-            dataController.alertInformation(message("DeletedRowsNumber") + ": "
-                    + sourceController.filteredRowsIndices.size());
+            editor.updateTable(outputData);
+            editor.tableChanged(true);
+            editor.requestMouse();
+            editor.alertInformation(message("DeletedRowsNumber") + ": " + count);
             tabPane.getSelectionModel().select(sourceTab);
         } catch (Exception e) {
             popError(message(e.toString()));
@@ -127,11 +127,12 @@ public class Data2DDeleteController extends BaseData2DTaskTargetsController {
             protected void whenSucceeded() {
                 sourceController.selectedRowsIndices = null;
                 tabPane.getSelectionModel().select(sourceTab);
-                dataController.data2D.cloneData(data2D);
-                dataController.dataSizeLoaded = false;
-                dataController.goPage();
-                dataController.requestMouse();
-                dataController.alertInformation(message("DeletedRowsNumber") + ": " + count);
+                editor.data2D.cloneData(data2D);
+                editor.data2D.setTableChanged(false);
+                editor.dataSizeLoaded = false;
+                editor.goPage();
+                editor.requestMouse();
+                editor.alertInformation(message("DeletedRowsNumber") + ": " + count);
             }
 
             @Override

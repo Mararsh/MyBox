@@ -2,8 +2,8 @@ package mara.mybox.calculation;
 
 import java.util.ArrayList;
 import java.util.List;
-import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.db.data.ColumnDefinition;
+import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.DoubleTools;
@@ -108,7 +108,7 @@ public class OLSLinearRegression extends OLSMultipleLinearRegression {
             data.add(row);
             for (int i = 0; i < x.length; i++) {
                 row = new ArrayList<>();
-                row.add(message("Row") + (i + 1));
+                row.add("" + (i + 1));
                 row.add(y[i] + "");
                 for (int j = 0; j < x[i].length; j++) {
                     row.add(x[i][j] + "");

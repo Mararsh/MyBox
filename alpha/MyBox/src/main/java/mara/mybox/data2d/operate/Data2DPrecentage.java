@@ -5,7 +5,6 @@ import java.util.List;
 import mara.mybox.data2d.Data2D_Edit;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DoubleTools;
-import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -118,7 +117,7 @@ public class Data2DPrecentage extends Data2DOperate {
                 return false;
             }
             targetRow = new ArrayList<>();
-            targetRow.add(message("Row") + sourceRowIndex);
+            targetRow.add("" + sourceRowIndex);
             for (int c = 0; c < colsLen; c++) {
                 int i = cols.get(c);
                 double d;
@@ -197,7 +196,7 @@ public class Data2DPrecentage extends Data2DOperate {
                 return false;
             }
             targetRow = new ArrayList<>();
-            targetRow.add(message("Row") + sourceRowIndex);
+            targetRow.add("" + sourceRowIndex);
             for (int c = 0; c < colsLen; c++) {
                 int i = cols.get(c);
                 double d;
@@ -249,7 +248,7 @@ public class Data2DPrecentage extends Data2DOperate {
                 return false;
             }
             targetRow = new ArrayList<>();
-            targetRow.add(message("Row") + sourceRowIndex);
+            targetRow.add("" + sourceRowIndex);
             double sum = 0;
             for (int c = 0; c < colsLen; c++) {
                 int i = cols.get(c);

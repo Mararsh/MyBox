@@ -150,7 +150,6 @@ public class BaseData2DPasteController extends ControlData2DSource {
             targetController.isSettingValues = false;
             targetController.tableChanged(true);
             targetController.popSuccessful();
-            close();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

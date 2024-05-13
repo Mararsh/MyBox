@@ -198,11 +198,15 @@ public abstract class Data2D_Data extends Data2D_Attributes {
         }
     }
 
-    public List<List<String>> tableRows(boolean withRowNumber, boolean formatValues) {
+    public List<List<String>> tableRows(boolean tableRowNumber, boolean dataRowNumber, boolean formatValues) {
         try {
             List<List<String>> rows = new ArrayList<>();
             for (int i = 0; i < pageData.size(); i++) {
-                List<String> row = tableRow(i, withRowNumber, formatValues);
+                List<String> row = new ArrayList<>();
+                if (tableRowNumber) {
+                    row.add("" + (i + 1));
+                }
+                row.addAll(tableRow(i, dataRowNumber, formatValues));
                 rows.add(row);
             }
             return rows;
@@ -211,8 +215,8 @@ public abstract class Data2D_Data extends Data2D_Attributes {
         }
     }
 
-    public List<List<String>> tableRows(boolean withRowNumber) {
-        return tableRows(withRowNumber, false);
+    public List<List<String>> tableRows(boolean dataRowNumber) {
+        return tableRows(false, dataRowNumber, false);
     }
 
     public List<String> newRow() {

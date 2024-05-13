@@ -195,7 +195,7 @@ public class ControlData2DSystemClipboard extends BaseController {
         }
         if (textData.getFile() == null) {
             Data2DManufactureController.openData(textData.dataName(),
-                    textData.getColumns(), textData.tableRows(false, false));
+                    textData.getColumns(), textData.tableRows(false, false, false));
         } else {
             Data2DManufactureController.openDef(textData);
         }

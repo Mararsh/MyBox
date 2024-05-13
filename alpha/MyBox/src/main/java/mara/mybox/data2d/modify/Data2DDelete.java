@@ -2,7 +2,6 @@ package mara.mybox.data2d.modify;
 
 import java.util.List;
 import mara.mybox.data2d.Data2D_Edit;
-import mara.mybox.data2d.operate.Data2DOperate;
 import mara.mybox.dev.MyBoxLog;
 
 /**
@@ -10,7 +9,7 @@ import mara.mybox.dev.MyBoxLog;
  * @CreateDate 2022-8-16
  * @License Apache License Version 2.0
  */
-public class Data2DDelete extends Data2DOperate {
+public class Data2DDelete extends Data2DModify {
 
     public static Data2DDelete create(Data2D_Edit data) {
         if (data == null) {
@@ -20,7 +19,7 @@ public class Data2DDelete extends Data2DOperate {
         if (!operate.setSourceData(data)) {
             return null;
         }
-        operate.addWriter(data.selfWriter());
+        operate.initWriter();
         return operate;
     }
 

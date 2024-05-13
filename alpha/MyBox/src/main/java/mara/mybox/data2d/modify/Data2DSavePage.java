@@ -1,15 +1,13 @@
 package mara.mybox.data2d.modify;
 
 import mara.mybox.data2d.Data2D_Edit;
-import mara.mybox.data2d.operate.Data2DOperate;
-import mara.mybox.data2d.writer.Data2DWriter;
 
 /**
  * @Author Mara
  * @CreateDate 2022-2-25
  * @License Apache License Version 2.0
  */
-public class Data2DSavePage extends Data2DOperate {
+public class Data2DSavePage extends Data2DModify {
 
     public static Data2DSavePage save(Data2D_Edit data) {
         if (data == null) {
@@ -19,8 +17,7 @@ public class Data2DSavePage extends Data2DOperate {
         if (!operate.setSourceData(data)) {
             return null;
         }
-        Data2DWriter writer = data.selfWriter();
-        operate.addWriter(writer);
+        operate.initWriter();
         return operate;
 
     }

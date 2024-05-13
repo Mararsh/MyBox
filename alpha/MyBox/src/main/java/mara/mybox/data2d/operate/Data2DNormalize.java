@@ -4,12 +4,8 @@ import java.util.ArrayList;
 import mara.mybox.calculation.DoubleStatistic;
 import mara.mybox.calculation.Normalization;
 import mara.mybox.data2d.Data2D_Edit;
-import static mara.mybox.db.data.ColumnDefinition.InvalidAs.Null;
-import static mara.mybox.db.data.ColumnDefinition.InvalidAs.Skip;
-import static mara.mybox.db.data.ColumnDefinition.InvalidAs.Zero;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.value.AppValues;
-import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -100,7 +96,7 @@ public class Data2DNormalize extends Data2DOperate {
             }
             targetRow = new ArrayList<>();
             if (includeRowNumber) {
-                targetRow.add(message("Row") + sourceRowIndex);
+                targetRow.add("" + sourceRowIndex);
             }
             for (int c = 0; c < colsLen; c++) {
                 int i = cols.get(c);
@@ -110,22 +106,7 @@ public class Data2DNormalize extends Data2DOperate {
                     String s = sourceRow.get(i);
                     double v = DoubleTools.toDouble(s, invalidAs);
                     if (DoubleTools.invalidDouble(v)) {
-                        switch (invalidAs) {
-                            case Empty:
-                                targetRow.add("");
-                                break;
-                            case Zero:
-                                targetRow.add("0");
-                                break;
-                            case Skip:
-                                break;
-                            case Null:
-                                targetRow.add(null);
-                                break;
-                            default:
-                                targetRow.add(s);
-                                break;
-                        }
+                        targetRow.add(null);
                     } else {
                         v = from + statisticData[c].dTmp * (v - statisticData[c].minimum);
                         targetRow.add(DoubleTools.scale(v, scale) + "");
@@ -155,7 +136,7 @@ public class Data2DNormalize extends Data2DOperate {
             }
             targetRow = new ArrayList<>();
             if (includeRowNumber) {
-                targetRow.add(message("Row") + sourceRowIndex);
+                targetRow.add("" + sourceRowIndex);
             }
             for (int c = 0; c < colsLen; c++) {
                 int i = cols.get(c);
@@ -165,22 +146,7 @@ public class Data2DNormalize extends Data2DOperate {
                     String s = sourceRow.get(i);
                     double v = DoubleTools.toDouble(s, invalidAs);
                     if (DoubleTools.invalidDouble(v)) {
-                        switch (invalidAs) {
-                            case Empty:
-                                targetRow.add("");
-                                break;
-                            case Zero:
-                                targetRow.add("0");
-                                break;
-                            case Skip:
-                                break;
-                            case Null:
-                                targetRow.add(null);
-                                break;
-                            default:
-                                targetRow.add(s);
-                                break;
-                        }
+                        targetRow.add(null);
                     } else {
                         v = v * colValues[c];
                         targetRow.add(DoubleTools.scale(v, scale) + "");
@@ -210,7 +176,7 @@ public class Data2DNormalize extends Data2DOperate {
             }
             targetRow = new ArrayList<>();
             if (includeRowNumber) {
-                targetRow.add(message("Row") + sourceRowIndex);
+                targetRow.add("" + sourceRowIndex);
             }
             for (int c = 0; c < colsLen; c++) {
                 int i = cols.get(c);
@@ -220,22 +186,7 @@ public class Data2DNormalize extends Data2DOperate {
                     String s = sourceRow.get(i);
                     double v = DoubleTools.toDouble(s, invalidAs);
                     if (DoubleTools.invalidDouble(v)) {
-                        switch (invalidAs) {
-                            case Empty:
-                                targetRow.add("");
-                                break;
-                            case Zero:
-                                targetRow.add("0");
-                                break;
-                            case Skip:
-                                break;
-                            case Null:
-                                targetRow.add(null);
-                                break;
-                            default:
-                                targetRow.add(s);
-                                break;
-                        }
+                        targetRow.add(null);
                     } else {
                         double k = statisticData[c].getPopulationStandardDeviation();
                         if (k == 0) {
@@ -269,7 +220,7 @@ public class Data2DNormalize extends Data2DOperate {
             }
             targetRow = new ArrayList<>();
             if (includeRowNumber) {
-                targetRow.add(message("Row") + sourceRowIndex);
+                targetRow.add("" + sourceRowIndex);
             }
             for (int c = 0; c < colsLen; c++) {
                 int i = cols.get(c);
@@ -279,22 +230,7 @@ public class Data2DNormalize extends Data2DOperate {
                     String s = sourceRow.get(i);
                     double v = DoubleTools.toDouble(s, invalidAs);
                     if (DoubleTools.invalidDouble(v)) {
-                        switch (invalidAs) {
-                            case Empty:
-                                targetRow.add("");
-                                break;
-                            case Zero:
-                                targetRow.add("0");
-                                break;
-                            case Skip:
-                                break;
-                            case Null:
-                                targetRow.add(null);
-                                break;
-                            default:
-                                targetRow.add(s);
-                                break;
-                        }
+                        targetRow.add(null);
                     } else {
                         v = from + statisticAll.dTmp * (v - statisticAll.minimum);
                         targetRow.add(DoubleTools.scale(v, scale) + "");
@@ -324,7 +260,7 @@ public class Data2DNormalize extends Data2DOperate {
             }
             targetRow = new ArrayList<>();
             if (includeRowNumber) {
-                targetRow.add(message("Row") + sourceRowIndex);
+                targetRow.add("" + sourceRowIndex);
             }
             for (int c = 0; c < colsLen; c++) {
                 int i = cols.get(c);
@@ -334,22 +270,7 @@ public class Data2DNormalize extends Data2DOperate {
                     String s = sourceRow.get(i);
                     double v = DoubleTools.toDouble(s, invalidAs);
                     if (DoubleTools.invalidDouble(v)) {
-                        switch (invalidAs) {
-                            case Empty:
-                                targetRow.add("");
-                                break;
-                            case Zero:
-                                targetRow.add("0");
-                                break;
-                            case Skip:
-                                break;
-                            case Null:
-                                targetRow.add(null);
-                                break;
-                            default:
-                                targetRow.add(s);
-                                break;
-                        }
+                        targetRow.add(null);
                     } else {
                         v = v * tValue;
                         targetRow.add(DoubleTools.scale(v, scale) + "");
@@ -379,7 +300,7 @@ public class Data2DNormalize extends Data2DOperate {
             }
             targetRow = new ArrayList<>();
             if (includeRowNumber) {
-                targetRow.add(message("Row") + sourceRowIndex);
+                targetRow.add("" + sourceRowIndex);
             }
             for (int c = 0; c < colsLen; c++) {
                 int i = cols.get(c);
@@ -389,22 +310,7 @@ public class Data2DNormalize extends Data2DOperate {
                     String s = sourceRow.get(i);
                     double v = DoubleTools.toDouble(s, invalidAs);
                     if (DoubleTools.invalidDouble(v)) {
-                        switch (invalidAs) {
-                            case Empty:
-                                targetRow.add("");
-                                break;
-                            case Zero:
-                                targetRow.add("0");
-                                break;
-                            case Skip:
-                                break;
-                            case Null:
-                                targetRow.add(null);
-                                break;
-                            default:
-                                targetRow.add(s);
-                                break;
-                        }
+                        targetRow.add(null);
                     } else {
                         double k = statisticAll.getPopulationStandardDeviation();
                         if (k == 0) {
@@ -438,7 +344,7 @@ public class Data2DNormalize extends Data2DOperate {
             }
             targetRow = new ArrayList<>();
             if (includeRowNumber) {
-                targetRow.add(message("Row") + sourceRowIndex);
+                targetRow.add("" + sourceRowIndex);
             }
             String[] values = new String[colsLen];
             for (int c = 0; c < colsLen; c++) {
@@ -459,23 +365,7 @@ public class Data2DNormalize extends Data2DOperate {
             for (String s : values) {
                 double d = DoubleTools.toDouble(s, invalidAs);
                 if (DoubleTools.invalidDouble(d)) {
-                    switch (invalidAs) {
-                        case Zero:
-                            targetRow.add("0");
-                            break;
-                        case Empty:
-                            targetRow.add("");
-                            break;
-                        case Skip:
-                            break;
-                        case Null:
-                            targetRow.add(null);
-                            break;
-                        default:
-                            targetRow.add(s);
-                            break;
-
-                    }
+                    targetRow.add(null);
                 } else {
                     targetRow.add(DoubleTools.scale(d, scale) + "");
                 }

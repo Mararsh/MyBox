@@ -127,10 +127,6 @@ public class ExpressionCalculator {
                 handleError(message("invalidParameter"));
                 return false;
             }
-            if (script.contains("#{" + message("TableRowNumber") + "}")) {
-                handleError(message("NoTableRowNumberWhenAllPages"));
-                return false;
-            }
             expression = script;
             int index = 1, rowSize = rowValues.size();
             String value;
@@ -167,10 +163,6 @@ public class ExpressionCalculator {
             reset();
             if (tableRow == null || tableRow.isEmpty()) {
                 handleError(message("invalidParameter"));
-                return false;
-            }
-            if (tableRowNumber < 0) {
-                handleError(message("NoTableRowNumberWhenAllPages"));
                 return false;
             }
             if (!makeExpression(data2D, script,

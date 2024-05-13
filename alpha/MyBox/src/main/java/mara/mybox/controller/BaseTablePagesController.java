@@ -499,7 +499,7 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
     }
 
     protected void afterClear() {
-        resetView(true);
+        resetView(false);
     }
 
     @FXML

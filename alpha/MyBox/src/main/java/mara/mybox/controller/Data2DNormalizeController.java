@@ -5,7 +5,6 @@ import java.util.List;
 import javafx.fxml.FXML;
 import mara.mybox.calculation.Normalization;
 import mara.mybox.data2d.writer.Data2DWriter;
-import static mara.mybox.db.data.ColumnDefinition.InvalidAs.Empty;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
@@ -54,35 +53,21 @@ public class Data2DNormalizeController extends BaseData2DTaskTargetsController {
             if (matrix == null) {
                 return false;
             }
+            boolean showRowNumber = showRowNumber();
             outputColumns = data2D.targetColumns(checkedColsIndices, otherColsIndices,
-                    showRowNumber(), message("Normalize"));
+                    showRowNumber, message("Normalize"));
             outputData = new ArrayList<>();
             int otherColsNumber = otherColsIndices != null ? otherColsIndices.size() : 0;
             for (int r = 0; r < rowsNumber; r++) {
                 List<String> row = new ArrayList<>();
-                if (showRowNumber()) {
-                    row.add(message("Row") + (filteredRowsIndices.get(r) + 1) + "");
+                if (showRowNumber) {
+                    row.add((filteredRowsIndices.get(r) + 1) + "");
                 }
                 for (int c = 0; c < colsNumber; c++) {
                     String s = matrix[r][c];
                     double d = DoubleTools.toDouble(s, invalidAs);
                     if (DoubleTools.invalidDouble(d)) {
-                        switch (invalidAs) {
-                            case Zero:
-                                row.add("0");
-                                break;
-                            case Skip:
-                                break;
-                            case Empty:
-                                row.add("");
-                                break;
-                            case Null:
-                                row.add(null);
-                                break;
-                            default:
-                                row.add(s);
-                                break;
-                        }
+                        row.add(null);
                     } else {
                         row.add(NumberTools.format(d, scale));
                     }

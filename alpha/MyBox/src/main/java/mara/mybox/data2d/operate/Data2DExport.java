@@ -159,7 +159,7 @@ public class Data2DExport extends Data2DOperate {
         }
         if (includeRowNumber) {
             if (columns != null) {
-                columns.add(0, new Data2DColumn(message("RowNumber"), ColumnDefinition.ColumnType.String));
+                columns.add(0, new Data2DColumn(message("RowNumber"), ColumnDefinition.ColumnType.Long));
             }
             if (columnNames != null) {
                 columnNames.add(0, message("RowNumber"));

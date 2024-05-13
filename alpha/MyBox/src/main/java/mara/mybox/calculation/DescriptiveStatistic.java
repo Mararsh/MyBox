@@ -190,7 +190,7 @@ public class DescriptiveStatistic {
 
             String cName = categoryName != null ? categoryName : message("SourceRowNumber");
             outputNames.add(cName);
-            outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.String));
+            outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Long));
 
             String prefix = message("Rows") + "-";
             int width = 150;
@@ -386,11 +386,7 @@ public class DescriptiveStatistic {
             for (int r = 0; r < rowsNumber; r++) {
                 List<String> rowStatistic = new ArrayList<>();
                 List<String> row = rows.get(r);
-                if (categoryName == null) {
-                    rowStatistic.add(message("Row") + row.get(0));
-                } else {
-                    rowStatistic.add(row.get(0));
-                }
+                rowStatistic.add(row.get(0));
                 int colsNumber = row.size();
                 String[] rowData = new String[colsNumber - 1];
                 for (int c = 1; c < colsNumber; c++) {

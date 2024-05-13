@@ -4,7 +4,6 @@ import java.util.List;
 import mara.mybox.calculation.ExpressionCalculator;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
-import mara.mybox.value.AppValues;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -129,12 +128,12 @@ public class DataFilter {
     }
 
     public void handleError(String error) {
-        if (error != null && AppValues.Alpha) {
-            if (task != null) {
-                task.setError(error);
-            }
+//        if (error != null && AppValues.Alpha) {
+//            if (task != null) {
+//                task.setError(error);
+//            }
 //            MyBoxLog.debug(error + "\n" + sourceScript);
-        }
+//        }
     }
 
     public void clear() {

@@ -101,7 +101,6 @@ public class Data2DManufactureController extends BaseData2DViewController {
         if (isSettingValues) {
             return;
         }
-        operationButton.setDisable(!isEditing());
         if (!isValidData() || csvRadio != ov || !isCSVModified || isCSVpicked) {
             switchFormat();
             return;
@@ -801,11 +800,22 @@ public class Data2DManufactureController extends BaseData2DViewController {
 
     @Override
     public int addRows(int index, List<List<String>> list) {
-        int count = super.addRows(index, list);
-        if (count <= 0) {
-            return count;
+        if (list == null || list.isEmpty()) {
+            return -1;
         }
-        return count;
+        if (index < 0) {
+            index = tableData.size();
+        }
+        isSettingValues = true;
+        tableData.addAll(index, list);
+        isSettingValues = false;
+        if (tableRadio.isSelected()) {
+            tableView.scrollTo(index - 5);
+        } else {
+            switchFormat();
+        }
+        tableChanged(true);
+        return list.size();
     }
 
     @FXML
@@ -833,9 +843,6 @@ public class Data2DManufactureController extends BaseData2DViewController {
             popError(message("InvalidData"));
             return;
         }
-        if (!tableRadio.isSelected()) {
-            return;
-        }
         if (data2D.isTmpData()) {
             deleteAllRows();
         } else {
@@ -849,12 +856,6 @@ public class Data2DManufactureController extends BaseData2DViewController {
             return 0;
         }
         return data2D.clearData(currentTask);
-    }
-
-    @Override
-    protected void afterClear() {
-        resetView(true);
-        setPagination();
     }
 
     @FXML

@@ -161,7 +161,7 @@ public class Data2DTableTools {
             List<Data2DColumn> targetColumns = new ArrayList<>();
             if (rowNumberName != null) {
                 names.add(rowNumberName);
-                targetColumns.add(0, new Data2DColumn(rowNumberName, ColumnDefinition.ColumnType.String));
+                targetColumns.add(0, new Data2DColumn(rowNumberName, ColumnDefinition.ColumnType.Long));
             }
             ResultSetMetaData meta = results.getMetaData();
             for (int col = 1; col <= meta.getColumnCount(); col++) {
@@ -188,7 +188,7 @@ public class Data2DTableTools {
             while (results.next() && task != null && !task.isCancelled()) {
                 count++;
                 if (rowNumberName != null) {
-                    fileRow.add(rowNumberName + count);
+                    fileRow.add("" + count);
                 }
                 for (Data2DColumn column : db2Columns) {
                     Object v = column.value(results);

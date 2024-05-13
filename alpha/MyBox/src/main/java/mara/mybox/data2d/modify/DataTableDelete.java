@@ -7,9 +7,7 @@ import java.util.List;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.db.Database;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.data.Data2DColumn;
-import mara.mybox.db.data.Data2DRow;
-import mara.mybox.db.table.TableData2D;
+import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -17,15 +15,9 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-1-29
  * @License Apache License Version 2.0
  */
-public class DataTableDelete extends Data2DDelete {
+public class DataTableDelete extends DataTableModify {
 
-    protected DataTable sourceTable;
-    protected TableData2D tableData2D;
-    protected int columnsNumber;
-    protected Data2DRow sourceTableRow;
-    protected Connection conn;
     protected PreparedStatement delete;
-    protected List<Data2DColumn> columns;
 
     public DataTableDelete(DataTable data) {
         setSourceData(data);
@@ -57,6 +49,7 @@ public class DataTableDelete extends Data2DDelete {
             delete.executeBatch();
             conn.commit();
             showInfo(message("Deleted") + ": " + handledCount);
+            updateTable();
             conn.close();
             conn = null;
             return true;
@@ -67,21 +60,25 @@ public class DataTableDelete extends Data2DDelete {
     }
 
     @Override
-    public void deleteRow(boolean needDelete) {
+    public void handleRow(List<String> row, long index) {
         try {
-            if (!needDelete) {
-                return;
-            }
-            if (tableData2D.setDeleteStatement(conn, delete, sourceTableRow)) {
-                delete.addBatch();
-                if (++handledCount % Database.BatchSize == 0) {
-                    delete.executeBatch();
-                    conn.commit();
-                    showInfo(message("Deleted") + ": " + handledCount);
+            sourceRow = row;
+            sourceRowIndex = index;
+            targetRow = null;
+            passFilter = sourceData.filterDataRow(sourceRow, sourceRowIndex);
+            reachMax = sourceData.filterReachMaxPassed();
+            if (passFilter && !reachMax) {
+                if (tableData2D.setDeleteStatement(conn, delete, sourceTableRow)) {
+                    delete.addBatch();
+                    if (++handledCount % Database.BatchSize == 0) {
+                        delete.executeBatch();
+                        conn.commit();
+                        showInfo(message("Deleted") + ": " + handledCount);
+                    }
                 }
             }
         } catch (Exception e) {
-            showError(e.toString());
+            MyBoxLog.console(e);
         }
     }
 

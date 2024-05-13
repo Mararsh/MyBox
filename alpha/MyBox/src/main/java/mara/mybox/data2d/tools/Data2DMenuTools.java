@@ -39,7 +39,6 @@ public class Data2DMenuTools {
                 return null;
             }
             List<MenuItem> items = new ArrayList<>();
-            boolean isEditing = dataController.isEditing();
             boolean isTmpData = data2D.isTmpData();
             boolean notLoaded = !dataController.isDataSizeLoaded();
 
@@ -47,32 +46,30 @@ public class Data2DMenuTools {
 
             items.add(new SeparatorMenuItem());
 
-            if (isEditing) {
-                menu = new MenuItem(message("DefineData"), StyleTools.getIconImageView("iconMeta.png"));
-                menu.setOnAction((ActionEvent event) -> {
-                    dataController.definitonAction();
-                });
-                menu.setDisable(notLoaded);
-                items.add(menu);
+            menu = new MenuItem(message("DefineData"), StyleTools.getIconImageView("iconMeta.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                dataController.definitonAction();
+            });
+            menu.setDisable(notLoaded);
+            items.add(menu);
 
-                menu = new MenuItem(message("Save") + "    Ctrl+S " + message("Or") + " Alt+S",
-                        StyleTools.getIconImageView("iconSave.png"));
-                menu.setOnAction((ActionEvent event) -> {
-                    dataController.saveAction();
-                });
-                menu.setDisable(notLoaded);
-                items.add(menu);
+            menu = new MenuItem(message("Save") + "    Ctrl+S " + message("Or") + " Alt+S",
+                    StyleTools.getIconImageView("iconSave.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                dataController.saveAction();
+            });
+            menu.setDisable(notLoaded);
+            items.add(menu);
 
-                items.add(new SeparatorMenuItem());
+            items.add(new SeparatorMenuItem());
 
-                menu = new MenuItem(message("Recover") + "    Ctrl+R " + message("Or") + " Alt+R",
-                        StyleTools.getIconImageView("iconRecover.png"));
-                menu.setOnAction((ActionEvent event) -> {
-                    dataController.recoverAction();
-                });
-                menu.setDisable(isTmpData);
-                items.add(menu);
-            }
+            menu = new MenuItem(message("Recover") + "    Ctrl+R " + message("Or") + " Alt+R",
+                    StyleTools.getIconImageView("iconRecover.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                dataController.recoverAction();
+            });
+            menu.setDisable(isTmpData);
+            items.add(menu);
 
             menu = new MenuItem(message("Refresh"), StyleTools.getIconImageView("iconRefresh.png"));
             menu.setOnAction((ActionEvent event) -> {
@@ -135,7 +132,7 @@ public class Data2DMenuTools {
 
     public static List<MenuItem> operationsMenus(Data2DManufactureController dataController) {
         try {
-            if (!dataController.isEditing() || !dataController.isValidData()) {
+            if (!dataController.isValidData()) {
                 return null;
             }
             Data2D data2D = dataController.getData2D();
@@ -243,13 +240,14 @@ public class Data2DMenuTools {
             });
             items.add(menu);
 
+            menu = new MenuItem(message("SetStyles"), StyleTools.getIconImageView("iconColor.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                dataController.setStyles();
+            });
+            menu.setDisable(isTmp);
+            items.add(menu);
+
             if (isTableMode) {
-                menu = new MenuItem(message("SetStyles"), StyleTools.getIconImageView("iconColor.png"));
-                menu.setOnAction((ActionEvent event) -> {
-                    dataController.setStyles();
-                });
-                menu.setDisable(isTmp);
-                items.add(menu);
 
                 items.add(new SeparatorMenuItem());
 
@@ -284,7 +282,6 @@ public class Data2DMenuTools {
             }
             List<MenuItem> items = new ArrayList<>();
             MenuItem menu;
-            String baseName = dataController.getBaseName();
 
             if (data2D.isExcel()) {
                 menu = new MenuItem(message("Sheet"), StyleTools.getIconImageView("iconFrame.png"));

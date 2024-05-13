@@ -224,12 +224,18 @@ public abstract class BaseData2DTaskController extends BaseBranchController {
             }
 
             checkParameters();
-            getMyStage().setTitle(baseTitle
-                    + (data2D == null ? "" : " - " + data2D.displayName()));
+
+            setBaseTitle(baseTitle);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+    }
+
+    public void setBaseTitle(String title) {
+        baseTitle = title;
+        getMyStage().setTitle(baseTitle
+                + (data2D == null ? "" : " - " + data2D.displayName()));
     }
 
     public boolean isAllPages() {

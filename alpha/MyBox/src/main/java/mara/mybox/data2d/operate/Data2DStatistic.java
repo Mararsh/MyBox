@@ -8,7 +8,6 @@ import mara.mybox.calculation.DoubleStatistic;
 import mara.mybox.data2d.Data2D_Edit;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DoubleTools;
-import static mara.mybox.value.Languages.message;
 import org.apache.commons.math3.stat.descriptive.moment.Skewness;
 
 /**
@@ -262,7 +261,7 @@ public class Data2DStatistic extends Data2DOperate {
             targetRow = new ArrayList<>();
             int startIndex;
             if (statisticCalculation.getCategoryName() == null) {
-                targetRow.add(message("Row") + " " + sourceRowIndex);
+                targetRow.add("" + sourceRowIndex);
                 startIndex = 0;
             } else {
                 targetRow.add(sourceRow.get(cols.get(0)));

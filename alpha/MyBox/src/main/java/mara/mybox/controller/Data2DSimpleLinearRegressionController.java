@@ -218,7 +218,7 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DRegression
             r = simpleRegression.getR();
 
             outputColumns = new ArrayList<>();
-            outputColumns.add(new Data2DColumn(message("RowNumber"), ColumnDefinition.ColumnType.String));
+            outputColumns.add(new Data2DColumn(message("RowNumber"), ColumnDefinition.ColumnType.Long));
             outputColumns.add(data2D.columnByName(selectedCategory));
             outputColumns.add(data2D.columnByName(selectedValue));
             outputColumns.add(new Data2DColumn(selectedValue + "_" + message("FittedValue"), ColumnDefinition.ColumnType.Double));
@@ -238,7 +238,7 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DRegression
     public void makeResidualData() {
         try {
             residualColumns = new ArrayList<>();
-            residualColumns.add(new Data2DColumn(message("RowNumber"), ColumnDefinition.ColumnType.String));
+            residualColumns.add(new Data2DColumn(message("RowNumber"), ColumnDefinition.ColumnType.Long));
             if (residualIndRadio.isSelected()) {
                 residualColumns.add(new Data2DColumn(message("IndependentVariable"), ColumnDefinition.ColumnType.Double));
             } else if (residualActualRadio.isSelected()) {

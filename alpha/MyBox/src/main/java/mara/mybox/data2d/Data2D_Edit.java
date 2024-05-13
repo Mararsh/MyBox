@@ -268,7 +268,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
             if (operate.isFailed()) {
                 return -3;
             }
-            return rowsNumber;
+            return operate.rowsCount();
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
@@ -308,7 +308,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
             if (!isValidData() || cols == null || cols.isEmpty()) {
                 return -1;
             }
-            Data2DSetValue operate = isUserTable()
+            Data2DOperate operate = isUserTable()
                     ? new DataTableSetValue((DataTable) this, setValue)
                     : Data2DSetValue.create(this, setValue);
             if (operate == null) {
@@ -334,9 +334,35 @@ public abstract class Data2D_Edit extends Data2D_Filter {
             if (!isValidData()) {
                 return -1;
             }
-            Data2DDelete operate = isUserTable()
+            Data2DOperate operate = isUserTable()
                     ? new DataTableDelete((DataTable) this)
                     : Data2DDelete.create(this);
+            if (operate == null) {
+                return -2;
+            }
+            operate.setTask(task).start();
+            if (operate.isFailed()) {
+                return -3;
+            }
+            return operate.getHandledCount();
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e);
+            return -4;
+        }
+    }
+
+    public long clearData(FxTask task) {
+        try {
+            if (!isValidData()) {
+                return -1;
+            }
+            Data2DOperate operate = isUserTable()
+                    ? new DataTableClear((DataTable) this)
+                    : Data2DClear.create(this);
+
             if (operate == null) {
                 return -2;
             }
@@ -355,25 +381,6 @@ public abstract class Data2D_Edit extends Data2D_Filter {
         }
     }
 
-    public long clearData(FxTask task) {
-        if (!isValidData()) {
-            return -1;
-        }
-        Data2DOperate operate = isUserTable()
-                ? new DataTableClear((DataTable) this)
-                : Data2DClear.create(this);
-
-        if (operate == null) {
-            return -2;
-        }
-        operate.setTask(task).start();
-        if (operate.isFailed()) {
-            return -3;
-        }
-        tableChanged = false;
-        return operate.getHandledCount();
-    }
-
     public String encodeCSV(FxTask task, String delimiterName,
             boolean displayRowNames, boolean displayColNames, boolean formatValues) {
         if (!isValidDefinition()) {
@@ -384,8 +391,17 @@ public abstract class Data2D_Edit extends Data2D_Filter {
         }
         try {
             File tmpFile = getTempFile(".csv");
+            List<String> cols = null;
+            if (displayColNames) {
+                cols = new ArrayList<>();
+                if (displayRowNames) {
+                    cols.add(message("TableRowNumber"));
+                    cols.add(message("DataRowNumber"));
+                }
+                cols.addAll(columnNames());
+            }
             tmpFile = DataFileCSV.csvFile(task, tmpFile, delimiterValue(delimiterName),
-                    displayColNames ? columnNames() : null, tableRows(displayRowNames, formatValues));
+                    cols, tableRows(displayRowNames, displayRowNames, formatValues));
             if (tmpFile == null || !tmpFile.exists()) {
                 return "";
             }

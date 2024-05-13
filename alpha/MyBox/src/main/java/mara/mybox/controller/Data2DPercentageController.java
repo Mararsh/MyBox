@@ -143,7 +143,7 @@ public class Data2DPercentageController extends BaseData2DTaskTargetsController 
             for (int r : filteredRowsIndices) {
                 List<String> tableRow = sourceController.tableData.get(r);
                 row = new ArrayList<>();
-                row.add(message("Row") + (r + 1));
+                row.add("" + (r + 1));
                 for (int c = 0; c < colsLen; c++) {
                     String s = tableRow.get(colIndices.get(c) + 1);
                     double d = DoubleTools.toDouble(s, invalidAs);
@@ -190,7 +190,7 @@ public class Data2DPercentageController extends BaseData2DTaskTargetsController 
             for (int r : filteredRowsIndices) {
                 double sum = 0d;
                 List<String> row = new ArrayList<>();
-                row.add(message("Row") + (r + 1));
+                row.add("" + (r + 1));
                 List<String> tableRow = sourceController.tableData.get(r);
                 for (int c : colIndices) {
                     double d = DoubleTools.toDouble(tableRow.get(c + 1), invalidAs);
@@ -277,7 +277,7 @@ public class Data2DPercentageController extends BaseData2DTaskTargetsController 
             for (int r : filteredRowsIndices) {
                 List<String> tableRow = sourceController.tableData.get(r);
                 row = new ArrayList<>();
-                row.add(message("Row") + (r + 1) + "");
+                row.add("" + (r + 1));
                 for (int c : colIndices) {
                     String s = tableRow.get(c + 1);
                     double d = DoubleTools.toDouble(s, invalidAs);

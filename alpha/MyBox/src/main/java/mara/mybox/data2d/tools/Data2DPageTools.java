@@ -39,7 +39,8 @@ public class Data2DPageTools {
             if (showColumns) {
                 names = new ArrayList<>();
                 if (showRowNumber) {
-                    names.add(message("RowNumber"));
+                    names.add(message("TableRowNumber"));
+                    names.add(message("DataRowNumber"));
                 }
                 for (int i = 0; i < cNumber; i++) {
                     names.add(data2d.columnName(i));
@@ -54,18 +55,15 @@ public class Data2DPageTools {
             StringTable table = new StringTable(names, title);
 
             for (int i = 0; i < rNumber; i++) {
+                List<String> dataRow = data2d.tableRow(i, true, true);
                 List<String> htmlRow = new ArrayList<>();
                 if (showRowNumber) {
-                    htmlRow.add(data2d.rowName(i));
+                    htmlRow.add("" + (i + 1));
+                    htmlRow.add(dataRow.get(0));
                 }
-                List<String> dataRow = data2d.getPageData().get(i);
+
                 for (int col = 0; col < cNumber; col++) {
                     String value = dataRow.get(col + 1);
-                    if (value == null) {
-                        value = "";
-                    } else {
-                        value = data2d.formatValue(col, value);
-                    }
                     value = StringTools.replaceHtmlLineBreak(value);
                     String style = data2d.cellStyle(styleFilter, i, data2d.columnName(col));
                     if (style != null && !style.isBlank()) {
@@ -100,26 +98,29 @@ public class Data2DPageTools {
             }
             for (int r = 0; r < rNumber; r++) {
                 StringTable table = new StringTable();
+                List<String> dataRow = data2d.tableRow(r, true, true);
                 if (showRowNumber) {
-                    List<String> row = new ArrayList<>();
-                    row.add(data2d.rowName(r));
+                    List<String> htmlRow = new ArrayList<>();
                     if (showColumns) {
-                        row.add(null);
+                        htmlRow.add(message("TableRowNumber"));
                     }
-                    table.add(row);
+                    htmlRow.add("" + (r + 1));
+                    table.add(htmlRow);
+
+                    htmlRow = new ArrayList<>();
+                    if (showColumns) {
+                        htmlRow.add(message("DataRowNumber"));
+                    }
+                    htmlRow.add(dataRow.get(0));
+                    table.add(htmlRow);
                 }
-                List<String> dataRow = data2d.getPageData().get(r);
+
                 for (int col = 0; col < cNumber; col++) {
                     List<String> htmlRow = new ArrayList<>();
                     if (showColumns) {
                         htmlRow.add(data2d.columnName(col));
                     }
                     String value = dataRow.get(col + 1);
-                    if (value == null) {
-                        value = "";
-                    } else {
-                        value = data2d.formatValue(col, value);
-                    }
                     value = StringTools.replaceHtmlLineBreak(value);
                     String style = data2d.cellStyle(styleFilter, r, data2d.columnName(col));
                     if (style != null && !style.isBlank()) {
@@ -170,18 +171,26 @@ public class Data2DPageTools {
             s.append(data2d.titleName()).append("\n\n");
         }
         for (int r = 0; r < data2d.tableRowsNumber(); r++) {
-            if (showRowNumber) {
-                s.append(data2d.rowName(r)).append("\n");
-            }
-            List<String> drow = data2d.tableRow(r, false, true);
+            List<String> drow = data2d.tableRow(r, true, true);
             if (drow == null) {
                 continue;
             }
+            if (showRowNumber) {
+                if (showColumns) {
+                    s.append(message("TableRowNumber")).append(": ");
+                }
+                s.append(r + 1).append("\n");
+                if (showColumns) {
+                    s.append(message("DataRowNumber")).append(": ");
+                }
+                s.append(drow.get(0)).append("\n");
+            }
+
             for (int col = 0; col < data2d.columnsNumber(); col++) {
                 if (showColumns) {
                     s.append(data2d.columnName(col)).append(": ");
                 }
-                String v = drow.get(col);
+                String v = drow.get(col + 1);
                 if (v == null) {
                     continue;
                 }

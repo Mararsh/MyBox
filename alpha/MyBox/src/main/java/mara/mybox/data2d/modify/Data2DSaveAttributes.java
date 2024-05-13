@@ -3,8 +3,6 @@ package mara.mybox.data2d.modify;
 import java.util.ArrayList;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.Data2D_Edit;
-import mara.mybox.data2d.operate.Data2DOperate;
-import mara.mybox.data2d.writer.Data2DWriter;
 import mara.mybox.db.data.Data2DColumn;
 
 /**
@@ -12,7 +10,7 @@ import mara.mybox.db.data.Data2DColumn;
  * @CreateDate 2022-2-25
  * @License Apache License Version 2.0
  */
-public class Data2DSaveAttributes extends Data2DOperate {
+public class Data2DSaveAttributes extends Data2DModify {
 
     protected Data2D attributes;
 
@@ -25,8 +23,7 @@ public class Data2DSaveAttributes extends Data2DOperate {
             return null;
         }
         operate.attributes = attributes;
-        Data2DWriter writer = attributes.selfWriter();
-        operate.addWriter(writer);
+        operate.initWriter();
         return operate;
     }
 
