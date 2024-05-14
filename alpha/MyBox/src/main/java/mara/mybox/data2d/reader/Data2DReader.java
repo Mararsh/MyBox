@@ -9,6 +9,7 @@ import mara.mybox.data2d.Data2D_Edit;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataFileExcel;
 import mara.mybox.data2d.DataFileText;
+import mara.mybox.data2d.DataMatrix;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.data2d.operate.Data2DOperate;
 import mara.mybox.db.DerbyBase;
@@ -52,6 +53,8 @@ public abstract class Data2DReader {
             return new DataFileTextReader((DataFileText) data);
         } else if (data instanceof DataTable) {
             return new DataTableReader((DataTable) data);
+        } else if (data instanceof DataMatrix) {
+            return new MatrixReader((DataMatrix) data);
         }
         return null;
     }
@@ -98,7 +101,7 @@ public abstract class Data2DReader {
                 handleRow();
             }
         } catch (Exception e) {  // skip  bad lines
-//            showError(e.toString());
+            showError(e.toString());
 //            setFailed();
         }
     }

@@ -106,9 +106,9 @@ public class ControlData2DColumnEdit extends BaseChildController {
         }
     }
 
-    protected void init(BaseData2DColumnsController columnsController) {
+    protected void init(BaseData2DColumnsController controller) {
         try {
-            this.columnsController = columnsController;
+            this.columnsController = controller;
             columnIndex = -1;
 
             rightTipsView.setVisible(columnsController.data2D != null && columnsController.data2D.isTable());
@@ -186,6 +186,10 @@ public class ControlData2DColumnEdit extends BaseChildController {
             } else {
                 columnIndex = -1;
                 loadColumn(new Data2DColumn());
+            }
+            if (columnsController.data2D != null && columnsController.data2D.isMatrix()) {
+                typesPane.setDisable(true);
+                doubleRadio.setSelected(true);
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -419,7 +423,9 @@ public class ControlData2DColumnEdit extends BaseChildController {
             if (message("None").equals(format)) {
                 format = null;
             }
-            if (stringRadio.isSelected()) {
+            if (columnsController.data2D != null && columnsController.data2D.isMatrix()) {
+                column.setType(ColumnType.Double).setFormat(format);
+            } else if (stringRadio.isSelected()) {
                 column.setType(ColumnType.String).setFormat(null);
             } else if (doubleRadio.isSelected()) {
                 column.setType(ColumnType.Double).setFormat(format);

@@ -33,12 +33,18 @@ public class MatrixWriter extends Data2DWriter {
             if (matrix == null) {
                 matrix = new DataMatrix();
                 matrix.setTask(task()).setDataName(dataName);
+            }
+            did = matrix.getD2did();
+            if (did < 0) {
                 if (!Data2D.saveAttributes(conn, matrix, columns)) {
                     return false;
                 }
             }
-            tableData2DCell = matrix.getTableData2DCell();
             did = matrix.getD2did();
+            if (did < 0) {
+                return false;
+            }
+            tableData2DCell = matrix.getTableData2DCell();
             conn.setAutoCommit(false);
             dwCount = 0;
             showInfo(message("Writing") + " " + matrix.dataName());

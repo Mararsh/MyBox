@@ -92,6 +92,7 @@ public class Data2DSaveAsController extends BaseTaskController {
             if (writer == null) {
                 return false;
             }
+            showLogs(writer.getClass().getName());
             invalidAs = targetController.invalidAs();
             return true;
         } catch (Exception e) {
