@@ -183,13 +183,51 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
     public void updateStatus() {
         try {
             super.updateStatus();
-            updateInterface();
+
+            sourceFile = data2D != null ? data2D.getFile() : null;
+            if (dataManufactureButton != null) {
+                dataManufactureButton.setDisable(data2D == null);
+            }
+            checkSelected();
+            if (dataLabel != null) {
+                dataLabel.setText(data2D != null ? data2D.displayName() : "");
+            }
+            myStage = getMyStage();
+            if (myStage == null) {
+                return;
+            }
+            String title = getRootBaseTitle();
+            if (data2D != null) {
+                title += " : ";
+                if (data2D.isTableChanged()) {
+                    title += " * ";
+                }
+                title += data2D.displayName();
+
+            }
+            myStage.setTitle(title);
+
             if (statusNotify != null) {
                 statusNotify.set(!statusNotify.get());
             }
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+    }
+
+    @Override
+    public void setDataSizeLabel() {
+        if (dataSizeLabel == null || data2D == null) {
+            return;
+        }
+        int tsize = tableData == null ? 0 : tableData.size();
+        long start = data2D.getStartRowOfCurrentPage();
+        long end = data2D.getEndRowOfCurrentPage();
+        dataSizeLabel.setText(message("Rows") + ": "
+                + "[" + start + "-" + end + "]" + tsize
+                + (data2D.isTableChanged() ? "*" : "")
+                + (dataSize > 0 ? "/" + dataSize : ""));
     }
 
     public boolean isValidData() {
@@ -545,46 +583,6 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
     /*
         interface
      */
-    public void updateInterface() {
-        try {
-            sourceFile = data2D != null ? data2D.getFile() : null;
-            if (dataManufactureButton != null) {
-                dataManufactureButton.setDisable(data2D == null);
-            }
-            checkSelected();
-            if (dataLabel != null) {
-                dataLabel.setText(data2D != null ? data2D.displayName() : "");
-            }
-            myStage = getMyStage();
-            if (myStage == null) {
-                return;
-            }
-            String title = getRootBaseTitle();
-            if (data2D != null) {
-                title += " : ";
-                if (data2D.isTableChanged()) {
-                    title += " * ";
-                }
-                title += data2D.displayName();
-
-                if (dataSizeLabel != null) {
-                    int tsize = tableData == null ? 0 : tableData.size();
-                    long start = data2D.getStartRowOfCurrentPage();
-                    long end = data2D.getEndRowOfCurrentPage();
-                    dataSizeLabel.setText(message("Rows") + ": "
-                            + "[" + start + "-" + end + "]" + tsize
-                            + (data2D.isTableChanged() ? "*" : "")
-                            + (dataSize > 0 ? "/" + dataSize : ""));
-                }
-
-            }
-            myStage.setTitle(title);
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
     @Override
     protected List<MenuItem> makeTableContextMenu() {
         try {

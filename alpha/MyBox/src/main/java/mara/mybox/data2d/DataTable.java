@@ -261,50 +261,6 @@ public class DataTable extends Data2D {
         }
     }
 
-    public boolean updateTable(Connection conn) {
-        try {
-            List<String> dbColumnNames = tableData2D.columnNames();
-            List<String> dataColumnNames = new ArrayList<>();
-            for (Data2DColumn column : columns) {
-                String name = column.getColumnName();
-                dataColumnNames.add(name);
-                if (dbColumnNames.contains(name) && column.getIndex() < 0) {
-                    tableData2D.dropColumn(conn, name);
-                    conn.commit();
-                    dbColumnNames.remove(name);
-                }
-            }
-            for (String name : dbColumnNames) {
-                if (!dataColumnNames.contains(name)) {
-                    tableData2D.dropColumn(conn, name);
-                    conn.commit();
-                }
-            }
-            for (Data2DColumn column : columns) {
-                String name = column.getColumnName();
-                if (!dbColumnNames.contains(name)) {
-                    tableData2D.addColumn(conn, column);
-                    conn.commit();
-                }
-            }
-            List<ColumnDefinition> dbColumns = new ArrayList<>();
-            for (Data2DColumn column : columns) {
-                ColumnDefinition dbColumn = new ColumnDefinition();
-                dbColumn.cloneFrom(column);
-                dbColumns.add(dbColumn);
-            }
-            tableData2D.setColumns(dbColumns);
-            return true;
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            } else {
-                MyBoxLog.error(e);
-            }
-            return false;
-        }
-    }
-
     public String pageQuery() {
         String sql = "SELECT * FROM " + sheet;
         String orderby = null;
@@ -325,7 +281,19 @@ public class DataTable extends Data2D {
     @Override
     public long savePageData(FxTask task) {
         try (Connection conn = DerbyBase.getConnection()) {
-            updateTable(conn);
+            return savePageData(task, conn);
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
+            }
+            return -1;
+        }
+    }
+
+    public long savePageData(FxTask task, Connection conn) {
+        try {
             List<Data2DRow> dbRows = tableData2D.query(conn, pageQuery());
             List<Data2DRow> pageRows = new ArrayList<>();
             conn.setAutoCommit(false);
@@ -354,6 +322,55 @@ public class DataTable extends Data2D {
             }
             conn.commit();
             rowsNumber = tableData2D.size(conn);
+            saveAttributes(conn);
+            return rowsNumber;
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
+            }
+            return -1;
+        }
+    }
+
+    @Override
+    public long saveAttributes(FxTask task, Data2D attributes) {
+        if (attributes == null) {
+            return -1;
+        }
+        try (Connection conn = DerbyBase.getConnection()) {
+            if (savePageData(task, conn) < 0) {
+                return -1;
+            }
+            List<String> currentNames = columnNames();
+            List<String> newNames = new ArrayList<>();
+            for (Data2DColumn column : attributes.columns) {
+                String name = column.getColumnName();
+                newNames.add(name);
+                if (currentNames.contains(name) && column.getIndex() < 0) {
+                    tableData2D.dropColumn(conn, name);
+                    conn.commit();
+                    currentNames.remove(name);
+                }
+            }
+            for (String name : currentNames) {
+                if (!newNames.contains(name)) {
+                    tableData2D.dropColumn(conn, name);
+                    conn.commit();
+                }
+            }
+            for (Data2DColumn column : attributes.columns) {
+                String name = column.getColumnName();
+                if (!currentNames.contains(name)) {
+                    tableData2D.addColumn(conn, column);
+                    conn.commit();
+                }
+            }
+            attributes.rowsNumber = rowsNumber;
+            attributes.tableChanged = false;
+            attributes.currentPage = currentPage;
+            cloneData(attributes);
             return rowsNumber;
         } catch (Exception e) {
             if (task != null) {

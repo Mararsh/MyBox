@@ -785,4 +785,15 @@ public class BaseData2DViewController extends BaseData2DLoadController {
         }
     }
 
+    @Override
+    public void cleanPane() {
+        try {
+            if (loadTask != null) {
+                loadTask.cancel();
+                loadTask = null;
+            }
+        } catch (Exception e) {
+        }
+        super.cleanPane();
+    }
 }

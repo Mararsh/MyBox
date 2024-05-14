@@ -41,29 +41,25 @@ public class BaseData2DRowsColumnsController extends BaseData2DSourceRowsControl
     public void updateStatus() {
         try {
             super.updateStatus();
+
             if (filterController != null) {
                 filterController.setData2D(data2D);
             }
             refreshControls();
+            if (toolbar != null) {
+                if (data2D != null && data2D.isDataFile() && data2D.getFile() != null) {
+                    if (!toolbar.getChildren().contains(fileMenuButton)) {
+                        toolbar.getChildren().add(2, fileMenuButton);
+                    }
+                } else {
+                    if (toolbar.getChildren().contains(fileMenuButton)) {
+                        toolbar.getChildren().remove(fileMenuButton);
+                    }
+                }
+            }
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
-    }
-
-    @Override
-    public void updateInterface() {
-        if (toolbar != null) {
-            if (data2D != null && data2D.isDataFile() && data2D.getFile() != null) {
-                if (!toolbar.getChildren().contains(fileMenuButton)) {
-                    toolbar.getChildren().add(2, fileMenuButton);
-                }
-            } else {
-                if (toolbar.getChildren().contains(fileMenuButton)) {
-                    toolbar.getChildren().remove(fileMenuButton);
-                }
-            }
-        }
-        super.updateInterface();
     }
 
     @Override

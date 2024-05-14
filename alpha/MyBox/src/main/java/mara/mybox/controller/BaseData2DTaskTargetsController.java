@@ -163,7 +163,7 @@ public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskCont
                 popDone();
                 writer.showResult();
                 if (targetController != null) {
-                    targetController.refreshControls();
+                    targetController.sourceChanged();
                 }
             }
 
@@ -281,7 +281,7 @@ public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskCont
             dataController.requestMouse();
             dataController.popDone();
             if (targetController != null) {
-                targetController.refreshControls();
+                targetController.sourceChanged();
             }
             return true;
         } catch (Exception e) {

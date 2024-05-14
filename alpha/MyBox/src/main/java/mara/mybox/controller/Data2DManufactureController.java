@@ -229,7 +229,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
 
             @Override
             protected boolean handle() {
-                text = data2D.encodeCSV(this, delimiterName, false, false, false);
+                text = data2D.encodeCSV(this, delimiterName, false, false);
                 return text != null;
             }
 
@@ -303,8 +303,10 @@ public class Data2DManufactureController extends BaseData2DViewController {
         status
      */
     @Override
-    public void updateInterface() {
+    public void updateStatus() {
         try {
+            super.updateStatus();
+
             boolean invalidData = !isValidData();
             mainAreaBox.setDisable(invalidData);
             opsPane.setDisable(invalidData);
@@ -322,7 +324,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
                     toolbar.getChildren().remove(fileMenuButton);
                 }
             }
-            super.updateInterface();
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -347,10 +349,6 @@ public class Data2DManufactureController extends BaseData2DViewController {
             isCSVpicked = true;
         }
         return true;
-    }
-
-    public boolean isEditing() {
-        return tableRadio.isSelected() || csvRadio.isSelected();
     }
 
     public boolean isTableMode() {
@@ -663,7 +661,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
 
     @Override
     public boolean controlAltN() {
-        if (isValidData() && isEditing()) {
+        if (isValidData()) {
             addRowsAction();
             return true;
         }
@@ -684,7 +682,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
 
     @Override
     public boolean controlAltL() {
-        if (isValidData() && isEditing()) {
+        if (isValidData()) {
             clearAction();
         }
         return false;
@@ -714,7 +712,11 @@ public class Data2DManufactureController extends BaseData2DViewController {
             return;
         }
         if (data2D.isTmpData()) {
-            Data2DSaveAsController.save(this);
+            if (data2D.isTable()) {
+                Data2DTableCreateController.open(this);
+            } else {
+                Data2DSaveAsController.save(this);
+            }
             return;
         }
         if (task != null) {

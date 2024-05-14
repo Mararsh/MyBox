@@ -651,7 +651,7 @@ public abstract class BaseTable<D> {
         try {
             sql = "ALTER TABLE " + DerbyBase.fixedIdentifier(tableName)
                     + " DROP COLUMN " + DerbyBase.fixedIdentifier(colName);
-            MyBoxLog.console(sql);
+//            MyBoxLog.console(sql);
             return conn.createStatement().executeUpdate(sql) >= 0;
         } catch (Exception e) {
             MyBoxLog.debug(e, sql);

@@ -22,16 +22,16 @@ import static mara.mybox.value.Languages.message;
  */
 public class Data2DDefinition extends BaseData {
 
-    protected long d2did;
-    protected DataType dataType;
-    protected String dataName, sheet, delimiter, comments;
-    protected File file;
-    protected Charset charset;
-    protected boolean hasHeader;
-    protected long colsNumber, rowsNumber;
-    protected short scale;
-    protected int maxRandom;
-    protected Date modifyTime;
+    public long d2did;
+    public DataType dataType;
+    public String dataName, sheet, delimiter, comments;
+    public File file;
+    public Charset charset;
+    public boolean hasHeader;
+    public long colsNumber, rowsNumber;
+    public short scale;
+    public int maxRandom;
+    public Date modifyTime;
 
     public static enum DataType {
         Texts, CSV, Excel, MyBoxClipboard, Matrix, DatabaseTable, InternalTable

@@ -174,7 +174,8 @@ public class BaseData2DSourceRowsController extends BaseData2DLoadController {
     }
 
     @Override
-    public void updateInterface() {
+    public void updateStatus() {
+        super.updateStatus();
         if (dataBox != null) {
             dataBox.setDisable(data2D == null);
         }

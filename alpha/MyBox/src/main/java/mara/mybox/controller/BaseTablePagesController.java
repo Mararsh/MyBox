@@ -84,14 +84,19 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
     @Override
     public void updateStatus() {
         super.updateStatus();
-        if (dataSizeLabel != null) {
-            int tsize = tableData == null ? 0 : tableData.size();
-            long start = startRowOfCurrentPage + 1;
-            long end = start + tsize - 1;
-            dataSizeLabel.setText(message("Rows") + ": "
-                    + "[" + start + "-" + end + "]" + tsize
-                    + (dataSize > 0 ? "/" + dataSize : ""));
+        setDataSizeLabel();
+    }
+
+    public void setDataSizeLabel() {
+        if (dataSizeLabel == null) {
+            return;
         }
+        int tsize = tableData == null ? 0 : tableData.size();
+        long start = startRowOfCurrentPage + 1;
+        long end = start + tsize - 1;
+        dataSizeLabel.setText(message("Rows") + ": "
+                + "[" + start + "-" + end + "]" + tsize
+                + (dataSize > 0 ? "/" + dataSize : ""));
     }
 
     public boolean checkBeforeLoadingTableData() {

@@ -12,12 +12,12 @@ import java.util.Random;
 import mara.mybox.data.SetValue;
 import mara.mybox.data2d.modify.Data2DClear;
 import mara.mybox.data2d.modify.Data2DDelete;
+import mara.mybox.data2d.modify.Data2DModify;
 import mara.mybox.data2d.modify.Data2DSaveAttributes;
 import mara.mybox.data2d.modify.Data2DSavePage;
 import mara.mybox.data2d.modify.Data2DSetValue;
 import mara.mybox.data2d.modify.DataTableClear;
 import mara.mybox.data2d.modify.DataTableDelete;
-import mara.mybox.data2d.modify.DataTableSaveAttributes;
 import mara.mybox.data2d.modify.DataTableSetValue;
 import mara.mybox.data2d.operate.Data2DOperate;
 import mara.mybox.data2d.operate.Data2DReadPage;
@@ -261,7 +261,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
      */
     public long savePageData(FxTask task) {
         try {
-            Data2DSavePage operate = Data2DSavePage.save(this);
+            Data2DModify operate = Data2DSavePage.save(this);
             if (operate == null) {
                 return -2;
             }
@@ -284,9 +284,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
             if (attributes == null) {
                 return -1;
             }
-            Data2DOperate operate = isUserTable()
-                    ? new DataTableSaveAttributes((DataTable) this, attributes)
-                    : Data2DSaveAttributes.create(this, attributes);
+            Data2DModify operate = Data2DSaveAttributes.create(this, attributes);
             if (operate == null) {
                 return -2;
             }
@@ -294,9 +292,11 @@ public abstract class Data2D_Edit extends Data2D_Filter {
             if (operate.isFailed()) {
                 return -3;
             }
+            attributes.rowsNumber = operate.rowsCount();
             attributes.tableChanged = false;
             attributes.currentPage = currentPage;
-            return operate.getHandledCount();
+            cloneData(attributes);
+            return attributes.rowsNumber;
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
@@ -385,7 +385,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
     }
 
     public String encodeCSV(FxTask task, String delimiterName,
-            boolean displayRowNames, boolean displayColNames, boolean formatValues) {
+            boolean displayRowNames, boolean displayColNames) {
         if (!isValidDefinition()) {
             return "";
         }
@@ -404,7 +404,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
                 cols.addAll(columnNames());
             }
             tmpFile = DataFileCSV.csvFile(task, tmpFile, delimiterValue(delimiterName),
-                    cols, tableRows(displayRowNames, displayRowNames, formatValues));
+                    cols, tableRows(displayRowNames));
             if (tmpFile == null || !tmpFile.exists()) {
                 return "";
             }
@@ -473,7 +473,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
 
     public boolean saveAttributes() {
         try (Connection conn = DerbyBase.getConnection()) {
-            return saveAttributes(conn, (Data2D) this, columns);
+            return saveAttributes(conn);
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
@@ -483,20 +483,8 @@ public abstract class Data2D_Edit extends Data2D_Filter {
         }
     }
 
-    public static boolean saveAttributes(Data2D source, Data2D target) {
-        try (Connection conn = DerbyBase.getConnection()) {
-            target.clonePageAttributes(source);
-            if (!saveAttributes(conn, target, source.getColumns())) {
-                return false;
-            }
-            return target.getTableData2DStyle().copyStyles(conn, source.getD2did(), target.getD2did()) >= 0;
-        } catch (Exception e) {
-            if (source.getTask() != null) {
-                source.getTask().setError(e.toString());
-            }
-            MyBoxLog.error(e);
-            return false;
-        }
+    public boolean saveAttributes(Connection conn) {
+        return saveAttributes(conn, (Data2D) this, columns);
     }
 
     public static boolean saveAttributes(Data2D d, List<Data2DColumn> cols) {

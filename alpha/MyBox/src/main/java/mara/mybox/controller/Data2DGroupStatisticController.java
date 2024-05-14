@@ -266,7 +266,7 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
                     if (displayAllCheck.isSelected()) {
                         resultsData = dataFile.allRows(false);
                     } else {
-                        resultsData = chartDataController.data2D.tableRows(false);
+                        resultsData = chartDataController.data2D.tableRows();
                     }
                     if (resultsData == null) {
                         return false;

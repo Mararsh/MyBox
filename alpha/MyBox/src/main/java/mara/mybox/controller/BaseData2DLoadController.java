@@ -86,7 +86,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
             data2D.setController(this);
 
             showPaginationPane(!data2D.isTmpData() && !data2D.isMatrix());
-            updateInterface();
+            updateStatus();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

@@ -12,18 +12,15 @@ import mara.mybox.db.DerbyBase;
 public class DataTableClear extends DataTableModify {
 
     public DataTableClear(DataTable data) {
-        setSourceData(data);
-        sourceTable = data;
+        setSourceTable(data);
     }
 
     @Override
     public boolean go() {
         try (Connection dconn = DerbyBase.getConnection()) {
             conn = dconn;
-            String sql = "DELETE FROM " + sourceTable.getSheet();
+            String sql = "DELETE FROM " + tableName;
             showInfo(sql);
-            tableData2D = sourceTable.getTableData2D();
-            tableData2D.setTableName(sourceTable.getSheet());
             handledCount = tableData2D.clearData(conn);
             if (handledCount < 0) {
                 return false;

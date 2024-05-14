@@ -51,14 +51,14 @@ import mara.mybox.value.UserConfig;
  * @License Apache License Version 2.0
  */
 public class ControlData2DTarget extends BaseDataConvertController {
-
+    
     protected BaseData2DLoadController tableController;
     protected TargetType format;
     protected boolean notInTable;
     protected ChangeListener<Boolean> tableStatusListener;
     protected Data2D data2D;
     protected String targetName;
-
+    
     @FXML
     protected ToggleGroup targetGroup;
     @FXML
@@ -86,7 +86,7 @@ public class ControlData2DTarget extends BaseDataConvertController {
     protected ControlNewDataTable dbController;
     @FXML
     protected FlowPane extFormatPane, internalFormatPane;
-
+    
     public boolean isInvalid() {
         if (tableController == null) {
             return false;
@@ -96,7 +96,7 @@ public class ControlData2DTarget extends BaseDataConvertController {
                 || !tableController.data2D.isValidDefinition()
                 || (data2D != null && tableController.data2D.getD2did() != data2D.getD2did());
     }
-
+    
     public void setParameters(BaseController parent, BaseData2DLoadController controller) {
         try {
             tableController = controller;
@@ -104,24 +104,22 @@ public class ControlData2DTarget extends BaseDataConvertController {
                 close();
                 return;
             }
-
+            
             baseName = parent.baseName + "_" + baseName;
-
+            
             initControls(baseName);
-
+            
             if (tableController != null) {
                 data2D = tableController.data2D.cloneAll().setController(parent);
                 dbController.setParameters(this, data2D);
-                dbController.setColumns(data2D.columnIndices());
-                dbController.nameInput.setText(data2D.getDataName());
             } else {
                 data2D = null;
                 databaseRadio.setDisable(true);
             }
-
+            
             optionsPane.getTabs().clear();
             optionsBox.getChildren().clear();
-
+            
             initTarget(TargetType.valueOf(UserConfig.getString(baseName + "DataTarget", "CSV")));
             targetGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
@@ -130,13 +128,13 @@ public class ControlData2DTarget extends BaseDataConvertController {
                 }
             });
             checkTarget();
-
+            
             if (tableController != null) {
-                refreshControls();
+                sourceChanged();
                 tableStatusListener = new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        refreshControls();
+                        sourceChanged();
                     }
                 };
                 tableController.statusNotify.addListener(tableStatusListener);
@@ -145,7 +143,7 @@ public class ControlData2DTarget extends BaseDataConvertController {
             MyBoxLog.error(e);
         }
     }
-
+    
     public void initTarget(TargetType type) {
         try {
             format = type;
@@ -223,7 +221,7 @@ public class ControlData2DTarget extends BaseDataConvertController {
             MyBoxLog.error(e);
         }
     }
-
+    
     public TargetType checkTarget() {
         try {
             format = TargetType.CSV;
@@ -250,55 +248,55 @@ public class ControlData2DTarget extends BaseDataConvertController {
                 targetFileController.setFile(FileType.CSV,
                         baseName + "TargetType" + FileType.CSV, name, "csv");
                 optionsBox.getChildren().add(csvBox);
-
+                
             } else if (excelRadio.isSelected()) {
                 format = TargetType.Excel;
                 targetFileController.setFile(FileType.Excel,
                         baseName + "TargetType" + FileType.Excel, name, "xlsx");
                 optionsBox.getChildren().add(excelBox);
                 currentSheetOnlyCheck.setVisible(data2D.isExcel());
-
+                
             } else if (textsRadio.isSelected()) {
                 format = TargetType.Text;
                 targetFileController.setFile(FileType.Text,
                         baseName + "TargetType" + FileType.Text, name, "txt");
                 optionsBox.getChildren().add(textBox);
-
+                
             } else if (matrixRadio.isSelected()) {
                 format = TargetType.Matrix;
-
+                
             } else if (systemClipboardRadio.isSelected()) {
                 format = TargetType.SystemClipboard;
-
+                
             } else if (myBoxClipboardRadio.isSelected()) {
                 format = TargetType.MyBoxClipboard;
-
+                
             } else if (databaseRadio.isSelected()) {
                 format = TargetType.DatabaseTable;
                 optionsBox.getChildren().add(dbBox);
-
+                
             } else if (jsonRadio.isSelected()) {
                 format = TargetType.JSON;
                 targetFileController.setFile(FileType.JSON,
                         baseName + "TargetType" + FileType.JSON, name, "json");
-
+                
             } else if (xmlRadio.isSelected()) {
                 format = TargetType.XML;
                 targetFileController.setFile(FileType.XML,
                         baseName + "TargetType" + FileType.XML, name, "xml");
-
+                
             } else if (htmlRadio.isSelected()) {
                 format = TargetType.HTML;
                 targetFileController.setFile(FileType.Html,
                         baseName + "TargetType" + FileType.Html, name, "html");
                 optionsBox.getChildren().add(htmlBox);
-
+                
             } else if (pdfRadio.isSelected()) {
                 format = TargetType.PDF;
                 targetFileController.setFile(FileType.PDF,
                         baseName + "TargetType" + FileType.PDF, name, "pdf");
                 optionsBox.getChildren().add(pdfBox);
-
+                
             } else if (inTableBox != null) {
                 if (replaceRadio.isSelected()) {
                     if (!notInTable) {
@@ -338,7 +336,7 @@ public class ControlData2DTarget extends BaseDataConvertController {
                     }
                 }
             }
-
+            
             if (inTableBox != null) {
                 if (notInTable) {
                     if (thisPane.getChildren().contains(inTableBox)) {
@@ -381,17 +379,17 @@ public class ControlData2DTarget extends BaseDataConvertController {
                     }
                 }
             }
-
+            
             refreshStyle(thisPane);
-
+            
             UserConfig.setString(baseName + "DataTarget", format.name());
-
+            
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
         return format;
     }
-
+    
     public void setTarget(TargetType type) {
         if (type == null) {
             return;
@@ -405,8 +403,8 @@ public class ControlData2DTarget extends BaseDataConvertController {
             internalFormatPane.setDisable(true);
         }
     }
-
-    public synchronized void refreshControls() {
+    
+    public synchronized void sourceChanged() {
         try {
             if (tableController == null || tableController.data2D == null) {
                 return;
@@ -424,7 +422,7 @@ public class ControlData2DTarget extends BaseDataConvertController {
             }
             rowSelector.getItems().setAll(rows);
             rowSelector.getSelectionModel().select(thisSelect >= 0 ? thisSelect : 0);
-
+            
             String selectedCol = colSelector.getSelectionModel().getSelectedItem();
             if (tableController.data2D.getColumns() != null) {
                 List<String> names = tableController.data2D.columnNames();
@@ -442,22 +440,24 @@ public class ControlData2DTarget extends BaseDataConvertController {
             } else {
                 colSelector.getItems().clear();
             }
-
+            
+            dbController.setData(data2D);
+            
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
-
+    
     public void setNotInTable(boolean notInTable) {
         this.notInTable = notInTable;
         checkTarget();
     }
-
+    
     public boolean inTable() {
         return !notInTable && inTableBox != null
                 && (insertRadio.isSelected() || appendRadio.isSelected() || replaceRadio.isSelected());
     }
-
+    
     public boolean validateTarget() {
         try {
             if (format == null) {
@@ -493,16 +493,16 @@ public class ControlData2DTarget extends BaseDataConvertController {
             return false;
         }
     }
-
+    
     public TargetType format() {
         return format;
     }
-
+    
     public String name() {
         String name = nameInput.getText();
         return name != null && !name.isBlank() ? name.trim() : null;
     }
-
+    
     public File file() {
         if (targetFileController == null) {
             return FileTmpTools.getTempFile();
@@ -510,21 +510,21 @@ public class ControlData2DTarget extends BaseDataConvertController {
             return targetFileController.makeTargetFile();
         }
     }
-
+    
     public int row() {
         if (!inTable()) {
             return -1;
         }
         return rowSelector.getSelectionModel().getSelectedIndex();
     }
-
+    
     public int col() {
         if (!inTable() || tableController == null) {
             return -1;
         }
         return tableController.data2D.colOrder(colSelector.getSelectionModel().getSelectedItem());
     }
-
+    
     public InvalidAs invalidAs() {
         if (zeroNonnumericRadio != null && zeroNonnumericRadio.isSelected()) {
             return InvalidAs.Zero;
@@ -538,7 +538,7 @@ public class ControlData2DTarget extends BaseDataConvertController {
             return InvalidAs.Keep;
         }
     }
-
+    
     public Data2DWriter pickWriter() {
         try {
             if (isInvalid()) {
@@ -595,7 +595,7 @@ public class ControlData2DTarget extends BaseDataConvertController {
             return null;
         }
     }
-
+    
     @Override
     public void cleanPane() {
         try {
@@ -608,5 +608,5 @@ public class ControlData2DTarget extends BaseDataConvertController {
         }
         super.cleanPane();
     }
-
+    
 }

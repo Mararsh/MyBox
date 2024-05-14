@@ -20,19 +20,14 @@ public class DataTableDelete extends DataTableModify {
     protected PreparedStatement delete;
 
     public DataTableDelete(DataTable data) {
-        setSourceData(data);
-        sourceTable = data;
+        setSourceTable(data);
     }
 
     @Override
     public boolean go() {
         handledCount = 0;
-        tableData2D = sourceTable.getTableData2D();
-        tableData2D.setTableName(sourceTable.getSheet());
-        String sql = "SELECT * FROM " + sourceTable.getSheet();
+        String sql = "SELECT * FROM " + tableName;
         showInfo(sql);
-        columns = sourceTable.getColumns();
-        columnsNumber = columns.size();
         try (Connection dconn = DerbyBase.getConnection();
                 PreparedStatement statement = dconn.prepareStatement(sql);
                 ResultSet results = statement.executeQuery();

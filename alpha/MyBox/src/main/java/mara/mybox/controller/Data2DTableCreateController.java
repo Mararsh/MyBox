@@ -1,24 +1,33 @@
 package mara.mybox.controller;
 
 import java.sql.Connection;
-import java.util.ArrayList;
-import java.util.List;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.Tab;
 import javafx.scene.layout.VBox;
+import mara.mybox.data2d.Data2D;
 import mara.mybox.db.DerbyBase;
+import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
  * @CreateDate 2022-2-24
  * @License Apache License Version 2.0
  */
-public class Data2DTableCreateController extends BaseData2DTaskController {
+public class Data2DTableCreateController extends BaseChildController {
+
+    protected Data2DManufactureController editor;
+    protected Data2D data2D;
+    protected InvalidAs invalidAs;
+    protected ChangeListener<Boolean> tableLoadListener;
 
     @FXML
     protected Tab attributesTab;
@@ -26,33 +35,39 @@ public class Data2DTableCreateController extends BaseData2DTaskController {
     protected VBox attributesBox, optionsBox;
     @FXML
     protected ControlNewDataTable attributesController;
+    @FXML
+    protected RadioButton skipNonnumericRadio, zeroNonnumericRadio;
 
-    @Override
-    public void setParameters(BaseData2DLoadController controller) {
+    public Data2DTableCreateController() {
+        baseTitle = message("DataTableCreate");
+    }
+
+    public void setParameters(Data2DManufactureController controller) {
         try {
-            super.setParameters(controller);
+            editor = controller;
 
             attributesController.setParameters(this, data2D);
+
+            tableLoadListener = new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    sourceChanged();
+                }
+            };
+            editor.loadedNotify.addListener(tableLoadListener);
+
+            sourceChanged();
 
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
-    @Override
     public void sourceChanged() {
         try {
-            super.sourceChanged();
+            data2D = editor.data2D.cloneAll().setController(this);
 
-            if (data2D == null || data2D.getColumns() == null) {
-                attributesController.setColumns(null);
-            } else {
-                List<Integer> indices = new ArrayList<>();
-                for (int i = 0; i < data2D.getColumns().size(); i++) {
-                    indices.add(i);
-                }
-                attributesController.setColumns(indices);
-            }
+            attributesController.setData(data2D);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -60,6 +75,18 @@ public class Data2DTableCreateController extends BaseData2DTaskController {
 
     @Override
     public boolean checkOptions() {
+        if (isSettingValues) {
+            return true;
+        }
+        if (data2D == null || !data2D.isValidDefinition()) {
+            popError(message("NoData"));
+            return false;
+        }
+        if (zeroNonnumericRadio.isSelected()) {
+            invalidAs = InvalidAs.Zero;
+        } else {
+            invalidAs = InvalidAs.Skip;
+        }
         try (Connection conn = DerbyBase.getConnection()) {
             boolean ok = attributesController.checkOptions(conn, false);
             if (!ok) {
@@ -70,19 +97,6 @@ public class Data2DTableCreateController extends BaseData2DTaskController {
             MyBoxLog.error(e);
             return false;
         }
-    }
-
-    @Override
-    public void beforeTask() {
-        super.beforeTask();
-        attributesBox.setDisable(true);
-        optionsBox.setDisable(true);
-
-    }
-
-    @Override
-    protected void startOperation() {
-        defaultStartTask();
     }
 
     @Override
@@ -107,9 +121,12 @@ public class Data2DTableCreateController extends BaseData2DTaskController {
     public void afterSuccess() {
         try {
             SoundTools.miao3();
-            if (dataController != null) {
-                dataController.setData(attributesController.dataTable);
-                dataController.dataSaved();
+            if (editor != null) {
+                editor.popInformation(message("Saved"));
+                editor.setData(attributesController.dataTable);
+                editor.notifySaved();
+                editor.loadPage(true);
+                close();
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -117,15 +134,17 @@ public class Data2DTableCreateController extends BaseData2DTaskController {
     }
 
     @Override
-    public void afterTask(boolean ok) {
+    public void cleanPane() {
         try {
-            super.afterTask(ok);
-            attributesBox.setDisable(false);
-            optionsBox.setDisable(false);
-            startButton.setDisable(false);
+            if (editor != null) {
+                editor.loadedNotify.removeListener(tableLoadListener);
+                tableLoadListener = null;
+            }
+            editor = null;
+            data2D = null;
         } catch (Exception e) {
-            MyBoxLog.error(e);
         }
+        super.cleanPane();
     }
 
     /*

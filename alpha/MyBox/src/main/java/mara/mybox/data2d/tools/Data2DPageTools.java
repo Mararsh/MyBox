@@ -55,7 +55,7 @@ public class Data2DPageTools {
             StringTable table = new StringTable(names, title);
 
             for (int i = 0; i < rNumber; i++) {
-                List<String> dataRow = data2d.tableRow(i, true, true);
+                List<String> dataRow = data2d.tableRowShow(i);
                 List<String> htmlRow = new ArrayList<>();
                 if (showRowNumber) {
                     htmlRow.add("" + (i + 1));
@@ -98,7 +98,7 @@ public class Data2DPageTools {
             }
             for (int r = 0; r < rNumber; r++) {
                 StringTable table = new StringTable();
-                List<String> dataRow = data2d.tableRow(r, true, true);
+                List<String> dataRow = data2d.tableRowShow(r);
                 if (showRowNumber) {
                     List<String> htmlRow = new ArrayList<>();
                     if (showColumns) {
@@ -155,7 +155,7 @@ public class Data2DPageTools {
     public static String pageToTextsTable(Data2D data2d, String delimiterName,
             boolean showColumns, boolean showRowNumber, boolean showTitle) {
         String texts = data2d.encodeCSV(null, delimiterName,
-                showRowNumber, showColumns, true);
+                showRowNumber, showColumns);
         String title = showTitle ? data2d.titleName() : null;
         if (title != null && !title.isBlank()) {
             return title + "\n\n" + texts;
@@ -171,7 +171,7 @@ public class Data2DPageTools {
             s.append(data2d.titleName()).append("\n\n");
         }
         for (int r = 0; r < data2d.tableRowsNumber(); r++) {
-            List<String> drow = data2d.tableRow(r, true, true);
+            List<String> drow = data2d.tableRowShow(r);
             if (drow == null) {
                 continue;
             }

@@ -90,7 +90,7 @@ public abstract class Data2DReader {
                 if (isStopped()) {
                     return;
                 }
-                sourceRow = sourceData.tableRow(r, false, false);
+                sourceRow = sourceData.tableRow(r);
                 if (sourceRow == null || sourceRow.isEmpty()) {
                     continue;
                 }

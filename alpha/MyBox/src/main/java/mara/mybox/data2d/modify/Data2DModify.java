@@ -19,11 +19,9 @@ import static mara.mybox.data.SetValue.ValueType.RandomNonNegative;
 import static mara.mybox.data.SetValue.ValueType.Scale;
 import static mara.mybox.data.SetValue.ValueType.Suffix;
 import static mara.mybox.data.SetValue.ValueType.Zero;
-import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.data2d.operate.Data2DOperate;
 import mara.mybox.data2d.writer.Data2DWriter;
-import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.tools.StringTools;
 
 /**
@@ -40,8 +38,6 @@ public abstract class Data2DModify extends Data2DOperate {
     protected SetValue setValue;
     protected String dataValue;
     protected Random random = new Random();
-
-    protected Data2D attributes;
 
     public void initWriter() {
         writer = sourceData.selfWriter();
@@ -159,29 +155,6 @@ public abstract class Data2DModify extends Data2DOperate {
         }
     }
 
-    public void applyAttributes(List<String> row, long index) {
-        try {
-            sourceRow = row;
-            sourceRowIndex = index;
-            targetRow = null;
-            if (sourceRow == null) {
-                return;
-            }
-            targetRow = new ArrayList<>();
-            for (Data2DColumn column : attributes.columns) {
-                int colIndex = column.getIndex();
-                if (colIndex < 0 || colIndex >= sourceRow.size()) {
-                    targetRow.add(null);
-                } else {
-                    targetRow.add(sourceRow.get(colIndex));
-                }
-            }
-            writeRow();
-        } catch (Exception e) {
-            showError(e.toString());
-        }
-    }
-
     @Override
     public boolean end() {
         try {
@@ -192,6 +165,7 @@ public abstract class Data2DModify extends Data2DOperate {
             }
             rowsNumber = writer.getTargetRowIndex();
             sourceData.setRowsNumber(rowsNumber);
+            sourceData.setTableChanged(false);
             return true;
         } catch (Exception e) {
             showError(e.toString());
@@ -200,7 +174,11 @@ public abstract class Data2DModify extends Data2DOperate {
     }
 
     public long rowsCount() {
-        return rowsNumber;
+        if (failed) {
+            return -1;
+        } else {
+            return rowsNumber;
+        }
     }
 
 }

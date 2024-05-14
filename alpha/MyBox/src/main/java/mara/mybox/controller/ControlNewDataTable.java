@@ -51,19 +51,10 @@ public class ControlNewDataTable extends BaseController {
         TipsLabelKey = message("SqlIdentifierComments");
     }
 
-    public void setParameters(BaseTaskController taskController) {
-        try {
-            this.taskController = taskController;
-
-            columnsController.setParameters(this, message("Column"), "");
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
     public void setParameters(BaseTaskController taskController, Data2D data2D) {
-        setParameters(taskController);
+        this.taskController = taskController;
+
+        columnsController.setParameters(this, message("Column"), "");
         setData(data2D);
     }
 
@@ -76,29 +67,13 @@ public class ControlNewDataTable extends BaseController {
             }
             if (data2D != null) {
                 nameInput.setText(data2D.shortName());
+                columnIndices = data2D.columnIndices();
                 columnsController.loadNames(data2D.columnNames());
+            } else {
+                columnIndices = null;
+                columnsController.loadNames(null);
             }
 
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    public void setColumns(List<Integer> columnIndices) {
-        try {
-            if (data2D == null) {
-                return;
-            }
-            this.columnIndices = columnIndices;
-            columnsController.loadNames(null);
-            if (columnIndices == null) {
-                return;
-            }
-            List<String> names = new ArrayList<>();
-            for (int index : columnIndices) {
-                names.add(data2D.getColumns().get(index).getColumnName());
-            }
-            columnsController.loadNames(names);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

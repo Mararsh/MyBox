@@ -176,20 +176,13 @@ public abstract class Data2D_Data extends Data2D_Attributes {
         return -1;
     }
 
-    public List<String> tableRow(int rowIndex, boolean withRowNumber, boolean formatValues) {
+    public List<String> tableRow(int rowIndex) {
         try {
             List<String> trow = pageData.get(rowIndex);
             List<String> row = new ArrayList<>();
-            if (withRowNumber) {
-                row.add(trow.get(0));
-            }
             for (int i = 0; i < columns.size(); i++) {
                 String v = trow.get(i + 1);
-                if (formatValues) {
-                    v = formatValue(i, v);
-                } else {
-                    v = savedValue(i, v);
-                }
+                v = savedValue(i, v);
                 row.add(v);
             }
             return row;
@@ -198,15 +191,34 @@ public abstract class Data2D_Data extends Data2D_Attributes {
         }
     }
 
-    public List<List<String>> tableRows(boolean tableRowNumber, boolean dataRowNumber, boolean formatValues) {
+    public List<String> tableRowShow(int rowIndex) {
+        try {
+            List<String> trow = pageData.get(rowIndex);
+            List<String> row = new ArrayList<>();
+            String rindex = trow.get(0);
+            row.add(rindex != null && rindex.startsWith("-1") ? null : rindex);
+            for (int i = 0; i < columns.size(); i++) {
+                String v = trow.get(i + 1);
+                v = formatValue(i, v);
+                row.add(v);
+            }
+            return row;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public List<List<String>> tableRows(boolean rowNumber) {
         try {
             List<List<String>> rows = new ArrayList<>();
             for (int i = 0; i < pageData.size(); i++) {
                 List<String> row = new ArrayList<>();
-                if (tableRowNumber) {
+                if (rowNumber) {
                     row.add("" + (i + 1));
+                    row.addAll(tableRowShow(i));
+                } else {
+                    row.addAll(tableRow(i));
                 }
-                row.addAll(tableRow(i, dataRowNumber, formatValues));
                 rows.add(row);
             }
             return rows;
@@ -215,8 +227,8 @@ public abstract class Data2D_Data extends Data2D_Attributes {
         }
     }
 
-    public List<List<String>> tableRows(boolean dataRowNumber) {
-        return tableRows(false, dataRowNumber, false);
+    public List<List<String>> tableRows() {
+        return tableRows(false);
     }
 
     public List<String> newRow() {
@@ -296,30 +308,6 @@ public abstract class Data2D_Data extends Data2D_Attributes {
             data.add(row);
         }
         return data;
-    }
-
-    public String rowName(int row) {
-        return message("Row") + (startRowOfCurrentPage + row + 1);
-    }
-
-    public List<String> rowNames() {
-        try {
-            return rowNames(pageData.size());
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    public List<String> rowNames(int end) {
-        try {
-            List<String> names = new ArrayList<>();
-            for (int i = 0; i < end; i++) {
-                names.add(rowName(i));
-            }
-            return names;
-        } catch (Exception e) {
-            return null;
-        }
     }
 
     public String random(Random random, int col, boolean nonNegative) {

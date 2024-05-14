@@ -259,7 +259,6 @@ public class Data2DAttributesController extends BaseChildController {
             protected void whenSucceeded() {
                 dataController.popInformation(message("Saved"));
                 dataController.notifySaved();
-                dataController.data2D.cloneData(attributes);
                 dataController.readData(false);
                 if (needBackup) {
                     if (backup != null && backup.getBackup() != null) {
