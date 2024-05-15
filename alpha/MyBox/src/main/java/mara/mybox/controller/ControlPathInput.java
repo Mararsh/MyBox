@@ -24,11 +24,4 @@ public class ControlPathInput extends ControlFileSelecter {
         label.setText(message("TargetPath"));
     }
 
-    @Override
-    public ControlFileSelecter baseName(String baseName) {
-        this.baseName = baseName;
-        this.savedName = baseName + "TargatPath";
-        return this;
-    }
-
 }

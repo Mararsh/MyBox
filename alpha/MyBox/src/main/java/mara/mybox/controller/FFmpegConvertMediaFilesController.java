@@ -34,8 +34,7 @@ public class FFmpegConvertMediaFilesController extends BaseBatchFFmpegController
 
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(
-                    targetPathController.valid.not()
-                            .or(Bindings.isEmpty(tableView.getItems()))
+                    Bindings.isEmpty(tableView.getItems())
                             .or(ffmpegOptionsController.extensionInput.styleProperty().isEqualTo(UserConfig.badStyle()))
             );
 

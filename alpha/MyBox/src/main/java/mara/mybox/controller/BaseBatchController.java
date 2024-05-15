@@ -453,13 +453,20 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
 
         if (targetFileController != null) {
             targetFile = makeTargetFile();
-            if (targetFile != null) {
-                lastTargetName = targetFile.getAbsolutePath();
-                targetPath = targetFile.getParentFile();
+            if (targetFile == null) {
+                popError(message("InvalidParameter") + ": " + message("TargetFile"));
+                return false;
             }
+            lastTargetName = targetFile.getAbsolutePath();
+            targetPath = targetFile.getParentFile();
         }
         if (targetPathController != null) {
-            targetPath = targetPathController.file();
+            targetPath = targetPathController.getFile();
+            if ((targetPath == null || !targetPath.exists())
+                    && targetPathController.isMustExist()) {
+                popError(message("InvalidParameter") + ": " + message("TargetPath"));
+                return false;
+            }
         }
         if (targetPath != null) {
             actualParameters.targetRootPath = targetPath.getAbsolutePath();

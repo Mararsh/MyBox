@@ -42,16 +42,9 @@ public abstract class FindReplaceBatchController extends BaseBatchFileController
             optionsController.setParent(this, editType);
 
             startButton.disableProperty().unbind();
-            if (targetPathController != null) {
-                startButton.disableProperty().bind(targetPathController.valid.not()
-                        .or(optionsController.findArea.textProperty().isEmpty())
-                        .or(Bindings.isEmpty(tableView.getItems()))
-                );
-            } else {
-                startButton.disableProperty().bind(optionsController.findArea.textProperty().isEmpty()
-                        .or(Bindings.isEmpty(tableView.getItems()))
-                );
-            }
+            startButton.disableProperty().bind(optionsController.findArea.textProperty().isEmpty()
+                    .or(Bindings.isEmpty(tableView.getItems()))
+            );
 
         } catch (Exception e) {
             MyBoxLog.error(e);

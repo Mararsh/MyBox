@@ -59,7 +59,6 @@ public class PdfCompressImagesBatchController extends PdfImagesConvertBatchContr
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(
                     Bindings.isEmpty(tableView.getItems())
-                            .or(targetPathController.valid.not())
                             .or(jpegBox.styleProperty().isEqualTo(UserConfig.badStyle()))
                             .or(thresholdInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                             .or(Bindings.isEmpty(tableView.getItems()))

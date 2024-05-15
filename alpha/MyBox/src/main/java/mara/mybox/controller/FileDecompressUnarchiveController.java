@@ -179,7 +179,8 @@ public class FileDecompressUnarchiveController extends FilesTreeController {
             popError(Languages.message("InvalidData"));
             return;
         }
-        if (targetPath == null || !targetPathController.valid.get()) {
+        targetPath = targetPathController.getFile();
+        if (targetPath == null) {
             popError(message("InvalidTargetPath"));
             tabPane.getSelectionModel().select(targetTab);
             return;
@@ -481,7 +482,8 @@ public class FileDecompressUnarchiveController extends FilesTreeController {
             tabPane.getSelectionModel().select(sourceTab);
             return false;
         }
-        if (targetPath == null || !targetPathController.valid.get()) {
+        targetPath = targetPathController.getFile();
+        if (targetPath == null) {
             popError(message("InvalidTargetPath"));
             tabPane.getSelectionModel().select(targetTab);
             return false;

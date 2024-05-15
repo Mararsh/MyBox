@@ -37,8 +37,7 @@ public class TextFilterBatchController extends BaseBatchFileController {
             super.initControls();
 
             startButton.disableProperty().unbind();
-            startButton.disableProperty().bind(targetPathController.valid.not()
-                    .or(filterController.valid.not())
+            startButton.disableProperty().bind(filterController.valid.not()
                     .or(Bindings.isEmpty(tableView.getItems()))
             );
 

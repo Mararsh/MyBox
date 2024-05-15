@@ -105,23 +105,11 @@ public abstract class BaseController_Interface extends BaseController_Files {
             }
 
             if (targetFileController != null) {
-                targetFileController.notify.addListener(new ChangeListener<Boolean>() {
-                    @Override
-                    public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                        targetFile = targetFileController.file();
-                    }
-                });
-                targetFileController.baseName(interfaceName).savedName(interfaceName + "TargetFile").type(TargetFileType).initFile();
+                targetFileController.type(TargetFileType).parent((BaseController) this);
             }
 
             if (targetPathController != null) {
-                targetPathController.notify.addListener(new ChangeListener<Boolean>() {
-                    @Override
-                    public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                        targetPath = targetPathController.file();
-                    }
-                });
-                targetPathController.baseName(interfaceName).savedName(interfaceName + "TargetPath").type(TargetPathType).initFile();
+                targetPathController.type(TargetPathType).parent((BaseController) this);
             }
 
             if (operationBarController != null) {

@@ -46,8 +46,10 @@ public class WebFavoriteEditor extends InfoTreeNodeEditor {
         try {
             super.initControls();
 
-            iconController.isDirectory(false).isSource(true).mustExist(true).permitNull(true)
-                    .baseName(baseName).savedName(baseName + "Icon").type(VisitHistory.FileType.Image);
+            iconController.isDirectory(false).isSource(true)
+                    .mustExist(true).permitNull(true)
+                    .type(VisitHistory.FileType.Image)
+                    .parent(this, baseName + "Icon");
             iconController.notify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldTab, Boolean newTab) {

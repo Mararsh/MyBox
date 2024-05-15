@@ -81,8 +81,7 @@ public class ImageReplaceColorBatchController extends BaseImageEditBatchControll
             });
 
             startButton.disableProperty().unbind();
-            startButton.disableProperty().bind(targetPathController.valid.not()
-                    .or(Bindings.isEmpty(tableView.getItems()))
+            startButton.disableProperty().bind(Bindings.isEmpty(tableView.getItems())
                     .or(matchController.distanceSelector.getEditor().styleProperty().isEqualTo(UserConfig.badStyle()))
             );
 

@@ -57,7 +57,6 @@ public class DataFileCSVMergeController extends FilesMergeController {
 
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(Bindings.isEmpty(tableData)
-                    .or(targetFileController.valid.not())
                     .or(csvSourceController.delimiterController.delimiterInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                     .or(csvTargetController.delimiterController.delimiterInput.styleProperty().isEqualTo(UserConfig.badStyle()))
             );

@@ -261,7 +261,7 @@ public class ImageOCRController extends BaseController {
     @Override
     public void startAction() {
         ocrOptionsController.setLanguages();
-        File dataPath = ocrOptionsController.dataPathController.file();
+        File dataPath = ocrOptionsController.dataPathController.getFile();
         if (!dataPath.exists()) {
             popError(message("InvalidParameters"));
             ocrOptionsController.dataPathController.fileInput.setStyle(UserConfig.badStyle());
@@ -363,7 +363,7 @@ public class ImageOCRController extends BaseController {
 
     protected void embedded() {
         if (preprocessController.imageView.getImage() == null
-                || ocrOptionsController.dataPathController.file() == null) {
+                || ocrOptionsController.dataPathController.getFile() == null) {
             return;
         }
         if (task != null) {

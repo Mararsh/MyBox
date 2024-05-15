@@ -44,10 +44,7 @@ public class PdfMergeController extends BaseBatchPdfController {
             super.initControls();
 
             startButton.disableProperty().unbind();
-            startButton.disableProperty().bind(
-                    Bindings.isEmpty(tableView.getItems())
-                            .or(targetFileController.valid.not())
-            );
+            startButton.disableProperty().bind(Bindings.isEmpty(tableView.getItems()));
 
         } catch (Exception e) {
             MyBoxLog.error(e);

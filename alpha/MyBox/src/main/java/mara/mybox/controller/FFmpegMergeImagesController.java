@@ -74,8 +74,7 @@ public class FFmpegMergeImagesController extends BaseBatchFFmpegController {
 
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(
-                    targetFileController.valid.not()
-                            .or(Bindings.isEmpty(tableView.getItems()))
+                    Bindings.isEmpty(tableView.getItems())
                             .or(ffmpegOptionsController.extensionInput.styleProperty().isEqualTo(UserConfig.badStyle()))
             );
 
@@ -100,6 +99,7 @@ public class FFmpegMergeImagesController extends BaseBatchFFmpegController {
     @Override
     public void doCurrentProcess() {
         try {
+            targetFile = targetFileController.getFile();
             if (currentParameters == null || tableData.isEmpty() || targetFile == null) {
                 popError(message("InvalidParameters"));
                 return;

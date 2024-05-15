@@ -173,9 +173,8 @@ public class ImagesSaveController extends BaseTaskController {
             setBox.getChildren().addAll(savedWidthBox, imageFormatBox);
             targetVBox.getChildren().add(pathBox);
             bname = baseName + "ImagesTargetPath";
-            pathController.initPathSelecter()
-                    .baseName(bname).savedName(bname)
-                    .type(TargetPathType).initFile();
+            pathController.initPathSelecter().type(TargetPathType)
+                    .parent(this, bname);
             openTargetButton.setDisable(false);
 
         } else if (!spliceRadio.isSelected() && !videoRadio.isSelected()) {
@@ -204,9 +203,8 @@ public class ImagesSaveController extends BaseTaskController {
             }
 
             targetVBox.getChildren().add(fileBox);
-            fileController.initFileSelecter()
-                    .baseName(bname).savedName(bname)
-                    .type(TargetFileType).initFile();
+            fileController.initFileSelecter().type(TargetFileType)
+                    .parent(this, bname);
             openTargetButton.setDisable(false);
         } else {
             openTargetButton.setDisable(true);
@@ -404,7 +402,8 @@ public class ImagesSaveController extends BaseTaskController {
         targetPath = null;
         targetFile = null;
         if (imagesRadio.isSelected()) {
-            targetPath = pathController.file();
+            targetPath = pathController.getFile();
+            MyBoxLog.console(targetPath);
             if (targetPath == null) {
                 popError(message("InvalidParameter") + ": " + message("TargetPath"));
                 return false;
@@ -764,7 +763,7 @@ public class ImagesSaveController extends BaseTaskController {
     @Override
     public void openTarget() {
         if (imagesRadio.isSelected()) {
-            targetPath = pathController.file();
+            targetPath = pathController.getFile();
             if (targetPath == null || !targetPath.exists()) {
                 popInformation(message("NotExist"));
                 return;

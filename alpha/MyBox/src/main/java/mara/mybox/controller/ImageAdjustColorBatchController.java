@@ -38,9 +38,7 @@ public class ImageAdjustColorBatchController extends BaseImageEditBatchControlle
             super.initControls();
 
             startButton.disableProperty().unbind();
-            startButton.disableProperty().bind(targetPathController.valid.not()
-                    .or(Bindings.isEmpty(tableView.getItems()))
-            );
+            startButton.disableProperty().bind(Bindings.isEmpty(tableView.getItems()));
 
         } catch (Exception e) {
             MyBoxLog.debug(e);

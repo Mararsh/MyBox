@@ -227,12 +227,9 @@ public class FilesArchiveCompressController extends BaseBatchFileController {
         });
 
         openTargetButton.disableProperty().unbind();
-        openTargetButton.disableProperty().bind(targetFileController.valid.not());
 
         startButton.disableProperty().unbind();
-        startButton.disableProperty().bind(targetFileController.valid.not()
-                .or(Bindings.isEmpty(tableData))
-        );
+        startButton.disableProperty().bind(Bindings.isEmpty(tableData));
 
     }
 

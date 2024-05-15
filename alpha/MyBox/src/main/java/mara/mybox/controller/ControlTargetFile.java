@@ -137,12 +137,11 @@ public class ControlTargetFile extends ControlFileSelecter {
         UserConfig.setString(baseName + "TargetExistType", targetExistType.name());
     }
 
-    public void setFile(int type, String savedName, String prefix, String ext) {
-        defaultFile(null).type(type).savedName(savedName);
-        isSettingValues = true;
-        fileInput.setText(FileTmpTools.generateFile(prefix, ext).getAbsolutePath());
-        isSettingValues = false;
-        checkFileInput();
+    public void setFile(int type, String name, String prefix, String ext) {
+        defaultFile = null;
+        setFileType(type);
+        baseName = name;
+        inputFile(FileTmpTools.generateFile(prefix, ext));
     }
 
     @Override
@@ -206,8 +205,7 @@ public class ControlTargetFile extends ControlFileSelecter {
 
     @Override
     public File makeTargetFile() {
-        checkFileInput();
-        return makeTargetFile(file);
+        return makeTargetFile(getFile());
     }
 
     public boolean isSkip() {

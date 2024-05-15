@@ -817,7 +817,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
             if (targetFileController == null) {
                 return null;
             }
-            targetFile = targetFileController.file();
+            targetFile = targetFileController.getFile();
             if (targetFile == null) {
                 return null;
             }

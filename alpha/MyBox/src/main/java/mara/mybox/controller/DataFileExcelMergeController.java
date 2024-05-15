@@ -55,9 +55,7 @@ public class DataFileExcelMergeController extends FilesMergeController {
             super.initControls();
 
             startButton.disableProperty().unbind();
-            startButton.disableProperty().bind(Bindings.isEmpty(tableData)
-                    .or(targetFileController.valid.not())
-            );
+            startButton.disableProperty().bind(Bindings.isEmpty(tableData));
 
         } catch (Exception e) {
             MyBoxLog.error(e);

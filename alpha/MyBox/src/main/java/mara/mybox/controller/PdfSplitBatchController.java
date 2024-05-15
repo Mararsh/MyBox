@@ -51,7 +51,6 @@ public class PdfSplitBatchController extends BaseBatchPdfController {
             startButton.disableProperty().bind(
                     Bindings.isEmpty(tableView.getItems())
                             .or(splitController.valid)
-                            .or(targetPathController.valid.not())
             );
 
         } catch (Exception e) {

@@ -71,7 +71,7 @@ public class Data2DExportController extends BaseData2DTaskController {
             if (!super.checkOptions()) {
                 return false;
             }
-            targetPath = targetPathController.file();
+            targetPath = targetPathController.getFile();
             if (targetPath == null) {
                 popError(message("InvalidParameters") + ": " + message("TargetPath"));
                 tabPane.getSelectionModel().select(targetTab);

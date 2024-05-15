@@ -52,7 +52,6 @@ public class PptSplitController extends BaseBatchFileController {
             startButton.disableProperty().bind(
                     Bindings.isEmpty(tableView.getItems())
                             .or(splitController.valid)
-                            .or(targetPathController.valid.not())
             );
 
         } catch (Exception e) {

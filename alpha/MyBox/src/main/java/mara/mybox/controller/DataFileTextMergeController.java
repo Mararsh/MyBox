@@ -56,7 +56,6 @@ public class DataFileTextMergeController extends FilesMergeController {
 
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(Bindings.isEmpty(tableData)
-                    .or(targetFileController.valid.not())
                     .or(readOptionsController.delimiterController.delimiterInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                     .or(writeOptionsController.delimiterController.delimiterInput.styleProperty().isEqualTo(UserConfig.badStyle()))
             );

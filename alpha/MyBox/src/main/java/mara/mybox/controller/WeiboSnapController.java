@@ -861,10 +861,9 @@ public class WeiboSnapController extends BaseController {
         });
         checkCategory();
 
-        targetPathInputController.baseName(baseName).initFile();
+        targetPathInputController.parent(this);
 
-        startButton.disableProperty().bind(targetPathInputController.valid.not()
-                .or(startMonthInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+        startButton.disableProperty().bind(startMonthInput.styleProperty().isEqualTo(UserConfig.badStyle())
                 .or(endMonthInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                 .or(zoomBox.getEditor().styleProperty().isEqualTo(UserConfig.badStyle()))
                 .or(addressBox.getEditor().styleProperty().isEqualTo(UserConfig.badStyle()))
@@ -1009,7 +1008,7 @@ public class WeiboSnapController extends BaseController {
         parameters.setWebAddress(exmapleAddress);
         parameters.setStartMonth(DateTools.encodeDate("2014-09"));
         parameters.setEndMonth(DateTools.encodeDate("2014-10"));
-        targetPath = targetPathInputController.file;
+        targetPath = targetPathInputController.getFile();
         parameters.setTargetPath(targetPath == null ? new File(FileTmpTools.generatePath("weibo")) : targetPath);
         startSnap();
     }
@@ -1058,7 +1057,7 @@ public class WeiboSnapController extends BaseController {
             parameters.setPageHeight(pageHeight);
             parameters.setMarginSize(marginSize);
             parameters.setAuthor(authorInput.getText());
-            targetPath = targetPathInputController.file;
+            targetPath = targetPathInputController.getFile();
             parameters.setTargetPath(targetPath);
             parameters.setCreatePDF(pdfCheck.isSelected());
             parameters.setCreateHtml(htmlCheck.isSelected());
@@ -1092,7 +1091,7 @@ public class WeiboSnapController extends BaseController {
 
     protected void startSnap() {
         try {
-            targetPath = targetPathInputController.file;
+            targetPath = targetPathInputController.getFile();
             if (webAddress == null || webAddress.isEmpty() || parameters == null || targetPath == null) {
                 popError(Languages.message("ParametersError"));
                 return;

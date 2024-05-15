@@ -183,7 +183,7 @@ public class DownloadFirstLevelLinksController extends BaseTablePagesController<
             textParser = Parser.builder(textOptions).build();
             textCollectingVisitor = new TextCollectingVisitor();
 
-            targetPathInputController.baseName(baseName).initFile();
+            targetPathInputController.parent(this);
         } catch (Exception e) {
             MyBoxLog.console(e.toString());
         }
@@ -456,7 +456,7 @@ public class DownloadFirstLevelLinksController extends BaseTablePagesController<
     public void afterSceneLoaded() {
         try {
             super.afterSceneLoaded();
-            if (targetPathInputController.file == null) {
+            if (targetPathInputController.getFile() == null) {
                 tabPane.getSelectionModel().select(optionsTab);
             }
 
@@ -495,7 +495,7 @@ public class DownloadFirstLevelLinksController extends BaseTablePagesController<
             return;
         }
         TableStringValues.add("DownloadHtmlsHistories", address);
-        File downloadPath = targetPathInputController.file;
+        File downloadPath = targetPathInputController.getFile();
         if (downloadPath == null) {
             popError(message("InvalidParameters") + ": " + message("TargetPath"));
             tabPane.getSelectionModel().select(optionsTab);
@@ -556,7 +556,7 @@ public class DownloadFirstLevelLinksController extends BaseTablePagesController<
         this.subPath = subPath;
         filenameType = nameType;
         tableData.clear();
-        File downloadPath = targetPathInputController.file;
+        File downloadPath = targetPathInputController.getFile();
         if (task != null) {
             task.cancel();
         }
@@ -706,7 +706,7 @@ public class DownloadFirstLevelLinksController extends BaseTablePagesController<
         }
         String path = result.get().trim();
         for (Link link : selected) {
-            File fullpath = new File(targetPathInputController.file.getAbsolutePath() + File.separator + path);
+            File fullpath = new File(targetPathInputController.getFile().getAbsolutePath() + File.separator + path);
             String filename = link.filename(fullpath, filenameType);
             link.setFile(filename);
         }
@@ -722,7 +722,7 @@ public class DownloadFirstLevelLinksController extends BaseTablePagesController<
             Link link = selected.get(i);
             String filename = link.getFile();
             if (filename == null) {
-                filename = link.filename(new File(targetPathInputController.file.getAbsolutePath()), filenameType);
+                filename = link.filename(new File(targetPathInputController.getFile().getAbsolutePath()), filenameType);
                 link.setFile(filename);
             }
             File file = new File(filename);
@@ -740,7 +740,7 @@ public class DownloadFirstLevelLinksController extends BaseTablePagesController<
         for (Link link : selected) {
             String filename = link.getFile();
             if (filename == null) {
-                filename = link.filename(new File(targetPathInputController.file.getAbsolutePath()), filenameType);
+                filename = link.filename(new File(targetPathInputController.getFile().getAbsolutePath()), filenameType);
                 link.setFile(filename);
             }
             File file = new File(filename);
@@ -862,7 +862,7 @@ public class DownloadFirstLevelLinksController extends BaseTablePagesController<
 
     @FXML
     public void view(Link link) {
-        if (link == null || targetPathInputController.file == null) {
+        if (link == null || targetPathInputController.getFile() == null) {
             return;
         }
         String s = message("Address") + ": " + link.getAddress() + "<br>"
@@ -1525,11 +1525,12 @@ public class DownloadFirstLevelLinksController extends BaseTablePagesController<
         }
     }
 
+    @Override
     public void updateLogs(final String line) {
         Platform.runLater(() -> {
             try {
-                String newLogs = DateTools.datetimeToString(new Date()) + "  " + line + "\n";
-                logsTextArea.insertText(0, newLogs);
+                String logs = DateTools.datetimeToString(new Date()) + "  " + line + "\n";
+                logsTextArea.insertText(0, logs);
                 int len = logsTextArea.getLength();
                 if (len > maxLogs) {
                     logsTextArea.deleteText(len - len / 4, len - 1);
@@ -1542,6 +1543,7 @@ public class DownloadFirstLevelLinksController extends BaseTablePagesController<
     }
 
     @FXML
+    @Override
     public void clearLogs() {
         logsTextArea.setText("");
     }
@@ -1549,7 +1551,7 @@ public class DownloadFirstLevelLinksController extends BaseTablePagesController<
     @FXML
     protected void openPath() {
         try {
-            browseURI(targetPathInputController.file.toURI());
+            browseURI(targetPathInputController.getFile().toURI());
         } catch (Exception e) {
         }
     }

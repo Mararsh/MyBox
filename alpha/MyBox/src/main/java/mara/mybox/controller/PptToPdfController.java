@@ -48,9 +48,7 @@ public class PptToPdfController extends BaseBatchFileController {
             pdfOptionsController.set(baseName, true);
 
             startButton.disableProperty().unbind();
-            startButton.disableProperty().bind(Bindings.isEmpty(tableView.getItems())
-                    .or(targetPathController.valid.not())
-            );
+            startButton.disableProperty().bind(Bindings.isEmpty(tableView.getItems()));
 
         } catch (Exception e) {
             MyBoxLog.error(e);

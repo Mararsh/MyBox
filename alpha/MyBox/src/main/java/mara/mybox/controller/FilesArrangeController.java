@@ -42,7 +42,6 @@ public class FilesArrangeController extends BaseBatchFileController {
     protected String lastFileName;
     private boolean startHandle, isCopy, byModifyTime;
     private int dirType, replaceType;
-    private long count;
     protected String renameAppdex = "-m";
     protected String strFailedCopy, strCreatedSuccessfully, strCopySuccessfully, strDeleteSuccessfully, strFailedDelete;
     protected FileSynchronizeAttributes copyAttr;
@@ -86,12 +85,11 @@ public class FilesArrangeController extends BaseBatchFileController {
             initDirTab();
             initConditionTab();
 
-            targetPathInputController.baseName(baseName).initFile();
+            targetPathInputController.parent(this);
 
             startButton.disableProperty().bind(
                     Bindings.isEmpty(sourcePathInput.textProperty())
                             .or(sourcePathInput.styleProperty().isEqualTo(UserConfig.badStyle()))
-                            .or(targetPathInputController.valid.not())
             );
 
             operationBarController.openTargetButton.disableProperty().bind(
@@ -244,7 +242,7 @@ public class FilesArrangeController extends BaseBatchFileController {
             if (!paused || lastFileName == null) {
                 copyAttr = new FileSynchronizeAttributes();
 
-                targetPath = targetPathInputController.file;
+                targetPath = targetPathInputController.getFile();
                 if (!targetPath.exists()) {
                     targetPath.mkdirs();
                     updateLogs(strCreatedSuccessfully + targetPath.getAbsolutePath(), true);
@@ -473,7 +471,7 @@ public class FilesArrangeController extends BaseBatchFileController {
     @Override
     public void openTarget() {
         try {
-            browseURI(targetPathInputController.file.toURI());
+            browseURI(targetPathInputController.getFile().toURI());
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

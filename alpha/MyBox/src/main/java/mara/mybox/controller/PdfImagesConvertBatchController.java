@@ -64,7 +64,6 @@ public class PdfImagesConvertBatchController extends BaseBatchPdfController {
 
                 startButton.disableProperty().unbind();
                 startButton.disableProperty().bind(Bindings.isEmpty(tableView.getItems())
-                        .or(targetPathController.valid.not())
                         .or(formatController.qualitySelector.getEditor().styleProperty().isEqualTo(UserConfig.badStyle()))
                         .or(formatController.dpiSelector.getEditor().styleProperty().isEqualTo(UserConfig.badStyle()))
                         .or(formatController.profileInput.styleProperty().isEqualTo(UserConfig.badStyle()))
