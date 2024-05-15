@@ -56,7 +56,7 @@ public class Data2DLoadContentInSystemClipboardController extends ControlData2DS
     @Override
     public void afterSuccess() {
         try {
-            targetController.loadData(checkedColsNames, data);
+            targetController.loadData(null, checkedColumns, data);
             close();
         } catch (Exception e) {
             MyBoxLog.error(e);

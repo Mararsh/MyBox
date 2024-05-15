@@ -80,8 +80,7 @@ public class DataInMyBoxClipboardController extends BaseData2DListController {
     @FXML
     @Override
     public void createAction() {
-        Data2DManufactureController controller = Data2DManufactureController.open();
-        controller.createData(Data2DDefinition.DataType.MyBoxClipboard);
+        Data2DManufactureController.create(Data2DDefinition.DataType.MyBoxClipboard);
     }
 
     /*

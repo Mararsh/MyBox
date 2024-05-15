@@ -16,7 +16,7 @@ import mara.mybox.controller.DataFileExcelSheetsController;
 import mara.mybox.controller.DataFileTextFormatController;
 import mara.mybox.controller.FileBrowseController;
 import mara.mybox.data2d.Data2D;
-import mara.mybox.db.data.Data2DDefinition;
+import mara.mybox.db.data.Data2DDefinition.DataType;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.style.StyleTools;
@@ -711,43 +711,37 @@ public class Data2DMenuTools {
 
             menu = new MenuItem("CSV", StyleTools.getIconImageView("iconCSV.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
-                Data2DManufactureController controller = Data2DManufactureController.open();
-                controller.createData(Data2DDefinition.DataType.CSV);
+                Data2DManufactureController.create(DataType.CSV);
             });
             items.add(menu);
 
             menu = new MenuItem("Excel", StyleTools.getIconImageView("iconExcel.png"));
             menu.setOnAction((ActionEvent event) -> {
-                Data2DManufactureController controller = Data2DManufactureController.open();
-                controller.createData(Data2DDefinition.DataType.Excel);
+                Data2DManufactureController.create(DataType.Excel);
             });
             items.add(menu);
 
             menu = new MenuItem(message("Texts"), StyleTools.getIconImageView("iconTxt.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
-                Data2DManufactureController controller = Data2DManufactureController.open();
-                controller.createData(Data2DDefinition.DataType.Texts);
+                Data2DManufactureController.create(DataType.Texts);
             });
             items.add(menu);
 
             menu = new MenuItem(message("Matrix"), StyleTools.getIconImageView("iconMatrix.png"));
             menu.setOnAction((ActionEvent event) -> {
-                Data2DManufactureController controller = Data2DManufactureController.open();
-                controller.createData(Data2DDefinition.DataType.Matrix);
+                Data2DManufactureController.create(DataType.Matrix);
             });
             items.add(menu);
 
             menu = new MenuItem(message("MyBoxClipboard"), StyleTools.getIconImageView("iconClipboard.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
-                Data2DManufactureController controller = Data2DManufactureController.open();
-                controller.createData(Data2DDefinition.DataType.MyBoxClipboard);
+                Data2DManufactureController.create(DataType.MyBoxClipboard);
             });
             items.add(menu);
 
             menu = new MenuItem(message("DatabaseTable"), StyleTools.getIconImageView("iconDatabase.png"));
             menu.setOnAction((ActionEvent event) -> {
-                Data2DManufactureController controller = Data2DManufactureController.open();
-                controller.createData(Data2DDefinition.DataType.DatabaseTable);
+                Data2DManufactureController.create(DataType.DatabaseTable);
             });
             items.add(menu);
 

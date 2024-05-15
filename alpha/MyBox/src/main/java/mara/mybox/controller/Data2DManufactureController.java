@@ -1063,4 +1063,16 @@ public class Data2DManufactureController extends BaseData2DViewController {
         }
     }
 
+    public static Data2DManufactureController create(DataType type) {
+        try {
+            Data2DManufactureController controller = Data2DManufactureController.open();
+            controller.createData(type);
+            controller.requestMouse();
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
 }

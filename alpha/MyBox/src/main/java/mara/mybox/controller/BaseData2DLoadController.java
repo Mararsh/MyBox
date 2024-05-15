@@ -69,6 +69,9 @@ public class BaseData2DLoadController extends BaseData2DTableController {
             return false;
         }
         resetStatus();
+        if (type == null) {
+            type = DataType.CSV;
+        }
         data2D = Data2D.create(type);
         loadTmpData(3);
         return true;
@@ -113,7 +116,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
     }
 
     public boolean loadNull() {
-        return createData(DataType.CSV);
+        return createData(null);
     }
 
     public void dataSaved() {
@@ -225,10 +228,6 @@ public class BaseData2DLoadController extends BaseData2DTableController {
         }
         data2D = Data2D.create(type);
         loadData(name, cols, data);
-    }
-
-    public void loadData(List<String> cols, List<List<String>> data) {
-        loadData(null, data2D.toColumns(cols), data);
     }
 
     public void loadData(String name, List<Data2DColumn> cols, List<List<String>> data) {
@@ -597,7 +596,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
     @Override
     public void loadContentInSystemClipboard() {
         try {
-            if (data2D == null || !checkBeforeNextAction()) {
+            if (!checkBeforeNextAction()) {
                 return;
             }
             String text = Clipboard.getSystemClipboard().getString();
