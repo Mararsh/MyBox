@@ -200,11 +200,7 @@ public class FileInformation {
 
     public String getFileName() {
         if (file != null) {
-            if (file.isDirectory()) {
-                return null;
-            } else {
-                return file.getName();
-            }
+            return file.getName();
         } else {
             return null;
         }

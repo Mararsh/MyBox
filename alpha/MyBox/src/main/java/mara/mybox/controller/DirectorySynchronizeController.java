@@ -100,6 +100,10 @@ public class DirectorySynchronizeController extends BaseTaskController {
     protected boolean checkSource() {
         try {
             sourcePath = new File(sourcePathInput.getText());
+            if (sourcePath == null || !sourcePath.exists()) {
+                popError(message("Invalid") + ": " + message("SourcePath"));
+                return false;
+            }
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -480,9 +484,7 @@ public class DirectorySynchronizeController extends BaseTaskController {
                     } catch (Exception e) {
                         copyAttr.setFailedDeletedDirectories(copyAttr.getFailedDeletedDirectories() + 1);
                         copyAttr.setFailedDeletedSize(copyAttr.getFailedDeletedSize() + len);
-                        if (verboseCheck == null || verboseCheck.isSelected()) {
-                            showLogs(strFailedDelete + child.nodeFullName());
-                        }
+                        showLogs(strFailedDelete + child.nodeFullName());
                         if (!copyAttr.isContinueWhenError()) {
                             return false;
                         }
@@ -490,9 +492,7 @@ public class DirectorySynchronizeController extends BaseTaskController {
                 } else {
                     copyAttr.setFailedDeletedDirectories(copyAttr.getFailedDeletedDirectories() + 1);
                     copyAttr.setFailedDeletedSize(copyAttr.getFailedDeletedSize() + len);
-                    if (verboseCheck == null || verboseCheck.isSelected()) {
-                        updateLogs(strFailedDelete + child.nodeFullName());
-                    }
+                    showLogs(strFailedDelete + child.nodeFullName());
                     if (!copyAttr.isContinueWhenError()) {
                         return false;
                     }

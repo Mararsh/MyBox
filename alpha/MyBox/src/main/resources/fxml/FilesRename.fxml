@@ -112,11 +112,10 @@ License:    Apache License Version 2.0
                                           </HBox>
                                                         <VBox fx:id="numberBox" spacing="5.0">
                                                             <children>
+                                                                  <CheckBox fx:id="originalCheck" mnemonicParsing="false" text="%IncludeOriginalFileName" />
                                                 <HBox alignment="CENTER_LEFT" spacing="2.0">
                                                    <children>
-                                                                        <Label text="%Prefix" />
-                                                                        <CheckBox fx:id="originalCheck" mnemonicParsing="false" text="%IncludeOriginalFileName" />
-                                                                        <CheckBox fx:id="stringCheck" mnemonicParsing="false" text="%IncludeString" />
+                                                                        <CheckBox fx:id="stringCheck" mnemonicParsing="false" text="%Prefix" />
                                                                         <TextField fx:id="stringInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                                    </children>
                                                 </HBox>

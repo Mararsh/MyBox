@@ -152,9 +152,10 @@ public class FilesRenameController extends BaseBatchFileController {
                         digit = Integer.parseInt(digitInput.getText());
                     } catch (Exception e) {
                         if (tableController.totalFilesNumber <= 0) {
-                            tableController.countSize(false);
+                            digit = tableData.size();
+                        } else {
+                            digit = (tableController.totalFilesNumber + "").length();
                         }
-                        digit = (tableController.totalFilesNumber + "").length();
                     }
                 }
                 try {
@@ -272,7 +273,10 @@ public class FilesRenameController extends BaseBatchFileController {
                         newName += FileNameTools.prefix(currentName);
                     }
                     if (stringCheck.isSelected()) {
-                        newName += FileNameTools.filter(stringInput.getText());
+                        String s = stringInput.getText();
+                        if (s != null && !s.isEmpty()) {
+                            newName += FileNameTools.filter(s);
+                        }
                     }
                     String pageNumber = currentAccum + "";
                     if (fillZeroCheck.isSelected()) {
