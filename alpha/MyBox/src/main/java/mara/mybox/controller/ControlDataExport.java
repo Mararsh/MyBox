@@ -215,7 +215,8 @@ public class ControlDataExport extends BaseDataConvertController {
             } else {
                 export = Data2DExport.create(data2D);
             }
-            export.setIncludeRowNumber(rowNumberCheck.isSelected());
+            export.setMaxLines(maxLines)
+                    .setIncludeRowNumber(rowNumberCheck.isSelected());
             boolean formatValues = formatValuesCheck.isSelected();
             if (csvCheck.isSelected()) {
                 Data2DWriter writer = pickCSVWriter();

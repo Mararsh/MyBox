@@ -62,7 +62,8 @@ public class Data2DExport extends Data2DOperate {
         if (targetFile != null) {
             writer.setPrintFile(targetFile);
         } else if (pathController != null) {
-            writer.setPrintFile(pathController.makeTargetFile(filePrefix,
+            String name = filePrefix + (maxLines > 0 ? fileIndex : "");
+            writer.setPrintFile(pathController.makeTargetFile(name,
                     "." + writer.getFileSuffix(), targetPath));
         }
     }
@@ -168,6 +169,9 @@ public class Data2DExport extends Data2DOperate {
         for (Data2DWriter writer : writers) {
             writer.setColumns(columns).setHeaderNames(columnNames);
         }
+        sourceRowIndex = 0;
+        fileIndex = 1;
+        fileRowIndex = 0;
         return true;
     }
 
@@ -183,8 +187,9 @@ public class Data2DExport extends Data2DOperate {
                 targetRow.add(v);
             }
             fileRowIndex++;
+            sourceRowIndex++;
             if (includeRowNumber) {
-                targetRow.add(0, fileRowIndex + "");
+                targetRow.add(0, sourceRowIndex + "");
             }
             writeRow();
         } catch (Exception e) {
@@ -235,8 +240,9 @@ public class Data2DExport extends Data2DOperate {
         return maxLines;
     }
 
-    public void setMaxLines(int maxLines) {
+    public Data2DExport setMaxLines(int maxLines) {
         this.maxLines = maxLines;
+        return this;
     }
 
     public File getTargetPath() {

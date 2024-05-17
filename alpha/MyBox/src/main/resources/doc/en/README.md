@@ -38,6 +38,14 @@ This is compute application to provide simple and easy functions. It's free and 
                                               
 [Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.8.1)                                                
 
+## Notice         
+Without enough testings, MyBox has low reliability and bad stability. When use MyBox, following may happen:        
+ 
+* Files/Data are damaged.       
+* Output wrong results.      
+* Functions fail.      
+* Other unexpected behaviours.     
+
 
 # Download and Execution
 

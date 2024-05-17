@@ -198,6 +198,7 @@ public abstract class BaseData2DTaskController extends BaseBranchController {
             }
             isSettingValues = false;
             if (checkedColsIndices != null && !checkedColsIndices.isEmpty()
+                    && data2D.getColumns() != null
                     && checkedColsIndices.size() != data2D.getColumns().size()) {
                 if (columnsPane != null) {
                     for (Node node : columnsPane.getChildren()) {

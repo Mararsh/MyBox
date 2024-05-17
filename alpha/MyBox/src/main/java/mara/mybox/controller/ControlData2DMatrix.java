@@ -11,7 +11,7 @@ import mara.mybox.dev.MyBoxLog;
  */
 public class ControlData2DMatrix extends BaseData2DRowsColumnsController {
 
-    DataMatrix dataMatrix;
+    protected DataMatrix dataMatrix;
 
     @Override
     public void initControls() {

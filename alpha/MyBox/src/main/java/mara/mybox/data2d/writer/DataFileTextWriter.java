@@ -45,9 +45,7 @@ public class DataFileTextWriter extends Data2DWriter {
             if (delimiter == null) {
                 delimiter = ",";
             }
-            if (fileWriter == null) {
-                fileWriter = new BufferedWriter(new FileWriter(tmpFile, charset));
-            }
+            fileWriter = new BufferedWriter(new FileWriter(tmpFile, charset));
             if (writeHeader) {
                 TextFileTools.writeLine(task(), fileWriter, headerNames, delimiter);
             }

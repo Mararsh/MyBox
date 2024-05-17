@@ -39,7 +39,15 @@
                                                                                                            
 [此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.8.1)                         
           
-                  
+## 注意       
+MyBox未经足够测试，可靠性低、稳定性差。使用MyBox，可能出现以下情况：      
+ 
+* 毁坏文件/数据。       
+* 输出错误的结果。       
+* 功能失效。       
+* 其它非预期的行为。         
+
+           
 # 下载与运行
 
 ## 源码
