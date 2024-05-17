@@ -34,10 +34,10 @@ import mara.mybox.value.UserConfig;
  * @License Apache License Version 2.0
  */
 public class ImageInSystemClipboardController extends BaseImageController {
-    
+
     private int scaledWidth;
     private String filePrefix;
-    
+
     @FXML
     protected ControlPathInput targetPathInputController;
     @FXML
@@ -50,17 +50,17 @@ public class ImageInSystemClipboardController extends BaseImageController {
     protected ComboBox<String> intervalSelector, widthSelector;
     @FXML
     protected ControlImageFormat formatController;
-    
+
     public ImageInSystemClipboardController() {
         baseTitle = message("ImagesInSystemClipboard");
         TipsLabelKey = "RecordImagesTips";
     }
-    
+
     @Override
     public void initControls() {
         try {
             super.initControls();
-            
+
             saveCheck.setSelected(ImageClipboardTools.isSave());
             saveCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -69,7 +69,7 @@ public class ImageInSystemClipboardController extends BaseImageController {
                     ImageClipboardTools.setSave(newValue);
                 }
             });
-            
+
             copyCheck.setSelected(ImageClipboardTools.isCopy());
             copyCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -77,7 +77,7 @@ public class ImageInSystemClipboardController extends BaseImageController {
                     ImageClipboardTools.setCopy(newValue);
                 }
             });
-            
+
             List<String> values = Arrays.asList(message("OriginalSize"),
                     "512", "1024", "256", "128", "2048", "100", "80", "4096");
             widthSelector.getItems().addAll(values);
@@ -106,7 +106,7 @@ public class ImageInSystemClipboardController extends BaseImageController {
                     ImageClipboardTools.setWidth(scaledWidth);
                 }
             });
-            
+
             intervalSelector.getItems().addAll(Arrays.asList("1000", "500", "800", "1500", "2000"));
             intervalSelector.setValue(ImageClipboardTools.getMonitorInterval() + "");
             intervalSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -126,25 +126,26 @@ public class ImageInSystemClipboardController extends BaseImageController {
                     }
                 }
             });
-            
+
             targetPathInputController.parent(this);
-            
+
             targetPathInputController.notify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) {
-                    checkTargetPath();
+                    targetPath = targetPathInputController.file();
+                    applyTargetPath();
                 }
             });
-            
+
             targetPrefixInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> ov, String oldValue, String newValue) {
                     checkTargetPath();
                 }
             });
-            
+
             formatController.setParameters(this, false);
-            
+
             formatController.notify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) {
@@ -153,19 +154,19 @@ public class ImageInSystemClipboardController extends BaseImageController {
                     }
                 }
             });
-            
+
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
-        
+
     }
-    
+
     @Override
     public void afterSceneLoaded() {
         super.afterSceneLoaded();
         updateStatus();
     }
-    
+
     @Override
     public void setControlsStyle() {
         try {
@@ -176,17 +177,17 @@ public class ImageInSystemClipboardController extends BaseImageController {
             MyBoxLog.debug(e);
         }
     }
-    
+
     @FXML
     public void openPath() {
-        view(targetPathInputController.getFile());
+        view(targetPathInputController.pickFile());
     }
-    
+
     @FXML
     public void clearTmp() {
         WindowTools.openStage(Fxmls.FilesDeleteJavaTempFxml);
     }
-    
+
     public void startMonitor() {
         try {
             if (ImageClipMonitor != null) {
@@ -200,10 +201,14 @@ public class ImageInSystemClipboardController extends BaseImageController {
             MyBoxLog.debug(e);
         }
     }
-    
+
     public void checkTargetPath() {
+        targetPath = targetPathInputController.pickFile();
+        applyTargetPath();
+    }
+
+    public void applyTargetPath() {
         try {
-            targetPath = targetPathInputController.getFile();
             filesLabel.setText("");
             if (targetPath != null && targetPath.exists()) {
                 if (targetPrefixInput.getText().trim().isEmpty()) {
@@ -229,7 +234,7 @@ public class ImageInSystemClipboardController extends BaseImageController {
             MyBoxLog.debug(e);
         }
     }
-    
+
     @FXML
     @Override
     public synchronized void startAction() {
@@ -244,7 +249,7 @@ public class ImageInSystemClipboardController extends BaseImageController {
             MyBoxLog.debug(e);
         }
     }
-    
+
     public synchronized void updateStatus() {
         try {
             if (ImageClipboardTools.isMonitoring()) {
@@ -268,7 +273,7 @@ public class ImageInSystemClipboardController extends BaseImageController {
             MyBoxLog.debug(e);
         }
     }
-    
+
     public void updateNumbers() {
         if (ImageClipMonitor != null) {
             numberLabel.setText(message("Read") + ": " + ImageClipMonitor.getRecordNumber() + "   "
@@ -279,7 +284,7 @@ public class ImageInSystemClipboardController extends BaseImageController {
         }
         filesLabel.setText("");
     }
-    
+
     @FXML
     @Override
     public void refreshAction() {
@@ -290,7 +295,7 @@ public class ImageInSystemClipboardController extends BaseImageController {
         }
         loadClip(clipboard.getImage());
     }
-    
+
     public void loadClip(Image clip) {
         updateNumbers();
         if (clip == null) {
@@ -298,11 +303,11 @@ public class ImageInSystemClipboardController extends BaseImageController {
         }
         loadImage(clip);
     }
-    
+
     public void filesInfo(String info) {
         filesLabel.setText(info);
     }
-    
+
     @FXML
     @Override
     public void clearAction() {
@@ -324,7 +329,7 @@ public class ImageInSystemClipboardController extends BaseImageController {
         }
         return null;
     }
-    
+
     public static ImageInSystemClipboardController oneOpen() {
         ImageInSystemClipboardController controller = running();
         if (controller == null) {
@@ -334,7 +339,7 @@ public class ImageInSystemClipboardController extends BaseImageController {
         controller.updateStatus();
         return controller;
     }
-    
+
     public static void updateSystemClipboardStatus() {
         Platform.runLater(() -> {
             ImageInSystemClipboardController controller = running();
@@ -344,5 +349,5 @@ public class ImageInSystemClipboardController extends BaseImageController {
         });
         Platform.requestNextPulse();
     }
-    
+
 }

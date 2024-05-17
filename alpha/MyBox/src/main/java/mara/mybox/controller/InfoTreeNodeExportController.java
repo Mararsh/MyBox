@@ -226,7 +226,7 @@ public class InfoTreeNodeExportController extends BaseTaskController {
             popError(message("SelectToHandle"));
             return false;
         }
-        targetPath = targetPathController.getFile();
+        targetPath = targetPathController.pickFile();
         if (targetPath == null) {
             popError(message("InvalidParameters") + ": " + message("TargetPath"));
             return false;

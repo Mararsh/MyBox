@@ -229,7 +229,7 @@ public class BaseTaskController extends BaseLogs {
         File path = targetPath;
         if (path == null || !path.exists()) {
             if (targetPathController != null) {
-                path = targetPathController.getFile();
+                path = targetPathController.pickFile();
             } else if (targetFile != null) {
                 path = targetFile.getParentFile();
             } else if (targetFiles != null) {
@@ -274,7 +274,7 @@ public class BaseTaskController extends BaseLogs {
         } else if (targetFile != null) {
             return targetFile;
         } else if (targetFileController != null) {
-            return targetFileController.getFile();
+            return targetFileController.pickFile();
         }
         return null;
     }

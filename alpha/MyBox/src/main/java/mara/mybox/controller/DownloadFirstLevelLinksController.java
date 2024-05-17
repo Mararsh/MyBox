@@ -136,8 +136,6 @@ public class DownloadFirstLevelLinksController extends BaseTablePagesController<
     @FXML
     protected ComboBox<String> threadsSelector, retriesSelector;
     @FXML
-    protected TextArea logsTextArea;
-    @FXML
     protected VBox optionsBox, htmlOptionsBox, pdfOptionsBox;
     @FXML
     protected ControlTTFSelector ttfController;
@@ -456,7 +454,7 @@ public class DownloadFirstLevelLinksController extends BaseTablePagesController<
     public void afterSceneLoaded() {
         try {
             super.afterSceneLoaded();
-            if (targetPathInputController.getFile() == null) {
+            if (targetPathInputController.pickFile() == null) {
                 tabPane.getSelectionModel().select(optionsTab);
             }
 
@@ -495,7 +493,7 @@ public class DownloadFirstLevelLinksController extends BaseTablePagesController<
             return;
         }
         TableStringValues.add("DownloadHtmlsHistories", address);
-        File downloadPath = targetPathInputController.getFile();
+        File downloadPath = targetPathInputController.pickFile();
         if (downloadPath == null) {
             popError(message("InvalidParameters") + ": " + message("TargetPath"));
             tabPane.getSelectionModel().select(optionsTab);
@@ -556,7 +554,7 @@ public class DownloadFirstLevelLinksController extends BaseTablePagesController<
         this.subPath = subPath;
         filenameType = nameType;
         tableData.clear();
-        File downloadPath = targetPathInputController.getFile();
+        File downloadPath = targetPathInputController.pickFile();
         if (task != null) {
             task.cancel();
         }
@@ -706,7 +704,7 @@ public class DownloadFirstLevelLinksController extends BaseTablePagesController<
         }
         String path = result.get().trim();
         for (Link link : selected) {
-            File fullpath = new File(targetPathInputController.getFile().getAbsolutePath() + File.separator + path);
+            File fullpath = new File(targetPathInputController.pickFile().getAbsolutePath() + File.separator + path);
             String filename = link.filename(fullpath, filenameType);
             link.setFile(filename);
         }
@@ -722,7 +720,7 @@ public class DownloadFirstLevelLinksController extends BaseTablePagesController<
             Link link = selected.get(i);
             String filename = link.getFile();
             if (filename == null) {
-                filename = link.filename(new File(targetPathInputController.getFile().getAbsolutePath()), filenameType);
+                filename = link.filename(new File(targetPathInputController.pickFile().getAbsolutePath()), filenameType);
                 link.setFile(filename);
             }
             File file = new File(filename);
@@ -740,7 +738,7 @@ public class DownloadFirstLevelLinksController extends BaseTablePagesController<
         for (Link link : selected) {
             String filename = link.getFile();
             if (filename == null) {
-                filename = link.filename(new File(targetPathInputController.getFile().getAbsolutePath()), filenameType);
+                filename = link.filename(new File(targetPathInputController.pickFile().getAbsolutePath()), filenameType);
                 link.setFile(filename);
             }
             File file = new File(filename);
@@ -862,7 +860,7 @@ public class DownloadFirstLevelLinksController extends BaseTablePagesController<
 
     @FXML
     public void view(Link link) {
-        if (link == null || targetPathInputController.getFile() == null) {
+        if (link == null || targetPathInputController.pickFile() == null) {
             return;
         }
         String s = message("Address") + ": " + link.getAddress() + "<br>"
@@ -1551,7 +1549,7 @@ public class DownloadFirstLevelLinksController extends BaseTablePagesController<
     @FXML
     protected void openPath() {
         try {
-            browseURI(targetPathInputController.getFile().toURI());
+            browseURI(targetPathInputController.pickFile().toURI());
         } catch (Exception e) {
         }
     }

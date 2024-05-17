@@ -99,7 +99,7 @@ public class FFmpegMergeImagesController extends BaseBatchFFmpegController {
     @Override
     public void doCurrentProcess() {
         try {
-            targetFile = targetFileController.getFile();
+            targetFile = targetFileController.pickFile();
             if (currentParameters == null || tableData.isEmpty() || targetFile == null) {
                 popError(message("InvalidParameters"));
                 return;

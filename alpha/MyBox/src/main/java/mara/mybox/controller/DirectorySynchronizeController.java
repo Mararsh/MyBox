@@ -83,7 +83,7 @@ public class DirectorySynchronizeController extends BaseTaskController {
         task
      */
     protected boolean checkTarget() {
-        targetPath = targetPathInputController.getFile();
+        targetPath = targetPathInputController.pickFile();
         if (targetPath == null) {
             popError(message("Invalid") + ": " + message("TargetPath"));
             return false;
@@ -601,7 +601,7 @@ public class DirectorySynchronizeController extends BaseTaskController {
     @Override
     public void openTarget() {
         try {
-            browseURI(targetPathInputController.getFile().toURI());
+            browseURI(targetPathInputController.pickFile().toURI());
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

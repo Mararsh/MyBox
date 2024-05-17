@@ -242,7 +242,7 @@ public class FilesArrangeController extends BaseBatchFileController {
             if (!paused || lastFileName == null) {
                 copyAttr = new FileSynchronizeAttributes();
 
-                targetPath = targetPathInputController.getFile();
+                targetPath = targetPathInputController.pickFile();
                 if (!targetPath.exists()) {
                     targetPath.mkdirs();
                     updateLogs(strCreatedSuccessfully + targetPath.getAbsolutePath(), true);
@@ -471,7 +471,7 @@ public class FilesArrangeController extends BaseBatchFileController {
     @Override
     public void openTarget() {
         try {
-            browseURI(targetPathInputController.getFile().toURI());
+            browseURI(targetPathInputController.pickFile().toURI());
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

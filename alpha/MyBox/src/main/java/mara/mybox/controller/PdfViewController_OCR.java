@@ -49,7 +49,7 @@ public abstract class PdfViewController_OCR extends BaseFileImagesController {
             return;
         }
         ocrOptionsController.setLanguages();
-        File dataPath = ocrOptionsController.dataPathController.getFile();
+        File dataPath = ocrOptionsController.dataPathController.pickFile();
         if (!dataPath.exists()) {
             popError(message("InvalidParameters"));
             ocrOptionsController.dataPathController.fileInput.setStyle(UserConfig.badStyle());

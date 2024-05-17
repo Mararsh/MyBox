@@ -209,7 +209,11 @@ public class FilesArchiveCompressController extends BaseBatchFileController {
             @Override
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                 try {
-                    targetFile = makeTargetFile();
+                    targetFile = targetFileController.file();
+                    if (targetFile == null) {
+                        return;
+                    }
+                    targetFile = makeTargetFile(targetFile, targetFile.getParentFile());
                     if (targetFile == null) {
                         return;
                     }
@@ -429,6 +433,7 @@ public class FilesArchiveCompressController extends BaseBatchFileController {
             } else {
                 FileTools.override(archiveFile, targetFile);
             }
+            targetFileGenerated(targetFile);
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }

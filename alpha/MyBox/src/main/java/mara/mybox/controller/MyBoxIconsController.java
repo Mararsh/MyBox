@@ -57,7 +57,7 @@ public class MyBoxIconsController extends BaseBatchFileController {
         if (task != null) {
             task.cancel();
         }
-        srcRoot = sourceCodesPathController.getFile();
+        srcRoot = sourceCodesPathController.pickFile();
         if (srcRoot == null) {
             popError(message("InvalidSourceCodesPath"));
             return;

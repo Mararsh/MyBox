@@ -345,7 +345,7 @@ public class ControlOCROptions extends BaseController {
                     }
                 }
                 tesseractPathController.thisPane.setDisable(false);
-                tesseractPathController.getFile();
+                tesseractPathController.pickFile();
                 tesseractVersion = 4;
             } else {
                 if (parentController != null && parentController instanceof ImageOCRController) {
@@ -357,7 +357,7 @@ public class ControlOCROptions extends BaseController {
                 tesseractPathController.thisPane.setDisable(true);
                 tesseractVersion = tesseractVersion();
             }
-            dataPathController.getFile();
+            dataPathController.pickFile();
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
@@ -365,7 +365,7 @@ public class ControlOCROptions extends BaseController {
 
     public int tesseractVersion() {
         try {
-            File tesseractPath = tesseractPathController.getFile();
+            File tesseractPath = tesseractPathController.pickFile();
             if (tesseractPath == null || !tesseractPath.exists()) {
                 popError(message("InvalidParameters"));
                 return -1;
@@ -567,7 +567,7 @@ public class ControlOCROptions extends BaseController {
                     instance.setVariable(key, p.get(key));
                 }
             }
-            instance.setDatapath(dataPathController.getFile().getAbsolutePath());
+            instance.setDatapath(dataPathController.pickFile().getAbsolutePath());
             if (selectedLanguages != null) {
                 instance.setLanguage(selectedLanguages);
             }
@@ -581,12 +581,12 @@ public class ControlOCROptions extends BaseController {
 
     public boolean checkCommandPamameters(boolean html, boolean pdf) {
         try {
-            File tesseract = tesseractPathController.getFile();
+            File tesseract = tesseractPathController.pickFile();
             if (!tesseract.exists()) {
                 popError(message("InvalidParameters"));
                 return false;
             }
-            File dataPath = dataPathController.getFile();
+            File dataPath = dataPathController.pickFile();
             if (!dataPath.exists()) {
                 popError(message("InvalidParameters"));
                 return false;
@@ -626,9 +626,9 @@ public class ControlOCROptions extends BaseController {
             }
             List<String> parameters = new ArrayList<>();
             parameters.addAll(Arrays.asList(
-                    tesseractPathController.getFile().getAbsolutePath(),
+                    tesseractPathController.pickFile().getAbsolutePath(),
                     file.getAbsolutePath(), prefix,
-                    "--tessdata-dir", dataPathController.getFile().getAbsolutePath(),
+                    "--tessdata-dir", dataPathController.pickFile().getAbsolutePath(),
                     tesseractVersion > 3 ? "--psm" : "-psm", psm + ""
             ));
             if (selectedLanguages != null) {

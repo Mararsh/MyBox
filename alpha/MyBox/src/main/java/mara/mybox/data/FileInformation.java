@@ -198,6 +198,18 @@ public class FileInformation {
         }
     }
 
+    public String getTfileName() {
+        if (file != null) {
+            if (file.isDirectory()) {
+                return null;
+            } else {
+                return file.getName();
+            }
+        } else {
+            return null;
+        }
+    }
+
     public String getFileName() {
         if (file != null) {
             return file.getName();

@@ -402,7 +402,7 @@ public class ImagesSaveController extends BaseTaskController {
         targetPath = null;
         targetFile = null;
         if (imagesRadio.isSelected()) {
-            targetPath = pathController.getFile();
+            targetPath = pathController.pickFile();
             MyBoxLog.console(targetPath);
             if (targetPath == null) {
                 popError(message("InvalidParameter") + ": " + message("TargetPath"));
@@ -763,7 +763,7 @@ public class ImagesSaveController extends BaseTaskController {
     @Override
     public void openTarget() {
         if (imagesRadio.isSelected()) {
-            targetPath = pathController.getFile();
+            targetPath = pathController.pickFile();
             if (targetPath == null || !targetPath.exists()) {
                 popInformation(message("NotExist"));
                 return;

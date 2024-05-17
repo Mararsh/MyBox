@@ -116,6 +116,14 @@ public class FileNode extends FileInformation {
         }
     }
 
+    @Override
+    public void setData(String data) {
+        this.data = data;
+        if (nodename == null) {
+            nodename = data;
+        }
+    }
+
     /*
         get/set
      */

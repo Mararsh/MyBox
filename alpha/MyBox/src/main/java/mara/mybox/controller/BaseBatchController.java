@@ -461,7 +461,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
             targetPath = targetFile.getParentFile();
         }
         if (targetPathController != null) {
-            targetPath = targetPathController.getFile();
+            targetPath = targetPathController.pickFile();
             if ((targetPath == null || !targetPath.exists())
                     && targetPathController.isMustExist()) {
                 popError(message("InvalidParameter") + ": " + message("TargetPath"));

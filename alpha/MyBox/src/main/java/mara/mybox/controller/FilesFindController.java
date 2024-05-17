@@ -68,7 +68,7 @@ public class FilesFindController extends BaseBatchFileController {
             dirColumn.setCellValueFactory(new PropertyValueFactory<>("path"));
             dirColumn.setPrefWidth(260);
 
-            fileColumn.setCellValueFactory(new PropertyValueFactory<>("fileName"));
+            fileColumn.setCellValueFactory(new PropertyValueFactory<>("tfileName"));
             fileColumn.setPrefWidth(160);
 
             typeColumn.setCellValueFactory(new PropertyValueFactory<>("suffix"));

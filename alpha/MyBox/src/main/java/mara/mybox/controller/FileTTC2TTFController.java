@@ -61,7 +61,7 @@ public class FileTTC2TTFController extends HtmlTableController {
     }
 
     public void loadFile() {
-        File file = ttcController.getFile();
+        File file = ttcController.file();
         if (file == null || !file.exists() || !file.isFile()) {
             return;
         }
@@ -94,7 +94,7 @@ public class FileTTC2TTFController extends HtmlTableController {
     @FXML
     @Override
     public void startAction() {
-        targetPath = targetPathInputController.getFile();
+        targetPath = targetPathInputController.pickFile();
         if (ttc == null || targetPath == null) {
             return;
         }

@@ -128,8 +128,8 @@ public abstract class BaseController_Interface extends BaseController_Files {
             }
 
             saveAsType = BaseController.SaveAsType.Open;
-            if (saveAsGroup != null && saveOpenRadio != null) {
-                String v = UserConfig.getString(interfaceName + "SaveAsType", BaseController.SaveAsType.Open.name());
+            if (saveAsGroup != null && saveLoadRadio != null) {
+                String v = UserConfig.getString(interfaceName + "SaveAsType", BaseController.SaveAsType.Edit.name());
                 for (BaseController.SaveAsType s : BaseController.SaveAsType.values()) {
                     if (v.equals(s.name())) {
                         saveAsType = s;

@@ -60,7 +60,11 @@ public class HtmlMergeAsHtmlController extends FilesMergeController {
 
             targetFileController.notify.addListener(
                     (ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
-                        File file = targetFileController.getFile();
+                        String s = titleInput.getText();
+                        if (s != null && !s.isBlank()) {
+                            return;
+                        }
+                        File file = targetFileController.file();
                         if (file != null) {
                             String prefix = FileNameTools.prefix(file.getName());
                             if (prefix != null) {

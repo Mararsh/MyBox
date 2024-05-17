@@ -1008,7 +1008,7 @@ public class WeiboSnapController extends BaseController {
         parameters.setWebAddress(exmapleAddress);
         parameters.setStartMonth(DateTools.encodeDate("2014-09"));
         parameters.setEndMonth(DateTools.encodeDate("2014-10"));
-        targetPath = targetPathInputController.getFile();
+        targetPath = targetPathInputController.pickFile();
         parameters.setTargetPath(targetPath == null ? new File(FileTmpTools.generatePath("weibo")) : targetPath);
         startSnap();
     }
@@ -1057,7 +1057,7 @@ public class WeiboSnapController extends BaseController {
             parameters.setPageHeight(pageHeight);
             parameters.setMarginSize(marginSize);
             parameters.setAuthor(authorInput.getText());
-            targetPath = targetPathInputController.getFile();
+            targetPath = targetPathInputController.pickFile();
             parameters.setTargetPath(targetPath);
             parameters.setCreatePDF(pdfCheck.isSelected());
             parameters.setCreateHtml(htmlCheck.isSelected());
@@ -1091,7 +1091,7 @@ public class WeiboSnapController extends BaseController {
 
     protected void startSnap() {
         try {
-            targetPath = targetPathInputController.getFile();
+            targetPath = targetPathInputController.pickFile();
             if (webAddress == null || webAddress.isEmpty() || parameters == null || targetPath == null) {
                 popError(Languages.message("ParametersError"));
                 return;

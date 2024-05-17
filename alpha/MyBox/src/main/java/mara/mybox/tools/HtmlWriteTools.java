@@ -522,6 +522,9 @@ public class HtmlWriteTools {
                 return false;
             }
             Link baseLink = completedLinks.get(httpFile);
+            if (baseLink == null) {
+                return false;
+            }
             String html = TextFileTools.readTexts(task, httpFile);
             List<Link> links = HtmlReadTools.links(baseLink.getUrl(), html);
             String replaced = "";

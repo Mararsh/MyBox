@@ -344,7 +344,7 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
                 if (dirColumn != null) {
                     dirColumn.setCellValueFactory(new PropertyValueFactory<>("path"));
                     dirColumn.setPrefWidth(260);
-                    fileColumn.setCellValueFactory(new PropertyValueFactory<>("fileName"));
+                    fileColumn.setCellValueFactory(new PropertyValueFactory<>("tfileName"));
                     fileColumn.setPrefWidth(160);
                 } else {
                     fileColumn.setCellValueFactory(new PropertyValueFactory<>("fullName"));

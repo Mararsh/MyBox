@@ -83,7 +83,6 @@ public class ImageAnalyseController extends BaseController {
 
     public ImageAnalyseController() {
         baseTitle = message("ImageAnalyse");
-        TipsLabelKey = "ImageAnalyseTips";
     }
 
     @Override

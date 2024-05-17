@@ -140,7 +140,7 @@ public class Data2DExport extends Data2DOperate {
         }
         filePrefix = prefix != null ? prefix : "mexport";
         targetFile = null;
-        File file = pathController.getFile();
+        File file = pathController.pickFile();
         if (file == null) {
             targetPath = new File(AppPaths.getGeneratedPath() + File.separator);
         } else if (file.isDirectory()) {

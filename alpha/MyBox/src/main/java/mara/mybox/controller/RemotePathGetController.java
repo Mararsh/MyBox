@@ -59,7 +59,7 @@ public class RemotePathGetController extends RemotePathHandleFilesController {
             if (!super.checkParameters()) {
                 return false;
             }
-            targetPath = targetPathInputController.getFile();
+            targetPath = targetPathInputController.pickFile();
             return targetPath != null && targetPath.exists();
         } catch (Exception e) {
             showLogs(e.toString());

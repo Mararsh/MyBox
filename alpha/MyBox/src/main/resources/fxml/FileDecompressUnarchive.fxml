@@ -26,7 +26,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane fx:id="thisPane" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.FileDecompressUnarchiveController">
+<BorderPane fx:id="thisPane" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.FileDecompressUnarchiveController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
@@ -97,14 +97,14 @@ License:    Apache License Version 2.0
                                                                 <ToggleGroup fx:id="archiverGroup" />
                                                             </toggleGroup>
                                                         </RadioButton>
-                                                        <RadioButton  layoutX="266.0" layoutY="15.0" text="zip" toggleGroup="$archiverGroup" />
-                                                        <RadioButton  layoutX="266.0" layoutY="15.0" text="tar" toggleGroup="$archiverGroup" />
-                                                        <RadioButton  layoutX="15.0" layoutY="15.0" text="jar" toggleGroup="$archiverGroup" />
-                                                        <RadioButton  layoutX="596.0" layoutY="15.0" text="7z" toggleGroup="$archiverGroup" />
-                                                        <RadioButton  layoutX="103.0" layoutY="10.0" text="ar" toggleGroup="$archiverGroup" />
-                                                        <RadioButton  layoutX="94.0" layoutY="15.0" text="cpio" toggleGroup="$archiverGroup" />
-                                                        <RadioButton  text="arj" toggleGroup="$archiverGroup" />
-                                                        <RadioButton  layoutX="997.0" layoutY="15.0" text="dump" toggleGroup="$archiverGroup" />
+                                                        <RadioButton layoutX="266.0" layoutY="15.0" text="zip" toggleGroup="$archiverGroup" />
+                                                        <RadioButton layoutX="266.0" layoutY="15.0" text="tar" toggleGroup="$archiverGroup" />
+                                                        <RadioButton layoutX="15.0" layoutY="15.0" text="jar" toggleGroup="$archiverGroup" />
+                                                        <RadioButton layoutX="596.0" layoutY="15.0" text="7z" toggleGroup="$archiverGroup" />
+                                                        <RadioButton layoutX="103.0" layoutY="10.0" text="ar" toggleGroup="$archiverGroup" />
+                                                        <RadioButton layoutX="94.0" layoutY="15.0" text="cpio" toggleGroup="$archiverGroup" />
+                                                        <RadioButton text="arj" toggleGroup="$archiverGroup" />
+                                                        <RadioButton layoutX="997.0" layoutY="15.0" text="dump" toggleGroup="$archiverGroup" />
                                                         <RadioButton text="%None" toggleGroup="$archiverGroup" />
                                                     </children>
                                                     <padding>
@@ -162,7 +162,7 @@ License:    Apache License Version 2.0
                                         </HBox>
                                         <TreeTableView fx:id="filesTreeView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                                             <columns>
-                                                <TreeTableColumn fx:id="fileColumn" editable="false" prefWidth="300.0" text="%File" />
+                                                <TreeTableColumn fx:id="nodeColumn" editable="false" prefWidth="300.0" text="%File" />
                                                 <TreeTableColumn fx:id="selectedColumn" minWidth="-1.0" prefWidth="100.0" text="%Select" />
                                                 <TreeTableColumn fx:id="sizeColumn" editable="false" prefWidth="160.0" text="%Size" />
                                                 <TreeTableColumn fx:id="typeColumn" editable="false" minWidth="0.0" prefWidth="100.0" text="%Type" />

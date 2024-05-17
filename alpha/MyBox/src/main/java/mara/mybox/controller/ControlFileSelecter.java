@@ -64,7 +64,7 @@ public class ControlFileSelecter extends BaseController {
             fileInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    getFile();
+                    pickFile();
                 }
             });
         }
@@ -129,7 +129,7 @@ public class ControlFileSelecter extends BaseController {
         setFile(new File(string));
     }
 
-    public File getFile() {
+    public File pickFile() {
         if (isSettingValues || fileInput == null) {
             return file;
         }
@@ -162,7 +162,7 @@ public class ControlFileSelecter extends BaseController {
                     }
                 } else {
                     if (isSource) {
-                        parentController.sourceFile = file;
+//                        parentController.sourceFile = file;
                     } else {
                         parentController.targetFile = file;
                     }
@@ -170,6 +170,10 @@ public class ControlFileSelecter extends BaseController {
             }
         }
         notify.set(!notify.get());
+        return file;
+    }
+
+    public File file() {
         return file;
     }
 
@@ -233,7 +237,7 @@ public class ControlFileSelecter extends BaseController {
     public void selectFile() {
         try {
             File selectedfile;
-            File path = UserConfig.getPath(baseName);
+            File path = UserConfig.getPath(isSource ? baseName + "SourcePath" : baseName + "TargetPath");
             if (path == null) {
                 path = defaultFile;
             }

@@ -424,9 +424,6 @@ public class HelpTools {
             s.append("    <H3>").append(message(lang, "SVGEditor")).append("</H3>\n");
             s.append("    <PRE>").append(message(lang, "SVGEditorTips")).append("</PRE>\n");
 
-            s.append("    <H3>").append(message(lang, "ImageAnalyse")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "ImageAnalyseTips")).append("</PRE>\n");
-
             s.append("    <H3>").append(message(lang, "ImageQuantization")).append("</H3>\n");
             s.append("    <PRE>").append(message(lang, "ImageQuantizationComments")).append("</PRE>\n");
 

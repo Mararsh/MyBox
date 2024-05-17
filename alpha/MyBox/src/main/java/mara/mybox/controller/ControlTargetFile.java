@@ -205,7 +205,7 @@ public class ControlTargetFile extends ControlFileSelecter {
 
     @Override
     public File makeTargetFile() {
-        return makeTargetFile(getFile());
+        return makeTargetFile(pickFile());
     }
 
     public boolean isSkip() {

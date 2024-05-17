@@ -469,6 +469,11 @@ public class PdfViewController extends PdfViewController_Html {
     }
 
     @FXML
+    public void refreshBookmarks() {
+        loadBookmarks();
+    }
+
+    @FXML
     @Override
     public boolean infoAction() {
         if (pdfInformation == null) {

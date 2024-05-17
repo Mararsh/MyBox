@@ -30,7 +30,11 @@ This is compute application to provide simple and easy functions. It's free and 
      - Options of "Target file" in some interfaces do not work.                 
      - Transparent background is set wrongly when draw shape in SVG.                  
      - Options of "View" do not work for SVG.                  
-     - Transparent does not work for colors in html.                                                                                                                             
+     - Transparent does not work for colors in html.              
+     - Rename Files: Option "Fill zero" does not work when files number in table is not counted.             
+     - Directory Synchronize: Fail when select option "Delete files/directories existed In target path but not existed in source path".          
+     - File Decompress Unarchive: Empty file names in selection list.            
+     - File Redundancy: Empty file names in result list.                                                                                                                                    
                                               
 [Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.8.1)                                                
 
