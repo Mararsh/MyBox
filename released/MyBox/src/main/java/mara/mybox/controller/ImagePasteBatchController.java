@@ -58,8 +58,7 @@ public class ImagePasteBatchController extends BaseImageEditBatchController {
             super.initControls();
 
             startButton.disableProperty().unbind();
-            startButton.disableProperty().bind(targetPathController.valid.not()
-                    .or(Bindings.isEmpty(tableView.getItems()))
+            startButton.disableProperty().bind(Bindings.isEmpty(tableView.getItems())
                     .or(Bindings.isEmpty(sourceFileInput.textProperty()))
                     .or(sourceFileInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                     .or(xInput.styleProperty().isEqualTo(UserConfig.badStyle()))

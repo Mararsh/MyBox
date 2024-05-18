@@ -13,8 +13,7 @@ public abstract class MainMenuController_Data extends MainMenuController_Network
 
     @FXML
     protected void DataManufacture(ActionEvent event) {
-        DataManufactureController c = (DataManufactureController) loadScene(Fxmls.DataManufactureFxml);
-        c.createAction();
+        loadScene(Fxmls.Data2DManufactureFxml);
     }
 
     @FXML
@@ -39,20 +38,17 @@ public abstract class MainMenuController_Data extends MainMenuController_Network
 
     @FXML
     protected void openMatricesManage(ActionEvent event) {
-        MatricesManageController c = (MatricesManageController) loadScene(Fxmls.MatricesManageFxml);
-        c.createAction();
+        loadScene(Fxmls.MatricesManageFxml);
     }
 
     @FXML
     protected void openMatrixUnaryCalculation(ActionEvent event) {
-        MatrixUnaryCalculationController c = (MatrixUnaryCalculationController) loadScene(Fxmls.MatrixUnaryCalculationFxml);
-        c.createAction();
+        loadScene(Fxmls.MatrixUnaryCalculationFxml);
     }
 
     @FXML
     protected void openMatricesBinaryCalculation(ActionEvent event) {
-        MatricesBinaryCalculationController c = (MatricesBinaryCalculationController) loadScene(Fxmls.MatricesBinaryCalculationFxml);
-        c.createAction();
+        loadScene(Fxmls.MatricesBinaryCalculationFxml);
     }
 
     @FXML
@@ -77,24 +73,7 @@ public abstract class MainMenuController_Data extends MainMenuController_Network
 
     @FXML
     protected void dataInMyBoxClipboard(ActionEvent event) {
-        DataInMyBoxClipboardController c = DataInMyBoxClipboardController.oneOpen();
-        c.createAction();
-    }
-
-    @FXML
-    protected void openDataCsv(ActionEvent event) {
-        DataFileCSVController c = (DataFileCSVController) loadScene(Fxmls.DataFileCSVFxml);
-        if (c != null) {
-            c.createAction();
-        }
-    }
-
-    @FXML
-    protected void openDataExcel(ActionEvent event) {
-        DataFileExcelController c = (DataFileExcelController) loadScene(Fxmls.DataFileExcelFxml);
-        if (c != null) {
-            c.createAction();
-        }
+        DataInMyBoxClipboardController.oneOpen();
     }
 
     @FXML
@@ -115,14 +94,6 @@ public abstract class MainMenuController_Data extends MainMenuController_Network
     @FXML
     protected void openCsvMerge(ActionEvent event) {
         loadScene(Fxmls.DataFileCSVMergeFxml);
-    }
-
-    @FXML
-    protected void openDataText(ActionEvent event) {
-        DataFileTextController c = (DataFileTextController) loadScene(Fxmls.DataFileTextFxml);
-        if (c != null) {
-            c.createAction();
-        }
     }
 
     @FXML

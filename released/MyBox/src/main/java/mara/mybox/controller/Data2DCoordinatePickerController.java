@@ -19,16 +19,16 @@ import static mara.mybox.value.Languages.message;
  */
 public class Data2DCoordinatePickerController extends CoordinatePickerController {
 
-    protected ControlData2DLoad dataControl;
+    protected BaseData2DTableController dataTable;
     protected int rowIndex;
     protected ControlData2DRowEdit editControl;
 
     @FXML
     protected ComboBox<String> longitudeSelector, latitudeSelector;
 
-    public void setParameters(ControlData2DLoad dataControl, int rowIndex) {
+    public void setParameters(BaseData2DTableController dataControl, int rowIndex) {
         try {
-            this.dataControl = dataControl;
+            this.dataTable = dataControl;
             this.rowIndex = rowIndex;
 
             List<String> loNames = new ArrayList<>();
@@ -127,13 +127,13 @@ public class Data2DCoordinatePickerController extends CoordinatePickerController
                 popError(message("NoData"));
                 return;
             }
-            if (dataControl != null) {
-                int loIndex = dataControl.data2D.colOrder(longitudeSelector.getValue());
-                int laIndex = dataControl.data2D.colOrder(latitudeSelector.getValue());
-                List<String> row = dataControl.getTableData().get(rowIndex);
+            if (dataTable != null) {
+                int loIndex = dataTable.data2D.colOrder(longitudeSelector.getValue());
+                int laIndex = dataTable.data2D.colOrder(latitudeSelector.getValue());
+                List<String> row = dataTable.getTableData().get(rowIndex);
                 row.set(loIndex + 1, geographyCode.getLongitude() + "");
                 row.set(laIndex + 1, geographyCode.getLatitude() + "");
-                dataControl.getTableData().set(rowIndex, row);
+                dataTable.getTableData().set(rowIndex, row);
 
             } else if (editControl != null) {
                 for (Data2DColumn column : editControl.inputs.keySet()) {
@@ -155,7 +155,7 @@ public class Data2DCoordinatePickerController extends CoordinatePickerController
     /*
         static
      */
-    public static Data2DCoordinatePickerController open(ControlData2DLoad dataControl, int rowIndex) {
+    public static Data2DCoordinatePickerController open(BaseData2DTableController dataControl, int rowIndex) {
         try {
             Data2DCoordinatePickerController controller
                     = (Data2DCoordinatePickerController) WindowTools.childStage(

@@ -801,7 +801,7 @@ public class BarcodeCreatorController extends BaseImageController {
 
             @Override
             protected boolean handle() {
-                String format = FileNameTools.suffix(file.getName());
+                String format = FileNameTools.ext(file.getName());
                 BufferedImage bufferedImage
                         = FxImageTools.toBufferedImage(imageView.getImage());
                 if (bufferedImage == null || task == null || isCancelled()) {

@@ -69,6 +69,7 @@ public class BaseTask<P> extends Task<P> {
             }
             finalAction();
         });
+        Platform.requestNextPulse();
     }
 
     protected void whenSucceeded() {
@@ -90,7 +91,7 @@ public class BaseTask<P> extends Task<P> {
             whenFailed();
             finalAction();
         });
-
+        Platform.requestNextPulse();
     }
 
     @Override
@@ -101,6 +102,7 @@ public class BaseTask<P> extends Task<P> {
             whenCanceled();
             finalAction();
         });
+        Platform.requestNextPulse();
     }
 
     protected void taskQuit() {

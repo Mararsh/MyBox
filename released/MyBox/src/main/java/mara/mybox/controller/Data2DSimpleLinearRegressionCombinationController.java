@@ -31,9 +31,9 @@ public class Data2DSimpleLinearRegressionCombinationController extends BaseData2
     }
 
     @Override
-    public void initControls() {
+    public void initOptions() {
         try {
-            super.initControls();
+            super.initOptions();
 
             resultsController.setParameters(this);
 
@@ -48,6 +48,7 @@ public class Data2DSimpleLinearRegressionCombinationController extends BaseData2
             task.cancel();
         }
         resultsController.clear();
+        taskSuccessed = false;
         task = new FxSingletonTask<Void>(this) {
 
             @Override
@@ -69,7 +70,8 @@ public class Data2DSimpleLinearRegressionCombinationController extends BaseData2
                         }
                     }
                     data2D.stopFilter();
-                    return true;
+                    taskSuccessed = true;
+                    return taskSuccessed;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -87,7 +89,7 @@ public class Data2DSimpleLinearRegressionCombinationController extends BaseData2
                     if (isAllPages()) {
                         data2D.simpleLinearRegression(null, dataColsIndices, simpleRegression, false);
                     } else {
-                        simpleRegression.addData(tableFiltered(dataColsIndices, true), invalidAs);
+                        simpleRegression.addData(sourceController.rowsFiltered(dataColsIndices, true), invalidAs);
                     }
                     List<String> row = new ArrayList<>();
                     row.add(yName);
@@ -115,24 +117,24 @@ public class Data2DSimpleLinearRegressionCombinationController extends BaseData2
             @Override
             protected void whenSucceeded() {
                 resultsController.afterRegression();
+                rightPane.setDisable(false);
             }
 
             @Override
             protected void finalAction() {
                 super.finalAction();
-                data2D.stopTask();
+                closeTask(ok);
             }
 
         };
-        start(task);
-
+        start(task, false);
     }
 
 
     /*
         static
      */
-    public static Data2DSimpleLinearRegressionCombinationController open(ControlData2DLoad tableController) {
+    public static Data2DSimpleLinearRegressionCombinationController open(BaseData2DLoadController tableController) {
         try {
             Data2DSimpleLinearRegressionCombinationController controller
                     = (Data2DSimpleLinearRegressionCombinationController) WindowTools.branchStage(

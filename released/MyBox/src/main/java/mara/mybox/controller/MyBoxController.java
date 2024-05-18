@@ -4,7 +4,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.HelpTools;
 import mara.mybox.value.AppValues;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.SystemConfig;
@@ -31,6 +30,7 @@ public class MyBoxController extends MyBoxController_About {
             titleLabel.setText(baseTitle);
             titleLabel.requestFocus();
 
+//            Languages.checkStatus();
 //            if (scheduledTasks != null && !scheduledTasks.isEmpty()) {
 //                bottomLabel.setText(MessageFormat.format(message("AlarmClocksRunning"), scheduledTasks.size()));
 //            }
@@ -38,15 +38,9 @@ public class MyBoxController extends MyBoxController_About {
                 alertInformation(message("MyBoxWarning"));
                 SystemConfig.setBoolean("MyBoxWarningDisplayed", true);
             }
-
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
-    }
-
-    @FXML
-    public void stories() {
-        HelpTools.imageStories(this);
     }
 
 }

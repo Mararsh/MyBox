@@ -2,26 +2,30 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.Tooltip;
 import javafx.util.Callback;
 import mara.mybox.data.StringTable;
 import mara.mybox.data2d.Data2D;
-import mara.mybox.data2d.Data2DTools;
+import mara.mybox.data2d.tools.Data2DColumnTools;
+import mara.mybox.data2d.tools.Data2DDefinitionTools;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.InfoNode;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.cell.TableBooleanCell;
 import mara.mybox.fxml.cell.TableCheckboxCell;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
 import static mara.mybox.value.Languages.message;
 
@@ -32,13 +36,11 @@ import static mara.mybox.value.Languages.message;
  */
 public class ControlData2DColumns extends BaseData2DColumnsController {
 
-    protected ControlData2D dataController;
-    protected ControlData2DLoad tableController;
+    protected BaseData2DLoadController dataController;
     protected TableData2DDefinition tableData2DDefinition;
-    protected Data2DConvertToDataBaseController convertController;
 
-    public ControlData2DColumns() {
-    }
+    @FXML
+    protected Button headerButton;
 
     @Override
     public void initColumns() {
@@ -54,31 +56,33 @@ public class ControlData2DColumns extends BaseData2DColumnsController {
         }
     }
 
-    protected void setParameters(ControlData2D dataController) {
+    @Override
+    public void setControlsStyle() {
         try {
-            this.dataController = dataController;
-            tableController = dataController.tableController;
+            super.setControlsStyle();
+            NodeStyleTools.setTooltip(headerButton, new Tooltip(message("FirstLineDefineNames")));
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
+    }
+
+    protected void setParameters(BaseData2DLoadController controller) {
+        try {
+            this.dataController = controller;
+
+            loadValues();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
-    protected void setParameters(Data2DConvertToDataBaseController convertController) {
+    protected void loadValues() {
         try {
-            this.convertController = convertController;
-            tableController = convertController.tableController;
-            buttonsPane.getChildren().removeAll(cancelButton, okButton);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    protected void setData(Data2D data) {
-        try {
-            data2D = data;
-            tableData2DDefinition = tableController.tableData2DDefinition;
-            tableData2DColumn = tableController.tableData2DColumn;
+            data2D = dataController.data2D;
+            tableData2DDefinition = dataController.tableData2DDefinition;
+            tableData2DColumn = dataController.tableData2DColumn;
             setData2DColumns();
+            loadColumns();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -150,7 +154,7 @@ public class ControlData2DColumns extends BaseData2DColumnsController {
                                         if (value != column.isNotNull()) {
                                             isChanging = true;
                                             column.setNotNull(value);
-                                            status(Status.Modified);
+                                            changed(true);
                                             isChanging = false;
                                         }
                                     } catch (Exception e) {
@@ -187,17 +191,11 @@ public class ControlData2DColumns extends BaseData2DColumnsController {
         }
     }
 
-    public void loadData() {
-        if (isSettingValues) {
-            return;
-        }
-        status = null;
-        loadColumns();
-        status(Status.Loaded);
-    }
-
     public void loadColumns() {
         try {
+            if (isSettingValues) {
+                return;
+            }
             isSettingValues = true;
             tableData.clear();
             tableView.refresh();
@@ -205,14 +203,18 @@ public class ControlData2DColumns extends BaseData2DColumnsController {
             if (data2D == null) {
                 return;
             }
-            if (data2D.isColumnsValid()) {
+            if (data2D.isValidDefinition()) {
                 isSettingValues = true;
+                int colIndex = 0;
                 for (Data2DColumn column : data2D.getColumns()) {
-                    tableData.add(column.cloneAll());
+                    Data2DColumn c = column.cloneAll();
+                    c.setIndex(colIndex++);
+                    tableData.add(c);
                 }
                 isSettingValues = false;
             }
             postLoadedTableData();
+            changed(false);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -226,79 +228,29 @@ public class ControlData2DColumns extends BaseData2DColumnsController {
         deleteRowsButton.setDisable(data2D == null || data2D.isInternalTable() || isNoneSelected());
     }
 
-    @Override
-    public void status(Status newStatus) {
-        if (status == newStatus) {
-            return;
-        }
-        status = newStatus;
-        if (dataController != null) {
-            dataController.checkStatus();
-        }
-    }
-
-    @FXML
-    @Override
-    public void okAction() {
-        if (status != Status.Modified) {
-            return;
-        }
-        if (pickValues()) {
-            status(Status.Applied);
-        }
-    }
-
-    public boolean pickValues() {
+    public List<Data2DColumn> pickColumns() {
         try {
-            if (convertController != null || tableController == null) {
-                return false;
-            }
-            StringTable validateTable = Data2DTools.validate(tableData);
+            StringTable validateTable = Data2DColumnTools.validate(tableData);
             if (validateTable != null && !validateTable.isEmpty()) {
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        dataController.tabPane.getSelectionModel().select(dataController.columnsTab);
-                        validateTable.htmlTable();
-                    }
-                });
-                return false;
-            }
-            List<List<String>> newTableData = new ArrayList<>();
-            if (!tableData.isEmpty()) {
-                for (List<String> rowValues : tableController.tableData) {
-                    List<String> newRow = new ArrayList<>();
-                    newRow.add(rowValues.get(0));
-                    for (Data2DColumn row : tableData) {
-                        int col = data2D.colOrder(row.getIndex()) + 1;
-                        if (col <= 0 || col >= rowValues.size()) {
-                            newRow.add(null);
-                        } else {
-                            newRow.add(rowValues.get(col));
-                        }
-                    }
-                    newTableData.add(newRow);
-                }
+                validateTable.htmlTable();
+                return null;
             }
             List<Data2DColumn> columns = new ArrayList<>();
             for (int i = 0; i < tableData.size(); i++) {
-                columns.add(tableData.get(i).cloneAll());
+                Data2DColumn column = tableData.get(i).cloneAll();
+                columns.add(column);
             }
-            data2D.setColumns(columns);
-            return tableController.updateData(newTableData, true);
+            return columns;
         } catch (Exception e) {
             MyBoxLog.error(e);
-            return false;
+            return null;
         }
     }
 
     @FXML
     @Override
-    public void cancelAction() {
-        if (status == Status.Modified) {
-            loadColumns();
-            status(Status.Applied);
-        }
+    public void recoverAction() {
+        loadValues();
     }
 
     @FXML
@@ -312,10 +264,36 @@ public class ControlData2DColumns extends BaseData2DColumnsController {
                 if (node == null) {
                     return;
                 }
-                addColumns(Data2DTools.definitionFromXML(null, myController, node.getInfo()));
+                addColumns(Data2DDefinitionTools.definitionFromXML(null, myController, node.getInfo()));
                 controller.close();
             }
         });
+    }
+
+    @FXML
+    public void headerAction() {
+        try {
+            if (dataController.data2D == null || dataController.tableData.isEmpty()) {
+                popError(message("NoData"));
+                return;
+            }
+            List<String> row = dataController.tableData.get(0);
+            if (row == null || row.size() < 2) {
+                popError(message("InvalidData"));
+                return;
+            }
+            List<String> names = new ArrayList<>();
+            for (int i = 1; i < row.size(); i++) {
+                String name = row.get(i);
+                if (name == null || name.isBlank()) {
+                    name = message("Column") + i;
+                }
+                DerbyBase.checkIdentifier(names, name, true);
+            }
+            setNames(names);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
     @Override

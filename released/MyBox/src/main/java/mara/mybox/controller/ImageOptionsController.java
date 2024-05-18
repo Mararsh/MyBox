@@ -1,6 +1,7 @@
 package mara.mybox.controller;
 
 import java.awt.RenderingHints;
+import java.sql.Connection;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,6 +19,7 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.ValidationTools;
@@ -608,8 +610,11 @@ public class ImageOptionsController extends BaseChildController {
                 ImageHints.put(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_DEFAULT);
             }
 
-            ImageRenderHints.saveImageRenderHints();
-
+            try (Connection conn = DerbyBase.getConnection()) {
+                ImageRenderHints.saveImageRenderHints(conn);
+            } catch (Exception e) {
+                MyBoxLog.error(e);
+            }
             return ImageHints;
         } catch (Exception e) {
             MyBoxLog.error(e);

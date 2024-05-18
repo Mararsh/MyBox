@@ -18,7 +18,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-4-21
  * @License Apache License Version 2.0
  */
-public class ControlData2DSimpleLinearRegressionTable extends ControlData2DResults {
+public class ControlData2DSimpleLinearRegressionTable extends ControlData2DView {
 
     protected BaseData2DRegressionController regressController;
     protected TableColumn sortColumn;
@@ -27,7 +27,7 @@ public class ControlData2DSimpleLinearRegressionTable extends ControlData2DResul
     public void initValues() {
         try {
             super.initValues();
-            data2D = Data2D.create(Data2DDefinition.Type.Texts);
+            data2D = Data2D.create(Data2DDefinition.DataType.Texts);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -73,10 +73,6 @@ public class ControlData2DSimpleLinearRegressionTable extends ControlData2DResul
         }
     }
 
-    public void clear() {
-        tableData.clear();
-    }
-
     public void addRow(List<String> row) {
         if (row == null) {
             return;
@@ -90,22 +86,16 @@ public class ControlData2DSimpleLinearRegressionTable extends ControlData2DResul
     public void afterRegression() {
         isSettingValues = true;
         tableView.getSortOrder().clear();
-        sortColumn.setSortType(TableColumn.SortType.DESCENDING);
-        tableView.getSortOrder().add(sortColumn);
+        if (sortColumn != null) {
+            sortColumn.setSortType(TableColumn.SortType.DESCENDING);
+            tableView.getSortOrder().add(sortColumn);
+        }
         isSettingValues = false;
         checkButtons();
     }
 
     public List<String> selected() {
         return selectedItem();
-    }
-
-    @Override
-    public void tableChanged(boolean changed) {
-        if (isSettingValues) {
-            return;
-        }
-        checkSelected();
     }
 
     @Override
@@ -125,7 +115,8 @@ public class ControlData2DSimpleLinearRegressionTable extends ControlData2DResul
             popError(message("NoData"));
             return;
         }
-        DataManufactureController.open(data2D.getColumns(), data2D.tableRows(false));
+        Data2DManufactureController.openData(data2D.dataName(),
+                data2D.getColumns(), data2D.tableRows());
     }
 
     @FXML
@@ -136,7 +127,7 @@ public class ControlData2DSimpleLinearRegressionTable extends ControlData2DResul
         }
         List<String> selected = selected();
         if (selected == null) {
-            Data2DSimpleLinearRegressionController.open(regressController.tableController);
+            Data2DSimpleLinearRegressionController.open(regressController.dataController);
         } else {
             try {
                 Data2DSimpleLinearRegressionController controller = (Data2DSimpleLinearRegressionController) WindowTools
@@ -148,8 +139,8 @@ public class ControlData2DSimpleLinearRegressionTable extends ControlData2DResul
                 controller.interceptCheck.setSelected(regressController.interceptCheck.isSelected());
                 controller.alphaSelector.getSelectionModel().select(regressController.alpha + "");
                 controller.cloneOptions(regressController);
-                controller.setParameters(regressController.tableController);
-                controller.okAction();
+                controller.setParameters(regressController.dataController);
+                controller.startAction();
                 controller.requestMouse();
             } catch (Exception e) {
                 MyBoxLog.error(e);

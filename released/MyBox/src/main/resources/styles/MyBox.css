@@ -11,6 +11,15 @@
     -fx-border-color: #961c1c;
 }
 
+.button:hover {
+    -fx-color: ladder(
+        -fx-base,
+        derive(-fx-base,8%) 80%,
+        derive(-fx-base,-8%) 82%
+        );
+}
+
+
 .column-header.editable-column > .label{
     -fx-text-fill: #003472;
     -fx-font-weight: bolder;
@@ -36,6 +45,8 @@
 .check-menu-item:focused:checked > .left-container > .check {
     -fx-background-color: black;
 }
+
+
 
 /*.radio-menu-item > .left-container {
     -fx-background-color: -fx-shadow-highlight-color, -fx-outer-border, -fx-inner-border, -fx-body-color;

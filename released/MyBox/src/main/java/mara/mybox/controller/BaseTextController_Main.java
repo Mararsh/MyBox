@@ -191,6 +191,7 @@ public abstract class BaseTextController_Main extends BaseTextController_Pair {
                     AnchorPane.setBottomAnchor(lineArea, barHeight);
                     isSettingValues = false;
                 });
+                Platform.requestNextPulse();
             }
         }, 300);   // Wait for text loaded
     }
@@ -529,6 +530,7 @@ public abstract class BaseTextController_Main extends BaseTextController_Pair {
                     mainArea.requestFocus();
                     mainArea.selectRange(Math.min(text.length(), startIndex + number), startIndex);
                 });
+                Platform.requestNextPulse();
             }
         }, 300);  // wait for text loaded
     }
@@ -561,6 +563,7 @@ public abstract class BaseTextController_Main extends BaseTextController_Pair {
                     mainArea.requestFocus();
                     mainArea.selectRange(charIndex, startIndex);
                 });
+                Platform.requestNextPulse();
             }
         }, 300); // wait for text loaded
     }

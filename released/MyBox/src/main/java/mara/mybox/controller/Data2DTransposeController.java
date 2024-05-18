@@ -6,8 +6,8 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import mara.mybox.data2d.Data2D;
-import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.TmpTable;
+import mara.mybox.data2d.writer.Data2DWriter;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
@@ -23,7 +23,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-12-9
  * @License Apache License Version 2.0
  */
-public class Data2DTransposeController extends BaseData2DTargetsController {
+public class Data2DTransposeController extends BaseData2DTaskTargetsController {
 
     @FXML
     protected CheckBox firstCheck;
@@ -33,9 +33,9 @@ public class Data2DTransposeController extends BaseData2DTargetsController {
     }
 
     @Override
-    public void initControls() {
+    public void initOptions() {
         try {
-            super.initControls();
+            super.initOptions();
 
             firstCheck.setSelected(UserConfig.getBoolean(baseName + "FirstAsNames", false));
             firstCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) -> {
@@ -53,14 +53,14 @@ public class Data2DTransposeController extends BaseData2DTargetsController {
     @Override
     public boolean handleRows() {
         try {
-            boolean showRowNumber = showRowNumber();
-            outputData = tableFiltered(showRowNumber);
+            outputData = rowsFiltered();
             if (outputData == null) {
                 return false;
             }
             boolean showColNames = showColNames();
             int rowsNumber = outputData.size(), columnsNumber = outputData.get(0).size();
             outputColumns = new ArrayList<>();
+            boolean showRowNumber = showRowNumber();
             int nameIndex = showRowNumber ? 1 : 0;
             List<String> names = new ArrayList<>();
             if (firstCheck.isSelected()) {
@@ -77,12 +77,12 @@ public class Data2DTransposeController extends BaseData2DTargetsController {
                 }
             }
             if (showColNames) {
-                DerbyBase.checkIdentifier(names, message("ColumnName"), true);
+                String name = DerbyBase.checkIdentifier(names, message("ColumnName"), false);
+                names.add(0, name);
             }
             for (int c = 0; c < names.size(); c++) {
                 outputColumns.add(new Data2DColumn(names.get(c), ColumnDefinition.ColumnType.String));
             }
-
             List<List<String>> transposed = new ArrayList<>();
             for (int c = 0; c < columnsNumber; ++c) {
                 List<String> row = new ArrayList<>();
@@ -115,47 +115,46 @@ public class Data2DTransposeController extends BaseData2DTargetsController {
     }
 
     @Override
-    public DataFileCSV generatedFile() {
+    public boolean handleAllData(FxTask currentTask, Data2DWriter writer) {
         try {
-            FxTask data2DTask = data2D.getTask();
-            Data2D tmp2D = data2D.cloneAll();
-            tmp2D.startTask(data2DTask, filterController.filter);
-            if (data2DTask != null) {
-                data2DTask.setInfo(message("Filter") + "...");
+            Data2D tmp2D = data2D.cloneAll().setController(this);
+            tmp2D.startTask(currentTask, filterController.filter);
+            if (currentTask != null) {
+                currentTask.setInfo(message("Filter") + "...");
             }
             TmpTable tmpTable = new TmpTable()
                     .setSourceData(tmp2D)
-                    .setTargetName(data2D.getDataName())
+                    .setTargetName(data2D.dataName())
                     .setSourcePickIndice(checkedColsIndices)
                     .setImportData(true)
                     .setForStatistic(false)
                     .setIncludeColName(showColNames())
                     .setIncludeRowNumber(showRowNumber())
                     .setInvalidAs(invalidAs);
-            tmpTable.setTask(data2DTask);
+            tmpTable.setTask(currentTask);
             if (!tmpTable.createTable()) {
                 tmpTable = null;
             }
             tmp2D.stopFilter();
             if (tmpTable == null) {
-                return null;
+                return false;
             }
-            DataFileCSV csvData = tmpTable.transpose(firstCheck.isSelected());
+            boolean ok = tmpTable.transpose(currentTask, writer, firstCheck.isSelected());
             tmpTable.drop();
-            return csvData;
+            return ok;
         } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
+            if (currentTask != null) {
+                currentTask.setError(e.toString());
             }
             MyBoxLog.error(e);
-            return null;
+            return false;
         }
     }
 
     /*
         static
      */
-    public static Data2DTransposeController open(ControlData2DLoad tableController) {
+    public static Data2DTransposeController open(BaseData2DLoadController tableController) {
         try {
             Data2DTransposeController controller = (Data2DTransposeController) WindowTools.branchStage(
                     tableController, Fxmls.Data2DTransposeFxml);

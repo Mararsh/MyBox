@@ -27,10 +27,10 @@ import mara.mybox.value.UserConfig;
  */
 public class ControlFileSelecter extends BaseController {
 
-    protected File file, defaultFile;
-    protected String savedName;
+    private File file;
+    protected File defaultFile;
     protected boolean isSource, isDirectory, checkQuit, permitNull, mustExist;
-    protected SimpleBooleanProperty notify, valid;
+    protected SimpleBooleanProperty notify;
 
     @FXML
     protected Label label;
@@ -44,14 +44,12 @@ public class ControlFileSelecter extends BaseController {
     public final ControlFileSelecter initSelecter() {
         file = null;
         defaultFile = null;
-        savedName = null;
         isSource = true;
         isDirectory = false;
         checkQuit = false;
         permitNull = false;
         mustExist = false;
         notify = new SimpleBooleanProperty(false);
-        valid = new SimpleBooleanProperty(false);
         return this;
     }
 
@@ -66,13 +64,16 @@ public class ControlFileSelecter extends BaseController {
             fileInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    checkFileInput();
+                    pickFile();
                 }
             });
         }
         label.setMinWidth(Region.USE_PREF_SIZE);
     }
 
+    /*
+        make
+     */
     public String defaultName() {
         if (defaultFile == null) {
             String ext = VisitHistoryTools.defaultExt(TargetFileType);
@@ -85,38 +86,116 @@ public class ControlFileSelecter extends BaseController {
         return defaultFile.getAbsolutePath();
     }
 
+    public ControlFileSelecter parent(BaseController parent) {
+        return parent(parent, null);
+    }
+
+    public ControlFileSelecter parent(BaseController parent, String name) {
+        parentController = parent;
+        if (name != null && !name.isBlank()) {
+            baseName = name;
+        } else {
+            if (parentController != null) {
+                baseName = parentController.baseName;
+            }
+            baseName += (isSource ? "Source" : "Target")
+                    + (isDirectory ? "Path" : "File");
+        }
+        return initFile();
+    }
+
     public ControlFileSelecter initFile() {
         String defaultName = defaultName();
-        String name;
-        if (savedName != null) {
-            name = UserConfig.getString(savedName, defaultName);
-        } else {
-            name = defaultName;
+        String filename = UserConfig.getString(baseName, defaultName);
+        input(filename);
+        return this;
+    }
+
+    public void inputFile(File file) {
+        if (fileInput != null && file != null) {
+            isSettingValues = true;
+            fileInput.setText(file.getAbsolutePath());
+            isSettingValues = false;
         }
+        setFile(file);
+    }
+
+    public void input(String string) {
         if (fileInput != null) {
             isSettingValues = true;
-            fileInput.setText(name);
+            fileInput.setText(string);
             isSettingValues = false;
-            checkFileInput();
-        } else {
-            setFile(new File(name));
         }
+        setFile(new File(string));
+    }
+
+    public File pickFile() {
+        if (isSettingValues || fileInput == null) {
+            return file;
+        }
+        String v = fileInput.getText();
+        if (v == null || v.isBlank()) {
+            file = null;
+            return file;
+        }
+        File inputfile = new File(v);
+        if (mustExist && (!inputfile.exists()
+                || isDirectory && !inputfile.isDirectory()
+                || !isDirectory && !inputfile.isFile())) {
+            file = null;
+            return file;
+        }
+        return setFile(inputfile);
+
+    }
+
+    private File setFile(File infile) {
+        file = infile;
+        if (file != null) {
+            UserConfig.setString(baseName, file.getAbsolutePath());
+            if (parentController != null) {
+                if (isDirectory) {
+                    if (isSource) {
+                        parentController.sourcePath = file;
+                    } else {
+                        parentController.targetPath = file;
+                    }
+                } else {
+                    if (isSource) {
+//                        parentController.sourceFile = file;
+                    } else {
+                        parentController.targetFile = file;
+                    }
+                }
+            }
+        }
+        notify.set(!notify.get());
+        return file;
+    }
+
+    public File file() {
+        return file;
+    }
+
+    public String text() {
+        if (fileInput == null) {
+            return null;
+        } else {
+            return fileInput.getText();
+        }
+    }
+
+    /*
+        set
+     */
+    public ControlFileSelecter type(int fileType) {
+        setFileType(fileType);
         return this;
     }
 
     public ControlFileSelecter label(String labelString) {
         label.setText(labelString);
 //        refreshStyle(thisPane);
-        return this;
-    }
-
-    public ControlFileSelecter savedName(String savedName) {
-        this.savedName = savedName;
-        return this;
-    }
-
-    public ControlFileSelecter baseName(String baseName) {
-        this.baseName = baseName;
         return this;
     }
 
@@ -151,61 +230,9 @@ public class ControlFileSelecter extends BaseController {
         return this;
     }
 
-    protected ControlFileSelecter type(int fileType) {
-        setFileType(fileType);
-        return this;
-    }
-
-    protected void checkFileInput() {
-        if (isSettingValues || fileInput == null) {
-            return;
-        }
-        String v = fileInput.getText();
-        if (v == null || v.isEmpty()) {
-            if (permitNull) {
-                fileInput.setStyle(null);
-                valid.set(true);
-            } else {
-                fileInput.setStyle(UserConfig.badStyle());
-                valid.set(false);
-            }
-            file = null;
-            notify.set(!notify.get());
-            return;
-        }
-        File inputfile = new File(v);
-        if (mustExist && (!inputfile.exists()
-                || isDirectory && !inputfile.isDirectory()
-                || !isDirectory && !inputfile.isFile())) {
-            if (fileInput != null) {
-                fileInput.setStyle(UserConfig.badStyle());
-            }
-            valid.set(false);
-            file = null;
-            notify.set(!notify.get());
-            return;
-        }
-        fileInput.setStyle(null);
-        setFile(inputfile);
-    }
-
-    protected void setFile(File file) {
-        if (file == null) {
-            return;
-        }
-        this.file = file;
-        if (savedName != null) {
-            UserConfig.setString(savedName, file.getAbsolutePath());
-        }
-//        if (isSource) {
-//            recordFileOpened(file);
-//        } else {
-//            recordFileWritten(file);
-//        }
-        valid.set(true);
-        notify.set(!notify.get());
-    }
-
+    /*
+        button
+     */
     @FXML
     public void selectFile() {
         try {
@@ -232,11 +259,7 @@ public class ControlFileSelecter extends BaseController {
             if (selectedfile == null || (mustExist && !selectedfile.exists())) {
                 return;
             }
-            if (fileInput != null) {
-                fileInput.setText(selectedfile.getAbsolutePath());
-            } else {
-                setFile(selectedfile);
-            }
+            inputFile(selectedfile);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -276,10 +299,11 @@ public class ControlFileSelecter extends BaseController {
                     return;
                 }
                 if (fileInput != null) {
+                    isSettingValues = true;
                     fileInput.setText(selectedfile.getAbsolutePath());
-                } else {
-                    setFile(selectedfile);
+                    isSettingValues = false;
                 }
+                setFile(selectedfile);
             }
 
             @Override
@@ -291,10 +315,11 @@ public class ControlFileSelecter extends BaseController {
                 }
                 if (isDirectory) {
                     if (fileInput != null) {
+                        isSettingValues = true;
                         fileInput.setText(selectedfile.getAbsolutePath());
-                    } else {
-                        setFile(selectedfile);
+                        isSettingValues = false;
                     }
+                    setFile(selectedfile);
                 } else {
                     UserConfig.setString(isSource ? baseName + "SourcePath" : baseName + "TargetPath", fname);
                     selectFile();
@@ -321,40 +346,37 @@ public class ControlFileSelecter extends BaseController {
         }
     }
 
-    public void input(String string) {
-        if (fileInput == null) {
-            setFile(new File(string));
-        } else {
-            fileInput.setText(string);
-        }
-    }
-
-    public String text() {
-        if (fileInput == null) {
-            return null;
-        } else {
-            return fileInput.getText();
-        }
-    }
-
-    public File file() {
-        return file;
-    }
-
-    public boolean valid() {
-        return valid.get();
-    }
-
     @Override
     public void cleanPane() {
         try {
-            notify = null;
-            valid = null;
             file = null;
             defaultFile = null;
         } catch (Exception e) {
         }
         super.cleanPane();
+    }
+
+    /*
+        get
+     */
+    public boolean isIsSource() {
+        return isSource;
+    }
+
+    public boolean isIsDirectory() {
+        return isDirectory;
+    }
+
+    public boolean isCheckQuit() {
+        return checkQuit;
+    }
+
+    public boolean isPermitNull() {
+        return permitNull;
+    }
+
+    public boolean isMustExist() {
+        return mustExist;
     }
 
 }

@@ -70,12 +70,12 @@ public class ChartTools {
 
     // This can set more than 8 colors. javafx only supports 8 colors defined in css
     // This should be called after data have been assigned to pie
-    public static void setPieColors(PieChart pie, boolean showLegend) {
+    public static void setPieStyle(PieChart pie, boolean showLegend) {
         List<String> palette = FxColorTools.randomRGB(pie.getData().size());
-        setPieColors(pie, palette, showLegend, 10);
+        setPieStyle(pie, palette, showLegend, 10);
     }
 
-    public static void setPieColors(PieChart pie, List<String> palette, boolean showLegend, int fontSize) {
+    public static void setPieStyle(PieChart pie, List<String> palette, boolean showLegend, int fontSize) {
         if (pie == null || palette == null || pie.getData() == null || pie.getData().size() > palette.size()) {
             return;
         }
@@ -116,12 +116,12 @@ public class ChartTools {
         }
     }
 
-    public static void setBarChartColors(XYChart chart, boolean showLegend) {
+    public static void setBarChartStyle(XYChart chart, boolean showLegend) {
         List<String> palette = FxColorTools.randomRGB(chart.getData().size());
-        setBarChartColors(chart, palette, showLegend);
+        ChartTools.setBarChartStyle(chart, palette, showLegend);
     }
 
-    public static void setBarChartColors(XYChart chart, List<String> palette, boolean showLegend) {
+    public static void setBarChartStyle(XYChart chart, List<String> palette, boolean showLegend) {
         if (chart == null || palette == null) {
             return;
         }
@@ -145,7 +145,7 @@ public class ChartTools {
         setLegend(chart, palette, showLegend);
     }
 
-    public static void setBarChartColors(XYChart chart, Map<String, String> palette, boolean showLegend) {
+    public static void setBarChartStyle(XYChart chart, Map<String, String> palette, boolean showLegend) {
         if (chart == null || palette == null) {
             return;
         }
@@ -171,7 +171,7 @@ public class ChartTools {
         setLegend(chart, palette, showLegend);
     }
 
-    public static void setLineChartColors(XYChart chart, int lineWidth, Map<String, String> palette,
+    public static void setLineChartStyle(XYChart chart, int lineWidth, int symbolSize, Map<String, String> palette,
             boolean showLegend, boolean dotted) {
         if (chart == null || palette == null) {
             return;
@@ -195,7 +195,8 @@ public class ChartTools {
             }
             Node node = seriesNode.lookup(".chart-series-line");
             if (node != null) {
-                node.setStyle("-fx-stroke: " + color + "; -fx-stroke-width: " + lineWidth + "px;"
+                node.setStyle("-fx-stroke: " + color + "; "
+                        + "-fx-stroke-width: " + lineWidth + "px;"
                         + (dotted ? " -fx-stroke-dash-array: " + lineWidth * 2 + ";" : ""));
             }
             for (int i = 0; i < series.getData().size(); i++) {
@@ -205,14 +206,17 @@ public class ChartTools {
                 }
                 node = item.getNode().lookup(".chart-line-symbol");
                 if (node != null) {
-                    node.setStyle("-fx-background-color:  " + color + ", white;");
+                    int r = symbolSize / 2;
+                    node.setStyle("-fx-background-color: " + color + ", white;"
+                            + "-fx-background-radius: " + r + ";"
+                            + "-fx-padding: " + r + ";");
                 }
             }
         }
         setLegend(chart, palette, showLegend);
     }
 
-    public static void setAreaChartColors(XYChart chart, int lineWidth, Map<String, String> palette, boolean showLegend) {
+    public static void setAreaChartStyle(XYChart chart, int lineWidth, int symbolSize, Map<String, String> palette, boolean showLegend) {
         if (chart == null || palette == null) {
             return;
         }
@@ -251,14 +255,17 @@ public class ChartTools {
                 }
                 node = item.getNode().lookup(".chart-area-symbol");
                 if (node != null) {
-                    node.setStyle("-fx-background-color:  " + color + ", white;");
+                    int r = symbolSize / 2;
+                    node.setStyle("-fx-background-color: " + color + ", white;"
+                            + "-fx-background-radius: " + r + ";"
+                            + "-fx-padding: " + r + ";");
                 }
             }
         }
         setLegend(chart, palette, showLegend);
     }
 
-    public static void setScatterChart​Colors(XYChart chart, Map<String, String> palette, boolean showLegend) {
+    public static void setScatterChartStyle(XYChart chart, int symbolSize, Map<String, String> palette, boolean showLegend) {
         if (chart == null || palette == null) {
             return;
         }
@@ -279,14 +286,17 @@ public class ChartTools {
                 }
                 Node node = item.getNode().lookup(".chart-symbol");
                 if (node != null) {
-                    node.setStyle("-fx-background-color:  " + color + ";");
+                    int r = symbolSize / 2;
+                    node.setStyle("-fx-background-color: " + color + ";"
+                            + "-fx-background-radius: " + r + ";"
+                            + "-fx-padding: " + r + ";");
                 }
             }
         }
         setLegend(chart, palette, showLegend);
     }
 
-    public static void setBubbleChart​Colors(XYChart chart, String bubbleStyle, Map<String, String> palette, boolean showLegend) {
+    public static void setBubbleChartStyle(XYChart chart, String bubbleStyle, Map<String, String> palette, boolean showLegend) {
         if (chart == null || palette == null) {
             return;
         }

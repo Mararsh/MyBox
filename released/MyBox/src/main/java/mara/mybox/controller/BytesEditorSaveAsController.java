@@ -36,10 +36,10 @@ public class BytesEditorSaveAsController extends BaseChildController {
     public void saveAsAction() {
         try {
             fileController.saveAsType = saveAsType;
+            fileController.saveAs();
             if (closeAfterCheck.isSelected()) {
                 close();
             }
-            fileController.saveAs();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

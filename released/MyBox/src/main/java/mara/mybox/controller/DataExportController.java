@@ -14,6 +14,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.FlowPane;
+import mara.mybox.data2d.operate.Data2DExport;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.BaseData;
 import mara.mybox.db.data.BaseDataAdaptor;
@@ -37,9 +38,10 @@ import mara.mybox.value.UserConfig;
 public class DataExportController extends BaseTaskController {
 
     protected BaseDataManageController dataController;
+    protected Data2DExport export;
     protected BaseTable table;
     protected String currentSQL;
-    protected long startTime, dataSize;
+    protected long dataSize;
     protected boolean currentPage = false;
     protected List<ColumnDefinition> columns;
     protected int top;
@@ -49,7 +51,7 @@ public class DataExportController extends BaseTaskController {
     @FXML
     protected ControlDataQuery queryController;
     @FXML
-    protected ControlDataConvert convertController;
+    protected ControlDataExport convertController;
     @FXML
     protected FlowPane fieldsPane;
     @FXML
@@ -89,7 +91,7 @@ public class DataExportController extends BaseTaskController {
             }
             queryController.setControls(dataController, initCondition, tableDefinition, prefixEditable, supportTop);
 
-            convertController.setControls(this);
+            convertController.setParameters(this);
 
             fieldsPane.getChildren().clear();
             List<ColumnDefinition> tableColumns = table.getColumns();
@@ -107,7 +109,6 @@ public class DataExportController extends BaseTaskController {
             startButton.applyCss();
             startButton.setUserData(null);
             startButton.disableProperty().unbind();
-            startButton.disableProperty().bind(targetPathController.valid.not());
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -143,7 +144,8 @@ public class DataExportController extends BaseTaskController {
                 queryController.loadList();
             }
         }
-        if (!convertController.initParameters()) {
+        export = convertController.pickParameters(null);
+        if (export == null) {
             tabPane.getSelectionModel().select(formatsTab);
             return false;
         }
@@ -161,7 +163,8 @@ public class DataExportController extends BaseTaskController {
             popError(Languages.message("NoData"));
             return false;
         }
-        convertController.names = names;
+        export.setNames(targetPathController, names);
+        export.setController(this);
         return true;
     }
 
@@ -185,7 +188,7 @@ public class DataExportController extends BaseTaskController {
                 startButton.applyCss();
                 startButton.setUserData("stop");
             } else {
-                cancelled = true;
+                taskCancelled = true;
                 if (task != null) {
                     task.cancel();
                     task = null;
@@ -195,6 +198,7 @@ public class DataExportController extends BaseTaskController {
                 startButton.setUserData(null);
             }
         });
+        Platform.requestNextPulse();
     }
 
     @Override
@@ -202,19 +206,16 @@ public class DataExportController extends BaseTaskController {
         if (task != null) {
             task.cancel();
         }
-        cancelled = false;
+        taskCancelled = false;
         tabPane.getSelectionModel().select(logsTab);
-        startTime = new Date().getTime();
+        startTime = new Date();
         beforeTask();
         task = new FxSingletonTask<Void>(this) {
-
-            private final boolean skip = targetPathController.isSkip();
 
             @Override
             protected boolean handle() {
                 try {
                     String filePrefix = targetNameInput.getText().trim();
-
                     if (currentPage) {
                         currentSQL = dataController.pageQuerySQL;
                         dataSize = dataController.tableData.size();
@@ -237,7 +238,7 @@ public class DataExportController extends BaseTaskController {
                             + (where == null || where.isBlank() ? "" : " WHERE " + where)
                             + (order == null || order.isBlank() ? "" : " ORDER BY " + order)
                             + (fetch == null || fetch.isBlank() ? "" : " " + fetch);
-                    if (cancelled) {
+                    if (taskCancelled) {
                         updateLogs(Languages.message("Cancelled"));
                         return false;
                     }
@@ -271,12 +272,13 @@ public class DataExportController extends BaseTaskController {
                 try (Connection conn = DerbyBase.getConnection()) {
                     conn.setReadOnly(true);
                     int count = 0;
-                    if (!convertController.setParameters(filePrefix, skip)) {
+                    export.setFilePrefix(filePrefix);
+                    if (!export.openWriters()) {
                         return false;
                     }
                     try (ResultSet results = conn.createStatement().executeQuery(currentSQL)) {
                         while (results.next()) {
-                            if (cancelled) {
+                            if (taskCancelled) {
                                 updateLogs(Languages.message("Cancelled") + " " + filePrefix);
                                 return false;
                             }
@@ -295,7 +297,7 @@ public class DataExportController extends BaseTaskController {
                             }
                         }
                     }
-                    convertController.closeWriters();
+                    export.closeWriters();
                 } catch (Exception e) {
                     updateLogs(e.toString());
                     return false;
@@ -317,7 +319,7 @@ public class DataExportController extends BaseTaskController {
                         }
                         row.add(display);
                     }
-                    convertController.writeRow(row);
+                    export.writeRow(row);
                     return true;
                 } catch (Exception e) {
                     updateLogs(e.toString());
@@ -334,10 +336,7 @@ public class DataExportController extends BaseTaskController {
             @Override
             protected void finalAction() {
                 super.finalAction();
-                StyleTools.setNameIcon(startButton, Languages.message("Start"), "iconStart.png");
-                startButton.applyCss();
-                startButton.setUserData(null);
-                afterTask();
+                closeTask(ok);
             }
         };
         start(task, false);
@@ -375,7 +374,7 @@ public class DataExportController extends BaseTaskController {
 
     @Override
     public void cleanPane() {
-        cancelled = true;
+        taskCancelled = true;
         super.cleanPane();
     }
 

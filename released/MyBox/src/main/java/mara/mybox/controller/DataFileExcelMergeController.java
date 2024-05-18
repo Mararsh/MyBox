@@ -35,6 +35,7 @@ public class DataFileExcelMergeController extends FilesMergeController {
 
     protected XSSFWorkbook targetBook;
     protected Map<String, Integer> sheetsIndex;
+    protected String firstSheet;
 
     @FXML
     protected CheckBox sourceWithNamesCheck, targetWithNamesCheck;
@@ -54,9 +55,7 @@ public class DataFileExcelMergeController extends FilesMergeController {
             super.initControls();
 
             startButton.disableProperty().unbind();
-            startButton.disableProperty().bind(Bindings.isEmpty(tableData)
-                    .or(targetFileController.valid.not())
-            );
+            startButton.disableProperty().bind(Bindings.isEmpty(tableData));
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -68,6 +67,7 @@ public class DataFileExcelMergeController extends FilesMergeController {
         try {
             targetBook = new XSSFWorkbook();
             sheetsIndex = new HashMap<>();
+            firstSheet = null;
             return true;
         } catch (Exception e) {
             return false;
@@ -86,6 +86,9 @@ public class DataFileExcelMergeController extends FilesMergeController {
                 Sheet sourceSheet = sourceBook.getSheetAt(s);
                 String sheetName = sourceSheet.getSheetName();
                 updateLogs(message("Reading") + " " + message("Sheet") + ":" + sheetName);
+                if (firstSheet == null) {
+                    firstSheet = sheetName;
+                }
                 Sheet targetSheet = targetBook.getSheet(sheetName);
                 if (targetSheet == null) {
                     targetSheet = targetBook.createSheet(sheetName);
@@ -147,11 +150,11 @@ public class DataFileExcelMergeController extends FilesMergeController {
             try (Connection conn = DerbyBase.getConnection()) {
                 TableData2DDefinition tableData2DDefinition = new TableData2DDefinition();
                 for (String sheet : sheetsIndex.keySet()) {
-                    Data2DDefinition def = tableData2DDefinition.queryFileSheet(conn, Data2DDefinition.Type.Excel, targetFile, sheet);
+                    Data2DDefinition def = tableData2DDefinition.queryFileSheet(conn, Data2DDefinition.DataType.Excel, targetFile, sheet);
                     if (def == null) {
                         def = Data2DDefinition.create();
                     }
-                    def.setType(Data2DDefinition.Type.Excel)
+                    def.setType(Data2DDefinition.DataType.Excel)
                             .setFile(targetFile)
                             .setDelimiter(sheet)
                             .setDataName(targetFile.getName())
@@ -172,6 +175,14 @@ public class DataFileExcelMergeController extends FilesMergeController {
             updateLogs(e.toString(), true, true);
             return false;
         }
+    }
+
+    @Override
+    public void viewTarget(File file) {
+        if (file == null) {
+            return;
+        }
+        Data2DManufactureController.openExcelFile(file, firstSheet, targetWithNamesCheck.isSelected());
     }
 
 }

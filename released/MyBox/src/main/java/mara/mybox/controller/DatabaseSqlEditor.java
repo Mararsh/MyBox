@@ -21,9 +21,11 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
+import mara.mybox.data2d.tools.Data2DTableTools;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataInternalTable;
 import mara.mybox.data2d.DataTable;
+import mara.mybox.data2d.tools.Data2DConvertTools;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.table.TableData2D;
 import mara.mybox.db.table.TableStringValues;
@@ -54,7 +56,7 @@ public class DatabaseSqlEditor extends InfoTreeNodeEditor {
     @FXML
     protected Button listButton, tableDefinitionButton;
     @FXML
-    protected ControlData2DResults dataController;
+    protected ControlData2DView dataController;
     @FXML
     protected CheckBox wrapOutputsCheck;
 
@@ -135,7 +137,7 @@ public class DatabaseSqlEditor extends InfoTreeNodeEditor {
                                     outputArea.appendText(DateTools.nowString() + "  " + message("UpdatedCount") + ": " + count);
                                 } else {
                                     ResultSet results = statement.getResultSet();
-                                    data = DataTable.save(this, results);
+                                    data = Data2DConvertTools.write(this, results);
                                 }
                             }
                             conn.commit();
@@ -227,7 +229,7 @@ public class DatabaseSqlEditor extends InfoTreeNodeEditor {
             if (internal) {
                 names = DataInternalTable.InternalTables;
             } else {
-                names = DataTable.userTables();
+                names = Data2DTableTools.userTables();
             }
             List<Node> valueButtons = new ArrayList<>();
             for (String name : names) {
@@ -284,7 +286,7 @@ public class DatabaseSqlEditor extends InfoTreeNodeEditor {
             if (internal) {
                 names = DataInternalTable.InternalTables;
             } else {
-                names = DataTable.userTables();
+                names = Data2DTableTools.userTables();
             }
             List<Node> valueButtons = new ArrayList<>();
             for (String name : names) {

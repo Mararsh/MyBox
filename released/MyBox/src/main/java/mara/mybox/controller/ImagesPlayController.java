@@ -192,6 +192,8 @@ public class ImagesPlayController extends BaseFileController {
                 }
             });
 
+            viewBox.disableProperty().bind(viewController.imageView.imageProperty().isNull());
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -244,7 +246,7 @@ public class ImagesPlayController extends BaseFileController {
         if (file == null) {
             return;
         }
-        String format = FileNameTools.suffix(file.getName());
+        String format = FileNameTools.ext(file.getName());
         if (format == null || format.isBlank()) {
             popError(message("NotSupport"));
             return;
@@ -325,7 +327,7 @@ public class ImagesPlayController extends BaseFileController {
                 return;
             }
             imageInputStream = ImageIO.createImageInputStream(sourceFile);
-            imageReader = ImageFileReaders.getReader(imageInputStream, FileNameTools.suffix(sourceFile.getName()));
+            imageReader = ImageFileReaders.getReader(imageInputStream, FileNameTools.ext(sourceFile.getName()));
             if (imageReader != null) {
                 imageReader.setInput(imageInputStream, false, false);
             }
@@ -463,6 +465,7 @@ public class ImagesPlayController extends BaseFileController {
                 synchronized (sourceFile) {
                     sourceFile.wait();
                 }
+                Platform.requestNextPulse();
                 try {
                     pdfDoc = PDDocument.load(sourceFile, pdfPassword, AppVariables.PdfMemUsage);
                 } catch (Exception ee) {

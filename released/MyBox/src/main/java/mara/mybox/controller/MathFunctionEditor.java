@@ -2,6 +2,7 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javafx.beans.value.ChangeListener;
@@ -9,12 +10,18 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
+import javax.script.Bindings;
+import mara.mybox.calculation.ExpressionCalculator;
 import mara.mybox.db.data.InfoNode;
 import static mara.mybox.db.data.InfoNode.ValueSeparater;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
+import static mara.mybox.fxml.PopTools.javaScriptExamples;
+import mara.mybox.tools.StringTools;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -26,6 +33,7 @@ public class MathFunctionEditor extends InfoTreeNodeEditor {
 
     protected MathFunctionController functionController;
     protected String outputs = "";
+    protected ExpressionCalculator calculator;
 
     @FXML
     protected TextField variablesInput, functionNameInput;
@@ -38,6 +46,8 @@ public class MathFunctionEditor extends InfoTreeNodeEditor {
     public void setManager(InfoTreeManageController treeController) {
         try {
             super.setManager(treeController);
+
+            calculator = new ExpressionCalculator();
 
             functionController = (MathFunctionController) treeController;
 
@@ -54,7 +64,7 @@ public class MathFunctionEditor extends InfoTreeNodeEditor {
                     if (isSettingValues || nv) {
                         return;
                     }
-                    functionController.calculateController.variablesChanged();
+                    functionController.variablesChanged();
                 }
             });
 
@@ -85,7 +95,7 @@ public class MathFunctionEditor extends InfoTreeNodeEditor {
             moreInput.setText(values.get("FunctionDomain"));
             isSettingValues = false;
         }
-        functionController.calculateController.variablesChanged();
+        functionController.variablesChanged();
     }
 
     @Override
@@ -128,6 +138,112 @@ public class MathFunctionEditor extends InfoTreeNodeEditor {
         }
     }
 
+    public Bindings bindings() {
+        if (calculator == null) {
+            return null;
+        } else {
+            return calculator.variableValues;
+        }
+    }
+
+    public String script() {
+        return valueInput.getText();
+    }
+
+    public String domain() {
+        String d = moreInput.getText();
+        if (d == null || d.isBlank()) {
+            return null;
+        }
+        return StringTools.replaceLineBreak(d);
+    }
+
+    public String functionName() {
+        String name = functionNameInput.getText();
+        return name == null || name.isBlank() ? "f" : name;
+    }
+
+    public String titleName() {
+        String name = attributesController.nameInput.getText();
+        return name == null || name.isBlank() ? message("MathFunction") : name;
+    }
+
+    public String calculate(String script, Map<String, Object> variables) {
+        return calculator.calculate(script, variables);
+    }
+
+    public boolean inDomain(String domain, Map<String, Object> variables) {
+        if (domain == null || domain.isBlank()) {
+            return true;
+        }
+        return calculator.condition(domain, variables);
+    }
+
+    public Map<String, Object> dummyBindings() {
+        try {
+            Map<String, Object> vs = new HashMap<>();
+            List<String> variables = variableNames();
+            if (variables != null) {
+                for (int i = 0; i < variables.size(); i++) {
+                    vs.put(variables.get(i), 1);
+                }
+            }
+            return vs;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public boolean checkScripts() {
+        String script = script();
+        if (script == null || script.isBlank()) {
+            popError(message("InvalidParameters") + ": " + message("Expression"));
+            return false;
+        }
+        Map<String, Object> variableValues = dummyBindings();
+        script = script.trim();
+        String ret = calculate(script, variableValues);
+        if (ret == null) {
+            if (calculator.getError() != null) {
+                popError(calculator.getError());
+            } else {
+                popError(message("InvalidParameters") + ": " + message("Expression"));
+            }
+            return false;
+        }
+        String edomain = domain();
+        if (edomain == null) {
+            return true;
+        }
+        ret = calculate(edomain, variableValues);
+        if (ret == null) {
+            if (calculator.getError() != null) {
+                popError(calculator.getError());
+            } else {
+                popError(message("InvalidParameters") + ": " + message("FunctionDomain"));
+            }
+            return false;
+        }
+        return true;
+    }
+
+    public int checkScale(ComboBox<String> selector) {
+        try {
+            int v = Integer.parseInt(selector.getValue());
+            if (v >= 0) {
+                selector.getEditor().setStyle(null);
+                return v;
+            } else {
+                selector.getEditor().setStyle(UserConfig.badStyle());
+                return -1;
+            }
+        } catch (Exception e) {
+            selector.getEditor().setStyle(UserConfig.badStyle());
+            return -2;
+        }
+    }
+
     @FXML
     protected void popScriptExamples(MouseEvent event) {
         if (UserConfig.getBoolean("FunctionScriptExamplesPopWhenMouseHovering", false)) {
@@ -137,20 +253,7 @@ public class MathFunctionEditor extends InfoTreeNodeEditor {
 
     @FXML
     protected void showScriptExamples(Event event) {
-        try {
-            String menuName = "FunctionScriptExamples";
-            MenuController controller = PopTools.popJavaScriptExamples(this, event, valueInput, menuName);
-
-            PopTools.addButtonsPane(controller, valueInput, Arrays.asList(
-                    "Math.PI", "Math.E", "Math.random()", "Math.abs(x)",
-                    "Math.pow(x,2)", "Math.pow(x,3)", "Math.sqrt(x)", "Math.pow(x,1d/3)",
-                    "Math.pow(3, x)", "Math.exp(x)",
-                    "Math.log(x)", "Math.sin(x)", "Math.cos(x)", "Math.tan(x)"
-            ), 4);
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
+        PopTools.popJavaScriptExamples(this, event, valueInput, "FunctionScriptExamples", null);
     }
 
     @FXML
@@ -184,13 +287,14 @@ public class MathFunctionEditor extends InfoTreeNodeEditor {
 
     protected void domainExamples(Event event) {
         try {
-            String menuName = "FunctionDomainExamples";
-            MenuController controller = PopTools.popJavaScriptExamples(this, event, moreInput, menuName);
-
-            PopTools.addButtonsPane(controller, moreInput, Arrays.asList(
+            List<List<String>> preValues = new ArrayList<>();
+            preValues.add(Arrays.asList(
                     "x > 0", "x >= 0", "x < 0", "x <= 0", "x != 0", "x != 1",
                     "x >= -1 && x <= 1", "( x - Math.PI / 2 ) % Math.PI != 0"
-            ), 4);
+            ));
+            preValues.addAll(javaScriptExamples("x", "stringV", "dateV"));
+
+            PopTools.popJavaScriptExamples(this, event, moreInput, "FunctionDomainExamples", preValues);
 
         } catch (Exception e) {
             MyBoxLog.error(e);

@@ -5,6 +5,7 @@ import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.input.KeyEvent;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
@@ -33,9 +34,9 @@ public class Data2DChartPieController extends BaseData2DChartController {
     }
 
     @Override
-    public void initControls() {
+    public void initOptions() {
         try {
-            super.initControls();
+            super.initOptions();
 
             pieMaker = chartController.pieMaker;
             chartController.redrawNotify.addListener(new ChangeListener<Boolean>() {
@@ -51,15 +52,15 @@ public class Data2DChartPieController extends BaseData2DChartController {
     }
 
     @Override
-    public boolean initData() {
+    public boolean checkOptions() {
         try {
-            if (!super.initData()) {
+            if (!super.checkOptions()) {
                 return false;
             }
             dataColsIndices = new ArrayList<>();
             int categoryCol = data2D.colOrder(selectedCategory);
             if (categoryCol < 0) {
-                outOptionsError(message("SelectToHandle") + ": " + message("CategoryColumn"));
+                popError(message("SelectToHandle") + ": " + message("CategoryColumn"));
                 tabPane.getSelectionModel().select(optionsTab);
                 return false;
             }
@@ -68,7 +69,7 @@ public class Data2DChartPieController extends BaseData2DChartController {
 
             int valueCol = data2D.colOrder(selectedValue);
             if (valueCol < 0) {
-                outOptionsError(message("SelectToHandle") + ": " + message("ValueColumn"));
+                popError(message("SelectToHandle") + ": " + message("ValueColumn"));
                 tabPane.getSelectionModel().select(optionsTab);
                 return false;
             }
@@ -151,10 +152,18 @@ public class Data2DChartPieController extends BaseData2DChartController {
         }
     }
 
+    @Override
+    public boolean keyEventsFilter(KeyEvent event) {
+        if (super.keyEventsFilter(event)) {
+            return true;
+        }
+        return chartController.keyEventsFilter(event);
+    }
+
     /*
         static
      */
-    public static Data2DChartPieController open(ControlData2DLoad tableController) {
+    public static Data2DChartPieController open(BaseData2DLoadController tableController) {
         try {
             Data2DChartPieController controller = (Data2DChartPieController) WindowTools.branchStage(
                     tableController, Fxmls.Data2DChartPieFxml);

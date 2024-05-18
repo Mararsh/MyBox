@@ -9,24 +9,45 @@
   <h1>MyBox: Set of Easy Tools</h1>
   <p>This is compute application to provide simple and easy functions. It’s free and open sources.</p>
   <h2>What’s New</h2>
-  <p>2024-2-9 v6.8</p>
+  <p>2024-5-18 v6.8.1</p>
   <ul>
+   <li>Add: 
+    <ul>
+     <li>Write watermarks in PDF files in batch.</li>
+     <li>New data column type: Editable enumeration.</li>
+     <li>Documents: Test Environment, Base Functions’ Verification List, Compatibility Testing, Detailed Testing.</li>
+    </ul></li>
    <li>Improve: 
     <ul>
-     <li>New shortcut CTRL/ALT+0: set/disable “Always on top”. Not work for popup window.</li>
-     <li>New shortcut CTRL/ALT+9: Snapshot current window.</li>
-     <li>Save and manage “Image Scope” in tree.</li>
-     <li>Simplify interface of editing html.</li>
+     <li>Redesign and implement “Data manufacture”. The base framework is: reader + operate + writers.</li>
+     <li>Options: Verify types when edit data; Verify types when save data.</li>
+     <li>Row expression: Set variable values by bindings. Placeholders are handled as variable names instead of variable values.</li>
+     <li>Row filter: When expression is not empty and its value is not true nor false, the row is not taken.</li>
+     <li>Data manufacture: Fix and enhance “Set Values”.</li>
+     <li>Simplify interface of “Data manufacture”.</li>
+     <li>Transparent can be set when customized colors.</li>
+     <li>“rtbufsize” and rotation can be set for ffmpeg.</li>
+     <li>Notes: Node can be any html which can include head.</li>
     </ul></li>
    <li>Solved problems: 
     <ul>
-     <li>Manage colors: “Copy colors” fails to work.</li>
-     <li>Edit html: Contents are lost when switch from “texts” mode.</li>
-     <li>Button “play” does not work in interface of “View PPT”.</li>
+     <li>Fail to switch language when default locale is not Chinese.</li>
+     <li>Row expression is messed when value is string of multiple lines.</li>
+     <li>In data manufacture, “Set Values” should not clear data rows when expression is invalid.</li>
+     <li>Errors popped when edit data row.</li>
+     <li>Icon is displayed as blank.</li>
+     <li>“Era” is converted wrongly when import data in database table.</li>
+     <li>Options of “Target file” in some interfaces do not work.</li>
+     <li>Transparent background is set wrongly when draw shape in SVG.</li>
+     <li>Options of “View” do not work for SVG.</li>
+     <li>Transparent does not work for colors in html.</li>
+     <li>Rename Files: Option “Fill zero” does not work when files number in table is not counted.</li>
+     <li>Directory Synchronize: Fail when select option “Delete files/directories existed In target path but not existed in source path”.</li>
+     <li>File Decompress Unarchive: Empty file names in selection list.</li>
+     <li>File Redundancy: Empty file names in result list.</li>
     </ul></li>
   </ul>
-  <p>Happy Chinese Loong Year!</p>
-  <p><a target=_blank href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.8">Closed requirements/bugs in this version</a></p>
+  <p><a target=_blank href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.8.1">Closed requirements/bugs in this version</a></p>
   <h2>Notice</h2>
   <p>Without enough testings, MyBox has low reliability and bad stability. When use MyBox, following may happen:</p>
   <ul>
@@ -424,8 +445,8 @@
    <tbody>
     <tr>
      <td>Development Logs</td>
-     <td>6.8</td>
-     <td>2024-2-9</td>
+     <td>6.8.1</td>
+     <td>2024-5-18</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_devLogs_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_devLogs_zh.html">html</a></td>
     </tr>
@@ -438,8 +459,8 @@
     </tr>
     <tr>
      <td>Functions list</td>
-     <td>6.8</td>
-     <td>2024-2-9</td>
+     <td>6.8.1</td>
+     <td>2024-5-18</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_functions_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_functions_zh.html">html</a></td>
     </tr>
@@ -459,8 +480,8 @@
     </tr>
     <tr>
      <td>User Guide - Overview</td>
-     <td>6.8</td>
-     <td>2024-2-9</td>
+     <td>6.8.1</td>
+     <td>2024-5-18</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/guide/en/MyBox-Overview-en/MyBox-Overview-en.html">html</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-en.pdf">PDF</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-en.odt">odt</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/guide/zh/MyBox-Overview-zh/MyBox-Overview-zh.html">html</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-zh.pdf">PDF</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-zh.odt">odt</a></td>
     </tr>
@@ -514,30 +535,58 @@
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/guide/zh/MyBox-DevTools-zh/MyBox-DevTools-zh.html">html</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-DevTools-zh.pdf">PDF</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-DevTools-zh.odt">odt</a></td>
     </tr>
     <tr>
+     <td>Software Testing - Test Environment</td>
+     <td>6.8.1</td>
+     <td>2024-5-18</td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_TestEnvironment_en.html">html</a></td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_TestEnvironment_zh.html">html</a></td>
+    </tr>
+    <tr>
+     <td>Software Testing - Base Functions’ Verification List</td>
+     <td>6.8.1</td>
+     <td>2024-5-18</td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_BaseVerificationList_en.html">html</a></td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_BaseVerificationList_zh.html">html</a></td>
+    </tr>
+    <tr>
+     <td>Software Testing - Compatibility Testing</td>
+     <td>6.8.1</td>
+     <td>2024-5-18</td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_CompatibilityTesting_en.html">html</a></td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_CompatibilityTesting_zh.html">html</a></td>
+    </tr>
+    <tr>
+     <td>Software Testing - Detailed Testing</td>
+     <td>6.8.1</td>
+     <td>2024-5-18</td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_DetailedTesting_en.html">html</a></td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_DetailedTesting_zh.html">html</a></td>
+    </tr>
+    <tr>
      <td>Tips in Interfaces</td>
-     <td>6.8</td>
-     <td>2024-2-9</td>
+     <td>6.8.1</td>
+     <td>2024-5-18</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_interface_tips_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_interface_tips_zh.html">html</a></td>
     </tr>
     <tr>
      <td>About - Tree Information</td>
-     <td>6.8</td>
-     <td>2024-2-9</td>
+     <td>6.8.1</td>
+     <td>2024-5-18</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_about_tree_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_about_tree_zh.html">html</a></td>
     </tr>
     <tr>
      <td>About - Data in Two-dimensional Storage Structure</td>
-     <td>6.7.3</td>
-     <td>2023-5-22</td>
+     <td>6.8.1</td>
+     <td>2024-5-18</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_about_data2d_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_about_data2d_zh.html">html</a></td>
     </tr>
     <tr>
      <td>About - row expression and row filter</td>
-     <td>6.7.2</td>
-     <td>2023-4-16</td>
+     <td>6.8.1</td>
+     <td>2024-5-18</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_about_row_expression_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_about_row_expression_zh.html">html</a></td>
     </tr>

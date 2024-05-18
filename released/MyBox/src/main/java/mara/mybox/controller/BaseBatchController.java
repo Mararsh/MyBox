@@ -27,6 +27,7 @@ import mara.mybox.data.FileInformation;
 import mara.mybox.data.FileInformation.FileSelectorType;
 import mara.mybox.data.ImageItem;
 import mara.mybox.data.ProcessParameters;
+import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
@@ -55,7 +56,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
     protected TableView<T> tableView;
     protected List<File> sourceFiles;
     protected List<String> filesPassword;
-    protected boolean sourceCheckSubdir, createDirectories, allowPaused, browseTargets, viewTargetPath;
+    protected boolean sourceCheckSubdir, createDirectories, allowPaused, viewTargetPath;
     protected boolean isPreview, paused;
     protected long dirFilesNumber, dirFilesHandled, totalFilesHandled = 0, totalItemsHandled = 0;
     protected long fileSelectorSize, fileSelectorTime;
@@ -84,7 +85,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
 
     public BaseBatchController() {
         targetSubdirKey = "targetSubdirKey";
-        browseTargets = viewTargetPath = false;
+        viewTargetPath = false;
         allowPaused = false;
 
         sourceExtensionFilter = FileFilters.AllExtensionFilter;
@@ -111,7 +112,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
     }
 
     @Override
-    public void afterTask() {
+    public void afterTask(boolean ok) {
         showCost();
         tableView.refresh();
         recordTargetFiles();
@@ -121,7 +122,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
         if (!isPreview && openCheck != null && !openCheck.isSelected()) {
             return;
         }
-        if (targetFilesCount > 0 && viewTargetPath) {
+        if (viewTargetPath && targetFilesCount > 0) {
             openTarget();
         } else if (targetFiles == null || targetFilesCount == 1) {
             if (lastTargetName == null || !new File(lastTargetName).exists()) {
@@ -130,7 +131,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
                 viewTarget(new File(lastTargetName));
             }
         } else if (targetFilesCount > 0) {
-            if (browseTargets) {
+            if (VisitHistory.isImageType(TargetFileType)) {
                 browseAction();
             } else {
                 openTarget();
@@ -451,14 +452,21 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
         fileSelectorTime = tableController.fileSelectorTime;
 
         if (targetFileController != null) {
-            targetFile = targetFileController.file();
-            if (targetFile != null) {
-                lastTargetName = targetFile.getAbsolutePath();
-                targetPath = targetFile.getParentFile();
+            targetFile = makeTargetFile();
+            if (targetFile == null) {
+                popError(message("InvalidParameter") + ": " + message("TargetFile"));
+                return false;
             }
+            lastTargetName = targetFile.getAbsolutePath();
+            targetPath = targetFile.getParentFile();
         }
         if (targetPathController != null) {
-            targetPath = targetPathController.file();
+            targetPath = targetPathController.pickFile();
+            if ((targetPath == null || !targetPath.exists())
+                    && targetPathController.isMustExist()) {
+                popError(message("InvalidParameter") + ": " + message("TargetPath"));
+                return false;
+            }
         }
         if (targetPath != null) {
             actualParameters.targetRootPath = targetPath.getAbsolutePath();
@@ -627,7 +635,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
             protected void finalAction() {
                 super.finalAction();
                 tableController.markFileHandling(-1);
-                afterTask();
+                closeTask(ok);
             }
 
         };
@@ -724,7 +732,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
             sourceFilesSelector = new String[0];
         }
         String fname = file.getName();
-        String suffix = FileNameTools.suffix(fname);
+        String suffix = FileNameTools.ext(fname);
         switch (fileSelectorType) {
 
             case ExtensionEuqalAny:
@@ -1111,7 +1119,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
 
             }
         });
-
+        Platform.requestNextPulse();
     }
 
     public double countAverageTime(long cost) {

@@ -30,12 +30,12 @@ import org.w3c.dom.Node;
  * @License Apache License Version 2.0
  */
 public class ControlSvgViewOptions extends BaseController {
-
-    protected Document doc;
+    
+    protected Document srcDoc, viewDoc;
     protected Node focusedNode;
     protected float width, height, bgOpacity;
     protected Rectangle viewBox;
-
+    
     @FXML
     protected TextField widthInput, heightInput, viewBoxInput;
     @FXML
@@ -48,12 +48,12 @@ public class ControlSvgViewOptions extends BaseController {
     protected VBox bgBox;
     @FXML
     protected FlowPane colorPane;
-
+    
     @Override
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-
+            
             NodeStyleTools.setTooltip(widthInput, new Tooltip(message("BlankInvalidtoUseDefault")));
             NodeStyleTools.setTooltip(heightInput, new Tooltip(message("BlankInvalidtoUseDefault")));
             NodeStyleTools.setTooltip(viewBoxInput, new Tooltip(message("BlankInvalidtoUseDefault")));
@@ -62,16 +62,14 @@ public class ControlSvgViewOptions extends BaseController {
             MyBoxLog.debug(e);
         }
     }
-
+    
     @Override
     public void initControls() {
         try {
             super.initControls();
-
-            bgColorController.init(this, baseName + "BackgroundColor", Color.TRANSPARENT);
-
-            bgColorCheck.setSelected(UserConfig.getBoolean(baseName + "ShowBackgroundColor", false));
-
+            
+            bgColorController.init(this, baseName + "BackgroundColor", Color.WHITE);
+            
             bgOpacity = UserConfig.getFloat(baseName + "BackgroundOpacity", 0.3f);
             if (bgOpacity < 0) {
                 bgOpacity = 0.3f;
@@ -90,41 +88,44 @@ public class ControlSvgViewOptions extends BaseController {
             MyBoxLog.error(e);
         }
     }
-
+    
     public void loadExcept(FxTask currentTask, Document srcDoc, Node except) {
         load(currentTask, srcDoc, null, except);
     }
-
+    
     public void loadFocus(FxTask currentTask, Document srcDoc, Node focus) {
         load(currentTask, srcDoc, focus, null);
     }
-
-    public void load(FxTask currentTask, Document srcDoc, Node focus, Node except) {
+    
+    public void load(FxTask currentTask, Document doc, Node focus, Node except) {
         try {
-            if (srcDoc == null) {
-                doc = null;
+            if (srcDoc != doc) {
+                initOptions(doc);
+            }
+            if (doc == null) {
                 return;
             }
-            doc = (Document) srcDoc.cloneNode(true);
+            viewDoc = (Document) doc.cloneNode(true);
             focusedNode = focus;
             if (currentTask != null && !currentTask.isWorking()) {
                 return;
             }
             if (except != null) {
-                XmlTools.remove(doc, except);
+                XmlTools.remove(viewDoc, except);
             }
-            initOptions();
+            
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
-
-    public void initOptions() {
+    
+    public void initOptions(Document doc) {
         try {
-            if (doc == null) {
+            srcDoc = doc;
+            if (srcDoc == null) {
                 return;
             }
-            SVG svg = new SVG(doc);
+            SVG svg = new SVG(srcDoc);
             width = svg.getWidth();
             height = svg.getHeight();
             viewBox = svg.getViewBox();
@@ -149,11 +150,12 @@ public class ControlSvgViewOptions extends BaseController {
             } else {
                 heightInput.clear();
             }
+            bgColorCheck.setSelected(false);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
-
+    
     public boolean pickValues() {
         width = -1;
         try {
@@ -163,7 +165,7 @@ public class ControlSvgViewOptions extends BaseController {
             }
         } catch (Exception e) {
         }
-
+        
         height = -1;
         try {
             float v = Float.parseFloat(heightInput.getText());
@@ -173,16 +175,15 @@ public class ControlSvgViewOptions extends BaseController {
         } catch (Exception e) {
         }
         viewBox = SvgTools.viewBox(viewBoxInput.getText());
-
+        
         if (checkOpacity()) {
             UserConfig.setFloat(baseName + "BackgroundOpacity", bgOpacity);
-            UserConfig.setBoolean(baseName + "ShowBackgroundColor", bgColorCheck.isSelected());
             return true;
         } else {
             return false;
         }
     }
-
+    
     public boolean checkOpacity() {
         float v = -1;
         try {
@@ -199,18 +200,18 @@ public class ControlSvgViewOptions extends BaseController {
             return false;
         }
     }
-
+    
     @FXML
     public void defaultSize() {
-        initOptions();
+        initOptions(srcDoc);
     }
-
+    
     public Document toSVG(FxTask currentTask) {
         try {
-            if (doc == null) {
+            if (viewDoc == null) {
                 return null;
             }
-            Document svgDoc = SvgTools.focus(currentTask, doc, focusedNode, bgOpacity);
+            Document svgDoc = SvgTools.focus(currentTask, viewDoc, focusedNode, bgOpacity);
             if (svgDoc == null || (currentTask != null && !currentTask.isWorking())) {
                 return null;
             }
@@ -242,17 +243,17 @@ public class ControlSvgViewOptions extends BaseController {
             return null;
         }
     }
-
+    
     public String toXML(FxTask currentTask) {
         return XmlTools.transform(toSVG(currentTask));
     }
-
+    
     public File toImage(FxTask currentTask) {
         return SvgTools.docToImage(currentTask, this, toSVG(currentTask), width, height, viewBox);
     }
-
+    
     public File toPDF(FxTask currentTask) {
         return SvgTools.docToPDF(currentTask, this, toSVG(currentTask), width, height, viewBox);
     }
-
+    
 }

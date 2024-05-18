@@ -17,7 +17,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" spacing="5.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlNewDataTable">
+<VBox fx:id="thisPane" spacing="5.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlNewDataTable">
     <children>
         <HBox alignment="CENTER_LEFT" spacing="2.0">
             <children>
@@ -56,5 +56,6 @@ License:    Apache License Version 2.0
                 </Button>
             </children>
         </HBox>
+      <Label minHeight="-Infinity" text="%NewTableComments" wrapText="true" />
     </children>
 </VBox>

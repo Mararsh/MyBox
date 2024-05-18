@@ -74,8 +74,7 @@ public class FFmpegMergeImagesController extends BaseBatchFFmpegController {
 
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(
-                    targetFileController.valid.not()
-                            .or(Bindings.isEmpty(tableView.getItems()))
+                    Bindings.isEmpty(tableView.getItems())
                             .or(ffmpegOptionsController.extensionInput.styleProperty().isEqualTo(UserConfig.badStyle()))
             );
 
@@ -93,13 +92,14 @@ public class FFmpegMergeImagesController extends BaseBatchFFmpegController {
         if (v == null || v.isBlank()) {
             targetFileController.input(FileTmpTools.generateFile(ext).getAbsolutePath());
         } else if (!v.endsWith("." + ext)) {
-            targetFileController.input(FileNameTools.replaceSuffix(v, ext));
+            targetFileController.input(FileNameTools.replaceExt(v, ext));
         }
     }
 
     @Override
     public void doCurrentProcess() {
         try {
+            targetFile = targetFileController.pickFile();
             if (currentParameters == null || tableData.isEmpty() || targetFile == null) {
                 popError(message("InvalidParameters"));
                 return;
@@ -112,7 +112,7 @@ public class FFmpegMergeImagesController extends BaseBatchFFmpegController {
             }
             String ext = ffmpegOptionsController.extensionInput.getText().trim();
             if (ext.isEmpty() || message("OriginalFormat").equals(ext)) {
-                ext = FileNameTools.suffix(targetFile.getName());
+                ext = FileNameTools.ext(targetFile.getName());
             }
             final File videoFile = makeTargetFile(FileNameTools.prefix(targetFile.getName()),
                     "." + ext, targetFile.getParentFile());
@@ -166,7 +166,7 @@ public class FFmpegMergeImagesController extends BaseBatchFFmpegController {
                 @Override
                 protected void finalAction() {
                     super.finalAction();
-                    afterTask();
+                    closeTask(ok);
                 }
 
             };

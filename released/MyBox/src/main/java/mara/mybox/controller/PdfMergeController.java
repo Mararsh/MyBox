@@ -44,10 +44,7 @@ public class PdfMergeController extends BaseBatchPdfController {
             super.initControls();
 
             startButton.disableProperty().unbind();
-            startButton.disableProperty().bind(
-                    Bindings.isEmpty(tableView.getItems())
-                            .or(targetFileController.valid.not())
-            );
+            startButton.disableProperty().bind(Bindings.isEmpty(tableView.getItems()));
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -111,7 +108,7 @@ public class PdfMergeController extends BaseBatchPdfController {
     }
 
     @Override
-    public void afterTask() {
+    public void afterTask(boolean ok) {
         try {
             if (targetDoc != null) {
                 targetDoc.save(targetFile);
@@ -135,7 +132,7 @@ public class PdfMergeController extends BaseBatchPdfController {
             MyBoxLog.error(e);
         }
         targetDoc = null;
-        super.afterTask();
+        super.afterTask(ok);
     }
 
 }

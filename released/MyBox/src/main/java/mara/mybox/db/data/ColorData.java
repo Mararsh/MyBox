@@ -14,6 +14,7 @@ import mara.mybox.color.SRGB;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
+import static mara.mybox.fximage.FxColorTools.color2css;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FloatTools;
@@ -354,9 +355,12 @@ public class ColorData extends BaseData {
         StringTable table = new StringTable(names, message("Color"));
         List<String> row = new ArrayList<>();
         row.add(message("Color"));
-        row.add("<DIV style=\"width: 50px;  background-color:" + getRgb() + "; \">&nbsp;&nbsp;&nbsp;</DIV>");
-        row.add("<DIV style=\"width: 50px;  background-color:" + invertData.getRgb() + "; \">&nbsp;&nbsp;&nbsp;</DIV>");
-        row.add("<DIV style=\"width: 50px;  background-color:" + complementaryData.getRgb() + "; \">&nbsp;&nbsp;&nbsp;</DIV>");
+        row.add("<DIV style=\"width: 50px;  background-color:"
+                + color2css(getColor()) + "; \">&nbsp;&nbsp;&nbsp;</DIV>");
+        row.add("<DIV style=\"width: 50px;  background-color:"
+                + color2css(invertData.getColor()) + "; \">&nbsp;&nbsp;&nbsp;</DIV>");
+        row.add("<DIV style=\"width: 50px;  background-color:"
+                + color2css(complementaryData.getColor()) + "; \">&nbsp;&nbsp;&nbsp;</DIV>");
         table.add(row);
         row = new ArrayList<>();
         row.addAll(Arrays.asList(message("Name"), getColorName() + "", invertData.getColorName() + "", complementaryData.getColorName() + ""));

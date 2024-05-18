@@ -37,7 +37,7 @@ public class RemotePathGetController extends RemotePathHandleFilesController {
         try {
             super.setParameters(manageController);
 
-            targetPathInputController.baseName(baseName).initFile();
+            targetPathInputController.parent(this);
 
             copyMtimeCheck.setSelected(UserConfig.getBoolean(baseName + "CopyMtime", true));
             copyMtimeCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -59,7 +59,7 @@ public class RemotePathGetController extends RemotePathHandleFilesController {
             if (!super.checkParameters()) {
                 return false;
             }
-            targetPath = targetPathInputController.file();
+            targetPath = targetPathInputController.pickFile();
             return targetPath != null && targetPath.exists();
         } catch (Exception e) {
             showLogs(e.toString());
@@ -127,7 +127,7 @@ public class RemotePathGetController extends RemotePathHandleFilesController {
                 } else {
                     ok = downFile(currentTask, child, attrs, target);
                 }
-                if (!ok && !continueCheck.isSelected()) {
+                if (!ok && !errorContinueCheck.isSelected()) {
                     if (currentTask != null) {
                         currentTask.cancel();
                     }
@@ -142,8 +142,8 @@ public class RemotePathGetController extends RemotePathHandleFilesController {
     }
 
     @Override
-    public void afterTask() {
-        super.afterTask();
+    public void afterTask(boolean ok) {
+        super.afterTask(ok);
         if (openCheck.isSelected()) {
             openTarget();
         }

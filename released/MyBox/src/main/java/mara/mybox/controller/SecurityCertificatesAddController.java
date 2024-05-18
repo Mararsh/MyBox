@@ -128,9 +128,6 @@ public class SecurityCertificatesAddController extends BaseChildController {
                         certController = SecurityCertificatesController.oneOpen(ksFile);
                     }
                     certController.loadAll(alias);
-                    if (closeAfterCheck.isSelected()) {
-                        closeStage();
-                    }
                     if (needBackup) {
                         if (backup != null && backup.getBackup() != null) {
                             popInformation(message("SavedAndBacked"));
@@ -140,6 +137,9 @@ public class SecurityCertificatesAddController extends BaseChildController {
                         }
                     } else {
                         popSuccessful();
+                    }
+                    if (closeAfterCheck.isSelected()) {
+                        close();
                     }
                 } else {
                     popError(error);

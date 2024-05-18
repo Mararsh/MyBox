@@ -84,14 +84,19 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
     @Override
     public void updateStatus() {
         super.updateStatus();
-        if (dataSizeLabel != null) {
-            int tsize = tableData == null ? 0 : tableData.size();
-            long start = startRowOfCurrentPage + 1;
-            long end = start + tsize - 1;
-            dataSizeLabel.setText(message("Rows") + ": "
-                    + "[" + start + "-" + end + "]" + tsize
-                    + (dataSize > 0 ? "/" + dataSize : ""));
+        setDataSizeLabel();
+    }
+
+    public void setDataSizeLabel() {
+        if (dataSizeLabel == null) {
+            return;
         }
+        int tsize = tableData == null ? 0 : tableData.size();
+        long start = startRowOfCurrentPage + 1;
+        long end = start + tsize - 1;
+        dataSizeLabel.setText(message("Rows") + ": "
+                + "[" + start + "-" + end + "]" + tsize
+                + (dataSize > 0 ? "/" + dataSize : ""));
     }
 
     public boolean checkBeforeLoadingTableData() {
@@ -106,8 +111,8 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
         if (!checkBeforeLoadingTableData()) {
             return;
         }
-        if (task != null && !task.isQuit()) {
-            return;
+        if (task != null) {
+            task.cancel();
         }
         task = new FxSingletonTask<Void>(this) {
             private List<P> data;
@@ -203,11 +208,11 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
         pagesNumber = 1;
         dataSize = 0;
         startRowOfCurrentPage = 0;
-        dataSizeLoaded = false;
+        dataSizeLoaded = true;
         tableChanged(changed);
-        checkSelected();
         editNull();
         viewNull();
+        setPagination();
     }
 
     public boolean isDataSizeLoaded() {
@@ -239,6 +244,7 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
         if (index < 0) {
             index = tableData.size();
         }
+        isSettingValues = true;
         tableData.addAll(index, list);
         tableView.scrollTo(index - 5);
         isSettingValues = false;
@@ -498,7 +504,7 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
     }
 
     protected void afterClear() {
-        resetView(true);
+        resetView(false);
     }
 
     @FXML
@@ -506,7 +512,7 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
     public void deleteRowsAction() {
         List<P> selected = selectedItems();
         if (selected == null || selected.isEmpty()) {
-            deleteAllRows();
+            popError(message("SelectToHandle"));
             return;
         }
         isSettingValues = true;

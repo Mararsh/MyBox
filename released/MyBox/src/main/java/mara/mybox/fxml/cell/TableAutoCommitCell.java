@@ -30,6 +30,7 @@ import mara.mybox.fxml.converter.FloatStringFromatConverter;
 import mara.mybox.fxml.converter.IntegerStringFromatConverter;
 import mara.mybox.fxml.converter.LongStringFromatConverter;
 import mara.mybox.fxml.converter.ShortStringFromatConverter;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.TimeFormats;
@@ -170,6 +171,7 @@ public class TableAutoCommitCell<S, T> extends TextFieldTableCell<S, T> {
             editor.textProperty().addListener(editListener);
             editor.setOnKeyReleased(keyReleasedHandler);
             editor.setStyle(null);
+            NodeStyleTools.setTooltip(editor, message("EditCellComments"));
         } catch (Exception e) {
             MyBoxLog.console(e);
         }

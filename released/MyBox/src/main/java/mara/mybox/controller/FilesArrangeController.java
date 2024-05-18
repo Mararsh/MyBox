@@ -42,7 +42,6 @@ public class FilesArrangeController extends BaseBatchFileController {
     protected String lastFileName;
     private boolean startHandle, isCopy, byModifyTime;
     private int dirType, replaceType;
-    private long count;
     protected String renameAppdex = "-m";
     protected String strFailedCopy, strCreatedSuccessfully, strCopySuccessfully, strDeleteSuccessfully, strFailedDelete;
     protected FileSynchronizeAttributes copyAttr;
@@ -86,12 +85,11 @@ public class FilesArrangeController extends BaseBatchFileController {
             initDirTab();
             initConditionTab();
 
-            targetPathInputController.baseName(baseName).initFile();
+            targetPathInputController.parent(this);
 
             startButton.disableProperty().bind(
                     Bindings.isEmpty(sourcePathInput.textProperty())
                             .or(sourcePathInput.styleProperty().isEqualTo(UserConfig.badStyle()))
-                            .or(targetPathInputController.valid.not())
             );
 
             operationBarController.openTargetButton.disableProperty().bind(
@@ -244,7 +242,7 @@ public class FilesArrangeController extends BaseBatchFileController {
             if (!paused || lastFileName == null) {
                 copyAttr = new FileSynchronizeAttributes();
 
-                targetPath = targetPathInputController.file;
+                targetPath = targetPathInputController.pickFile();
                 if (!targetPath.exists()) {
                     targetPath.mkdirs();
                     updateLogs(strCreatedSuccessfully + targetPath.getAbsolutePath(), true);
@@ -320,7 +318,7 @@ public class FilesArrangeController extends BaseBatchFileController {
             @Override
             protected void finalAction() {
                 super.finalAction();
-                afterTask();
+                closeTask(ok);
             }
 
         };
@@ -443,7 +441,7 @@ public class FilesArrangeController extends BaseBatchFileController {
     }
 
     @Override
-    public void afterTask() {
+    public void afterTask(boolean ok) {
         recordTargetFiles();
         updateLogs(message("StartTime") + ": " + DateTools.datetimeToString(processStartTime) + "   "
                 + message("Cost") + ": " + DateTools.datetimeMsDuration(new Date(), processStartTime), false, true);
@@ -473,7 +471,7 @@ public class FilesArrangeController extends BaseBatchFileController {
     @Override
     public void openTarget() {
         try {
-            browseURI(targetPathInputController.file.toURI());
+            browseURI(targetPathInputController.pickFile().toURI());
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -631,7 +629,7 @@ public class FilesArrangeController extends BaseBatchFileController {
         if (!file.exists()) {
             return file;
         }
-        String newName = FileNameTools.prefix(file.getName()) + renameAppdex + "." + FileNameTools.suffix(file.getName());
+        String newName = FileNameTools.prefix(file.getName()) + renameAppdex + "." + FileNameTools.ext(file.getName());
         File newFile = new File(file.getParent() + File.separator + newName);
         if (!newFile.exists()) {
             return newFile;

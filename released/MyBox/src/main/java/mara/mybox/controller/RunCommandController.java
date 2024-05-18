@@ -123,7 +123,7 @@ public class RunCommandController extends HtmlPopController {
             String html = HtmlWriteTools.html(null, charset.name(), null, "<body>" + outputs + "</body>");
             loadContents(html);
         });
-
+        Platform.requestNextPulse();
     }
 
     protected void setStatus(String msg) {
@@ -131,6 +131,7 @@ public class RunCommandController extends HtmlPopController {
             String html = HtmlWriteTools.html(null, charset.name(), null, "<body>" + outputs + "<br><hr>\n" + msg + "</body>");
             loadContents(html);
         });
+        Platform.requestNextPulse();
     }
 
     @FXML

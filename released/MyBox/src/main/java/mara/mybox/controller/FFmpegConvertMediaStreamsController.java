@@ -81,7 +81,7 @@ public class FFmpegConvertMediaStreamsController extends FFmpegConvertMediaFiles
             @Override
             protected void finalAction() {
                 super.finalAction();
-                afterTask();
+                closeTask(ok);
             }
 
         };
@@ -103,7 +103,7 @@ public class FFmpegConvertMediaStreamsController extends FFmpegConvertMediaFiles
             File file = new File(address);
             if (file.exists()) {
                 prefix = FileNameTools.prefix(file.getName());
-                suffix = FileNameTools.suffix(file.getName());
+                suffix = FileNameTools.ext(file.getName());
             } else {
                 int posSlash = address.lastIndexOf('/');
 

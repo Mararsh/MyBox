@@ -8,7 +8,6 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.AppValues;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
-import static mara.mybox.value.UserConfig.imageScale;
 
 /**
  * @Author Mara
@@ -20,7 +19,8 @@ public class DoubleTools {
     public static NumberFormat numberFormat;
 
     public static boolean invalidDouble(double value) {
-        return Double.isNaN(value) || Double.isInfinite(value)
+        return Double.isNaN(value)
+                || Double.isInfinite(value)
                 || value == AppValues.InvalidDouble;
     }
 
@@ -121,7 +121,7 @@ public class DoubleTools {
     }
 
     public static int compare(String s1, String s2, boolean desc) {
-        return compare(toDouble(s1, InvalidAs.Blank), toDouble(s2, InvalidAs.Blank), desc);
+        return compare(toDouble(s1, InvalidAs.Empty), toDouble(s2, InvalidAs.Empty), desc);
     }
 
     // invalid values are counted as smaller

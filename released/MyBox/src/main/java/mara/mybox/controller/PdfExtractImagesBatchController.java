@@ -7,7 +7,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.FileNameTools;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDResources;
@@ -22,8 +22,7 @@ import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 public class PdfExtractImagesBatchController extends BaseBatchPdfController {
 
     public PdfExtractImagesBatchController() {
-        baseTitle = Languages.message("PdfExtractImagesBatch");
-        browseTargets = true;
+        baseTitle = message("PdfExtractImagesBatch");
     }
 
     @Override

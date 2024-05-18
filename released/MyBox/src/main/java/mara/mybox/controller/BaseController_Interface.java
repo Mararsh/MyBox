@@ -105,23 +105,11 @@ public abstract class BaseController_Interface extends BaseController_Files {
             }
 
             if (targetFileController != null) {
-                targetFileController.notify.addListener(new ChangeListener<Boolean>() {
-                    @Override
-                    public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                        targetFile = targetFileController.file();
-                    }
-                });
-                targetFileController.baseName(interfaceName).savedName(interfaceName + "TargetFile").type(TargetFileType).initFile();
+                targetFileController.type(TargetFileType).parent((BaseController) this);
             }
 
             if (targetPathController != null) {
-                targetPathController.notify.addListener(new ChangeListener<Boolean>() {
-                    @Override
-                    public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                        targetPath = targetPathController.file();
-                    }
-                });
-                targetPathController.baseName(interfaceName).savedName(interfaceName + "TargetPath").type(TargetPathType).initFile();
+                targetPathController.type(TargetPathType).parent((BaseController) this);
             }
 
             if (operationBarController != null) {
@@ -140,8 +128,8 @@ public abstract class BaseController_Interface extends BaseController_Files {
             }
 
             saveAsType = BaseController.SaveAsType.Open;
-            if (saveAsGroup != null && saveOpenRadio != null) {
-                String v = UserConfig.getString(interfaceName + "SaveAsType", BaseController.SaveAsType.Open.name());
+            if (saveAsGroup != null && saveLoadRadio != null) {
+                String v = UserConfig.getString(interfaceName + "SaveAsType", BaseController.SaveAsType.Edit.name());
                 for (BaseController.SaveAsType s : BaseController.SaveAsType.values()) {
                     if (v.equals(s.name())) {
                         saveAsType = s;
@@ -217,6 +205,27 @@ public abstract class BaseController_Interface extends BaseController_Files {
             }
 
             initMainArea();
+
+            if (onTopCheck != null) {
+                onTopCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                        if (isSettingValues || myStage == null) {
+                            return;
+                        }
+                        setAlwaysTop(onTopCheck.isSelected(), true);
+                    }
+                });
+            }
+            if (closeAfterCheck != null) {
+                closeAfterCheck.setSelected(UserConfig.getBoolean(interfaceName + "SaveClose", false));
+                closeAfterCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                        UserConfig.setBoolean(interfaceName + "SaveClose", closeAfterCheck.isSelected());
+                    }
+                });
+            }
 
             if (tipsView != null) {
                 tipsView.setPickOnBounds(true);
@@ -433,9 +442,17 @@ public abstract class BaseController_Interface extends BaseController_Files {
                                 rightPane.setVvalue(0);
                             }
                         });
+                        Platform.requestNextPulse();
                     }
                 }, 1000);
             }
+
+            if (onTopCheck != null) {
+                isSettingValues = true;
+                onTopCheck.setSelected(myStage.isAlwaysOnTop());
+                isSettingValues = false;
+            }
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -558,8 +575,29 @@ public abstract class BaseController_Interface extends BaseController_Files {
                         getMyStage().setIconified(false);
                         myStage.toFront();
                     });
+                    Platform.requestNextPulse();
                 }
             }, 500);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    public void setAlwaysTop(boolean onTop, boolean info) {
+        try {
+            myStage = getMyStage();
+            if (myStage == null || !myStage.isShowing()) {
+                return;
+            }
+            myStage.setAlwaysOnTop(onTop);
+            if (info) {
+                popInformation(onTop ? message("AlwayOnTop") : message("DisableAlwayOnTop"));
+            }
+            if (onTopCheck != null) {
+                isSettingValues = true;
+                onTopCheck.setSelected(onTop);
+                isSettingValues = false;
+            }
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -584,6 +622,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
                 LocateTools.mouseCenter(myStage);
                 closePopup();
             });
+            Platform.requestNextPulse();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

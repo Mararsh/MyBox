@@ -67,10 +67,6 @@ import static mara.mybox.value.Languages.message;
 import org.apache.pdfbox.io.MemoryUsageSetting;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDDocumentInformation;
-import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.interactive.action.PDActionGoTo;
-import org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination.PDPageXYZDestination;
 
 /**
  * @Author Mara
@@ -1128,7 +1124,7 @@ public class WeiboSnapRunController extends BaseController {
                         if (fname.isEmpty()) {
                             continue;
                         }
-                        suffix = FileNameTools.suffix(pix[i]);
+                        suffix = FileNameTools.ext(pix[i]);
                         if (suffix.isEmpty()) {
                             suffix = "jpg";
                             fname += "." + suffix;
@@ -1422,22 +1418,7 @@ public class WeiboSnapRunController extends BaseController {
                     mergePdf.mergeDocuments(memSettings);
 
                     try (PDDocument doc = PDDocument.load(monthFile, memSettings)) {
-                        PDDocumentInformation info = new PDDocumentInformation();
-                        info.setCreationDate(Calendar.getInstance());
-                        info.setModificationDate(Calendar.getInstance());
-                        info.setProducer("MyBox v" + AppValues.AppVersion);
-                        info.setAuthor(parameters.getAuthor());
-                        doc.setDocumentInformation(info);
-                        doc.setVersion(1.0f);
-
-                        PDPage page = doc.getPage(0);
-                        PDPageXYZDestination dest = new PDPageXYZDestination();
-                        dest.setPage(page);
-                        dest.setZoom(parameters.getPdfScale() / 100.0f);
-                        dest.setTop((int) page.getCropBox().getHeight());
-                        PDActionGoTo action = new PDActionGoTo();
-                        action.setDestination(dest);
-                        doc.getDocumentCatalog().setOpenAction(action);
+                        PdfTools.setAttributes(doc, parameters.getAuthor(), parameters.getPdfScale());
 
                         doc.save(monthFile);
                         doc.close();

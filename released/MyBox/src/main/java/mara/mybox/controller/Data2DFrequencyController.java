@@ -5,11 +5,12 @@ import java.util.Iterator;
 import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
-import mara.mybox.data2d.DataFileCSV;
+import mara.mybox.data2d.writer.Data2DWriter;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.NumberTools;
 import mara.mybox.value.Fxmls;
@@ -21,7 +22,7 @@ import org.apache.commons.math3.stat.Frequency;
  * @CreateDate 2022-4-15
  * @License Apache License Version 2.0
  */
-public class Data2DFrequencyController extends BaseData2DTargetsController {
+public class Data2DFrequencyController extends BaseData2DTaskTargetsController {
 
     protected List<String> handledNames;
     protected int freCol;
@@ -38,16 +39,16 @@ public class Data2DFrequencyController extends BaseData2DTargetsController {
     }
 
     @Override
-    public boolean initData() {
+    public boolean checkOptions() {
         try {
-            if (!super.initData()) {
+            if (!super.checkOptions()) {
                 return false;
             }
             freName = colSelector.getSelectionModel().getSelectedItem();
             freCol = data2D.colOrder(freName);
             Data2DColumn freColumn = data2D.column(freCol);
             if (freColumn == null) {
-                outOptionsError(message("SelectToHandle") + ": " + message("Column"));
+                popError(message("SelectToHandle") + ": " + message("Column"));
                 tabPane.getSelectionModel().select(optionsTab);
                 return false;
             }
@@ -76,15 +77,13 @@ public class Data2DFrequencyController extends BaseData2DTargetsController {
     public boolean handleRows() {
         try {
             outputData = new ArrayList<>();
-            filteredRowsIndices = filteredRowsIndices();
+            List<Integer> filteredRowsIndices = sourceController.filteredRowsIndices;
             if (filteredRowsIndices == null || filteredRowsIndices.isEmpty()) {
-                if (task != null) {
-                    task.setError(message("NoData"));
-                }
+                setError(message("NoData"));
                 return false;
             }
             for (int r : filteredRowsIndices) {
-                List<String> tableRow = tableController.tableData.get(r);
+                List<String> tableRow = sourceController.tableData.get(r);
                 String d = tableRow.get(freCol + 1);
                 frequency.addValue(d);
             }
@@ -102,32 +101,20 @@ public class Data2DFrequencyController extends BaseData2DTargetsController {
             frequency.clear();
             return true;
         } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
+            setError(e.toString());
             return false;
         }
     }
 
     @Override
-    public DataFileCSV generatedFile() {
-        return data2D.frequency(targetController.name(), frequency, freName, freCol, scale);
-    }
-
-    @Override
-    public void cleanPane() {
-        try {
-            tableController.statusNotify.removeListener(tableStatusListener);
-            tableStatusListener = null;
-        } catch (Exception e) {
-        }
-        super.cleanPane();
+    public boolean handleAllData(FxTask currentTask, Data2DWriter writer) {
+        return data2D.frequency(currentTask, writer, frequency, outputColumns, freCol, scale);
     }
 
     /*
         static
      */
-    public static Data2DFrequencyController open(ControlData2DLoad tableController) {
+    public static Data2DFrequencyController open(BaseData2DLoadController tableController) {
         try {
             Data2DFrequencyController controller = (Data2DFrequencyController) WindowTools.branchStage(
                     tableController, Fxmls.Data2DFrequencyFxml);

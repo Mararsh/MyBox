@@ -6,15 +6,12 @@ import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
 import javafx.scene.image.Image;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.ScaleTools;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
-import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -29,9 +26,6 @@ public class BaseImageEditController extends BaseShapeController {
     protected ImageScope scope;
     protected boolean needFixSize;
     protected FxTask demoTask;
-
-    @FXML
-    protected CheckBox closeAfterCheck, onTopCheck;
 
     protected void setParameters(BaseImageController parent) {
         try {
@@ -50,23 +44,6 @@ public class BaseImageEditController extends BaseShapeController {
                     }
                 });
             }
-
-            closeAfterCheck.setSelected(UserConfig.getBoolean(baseName + "CloseAfterHandle", false));
-            closeAfterCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
-                    UserConfig.setBoolean(baseName + "CloseAfterHandle", closeAfterCheck.isSelected());
-                }
-            });
-
-            onTopCheck.setSelected(getMyStage().isAlwaysOnTop());
-            onTopCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
-                    myStage.setAlwaysOnTop(onTopCheck.isSelected());
-                    popInformation(myStage.isAlwaysOnTop() ? message("AlwayOnTop") : message("DisableAlwayOnTop"));
-                }
-            });
 
             if (undoButton != null) {
                 undoButton.disableProperty().bind(imageController.undoButton.disableProperty());
@@ -153,7 +130,8 @@ public class BaseImageEditController extends BaseShapeController {
         }
     }
 
-    protected boolean checkOptions() {
+    @Override
+    public boolean checkOptions() {
         if (imageController == null || !imageController.isShowing()) {
             close();
             return false;
@@ -219,8 +197,8 @@ public class BaseImageEditController extends BaseShapeController {
     protected void passHandled(Image passImage) {
         imageController.updateImage(operation, opInfo, scope, passImage);
         if (closeAfterCheck.isSelected()) {
-            close();
             imageController.popSuccessful();
+            close();
         } else {
             toFront();
         }
@@ -302,18 +280,6 @@ public class BaseImageEditController extends BaseShapeController {
     @Override
     public void saveAction() {
         imageController.saveAction();
-    }
-
-    @FXML
-    @Override
-    public void cancelAction() {
-        close();
-    }
-
-    @Override
-    public boolean keyESC() {
-        close();
-        return false;
     }
 
     @Override

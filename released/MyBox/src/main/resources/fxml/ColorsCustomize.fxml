@@ -17,7 +17,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" spacing="5.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ColorsCustomizeController">
+<VBox fx:id="thisPane" spacing="5.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ColorsCustomizeController">
     <children>
         <HBox alignment="CENTER" VBox.vgrow="NEVER">
             <children>
@@ -45,17 +45,6 @@ License:    Apache License Version 2.0
                         <TextField fx:id="hueStepInput" layoutX="178.0" layoutY="10.0" prefWidth="100.0" text="1" />
                     </children>
                 </HBox>
-                <HBox alignment="CENTER_LEFT" layoutX="12.0" layoutY="12.0" spacing="5.0">
-                    <children>
-                        <Label minWidth="-Infinity" text="%Brightness" />
-                        <Label minWidth="-Infinity" text="%From" />
-                        <TextField fx:id="brightnessFromInput" prefWidth="100.0" promptText="1~100" text="100" />
-                        <Label layoutX="39.0" layoutY="10.0" minWidth="-Infinity" text="%To" />
-                        <TextField fx:id="brightnessToInput" prefWidth="100.0" promptText="1~100" text="100" />
-                        <Label minWidth="-Infinity" text="%ValueStep" />
-                        <TextField fx:id="brightnessStepInput" prefWidth="100.0" text="10" />
-                    </children>
-                </HBox>
                 <HBox alignment="CENTER_LEFT" layoutX="12.0" layoutY="35.0" spacing="5.0">
                     <children>
                         <Label minWidth="-Infinity" text="%Saturation" />
@@ -67,6 +56,28 @@ License:    Apache License Version 2.0
                         <TextField fx:id="saturationStepInput" prefWidth="100.0" text="10" />
                     </children>
                 </HBox>
+                <HBox alignment="CENTER_LEFT" layoutX="12.0" layoutY="12.0" spacing="5.0">
+                    <children>
+                        <Label minWidth="-Infinity" text="%Brightness" />
+                        <Label minWidth="-Infinity" text="%From" />
+                        <TextField fx:id="brightnessFromInput" prefWidth="100.0" promptText="1~100" text="100" />
+                        <Label layoutX="39.0" layoutY="10.0" minWidth="-Infinity" text="%To" />
+                        <TextField fx:id="brightnessToInput" prefWidth="100.0" promptText="1~100" text="100" />
+                        <Label minWidth="-Infinity" text="%ValueStep" />
+                        <TextField fx:id="brightnessStepInput" prefWidth="100.0" text="10" />
+                    </children>
+                </HBox>
+            <HBox alignment="CENTER_LEFT" layoutX="12.0" layoutY="68.0" spacing="5.0">
+               <children>
+                  <Label minWidth="-Infinity" text="%Opacity" />
+                  <Label minWidth="-Infinity" text="%From" />
+                  <TextField fx:id="opacityFromInput" prefWidth="100.0" promptText="1~100" text="100" />
+                  <Label layoutX="39.0" layoutY="10.0" minWidth="-Infinity" text="%To" />
+                  <TextField fx:id="opacityToInput" prefWidth="100.0" promptText="1~100" text="100" />
+                  <Label minWidth="-Infinity" text="%ValueStep" />
+                  <TextField fx:id="opacityStepInput" prefWidth="100.0" text="10" />
+               </children>
+            </HBox>
             </children>
         </VBox>
         <HBox alignment="CENTER_RIGHT" spacing="5.0">

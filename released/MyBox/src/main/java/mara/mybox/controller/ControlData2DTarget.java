@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.application.Platform;
@@ -8,13 +9,40 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import mara.mybox.data2d.Data2D;
+import mara.mybox.data2d.Data2D_Attributes.TargetType;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.Append;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.CSV;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.DatabaseTable;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.Excel;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.HTML;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.Insert;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.JSON;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.Matrix;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.MyBoxClipboard;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.PDF;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.Replace;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.SystemClipboard;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.Text;
+import static mara.mybox.data2d.Data2D_Attributes.TargetType.XML;
+import mara.mybox.data2d.TmpTable;
+import mara.mybox.data2d.tools.Data2DConvertTools;
+import mara.mybox.data2d.writer.Data2DWriter;
+import mara.mybox.data2d.writer.SystemClipboardWriter;
+import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.db.data.Data2DColumn;
+import mara.mybox.db.data.VisitHistory.FileType;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.tools.FileTmpTools;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -22,12 +50,14 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-12-11
  * @License Apache License Version 2.0
  */
-public class ControlData2DTarget extends BaseController {
+public class ControlData2DTarget extends BaseDataConvertController {
 
-    protected ControlData2DLoad tableController;
-    protected String target;
+    protected BaseData2DLoadController tableController;
+    protected TargetType format;
     protected boolean notInTable;
     protected ChangeListener<Boolean> tableStatusListener;
+    protected Data2D data2D;
+    protected String targetName;
 
     @FXML
     protected ToggleGroup targetGroup;
@@ -38,104 +68,241 @@ public class ControlData2DTarget extends BaseController {
     @FXML
     protected ComboBox<String> rowSelector, colSelector;
     @FXML
-    protected VBox externalBox, inTableBox;
+    protected VBox externalBox, externalDefBox, fileBox, inTableBox;
     @FXML
-    protected HBox prefixBox, locationBox;
+    protected HBox dataNameBox, locationBox;
     @FXML
     protected TextField nameInput;
+    @FXML
+    protected TabPane optionsPane;
+    @FXML
+    protected Tab csvTab, excelTab, textTab, htmlTab, pdfTab, dbTab;
+    @FXML
+    protected RadioButton keepNonnumericRadio, zeroNonnumericRadio,
+            emptyNonnumericRadio, skipNonnumericRadio, nullNonnumericRadio;
+    @FXML
+    protected VBox optionsBox, csvBox, excelBox, textBox, htmlBox, pdfBox, dbBox;
+    @FXML
+    protected ControlNewDataTable dbController;
+    @FXML
+    protected FlowPane extFormatPane, internalFormatPane;
 
-    public void setParameters(BaseController parent, ControlData2DLoad tableController) {
+    public boolean isInvalid() {
+        if (tableController == null) {
+            return false;
+        }
+        return !tableController.isShowing()
+                || tableController.data2D == null
+                || !tableController.data2D.isValidDefinition()
+                || (data2D != null && tableController.data2D.getD2did() != data2D.getD2did());
+    }
+
+    public void setParameters(BaseController parent, BaseData2DLoadController controller) {
         try {
-            baseName = parent.baseName;
-            this.tableController = tableController;
+            tableController = controller;
+            if (isInvalid()) {
+                close();
+                return;
+            }
 
-            checkControls();
+            baseName = parent.baseName + "_" + baseName;
+
+            initControls(baseName);
+
+            if (tableController != null) {
+                data2D = tableController.data2D.cloneAll().setController(parent);
+                dbController.setParameters(this, data2D);
+            } else {
+                data2D = null;
+                databaseRadio.setDisable(true);
+            }
+
+            optionsPane.getTabs().clear();
+            optionsBox.getChildren().clear();
+
+            initTarget(TargetType.valueOf(UserConfig.getString(baseName + "DataTarget", "CSV")));
             targetGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
                     checkTarget();
                 }
             });
+            checkTarget();
 
             if (tableController != null) {
-                refreshControls();
+                sourceChanged();
                 tableStatusListener = new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        refreshControls();
+                        sourceChanged();
                     }
                 };
                 tableController.statusNotify.addListener(tableStatusListener);
             }
-
-            target = UserConfig.getString(baseName + "DataTarget", "csv");
-            setTarget(target);
-
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
-    public void checkControls() {
-        if (inTableBox != null) {
-            if (notInTable) {
-                if (thisPane.getChildren().contains(inTableBox)) {
-                    thisPane.getChildren().remove(inTableBox);
-                }
+    public void initTarget(TargetType type) {
+        try {
+            format = type;
+            isSettingValues = true;
+            if (type == null) {
+                csvRadio.setSelected(true);
             } else {
-                if (!thisPane.getChildren().contains(inTableBox)) {
-                    thisPane.getChildren().add(2, inTableBox);
+                switch (type) {
+                    case CSV:
+                        csvRadio.setSelected(true);
+                        break;
+                    case Excel:
+                        excelRadio.setSelected(true);
+                        break;
+                    case Text:
+                        textsRadio.setSelected(true);
+                        break;
+                    case Matrix:
+                        matrixRadio.setSelected(true);
+                        break;
+                    case SystemClipboard:
+                        systemClipboardRadio.setSelected(true);
+                        break;
+                    case MyBoxClipboard:
+                        myBoxClipboardRadio.setSelected(true);
+                        break;
+                    case DatabaseTable:
+                        if (tableController != null) {
+                            databaseRadio.setSelected(true);
+                            databaseRadio.setDisable(false);
+                        } else {
+                            csvRadio.setSelected(true);
+                            databaseRadio.setDisable(true);
+                        }
+                        break;
+                    case JSON:
+                        jsonRadio.setSelected(true);
+                        break;
+                    case XML:
+                        xmlRadio.setSelected(true);
+                        break;
+                    case HTML:
+                        htmlRadio.setSelected(true);
+                        break;
+                    case PDF:
+                        pdfRadio.setSelected(true);
+                        break;
+                    case Append:
+                        if (notInTable && inTableBox != null) {
+                            appendRadio.setSelected(true);
+                        } else {
+                            csvRadio.setSelected(true);
+                        }
+                        break;
+                    case Insert:
+                        if (notInTable && inTableBox != null) {
+                            insertRadio.setSelected(true);
+                        } else {
+                            csvRadio.setSelected(true);
+                        }
+                        break;
+                    case Replace:
+                        if (notInTable && inTableBox != null) {
+                            replaceRadio.setSelected(true);
+                        } else {
+                            csvRadio.setSelected(true);
+                        }
+                        break;
+                    default:
+                        csvRadio.setSelected(true);
                 }
             }
-        }
-        if (inTable()) {
-            if (!inTableBox.getChildren().contains(locationBox)) {
-                inTableBox.getChildren().add(locationBox);
-            }
-            if (externalBox.getChildren().contains(prefixBox)) {
-                externalBox.getChildren().remove(prefixBox);
-            }
-        } else {
-            if (inTableBox != null && inTableBox.getChildren().contains(locationBox)) {
-                inTableBox.getChildren().remove(locationBox);
-            }
-            if (!externalBox.getChildren().contains(prefixBox)) {
-                externalBox.getChildren().add(prefixBox);
-            }
+            isSettingValues = false;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
         }
     }
 
-    public String checkTarget() {
+    public TargetType checkTarget() {
         try {
-            target = "csv";
+            format = TargetType.CSV;
+            optionsBox.getChildren().clear();
+            if (isSettingValues) {
+                return format;
+            }
+            String name = name();
+            if (name == null || name.isBlank()) {
+                if (data2D != null) {
+                    name = data2D.dataName();
+                }
+            }
+            if (name == null || name.isBlank()) {
+                if (tableController != null) {
+                    name = tableController.getTitle();
+                }
+            }
+            if (name == null || name.isBlank()) {
+                name = "Data2D";
+            }
             if (csvRadio.isSelected()) {
-                target = "csv";
+                format = TargetType.CSV;
+                targetFileController.setFile(FileType.CSV,
+                        baseName + "TargetType" + FileType.CSV, name, "csv");
+                optionsBox.getChildren().add(csvBox);
+
             } else if (excelRadio.isSelected()) {
-                target = "excel";
+                format = TargetType.Excel;
+                targetFileController.setFile(FileType.Excel,
+                        baseName + "TargetType" + FileType.Excel, name, "xlsx");
+                optionsBox.getChildren().add(excelBox);
+                currentSheetOnlyCheck.setVisible(data2D.isExcel());
+
             } else if (textsRadio.isSelected()) {
-                target = "texts";
+                format = TargetType.Text;
+                targetFileController.setFile(FileType.Text,
+                        baseName + "TargetType" + FileType.Text, name, "txt");
+                optionsBox.getChildren().add(textBox);
+
             } else if (matrixRadio.isSelected()) {
-                target = "matrix";
+                format = TargetType.Matrix;
+
             } else if (systemClipboardRadio.isSelected()) {
-                target = "systemClipboard";
+                format = TargetType.SystemClipboard;
+
             } else if (myBoxClipboardRadio.isSelected()) {
-                target = "myBoxClipboard";
+                format = TargetType.MyBoxClipboard;
+
             } else if (databaseRadio.isSelected()) {
-                target = "table";
+                format = TargetType.DatabaseTable;
+                optionsBox.getChildren().add(dbBox);
+
             } else if (jsonRadio.isSelected()) {
-                target = "json";
+                format = TargetType.JSON;
+                targetFileController.setFile(FileType.JSON,
+                        baseName + "TargetType" + FileType.JSON, name, "json");
+
             } else if (xmlRadio.isSelected()) {
-                target = "xml";
+                format = TargetType.XML;
+                targetFileController.setFile(FileType.XML,
+                        baseName + "TargetType" + FileType.XML, name, "xml");
+
             } else if (htmlRadio.isSelected()) {
-                target = "html";
+                format = TargetType.HTML;
+                targetFileController.setFile(FileType.Html,
+                        baseName + "TargetType" + FileType.Html, name, "html");
+                optionsBox.getChildren().add(htmlBox);
+
             } else if (pdfRadio.isSelected()) {
-                target = "pdf";
+                format = TargetType.PDF;
+                targetFileController.setFile(FileType.PDF,
+                        baseName + "TargetType" + FileType.PDF, name, "pdf");
+                optionsBox.getChildren().add(pdfBox);
+
             } else if (inTableBox != null) {
                 if (replaceRadio.isSelected()) {
                     if (!notInTable) {
-                        target = "replace";
+                        format = TargetType.Replace;
                     } else {
-                        target = "csv";
+                        format = TargetType.CSV;
                         Platform.runLater(new Runnable() {
                             @Override
                             public void run() {
@@ -145,9 +312,9 @@ public class ControlData2DTarget extends BaseController {
                     }
                 } else if (insertRadio.isSelected()) {
                     if (!notInTable) {
-                        target = "insert";
+                        format = TargetType.Insert;
                     } else {
-                        target = "csv";
+                        format = TargetType.CSV;
                         Platform.runLater(new Runnable() {
                             @Override
                             public void run() {
@@ -157,9 +324,9 @@ public class ControlData2DTarget extends BaseController {
                     }
                 } else if (appendRadio.isSelected()) {
                     if (!notInTable) {
-                        target = "append";
+                        format = TargetType.Append;
                     } else {
-                        target = "csv";
+                        format = TargetType.CSV;
                         Platform.runLater(new Runnable() {
                             @Override
                             public void run() {
@@ -169,85 +336,75 @@ public class ControlData2DTarget extends BaseController {
                     }
                 }
             }
-            checkControls();
-            UserConfig.setString(baseName + "DataTarget", target);
+
+            if (inTableBox != null) {
+                if (notInTable) {
+                    if (thisPane.getChildren().contains(inTableBox)) {
+                        thisPane.getChildren().remove(inTableBox);
+                    }
+                } else {
+                    if (!thisPane.getChildren().contains(inTableBox)) {
+                        thisPane.getChildren().add(2, inTableBox);
+                    }
+                }
+            }
+            if (inTable()) {
+                if (!inTableBox.getChildren().contains(locationBox)) {
+                    inTableBox.getChildren().add(locationBox);
+                }
+                if (externalBox != null) {
+                    if (externalBox.getChildren().contains(externalDefBox)) {
+                        externalBox.getChildren().remove(externalDefBox);
+                    }
+                }
+            } else {
+                if (inTableBox != null && inTableBox.getChildren().contains(locationBox)) {
+                    inTableBox.getChildren().remove(locationBox);
+                }
+                if (externalBox != null) {
+                    if (externalBox.getChildren().contains(externalDefBox)) {
+                        externalBox.getChildren().remove(externalDefBox);
+                    }
+                }
+                if (matrixRadio.isSelected()
+                        || systemClipboardRadio.isSelected()
+                        || myBoxClipboardRadio.isSelected()
+                        || databaseRadio.isSelected()) {
+                    if (externalDefBox.getChildren().contains(fileBox)) {
+                        externalDefBox.getChildren().remove(fileBox);
+                    }
+                } else {
+                    if (!externalDefBox.getChildren().contains(fileBox)) {
+                        externalDefBox.getChildren().add(fileBox);
+                    }
+                }
+            }
+
+            refreshStyle(thisPane);
+
+            UserConfig.setString(baseName + "DataTarget", format.name());
 
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
-        return target;
+        return format;
     }
 
-    public void setTarget(String target) {
-        try {
-            if (target == null) {
-                csvRadio.setSelected(true);
-                return;
-            }
-            switch (target) {
-                case "csv":
-                    csvRadio.setSelected(true);
-                    break;
-                case "excel":
-                    excelRadio.setSelected(true);
-                    break;
-                case "texts":
-                    textsRadio.setSelected(true);
-                    break;
-                case "matrix":
-                    matrixRadio.setSelected(true);
-                    break;
-                case "systemClipboard":
-                    systemClipboardRadio.setSelected(true);
-                    break;
-                case "myBoxClipboard":
-                    myBoxClipboardRadio.setSelected(true);
-                    break;
-                case "table":
-                    databaseRadio.setSelected(true);
-                    break;
-                case "json":
-                    jsonRadio.setSelected(true);
-                    break;
-                case "xml":
-                    xmlRadio.setSelected(true);
-                    break;
-                case "html":
-                    htmlRadio.setSelected(true);
-                    break;
-                case "pdf":
-                    pdfRadio.setSelected(true);
-                    break;
-                case "append":
-                    if (notInTable && inTableBox != null) {
-                        appendRadio.setSelected(true);
-                    } else {
-                        csvRadio.setSelected(true);
-                    }
-                    break;
-                case "insert":
-                    if (notInTable && inTableBox != null) {
-                        insertRadio.setSelected(true);
-                    } else {
-                        csvRadio.setSelected(true);
-                    }
-                    break;
-                case "relpace":
-                    if (notInTable && inTableBox != null) {
-                        replaceRadio.setSelected(true);
-                    } else {
-                        csvRadio.setSelected(true);
-                    }
-                    break;
-                default:
-                    csvRadio.setSelected(true);
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e);
+    public void setTarget(TargetType type) {
+        if (type == null) {
+            return;
+        }
+        initTarget(type);
+        checkTarget();
+        if (extFormatPane != null) {
+            extFormatPane.setDisable(true);
+        }
+        if (internalFormatPane != null) {
+            internalFormatPane.setDisable(true);
         }
     }
 
-    public synchronized void refreshControls() {
+    public synchronized void sourceChanged() {
         try {
             if (tableController == null || tableController.data2D == null) {
                 return;
@@ -284,6 +441,8 @@ public class ControlData2DTarget extends BaseController {
                 colSelector.getItems().clear();
             }
 
+            dbController.setData(data2D);
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -299,8 +458,57 @@ public class ControlData2DTarget extends BaseController {
                 && (insertRadio.isSelected() || appendRadio.isSelected() || replaceRadio.isSelected());
     }
 
+    public boolean validateTarget() {
+        try {
+            if (format == null) {
+                return false;
+            }
+            switch (format) {
+                case CSV:
+                case Excel:
+                case Text:
+                case JSON:
+                case XML:
+                case HTML:
+                case PDF:
+                    File file = file();
+                    if (file == null) {
+                        popError(message("InvalidParameter") + ": " + message("FileName"));
+                        return false;
+                    } else {
+                        return true;
+                    }
+//                case Matrix:
+//                case DatabaseTable:
+//                    if (name() == null) {
+//                        popError(message("InvalidParameter") + ": " + message("DataName"));
+//                        return false;
+//                    } else {
+//                        return true;
+//                    }
+            }
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
+    public TargetType format() {
+        return format;
+    }
+
     public String name() {
-        return nameInput.getText().trim();
+        String name = nameInput.getText();
+        return name != null && !name.isBlank() ? name.trim() : null;
+    }
+
+    public File file() {
+        if (targetFileController == null) {
+            return FileTmpTools.getTempFile();
+        } else {
+            return targetFileController.makeTargetFile();
+        }
     }
 
     public int row() {
@@ -311,10 +519,83 @@ public class ControlData2DTarget extends BaseController {
     }
 
     public int col() {
-        if (!inTable()) {
+        if (!inTable() || tableController == null) {
             return -1;
         }
         return tableController.data2D.colOrder(colSelector.getSelectionModel().getSelectedItem());
+    }
+
+    public InvalidAs invalidAs() {
+        if (zeroNonnumericRadio != null && zeroNonnumericRadio.isSelected()) {
+            return InvalidAs.Zero;
+        } else if (emptyNonnumericRadio != null && emptyNonnumericRadio.isSelected()) {
+            return InvalidAs.Empty;
+        } else if (skipNonnumericRadio != null && skipNonnumericRadio.isSelected()) {
+            return InvalidAs.Skip;
+        } else if (nullNonnumericRadio != null && nullNonnumericRadio.isSelected()) {
+            return InvalidAs.Null;
+        } else {
+            return InvalidAs.Keep;
+        }
+    }
+
+    public Data2DWriter pickWriter() {
+        try {
+            if (isInvalid()) {
+                close();
+                return null;
+            }
+            if (format == null || !validateTarget()) {
+                return null;
+            }
+            targetName = name();
+            if (targetName == null || targetName.isBlank()) {
+                if (data2D != null) {
+                    targetName = data2D.dataName();
+                }
+            }
+            if (targetName == null || targetName.isBlank()) {
+                targetName = "Data2D";
+            } else if (targetName.startsWith(TmpTable.TmpTablePrefix)
+                    || targetName.startsWith(TmpTable.TmpTablePrefix.toLowerCase())) {
+                targetName = targetName.substring(TmpTable.TmpTablePrefix.length());
+            }
+            Data2DWriter writer;
+            if (format == TargetType.DatabaseTable) {
+                writer = dbController.pickTableWriter();
+            } else {
+                if (format != TargetType.Matrix) {
+                    targetFile = file();
+                    if (targetFile == null) {
+                        targetFile = Data2DConvertTools.targetFile(targetName, format);
+                    }
+                    if (targetFile == null) {
+                        popError(message("InvalidParameter") + ": " + message("TargetFile"));
+                        return null;
+                    }
+                }
+                writer = pickWriter(format);
+            }
+            if (writer == null) {
+                return null;
+            }
+            if (data2D != null) {
+                writer.setColumns(data2D.getColumns())
+                        .setHeaderNames(data2D.columnNames());
+            }
+            writer.setDataName(targetName)
+                    .setPrintFile(targetFile)
+                    .setRecordTargetFile(true)
+                    .setRecordTargetData(true)
+                    .setInvalidAs(invalidAs());
+            if (writer instanceof SystemClipboardWriter) {
+                ((SystemClipboardWriter) writer).setController(tableController);
+            }
+            return writer;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
     }
 
     @Override

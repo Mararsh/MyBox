@@ -1,5 +1,8 @@
 package mara.mybox.controller;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.Event;
@@ -8,13 +11,16 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import mara.mybox.data2d.Data2D;
-import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataTable;
+import mara.mybox.data2d.tools.Data2DTableTools;
+import mara.mybox.data2d.writer.Data2DWriter;
+import mara.mybox.db.DerbyBase;
+import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.table.TableData2D;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.PopTools;
 import mara.mybox.tools.StringTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -57,7 +63,7 @@ public class DataTableQueryEditor extends InfoTreeNodeEditor {
         }
     }
 
-    public void setParameters(ControlData2DLoad tableController) {
+    public void setParameters(BaseData2DLoadController tableController) {
         try {
             setDataTable(tableController.data2D);
 
@@ -81,14 +87,17 @@ public class DataTableQueryEditor extends InfoTreeNodeEditor {
         try {
             this.dataTable = (DataTable) data2D;
             namesList.getItems().clear();
-            if (dataTable == null || !dataTable.isValid()) {
+            if (dataTable == null || !dataTable.isValidDefinition()) {
                 return;
             }
             String name = dataTable.getSheet();
             if (name != null && !name.isBlank()) {
                 namesList.getItems().add(name);
             }
-            namesList.getItems().addAll(dataTable.columnNames());
+            if (!dataTable.isValidDefinition()) {
+                return;
+            }
+            namesList.getItems().setAll(dataTable.columnNames());
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -98,8 +107,9 @@ public class DataTableQueryEditor extends InfoTreeNodeEditor {
     @FXML
     @Override
     public void startAction() {
-        if (targetController != null && targetController.checkTarget() == null) {
-            popError(message("SelectToHandle"));
+        Data2DWriter writer = targetController.pickWriter();
+        if (writer == null || writer.getPrintFile() == null) {
+            popError(message("InvalidParameter") + ": " + message("TargetFile"));
             return;
         }
         String s = valueInput.getText();
@@ -113,21 +123,27 @@ public class DataTableQueryEditor extends InfoTreeNodeEditor {
         }
         task = new FxSingletonTask<Void>(this) {
 
-            private DataFileCSV dataCSV;
-
             @Override
             protected boolean handle() {
-                TableStringValues.add("DataTableQueryHistories", query);
-                dataTable.setTask(this);
-                dataCSV = dataTable.query(targetController.name(), task, query,
-                        rowNumberCheck.isSelected() ? message("Row") : null);
-                return dataCSV != null;
+                try (Connection conn = DerbyBase.getConnection();
+                        PreparedStatement statement = conn.prepareStatement(query);
+                        ResultSet results = statement.executeQuery()) {
+                    task.setInfo(query);
+                    TableStringValues.add(conn, "DataTableQueryHistories", query);
+                    dataTable.setTask(this);
+                    return Data2DTableTools.write(task, dataTable, writer, results,
+                            rowNumberCheck.isSelected() ? message("Row") : null,
+                            dataTable.getScale(), ColumnDefinition.InvalidAs.Empty);
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
             }
 
             @Override
             protected void whenSucceeded() {
                 popDone();
-                DataFileCSV.openCSV(myController, dataCSV, targetController.target);
+                writer.showResult();
             }
 
             @Override

@@ -11,6 +11,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.ColorPicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TitledPane?>
@@ -20,7 +21,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane fx:id="thisPane" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ColorQueryController">
+<BorderPane fx:id="thisPane" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ColorQueryController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
@@ -103,6 +104,30 @@ License:    Apache License Version 2.0
                                                               </ImageView>
                                                           </graphic>
                                                       </Button>
+                                             </children>
+                                          </HBox>
+                                          <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="86.0" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                             <children>
+                                                <Label text="%Hue" />
+                                                <Slider fx:id="hueSlider" blockIncrement="1.0" max="360.0" maxWidth="1.7976931348623157E308" showTickLabels="true" showTickMarks="true" HBox.hgrow="ALWAYS" />
+                                             </children>
+                                          </HBox>
+                                          <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="118.0" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                             <children>
+                                                <Label text="%Saturation" />
+                                                <Slider fx:id="saturationSlider" blockIncrement="1.0" maxWidth="1.7976931348623157E308" showTickLabels="true" showTickMarks="true" HBox.hgrow="ALWAYS" />
+                                             </children>
+                                          </HBox>
+                                          <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="160.0" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                             <children>
+                                                <Label text="%Brightness" />
+                                                <Slider fx:id="brightnessSlider" blockIncrement="1.0" maxWidth="1.7976931348623157E308" showTickLabels="true" showTickMarks="true" HBox.hgrow="ALWAYS" />
+                                             </children>
+                                          </HBox>
+                                          <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="202.0" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                             <children>
+                                                <Label text="%Opacity" />
+                                                <Slider fx:id="opacitySlider" blockIncrement="1.0" maxWidth="1.7976931348623157E308" showTickLabels="true" showTickMarks="true" HBox.hgrow="ALWAYS" />
                                              </children>
                                           </HBox>
                                        </children>

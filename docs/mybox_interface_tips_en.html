@@ -1,4 +1,4 @@
-<!DOCTYPE html><HTML>
+<HTML>
     <HEAD>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <TITLE>Tips in Interfaces</TITLE>
@@ -21,9 +21,9 @@
     <H3>Notes</H3>
     <PRE>This tool helps to record information:
 - Note is a piece of information in html format:
-       - Note' html code should be contents of "body" and have not tags "html", "head" and "body".
+       - Note' html code can be edited in six modes.
        - Tags can be set for note.
-       - Style can be set for note. Style is only for displaying and not saved in note's codes.
+       - Style can be set for note. 
 - A notebook is collection of some notes and some notebooks.
        - Notebook's name should not include string " > "(Blank before and after ">").
        - Notebooks are organized as a tree, that is notebooks can be children of other notebook.</PRE>
@@ -198,10 +198,6 @@ Set "Load width" to view the image in limited pixels.</PRE>
        - Click button "Menu"(F6) or right click edit area to pop context menu.
 
 Known issue: MyBox may crash when the SVG data contains invalid format or contents.</PRE>
-    <H3>Analyse Image</H3>
-    <PRE>This tool helps to analyse pixels in image:
--  Set scope of image to analyse part of it.
--  Data can be saved as a html which includes all results.</PRE>
     <H3>Image quantization</H3>
     <PRE>Technique of reducing distinct colors in image is called "Color Quantization".
 Different algorithms can be selected for different purposes: 
@@ -296,14 +292,12 @@ Notice, following values will map image(2D) to line(1D) and be invalid:
 2) rx=-1   ry=-1 </PRE>
     <H3>Repeat/Tile Image</H3>
     <PRE>This tool helps to make background/texture image:
-- Select an image, set part or whole of it as input of scaling.
-- Scale the selected image part as the cell of repeating.
-- Make the target image:
-      - Select the repeating type:
-            - Repeat the cell with horizontal number and vertical number.
-            - Tile the cell into width and height of canvas.
-      - Set interval between cells. Negative value may make effect of interleave.
-      - Set margins of target image.</PRE>
+- Select an image as the cell of repeating.
+- Select the repeating type:
+        - Repeat the cell with horizontal number and vertical number.
+        - Tile the cell into width and height of canvas.
+- Set interval between cells. Negative value may make effect of interleave.
+- Set margins of target image.</PRE>
     <H3>Sample Image</H3>
     <PRE>This function reduces the pixels of an image:
   - Resize and move the rectangle to define the region to pick.
@@ -514,54 +508,6 @@ Decoding does reverse conversion.</PRE>
       - Records are maintained by Data Tables Manager.
       - Data are saved in MyBox database tables.
       - Deleting record of data table will delete data of this data table.</PRE>
-    <H3>Edit CSV File</H3>
-    <PRE>This tool helps to view and edit data in CSV file:
-- In the file:
-     - In general, the first line(header) defines column names, and each of followed lines defines a row of data.
-     - Values are separated by "delimiter" which can be string.
-     - If a value contains delimiter or line break, it should be surrounded by quotes.
-     - If delimiter is not "#", then lines started with "#" will be skipped(as comments).
-- When the file is opened for the first time, the tool guesses its delimiter and charset. 
-- If file is read abnormally, use "File-Format" to change options and click button "OK".
-- Data are paginated. When pages number is larger than 1, changes should be saved before run some functions.
-- To string values, multiple lines can be edited and saved:
-     - When the value is single line(not include line break):
-           - Text field is shown when click the data cell.
-           - Write "\n" as line break in the value  and commit the change(return or click other place).
-     - When the value includes line breaks:
-           - Text area is shown when click the data cell.
-           - Write the text in multiple lines directly.
-- Data can be saved as different charsets and delimiters.</PRE>
-    <H3>Edit Excel File</H3>
-    <PRE>This tool helps to view and edit data in Excel file:
-- Choose one worksheet to handle.
-- Worksheets can be added/renamed/deleted.
-- In general, the first line(header) defines column names, and each of followed lines defines a row of data.
-- If file is read abnormally, use "File-Format" to change options and click button "OK".
-- Data are paginated. When pages number is larger than 1, changes should be saved before run some functions.
-- To string values, multiple lines can be edited and saved:
-     - When the value is single line(not include line break):
-           - Text field is shown when click the data cell.
-           - Write "\n" as line break in the value  and commit the change(return or click other place).
-     - When the value includes line breaks:
-           - Text area is shown when click the data cell.
-           - Write the text in multiple lines directly.
-- Data can be saved with current sheet only or all worksheets.
-
-Notice: Tool can only handle base data in Excel file. 
-If file includes format, style, formula, or chart, suggest to save changes as new file to avoid data loss.</PRE>
-    <H3>Edit Text Data File</H3>
-    <PRE>This tool helps to view and edit data in text file:
-- In the file:
-     - In general, the first line(header) defines column names, and each of followed lines defines a row of data.
-     - Values are separated by "delimiter" which can be string. Regular expression is supported when parse the file.
-     - Values should not contain delimiter nor line break.
-     - If a line starts with "#", it will be skipped.
-- When the file is opened for the first time, the tool guesses its delimiter and charset. 
-- If file is read abnormally, use "File-Format" to change options and click button "OK".
-- Data are paginated. When pages number is larger than 1, changes should be saved before run some functions.
-- Not support multiple lines in values.
-- Data can be saved as different charsets and delimiters.</PRE>
     <H3>Database Table</H3>
     <PRE>This tool is to manage and edit data tables in database:
 - Names of tables and columns should satisfy "Limitations of SQL identifer".
@@ -897,8 +843,8 @@ This tool helps to run JEXL in GUI:
              - The script can include any valid elments which Nashorn can parse(ECMAScript 5.1).
              - It should be a boolean value(true or false) finally.
              - It can refer to the given variables, but should not declare them.
-- When the tool calculates a script, 'var <variable_name>=<variable_value>;' are inserted in the head of it before the evaluation.
-- If script of domain is not blank, the given values of variables are inserted in it and check the result.
+- When the tool calculates a script, it maps variable names to variable values before the evaluation.
+- If script of domain is not blank, values of variables are mapped and the result is checked:
    If true, continue to calculate the script of function expression. Else this set of values is skipped. 
 - With defined range, interval, and decimal scale, data set of the function can be generated.
 - To unary function, XY chart, including scatter chart and line chart, can be displayed.

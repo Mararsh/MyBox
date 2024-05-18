@@ -11,7 +11,7 @@ import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DStyle;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.ExpressionCalculator;
+import mara.mybox.calculation.ExpressionCalculator;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.DoubleTools;
 import static mara.mybox.value.Languages.message;
@@ -174,7 +174,7 @@ public abstract class Data2D_Filter extends Data2D_Data {
             }
             DescriptiveStatistic calculation = new DescriptiveStatistic()
                     .setStatisticObject(DescriptiveStatistic.StatisticObject.Columns)
-                    .setInvalidAs(InvalidAs.Blank);
+                    .setInvalidAs(InvalidAs.Empty);
             List<Integer> colIndices = new ArrayList<>();
             for (String script : scripts) {
                 checkFilterStatistic(script, calculation, colIndices);
@@ -251,7 +251,7 @@ public abstract class Data2D_Filter extends Data2D_Data {
 
     public String replaceFilterStatistic(FindReplaceString findReplace, String script) {
         try {
-            if (!isValid() || script == null || script.isBlank()) {
+            if (!isValidDefinition() || script == null || script.isBlank()) {
                 return script;
             }
             String filledScript = script;
@@ -387,7 +387,7 @@ public abstract class Data2D_Filter extends Data2D_Data {
             if (styleFilter == null || styles == null || styles.isEmpty() || colName == null || colName.isBlank()) {
                 return null;
             }
-            List<String> tableRow = tableViewRow(tableRowIndex);
+            List<String> tableRow = pageRow(tableRowIndex);
             if (tableRow == null || tableRow.size() < 1) {
                 return null;
             }

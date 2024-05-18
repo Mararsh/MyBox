@@ -1,6 +1,7 @@
 package mara.mybox.calculation;
 
 import mara.mybox.db.data.ColumnDefinition.InvalidAs;
+import static mara.mybox.db.data.ColumnDefinition.InvalidAs.Zero;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.StringTools;
@@ -124,8 +125,7 @@ public class Normalization {
                         case Zero:
                             d = 0;
                             break;
-                        case Skip:
-                        case Blank:
+                        default:
                             continue;
                     }
                 }
@@ -135,9 +135,6 @@ public class Normalization {
                 if (d < min) {
                     min = d;
                 }
-            }
-            if (min == Double.MAX_VALUE) {
-                return false;
             }
             double k = max - min;
             if (k == 0) {
@@ -149,20 +146,10 @@ public class Normalization {
                 String s = sourceVector[i];
                 double d = DoubleTools.toDouble(s, invalidAs);
                 if (DoubleTools.invalidDouble(d)) {
-                    switch (invalidAs) {
-                        case Zero:
-                            resultVector[i] = "0";
-                            break;
-                        case Skip:
-                            resultVector[i] = s;
-                            break;
-                        case Blank:
-                            resultVector[i] = "";
-                            break;
-                    }
-                    continue;
+                    resultVector[i] = null;
+                } else {
+                    resultVector[i] = from + k * (d - min) + "";
                 }
-                resultVector[i] = from + k * (d - min) + "";
             }
             return true;
         } catch (Exception e) {
@@ -198,8 +185,7 @@ public class Normalization {
                         case Zero:
                             d = 0;
                             break;
-                        case Skip:
-                        case Blank:
+                        default:
                             continue;
                     }
                 }
@@ -215,20 +201,10 @@ public class Normalization {
                 String s = sourceVector[i];
                 double d = DoubleTools.toDouble(s, invalidAs);
                 if (DoubleTools.invalidDouble(d)) {
-                    switch (invalidAs) {
-                        case Zero:
-                            resultVector[i] = "0";
-                            break;
-                        case Skip:
-                            resultVector[i] = s;
-                            break;
-                        case Blank:
-                            resultVector[i] = "";
-                            break;
-                    }
-                    continue;
+                    resultVector[i] = null;
+                } else {
+                    resultVector[i] = (d - mean) / variance + "";
                 }
-                resultVector[i] = (d - mean) / variance + "";
             }
             return true;
         } catch (Exception e) {
@@ -263,20 +239,10 @@ public class Normalization {
                 String s = sourceVector[i];
                 double d = DoubleTools.toDouble(s, invalidAs);
                 if (DoubleTools.invalidDouble(d)) {
-                    switch (invalidAs) {
-                        case Zero:
-                            resultVector[i] = "0";
-                            break;
-                        case Skip:
-                            resultVector[i] = s;
-                            break;
-                        case Blank:
-                            resultVector[i] = "";
-                            break;
-                    }
-                    continue;
+                    resultVector[i] = null;
+                } else {
+                    resultVector[i] = d / sum + "";
                 }
-                resultVector[i] = d / sum + "";
             }
             return true;
         } catch (Exception e) {
@@ -311,20 +277,8 @@ public class Normalization {
                 String s = sourceVector[i];
                 double d = DoubleTools.toDouble(s, invalidAs);
                 if (DoubleTools.invalidDouble(d)) {
-                    switch (invalidAs) {
-                        case Zero:
-                            resultVector[i] = "0";
-                            break;
-                        case Skip:
-                            resultVector[i] = s;
-                            break;
-                        case Blank:
-                            resultVector[i] = "";
-                            break;
-                    }
-                    continue;
-                }
-                if (maxAbs == 0 || width == 0) {
+                    resultVector[i] = null;
+                } else if (maxAbs == 0 || width == 0) {
                     resultVector[i] = "0";
                 } else {
                     resultVector[i] = width * d / maxAbs + "";

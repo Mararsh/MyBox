@@ -40,6 +40,7 @@ public class Fxmls {
     public static final String PdfOCRBatchFxml = "/fxml/PdfOCRBatch.fxml";
     public static final String PdfMergeFxml = "/fxml/PdfMerge.fxml";
     public static final String PdfSplitBatchFxml = "/fxml/PdfSplitBatch.fxml";
+    public static final String PdfAddWatermarkBatchFxml = "/fxml/PdfAddWatermarkBatch.fxml";
 
     public static final String HtmlEditorFxml = "/fxml/HtmlEditor.fxml";
     public static final String HtmlDomCopyFxml = "/fxml/HtmlDomCopy.fxml";
@@ -282,15 +283,20 @@ public class Fxmls {
     /*
         data
      */
+    public static final String Data2DManufactureFxml = "/fxml/Data2DManufacture.fxml";
     public static final String Data2DManageFxml = "/fxml/Data2DManage.fxml";
     public static final String Data2DDefinitionFxml = "/fxml/Data2DDefinition.fxml";
     public static final String Data2DManageQueryFxml = "/fxml/Data2DManageQuery.fxml";
     public static final String DataInSystemClipboardFxml = "/fxml/DataInSystemClipboard.fxml";
     public static final String DataInMyBoxClipboardFxml = "/fxml/DataInMyBoxClipboard.fxml";
-    public static final String DataManufactureFxml = "/fxml/DataManufacture.fxml";
-    public static final String DataManufactureSaveFxml = "/fxml/DataManufactureSave.fxml";
+    public static final String Data2DSaveAsFxml = "/fxml/Data2DSaveAs.fxml";
+    public static final String Data2DSaveDataFxml = "/fxml/Data2DSaveData.fxml";
+    public static final String Data2DSaveRowsFxml = "/fxml/Data2DSaveRows.fxml";
     public static final String Data2DSpliceFxml = "/fxml/Data2DSplice.fxml";
 
+    public static final String Data2DSelectFxml = "/fxml/Data2DSelect.fxml";
+    public static final String Data2DAttributesFxml = "/fxml/Data2DAttributes.fxml";
+    public static final String Data2DColumnsFxml = "/fxml/Data2DColumns.fxml";
     public static final String Data2DAddRowsFxml = "/fxml/Data2DAddRows.fxml";
     public static final String Data2DRowEditFxml = "/fxml/Data2DRowEdit.fxml";
     public static final String Data2DColumnEditFxml = "/fxml/Data2DColumnEdit.fxml";
@@ -314,7 +320,6 @@ public class Fxmls {
     public static final String Data2DChartBoxWhiskerFxml = "/fxml/Data2DChartBoxWhisker.fxml";
     public static final String Data2DChartSelfComparisonBarsFxml = "/fxml/Data2DChartSelfComparisonBars.fxml";
     public static final String Data2DChartComparisonBarsFxml = "/fxml/Data2DChartComparisonBars.fxml";
-    public static final String Data2DConvertToDatabaseFxml = "/fxml/Data2DConvertToDatabase.fxml";
     public static final String Data2DColumnCreateFxml = "/fxml/Data2DColumnCreate.fxml";
     public static final String Data2DTableCreateFxml = "/fxml/Data2DTableCreate.fxml";
     public static final String DataTableQueryFxml = "/fxml/DataTableQuery.fxml";
@@ -336,33 +341,27 @@ public class Fxmls {
     public static final String Data2DChartGroupSelfComparisonBarsFxml = "/fxml/Data2DChartGroupSelfComparisonBars.fxml";
     public static final String Data2DChartGroupBoxWhiskerFxml = "/fxml/Data2DChartGroupBoxWhisker.fxml";
     public static final String ValueRangeInputFxml = "/fxml/ValueRangeInput.fxml";
-    public static final String Data2DTargetExportFxml = "/fxml/Data2DTargetExport.fxml";
 
     public static final String JShellFxml = "/fxml/JShell.fxml";
     public static final String JexlFxml = "/fxml/Jexl.fxml";
     public static final String JavaScriptFxml = "/fxml/JavaScript.fxml";
 
     public static final String MathFunctionFxml = "/fxml/MathFunction.fxml";
-    public static final String MathFunctionCalculatorFxml = "/fxml/MathFunctionCalculator.fxml";
+    public static final String MathFunctionDataFxml = "/fxml/MathFunctionData.fxml";
+    public static final String MathFunctionChartFxml = "/fxml/MathFunctionChart.fxml";
     public static final String ControlDataSplitFxml = "/fxml/ControlDataSplit.fxml";
     public static final String MathFunctionXYChartFxml = "/fxml/MathFunctionXYChart.fxml";
 
-    public static final String DataFileCSVFxml = "/fxml/DataFileCSV.fxml";
     public static final String DataFileCSVFormatFxml = "/fxml/DataFileCSVFormat.fxml";
-    public static final String DataFileCSVSaveAsFxml = "/fxml/DataFileCSVSaveAs.fxml";
     public static final String DataFileCSVConvertFxml = "/fxml/DataFileCSVConvert.fxml";
     public static final String DataFileCSVMergeFxml = "/fxml/DataFileCSVMerge.fxml";
 
-    public static final String DataFileExcelFxml = "/fxml/DataFileExcel.fxml";
     public static final String DataFileExcelSheetsFxml = "/fxml/DataFileExcelSheets.fxml";
     public static final String DataFileExcelFormatFxml = "/fxml/DataFileExcelFormat.fxml";
-    public static final String DataFileExcelSaveAsFxml = "/fxml/DataFileExcelSaveAs.fxml";
     public static final String DataFileExcelConvertFxml = "/fxml/DataFileExcelConvert.fxml";
     public static final String DataFileExcelMergeFxml = "/fxml/DataFileExcelMerge.fxml";
 
-    public static final String DataFileTextFxml = "/fxml/DataFileText.fxml";
     public static final String DataFileTextFormatFxml = "/fxml/DataFileTextFormat.fxml";
-    public static final String DataFileTextSaveAsFxml = "/fxml/DataFileTextSaveAs.fxml";
     public static final String DataFileTextConvertFxml = "/fxml/DataFileTextConvert.fxml";
     public static final String DataFileTextMergeFxml = "/fxml/DataFileTextMerge.fxml";
 

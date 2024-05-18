@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.data.StringTable;
+import static mara.mybox.db.data.ColumnDefinition.ColumnType.Enumeration;
 import static mara.mybox.db.data.ColumnDefinition.ColumnType.Era;
 import mara.mybox.db.table.BaseTable;
 import mara.mybox.db.table.TableAlarmClock;
@@ -431,6 +432,7 @@ public class BaseDataAdaptor {
             switch (column.getType()) {
                 case String:
                 case Enumeration:
+                case EnumerationEditable:
                 case Color:
                 case File:
                 case Image:

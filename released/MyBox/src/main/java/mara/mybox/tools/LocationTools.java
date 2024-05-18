@@ -17,7 +17,8 @@ public class LocationTools {
         try {
             File map = FxFileTools.getInternalFile("/js/tianditu.html", "js", "tianditu.html");
             String html = TextFileTools.readTexts(null, map);
-            html = html.replace("0ddeb917def62b4691500526cc30a9b1", UserConfig.getString("TianDiTuWebKey", AppValues.TianDiTuWebKey));
+            html = html.replace(AppValues.TianDiTuWebKey,
+                    UserConfig.getString("TianDiTuWebKey", AppValues.TianDiTuWebKey));
             if (geodetic) {
                 html = html.replace("'EPSG:900913", "EPSG:4326");
             }
@@ -33,7 +34,8 @@ public class LocationTools {
         try {
             File map = FxFileTools.getInternalFile("/js/GaoDeMap.html", "js", "GaoDeMap.html");
             String html = TextFileTools.readTexts(null, map);
-            html = html.replace("06b9e078a51325a843dfefd57ffd876c", UserConfig.getString("GaoDeMapWebKey", AppValues.GaoDeMapWebKey));
+            html = html.replace(AppValues.GaoDeMapJavascriptKey,
+                    UserConfig.getString("GaoDeMapWebKey", AppValues.GaoDeMapJavascriptKey));
             return html;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

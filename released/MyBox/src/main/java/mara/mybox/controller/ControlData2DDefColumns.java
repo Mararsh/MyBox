@@ -52,7 +52,7 @@ public class ControlData2DDefColumns extends BaseData2DColumnsController {
                                     if (value != column.isIsPrimaryKey()) {
                                         isChanging = true;
                                         column.setIsPrimaryKey(value);
-                                        status(Status.Modified);
+                                        changed(true);
                                         isChanging = false;
                                     }
                                 } catch (Exception e) {
@@ -96,7 +96,7 @@ public class ControlData2DDefColumns extends BaseData2DColumnsController {
                                     if (value != column.isAuto()) {
                                         isChanging = true;
                                         column.setAuto(value);
-                                        status(Status.Modified);
+                                        changed(true);
                                         isChanging = false;
                                     }
                                 } catch (Exception e) {
@@ -133,22 +133,19 @@ public class ControlData2DDefColumns extends BaseData2DColumnsController {
             }
             isSettingValues = false;
             checkSelected();
-            status(Status.Loaded);
+            changed(true);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
     @Override
-    public void status(Status newStatus) {
-        if (isSettingValues) {
-            return;
-        }
-        status = newStatus;
+    public void changed(boolean changed) {
+        this.changed = changed;
         if (editor == null) {
             return;
         }
-        editor.valueChanged(status == Status.Modified);
+        editor.valueChanged(changed);
     }
 
     /*

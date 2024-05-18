@@ -1,15 +1,13 @@
 package mara.mybox.controller;
 
 import java.sql.Connection;
-import java.util.ArrayList;
-import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Tab;
-import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
+import mara.mybox.data2d.Data2D;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.dev.MyBoxLog;
@@ -17,17 +15,19 @@ import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
  * @CreateDate 2022-2-24
  * @License Apache License Version 2.0
  */
-public class Data2DTableCreateController extends BaseTaskController {
+public class Data2DTableCreateController extends BaseChildController {
 
-    protected ControlData2DEditTable editController;
-    protected ChangeListener<Boolean> columnStatusListener;
-    protected InvalidAs invalidAs = InvalidAs.Blank;
+    protected Data2DManufactureController editor;
+    protected Data2D data2D;
+    protected InvalidAs invalidAs;
+    protected ChangeListener<Boolean> tableLoadListener;
 
     @FXML
     protected Tab attributesTab;
@@ -36,46 +36,38 @@ public class Data2DTableCreateController extends BaseTaskController {
     @FXML
     protected ControlNewDataTable attributesController;
     @FXML
-    protected ToggleGroup objectGroup;
-    @FXML
-    protected RadioButton zeroNonnumericRadio, blankNonnumericRadio;
+    protected RadioButton skipNonnumericRadio, zeroNonnumericRadio;
 
-    public void setParameters(ControlData2DEditTable editController) {
+    public Data2DTableCreateController() {
+        baseTitle = message("DataTableCreate");
+    }
+
+    public void setParameters(Data2DManufactureController controller) {
         try {
-            this.editController = editController;
-            attributesController.setParameters(this, editController.data2D);
+            editor = controller;
 
-            columnStatusListener = new ChangeListener<Boolean>() {
+            attributesController.setParameters(this, data2D);
+
+            tableLoadListener = new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    refreshControls();
+                    sourceChanged();
                 }
             };
-            editController.columnChangedNotify.addListener(columnStatusListener);
+            editor.loadedNotify.addListener(tableLoadListener);
 
-            refreshControls();
+            sourceChanged();
 
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
-    public void refreshControls() {
+    public void sourceChanged() {
         try {
-            if (editController == null) {
-                return;
-            }
-            getMyStage().setTitle(editController.getTitle());
+            data2D = editor.data2D.cloneAll().setController(this);
 
-            if (editController.data2D.getColumns() == null) {
-                attributesController.setColumns(null);
-            } else {
-                List<Integer> indices = new ArrayList<>();
-                for (int i = 0; i < editController.data2D.getColumns().size(); i++) {
-                    indices.add(i);
-                }
-                attributesController.setColumns(indices);
-            }
+            attributesController.setData(data2D);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -83,6 +75,18 @@ public class Data2DTableCreateController extends BaseTaskController {
 
     @Override
     public boolean checkOptions() {
+        if (isSettingValues) {
+            return true;
+        }
+        if (data2D == null || !data2D.isValidDefinition()) {
+            popError(message("NoData"));
+            return false;
+        }
+        if (zeroNonnumericRadio.isSelected()) {
+            invalidAs = InvalidAs.Zero;
+        } else {
+            invalidAs = InvalidAs.Skip;
+        }
         try (Connection conn = DerbyBase.getConnection()) {
             boolean ok = attributesController.checkOptions(conn, false);
             if (!ok) {
@@ -96,25 +100,12 @@ public class Data2DTableCreateController extends BaseTaskController {
     }
 
     @Override
-    public void beforeTask() {
-        super.beforeTask();
-        attributesBox.setDisable(true);
-        optionsBox.setDisable(true);
-
-        if (zeroNonnumericRadio != null && zeroNonnumericRadio.isSelected()) {
-            invalidAs = InvalidAs.Zero;
-        } else {
-            invalidAs = InvalidAs.Blank;
-        }
-    }
-
-    @Override
     public boolean doTask(FxTask currentTask) {
         try (Connection conn = DerbyBase.getConnection()) {
             if (!attributesController.createTable(currentTask, conn)) {
                 return false;
             }
-            if (editController.data2D.isMutiplePages()) {
+            if (data2D.isMutiplePages()) {
                 attributesController.importAllData(currentTask, conn, invalidAs);
             } else {
                 attributesController.importData(conn, null, invalidAs);
@@ -130,22 +121,13 @@ public class Data2DTableCreateController extends BaseTaskController {
     public void afterSuccess() {
         try {
             SoundTools.miao3();
-            if (editController != null) {
-                editController.dataController.setData(attributesController.dataTable);
-                editController.dataSaved();
+            if (editor != null) {
+                editor.popInformation(message("Saved"));
+                editor.setData(attributesController.dataTable);
+                editor.notifySaved();
+                editor.loadPage(true);
+                close();
             }
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    @Override
-    public void afterTask() {
-        try {
-            super.afterTask();
-            attributesBox.setDisable(successed);
-            optionsBox.setDisable(successed);
-            startButton.setDisable(successed);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -154,12 +136,12 @@ public class Data2DTableCreateController extends BaseTaskController {
     @Override
     public void cleanPane() {
         try {
-            if (editController != null) {
-                editController.columnChangedNotify.removeListener(columnStatusListener);
-                columnStatusListener = null;
-                editController = null;
+            if (editor != null) {
+                editor.loadedNotify.removeListener(tableLoadListener);
+                tableLoadListener = null;
             }
-
+            editor = null;
+            data2D = null;
         } catch (Exception e) {
         }
         super.cleanPane();
@@ -168,7 +150,7 @@ public class Data2DTableCreateController extends BaseTaskController {
     /*
         static
      */
-    public static Data2DTableCreateController open(ControlData2DEditTable tableController) {
+    public static Data2DTableCreateController open(Data2DManufactureController tableController) {
         try {
             Data2DTableCreateController controller = (Data2DTableCreateController) WindowTools.childStage(
                     tableController, Fxmls.Data2DTableCreateFxml);

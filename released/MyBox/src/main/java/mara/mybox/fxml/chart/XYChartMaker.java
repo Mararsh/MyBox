@@ -435,25 +435,25 @@ public class XYChartMaker<X, Y> extends XYChartOptions<X, Y> {
             return;
         }
         if (barChart != null) {
-            ChartTools.setBarChartColors(barChart, palette, legendSide != null);
+            ChartTools.setBarChartStyle(barChart, palette, legendSide != null);
         } else if (stackedBarChart != null) {
-            ChartTools.setBarChartColors(stackedBarChart, palette, legendSide != null);
+            ChartTools.setBarChartStyle(stackedBarChart, palette, legendSide != null);
         } else if (lineChart != null) {
-            ChartTools.setLineChartColors(lineChart, lineWidth, palette, legendSide != null, dotted);
+            ChartTools.setLineChartStyle(lineChart, lineWidth, symbolSize, palette, legendSide != null, dotted);
         } else if (areaChart != null) {
-            ChartTools.setAreaChartColors(areaChart, lineWidth, palette, legendSide != null);
+            ChartTools.setAreaChartStyle(areaChart, lineWidth, symbolSize, palette, legendSide != null);
         } else if (stackedAreaChart != null) {
-            ChartTools.setAreaChartColors(stackedAreaChart, lineWidth, palette, legendSide != null);
+            ChartTools.setAreaChartStyle(stackedAreaChart, lineWidth, symbolSize, palette, legendSide != null);
         } else if (scatterChart != null) {
-            ChartTools.setScatterChart​Colors(scatterChart, palette, legendSide != null);
+            ChartTools.setScatterChartStyle(scatterChart, symbolSize, palette, legendSide != null);
         } else if (bubbleChart != null) {
-            ChartTools.setBubbleChart​Colors(bubbleChart, bubbleStyle, palette, legendSide != null);
+            ChartTools.setBubbleChartStyle(bubbleChart, bubbleStyle, palette, legendSide != null);
         } else if (boxWhiskerChart != null) {
-            ChartTools.setLineChartColors(boxWhiskerChart, lineWidth, palette, legendSide != null, dotted);
+            ChartTools.setLineChartStyle(boxWhiskerChart, lineWidth, symbolSize, palette, legendSide != null, dotted);
         } else if (simpleRegressionChart != null) {
-            ChartTools.setScatterChart​Colors(simpleRegressionChart, palette, legendSide != null);
+            ChartTools.setScatterChartStyle(simpleRegressionChart, symbolSize, palette, legendSide != null);
         } else if (residualChart != null) {
-            ChartTools.setScatterChart​Colors(residualChart, palette, legendSide != null);
+            ChartTools.setScatterChartStyle(residualChart, symbolSize, palette, legendSide != null);
         }
     }
 

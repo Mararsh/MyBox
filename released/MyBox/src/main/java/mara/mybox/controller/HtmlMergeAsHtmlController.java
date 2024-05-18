@@ -60,8 +60,13 @@ public class HtmlMergeAsHtmlController extends FilesMergeController {
 
             targetFileController.notify.addListener(
                     (ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
-                        if (targetFileController.file != null) {
-                            String prefix = FileNameTools.prefix(targetFileController.file.getName());
+                        String s = titleInput.getText();
+                        if (s != null && !s.isBlank()) {
+                            return;
+                        }
+                        File file = targetFileController.file();
+                        if (file != null) {
+                            String prefix = FileNameTools.prefix(file.getName());
                             if (prefix != null) {
                                 titleInput.setText(prefix);
                             }
@@ -87,7 +92,7 @@ public class HtmlMergeAsHtmlController extends FilesMergeController {
     protected boolean openWriter() {
         try {
             writer = new FileWriter(targetFile, Charset.forName("utf-8"));
-            writer.write("<!DOCTYPE html><html>\n"
+            writer.write("<html>\n"
                     + headArea.getText().replace("####title####", titleInput.getText()) + "\n"
                     + "    <body>\n");
             return true;

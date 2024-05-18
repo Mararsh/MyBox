@@ -69,7 +69,7 @@ public class HtmlWriteTools {
 
     public static String htmlPrefix(String title, String charset, String styleValue) {
         StringBuilder s = new StringBuilder();
-        s.append("<!DOCTYPE html><HTML>\n").append(Indent).append("<HEAD>\n");
+        s.append("<HTML>\n").append(Indent).append("<HEAD>\n");
         if (charset == null || charset.isBlank()) {
             charset = "utf-8";
         }
@@ -113,6 +113,10 @@ public class HtmlWriteTools {
 
     public static String html(String body) {
         return html(null, "utf-8", HtmlStyles.DefaultStyle, body);
+    }
+
+    public static String table(String body) {
+        return html(null, "utf-8", HtmlStyles.TableStyle, body);
     }
 
     public static String style(String html, String styleValue) {
@@ -518,6 +522,9 @@ public class HtmlWriteTools {
                 return false;
             }
             Link baseLink = completedLinks.get(httpFile);
+            if (baseLink == null) {
+                return false;
+            }
             String html = TextFileTools.readTexts(task, httpFile);
             List<Link> links = HtmlReadTools.links(baseLink.getUrl(), html);
             String replaced = "";

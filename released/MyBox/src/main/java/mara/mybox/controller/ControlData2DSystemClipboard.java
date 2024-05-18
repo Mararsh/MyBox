@@ -14,14 +14,13 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.Clipboard;
-import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataFileText;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TextTools;
-import mara.mybox.tools.FileTmpTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -144,6 +143,7 @@ public class ControlData2DSystemClipboard extends BaseController {
     }
 
     @FXML
+    @Override
     public void refreshAction() {
         labelDelimiter();
         String text = textArea.getText();
@@ -189,22 +189,15 @@ public class ControlData2DSystemClipboard extends BaseController {
         start(task);
     }
 
-    public boolean hasData() {
-        return textData != null && textData.isValid();
-    }
-
     public void editAction() {
-        if (textData == null || !textData.isValid()) {
+        if (textData == null || !textData.isValidDefinition()) {
             return;
         }
-        if (textData.isCSV()) {
-            if (textData.getFile() != null) {
-                DataFileCSVController.open(textData);
-            } else {
-                DataFileCSVController.open(textData.dataName(), textData.getColumns(), textData.tableRows(false, false));
-            }
+        if (textData.getFile() == null) {
+            Data2DManufactureController.openData(textData.dataName(),
+                    textData.getColumns(), textData.tableRows());
         } else {
-            Data2D.open(textData);
+            Data2DManufactureController.openDef(textData);
         }
     }
 }

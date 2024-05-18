@@ -1,9 +1,16 @@
 package mara.mybox.controller;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.stage.Window;
+import mara.mybox.data2d.Data2D;
+import mara.mybox.data2d.DataInternalTable;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DDefinition;
+import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -13,12 +20,63 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-2-10
  * @License Apache License Version 2.0
  */
-public class MyBoxTablesController extends DataTablesController {
+public class MyBoxTablesController extends BaseData2DListController {
 
     public MyBoxTablesController() {
         baseTitle = message("MyBoxTables");
-        type = Data2DDefinition.Type.InternalTable;
     }
+
+    @Override
+    public void setConditions() {
+        try {
+            queryConditions = " data_type = " + Data2D.type(Data2DDefinition.DataType.InternalTable);
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    @Override
+    public void loadList() {
+        task = new FxSingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                try (Connection conn = DerbyBase.getConnection()) {
+                    DataInternalTable dataTable = new DataInternalTable();
+                    for (String name : DataInternalTable.InternalTables) {
+                        if (tableData2DDefinition.queryTable(conn, name, Data2DDefinition.DataType.InternalTable) == null) {
+                            dataTable.readDefinitionFromDB(conn, name);
+                        }
+                    }
+                } catch (Exception e) {
+                    MyBoxLog.error(e);
+                }
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                loadTableData();
+            }
+
+        };
+        start(task);
+    }
+
+    @Override
+    protected int deleteData(FxTask currentTask, List<Data2DDefinition> data) {
+        if (data == null || data.isEmpty()) {
+            return 0;
+        }
+        return tableDefinition.deleteData(data);
+    }
+
+    @Override
+    protected long clearData(FxTask currentTask) {
+        return tableDefinition.deleteCondition(queryConditions);
+    }
+
 
     /*
         static

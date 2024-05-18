@@ -69,9 +69,9 @@ public class FilesDeleteEmptyDirectoriesController extends BaseBatchFileControll
     }
 
     @Override
-    public void afterTask() {
+    public void afterTask(boolean ok) {
         updateLogs(MessageFormat.format(Languages.message("DeleteEmptyDirectoriesTotalCount"), totalDeleted));
-        super.afterTask();
+        super.afterTask(ok);
     }
 
 }

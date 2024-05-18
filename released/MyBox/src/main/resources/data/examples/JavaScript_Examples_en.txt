@@ -291,8 +291,9 @@ arrayA.includes('C');
 
 ##MyBox#
 JavaScript > Examples > Expressions > Boolean operations
-is number
-Math.abs(2a) >= 0
+is not number
+var v1='hello'
+isNaN(v1 - 1)
 
 ##MyBox#
 JavaScript > Examples > Expressions > Boolean operations
@@ -333,11 +334,35 @@ new Date('2022-11-30'.replace(/-/g,'/'))
 
 ##MyBox#
 JavaScript > Examples > Expressions > Date operations
+format date
+function formatDate(date) {
+     var y = date.getFullYear();
+     var m = date.getMonth() + 1;
+     m = m < 10 ? ('0' + m) : m;
+     var d = date.getDate();
+     d = d < 10 ? ('0' + d) : d;
+     var h =date.getHours();
+     h = h < 10 ? ('0' + h) : h;
+     var M =date.getMinutes();
+     M = M < 10 ? ('0' + M) : M;
+     var s =date.getSeconds();
+     s = s < 10 ? ('0' + s) : s;
+     return y + '-' + m + '-' + d + ' ' + h + ':' + M + ':' + s;
+}
+formatDate(new Date());
+
+##MyBox#
+JavaScript > Examples > Expressions > Date operations
 components of date
 var timeb = new Date('2022/11/30 10:35:32');
 "year: " + timeb.getFullYear() + "\nmonth: " + (timeb.getMonth() + 1) + "\nday: " + timeb.getDate()
  + "\nweek day: " + timeb.getDay() + "\nhours: " + timeb.getHours()+ "\nminutes: " + timeb.getMinutes()
 + "\nseconds: " + timeb.getSeconds();
+
+##MyBox#
+JavaScript > Examples > Expressions > Date operations
+whether Sunday
+new Date().getDay() == 0
 
 ##MyBox#
 JavaScript > Examples > Expressions > Date operations

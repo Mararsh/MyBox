@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.List;
 import mara.mybox.data2d.DataFileText;
-import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileTools;
 
 /**
@@ -20,26 +19,24 @@ public class DataFileTextReader extends Data2DReader {
 
     public DataFileTextReader(DataFileText data) {
         this.readerText = data;
-        init(data);
+        sourceData = data;
     }
 
     @Override
-    public void scanData() {
-        File validFile = FileTools.removeBOM(task, sourceFile);
-        if (validFile == null || readerStopped()) {
+    public void scanFile() {
+        File validFile = FileTools.removeBOM(task(), sourceFile);
+        if (validFile == null || isStopped()) {
             return;
         }
+        readerText.checkForLoad();
         try (BufferedReader reader = new BufferedReader(new FileReader(validFile, readerText.getCharset()))) {
             textReader = reader;
-            operator.handleData();
+            operate.handleData();
             textReader = null;
             reader.close();
         } catch (Exception e) {
-            MyBoxLog.error(e);
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            failed = true;
+            showError(e.toString());
+            setFailed();
         }
     }
 
@@ -55,19 +52,16 @@ public class DataFileTextReader extends Data2DReader {
     public void readColumnNames() {
         try {
             String line;
-            while ((line = textReader.readLine()) != null && !readerStopped()) {
+            while ((line = textReader.readLine()) != null && !isStopped()) {
                 sourceRow = parseFileLine(line);
                 if (sourceRow == null || sourceRow.isEmpty()) {
                     continue;
                 }
-                handleHeader();
+                makeHeader();
                 return;
             }
         } catch (Exception e) {
-            MyBoxLog.error(e);
-            if (task != null) {
-                task.setError(e.toString());
-            }
+            showError(e.toString());
         }
     }
 
@@ -75,24 +69,21 @@ public class DataFileTextReader extends Data2DReader {
     public void readTotal() {
         try {
             String line;
-            rowIndex = 0;
+            sourceIndex = 0;
             skipHeader();
             while ((line = textReader.readLine()) != null) {
-                if (readerStopped()) {
-                    rowIndex = 0;
+                if (isStopped()) {
+                    sourceIndex = 0;
                     return;
                 }
                 List<String> row = parseFileLine(line);
                 if (row != null && !row.isEmpty()) {
-                    ++rowIndex;
+                    ++sourceIndex;
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.error(e);
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            failed = true;
+            showError(e.toString());
+            setFailed();
         }
     }
 
@@ -102,7 +93,7 @@ public class DataFileTextReader extends Data2DReader {
         }
     }
 
-    // rowIndex is 1-base while rowsStart and rowsEnd are 0-based
+    // sourceIndex is 1-base while pageStartIndex and pageEndIndex are 0-based
     @Override
     public void readPage() {
         if (textReader == null) {
@@ -110,28 +101,25 @@ public class DataFileTextReader extends Data2DReader {
         }
         try {
             skipHeader();
-            rowIndex = 0;
+            sourceIndex = 0;
             String line;
-            while ((line = textReader.readLine()) != null && !readerStopped()) {
+            while ((line = textReader.readLine()) != null && !isStopped()) {
                 sourceRow = parseFileLine(line);
                 if (sourceRow == null || sourceRow.isEmpty()) {
                     continue;
                 }
-                if (rowIndex++ < rowsStart) {
+                if (sourceIndex++ < pageStartIndex) {
                     continue;
                 }
-                if (rowIndex > rowsEnd) {
-                    readerStopped = true;
+                if (sourceIndex > pageEndIndex) {
+                    stop();
                     break;
                 }
-                handlePageRow();
+                makePageRow();
             }
         } catch (Exception e) {
-            MyBoxLog.error(e);
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            failed = true;
+            showError(e.toString());
+            setFailed();
         }
     }
 
@@ -142,22 +130,29 @@ public class DataFileTextReader extends Data2DReader {
                 return;
             }
             skipHeader();
-            rowIndex = 0;
+            sourceIndex = 0;
+            long fileIndex = -1;
+            long startIndex = sourceData.startRowOfCurrentPage;
+            long endIndex = sourceData.endRowOfCurrentPage;
             String line;
-            while ((line = textReader.readLine()) != null && !readerStopped()) {
+            while ((line = textReader.readLine()) != null && !isStopped()) {
                 sourceRow = parseFileLine(line);
                 if (sourceRow == null || sourceRow.isEmpty()) {
                     continue;
                 }
-                ++rowIndex;
-                handleRow();
+                fileIndex++;
+
+                if (fileIndex < startIndex || fileIndex >= endIndex) {
+                    ++sourceIndex;
+                    handleRow();
+
+                } else if (fileIndex == startIndex) {
+                    scanPage();
+                }
             }
         } catch (Exception e) {
-            MyBoxLog.error(e);
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            failed = true;
+            showError(e.toString());
+            setFailed();
         }
     }
 

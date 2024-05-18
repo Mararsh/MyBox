@@ -10,11 +10,13 @@ import javafx.scene.layout.VBox;
 import mara.mybox.calculation.DescriptiveStatistic;
 import mara.mybox.calculation.DescriptiveStatistic.StatisticObject;
 import mara.mybox.calculation.DoubleStatistic;
-import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.data2d.TmpTable;
+import mara.mybox.data2d.tools.Data2DConvertTools;
+import mara.mybox.data2d.writer.Data2DWriter;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -25,7 +27,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-12-12
  * @License Apache License Version 2.0
  */
-public class Data2DStatisticController extends BaseData2DTargetsController {
+public class Data2DStatisticController extends BaseData2DTaskTargetsController {
 
     protected DescriptiveStatistic calculation;
     protected int categorysCol;
@@ -45,9 +47,9 @@ public class Data2DStatisticController extends BaseData2DTargetsController {
     }
 
     @Override
-    public void initControls() {
+    public void initOptions() {
         try {
-            super.initControls();
+            super.initOptions();
 
             categoryColumnSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
@@ -62,11 +64,11 @@ public class Data2DStatisticController extends BaseData2DTargetsController {
     }
 
     @Override
-    public void refreshControls() {
+    public void sourceChanged() {
         try {
-            super.refreshControls();
+            super.sourceChanged();
 
-            List<String> names = tableController.data2D.columnNames();
+            List<String> names = data2D.columnNames();
             if (names == null || names.isEmpty()) {
                 return;
             }
@@ -102,9 +104,9 @@ public class Data2DStatisticController extends BaseData2DTargetsController {
     }
 
     @Override
-    public boolean initData() {
+    public boolean checkOptions() {
         try {
-            if (!super.initData()) {
+            if (!super.checkOptions()) {
                 return false;
             }
             categorysCol = -1;
@@ -117,7 +119,7 @@ public class Data2DStatisticController extends BaseData2DTargetsController {
             calculation = statisticController.pickValues()
                     .setScale(scale)
                     .setInvalidAs(invalidAs)
-                    .setHandleController(this)
+                    .setTaskController(this)
                     .setData2D(data2D)
                     .setColsIndices(checkedColsIndices)
                     .setColsNames(checkedColsNames)
@@ -174,7 +176,8 @@ public class Data2DStatisticController extends BaseData2DTargetsController {
         if (rowsRadio.isSelected() && categorysCol >= 0) {
             colsIndices.add(0, categorysCol);
         }
-        if (!calculation.statisticData(tableFiltered(colsIndices, rowsRadio.isSelected() && categorysCol < 0))) {
+        if (!calculation.statisticData(sourceController.rowsFiltered(colsIndices,
+                rowsRadio.isSelected() && categorysCol < 0))) {
             return false;
         }
         outputColumns = calculation.getOutputColumns();
@@ -183,6 +186,10 @@ public class Data2DStatisticController extends BaseData2DTargetsController {
     }
 
     public void handleAllByColumnsTask() {
+        if (task != null) {
+            task.cancel();
+        }
+        taskSuccessed = false;
         task = new FxSingletonTask<Void>(this) {
 
             @Override
@@ -199,14 +206,14 @@ public class Data2DStatisticController extends BaseData2DTargetsController {
                         calculation.setData2D(tmpTable)
                                 .setColsIndices(tmpTable.columnIndices().subList(1, tmpTable.columnsNumber()))
                                 .setColsNames(tmpTable.columnNames().subList(1, tmpTable.columnsNumber()));
-                        ok = calculation.statisticAllByColumns();
+                        taskSuccessed = calculation.statisticAllByColumns();
                         tmpTable.stopFilter();
                         tmpTable.drop();
                     } else {
-                        ok = calculation.statisticAllByColumnsWithoutStored();
+                        taskSuccessed = calculation.statisticAllByColumnsWithoutStored();
                     }
                     data2D.stopFilter();
-                    return ok;
+                    return taskSuccessed;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -220,25 +227,26 @@ public class Data2DStatisticController extends BaseData2DTargetsController {
                 if (targetController.inTable()) {
                     updateTable();
                 } else {
-                    outputExternal();
+                    outputRowsToExternal();
                 }
             }
 
             @Override
             protected void finalAction() {
                 super.finalAction();
-                data2D.stopTask();
                 calculation.setTask(null);
-                if (targetController != null) {
-                    targetController.refreshControls();
-                }
+                closeTask(ok);
             }
 
         };
-        start(task);
+        start(task, false);
     }
 
     public void handleAllByAllTask() {
+        if (task != null) {
+            task.cancel();
+        }
+        taskSuccessed = false;
         task = new FxSingletonTask<Void>(this) {
 
             @Override
@@ -247,7 +255,8 @@ public class Data2DStatisticController extends BaseData2DTargetsController {
                     data2D.startTask(this, filterController.filter);
                     calculation.setTask(this);
                     if (calculation.needStored()) {
-                        DataTable dataTable = data2D.singleColumn(this, checkedColsIndices);
+                        DataTable dataTable = Data2DConvertTools.singleColumn(this,
+                                data2D, checkedColsIndices);
                         if (dataTable == null) {
                             return false;
                         }
@@ -256,18 +265,17 @@ public class Data2DStatisticController extends BaseData2DTargetsController {
                         calculation.setData2D(dataTable)
                                 .setColsIndices(dataTable.columnIndices().subList(1, 2))
                                 .setColsNames(dataTable.columnNames().subList(1, 2));
-                        ok = calculation.statisticAllByColumns();
-                        dataTable.stopFilter();
-                        return ok;
+                        taskSuccessed = calculation.statisticAllByColumns();
                     } else {
                         DoubleStatistic statisticData = data2D.statisticByAllWithoutStored(checkedColsIndices, calculation);
                         if (statisticData == null) {
                             return false;
                         }
                         calculation.statisticByColumnsWrite(statisticData);
-                        data2D.stopFilter();
-                        return true;
+                        taskSuccessed = true;
                     }
+                    data2D.stopFilter();
+                    return taskSuccessed;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -281,38 +289,35 @@ public class Data2DStatisticController extends BaseData2DTargetsController {
                 if (targetController.inTable()) {
                     updateTable();
                 } else {
-                    outputExternal();
+                    outputRowsToExternal();
                 }
             }
 
             @Override
             protected void finalAction() {
                 super.finalAction();
-                data2D.stopTask();
                 calculation.setTask(null);
-                if (targetController != null) {
-                    targetController.refreshControls();
-                }
+                closeTask(ok);
             }
 
         };
-        start(task);
+        start(task, false);
     }
 
     @Override
-    public DataFileCSV generatedFile() {
+    public boolean handleAllData(FxTask currentTask, Data2DWriter writer) {
         List<Integer> colsIndices = checkedColsIndices;
         if (rowsRadio.isSelected() && categorysCol >= 0) {
             colsIndices.add(0, categorysCol);
         }
-        return data2D.statisticByRows(targetController.name(),
+        return data2D.statisticByRows(currentTask, writer,
                 calculation.getOutputNames(), colsIndices, calculation);
     }
 
     /*
         static
      */
-    public static Data2DStatisticController open(ControlData2DLoad tableController) {
+    public static Data2DStatisticController open(BaseData2DLoadController tableController) {
         try {
             Data2DStatisticController controller = (Data2DStatisticController) WindowTools.branchStage(
                     tableController, Fxmls.Data2DStatisticFxml);

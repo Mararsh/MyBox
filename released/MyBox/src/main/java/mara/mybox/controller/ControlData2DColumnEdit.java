@@ -25,7 +25,9 @@ import javafx.scene.paint.Color;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import static mara.mybox.db.data.ColumnDefinition.ColumnType.Color;
+import static mara.mybox.db.data.ColumnDefinition.DefaultInvalidAs;
 import mara.mybox.db.data.ColumnDefinition.InvalidAs;
+import static mara.mybox.db.data.ColumnDefinition.InvalidAs.Empty;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.table.BaseTable;
 import mara.mybox.dev.MyBoxLog;
@@ -53,8 +55,9 @@ public class ControlData2DColumnEdit extends BaseChildController {
     protected ToggleGroup typeGroup;
     @FXML
     protected RadioButton stringRadio, doubleRadio, floatRadio, longRadio, intRadio, shortRadio, booleanRadio,
-            datetimeRadio, dateRadio, eraRadio, longitudeRadio, latitudeRadio, enumRadio, colorRadio, clobRadio,
-            invalidAsEmptyRadio, invalidAsZeroRadio, invalidAsSkipRadio;
+            datetimeRadio, dateRadio, eraRadio, longitudeRadio, latitudeRadio, enumRadio, enumEditableRadio,
+            colorRadio, clobRadio, skipNonnumericRadio, zeroNonnumericRadio, emptyNonnumericRadio,
+            nullNonnumericRadio, keepNonnumericRadio;
     @FXML
     protected CheckBox notNullCheck, editableCheck, fixYearCheck;
     @FXML
@@ -82,10 +85,10 @@ public class ControlData2DColumnEdit extends BaseChildController {
         }
     }
 
-    protected void init(BaseData2DColumnsController columnsController) {
+    @Override
+    public void initControls() {
         try {
-            this.columnsController = columnsController;
-            columnIndex = -1;
+            super.initControls();
 
             colorController.init(this, baseName + "Color");
             colorController.setColor(FxColorTools.randomColor());
@@ -98,6 +101,15 @@ public class ControlData2DColumnEdit extends BaseChildController {
             });
 
             centuryPane.disableProperty().bind(fixYearCheck.selectedProperty().not());
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
+    }
+
+    protected void init(BaseData2DColumnsController controller) {
+        try {
+            this.columnsController = controller;
+            columnIndex = -1;
 
             rightTipsView.setVisible(columnsController.data2D != null && columnsController.data2D.isTable());
 
@@ -107,8 +119,8 @@ public class ControlData2DColumnEdit extends BaseChildController {
     }
 
     protected void setParameters(BaseData2DColumnsController columnsController) {
-        init(columnsController);
-        loadColumn(-1);
+        setParameters(columnsController, -1);
+
     }
 
     public void setParameters(BaseData2DColumnsController columnsController, int index) {
@@ -125,9 +137,9 @@ public class ControlData2DColumnEdit extends BaseChildController {
             defaultInput.clear();
             formatInput.clear();
             fixYearCheck.setSelected(false);
-            invalidAsSkipRadio.setSelected(true);
+            keepNonnumericRadio.setSelected(true);
 
-            if (enumRadio.isSelected()) {
+            if (enumRadio.isSelected() || enumEditableRadio.isSelected()) {
                 optionsBox.getChildren().add(enumBox);
 
             } else if (datetimeRadio.isSelected()) {
@@ -146,7 +158,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
                     || longRadio.isSelected() || intRadio.isSelected() || shortRadio.isSelected()) {
                 optionsBox.getChildren().add(formatBox);
                 formatInput.setText(message("GroupInThousands"));
-                invalidAsZeroRadio.setSelected(true);
+                zeroNonnumericRadio.setSelected(true);
 
             }
 
@@ -174,6 +186,10 @@ public class ControlData2DColumnEdit extends BaseChildController {
             } else {
                 columnIndex = -1;
                 loadColumn(new Data2DColumn());
+            }
+            if (columnsController.data2D != null && columnsController.data2D.isMatrix()) {
+                typesPane.setDisable(true);
+                doubleRadio.setSelected(true);
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -220,6 +236,9 @@ public class ControlData2DColumnEdit extends BaseChildController {
                 case Enumeration:
                     enumRadio.setSelected(true);
                     break;
+                case EnumerationEditable:
+                    enumEditableRadio.setSelected(true);
+                    break;
                 case Longitude:
                     longitudeRadio.setSelected(true);
                     break;
@@ -248,7 +267,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
             enumInput.clear();
             String format = column.getFormat();
             if (format != null) {
-                if (enumRadio.isSelected()) {
+                if (enumRadio.isSelected() || enumEditableRadio.isSelected()) {
                     enumInput.setText(format);
 
                 } else if (datetimeRadio.isSelected() || dateRadio.isSelected() || eraRadio.isSelected()) {
@@ -269,20 +288,40 @@ public class ControlData2DColumnEdit extends BaseChildController {
             colorController.setColor(column.getColor());
 
             InvalidAs invalidAs = column.getInvalidAs();
-            if (invalidAs == InvalidAs.Blank) {
-                invalidAsEmptyRadio.setSelected(true);
-            } else if (invalidAs == InvalidAs.Zero) {
-                invalidAsZeroRadio.setSelected(true);
+
+            if (null == invalidAs) {
+                keepNonnumericRadio.setSelected(true);
             } else {
-                invalidAsSkipRadio.setSelected(true);
+                switch (invalidAs) {
+                    case Skip:
+                        skipNonnumericRadio.setSelected(true);
+                        break;
+                    case Empty:
+                        emptyNonnumericRadio.setSelected(true);
+                        break;
+                    case Zero:
+                        zeroNonnumericRadio.setSelected(true);
+                        break;
+                    case Null:
+                        nullNonnumericRadio.setSelected(true);
+                        break;
+                    default:
+                        keepNonnumericRadio.setSelected(true);
+                        break;
+                }
             }
 
             boolean canNotChange = columnsController.data2D != null
-                    && columnsController.data2D.isTable() && columnIndex >= 0;
+                    && columnsController.data2D.isTable()
+                    && columnsController.data2D.getSheet() != null
+                    && columnIndex >= 0;
             nameInput.setDisable(canNotChange);
             for (int i = 1; i < typesPane.getChildren().size(); i++) {
                 typesPane.getChildren().get(i).setDisable(canNotChange);
             }
+            notNullCheck.setDisable(canNotChange);
+            defaultInput.setDisable(canNotChange);
+            lengthInput.setDisable(canNotChange);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -345,17 +384,24 @@ public class ControlData2DColumnEdit extends BaseChildController {
             }
 
             String enumString = enumInput.getText();
-            if (enumRadio.isSelected() && (enumString == null || enumString.isBlank())) {
+            if (enumRadio.isSelected()
+                    && (enumString == null || enumString.isBlank())) {
                 popError(message("InvalidParameter") + ": " + message("EnumerateValues"));
                 return null;
             }
             InvalidAs invalidAs;
-            if (invalidAsEmptyRadio.isSelected()) {
-                invalidAs = InvalidAs.Blank;
-            } else if (invalidAsZeroRadio.isSelected()) {
-                invalidAs = InvalidAs.Zero;
-            } else {
+            if (skipNonnumericRadio.isSelected()) {
                 invalidAs = InvalidAs.Skip;
+            } else if (emptyNonnumericRadio.isSelected()) {
+                invalidAs = InvalidAs.Empty;
+            } else if (zeroNonnumericRadio.isSelected()) {
+                invalidAs = InvalidAs.Zero;
+            } else if (nullNonnumericRadio.isSelected()) {
+                invalidAs = InvalidAs.Null;
+            } else if (keepNonnumericRadio.isSelected()) {
+                invalidAs = InvalidAs.Keep;
+            } else {
+                invalidAs = DefaultInvalidAs;
             }
             Data2DColumn column;
             if (columnIndex >= 0) {
@@ -377,7 +423,9 @@ public class ControlData2DColumnEdit extends BaseChildController {
             if (message("None").equals(format)) {
                 format = null;
             }
-            if (stringRadio.isSelected()) {
+            if (columnsController.data2D != null && columnsController.data2D.isMatrix()) {
+                column.setType(ColumnType.Double).setFormat(format);
+            } else if (stringRadio.isSelected()) {
                 column.setType(ColumnType.String).setFormat(null);
             } else if (doubleRadio.isSelected()) {
                 column.setType(ColumnType.Double).setFormat(format);
@@ -398,8 +446,9 @@ public class ControlData2DColumnEdit extends BaseChildController {
             } else if (eraRadio.isSelected()) {
                 column.setType(ColumnType.Era).setFormat(format);
             } else if (enumRadio.isSelected()) {
-                column.setType(ColumnType.Enumeration)
-                        .setFormat(enumString);
+                column.setType(ColumnType.Enumeration).setFormat(enumString);
+            } else if (enumEditableRadio.isSelected()) {
+                column.setType(ColumnType.EnumerationEditable).setFormat(enumString);
             } else if (longitudeRadio.isSelected()) {
                 column.setType(ColumnType.Longitude).setFormat(null);
             } else if (latitudeRadio.isSelected()) {

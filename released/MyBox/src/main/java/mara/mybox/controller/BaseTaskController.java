@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -31,7 +34,7 @@ import mara.mybox.value.UserConfig;
  */
 public class BaseTaskController extends BaseLogs {
 
-    protected boolean cancelled, successed;
+    protected boolean taskCancelled, taskSuccessed;
     protected Date startTime, endTime;
     protected LinkedHashMap<Integer, List<File>> targetFiles;
     protected String lastTargetName;
@@ -95,6 +98,11 @@ public class BaseTaskController extends BaseLogs {
         if (!checkOptions()) {
             return;
         }
+        beforeTask();
+        startTask();
+    }
+
+    public void beforeTask() {
         if (task != null) {
             task.cancel();
         }
@@ -106,31 +114,32 @@ public class BaseTaskController extends BaseLogs {
         if (tabPane != null && logsTab != null) {
             tabPane.getSelectionModel().select(logsTab);
         }
-        beforeTask();
-        startTask();
-    }
-
-    public void beforeTask() {
-        cancelled = false;
-        successed = false;
+        taskCancelled = false;
+        taskSuccessed = false;
         targetFilesCount = 0;
         targetFiles = new LinkedHashMap<>();
         initLogs();
+
     }
 
     public void startTask() {
+        defaultStartTask();
+    }
+
+    public void defaultStartTask() {
+        startTime = new Date();
+        updateLogs(message("Start") + ": " + DateTools.dateToString(startTime), true);
+        taskSuccessed = false;
         task = new FxSingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
-                startTime = new Date();
-                return doTask(this);
-
+                taskSuccessed = doTask(this);
+                return taskSuccessed;
             }
 
             @Override
             protected void whenSucceeded() {
-                successed = true;
                 afterSuccess();
             }
 
@@ -142,17 +151,10 @@ public class BaseTaskController extends BaseLogs {
             @Override
             protected void finalAction() {
                 super.finalAction();
-                if (startButton != null) {
-                    StyleTools.setNameIcon(startButton, message("Start"), "iconStart.png");
-                    startButton.applyCss();
-                    startButton.setUserData(null);
-                }
-                updateLogs(message("Completed") + " " + message("Cost")
-                        + " " + DateTools.datetimeMsDuration(endTime, startTime), true);
-                afterTask();
+                closeTask(ok);
             }
         };
-        start(task, false, null);
+        start(task, false);
     }
 
     public boolean doTask(FxTask currentTask) {
@@ -161,6 +163,43 @@ public class BaseTaskController extends BaseLogs {
 
     public void afterSuccess() {
 
+    }
+
+    public void closeTask(boolean ok) {
+        if (startButton != null) {
+            StyleTools.setNameIcon(startButton, message("Start"), "iconStart.png");
+            startButton.applyCss();
+            startButton.setUserData(null);
+        }
+        if (startTime != null) {
+            if (endTime == null) {
+                endTime = new Date();
+            }
+            updateLogs(message("Completed") + " " + message("Cost")
+                    + " " + DateTools.datetimeMsDuration(endTime, startTime), true);
+        }
+        afterTask(ok);
+    }
+
+    public void afterTask(boolean ok) {
+        recordTargetFiles();
+        if (miaoCheck != null && miaoCheck.isSelected()) {
+            SoundTools.miao3();
+        }
+        if (openCheck != null && openCheck.isSelected()) {
+            openTarget();
+        }
+        if (ok && closeAfterCheck != null && closeAfterCheck.isSelected()) {
+            new Timer().schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    Platform.runLater(() -> {
+                        close();
+                    });
+                }
+            }, 500);
+
+        }
     }
 
     public void cancelTask() {
@@ -180,8 +219,8 @@ public class BaseTaskController extends BaseLogs {
     }
 
     protected void taskCanceled() {
-        cancelled = true;
-        showLogs(message("Cancel"));
+        taskCancelled = true;
+        showLogs(message("Cancelled"));
     }
 
     @FXML
@@ -190,7 +229,7 @@ public class BaseTaskController extends BaseLogs {
         File path = targetPath;
         if (path == null || !path.exists()) {
             if (targetPathController != null) {
-                path = targetPathController.file();
+                path = targetPathController.pickFile();
             } else if (targetFile != null) {
                 path = targetFile.getParentFile();
             } else if (targetFiles != null) {
@@ -229,23 +268,13 @@ public class BaseTaskController extends BaseLogs {
         return true;
     }
 
-    public void afterTask() {
-        recordTargetFiles();
-        if (miaoCheck != null && miaoCheck.isSelected()) {
-            SoundTools.miao3();
-        }
-        if (openCheck != null && openCheck.isSelected()) {
-            openTarget();
-        }
-    }
-
     public File lastTargetFile() {
         if (lastTargetName != null) {
             return new File(lastTargetName);
         } else if (targetFile != null) {
             return targetFile;
         } else if (targetFileController != null) {
-            return targetFileController.file();
+            return targetFileController.pickFile();
         }
         return null;
     }
@@ -318,7 +347,7 @@ public class BaseTaskController extends BaseLogs {
     public void cleanPane() {
         try {
             cancelTask();
-            cancelled = true;
+            taskCancelled = true;
         } catch (Exception e) {
         }
         super.cleanPane();

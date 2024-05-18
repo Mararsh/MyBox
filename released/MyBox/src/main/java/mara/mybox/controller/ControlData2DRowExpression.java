@@ -8,11 +8,11 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
+import mara.mybox.calculation.ExpressionCalculator;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.ExpressionCalculator;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
 import static mara.mybox.value.Languages.message;
@@ -68,7 +68,7 @@ public class ControlData2DRowExpression extends ControlJavaScriptRefer {
         try {
             Platform.runLater(() -> {
                 placeholdersList.getItems().clear();
-                if (data2D == null || !data2D.isValid()) {
+                if (data2D == null || !data2D.isValidDefinition()) {
                     return;
                 }
                 List<Data2DColumn> columns = data2D.getColumns();
@@ -103,23 +103,15 @@ public class ControlData2DRowExpression extends ControlJavaScriptRefer {
         }
     }
 
+    @FXML
     @Override
-    protected void moreExampleButtons(MenuController controller) {
-        try {
-            if (data2D == null || !data2D.isValid()) {
-                return;
-            }
-            String col1 = data2D.columnNames().get(0);
-            PopTools.rowExpressionButtons(controller, scriptInput, col1);
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
+    protected void showScriptExamples(Event event) {
+        PopTools.popRowExpressionExamples(this, event, scriptInput, interfaceName + "Examples", data2D);
     }
 
     public boolean checkExpression(boolean allPages) {
         error = null;
-        if (data2D == null || !data2D.hasData()) {
+        if (data2D == null || !data2D.isValidDefinition()) {
             error = message("InvalidData");
             return false;
         }

@@ -34,8 +34,7 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
     protected void showDataMenu(Event event) {
         MenuItem DataManufacture = new MenuItem(message("DataManufacture"));
         DataManufacture.setOnAction((ActionEvent event1) -> {
-            DataManufactureController c = (DataManufactureController) loadScene(Fxmls.DataManufactureFxml);
-            c.createAction();
+            loadScene(Fxmls.Data2DManufactureFxml);
         });
 
         MenuItem ManageData = new MenuItem(message("ManageData"));
@@ -66,13 +65,6 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
         MenuItem DataInMyBoxClipboard = new MenuItem(message("DataInMyBoxClipboard"));
         DataInMyBoxClipboard.setOnAction((ActionEvent event1) -> {
             DataInMyBoxClipboardController c = DataInMyBoxClipboardController.oneOpen();
-            c.createAction();
-        });
-
-        MenuItem EditExcel = new MenuItem(message("EditExcel"));
-        EditExcel.setOnAction((ActionEvent event1) -> {
-            DataFileExcelController c = (DataFileExcelController) loadScene(Fxmls.DataFileExcelFxml);
-            c.dataController.create();
         });
 
         MenuItem ExcelConvert = new MenuItem(message("ExcelConvert"));
@@ -85,12 +77,6 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
             loadScene(Fxmls.DataFileExcelMergeFxml);
         });
 
-        MenuItem EditCSV = new MenuItem(message("EditCSV"));
-        EditCSV.setOnAction((ActionEvent event1) -> {
-            DataFileCSVController c = (DataFileCSVController) loadScene(Fxmls.DataFileCSVFxml);
-            c.createAction();
-        });
-
         MenuItem CsvConvert = new MenuItem(message("CsvConvert"));
         CsvConvert.setOnAction((ActionEvent event1) -> {
             loadScene(Fxmls.DataFileCSVConvertFxml);
@@ -99,12 +85,6 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
         MenuItem CsvMerge = new MenuItem(message("CsvMerge"));
         CsvMerge.setOnAction((ActionEvent event1) -> {
             loadScene(Fxmls.DataFileCSVMergeFxml);
-        });
-
-        MenuItem TextData = new MenuItem(message("EditTextDataFile"));
-        TextData.setOnAction((ActionEvent event1) -> {
-            DataFileTextController c = (DataFileTextController) loadScene(Fxmls.DataFileTextFxml);
-            c.createAction();
         });
 
         MenuItem TextDataConvert = new MenuItem(message("TextDataConvert"));
@@ -117,12 +97,10 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
             loadScene(Fxmls.DataFileTextMergeFxml);
         });
 
-        Menu DataFile = new Menu(message("DataFile"));
-        DataFile.getItems().addAll(
-                EditCSV, CsvConvert, CsvMerge, new SeparatorMenuItem(),
-                EditExcel, ExcelConvert, ExcelMerge, new SeparatorMenuItem(),
-                TextData, TextDataConvert, TextDataMerge
-        );
+        Menu dataFile = new Menu(message("DataFile"));
+        dataFile.getItems().addAll(CsvConvert, CsvMerge, new SeparatorMenuItem(),
+                ExcelConvert, ExcelMerge, new SeparatorMenuItem(),
+                TextDataConvert, TextDataMerge);
 
         MenuItem GeographyCode = new MenuItem(message("GeographyCode"));
         GeographyCode.setOnAction((ActionEvent event1) -> {
@@ -147,19 +125,16 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
         MenuItem MatricesManage = new MenuItem(message("MatricesManage"));
         MatricesManage.setOnAction((ActionEvent event1) -> {
             MatricesManageController c = (MatricesManageController) loadScene(Fxmls.MatricesManageFxml);
-            c.createAction();
         });
 
         MenuItem MatrixUnaryCalculation = new MenuItem(message("MatrixUnaryCalculation"));
         MatrixUnaryCalculation.setOnAction((ActionEvent event1) -> {
             MatrixUnaryCalculationController c = (MatrixUnaryCalculationController) loadScene(Fxmls.MatrixUnaryCalculationFxml);
-            c.createAction();
         });
 
         MenuItem MatricesBinaryCalculation = new MenuItem(message("MatricesBinaryCalculation"));
         MatricesBinaryCalculation.setOnAction((ActionEvent event1) -> {
             MatricesBinaryCalculationController c = (MatricesBinaryCalculationController) loadScene(Fxmls.MatricesBinaryCalculationFxml);
-            c.createAction();
         });
 
         Menu matrix = new Menu(message("Matrix"));
@@ -246,8 +221,10 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
 
         List<MenuItem> items = new ArrayList<>();
         items.addAll(Arrays.asList(
-                DataManufacture, DataFile, matrix, database, ManageData, SpliceData,
-                Data2DDefinition, RowFilter, DataInSystemClipboard, DataInMyBoxClipboard, new SeparatorMenuItem(),
+                DataManufacture, ManageData, new SeparatorMenuItem(),
+                dataFile, matrix, database, new SeparatorMenuItem(),
+                SpliceData, Data2DDefinition, RowFilter,
+                DataInSystemClipboard, DataInMyBoxClipboard, new SeparatorMenuItem(),
                 calculation, MathFunction, new SeparatorMenuItem(),
                 Location, miscellaneousMenu));
 

@@ -34,8 +34,7 @@ public class ImageTextBatchController extends BaseImageEditBatchController {
             optionsController.setParameters(this);
 
             startButton.disableProperty().unbind();
-            startButton.disableProperty().bind(targetPathController.valid.not()
-                    .or(Bindings.isEmpty(tableView.getItems()))
+            startButton.disableProperty().bind(Bindings.isEmpty(tableView.getItems())
                     .or(Bindings.isEmpty(optionsController.textArea.textProperty()))
                     .or(optionsController.xInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                     .or(optionsController.yInput.styleProperty().isEqualTo(UserConfig.badStyle()))

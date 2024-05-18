@@ -441,6 +441,16 @@ public class TableVisitHistory extends BaseTable<VisitHistory> {
                 finalType = FileType.Image;
             }
         }
+        if (fileType == FileType.DataFile) {
+            String v = value.toLowerCase();
+            if (v.endsWith(".csv")) {
+                finalType = FileType.CSV;
+            } else if (v.endsWith(".xlsx") || v.endsWith(".xls")) {
+                finalType = FileType.Excel;
+            } else {
+                finalType = FileType.Text;
+            }
+        }
         try {
             VisitHistory exist = read(conn, resourceType, finalType, operationType, value);
             String d = DateTools.datetimeToString(new Date());

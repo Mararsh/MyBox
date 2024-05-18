@@ -264,6 +264,10 @@ public class ShortcutsController extends BaseTablePagesController<ShortCut> {
                     }
                     task.setInfo(file.getAbsolutePath());
 
+                    file = HelpTools.makeInterfaceTips(lang);
+                    FileCopyTools.copyFile(file, new File(path, file.getName()), true, true);
+                    task.setInfo(file.getAbsolutePath());
+
                     baseTitle = message(lang, "Shortcuts");
                     makeList(lang);
                     StringTable table = makeStringTable(this);
@@ -272,19 +276,25 @@ public class ShortcutsController extends BaseTablePagesController<ShortCut> {
                     file = TextFileTools.writeFile(file, html);
                     task.setInfo(file.getAbsolutePath());
 
-                    file = HelpTools.makeInterfaceTips(lang);
-                    FileCopyTools.copyFile(file, new File(path, file.getName()), true, true);
-                    task.setInfo(file.getAbsolutePath());
-
                     file = HelpTools.usefulLinks(lang);
                     FileCopyTools.copyFile(file, new File(path, file.getName()), true, true);
                     task.setInfo(file.getAbsolutePath());
-
                     file = imageStories(this, true, lang);
                     FileCopyTools.copyFile(file, new File(path, file.getName()), true, true);
                     task.setInfo(file.getAbsolutePath());
 
-                    file = FxFileTools.getInternalFile("/data/examples/ColorsArtPaints.csv",
+                    colorDocs();
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            protected void colorDocs() {
+                try {
+
+                    File file = FxFileTools.getInternalFile("/data/examples/ColorsArtPaints.csv",
                             "data", "ColorsArtPaints_" + lang + ".csv", true);
                     List<ColorData> colors = ColorDataTools.readCSV(this, file, true);
                     colorsDoc(lang, colors, message(lang, "ArtPaints"), "art_paints");
@@ -343,11 +353,7 @@ public class ShortcutsController extends BaseTablePagesController<ShortCut> {
 
                     colors = PaletteTools.greyScales(lang);
                     colorsDoc(lang, colors, message(lang, "GrayScale"), "gray");
-
-                    return true;
                 } catch (Exception e) {
-                    error = e.toString();
-                    return false;
                 }
             }
 

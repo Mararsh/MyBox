@@ -251,6 +251,7 @@ public class TextInSystemClipboardController extends BaseController {
                 controller.updateStatus();
             }
         });
+        Platform.requestNextPulse();
     }
 
 }

@@ -1,10 +1,9 @@
 package mara.mybox.data2d;
 
 import java.util.List;
+import mara.mybox.calculation.ExpressionCalculator;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.ExpressionCalculator;
 import mara.mybox.fxml.FxTask;
-import mara.mybox.value.AppValues;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -75,7 +74,7 @@ public class DataFilter {
         passed = false;
         if (calculateSuccess) {
             if (reversed) {
-                passed = !"true".equals(calculator.getResult());
+                passed = "false".equals(calculator.getResult());
             } else {
                 passed = "true".equals(calculator.getResult());
             }
@@ -129,12 +128,12 @@ public class DataFilter {
     }
 
     public void handleError(String error) {
-        if (task != null) {
-            task.setError(error);
-        }
-        if (error != null && AppValues.Alpha) {
-            MyBoxLog.debug(error + "\n" + sourceScript);
-        }
+//        if (error != null && AppValues.Alpha) {
+//            if (task != null) {
+//                task.setError(error);
+//            }
+//            MyBoxLog.debug(error + "\n" + sourceScript);
+//        }
     }
 
     public void clear() {

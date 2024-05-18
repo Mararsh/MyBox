@@ -3,10 +3,8 @@ package mara.mybox.controller;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
@@ -19,8 +17,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Window;
 import mara.mybox.data2d.Data2D;
-import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.data2d.DataMatrix;
+import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
@@ -37,13 +35,17 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2020-12-17
  * @License Apache License Version 2.0
  */
-public class MatrixUnaryCalculationController extends MatricesManageController {
+public class MatrixUnaryCalculationController extends BaseController {
 
-    protected DataMatrix dataMatrix, resultMatrix;
+    protected DataMatrix resultMatrix;
     protected int column, row, power;
     protected double number, resultValue;
-    protected double[][] result;
+    protected double[][] sourceMatrix, result;
 
+    @FXML
+    protected ControlData2DMatrix dataController;
+    @FXML
+    protected ControlData2DView resultController;
     @FXML
     protected Tab resultTab;
     @FXML
@@ -55,8 +57,6 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
     @FXML
     protected TextField rowInput, columnInput, numberInput, powerInput;
     @FXML
-    protected Button calculateButton;
-    @FXML
     protected RadioButton transposeRadio, DivideNumberRadio, normalizeRadio,
             DeterminantByEliminationRadio, DeterminantByComplementMinorRadio,
             InverseMatrixByEliminationRadio, InverseMatrixByAdjointRadio, MatrixRankRadio, AdjointMatrixRadio, PowerRadio,
@@ -65,8 +65,6 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
     protected ControlData2DNormalize normalizeController;
     @FXML
     protected Label resultLabel, checkLabel;
-    @FXML
-    protected ControlData2D resultController;
     @FXML
     protected TextArea resultArea;
     @FXML
@@ -81,9 +79,7 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
         try {
             super.initValues();
 
-            dataMatrix = (DataMatrix) dataController.data2D;
-
-            resultController.setDataType(null, Data2D.Type.Matrix);
+            resultController.createData(Data2D.DataType.Matrix);
             resultMatrix = (DataMatrix) resultController.data2D;
 
         } catch (Exception e) {
@@ -96,34 +92,20 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
         try {
             super.initControls();
 
-            dataController.statusNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
-                    checkMatrix();
-                }
-            });
-
-            resultController.savedNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
-                    listController.refreshAction();
-                }
-            });
-
             resultBox.getChildren().clear();
 
             row = UserConfig.getInt(baseName + "Row", 1);
             rowInput.setText(row + "");
             rowInput.textProperty().addListener(
                     (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
-                        calculateButton.setDisable(!checkXY());
+                        checkXY();
                     });
 
             column = UserConfig.getInt(baseName + "Column", 1);
             columnInput.setText(column + "");
             columnInput.textProperty().addListener(
                     (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
-                        calculateButton.setDisable(!checkXY());
+                        checkXY();
                     });
 
             try {
@@ -137,10 +119,8 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
                     number = Double.parseDouble(newValue);
                     numberInput.setStyle(null);
                     UserConfig.setString(baseName + "Number", number + "");
-                    calculateButton.setDisable(false);
                 } catch (Exception e) {
                     numberInput.setStyle(UserConfig.badStyle());
-                    calculateButton.setDisable(true);
                 }
             });
 
@@ -157,10 +137,8 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
                         power = v;
                         powerInput.setStyle(null);
                         UserConfig.setInt(baseName + "Power", power);
-                        calculateButton.setDisable(false);
                     } else {
                         powerInput.setStyle(UserConfig.badStyle());
-                        calculateButton.setDisable(true);
                     }
                 } catch (Exception e) {
                     powerInput.setStyle(UserConfig.badStyle());
@@ -169,9 +147,9 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
 
             opGroup.selectedToggleProperty().addListener(
                     (ObservableValue<? extends Toggle> ov, Toggle oldValue, Toggle newValue) -> {
-                        checkMatrix();
+                        checkMatrix(false);
                     });
-            checkMatrix();
+            checkMatrix(false);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -179,6 +157,9 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
     }
 
     protected boolean checkXY() {
+        if (sourceMatrix == null || sourceMatrix.length == 0) {
+            return false;
+        }
         boolean valid = true;
         try {
             if (!setBox.getChildren().contains(xyBox)) {
@@ -187,7 +168,7 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
                 return true;
             }
             int v = Integer.parseInt(rowInput.getText().trim());
-            if (v > 0 && v <= dataMatrix.tableRowsNumber()) {
+            if (v > 0 && v <= sourceMatrix.length) {
                 row = v;
                 rowInput.setStyle(null);
                 UserConfig.setInt(baseName + "Row", v);
@@ -201,7 +182,7 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
         }
         try {
             int v = Integer.parseInt(columnInput.getText().trim());
-            if (v > 0 && v <= dataMatrix.tableColsNumber()) {
+            if (v > 0 && v <= sourceMatrix[0].length) {
                 column = v;
                 columnInput.setStyle(null);
                 UserConfig.setInt(baseName + "Column", v);
@@ -217,6 +198,9 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
     }
 
     protected boolean checkNumber() {
+        if (sourceMatrix == null || sourceMatrix.length == 0) {
+            return false;
+        }
         try {
             if (!setBox.getChildren().contains(numberBox)) {
                 numberInput.setStyle(null);
@@ -237,6 +221,9 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
     }
 
     protected boolean checkPower() {
+        if (sourceMatrix == null || sourceMatrix.length == 0) {
+            return false;
+        }
         try {
             if (!setBox.getChildren().contains(powerBox)) {
                 powerInput.setStyle(null);
@@ -258,30 +245,75 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
         }
     }
 
-    protected boolean checkMatrix() {
+    protected void checkMatrix(boolean calculate) {
+        if (!dataController.checkSelections()) {
+            popError(message("NoData") + ": " + message("Matrix"));
+            return;
+        }
         setBox.getChildren().clear();
         rowInput.setStyle(null);
         columnInput.setStyle(null);
         numberInput.setStyle(null);
         powerInput.setStyle(null);
         checkLabel.setText("");
-        if (dataMatrix == null || !dataMatrix.isValid()) {
+        if (task != null) {
+            task.cancel();
+        }
+        resultLabel.setText("");
+        resultBox.getChildren().clear();
+        sourceMatrix = null;
+        task = new FxSingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                try {
+                    sourceMatrix = dataController.pickMatrix(this);
+                    return sourceMatrix != null && sourceMatrix.length > 0;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+            }
+
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                setControls();
+                if (ok && calculate) {
+                    calculate();
+                }
+            }
+
+        };
+        start(task);
+    }
+
+    protected void handleError(String error) {
+        popError(error);
+        checkLabel.setText(error);
+    }
+
+    protected boolean setControls() {
+        if (sourceMatrix == null || sourceMatrix.length == 0) {
+            handleError(message("InvalidData") + ": " + message("Matrix"));
             return false;
         }
         if (DeterminantByEliminationRadio.isSelected() || DeterminantByComplementMinorRadio.isSelected()
                 || InverseMatrixByEliminationRadio.isSelected() || InverseMatrixByAdjointRadio.isSelected()
                 || MatrixRankRadio.isSelected() || AdjointMatrixRadio.isSelected() || PowerRadio.isSelected()) {
-            if (!dataMatrix.isSquare()) {
-                checkLabel.setText(message("MatricesCannotCalculateShouldSqure"));
-                calculateButton.setDisable(true);
+            if (!dataController.isSquare(sourceMatrix)) {
+                handleError(message("MatricesCannotCalculateShouldSameRows"));
                 return false;
             }
 
             if (PowerRadio.isSelected()) {
                 setBox.getChildren().add(powerBox);
                 if (!checkPower()) {
-                    checkLabel.setText(message("InvalidParameters"));
-                    calculateButton.setDisable(true);
+                    handleError(message("InvalidParameters"));
                     return false;
                 }
             }
@@ -289,16 +321,14 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
         } else if (ComplementMinorRadio.isSelected()) {
             setBox.getChildren().add(xyBox);
             if (!checkXY()) {
-                checkLabel.setText(message("InvalidParameters"));
-                calculateButton.setDisable(true);
+                handleError(message("InvalidParameters"));
                 return false;
             }
 
         } else if (MultiplyNumberRadio.isSelected() || DivideNumberRadio.isSelected()) {
             setBox.getChildren().add(numberBox);
             if (!checkNumber()) {
-                checkLabel.setText(message("InvalidParameters"));
-                calculateButton.setDisable(true);
+                handleError(message("InvalidParameters"));
                 return false;
             }
 
@@ -306,13 +336,18 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
             setBox.getChildren().add(normalizeBox);
 
         }
-        calculateButton.setDisable(false);
         return true;
     }
 
     @FXML
     public void calculateAction() {
-        if (!checkMatrix()) {
+        checkMatrix(true);
+    }
+
+    @FXML
+    public void calculate() {
+        if (sourceMatrix == null || sourceMatrix.length == 0) {
+            handleError(message("InvalidData") + ": " + message("Matrix"));
             return;
         }
         if (task != null) {
@@ -330,46 +365,46 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
                     resultValue = AppValues.InvalidDouble;
                     op = ((RadioButton) opGroup.getSelectedToggle()).getText();
                     if (message("Transpose").equals(op)) {
-                        result = DoubleMatrixTools.transpose(dataMatrix.toMatrix());
+                        result = DoubleMatrixTools.transpose(sourceMatrix);
 
                     } else if (message("RowEchelonForm").equals(op)) {
-                        result = DoubleMatrixTools.rowEchelonForm(dataMatrix.toMatrix());
+                        result = DoubleMatrixTools.rowEchelonForm(sourceMatrix);
 
                     } else if (message("ReducedRowEchelonForm").equals(op)) {
-                        result = DoubleMatrixTools.reducedRowEchelonForm(dataMatrix.toMatrix());
+                        result = DoubleMatrixTools.reducedRowEchelonForm(sourceMatrix);
 
                     } else if (message("ComplementMinor").equals(op)) {
-                        result = DoubleMatrixTools.complementMinor(dataMatrix.toMatrix(), row - 1, column - 1);
+                        result = DoubleMatrixTools.complementMinor(sourceMatrix, row - 1, column - 1);
 
                     } else if (message("Normalize").equals(op)) {
-                        result = normalizeController.calculateDoubles(dataMatrix.toMatrix(), InvalidAs.Blank);
+                        result = normalizeController.calculateDoubles(sourceMatrix, InvalidAs.Empty);
 
                     } else if (message("MultiplyNumber").equals(op)) {
-                        result = DoubleMatrixTools.multiply(dataMatrix.toMatrix(), number);
+                        result = DoubleMatrixTools.multiply(sourceMatrix, number);
 
                     } else if (message("DivideNumber").equals(op)) {
-                        result = DoubleMatrixTools.divide(dataMatrix.toMatrix(), number);
+                        result = DoubleMatrixTools.divide(sourceMatrix, number);
 
                     } else if (message("DeterminantByElimination").equals(op)) {
-                        resultValue = DoubleMatrixTools.determinantByElimination(dataMatrix.toMatrix());
+                        resultValue = DoubleMatrixTools.determinantByElimination(sourceMatrix);
 
                     } else if (message("DeterminantByComplementMinor").equals(op)) {
-                        resultValue = DoubleMatrixTools.determinantByComplementMinor(dataMatrix.toMatrix());
+                        resultValue = DoubleMatrixTools.determinantByComplementMinor(sourceMatrix);
 
                     } else if (message("InverseMatrixByElimination").equals(op)) {
-                        result = DoubleMatrixTools.inverseByElimination(dataMatrix.toMatrix());
+                        result = DoubleMatrixTools.inverseByElimination(sourceMatrix);
 
                     } else if (message("InverseMatrixByAdjoint").equals(op)) {
-                        result = DoubleMatrixTools.inverseByAdjoint(dataMatrix.toMatrix());
+                        result = DoubleMatrixTools.inverseByAdjoint(sourceMatrix);
 
                     } else if (message("MatrixRank").equals(op)) {
-                        resultValue = DoubleMatrixTools.rank(dataMatrix.toMatrix());
+                        resultValue = DoubleMatrixTools.rank(sourceMatrix);
 
                     } else if (message("AdjointMatrix").equals(op)) {
-                        result = DoubleMatrixTools.adjoint(dataMatrix.toMatrix());
+                        result = DoubleMatrixTools.adjoint(sourceMatrix);
 
                     } else if (message("Power").equals(op)) {
-                        result = DoubleMatrixTools.power(dataMatrix.toMatrix(), power);
+                        result = DoubleMatrixTools.power(sourceMatrix, power);
 
                     }
                 } catch (Exception e) {
@@ -424,7 +459,6 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
 
     public static MatrixUnaryCalculationController open() {
         MatrixUnaryCalculationController controller = oneOpen();
-        controller.createAction();
         return controller;
     }
 

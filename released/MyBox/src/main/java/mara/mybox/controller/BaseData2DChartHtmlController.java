@@ -40,9 +40,9 @@ public abstract class BaseData2DChartHtmlController extends BaseData2DChartContr
     protected ControlWebView webViewController;
 
     @Override
-    public void initControls() {
+    public void initOptions() {
         try {
-            super.initControls();
+            super.initOptions();
 
             webViewController.setParent(this);
 
@@ -108,7 +108,7 @@ public abstract class BaseData2DChartHtmlController extends BaseData2DChartContr
                             barWidth = v;
                             UserConfig.setInt(baseName + "Width", v);
                             widthSelector.getEditor().setStyle(null);
-                            okAction();
+                            startAction();
                         } else {
                             widthSelector.getEditor().setStyle(UserConfig.badStyle());
                         }
@@ -127,7 +127,7 @@ public abstract class BaseData2DChartHtmlController extends BaseData2DChartContr
                 @Override
                 public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
                     UserConfig.setBoolean(baseName + "Absoluate", absoluateRadio.isSelected());
-                    okAction();
+                    startAction();
                 }
             });
 
@@ -142,8 +142,8 @@ public abstract class BaseData2DChartHtmlController extends BaseData2DChartContr
     }
 
     @Override
-    public boolean initData() {
-        if (!super.initData()) {
+    public boolean checkOptions() {
+        if (!super.checkOptions()) {
             return false;
         }
         categorysCol = -1;
@@ -175,7 +175,7 @@ public abstract class BaseData2DChartHtmlController extends BaseData2DChartContr
             }
 
         };
-        start(task);
+        start(task, false);
     }
 
     @Override
@@ -260,8 +260,9 @@ public abstract class BaseData2DChartHtmlController extends BaseData2DChartContr
     }
 
     protected String jsComments() {
-        return "\n<HR/>\n<P align=left style=\"font-size:0.8em;\">* "
-                + message("HtmlEditableComments") + "</P>\n";
+//        return "\n<HR/>\n<P align=left style=\"font-size:0.8em;\">* "
+//                + message("HtmlEditableComments") + "</P>\n";
+        return "<P></P>\n";
     }
 
     @FXML
@@ -278,22 +279,21 @@ public abstract class BaseData2DChartHtmlController extends BaseData2DChartContr
     }
 
     @FXML
-    @Override
     public void dataAction() {
         if (outputData == null || outputData.isEmpty()) {
             popError(message("NoData"));
             return;
         }
-        DataManufactureController.open(outputColumns, outputData);
+        Data2DManufactureController.openData(baseTitle, outputColumns, outputData);
     }
 
     @FXML
-    @Override
     public void editAction() {
         webViewController.editAction();
     }
 
     @FXML
+    @Override
     public void popFunctionsMenu(javafx.event.Event event) {
         if (UserConfig.getBoolean("WebviewFunctionsPopWhenMouseHovering", true)) {
             showFunctionsMenu(event);
@@ -301,8 +301,21 @@ public abstract class BaseData2DChartHtmlController extends BaseData2DChartContr
     }
 
     @FXML
+    @Override
     public void showFunctionsMenu(javafx.event.Event event) {
         webViewController.showFunctionsMenu(event);
+    }
+
+    @FXML
+    @Override
+    public boolean menuAction() {
+        return webViewController.menuAction();
+    }
+
+    @FXML
+    @Override
+    public boolean popAction() {
+        return webViewController.popAction();
     }
 
     @Override

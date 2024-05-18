@@ -199,6 +199,7 @@ public class PdfInformation extends FileInformation {
                 synchronized (info) {
                     info.wait();
                 }
+                Platform.requestNextPulse();
                 try (PDDocument doc = PDDocument.load(info.getFile(), info.getUserPassword(), AppVariables.PdfMemUsage)) {
                     info.readInfo(task, doc);
                     doc.close();

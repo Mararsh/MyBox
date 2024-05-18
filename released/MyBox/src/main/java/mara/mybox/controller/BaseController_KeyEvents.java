@@ -13,7 +13,6 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -498,6 +497,10 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
     }
 
     public boolean controlAltT() {
+        if (selectButton != null) {
+            selectAction();
+            return true;
+        }
         return false;
     }
 
@@ -562,8 +565,7 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
         }
         myStage = getMyStage();
         if (myStage != null && myStage.isShowing()) {
-            myStage.setAlwaysOnTop(!myStage.isAlwaysOnTop());
-            popInformation(myStage.isAlwaysOnTop() ? message("AlwayOnTop") : message("DisableAlwayOnTop"));
+            setAlwaysTop(!myStage.isAlwaysOnTop(), true);
             return true;
         }
         return false;

@@ -1,16 +1,14 @@
 package mara.mybox.data2d;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.nio.charset.Charset;
-import java.util.HashMap;
 import java.util.List;
 import mara.mybox.data.FindReplaceString;
+import mara.mybox.data2d.writer.Data2DWriter;
+import mara.mybox.data2d.writer.DataFileTextWriter;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TextTools;
@@ -26,46 +24,14 @@ public class DataFileText extends DataFile {
     public static final String CommentsMarker = "#";
 
     public DataFileText() {
-        type = Type.Texts;
-    }
-
-    public DataFileText(File file) {
-        type = Type.Texts;
-        this.file = file;
-        guessDelimiter();
+        dataType = DataType.Texts;
     }
 
     public String[] delimters() {
         String[] delimiters = {",", " ", "    ", "        ", "\t", "|", "@",
-            "#", ";", ":", "*", "%", "$", "_", "&", "-", "=", "!", "\"",
-            "'", "<", ">"};
+            ";", ":", "*", "%", "$", "_", "&", "-", "=", "!", "\"",
+            "'", "<", ">", "#"};
         return delimiters;
-    }
-
-    public void setOptions(boolean hasHeader, Charset charset, String delimiter) {
-        options = new HashMap<>();
-        options.put("hasHeader", hasHeader);
-        options.put("charset", charset);
-        options.put("delimiter", delimiter);
-    }
-
-    @Override
-    public void applyOptions() {
-        try {
-            if (options == null) {
-                return;
-            }
-            if (options.containsKey("hasHeader")) {
-                hasHeader = (boolean) (options.get("hasHeader"));
-            }
-            if (options.containsKey("charset")) {
-                charset = (Charset) (options.get("charset"));
-            }
-            if (options.containsKey("delimiter")) {
-                delimiter = (String) (options.get("delimiter"));
-            }
-        } catch (Exception e) {
-        }
     }
 
     @Override
@@ -206,135 +172,18 @@ public class DataFileText extends DataFile {
     }
 
     @Override
-    public boolean savePageData(Data2D targetData) {
-        if (targetData == null || !(targetData instanceof DataFileText)) {
-            return false;
-        }
-        DataFileText targetTextFile = (DataFileText) targetData;
-        File tmpFile = FileTmpTools.getTempFile();
-        File tFile = targetTextFile.getFile();
-        if (tFile == null) {
-            return false;
-        }
-        targetTextFile.checkForLoad();
-        Charset tCharset = targetTextFile.getCharset();
-        String tDelimiter = targetTextFile.getDelimiter();
-        checkForLoad();
-        boolean tHasHeader = targetTextFile.isHasHeader();
-        if (file != null && file.exists() && file.length() > 0) {
-            File validFile = FileTools.removeBOM(task, file);
-            if (validFile == null || (task != null && !task.isWorking())) {
-                return false;
-            }
-            try (BufferedReader reader = new BufferedReader(new FileReader(validFile, charset));
-                    BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, tCharset, false))) {
-                List<String> colsNames = columnNames();
-                if (hasHeader) {
-                    readValidLine(reader);
-                }
-                if (tHasHeader && colsNames != null) {
-                    TextFileTools.writeLine(task, writer, colsNames, tDelimiter);
-                } else {
-                    targetTextFile.setHasHeader(false);
-                }
-                long rIndex = -1;
-                String line;
-                while ((line = reader.readLine()) != null && task != null && task.isWorking()) {
-                    List<String> row = parseFileLine(line);
-                    if (row == null || row.isEmpty()) {
-                        continue;
-                    }
-                    if (++rIndex < startRowOfCurrentPage || rIndex >= endRowOfCurrentPage) {
-                        TextFileTools.writeLine(task, writer, fileRow(row), tDelimiter);
-                    } else if (rIndex == startRowOfCurrentPage) {
-                        writePageData(writer, tDelimiter);
-                    }
-                }
-                if (rIndex < 0) {
-                    writePageData(writer, tDelimiter);
-                }
-                writer.flush();
-            } catch (Exception e) {
-                MyBoxLog.console(e);
-                if (task != null) {
-                    task.setError(e.toString());
-                }
-                return false;
-            }
-        } else {
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, tCharset, false))) {
-                List<String> colsNames = columnNames();
-                if (tHasHeader && colsNames != null) {
-                    TextFileTools.writeLine(task, writer, colsNames, tDelimiter);
-                } else {
-                    targetTextFile.setHasHeader(false);
-                }
-                writePageData(writer, tDelimiter);
-            } catch (Exception e) {
-                MyBoxLog.console(e);
-                if (task != null) {
-                    task.setError(e.toString());
-                }
-                return false;
-            }
-        }
-        return FileTools.override(tmpFile, tFile);
-    }
-
-    public boolean writePageData(BufferedWriter writer, String delimiter) {
-        try {
-            if (writer == null || delimiter == null) {
-                return false;
-            }
-            if (!isColumnsValid()) {
-                return true;
-            }
-            for (int r = 0; r < tableRowsNumber(); r++) {
-                if (task == null || task.isCancelled()) {
-                    return false;
-                }
-                TextFileTools.writeLine(task, writer, tableRow(r, false, false), delimiter);
-            }
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.console(e);
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            return false;
-        }
-    }
-
-    public File tmpTxtFile(String dname, List<String> cols, List<List<String>> data) {
-        try {
-            if (cols == null || cols.isEmpty()) {
-                if (data == null || data.isEmpty()) {
-                    return null;
-                }
-            }
-            File tmpFile = tmpFile(dname, "tmp", "txt");
-            String fDelimiter = ",";
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, Charset.forName("UTF-8"), false))) {
-                if (cols != null && !cols.isEmpty()) {
-                    TextFileTools.writeLine(task, writer, cols, fDelimiter);
-                }
-                if (data != null) {
-                    for (int r = 0; r < data.size(); r++) {
-                        if (task != null && task.isCancelled()) {
-                            break;
-                        }
-                        TextFileTools.writeLine(task, writer, data.get(r), fDelimiter);
-                    }
-                }
-            }
-            return tmpFile;
-        } catch (Exception e) {
-            MyBoxLog.console(e);
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            return null;
-        }
+    public Data2DWriter selfWriter() {
+        DataFileTextWriter writer = new DataFileTextWriter();
+        writer.setCharset(charset)
+                .setDelimiter(delimiter)
+                .setWriteHeader(hasHeader)
+                .setTargetData(this)
+                .setPrintFile(file)
+                .setColumns(columns)
+                .setHeaderNames(columnNames())
+                .setRecordTargetFile(true)
+                .setRecordTargetData(true);
+        return writer;
     }
 
 }

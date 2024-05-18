@@ -44,7 +44,7 @@ public class ImageTiffFile {
         try {
             IIOMetadata metadata;
             try ( ImageInputStream iis = ImageIO.createImageInputStream(file)) {
-                ImageReader reader = ImageFileReaders.getReader(iis, FileNameTools.suffix(file.getName()));
+                ImageReader reader = ImageFileReaders.getReader(iis, FileNameTools.ext(file.getName()));
                 if (reader == null) {
                     return null;
                 }

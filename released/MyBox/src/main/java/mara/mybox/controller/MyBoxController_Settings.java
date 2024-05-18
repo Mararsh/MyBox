@@ -119,6 +119,7 @@ public abstract class MyBoxController_Settings extends MyBoxController_Recent {
                 }
                 derbyServer.setDisable(false);
             });
+            Platform.requestNextPulse();
         });
         isSettingValues = true;
         derbyServer.setSelected("client".equals(DerbyBase.mode));

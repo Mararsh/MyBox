@@ -41,8 +41,11 @@ public class FxTask<Void> extends BaseTask<Void> {
         }
         if (loading != null) {
             loading.setInfo(info);
+        } else if (controller != null) {
+            controller.setInfo(info);
+        } else {
+//            MyBoxLog.console(info);
         }
-//        MyBoxLog.console(info);
     }
 
     @Override
@@ -53,8 +56,11 @@ public class FxTask<Void> extends BaseTask<Void> {
         }
         if (loading != null) {
             loading.setInfo(error);
+        } else if (controller != null) {
+            controller.setError(error);
+        } else {
+            MyBoxLog.error(error);
         }
-        MyBoxLog.debug(error);
     }
 
     public String getInfo() {
@@ -71,7 +77,7 @@ public class FxTask<Void> extends BaseTask<Void> {
             return;
         }
         if (controller != null) {
-            controller.popSuccessful();
+            controller.displayInfo(message("Successful"));
         }
     }
 
@@ -87,16 +93,17 @@ public class FxTask<Void> extends BaseTask<Void> {
             return;
         }
         if (controller != null) {
+            MyBoxLog.console(controller.getClass());
             if (error != null) {
+                MyBoxLog.debug(controller.getTitle() + ": " + error);
                 if (error.equals(message("Failed"))) {
-                    controller.popError(error);
+                    controller.displayError(error);
                 } else {
                     if (error.contains("java.sql.SQLDataException: 22003 : [0] DOUBLE")) {
                         error = error + "\n\n" + message("DataOverflow");
                     }
                     controller.alertError(error);
                 }
-                MyBoxLog.debug(controller.getTitle() + ": " + error);
             } else {
                 controller.popFailed();
             }

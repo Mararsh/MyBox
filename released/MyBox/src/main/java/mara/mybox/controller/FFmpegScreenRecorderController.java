@@ -109,7 +109,7 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
         if (v == null || v.isBlank()) {
             targetFileController.input(FileTmpTools.generateFile(ext).getAbsolutePath());
         } else if (!v.endsWith("." + ext)) {
-            targetFileController.input(FileNameTools.replaceSuffix(v, ext));
+            targetFileController.input(FileNameTools.replaceExt(v, ext));
         }
     }
 
@@ -120,16 +120,7 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
                 popError(message("NothingHandled"));
                 return false;
             }
-            return pickTarget();
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return false;
-        }
-    }
-
-    public boolean pickTarget() {
-        try {
-            targetFile = targetFileController.file();
+            targetFile = makeTargetFile();
             if (targetFile == null) {
                 popError(message("InvalidParameter") + ": " + message("TargetFile"));
                 return false;
@@ -215,7 +206,9 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
                     }
                 }
             }
-            process.waitFor();
+            if (process != null) {
+                process.waitFor();
+            }
             if (process != null) {
                 process.destroy();
                 process = null;
@@ -261,6 +254,15 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
     }
 
     @Override
+    public void afterTask(boolean ok) {
+        super.afterTask(ok);
+        if (process != null) {
+            process.destroy();
+            process = null;
+        }
+    }
+
+    @Override
     public void cancelTask() {
         if (task != null) {
             task.cancel();
@@ -292,7 +294,12 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
     @Override
     public void cleanPane() {
         try {
+            stopping.set(false);
             cancelTask();
+            if (process != null) {
+                process.destroy();
+                process = null;
+            }
         } catch (Exception e) {
         }
         super.cleanPane();

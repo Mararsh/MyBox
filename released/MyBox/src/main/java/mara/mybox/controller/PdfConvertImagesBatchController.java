@@ -15,7 +15,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.FileNameTools;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
@@ -38,8 +38,7 @@ public class PdfConvertImagesBatchController extends BaseBatchPdfController {
             appendColorCheck, appendCompressionCheck, appendQualityCheck, appendDensityCheck;
 
     public PdfConvertImagesBatchController() {
-        baseTitle = Languages.message("PdfConvertImagesBatch");
-        browseTargets = true;
+        baseTitle = message("PdfConvertImagesBatch");
     }
 
     @Override
@@ -72,7 +71,6 @@ public class PdfConvertImagesBatchController extends BaseBatchPdfController {
 
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(Bindings.isEmpty(tableView.getItems())
-                    .or(targetPathController.valid.not())
                     .or(formatController.qualitySelector.getEditor().styleProperty().isEqualTo(UserConfig.badStyle()))
                     .or(formatController.dpiSelector.getEditor().styleProperty().isEqualTo(UserConfig.badStyle()))
                     .or(formatController.profileInput.styleProperty().isEqualTo(UserConfig.badStyle()))
@@ -190,13 +188,14 @@ public class PdfConvertImagesBatchController extends BaseBatchPdfController {
         }
     }
 
+    @Override
     public File makeTargetFile() {
         try {
             String namePrefix = FileNameTools.prefix(currentParameters.currentSourceFile.getName())
                     + "_page" + currentParameters.currentPage;
             if (!"ico".equals(attributes.getImageFormat())) {
                 if (appendColorCheck.isSelected()) {
-                    if (Languages.message("IccProfile").equals(attributes.getColorSpaceName())) {
+                    if (message("IccProfile").equals(attributes.getColorSpaceName())) {
                         namePrefix += "_" + attributes.getProfileName();
                     } else {
                         namePrefix += "_" + attributes.getColorSpaceName();

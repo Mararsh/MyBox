@@ -59,8 +59,7 @@ public class ImageAlphaAddBatchController extends BaseImageEditBatchController {
         try {
             super.initControls();
             startButton.disableProperty().unbind();
-            startButton.disableProperty().bind(targetPathController.valid.not()
-                    .or(sourceFileInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+            startButton.disableProperty().bind(sourceFileInput.styleProperty().isEqualTo(UserConfig.badStyle())
                     .or(opacityBox.getEditor().styleProperty().isEqualTo(UserConfig.badStyle()))
                     .or(Bindings.isEmpty(tableView.getItems()))
             );

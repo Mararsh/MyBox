@@ -88,11 +88,6 @@ License:    Apache License Version 2.0
                      </graphic></RadioButton>
                </children>
             </FlowPane>
-            <ImageView fx:id="rightTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../buttons/Red/iconTipsRight.png" />
-               </image>
-            </ImageView>
             <Button fx:id="helpButton" mnemonicParsing="false" onAction="#showHtmlHelps" onMouseEntered="#popHtmlHelps">
                <graphic>
                   <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">

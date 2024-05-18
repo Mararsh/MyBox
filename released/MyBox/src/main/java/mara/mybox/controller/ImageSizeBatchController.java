@@ -57,8 +57,7 @@ public class ImageSizeBatchController extends BaseImageEditBatchController {
             super.initControls();
 
             startButton.disableProperty().unbind();
-            startButton.disableProperty().bind(targetPathController.valid.not()
-                    .or(Bindings.isEmpty(tableView.getItems()))
+            startButton.disableProperty().bind(Bindings.isEmpty(tableView.getItems())
                     .or(customWidthInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                     .or(customHeightInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                     .or(keepWidthInput.styleProperty().isEqualTo(UserConfig.badStyle()))

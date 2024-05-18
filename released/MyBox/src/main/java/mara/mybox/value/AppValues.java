@@ -8,8 +8,8 @@ package mara.mybox.value;
 public class AppValues {
 
     public static final boolean Alpha = false;
-    public static final String AppVersion = "6.8";
-    public static final String AppVersionDate = "2024-2-9";
+    public static final String AppVersion = "6.8.1";
+    public static final String AppVersionDate = "2024-5-18";
     public static final String AppDerbyUser = "mara";
     public static final String AppDerbyPassword = "mybox";
     public static final int AppYear = 2024;
@@ -31,8 +31,8 @@ public class AppValues {
     public static final double InvalidDouble = Double.MAX_VALUE;
     public static final double TinyDouble = Float.MIN_VALUE;
 
-    public static final String GaoDeMapWebKey = "06b9e078a51325a843dfefd57ffd876c";
-    public static final String GaoDeMapServiceKey = "d7444d9a7fae01fa850236d909ad4450";
+    public static final String GaoDeMapJavascriptKey = "9a05f3a33dbf64b70f6e1ac3988d9cdd";
+    public static final String GaoDeMapWebServiceKey = "a389d47ae369e57e0c2c7e32e845d1b0";
     public static final String TianDiTuWebKey = "0ddeb917def62b4691500526cc30a9b1";
 
 }

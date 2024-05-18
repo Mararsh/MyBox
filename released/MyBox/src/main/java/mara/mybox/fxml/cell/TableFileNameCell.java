@@ -42,7 +42,7 @@ public class TableFileNameCell<T> extends TableCell<T, String>
                 if (empty || item == null) {
                     return;
                 }
-                String suffix = FileNameTools.suffix(item).toLowerCase();
+                String suffix = FileNameTools.ext(item).toLowerCase();
                 if (FileExtensions.SupportedImages.contains(suffix)) {
                     ImageViewFileTask task = new ImageViewFileTask()
                             .setCell(this).setView(imageview)

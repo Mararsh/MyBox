@@ -14,14 +14,14 @@ import static mara.mybox.value.Languages.message;
  * @License Apache License Version 2.0
  *
  */
-public class Data2DColumnCreateController extends BaseChildController {
+public class Data2DColumnCreateController extends BaseBranchController {
 
     protected BaseData2DColumnsController columnsController;
 
     @FXML
     protected ControlData2DColumnEdit columnEditController;
     @FXML
-    protected Label buttomLabel;
+    protected Label nameLabel, buttomLabel;
 
     public Data2DColumnCreateController() {
         baseTitle = message("NewColumn");
@@ -31,6 +31,9 @@ public class Data2DColumnCreateController extends BaseChildController {
     protected void setParameters(BaseData2DColumnsController columnsController) {
         try {
             this.columnsController = columnsController;
+
+            nameLabel.setText(columnsController.data2D == null ? "" : columnsController.data2D.displayName());
+
             buttomLabel.setVisible(columnsController.data2D != null
                     && columnsController.data2D.isTable() && columnsController.data2D.getSheet() != null);
 
@@ -50,7 +53,7 @@ public class Data2DColumnCreateController extends BaseChildController {
                 return;
             }
             columnsController.addRow(column);
-            popSuccessful();
+            columnsController.popSuccessful();
             close();
         } catch (Exception e) {
             MyBoxLog.error(e);

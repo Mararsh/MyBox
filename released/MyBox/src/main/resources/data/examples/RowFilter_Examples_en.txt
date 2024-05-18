@@ -8,39 +8,22 @@ Examples
 
 ##MyBox#
 Row filter > Examples
-Value is null or empty
-'#{Column1}' == ''
-
-##MyBox#
-Row filter > Examples
-Value is not null nor empty
-'#{Column1}'.length > 0
-
-##MyBox#
-Row filter > Examples
-10 rows in front
-_:;MyBoxNodeValue;:_
-true_:;MyBoxNodeValue;:_
-10
-
-##MyBox#
-Row filter > Examples
 Number
 
 ##MyBox#
 Row filter > Examples > Number
-Is number
-Math.abs(#{Column1}) >= 0
+Is not number
+isNaN(#{stringColumn} - 1)
 
 ##MyBox#
 Row filter > Examples > Number
 Compare
-#{Column1} != 0 || #{Column1} < #{Column2}
+#{numberColumn1} != 0 || #{numberColumn1} < #{numberColumn2}
 
 ##MyBox#
 Row filter > Examples > Number
 Compare with statistic
-#{Column1} < #{Column1-Mean}
+#{numberColumn} < #{numberColumn-Mean}
 
 ##MyBox#
 Row filter > Examples
@@ -48,18 +31,62 @@ Date
 
 ##MyBox#
 Row filter > Examples > Date
+value of date
+if (#{dateColumn} != null)
+   new Date(#{dateColumn}.getTime()
+else
+   -1;
+
+##MyBox#
+Row filter > Examples > Date
 Special time
-'#{Date}' == '2016-05-19 11:34:28'
+#{dateColumn} == '2016-05-19 11:34:28'
 
 ##MyBox#
 Row filter > Examples > Date
 Match time
-'#{Date}'.startsWith('2016-05-19 09')
+if (#{dateColumn} != null)
+   #{dateColumn}.startsWith('2016-05-19 09')
+else
+   undefined;
 
 ##MyBox#
 Row filter > Examples > Date
 Compare time
-new Date('#{Date}'.replace(/-/g,'/')).getTime()  > new Date('2016/05/19 09:23:12').getTime()
+if (#{dateColumn} != null)
+   new Date(#{dateColumn}).getTime()  > new Date('2016/05/19 09:23:12').getTime()
+else
+   undefined;
+
+##MyBox#
+Row filter > Examples > Date
+Format Date
+function formatDate(date) {
+     var y = date.getFullYear();
+     var m = date.getMonth() + 1;
+     m = m < 10 ? ('0' + m) : m;
+     var d = date.getDate();
+     d = d < 10 ? ('0' + d) : d;
+     var h =date.getHours();
+     h = h < 10 ? ('0' + h) : h;
+     var M =date.getMinutes();
+     M = M < 10 ? ('0' + M) : M;
+     var s =date.getSeconds();
+     s = s < 10 ? ('0' + s) : s;
+     return y + '-' + m + '-' + d + ' ' + h + ':' + M + ':' + s;
+}
+if (#{dateColumn} != null)
+   formatDate(new Date(#{dateColumn}));
+else
+   null;
+
+##MyBox#
+Row filter > Examples > Date
+whether Sunday
+if (#{dateColumn} != null)
+   new Date(#{dateColumn}).getDay() == 0
+else
+   undefined;
 
 ##MyBox#
 Row filter > Examples
@@ -67,21 +94,88 @@ String
 
 ##MyBox#
 Row filter > Examples > String
-Length
-'#{Column1}'.length > 3
+string is empty
+#{stringColumn} == ''
 
 ##MyBox#
 Row filter > Examples > String
-Match
-'#{Column1}'.search(/Hello/ig) >= 0
+string is not null
+#{stringColumn} != null
+
+##MyBox#
+Row filter > Examples > String
+string length
+if ( #{stringColumn} != null ) 
+    #{stringColumn}.length
+else
+    -1
+
+##MyBox#
+Row filter > Examples > String
+contain sub-string
+if ( #{stringColumn} != null ) 
+    #{stringColumn}.search(/hello/ig)
+else
+    -1
 
 ##MyBox#
 Row filter > Examples > String
 Position of sub-string
-'#{Column1}'.indexOf('Hello') == 3
+if ( #{stringColumn} != null ) 
+    #{stringColumn}.indexOf('hello')
+else
+    -1
+
+##MyBox#
+Row filter > Examples > String
+compare strings
+#{stringColumn} === 'hello' 
+
+##MyBox#
+Row filter > Examples > String
+replace first
+if ( #{stringColumn} != null ) 
+    #{stringColumn}.replace("hello", "Hello");
+else
+   null
+
+##MyBox#
+Row filter > Examples > String
+replace all
+if ( #{stringColumn} != null ) 
+    #{stringColumn}.replace(/hello/g, "Hello");
+else
+   null
+
+##MyBox#
+Row filter > Examples > String
+starts with
+if ( #{stringColumn} != null ) 
+    #{stringColumn}.startsWith('Hello')
+else
+   undefined
+
+##MyBox#
+Row filter > Examples > String
+ends with
+if ( #{stringColumn} != null ) 
+    #{stringColumn}.endsWith('hello')
+else
+   undefined
 
 ##MyBox#
 Row filter > Examples > String
 Special values
 var array = [ 'A', 'B', 'C', 'D' ];
-array.includes('#{Column1}')
+array.includes('#{stringColumn}')
+
+##MyBox#
+Row filter > Examples
+Limit Rows
+
+##MyBox#
+Row filter > Examples > Limit Rows
+10 rows in front
+_:;MyBoxNodeValue;:_
+true_:;MyBoxNodeValue;:_
+10

@@ -1,6 +1,8 @@
 package mara.mybox.data;
 
+import static mara.mybox.db.data.ColumnDefinition.DefaultInvalidAs;
 import mara.mybox.db.data.ColumnDefinition.InvalidAs;
+import static mara.mybox.db.data.ColumnDefinition.InvalidAs.Empty;
 import mara.mybox.tools.DoubleTools;
 
 /**
@@ -17,7 +19,9 @@ public class SetValue {
     public InvalidAs invalidAs;
 
     public static enum ValueType {
-        Value, Zero, One, Blank, Random, RandomNonNegative, Scale, Prefix, Suffix, SuffixNumber,
+        Value, Zero, One, Empty, Null, Random, RandomNonNegative,
+        Scale, Prefix, Suffix,
+        NumberSuffix, NumberPrefix, NumberReplace, NumberSuffixString, NumberPrefixString,
         Expression, GaussianDistribution, Identify, UpperTriangle, LowerTriangle
     }
 
@@ -33,63 +37,7 @@ public class SetValue {
         scale = 5;
         fillZero = true;
         aotoDigit = true;
-        invalidAs = InvalidAs.Skip;
-    }
-
-    public boolean isZero() {
-        return type == ValueType.Zero;
-    }
-
-    public boolean isOne() {
-        return type == ValueType.One;
-    }
-
-    public boolean isBlank() {
-        return type == ValueType.Blank;
-    }
-
-    public boolean isRandom() {
-        return type == ValueType.Random;
-    }
-
-    public boolean isRandomNonNegative() {
-        return type == ValueType.RandomNonNegative;
-    }
-
-    public boolean isScale() {
-        return type == ValueType.Scale;
-    }
-
-    public boolean isPrefix() {
-        return type == ValueType.Prefix;
-    }
-
-    public boolean isSuffix() {
-        return type == ValueType.Suffix;
-    }
-
-    public boolean isSuffixNumber() {
-        return type == ValueType.SuffixNumber;
-    }
-
-    public boolean isExpression() {
-        return type == ValueType.Expression;
-    }
-
-    public boolean isGaussianDistribution() {
-        return type == ValueType.GaussianDistribution;
-    }
-
-    public boolean isIdentify() {
-        return type == ValueType.Identify;
-    }
-
-    public boolean isUpperTriangle() {
-        return type == ValueType.UpperTriangle;
-    }
-
-    public boolean isLowerTriangle() {
-        return type == ValueType.LowerTriangle;
+        invalidAs = DefaultInvalidAs;
     }
 
     public int countFinalDigit(long dataSize) {
@@ -113,14 +61,18 @@ public class SetValue {
                 switch (invalidAs) {
                     case Zero:
                         return "0";
-                    case Blank:
+                    case Empty:
                         return "";
+                    case Null:
+                        return null;
+                    case Skip:
+                        return null;
                     default:
                         return value;
                 }
             }
         } else {
-            return DoubleTools.scale(d, scale) + "";
+            return DoubleTools.scaleString(d, scale);
         }
     }
 

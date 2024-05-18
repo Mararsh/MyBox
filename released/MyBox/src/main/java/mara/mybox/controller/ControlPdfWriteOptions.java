@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.sql.Connection;
 import java.util.Arrays;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -13,15 +14,11 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.style.NodeStyleTools;
-import mara.mybox.fxml.NodeTools;
-import mara.mybox.value.UserConfig;
-import mara.mybox.fxml.ValidationTools;
 import mara.mybox.tools.PdfTools.PdfImageFormat;
-import mara.mybox.value.AppVariables;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -31,22 +28,24 @@ import mara.mybox.value.UserConfig;
  */
 public class ControlPdfWriteOptions extends BaseController {
 
-    protected String ttfFile, author, header;
-    protected boolean isImageSize, includeImageOptions, dithering, showPageNumber;
+    protected String author, header, footer, ttfFile;
+    protected boolean isImageSize, includeImageOptions, dithering, showPageNumber, landscape;
     protected int marginSize, pageWidth, pageHeight, jpegQuality, threshold, fontSize, zoom;
     protected PdfImageFormat imageFormat;
 
     @FXML
     protected ComboBox<String> marginSelector, standardSizeSelector, jpegQualitySelector, fontSizeSelector, zoomSelector;
     @FXML
-    protected ControlTTFSelecter ttfController;
+    protected ControlTTFSelector ttfController;
     @FXML
     protected ToggleGroup sizeGroup, imageFormatGroup;
     @FXML
     protected RadioButton pixSizeRadio, standardSizeRadio, customSizeRadio,
+            pngRadio, jpgRadio, bwRadio,
             pdfMem500MRadio, pdfMem1GRadio, pdfMem2GRadio, pdfMemUnlimitRadio;
     @FXML
-    protected TextField authorInput, headerInput, customWidthInput, customHeightInput, thresholdInput;
+    protected TextField authorInput, headerInput, footerInput,
+            customWidthInput, customHeightInput, thresholdInput;
     @FXML
     protected CheckBox pageNumberCheck, ditherCheck, landscapeCheck;
     @FXML
@@ -62,14 +61,17 @@ public class ControlPdfWriteOptions extends BaseController {
         setFileType(VisitHistory.FileType.TTF);
     }
 
-    public static ControlPdfWriteOptions create() {
-        return new ControlPdfWriteOptions();
+    public ControlPdfWriteOptions set(String baseName, boolean imageOptions) {
+        this.baseName = baseName;
+        this.includeImageOptions = imageOptions;
+        ttfController.name(baseName);
+        setControls();
+        return this;
     }
 
-    public ControlPdfWriteOptions set(String baseName, boolean includeImageOptions) {
-        this.baseName = baseName;
-        this.includeImageOptions = includeImageOptions;
-        try {
+    public void setControls() {
+        try (Connection conn = DerbyBase.getConnection()) {
+
             sizeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue<? extends Toggle> ov, Toggle old_toggle, Toggle new_toggle) {
@@ -92,144 +94,55 @@ public class ControlPdfWriteOptions extends BaseController {
                     "C5	    16.2cm x 22.9cm",
                     "C6	    11.4cm x 16.2cm"
             ));
+            standardSizeSelector.setValue(UserConfig.getString(conn, baseName + "PdfStandardSize", "A4 (16k)  21.0cm x 29.7cm"));
             standardSizeSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> ov, String oldValue, String newValue) {
-                    UserConfig.setString(baseName + "PdfStandardSize", newValue);
-                    checkStandardValues();
-                }
-            });
-            standardSizeSelector.setValue(UserConfig.getString(baseName + "PdfStandardSize", "A4 (16k)  21.0cm x 29.7cm"));
-
-            dpiSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> ov, String oldValue, String newValue) {
                     checkStandardValues();
                 }
             });
 
-            customWidthInput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                    UserConfig.setString(baseName + "PdfCustomWidth", newValue);
-                    checkCustomValues();
-                }
-            });
-            customWidthInput.setText(UserConfig.getString(baseName + "PdfCustomWidth", ""));
-            customHeightInput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                    UserConfig.setString(baseName + "PdfCustomHeight", newValue);
-                    checkCustomValues();
-                }
-            });
-            customHeightInput.setText(UserConfig.getString(baseName + "PdfCustomHeight", ""));
+            pageWidth = UserConfig.getInt(conn, baseName + "PdfCustomWidth", 1024);
+            customWidthInput.setText(pageWidth + "");
+
+            pageHeight = UserConfig.getInt(conn, baseName + "PdfCustomHeight", 500);
+            customHeightInput.setText(pageHeight + "");
 
             marginSelector.getItems().addAll(Arrays.asList("20", "10", "15", "5", "25", "30", "40"));
-            marginSize = UserConfig.getInt(baseName + "PdfMarginSize", 20);
+            marginSize = UserConfig.getInt(conn, baseName + "PdfMarginSize", 20);
             marginSelector.setValue(marginSize + "");
-            marginSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> ov, String oldValue, String newValue) {
-                    try {
-                        int v = Integer.parseInt(newValue);
-                        if (v >= 0) {
-                            marginSize = v;
-                            ValidationTools.setEditorNormal(marginSelector);
-                            UserConfig.setInt(baseName + "PdfMarginSize", v);
-                        } else {
-                            ValidationTools.setEditorBadStyle(marginSelector);
-                        }
-                    } catch (Exception e) {
-                        ValidationTools.setEditorBadStyle(marginSelector);
-                    }
-                }
-            });
-
-            ttfController.name(baseName);
 
             fontSizeSelector.getItems().addAll(Arrays.asList(
                     "20", "14", "18", "15", "9", "10", "12", "17", "24", "36", "48", "64", "72", "96"));
-            fontSize = UserConfig.getInt(baseName + "PdfFontSize", 20);
+            fontSize = UserConfig.getInt(conn, baseName + "PdfFontSize", 20);
             fontSizeSelector.getSelectionModel().select(fontSize + "");
-            fontSizeSelector.valueProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    try {
-                        int v = Integer.parseInt(newValue);
-                        if (v > 0) {
-                            fontSize = v;
-                            UserConfig.setInt(baseName + "PdfFontSize", v);
-                            ValidationTools.setEditorNormal(fontSizeSelector);
-                        } else {
-                            ValidationTools.setEditorBadStyle(fontSizeSelector);
-                        }
-                    } catch (Exception e) {
-                        ValidationTools.setEditorBadStyle(fontSizeSelector);
-                    }
-                }
-            });
 
             zoomSelector.getItems().addAll(Arrays.asList("60", "100", "75", "50", "125", "30", "45", "200"));
-            zoom = UserConfig.getInt(baseName + "PdfZoom", 60);
+            zoom = UserConfig.getInt(conn, baseName + "PdfZoom", 60);
             zoomSelector.getSelectionModel().select(zoom + "");
-            zoomSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> ov,
-                        String oldValue, String newValue) {
-                    try {
-                        int v = Integer.parseInt(newValue);
-                        if (v > 0) {
-                            zoom = v;
-                            ValidationTools.setEditorNormal(zoomSelector);
-                            UserConfig.setInt(baseName + "PdfZoom", v);
-                        } else {
-                            ValidationTools.setEditorBadStyle(zoomSelector);
-                        }
 
-                    } catch (Exception e) {
-                        ValidationTools.setEditorBadStyle(zoomSelector);
-                    }
-                }
-            });
+            author = UserConfig.getString(conn, baseName + "PdfAuthor", System.getProperty("user.name"));
+            authorInput.setText(author);
 
-            authorInput.setText(UserConfig.getString(baseName + "PdfAuthor", System.getProperty("user.name")));
-            authorInput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                    UserConfig.setString(baseName + "PdfAuthor", newValue);
-                }
-            });
+            header = UserConfig.getString(conn, baseName + "PdfHeader", "");
+            headerInput.setText(header);
 
-            headerInput.setText(UserConfig.getString(baseName + "PdfHeader", ""));
-            headerInput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                    UserConfig.setString(baseName + "PdfHeader", newValue);
-                }
-            });
+            footer = UserConfig.getString(conn, baseName + "PdfFooter", "");
+            footerInput.setText(footer);
 
-            showPageNumber = UserConfig.getBoolean(baseName + "PdfShowPageNumber", true);
+            showPageNumber = UserConfig.getBoolean(conn, baseName + "PdfShowPageNumber", true);
             pageNumberCheck.setSelected(showPageNumber);
-            pageNumberCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                    showPageNumber = newValue;
-                    UserConfig.setBoolean(baseName + "PdfShowPageNumber", newValue);
-                }
-            });
 
-            landscapeCheck.setSelected(UserConfig.getBoolean(baseName + "PdfPageHorizontal", false));
+            landscape = UserConfig.getBoolean(conn, baseName + "PdfPageHorizontal", false);
+            landscapeCheck.setSelected(landscape);
             landscapeCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "PdfPageHorizontal", newValue);
                     checkStandardValues();
                 }
             });
 
             String pm = UserConfig.getString("PdfMemDefault", "1GB");
-            isSettingValues = true;
             switch (pm) {
                 case "1GB":
                     pdfMem1GRadio.setSelected(true);
@@ -244,41 +157,31 @@ public class ControlPdfWriteOptions extends BaseController {
                 default:
                     pdfMem500MRadio.setSelected(true);
             }
-            isSettingValues = false;
 
-            initImageOptions();
+            initImageOptions(conn);
 
             checkPageSize();
 
         } catch (Exception e) {
             MyBoxLog.error(e, baseName);
         }
-        return this;
     }
 
     protected void checkPageSize() {
         standardSizeSelector.setDisable(true);
         dpiBox.setDisable(true);
         landscapeCheck.setDisable(true);
-        customWidthInput.setDisable(true);
-        customHeightInput.setDisable(true);
-        customWidthInput.setStyle(null);
-        customHeightInput.setStyle(null);
         isImageSize = false;
 
-        RadioButton selected = (RadioButton) sizeGroup.getSelectedToggle();
-        if (Languages.message("ImagesSize").equals(selected.getText())) {
+        if (pixSizeRadio.isSelected()) {
             isImageSize = true;
-        } else if (Languages.message("StandardSize").equals(selected.getText())) {
+        } else if (standardSizeRadio.isSelected()) {
             standardSizeSelector.setDisable(false);
             dpiBox.setDisable(false);
             landscapeCheck.setDisable(false);
             checkStandardValues();
 
-        } else if (Languages.message("Custom").equals(selected.getText())) {
-            customWidthInput.setDisable(false);
-            customHeightInput.setDisable(false);
-            checkCustomValues();
+        } else if (customSizeRadio.isSelected()) {
         }
     }
 
@@ -352,36 +255,7 @@ public class ControlPdfWriteOptions extends BaseController {
         return (int) Math.round(cm * dpi / 2.54);
     }
 
-    protected void checkCustomValues() {
-        RadioButton selected = (RadioButton) sizeGroup.getSelectedToggle();
-        if (!Languages.message("Custom").equals(selected.getText())) {
-            return;
-        }
-        try {
-            int v = Integer.parseInt(customWidthInput.getText());
-            if (v > 0) {
-                pageWidth = v;
-                customWidthInput.setStyle(null);
-            } else {
-                customWidthInput.setStyle(UserConfig.badStyle());
-            }
-        } catch (Exception e) {
-            customWidthInput.setStyle(UserConfig.badStyle());
-        }
-        try {
-            int v = Integer.parseInt(customHeightInput.getText());
-            if (pageHeight > 0) {
-                pageHeight = v;
-                customHeightInput.setStyle(null);
-            } else {
-                customHeightInput.setStyle(UserConfig.badStyle());
-            }
-        } catch (Exception e) {
-            customHeightInput.setStyle(UserConfig.badStyle());
-        }
-    }
-
-    protected void initImageOptions() {
+    protected void initImageOptions(Connection conn) {
         try {
             if (!includeImageOptions) {
                 thisPane.getChildren().removeAll(pixSizeRadio, imageOptionsBox);
@@ -389,104 +263,129 @@ public class ControlPdfWriteOptions extends BaseController {
                 return;
             }
 
-            imageFormatGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-                @Override
-                public void changed(ObservableValue<? extends Toggle> ov, Toggle old_toggle, Toggle new_toggle) {
-                    checkImageFormat();
-                }
-            });
-
             jpegQualitySelector.getItems().addAll(Arrays.asList("100", "75", "90", "50", "60", "80", "30", "10"));
-            jpegQuality = UserConfig.getInt(baseName + "PdfJpegQuality", 100);
+            jpegQuality = UserConfig.getInt(conn, baseName + "PdfJpegQuality", 100);
             jpegQualitySelector.setValue(jpegQuality + "");
-            jpegQualitySelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> ov, String oldValue, String newValue) {
-                    checkJpegQuality();
-                }
-            });
 
-            threshold = UserConfig.getInt(baseName + "PdfThreshold", -1);
-            if (threshold > 0 && threshold < 100) {
-                thresholdInput.setText(threshold + "");
-            }
-            thresholdInput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                    checkThreshold();
-                    UserConfig.setString(baseName + "PdfThreshold", newValue);
-                }
-            });
+            threshold = UserConfig.getInt(conn, baseName + "PdfThreshold", -1);
+            thresholdInput.setText(threshold + "");
 
-            dithering = UserConfig.getBoolean(baseName + "PdfImageDithering", true);
+            dithering = UserConfig.getBoolean(conn, baseName + "PdfImageDithering", true);
             ditherCheck.setSelected(dithering);
-            ditherCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                    dithering = newValue;
-                    UserConfig.setBoolean(baseName + "PdfImageDithering", newValue);
-                }
-            });
-
-            checkImageFormat();
 
         } catch (Exception e) {
             MyBoxLog.error(e, baseName);
         }
     }
 
-    protected void checkJpegQuality() {
-        try {
-            int v = Integer.parseInt(jpegQualitySelector.getSelectionModel().getSelectedItem());
-            if (v >= 0 && v <= 100) {
-                jpegQuality = v;
-                jpegQualitySelector.setStyle(null);
-                UserConfig.setInt(baseName + "PdfJpegQuality", jpegQuality);
-            } else {
-                jpegQualitySelector.setStyle(UserConfig.badStyle());
+    public boolean pickValues() {
+        if (customSizeRadio.isSelected()) {
+            try {
+                pageWidth = Integer.parseInt(customWidthInput.getText());
+            } catch (Exception e) {
+                pageWidth = -1;
             }
+            try {
+                pageHeight = Integer.parseInt(customHeightInput.getText());
+            } catch (Exception e) {
+                pageHeight = -1;
+            }
+        } else if (standardSizeRadio.isSelected()) {
+            try {
+                dpi = Integer.parseInt(dpiSelector.getValue());
+            } catch (Exception e) {
+                dpi = -1;
+            }
+            if (dpi <= 0) {
+                popError(message("InvalidParameter") + ": " + "DPI");
+                return false;
+            }
+        }
+        if (!isImageSize) {
+            if (pageWidth <= 0) {
+                popError(message("InvalidParameter") + ": " + message("Width"));
+                return false;
+            }
+            if (pageHeight <= 0) {
+                popError(message("InvalidParameter") + ": " + message("Height"));
+                return false;
+            }
+        }
+        try {
+            fontSize = Integer.parseInt(fontSizeSelector.getValue());
         } catch (Exception e) {
-            jpegQualitySelector.setStyle(UserConfig.badStyle());
+            fontSize = -1;
         }
-    }
-
-    protected void checkImageFormat() {
-        jpegQualitySelector.setDisable(true);
-        jpegQualitySelector.setStyle(null);
-        thresholdInput.setDisable(true);
-
-        RadioButton selected = (RadioButton) imageFormatGroup.getSelectedToggle();
-        if (Languages.message("PNG").equals(selected.getText())) {
-            imageFormat = PdfImageFormat.Original;
-        } else if (Languages.message("CCITT4").equals(selected.getText())) {
-            imageFormat = PdfImageFormat.Tiff;
-            thresholdInput.setDisable(false);
-            checkThreshold();
-        } else if (Languages.message("JpegQuailty").equals(selected.getText())) {
-            imageFormat = PdfImageFormat.Jpeg;
-            jpegQualitySelector.setDisable(false);
-            checkJpegQuality();
+        if (fontSize <= 0) {
+            popError(message("InvalidParameter") + ": " + message("FontSize"));
+            return false;
         }
+        try {
+            zoom = Integer.parseInt(zoomSelector.getValue());
+        } catch (Exception e) {
+            zoom = -1;
+        }
+        if (zoom <= 0) {
+            popError(message("InvalidParameter") + ": " + message("DefaultDisplayScale"));
+            return false;
+        }
+        if (includeImageOptions) {
+            if (bwRadio.isSelected()) {
+                try {
+                    threshold = Integer.parseInt(thresholdInput.getText());
+                } catch (Exception e) {
+                    threshold = -1;
+                }
+                if (threshold < 0 || threshold > 255) {
+                    popError(message("InvalidParameter") + ": " + message("CCITT4"));
+                    return false;
+                }
+                imageFormat = PdfImageFormat.Tiff;
+            } else if (jpgRadio.isSelected()) {
+                try {
+                    jpegQuality = Integer.parseInt(thresholdInput.getText());
+                } catch (Exception e) {
+                    jpegQuality = -1;
+                }
+                if (jpegQuality < 0 || jpegQuality > 100) {
+                    popError(message("InvalidParameter") + ": " + message("JpegQuailty"));
+                    return false;
+                }
+                imageFormat = PdfImageFormat.Jpeg;
+            } else {
+                imageFormat = PdfImageFormat.Original;
+            }
+        }
+        try {
+            marginSize = Integer.parseInt(marginSelector.getValue());
+        } catch (Exception e) {
+            marginSize = 0;
+        }
+        showPageNumber = pageNumberCheck.isSelected();
+        landscape = landscapeCheck.isSelected();
         dithering = ditherCheck.isSelected();
-    }
-
-    protected void checkThreshold() {
-        try {
-            threshold = -1;
-            if (thresholdInput.getText().isEmpty()) {
-                thresholdInput.setStyle(null);
-                return;
-            }
-            int v = Integer.parseInt(thresholdInput.getText());
-            if (v >= 0 && v <= 255) {
-                threshold = v;
-                thresholdInput.setStyle(null);
-            } else {
-                thresholdInput.setStyle(UserConfig.badStyle());
-            }
+        ttfFile = ttfController.ttfFile;
+        author = authorInput.getText();
+        header = headerInput.getText();
+        footer = footerInput.getText();
+        try (Connection conn = DerbyBase.getConnection()) {
+            UserConfig.setInt(conn, baseName + "PdfZoom", zoom);
+            UserConfig.setInt(conn, baseName + "PdfFontSize", fontSize);
+            UserConfig.setInt(conn, baseName + "PdfMarginSize", marginSize);
+            UserConfig.setInt(conn, baseName + "PdfCustomWidth", pageWidth);
+            UserConfig.setInt(conn, baseName + "PdfCustomHeight", pageHeight);
+            UserConfig.setInt(conn, baseName + "PdfThreshold", threshold);
+            UserConfig.setInt(conn, baseName + "PdfJpegQuality", jpegQuality);
+            UserConfig.setString(conn, baseName + "PdfHeader", header);
+            UserConfig.setString(conn, baseName + "PdfAuthor", author);
+            UserConfig.setString(conn, baseName + "PdfFooter", footer);
+            UserConfig.setString(conn, baseName + "PdfStandardSize", standardSizeSelector.getValue());
+            UserConfig.setBoolean(conn, baseName + "PdfShowPageNumber", showPageNumber);
+            UserConfig.setBoolean(conn, baseName + "PdfPageHorizontal", landscape);
+            UserConfig.setBoolean(conn, baseName + "PdfImageDithering", dithering);
         } catch (Exception e) {
-            thresholdInput.setStyle(UserConfig.badStyle());
         }
+        return true;
     }
 
     @FXML
@@ -521,297 +420,71 @@ public class ControlPdfWriteOptions extends BaseController {
         UserConfig.setPdfMem("Unlimit");
     }
 
-
     /*
-        get/set
+        get
      */
-    public String getTtfFile() {
-        if (ttfController != null) {
-            ttfFile = ttfController.ttfFile;
-        }
-        return ttfFile;
+    public String getAuthor() {
+        return author;
     }
 
-    public void setTtfFile(String ttfFile) {
-        this.ttfFile = ttfFile;
+    public String getHeader() {
+        return header;
+    }
+
+    public String getFooter() {
+        return footer;
+    }
+
+    public String getTtfFile() {
+        return ttfFile;
     }
 
     public boolean isIsImageSize() {
         return isImageSize;
     }
 
-    public void setIsImageSize(boolean isImageSize) {
-        this.isImageSize = isImageSize;
-    }
-
-    public boolean isIncludeImageOptions() {
-        return includeImageOptions;
-    }
-
-    public void setIncludeImageOptions(boolean includeImageOptions) {
-        this.includeImageOptions = includeImageOptions;
-    }
-
-    public int getMarginSize() {
-        return marginSize;
-    }
-
-    public void setMarginSize(int marginSize) {
-        this.marginSize = marginSize;
-    }
-
-    public int getPageWidth() {
-        return pageWidth;
-    }
-
-    public void setPageWidth(int pageWidth) {
-        this.pageWidth = pageWidth;
-    }
-
-    public int getPageHeight() {
-        return pageHeight;
-    }
-
-    public void setPageHeight(int pageHeight) {
-        this.pageHeight = pageHeight;
-    }
-
-    public int getJpegQuality() {
-        return jpegQuality;
-    }
-
-    public void setJpegQuality(int jpegQuality) {
-        this.jpegQuality = jpegQuality;
-    }
-
-    public int getThreshold() {
-        return threshold;
-    }
-
-    public void setThreshold(int threshold) {
-        this.threshold = threshold;
-    }
-
-    public int getFontSize() {
-        return fontSize;
-    }
-
-    public void setFontSize(int fontSize) {
-        this.fontSize = fontSize;
-    }
-
-    public PdfImageFormat getImageFormat() {
-        return imageFormat;
-    }
-
-    public void setImageFormat(PdfImageFormat imageFormat) {
-        this.imageFormat = imageFormat;
-    }
-
-    public ComboBox<String> getMarginSelector() {
-        return marginSelector;
-    }
-
-    public void setMarginSelector(ComboBox<String> marginSelector) {
-        this.marginSelector = marginSelector;
-    }
-
-    public ComboBox<String> getStandardSizeSelector() {
-        return standardSizeSelector;
-    }
-
-    public void setStandardSizeSelector(ComboBox<String> standardSizeSelector) {
-        this.standardSizeSelector = standardSizeSelector;
-    }
-
-    public ComboBox<String> getJpegQualitySelector() {
-        return jpegQualitySelector;
-    }
-
-    public void setJpegQualitySelector(ComboBox<String> jpegQualitySelector) {
-        this.jpegQualitySelector = jpegQualitySelector;
-    }
-
-    public ComboBox<String> getFontSizeSelector() {
-        return fontSizeSelector;
-    }
-
-    public void setFontSizeSelector(ComboBox<String> fontSizeSelector) {
-        this.fontSizeSelector = fontSizeSelector;
-    }
-
-    public ToggleGroup getSizeGroup() {
-        return sizeGroup;
-    }
-
-    public void setSizeGroup(ToggleGroup sizeGroup) {
-        this.sizeGroup = sizeGroup;
-    }
-
-    public ToggleGroup getImageFormatGroup() {
-        return imageFormatGroup;
-    }
-
-    public void setImageFormatGroup(ToggleGroup imageFormatGroup) {
-        this.imageFormatGroup = imageFormatGroup;
-    }
-
-    public RadioButton getPixSizeRadio() {
-        return pixSizeRadio;
-    }
-
-    public void setPixSizeRadio(RadioButton pixSizeRadio) {
-        this.pixSizeRadio = pixSizeRadio;
-    }
-
-    public RadioButton getStandardSizeRadio() {
-        return standardSizeRadio;
-    }
-
-    public void setStandardSizeRadio(RadioButton standardSizeRadio) {
-        this.standardSizeRadio = standardSizeRadio;
-    }
-
-    public RadioButton getCustomSizeRadio() {
-        return customSizeRadio;
-    }
-
-    public void setCustomSizeRadio(RadioButton customSizeRadio) {
-        this.customSizeRadio = customSizeRadio;
-    }
-
-    public TextField getAuthorInput() {
-        return authorInput;
-    }
-
-    public void setAuthorInput(TextField authorInput) {
-        this.authorInput = authorInput;
-    }
-
-    public TextField getHeaderInput() {
-        return headerInput;
-    }
-
-    public void setHeaderInput(TextField headerInput) {
-        this.headerInput = headerInput;
-    }
-
-    public TextField getCustomWidthInput() {
-        return customWidthInput;
-    }
-
-    public void setCustomWidthInput(TextField customWidthInput) {
-        this.customWidthInput = customWidthInput;
-    }
-
-    public TextField getCustomHeightInput() {
-        return customHeightInput;
-    }
-
-    public void setCustomHeightInput(TextField customHeightInput) {
-        this.customHeightInput = customHeightInput;
-    }
-
-    public TextField getThresholdInput() {
-        return thresholdInput;
-    }
-
-    public void setThresholdInput(TextField thresholdInput) {
-        this.thresholdInput = thresholdInput;
-    }
-
-    public CheckBox getPageNumberCheck() {
-        return pageNumberCheck;
-    }
-
-    public void setPageNumberCheck(CheckBox pageNumberCheck) {
-        this.pageNumberCheck = pageNumberCheck;
-    }
-
-    public CheckBox getDitherCheck() {
-        return ditherCheck;
-    }
-
-    public void setDitherCheck(CheckBox ditherCheck) {
-        this.ditherCheck = ditherCheck;
-    }
-
-    public CheckBox getLandscapeCheck() {
-        return landscapeCheck;
-    }
-
-    public void setLandscapeCheck(CheckBox landscapeCheck) {
-        this.landscapeCheck = landscapeCheck;
-    }
-
-    public VBox getImageOptionsBox() {
-        return imageOptionsBox;
-    }
-
-    public void setImageOptionsBox(VBox imageOptionsBox) {
-        this.imageOptionsBox = imageOptionsBox;
-    }
-
     public boolean isDithering() {
         return dithering;
-    }
-
-    public void setDithering(boolean dithering) {
-        this.dithering = dithering;
     }
 
     public boolean isShowPageNumber() {
         return showPageNumber;
     }
 
-    public void setShowPageNumber(boolean showPageNumber) {
-        this.showPageNumber = showPageNumber;
+    public boolean isLandscape() {
+        return landscape;
     }
 
-    public String getAuthor() {
-        if (authorInput != null) {
-            author = authorInput.getText();
-        }
-        return author;
+    public int getMarginSize() {
+        return marginSize;
     }
 
-    public void setAuthor(String author) {
-        this.author = author;
+    public int getPageWidth() {
+        return pageWidth;
     }
 
-    public String getHeader() {
-        if (headerInput != null) {
-            header = headerInput.getText();
-        }
-        return header;
+    public int getPageHeight() {
+        return pageHeight;
     }
 
-    public void setHeader(String header) {
-        this.header = header;
+    public int getJpegQuality() {
+        return jpegQuality;
+    }
+
+    public int getThreshold() {
+        return threshold;
+    }
+
+    public int getFontSize() {
+        return fontSize;
     }
 
     public int getZoom() {
         return zoom;
     }
 
-    public void setZoom(int zoom) {
-        this.zoom = zoom;
-    }
-
-    public ComboBox<String> getZoomSelector() {
-        return zoomSelector;
-    }
-
-    public void setZoomSelector(ComboBox<String> zoomSelector) {
-        this.zoomSelector = zoomSelector;
-    }
-
-    public ControlTTFSelecter getTtfController() {
-        return ttfController;
-    }
-
-    public void setTtfController(ControlTTFSelecter ttfController) {
-        this.ttfController = ttfController;
+    public PdfImageFormat getImageFormat() {
+        return imageFormat;
     }
 
 }

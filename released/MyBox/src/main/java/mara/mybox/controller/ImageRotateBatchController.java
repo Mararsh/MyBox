@@ -44,8 +44,7 @@ public class ImageRotateBatchController extends BaseImageEditBatchController {
             angleSelector.setValue(rotateAngle + "");
 
             startButton.disableProperty().unbind();
-            startButton.disableProperty().bind(targetPathController.valid.not()
-                    .or(Bindings.isEmpty(tableView.getItems()))
+            startButton.disableProperty().bind(Bindings.isEmpty(tableView.getItems())
                     .or(angleSelector.getEditor().styleProperty().isEqualTo(UserConfig.badStyle()))
             );
 

@@ -87,7 +87,7 @@ public class ControlImageView extends BaseImageController {
                     t += controller.sourceFile.getAbsolutePath();
                 }
                 if (framesNumber > 1) {
-                    t += " - " + message("Page") + " " + frameIndex + "/" + framesNumber;
+                    t += " - " + message("Page") + " " + (frameIndex + 1) + "/" + framesNumber;
                 }
                 getMyStage().setTitle(t);
             }

@@ -235,6 +235,7 @@ public class AutoTestingExecutionController extends BaseTablePagesController<Tes
                             currentIndex++;
                             caseNotify();
                         });
+                        Platform.requestNextPulse();
                     }
                 }, interval);
                 return;

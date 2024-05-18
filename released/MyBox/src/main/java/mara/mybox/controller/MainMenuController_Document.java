@@ -83,6 +83,11 @@ public abstract class MainMenuController_Document extends MainMenuController_Win
     }
 
     @FXML
+    protected void openPdfAddWatermark(ActionEvent event) {
+        loadScene(Fxmls.PdfAddWatermarkBatchFxml);
+    }
+
+    @FXML
     protected void openCompressPdfImagesBatch(ActionEvent event) {
         loadScene(Fxmls.PdfCompressImagesBatchFxml);
     }

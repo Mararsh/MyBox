@@ -216,9 +216,9 @@ public class HtmlReadTools {
             }
             String suffix = null;
             if (name != null && !name.isBlank()) {
-                suffix = FileNameTools.suffix(name);
+                suffix = FileNameTools.ext(name);
             }
-            String addrSuffix = FileNameTools.suffix(address);
+            String addrSuffix = FileNameTools.ext(address);
             if (addrSuffix != null && !addrSuffix.isBlank()) {
                 if (suffix == null || suffix.isBlank()
                         || !addrSuffix.equalsIgnoreCase(suffix)) {
@@ -411,10 +411,9 @@ public class HtmlReadTools {
         }
     }
 
-    public static String body(String html) {
-        return body(html, true);
-    }
-
+//    public static String body(String html) {
+//        return body(html, false);
+//    }
     public static String body(String html, boolean withTag) {
         try {
             Element body = Jsoup.parse(html).body();

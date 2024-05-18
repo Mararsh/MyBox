@@ -2,18 +2,18 @@ package mara.mybox.data2d.writer;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import mara.mybox.data2d.DataFileExcel;
-import mara.mybox.dev.MyBoxLog;
+import mara.mybox.data2d.Data2D;
+import mara.mybox.db.data.Data2DDefinition;
+import mara.mybox.db.data.VisitHistory;
 import mara.mybox.tools.FileCopyTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.FileTools;
-import mara.mybox.tools.MicrosoftDocumentTools;
+import static mara.mybox.value.Languages.message;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -22,165 +22,168 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
  * @Author Mara
- * @CreateDate 2022-1-27
+ * @CreateDate 2022-1-29
  * @License Apache License Version 2.0
  */
 public class DataFileExcelWriter extends Data2DWriter {
 
-    protected DataFileExcel sourceExcel;
+    protected Workbook xssfBook;
+    protected Sheet xssfSheet;
     protected String sheetName;
-    protected Sheet sourceSheet, targetSheet;
-    protected int targetRowIndex;
-    protected Row sourceExcelRow;
+    protected boolean currentSheetOnly;
+    protected File baseFile;
+    protected int rowIndex;
 
-    protected Iterator<Row> iterator;
-
-    public DataFileExcelWriter(DataFileExcel data) {
-        this.sourceExcel = data;
-        sheetName = data.getSheet();
-        init(data);
+    public DataFileExcelWriter() {
+        fileSuffix = "xlsx";
+        currentSheetOnly = false;
     }
 
     @Override
-    public void scanData() {
-        if (!FileTools.hasData(sourceFile)) {
-            return;
-        }
-        File tmpFile = FileTmpTools.getTempFile();
-        rowIndex = 0;
-        count = 0;
-        try (Workbook sourceBook = WorkbookFactory.create(sourceFile)) {
-            if (sheetName != null) {
-                sourceSheet = sourceBook.getSheet(sheetName);
-            } else {
-                sourceSheet = sourceBook.getSheetAt(0);
-                sheetName = sourceSheet.getSheetName();
+    public boolean openWriter() {
+        try {
+            if (!super.openWriter()) {
+                return false;
             }
-            if (sourceExcel != null) {
-                int sheetsNumber = sourceBook.getNumberOfSheets();
-                List<String> sheetNames = new ArrayList<>();
-                for (int i = 0; i < sheetsNumber; i++) {
-                    sheetNames.add(sourceBook.getSheetName(i));
+            if (printFile == null) {
+                showInfo(message("InvalidParameter") + ": " + message("TargetFile"));
+                return false;
+            }
+            showInfo(message("Writing") + " " + printFile.getAbsolutePath());
+            tmpFile = FileTmpTools.getTempFile(".xlsx");
+            if (sheetName == null) {
+                sheetName = "sheet1";
+            }
+            if (!currentSheetOnly && baseFile != null && baseFile.exists()) {
+                try (Workbook sourceBook = WorkbookFactory.create(baseFile)) {
+                    int sheetsNumber = sourceBook.getNumberOfSheets();
+                    if (sheetsNumber == 1) {
+                        xssfBook = new XSSFWorkbook();
+                        xssfSheet = xssfBook.createSheet(sheetName);
+                    } else {
+                        FileCopyTools.copyFile(baseFile, tmpFile);
+                        xssfBook = WorkbookFactory.create(tmpFile);
+                        int index = sourceBook.getSheetIndex(sheetName);
+                        if (index >= 0) {
+                            xssfBook.removeSheetAt(index);
+                            xssfSheet = xssfBook.createSheet(sheetName);
+                            xssfBook.setSheetOrder(sheetName, index);
+                        } else {
+                            xssfSheet = xssfBook.createSheet(sheetName);
+                        }
+                    }
+                } catch (Exception e) {
+                    showError(e.toString());
+                    return false;
                 }
-                sourceExcel.setSheetNames(sheetNames);
-                sourceExcel.setSheet(sheetName);
-            }
-
-            File tmpDataFile = null;
-            int sheetsNumber = sourceBook.getNumberOfSheets();
-            Workbook targetBook;
-            if (sheetsNumber == 1) {
-                targetBook = new XSSFWorkbook();
-                targetSheet = targetBook.createSheet(sheetName);
             } else {
-                tmpDataFile = FileTmpTools.getTempFile();
-                FileCopyTools.copyFile(sourceFile, tmpDataFile);
-                targetBook = WorkbookFactory.create(tmpDataFile);
-                int index = targetBook.getSheetIndex(sheetName);
-                targetBook.removeSheetAt(index);
-                targetSheet = targetBook.createSheet(sheetName);
-                targetBook.setSheetOrder(sheetName, index);
+                xssfBook = new XSSFWorkbook();
+                xssfSheet = xssfBook.createSheet(sheetName);
             }
-            targetRowIndex = 0;
-            if (data2D.isHasHeader()) {
-                targetRowIndex = sourceExcel.writeHeader(targetSheet, targetRowIndex);
+            xssfSheet.setDefaultColumnWidth(20);
+            rowIndex = 0;
+            if (writeHeader && headerNames != null) {
+                Row titleRow = xssfSheet.createRow(rowIndex++);
+                CellStyle horizontalCenter = xssfBook.createCellStyle();
+                horizontalCenter.setAlignment(HorizontalAlignment.CENTER);
+                for (int i = 0; i < headerNames.size(); i++) {
+                    Cell cell = titleRow.createCell(i, CellType.STRING);
+                    cell.setCellValue(headerNames.get(i));
+                    cell.setCellStyle(horizontalCenter);
+                }
             }
-            iterator = sourceSheet.iterator();
-            failed = !handleRows();
-            sourceBook.close();
-            if (failed) {
+            return true;
+        } catch (Exception e) {
+            showError(e.toString());
+            return false;
+        }
+    }
+
+    @Override
+    public void printTargetRow() {
+        try {
+            if (printRow == null) {
+                return;
+            }
+            Row sheetRow = xssfSheet.createRow(rowIndex++);
+            for (int i = 0; i < printRow.size(); i++) {
+                Cell cell = sheetRow.createCell(i, CellType.STRING);
+                cell.setCellValue(printRow.get(i));
+            }
+        } catch (Exception e) {
+            showError(e.toString());
+        }
+    }
+
+    @Override
+    public void closeWriter() {
+        try {
+            created = false;
+            if (xssfBook == null || xssfSheet == null || tmpFile == null) {
+                return;
+            }
+            for (int i = 0; i < headerNames.size(); i++) {
+                xssfSheet.autoSizeColumn(i);
+            }
+            try (FileOutputStream fileOut = new FileOutputStream(tmpFile)) {
+                xssfBook.write(fileOut);
+            }
+            xssfBook.close();
+            xssfBook = null;
+            if (isFailed() || !tmpFile.exists()
+                    || !FileTools.override(tmpFile, printFile, true)) {
                 FileDeleteTools.delete(tmpFile);
-            } else {
-                try (FileOutputStream fileOut = new FileOutputStream(tmpFile)) {
-                    targetBook.write(fileOut);
+                showInfo(message("Failed") + ": " + printFile);
+                return;
+            }
+            if (printFile == null || !printFile.exists()) {
+                showInfo(message("Failed") + ": " + printFile);
+                return;
+            }
+            recordFileGenerated(printFile, VisitHistory.FileType.Excel);
+            if (recordTargetData) {
+                if (targetData == null) {
+                    targetData = Data2D.create(Data2DDefinition.DataType.Excel);
                 }
-                targetBook.close();
-                failed = !FileTools.override(tmpFile, sourceFile);
+                targetData.setTask(task())
+                        .setFile(printFile)
+                        .setSheet(sheetName)
+                        .setHasHeader(writeHeader)
+                        .setDataName(dataName)
+                        .setColsNumber(columns.size())
+                        .setRowsNumber(targetRowIndex);
+                Data2D.saveAttributes(conn(), targetData, columns);
             }
-            FileDeleteTools.delete(tmpDataFile);
+            created = true;
         } catch (Exception e) {
-            MyBoxLog.error(e);
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            failed = true;
-        }
-        if (failed) {
-            writerStopped = true;
+            showError(e.toString());
         }
     }
 
-    public boolean handleRows() {
-        if (iterator == null) {
-            return false;
-        }
-        try {
-            if (data2D.isHasHeader()) {
-                while (iterator.hasNext() && (iterator.next() == null) && !writerStopped()) {
-                }
-            }
-            if (isClearData()) {
-                count = data2D.getDataSize();
-                return true;
-            }
-            while (iterator.hasNext() && !writerStopped()) {
-                readRow();
-                if (sourceRow == null || sourceRow.isEmpty()) {
-                    continue;
-                }
-                ++rowIndex;
-                handleRow();
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            return false;
-        }
-        return true;
+    /*
+        get/set
+     */
+    public File getBaseFile() {
+        return baseFile;
     }
 
-    public void readRow() {
-        try {
-            sourceRow = null;
-            if (writerStopped() || iterator == null) {
-                return;
-            }
-            sourceExcelRow = iterator.next();
-            if (sourceExcelRow == null) {
-                return;
-            }
-            sourceRow = new ArrayList<>();
-            for (int c = sourceExcelRow.getFirstCellNum(); c < sourceExcelRow.getLastCellNum(); c++) {
-                sourceRow.add(MicrosoftDocumentTools.cellString(sourceExcelRow.getCell(c)));
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            if (task != null) {
-                task.setError(e.toString());
-            }
-        }
+    public DataFileExcelWriter setBaseFile(File baseFile) {
+        this.baseFile = baseFile;
+        return this;
     }
 
-    @Override
-    public void writeRow() {
-        try {
-            if (writerStopped() || sourceExcelRow == null || targetRow == null) {
-                return;
-            }
-            Row targetExcelRow = targetSheet.createRow(targetRowIndex++);
-            int i = 0;
-            for (int c = sourceExcelRow.getFirstCellNum(); c < Math.min(sourceExcelRow.getLastCellNum(), targetRow.size()); c++) {
-                Cell targetCell = targetExcelRow.createCell(c, CellType.STRING);
-                targetCell.setCellValue(targetRow.get(i++));
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            if (task != null) {
-                task.setError(e.toString());
-            }
-        }
+    public String getSheetName() {
+        return sheetName;
+    }
+
+    public DataFileExcelWriter setSheetName(String sheetName) {
+        this.sheetName = sheetName;
+        return this;
+    }
+
+    public DataFileExcelWriter setCurrentSheetOnly(boolean currentSheetOnly) {
+        this.currentSheetOnly = currentSheetOnly;
+        return this;
     }
 
 }

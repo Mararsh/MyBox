@@ -1,6 +1,7 @@
 package mara.mybox.data2d.reader;
 
 import java.io.File;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.data2d.Data2D;
@@ -8,9 +9,10 @@ import mara.mybox.data2d.Data2D_Edit;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataFileExcel;
 import mara.mybox.data2d.DataFileText;
-import mara.mybox.data2d.DataFilter;
+import mara.mybox.data2d.DataMatrix;
 import mara.mybox.data2d.DataTable;
-import mara.mybox.dev.MyBoxLog;
+import mara.mybox.data2d.operate.Data2DOperate;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.StringTools;
 
@@ -21,19 +23,15 @@ import mara.mybox.tools.StringTools;
  */
 public abstract class Data2DReader {
 
-    protected Data2D data2D;
+    protected Data2D sourceData;
     protected File sourceFile;
-    protected Data2DOperator operator;
-    protected long rowIndex; // 1-based 
-    protected long rowsStart, rowsEnd; //  0-based
+    protected Data2DOperate operate;
+    protected long sourceIndex; // 1-based 
+    protected long pageStartIndex, pageEndIndex; //  0-based
     protected List<String> sourceRow, names;
     protected List<List<String>> rows = new ArrayList<>();
-    protected boolean failed;
-    protected DataFilter filter;
-    protected boolean readerHasHeader, readerStopped, needCheckTask;
-    protected FxTask task;
-
-    public abstract void scanData();
+    protected Connection conn;
+    protected boolean readerHasHeader;
 
     public abstract void readColumnNames();
 
@@ -55,57 +53,68 @@ public abstract class Data2DReader {
             return new DataFileTextReader((DataFileText) data);
         } else if (data instanceof DataTable) {
             return new DataTableReader((DataTable) data);
+        } else if (data instanceof DataMatrix) {
+            return new MatrixReader((DataMatrix) data);
         }
         return null;
     }
 
-    public void init(Data2D data) {
-        this.data2D = data;
-        task = data2D.getTask();
-    }
-
-    public boolean start() {
-        if (data2D == null || !data2D.validData() || operator == null) {
+    public boolean start(boolean scanWholeFile) {
+        if (sourceData == null || operate == null) {
             return false;
         }
-        sourceFile = data2D.getFile();
-        readerStopped = false;
-        readerHasHeader = data2D.isHasHeader();
-        needCheckTask = task != null;
-        rowIndex = 0;  // 1-based
-        rowsStart = data2D.getStartRowOfCurrentPage();
-        rowsEnd = rowsStart + data2D.getPageSize();
+        sourceFile = sourceData.getFile();
+        readerHasHeader = sourceData.isHasHeader();
+        sourceIndex = 0;  // 1-based
+        pageStartIndex = sourceData.getStartRowOfCurrentPage();
+        pageEndIndex = pageStartIndex + sourceData.getPageSize();
         names = new ArrayList<>();
         rows = new ArrayList<>();
         sourceRow = new ArrayList<>();
-        data2D.startFilter();
-        scanData();
+        sourceData.startFilter();
+        if (sourceData.isTmpData()) {
+            scanPage();
+        } else if (scanWholeFile || !sourceData.hasPage()
+                || sourceData.isMutiplePages() || !sourceData.isDataLoaded()) {
+            scanFile();
+        } else {
+            scanPage();
+        }
         afterScanned();
-        operator.end();
         return true;
+    }
+
+    public void scanFile() {
+    }
+
+    public void scanPage() {
+        try {
+            for (int r = 0; r < sourceData.tableRowsNumber(); r++) {
+                if (isStopped()) {
+                    return;
+                }
+                sourceRow = sourceData.tableRow(r);
+                if (sourceRow == null || sourceRow.isEmpty()) {
+                    continue;
+                }
+                ++sourceIndex;
+                handleRow();
+            }
+        } catch (Exception e) {  // skip  bad lines
+            showError(e.toString());
+//            setFailed();
+        }
     }
 
     public void handleRow() {
         try {
-            if (!data2D.filterDataRow(sourceRow, rowIndex)) {
-                return;
-            }
-            if (data2D.filterReachMaxPassed()) {
-                readerStopped = true;
-                return;
-            }
-            operator.sourceRow = sourceRow;
-            operator.rowIndex = rowIndex;
-            operator.handleRow();
+            operate.handleRow(sourceRow, sourceIndex);
         } catch (Exception e) {
-            MyBoxLog.error(e);
-            if (task != null) {
-                task.setError(e.toString());
-            }
+            showError(e.toString());
         }
     }
 
-    public void handleHeader() {
+    public void makeHeader() {
         try {
             names = new ArrayList<>();
             if (readerHasHeader && StringTools.noDuplicated(sourceRow, true)) {
@@ -114,52 +123,97 @@ public abstract class Data2DReader {
                 readerHasHeader = false;
                 if (sourceRow != null) {
                     for (int i = 1; i <= sourceRow.size(); i++) {
-                        names.add(data2D.colPrefix() + i);
+                        names.add(sourceData.colPrefix() + i);
                     }
                 }
             }
-            data2D.setHasHeader(readerHasHeader);
-            readerStopped = true;
+            sourceData.setHasHeader(readerHasHeader);
+            stop();
         } catch (Exception e) {
-            MyBoxLog.error(e);
-            if (task != null) {
-                task.setError(e.toString());
-            }
+            showError(e.toString());
         }
     }
 
-    public void handlePageRow() {
+    public void makePageRow() {
         List<String> row = new ArrayList<>();
-        for (int i = 0; i < Math.min(sourceRow.size(), data2D.columnsNumber()); i++) {
+        for (int i = 0; i < Math.min(sourceRow.size(), sourceData.columnsNumber()); i++) {
             row.add(sourceRow.get(i));
         }
-        for (int col = row.size(); col < data2D.columnsNumber(); col++) {
-            row.add(data2D.defaultColValue());
+        for (int col = row.size(); col < sourceData.columnsNumber(); col++) {
+            row.add(sourceData.defaultColValue());
         }
-        row.add(0, "" + rowIndex);
+        row.add(0, "" + sourceIndex);
         rows.add(row);
     }
 
     public void afterScanned() {
         try {
-            data2D.stopFilter();
+            sourceData.stopFilter();
         } catch (Exception e) {
-            MyBoxLog.error(e);
-            if (task != null) {
-                task.setError(e.toString());
-            }
+            showError(e.toString());
         }
     }
 
-    public boolean readerStopped() {
-        return readerStopped || (needCheckTask && (task == null || !task.isWorking()));
+    /*
+        status
+     */
+    public FxTask task() {
+        if (operate != null) {
+            return operate.getTask();
+        } else {
+            return null;
+        }
+    }
+
+    public Connection conn() {
+        if (operate != null) {
+            return operate.conn();
+        } else {
+            return DerbyBase.getConnection();
+        }
+    }
+
+    public void showInfo(String info) {
+        if (operate != null) {
+            operate.showInfo(info);
+        }
+    }
+
+    public void showError(String error) {
+        if (operate != null) {
+            operate.showError(error);
+        }
+    }
+
+    public void stop() {
+        if (operate != null) {
+            operate.stop();
+        }
+    }
+
+    public void setFailed() {
+        if (operate != null) {
+            operate.setFailed();
+        }
+    }
+
+    public boolean isStopped() {
+        return operate == null || operate.isStopped();
     }
 
     /*
         get/set
      */
-    public boolean isFailed() {
-        return failed;
+    public Data2D getSourceData() {
+        return sourceData;
+    }
+
+    public Data2DOperate getOperate() {
+        return operate;
+    }
+
+    public void setOperate(Data2DOperate operate) {
+        this.operate = operate;
     }
 
     public List<String> getNames() {
@@ -170,32 +224,21 @@ public abstract class Data2DReader {
         return rows;
     }
 
-    public long getRowIndex() {
-        return rowIndex;
+    public long getSourceIndex() {
+        return sourceIndex;
+    }
+
+    public void setSourceIndex(long sourceIndex) {
+        this.sourceIndex = sourceIndex;
     }
 
     public Data2DReader setReaderData(Data2D readerData) {
-        this.data2D = readerData;
+        this.sourceData = readerData;
         return this;
     }
 
     public Data2DReader setReaderHasHeader(boolean readerHasHeader) {
         this.readerHasHeader = readerHasHeader;
-        return this;
-    }
-
-    public Data2DReader setReaderCanceled(boolean readerStopped) {
-        this.readerStopped = readerStopped;
-        return this;
-    }
-
-    public Data2DReader setNeedCheckTask(boolean needCheckTask) {
-        this.needCheckTask = needCheckTask;
-        return this;
-    }
-
-    public Data2DReader setTask(FxTask task) {
-        this.task = task;
         return this;
     }
 

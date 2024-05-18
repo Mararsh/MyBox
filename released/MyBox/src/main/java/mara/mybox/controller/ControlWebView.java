@@ -19,6 +19,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Worker;
 import static javafx.concurrent.Worker.State.CANCELLED;
 import static javafx.concurrent.Worker.State.FAILED;
+import static javafx.concurrent.Worker.State.RUNNING;
 import static javafx.concurrent.Worker.State.SUCCEEDED;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
@@ -85,12 +86,13 @@ public class ControlWebView extends BaseController {
     protected String address, contents, style, defaultStyle, initStyle;
     protected Charset charset;
     protected Map<Integer, Document> framesDoc;
-    protected EventListener docListener, clickListener;
+    protected EventListener docListener;
     protected Element element;
     protected final SimpleBooleanProperty addressChangedNotify, addressInvalidNotify,
             pageLoadingNotify, pageLoadedNotify;
     protected final String StyleNodeID = "MyBox__Html_Style20211118";
     protected boolean listened, linkInNewTab;
+    public final Object lock = new Object();
 
     @FXML
     protected WebView webView;
@@ -229,6 +231,9 @@ public class ControlWebView extends BaseController {
         Platform.runLater(() -> {
             try {
                 switch (state) {
+                    case READY:
+                        ready();
+                        break;
                     case RUNNING:
                         running();
                         break;
@@ -254,6 +259,7 @@ public class ControlWebView extends BaseController {
                 MyBoxLog.error(e);
             }
         });
+        Platform.requestNextPulse();
     }
 
     public void docEvent(org.w3c.dom.events.Event ev) {
@@ -273,7 +279,7 @@ public class ControlWebView extends BaseController {
             } else {
                 element = null;
             }
-//                        MyBoxLog.console(webView.getId() + " " + domEventType + " " + tag + " " + href);
+//            MyBoxLog.console(webView.getId() + " " + domEventType + " " + tag + " " + href);
             if (webViewLabel != null) {
                 String label;
                 if ("mouseover".equals(domEventType)) {
@@ -336,6 +342,7 @@ public class ControlWebView extends BaseController {
                     popElementMenu(element);
                 });
             }
+            Platform.requestNextPulse();
             MenuWebviewController menu = MenuWebviewController.running(webView);
             if (menu != null) {
                 menu.setElement(element);
@@ -422,51 +429,65 @@ public class ControlWebView extends BaseController {
         status
      */
     public void clear() {
-        reset();
-        loadContents(null);
+        loadContents("");
     }
 
     private void reset() {
+        if (timer != null) {
+            timer.cancel();
+        }
+//        clearListener(webEngine.getDocument());
+    }
+
+    private void ready() {
         try {
             if (timer != null) {
                 timer.cancel();
             }
             framesDoc.clear();
             charset = Charset.defaultCharset();
-            clearListener();
-            listened = false;
+            synchronized (lock) {
+                listened = false;
+            }
         } catch (Exception e) {
             MyBoxLog.console(e);
         }
     }
 
-    private void clearListener() {
+    // Errors popped when call this. Do not call this.
+    private synchronized void clearListener(Document doc) {
         try {
-            executeScript("document.onclick=function(){};"
-                    + " document.oncontextmenu=function(){}; "
-                    + "  document.onmouseover=function(){};"
-                    + "  document.onmouseout=function(){};");
+            if (doc == null) {
+                return;
+            }
+            EventTarget t = (EventTarget) doc.getDocumentElement();
+            t.removeEventListener("contextmenu", docListener, true);
+            t.removeEventListener("click", docListener, true);
+            t.removeEventListener("mouseover", docListener, true);
+            t.removeEventListener("mouseout", docListener, true);
         } catch (Exception e) {
         }
     }
 
     private void running() {
         try {
-            reset();
             pageLoadingNotify.set(!pageLoadingNotify.get());
             timer = new Timer();
             timer.schedule(new TimerTask() {
                 @Override
                 public void run() {
                     Platform.runLater(() -> {
-                        if (listened) {
-                            if (timer != null) {
-                                timer.cancel();
+                        synchronized (lock) {
+                            if (listened) {
+                                if (timer != null) {
+                                    timer.cancel();
+                                }
+                                return;
                             }
-                            return;
                         }
                         initDoc(webEngine.getDocument());
                     });
+                    Platform.requestNextPulse();
                 }
             }, 300, 100);
         } catch (Exception e) {
@@ -474,10 +495,12 @@ public class ControlWebView extends BaseController {
         }
     }
 
-    private synchronized boolean initDoc(Document doc) {
+    private boolean initDoc(Document doc) {
         try {
-            if (listened || doc == null) {
-                return false;
+            synchronized (lock) {
+                if (listened || doc == null) {
+                    return false;
+                }
             }
             Object winObject = executeScript("window");
             Object docObject = executeScript("document");
@@ -485,12 +508,10 @@ public class ControlWebView extends BaseController {
                 return false;
             }
             ((JSObject) winObject).setMember("control", this);
-            executeScript("if ( document.readyState==\"complete\" || document.readyState==\"interactive\")"
-                    + " { control.setDocListeners(); } ");
+            executeScript("if ( document.addEventListener ) { control.setDocListeners(); } ");
             if (timer != null) {
                 timer.cancel();
             }
-            listened = true;
             return true;
         } catch (Exception e) {
             MyBoxLog.console(e);
@@ -499,20 +520,22 @@ public class ControlWebView extends BaseController {
     }
 
     public void setDocListeners() {
-        clearListener();
         setDocListeners(webEngine.getDocument());
+        synchronized (lock) {
+            listened = true;
+        }
     }
 
-    private void setDocListeners(Document doc) {
+    private synchronized void setDocListeners(Document doc) {
         try {
             if (doc == null) {
                 return;
             }
             EventTarget t = (EventTarget) doc.getDocumentElement();
-            t.addEventListener("contextmenu", docListener, false);
-            t.addEventListener("click", docListener, false);
-            t.addEventListener("mouseover", docListener, false);
-            t.addEventListener("mouseout", docListener, false);
+            t.addEventListener("contextmenu", docListener, true);
+            t.addEventListener("click", docListener, true);
+            t.addEventListener("mouseover", docListener, true);
+            t.addEventListener("mouseout", docListener, true);
         } catch (Exception e) {
             MyBoxLog.console(e);
         }
@@ -553,9 +576,7 @@ public class ControlWebView extends BaseController {
 
             Document doc = webEngine.getDocument();
             if (doc != null) {
-                if (!listened) {
-                    initDoc(doc);
-                }
+                initDoc(doc);
                 NodeList frameList = doc.getElementsByTagName("frame");
                 for (int i = 0; i < frameList.getLength(); i++) {
                     executeScript("if ( window.frames[" + i + "].document.readyState==\"complete\") control.frameIndexReady(" + i + ");");
@@ -714,6 +735,7 @@ public class ControlWebView extends BaseController {
     }
 
     public void writeContents(String contents) {
+        reset();
         this.contents = contents;
         webEngine.getLoadWorker().cancel();
         webEngine.loadContent(contents == null ? "" : contents);
@@ -750,6 +772,7 @@ public class ControlWebView extends BaseController {
             if (!setAddress(value)) {
                 return;
             }
+            reset();
             contents = null;
             setWebViewLabel(message("Loading..."));
             webEngine.getLoadWorker().cancel();
@@ -1446,9 +1469,22 @@ public class ControlWebView extends BaseController {
                 });
                 items.add(menu);
 
-            } else {
-                items.add(new SeparatorMenuItem());
+                if (sourceFile != null) {
+                    menu = new MenuItem(message("OpenDirectory"), StyleTools.getIconImageView("iconOpenPath.png"));
+                    menu.setOnAction((ActionEvent event) -> {
+                        openSourcePath();
+                    });
+                    items.add(menu);
+
+                    menu = new MenuItem(message("BrowseFiles"), StyleTools.getIconImageView("iconList.png"));
+                    menu.setOnAction((ActionEvent event) -> {
+                        FileBrowseController.open(myController);
+                    });
+                    items.add(menu);
+                }
+
             }
+            items.add(new SeparatorMenuItem());
 
             if (!linkInNewTab) {
                 items.add(clickedMenu());
@@ -1756,9 +1792,7 @@ public class ControlWebView extends BaseController {
                 if (tables == null || tables.isEmpty()) {
                     popInformation(message("NoData"));
                 } else {
-                    DataFileCSVController c = (DataFileCSVController) WindowTools.openStage(Fxmls.DataFileCSVFxml);
-                    c.loadData(tables);
-                    c.toFront();
+                    Data2DManufactureController.loadTables(title(), tables);
                 }
             }
 

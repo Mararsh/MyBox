@@ -4,7 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import mara.mybox.data2d.Data2D_Operations.ObjectType;
 import mara.mybox.data2d.DataTable;
-import mara.mybox.data2d.reader.DataTableGroupStatistic;
+import mara.mybox.data2d.DataTableGroupStatistic;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
@@ -22,16 +22,16 @@ public class Data2DChartGroupBoxWhiskerController extends Data2DChartBoxWhiskerC
     protected DataTable statisticData;
 
     @FXML
-    protected ControlData2DResults statisticDataController;
+    protected ControlData2DView statisticDataController;
 
     public Data2DChartGroupBoxWhiskerController() {
         baseTitle = message("GroupData") + " - " + message("BoxWhiskerChart");
     }
 
     @Override
-    public void initControls() {
+    public void initOptions() {
         try {
-            super.initControls();
+            super.initOptions();
 
             objectType = ObjectType.Columns;
 
@@ -70,7 +70,7 @@ public class Data2DChartGroupBoxWhiskerController extends Data2DChartBoxWhiskerC
 
     @Override
     protected void loadChartData() {
-        statisticDataController.loadData(statisticData.cloneAll());
+        statisticDataController.loadDef(statisticData);
         super.loadChartData();
     }
 
@@ -107,7 +107,7 @@ public class Data2DChartGroupBoxWhiskerController extends Data2DChartBoxWhiskerC
     /*
         static
      */
-    public static Data2DChartGroupBoxWhiskerController open(ControlData2DLoad tableController) {
+    public static Data2DChartGroupBoxWhiskerController open(BaseData2DLoadController tableController) {
         try {
             Data2DChartGroupBoxWhiskerController controller = (Data2DChartGroupBoxWhiskerController) WindowTools.branchStage(
                     tableController, Fxmls.Data2DChartGroupBoxWhiskerFxml);

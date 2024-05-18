@@ -19,7 +19,7 @@ public class FileFilters {
             if (filters == null || file == null) {
                 return false;
             }
-            String suffix = FileNameTools.suffix(file.getName());
+            String suffix = FileNameTools.ext(file.getName());
             for (FileChooser.ExtensionFilter filter : filters) {
                 List<String> exts = filter.getExtensions();
                 for (String ext : exts) {

@@ -3,6 +3,9 @@ package mara.mybox.controller;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.scene.control.Toggle;
 import javafx.scene.paint.Color;
 import mara.mybox.calculation.Normalization;
 import mara.mybox.db.data.ColumnDefinition.InvalidAs;
@@ -32,9 +35,26 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DChartHtml
     }
 
     @Override
-    public boolean initData() {
+    public void initOptions() {
         try {
-            if (!super.initData()) {
+            super.initOptions();
+
+            objectGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+                @Override
+                public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
+                    startAction();
+                }
+            });
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    @Override
+    public boolean checkOptions() {
+        try {
+            if (!super.checkOptions()) {
                 return false;
             }
             dataColsIndices = new ArrayList<>();
@@ -372,7 +392,7 @@ public class Data2DChartSelfComparisonBarsController extends BaseData2DChartHtml
     /*
         static
      */
-    public static Data2DChartSelfComparisonBarsController open(ControlData2DLoad tableController) {
+    public static Data2DChartSelfComparisonBarsController open(BaseData2DLoadController tableController) {
         try {
             Data2DChartSelfComparisonBarsController controller = (Data2DChartSelfComparisonBarsController) WindowTools.branchStage(
                     tableController, Fxmls.Data2DChartSelfComparisonBarsFxml);

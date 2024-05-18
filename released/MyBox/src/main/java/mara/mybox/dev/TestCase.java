@@ -163,15 +163,12 @@ public class TestCase {
             cases.add(new TestCase(index++, message("PixelsCalculator"), Fxmls.PixelsCalculatorFxml));
             cases.add(new TestCase(index++, message("ImageBase64"), Fxmls.ImageBase64Fxml));
 
-            cases.add(new TestCase(index++, message("DataManufacture"), Fxmls.DataManufactureFxml));
+            cases.add(new TestCase(index++, message("DataManufacture"), Fxmls.Data2DManufactureFxml));
             cases.add(new TestCase(index++, message("ManageData"), Fxmls.Data2DManageFxml));
-            cases.add(new TestCase(index++, message("EditCSV"), Fxmls.DataFileCSVFxml));
             cases.add(new TestCase(index++, message("CsvConvert"), Fxmls.DataFileCSVConvertFxml));
             cases.add(new TestCase(index++, message("CsvMerge"), Fxmls.DataFileCSVMergeFxml));
-            cases.add(new TestCase(index++, message("EditExcel"), Fxmls.DataFileExcelFxml));
             cases.add(new TestCase(index++, message("ExcelConvert"), Fxmls.DataFileExcelConvertFxml));
             cases.add(new TestCase(index++, message("ExcelMerge"), Fxmls.DataFileExcelMergeFxml));
-            cases.add(new TestCase(index++, message("EditTextDataFile"), Fxmls.DataFileTextFxml));
             cases.add(new TestCase(index++, message("TextDataConvert"), Fxmls.DataFileTextConvertFxml));
             cases.add(new TestCase(index++, message("TextDataMerge"), Fxmls.DataFileTextMergeFxml));
             cases.add(new TestCase(index++, message("DataInSystemClipboard"), Fxmls.DataInMyBoxClipboardFxml));

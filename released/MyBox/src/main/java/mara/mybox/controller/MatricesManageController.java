@@ -2,11 +2,12 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import javafx.fxml.FXML;
 import javafx.stage.Window;
-import mara.mybox.data2d.DataFileCSV;
-import mara.mybox.data2d.DataTable;
+import mara.mybox.data2d.Data2D;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
@@ -16,13 +17,27 @@ import mara.mybox.value.Languages;
  * @CreateDate 2020-12-15
  * @License Apache License Version 2.0
  */
-public class MatricesManageController extends BaseData2DController {
+public class MatricesManageController extends BaseData2DListController {
 
     public MatricesManageController() {
         baseTitle = Languages.message("MatricesManage");
-        type = Data2DDefinition.Type.Matrix;
     }
 
+    @Override
+    public void setConditions() {
+        try {
+            queryConditions = " data_type = " + Data2D.type(Data2DDefinition.DataType.Matrix);
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    @FXML
+    @Override
+    public void createAction() {
+        Data2DManufactureController.create(Data2DDefinition.DataType.Matrix);
+    }
 
     /*
         static
@@ -56,20 +71,7 @@ public class MatricesManageController extends BaseData2DController {
 
     public static MatricesManageController open(String name, List<Data2DColumn> cols, List<List<String>> data) {
         MatricesManageController controller = oneOpen();
-        controller.dataController.loadTmpData(name, cols, data);
-        return controller;
-    }
-
-    public static MatricesManageController loadCSV(DataFileCSV csvData) {
-        MatricesManageController controller = oneOpen();
-        controller.loadCSVData(csvData);
-        return controller;
-    }
-
-    public static MatricesManageController loadTable(DataTable dataTable) {
-        MatricesManageController controller = oneOpen();
-        controller.loadTableData(dataTable);
-        controller.requestMouse();
+        controller.viewController.loadType(Data2DDefinition.DataType.Matrix, name, cols, data);
         return controller;
     }
 

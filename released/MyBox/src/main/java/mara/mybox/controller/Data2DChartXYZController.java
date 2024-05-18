@@ -23,7 +23,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-9-13
  * @License Apache License Version 2.0
  */
-public class Data2DChartXYZController extends BaseData2DHandleController {
+public class Data2DChartXYZController extends BaseData2DTaskController {
 
     protected int seriesSize;
     protected File chartFile;
@@ -90,9 +90,9 @@ public class Data2DChartXYZController extends BaseData2DHandleController {
     }
 
     @Override
-    public void refreshControls() {
+    public void sourceChanged() {
         try {
-            super.refreshControls();
+            super.sourceChanged();
             isSettingValues = true;
             xSelector.getItems().clear();
             ySelector.getItems().clear();
@@ -158,8 +158,11 @@ public class Data2DChartXYZController extends BaseData2DHandleController {
     }
 
     @Override
-    public boolean initData() {
+    public boolean checkOptions() {
         try {
+            if (!super.checkOptions()) {
+                return false;
+            }
             if (!chartController.checkParameters()) {
                 tabPane.getSelectionModel().select(optionsTab);
                 return false;
@@ -170,7 +173,7 @@ public class Data2DChartXYZController extends BaseData2DHandleController {
             String xName = xSelector.getSelectionModel().getSelectedItem();
             int xCol = data2D.colOrder(xName);
             if (xCol < 0) {
-                outOptionsError(message("SelectToHandle") + ": " + message("AxisX"));
+                popError(message("SelectToHandle") + ": " + message("AxisX"));
                 tabPane.getSelectionModel().select(optionsTab);
                 return false;
             }
@@ -180,7 +183,7 @@ public class Data2DChartXYZController extends BaseData2DHandleController {
             String yName = ySelector.getSelectionModel().getSelectedItem();
             int yCol = data2D.colOrder(yName);
             if (yCol < 0) {
-                outOptionsError(message("SelectToHandle") + ": " + message("AxisY"));
+                popError(message("SelectToHandle") + ": " + message("AxisY"));
                 tabPane.getSelectionModel().select(optionsTab);
                 return false;
             }
@@ -189,7 +192,7 @@ public class Data2DChartXYZController extends BaseData2DHandleController {
 
             if (chartController.scatterRadio.isSelected()) {
                 if (checkedColsIndices == null || checkedColsIndices.isEmpty()) {
-                    outOptionsError(message("SelectToHandle") + ": " + message("AxisZ"));
+                    popError(message("SelectToHandle") + ": " + message("AxisZ"));
                     tabPane.getSelectionModel().select(optionsTab);
                     return false;
                 }
@@ -200,7 +203,7 @@ public class Data2DChartXYZController extends BaseData2DHandleController {
                 String zName = zSelector.getSelectionModel().getSelectedItem();
                 int zCol = data2D.colOrder(zName);
                 if (zCol < 0) {
-                    outOptionsError(message("SelectToHandle") + ": " + message("AxisZ"));
+                    popError(message("SelectToHandle") + ": " + message("AxisZ"));
                     tabPane.getSelectionModel().select(optionsTab);
                     return false;
                 }
@@ -228,6 +231,7 @@ public class Data2DChartXYZController extends BaseData2DHandleController {
         if (task != null) {
             task.cancel();
         }
+        taskSuccessed = false;
         task = new FxSingletonTask<Void>(this) {
 
             @Override
@@ -243,7 +247,8 @@ public class Data2DChartXYZController extends BaseData2DHandleController {
                     chartFile = chartController.makeChart(outputColumns, outputData,
                             seriesSize, data2D.dataName(), scale,
                             xCategoryCheck.isSelected(), yCategoryCheck.isSelected(), zCategoryCheck.isSelected());
-                    return chartFile != null && chartFile.exists();
+                    taskSuccessed = chartFile != null && chartFile.exists();
+                    return taskSuccessed;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -259,17 +264,17 @@ public class Data2DChartXYZController extends BaseData2DHandleController {
             @Override
             protected void finalAction() {
                 super.finalAction();
-                data2D.stopTask();
+                closeTask(ok);
             }
 
         };
-        start(task);
+        start(task, false);
     }
 
     /*
         static
      */
-    public static Data2DChartXYZController open(ControlData2DLoad tableController) {
+    public static Data2DChartXYZController open(BaseData2DLoadController tableController) {
         try {
             Data2DChartXYZController controller = (Data2DChartXYZController) WindowTools.branchStage(
                     tableController, Fxmls.Data2DChartXYZFxml);

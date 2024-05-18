@@ -50,7 +50,7 @@ License:    Apache License Version 2.0
                                                 <ToggleGroup fx:id="takeGroup" />
                                             </toggleGroup>
                                         </RadioButton>
-                                        <RadioButton fx:id="othersRadio" mnemonicParsing="false" text="%Others" toggleGroup="$takeGroup" />
+                              <RadioButton fx:id="falseRadio" mnemonicParsing="false" text="false" toggleGroup="$takeGroup" />
                                     </children>
                                 </FlowPane>
                                 <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0">

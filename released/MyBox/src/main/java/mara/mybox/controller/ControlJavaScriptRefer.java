@@ -116,17 +116,7 @@ public class ControlJavaScriptRefer extends ControlInfoTreeList {
 
     @FXML
     protected void showScriptExamples(Event event) {
-        try {
-            MenuController controller
-                    = PopTools.popJavaScriptExamples(this, event, scriptInput, interfaceName + "Examples");
-            moreExampleButtons(controller);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    protected void moreExampleButtons(MenuController controller) {
-
+        PopTools.popJavaScriptExamples(this, event, scriptInput, interfaceName + "Examples", null);
     }
 
     @FXML

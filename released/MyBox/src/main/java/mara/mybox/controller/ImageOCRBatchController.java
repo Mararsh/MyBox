@@ -68,7 +68,6 @@ public class ImageOCRBatchController extends BaseBatchImageController {
 
     public ImageOCRBatchController() {
         baseTitle = message("ImageOCRBatch");
-        browseTargets = false;
     }
 
     @Override

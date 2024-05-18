@@ -83,7 +83,6 @@ public class ImageAnalyseController extends BaseController {
 
     public ImageAnalyseController() {
         baseTitle = message("ImageAnalyse");
-        TipsLabelKey = "ImageAnalyseTips";
     }
 
     @Override
@@ -125,6 +124,7 @@ public class ImageAnalyseController extends BaseController {
 
     protected void loadData() {
         image = imageController.imageView.getImage();
+        sourceFile = imageController.sourceFile;
         if (image == null || isSettingValues) {
             return;
         }
@@ -627,7 +627,11 @@ public class ImageAnalyseController extends BaseController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            final File file = chooseSaveFile();
+            String fname = baseTitle;
+            if (sourceFile != null) {
+                fname += "-" + FileNameTools.prefix(sourceFile.getName());
+            }
+            final File file = chooseSaveFile(fname);
             if (file == null) {
                 return;
             }
@@ -642,7 +646,7 @@ public class ImageAnalyseController extends BaseController {
             tabPane.getSelectionModel().select(statisticTab);
             String html = statisticController.currentHtml();
             Thread.sleep(50);
-            final String colorsViewHml = HtmlReadTools.body(html);
+            final String colorsViewHml = HtmlReadTools.body(html, false);
 
             final Image colorsBarchartSnap = colorsBarchart.snapshot(snapPara, null);
 
@@ -650,7 +654,7 @@ public class ImageAnalyseController extends BaseController {
             dominantController.tabPane.getSelectionModel().select(dominantController.colorTab);
             html = dominantController.colorsController.currentHtml();
             Thread.sleep(50);
-            final String dominantViewHml = HtmlReadTools.body(html);
+            final String dominantViewHml = HtmlReadTools.body(html, false);
 
             Thread.sleep(50);
             dominantController.tabPane.getSelectionModel().select(dominantController.pieTab);
@@ -659,7 +663,7 @@ public class ImageAnalyseController extends BaseController {
             tabPane.getSelectionModel().select(grayTab);
             html = WebViewTools.getHtml(grayView);
             Thread.sleep(50);
-            final String greyHtml = HtmlReadTools.body(html);
+            final String greyHtml = HtmlReadTools.body(html, false);
 
             Thread.sleep(50);
             final Image greyBarchartSnap = grayBarchart.snapshot(snapPara, null);
@@ -667,7 +671,7 @@ public class ImageAnalyseController extends BaseController {
             tabPane.getSelectionModel().select(redTab);
             html = WebViewTools.getHtml(redView);
             Thread.sleep(50);
-            final String redHtml = HtmlReadTools.body(html);
+            final String redHtml = HtmlReadTools.body(html, false);
 
             Thread.sleep(50);
             final Image redBarchartSnap = redBarchart.snapshot(snapPara, null);
@@ -675,7 +679,7 @@ public class ImageAnalyseController extends BaseController {
             tabPane.getSelectionModel().select(greenTab);
             html = WebViewTools.getHtml(greenView);
             Thread.sleep(50);
-            final String greenHtml = HtmlReadTools.body(html);
+            final String greenHtml = HtmlReadTools.body(html, false);
 
             Thread.sleep(50);
             final Image greenBarchartSnap = greenBarchart.snapshot(snapPara, null);
@@ -683,7 +687,7 @@ public class ImageAnalyseController extends BaseController {
             tabPane.getSelectionModel().select(blueTab);
             html = WebViewTools.getHtml(blueView);
             Thread.sleep(50);
-            final String blueHtml = HtmlReadTools.body(html);
+            final String blueHtml = HtmlReadTools.body(html, false);
 
             Thread.sleep(50);
             final Image blueBarchartSnap = blueBarchart.snapshot(snapPara, null);
@@ -691,7 +695,7 @@ public class ImageAnalyseController extends BaseController {
             tabPane.getSelectionModel().select(hueTab);
             html = WebViewTools.getHtml(hueView);
             Thread.sleep(50);
-            final String hueHtml = HtmlReadTools.body(html);
+            final String hueHtml = HtmlReadTools.body(html, false);
 
             Thread.sleep(50);
             final Image hueBarchartSnap = hueBarchart.snapshot(snapPara, null);
@@ -699,7 +703,7 @@ public class ImageAnalyseController extends BaseController {
             tabPane.getSelectionModel().select(brightnessTab);
             html = WebViewTools.getHtml(brightnessView);
             Thread.sleep(50);
-            final String brightnessHtml = HtmlReadTools.body(html);
+            final String brightnessHtml = HtmlReadTools.body(html, false);
 
             Thread.sleep(50);
             final Image brightnessBarchartSnap = brightnessBarchart.snapshot(snapPara, null);
@@ -707,7 +711,7 @@ public class ImageAnalyseController extends BaseController {
             tabPane.getSelectionModel().select(saturationTab);
             html = WebViewTools.getHtml(saturationView);
             Thread.sleep(50);
-            final String saturationHtml = HtmlReadTools.body(html);
+            final String saturationHtml = HtmlReadTools.body(html, false);
 
             Thread.sleep(50);
             final Image saturationBarchartSnap = saturationBarchart.snapshot(snapPara, null);
@@ -715,7 +719,7 @@ public class ImageAnalyseController extends BaseController {
             tabPane.getSelectionModel().select(alphaTab);
             html = WebViewTools.getHtml(alphaView);
             Thread.sleep(50);
-            final String alphaHtml = HtmlReadTools.body(html);
+            final String alphaHtml = HtmlReadTools.body(html, false);
 
             Thread.sleep(50);
             final Image alphaBarchartSnap = alphaBarchart.snapshot(snapPara, null);

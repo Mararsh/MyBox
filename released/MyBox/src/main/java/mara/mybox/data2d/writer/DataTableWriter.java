@@ -1,17 +1,14 @@
 package mara.mybox.data2d.writer;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.util.ArrayList;
-import mara.mybox.db.data.ColumnDefinition.InvalidAs;
+import java.util.List;
+import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataTable;
+import mara.mybox.data2d.tools.Data2DTableTools;
 import mara.mybox.db.Database;
-import mara.mybox.db.DerbyBase;
-import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DRow;
 import mara.mybox.db.table.TableData2D;
-import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -21,153 +18,159 @@ import static mara.mybox.value.Languages.message;
  */
 public class DataTableWriter extends Data2DWriter {
 
-    protected DataTable sourceTable;
+    protected DataTable targetTable;
+    protected String targetTableName, targetTableDesciption;
+    protected List<String> keys;
+    protected String idName;
+    protected boolean dropExisted;
     protected TableData2D tableData2D;
-    protected int writeCount;
-    protected Data2DRow sourceTableRow;
-    protected Connection conn;
-    protected PreparedStatement update;
-    protected PreparedStatement delete;
-
-    public DataTableWriter(DataTable data) {
-        init(data);
-        sourceTable = data;
-        tableData2D = sourceTable.getTableData2D();
-        tableData2D.setTableName(sourceTable.getSheet());
-    }
+    protected PreparedStatement insert;
 
     @Override
-    public Data2DWriter start(Operation operation) {
-        this.operation = operation;
-        if (isClearData()) {
-            count = tableData2D.clearData();
-            return this;
-        }
-        return super.start(operation);
-    }
-
-    @Override
-    public void scanData() {
-        rowIndex = 0;
-        count = 0;
-        writeCount = 0;
-        String sql = "SELECT * FROM " + sourceTable.getSheet();
-        if (task != null) {
-            task.setInfo(sql);
-        }
-        try ( Connection dconn = DerbyBase.getConnection();
-                 PreparedStatement statement = dconn.prepareStatement(sql);
-                 ResultSet results = statement.executeQuery();
-                 PreparedStatement dUpdate = conn.prepareStatement(tableData2D.updateStatement());
-                 PreparedStatement dDelete = conn.prepareStatement(tableData2D.deleteStatement())) {
-            conn = dconn;
+    public boolean openWriter() {
+        try {
+            if (!super.openWriter()) {
+                return false;
+            }
+            conn = conn();
+            if (conn == null) {
+                return false;
+            }
+            if (targetTable == null) {
+                targetTable = Data2DTableTools.createTable(task(), conn, targetTableName,
+                        columns, keys, targetTableDesciption, idName, dropExisted);
+                if (targetTable == null) {
+                    return false;
+                }
+            } else {
+                columns = targetTable.getColumns();
+            }
+            tableData2D = targetTable.getTableData2D();
             conn.setAutoCommit(false);
-            update = dUpdate;
-            delete = dDelete;
-            while (results.next() && !writerStopped() && !data2D.filterReachMaxPassed()) {
-                sourceTableRow = tableData2D.readData(results);
-                makeRecord();
-                if (sourceRow == null || sourceRow.isEmpty()) {
-                    continue;
-                }
-                rowIndex++;
-                handleRow();
-            }
-            update.executeBatch();
-            conn.commit();
-            if (task != null) {
-                task.setInfo(message("Updated") + ": " + count);
-            }
-            delete.executeBatch();
-            conn.commit();
-            if (task != null) {
-                task.setInfo(message("Deleted") + ": " + count);
-            }
-            conn.close();
-            conn = null;
+            targetRowIndex = 0;
+            String sql = tableData2D.insertStatement();
+            showInfo(sql);
+            insert = conn.prepareStatement(sql);
+            targetData = targetTable;
+            validateValue = true;
+            return true;
         } catch (Exception e) {
-            MyBoxLog.error(e);
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            failed = true;
-        }
-        if (failed) {
-            writerStopped = true;
-        }
-    }
-
-    public void makeRecord() {
-        try {
-            sourceRow = null;
-            if (sourceTableRow == null) {
-                return;
-            }
-            sourceRow = new ArrayList<>();
-            for (int i = 0; i < columnsNumber; ++i) {
-                Data2DColumn column = sourceTable.getColumns().get(i);
-                Object value = sourceTableRow.getColumnValue(column.getColumnName());
-                sourceRow.add(column.toString(value));
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            if (task != null) {
-                task.setError(e.toString());
-            }
+            showError(e.toString());
+            return false;
         }
     }
 
     @Override
-    public void writeRow() {
+    public void writeRow(List<String> inRow) {
         try {
-            if (writerStopped() || targetRow == null || targetRow.isEmpty()) {
+            printRow = null;
+            if (inRow == null || inRow.isEmpty() || conn == null || targetTable == null) {
                 return;
             }
-            for (int i = 0; i < columnsNumber; ++i) {
-                Data2DColumn column = sourceTable.getColumns().get(i);
-                String name = column.getColumnName();
-                sourceTableRow.setColumnValue(name, column.fromString(targetRow.get(i), InvalidAs.Blank));
+            printRow = new ArrayList<>();
+            Data2DRow data2DRow = targetTable.makeRow(inRow, invalidAs);
+            if (data2DRow == null || data2DRow.isNoColumn()) {
+                return;
             }
-            if (tableData2D.setUpdateStatement(conn, update, sourceTableRow)) {
-                update.addBatch();
-                if (++count % Database.BatchSize == 0) {
-                    update.executeBatch();
+            if (tableData2D.setInsertStatement(conn, insert, data2DRow)) {
+                insert.addBatch();
+                if (++targetRowIndex % Database.BatchSize == 0) {
+                    insert.executeBatch();
                     conn.commit();
-                    if (task != null) {
-                        task.setInfo(message("Updated") + ": " + count);
-                    }
+                    showInfo(message("Inserted") + ": " + targetRowIndex);
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.error(e);
-            if (task != null) {
-                task.setError(e.toString());
-            }
+            showError(e.toString());
         }
     }
 
     @Override
-    public void deleteRow(boolean needDelete) {
+    public void closeWriter() {
         try {
-            if (!needDelete) {
+            created = false;
+            if (conn == null || targetTable == null) {
+                showInfo(message("Failed"));
                 return;
             }
-            if (tableData2D.setDeleteStatement(conn, delete, sourceTableRow)) {
-                delete.addBatch();
-                if (++count % Database.BatchSize == 0) {
-                    delete.executeBatch();
-                    conn.commit();
-                    if (task != null) {
-                        task.setInfo(message("Deleted") + ": " + count);
-                    }
-                }
-            }
+            insert.executeBatch();
+            conn.commit();
+            insert.close();
+            targetTable.setRowsNumber(targetRowIndex);
+            Data2D.saveAttributes(conn, targetTable, targetTable.getColumns());
+            targetData = targetTable;
+            showInfo(message("Generated") + ": " + targetTable.getSheet() + "  "
+                    + message("RowsNumber") + ": " + targetRowIndex);
+            created = true;
         } catch (Exception e) {
-            MyBoxLog.error(e);
-            if (task != null) {
-                task.setError(e.toString());
-            }
+            showError(e.toString());
         }
+    }
+
+    /*
+        get/set
+     */
+    public DataTable getTargetTable() {
+        return targetTable;
+    }
+
+    public DataTableWriter setTargetTable(DataTable targetTable) {
+        this.targetTable = targetTable;
+        return this;
+    }
+
+    public String getTargetTableName() {
+        return targetTableName;
+    }
+
+    public DataTableWriter setTargetTableName(String targetTableName) {
+        this.targetTableName = targetTableName;
+        return this;
+    }
+
+    public String getTargetTableDesciption() {
+        return targetTableDesciption;
+    }
+
+    public DataTableWriter setTargetTableDesciption(String targetTableDesciption) {
+        this.targetTableDesciption = targetTableDesciption;
+        return this;
+    }
+
+    public List<String> getKeys() {
+        return keys;
+    }
+
+    public DataTableWriter setKeys(List<String> keys) {
+        this.keys = keys;
+        return this;
+    }
+
+    public String getIdName() {
+        return idName;
+    }
+
+    public DataTableWriter setIdName(String idName) {
+        this.idName = idName;
+        return this;
+    }
+
+    public boolean isDropExisted() {
+        return dropExisted;
+    }
+
+    public DataTableWriter setDropExisted(boolean dropExisted) {
+        this.dropExisted = dropExisted;
+        return this;
+    }
+
+    public PreparedStatement getInsert() {
+        return insert;
+    }
+
+    public DataTableWriter setInsert(PreparedStatement insert) {
+        this.insert = insert;
+        return this;
     }
 
 }

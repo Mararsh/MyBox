@@ -432,7 +432,7 @@ public class ImageFileReaders {
             if (e == null || file == null) {
                 return null;
             }
-            String format = FileNameTools.suffix(file.getName()).toLowerCase();
+            String format = FileNameTools.ext(file.getName()).toLowerCase();
             if (task != null) {
                 task.setInfo("Reading broken image: " + format);
             }
@@ -1098,7 +1098,7 @@ public class ImageFileReaders {
     public static IIOMetadata getIIOMetadata(FxTask task, File file) {
         IIOMetadata iioMetaData = null;
         try (ImageInputStream iis = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(file)))) {
-            ImageReader reader = getReader(iis, FileNameTools.suffix(file.getName()).toLowerCase());
+            ImageReader reader = getReader(iis, FileNameTools.ext(file.getName()).toLowerCase());
             if (reader == null) {
                 return null;
             }

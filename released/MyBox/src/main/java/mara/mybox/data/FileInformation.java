@@ -170,9 +170,9 @@ public class FileInformation {
 
     public String getSuffix() {
         if (file != null) {
-            return FileNameTools.suffix(file.getName());
+            return FileNameTools.ext(file.getName());
         } else if (data != null) {
-            return FileNameTools.suffix(data);
+            return FileNameTools.ext(data);
         } else {
             return null;
         }
@@ -198,13 +198,21 @@ public class FileInformation {
         }
     }
 
-    public String getFileName() {
+    public String getTfileName() {
         if (file != null) {
             if (file.isDirectory()) {
                 return null;
             } else {
                 return file.getName();
             }
+        } else {
+            return null;
+        }
+    }
+
+    public String getFileName() {
+        if (file != null) {
+            return file.getName();
         } else {
             return null;
         }

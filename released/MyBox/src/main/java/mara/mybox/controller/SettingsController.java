@@ -872,8 +872,8 @@ public class SettingsController extends BaseController {
     public void initMapTab() {
         try {
             tiandituWebKeyInput.setText(UserConfig.getString("TianDiTuWebKey", AppValues.TianDiTuWebKey));
-            gaodeWebKeyInput.setText(UserConfig.getString("GaoDeMapWebKey", AppValues.GaoDeMapWebKey));
-            gaodeServiceKeyInput.setText(UserConfig.getString("GaoDeMapServiceKey", AppValues.GaoDeMapServiceKey));
+            gaodeWebKeyInput.setText(UserConfig.getString("GaoDeMapWebKey", AppValues.GaoDeMapJavascriptKey));
+            gaodeServiceKeyInput.setText(UserConfig.getString("GaoDeMapServiceKey", AppValues.GaoDeMapWebServiceKey));
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
@@ -898,8 +898,8 @@ public class SettingsController extends BaseController {
     @FXML
     public void defaultMapAction() {
         tiandituWebKeyInput.setText(AppValues.TianDiTuWebKey);
-        gaodeWebKeyInput.setText(AppValues.GaoDeMapWebKey);
-        gaodeServiceKeyInput.setText(AppValues.GaoDeMapServiceKey);
+        gaodeWebKeyInput.setText(AppValues.GaoDeMapJavascriptKey);
+        gaodeServiceKeyInput.setText(AppValues.GaoDeMapWebServiceKey);
         setMapKeysAction();
     }
 

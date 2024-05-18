@@ -18,7 +18,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" prefHeight="500.0" prefWidth="600.0" spacing="5.0" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.RemotePathGetController">
+<VBox fx:id="thisPane" prefHeight="500.0" prefWidth="600.0" spacing="5.0" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.RemotePathGetController">
     <children>
         <Label fx:id="titleLabel" alignment="CENTER" maxWidth="1.7976931348623157E308" text="%RemotePathGet" textAlignment="CENTER" VBox.vgrow="ALWAYS" />
         <fx:include fx:id="targetPathInput" source="ControlPathInput.fxml" />
@@ -41,7 +41,7 @@ License:    Apache License Version 2.0
         <FlowPane alignment="CENTER_LEFT" hgap="2.0" vgap="2.0">
             <children>
                 <CheckBox fx:id="copyMtimeCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%CopyModifyTime" wrapText="true" />
-                <CheckBox fx:id="continueCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%ContinueWhenError" wrapText="true" />
+                <CheckBox fx:id="errorContinueCheck" minHeight="-Infinity" mnemonicParsing="false" text="%ContinueWhenError" wrapText="true" />
             </children>
         </FlowPane>
         <HBox alignment="CENTER_LEFT" spacing="2.0">

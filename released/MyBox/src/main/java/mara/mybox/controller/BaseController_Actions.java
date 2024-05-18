@@ -159,8 +159,8 @@ public abstract class BaseController_Actions extends BaseController_Interface {
         if (this instanceof BaseImageController) {
             ImageInMyBoxClipboardController.oneOpen();
 
-        } else if (this instanceof ControlData2DEditTable) {
-            Data2DPasteContentInMyBoxClipboardController.open((ControlData2DEditTable) this);
+        } else if (this instanceof Data2DManufactureController) {
+            Data2DPasteContentInMyBoxClipboardController.open((Data2DManufactureController) this);
 
         } else {
             TextInMyBoxClipboardController.oneOpen();
@@ -253,7 +253,11 @@ public abstract class BaseController_Actions extends BaseController_Interface {
 
     @FXML
     public void openBackups() {
-        FileBackupController.load((BaseController) this);
+        openBackups(baseName + "BackupWhenSave");
+    }
+
+    public void openBackups(String name) {
+        FileBackupController.load((BaseController) this, name);
     }
 
     public FileBackup addBackup(FxTask inTask, File file) {
@@ -382,10 +386,7 @@ public abstract class BaseController_Actions extends BaseController_Interface {
 
     @FXML
     public void setAlwaysOnTop() {
-        if (getMyStage() == null) {
-            return;
-        }
-        myStage.setAlwaysOnTop(true);
+        setAlwaysTop(true, true);
     }
 
     public void clearUserSettings() {

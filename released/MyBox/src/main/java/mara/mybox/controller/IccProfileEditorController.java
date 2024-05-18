@@ -30,6 +30,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
@@ -113,7 +114,9 @@ public class IccProfileEditorController extends ChromaticityBaseController {
     @FXML
     protected Tab tagDataTab;
     @FXML
-    protected Button refreshHeaderButton, refreshXmlButton, exportXmlButton;
+    protected Button refreshHeaderButton, refreshXmlButton, exportXmlButton, backupButton;
+    @FXML
+    protected FlowPane opsPane;
 
     protected enum SourceType {
         Embed, Internal_File, External_File, External_Data
@@ -140,6 +143,8 @@ public class IccProfileEditorController extends ChromaticityBaseController {
             initHeaderControls();
             initTagsTable();
             initOptions();
+
+            opsPane.setDisable(true);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -659,7 +664,6 @@ public class IccProfileEditorController extends ChromaticityBaseController {
         if (name == null || name.trim().isEmpty()) {
             return;
         }
-        String fname = null;
         switch (name) {
             case "sRGB":
             case "XYZ":
@@ -696,7 +700,6 @@ public class IccProfileEditorController extends ChromaticityBaseController {
         if (name == null || name.trim().isEmpty()) {
             return;
         }
-
         if (task != null) {
             task.cancel();
         }
@@ -708,7 +711,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
         }
         task = new FxSingletonTask<Void>(this) {
 
-            private File file;
+            private File file = null;
             private IccProfile p;
 
             @Override
@@ -781,6 +784,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
             myStage.setTitle(getBaseTitle() + "  " + getCurrentName());
         }
         resetMarkLabel(headerBox);
+        backupButton.setDisable(sourceFile == null);
         inputsValid = true;
         task = new FxSingletonTask<Void>(this) {
 
@@ -808,6 +812,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
                 makeTagsInputs();
                 displayTagsTable();
                 displayXML(xml);
+                opsPane.setDisable(false);
             }
 
         };

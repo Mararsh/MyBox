@@ -93,6 +93,25 @@ public class TextPopController extends BaseChildController {
 
     public void setFile(BaseController parent, String filename) {
         this.parentController = parent;
+        sourceFileChanged(new File(filename));
+    }
+
+    public void setText(String text) {
+        try {
+            this.sourceInput = null;
+            setControls();
+            refreshAction();
+            textArea.setText(text);
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
+    }
+
+    @Override
+    public void sourceFileChanged(File file) {
+        if (file == null) {
+            return;
+        }
         if (task != null) {
             task.cancel();
         }
@@ -103,7 +122,8 @@ public class TextPopController extends BaseChildController {
             @Override
             protected boolean handle() {
                 try {
-                    texts = TextFileTools.readTexts(this, new File(filename));
+                    sourceFile = file;
+                    texts = TextFileTools.readTexts(this, file);
                     return true;
                 } catch (Exception e) {
                     error = e.toString();
@@ -119,21 +139,11 @@ public class TextPopController extends BaseChildController {
             protected void finalAction() {
                 super.finalAction();
                 setText(texts);
+                setTitle(baseTitle + " " + file.getAbsolutePath());
             }
 
         };
         start(task);
-    }
-
-    public void setText(String text) {
-        try {
-            this.sourceInput = null;
-            setControls();
-            refreshAction();
-            textArea.setText(text);
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
     }
 
     public void checkSychronize() {
@@ -172,7 +182,11 @@ public class TextPopController extends BaseChildController {
 
     @FXML
     public void editAction() {
-        TextEditorController.edit(textArea.getText());
+        if (sourceFile != null) {
+            TextEditorController.open(sourceFile);
+        } else {
+            TextEditorController.edit(textArea.getText());
+        }
     }
 
     @FXML

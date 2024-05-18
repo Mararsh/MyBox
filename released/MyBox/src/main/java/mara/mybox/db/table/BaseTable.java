@@ -23,13 +23,13 @@ import mara.mybox.db.data.BaseDataAdaptor;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import static mara.mybox.db.data.ColumnDefinition.ColumnType.Clob;
+import static mara.mybox.db.data.ColumnDefinition.ColumnType.Enumeration;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FloatTools;
 import mara.mybox.tools.HtmlWriteTools;
-import mara.mybox.tools.LongTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppValues;
 import static mara.mybox.value.Languages.message;
@@ -127,14 +127,20 @@ public abstract class BaseTable<D> {
                 case File:
                 case Image:
                 case Enumeration:
-                    if (value == null) {
-                        if (notNull) {
-                            statement.setString(index, (String) column.defaultValue());
-                        } else {
-                            statement.setNull(index, Types.VARCHAR);
-                        }
+                case EnumerationEditable:
+                    if (value == null && !notNull) {
+                        statement.setNull(index, Types.VARCHAR);
                     } else {
-                        String s = (String) value;
+                        String s;
+                        try {
+                            s = (String) value;
+                        } catch (Exception ex) {
+                            try {
+                                s = (String) column.defaultValue();
+                            } catch (Exception exs) {
+                                s = "";
+                            }
+                        }
                         if (column.getLength() > 0 && s.length() > column.getLength()) {
                             s = s.substring(0, column.getLength());
                         }
@@ -145,175 +151,210 @@ public abstract class BaseTable<D> {
                 case Longitude:
                 case Latitude:
                     double d;
-                    if (value == null) {
-                        d = Double.NaN;
-                    } else {
-                        if (!(value instanceof Double)) {
-                            MyBoxLog.console(value + "  " + value.getClass());
-                            d = Double.NaN;
-                        } else {
-                            d = (double) value;
+                    try {
+                        d = (double) value;
+                    } catch (Exception ex) {
+                        try {
+                            d = (double) column.defaultValue();
+                        } catch (Exception exs) {
+                            d = AppValues.InvalidDouble;
                         }
                     }
                     if (DoubleTools.invalidDouble(d)) {
-                        if (notNull) {
-                            statement.setDouble(index, AppValues.InvalidDouble);
-                        } else {
+                        d = AppValues.InvalidDouble;
+                        if (!notNull) {
                             statement.setNull(index, Types.DOUBLE);
+                            break;
                         }
-                    } else {
-                        statement.setDouble(index, d);
                     }
+                    statement.setDouble(index, d);
                     break;
                 case Float:
                     float f;
-                    if (value == null) {
-                        f = Float.NaN;
-                    } else {
+                    try {
                         f = (float) value;
+                    } catch (Exception ex) {
+                        try {
+                            f = (float) column.defaultValue();
+                        } catch (Exception exs) {
+                            f = AppValues.InvalidFloat;
+                        }
                     }
                     if (FloatTools.invalidFloat(f)) {
-                        if (notNull) {
-                            statement.setDouble(index, AppValues.InvalidFloat);
-                        } else {
+                        f = AppValues.InvalidFloat;
+                        if (!notNull) {
                             statement.setNull(index, Types.FLOAT);
+                            break;
                         }
-                    } else {
-                        statement.setFloat(index, f);
                     }
+                    statement.setFloat(index, f);
                     break;
                 case Long:
                     long l;
-                    if (value == null) {
-                        if (column.isAuto()) {
-                            l = -1;
-                        } else {
+                    try {
+                        l = (long) value;
+                    } catch (Exception ex) {
+                        try {
+                            l = (long) column.defaultValue();
+                        } catch (Exception exx) {
                             l = AppValues.InvalidLong;
                         }
-                    } else {
-                        l = (long) value;
                     }
-                    if (LongTools.invalidLong(l)) {
-                        if (notNull) {
-                            statement.setDouble(index, AppValues.InvalidLong);
-                        } else {
+                    if (l == AppValues.InvalidLong) {
+                        if (!notNull) {
                             statement.setNull(index, Types.BIGINT);
+                            break;
                         }
-                    } else {
-                        statement.setLong(index, l);
                     }
+                    statement.setLong(index, l);
                     break;
                 case Era:
                     long el;
-                    if (value == null) {
-                        el = AppValues.InvalidLong;
-                    } else {
+                    try {
+                        el = Long.parseLong(value + "");
+                        if (el < 10000 && el > -10000) {
+                            Date ed = DateTools.encodeDate((String) value);
+                            el = ed.getTime();
+                        }
+                    } catch (Exception ex) {
                         try {
-                            el = Long.parseLong(value + "");
-                            if (el < 10000 && el > -10000) {
-                                Date ed = DateTools.encodeDate((String) value);
-                                el = ed.getTime();
-                            }
-                        } catch (Exception ex) {
-                            try {
-                                Date ed = DateTools.encodeDate((String) value);
-                                el = ed.getTime();
-                            } catch (Exception e) {
-                                el = AppValues.InvalidLong;
-                            }
+                            Date ed = DateTools.encodeDate((String) value);
+                            el = ed.getTime();
+                        } catch (Exception e) {
+                            el = AppValues.InvalidLong;
                         }
                     }
-                    if (LongTools.invalidLong(el)) {
-                        if (notNull) {
-                            statement.setDouble(index, AppValues.InvalidLong);
-                        } else {
+                    if (el == AppValues.InvalidLong) {
+                        if (!notNull) {
                             statement.setNull(index, Types.BIGINT);
+                            break;
                         }
-                    } else {
-                        statement.setLong(index, el);
                     }
+                    statement.setLong(index, el);
                     break;
                 case Integer:
                     int i;
-                    if (value == null) {
-                        i = AppValues.InvalidInteger;
-                    } else {
+                    try {
                         i = (int) value;
+                    } catch (Exception ex) {
+                        try {
+                            i = (int) column.defaultValue();
+                        } catch (Exception exx) {
+                            i = AppValues.InvalidInteger;
+                        }
                     }
                     if (i == AppValues.InvalidInteger) {
-                        if (notNull) {
-                            statement.setDouble(index, AppValues.InvalidInteger);
-                        } else {
+                        if (!notNull) {
                             statement.setNull(index, Types.INTEGER);
+                            break;
                         }
-                    } else {
-                        statement.setInt(index, i);
                     }
+                    statement.setInt(index, i);
                     break;
                 case Boolean:
-                    if (value == null) {
-                        if (notNull) {
-                            statement.setBoolean(index, false);
-                        } else {
-                            statement.setNull(index, Types.BOOLEAN);
-                        }
+                    if (value == null && !notNull) {
+                        statement.setNull(index, Types.BOOLEAN);
                     } else {
-                        statement.setBoolean(index, (boolean) value);
+                        boolean b;
+                        try {
+                            b = (boolean) value;
+                        } catch (Exception ex) {
+                            try {
+                                b = (boolean) column.defaultValue();
+                            } catch (Exception exx) {
+                                b = false;
+                            }
+                        }
+                        statement.setBoolean(index, b);
                     }
                     break;
                 case Short:
                     short r;
-                    if (value == null) {
-                        r = AppValues.InvalidShort;
-                    } else {
+                    try {
                         if (value instanceof Integer) { // sometime value becomes Integer...
                             r = (short) ((int) value);
                         } else {
                             r = (short) value;
                         }
+                    } catch (Exception ex) {
+                        try {
+                            r = (short) column.defaultValue();
+                        } catch (Exception exx) {
+                            r = AppValues.InvalidShort;
+                        }
                     }
                     if (r == AppValues.InvalidShort) {
-                        if (notNull) {
-                            statement.setShort(index, AppValues.InvalidShort);
-                        } else {
+                        if (!notNull) {
                             statement.setNull(index, Types.SMALLINT);
+                            break;
                         }
-                    } else {
-                        statement.setShort(index, r);
                     }
+                    statement.setShort(index, r);
                     break;
                 case Datetime:
-                    if (value == null) {
-                        if (notNull) {
-                            statement.setTimestamp(index, (Timestamp) column.defaultValue());
-                        } else {
-                            statement.setNull(index, Types.TIMESTAMP);
+                    Date dt;
+                    try {
+                        dt = (Date) value;
+                    } catch (Exception ex) {
+                        try {
+                            dt = (Timestamp) column.defaultValue();
+                        } catch (Exception exx) {
+                            dt = null;
                         }
-                    } else {
-                        Date datetime = (Date) value;
-                        statement.setTimestamp(index, new Timestamp(datetime.getTime()));
                     }
+                    if (dt == null) {
+                        if (!notNull) {
+                            statement.setNull(index, Types.TIMESTAMP);
+                            break;
+                        }
+                        dt = new Date();
+                    }
+                    statement.setTimestamp(index, new Timestamp(dt.getTime()));
                     break;
                 case Date:
-                    if (value == null) {
-                        if (notNull) {
-                            statement.setDate(index, (java.sql.Date) column.defaultValue());
-                        } else {
-                            statement.setNull(index, Types.DATE);
-                        }
+                    if (value == null && !notNull) {
+                        statement.setNull(index, Types.DATE);
                     } else {
-                        Date date = (Date) value;
-                        statement.setDate(index, new java.sql.Date(date.getTime()));
+                        Date dd;
+                        try {
+                            dd = (Date) value;
+                        } catch (Exception ex) {
+                            try {
+                                dd = (java.sql.Date) column.defaultValue();
+                            } catch (Exception exx) {
+                                dd = null;
+                            }
+                        }
+                        if (dd == null) {
+                            if (!notNull) {
+                                statement.setNull(index, Types.DATE);
+                                break;
+                            }
+                            dd = new Date();
+                        }
+                        statement.setDate(index, new java.sql.Date(dd.getTime()));
                     }
                     break;
                 case Clob:
-                    if (value == null) {
-                        statement.setNull(index, Types.CLOB);
-                    } else {
-                        // CLOB is handled as string internally, and maxmium length is Integer.MAX(2G)
-                        String s = (String) value;
-                        statement.setCharacterStream(index, new BufferedReader(new StringReader(s)), s.length());
+                    String cb;
+                    try {
+                        cb = (String) value;
+                    } catch (Exception ex) {
+                        try {
+                            cb = (String) column.defaultValue();
+                        } catch (Exception exs) {
+                            cb = null;
+                        }
                     }
+                    if (cb == null) {
+                        if (!notNull) {
+                            statement.setNull(index, Types.CLOB);
+                            break;
+                        }
+                        cb = "";
+                    }
+                    // CLOB is handled as string internally, and maxmium length is Integer.MAX(2G)
+                    statement.setCharacterStream(index, new BufferedReader(new StringReader(cb)), cb.length());
                     break;
                 case Blob:
                     if (value == null) {
@@ -516,6 +557,7 @@ public abstract class BaseTable<D> {
             case File:
             case Image:
             case Enumeration:
+            case EnumerationEditable:
                 def += "VARCHAR(" + column.getLength() + ")";
                 break;
             case Color:
@@ -564,9 +606,9 @@ public abstract class BaseTable<D> {
             def += " NOT NULL GENERATED BY DEFAULT AS IDENTITY (START WITH 1, INCREMENT BY 1)";
 
         } else if (column.isNotNull()) {
-            def += " NOT NULL WITH DEFAULT " + column.makeDefaultValue();
+            def += " NOT NULL WITH DEFAULT " + column.dbDefaultValue();
         } else if (column.getDefaultValue() != null) {
-            def += " WITH DEFAULT " + column.makeDefaultValue();
+            def += " WITH DEFAULT " + column.dbDefaultValue();
         }
         return def;
     }
@@ -609,7 +651,7 @@ public abstract class BaseTable<D> {
         try {
             sql = "ALTER TABLE " + DerbyBase.fixedIdentifier(tableName)
                     + " DROP COLUMN " + DerbyBase.fixedIdentifier(colName);
-            MyBoxLog.console(sql);
+//            MyBoxLog.console(sql);
             return conn.createStatement().executeUpdate(sql) >= 0;
         } catch (Exception e) {
             MyBoxLog.debug(e, sql);

@@ -223,7 +223,7 @@ public class PdfAttributesBatchController extends BaseBatchPdfController {
             return;
         }
         try {
-            Float f = Float.parseFloat(versionInput.getText());
+            Float f = Float.valueOf(versionInput.getText());
             if (f >= 0) {
                 versionInput.setStyle(null);
                 version = f;
@@ -428,15 +428,18 @@ public class PdfAttributesBatchController extends BaseBatchPdfController {
                 pd.close();
             }
             if (FileTools.override(tmpFile, srcFile, true)) {
+                targetFileGenerated(srcFile);
                 return message("Successful");
             } else {
                 return message("Failed");
             }
 
         } catch (InvalidPasswordException e) {
+            showLogs(message("PasswordIncorrect"));
             return message("PasswordIncorrect");
         } catch (Exception e) {
-            return e.toString();
+            showLogs(e.toString());
+            return message("Failed");
         }
     }
 

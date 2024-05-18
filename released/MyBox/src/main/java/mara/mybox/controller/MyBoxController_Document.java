@@ -116,10 +116,15 @@ public abstract class MyBoxController_Document extends MyBoxController_Base {
             loadScene(Fxmls.PdfSplitBatchFxml);
         });
 
+        MenuItem PdfAddWatermark = new MenuItem(message("PdfAddWatermark"));
+        PdfAddWatermark.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.PdfAddWatermarkBatchFxml);
+        });
+
         pdfMenu.getItems().addAll(
                 pdfView, PdfPlay, new SeparatorMenuItem(),
                 pdfConvertImagesBatch, PdfImagesConvertBatch, pdfConvertHtmlsBatch, pdfCompressImagesBatch, new SeparatorMenuItem(),
-                pdfExtractImagesBatch, pdfExtractTextsBatch, pdfOcrBatch, new SeparatorMenuItem(),
+                pdfExtractImagesBatch, pdfExtractTextsBatch, pdfOcrBatch, PdfAddWatermark, new SeparatorMenuItem(),
                 PdfSplitBatch, pdfMerge, imagesCombinePdf, new SeparatorMenuItem(),
                 PDFAttributes, PDFAttributesBatch
         );

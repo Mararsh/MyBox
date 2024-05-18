@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+
+  <VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.PdfAttributesBatchController">
+      <children>
+            <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+                <tabs>
+                    <Tab fx:id="optionsTab" text="%Document">
+                        <content>
+                            <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+                                <content>
+                                    <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                        <padding>
+                                            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                        </padding>
+                                        <children>
+                                            <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                                <children>
+                                                    <CheckBox fx:id="titleCheck" mnemonicParsing="false" text="%Title" />
+                                                    <TextField fx:id="titleInput" disable="true" HBox.hgrow="ALWAYS" />
+                                                </children>
+                                            </HBox>
+                                            <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                                <children>
+                                                    <CheckBox fx:id="subjectCheck" mnemonicParsing="false" text="%Subject" />
+                                                    <TextField fx:id="subjectInput" disable="true" HBox.hgrow="ALWAYS" />
+                                                </children>
+                                            </HBox>
+                                            <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                                <children>
+                                                    <CheckBox fx:id="keywordsCheck" mnemonicParsing="false" text="%Keywords" />
+                                                    <TextField fx:id="keywordInput" disable="true" maxHeight="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                </children>
+                                            </HBox>
+                                            <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                                <children>
+                                                    <CheckBox fx:id="creatorCheck" mnemonicParsing="false" text="%Creator" />
+                                                    <TextField fx:id="creatorInput" disable="true" HBox.hgrow="ALWAYS" />
+                                                </children>
+                                            </HBox>
+                                            <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                                <children>
+                                                    <CheckBox fx:id="productorCheck" mnemonicParsing="false" text="%PDFProducer" />
+                                                    <TextField fx:id="producerInput" disable="true" HBox.hgrow="ALWAYS" />
+                                                </children>
+                                            </HBox>
+                                            <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                                <children>
+                                                    <CheckBox fx:id="authorCheck" mnemonicParsing="false" text="%Author" />
+                                                    <TextField fx:id="authorInput" disable="true" HBox.hgrow="ALWAYS" />
+                                                </children>
+                                            </HBox>
+                                            <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                                <children>
+                                                    <CheckBox fx:id="versionCheck" mnemonicParsing="false" text="%Version" />
+                                                    <TextField fx:id="versionInput" disable="true" HBox.hgrow="ALWAYS" />
+                                                </children>
+                                            </HBox>
+                                            <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                                <children>
+                                                    <CheckBox fx:id="createTimeCheck" mnemonicParsing="false" text="%CreateTime" />
+                                                    <TextField fx:id="createTimeInput" disable="true" HBox.hgrow="ALWAYS" />
+                                                    <Button fx:id="nowCreateButton" disable="true" mnemonicParsing="false" onAction="#nowCreateTime" text="%Now" />
+                                                </children>
+                                            </HBox>
+                                            <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                                <children>
+                                                    <CheckBox fx:id="modifyTimeCheck" mnemonicParsing="false" text="%ModifyTime" />
+                                                    <TextField fx:id="modifyTimeInput" disable="true" HBox.hgrow="ALWAYS" />
+                                                    <Button fx:id="nowModifyButton" disable="true" mnemonicParsing="false" onAction="#nowModifyTime" text="%Now" />
+                                                </children>
+                                            </HBox>
+                                        </children>
+                                    </VBox>
+                                </content>
+                            </ScrollPane>
+                        </content>
+                    </Tab>
+            <Tab fx:id="optionsTab11" text="%Pages">
+               <content>
+                  <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+                     <content>
+                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                           <padding>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </padding>
+                           <children>
+                              <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                 <children>
+                                    <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                       <children>
+                                          <CheckBox fx:id="titleCheck1" mnemonicParsing="false" text="%PageHeader" />
+                                          <TextField fx:id="titleInput1" disable="true" HBox.hgrow="ALWAYS" />
+                                       </children>
+                                    </HBox>
+                                    <fx:include fx:id="ttf" source="ControlTTFSelector.fxml" />
+                                    <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                       <children>
+                                          <Label text="%FontSize" />
+                                          <ComboBox fx:id="fontSizeSelector" editable="true" prefWidth="140.0" promptText="%Size" />
+                                          <Label text="px">
+                                             <padding>
+                                                <Insets right="10.0" />
+                                             </padding>
+                                          </Label>
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </VBox>
+                              <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                 <children>
+                                    <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                       <children>
+                                          <CheckBox fx:id="subjectCheck1" mnemonicParsing="false" text="%PageFooter" />
+                                          <TextField fx:id="subjectInput1" disable="true" HBox.hgrow="ALWAYS" />
+                                       </children>
+                                    </HBox>
+                                    <fx:include fx:id="ttf1" source="ControlTTFSelector.fxml" />
+                                    <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                       <children>
+                                          <Label text="%FontSize" />
+                                          <ComboBox fx:id="fontSizeSelector1" editable="true" prefWidth="140.0" promptText="%Size" />
+                                          <Label text="px">
+                                             <padding>
+                                                <Insets right="10.0" />
+                                             </padding>
+                                          </Label>
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </VBox>
+                           </children>
+                        </VBox>
+                     </content>
+                  </ScrollPane>
+               </content>
+            </Tab>
+            <Tab fx:id="optionsTab111" text="%Watermark">
+               <content>
+                  <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+                     <content>
+                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                           <padding>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </padding>
+                           <children>
+                              <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                 <children>
+                                    <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                       <children>
+                                          <CheckBox fx:id="keywordsCheck1" mnemonicParsing="false" text="%WatermarkText" />
+                                          <TextField fx:id="subjectInput11" disable="true" HBox.hgrow="ALWAYS" />
+                                       </children>
+                                    </HBox>
+                                    <fx:include fx:id="ttf11" source="ControlTTFSelector.fxml" />
+                                    <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                       <children>
+                                          <Label text="%FontSize" />
+                                          <ComboBox fx:id="fontSizeSelector11" editable="true" prefWidth="140.0" promptText="%Size" />
+                                          <Label text="px">
+                                             <padding>
+                                                <Insets right="10.0" />
+                                             </padding>
+                                          </Label>
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </VBox>
+                              <HBox alignment="CENTER_LEFT" spacing="5.0" />
+                           </children>
+                        </VBox>
+                     </content>
+                  </ScrollPane>
+               </content>
+            </Tab>
+            <Tab fx:id="optionsTab1" text="%Protection">
+               <content>
+                  <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+                     <content>
+                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                           <padding>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </padding>
+                           <children>
+                                            <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                                <children>
+                                                    <RadioButton fx:id="changeProtectionRadio" mnemonicParsing="false" selected="true" text="%ChangeProtection" wrapText="true">
+                                                        <toggleGroup>
+                                                            <ToggleGroup fx:id="protectionGroup" />
+                                                        </toggleGroup>
+                                                    </RadioButton>
+                                                    <RadioButton fx:id="clearProtectionRadio" mnemonicParsing="false" text="%ClearProtection" toggleGroup="$protectionGroup" wrapText="true" />
+                                                </children>
+                                            </HBox>
+                                            <VBox fx:id="protectionBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                                <children>
+                                    <FlowPane alignment="CENTER_LEFT" hgap="2.0" vgap="2.0">
+                                       <children>
+                                                            <CheckBox fx:id="permissionAssembleCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%AssemblePages" wrapText="true" />
+                                                            <CheckBox fx:id="permissionExtractCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%ExtractContents" wrapText="true" />
+                                                            <CheckBox fx:id="permissionModifyCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%ModifyContents" wrapText="true" />
+                                                            <CheckBox fx:id="permissionFillCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%FillForm" wrapText="true" />
+                                                            <CheckBox fx:id="permissionPrintCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%Print" wrapText="true" />
+                                                            <CheckBox fx:id="permissionAssembleCheck1" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%AssemblePages" wrapText="true" />
+                                       </children>
+                                    </FlowPane>
+                                    <HBox alignment="CENTER_LEFT" spacing="2.0" VBox.vgrow="NEVER">
+                                       <children>
+                                                            <Label minHeight="-Infinity" text="%UserPassword" wrapText="true" />
+                                                            <TextField fx:id="userPasswordInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                            <Label minHeight="-Infinity" text="%PasswordAgain" wrapText="true" />
+                                                            <TextField fx:id="userPasswordInput2" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                            <Button fx:id="clearUserPButton" mnemonicParsing="false" onAction="#clearUserPassword">
+                                                                <graphic>
+                                                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                        <image>
+                                                                            <Image url="@../buttons/Red/iconClear.png" />
+                                                                        </image>
+                                                                    </ImageView>
+                                                                </graphic>
+                                                            </Button>
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT" spacing="2.0">
+                                       <children>
+                                                            <Label minHeight="-Infinity" text="%OwnerPassword" wrapText="true" />
+                                                            <TextField fx:id="ownerPasswordInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                            <Label minHeight="-Infinity" text="%PasswordAgain" wrapText="true" />
+                                                            <TextField fx:id="ownerPasswordInput2" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                            <Button fx:id="clearOwnerPButton" mnemonicParsing="false" onAction="#clearOwnerPassword">
+                                                                <graphic>
+                                                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                        <image>
+                                                                            <Image url="@../buttons/Red/iconClear.png" />
+                                                                        </image>
+                                                                    </ImageView>
+                                                                </graphic>
+                                                            </Button>
+                                       </children>
+                                    </HBox>
+                                                </children>
+                                            </VBox>
+                                            <Label minHeight="-Infinity" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%PdfProtectionComments" wrapText="true" />
+                           </children>
+                        </VBox>
+                     </content>
+                  </ScrollPane>
+               </content>
+            </Tab>
+                </tabs>
+            </TabPane>
+      </children>
+  </VBox>

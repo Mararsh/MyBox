@@ -13,7 +13,7 @@ import mara.mybox.value.Fxmls;
  */
 public class Data2DRowFilterEdit extends BaseInputController {
 
-    protected BaseData2DHandleController handleController;
+    protected BaseData2DTaskController taskController;
 
     @FXML
     protected ControlData2DRowFilter filterController;
@@ -21,10 +21,10 @@ public class Data2DRowFilterEdit extends BaseInputController {
     public Data2DRowFilterEdit() {
     }
 
-    public void setParameters(BaseData2DHandleController handleController, DataFilter filter) {
+    public void setParameters(BaseData2DTaskController handleController, DataFilter filter) {
         try {
             super.setParameters(handleController, null);
-            this.handleController = handleController;
+            this.taskController = handleController;
 
             filterController.setParameters(handleController);
             filterController.load(handleController.data2D, filter);
@@ -37,7 +37,7 @@ public class Data2DRowFilterEdit extends BaseInputController {
 
     @Override
     public boolean checkInput() {
-        if (!filterController.checkExpression(handleController.isAllPages())) {
+        if (!filterController.checkExpression(taskController.isAllPages())) {
             popError(filterController.error);
             return false;
         }
@@ -51,7 +51,7 @@ public class Data2DRowFilterEdit extends BaseInputController {
     /*
         static
      */
-    public static Data2DRowFilterEdit open(BaseData2DHandleController handleController, DataFilter filter) {
+    public static Data2DRowFilterEdit open(BaseData2DTaskController handleController, DataFilter filter) {
         try {
             Data2DRowFilterEdit controller = (Data2DRowFilterEdit) WindowTools.branchStage(
                     handleController, Fxmls.Data2DRowFilterEditFxml);

@@ -7,7 +7,6 @@ import com.vladsch.flexmark.util.data.MutableDataHolder;
 import java.io.File;
 import java.util.Timer;
 import java.util.TimerTask;
-import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.Event;
@@ -224,23 +223,19 @@ public class MarkdownEditorController extends TextEditorController {
             protected void whenSucceeded() {
                 try {
                     if (updateHtml) {
-                        Platform.runLater(() -> {
-                            webViewController.loadContents(html);
-                            htmlPage = sourceInformation.getCurrentPage();
-                        });
+                        webViewController.loadContents(html);
+                        htmlPage = sourceInformation.getCurrentPage();
                     }
                     if (updateCodes) {
-                        Platform.runLater(() -> {
-                            codesArea.setText(html);
-                            codesPage = sourceInformation.getCurrentPage();
-                            new Timer().schedule(new TimerTask() {
-                                @Override
-                                public void run() {
-                                    codesArea.setScrollLeft(htmlScrollLeft);
-                                    codesArea.setScrollTop(htmlScrollTop);
-                                }
-                            }, 300);
-                        });
+                        codesArea.setText(html);
+                        codesPage = sourceInformation.getCurrentPage();
+                        new Timer().schedule(new TimerTask() {
+                            @Override
+                            public void run() {
+                                codesArea.setScrollLeft(htmlScrollLeft);
+                                codesArea.setScrollTop(htmlScrollTop);
+                            }
+                        }, 300);
                     }
                 } catch (Exception e) {
                     MyBoxLog.error(e);

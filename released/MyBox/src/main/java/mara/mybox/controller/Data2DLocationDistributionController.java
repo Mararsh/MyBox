@@ -12,6 +12,8 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.IndexRange;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.paint.Color;
@@ -44,8 +46,11 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
     protected int frameid, lastFrameid;
 
     @FXML
+    protected TabPane chartTabPane;
+    @FXML
+    protected Tab chartTab, dataTab;
+    @FXML
     protected ComboBox<String> labelSelector, longitudeSelector, latitudeSelector, sizeSelector;
-
     @FXML
     protected FlowPane csPane;
     @FXML
@@ -55,16 +60,16 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
     @FXML
     protected CheckBox accumulateCheck, centerCheck, linkCheck;
     @FXML
-    protected ControlData2DResults valuesController;
+    protected ControlData2DView valuesController;
 
     public Data2DLocationDistributionController() {
         baseTitle = message("LocationDistribution");
     }
 
     @Override
-    public void initControls() {
+    public void initOptions() {
         try {
-            super.initControls();
+            super.initOptions();
 
             mapController.mapOptionsController = mapOptionsController;
             mapController.initMap();
@@ -97,9 +102,9 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
     }
 
     @Override
-    public void refreshControls() {
+    public void sourceChanged() {
         try {
-            super.refreshControls();
+            super.sourceChanged();
             isSettingValues = true;
             labelSelector.getItems().clear();
             longitudeSelector.getItems().clear();
@@ -118,11 +123,11 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
                 allNames.add(name);
             }
             if (longNames.isEmpty() || laNames.isEmpty()) {
-                okButton.setDisable(true);
+                startButton.setDisable(true);
                 popError(message("NoCoordinateInData"));
                 return;
             }
-            okButton.setDisable(false);
+            startButton.setDisable(false);
             labelSelector.getItems().setAll(allNames);
             labelSelector.getSelectionModel().select(0);
 
@@ -138,7 +143,7 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
 
             isSettingValues = false;
 
-            String dname = data2D.getDataName();
+            String dname = data2D.dataName();
 
             File file = null;
             if (dname != null) {
@@ -161,7 +166,7 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
     }
 
     @Override
-    public boolean checkOptions() {
+    public boolean checkParameters() {
         if (isSettingValues) {
             return true;
         }
@@ -169,22 +174,22 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
             popError(message("MapNotReady"));
             return false;
         }
-        boolean ok = super.checkOptions();
+        boolean ok = super.checkParameters();
         noticeLabel.setVisible(isAllPages());
         return ok;
     }
 
     @Override
-    public boolean initData() {
+    public boolean checkOptions() {
         try {
-            if (!super.initData()) {
+            if (!super.checkOptions()) {
                 return false;
             }
             dataColsIndices = new ArrayList<>();
             labelCol = labelSelector.getValue();
             int col = data2D.colOrder(labelCol);
             if (col < 0) {
-                outOptionsError(message("SelectToHandle") + ": " + message("Label"));
+                popError(message("SelectToHandle") + ": " + message("Label"));
                 tabPane.getSelectionModel().select(optionsTab);
                 return false;
             }
@@ -193,7 +198,7 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
             longCol = longitudeSelector.getValue();
             col = data2D.colOrder(longCol);
             if (col < 0) {
-                outOptionsError(message("SelectToHandle") + ": " + message("Longitude"));
+                popError(message("SelectToHandle") + ": " + message("Longitude"));
                 tabPane.getSelectionModel().select(optionsTab);
                 return false;
             }
@@ -204,7 +209,7 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
             laCol = latitudeSelector.getValue();
             col = data2D.colOrder(laCol);
             if (col < 0) {
-                outOptionsError(message("SelectToHandle") + ": " + message("Latitude"));
+                popError(message("SelectToHandle") + ": " + message("Latitude"));
                 tabPane.getSelectionModel().select(optionsTab);
                 return false;
             }
@@ -239,7 +244,6 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
                     }
                 }
             }
-
             dataPoints = null;
             framesNumber = -1;
             frameid = -1;
@@ -256,6 +260,7 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
             task.cancel();
         }
         valuesController.loadNull();
+        taskSuccessed = false;
         task = new FxSingletonTask<Void>(this) {
 
             private DataFileCSV csvData;
@@ -288,7 +293,8 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
                             }
                         }
                     }
-                    return initPoints(csvData);
+                    taskSuccessed = initPoints(csvData);
+                    return taskSuccessed;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -297,21 +303,23 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
 
             @Override
             protected void whenSucceeded() {
-
             }
 
             @Override
             protected void finalAction() {
                 super.finalAction();
                 data2D.stopTask();
-                if (ok) {
+                if (taskSuccessed) {
                     drawPoints();
-                    valuesController.loadData(csvData);
+                    valuesController.loadDef(csvData);
+                    rightPane.setDisable(false);
+                } else {
+                    closeTask(ok);
                 }
             }
 
         };
-        start(task);
+        start(task, false);
     }
 
     protected boolean initPoints(DataFileCSV csvData) {
@@ -387,7 +395,9 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
         }
         playController.clear();
         mapController.clearAction();
+        taskSuccessed = false;
         if (dataPoints == null || dataPoints.isEmpty()) {
+            closeTask(false);
             return;
         }
         task = new FxSingletonTask<Void>(this) {
@@ -426,7 +436,8 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
                             break;
                         }
                     }
-                    return true;
+                    taskSuccessed = true;
+                    return taskSuccessed;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -435,22 +446,20 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
 
             @Override
             protected void whenSucceeded() {
+                framesNumber = dataPoints.size();
+                lastFrameid = -1;
+                mapController.initPoints(mapPoints);
+                playController.play(size);
             }
 
             @Override
             protected void finalAction() {
                 super.finalAction();
-                data2D.stopTask();
-                if (ok) {
-                    framesNumber = dataPoints.size();
-                    lastFrameid = -1;
-                    mapController.initPoints(mapPoints);
-                    playController.play(size);
-                }
+                closeTask(ok);
             }
 
         };
-        start(task);
+        start(task, false);
     }
 
     // maximum marker size of GaoDe Map is 64
@@ -517,12 +526,40 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
         drawPoints();
     }
 
+    @FXML
+    @Override
+    public boolean menuAction() {
+        Tab tab = chartTabPane.getSelectionModel().getSelectedItem();
+        if (tab == chartTab) {
+            return mapController.menuAction();
+
+        } else if (tab == dataTab) {
+            return valuesController.menuAction();
+
+        }
+        return false;
+    }
+
+    @FXML
+    @Override
+    public boolean popAction() {
+        Tab tab = chartTabPane.getSelectionModel().getSelectedItem();
+        if (tab == chartTab) {
+            return mapController.popAction();
+
+        } else if (tab == dataTab) {
+            return valuesController.popAction();
+
+        }
+        return false;
+    }
+
     @Override
     public void cleanPane() {
         try {
             playController.clear();
             mapController.clearAction();
-            valuesController.loadData(null);
+            valuesController.loadNull();
         } catch (Exception e) {
         }
         super.cleanPane();
@@ -531,7 +568,7 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
     /*
         static
      */
-    public static Data2DLocationDistributionController open(ControlData2DLoad tableController) {
+    public static Data2DLocationDistributionController open(BaseData2DLoadController tableController) {
         try {
             Data2DLocationDistributionController controller = (Data2DLocationDistributionController) WindowTools.branchStage(
                     tableController, Fxmls.Data2DLocationDistributionFxml);

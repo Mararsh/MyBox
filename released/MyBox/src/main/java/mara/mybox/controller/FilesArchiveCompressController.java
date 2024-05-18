@@ -209,7 +209,14 @@ public class FilesArchiveCompressController extends BaseBatchFileController {
             @Override
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                 try {
-                    targetFile = targetFileController.file;
+                    targetFile = targetFileController.file();
+                    if (targetFile == null) {
+                        return;
+                    }
+                    targetFile = makeTargetFile(targetFile, targetFile.getParentFile());
+                    if (targetFile == null) {
+                        return;
+                    }
                     if (rootInput.getText().trim().isEmpty()) {
                         String name = targetFile.getName();
                         int pos = name.indexOf('.');
@@ -224,12 +231,9 @@ public class FilesArchiveCompressController extends BaseBatchFileController {
         });
 
         openTargetButton.disableProperty().unbind();
-        openTargetButton.disableProperty().bind(targetFileController.valid.not());
 
         startButton.disableProperty().unbind();
-        startButton.disableProperty().bind(targetFileController.valid.not()
-                .or(Bindings.isEmpty(tableData))
-        );
+        startButton.disableProperty().bind(Bindings.isEmpty(tableData));
 
     }
 
@@ -244,7 +248,7 @@ public class FilesArchiveCompressController extends BaseBatchFileController {
     public boolean beforeHandleFiles(FxTask currentTask) {
         try {
             targetFile = makeTargetFile(FileNameTools.prefix(targetFile.getName()),
-                    "." + FileNameTools.suffix(targetFile.getName()),
+                    "." + FileNameTools.ext(targetFile.getName()),
                     targetFile.getParentFile());
             if (targetFile == null) {
                 return false;
@@ -429,16 +433,17 @@ public class FilesArchiveCompressController extends BaseBatchFileController {
             } else {
                 FileTools.override(archiveFile, targetFile);
             }
+            targetFileGenerated(targetFile);
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
     }
 
     @Override
-    public void afterTask() {
+    public void afterTask(boolean ok) {
         tableView.refresh();
         targetPath = targetFile.getParentFile();
-        super.afterTask();
+        super.afterTask(ok);
         if (archive == null) {
             return;
         }

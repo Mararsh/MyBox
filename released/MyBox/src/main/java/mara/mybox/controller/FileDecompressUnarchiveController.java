@@ -25,6 +25,7 @@ import mara.mybox.data.FileNode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
+import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.CompressTools;
 import mara.mybox.tools.DateTools;
@@ -178,7 +179,8 @@ public class FileDecompressUnarchiveController extends FilesTreeController {
             popError(Languages.message("InvalidData"));
             return;
         }
-        if (targetPath == null || !targetPathController.valid.get()) {
+        targetPath = targetPathController.pickFile();
+        if (targetPath == null) {
             popError(message("InvalidTargetPath"));
             tabPane.getSelectionModel().select(targetTab);
             return;
@@ -410,13 +412,16 @@ public class FileDecompressUnarchiveController extends FilesTreeController {
             isSettingValues = true;
             FileNode rootInfo = new FileNode();
             rootInfo.setData("");
+            rootInfo.setNodename(sourceFile.getName());
             TreeItem<FileNode> rootItem = new TreeItem(rootInfo);
             rootItem.setExpanded(true);
             addSelectedListener(rootItem);
 
             TreeItem<FileNode> parent;
             for (FileNode entry : entries) {
-                String[] nodes = entry.getData().split("/");
+                String entryName = entry.getData();
+                entry.setNodename(entryName);
+                String[] nodes = entryName.split("/");
                 parent = rootItem;
                 TreeItem<FileNode> nodeItem = null;
                 for (String node : nodes) {
@@ -432,7 +437,8 @@ public class FileDecompressUnarchiveController extends FilesTreeController {
                 nodeInfo.setFileType(entry.getFileType());
                 if (entry.getFileType() == FileType.File) {
                     totalFiles++;
-                    nodeInfo.setData(entry.getData());
+                    nodeInfo.setNodename(entryName);
+                    nodeInfo.setData(entryName);
                     nodeInfo.setModifyTime(entry.getModifyTime());
                     long size = entry.getFileSize();
                     if (size < 0) {
@@ -480,7 +486,8 @@ public class FileDecompressUnarchiveController extends FilesTreeController {
             tabPane.getSelectionModel().select(sourceTab);
             return false;
         }
-        if (targetPath == null || !targetPathController.valid.get()) {
+        targetPath = targetPathController.pickFile();
+        if (targetPath == null) {
             popError(message("InvalidTargetPath"));
             tabPane.getSelectionModel().select(targetTab);
             return false;
@@ -521,7 +528,7 @@ public class FileDecompressUnarchiveController extends FilesTreeController {
     }
 
     @Override
-    public void afterTask() {
+    public void afterTask(boolean ok) {
         sourceVBox.setDisable(false);
         selectionVBox.setDisable(false);
         targetVBox.setDisable(false);
@@ -536,7 +543,11 @@ public class FileDecompressUnarchiveController extends FilesTreeController {
         showLogs(MessageFormat.format(message("FileUnarchived"),
                 message("Selected") + ":" + selected.size(),
                 fileUnarchive.getArchiveSuccess(), fileUnarchive.getArchiveFail()));
-        super.afterTask();
+        super.afterTask(ok);
+        recordTargetFiles();
+        if (miaoCheck != null && miaoCheck.isSelected()) {
+            SoundTools.miao3();
+        }
     }
 
     /*

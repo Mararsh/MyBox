@@ -365,6 +365,7 @@ public class ImagesBrowserController extends ControlImagesTable {
             Platform.runLater(() -> {
                 paneSizeAll();
             });
+            Platform.requestNextPulse();
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -589,7 +590,7 @@ public class ImagesBrowserController extends ControlImagesTable {
     }
 
     @Override
-    protected int selectedIndix() {
+    public int selectedIndix() {
         try {
             return Integer.parseInt(selectedIndexes.get(0));
         } catch (Exception e) {
@@ -710,6 +711,7 @@ public class ImagesBrowserController extends ControlImagesTable {
                         });
 
                     }
+                    Platform.requestNextPulse();
                     return true;
                 } catch (Exception e) {
                     error = e.toString();
@@ -871,10 +873,10 @@ public class ImagesBrowserController extends ControlImagesTable {
     }
 
     @Override
-    protected void popTableMenu(MouseEvent event) {
+    protected List<MenuItem> makeTableContextMenu() {
         int index = tableView.getSelectionModel().getSelectedIndex();
         if (index < 0) {
-            return;
+            return null;
         }
         List<MenuItem> items = new ArrayList<>();
         MenuItem menu;
@@ -937,10 +939,7 @@ public class ImagesBrowserController extends ControlImagesTable {
         });
         items.add(menu);
 
-        items.add(new SeparatorMenuItem());
-
-        popEventMenu(event, items);
-
+        return items;
     }
 
     public List<ImageInformation> selected() {

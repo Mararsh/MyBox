@@ -43,7 +43,7 @@ public class ImageBlackWhiteController extends BasePixelsController {
     }
 
     @Override
-    protected boolean checkOptions() {
+    public boolean checkOptions() {
         if (!super.checkOptions()) {
             return false;
         }

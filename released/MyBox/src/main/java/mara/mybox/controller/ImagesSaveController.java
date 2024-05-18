@@ -7,12 +7,12 @@ import java.sql.Connection;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
@@ -37,27 +37,24 @@ import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistory.FileType;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.imagefile.ImageGifFile;
 import mara.mybox.imagefile.ImageTiffFile;
+import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.MicrosoftDocumentTools;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.tools.StringTools;
-import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDDocumentInformation;
-import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.interactive.action.PDActionGoTo;
-import org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination.PDPageXYZDestination;
 import org.apache.poi.hslf.usermodel.HSLFPictureShape;
 import org.apache.poi.hslf.usermodel.HSLFSlide;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
@@ -99,6 +96,8 @@ public class ImagesSaveController extends BaseTaskController {
     protected ControlTargetPath pathController;
     @FXML
     protected ControlTargetFile fileController;
+    @FXML
+    protected Button openTargetButton;
 
     public ImagesSaveController() {
         baseTitle = message("SaveAs");
@@ -130,7 +129,7 @@ public class ImagesSaveController extends BaseTaskController {
         }
     }
 
-    public void setParameters(List<ImageInformation> infos) {
+    public void setParameters(File source, List<ImageInformation> infos) {
         try {
             if (infos == null || infos.isEmpty()) {
                 close();
@@ -139,6 +138,9 @@ public class ImagesSaveController extends BaseTaskController {
             imageInfos = new ArrayList<>();
             for (ImageInformation info : infos) {
                 imageInfos.add(info.cloneAttributes());
+            }
+            if (source != null) {
+                prefixInput.setText(FileNameTools.prefix(source.getName()));
             }
             checkFormatType();
         } catch (Exception e) {
@@ -171,9 +173,9 @@ public class ImagesSaveController extends BaseTaskController {
             setBox.getChildren().addAll(savedWidthBox, imageFormatBox);
             targetVBox.getChildren().add(pathBox);
             bname = baseName + "ImagesTargetPath";
-            pathController.initPathSelecter()
-                    .baseName(bname).savedName(bname)
-                    .type(TargetPathType).initFile();
+            pathController.initPathSelecter().type(TargetPathType)
+                    .parent(this, bname);
+            openTargetButton.setDisable(false);
 
         } else if (!spliceRadio.isSelected() && !videoRadio.isSelected()) {
 
@@ -201,9 +203,11 @@ public class ImagesSaveController extends BaseTaskController {
             }
 
             targetVBox.getChildren().add(fileBox);
-            fileController.initFileSelecter()
-                    .baseName(bname).savedName(bname)
-                    .type(TargetFileType).initFile();
+            fileController.initFileSelecter().type(TargetFileType)
+                    .parent(this, bname);
+            openTargetButton.setDisable(false);
+        } else {
+            openTargetButton.setDisable(true);
         }
     }
 
@@ -395,8 +399,11 @@ public class ImagesSaveController extends BaseTaskController {
             close();
             return false;
         }
+        targetPath = null;
+        targetFile = null;
         if (imagesRadio.isSelected()) {
-            targetPath = pathController.file();
+            targetPath = pathController.pickFile();
+            MyBoxLog.console(targetPath);
             if (targetPath == null) {
                 popError(message("InvalidParameter") + ": " + message("TargetPath"));
                 return false;
@@ -407,7 +414,7 @@ public class ImagesSaveController extends BaseTaskController {
             }
 
         } else if (!spliceRadio.isSelected() && !videoRadio.isSelected()) {
-            targetFile = fileController.file();
+            targetFile = fileController.makeTargetFile();
             if (targetFile == null) {
                 popError(message("InvalidParameter") + ": " + message("TargetFile"));
                 return false;
@@ -416,6 +423,11 @@ public class ImagesSaveController extends BaseTaskController {
                 if (!checkPptWidth() || !checkPptHeight() || !checkPptMargin()) {
                     return false;
                 }
+            }
+        }
+        if (pdfRadio.isSelected()) {
+            if (!pdfOptionsController.pickValues()) {
+                return false;
             }
         }
         try (Connection conn = DerbyBase.getConnection()) {
@@ -566,14 +578,6 @@ public class ImagesSaveController extends BaseTaskController {
     protected boolean saveAsPdf(FxTask currentTask) {
         File tmpFile = FileTmpTools.getTempFile();
         try (PDDocument document = new PDDocument(AppVariables.PdfMemUsage)) {
-            PDDocumentInformation info = new PDDocumentInformation();
-            info.setCreationDate(Calendar.getInstance());
-            info.setModificationDate(Calendar.getInstance());
-            info.setProducer("MyBox v" + AppValues.AppVersion);
-            info.setAuthor(pdfOptionsController.authorInput.getText());
-            document.setDocumentInformation(info);
-            document.setVersion(1.0f);
-
             int count = 0;
             for (int i = 0; i < imageInfos.size(); ++i) {
                 if (currentTask == null || !currentTask.isWorking()) {
@@ -597,14 +601,9 @@ public class ImagesSaveController extends BaseTaskController {
                 updateLogs(msg, true);
             }
 
-            PDPage page = document.getPage(0);
-            PDPageXYZDestination dest = new PDPageXYZDestination();
-            dest.setPage(page);
-            dest.setZoom(pdfOptionsController.zoom / 100.0f);
-            dest.setTop((int) page.getCropBox().getHeight());
-            PDActionGoTo action = new PDActionGoTo();
-            action.setDestination(dest);
-            document.getDocumentCatalog().setOpenAction(action);
+            PdfTools.setAttributes(document,
+                    pdfOptionsController.authorInput.getText(),
+                    pdfOptionsController.zoom);
 
             document.save(tmpFile);
             document.close();
@@ -760,13 +759,35 @@ public class ImagesSaveController extends BaseTaskController {
         ImagesEditorController.openImages(imageInfos);
     }
 
+    @FXML
+    @Override
+    public void openTarget() {
+        if (imagesRadio.isSelected()) {
+            targetPath = pathController.pickFile();
+            if (targetPath == null || !targetPath.exists()) {
+                popInformation(message("NotExist"));
+                return;
+            }
+            browseURI(targetPath.toURI());
+            recordFileOpened(targetPath);
+        } else if (!spliceRadio.isSelected() && !videoRadio.isSelected()) {
+            if (targetFile == null || !targetFile.exists()) {
+                popInformation(message("NotExist"));
+                return;
+            }
+            ControllerTools.popTarget(myController, targetFile.getAbsolutePath(), true);
+        } else {
+            popInformation(message("NoData"));
+        }
+    }
+
     /*
         static methods
      */
     public static ImagesSaveController saveImages(BaseController parent, List<ImageInformation> infos) {
         try {
             ImagesSaveController controller = (ImagesSaveController) WindowTools.childStage(parent, Fxmls.ImagesSaveFxml);
-            controller.setParameters(infos);
+            controller.setParameters(parent != null ? parent.sourceFile : null, infos);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e);

@@ -334,6 +334,7 @@ public class MyBoxLoadingController implements Initializable {
         Platform.runLater(() -> {
             infoLabel.setText(info);
         });
+        Platform.requestNextPulse();
     }
 
 }

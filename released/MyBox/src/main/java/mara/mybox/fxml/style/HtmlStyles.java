@@ -29,41 +29,32 @@ public class HtmlStyles {
             = ArticleStyle
             + "              .valueText { color:#2e598a;  } \n";
     public static final String ConsoleStyle
-            = DefaultStyle
+            = TableStyle
             + " body { background-color:black; color:#CCFF99; }\n"
-            + "              table, th, td { border: #CCFF99; }\n"
             + "              a:link {color: dodgerblue}\n"
             + "              a:visited  {color: #DDDDDD}\n"
             + "              .valueBox { border-color:#CCFF99;}\n"
             + "              .valueText { color:skyblue;  }\n";
     public static final String BlackboardStyle
-            = DefaultStyle
+            = TableStyle
             + " body { background-color:#336633; color:white; }\n"
-            + "              table, th, td { border: white; }\n"
             + "              a:link {color: aqua}\n"
             + "              a:visited  {color: #DDDDDD}\n"
             + "              .valueBox { border-color:white; }\n"
             + "              .valueText { color:wheat;  }\n";
     public static final String AgoStyle
-            = DefaultStyle
+            = TableStyle
             + " body { background-color:darkblue; color:white;  }\n"
-            + "              table, th, td { border: white; }\n"
             + "              a:link {color: springgreen}\n"
             + "              a:visited  {color: #DDDDDD}\n"
             + "              .valueBox {  border-color:white;}\n"
             + "              .valueText { color:yellow;  }\n";
     public static final String BookStyle
-            = DefaultStyle
+            = TableStyle
             + " body { background-color:#F6F1EB; color:black;  }\n";
     public static final String GreyStyle
-            = DefaultStyle
+            = TableStyle
             + " body { background-color:#ececec; color:black;  }\n";
-    public static final String LinkStyle
-            = DefaultStyle
-            + " body { background-color:transparent;  }\n"
-            + "              table { border-collapse:collapse; max-width:95%; }\n"
-            + "              table, th, td { border: 0px solid; }\n"
-            + "              td { padding:20px;  }\n";
 
     public static HtmlStyles.HtmlStyle styleName(String styleName) {
         for (HtmlStyles.HtmlStyle style : HtmlStyles.HtmlStyle.values()) {

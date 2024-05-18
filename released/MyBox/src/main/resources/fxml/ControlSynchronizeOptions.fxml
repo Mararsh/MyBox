@@ -19,7 +19,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlSynchronizeOptions">
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlSynchronizeOptions">
       <children>
       <FlowPane alignment="CENTER_LEFT" hgap="2.0" vgap="2.0">
          <children>
@@ -94,7 +94,7 @@ License:    Apache License Version 2.0
          </VBox.margin>
                   </VBox>
                       <CheckBox fx:id="copyAttrCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%CopyOriginalFileAttr" wrapText="true" />
-                      <CheckBox fx:id="continueCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%ContinueWhenError" wrapText="true" />
+                      <CheckBox fx:id="errorContinueCheck" minHeight="-Infinity" mnemonicParsing="false" text="%ContinueWhenError" wrapText="true" />
                       <CheckBox fx:id="deleteSourceCheck" minHeight="-Infinity" mnemonicParsing="false" text="%DeleteSourcePathAfterComplete" wrapText="true" />
       </children>
   </VBox>

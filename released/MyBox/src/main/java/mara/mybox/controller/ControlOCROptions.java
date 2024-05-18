@@ -107,11 +107,11 @@ public class ControlOCROptions extends BaseController {
             tesseractPathController.type(VisitHistory.FileType.All)
                     .isDirectory(false).mustExist(true).permitNull(true)
                     .defaultFile("win".equals(os) ? new File("D:\\Programs\\Tesseract-OCR\\tesseract.exe") : new File("/bin/tesseract"))
-                    .baseName(baseName).savedName("TesseractPath").initFile();
+                    .parent(this, "TesseractPath");
 
             dataPathController.isDirectory(true).mustExist(true).permitNull(false)
                     .defaultFile("win".equals(os) ? new File("D:\\Programs\\Tesseract-OCR\\tessdata") : new File("/usr/local/share/tessdata/"))
-                    .baseName(baseName).savedName(OCRTools.TessDataPath).initFile();
+                    .parent(this, OCRTools.TessDataPath);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -345,7 +345,7 @@ public class ControlOCROptions extends BaseController {
                     }
                 }
                 tesseractPathController.thisPane.setDisable(false);
-                tesseractPathController.checkFileInput();
+                tesseractPathController.pickFile();
                 tesseractVersion = 4;
             } else {
                 if (parentController != null && parentController instanceof ImageOCRController) {
@@ -355,10 +355,9 @@ public class ControlOCROptions extends BaseController {
                     }
                 }
                 tesseractPathController.thisPane.setDisable(true);
-                tesseractPathController.fileInput.setStyle(null);
                 tesseractVersion = tesseractVersion();
             }
-            dataPathController.checkFileInput();
+            dataPathController.pickFile();
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
@@ -366,15 +365,13 @@ public class ControlOCROptions extends BaseController {
 
     public int tesseractVersion() {
         try {
-            if (tesseractPathController.file() == null || !tesseractPathController.file().exists()) {
+            File tesseractPath = tesseractPathController.pickFile();
+            if (tesseractPath == null || !tesseractPath.exists()) {
                 popError(message("InvalidParameters"));
                 return -1;
             }
             List<String> parameters = new ArrayList<>();
-            parameters.addAll(Arrays.asList(
-                    tesseractPathController.file().getAbsolutePath(),
-                    "--version"
-            ));
+            parameters.addAll(Arrays.asList(tesseractPath.getAbsolutePath(), "--version"));
             ProcessBuilder pb = new ProcessBuilder(parameters).redirectErrorStream(true);
             Process process = pb.start();
             try (BufferedReader inReader = process.inputReader(Charset.defaultCharset())) {
@@ -570,7 +567,7 @@ public class ControlOCROptions extends BaseController {
                     instance.setVariable(key, p.get(key));
                 }
             }
-            instance.setDatapath(dataPathController.file().getAbsolutePath());
+            instance.setDatapath(dataPathController.pickFile().getAbsolutePath());
             if (selectedLanguages != null) {
                 instance.setLanguage(selectedLanguages);
             }
@@ -584,16 +581,14 @@ public class ControlOCROptions extends BaseController {
 
     public boolean checkCommandPamameters(boolean html, boolean pdf) {
         try {
-            File tesseract = tesseractPathController.file();
+            File tesseract = tesseractPathController.pickFile();
             if (!tesseract.exists()) {
                 popError(message("InvalidParameters"));
-                tesseractPathController.fileInput.setStyle(UserConfig.badStyle());
                 return false;
             }
-            File dataPath = dataPathController.file();
+            File dataPath = dataPathController.pickFile();
             if (!dataPath.exists()) {
                 popError(message("InvalidParameters"));
-                dataPathController.fileInput.setStyle(UserConfig.badStyle());
                 return false;
             }
 
@@ -631,9 +626,9 @@ public class ControlOCROptions extends BaseController {
             }
             List<String> parameters = new ArrayList<>();
             parameters.addAll(Arrays.asList(
-                    tesseractPathController.file().getAbsolutePath(),
+                    tesseractPathController.pickFile().getAbsolutePath(),
                     file.getAbsolutePath(), prefix,
-                    "--tessdata-dir", dataPathController.file().getAbsolutePath(),
+                    "--tessdata-dir", dataPathController.pickFile().getAbsolutePath(),
                     tesseractVersion > 3 ? "--psm" : "-psm", psm + ""
             ));
             if (selectedLanguages != null) {

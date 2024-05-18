@@ -4,6 +4,46 @@
     </head>
     <body contenteditable="false" style="width: 900px; margin:0 auto;">
         <h1>开发日志</h1>
+        <p>2024-5-18 版本6.8.1</p>
+        <ul>
+            <li>新增： 
+                <ul>
+                    <li>对PDF批量添加水印。</li>
+                    <li>数据的列类型：可编辑的枚举型。</li>
+                    <li>文档：测试环境、基本功能检验列表、兼容性测试、详细测试。</li>
+                </ul></li>
+            <li>改进： 
+                <ul>
+                    <li>重新设计和实现"处理数据"，基础框架为：读+处理+写。</li>
+                    <li>选项：编辑数据时检验类型、保存数据时检验类型。</li>
+                    <li>行表达式：以bindings代入变量值，占位符被处理为变量名而不是变量值。</li>
+                    <li>行过滤：当表达式不为空且其值不为true或false，不取此行。</li>
+                    <li>简化"处理数据"的界面。</li>
+                    <li>处理数据：修正和增强“赋值”。</li>
+                    <li>定制颜色时可以设置透明度。</li>
+                    <li>ffmpeg可以设置"rtbufsize"和旋转。</li>
+                    <li>笔记：节点是任何html，可以包含head。</li>
+                </ul></li>
+            <li>解决问题： 
+                <ul>
+                    <li>缺省locale非中文时无法切换语言。</li>
+                    <li>当数据值为多行字串时行表达式会解析混乱。</li>
+                    <li>数据处理中当表达式非法时“赋值”不应清除数据行。</li>
+                    <li>编辑数据行时弹出错误。</li>
+                    <li>对数据库表导入数据时，类型“纪元”转换错误。</li>
+                    <li>icon图片显示为空白。</li>
+                    <li>一些界面中“目标文件”的选项未生效。</li>
+                    <li>对SVG绘制形状时，透明背景未正确设置。</li>
+                    <li>SVG的“查看”选项未生效。</li>
+                    <li>在网页中显示颜色时透明值未生效。</li>
+                    <li>重命名文件：当未统计文件数时选项“填零”失效。</li>
+                    <li>文件同步：当选择“删除存在于目标目录但不存在于源目录的文件和目录”时功能失效。</li>
+                    <li>解压/解档文件：解开的列表中文件名为空。</li>
+                    <li>检查冗余文件：结果列表中文件名为空。</li>
+                </ul></li>
+        </ul>
+        <p><a target=_blank href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.8.1">此版本关闭的需求/问题列表</a></p>
+
         <p>2024-2-9 版本6.8</p>
         <ul>
             <li>改进： 
@@ -22,6 +62,7 @@
         </ul>
         <p>中国龙年快乐！</p>
         <p><a target=_blank href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.8">此版本关闭的需求/问题列表</a></p>
+
         <p>2024-1-17 版本6.7.9</p>
         <ul>
             <li>解决问题： 

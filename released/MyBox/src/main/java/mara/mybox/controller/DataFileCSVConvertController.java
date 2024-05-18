@@ -21,7 +21,7 @@ import org.apache.commons.csv.CSVRecord;
  * @CreateDate 2020-12-14
  * @License Apache License Version 2.0
  */
-public class DataFileCSVConvertController extends BaseDataConvertController {
+public class DataFileCSVConvertController extends BaseDataFileConvertController {
 
     @FXML
     protected ControlTextOptions csvReadController;
@@ -57,6 +57,7 @@ public class DataFileCSVConvertController extends BaseDataConvertController {
 
     @Override
     public String handleFile(FxTask currentTask, File srcFile, File targetPath) {
+
         if (csvReadController.withNamesCheck.isSelected()) {
             return withHeader(currentTask, srcFile, targetPath);
         } else {
@@ -80,7 +81,8 @@ public class DataFileCSVConvertController extends BaseDataConvertController {
                 CsvTools.csvFormat(csvReadController.getDelimiterName(), true))) {
             List<String> names = new ArrayList<>();
             names.addAll(parser.getHeaderNames());
-            convertController.setParameters(targetPath, names, filePrefix(srcFile), skip);
+            export.setNames(targetPathController, names, filePrefix(srcFile));
+            export.openWriters();
             for (CSVRecord record : parser) {
                 if (currentTask == null || currentTask.isCancelled()) {
                     return message("Cancelled");
@@ -89,9 +91,9 @@ public class DataFileCSVConvertController extends BaseDataConvertController {
                 for (String v : record) {
                     rowData.add(v);
                 }
-                convertController.writeRow(rowData);
+                export.writeRow(rowData);
             }
-            convertController.closeWriters();
+            export.closeWriters();
             result = message("Handled");
         } catch (Exception e) {
             result = e.toString();
@@ -123,15 +125,16 @@ public class DataFileCSVConvertController extends BaseDataConvertController {
                     for (int i = 1; i <= record.size(); i++) {
                         names.add(message("Column") + i);
                     }
-                    convertController.setParameters(targetPath, names, filePrefix(srcFile), skip);
+                    export.setNames(targetPathController, names, filePrefix(srcFile));
+                    export.openWriters();
                 }
                 List<String> rowData = new ArrayList<>();
                 for (String v : record) {
                     rowData.add(v);
                 }
-                convertController.writeRow(rowData);
+                export.writeRow(rowData);
             }
-            convertController.closeWriters();
+            export.closeWriters();
             result = message("Handled");
         } catch (Exception e) {
             result = e.toString();

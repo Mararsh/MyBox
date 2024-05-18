@@ -68,7 +68,7 @@ public class FilesFindController extends BaseBatchFileController {
             dirColumn.setCellValueFactory(new PropertyValueFactory<>("path"));
             dirColumn.setPrefWidth(260);
 
-            fileColumn.setCellValueFactory(new PropertyValueFactory<>("fileName"));
+            fileColumn.setCellValueFactory(new PropertyValueFactory<>("tfileName"));
             fileColumn.setPrefWidth(160);
 
             typeColumn.setCellValueFactory(new PropertyValueFactory<>("suffix"));
@@ -191,7 +191,7 @@ public class FilesFindController extends BaseBatchFileController {
     }
 
     @Override
-    public void afterTask() {
+    public void afterTask(boolean ok) {
         showCost();
         if (miaoCheck.isSelected()) {
             SoundTools.miao3();

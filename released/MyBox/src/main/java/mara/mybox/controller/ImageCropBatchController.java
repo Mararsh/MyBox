@@ -41,8 +41,7 @@ public class ImageCropBatchController extends BaseImageEditBatchController {
         try {
             super.initControls();
 
-            startButton.disableProperty().bind(targetPathController.valid.not()
-                    .or(Bindings.isEmpty(tableView.getItems()))
+            startButton.disableProperty().bind(Bindings.isEmpty(tableView.getItems())
                     .or(leftXInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                     .or(leftYInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                     .or(rightXInput.styleProperty().isEqualTo(UserConfig.badStyle()))

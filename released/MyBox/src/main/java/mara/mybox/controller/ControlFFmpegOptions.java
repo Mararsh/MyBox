@@ -15,9 +15,11 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import mara.mybox.dev.MyBoxLog;
@@ -50,7 +52,7 @@ public class ControlFFmpegOptions extends BaseController {
     protected File executable;
     protected List<String> dataTypes;
     protected FxTask encoderTask, muxerTask, queryTask;
-    protected String muxer, videoCodec, audioCodec, subtitleCodec, aspect, x264preset, volumn;
+    protected String muxer, videoCodec, audioCodec, subtitleCodec, aspect, x264preset, volumn, rtbufsize;
     protected boolean disableVideo, disableAudio, disableSubtitle;
     protected long mediaStart;
     protected int width, height, crf;
@@ -59,9 +61,13 @@ public class ControlFFmpegOptions extends BaseController {
     @FXML
     protected Label executableLabel;
     @FXML
-    protected TextField executableInput, extensionInput, moreInput;
+    protected TextField executableInput, extensionInput, rtbufsizeInput, moreInput;
     @FXML
     protected VBox functionBox;
+    @FXML
+    protected ToggleGroup rotateGroup;
+    @FXML
+    protected RadioButton noRotateRadio, rightRotateRadio, leftRotateRadio;
     @FXML
     protected TextArea tipsArea;
     @FXML
@@ -126,6 +132,20 @@ public class ControlFFmpegOptions extends BaseController {
 
             if (durationBox != null) {
                 durationBox.setVisible(false);
+            }
+
+            rtbufsize = UserConfig.getString("FFmpegRtbufsize", "");
+            if (rtbufsizeInput != null) {
+                rtbufsizeInput.setText(rtbufsize);
+                rtbufsizeInput.focusedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                        if (!nv) {
+                            rtbufsize = rtbufsizeInput.getText();
+                            UserConfig.setString("FFmpegRtbufsize", rtbufsize);
+                        }
+                    }
+                });
             }
 
         } catch (Exception e) {
@@ -1019,6 +1039,10 @@ public class ControlFFmpegOptions extends BaseController {
             if (inParameters != null) {
                 parameters.addAll(inParameters);
             }
+            if (rtbufsize != null && !rtbufsize.isBlank()) {
+                parameters.add("-rtbufsize");
+                parameters.add(rtbufsize);
+            }
             makeSpecialParameters(parameters);
             if (disableVideo()) {
                 parameters.add("-vn");
@@ -1042,6 +1066,14 @@ public class ControlFFmpegOptions extends BaseController {
                 if (args != null && args.length > 0) {
                     parameters.addAll(Arrays.asList(args));
                 }
+            }
+
+            if (rightRotateRadio != null && rightRotateRadio.isSelected()) {
+                parameters.add("-vf");
+                parameters.add("\"transpose=1\"");
+            } else if (leftRotateRadio != null && leftRotateRadio.isSelected()) {
+                parameters.add("-vf");
+                parameters.add("\"transpose=2\"");
             }
             return parameters;
         } catch (Exception e) {
@@ -1153,7 +1185,14 @@ public class ControlFFmpegOptions extends BaseController {
         if (command == null || ffmpegController == null) {
             return;
         }
-        ffmpegController.showLogs("\n\n" + command.toString().replaceAll("[\\[|,|\\]]", " "));
+        ffmpegController.showLogs("\n\n" + cmd(command));
+    }
+
+    protected String cmd(List<String> command) {
+        if (command == null) {
+            return null;
+        }
+        return command.toString().replaceAll("[\\[|,|\\]]", " ");
     }
 
 }

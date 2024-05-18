@@ -300,8 +300,8 @@ public abstract class BaseImportCsvController<D> extends BaseBatchFileController
     }
 
     @Override
-    public void afterTask() {
-        super.afterTask();
+    public void afterTask(boolean ok) {
+        super.afterTask(ok);
         if (parent != null && parent.getMyStage().isShowing()) {
             if (closeWhenCompleteCheck != null && closeWhenCompleteCheck.isSelected()) {
                 closeStage();

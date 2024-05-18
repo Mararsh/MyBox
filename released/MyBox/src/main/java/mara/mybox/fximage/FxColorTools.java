@@ -10,6 +10,7 @@ import mara.mybox.bufferedimage.ColorConvertTools;
 import mara.mybox.color.SRGB;
 import mara.mybox.db.data.ColorData;
 import mara.mybox.db.table.TableColor;
+import mara.mybox.tools.DoubleTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.Languages;
 
@@ -103,6 +104,14 @@ public class FxColorTools {
                 + (int) (color.getGreen() * 255) + ","
                 + (int) (color.getBlue() * 255) + ","
                 + color.getOpacity() + ")";
+    }
+
+    public static String color2hsla(Color color) {
+        return "hsla("
+                + Math.round(color.getHue()) + ","
+                + Math.round(color.getSaturation() * 100) + "%,"
+                + Math.round(color.getBrightness() * 100) + "%,"
+                + DoubleTools.scale2(color.getOpacity()) + ")";
     }
 
     public static String color2rgba(Color color) {

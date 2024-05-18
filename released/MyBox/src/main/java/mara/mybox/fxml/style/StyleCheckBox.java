@@ -66,7 +66,7 @@ public class StyleCheckBox {
             case "shapeCanMoveCheck":
                 return new StyleData(id, message("ShapeCanMove"), "", "iconMove.png");
             case "onTopCheck":
-                return new StyleData(id, message("AlwayOnTopComments"), "", "iconTop.png");
+                return new StyleData(id, message("AlwayOnTopComments"), "CTRL+0 / ALT+0", "iconTop.png");
             case "synchronizeSwitchCheck":
                 return new StyleData(id, message("SynchronizeWhenSwitchFormat"), "", "iconSynchronize.png");
         }

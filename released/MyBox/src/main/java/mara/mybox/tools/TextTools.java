@@ -530,7 +530,7 @@ public class TextTools {
 
     public static String delimiterValue(String delimiterName) {
         if (delimiterName == null) {
-            return null;
+            return ",";
         }
         String delimiter;
         switch (delimiterName) {

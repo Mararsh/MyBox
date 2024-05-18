@@ -22,13 +22,14 @@ import mara.mybox.controller.NotesController;
 import mara.mybox.controller.RowFilterController;
 import mara.mybox.controller.WebFavoritesController;
 import mara.mybox.data.StringTable;
-import mara.mybox.data2d.Data2DTools;
 import mara.mybox.data2d.DataFileCSV;
+import mara.mybox.data2d.tools.Data2DDefinitionTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
 import static mara.mybox.fxml.FxFileTools.getInternalFile;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.DateTools;
+import mara.mybox.tools.HtmlReadTools;
 import mara.mybox.tools.JsonTools;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
@@ -533,7 +534,7 @@ public class InfoNode extends BaseData {
         String html = "";
         switch (category) {
             case InfoNode.Notebook:
-                html = s;
+                html = HtmlReadTools.body(s, false);
                 break;
             case InfoNode.WebFavorite: {
                 Map<String, String> values = InfoNode.parseInfo(category, s);
@@ -557,9 +558,9 @@ public class InfoNode extends BaseData {
                 break;
             }
             case InfoNode.Data2DDefinition: {
-                DataFileCSV csv = Data2DTools.definitionFromXML(task, controller, s);
+                DataFileCSV csv = Data2DDefinitionTools.definitionFromXML(task, controller, s);
                 if (csv != null) {
-                    html = Data2DTools.definitionToHtml(csv);
+                    html = Data2DDefinitionTools.definitionToHtml(csv);
                 }
                 break;
             }
@@ -637,10 +638,10 @@ public class InfoNode extends BaseData {
         String json = "";
         switch (category) {
             case InfoNode.Data2DDefinition: {
-                DataFileCSV csv = Data2DTools.definitionFromXML(task, controller, s);
+                DataFileCSV csv = Data2DDefinitionTools.definitionFromXML(task, controller, s);
                 if (csv != null) {
                     json = prefix + ",\n"
-                            + Data2DTools.definitionToJSON(csv, true, prefix);
+                            + Data2DDefinitionTools.definitionToJSON(csv, true, prefix);
                 }
                 break;
             }
@@ -678,6 +679,10 @@ public class InfoNode extends BaseData {
 
     public static boolean isWebFavorite(String category) {
         return Languages.matchIgnoreCase(category, InfoNode.WebFavorite);
+    }
+
+    public static boolean isNotes(String category) {
+        return Languages.matchIgnoreCase(category, InfoNode.Notebook);
     }
 
     public static InfoTreeManageController openManager(String category) {

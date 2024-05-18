@@ -119,6 +119,18 @@ License:    Apache License Version 2.0
                                 <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                             </padding>
                             <children>
+                                <FlowPane hgap="2.0" vgap="2.0">
+                                    <children>
+                                        <Label minHeight="-Infinity" text="%TakeSourceDataWhenExpressionEmptyOr" wrapText="true" />
+                                        <RadioButton fx:id="trueRadio" mnemonicParsing="false" selected="true" text="true">
+                                            <toggleGroup>
+                                                <ToggleGroup fx:id="takeGroup" />
+                                            </toggleGroup>
+                                        </RadioButton>
+                                        <RadioButton fx:id="falseRadio" mnemonicParsing="false" text="false" toggleGroup="$takeGroup" />
+                                    </children>
+                                </FlowPane>
+                        <Label minHeight="-Infinity" text="%DataFilterComments" wrapText="true" />
                                 <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0">
                                     <children>
                                         <Button fx:id="helpButton" mnemonicParsing="false" onAction="#showRowExpressionHelps" onMouseEntered="#popRowExpressionHelps">
@@ -130,7 +142,7 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                             </graphic>
                                         </Button>
-                                        <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                        <Label maxWidth="1.7976931348623157E308" text="%RowExpression" HBox.hgrow="ALWAYS" />
                                         <CheckBox fx:id="leftPaneCheck" minWidth="-Infinity" mnemonicParsing="false">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -178,17 +190,6 @@ License:    Apache License Version 2.0
                                         </Button>
                                     </children>
                                 </HBox>
-                                <FlowPane hgap="2.0" vgap="2.0">
-                                    <children>
-                                        <Label minHeight="-Infinity" text="%TakeSourceDataWhenExpressionEmptyOr" wrapText="true" />
-                                        <RadioButton fx:id="trueRadio" mnemonicParsing="false" selected="true" text="true">
-                                            <toggleGroup>
-                                                <ToggleGroup fx:id="takeGroup" />
-                                            </toggleGroup>
-                                        </RadioButton>
-                                        <RadioButton fx:id="othersRadio" mnemonicParsing="false" text="%Others" toggleGroup="$takeGroup" />
-                                    </children>
-                                </FlowPane>
                                 <TextArea fx:id="scriptInput" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" wrapText="true" VBox.vgrow="ALWAYS" />
                             </children>
                         </VBox>

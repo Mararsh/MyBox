@@ -13,6 +13,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.FlowPane;
 import javafx.stage.Window;
 import mara.mybox.data.CertificateEntry;
 import mara.mybox.db.data.FileBackup;
@@ -43,7 +44,9 @@ public class SecurityCertificatesController extends BaseTablePagesController<Cer
     @FXML
     protected TextArea certArea;
     @FXML
-    protected Button htmlButton;
+    protected Button htmlButton, backupButton;
+    @FXML
+    protected FlowPane opsPane;
 
     public SecurityCertificatesController() {
         baseTitle = Languages.message("SecurityCertificates");
@@ -63,6 +66,7 @@ public class SecurityCertificatesController extends BaseTablePagesController<Cer
             htmlButton.setDisable(true);
             addButton.setDisable(true);
             recoverButton.setDisable(true);
+            opsPane.setDisable(true);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -132,6 +136,8 @@ public class SecurityCertificatesController extends BaseTablePagesController<Cer
         htmlButton.setDisable(true);
         addButton.setDisable(true);
         recoverButton.setDisable(true);
+        opsPane.setDisable(true);
+        backupButton.setDisable(sourceFile == null);
         if (sourceFile == null) {
             return;
         }
@@ -227,6 +233,7 @@ public class SecurityCertificatesController extends BaseTablePagesController<Cer
                 htmlButton.setDisable(false);
                 addButton.setDisable(false);
                 recoverButton.setDisable(false);
+                opsPane.setDisable(false);
                 bottomLabel.setText(Languages.message("Count") + ": " + tableData.size());
             }
         };

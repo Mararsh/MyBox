@@ -12,7 +12,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import mara.mybox.data2d.reader.DataTableGroup;
+import mara.mybox.data2d.DataTableGroup;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
@@ -26,7 +26,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2022-1-19
  * @License Apache License Version 2.0
  */
-public abstract class BaseData2DChartController extends BaseData2DHandleController {
+public abstract class BaseData2DChartController extends BaseData2DTaskController {
 
     protected String selectedCategory, selectedValue, groupParameters;
     protected DataTableGroup group;
@@ -46,14 +46,14 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
     @FXML
     protected TextField chartMaxInput;
     @FXML
-    protected ControlData2DResults groupDataController;
+    protected ControlData2DView groupDataController;
     @FXML
     protected ControlPlay playController;
 
     @Override
-    public void initControls() {
+    public void initOptions() {
         try {
-            super.initControls();
+            super.initOptions();
 
             initDataTab();
 
@@ -67,7 +67,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
                     noticeMemory();
                 });
 
-                displayAllCheck.visibleProperty().bind(allPagesRadio.selectedProperty());
+                displayAllCheck.visibleProperty().bind(sourceController.allPagesRadio.selectedProperty());
             }
 
             chartMaxData = UserConfig.getInt(baseName + "ChartMaxData", 100);
@@ -96,9 +96,11 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
                         }
                     }
                 });
-
             }
 
+            if (rightPane != null) {
+                rightPane.setDisable(true);
+            }
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -130,9 +132,9 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
     }
 
     @Override
-    public void refreshControls() {
+    public void sourceChanged() {
         try {
-            super.refreshControls();
+            super.sourceChanged();
             makeOptions();
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -141,7 +143,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
 
     public void makeOptions() {
         try {
-            List<String> names = tableController.data2D.columnNames();
+            List<String> names = data2D.columnNames();
             if (names == null || names.isEmpty()) {
                 return;
             }
@@ -171,11 +173,11 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
     }
 
     @Override
-    public boolean checkOptions() {
+    public boolean checkParameters() {
         if (isSettingValues) {
             return true;
         }
-        boolean ok = super.checkOptions();
+        boolean ok = super.checkParameters();
         noticeMemory();
         return ok;
     }
@@ -189,9 +191,9 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
     }
 
     @Override
-    public boolean initData() {
+    public boolean checkOptions() {
         try {
-            if (!super.initData()) {
+            if (!super.checkOptions()) {
                 return false;
             }
             if (categoryColumnSelector != null) {
@@ -249,9 +251,10 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
         no group
      */
     protected void startNoGroup() {
-        if (task != null && !task.isQuit()) {
-            return;
+        if (task != null) {
+            task.cancel();
         }
+        taskSuccessed = false;
         task = new FxSingletonTask<Void>(this) {
 
             @Override
@@ -260,7 +263,8 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
                     data2D.startTask(this, filterController.filter);
                     readData();
                     data2D.stopFilter();
-                    return outputData != null && !outputData.isEmpty();
+                    taskSuccessed = outputData != null && !outputData.isEmpty();
+                    return taskSuccessed;
                 } catch (Exception e) {
                     MyBoxLog.error(e);
                     error = e.toString();
@@ -270,25 +274,26 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
 
             @Override
             protected void whenSucceeded() {
+                outputData();
+                if (rightPane != null) {
+                    rightPane.setDisable(false);
+                }
             }
 
             @Override
             protected void finalAction() {
                 super.finalAction();
-                data2D.stopTask();
-                if (ok) {
-                    outputData();
-                }
+                closeTask(ok);
             }
 
         };
-        start(task);
+        start(task, false);
     }
 
     public void readData() {
         try {
             boolean showRowNumber = showRowNumber();
-            outputData = sortedData(dataColsIndices, showRowNumber);
+            outputData = sortPage(dataColsIndices, showRowNumber);
             if (outputData == null || scaleSelector == null) {
                 return;
             }
@@ -336,6 +341,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
                 return;
             }
             chartMax();
+            rightPane.setDisable(false);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -348,7 +354,12 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
     public boolean checkMax() {
         if (chartMaxInput != null) {
             try {
-                chartMaxData = Integer.parseInt(chartMaxInput.getText());
+                String s = chartMaxInput.getText();
+                if (s == null || s.isBlank()) {
+                    chartMaxData = -1;
+                } else {
+                    chartMaxData = Integer.parseInt(s);
+                }
                 UserConfig.setInt(baseName + "ChartMaxData", chartMaxData);
                 return true;
             } catch (Exception ex) {
@@ -398,13 +409,14 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
         group
      */
     protected void startGroup() {
-        if (task != null && !task.isQuit()) {
-            return;
+        if (task != null) {
+            task.cancel();
         }
         playController.clear();
         groupDataController.loadNull();
         group = null;
         framesNumber = -1;
+        taskSuccessed = false;
         task = new FxSingletonTask<Void>(this) {
 
             @Override
@@ -421,14 +433,16 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
                             }
                         }
                     }
-                    outputColumns = data2D.makeColumns(cols, showRowNumber());
+                    boolean showRowNumber = showRowNumber();
+                    outputColumns = data2D.makeColumns(cols, showRowNumber);
                     group = groupData(DataTableGroup.TargetType.Table,
-                            cols, showRowNumber(), maxData, scale);
+                            cols, showRowNumber, maxData, scale);
                     if (!group.run()) {
                         return false;
                     }
                     framesNumber = (int) group.groupsNumber();
-                    return initGroups();
+                    taskSuccessed = initGroups();
+                    return taskSuccessed;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -437,20 +451,21 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
 
             @Override
             protected void whenSucceeded() {
+                loadChartData();
+                playController.play(framesNumber);
+                if (rightPane != null) {
+                    rightPane.setDisable(false);
+                }
             }
 
             @Override
             protected void finalAction() {
                 super.finalAction();
-                data2D.stopTask();
-                if (ok) {
-                    loadChartData();
-                    playController.play(framesNumber);
-                }
+                closeTask(ok);
             }
 
         };
-        start(task);
+        start(task, false);
     }
 
     protected boolean initGroups() {
@@ -459,7 +474,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
 
     protected void loadChartData() {
         if (group.getTargetData() != null) {
-            groupDataController.loadData(group.getTargetData().cloneAll());
+            groupDataController.loadDef(group.getTargetData());
         }
     }
 
@@ -512,6 +527,9 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
         return null;
     }
 
+    /*
+        interface
+     */
     @Override
     public void cleanPane() {
         try {
@@ -522,7 +540,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
                 playController.clear();
             }
             if (groupDataController != null) {
-                groupDataController.loadData(null);
+                groupDataController.loadNull();
             }
         } catch (Exception e) {
         }

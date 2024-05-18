@@ -16,7 +16,7 @@ import static mara.mybox.value.Languages.message;
  */
 public class DataTableQueryController extends InfoTreeManageController {
 
-    protected ControlData2DLoad tableController;
+    protected BaseData2DLoadController tableController;
     protected ChangeListener<Boolean> tableStatusListener;
 
     @FXML
@@ -40,7 +40,7 @@ public class DataTableQueryController extends InfoTreeManageController {
         }
     }
 
-    public void setParameters(ControlData2DLoad tableController) {
+    public void setParameters(BaseData2DLoadController tableController) {
         try {
             this.tableController = tableController;
             editorController.setParameters(tableController);
@@ -74,7 +74,7 @@ public class DataTableQueryController extends InfoTreeManageController {
     /*
         static
      */
-    public static DataTableQueryController open(ControlData2DLoad tableController) {
+    public static DataTableQueryController open(BaseData2DLoadController tableController) {
         try {
             DataTableQueryController controller = (DataTableQueryController) WindowTools.branchStage(
                     tableController, Fxmls.DataTableQueryFxml);

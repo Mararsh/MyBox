@@ -113,6 +113,13 @@ public class ControlTextOptions extends BaseController {
         return charset.name();
     }
 
+    public Charset getCharset() {
+        if (charset == null) {
+            charset = Charset.forName("utf-8");
+        }
+        return charset;
+    }
+
     protected void setDelimiterName(String delimiter) {
         delimiterController.setDelimiterName(delimiter);
     }
@@ -123,6 +130,14 @@ public class ControlTextOptions extends BaseController {
 
     public String getDelimiterValue() {
         return delimiterController.getDelimiterValue();
+    }
+
+    public boolean withName() {
+        return withNamesCheck.isSelected();
+    }
+
+    public boolean invalidDelimiter() {
+        return delimiterController.delimiterInput.getStyle().equals(UserConfig.badStyle());
     }
 
 }

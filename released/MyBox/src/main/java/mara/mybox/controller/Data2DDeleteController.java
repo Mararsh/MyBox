@@ -1,38 +1,57 @@
 package mara.mybox.controller;
 
 import java.util.ArrayList;
-import java.util.List;
-import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
  * @CreateDate 2021-11-28
  * @License Apache License Version 2.0
  */
-public class Data2DDeleteController extends BaseData2DTargetsController {
+public class Data2DDeleteController extends BaseData2DTaskTargetsController {
 
-    @FXML
-    protected CheckBox errorContinueCheck;
+    protected Data2DManufactureController editor;
+    protected boolean clearAll;
 
     public Data2DDeleteController() {
         baseTitle = message("Delete");
     }
 
-    @Override
-    public boolean initData() {
+    public void setParameters(Data2DManufactureController tableController) {
         try {
-            if (!super.initData()) {
+            editor = tableController;
+            super.setParameters(tableController);
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    @Override
+    public boolean checkOptions() {
+        try {
+            if (!super.checkOptions()) {
                 return false;
             }
-            return !isAllPages() || tableController.checkBeforeNextAction();
+            clearAll = false;
+            if (sourceController.isAllPages()) {
+                clearAll = !filterController.filter.needFilter();
+                if (clearAll) {
+                    if (!PopTools.askSure(getTitle(), message("SureClearData"))) {
+                        return false;
+                    }
+                } else {
+                    if (!PopTools.askSure(getTitle(), message("SureDelete"))) {
+                        return false;
+                    }
+                }
+            }
+            return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
             return false;
@@ -40,70 +59,43 @@ public class Data2DDeleteController extends BaseData2DTargetsController {
     }
 
     @Override
-    public synchronized void handleRowsTask() {
-        task = new FxSingletonTask<Void>(this) {
-
-            List<List<String>> data;
-
-            @Override
-            protected boolean handle() {
-                try {
-                    data2D.startTask(this, filterController.filter);
-                    data = new ArrayList<>();
-                    filteredRowsIndices = filteredRowsIndices();
-                    for (int i = 0; i < tableController.tableData.size(); i++) {
-                        if (!filteredRowsIndices.contains(i)) {
-                            data.add(tableController.tableData.get(i));
-                        }
-                    }
-                    data2D.stopFilter();
-                    return ok;
-                } catch (Exception e) {
-                    error = e.toString();
-                    return false;
+    public boolean handleRows() {
+        try {
+            outputData = new ArrayList<>();
+            for (int i = 0; i < sourceController.tableData.size(); i++) {
+                if (!sourceController.filteredRowsIndices.contains(i)) {
+                    outputData.add(sourceController.tableData.get(i));
                 }
             }
+            return true;
+        } catch (Exception e) {
+            setError(e.toString());
+            outputData = null;
+            return false;
+        }
+    }
 
-            @Override
-            protected void whenSucceeded() {
-                try {
-                    tableController.isSettingValues = true;
-                    tableController.tableData.setAll(data);
-                    tableController.isSettingValues = false;
-                    selectedRowsIndices = null;
-                    tableController.tableChanged(true);
-                    tableController.requestMouse();
-                    tabPane.getSelectionModel().select(dataTab);
-                    alertInformation(message("DeletedRowsNumber") + ": " + filteredRowsIndices.size());
-                } catch (Exception e) {
-                    MyBoxLog.error(e);
-                }
-            }
-
-            @Override
-            protected void finalAction() {
-                super.finalAction();
-                data2D.stopTask();
-                if (targetController != null) {
-                    targetController.refreshControls();
-                }
-            }
-
-        };
-        start(task);
+    @Override
+    public void ouputRows() {
+        try {
+            int count = sourceController.tableData.size() - outputData.size();
+            sourceController.selectedRowsIndices = null;
+            editor.updateTable(outputData);
+            editor.tableChanged(true);
+            editor.requestMouse();
+            editor.alertInformation(message("DeletedRowsNumber") + ": " + count);
+            tabPane.getSelectionModel().select(sourceTab);
+        } catch (Exception e) {
+            popError(message(e.toString()));
+        }
     }
 
     @Override
     public void handleAllTask() {
-        if (!data2D.needFilter()) {
-            if (!PopTools.askSure(getTitle(), message("SureDeleteAll"))) {
-                return;
-            }
-        } else {
-            if (!PopTools.askSure(getTitle(), message("SureDelete"))) {
-                return;
-            }
+        if (task != null) {
+            task.cancel();
         }
+        taskSuccessed = false;
         task = new FxSingletonTask<Void>(this) {
 
             private long count;
@@ -112,15 +104,19 @@ public class Data2DDeleteController extends BaseData2DTargetsController {
             @Override
             protected boolean handle() {
                 try {
-                    needBackup = data2D.isDataFile() && !data2D.isTmpData()
-                            && UserConfig.getBoolean(baseName + "BackupWhenSave", true);
+                    needBackup = data2D.needBackup();
                     if (needBackup) {
                         addBackup(this, data2D.getFile());
                     }
                     data2D.startTask(this, filterController.filter);
-                    count = data2D.deleteRows(errorContinueCheck.isSelected());
+                    if (clearAll) {
+                        count = data2D.clearData(this);
+                    } else {
+                        count = data2D.deleteRows(this);
+                    }
                     data2D.stopFilter();
-                    return count >= 0;
+                    taskSuccessed = count >= 0;
+                    return taskSuccessed;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -129,28 +125,30 @@ public class Data2DDeleteController extends BaseData2DTargetsController {
 
             @Override
             protected void whenSucceeded() {
-                selectedRowsIndices = null;
-                tableController.dataSizeLoaded = false;
-                tableController.dataController.goPage();
-                tableController.requestMouse();
-                tabPane.getSelectionModel().select(dataTab);
-                alertInformation(message("DeletedRowsNumber") + ": " + count);
+                sourceController.selectedRowsIndices = null;
+                tabPane.getSelectionModel().select(sourceTab);
+                editor.data2D.cloneData(data2D);
+                editor.data2D.setTableChanged(false);
+                editor.dataSizeLoaded = false;
+                editor.goPage();
+                editor.requestMouse();
+                editor.alertInformation(message("DeletedRowsNumber") + ": " + count);
             }
 
             @Override
             protected void finalAction() {
                 super.finalAction();
-                data2D.stopTask();
+                closeTask(ok);
             }
 
         };
-        start(task);
+        start(task, false);
     }
 
     /*
         static
      */
-    public static Data2DDeleteController open(ControlData2DLoad tableController) {
+    public static Data2DDeleteController open(Data2DManufactureController tableController) {
         try {
             Data2DDeleteController controller = (Data2DDeleteController) WindowTools.branchStage(
                     tableController, Fxmls.Data2DDeleteFxml);

@@ -46,17 +46,14 @@ public class FileTTC2TTFController extends HtmlTableController {
             ttcController.label(message("SourceFile"))
                     .isSource(true).isDirectory(false).mustExist(true).permitNull(false)
                     .type(VisitHistory.FileType.TTC)
-                    .baseName(baseName).savedName(baseName + "TTC")
-                    .initFile();
+                    .parent(this, baseName + "TTC");
 
-            targetPathInputController.mustExist(true).type(VisitHistory.FileType.TTF)
-                    .baseName(baseName).initFile();
+            targetPathInputController
+                    .isSource(false).isDirectory(true).mustExist(true).permitNull(false)
+                    .type(VisitHistory.FileType.TTF)
+                    .parent(this);
 
             startButton.disableProperty().unbind();
-            startButton.disableProperty().bind(
-                    ttcController.valid.not()
-                            .or(targetPathInputController.valid.not())
-            );
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -64,7 +61,8 @@ public class FileTTC2TTFController extends HtmlTableController {
     }
 
     public void loadFile() {
-        if (ttcController.file == null || !ttcController.file.exists() || !ttcController.file.isFile()) {
+        File file = ttcController.file();
+        if (file == null || !file.exists() || !file.isFile()) {
             return;
         }
         if (task != null) {
@@ -75,7 +73,7 @@ public class FileTTC2TTFController extends HtmlTableController {
             @Override
             protected boolean handle() {
                 try {
-                    ttc = new TTC(ttcController.file);
+                    ttc = new TTC(file);
                     ttc.parseFile();
                     return true;
                 } catch (Exception e) {
@@ -96,7 +94,7 @@ public class FileTTC2TTFController extends HtmlTableController {
     @FXML
     @Override
     public void startAction() {
-        targetPath = targetPathInputController.file;
+        targetPath = targetPathInputController.pickFile();
         if (ttc == null || targetPath == null) {
             return;
         }

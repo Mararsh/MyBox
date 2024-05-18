@@ -20,7 +20,7 @@ License:    Apache License Version 2.0
                     <menus>
                         <Menu fx:id="homeMenu" mnemonicParsing="false" text="%Window">
                             <items>
-                                <MenuItem mnemonicParsing="false" onAction="#showHome" text="%Home" />
+                                <MenuItem mnemonicParsing="false" onAction="#showHome" text="%MainPageShortcut" />
                                 <MenuItem mnemonicParsing="false" onAction="#WindowsList" text="%WindowsList" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#SnapshotWindow" text="%SnapshotWindowComments" />
@@ -58,6 +58,7 @@ License:    Apache License Version 2.0
                                         <MenuItem mnemonicParsing="false" onAction="#openPdfExtractImagesBatch" text="%PdfExtractImagesBatch" />
                                         <MenuItem mnemonicParsing="false" onAction="#openPdfExtractTextsBatch" text="%PdfExtractTextsBatch" />
                                         <MenuItem mnemonicParsing="false" onAction="#openPdfOCRBatch" text="%PdfOCRBatch" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openPdfAddWatermark" text="%PdfAddWatermark" />
                                         <SeparatorMenuItem mnemonicParsing="false" />
                                         <MenuItem mnemonicParsing="false" onAction="#openPdfSplitBatch" text="%PdfSplitBatch" />
                                         <MenuItem mnemonicParsing="false" onAction="#openMergePdf" text="%MergePdf" />
@@ -263,17 +264,16 @@ License:    Apache License Version 2.0
                         <Menu mnemonicParsing="false" text="%Data">
                             <items>
                                 <MenuItem mnemonicParsing="false" onAction="#DataManufacture" text="%DataManufacture" />
+                                <MenuItem mnemonicParsing="false" onAction="#manageData" text="%ManageData" />
+                                <SeparatorMenuItem mnemonicParsing="false" />
                                 <Menu mnemonicParsing="false" text="%DataFile">
                                     <items>
-                                        <MenuItem mnemonicParsing="false" onAction="#openDataCsv" text="%EditCSV" />
                                         <MenuItem mnemonicParsing="false" onAction="#openCsvConvert" text="%CsvConvert" />
                                         <MenuItem mnemonicParsing="false" onAction="#openCsvMerge" text="%CsvMerge" />
                                         <SeparatorMenuItem mnemonicParsing="false" />
-                                        <MenuItem mnemonicParsing="false" onAction="#openDataExcel" text="%EditExcel" />
                                         <MenuItem mnemonicParsing="false" onAction="#openExcelConvert" text="%ExcelConvert" />
                                         <MenuItem mnemonicParsing="false" onAction="#openExcelMerge" text="%ExcelMerge" />
                                         <SeparatorMenuItem mnemonicParsing="false" />
-                                        <MenuItem mnemonicParsing="false" onAction="#openDataText" text="%EditTextDataFile" />
                                         <MenuItem mnemonicParsing="false" onAction="#openTextDataConvert" text="%TextDataConvert" />
                                         <MenuItem mnemonicParsing="false" onAction="#openTextDataMerge" text="%TextDataMerge" />
                                     </items>
@@ -292,9 +292,9 @@ License:    Apache License Version 2.0
                                         <MenuItem mnemonicParsing="false" onAction="#databaseTableDefinition" text="%TableDefinition" />
                                     </items>
                                 </Menu>
-                                <MenuItem mnemonicParsing="false" onAction="#manageData" text="%ManageData" />
-                                <MenuItem mnemonicParsing="false" onAction="#SpliceData" text="%SpliceData" />
+                                <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#Data2DDefinition" text="%Data2DDefinition" />
+                                <MenuItem mnemonicParsing="false" onAction="#SpliceData" text="%SpliceData" />
                                 <MenuItem mnemonicParsing="false" onAction="#RowFilter" text="%RowFilter" />
                                 <MenuItem mnemonicParsing="false" onAction="#dataInSystemClipboard" text="%DataInSystemClipboard" />
                                 <MenuItem mnemonicParsing="false" onAction="#dataInMyBoxClipboard" text="%DataInMyBoxClipboard" />
@@ -568,6 +568,7 @@ License:    Apache License Version 2.0
                                 <MenuItem mnemonicParsing="false" onAction="#makeIcons" text="%MakeIcons" />
                                 <MenuItem mnemonicParsing="false" onAction="#makeDocuments" text="%MakeDocuments" />
                                 <MenuItem mnemonicParsing="false" onAction="#autoTesting" text="%AutoTesting" />
+                                <MenuItem mnemonicParsing="false" onAction="#myBoxBaseVerificationList" text="%MyBoxBaseVerificationList" />
                                 <!--                                <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#messageAuthor" text="%MessageAuthor" />-->
                             </items>

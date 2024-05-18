@@ -53,6 +53,19 @@ import mara.mybox.controller.BaseLogs;
 import mara.mybox.controller.ControlWebView;
 import mara.mybox.controller.HtmlStyleInputController;
 import mara.mybox.controller.MenuController;
+import mara.mybox.data2d.Data2D;
+import static mara.mybox.db.data.ColumnDefinition.ColumnType.Color;
+import static mara.mybox.db.data.ColumnDefinition.ColumnType.Date;
+import static mara.mybox.db.data.ColumnDefinition.ColumnType.Datetime;
+import static mara.mybox.db.data.ColumnDefinition.ColumnType.Enumeration;
+import static mara.mybox.db.data.ColumnDefinition.ColumnType.EnumerationEditable;
+import static mara.mybox.db.data.ColumnDefinition.ColumnType.Era;
+import static mara.mybox.db.data.ColumnDefinition.ColumnType.File;
+import static mara.mybox.db.data.ColumnDefinition.ColumnType.Image;
+import static mara.mybox.db.data.ColumnDefinition.ColumnType.Latitude;
+import static mara.mybox.db.data.ColumnDefinition.ColumnType.Longitude;
+import static mara.mybox.db.data.ColumnDefinition.ColumnType.Short;
+import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.style.HtmlStyles;
@@ -1078,8 +1091,9 @@ public class PopTools {
     }
 
     public static MenuController popJavaScriptExamples(BaseController parent, Event event,
-            TextInputControl scriptInput, String valueName) {
+            TextInputControl scriptInput, String valueName, List<List<String>> preValues) {
         try {
+
             MenuController controller = MenuController.open(parent, scriptInput, event, valueName, false);
 
             controller.setTitleLabel(message("Examples"));
@@ -1111,6 +1125,16 @@ public class PopTools {
             controller.addFlowPane(topButtons);
             controller.addNode(new Separator());
 
+            List<List<String>> pvalues;
+            if (preValues == null || preValues.isEmpty()) {
+                pvalues = javaScriptExamples("numberV", "stringV", "dateV");
+            } else {
+                pvalues = preValues;
+            }
+            for (List<String> values : pvalues) {
+                PopTools.addButtonsPane(controller, scriptInput, values);
+            }
+
             PopTools.addButtonsPane(controller, scriptInput, Arrays.asList(
                     " + ", " - ", " * ", " / ", " % ",
                     "''", "( )", ";", " = ", " += ", " -= ", " *= ", " /= ", " %= ",
@@ -1120,7 +1144,7 @@ public class PopTools {
 
             PopTools.addButtonsPane(controller, scriptInput, Arrays.asList(
                     " >= ", " > ", " <= ", " < ", " != ", " && ", " || ", " !",
-                    " '' == ", " == ", " '' != ", " === ", " !== ",
+                    " == ", " === ", " !== ",
                     " true ", " false ", " null ", " undefined "
             ));
 
@@ -1132,44 +1156,164 @@ public class PopTools {
         }
     }
 
-    public static void rowExpressionButtons(MenuController controller,
-            TextInputControl scriptInput, String colName) {
+    public static List<List<String>> javaScriptExamples(String numColumn,
+            String stringColumn, String dateColumn) {
+        List<List<String>> preValues = new ArrayList<>();
+        List<String> values = new ArrayList<>();
+
+        if (numColumn != null) {
+            values.addAll(Arrays.asList(
+                    numColumn + " == 0", numColumn + " >= 0", numColumn + " < 0",
+                    "Math.abs(" + numColumn + ")",
+                    "Math.trunc(" + numColumn + ")", "Math.round(" + numColumn + ")",
+                    "Math.ceil(" + numColumn + ")", "Math.floor(" + numColumn + ")",
+                    "Math.pow(" + numColumn + ", 2)", "Math.sqrt(" + numColumn + ")",
+                    "Math.pow(" + numColumn + ", 1d/3)",
+                    "Math.exp(" + numColumn + ")", "Math.log(" + numColumn + ")",
+                    "Math.min(" + numColumn + ",2,-3)", "Math.max(" + numColumn + ",2,-3)",
+                    "Math.sin(" + numColumn + ")", "Math.cos(" + numColumn + ")", "Math.tan(" + numColumn + ")"
+            ));
+        }
+        values.addAll(Arrays.asList(
+                "Math.PI", "Math.E", "Math.random()"
+        ));
+        preValues.add(values);
+
+        if (stringColumn != null) {
+            values = Arrays.asList(
+                    stringColumn + " == null || " + stringColumn + " == ''",
+                    stringColumn + " == 'Hello'",
+                    "if ( " + stringColumn + " != null ) \n"
+                    + "    " + stringColumn + ".length\n"
+                    + "else\n"
+                    + "    -1",
+                    "if ( " + stringColumn + " != null ) \n"
+                    + "    " + stringColumn + ".indexOf('Hello')\n"
+                    + "else\n"
+                    + "    -1",
+                    "if ( " + stringColumn + " != null ) \n"
+                    + "    " + stringColumn + ".search(/Hello/ig)\n"
+                    + "else\n"
+                    + "    -1",
+                    "if ( " + stringColumn + " != null ) \n"
+                    + "    " + stringColumn + ".startsWith('Hello')\n"
+                    + "else\n"
+                    + "    undefined",
+                    "if ( " + stringColumn + " != null ) \n"
+                    + "    " + stringColumn + ".endsWith('Hello')\n"
+                    + "else\n"
+                    + "    undefined",
+                    "if ( " + stringColumn + " != null ) \n"
+                    + "    " + stringColumn + ".replace(/h/g, \"H\")\n"
+                    + "else\n"
+                    + "    null",
+                    "if ( " + stringColumn + " != null ) \n"
+                    + "    " + stringColumn + ".toLowerCase()\n"
+                    + "else\n"
+                    + "    null",
+                    "if ( " + stringColumn + " != null ) \n"
+                    + "    " + stringColumn + ".toUpperCase()\n"
+                    + "else\n"
+                    + "    null"
+            );
+            preValues.add(values);
+        }
+
+        if (dateColumn != null) {
+            values = Arrays.asList(
+                    dateColumn + " == '2016-05-19 11:34:28'",
+                    "if ( " + dateColumn + " != null ) \n"
+                    + "    " + dateColumn + ".startsWith('2016-05-19 11')\n"
+                    + "else\n"
+                    + "    undefined",
+                    "if ( " + dateColumn + " != null ) \n"
+                    + "    " + "new Date(" + dateColumn + ").getTime()  > new Date('2016/05/19 09:23:12').getTime()\n"
+                    + "else\n"
+                    + "    undefined",
+                    "function formatDate(date) {\n"
+                    + "     var y = date.getFullYear();\n"
+                    + "     var m = date.getMonth() + 1;\n"
+                    + "     m = m < 10 ? ('0' + m) : m;\n"
+                    + "     var d = date.getDate();\n"
+                    + "     d = d < 10 ? ('0' + d) : d;\n"
+                    + "     var h =date.getHours();\n"
+                    + "     h = h < 10 ? ('0' + h) : h;\n"
+                    + "     var M =date.getMinutes();\n"
+                    + "     M = M < 10 ? ('0' + M) : M;\n"
+                    + "     var s =date.getSeconds();\n"
+                    + "     s = s < 10 ? ('0' + s) : s;\n"
+                    + "     return y + '-' + m + '-' + d + ' ' + h + ':' + M + ':' + s;\n"
+                    + "}\n"
+                    + "if (" + dateColumn + " != null)\n"
+                    + "   formatDate(new Date(" + dateColumn + "));\n"
+                    + "else\n"
+                    + "   null;"
+            );
+            preValues.add(values);
+        }
+
+        return preValues;
+    }
+
+    public static MenuController popRowExpressionExamples(BaseController parent, Event event,
+            TextInputControl scriptInput, String valueName, Data2D data2D) {
         try {
-            if (controller == null) {
-                return;
+            if (data2D == null) {
+                return popJavaScriptExamples(parent, event, scriptInput, valueName, null);
             }
-            PopTools.addButtonsPane(controller, scriptInput, Arrays.asList(
+            List<List<String>> preValues = new ArrayList<>();
+
+            List<String> values = Arrays.asList(
                     "#{" + message("DataRowNumber") + "} % 2 == 0",
                     "#{" + message("DataRowNumber") + "} % 2 == 1",
                     "#{" + message("DataRowNumber") + "} >= 9",
                     "#{" + message("TableRowNumber") + "} % 2 == 0",
                     "#{" + message("TableRowNumber") + "} % 2 == 1",
                     "#{" + message("TableRowNumber") + "} == 1"
-            ), 2);
+            );
+            preValues.add(values);
 
-            PopTools.addButtonsPane(controller, scriptInput, Arrays.asList(
-                    "#{" + colName + "} == 0",
-                    "Math.abs(#{" + colName + "}) >= 3",
-                    "#{" + colName + "} < 0 || #{" + colName + "} != -6 "
-            ), 3);
+            String stringColumn = null, dateColumn = null, numColumn = null, cname;
+            for (Data2DColumn c : data2D.getColumns()) {
+                cname = "#{" + c.getColumnName() + "}";
+                switch (c.getType()) {
+                    case String:
+                    case Enumeration:
+                    case EnumerationEditable:
+                    case File:
+                    case Image:
+                    case Color:
+                        if (stringColumn == null) {
+                            stringColumn = cname;
+                        }
+                        break;
+                    case Double:
+                    case Longitude:
+                    case Latitude:
+                    case Float:
+                    case Long:
+                    case Integer:
+                    case Short:
+                        if (numColumn == null) {
+                            numColumn = cname;
+                        }
+                        break;
+                    case Datetime:
+                    case Date:
+                    case Era:
+                        if (dateColumn == null) {
+                            dateColumn = cname;
+                        }
+                        break;
+                }
+            }
 
-            PopTools.addButtonsPane(controller, scriptInput, Arrays.asList(
-                    "new Date('#{" + message("Time") + "}'.replace(/-/g,'/')).getTime()  > new Date('2016/05/19 09:23:12').getTime()",
-                    "'#{" + message("Time") + "}' == '2016-05-19 11:34:28'",
-                    "'#{" + message("Time") + "}'.startsWith('2016-05-19 11')"
-            ), 4);
+            preValues.addAll(javaScriptExamples(numColumn, stringColumn, dateColumn));
 
-            PopTools.addButtonsPane(controller, scriptInput, Arrays.asList(
-                    "'#{" + colName + "}' == ''",
-                    "'#{" + colName + "}'.length > 0",
-                    "'#{" + colName + "}'.indexOf('Hello') == 3",
-                    "'#{" + colName + "}'.endsWith('Hello')",
-                    "'#{" + colName + "}'.search(/Hello/ig) >= 0",
-                    "var array = [ 'A', 'B', 'C', 'D' ];\n"
-                    + "array.includes('#{" + colName + "})')"
-            ), 5);
+            return popJavaScriptExamples(parent, event, scriptInput, valueName, preValues);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
+            return null;
         }
     }
 

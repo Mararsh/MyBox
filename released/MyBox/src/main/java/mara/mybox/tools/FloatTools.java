@@ -17,7 +17,9 @@ import mara.mybox.value.AppValues;
 public class FloatTools {
 
     public static boolean invalidFloat(float value) {
-        return Float.isNaN(value) || value == AppValues.InvalidFloat;
+        return Float.isNaN(value)
+                || Float.isInfinite(value)
+                || value == AppValues.InvalidFloat;
     }
 
     public static String percentage(float data, float total) {

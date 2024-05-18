@@ -496,7 +496,7 @@ public abstract class BaseDomEditorController extends BaseFileController {
 
                 menu = new MenuItem(message("FileBackups"), StyleTools.getIconImageView("iconBackup.png"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    openBackups();
+                    openBackups(baseName + "BackupWhenSave");
                 });
                 items.add(menu);
             }
@@ -667,6 +667,7 @@ public abstract class BaseDomEditorController extends BaseFileController {
         Platform.runLater(() -> {
             loadDom(textsByText(), true);
         });
+        Platform.requestNextPulse();
     }
 
     @FXML
@@ -744,12 +745,6 @@ public abstract class BaseDomEditorController extends BaseFileController {
         } else {
             popError(message("Failed"));
         }
-    }
-
-    @Override
-    public boolean controlAltI() {
-        infoAction();
-        return true;
     }
 
     @Override

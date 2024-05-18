@@ -31,7 +31,6 @@ public class ImageConverterBatchController extends BaseBatchImageController {
 
     public ImageConverterBatchController() {
         baseTitle = message("ImageConverterBatch");
-        browseTargets = true;
     }
 
     @Override
@@ -44,7 +43,6 @@ public class ImageConverterBatchController extends BaseBatchImageController {
 
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(Bindings.isEmpty(tableView.getItems())
-                    .or(targetPathController.valid.not())
                     .or(formatController.qualitySelector.getEditor().styleProperty().isEqualTo(UserConfig.badStyle()))
                     .or(formatController.profileInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                     .or(formatController.binaryController.thresholdInput.styleProperty().isEqualTo(UserConfig.badStyle()))

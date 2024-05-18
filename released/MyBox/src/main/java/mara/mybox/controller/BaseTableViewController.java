@@ -24,7 +24,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.data.StringTable;
-import mara.mybox.data2d.Data2DTools;
+import mara.mybox.data2d.tools.Data2DColumnTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fxml.FxTask;
@@ -40,7 +40,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2023-7-7
  * @License Apache License Version 2.0
  */
-public abstract class BaseTableViewController<P> extends BaseController {
+public abstract class BaseTableViewController<P> extends BaseFileController {
 
     protected ObservableList<P> tableData;
     protected boolean isSettingTable;
@@ -116,7 +116,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
                         popMenu.hide();
                     }
                     if (event.getButton() == MouseButton.SECONDARY) {
-                        popTableMenu(event);
+                        popTableMenu();
                     } else if (event.getClickCount() == 1) {
                         itemClicked();
                     } else if (event.getClickCount() > 1) {
@@ -197,6 +197,22 @@ public abstract class BaseTableViewController<P> extends BaseController {
         }
     }
 
+    protected void setSelectable(boolean selectable) {
+        tableView.getSelectionModel().clearSelection();
+        if (rowsSelectionColumn == null) {
+            return;
+        }
+        if (selectable) {
+            if (!tableView.getColumns().contains(rowsSelectionColumn)) {
+                tableView.getColumns().add(0, rowsSelectionColumn);
+            }
+        } else {
+            if (tableView.getColumns().contains(rowsSelectionColumn)) {
+                tableView.getColumns().remove(rowsSelectionColumn);
+            }
+        }
+    }
+
     /*
         status
      */
@@ -261,11 +277,11 @@ public abstract class BaseTableViewController<P> extends BaseController {
         }
     }
 
-    protected boolean isNoneSelected() {
+    public boolean isNoneSelected() {
         return tableView.getSelectionModel().getSelectedIndices().isEmpty();
     }
 
-    protected List<P> selectedItems() {
+    public List<P> selectedItems() {
         try {
             List<P> selectedItems = tableView.getSelectionModel().getSelectedItems();
             if (selectedItems != null && !selectedItems.isEmpty()) {
@@ -289,7 +305,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
         return null;
     }
 
-    protected int selectedIndix() {
+    public int selectedIndix() {
         try {
             int index = tableView.getSelectionModel().getSelectedIndex();
             if (index >= 0 && index < tableData.size()) {
@@ -305,7 +321,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
         return -1;
     }
 
-    protected P selectedItem() {
+    public P selectedItem() {
         try {
             int index = selectedIndix();
             if (index >= 0 && index < tableData.size()) {
@@ -562,7 +578,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
 
             @Override
             protected void whenSucceeded() {
-                DataFileCSVController.open(null, Data2DTools.toColumns(names), data);
+                Data2DManufactureController.openData(baseTitle, Data2DColumnTools.toColumns(names), data);
             }
         };
         start(dataTask, false, message("LoadingTableData"));
@@ -651,7 +667,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
         interface
      */
     @FXML
-    protected void popTableMenu(MouseEvent event) {
+    protected void popTableMenu() {
         if (isSettingValues) {
             return;
         }
@@ -661,7 +677,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
         }
         items.add(new SeparatorMenuItem());
 
-        popEventMenu(event, items);
+        popNodeMenu(tableView, items);
     }
 
     protected List<MenuItem> makeTableContextMenu() {

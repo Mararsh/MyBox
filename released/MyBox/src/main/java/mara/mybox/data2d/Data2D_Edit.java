@@ -10,9 +10,18 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import mara.mybox.data.SetValue;
-import mara.mybox.data2d.reader.Data2DOperator;
-import mara.mybox.data2d.reader.Data2DReadPage;
-import mara.mybox.data2d.reader.Data2DReadTotal;
+import mara.mybox.data2d.modify.Data2DClear;
+import mara.mybox.data2d.modify.Data2DDelete;
+import mara.mybox.data2d.modify.Data2DModify;
+import mara.mybox.data2d.modify.Data2DSaveAttributes;
+import mara.mybox.data2d.modify.Data2DSavePage;
+import mara.mybox.data2d.modify.Data2DSetValue;
+import mara.mybox.data2d.modify.DataTableClear;
+import mara.mybox.data2d.modify.DataTableDelete;
+import mara.mybox.data2d.modify.DataTableSetValue;
+import mara.mybox.data2d.operate.Data2DOperate;
+import mara.mybox.data2d.operate.Data2DReadPage;
+import mara.mybox.data2d.operate.Data2DReadTotal;
 import mara.mybox.data2d.writer.Data2DWriter;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
@@ -43,11 +52,10 @@ public abstract class Data2D_Edit extends Data2D_Filter {
 
     public abstract Data2DDefinition queryDefinition(Connection conn);
 
-    public abstract void applyOptions();
-
     public abstract List<String> readColumnNames();
 
-    public abstract boolean savePageData(Data2D targetData);
+    public abstract Data2DWriter selfWriter();
+
 
     /*
         read
@@ -64,9 +72,8 @@ public abstract class Data2D_Edit extends Data2D_Filter {
         try {
             Data2DDefinition definition = queryDefinition(conn);
             if (definition != null) {
-                cloneAll(definition);
+                cloneDef(definition);
             }
-            applyOptions();
             checkForLoad();
             if (definition == null) {
                 definition = tableData2DDefinition.insertData(conn, this);
@@ -78,7 +85,6 @@ public abstract class Data2D_Edit extends Data2D_Filter {
                 d2did = definition.getD2did();
                 savedColumns = tableData2DColumn.read(conn, d2did);
             }
-            options = null;
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
@@ -93,7 +99,6 @@ public abstract class Data2D_Edit extends Data2D_Filter {
         try {
             columns = null;
             List<String> colNames = readColumnNames();
-
             if (colNames == null || colNames.isEmpty()) {
                 hasHeader = false;
                 columns = savedColumns;
@@ -157,19 +162,13 @@ public abstract class Data2D_Edit extends Data2D_Filter {
         }
     }
 
-    public boolean loadColumns() {
-        savedColumns = columns;
-        return readColumns(null);
-    }
-
     public long readTotal() {
-        dataSize = 0;
-        Data2DOperator reader = Data2DReadTotal.create(this)
+        rowsNumber = -1;
+        Data2DOperate opearte = Data2DReadTotal.create(this)
                 .setTask(backgroundTask).start();
-        if (reader != null) {
-            dataSize = reader.getRowIndex();
+        if (opearte != null) {
+            rowsNumber = opearte.getSourceRowIndex();
         }
-        rowsNumber = dataSize;
         try (Connection conn = DerbyBase.getConnection()) {
             tableData2DDefinition.updateData(conn, this);
         } catch (Exception e) {
@@ -178,11 +177,11 @@ public abstract class Data2D_Edit extends Data2D_Filter {
             }
             MyBoxLog.error(e);
         }
-        return dataSize;
+        return rowsNumber;
     }
 
     public List<List<String>> readPageData(Connection conn) {
-        if (!isColumnsValid()) {
+        if (!isValidDefinition()) {
             startRowOfCurrentPage = endRowOfCurrentPage = 0;
             return null;
         }
@@ -245,66 +244,167 @@ public abstract class Data2D_Edit extends Data2D_Filter {
         }
     }
 
-    public void countSize() {
+    public void countPageSize() {
         try {
-            rowsNumber = dataSize + (tableRowsNumber() - (endRowOfCurrentPage - startRowOfCurrentPage));
+            rowsNumber = rowsNumber + (tableRowsNumber() - (endRowOfCurrentPage - startRowOfCurrentPage));
             colsNumber = tableColsNumber();
             if (colsNumber <= 0) {
                 hasHeader = false;
             }
         } catch (Exception e) {
+            MyBoxLog.error(e);
         }
     }
 
     /*
         modify
      */
-    public long setValue(List<Integer> cols, SetValue setValue, boolean errorContinue) {
-        if (!validData() || cols == null || cols.isEmpty()) {
-            return -1;
+    public long savePageData(FxTask task) {
+        try {
+            Data2DModify operate = Data2DSavePage.save(this);
+            if (operate == null) {
+                return -2;
+            }
+            operate.setTask(task).start();
+            if (operate.isFailed()) {
+                return -3;
+            }
+            return operate.rowsCount();
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e);
+            return -4;
         }
-        Data2DWriter writer = Data2DWriter.create(this)
-                .setSetValue(setValue).setCols(cols)
-                .setTask(task).start(Data2DWriter.Operation.SetValue);
-        if (writer == null || writer.isFailed()) {
-            return -2;
-        }
-        return writer.getCount();
     }
 
-    public long deleteRows(boolean errorContinue) {
-        if (!validData()) {
-            return -1;
+    public long saveAttributes(FxTask task, Data2D attributes) {
+        try {
+            if (attributes == null) {
+                return -1;
+            }
+            Data2DModify operate = Data2DSaveAttributes.create(this, attributes);
+            if (operate == null) {
+                return -2;
+            }
+            operate.setTask(task).start();
+            if (operate.isFailed()) {
+                return -3;
+            }
+            attributes.rowsNumber = operate.rowsCount();
+            attributes.tableChanged = false;
+            attributes.currentPage = currentPage;
+            cloneData(attributes);
+            return attributes.rowsNumber;
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e);
+            return -4;
         }
-        Data2DWriter writer = Data2DWriter.create(this)
-                .setTask(task).start(Data2DWriter.Operation.Delete);
-        if (writer == null || writer.isFailed()) {
-            return -2;
-        }
-        return writer.getCount();
     }
 
-    public long clearData() {
-        if (!validData()) {
-            return -1;
+    public long setValue(FxTask task, List<Integer> cols, SetValue setValue) {
+        try {
+            if (!isValidData() || cols == null || cols.isEmpty()) {
+                return -1;
+            }
+            Data2DOperate operate = isUserTable()
+                    ? new DataTableSetValue((DataTable) this, setValue)
+                    : Data2DSetValue.create(this, setValue);
+            if (operate == null) {
+                return -2;
+            }
+            operate.setCols(cols).setTask(task).start();
+            if (operate.isFailed()) {
+                return -3;
+            }
+            tableChanged = false;
+            return operate.getHandledCount();
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e);
+            return -4;
         }
-        Data2DWriter writer = Data2DWriter.create(this)
-                .setTask(task).start(Data2DWriter.Operation.ClearData);
-        if (writer == null || writer.isFailed()) {
-            return -2;
+    }
+
+    public long deleteRows(FxTask task) {
+        try {
+            if (!isValidData()) {
+                return -1;
+            }
+            Data2DOperate operate = isUserTable()
+                    ? new DataTableDelete((DataTable) this)
+                    : Data2DDelete.create(this);
+            if (operate == null) {
+                return -2;
+            }
+            operate.setTask(task).start();
+            if (operate.isFailed()) {
+                return -3;
+            }
+            return operate.getHandledCount();
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e);
+            return -4;
         }
-        return dataSize;
+    }
+
+    public long clearData(FxTask task) {
+        try {
+            if (!isValidData()) {
+                return -1;
+            }
+            Data2DOperate operate = isUserTable()
+                    ? new DataTableClear((DataTable) this)
+                    : Data2DClear.create(this);
+
+            if (operate == null) {
+                return -2;
+            }
+            operate.setTask(task).start();
+            if (operate.isFailed()) {
+                return -3;
+            }
+            tableChanged = false;
+            return operate.getHandledCount();
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e);
+            return -4;
+        }
     }
 
     public String encodeCSV(FxTask task, String delimiterName,
-            boolean displayRowNames, boolean displayColNames, boolean formatValues) {
-        if (!isColumnsValid() || delimiterName == null) {
+            boolean displayRowNames, boolean displayColNames) {
+        if (!isValidDefinition()) {
             return "";
+        }
+        if (delimiterName == null) {
+            delimiterName = ",";
         }
         try {
             File tmpFile = getTempFile(".csv");
+            List<String> cols = null;
+            if (displayColNames) {
+                cols = new ArrayList<>();
+                if (displayRowNames) {
+                    cols.add(message("TableRowNumber"));
+                    cols.add(message("DataRowNumber"));
+                }
+                cols.addAll(columnNames());
+            }
             tmpFile = DataFileCSV.csvFile(task, tmpFile, delimiterValue(delimiterName),
-                    displayColNames ? columnNames() : null, tableRows(displayRowNames, formatValues));
+                    cols, tableRows(displayRowNames));
             if (tmpFile == null || !tmpFile.exists()) {
                 return "";
             }
@@ -341,13 +441,18 @@ public abstract class Data2D_Edit extends Data2D_Filter {
             } catch (Exception e) {
                 if (task != null) {
                     task.setError(e.toString());
+                } else {
+                    MyBoxLog.error(e);
                 }
-                MyBoxLog.error(e);
             }
             FileDeleteTools.delete(tmpFile);
             return data;
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            if (task != null) {
+                task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
+            }
             return null;
         }
     }
@@ -368,7 +473,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
 
     public boolean saveAttributes() {
         try (Connection conn = DerbyBase.getConnection()) {
-            return saveAttributes(conn, (Data2D) this, columns);
+            return saveAttributes(conn);
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
@@ -378,20 +483,8 @@ public abstract class Data2D_Edit extends Data2D_Filter {
         }
     }
 
-    public static boolean saveAttributes(Data2D source, Data2D target) {
-        try (Connection conn = DerbyBase.getConnection()) {
-            target.cloneAttributes(source);
-            if (!saveAttributes(conn, target, source.getColumns())) {
-                return false;
-            }
-            return target.getTableData2DStyle().copyStyles(conn, source.getD2did(), target.getD2did()) >= 0;
-        } catch (Exception e) {
-            if (source.getTask() != null) {
-                source.getTask().setError(e.toString());
-            }
-            MyBoxLog.error(e);
-            return false;
-        }
+    public boolean saveAttributes(Connection conn) {
+        return saveAttributes(conn, (Data2D) this, columns);
     }
 
     public static boolean saveAttributes(Data2D d, List<Data2DColumn> cols) {
@@ -412,6 +505,9 @@ public abstract class Data2D_Edit extends Data2D_Filter {
     public static boolean saveAttributes(Connection conn, Data2D d, List<Data2DColumn> inColumns) {
         if (d == null) {
             return false;
+        }
+        if (conn == null) {
+            return saveAttributes(d, inColumns);
         }
         try {
             if (!d.checkForSave() || !d.checkForLoad()) {
@@ -438,7 +534,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
             if (did < 0) {
                 return false;
             }
-            d.cloneAll(def);
+            d.cloneDef(def);
             if (inColumns != null && !inColumns.isEmpty()) {
                 try {
                     List<Data2DColumn> targetColumns = new ArrayList<>();

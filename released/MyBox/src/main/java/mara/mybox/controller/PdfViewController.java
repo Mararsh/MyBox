@@ -112,6 +112,8 @@ public class PdfViewController extends PdfViewController_Html {
                 }
             });
 
+            leftPane.disableProperty().bind(imageController.imageView.imageProperty().isNull());
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -467,6 +469,11 @@ public class PdfViewController extends PdfViewController_Html {
     }
 
     @FXML
+    public void refreshBookmarks() {
+        loadBookmarks();
+    }
+
+    @FXML
     @Override
     public boolean infoAction() {
         if (pdfInformation == null) {
@@ -569,12 +576,6 @@ public class PdfViewController extends PdfViewController_Html {
             MyBoxLog.error(e);
             return null;
         }
-    }
-
-    @Override
-    public boolean controlAltI() {
-        infoAction();
-        return true;
     }
 
     /*

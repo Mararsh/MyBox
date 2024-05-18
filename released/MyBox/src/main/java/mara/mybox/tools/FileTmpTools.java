@@ -34,6 +34,11 @@ public class FileTmpTools {
         return getPathTempFile(AppVariables.MyBoxTempPath.getAbsolutePath(), suffix);
     }
 
+    public static File tmpFile(String prefix, String ext) {
+        return getPathTempFile(AppVariables.MyBoxTempPath.getAbsolutePath(), prefix,
+                ext == null || ext.isBlank() ? null : "." + ext);
+    }
+
     public static File getPathTempFile(String path) {
         if (path == null) {
             return null;
@@ -95,6 +100,12 @@ public class FileTmpTools {
         return file;
     }
 
+    public static boolean isTmpFile(File file) {
+        return file != null
+                && file.getAbsolutePath().startsWith(
+                        AppVariables.MyBoxTempPath.getAbsolutePath() + File.separator);
+    }
+
     public static String generatePath(String type) {
         String path = AppPaths.getGeneratedPath() + File.separator
                 + (type == null || type.isBlank() ? "x" : FileNameTools.filter(type));
@@ -108,6 +119,12 @@ public class FileTmpTools {
 
     public static File generateFile(String prefix, String ext) {
         return getPathTempFile(generatePath(ext), prefix, ext == null || ext.isBlank() ? null : "." + ext);
+    }
+
+    public static boolean isGenerateFile(File file) {
+        return file != null
+                && file.getAbsolutePath().startsWith(
+                        AppPaths.getGeneratedPath() + File.separator);
     }
 
 }

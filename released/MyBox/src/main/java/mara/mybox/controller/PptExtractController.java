@@ -107,7 +107,7 @@ public class PptExtractController extends BaseBatchFileController {
 
     @Override
     public String handleFile(FxTask currentTask, File srcFile, File targetPath) {
-        String suffix = FileNameTools.suffix(srcFile.getName());
+        String suffix = FileNameTools.ext(srcFile.getName());
         if ("pptx".equalsIgnoreCase(suffix)) {
             return handlePPTX(currentTask, srcFile, targetPath);
         }

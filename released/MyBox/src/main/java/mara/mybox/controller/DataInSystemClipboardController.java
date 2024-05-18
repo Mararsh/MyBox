@@ -22,7 +22,7 @@ public class DataInSystemClipboardController extends BaseController {
     @FXML
     protected ControlData2DSystemClipboard boardController;
     @FXML
-    protected ControlData2DResults resultsController;
+    protected ControlData2DView resultsController;
 
     public DataInSystemClipboardController() {
         baseTitle = message("DataInSystemClipboard");
@@ -36,7 +36,7 @@ public class DataInSystemClipboardController extends BaseController {
             boardController.loadNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    resultsController.loadData(boardController.textData);
+                    resultsController.loadDef(boardController.textData);
                 }
             });
             boardController.loadContentInSystemClipboard();

@@ -690,7 +690,7 @@ public class ControlFindReplace extends BaseController {
             }
             DataFileCSV matchesData = findReplace.getMatchesData();
             if (matchesData != null) {
-                DataFileCSVController.loadCSV(matchesData);
+                Data2DManufactureController.openDef(matchesData);
             } else {
                 List<FindReplaceMatch> matches = findReplace.getMatches();
                 if (matches == null || matches.isEmpty()) {

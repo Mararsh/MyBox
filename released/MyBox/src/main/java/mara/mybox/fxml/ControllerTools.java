@@ -4,8 +4,7 @@ import java.io.File;
 import java.util.Arrays;
 import javafx.stage.Stage;
 import mara.mybox.controller.BaseController;
-import mara.mybox.controller.DataFileCSVController;
-import mara.mybox.controller.DataFileExcelController;
+import mara.mybox.controller.Data2DManufactureController;
 import mara.mybox.controller.FileDecompressUnarchiveController;
 import mara.mybox.controller.HtmlPopController;
 import mara.mybox.controller.ImageEditorController;
@@ -59,7 +58,7 @@ public class ControllerTools {
             PopTools.browseURI(null, file.toURI());
             return null;
         }
-        String suffix = FileNameTools.suffix(file.getName()).toLowerCase();
+        String suffix = FileNameTools.ext(file.getName()).toLowerCase();
         if (FileExtensions.SupportedImages.contains(suffix)) {
             return ImageEditorController.openFile(file);
         } else if ("html".equals(suffix) || "htm".equals(suffix)) {
@@ -69,9 +68,9 @@ public class ControllerTools {
         } else if ("pdf".equals(suffix)) {
             return PdfViewController.open(file);
         } else if ("csv".equals(suffix)) {
-            return DataFileCSVController.openFile(file);
+            return Data2DManufactureController.openCSVFile(file, null, true, ",");
         } else if ("xlsx".equals(suffix) || "xls".equals(suffix)) {
-            return DataFileExcelController.openFile(file);
+            return Data2DManufactureController.openExcelFile(file, null, true);
         } else if ("ppt".equals(suffix) || "pptx".equals(suffix)) {
             return PptViewController.openFile(file);
         } else if ("doc".equals(suffix) || "docx".equals(suffix)) {
@@ -101,7 +100,7 @@ public class ControllerTools {
             return null;
         }
         if (filename.startsWith("http") || filename.startsWith("ftp")) {
-            return HtmlPopController.openHtml(parent, filename);
+            return HtmlPopController.openAddress(parent, filename);
         }
         File file = new File(filename);
         if (!file.exists()) {
@@ -114,12 +113,12 @@ public class ControllerTools {
         if (file.length() > 1024 * 1024) {
             return openTarget(filename, true);
         }
-        String suffix = FileNameTools.suffix(file.getName()).toLowerCase();
+        String suffix = FileNameTools.ext(file.getName()).toLowerCase();
         if (FileExtensions.SupportedImages.contains(suffix)) {
             return ImagePopController.openFile(parent, filename);
 
         } else if ("html".equals(suffix) || "htm".equals(suffix)) {
-            return HtmlPopController.openHtml(parent, filename);
+            return HtmlPopController.openAddress(parent, filename);
 
         } else if ("md".equals(suffix)) {
             return MarkdownPopController.openFile(parent, filename);

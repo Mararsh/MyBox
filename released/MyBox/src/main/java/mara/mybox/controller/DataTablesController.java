@@ -3,56 +3,43 @@ package mara.mybox.controller;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.stage.Window;
-import mara.mybox.data2d.DataFileCSV;
-import mara.mybox.data2d.DataTable;
-import mara.mybox.db.data.Data2DColumn;
+import mara.mybox.data2d.Data2D;
+import mara.mybox.data2d.TmpTable;
 import mara.mybox.db.data.Data2DDefinition;
-import mara.mybox.db.table.TableData2D;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
- * @CreateDate 2022-2-16
+ * @CreateDate 2021-12-16
  * @License Apache License Version 2.0
  */
-public class DataTablesController extends BaseData2DController {
-
-    @FXML
-    protected Button tableDefinitionButton;
+public class DataTablesController extends BaseData2DListController {
 
     public DataTablesController() {
         baseTitle = message("DatabaseTable");
         TipsLabelKey = "DataTableTips";
-        type = Data2DDefinition.Type.DatabaseTable;
     }
 
     @Override
-    public void checkButtons() {
-        super.checkButtons();
-        tableDefinitionButton.setDisable(loadController.data2D == null || loadController.data2D.getSheet() == null);
-    }
+    public void setConditions() {
+        try {
+            queryConditions = " data_type  = " + Data2D.type(Data2DDefinition.DataType.DatabaseTable)
+                    + " AND NOT( sheet like '" + TmpTable.TmpTablePrefix + "%' "
+                    + " OR sheet like '" + TmpTable.TmpTablePrefix.toLowerCase() + "%' )";
 
-    @FXML
-    protected void tableDefinition() {
-        if (loadController.data2D == null || loadController.data2D.getSheet() == null) {
-            popError(message("NotFound"));
-            return;
-        }
-        String html = TableData2D.tableDefinition(loadController.data2D.getSheet());
-        if (html != null) {
-            HtmlPopController.openHtml(this, html);
-        } else {
-            popError(message("NotFound"));
+        } catch (Exception e) {
+            MyBoxLog.error(e);
         }
     }
 
     @FXML
-    public void sql() {
-        DatabaseSqlController.open(this instanceof MyBoxTablesController);
+    @Override
+    public void createAction() {
+        Data2DManufactureController.create(Data2DDefinition.DataType.DatabaseTable);
     }
 
     /*
@@ -67,7 +54,6 @@ public class DataTablesController extends BaseData2DController {
             if (object != null && object instanceof DataTablesController) {
                 try {
                     controller = (DataTablesController) object;
-                    controller.refreshAction();
                     break;
                 } catch (Exception e) {
                 }
@@ -82,31 +68,7 @@ public class DataTablesController extends BaseData2DController {
 
     public static DataTablesController open(Data2DDefinition def) {
         DataTablesController controller = oneOpen();
-        if (def != null) {
-            controller.loadDef(def);
-        }
-        return controller;
-    }
-
-    public static DataTablesController open(String name, List<Data2DColumn> cols, List<List<String>> data) {
-        DataTablesController controller = oneOpen();
-        controller.dataController.loadTmpData(name, cols, data);
-        return controller;
-    }
-
-    public static DataTablesController loadCSV(DataFileCSV csvData) {
-        DataTablesController controller = oneOpen();
-        if (csvData != null) {
-            controller.loadCSVData(csvData);
-        }
-        return controller;
-    }
-
-    public static DataTablesController loadTable(DataTable dataTable) {
-        DataTablesController controller = oneOpen();
-        if (dataTable != null) {
-            controller.loadTableData(dataTable);
-        }
+        controller.loadDef(def);
         return controller;
     }
 

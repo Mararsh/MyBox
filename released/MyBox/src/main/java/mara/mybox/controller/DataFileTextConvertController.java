@@ -22,7 +22,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-9-17
  * @License Apache License Version 2.0
  */
-public class DataFileTextConvertController extends BaseDataConvertController {
+public class DataFileTextConvertController extends BaseDataFileConvertController {
 
     protected String sourceDelimiterName;
     protected Charset sourceCharset;
@@ -96,14 +96,15 @@ public class DataFileTextConvertController extends BaseDataConvertController {
                             names.add(message("Column") + i);
                         }
                     }
-                    convertController.setParameters(targetPath, names, filePrefix(srcFile), skip);
+                    export.setNames(targetPathController, names, filePrefix(srcFile));
+                    export.openWriters();
                     if (sourceWithName) {
                         continue;
                     }
                 }
-                convertController.writeRow(rowData);
+                export.writeRow(rowData);
             }
-            convertController.closeWriters();
+            export.closeWriters();
             result = message("Handled");
         } catch (Exception e) {
             result = e.toString();

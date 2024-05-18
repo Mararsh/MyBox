@@ -89,7 +89,10 @@ public abstract class BaseImageScope_Values extends BaseImageScope_Base {
                 } else {
                     drawMaskShape();
                 }
-                fitView();
+                if (needFixSize) {
+                    paneSize();
+                    needFixSize = false;
+                }
                 showNotify.set(!showNotify.get());
             }
 

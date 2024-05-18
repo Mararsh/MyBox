@@ -41,6 +41,7 @@ License:    Apache License Version 2.0
                                         <fx:include fx:id="bgColor" source="ControlColorSet.fxml" />
                                     </children>
                                 </FlowPane>
+                        <CheckBox fx:id="marginsCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%CutMargins" wrapText="true" />
                                 <FlowPane alignment="CENTER_RIGHT" hgap="2.0" layoutX="10.0" layoutY="174.0" prefWrapLength="100.0" vgap="2.0">
                                     <children>
                                         <CheckBox fx:id="onTopCheck" mnemonicParsing="false" selected="true">

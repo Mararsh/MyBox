@@ -32,8 +32,7 @@ public class ImageMarginsBatchController extends BaseImageEditBatchController {
             marginsController.setParameters(null);
 
             startButton.disableProperty().unbind();
-            startButton.disableProperty().bind(targetPathController.valid.not()
-                    .or(Bindings.isEmpty(tableView.getItems()))
+            startButton.disableProperty().bind(Bindings.isEmpty(tableView.getItems())
                     .or(marginsController.widthSelector.getEditor().styleProperty().isEqualTo(UserConfig.badStyle()))
                     .or(marginsController.distanceInput.styleProperty().isEqualTo(UserConfig.badStyle()))
             );

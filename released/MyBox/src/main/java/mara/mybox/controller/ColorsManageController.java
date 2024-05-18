@@ -38,7 +38,7 @@ import mara.mybox.db.table.TableColor;
 import mara.mybox.db.table.TableColorPalette;
 import mara.mybox.db.table.TableColorPaletteName;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.FxColorTools;
+import static mara.mybox.fximage.FxColorTools.color2css;
 import mara.mybox.fximage.PaletteTools;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
@@ -498,7 +498,7 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
             protected void whenSucceeded() {
                 if (file.exists()) {
                     recordFileWritten(file, FileType.Text);
-                    DataFileCSVController.open(file, Charset.forName("UTF-8"), true, ",");
+                    Data2DManufactureController.openCSVFile(file, Charset.forName("UTF-8"), true, ",");
                 }
             }
         };
@@ -582,8 +582,9 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
                     if (column.equals(colorValueColumn)) {
                         row.add(data.getColorValue() + "");
                     } else if (column.equals(colorColumn)) {
-                        row.add("<DIV style=\"width: 50px;  background-color:"
-                                + data.getRgb() + "; \">&nbsp;&nbsp;&nbsp;</DIV>");
+                        row.add("<DIV style=\"width: 50px;  "
+                                + "background-color:" + color2css(data.getColor()) + "; \">"
+                                + "&nbsp;&nbsp;&nbsp;</DIV>");
                     } else if (column.equals(colorNameColumn)) {
                         row.add(data.getColorName());
                     } else if (column.equals(rgbaColumn)) {
@@ -639,13 +640,15 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
                             row.add(ColorData.htmlSimpleValue(data));
                         }
                     } else if (column.equals(invertColumn)) {
-                        row.add("<DIV style=\"width: 50px;  background-color:"
-                                + FxColorTools.color2rgb(data.getInvertColor()) + "; \">&nbsp;&nbsp;&nbsp;</DIV>");
+                        row.add("<DIV style=\"width: 50px;  "
+                                + "background-color:" + color2css(data.getInvertColor()) + "; \">"
+                                + "&nbsp;&nbsp;&nbsp;</DIV>");
                     } else if (column.equals(invertRGBColumn)) {
                         row.add(data.getInvertRGB());
                     } else if (column.equals(complementaryColumn)) {
-                        row.add("<DIV style=\"width: 50px;  background-color:"
-                                + FxColorTools.color2rgb(data.getComplementaryColor()) + "; \">&nbsp;&nbsp;&nbsp;</DIV>");
+                        row.add("<DIV style=\"width: 50px; "
+                                + " background-color:" + color2css(data.getComplementaryColor()) + "; \">"
+                                + "&nbsp;&nbsp;&nbsp;</DIV>");
                     } else if (column.equals(complementaryRGBColumn)) {
                         row.add(data.getComplementaryRGB());
                     }

@@ -510,7 +510,7 @@ public class InfoTreeNodeImportController extends BaseBatchFileController {
     }
 
     @Override
-    public void afterTask() {
+    public void afterTask(boolean ok) {
         if (infoController != null) {
             infoController.infoTree.loadTree();
 

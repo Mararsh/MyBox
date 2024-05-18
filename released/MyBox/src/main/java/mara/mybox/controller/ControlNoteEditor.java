@@ -3,7 +3,6 @@ package mara.mybox.controller;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WebViewTools;
 import mara.mybox.fxml.style.HtmlStyles;
-import mara.mybox.tools.HtmlReadTools;
 
 /**
  * @Author Mara
@@ -20,7 +19,6 @@ public class ControlNoteEditor extends BaseHtmlFormat {
 
             webViewController.linkInNewTab = true;
             webViewController.defaultStyle = HtmlStyles.TableStyle;
-            webViewController.initStyle(HtmlStyles.TableStyle);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -37,16 +35,19 @@ public class ControlNoteEditor extends BaseHtmlFormat {
 
     @Override
     public String htmlCodes(String html) {
-        return HtmlReadTools.body(html, false);
+        return html;
+//        return HtmlReadTools.body(html, false);
     }
 
     @Override
     public String htmlInWebview() {
-        return HtmlReadTools.body(WebViewTools.getHtml(webEngine), false);
+        return WebViewTools.getHtml(webEngine);
+//        return HtmlReadTools.body(WebViewTools.getHtml(webEngine), false);
     }
 
     @Override
     public String htmlByRichEditor() {
-        return HtmlReadTools.body(richEditorController.getContents(), false);
+        return richEditorController.getContents();
+//        return HtmlReadTools.body(richEditorController.getContents(), false);
     }
 }

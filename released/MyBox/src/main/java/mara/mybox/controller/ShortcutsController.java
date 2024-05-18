@@ -115,7 +115,7 @@ public class ShortcutsController extends BaseTablePagesController<ShortCut> {
             tableData.add(new ShortCut("F5", "", message(lang, "SaveAs"), "CTRL+B / ALT+B", "iconSaveAs.png"));
             tableData.add(new ShortCut("F6", "", message(lang, "ContextMenu"), "", "iconMenu.png"));
             tableData.add(new ShortCut("F7", "", message(lang, "Operations"), "", "iconOperation.png"));
-            tableData.add(new ShortCut("F8", "", message(lang, "Home"), "", "iconMyBox.png"));
+            tableData.add(new ShortCut("F8", "", message(lang, "MainPage"), "", "iconMyBox.png"));
             tableData.add(new ShortCut("F9", "", message(lang, "Tips"), "", "iconTips.png"));
             tableData.add(new ShortCut("F10", "", message(lang, "Synchronize"), "", "iconSynchronize.png"));
             tableData.add(new ShortCut("F11", "", message(lang, "ControlLeftPane"), "", "iconDoubleLeft.png"));
@@ -264,6 +264,10 @@ public class ShortcutsController extends BaseTablePagesController<ShortCut> {
                     }
                     task.setInfo(file.getAbsolutePath());
 
+                    file = HelpTools.makeInterfaceTips(lang);
+                    FileCopyTools.copyFile(file, new File(path, file.getName()), true, true);
+                    task.setInfo(file.getAbsolutePath());
+
                     baseTitle = message(lang, "Shortcuts");
                     makeList(lang);
                     StringTable table = makeStringTable(this);
@@ -272,19 +276,25 @@ public class ShortcutsController extends BaseTablePagesController<ShortCut> {
                     file = TextFileTools.writeFile(file, html);
                     task.setInfo(file.getAbsolutePath());
 
-                    file = HelpTools.makeInterfaceTips(lang);
-                    FileCopyTools.copyFile(file, new File(path, file.getName()), true, true);
-                    task.setInfo(file.getAbsolutePath());
-
                     file = HelpTools.usefulLinks(lang);
                     FileCopyTools.copyFile(file, new File(path, file.getName()), true, true);
                     task.setInfo(file.getAbsolutePath());
-
                     file = imageStories(this, true, lang);
                     FileCopyTools.copyFile(file, new File(path, file.getName()), true, true);
                     task.setInfo(file.getAbsolutePath());
 
-                    file = FxFileTools.getInternalFile("/data/examples/ColorsArtPaints.csv",
+                    colorDocs();
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            protected void colorDocs() {
+                try {
+
+                    File file = FxFileTools.getInternalFile("/data/examples/ColorsArtPaints.csv",
                             "data", "ColorsArtPaints_" + lang + ".csv", true);
                     List<ColorData> colors = ColorDataTools.readCSV(this, file, true);
                     colorsDoc(lang, colors, message(lang, "ArtPaints"), "art_paints");
@@ -343,11 +353,7 @@ public class ShortcutsController extends BaseTablePagesController<ShortCut> {
 
                     colors = PaletteTools.greyScales(lang);
                     colorsDoc(lang, colors, message(lang, "GrayScale"), "gray");
-
-                    return true;
                 } catch (Exception e) {
-                    error = e.toString();
-                    return false;
                 }
             }
 

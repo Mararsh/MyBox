@@ -301,7 +301,7 @@ public class BaseImageController extends BaseImageController_Actions {
             MenuItem menu;
 
             if (sourceFile != null) {
-                String fileFormat = FileNameTools.suffix(sourceFile.getName()).toLowerCase();
+                String fileFormat = FileNameTools.ext(sourceFile.getName()).toLowerCase();
                 if (FileExtensions.MultiFramesImages.contains(fileFormat)) {
                     menu = new MenuItem(message("Frames"), StyleTools.getIconImageView("iconFrame.png"));
                     menu.setOnAction((ActionEvent menuItemEvent) -> {
@@ -500,7 +500,7 @@ public class BaseImageController extends BaseImageController_Actions {
             items.add(menu);
 
             if (mainMenuController == null) {
-                menu = new MenuItem(message("Home"), StyleTools.getIconImageView("iconMyBox.png"));
+                menu = new MenuItem(message("MainPageShortcut"), StyleTools.getIconImageView("iconMyBox.png"));
                 menu.setOnAction((ActionEvent event) -> {
                     mybox();
                 });
@@ -773,15 +773,6 @@ public class BaseImageController extends BaseImageController_Actions {
             return false;
         }
         saveAsAction();
-        return true;
-    }
-
-    @Override
-    public boolean controlAltI() {
-        if (imageInformation == null) {
-            return false;
-        }
-        infoAction();
         return true;
     }
 

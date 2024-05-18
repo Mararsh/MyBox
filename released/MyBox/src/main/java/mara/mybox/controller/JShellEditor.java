@@ -196,7 +196,7 @@ public class JShellEditor extends InfoTreeNodeEditor {
             String html = HtmlWriteTools.html(null, HtmlStyles.DefaultStyle, "<body>" + outputs + "</body>");
             jShellController.webViewController.loadContents(html);
         });
-
+        Platform.requestNextPulse();
     }
 
     // https://stackoverflow.com/questions/53867043/what-are-the-limits-to-jshell?r=SearchResults

@@ -170,9 +170,7 @@ public class InfoTreeNodeExportController extends BaseTaskController {
             styleInput.setText(UserConfig.getString(baseName + "Style", HtmlStyles.styleValue("Default")));
 
             startButton.disableProperty().unbind();
-            startButton.disableProperty().bind(targetPathController.valid.not()
-                    .or(infoTree.getSelectionModel().selectedItemProperty().isNull())
-            );
+            startButton.disableProperty().bind(infoTree.getSelectionModel().selectedItemProperty().isNull());
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -228,7 +226,7 @@ public class InfoTreeNodeExportController extends BaseTaskController {
             popError(message("SelectToHandle"));
             return false;
         }
-        targetPath = targetPathController.file();
+        targetPath = targetPathController.pickFile();
         if (targetPath == null) {
             popError(message("InvalidParameters") + ": " + message("TargetPath"));
             return false;
@@ -384,7 +382,7 @@ public class InfoTreeNodeExportController extends BaseTaskController {
     protected void writeHtmlHead(FileWriter writer, String title) {
         try {
             StringBuilder s = new StringBuilder();
-            s.append("<!DOCTYPE html><HTML>\n").append(indent).append("<HEAD>\n")
+            s.append("<HTML>\n").append(indent).append("<HEAD>\n")
                     .append(indent).append(indent).append("<title>").append(title).append("</title>\n")
                     .append(indent).append(indent)
                     .append("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=")

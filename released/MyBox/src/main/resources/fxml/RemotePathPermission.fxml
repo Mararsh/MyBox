@@ -20,7 +20,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" prefHeight="500.0" prefWidth="600.0" spacing="5.0" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.RemotePathPermissionController">
+<VBox fx:id="thisPane" prefHeight="500.0" prefWidth="600.0" spacing="5.0" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.RemotePathPermissionController">
     <children>
         <Label fx:id="titleLabel" alignment="CENTER" maxWidth="1.7976931348623157E308" text="%RemotePathPermission" textAlignment="CENTER" VBox.vgrow="ALWAYS" />
       <Label fx:id="hostLabel" layoutX="20.0" layoutY="450.0" minHeight="-Infinity" wrapText="true" />
@@ -59,7 +59,7 @@ License:    Apache License Version 2.0
       <HBox alignment="CENTER_LEFT" spacing="2.0">
          <children>
             <CheckBox fx:id="dirCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%HandleAllFilesInDirectories" wrapText="true" />
-            <CheckBox fx:id="continueCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%ContinueWhenError" wrapText="true" />
+            <CheckBox fx:id="errorContinueCheck" minHeight="-Infinity" mnemonicParsing="false" text="%ContinueWhenError" wrapText="true" />
          </children>
       </HBox>
       <HBox alignment="CENTER_LEFT" spacing="2.0">

@@ -9,6 +9,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataTable;
+import mara.mybox.data2d.tools.Data2DTableTools;
+import mara.mybox.data2d.writer.DataTableWriter;
 import mara.mybox.db.Database;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition.InvalidAs;
@@ -34,6 +36,7 @@ public class ControlNewDataTable extends BaseController {
     protected TableData2D tableData2D;
     protected List<Integer> columnIndices;
     protected long count;
+    protected String tableName;
 
     @FXML
     protected ControlSelection columnsController;
@@ -48,62 +51,45 @@ public class ControlNewDataTable extends BaseController {
         TipsLabelKey = message("SqlIdentifierComments");
     }
 
-    public void setParameters(BaseTaskController taskController) {
-        try {
-            this.taskController = taskController;
-
-            columnsController.setParameters(this, message("Column"), "");
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
     public void setParameters(BaseTaskController taskController, Data2D data2D) {
-        setParameters(taskController);
+        this.taskController = taskController;
+
+        columnsController.setParameters(this, message("Column"), "");
         setData(data2D);
     }
 
     public void setData(Data2D data2D) {
         try {
             this.data2D = data2D;
-            nameInput.setText(data2D.shortName());
-            idInput.setText("id");
-            columnsController.loadNames(data2D.columnNames());
+            String n = idInput.getText();
+            if (n == null || n.isBlank()) {
+                idInput.setText("id");
+            }
+            if (data2D != null) {
+                nameInput.setText(data2D.shortName());
+                columnIndices = data2D.columnIndices();
+                columnsController.loadNames(data2D.columnNames());
+            } else {
+                columnIndices = null;
+                columnsController.loadNames(null);
+            }
 
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
-    public void setColumns(List<Integer> columnIndices) {
+    public boolean checkOptions() {
         try {
-            if (data2D == null) {
-                return;
-            }
-            this.columnIndices = columnIndices;
-            columnsController.loadNames(null);
-            if (columnIndices == null) {
-                return;
-            }
-            List<String> names = new ArrayList<>();
-            for (int index : columnIndices) {
-                names.add(data2D.getColumns().get(index).getColumnName());
-            }
-            columnsController.loadNames(names);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    public boolean checkOptions(Connection conn, boolean onlySQL) {
-        try {
-            if (nameInput.getText().isBlank()) {
+            tableName = null;
+            String name = nameInput.getText();
+            if (name == null || name.isBlank()) {
                 taskController.popError(message("InvalidParameters") + ": " + message("TableName"));
                 return false;
             }
             if (autoRadio.isSelected()) {
-                if (idInput.getText().isBlank()) {
+                String id = idInput.getText();
+                if (id == null || id.isBlank()) {
                     taskController.popError(message("InvalidParameters") + ": " + message("ID"));
                     return false;
                 }
@@ -111,7 +97,7 @@ public class ControlNewDataTable extends BaseController {
                 taskController.popError(message("SelectToHandle") + ": " + message("PrimaryKey"));
                 return false;
             }
-            String tableName = DerbyBase.fixedIdentifier(nameInput.getText().trim());
+            tableName = DerbyBase.fixedIdentifier(name.trim());
             if ((data2D instanceof DataTable) && tableName.equals(data2D.getSheet())) {
                 alertError(message("CannotConvertToItself") + ": " + tableName);
                 return false;
@@ -119,18 +105,25 @@ public class ControlNewDataTable extends BaseController {
             if (tableData2D == null) {
                 tableData2D = new TableData2D();
             }
+            return true;
+        } catch (Exception e) {
+            popError(e.toString());
+            return false;
+        }
+    }
+
+    public boolean checkOptions(Connection conn, boolean onlySQL) {
+        try {
+            if (!checkOptions()) {
+                return false;
+            }
             if (DerbyBase.exist(conn, tableName) > 0) {
                 if (onlySQL) {
                     alertWarning(message("AlreadyExisted") + ": " + tableName);
                     return true;
                 } else {
-                    if (PopTools.askSure(message("AlreadyExisted") + ": " + tableName,
+                    if (!PopTools.askSure(message("AlreadyExisted") + ": " + tableName,
                             message("SureReplaceExistedDatabaseTable"))) {
-                        if (dataTable == null) {
-                            dataTable = new DataTable();
-                        }
-                        return dataTable.drop(conn, tableName) >= 0;
-                    } else {
                         return false;
                     }
                 }
@@ -142,8 +135,37 @@ public class ControlNewDataTable extends BaseController {
         }
     }
 
+    public DataTableWriter pickTableWriter() {
+        try (Connection conn = DerbyBase.getConnection()) {
+            if (!checkOptions(conn, false)) {
+                return null;
+            }
+            DataTableWriter writer = new DataTableWriter();
+            List<String> keys;
+            if (autoRadio.isSelected()) {
+                keys = null;
+            } else {
+                keys = columnsController.selectedNames();
+            }
+            writer.setTargetTableName(nameInput.getText().trim())
+                    .setKeys(keys)
+                    .setIdName(idInput.getText().trim())
+                    .setTargetTableDesciption(data2D.getComments())
+                    .setDropExisted(true)
+                    .setRecordTargetFile(false)
+                    .setRecordTargetData(true);
+            return writer;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
     public boolean makeTable(FxTask currentTask) {
         try {
+            if (!checkOptions()) {
+                return false;
+            }
             List<Data2DColumn> sourceColumns = new ArrayList<>();
             for (int index : columnIndices) {
                 sourceColumns.add(data2D.getColumns().get(index));
@@ -154,9 +176,9 @@ public class ControlNewDataTable extends BaseController {
             } else {
                 keys = columnsController.selectedNames();
             }
-            dataTable = Data2D.makeTable(currentTask, nameInput.getText().trim(),
+            dataTable = Data2DTableTools.makeTable(currentTask, nameInput.getText().trim(),
                     sourceColumns, keys, idInput.getText().trim());
-            if (currentTask == null || !currentTask.isWorking()) {
+            if (currentTask != null && !currentTask.isWorking()) {
                 return false;
             }
             if (dataTable == null) {
@@ -178,19 +200,25 @@ public class ControlNewDataTable extends BaseController {
 
     public boolean createTable(FxTask currentTask, Connection conn) {
         try {
-            if (!makeTable(currentTask)) {
+            if (conn == null || !makeTable(currentTask)) {
                 return false;
             }
+            String tName = tableData2D.getTableName();
             tableData2D = dataTable.getTableData2D();
             String sql = tableData2D.createTableStatement();
             taskController.updateLogs(sql);
+            if (DerbyBase.exist(conn, tName) > 0) {
+                dataTable.drop(conn, tName);
+                conn.commit();
+            }
             if (conn.createStatement().executeUpdate(sql) >= 0) {
                 taskController.updateLogs(message("Created"));
             } else {
                 taskController.updateLogs(message("Failed"));
                 return false;
             }
-            dataTable.recordTable(conn, tableData2D.getTableName(), dataTable.getColumns(), dataTable.getComments());
+            dataTable.recordTable(conn, tName,
+                    dataTable.getColumns(), dataTable.getComments());
             taskController.updateLogs(message("Record"));
             return true;
         } catch (Exception e) {
@@ -204,12 +232,12 @@ public class ControlNewDataTable extends BaseController {
             conn.setAutoCommit(false);
             count = 0;
             if (rows == null || rows.isEmpty()) {
-                for (List<String> pageRow : data2D.tableData()) {
+                for (List<String> pageRow : data2D.getPageData()) {
                     importRow(conn, pageRow, invalidAs);
                 }
             } else {
                 for (Integer row : rows) {
-                    importRow(conn, data2D.tableData().get(row), invalidAs);
+                    importRow(conn, data2D.getPageData().get(row), invalidAs);
                 }
             }
             dataTable.setRowsNumber(count);
@@ -246,7 +274,7 @@ public class ControlNewDataTable extends BaseController {
 
     public boolean importAllData(FxTask currentTask, Connection conn, InvalidAs invalidAs) {
         try {
-            count = data2D.importTable(currentTask, conn, dataTable, columnIndices, false, invalidAs);
+            count = Data2DTableTools.importTable(currentTask, conn, data2D, dataTable, columnIndices, false, invalidAs);
             taskController.updateLogs(message("Imported") + ": " + count);
             setRowsNumber(conn);
             return count >= 0;

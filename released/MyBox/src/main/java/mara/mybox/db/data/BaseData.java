@@ -41,7 +41,7 @@ public class BaseData implements Cloneable {
         }
     }
 
-    public boolean isEmpty() {
+    public boolean isNoColumn() {
         try {
             return columnValues.keySet().isEmpty();
         } catch (Exception e) {
@@ -57,6 +57,15 @@ public class BaseData implements Cloneable {
             MyBoxLog.debug(e);
             return null;
         }
+    }
+
+    public Map<String, String> nameValues() {
+        Map<String, String> values = new HashMap<>();
+        for (String name : columnValues.keySet()) {
+            Object value = getColumnValue(name);
+            values.put(name, value != null ? value.toString() : null);
+        }
+        return values;
     }
 
     @Override

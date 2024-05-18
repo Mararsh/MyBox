@@ -24,7 +24,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2023-6-13
  * @License Apache License Version 2.0
  */
-public abstract class BaseFileController extends BaseController {
+public abstract class BaseFileController extends BaseTaskController {
 
     protected FileSortTools.FileSortMode sortMode;
 
@@ -226,17 +226,28 @@ public abstract class BaseFileController extends BaseController {
         }
     }
 
+    @Override
+    public boolean controlAltI() {
+        return infoAction();
+    }
+
     @FXML
     @Override
     public boolean infoAction() {
-        if (sourceFile != null) {
-            String info = FileTools.fileInformation(sourceFile);
-            if (info != null && !info.isBlank()) {
-                TextPopController.loadText(info);
-                return true;
-            }
+        String info = fileInfo();
+        if (info != null && !info.isBlank()) {
+            TextPopController.loadText(info);
+            return true;
         }
         return false;
+    }
+
+    public String fileInfo() {
+        if (sourceFile != null) {
+            return FileTools.fileInformation(sourceFile);
+        } else {
+            return null;
+        }
     }
 
 }

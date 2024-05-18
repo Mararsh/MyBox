@@ -28,13 +28,7 @@ public class FilesMergeController extends BaseBatchFileController {
     @Override
     public boolean makeMoreParameters() {
         try {
-            if (targetFileController != null) {
-                targetFile = targetFileController.file;
-            }
-            if (targetFile == null) {
-                return false;
-            }
-            targetFile = makeTargetFile(targetFile, targetFile.getParentFile());
+            targetFile = makeTargetFile();
             if (targetFile == null) {
                 return false;
             }
@@ -85,11 +79,11 @@ public class FilesMergeController extends BaseBatchFileController {
     }
 
     @Override
-    public void afterTask() {
+    public void afterTask(boolean ok) {
         if (closeWriter()) {
             targetFileGenerated(targetFile);
         }
-        super.afterTask();
+        super.afterTask(ok);
     }
 
     protected boolean closeWriter() {

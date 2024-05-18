@@ -17,11 +17,9 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
-import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TextTools;
-import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -58,7 +56,6 @@ public class DataFileTextMergeController extends FilesMergeController {
 
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(Bindings.isEmpty(tableData)
-                    .or(targetFileController.valid.not())
                     .or(readOptionsController.delimiterController.delimiterInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                     .or(writeOptionsController.delimiterController.delimiterInput.styleProperty().isEqualTo(UserConfig.badStyle()))
             );
@@ -154,11 +151,11 @@ public class DataFileTextMergeController extends FilesMergeController {
             writer.close();
             try (Connection conn = DerbyBase.getConnection()) {
                 TableData2DDefinition tableData2DDefinition = new TableData2DDefinition();
-                Data2DDefinition def = tableData2DDefinition.queryFile(conn, Data2DDefinition.Type.Texts, targetFile);
+                Data2DDefinition def = tableData2DDefinition.queryFile(conn, Data2DDefinition.DataType.Texts, targetFile);
                 if (def == null) {
                     def = Data2DDefinition.create();
                 }
-                def.setType(Data2DDefinition.Type.Texts)
+                def.setType(Data2DDefinition.DataType.Texts)
                         .setFile(targetFile)
                         .setDataName(targetFile.getName())
                         .setCharset(targetCharset)
@@ -186,8 +183,7 @@ public class DataFileTextMergeController extends FilesMergeController {
         if (file == null) {
             return;
         }
-        DataFileTextController controller = (DataFileTextController) WindowTools.openStage(Fxmls.DataFileTextFxml);
-        controller.sourceFileChanged(file);
+        Data2DManufactureController.openTextFile(file, targetCharset, targetWithName, targetDelimiter);
     }
 
 }

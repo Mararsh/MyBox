@@ -7,6 +7,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import mara.mybox.db.data.Data2DColumn;
@@ -48,9 +49,9 @@ public class Data2DChartXYController extends BaseData2DChartController {
     }
 
     @Override
-    public void initControls() {
+    public void initOptions() {
         try {
-            super.initControls();
+            super.initOptions();
 
             chartMaker = chartController.chartMaker;
             chartController.redrawNotify.addListener(new ChangeListener<Boolean>() {
@@ -121,16 +122,16 @@ public class Data2DChartXYController extends BaseData2DChartController {
     }
 
     @Override
-    public boolean initData() {
+    public boolean checkOptions() {
         try {
-            if (!super.initData()) {
+            if (!super.checkOptions()) {
                 return false;
             }
             dataColsIndices = new ArrayList<>();
 
             int categoryCol = data2D.colOrder(selectedCategory);
             if (categoryCol < 0) {
-                outOptionsError(message("SelectToHandle") + ": " + message("Column"));
+                popError(message("SelectToHandle") + ": " + message("Column"));
                 tabPane.getSelectionModel().select(optionsTab);
                 return false;
             }
@@ -143,7 +144,7 @@ public class Data2DChartXYController extends BaseData2DChartController {
             if (chartTypesController.isBubbleChart()) {
                 int valueCol = data2D.colOrder(selectedValue);
                 if (valueCol < 0) {
-                    outOptionsError(message("SelectToHandle") + ": " + message("Column"));
+                    popError(message("SelectToHandle") + ": " + message("Column"));
                     tabPane.getSelectionModel().select(optionsTab);
                     return false;
                 }
@@ -225,10 +226,18 @@ public class Data2DChartXYController extends BaseData2DChartController {
         chartController.writeXYChart(outputColumns, chartData, categoryIndex, valueIndices);
     }
 
+    @Override
+    public boolean keyEventsFilter(KeyEvent event) {
+        if (super.keyEventsFilter(event)) {
+            return true;
+        }
+        return chartController.keyEventsFilter(event);
+    }
+
     /*
         static
      */
-    public static Data2DChartXYController open(ControlData2DLoad tableController) {
+    public static Data2DChartXYController open(BaseData2DLoadController tableController) {
         try {
             Data2DChartXYController controller = (Data2DChartXYController) WindowTools.branchStage(
                     tableController, Fxmls.Data2DChartXYFxml);

@@ -104,7 +104,11 @@ public class MessageDigestTools {
             byte[] digest = md.digest();
             return digest;
         } catch (Exception e) {
-            MyBoxLog.debug(e);
+            if (task != null) {
+                task.setError(e.toString());
+            } else {
+                MyBoxLog.debug(e);
+            }
             return null;
         }
     }

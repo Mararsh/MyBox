@@ -1,0 +1,4 @@
+Title,Hardwares,CPU,Memory,OS,Softwares,Language,Target,Comments
+Win,Desktop,Intel(R) Core(TM) i7-7700 3.60GHz,8 GB,Windows 10,JDK 21 + JavaFx 21 + Derby 10.17.1.0,Chinese,MyBox 6.8.1,
+Linux,Laptop,Intel(R) Core i5 2.40GHz,4 GB,CentOS 7,JDK 21 + JavaFx 21 + Derby 10.17.1.0,English,MyBox 6.8.1,
+Mac,Mac mini,Intel(R) Core i5 2.60GHz,8 GB,macOS Monterey 12.7.4,JDK 21 + JavaFx 21 + Derby 10.17.1.0,Chinese,MyBox 6.8.1,

@@ -19,7 +19,7 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
  * @CreateDate 2020-12-05
  * @License Apache License Version 2.0
  */
-public class DataFileExcelConvertController extends BaseDataConvertController {
+public class DataFileExcelConvertController extends BaseDataFileConvertController {
 
     @FXML
     protected CheckBox withNamesCheck;
@@ -56,18 +56,21 @@ public class DataFileExcelConvertController extends BaseDataConvertController {
                         names = new ArrayList<>();
                         if (withNamesCheck.isSelected()) {
                             names.addAll(rowData);
-                            convertController.setParameters(targetPath, names, filePrefix(srcFile), skip);
+                            export.setNames(targetPathController, names, filePrefix(srcFile));
+                            export.openWriters();
                             continue;
                         } else {
                             for (int c = 1; c <= rowData.size(); c++) {
                                 names.add(message("Column") + c);
                             }
-                            convertController.setParameters(targetPath, names, filePrefix(srcFile), skip);
+                            export.setNames(targetPathController, names, filePrefix(srcFile));
                         }
+                        export.openWriters();
                     }
-                    convertController.writeRow(rowData);
+
+                    export.writeRow(rowData);
                 }
-                convertController.closeWriters();
+                export.closeWriters();
             }
             result = message("Handled");
         } catch (Exception e) {

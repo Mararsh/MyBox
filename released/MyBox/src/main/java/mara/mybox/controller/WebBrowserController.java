@@ -348,8 +348,8 @@ public class WebBrowserController extends BaseController {
         String dname;
         if (name != null && !name.isBlank()) {
             dname = name;
-            String nameSuffix = FileNameTools.suffix(name);
-            String addrSuffix = FileNameTools.suffix(address);
+            String nameSuffix = FileNameTools.ext(name);
+            String addrSuffix = FileNameTools.ext(address);
             if (addrSuffix != null && !addrSuffix.isBlank()) {
                 if (nameSuffix == null || nameSuffix.isBlank()
                         || !addrSuffix.equalsIgnoreCase(nameSuffix)) {

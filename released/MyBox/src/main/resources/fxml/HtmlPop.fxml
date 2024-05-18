@@ -19,15 +19,6 @@ License:    Apache License Version 2.0
     <children>
         <HBox alignment="CENTER_LEFT" spacing="2.0">
             <children>
-            <Button fx:id="myboxButton" mnemonicParsing="false" onAction="#mybox">
-               <graphic>
-                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/iconMyBox.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
                 <Button fx:id="styleLinksButton" mnemonicParsing="false" onAction="#showHtmlStyle" onMouseEntered="#popHtmlStyle">
                     <graphic>
                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">

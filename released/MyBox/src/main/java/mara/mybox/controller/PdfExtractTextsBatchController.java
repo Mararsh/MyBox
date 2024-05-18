@@ -36,7 +36,6 @@ public class PdfExtractTextsBatchController extends BaseBatchPdfController {
 
     public PdfExtractTextsBatchController() {
         baseTitle = Languages.message("PdfExtractTextsBatch");
-        browseTargets = true;
     }
 
     @Override

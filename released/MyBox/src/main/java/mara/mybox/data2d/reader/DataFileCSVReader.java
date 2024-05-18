@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import mara.mybox.data2d.DataFileCSV;
-import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
 import org.apache.commons.csv.CSVParser;
@@ -23,131 +22,120 @@ public class DataFileCSVReader extends Data2DReader {
     protected CSVParser csvParser;
 
     public DataFileCSVReader(DataFileCSV data) {
-        this.readerCSV = data;
-        init(data);
+        readerCSV = data;
+        sourceData = data;
     }
 
     @Override
-    public void scanData() {
-        if (!FileTools.hasData(sourceFile)) {
+    public void scanFile() {
+        File validFile = FileTools.removeBOM(task(), sourceFile);
+        if (validFile == null || isStopped()) {
             return;
         }
         readerCSV.checkForLoad();
-        File validFile = FileTools.removeBOM(task, sourceFile);
-        if (validFile == null || readerStopped()) {
-            return;
-        }
         try (CSVParser parser = CSVParser.parse(validFile, readerCSV.getCharset(), readerCSV.cvsFormat())) {
             csvParser = parser;
             iterator = parser.iterator();
-            operator.handleData();
+            operate.handleData();
             csvParser = null;
             parser.close();
         } catch (Exception e) {
-            MyBoxLog.error(e);
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            failed = true;
+            showError(e.toString());
+            setFailed();
         }
     }
 
     @Override
     public void readColumnNames() {
-        if (csvParser == null) {
-            return;
-        }
-        sourceRow = null;
-        if (readerHasHeader) {
-            try {
-                List<String> values = csvParser.getHeaderNames();
-                if (StringTools.noDuplicated(values, true)) {
-                    names = new ArrayList<>();
-                    names.addAll(values);
-                    return;
-                } else {
-                    sourceRow = new ArrayList<>();
-                    sourceRow.addAll(values);
+        try {
+            if (csvParser == null) {
+                return;
+            }
+            sourceRow = null;
+            if (readerHasHeader) {
+                try {
+                    List<String> values = csvParser.getHeaderNames();
+                    if (StringTools.noDuplicated(values, true)) {
+                        names = new ArrayList<>();
+                        names.addAll(values);
+                        return;
+                    } else {
+                        sourceRow = new ArrayList<>();
+                        sourceRow.addAll(values);
+                    }
+                } catch (Exception e) {
+                    showError(e.toString());
                 }
-            } catch (Exception e) {
-                MyBoxLog.error(e);
-                if (task != null) {
-                    task.setError(e.toString());
+            } else {
+                while (iterator.hasNext() && !isStopped()) {
+                    readFileRecord();
+                    if (sourceRow != null && !sourceRow.isEmpty()) {
+                        break;
+                    }
                 }
             }
-        } else {
-            while (iterator.hasNext() && !readerStopped()) {
-                readRecord();
-                if (sourceRow != null && !sourceRow.isEmpty()) {
-                    break;
-                }
-            }
+            readerHasHeader = false;
+            makeHeader();
+        } catch (Exception e) {
+            showError(e.toString());
         }
-        readerHasHeader = false;
-        handleHeader();
     }
 
     @Override
     public void readTotal() {
-        if (iterator == null) {
-            return;
-        }
-        rowIndex = 0;
-        while (iterator.hasNext()) {
-            if (readerStopped()) {
-                rowIndex = 0;
+        try {
+            sourceIndex = 0;
+            if (iterator == null) {
                 return;
             }
-            readRecord();
-            if (sourceRow != null && !sourceRow.isEmpty()) {
-                ++rowIndex;
+            while (iterator.hasNext()) {
+                if (isStopped()) {
+                    sourceIndex = 0;
+                    return;
+                }
+                readFileRecord();
+                if (sourceRow != null && !sourceRow.isEmpty()) {
+                    ++sourceIndex;
+                }
             }
+        } catch (Exception e) {
+            showError(e.toString());
+            setFailed();
         }
     }
 
-    // rowIndex is 1-base while rowsStart and rowsEnd are 0-based
+    // sourceIndex is 1-base while pageStartIndex and pageEndIndex are 0-based
     @Override
     public void readPage() {
-        if (iterator == null) {
-            return;
-        }
-        rowIndex = 0;
-        while (iterator.hasNext() && !readerStopped()) {
-            readRecord();
-            if (sourceRow == null || sourceRow.isEmpty()) {
-                continue;
+        try {
+            if (iterator == null) {
+                return;
             }
-            if (rowIndex++ < rowsStart) {
-                continue;
+            sourceIndex = 0;
+            while (iterator.hasNext() && !isStopped()) {
+                readFileRecord();
+                if (sourceRow == null || sourceRow.isEmpty()) {
+                    continue;
+                }
+                if (sourceIndex++ < pageStartIndex) {
+                    continue;
+                }
+                if (sourceIndex > pageEndIndex) {
+                    stop();
+                    break;
+                }
+                makePageRow();
             }
-            if (rowIndex > rowsEnd) {
-                readerStopped = true;
-                break;
-            }
-            handlePageRow();
-        }
-    }
-
-    @Override
-    public void readRows() {
-        if (iterator == null) {
-            return;
-        }
-        rowIndex = 0;
-        while (iterator.hasNext() && !readerStopped()) {
-            readRecord();
-            if (sourceRow == null || sourceRow.isEmpty()) {
-                continue;
-            }
-            ++rowIndex;
-            handleRow();
+        } catch (Exception e) {
+            showError(e.toString());
+            setFailed();
         }
     }
 
-    public void readRecord() {
+    public void readFileRecord() {
         try {
             sourceRow = null;
-            if (readerStopped() || iterator == null) {
+            if (isStopped() || iterator == null) {
                 return;
             }
             CSVRecord csvRecord = iterator.next();
@@ -159,10 +147,44 @@ public class DataFileCSVReader extends Data2DReader {
                 sourceRow.add(v);
             }
         } catch (Exception e) {
-            MyBoxLog.error(e);
-            if (task != null) {
-                task.setError(e.toString());
+            showError(e.toString());
+        }
+    }
+
+    @Override
+    public void readRows() {
+        try {
+            if (iterator == null) {
+                return;
             }
+            sourceIndex = 0;
+            long fileIndex = -1;
+            long startIndex = sourceData.startRowOfCurrentPage;
+            long endIndex = sourceData.endRowOfCurrentPage;
+            while (iterator.hasNext() && !isStopped()) {
+                try {
+                    readFileRecord();
+                    if (sourceRow == null || sourceRow.isEmpty()) {
+                        continue;
+                    }
+                    fileIndex++;
+
+                    if (fileIndex < startIndex || fileIndex >= endIndex) {
+                        ++sourceIndex;
+                        handleRow();
+
+                    } else if (fileIndex == startIndex) {
+                        scanPage();
+                    }
+
+                } catch (Exception e) {  // skip  bad lines
+//                    showError(e.toString());
+//                    setFailed();
+                }
+            }
+        } catch (Exception e) {
+            showError(e.toString());
+            setFailed();
         }
     }
 

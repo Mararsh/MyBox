@@ -26,7 +26,7 @@ public class ControlHtml2PdfOptions extends BaseController {
     protected DataHolder pdfOptions;
 
     @FXML
-    protected ControlTTFSelecter ttfController;
+    protected ControlTTFSelector ttfController;
     @FXML
     protected TextArea cssArea;
     @FXML

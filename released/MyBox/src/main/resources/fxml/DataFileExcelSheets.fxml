@@ -15,22 +15,10 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" prefHeight="100.0" prefWidth="240.0" spacing="2.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.DataFileExcelSheetsController">
+<VBox fx:id="thisPane" prefHeight="100.0" prefWidth="300.0" spacing="2.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.DataFileExcelSheetsController">
       <children>
-                    <FlowPane hgap="2.0" vgap="2.0">
-                        <children>
-                            <ComboBox fx:id="sheetSelector" prefWidth="160.0" />
-                            <Button fx:id="goButton" mnemonicParsing="false" onAction="#goAction">
-                                <graphic>
-                                    <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                        <image>
-                                            <Image url="@../buttons/Red/iconGo.png" />
-                                        </image>
-                                    </ImageView>
-                                </graphic>
-                            </Button>
-                        </children>
-                    </FlowPane>
+                      <ComboBox fx:id="sheetSelector" maxWidth="1.7976931348623157E308" />
+                    <FlowPane hgap="2.0" vgap="2.0" />
                     <FlowPane hgap="2.0" vgap="2.0">
                         <children>
                             <Button fx:id="renameSheetButton" layoutX="71.0" layoutY="10.0" mnemonicParsing="false" onAction="#renameSheet">
@@ -69,10 +57,6 @@ License:    Apache License Version 2.0
                   </ImageView>
                </graphic>
             </Button>
-                        </children>
-                    </FlowPane>
-                    <FlowPane alignment="CENTER_LEFT" hgap="2.0" vgap="2.0">
-                        <children>
                             <Button fx:id="previousSheetButton" mnemonicParsing="false" onAction="#previousSheetAction">
                                 <graphic>
                                     <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -93,6 +77,7 @@ License:    Apache License Version 2.0
                             </Button>
                         </children>
                     </FlowPane>
+                    <FlowPane alignment="CENTER_LEFT" hgap="2.0" vgap="2.0" />
       <HBox alignment="CENTER_RIGHT" spacing="5.0">
          <children>
             <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">

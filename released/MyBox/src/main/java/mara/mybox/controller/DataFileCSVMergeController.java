@@ -57,7 +57,6 @@ public class DataFileCSVMergeController extends FilesMergeController {
 
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(Bindings.isEmpty(tableData)
-                    .or(targetFileController.valid.not())
                     .or(csvSourceController.delimiterController.delimiterInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                     .or(csvTargetController.delimiterController.delimiterInput.styleProperty().isEqualTo(UserConfig.badStyle()))
             );
@@ -154,11 +153,11 @@ public class DataFileCSVMergeController extends FilesMergeController {
             csvPrinter.close();
             try (Connection conn = DerbyBase.getConnection()) {
                 TableData2DDefinition tableData2DDefinition = new TableData2DDefinition();
-                Data2DDefinition def = tableData2DDefinition.queryFile(conn, Data2DDefinition.Type.CSV, targetFile);
+                Data2DDefinition def = tableData2DDefinition.queryFile(conn, Data2DDefinition.DataType.CSV, targetFile);
                 if (def == null) {
                     def = Data2DDefinition.create();
                 }
-                def.setType(Data2DDefinition.Type.CSV)
+                def.setType(Data2DDefinition.DataType.CSV)
                         .setFile(targetFile)
                         .setDataName(targetFile.getName())
                         .setCharset(targetCharset)

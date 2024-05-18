@@ -39,9 +39,9 @@ public class Data2DMultipleLinearRegressionCombinationController extends BaseDat
     }
 
     @Override
-    public void initControls() {
+    public void initOptions() {
         try {
-            super.initControls();
+            super.initOptions();
 
             resultsController.setParameters(this);
 
@@ -51,12 +51,12 @@ public class Data2DMultipleLinearRegressionCombinationController extends BaseDat
     }
 
     @Override
-    public boolean initData() {
+    public boolean checkOptions() {
         try {
-            if (!super.initData()) {
+            if (!super.checkOptions()) {
                 return false;
             }
-            invalidAs = InvalidAs.Blank;
+            invalidAs = InvalidAs.Empty;
 
             dataColsIndices = new ArrayList<>();
             if (otherColsIndices == null || otherColsIndices.isEmpty()) {
@@ -87,6 +87,7 @@ public class Data2DMultipleLinearRegressionCombinationController extends BaseDat
         }
         resultsController.clear();
         namesMap = new HashMap<>();
+        taskSuccessed = false;
         task = new FxSingletonTask<Void>(this) {
 
             List<List<String>> data;
@@ -119,7 +120,8 @@ public class Data2DMultipleLinearRegressionCombinationController extends BaseDat
                             }
                         }
                     }
-                    return true;
+                    taskSuccessed = true;
+                    return taskSuccessed;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -188,16 +190,17 @@ public class Data2DMultipleLinearRegressionCombinationController extends BaseDat
             @Override
             protected void whenSucceeded() {
                 resultsController.afterRegression();
+                rightPane.setDisable(false);
             }
 
             @Override
             protected void finalAction() {
                 super.finalAction();
-                data2D.stopTask();
+                closeTask(ok);
             }
 
         };
-        start(task);
+        start(task, false);
     }
 
     @FXML
@@ -216,7 +219,7 @@ public class Data2DMultipleLinearRegressionCombinationController extends BaseDat
     /*
         static
      */
-    public static Data2DMultipleLinearRegressionCombinationController open(ControlData2DLoad tableController) {
+    public static Data2DMultipleLinearRegressionCombinationController open(BaseData2DLoadController tableController) {
         try {
             Data2DMultipleLinearRegressionCombinationController controller = (Data2DMultipleLinearRegressionCombinationController) WindowTools.branchStage(
                     tableController, Fxmls.Data2DMultipleLinearRegressionCombinationFxml);

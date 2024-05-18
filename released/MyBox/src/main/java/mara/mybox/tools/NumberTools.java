@@ -57,7 +57,7 @@ public class NumberTools {
             if (data == null) {
                 return null;
             }
-            double d = DoubleTools.scale(data.toString(), InvalidAs.Blank, scale);
+            double d = DoubleTools.scale(data.toString(), InvalidAs.Empty, scale);
             return d + "";
         } catch (Exception e) {
             return null;

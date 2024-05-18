@@ -113,7 +113,7 @@ public class PieChartMaker extends PieChartOptions {
             pieChart.setLegendVisible(legendSide != null);
             pieChart.setLabelsVisible(labelVisible());
             pieChart.setClockwise(clockwise);
-            ChartTools.setPieColors(pieChart, paletteList, showLegend(), labelFontSize);
+            ChartTools.setPieStyle(pieChart, paletteList, showLegend(), labelFontSize);
 
         } catch (Exception e) {
             MyBoxLog.debug(e);

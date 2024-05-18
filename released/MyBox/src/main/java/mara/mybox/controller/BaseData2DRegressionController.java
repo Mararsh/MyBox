@@ -26,18 +26,18 @@ public class BaseData2DRegressionController extends BaseData2DChartController {
     @FXML
     protected ComboBox<String> alphaSelector;
     @FXML
-    protected ControlData2DResults regressionDataController;
+    protected ControlData2DView regressionDataController;
     @FXML
     protected ControlWebView modelController;
     @FXML
     protected Button dataButton;
     @FXML
-    protected ControlData2DResults resultsController;
+    protected ControlData2DView resultsController;
 
     @Override
-    public void initControls() {
+    public void initOptions() {
         try {
-            super.initControls();
+            super.initOptions();
 
             alpha = UserConfig.getDouble(baseName + "Alpha", 0.05);
             if (alpha >= 1 || alpha <= 0) {
@@ -80,9 +80,6 @@ public class BaseData2DRegressionController extends BaseData2DChartController {
             if (modelController != null) {
                 modelController.setParent(this);
             }
-            if (regressionDataController != null) {
-                regressionDataController.setNoRowNumber();
-            }
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -107,13 +104,11 @@ public class BaseData2DRegressionController extends BaseData2DChartController {
     }
 
     @FXML
-    @Override
     public void dataAction() {
         resultsController.dataAction();
     }
 
     @FXML
-    @Override
     public void viewAction() {
         resultsController.editAction();
     }

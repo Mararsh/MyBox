@@ -34,12 +34,12 @@
             <Label text="%SetValueWhenBaseImageTransparent" />
             <FlowPane hgap="2.0" prefWrapLength="100.0" vgap="2.0">
                <children>
-                  <RadioButton fx:id="baseAsOverlayRadio" mnemonicParsing="false" text="%PixelOfOverlay">
+                  <RadioButton fx:id="baseAsOverlayRadio" mnemonicParsing="false" selected="true" text="%PixelOfOverlay">
                      <toggleGroup>
                         <ToggleGroup fx:id="baseGroup" />
                      </toggleGroup>
                   </RadioButton>
-                  <RadioButton fx:id="baseAsTransparentRadio" mnemonicParsing="false" selected="true" text="%Transparent" toggleGroup="$baseGroup" />
+                  <RadioButton fx:id="baseAsTransparentRadio" mnemonicParsing="false" text="%Transparent" toggleGroup="$baseGroup" />
                   <RadioButton fx:id="baseBlendRadio" mnemonicParsing="false" text="%Blend" toggleGroup="$baseGroup" />
                </children>
             </FlowPane>

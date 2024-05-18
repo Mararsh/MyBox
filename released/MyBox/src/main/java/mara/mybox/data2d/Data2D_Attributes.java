@@ -1,8 +1,8 @@
 package mara.mybox.data2d;
 
 import java.util.List;
-import java.util.Map;
-import mara.mybox.controller.ControlData2DLoad;
+import javafx.collections.ObservableList;
+import mara.mybox.controller.BaseController;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.Data2DStyle;
@@ -19,20 +19,25 @@ import mara.mybox.fxml.FxTask;
  */
 public abstract class Data2D_Attributes extends Data2DDefinition {
 
+    public BaseController controller;
     public TableData2DDefinition tableData2DDefinition;
     public TableData2DColumn tableData2DColumn;
     public TableData2DStyle tableData2DStyle;
     public List<Data2DColumn> columns, savedColumns;
-    public Map<String, Object> options;
     public int pageSize, newColumnIndex;
-    public long dataSize, pagesNumber;
+    public long pagesNumber;
     public long currentPage, startRowOfCurrentPage, endRowOfCurrentPage;   // 0-based, excluded end
     public List<Data2DStyle> styles;
     public DataFilter filter;
-    public ControlData2DLoad loadController;
-    public boolean tableChanged;
+    public ObservableList<List<String>> pageData;
+    public boolean tableChanged, dataLoaded;
     public FxTask task, backgroundTask;
     public String error;
+
+    public enum TargetType {
+        CSV, Excel, Text, Matrix, DatabaseTable, SystemClipboard, MyBoxClipboard,
+        JSON, XML, HTML, PDF, Replace, Insert, Append
+    }
 
     public Data2D_Attributes() {
         tableData2DDefinition = new TableData2DDefinition();
@@ -45,18 +50,17 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
 
     private void initData() {
         resetDefinition();
-        dataSize = 0;
         pagesNumber = 1;
         currentPage = startRowOfCurrentPage = endRowOfCurrentPage = 0;
         columns = null;
         savedColumns = null;
         newColumnIndex = -1;
+        dataLoaded = true;
         tableChanged = false;
-        options = null;
         styles = null;
         filter = null;
         error = null;
-        loadController = null;
+        pageData = null;
         task = null;
         backgroundTask = null;
     }
@@ -65,50 +69,59 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
         initData();
     }
 
-    public void cloneAll(Data2D_Attributes d) {
+    public void cloneData(Data2D_Attributes d) {
         try {
-            cloneBase(d);
-            cloneAttributes(d);
+            super.cloneDefBase(d);
+            cloneTaskAttributes(d);
+            clonePageAttributes(d);
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
     }
 
-    public void cloneBase(Data2D_Attributes d) {
+    public void cloneDataAttributes(Data2D_Attributes d) {
+        try {
+            super.cloneDefAttributes(d);
+            cloneTaskAttributes(d);
+            clonePageAttributes(d);
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
+    }
+
+    public void cloneTaskAttributes(Data2D_Attributes d) {
         try {
             if (d == null) {
                 return;
             }
-            super.cloneBase(d);
             task = d.task;
             backgroundTask = d.backgroundTask;
             error = d.error;
-            options = d.options;
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
     }
 
-    public void cloneAttributes(Data2D_Attributes d) {
+    public void clonePageAttributes(Data2D_Attributes d) {
         try {
             if (d == null) {
                 return;
             }
-            cloneDefinitionAttributes(d);
-            loadController = d.loadController;
+            cloneValueAttributes(d);
+            pageData = d.pageData;
             tableData2DDefinition = d.tableData2DDefinition;
             tableData2DColumn = d.tableData2DColumn;
             columns = d.columns;
             savedColumns = d.savedColumns;
             newColumnIndex = d.newColumnIndex;
             styles = d.styles;
-            dataSize = d.dataSize;
             pageSize = d.pageSize;
             pagesNumber = d.pagesNumber;
             currentPage = d.currentPage;
             startRowOfCurrentPage = d.startRowOfCurrentPage;
             endRowOfCurrentPage = d.endRowOfCurrentPage;
             tableChanged = d.tableChanged;
+            dataLoaded = d.dataLoaded;
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
@@ -117,6 +130,15 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
     /*
         get/set
      */
+    public BaseController getController() {
+        return controller;
+    }
+
+    public Data2D setController(BaseController controller) {
+        this.controller = controller;
+        return (Data2D) this;
+    }
+
     public TableData2DDefinition getTableData2DDefinition() {
         return tableData2DDefinition;
     }
@@ -147,15 +169,6 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
 
     public Data2D_Attributes setColumns(List<Data2DColumn> columns) {
         this.columns = columns;
-        return this;
-    }
-
-    public long getDataSize() {
-        return dataSize;
-    }
-
-    public Data2D_Attributes setDataSize(long dataSize) {
-        this.dataSize = dataSize;
         return this;
     }
 
@@ -211,20 +224,16 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
         return tableChanged;
     }
 
-    public ControlData2DLoad getLoadController() {
-        return loadController;
+    public void setTableChanged(boolean tableChanged) {
+        this.tableChanged = tableChanged;
     }
 
-    public void setLoadController(ControlData2DLoad loadController) {
-        this.loadController = loadController;
+    public ObservableList<List<String>> getPageData() {
+        return pageData;
     }
 
-    public Map<String, Object> getOptions() {
-        return options;
-    }
-
-    public void setOptions(Map<String, Object> options) {
-        this.options = options;
+    public void setPageData(ObservableList<List<String>> pageData) {
+        this.pageData = pageData;
     }
 
     public List<Data2DColumn> getSavedColumns() {

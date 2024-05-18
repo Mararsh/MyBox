@@ -53,13 +53,7 @@ public class HtmlMergeAsPDFController extends BaseBatchFileController {
     @Override
     public boolean makeMoreParameters() {
         try {
-            if (targetFileController != null) {
-                targetFile = targetFileController.file;
-            }
-            if (targetFile == null) {
-                return false;
-            }
-            targetFile = makeTargetFile(targetFile, targetFile.getParentFile());
+            targetFile = makeTargetFile();
             if (targetFile == null) {
                 return false;
             }
@@ -67,7 +61,7 @@ public class HtmlMergeAsPDFController extends BaseBatchFileController {
             targetPath = targetFile.getParentFile();
             mergedHtml = new StringBuilder();
             String head
-                    = "<!DOCTYPE html><html>\n"
+                    = "<html>\n"
                     + "    <head>\n"
                     + "        <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n"
                     + "    </head>\n"

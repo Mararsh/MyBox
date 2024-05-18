@@ -130,10 +130,15 @@ public class TextClipboardTools {
             @Override
             public void run() {
                 if (text == null || text.isEmpty()) {
-                    controller.popError(message("NoData"));
+                    if (controller != null) {
+                        controller.popError(message("NoData"));
+                    }
                     return;
                 }
                 if (stringToSystemClipboard(text)) {
+                    if (controller == null) {
+                        return;
+                    }
                     int len = text.length();
                     String info = "\n" + message("CharactersNumber") + ":" + len
                             + "\n----------------------\n"
@@ -144,7 +149,9 @@ public class TextClipboardTools {
                         controller.popInformation(message("CopiedInSystemClipBoard") + info);
                     }
                 } else {
-                    controller.popFailed();
+                    if (controller != null) {
+                        controller.popFailed();
+                    }
                 }
             }
         });

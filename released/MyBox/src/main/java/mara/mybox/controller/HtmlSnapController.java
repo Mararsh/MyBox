@@ -103,6 +103,7 @@ public class HtmlSnapController extends WebAddressController {
     }
 
     @FXML
+    @Override
     public void snapAction() {
         try {
             Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
@@ -158,6 +159,7 @@ public class HtmlSnapController extends WebAddressController {
                             stopSnap();
                         }
                     });
+                    Platform.requestNextPulse();
 
                 }
             }, 0, delay);
@@ -205,6 +207,7 @@ public class HtmlSnapController extends WebAddressController {
                     Platform.runLater(() -> {
                         snap();
                     });
+                    Platform.requestNextPulse();
                 }
             }, 2000);    // make sure page is loaded before snapping
 
@@ -256,6 +259,7 @@ public class HtmlSnapController extends WebAddressController {
                             }
                             snap();
                         });
+                        Platform.requestNextPulse();
                     }
                 }, 300);    // make sure page is loaded before snapping
 
@@ -312,6 +316,7 @@ public class HtmlSnapController extends WebAddressController {
                 MyBoxLog.error(e);
             }
         });
+        Platform.requestNextPulse();
     }
 
     @Override

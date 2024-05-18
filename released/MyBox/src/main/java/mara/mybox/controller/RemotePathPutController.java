@@ -210,7 +210,7 @@ public class RemotePathPutController extends BaseBatchFileController {
     }
 
     @Override
-    public void afterTask() {
+    public void afterTask(boolean ok) {
         tableView.refresh();
         if (miaoCheck.isSelected()) {
             SoundTools.miao3();

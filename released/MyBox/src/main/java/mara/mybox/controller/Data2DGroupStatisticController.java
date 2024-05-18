@@ -9,6 +9,7 @@ import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
@@ -18,8 +19,8 @@ import mara.mybox.calculation.DescriptiveStatistic;
 import mara.mybox.calculation.DescriptiveStatistic.StatisticObject;
 import mara.mybox.calculation.DescriptiveStatistic.StatisticType;
 import mara.mybox.data2d.DataFileCSV;
-import mara.mybox.data2d.reader.DataTableGroup;
-import mara.mybox.data2d.reader.DataTableGroupStatistic;
+import mara.mybox.data2d.DataTableGroup;
+import mara.mybox.data2d.DataTableGroupStatistic;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
@@ -48,11 +49,13 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
     protected int pieMaxData;
 
     @FXML
-    protected Tab xyChartTab, pieChartTab;
+    protected TabPane chartTabPane;
+    @FXML
+    protected Tab groupDataTab, statisticDataTab, chartDataTab, xyChartTab, pieChartTab;
     @FXML
     protected ControlStatisticSelection statisticController;
     @FXML
-    protected ControlData2DResults statisticDataController, chartDataController;
+    protected ControlData2DView statisticDataController, chartDataController;
     @FXML
     protected ControlData2DChartPie pieChartController;
     @FXML
@@ -69,9 +72,9 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
     }
 
     @Override
-    public void initControls() {
+    public void initOptions() {
         try {
-            super.initControls();
+            super.initOptions();
 
             pieMaker = pieChartController.pieMaker;
             pieChartController.redrawNotify.addListener(new ChangeListener<Boolean>() {
@@ -135,7 +138,7 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
     }
 
     @Override
-    public boolean initData() {
+    public boolean checkOptions() {
         if (!groupController.pickValues()) {
             return false;
         }
@@ -164,7 +167,7 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
                 .setStatisticObject(StatisticObject.Columns)
                 .setScale(scale)
                 .setInvalidAs(invalidAs)
-                .setHandleController(this)
+                .setTaskController(this)
                 .setData2D(data2D)
                 .setColsIndices(checkedColsIndices)
                 .setColsNames(checkedColsNames);
@@ -176,6 +179,7 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
         for (StatisticType t : calculation.types) {
             valuesDisplayPane.getChildren().add(new CheckBox(message(t.name())));
         }
+        taskSuccessed = false;
         task = new FxSingletonTask<Void>(this) {
 
             private DataTableGroup group;
@@ -206,7 +210,8 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
                         return false;
                     }
                     dataFile = statistic.getChartData();
-                    return dataFile != null;
+                    taskSuccessed = dataFile != null;
+                    return taskSuccessed;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -215,19 +220,20 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
 
             @Override
             protected void whenSucceeded() {
-                chartDataController.loadData(dataFile.cloneAll());
-                groupDataController.loadData(group.getTargetData().cloneAll());
-                statisticDataController.loadData(statistic.getStatisticData().cloneAll());
+                chartDataController.loadDef(dataFile);
+                groupDataController.loadDef(group.getTargetData());
+                statisticDataController.loadDef(statistic.getStatisticData());
+                rightPane.setDisable(false);
             }
 
             @Override
             protected void finalAction() {
                 super.finalAction();
-                data2D.stopTask();
+                closeTask(ok);
             }
 
         };
-        start(task);
+        start(task, false);
     }
 
     @FXML
@@ -260,7 +266,7 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
                     if (displayAllCheck.isSelected()) {
                         resultsData = dataFile.allRows(false);
                     } else {
-                        resultsData = chartDataController.data2D.tableRows(false);
+                        resultsData = chartDataController.data2D.tableRows();
                     }
                     if (resultsData == null) {
                         return false;
@@ -471,7 +477,7 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
     }
 
     @FXML
-    public void okXYchart() {
+    public void goXYchart() {
         makeCharts(true, false);
     }
 
@@ -484,7 +490,7 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
     @Override
     public void typeChanged() {
         initChart();
-        okXYchart();
+        goXYchart();
     }
 
     @FXML
@@ -521,11 +527,95 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
         drawPieChart();
     }
 
+    @FXML
+    @Override
+    public boolean menuAction() {
+        Tab tab = chartTabPane.getSelectionModel().getSelectedItem();
+        if (tab == groupDataTab) {
+            return groupDataController.menuAction();
+
+        } else if (tab == statisticDataTab) {
+            return statisticDataController.menuAction();
+
+        } else if (tab == chartDataTab) {
+            return chartDataController.menuAction();
+
+        } else if (tab == xyChartTab) {
+            return chartController.menuAction();
+
+        } else if (tab == pieChartTab) {
+            return pieChartController.menuAction();
+
+        }
+        return false;
+    }
+
+    @FXML
+    @Override
+    public boolean popAction() {
+        Tab tab = chartTabPane.getSelectionModel().getSelectedItem();
+        if (tab == groupDataTab) {
+            return groupDataController.popAction();
+
+        } else if (tab == statisticDataTab) {
+            return statisticDataController.popAction();
+
+        } else if (tab == chartDataTab) {
+            return chartDataController.popAction();
+
+        } else if (tab == xyChartTab) {
+            return chartController.popAction();
+
+        } else if (tab == pieChartTab) {
+            return pieChartController.popAction();
+
+        }
+        return false;
+    }
+
+    @Override
+    public boolean controlAlt2() {
+        Tab tab = chartTabPane.getSelectionModel().getSelectedItem();
+        if (tab == xyChartTab) {
+            return chartController.controlAlt2();
+
+        } else if (tab == pieChartTab) {
+            return pieChartController.controlAlt2();
+
+        }
+        return false;
+    }
+
+    @Override
+    public boolean controlAlt3() {
+        Tab tab = chartTabPane.getSelectionModel().getSelectedItem();
+        if (tab == xyChartTab) {
+            return chartController.controlAlt3();
+
+        } else if (tab == pieChartTab) {
+            return pieChartController.controlAlt3();
+
+        }
+        return false;
+    }
+
+    @Override
+    public boolean controlAlt4() {
+        Tab tab = chartTabPane.getSelectionModel().getSelectedItem();
+        if (tab == xyChartTab) {
+            return chartController.controlAlt4();
+
+        } else if (tab == pieChartTab) {
+            return pieChartController.controlAlt4();
+
+        }
+        return false;
+    }
 
     /*
         static
      */
-    public static Data2DGroupStatisticController open(ControlData2DLoad tableController) {
+    public static Data2DGroupStatisticController open(BaseData2DLoadController tableController) {
         try {
             Data2DGroupStatisticController controller = (Data2DGroupStatisticController) WindowTools.branchStage(
                     tableController, Fxmls.Data2DGroupStatisticFxml);

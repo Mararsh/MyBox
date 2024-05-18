@@ -23,9 +23,10 @@ import static mara.mybox.value.Languages.message;
  */
 public class FunctionsList {
 
-    protected static final int MaxLevel = 3;
+    public static final int MaxLevel = 4;
     protected MenuBar menuBar;
     protected boolean withLink;
+    protected int index;
     protected StringTable table;
     protected String goImageFile, lang;
     protected Map<String, MenuItem> map;
@@ -47,7 +48,10 @@ public class FunctionsList {
                 ImageFileWriters.writeImageFile(null, srcImage, "png", goImageFile);
                 goImageFile = new File(goImageFile).toURI().toString();
             }
+            index = 0;
             List<String> names = new ArrayList<>();
+            names.add(message(lang, "Index"));
+            names.add(message(lang, "HierarchyNumber"));
             for (int i = 1; i <= MaxLevel; i++) {
                 names.add(message(lang, "Level") + " " + i);
             }
@@ -56,9 +60,10 @@ public class FunctionsList {
             }
             table = new StringTable(names, message(lang, "FunctionsList"));
             map = new HashMap<>();
-            List<Menu> menus = menuBar.getMenus();
+            List< Menu> menus = menuBar.getMenus();
+            int number = 0;
             for (Menu menu : menus) {
-                menu(menu, 0);
+                menu(menu, 0, ++number + "");
             }
             return table;
         } catch (Exception e) {
@@ -67,40 +72,52 @@ public class FunctionsList {
         }
     }
 
-    public void menu(Menu menu, int level) {
-        makeRow(menu, level);
-        for (MenuItem menuItem : menu.getItems()) {
-            if (menuItem instanceof Menu) {
-                menu((Menu) menuItem, level + 1);
-            } else {
-                makeRow(menuItem, level + 1);
+    public void menu(Menu menu, int level, String number) {
+        try {
+            makeRow(menu, level, number);
+            int childIndex = 0;
+            for (MenuItem menuItem : menu.getItems()) {
+                String childNumber = number + "." + ++childIndex;
+                if (menuItem instanceof Menu) {
+                    menu((Menu) menuItem, level + 1, childNumber);
+                } else {
+                    makeRow(menuItem, level + 1, childNumber);
+                }
             }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
         }
     }
 
-    public void makeRow(MenuItem menu, int level) {
-        String name = menu.getText();
-        if (name == null || name.isBlank()) {
-            return;
-        }
-        List<String> row = new ArrayList<>();
-        for (int i = 0; i < MaxLevel; i++) {
-            row.add("");
-        }
-        if (withLink) {
-            String link;
-            if (menu.getOnAction() != null) {
-                link = "<a><img src=\"" + goImageFile + "\" "
-                        + "onclick=\"alert('" + name + "')\" "
-                        + "alt=\"" + message(lang, "Go") + "\"></a>";
-                map.put(name, menu);
-            } else {
-                link = "";
+    public void makeRow(MenuItem menu, int level, String number) {
+        try {
+            String name = menu.getText();
+            if (name == null || name.isBlank()) {
+                return;
             }
-            row.add(link);
+            List<String> row = new ArrayList<>();
+            row.add(++index + "");
+            row.add(number);
+            for (int i = 0; i < MaxLevel; i++) {
+                row.add("");
+            }
+            if (withLink) {
+                String link;
+                if (menu.getOnAction() != null) {
+                    link = "<a><img src=\"" + goImageFile + "\" "
+                            + "onclick=\"alert('" + name + "')\" "
+                            + "alt=\"" + message(lang, "Go") + "\"></a>";
+                    map.put(name, menu);
+                } else {
+                    link = "";
+                }
+                row.add(link);
+            }
+            row.set(level + 2, name);
+            table.add(row);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
         }
-        row.set(level, name);
-        table.add(row);
     }
 
     /*

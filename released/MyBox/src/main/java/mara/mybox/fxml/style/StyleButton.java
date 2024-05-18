@@ -174,7 +174,7 @@ public class StyleButton {
         }
 
         if (id.startsWith("mybox")) {
-            return new StyleData(id, message("Home"), "", "iconMyBox.png");
+            return new StyleData(id, message("MainPage"), "F8", "iconMyBox.png");
         }
         if (id.startsWith("download")) {
             return new StyleData(id, message("Download"), "", "iconDownload.png");
@@ -335,8 +335,12 @@ public class StyleButton {
             return new StyleData(id, message("Validate"), "", "iconVerify.png");
         }
         if (id.startsWith("data")) {
-            if (id.startsWith("database")) {
+            if (id.startsWith("dataManufacture")) {
+                return new StyleData(id, message("DataManufacture"), "", "iconData.png");
+            } else if (id.startsWith("database")) {
                 return new StyleData(id, message("DatabaseTable"), "", "iconDatabase.png");
+            } else if (id.startsWith("dataDefinition")) {
+                return new StyleData(id, message("DefineData"), "", "iconMeta.png");
             } else if (id.startsWith("dataImport")) {
                 return new StyleData(id, message("Import"), "", "iconImport.png");
             } else if (id.startsWith("dataExport")) {
@@ -410,7 +414,7 @@ public class StyleButton {
         if (id.startsWith("view")) {
             switch (id) {
                 case "viewFileButton":
-                    return new StyleData(id, message("Open"), "", "iconDefault.png");
+                    return new StyleData(id, message("Open"), "", "iconView.png");
                 default:
                     return new StyleData(id, message("View"), "", "iconView.png");
             }
@@ -554,11 +558,10 @@ public class StyleButton {
             return new StyleData(id, "", "", "iconNumber.png");
         }
         if (id.startsWith("trim")) {
-            switch (id) {
-                case "trimData":
-                    return new StyleData(id, message("Trim"), "", "iconClean.png");
-                default:
-                    return new StyleData(id, "", "", "iconNumber.png");
+            if (id.startsWith("trimData")) {
+                return new StyleData(id, message("Trim"), "", "iconClean.png");
+            } else {
+                return new StyleData(id, "", "", "iconNumber.png");
             }
         }
         if (id.startsWith("lowerLetter")) {

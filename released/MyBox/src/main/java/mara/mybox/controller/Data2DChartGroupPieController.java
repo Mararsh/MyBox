@@ -39,7 +39,7 @@ public class Data2DChartGroupPieController extends Data2DChartPieController {
     /*
         static
      */
-    public static Data2DChartGroupPieController open(ControlData2DLoad tableController) {
+    public static Data2DChartGroupPieController open(BaseData2DLoadController tableController) {
         try {
             Data2DChartGroupPieController controller = (Data2DChartGroupPieController) WindowTools.branchStage(
                     tableController, Fxmls.Data2DChartGroupPieFxml);

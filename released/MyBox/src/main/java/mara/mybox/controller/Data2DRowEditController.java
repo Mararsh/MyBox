@@ -13,24 +13,28 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-9-4
  * @License Apache License Version 2.0
  */
-public class Data2DRowEditController extends BaseChildController {
+public class Data2DRowEditController extends BaseBranchController {
 
-    protected ControlData2DEditTable dataEditController;
+    protected Data2DManufactureController dataController;
     protected int index;
 
     @FXML
     protected ControlData2DRowEdit rowEditController;
     @FXML
-    protected Label titleLabel;
+    protected Label nameLabel;
 
-    public void setParameters(ControlData2DEditTable dataEditController, int index) {
+    public Data2DRowEditController() {
+        baseTitle = message("EditSelectedRow");
+    }
+
+    public void setParameters(Data2DManufactureController controller, int index) {
         try {
-            this.dataEditController = dataEditController;
+            this.dataController = controller;
             this.index = index;
 
-            rowEditController.setParameters(dataEditController, index);
-            titleLabel.setText(dataEditController.data2D.displayName() + "\n"
-                    + message("TableRowNumber") + " " + (index + 1));
+            rowEditController.setParameters(dataController, index);
+
+            nameLabel.setText(message("Data") + ": " + dataController.data2D.displayName());
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -46,9 +50,9 @@ public class Data2DRowEditController extends BaseChildController {
                 return;
             }
 
-            dataEditController.tableData.set(index, row);
-            dataEditController.tableView.scrollTo(index - 3);
-            dataEditController.popSuccessful();
+            dataController.tableData.set(index, row);
+            dataController.tableView.scrollTo(index - 3);
+            dataController.popSuccessful();
 
             close();
 
@@ -57,10 +61,16 @@ public class Data2DRowEditController extends BaseChildController {
         }
     }
 
+    @FXML
+    @Override
+    public void recoverAction() {
+        rowEditController.setParameters(dataController, index);
+    }
+
     /*
         static
      */
-    public static Data2DRowEditController open(ControlData2DEditTable tableViewController, int index) {
+    public static Data2DRowEditController open(Data2DManufactureController tableViewController, int index) {
         try {
             Data2DRowEditController controller = (Data2DRowEditController) WindowTools.branchStage(
                     tableViewController, Fxmls.Data2DRowEditFxml);

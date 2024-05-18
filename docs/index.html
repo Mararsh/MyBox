@@ -9,24 +9,45 @@
   <h1>MyBox：简易工具集</h1>
   <p>这是图形化计算机应用，目标是提供简单易用的功能。免费开源。</p>
   <h2>新内容</h2>
-  <p>2024-2-9 版本6.8</p>
+  <p>2024-5-18 版本6.8.1</p>
   <ul>
+   <li>新增： 
+    <ul>
+     <li>对PDF批量添加水印。</li>
+     <li>数据的列类型：可编辑的枚举型。</li>
+     <li>文档：测试环境、基本功能检验列表、兼容性测试、详细测试。</li>
+    </ul></li>
    <li>改进： 
     <ul>
-     <li>新增快捷键CTRL/ALT+0：设置/解除“总是在上面”，对弹出窗口无效。</li>
-     <li>新增快捷键CTRL/ALT+9：截图当前窗口。</li>
-     <li>以树形保存和管理“图片的范围”。</li>
-     <li>简化编辑网页的界面。</li>
+     <li>重新设计和实现"处理数据"，基础框架为：读+处理+写。</li>
+     <li>选项：编辑数据时检验类型、保存数据时检验类型。</li>
+     <li>行表达式：以bindings代入变量值，占位符被处理为变量名而不是变量值。</li>
+     <li>行过滤：当表达式不为空且其值不为true或false，不取此行。</li>
+     <li>简化"处理数据"的界面。</li>
+     <li>处理数据：修正和增强“赋值”。</li>
+     <li>定制颜色时可以设置透明度。</li>
+     <li>ffmpeg可以设置"rtbufsize"和旋转。</li>
+     <li>笔记：节点是任何html，可以包含head。</li>
     </ul></li>
    <li>解决问题： 
     <ul>
-     <li>管理颜色：复制颜色失效了。</li>
-     <li>编辑网页：从文本模式切换时内容丢失了。</li>
-     <li>在查看PPT界面中“播放”按钮失效了。</li>
+     <li>缺省locale非中文时无法切换语言。</li>
+     <li>当数据值为多行字串时行表达式会解析混乱。</li>
+     <li>数据处理中当表达式非法时“赋值”不应清除数据行。</li>
+     <li>编辑数据行时弹出错误。</li>
+     <li>对数据库表导入数据时，类型“纪元”转换错误。</li>
+     <li>icon图片显示为空白。</li>
+     <li>一些界面中“目标文件”的选项未生效。</li>
+     <li>对SVG绘制形状时，透明背景未正确设置。</li>
+     <li>SVG的“查看”选项未生效。</li>
+     <li>在网页中显示颜色时透明值未生效。</li>
+     <li>重命名文件：当未统计文件数时选项“填零”失效。</li>
+     <li>文件同步：当选择“删除存在于目标目录但不存在于源目录的文件和目录”时功能失效。</li>
+     <li>解压/解档文件：解开的列表中文件名为空。</li>
+     <li>检查冗余文件：结果列表中文件名为空。</li>
     </ul></li>
   </ul>
-  <p>中国龙年快乐！</p>
-  <p><a target=_blank href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.8">此版本关闭的需求/问题列表</a></p>
+  <p><a target=_blank href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.8.1">此版本关闭的需求/问题列表</a></p>
   <h2>注意</h2>
   <p>MyBox未经足够测试，可靠性低、稳定性差。使用MyBox，可能出现以下情况：</p>
   <ul>
@@ -424,8 +445,8 @@
    <tbody>
     <tr>
      <td>开发日志</td>
-     <td>6.8</td>
-     <td>2024-2-9</td>
+     <td>6.8.1</td>
+     <td>2024-5-18</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_devLogs_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_devLogs_zh.html">html</a></td>
     </tr>
@@ -438,8 +459,8 @@
     </tr>
     <tr>
      <td>功能列表</td>
-     <td>6.8</td>
-     <td>2024-2-9</td>
+     <td>6.8.1</td>
+     <td>2024-5-18</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_functions_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_functions_zh.html">html</a></td>
     </tr>
@@ -459,8 +480,8 @@
     </tr>
     <tr>
      <td>用户手册-综述</td>
-     <td>6.8</td>
-     <td>2024-2-9</td>
+     <td>6.8.1</td>
+     <td>2024-5-18</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/guide/en/MyBox-Overview-en/MyBox-Overview-en.html">html</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-en.pdf">PDF</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-en.odt">odt</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/guide/zh/MyBox-Overview-zh/MyBox-Overview-zh.html">html</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-zh.pdf">PDF</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-zh.odt">odt</a></td>
     </tr>
@@ -514,30 +535,58 @@
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/guide/zh/MyBox-DevTools-zh/MyBox-DevTools-zh.html">html</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-DevTools-zh.pdf">PDF</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-DevTools-zh.odt">odt</a></td>
     </tr>
     <tr>
+     <td>软件测试-测试环境</td>
+     <td>6.8.1</td>
+     <td>2024-5-18</td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_TestEnvironment_en.html">html</a></td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_TestEnvironment_zh.html">html</a></td>
+    </tr>
+    <tr>
+     <td>软件测试-基本功能验证列表</td>
+     <td>6.8.1</td>
+     <td>2024-5-18</td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_BaseVerificationList_en.html">html</a></td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_BaseVerificationList_zh.html">html</a></td>
+    </tr>
+    <tr>
+     <td>软件测试-兼容性测试</td>
+     <td>6.8.1</td>
+     <td>2024-5-18</td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_CompatibilityTesting_en.html">html</a></td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_CompatibilityTesting_zh.html">html</a></td>
+    </tr>
+    <tr>
+     <td>软件测试-详细测试</td>
+     <td>6.8.1</td>
+     <td>2024-5-18</td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_DetailedTesting_en.html">html</a></td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_DetailedTesting_zh.html">html</a></td>
+    </tr>
+    <tr>
      <td>界面中的提示信息</td>
-     <td>6.8</td>
-     <td>2024-2-9</td>
+     <td>6.8.1</td>
+     <td>2024-5-18</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_interface_tips_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_interface_tips_zh.html">html</a></td>
     </tr>
     <tr>
      <td>关于-树形信息</td>
-     <td>6.8</td>
-     <td>2024-2-9</td>
+     <td>6.8.1</td>
+     <td>2024-5-18</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_about_tree_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_about_tree_zh.html">html</a></td>
     </tr>
     <tr>
      <td>关于-二维存储结构的数据</td>
-     <td>6.7.3</td>
-     <td>2023-5-22</td>
+     <td>6.8.1</td>
+     <td>2024-5-18</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_about_data2d_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_about_data2d_zh.html">html</a></td>
     </tr>
     <tr>
      <td>关于-行表达式和行过滤器</td>
-     <td>6.7.2</td>
-     <td>2023-4-16</td>
+     <td>6.8.1</td>
+     <td>2024-5-18</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_about_row_expression_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_about_row_expression_zh.html">html</a></td>
     </tr>

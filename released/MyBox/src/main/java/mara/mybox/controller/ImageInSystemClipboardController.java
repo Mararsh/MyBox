@@ -23,10 +23,10 @@ import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
+import static mara.mybox.value.AppVariables.ImageClipMonitor;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
-import static mara.mybox.value.AppVariables.ImageClipMonitor;
 
 /**
  * @Author Mara
@@ -127,12 +127,13 @@ public class ImageInSystemClipboardController extends BaseImageController {
                 }
             });
 
-            targetPathInputController.baseName(baseName).initFile();
+            targetPathInputController.parent(this);
 
             targetPathInputController.notify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) {
-                    checkTargetPath();
+                    targetPath = targetPathInputController.file();
+                    applyTargetPath();
                 }
             });
 
@@ -153,8 +154,6 @@ public class ImageInSystemClipboardController extends BaseImageController {
                     }
                 }
             });
-
-            openPathButton.disableProperty().bind(targetPathInputController.valid.not());
 
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -181,7 +180,7 @@ public class ImageInSystemClipboardController extends BaseImageController {
 
     @FXML
     public void openPath() {
-        view(targetPathInputController.file);
+        view(targetPathInputController.pickFile());
     }
 
     @FXML
@@ -204,8 +203,12 @@ public class ImageInSystemClipboardController extends BaseImageController {
     }
 
     public void checkTargetPath() {
+        targetPath = targetPathInputController.pickFile();
+        applyTargetPath();
+    }
+
+    public void applyTargetPath() {
         try {
-            targetPath = targetPathInputController.file;
             filesLabel.setText("");
             if (targetPath != null && targetPath.exists()) {
                 if (targetPrefixInput.getText().trim().isEmpty()) {
@@ -226,6 +229,7 @@ public class ImageInSystemClipboardController extends BaseImageController {
             if (ImageClipMonitor != null) {
                 ImageClipMonitor.setFilePrefix(filePrefix);
             }
+            openPathButton.setDisable(targetPath == null);
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
@@ -343,6 +347,7 @@ public class ImageInSystemClipboardController extends BaseImageController {
                 controller.updateStatus();
             }
         });
+        Platform.requestNextPulse();
     }
 
 }

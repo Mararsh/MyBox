@@ -23,7 +23,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-9-4
  * @License Apache License Version 2.0
  */
-public class TableAddRowsController extends BaseChildController {
+public class TableAddRowsController extends BaseBranchController {
 
     protected BaseTablePagesController tableViewController;
     protected int number;
@@ -39,12 +39,14 @@ public class TableAddRowsController extends BaseChildController {
     @FXML
     protected HBox rowBox;
 
+    public TableAddRowsController() {
+        baseTitle = message("AddRows");
+    }
+
     public void setParameters(BaseTablePagesController tableViewController) {
         try {
             this.tableViewController = tableViewController;
             this.baseName = tableViewController.baseName;
-
-            getMyStage().setTitle(tableViewController.getBaseTitle());
 
             String location = UserConfig.getString(baseName + "AddRowsLocation", message("Front"));
             if (location == null || message("Front").equals(location)) {

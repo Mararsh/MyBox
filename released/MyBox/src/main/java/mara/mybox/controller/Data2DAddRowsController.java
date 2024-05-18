@@ -3,9 +3,11 @@ package mara.mybox.controller;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -14,17 +16,21 @@ import mara.mybox.value.Fxmls;
  */
 public class Data2DAddRowsController extends TableAddRowsController {
 
-    protected ControlData2DEditTable dataEditController;
+    protected BaseData2DLoadController dataController;
 
     @FXML
     protected ControlData2DRowEdit rowEditController;
+    @FXML
+    protected Label nameLabel;
 
-    public void setParameters(ControlData2DEditTable dataEditController) {
+    public void setParameters(BaseData2DLoadController controller) {
         try {
-            super.setParameters(dataEditController);
-            this.dataEditController = dataEditController;
+            super.setParameters(controller);
+            this.dataController = controller;
 
-            rowEditController.setParameters(dataEditController);
+            rowEditController.setParameters(controller);
+
+            nameLabel.setText(message("Data") + ": " + dataController.data2D.displayName());
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -44,7 +50,7 @@ public class Data2DAddRowsController extends TableAddRowsController {
                 row.addAll(values);
                 list.add(row);
             }
-            return tableViewController.addRows(index, list);
+            return dataController.addRows(index, list);
         } catch (Exception e) {
             MyBoxLog.error(e);
             return -2;
@@ -55,7 +61,7 @@ public class Data2DAddRowsController extends TableAddRowsController {
     /*
         static
      */
-    public static Data2DAddRowsController open(ControlData2DEditTable tableViewController) {
+    public static Data2DAddRowsController open(BaseData2DLoadController tableViewController) {
         try {
             Data2DAddRowsController controller = (Data2DAddRowsController) WindowTools.branchStage(
                     tableViewController, Fxmls.Data2DAddRowsFxml);

@@ -10,7 +10,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException;
 
@@ -50,7 +50,7 @@ public abstract class BaseBatchPdfController extends BaseBatchController<PdfInfo
     @Override
     public boolean makePreviewParameters() {
         if (!makeActualParameters()) {
-            popError(Languages.message("Invalid"));
+            popError(message("Invalid"));
             actualParameters = null;
             return false;
         }
@@ -121,17 +121,22 @@ public abstract class BaseBatchPdfController extends BaseBatchController<PdfInfo
                     }
                 }
                 postHandlePages(currentTask);
-                doc.close();
+                if (doc != null) {
+                    doc.close();
+                    doc = null;
+                }
             }
             currentParameters.startPage = 1;
         } catch (InvalidPasswordException e) {
-            return Languages.message("PasswordIncorrect");
+            return message("PasswordIncorrect");
         } catch (Exception e) {
-            return e.toString();
+            showLogs(e.toString());
+            return message("Failed");
         }
         updateInterface("CompleteFile");
-        return MessageFormat.format(Languages.message("HandlePagesGenerateNumber"),
-                currentParameters.currentPage - currentParameters.fromPage, generated);
+        showLogs(MessageFormat.format(message("HandlePagesGenerateNumber"),
+                currentParameters.currentPage - currentParameters.fromPage, generated));
+        return message("Successful");
     }
 
     public boolean preHandlePages(FxTask currentTask) {

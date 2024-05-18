@@ -2,14 +2,12 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Tab;
 import javafx.scene.layout.VBox;
+import mara.mybox.data2d.operate.Data2DExport;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.DateTools;
@@ -21,33 +19,32 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-12-8
  * @License Apache License Version 2.0
  */
-public class Data2DExportController extends BaseData2DHandleController {
+public class Data2DExportController extends BaseData2DTaskController {
 
+    protected Data2DExport export;
     protected String filePrefix;
 
     @FXML
-    protected VBox filterVBox, formatVBox, targetVBox;
+    protected BaseData2DRowsColumnsController rowsColumnsController;
     @FXML
-    protected ControlDataConvert convertController;
+    protected VBox dataBox, filterVBox, formatVBox, targetVBox;
     @FXML
-    protected CheckBox openCheck;
+    protected ControlDataExport convertController;
     @FXML
-    protected Tab targetTab, logsTab;
-    @FXML
-    protected Data2DExportTask taskController;
+    protected Tab targetTab;
 
     public Data2DExportController() {
         baseTitle = message("Export");
     }
 
     @Override
-    public void initControls() {
+    public void initValues() {
         try {
-            super.initControls();
+            super.initValues();
 
-            notSelectColumnsInTable(false);
-
-            okButton = startButton;
+            sourceController = rowsColumnsController;
+            formatValuesCheck = convertController.formatValuesCheck;
+            rowNumberCheck = convertController.rowNumberCheck;
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -55,13 +52,11 @@ public class Data2DExportController extends BaseData2DHandleController {
     }
 
     @Override
-    public void setParameters(ControlData2DLoad editController) {
+    public void setParameters(BaseData2DLoadController controller) {
         try {
-            convertController.setControls(taskController);
-            taskController.setParameters(this);
+            super.setParameters(controller);
 
-            super.setParameters(editController);
-
+            convertController.setParameters(this);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -76,80 +71,98 @@ public class Data2DExportController extends BaseData2DHandleController {
             if (!super.checkOptions()) {
                 return false;
             }
-            targetPath = targetPathController.file();
+            targetPath = targetPathController.pickFile();
             if (targetPath == null) {
-                outOptionsError(message("InvalidParameters") + ": " + message("TargetPath"));
+                popError(message("InvalidParameters") + ": " + message("TargetPath"));
                 tabPane.getSelectionModel().select(targetTab);
                 return false;
             }
-            filePrefix = data2D.getDataName();
+            filePrefix = data2D.dataName();
             if (filePrefix == null || filePrefix.isBlank()) {
                 filePrefix = DateTools.nowFileString();
             }
-            return convertController.initParameters();
+            export = convertController.pickParameters(data2D);
+            export.setInvalidAs(invalidAs);
+            export.setController(this);
+            return export.setColumns(targetPathController, checkedColumns, filePrefix);
         } catch (Exception e) {
             MyBoxLog.error(e);
             return false;
         }
     }
 
-    @FXML
     @Override
-    public void startAction() {
-        okAction();
+    public void beforeTask() {
+        try {
+            super.beforeTask();
+
+            dataBox.setDisable(true);
+            filterVBox.setDisable(true);
+            formatVBox.setDisable(true);
+            targetVBox.setDisable(true);
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
     @Override
     protected void startOperation() {
-        taskController.startAction();
-    }
-
-    public boolean export() {
-        try {
-            convertController.setExport(targetPath, checkedColumns, filePrefix, targetPathController.isSkip());
-            data2D.startTask(taskController.task, filterController.filter);
-            if (!isAllPages() || !data2D.isMutiplePages()) {
-                filteredRowsIndices = filteredRowsIndices();
-                for (Integer row : filteredRowsIndices) {
-                    List<String> dataRow = tableData.get(row);
-                    List<String> exportRow = new ArrayList<>();
-                    for (Integer col : checkedColsIndices) {
-                        exportRow.add(dataRow.get(col + 1));
-                    }
-                    convertController.writeRow(exportRow);
-                }
-
-            } else {
-                data2D.export(convertController, checkedColsIndices);
-            }
-            data2D.stopTask();
-
-            convertController.closeWriters();
-            return true;
-        } catch (Exception e) {
-            if (taskController.task != null) {
-                taskController.task.setError(e.toString());
-            }
-            MyBoxLog.error(e);
-            return false;
+        if (task != null) {
+            task.cancel();
         }
+        taskSuccessed = false;
+        task = new FxSingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                try {
+                    data2D.startTask(task, filterController.filter);
+                    if (!isAllPages() || !data2D.isMutiplePages()) {
+                        List<Integer> filteredRowsIndices = sourceController.filteredRowsIndices;
+                        export.openWriters();
+                        for (Integer row : filteredRowsIndices) {
+                            List<String> dataRow = sourceController.tableData.get(row);
+                            List<String> exportRow = new ArrayList<>();
+                            for (Integer col : checkedColsIndices) {
+                                exportRow.add(dataRow.get(col + 1));
+                            }
+                            export.writeRow(exportRow);
+                        }
+                        export.end();
+                    } else {
+                        export.setCols(checkedColsIndices).setTask(task).start();
+                    }
+                    taskSuccessed = !export.isFailed();
+                    return taskSuccessed;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                afterSuccess();
+            }
+
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                closeTask(ok);
+            }
+
+        };
+        start(task, false);
+
     }
 
+    @Override
     public void afterSuccess() {
         try {
             SoundTools.miao3();
             if (openCheck.isSelected()) {
-                new Timer().schedule(new TimerTask() {
-
-                    @Override
-                    public void run() {
-                        Platform.runLater(() -> {
-                            convertController.openFiles();
-                        });
-                    }
-
-                }, 1000);
-
+                export.openResults();
             }
             if (targetPath != null && targetPath.exists()) {
                 browseURI(targetPath.toURI());
@@ -162,10 +175,28 @@ public class Data2DExportController extends BaseData2DHandleController {
         }
     }
 
+    @Override
+    public void afterTask(boolean ok) {
+        try {
+            if (export != null) {
+                export.end();
+                export = null;
+            }
+            data2D.stopTask();
+            super.afterTask(ok);
+            dataBox.setDisable(false);
+            filterVBox.setDisable(false);
+            formatVBox.setDisable(false);
+            targetVBox.setDisable(false);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
     /*
         static
      */
-    public static Data2DExportController open(ControlData2DLoad tableController) {
+    public static Data2DExportController open(BaseData2DLoadController tableController) {
         try {
             Data2DExportController controller = (Data2DExportController) WindowTools.branchStage(
                     tableController, Fxmls.Data2DExportFxml);

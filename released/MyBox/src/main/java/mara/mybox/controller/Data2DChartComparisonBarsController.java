@@ -41,9 +41,9 @@ public class Data2DChartComparisonBarsController extends BaseData2DChartHtmlCont
     }
 
     @Override
-    public void initControls() {
+    public void initOptions() {
         try {
-            super.initControls();
+            super.initOptions();
 
             valueColumn2Selector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
@@ -62,7 +62,7 @@ public class Data2DChartComparisonBarsController extends BaseData2DChartHtmlCont
         try {
             super.makeOptions();
 
-            List<String> names = tableController.data2D.columnNames();
+            List<String> names = dataController.data2D.columnNames();
             if (names == null || names.isEmpty()) {
                 return;
             }
@@ -83,14 +83,14 @@ public class Data2DChartComparisonBarsController extends BaseData2DChartHtmlCont
     }
 
     @Override
-    public boolean initData() {
+    public boolean checkOptions() {
         try {
-            if (!super.initData()) {
+            if (!super.checkOptions()) {
                 return false;
             }
             selectedValue2 = valueColumn2Selector.getSelectionModel().getSelectedItem();
             if (selectedValue2 == null) {
-                outOptionsError(message("SelectToHandle") + ": " + message("Column"));
+                popError(message("SelectToHandle") + ": " + message("Column"));
                 tabPane.getSelectionModel().select(optionsTab);
                 return false;
             }
@@ -280,7 +280,7 @@ public class Data2DChartComparisonBarsController extends BaseData2DChartHtmlCont
     /*
         static
      */
-    public static Data2DChartComparisonBarsController open(ControlData2DLoad tableController) {
+    public static Data2DChartComparisonBarsController open(BaseData2DLoadController tableController) {
         try {
             Data2DChartComparisonBarsController controller = (Data2DChartComparisonBarsController) WindowTools.branchStage(
                     tableController, Fxmls.Data2DChartComparisonBarsFxml);

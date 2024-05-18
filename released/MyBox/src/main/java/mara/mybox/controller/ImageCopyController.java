@@ -124,8 +124,8 @@ public class ImageCopyController extends ImageSelectPixelsController {
                     }
                 }
                 if (closeAfterCheck.isSelected()) {
-                    close();
                     imageController.popSuccessful();
+                    close();
                 } else {
                     getMyWindow().requestFocus();
                     myStage.toFront();

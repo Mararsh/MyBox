@@ -136,11 +136,9 @@ public class DownloadFirstLevelLinksController extends BaseTablePagesController<
     @FXML
     protected ComboBox<String> threadsSelector, retriesSelector;
     @FXML
-    protected TextArea logsTextArea;
-    @FXML
     protected VBox optionsBox, htmlOptionsBox, pdfOptionsBox;
     @FXML
-    protected ControlTTFSelecter ttfController;
+    protected ControlTTFSelector ttfController;
     @FXML
     protected TextArea cssArea;
 
@@ -183,7 +181,7 @@ public class DownloadFirstLevelLinksController extends BaseTablePagesController<
             textParser = Parser.builder(textOptions).build();
             textCollectingVisitor = new TextCollectingVisitor();
 
-            targetPathInputController.baseName(baseName).initFile();
+            targetPathInputController.parent(this);
         } catch (Exception e) {
             MyBoxLog.console(e.toString());
         }
@@ -456,7 +454,7 @@ public class DownloadFirstLevelLinksController extends BaseTablePagesController<
     public void afterSceneLoaded() {
         try {
             super.afterSceneLoaded();
-            if (targetPathInputController.file == null) {
+            if (targetPathInputController.pickFile() == null) {
                 tabPane.getSelectionModel().select(optionsTab);
             }
 
@@ -495,7 +493,7 @@ public class DownloadFirstLevelLinksController extends BaseTablePagesController<
             return;
         }
         TableStringValues.add("DownloadHtmlsHistories", address);
-        File downloadPath = targetPathInputController.file;
+        File downloadPath = targetPathInputController.pickFile();
         if (downloadPath == null) {
             popError(message("InvalidParameters") + ": " + message("TargetPath"));
             tabPane.getSelectionModel().select(optionsTab);
@@ -556,7 +554,7 @@ public class DownloadFirstLevelLinksController extends BaseTablePagesController<
         this.subPath = subPath;
         filenameType = nameType;
         tableData.clear();
-        File downloadPath = targetPathInputController.file;
+        File downloadPath = targetPathInputController.pickFile();
         if (task != null) {
             task.cancel();
         }
@@ -706,7 +704,7 @@ public class DownloadFirstLevelLinksController extends BaseTablePagesController<
         }
         String path = result.get().trim();
         for (Link link : selected) {
-            File fullpath = new File(targetPathInputController.file.getAbsolutePath() + File.separator + path);
+            File fullpath = new File(targetPathInputController.pickFile().getAbsolutePath() + File.separator + path);
             String filename = link.filename(fullpath, filenameType);
             link.setFile(filename);
         }
@@ -722,7 +720,7 @@ public class DownloadFirstLevelLinksController extends BaseTablePagesController<
             Link link = selected.get(i);
             String filename = link.getFile();
             if (filename == null) {
-                filename = link.filename(new File(targetPathInputController.file.getAbsolutePath()), filenameType);
+                filename = link.filename(new File(targetPathInputController.pickFile().getAbsolutePath()), filenameType);
                 link.setFile(filename);
             }
             File file = new File(filename);
@@ -740,11 +738,11 @@ public class DownloadFirstLevelLinksController extends BaseTablePagesController<
         for (Link link : selected) {
             String filename = link.getFile();
             if (filename == null) {
-                filename = link.filename(new File(targetPathInputController.file.getAbsolutePath()), filenameType);
+                filename = link.filename(new File(targetPathInputController.pickFile().getAbsolutePath()), filenameType);
                 link.setFile(filename);
             }
             File file = new File(filename);
-            String suffix = FileNameTools.suffix(file.getName());
+            String suffix = FileNameTools.ext(file.getName());
             suffix = (suffix != null && !suffix.isBlank()) ? "." + suffix : "";
             String newName = file.getParent() + File.separator + link.pageName(filenameType) + suffix;
             link.setFile(newName);
@@ -862,7 +860,7 @@ public class DownloadFirstLevelLinksController extends BaseTablePagesController<
 
     @FXML
     public void view(Link link) {
-        if (link == null || targetPathInputController.file == null) {
+        if (link == null || targetPathInputController.pickFile() == null) {
             return;
         }
         String s = message("Address") + ": " + link.getAddress() + "<br>"
@@ -1363,7 +1361,7 @@ public class DownloadFirstLevelLinksController extends BaseTablePagesController<
 
             StringBuilder htmlBuilder = new StringBuilder();
             String head
-                    = "<!DOCTYPE html><html>\n"
+                    = "<html>\n"
                     + "    <head>\n"
                     + "        <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n"
                     + "    </head>\n"
@@ -1525,11 +1523,12 @@ public class DownloadFirstLevelLinksController extends BaseTablePagesController<
         }
     }
 
-    protected void updateLogs(final String line) {
+    @Override
+    public void updateLogs(final String line) {
         Platform.runLater(() -> {
             try {
-                String newLogs = DateTools.datetimeToString(new Date()) + "  " + line + "\n";
-                logsTextArea.insertText(0, newLogs);
+                String logs = DateTools.datetimeToString(new Date()) + "  " + line + "\n";
+                logsTextArea.insertText(0, logs);
                 int len = logsTextArea.getLength();
                 if (len > maxLogs) {
                     logsTextArea.deleteText(len - len / 4, len - 1);
@@ -1542,14 +1541,15 @@ public class DownloadFirstLevelLinksController extends BaseTablePagesController<
     }
 
     @FXML
-    protected void clearLogs() {
+    @Override
+    public void clearLogs() {
         logsTextArea.setText("");
     }
 
     @FXML
     protected void openPath() {
         try {
-            browseURI(targetPathInputController.file.toURI());
+            browseURI(targetPathInputController.pickFile().toURI());
         } catch (Exception e) {
         }
     }

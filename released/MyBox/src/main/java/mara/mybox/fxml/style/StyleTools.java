@@ -126,10 +126,6 @@ public class StyleTools {
     /*
         Color
      */
-    public static StyleColor getConfigStyleColor() {
-        return getColorStyle(UserConfig.getString("ControlColor", "red"));
-    }
-
     public static void setConfigStyleColor(BaseController controller, String value) {
         AppVariables.ControlColor = getColorStyle(value);
         UserConfig.setString("ControlColor", AppVariables.ControlColor.name());

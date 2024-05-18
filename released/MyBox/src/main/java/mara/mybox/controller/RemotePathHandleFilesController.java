@@ -16,6 +16,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -38,7 +39,7 @@ public abstract class RemotePathHandleFilesController extends BaseTaskController
     @FXML
     protected Label hostLabel;
     @FXML
-    protected CheckBox wrapCheck, continueCheck;
+    protected CheckBox wrapCheck, errorContinueCheck;
 
     public void setParameters(RemotePathManageController manageController) {
         try {
@@ -66,13 +67,19 @@ public abstract class RemotePathHandleFilesController extends BaseTaskController
             });
             namesArea.setWrapText(wrapCheck.isSelected());
 
-            continueCheck.setSelected(UserConfig.getBoolean("RemotePathFilesErrorContinue", true));
-            continueCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
-                    UserConfig.setBoolean("RemotePathFilesErrorContinue", nv);
-                }
-            });
+            if (errorContinueCheck != null) {
+                errorContinueCheck.setSelected(false);
+                errorContinueCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                        if (errorContinueCheck.isSelected()) {
+                            errorContinueCheck.setStyle(NodeStyleTools.darkRedTextStyle());
+                        } else {
+                            errorContinueCheck.setStyle(null);
+                        }
+                    }
+                });
+            }
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -134,7 +141,7 @@ public abstract class RemotePathHandleFilesController extends BaseTaskController
                     showLogs(doneString + ": " + name);
                 } else {
                     showLogs(message("Failed") + ": " + name);
-                    if (!continueCheck.isSelected()) {
+                    if (!errorContinueCheck.isSelected()) {
                         return false;
                     }
                 }
@@ -159,7 +166,7 @@ public abstract class RemotePathHandleFilesController extends BaseTaskController
     }
 
     @Override
-    public void afterTask() {
+    public void afterTask(boolean ok) {
         showLogs(doneString + ": " + doneCount);
         if (miaoCheck.isSelected()) {
             SoundTools.miao3();

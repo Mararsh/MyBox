@@ -103,6 +103,10 @@ public class VisitHistory extends BaseData {
                 FileType.MultipleFrames, FileType.PDF, FileType.PPT};
             return types;
 
+        } else if (fileType == FileType.DataFile) {
+            int[] types = {FileType.DataFile, FileType.CSV, FileType.Excel, FileType.Text};
+            return types;
+
         } else {
             return null;
         }
@@ -182,6 +186,13 @@ public class VisitHistory extends BaseData {
 
     public static boolean valid(VisitHistory data) {
         return data != null;
+    }
+
+    public static boolean isImageType(int fileType) {
+        return fileType == FileType.Image
+                || fileType == FileType.Gif
+                || fileType == FileType.Tif
+                || fileType == FileType.MultipleFrames;
     }
 
     /*

@@ -3,6 +3,7 @@ package mara.mybox.value;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.io.File;
+import java.sql.Connection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,7 @@ import java.util.concurrent.ScheduledFuture;
 import javafx.beans.property.SimpleBooleanProperty;
 import mara.mybox.controller.AlarmClockController;
 import mara.mybox.db.Database;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ImageClipboardMonitor;
@@ -47,7 +49,8 @@ public class AppVariables {
     public static boolean isTesting, handlingExit, ShortcutsCanNotOmitCtrlAlt, icons40px,
             closeCurrentWhenOpenTool, recordWindowsSizeLocation, controlDisplayText,
             commitModificationWhenDataCellLoseFocus,
-            ignoreDbUnavailable, popErrorLogs, saveDebugLogs, detailedDebugLogs;
+            ignoreDbUnavailable, popErrorLogs, saveDebugLogs, detailedDebugLogs,
+            data2DValidateEdit, data2DValidateSave;
     public static TextClipboardMonitor TextClipMonitor;
     public static ImageClipboardMonitor ImageClipMonitor;
     public static Timer ExitTimer;
@@ -61,33 +64,11 @@ public class AppVariables {
             SystemConfigValues.clear();
             CurrentLangName = Languages.getLangName();
             CurrentBundle = Languages.getBundle();
-            UserConfig.getPdfMem();
-            closeCurrentWhenOpenTool = UserConfig.getBoolean("CloseCurrentWhenOpenTool", false);
-            recordWindowsSizeLocation = UserConfig.getBoolean("RecordWindowsSizeLocation", true);
-            sceneFontSize = UserConfig.getInt("SceneFontSize", 15);
-            fileRecentNumber = UserConfig.getInt("FileRecentNumber", VisitHistory.Default_Max_Histories);
-            iconSize = UserConfig.getInt("IconSize", 20);
-            thumbnailWidth = UserConfig.getInt("ThumbnailWidth", 100);
-            maxDemoImage = UserConfig.getLong("MaxDemoImage", 1000000);
-            ControlColor = StyleTools.getConfigStyleColor();
-            controlDisplayText = UserConfig.getBoolean("ControlDisplayText", false);
-            icons40px = UserConfig.getBoolean("Icons40px", Toolkit.getDefaultToolkit().getScreenResolution() <= 120);
-            ShortcutsCanNotOmitCtrlAlt = UserConfig.getBoolean("ShortcutsCanNotOmitCtrlAlt", false);
-            commitModificationWhenDataCellLoseFocus = UserConfig.getBoolean("CommitModificationWhenDataCellLoseFocus", true);
-            saveDebugLogs = UserConfig.getBoolean("SaveDebugLogs", false);
-            detailedDebugLogs = UserConfig.getBoolean("DetailedDebugLogs", false);
             ignoreDbUnavailable = false;
-            popErrorLogs = UserConfig.getBoolean("PopErrorLogs", true);
             ErrorNotify = new SimpleBooleanProperty(false);
             isTesting = false;
 
-            Database.BatchSize = UserConfig.getLong("DatabaseBatchSize", 500);
-            if (Database.BatchSize <= 0) {
-                Database.BatchSize = 500;
-                UserConfig.setLong("DatabaseBatchSize", 500);
-            }
-
-            ImageRenderHints.loadImageRenderHints();
+            loadAppVaribles();
 
             if (ExitTimer != null) {
                 ExitTimer.cancel();
@@ -104,6 +85,52 @@ public class AppVariables {
                     WindowTools.checkExit();
                 }
             }, 0, 3000);
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public static void loadAppVaribles() {
+        try {
+            Connection conn = null;
+            try {
+                conn = DerbyBase.getConnection();
+            } catch (Exception e) {
+                MyBoxLog.console(e.toString());
+            }
+            UserConfig.getPdfMem(conn);
+            closeCurrentWhenOpenTool = UserConfig.getBoolean(conn, "CloseCurrentWhenOpenTool", false);
+            recordWindowsSizeLocation = UserConfig.getBoolean(conn, "RecordWindowsSizeLocation", true);
+            sceneFontSize = UserConfig.getInt(conn, "SceneFontSize", 15);
+            fileRecentNumber = UserConfig.getInt(conn, "FileRecentNumber", VisitHistory.Default_Max_Histories);
+            iconSize = UserConfig.getInt(conn, "IconSize", 20);
+            ControlColor = StyleTools.getColorStyle(UserConfig.getString(conn, "ControlColor", "red"));
+            controlDisplayText = UserConfig.getBoolean(conn, "ControlDisplayText", false);
+            icons40px = UserConfig.getBoolean(conn, "Icons40px", Toolkit.getDefaultToolkit().getScreenResolution() <= 120);
+            thumbnailWidth = UserConfig.getInt(conn, "ThumbnailWidth", 100);
+            maxDemoImage = UserConfig.getLong(conn, "MaxDemoImage", 1000000);
+            ShortcutsCanNotOmitCtrlAlt = UserConfig.getBoolean(conn, "ShortcutsCanNotOmitCtrlAlt", false);
+
+            commitModificationWhenDataCellLoseFocus = UserConfig.getBoolean(conn, "CommitModificationWhenDataCellLoseFocus", true);
+            data2DValidateEdit = UserConfig.getBoolean(conn, "Data2DValidateEdit", true);
+            data2DValidateSave = UserConfig.getBoolean(conn, "Data2DValidateSave", true);
+
+            saveDebugLogs = UserConfig.getBoolean(conn, "SaveDebugLogs", false);
+            detailedDebugLogs = UserConfig.getBoolean(conn, "DetailedDebugLogs", false);
+            popErrorLogs = UserConfig.getBoolean(conn, "PopErrorLogs", true);
+
+            Database.BatchSize = UserConfig.getLong(conn, "DatabaseBatchSize", 500);
+            if (Database.BatchSize <= 0) {
+                Database.BatchSize = 500;
+                UserConfig.setLong(conn, "DatabaseBatchSize", 500);
+            }
+
+            ImageRenderHints.loadImageRenderHints(conn);
+
+            if (conn != null) {
+                conn.close();
+            }
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

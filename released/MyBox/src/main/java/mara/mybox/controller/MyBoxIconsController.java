@@ -45,7 +45,7 @@ public class MyBoxIconsController extends BaseBatchFileController {
             sourceCodesPathController.label(message("sourceCodesPath"))
                     .isDirectory(true).isSource(false).mustExist(true).permitNull(false)
                     .defaultFile("win".equals(SystemTools.os()) ? new File("D:\\MyBox") : new File("/home/mara/mybox"))
-                    .baseName(baseName).savedName(baseName + "SourceCodesPath").initFile();
+                    .parent(this, baseName + "SourceCodesPath");
 
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -57,7 +57,7 @@ public class MyBoxIconsController extends BaseBatchFileController {
         if (task != null) {
             task.cancel();
         }
-        srcRoot = sourceCodesPathController.file();
+        srcRoot = sourceCodesPathController.pickFile();
         if (srcRoot == null) {
             popError(message("InvalidSourceCodesPath"));
             return;
@@ -177,7 +177,7 @@ public class MyBoxIconsController extends BaseBatchFileController {
     }
 
     @Override
-    public void afterTask() {
+    public void afterTask(boolean ok) {
         SoundTools.miao3();
         popInformation(message("TakeEffectWhenReboot"));
     }

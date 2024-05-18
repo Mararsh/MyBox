@@ -8,6 +8,8 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import mara.mybox.calculation.SimpleLinearRegression;
@@ -45,6 +47,10 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DRegression
     protected Map<String, String> residualPalette;
 
     @FXML
+    protected TabPane chartTabPane;
+    @FXML
+    protected Tab modelTab, resultsTab, fitTab, residualTab;
+    @FXML
     protected CheckBox textCheck, fittedPointsCheck, fittedLineCheck, residualStdCheck;
     @FXML
     protected ControlData2DChartXY fittingController, residualController;
@@ -60,9 +66,9 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DRegression
     }
 
     @Override
-    public void initControls() {
+    public void initOptions() {
         try {
-            super.initControls();
+            super.initOptions();
 
             fittingMaker = fittingController.chartMaker;
             fittingMaker.init(ChartType.SimpleRegressionChart, message("SimpleRegressionChart"));
@@ -150,25 +156,25 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DRegression
     }
 
     @Override
-    public boolean initData() {
+    public boolean checkOptions() {
         try {
-            if (!super.initData()) {
+            if (!super.checkOptions()) {
                 return false;
             }
             int categoryCol = data2D.colOrder(selectedCategory);
             if (categoryCol < 0) {
-                outOptionsError(message("SelectToHandle") + ": " + message("CategoryColumn"));
+                popError(message("SelectToHandle") + ": " + message("CategoryColumn"));
                 tabPane.getSelectionModel().select(optionsTab);
                 return false;
             }
             int valueCol = data2D.colOrder(selectedValue);
             if (valueCol < 0) {
-                outOptionsError(message("SelectToHandle") + ": " + message("ValueColumn"));
+                popError(message("SelectToHandle") + ": " + message("ValueColumn"));
                 tabPane.getSelectionModel().select(optionsTab);
                 return false;
             }
             if (categoryCol == valueCol) {
-                outOptionsError(message("IndependentVariableShouldNotDependentVariable"));
+                popError(message("IndependentVariableShouldNotDependentVariable"));
                 tabPane.getSelectionModel().select(optionsTab);
                 return false;
             }
@@ -197,10 +203,10 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DRegression
                     regressionData = simpleRegression.addData(outputData, invalidAs);
                 } else {
                     regressionFile = data2D.simpleLinearRegression(null, dataColsIndices, simpleRegression, true);
-                    outputData = tableFiltered(dataColsIndices, true);
+                    outputData = sourceController.rowsFiltered(dataColsIndices, true);
                 }
             } else {
-                outputData = tableFiltered(dataColsIndices, true);
+                outputData = sourceController.rowsFiltered(dataColsIndices, true);
                 regressionData = simpleRegression.addData(outputData, invalidAs);
             }
             if (outputData == null) {
@@ -212,7 +218,7 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DRegression
             r = simpleRegression.getR();
 
             outputColumns = new ArrayList<>();
-            outputColumns.add(new Data2DColumn(message("RowNumber"), ColumnDefinition.ColumnType.String));
+            outputColumns.add(new Data2DColumn(message("RowNumber"), ColumnDefinition.ColumnType.Long));
             outputColumns.add(data2D.columnByName(selectedCategory));
             outputColumns.add(data2D.columnByName(selectedValue));
             outputColumns.add(new Data2DColumn(selectedValue + "_" + message("FittedValue"), ColumnDefinition.ColumnType.Double));
@@ -232,7 +238,7 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DRegression
     public void makeResidualData() {
         try {
             residualColumns = new ArrayList<>();
-            residualColumns.add(new Data2DColumn(message("RowNumber"), ColumnDefinition.ColumnType.String));
+            residualColumns.add(new Data2DColumn(message("RowNumber"), ColumnDefinition.ColumnType.Long));
             if (residualIndRadio.isSelected()) {
                 residualColumns.add(new Data2DColumn(message("IndependentVariable"), ColumnDefinition.ColumnType.Double));
             } else if (residualActualRadio.isSelected()) {
@@ -368,7 +374,7 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DRegression
             s.append("<P>").append(message("DependentVariable")).append(": ").append(selectedValue).append(" = \n");
             s.append("<INPUT id=\"outputY\"  type=\"text\" style=\"width:200px\"/></P>\n");
 //            s.append("<P>").append(message("ConfidenceIntervals")).append(" = \n");
-//            s.append("<INPUT id=\"ConfidenceIntervals\"  type=\"text\" style=\"width:300px\"/></P>\n");
+//            s.append("<INPUT id=\"ConfidenceIntervals\"  dataType=\"text\" style=\"width:300px\"/></P>\n");
             s.append("</DIV>\n<HR/>\n");
 
             s.append("<H3 align=center>").append(message("LastStatus")).append("</H3>\n");
@@ -387,9 +393,8 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DRegression
             }
             s.append(table.div());
 
-            s.append("\n<HR/><P align=left style=\"font-size:1em;\">* ")
-                    .append(message("HtmlEditableComments")).append("</P>\n");
-
+//            s.append("\n<HR/><P align=left style=\"font-size:1em;\">* ")
+//                    .append(message("HtmlEditableComments")).append("</P>\n");
             s.append("</BODY>\n");
             modelController.loadContents(HtmlWriteTools.html(s.toString()));
 
@@ -403,7 +408,8 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DRegression
             if (regressionFile != null) {
                 regressionDataController.loadDef(regressionFile);
             } else {
-                regressionDataController.loadData(simpleRegression.getColumns(), regressionData);
+                regressionDataController.loadData(baseTitle,
+                        simpleRegression.getColumns(), regressionData);
             }
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -444,6 +450,85 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DRegression
         drawResidualChart();
     }
 
+    @FXML
+    @Override
+    public boolean menuAction() {
+        Tab tab = chartTabPane.getSelectionModel().getSelectedItem();
+        if (tab == modelTab) {
+            return modelController.menuAction();
+
+        } else if (tab == resultsTab) {
+            return regressionDataController.menuAction();
+
+        } else if (tab == fitTab) {
+            return fittingController.menuAction();
+
+        } else if (tab == residualTab) {
+            return residualController.menuAction();
+
+        }
+        return false;
+    }
+
+    @FXML
+    @Override
+    public boolean popAction() {
+        Tab tab = chartTabPane.getSelectionModel().getSelectedItem();
+        if (tab == modelTab) {
+            return modelController.popAction();
+
+        } else if (tab == resultsTab) {
+            return regressionDataController.popAction();
+
+        } else if (tab == fitTab) {
+            return fittingController.popAction();
+
+        } else if (tab == residualTab) {
+            return residualController.popAction();
+
+        }
+        return false;
+    }
+
+    @Override
+    public boolean controlAlt2() {
+        Tab tab = chartTabPane.getSelectionModel().getSelectedItem();
+        if (tab == fitTab) {
+            return fittingController.controlAlt2();
+
+        } else if (tab == residualTab) {
+            return residualController.controlAlt2();
+
+        }
+        return false;
+    }
+
+    @Override
+    public boolean controlAlt3() {
+        Tab tab = chartTabPane.getSelectionModel().getSelectedItem();
+        if (tab == fitTab) {
+            return fittingController.controlAlt3();
+
+        } else if (tab == residualTab) {
+            return residualController.controlAlt3();
+
+        }
+        return false;
+    }
+
+    @Override
+    public boolean controlAlt4() {
+        Tab tab = chartTabPane.getSelectionModel().getSelectedItem();
+        if (tab == fitTab) {
+            return fittingController.controlAlt4();
+
+        } else if (tab == residualTab) {
+            return residualController.controlAlt4();
+
+        }
+        return false;
+    }
+
     /*
         get/set
      */
@@ -454,7 +539,7 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DRegression
     /*
         static
      */
-    public static Data2DSimpleLinearRegressionController open(ControlData2DLoad tableController) {
+    public static Data2DSimpleLinearRegressionController open(BaseData2DLoadController tableController) {
         try {
             Data2DSimpleLinearRegressionController controller = (Data2DSimpleLinearRegressionController) WindowTools.branchStage(
                     tableController, Fxmls.Data2DSimpleLinearRegressionFxml);

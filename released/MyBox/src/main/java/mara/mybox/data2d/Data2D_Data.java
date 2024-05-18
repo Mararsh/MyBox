@@ -10,12 +10,14 @@ import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Data2DColumn;
+import static mara.mybox.db.data.Data2DDefinition.DataType.Texts;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.tools.DoubleTools;
-import static mara.mybox.tools.FileTmpTools.generateFile;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.NumberTools;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -24,31 +26,43 @@ import static mara.mybox.value.Languages.message;
  */
 public abstract class Data2D_Data extends Data2D_Attributes {
 
-    @Override
-    public boolean isValid() {
-        return super.isValid() && columns != null && !columns.isEmpty();
-    }
-
     public Data2D_Data initData(File file, String sheet, long dataSize, long currentPage) {
         resetData();
         this.file = file;
         this.sheet = sheet;
-        this.dataSize = dataSize;
+        this.rowsNumber = dataSize;
         this.currentPage = currentPage;
         return this;
     }
 
     public File tmpFile(String name, String operation, String ext) {
+        return tmpFile(name, operation, ext,
+                UserConfig.getBoolean("Data2DTmpDataUnderGeneratedPath", false));
+    }
+
+    public File tmpFile(String name, String operation, String ext, boolean underGeneratedPath) {
+        String prefix;
         if (name != null && !name.isBlank()) {
-            return generateFile(name, ext);
+            prefix = name;
+        } else {
+            prefix = shortName();
         }
-        String pname = shortName();
-        if (pname.startsWith(TmpTable.TmpTablePrefix)
-                || pname.startsWith(TmpTable.TmpTablePrefix.toLowerCase())) {
-            pname = pname.substring(TmpTable.TmpTablePrefix.length());
+        if (prefix.startsWith(TmpTable.TmpTablePrefix)
+                || prefix.startsWith(TmpTable.TmpTablePrefix.toLowerCase())) {
+            prefix = prefix.substring(TmpTable.TmpTablePrefix.length());
         }
-        pname = pname + ((operation == null || operation.isBlank()) ? "" : "_" + operation);
-        return generateFile(pname, ext);
+        if (operation != null && !operation.isBlank()) {
+            if (prefix != null && !prefix.isBlank()) {
+                prefix += "_" + operation;
+            } else {
+                prefix = operation;
+            }
+        }
+        if (underGeneratedPath) {
+            return FileTmpTools.generateFile(prefix, ext);
+        } else {
+            return FileTmpTools.tmpFile(prefix, ext);
+        }
     }
 
     /*
@@ -56,14 +70,23 @@ public abstract class Data2D_Data extends Data2D_Attributes {
      */
     public Data2D_Data initFile(File file) {
         if (file != null && file.equals(this.file)) {
-            return initData(file, sheet, dataSize, currentPage);
+            return initData(file, sheet, rowsNumber, currentPage);
         } else {
             return initData(file, null, 0, 0);
         }
     }
 
     public boolean isMutiplePages() {
-        return pagesNumber > 1;
+        return dataLoaded && pagesNumber > 1;
+    }
+
+    public boolean isDataLoaded() {
+        return dataLoaded;
+    }
+
+    public Data2D_Data setDataLoaded(boolean dataLoaded) {
+        this.dataLoaded = dataLoaded;
+        return this;
     }
 
     // file columns are not necessary in order of columns definition.
@@ -91,14 +114,14 @@ public abstract class Data2D_Data extends Data2D_Attributes {
     }
 
     public boolean supportMultipleLine() {
-        return type != Type.Texts && type != Type.Matrix;
+        return dataType != DataType.Texts && dataType != DataType.Matrix;
     }
 
     /*
         matrix
      */
     public boolean isSquareMatrix() {
-        return type == Type.Matrix && tableColsNumber() == tableRowsNumber();
+        return dataType == DataType.Matrix && tableColsNumber() == tableRowsNumber();
     }
 
     /*
@@ -117,35 +140,12 @@ public abstract class Data2D_Data extends Data2D_Attributes {
     /*
         table data
      */
-    public List<List<String>> tableData() {
-        return loadController == null ? null : loadController.getTableData();
-    }
-
-    public void setTableChanged(boolean changed) {
-        tableChanged = changed;
-    }
-
     public int tableRowsNumber() {
-        return loadController == null ? 0 : tableData().size();
+        return pageData == null ? 0 : pageData.size();
     }
 
     public int tableColsNumber() {
         return columns == null ? 0 : columns.size();
-    }
-
-    // Column's index, instead of column name or table index, is the key to determine the column.
-    // Columns order of table is synchronized when columns are applied. 
-    // Columns order of file is synchronized when file is saved. 
-    public int colOrder(int colIndex) {
-        try {
-            for (int i = 0; i < columns.size(); i++) {
-                if (colIndex == columns.get(i).getIndex()) {
-                    return i;
-                }
-            }
-        } catch (Exception e) {
-        }
-        return -1;
     }
 
     public int colOrder(String name) {
@@ -176,20 +176,13 @@ public abstract class Data2D_Data extends Data2D_Attributes {
         return -1;
     }
 
-    public List<String> tableRow(int rowIndex, boolean withRowNumber, boolean formatValues) {
+    public List<String> tableRow(int rowIndex) {
         try {
-            List<String> trow = tableData().get(rowIndex);
+            List<String> trow = pageData.get(rowIndex);
             List<String> row = new ArrayList<>();
-            if (withRowNumber) {
-                row.add(trow.get(0));
-            }
             for (int i = 0; i < columns.size(); i++) {
                 String v = trow.get(i + 1);
-                if (formatValues) {
-                    v = columns.get(i).format(v);
-                } else {
-                    v = columns.get(i).savedValue(v);
-                }
+                v = savedValue(i, v);
                 row.add(v);
             }
             return row;
@@ -198,11 +191,34 @@ public abstract class Data2D_Data extends Data2D_Attributes {
         }
     }
 
-    public List<List<String>> tableRows(boolean withRowNumber, boolean formatValues) {
+    public List<String> tableRowShow(int rowIndex) {
+        try {
+            List<String> trow = pageData.get(rowIndex);
+            List<String> row = new ArrayList<>();
+            String rindex = trow.get(0);
+            row.add(rindex != null && rindex.startsWith("-1") ? null : rindex);
+            for (int i = 0; i < columns.size(); i++) {
+                String v = trow.get(i + 1);
+                v = formatValue(i, v);
+                row.add(v);
+            }
+            return row;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public List<List<String>> tableRows(boolean rowNumber) {
         try {
             List<List<String>> rows = new ArrayList<>();
-            for (int i = 0; i < tableData().size(); i++) {
-                List<String> row = tableRow(i, withRowNumber, formatValues);
+            for (int i = 0; i < pageData.size(); i++) {
+                List<String> row = new ArrayList<>();
+                if (rowNumber) {
+                    row.add("" + (i + 1));
+                    row.addAll(tableRowShow(i));
+                } else {
+                    row.addAll(tableRow(i));
+                }
                 rows.add(row);
             }
             return rows;
@@ -211,8 +227,8 @@ public abstract class Data2D_Data extends Data2D_Attributes {
         }
     }
 
-    public List<List<String>> tableRows(boolean withRowNumber) {
-        return tableRows(withRowNumber, false);
+    public List<List<String>> tableRows() {
+        return tableRows(false);
     }
 
     public List<String> newRow() {
@@ -242,12 +258,20 @@ public abstract class Data2D_Data extends Data2D_Attributes {
         return newRow;
     }
 
-    public boolean hasData() {
-        return isValid() && tableData() != null && !tableData().isEmpty();
+    public boolean hasPage() {
+        return isValidDefinition() && pageData != null;
+    }
+
+    public boolean hasPageData() {
+        return isValidDefinition() && pageData != null && !pageData.isEmpty();
+    }
+
+    public boolean isPagesChanged() {
+        return isMutiplePages() && isTableChanged();
     }
 
     public boolean isTmpData() {
-        switch (type) {
+        switch (dataType) {
             case CSV:
             case Excel:
             case Texts:
@@ -260,13 +284,22 @@ public abstract class Data2D_Data extends Data2D_Attributes {
         }
     }
 
+    public boolean isTmpFile() {
+        return file == null || FileTmpTools.isTmpFile(file);
+    }
+
+    public boolean needBackup() {
+        return file != null && isDataFile() && !isTmpFile()
+                && UserConfig.getBoolean("Data2DFileBackupWhenSave", true);
+    }
+
     public List<List<String>> tmpData(int rows, int cols) {
         Random random = new Random();
         List<List<String>> data = new ArrayList<>();
         for (int i = 0; i < rows; i++) {
             List<String> row = new ArrayList<>();
             for (int j = 0; j < cols; j++) {
-                if (type == Type.Matrix) {
+                if (dataType == DataType.Matrix) {
                     row.add(randomDouble(random, true));
                 } else {
                     row.add(randomString(random));
@@ -275,30 +308,6 @@ public abstract class Data2D_Data extends Data2D_Attributes {
             data.add(row);
         }
         return data;
-    }
-
-    public String rowName(int row) {
-        return message("Row") + (startRowOfCurrentPage + row + 1);
-    }
-
-    public List<String> rowNames() {
-        try {
-            return rowNames(tableData().size());
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    public List<String> rowNames(int end) {
-        try {
-            List<String> names = new ArrayList<>();
-            for (int i = 0; i < end; i++) {
-                names.add(rowName(i));
-            }
-            return names;
-        } catch (Exception e) {
-            return null;
-        }
     }
 
     public String random(Random random, int col, boolean nonNegative) {
@@ -311,7 +320,9 @@ public abstract class Data2D_Data extends Data2D_Attributes {
 
     public boolean verifyData() {
         try {
-            List<List<String>> pageData = tableData();
+            if (pageData == null || pageData.isEmpty()) {
+                return true;
+            }
             List<String> names = new ArrayList<>();
             names.addAll(Arrays.asList(message("Row"), message("Column"), message("Invalid")));
             StringTable stringTable = new StringTable(names, displayName());
@@ -345,25 +356,25 @@ public abstract class Data2D_Data extends Data2D_Attributes {
     }
 
     /*
-        table view
+        page
      */
-    public List<String> tableViewRow(int row) {
-        if (loadController == null || row < 0 || row > tableData().size() - 1) {
+    public List<String> pageRow(int row) {
+        if (pageData == null || row < 0 || row > pageData.size() - 1) {
             return null;
         }
         try {
-            return tableData().get(row);
+            return pageData.get(row);
         } catch (Exception e) {
             return null;
         }
     }
 
-    public long tableViewRowIndex(int row) {
-        if (loadController == null || row < 0 || row > tableData().size() - 1) {
+    public long pageRowIndex(int row) {
+        if (pageData == null || row < 0 || row > pageData.size() - 1) {
             return -1;
         }
         try {
-            return Long.parseLong(tableData().get(row).get(0));
+            return Long.parseLong(pageData.get(row).get(0));
         } catch (Exception e) {
             return -1;
         }
@@ -407,7 +418,7 @@ public abstract class Data2D_Data extends Data2D_Attributes {
 
     public List<String> columnNames() {
         try {
-            if (!isColumnsValid()) {
+            if (!isValidDefinition()) {
                 return null;
             }
             List<String> names = new ArrayList<>();
@@ -450,7 +461,7 @@ public abstract class Data2D_Data extends Data2D_Attributes {
             }
             List<Data2DColumn> targetCcolumns = new ArrayList<>();
             if (rowNumber) {
-                targetCcolumns.add(new Data2DColumn(message("SourceRowNumber"), ColumnDefinition.ColumnType.String));
+                targetCcolumns.add(new Data2DColumn(message("SourceRowNumber"), ColumnDefinition.ColumnType.Long));
             }
             for (Integer i : indices) {
                 Data2DColumn column = sourceColumns.get(i).cloneAll();
@@ -467,7 +478,7 @@ public abstract class Data2D_Data extends Data2D_Attributes {
 
     public List<Integer> columnIndices() {
         try {
-            if (!isColumnsValid()) {
+            if (!isValidDefinition()) {
                 return null;
             }
             List<Integer> indices = new ArrayList<>();
@@ -503,8 +514,25 @@ public abstract class Data2D_Data extends Data2D_Attributes {
         }
     }
 
-    public boolean isColumnsValid() {
-        return columns != null && !columns.isEmpty();
+    public String formatValue(int col, String value) {
+        try {
+            return column(col).format(value, validateEdit());
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public String savedValue(int col, String value) {
+        try {
+            return column(col).savedValue(value, validateEdit());
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    @Override
+    public boolean isValidDefinition() {
+        return super.isValidDefinition() && columns != null && !columns.isEmpty();
     }
 
     public int newColumnIndex() {
@@ -594,7 +622,7 @@ public abstract class Data2D_Data extends Data2D_Attributes {
     }
 
     public void resetStatistic() {
-        if (!isValid()) {
+        if (!isValidDefinition()) {
             return;
         }
         for (Data2DColumn column : columns) {

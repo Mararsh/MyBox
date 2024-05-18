@@ -12,6 +12,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.VBox;
 import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
@@ -36,6 +37,8 @@ public class PptViewController extends BaseFileImagesController {
     protected TextArea slideArea, notesArea, masterArea, commentsArea;
     @FXML
     protected Label slideLabel, notesLabel, masterLabel, commentsLabel;
+    @FXML
+    protected VBox imageBox;
 
     public PptViewController() {
         baseTitle = message("PptView");
@@ -44,6 +47,19 @@ public class PptViewController extends BaseFileImagesController {
     @Override
     public void setFileType() {
         setFileType(VisitHistory.FileType.PPTS, VisitHistory.FileType.Image);
+    }
+
+    @Override
+    public void initControls() {
+        try {
+            super.initControls();
+
+            imageBox.disableProperty().bind(imageController.imageView.imageProperty().isNull());
+            leftPane.disableProperty().bind(imageController.imageView.imageProperty().isNull());
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
     @Override

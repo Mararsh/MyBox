@@ -181,8 +181,7 @@ public class FileCutController extends BaseBatchFileController {
     @Override
     public void initTargetSection() {
 
-        startButton.disableProperty().bind(targetPathController.valid.not()
-                .or(Bindings.isEmpty(tableData))
+        startButton.disableProperty().bind(Bindings.isEmpty(tableData)
                 .or(filesNumberInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                 .or(bytesNumberInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                 .or(listInput.styleProperty().isEqualTo(UserConfig.badStyle()))

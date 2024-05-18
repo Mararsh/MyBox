@@ -15,7 +15,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import mara.mybox.data.FileInformation;
 import mara.mybox.data.FindReplaceString;
@@ -45,7 +45,7 @@ public class FilesRenameController extends BaseBatchFileController {
     @FXML
     protected VBox renameOptionsBox, numberBox, replaceBox;
     @FXML
-    protected FlowPane suffixPane, prefixPane, extensionPane;
+    protected HBox suffixBox, prefixBox, extensionBox;
     @FXML
     protected CheckBox fillZeroCheck, originalCheck, stringCheck, accumCheck,
             suffixCheck, descentCheck, recountCheck, regexCheck;
@@ -107,11 +107,11 @@ public class FilesRenameController extends BaseBatchFileController {
 
         } else if (message("AppendSuffix").equals(selected.getText())) {
             renameType = RenameType.AppendSuffix;
-            renameOptionsBox.getChildren().addAll(suffixPane);
+            renameOptionsBox.getChildren().addAll(suffixBox);
 
         } else if (message("AddPrefix").equals(selected.getText())) {
             renameType = RenameType.AddPrefix;
-            renameOptionsBox.getChildren().addAll(prefixPane);
+            renameOptionsBox.getChildren().addAll(prefixBox);
 
         } else if (message("AddSequenceNumber").equals(selected.getText())) {
             renameType = RenameType.AddSequenceNumber;
@@ -119,7 +119,7 @@ public class FilesRenameController extends BaseBatchFileController {
 
         } else if (message("ChangeExtension").equals(selected.getText())) {
             renameType = RenameType.ChangeExtension;
-            renameOptionsBox.getChildren().addAll(extensionPane);
+            renameOptionsBox.getChildren().addAll(extensionBox);
         }
         refreshStyle(renameOptionsBox);
 
@@ -152,9 +152,10 @@ public class FilesRenameController extends BaseBatchFileController {
                         digit = Integer.parseInt(digitInput.getText());
                     } catch (Exception e) {
                         if (tableController.totalFilesNumber <= 0) {
-                            tableController.countSize(false);
+                            digit = tableData.size();
+                        } else {
+                            digit = (tableController.totalFilesNumber + "").length();
                         }
-                        digit = (tableController.totalFilesNumber + "").length();
                     }
                 }
                 try {
@@ -272,7 +273,10 @@ public class FilesRenameController extends BaseBatchFileController {
                         newName += FileNameTools.prefix(currentName);
                     }
                     if (stringCheck.isSelected()) {
-                        newName += FileNameTools.filter(stringInput.getText());
+                        String s = stringInput.getText();
+                        if (s != null && !s.isEmpty()) {
+                            newName += FileNameTools.filter(s);
+                        }
                     }
                     String pageNumber = currentAccum + "";
                     if (fillZeroCheck.isSelected()) {
@@ -280,10 +284,10 @@ public class FilesRenameController extends BaseBatchFileController {
                     }
                     newName += pageNumber;
                     currentAccum++;
-                    newName += "." + FileNameTools.suffix(currentName);
+                    newName += "." + FileNameTools.ext(currentName);
                     break;
                 case ChangeExtension:
-                    newName = FileNameTools.replaceSuffix(currentName, FileNameTools.filter(newExtInput.getText()));
+                    newName = FileNameTools.replaceExt(currentName, FileNameTools.filter(newExtInput.getText()));
                     break;
             }
             if (newName == null || newName.isBlank()) {
@@ -344,7 +348,7 @@ public class FilesRenameController extends BaseBatchFileController {
     }
 
     @Override
-    public void afterTask() {
+    public void afterTask(boolean ok) {
         try {
             if (names == null || names.isEmpty()) {
                 popError(message("SelectToHandle"));

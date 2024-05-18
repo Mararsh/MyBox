@@ -62,7 +62,7 @@ public class VisitHistoryTools {
                 return null;
             }
         }
-        return FileNameTools.suffix(ext);
+        return FileNameTools.ext(ext);
     }
 
     public static List<FileChooser.ExtensionFilter> getExtensionFilter(int fileType) {
@@ -149,7 +149,7 @@ public class VisitHistoryTools {
         if (resourceType == ResourceType.Path) {
             return true;
         }
-        String suffix = FileNameTools.suffix(file.getName());
+        String suffix = FileNameTools.ext(file.getName());
         if (fileType == FileType.PDF) {
             if (!suffix.equalsIgnoreCase("pdf")) {
                 return false;

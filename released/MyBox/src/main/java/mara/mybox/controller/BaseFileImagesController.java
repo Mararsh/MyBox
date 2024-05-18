@@ -481,6 +481,11 @@ public abstract class BaseFileImagesController extends BaseFileController {
 
     }
 
+    @FXML
+    public void refreshThumbs() {
+        loadThumbs();
+    }
+
     @Override
     public boolean keyEventsFilter(KeyEvent event) {
         if (super.keyEventsFilter(event)) {

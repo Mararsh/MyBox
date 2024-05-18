@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javafx.fxml.FXML;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import mara.mybox.calculation.OLSLinearRegression;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.data.ColumnDefinition.InvalidAs;
@@ -28,7 +30,9 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DRegressi
     protected List<String> xNames;
 
     @FXML
-    protected ControlData2DChartPie coefficientsChartController;
+    protected TabPane chartTabPane;
+    @FXML
+    protected Tab modelTab, resultsTab;
 
     public Data2DMultipleLinearRegressionController() {
         baseTitle = message("MultipleLinearRegression");
@@ -37,24 +41,24 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DRegressi
     }
 
     @Override
-    public boolean initData() {
+    public boolean checkOptions() {
         try {
-            if (!super.initData()) {
+            if (!super.checkOptions()) {
                 return false;
             }
-            invalidAs = InvalidAs.Blank;
+            invalidAs = InvalidAs.Empty;
 
             dataColsIndices = new ArrayList<>();
             yName = categoryColumnSelector.getSelectionModel().getSelectedItem();
             yCol = data2D.colOrder(yName);
             if (yCol < 0) {
-                outOptionsError(message("SelectToHandle") + ": " + message("DependentVariable"));
+                popError(message("SelectToHandle") + ": " + message("DependentVariable"));
                 return false;
             }
             dataColsIndices.add(yCol);
 
             if (checkedColsIndices == null || checkedColsIndices.isEmpty()) {
-                outOptionsError(message("SelectToHandle") + ": " + message("IndependentVariable"));
+                popError(message("SelectToHandle") + ": " + message("IndependentVariable"));
                 return false;
             }
             xNames = new ArrayList<>();
@@ -66,7 +70,7 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DRegressi
                 }
             }
             if (xNames.isEmpty()) {
-                outOptionsError(message("SelectToHandle") + ": " + message("IndependentVariable"));
+                popError(message("SelectToHandle") + ": " + message("IndependentVariable"));
                 return false;
             }
             regression = null;
@@ -84,6 +88,7 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DRegressi
             task.cancel();
         }
         modelController.clear();
+        taskSuccessed = false;
         task = new FxSingletonTask<Void>(this) {
 
             @Override
@@ -113,7 +118,8 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DRegressi
                             sx[i][j] = row.get(j + 1);
                         }
                     }
-                    return regression.calculate(sy, sx);
+                    taskSuccessed = regression.calculate(sy, sx);
+                    return taskSuccessed;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -124,6 +130,7 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DRegressi
             protected void whenSucceeded() {
                 writeRegressionData();
                 writeModel();
+                rightPane.setDisable(false);
             }
 
             @Override
@@ -146,11 +153,11 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DRegressi
             @Override
             protected void finalAction() {
                 super.finalAction();
-                data2D.stopTask();
+                closeTask(ok);
             }
 
         };
-        start(task);
+        start(task, false);
     }
 
     protected void writeModel() {
@@ -257,7 +264,8 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DRegressi
     }
 
     public void writeRegressionData() {
-        regressionDataController.loadData(regression.makeColumns(), regression.makeRegressionData());
+        regressionDataController.loadData(baseTitle,
+                regression.makeColumns(), regression.makeRegressionData());
     }
 
     @FXML
@@ -266,10 +274,39 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DRegressi
         writeModel();
     }
 
+    @FXML
+    @Override
+    public boolean menuAction() {
+        Tab tab = chartTabPane.getSelectionModel().getSelectedItem();
+        if (tab == modelTab) {
+            return modelController.menuAction();
+
+        } else if (tab == resultsTab) {
+            return regressionDataController.menuAction();
+
+        }
+        return false;
+    }
+
+    @FXML
+    @Override
+    public boolean popAction() {
+        Tab tab = chartTabPane.getSelectionModel().getSelectedItem();
+        if (tab == modelTab) {
+            return modelController.popAction();
+
+        } else if (tab == resultsTab) {
+            return regressionDataController.popAction();
+
+        }
+        return false;
+    }
+
+
     /*
         static
      */
-    public static Data2DMultipleLinearRegressionController open(ControlData2DLoad tableController) {
+    public static Data2DMultipleLinearRegressionController open(BaseData2DLoadController tableController) {
         try {
             Data2DMultipleLinearRegressionController controller = (Data2DMultipleLinearRegressionController) WindowTools.branchStage(
                     tableController, Fxmls.Data2DMultipleLinearRegressionFxml);

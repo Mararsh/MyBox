@@ -7,8 +7,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.RadioButton;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataTable;
-import mara.mybox.data2d.reader.DataTableGroup;
-import mara.mybox.data2d.reader.DataTableGroup.TargetType;
+import mara.mybox.data2d.DataTableGroup;
+import mara.mybox.data2d.DataTableGroup.TargetType;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
@@ -21,7 +21,7 @@ import org.apache.commons.csv.CSVPrinter;
  * @CreateDate 2022-9-23
  * @License Apache License Version 2.0
  */
-public class Data2DGroupController extends BaseData2DHandleController {
+public class Data2DGroupController extends BaseData2DTaskController {
 
     protected DataFileCSV resultsFile;
     protected List<DataFileCSV> files;
@@ -43,6 +43,7 @@ public class Data2DGroupController extends BaseData2DHandleController {
             task.cancel();
         }
         resultsFile = null;
+        taskSuccessed = false;
         task = new FxSingletonTask<Void>(this) {
 
             private DataTableGroup group;
@@ -60,7 +61,8 @@ public class Data2DGroupController extends BaseData2DHandleController {
                         targetType = TargetType.Table;
                     }
                     group = groupData(targetType, checkedColsIndices, showRowNumber(), maxData, scale);
-                    return group.run();
+                    taskSuccessed = group.run();
+                    return taskSuccessed;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -72,7 +74,7 @@ public class Data2DGroupController extends BaseData2DHandleController {
                 if (fileRadio.isSelected()) {
                     DataFileCSV targetFile = group.getTargetFile();
                     if (targetFile != null) {
-                        DataFileCSVController.loadCSV(targetFile);
+                        Data2DManufactureController.openDef(targetFile);
                         popInformation(message("GroupsNumber") + ": " + group.groupsNumber());
                     }
                 } else if (filesRadio.isSelected()) {
@@ -84,27 +86,26 @@ public class Data2DGroupController extends BaseData2DHandleController {
                 } else {
                     DataTable targetData = group.getTargetData();
                     if (targetData != null) {
-                        DataTablesController.loadTable(targetData);
+                        Data2DManufactureController.openDef(targetData);
                         popInformation(message("GroupsNumber") + ": " + group.groupsNumber());
                     }
                 }
-
             }
 
             @Override
             protected void finalAction() {
                 super.finalAction();
-                data2D.stopTask();
+                closeTask(ok);
             }
 
         };
-        start(task);
+        start(task, false);
     }
 
     /*
         static
      */
-    public static Data2DGroupController open(ControlData2DLoad tableController) {
+    public static Data2DGroupController open(BaseData2DLoadController tableController) {
         try {
             Data2DGroupController controller = (Data2DGroupController) WindowTools.branchStage(
                     tableController, Fxmls.Data2DGroupFxml);

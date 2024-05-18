@@ -50,7 +50,7 @@ public class ImageBlendColorController extends BasePixelsController {
     }
 
     @Override
-    protected boolean checkOptions() {
+    public boolean checkOptions() {
         if (!super.checkOptions()) {
             close();
             return false;
