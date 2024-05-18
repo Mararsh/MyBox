@@ -864,7 +864,7 @@ public abstract class BaseData2DTaskController extends BaseBranchController {
             if (groupController == null) {
                 return null;
             }
-            TmpTable tmpTable = tmpTable(data2D.getDataName(), data2D.columnIndices(), true);
+            TmpTable tmpTable = tmpTable(data2D.dataName(), data2D.columnIndices(), true);
             if (tmpTable == null) {
                 return null;
             }

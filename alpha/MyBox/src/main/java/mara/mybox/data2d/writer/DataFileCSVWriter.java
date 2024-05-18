@@ -5,7 +5,6 @@ import java.nio.charset.Charset;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileTmpTools;
@@ -34,7 +33,6 @@ public class DataFileCSVWriter extends Data2DWriter {
             if (!super.openWriter()) {
                 return false;
             }
-            MyBoxLog.console(printFile);
             if (printFile == null) {
                 showInfo(message("InvalidParameter") + ": " + message("TargetFile"));
                 return false;

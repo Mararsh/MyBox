@@ -51,7 +51,7 @@ public class Data2DSelectController extends BaseChildController {
             popError(message("SelectToHandle"));
             return;
         }
-        targetController.loadDef(listController.viewController.data2D);
+        targetController.loadDef(listController.viewController.data2D, false);
         close();
     }
 

@@ -276,6 +276,19 @@ public class ColumnDefinition extends BaseData {
         return !notNull || (value != null && !value.isEmpty());
     }
 
+    public int compare(Object value1, Object value2) {
+        if (value1 == null) {
+            if (value2 == null) {
+                return 0;
+            } else {
+                return -1;
+            }
+        } else if (value2 == null) {
+            return 1;
+        }
+        return compare(toString(value1), toString(value2));
+    }
+
     // invalid values are counted as smaller
     public int compare(String value1, String value2) {
         try {

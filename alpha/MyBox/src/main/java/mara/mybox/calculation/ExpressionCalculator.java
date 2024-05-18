@@ -143,6 +143,7 @@ public class ExpressionCalculator {
                 expression = replaceAll(expression, placeholder, variableName);
                 variableNames.put(placeholderQuoted, variableName);
                 variableValues.put(variableName, value);
+//                MyBoxLog.console(variableName + " " + value);
             }
             expression = replaceAll(expression, "#{" + message("DataRowNumber") + "}", dataRowNumber + "");
 //            MyBoxLog.console(info());

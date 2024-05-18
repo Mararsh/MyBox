@@ -29,7 +29,7 @@ public class Data2DVerify extends Data2DOperate {
 
     @Override
     public boolean checkParameters() {
-        File csvFile = sourceData.tmpFile(sourceData.getDataName(), "Verify", "csv");
+        File csvFile = sourceData.tmpFile(sourceData.dataName(), "Verify", "csv");
         writer = new DataFileCSVWriter();
         writer.setPrintFile(csvFile);
         List<Data2DColumn> columns = columns();

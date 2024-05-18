@@ -86,7 +86,7 @@ public class TmpTable extends DataTable {
             return false;
         }
         if (targetName == null) {
-            targetName = sourceData.getDataName();
+            targetName = sourceData.dataName();
         }
         try (Connection conn = DerbyBase.getConnection()) {
             List<Data2DColumn> sourceColumns = sourceData.getColumns();
@@ -172,7 +172,7 @@ public class TmpTable extends DataTable {
             columns = dataTable.getColumns();
             colsNumber = columns.size();
             tableData2D = dataTable.getTableData2D();
-            dataName = dataTable.getDataName();
+            dataName = dataTable.dataName();
             if (importData) {
                 importData(conn);
             }
@@ -242,7 +242,7 @@ public class TmpTable extends DataTable {
             if (includeRowNumber) {
                 String rowNum = sourceRow.get(0);
                 index = Long.parseLong(rowNum);
-                data2DRow.setColumnValue(column(1).getColumnName(), rowNum);
+                data2DRow.setColumnValue(column(1).getColumnName(), index);
                 values = sourceRow.subList(1, sourceRow.size());
             } else {
                 index = -1;
@@ -257,7 +257,7 @@ public class TmpTable extends DataTable {
                 Data2DColumn targetColumn = column(i + valueIndexOffset);
                 Object tmpValue;
                 if (i == expressionIndex) {
-                    expressionCalculator.calculateDataRowExpression(sourceData, groupExpression, sourceRow, index);
+                    expressionCalculator.calculateDataRowExpression(sourceData, groupExpression, values, index);
                     tmpValue = expressionCalculator.getResult();
                 } else {
                     Data2DColumn sourceColumn = sourceData.column(col);
@@ -272,6 +272,7 @@ public class TmpTable extends DataTable {
                         case Long:
                             if (timeIndex != i) {
                                 tmpValue = targetColumn.fromString(sourceValue, invalidAs);
+                                MyBoxLog.console(sourceValue + " " + tmpValue);
                             } else {
                                 Date d = DateTools.encodeDate(sourceValue);
                                 if (d == null) {

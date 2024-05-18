@@ -3,7 +3,6 @@ package mara.mybox.controller;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -32,8 +31,8 @@ import static mara.mybox.value.Languages.message;
  */
 public class MatricesBinaryCalculationController extends BaseController {
 
-    protected DataMatrix dataAMatrix, dataBMatrix, resultMatrix;
-    protected double[][] result;
+    protected DataMatrix resultMatrix;
+    protected double[][] sourceA, sourceB, result;
 
     @FXML
     protected Tab dataATab, dataBTab, resultTab;
@@ -49,7 +48,7 @@ public class MatricesBinaryCalculationController extends BaseController {
     @FXML
     protected Label matrixLabel, resultLabel, checkLabel;
     @FXML
-    protected Button matrixAButton, matrixBButton, calculateButton;
+    protected Button matrixAButton, matrixBButton;
 
     public MatricesBinaryCalculationController() {
         baseTitle = message("MatricesBinaryCalculation");
@@ -59,9 +58,6 @@ public class MatricesBinaryCalculationController extends BaseController {
     public void initValues() {
         try {
             super.initValues();
-
-            dataAMatrix = dataAController.dataMatrix;
-            dataBMatrix = dataBController.dataMatrix;
 
             resultController.createData(Data2D.DataType.Matrix);
             resultMatrix = (DataMatrix) resultController.data2D;
@@ -76,27 +72,11 @@ public class MatricesBinaryCalculationController extends BaseController {
         try {
             super.initControls();
 
-            dataAController.statusNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
-                    tabPane.getSelectionModel().select(dataATab);
-                    checkMatrices();
-                }
-            });
-
-            dataBController.statusNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
-                    tabPane.getSelectionModel().select(dataBTab);
-                    checkMatrices();
-                }
-            });
-
             opGroup.selectedToggleProperty().addListener(
                     (ObservableValue<? extends Toggle> ov, Toggle oldValue, Toggle newValue) -> {
-                        checkMatrices();
+                        checkMatrices(false);
                     });
-            checkMatrices();
+            checkMatrices(false);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -122,43 +102,6 @@ public class MatricesBinaryCalculationController extends BaseController {
     @Override
     public void afterSceneLoaded() {
         super.afterSceneLoaded();
-
-    }
-
-    protected boolean checkMatrices() {
-        checkLabel.setText("");
-        if (plusRadio.isSelected() || minusRadio.isSelected() || hadamardProductRadio.isSelected()) {
-            if (dataAMatrix.tableColsNumber() != dataBMatrix.tableColsNumber()
-                    || dataAMatrix.tableRowsNumber() != dataBMatrix.tableRowsNumber()) {
-                checkLabel.setText(message("MatricesCannotCalculateShouldSame"));
-                calculateButton.setDisable(true);
-                return false;
-            }
-
-        } else if (multiplyRadio.isSelected()) {
-            if (dataAMatrix.tableColsNumber() != dataBMatrix.tableRowsNumber()) {
-                checkLabel.setText(message("MatricesCannotCalculateMultiply"));
-                calculateButton.setDisable(true);
-                return false;
-            }
-
-        } else if (verticalMergeRadio.isSelected()) {
-            if (dataAMatrix.tableColsNumber() != dataBMatrix.tableColsNumber()) {
-                checkLabel.setText(message("MatricesCannotCalculateShouldSameCols"));
-                calculateButton.setDisable(true);
-                return false;
-            }
-
-        } else if (horizontalMergeRadio.isSelected()) {
-            if (dataAMatrix.tableRowsNumber() != dataBMatrix.tableRowsNumber()) {
-                checkLabel.setText(message("MatricesCannotCalculateShouldSameRows"));
-                calculateButton.setDisable(true);
-                return false;
-            }
-
-        }
-        calculateButton.setDisable(false);
-        return true;
     }
 
     @FXML
@@ -168,9 +111,120 @@ public class MatricesBinaryCalculationController extends BaseController {
         dataBController.createAction();
     }
 
+    protected void checkMatrices(boolean calculate) {
+        if (!dataAController.checkSelections()) {
+            popError(message("NoData") + ": " + message("MatrixA"));
+            return;
+        }
+        if (!dataBController.checkSelections()) {
+            popError(message("NoData") + ": " + message("MatrixB"));
+            return;
+        }
+        checkLabel.setText("");
+        if (task != null) {
+            task.cancel();
+        }
+        resultLabel.setText("");
+        sourceA = null;
+        sourceB = null;
+        task = new FxSingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                try {
+                    sourceA = dataAController.pickMatrix(this);
+                    if (sourceA == null || sourceA.length == 0) {
+                        return false;
+                    }
+                    sourceB = dataBController.pickMatrix(this);
+                    if (sourceB == null || sourceB.length == 0) {
+                        return false;
+                    }
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+            }
+
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                setControls();
+                if (ok && calculate) {
+                    calculate();
+                }
+            }
+
+        };
+        start(task);
+    }
+
+    protected void handleError(String error) {
+        popError(error);
+        checkLabel.setText(error);
+    }
+
+    protected boolean setControls() {
+        if (sourceA == null || sourceA.length == 0) {
+            handleError(message("InvalidData") + ": " + message("MatrixA"));
+            return false;
+        }
+        if (sourceB == null || sourceB.length == 0) {
+            handleError(message("InvalidData") + ": " + message("MatrixB"));
+            return false;
+        }
+        checkLabel.setText("");
+        int rowsNumberA = sourceA.length;
+        int colsNumberA = sourceA[0].length;
+        int rowsNumberB = sourceB.length;
+        int colsNumberB = sourceB[0].length;
+        if (plusRadio.isSelected() || minusRadio.isSelected() || hadamardProductRadio.isSelected()) {
+            if (rowsNumberA != rowsNumberB || colsNumberA != colsNumberB) {
+                handleError(message("MatricesCannotCalculateShouldSame"));
+                return false;
+            }
+
+        } else if (multiplyRadio.isSelected()) {
+            if (colsNumberA != rowsNumberB) {
+                handleError(message("MatricesCannotCalculateMultiply"));
+                return false;
+            }
+
+        } else if (verticalMergeRadio.isSelected()) {
+            if (colsNumberA != colsNumberB) {
+                handleError(message("MatricesCannotCalculateShouldSameCols"));
+                return false;
+            }
+
+        } else if (horizontalMergeRadio.isSelected()) {
+            if (rowsNumberA != rowsNumberB) {
+                handleError(message("MatricesCannotCalculateShouldSameRows"));
+                return false;
+            }
+
+        }
+
+        return true;
+    }
+
     @FXML
     public void calculateAction() {
-        if (!checkMatrices()) {
+        checkMatrices(true);
+    }
+
+    @FXML
+    public void calculate() {
+        if (sourceA == null || sourceA.length == 0) {
+            handleError(message("InvalidData") + ": " + message("MatrixA"));
+            return;
+        }
+        if (sourceB == null || sourceB.length == 0) {
+            handleError(message("InvalidData") + ": " + message("MatrixB"));
             return;
         }
         if (task != null) {
@@ -183,25 +237,25 @@ public class MatricesBinaryCalculationController extends BaseController {
             protected boolean handle() {
                 try {
                     if (plusRadio.isSelected()) {
-                        result = DoubleMatrixTools.add(dataAMatrix.toMatrix(), dataBMatrix.toMatrix());
+                        result = DoubleMatrixTools.add(sourceA, sourceB);
 
                     } else if (minusRadio.isSelected()) {
-                        result = DoubleMatrixTools.subtract(dataAMatrix.toMatrix(), dataBMatrix.toMatrix());
+                        result = DoubleMatrixTools.subtract(sourceA, sourceB);
 
                     } else if (multiplyRadio.isSelected()) {
-                        result = DoubleMatrixTools.multiply(dataAMatrix.toMatrix(), dataBMatrix.toMatrix());
+                        result = DoubleMatrixTools.multiply(sourceA, sourceB);
 
                     } else if (hadamardProductRadio.isSelected()) {
-                        result = DoubleMatrixTools.hadamardProduct(dataAMatrix.toMatrix(), dataBMatrix.toMatrix());
+                        result = DoubleMatrixTools.hadamardProduct(sourceA, sourceB);
 
                     } else if (kroneckerProductRadio.isSelected()) {
-                        result = DoubleMatrixTools.kroneckerProduct(dataAMatrix.toMatrix(), dataBMatrix.toMatrix());
+                        result = DoubleMatrixTools.kroneckerProduct(sourceA, sourceB);
 
                     } else if (verticalMergeRadio.isSelected()) {
-                        result = DoubleMatrixTools.vertivalMerge(dataAMatrix.toMatrix(), dataBMatrix.toMatrix());
+                        result = DoubleMatrixTools.vertivalMerge(sourceA, sourceB);
 
                     } else if (horizontalMergeRadio.isSelected()) {
-                        result = DoubleMatrixTools.horizontalMerge(dataAMatrix.toMatrix(), dataBMatrix.toMatrix());
+                        result = DoubleMatrixTools.horizontalMerge(sourceA, sourceB);
 
                     }
                 } catch (Exception e) {

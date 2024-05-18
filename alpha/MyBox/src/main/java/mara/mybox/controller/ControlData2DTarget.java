@@ -232,7 +232,7 @@ public class ControlData2DTarget extends BaseDataConvertController {
             String name = name();
             if (name == null || name.isBlank()) {
                 if (data2D != null) {
-                    name = data2D.getDataName();
+                    name = data2D.dataName();
                 }
             }
             if (name == null || name.isBlank()) {

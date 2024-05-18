@@ -310,7 +310,7 @@ public class Data2DTableTools {
             DataFileText targetData = new DataFileText();
             targetData.setColumns(csvData.getColumns())
                     .setFile(txtFile)
-                    .setDataName(csvData.getDataName())
+                    .setDataName(csvData.dataName())
                     .setCharset(Charset.forName("UTF-8"))
                     .setDelimiter(",")
                     .setHasHeader(true)
@@ -461,7 +461,7 @@ public class Data2DTableTools {
         File clipFile = DataClipboard.newFile();
         DataFileCSV csvData = toCSV(task, dataTable, clipFile, false);
         if (csvData != null && clipFile != null && clipFile.exists()) {
-            return DataClipboard.create(task, csvData, dataTable.getDataName(), clipFile);
+            return DataClipboard.create(task, csvData, dataTable.dataName(), clipFile);
         } else {
             return null;
         }

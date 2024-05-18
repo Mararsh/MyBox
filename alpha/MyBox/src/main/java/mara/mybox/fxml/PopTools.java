@@ -1093,6 +1093,7 @@ public class PopTools {
     public static MenuController popJavaScriptExamples(BaseController parent, Event event,
             TextInputControl scriptInput, String valueName, List<List<String>> preValues) {
         try {
+
             MenuController controller = MenuController.open(parent, scriptInput, event, valueName, false);
 
             controller.setTitleLabel(message("Examples"));
@@ -1124,10 +1125,13 @@ public class PopTools {
             controller.addFlowPane(topButtons);
             controller.addNode(new Separator());
 
+            List<List<String>> pvalues;
             if (preValues == null || preValues.isEmpty()) {
-                preValues = javaScriptExamples("numberV", "stringV", "dateV");
+                pvalues = javaScriptExamples("numberV", "stringV", "dateV");
+            } else {
+                pvalues = preValues;
             }
-            for (List<String> values : preValues) {
+            for (List<String> values : pvalues) {
                 PopTools.addButtonsPane(controller, scriptInput, values);
             }
 
@@ -1155,10 +1159,10 @@ public class PopTools {
     public static List<List<String>> javaScriptExamples(String numColumn,
             String stringColumn, String dateColumn) {
         List<List<String>> preValues = new ArrayList<>();
-        List<String> values;
+        List<String> values = new ArrayList<>();
 
         if (numColumn != null) {
-            values = Arrays.asList(
+            values.addAll(Arrays.asList(
                     numColumn + " == 0", numColumn + " >= 0", numColumn + " < 0",
                     "Math.abs(" + numColumn + ")",
                     "Math.trunc(" + numColumn + ")", "Math.round(" + numColumn + ")",
@@ -1168,9 +1172,7 @@ public class PopTools {
                     "Math.exp(" + numColumn + ")", "Math.log(" + numColumn + ")",
                     "Math.min(" + numColumn + ",2,-3)", "Math.max(" + numColumn + ",2,-3)",
                     "Math.sin(" + numColumn + ")", "Math.cos(" + numColumn + ")", "Math.tan(" + numColumn + ")"
-            );
-        } else {
-            values = new ArrayList<>();
+            ));
         }
         values.addAll(Arrays.asList(
                 "Math.PI", "Math.E", "Math.random()"

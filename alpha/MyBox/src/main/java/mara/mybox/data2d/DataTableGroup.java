@@ -714,7 +714,7 @@ public class DataTableGroup {
                 task.setInfo(sql);
             }
             try (ResultSet query = conn.prepareStatement(sql).executeQuery()) {
-                String expValue, lastExpValue = null;
+                Object expValue, lastExpValue = null;
                 boolean groupChanged;
                 conn.setAutoCommit(false);
                 while (query.next() && task != null && !task.isCancelled()) {
@@ -724,13 +724,12 @@ public class DataTableGroup {
                     }
                     try {
                         Data2DRow tmpRow = tableTmpData.readData(query);
-                        Object tv = tmpRow.getColumnValue(tmpExpName);
-                        expValue = tv == null ? null : (String) tv;
-                        groupChanged = lastExpValue == null || !lastExpValue.equals(expValue);
+                        expValue = tmpRow.getColumnValue(tmpExpName);
+                        groupChanged = expColumn.compare(lastExpValue, expValue) != 0;
                         if (groupChanged) {
                             groupChanged();
                             parameterValueForFilename = idColName + groupid;
-                            parameterValue = expValue;
+                            parameterValue = expColumn.toString(expValue);
                             recordGroup(groupid, parameterValue);
                         }
                         if (++groupCurrentSize <= max || max <= 0) {
@@ -926,6 +925,7 @@ public class DataTableGroup {
             }
             long rowIndex;
             String sql, script;
+
             for (DataFilter filter : conditions) {
                 if (task == null || task.isCancelled()) {
                     return false;

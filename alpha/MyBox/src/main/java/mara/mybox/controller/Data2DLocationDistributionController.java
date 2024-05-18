@@ -143,7 +143,7 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
 
             isSettingValues = false;
 
-            String dname = data2D.getDataName();
+            String dname = data2D.dataName();
 
             File file = null;
             if (dname != null) {

@@ -24,6 +24,7 @@ public class ControlData2DSource extends BaseData2DRowsColumnsController {
             if (dataManufactureButton != null) {
                 dataManufactureButton.setDisable(!isValidData());
             }
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

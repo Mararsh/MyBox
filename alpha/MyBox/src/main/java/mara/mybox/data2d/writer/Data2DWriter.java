@@ -160,7 +160,8 @@ public abstract class Data2DWriter {
         if (targetData == null) {
             return;
         }
-        Data2DManufactureController.openDef(targetData);
+        Data2DManufactureController c = Data2DManufactureController.openDef(targetData);
+        c.setAlwaysOnTop();
     }
 
     public void showInfo(String info) {
