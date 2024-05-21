@@ -1,8 +1,7 @@
-<html>
- <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <title>行过滤</title>
-  <style type="text/css">
+<html><head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>行过滤</title>
+        <style type="text/css">
                           table { max-width:95%; margin : 10px;  border-style: solid; border-width:2px; border-collapse: collapse;} 
               th, td { border-style: solid; border-width:1px; padding: 8px; border-collapse: collapse;} 
               th { font-weight:bold;  text-align:center;} 
@@ -10,14 +9,11 @@
               .center { text-align:center;  max-width:95%; } 
               .valueBox { border-style: solid; border-width:1px; border-color:black; padding: 5px; border-radius:5px;} 
               .boldText { font-weight:bold;  } 
- body { margin:0 auto; width: 900px; } 
-              img { max-width: 900px; } 
-              .valueText { color:#2e598a;  } 
 
         </style>
- </head>
- <body contenteditable="false">
-  <script>
+    </head>
+<body contenteditable="false">
+ <script>
     function nodeClicked(id) {
       var obj = document.getElementById(id);
       var objv = obj.style.display;
@@ -40,426 +36,341 @@
        }
     }
   </script>
-  <div>
-   <div>
-    <input type="checkbox" checked onclick="showClass('TreeNode', this.checked);">展开 <input type="checkbox" checked onclick="showClass('SerialNumber', this.checked);">层次号 <input type="checkbox" checked onclick="showClass('NodeTag', this.checked);">标签 <input type="checkbox" checked onclick="showClass('nodeValue', this.checked);">值
-   </div>
-   <hr>
-   <div style="padding: 2px;">
-    &nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item580')"><span class="SerialNumber">&nbsp;&nbsp;</span>行过滤</a>
-   </div>
-   <div class="TreeNode" id="item580">
-    <div style="padding: 2px;">
-     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item4320')"><span class="SerialNumber">1&nbsp;&nbsp;</span>示例</a>
+
+<div>
+<div>
+    <input type="checkbox" checked="" onclick="showClass('TreeNode', this.checked);">展开
+    <input type="checkbox" checked="" onclick="showClass('SerialNumber', this.checked);">层次号
+    <input type="checkbox" checked="" onclick="showClass('NodeTag', this.checked);">标签
+    <input type="checkbox" checked="" onclick="showClass('nodeValue', this.checked);">值
+</div>
+<hr>
+    <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item2')"><span class="SerialNumber">&nbsp;&nbsp;</span>行过滤</a>
     </div>
-    <div class="TreeNode" id="item4320">
-     <div style="padding: 2px;">
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1&nbsp;&nbsp;</span>数值为空（null或empty）
-     </div>
-     <div class="nodeValue">
-      <div style="padding: 0 0 0 96px;">
-       <div class="valueBox">
-        <div align="center">
-         <table>
-          <tbody>
-           <tr>
-            <td>脚本</td>
-            <td>
-             <pre><code>'#{列1}' == ''</code></pre></td>
-           </tr>
-           <tr>
-            <td>条件</td>
-            <td>
-             <pre><code>true</code></pre></td>
-           </tr>
-           <tr>
-            <td>最大值</td>
-            <td>
-             <pre><code>-1</code></pre></td>
-           </tr>
-          </tbody>
-         </table>
+    <div class="TreeNode" id="item2">
+        <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item197')"><span class="SerialNumber">1&nbsp;&nbsp;</span>示例</a>
         </div>
-       </div>
-      </div>
-     </div>
-     <div style="padding: 2px;">
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2&nbsp;&nbsp;</span>数值不为空
-     </div>
-     <div class="nodeValue">
-      <div style="padding: 0 0 0 96px;">
-       <div class="valueBox">
-        <div align="center">
-         <table>
-          <tbody>
-           <tr>
-            <td>脚本</td>
-            <td>
-             <pre><code>'#{列1}'.length &gt; 0</code></pre></td>
-           </tr>
-           <tr>
-            <td>条件</td>
-            <td>
-             <pre><code>true</code></pre></td>
-           </tr>
-           <tr>
-            <td>最大值</td>
-            <td>
-             <pre><code>-1</code></pre></td>
-           </tr>
-          </tbody>
-         </table>
+        <div class="TreeNode" id="item197">
+            <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item198')"><span class="SerialNumber">1.1&nbsp;&nbsp;</span>数字</a>
+            </div>
+            <div class="TreeNode" id="item198">
+                <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.1&nbsp;&nbsp;</span>列值不是数字
+                </div>
+                <div class="nodeValue"><div style="padding: 0 0 0 120px;"><div class="valueBox">
+                        <div align="center">
+            <table>
+                <tbody><tr><td>脚本</td><td><pre><code>isNaN(#{某列} - 1)</code></pre></td></tr>
+                <tr><td>条件</td><td><pre><code>true</code></pre></td></tr>
+                <tr><td>最大值</td><td><pre><code>-1</code></pre></td></tr>
+            </tbody></table>
         </div>
-       </div>
-      </div>
-     </div>
-     <div style="padding: 2px;">
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.3&nbsp;&nbsp;</span>最前面10行
-     </div>
-     <div class="nodeValue">
-      <div style="padding: 0 0 0 96px;">
-       <div class="valueBox">
-        <div align="center">
-         <table>
-          <tbody>
-           <tr>
-            <td>条件</td>
-            <td>
-             <pre><code>true</code></pre></td>
-           </tr>
-           <tr>
-            <td>最大值</td>
-            <td>
-             <pre><code>10</code></pre></td>
-           </tr>
-          </tbody>
-         </table>
+
+                </div></div></div>
+                <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.2&nbsp;&nbsp;</span>比较数字
+                </div>
+                <div class="nodeValue"><div style="padding: 0 0 0 120px;"><div class="valueBox">
+                        <div align="center">
+            <table>
+                <tbody><tr><td>脚本</td><td><pre><code>#{数字列1} != 0 || #{数字列1} &lt; #{数字列2}</code></pre></td></tr>
+                <tr><td>条件</td><td><pre><code>true</code></pre></td></tr>
+                <tr><td>最大值</td><td><pre><code>-1</code></pre></td></tr>
+            </tbody></table>
         </div>
-       </div>
-      </div>
-     </div>
-     <div style="padding: 2px;">
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item4324')"><span class="SerialNumber">1.4&nbsp;&nbsp;</span>数字</a>
-     </div>
-     <div class="TreeNode" id="item4324">
-      <div style="padding: 2px;">
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.1&nbsp;&nbsp;</span>数值是数字
-      </div>
-      <div class="nodeValue">
-       <div style="padding: 0 0 0 120px;">
-        <div class="valueBox">
-         <div align="center">
-          <table>
-           <tbody>
-            <tr>
-             <td>脚本</td>
-             <td>
-              <pre><code>Math.abs(#{列1}) &gt;= 0</code></pre></td>
-            </tr>
-            <tr>
-             <td>条件</td>
-             <td>
-              <pre><code>true</code></pre></td>
-            </tr>
-            <tr>
-             <td>最大值</td>
-             <td>
-              <pre><code>-1</code></pre></td>
-            </tr>
-           </tbody>
-          </table>
-         </div>
+
+                </div></div></div>
+                <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.3&nbsp;&nbsp;</span>比较统计值
+                </div>
+                <div class="nodeValue"><div style="padding: 0 0 0 120px;"><div class="valueBox">
+                        <div align="center">
+            <table>
+                <tbody><tr><td>脚本</td><td><pre><code>#{数字列} &lt; #{数字列-均值}</code></pre></td></tr>
+                <tr><td>条件</td><td><pre><code>true</code></pre></td></tr>
+                <tr><td>最大值</td><td><pre><code>-1</code></pre></td></tr>
+            </tbody></table>
         </div>
-       </div>
-      </div>
-      <div style="padding: 2px;">
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.2&nbsp;&nbsp;</span>比较数字
-      </div>
-      <div class="nodeValue">
-       <div style="padding: 0 0 0 120px;">
-        <div class="valueBox">
-         <div align="center">
-          <table>
-           <tbody>
-            <tr>
-             <td>脚本</td>
-             <td>
-              <pre><code>#{列1} != 0 || #{列1} &lt; #{列2}</code></pre></td>
-            </tr>
-            <tr>
-             <td>条件</td>
-             <td>
-              <pre><code>true</code></pre></td>
-            </tr>
-            <tr>
-             <td>最大值</td>
-             <td>
-              <pre><code>-1</code></pre></td>
-            </tr>
-           </tbody>
-          </table>
-         </div>
+
+                </div></div></div>
+            </div>
+            <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item202')"><span class="SerialNumber">1.2&nbsp;&nbsp;</span>时间</a>
+            </div>
+            <div class="TreeNode" id="item202">
+                <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.1&nbsp;&nbsp;</span>列值的时间值
+                </div>
+                <div class="nodeValue"><div style="padding: 0 0 0 120px;"><div class="valueBox">
+                        <div align="center">
+            <table>
+                <tbody><tr><td>脚本</td><td><pre><code>if (#{时间列} != null)
+   new Date(#{时间列}.getTime()
+else
+   -1;</code></pre></td></tr>
+                <tr><td>条件</td><td><pre><code>true</code></pre></td></tr>
+                <tr><td>最大值</td><td><pre><code>-1</code></pre></td></tr>
+            </tbody></table>
         </div>
-       </div>
-      </div>
-      <div style="padding: 2px;">
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.3&nbsp;&nbsp;</span>比较统计值
-      </div>
-      <div class="nodeValue">
-       <div style="padding: 0 0 0 120px;">
-        <div class="valueBox">
-         <div align="center">
-          <table>
-           <tbody>
-            <tr>
-             <td>脚本</td>
-             <td>
-              <pre><code>#{列1} &lt; #{列1-均值}</code></pre></td>
-            </tr>
-            <tr>
-             <td>条件</td>
-             <td>
-              <pre><code>true</code></pre></td>
-            </tr>
-            <tr>
-             <td>最大值</td>
-             <td>
-              <pre><code>-1</code></pre></td>
-            </tr>
-           </tbody>
-          </table>
-         </div>
+
+                </div></div></div>
+                <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.2&nbsp;&nbsp;</span>时间点
+                </div>
+                <div class="nodeValue"><div style="padding: 0 0 0 120px;"><div class="valueBox">
+                        <div align="center">
+            <table>
+                <tbody><tr><td>脚本</td><td><pre><code>#{时间列} == '2016-05-19 11:34:28'</code></pre></td></tr>
+                <tr><td>条件</td><td><pre><code>true</code></pre></td></tr>
+                <tr><td>最大值</td><td><pre><code>-1</code></pre></td></tr>
+            </tbody></table>
         </div>
-       </div>
-      </div>
-     </div>
-     <div style="padding: 2px;">
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item4328')"><span class="SerialNumber">1.5&nbsp;&nbsp;</span>时间</a>
-     </div>
-     <div class="TreeNode" id="item4328">
-      <div style="padding: 2px;">
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.5.1&nbsp;&nbsp;</span>时间点
-      </div>
-      <div class="nodeValue">
-       <div style="padding: 0 0 0 120px;">
-        <div class="valueBox">
-         <div align="center">
-          <table>
-           <tbody>
-            <tr>
-             <td>脚本</td>
-             <td>
-              <pre><code>'#{时间}' == '2016-05-19 11:34:28'</code></pre></td>
-            </tr>
-            <tr>
-             <td>条件</td>
-             <td>
-              <pre><code>true</code></pre></td>
-            </tr>
-            <tr>
-             <td>最大值</td>
-             <td>
-              <pre><code>-1</code></pre></td>
-            </tr>
-           </tbody>
-          </table>
-         </div>
+
+                </div></div></div>
+                <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.3&nbsp;&nbsp;</span>匹配时间
+                </div>
+                <div class="nodeValue"><div style="padding: 0 0 0 120px;"><div class="valueBox">
+                        <div align="center">
+            <table>
+                <tbody><tr><td>脚本</td><td><pre><code>if (#{时间列} != null)
+   #{时间列}.startsWith('2016-05-19 09')
+else
+   undefined;</code></pre></td></tr>
+                <tr><td>条件</td><td><pre><code>true</code></pre></td></tr>
+                <tr><td>最大值</td><td><pre><code>-1</code></pre></td></tr>
+            </tbody></table>
         </div>
-       </div>
-      </div>
-      <div style="padding: 2px;">
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.5.2&nbsp;&nbsp;</span>匹配时间
-      </div>
-      <div class="nodeValue">
-       <div style="padding: 0 0 0 120px;">
-        <div class="valueBox">
-         <div align="center">
-          <table>
-           <tbody>
-            <tr>
-             <td>脚本</td>
-             <td>
-              <pre><code>'#{时间}'.startsWith('2016-05-19 09')</code></pre></td>
-            </tr>
-            <tr>
-             <td>条件</td>
-             <td>
-              <pre><code>true</code></pre></td>
-            </tr>
-            <tr>
-             <td>最大值</td>
-             <td>
-              <pre><code>-1</code></pre></td>
-            </tr>
-           </tbody>
-          </table>
-         </div>
+
+                </div></div></div>
+                <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.4&nbsp;&nbsp;</span>比较时间
+                </div>
+                <div class="nodeValue"><div style="padding: 0 0 0 120px;"><div class="valueBox">
+                        <div align="center">
+            <table>
+                <tbody><tr><td>脚本</td><td><pre><code>if (#{时间列} != null)
+   new Date(#{时间列}).getTime()  &gt; new Date('2016/05/19 09:23:12').getTime()
+else
+   undefined;</code></pre></td></tr>
+                <tr><td>条件</td><td><pre><code>true</code></pre></td></tr>
+                <tr><td>最大值</td><td><pre><code>-1</code></pre></td></tr>
+            </tbody></table>
         </div>
-       </div>
-      </div>
-      <div style="padding: 2px;">
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.5.3&nbsp;&nbsp;</span>比较时间
-      </div>
-      <div class="nodeValue">
-       <div style="padding: 0 0 0 120px;">
-        <div class="valueBox">
-         <div align="center">
-          <table>
-           <tbody>
-            <tr>
-             <td>脚本</td>
-             <td>
-              <pre><code>new Date('#{时间}'.replace(/-/g,'/')).getTime()  &gt; new Date('2016/05/19 09:23:12').getTime()</code></pre></td>
-            </tr>
-            <tr>
-             <td>条件</td>
-             <td>
-              <pre><code>true</code></pre></td>
-            </tr>
-            <tr>
-             <td>最大值</td>
-             <td>
-              <pre><code>-1</code></pre></td>
-            </tr>
-           </tbody>
-          </table>
-         </div>
+
+                </div></div></div>
+                <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.5&nbsp;&nbsp;</span>格式化时间
+                </div>
+                <div class="nodeValue"><div style="padding: 0 0 0 120px;"><div class="valueBox">
+                        <div align="center">
+            <table>
+                <tbody><tr><td>脚本</td><td><pre><code>function formatDate(date) {
+     var y = date.getFullYear();
+     var m = date.getMonth() + 1;
+     m = m &lt; 10 ? ('0' + m) : m;
+     var d = date.getDate();
+     d = d &lt; 10 ? ('0' + d) : d;
+     var h =date.getHours();
+     h = h &lt; 10 ? ('0' + h) : h;
+     var M =date.getMinutes();
+     M = M &lt; 10 ? ('0' + M) : M;
+     var s =date.getSeconds();
+     s = s &lt; 10 ? ('0' + s) : s;
+     return y + '-' + m + '-' + d + ' ' + h + ':' + M + ':' + s;
+}
+if (#{时间列} != null)
+   formatDate(new Date(#{时间列}));
+else
+   null;</code></pre></td></tr>
+                <tr><td>条件</td><td><pre><code>true</code></pre></td></tr>
+                <tr><td>最大值</td><td><pre><code>-1</code></pre></td></tr>
+            </tbody></table>
         </div>
-       </div>
-      </div>
-     </div>
-     <div style="padding: 2px;">
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item4332')"><span class="SerialNumber">1.6&nbsp;&nbsp;</span>字符串</a>
-     </div>
-     <div class="TreeNode" id="item4332">
-      <div style="padding: 2px;">
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.6.1&nbsp;&nbsp;</span>字串长度
-      </div>
-      <div class="nodeValue">
-       <div style="padding: 0 0 0 120px;">
-        <div class="valueBox">
-         <div align="center">
-          <table>
-           <tbody>
-            <tr>
-             <td>脚本</td>
-             <td>
-              <pre><code>'#{列1}'.length &gt; 3</code></pre></td>
-            </tr>
-            <tr>
-             <td>条件</td>
-             <td>
-              <pre><code>true</code></pre></td>
-            </tr>
-            <tr>
-             <td>最大值</td>
-             <td>
-              <pre><code>-1</code></pre></td>
-            </tr>
-           </tbody>
-          </table>
-         </div>
+
+                </div></div></div>
+                <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.6&nbsp;&nbsp;</span>是否为星期日
+                </div>
+                <div class="nodeValue"><div style="padding: 0 0 0 120px;"><div class="valueBox">
+                        <div align="center">
+            <table>
+                <tbody><tr><td>脚本</td><td><pre><code>if (#{时间列} != null)
+   new Date(#{时间列}).getDay() == 0
+else
+   undefined;</code></pre></td></tr>
+                <tr><td>条件</td><td><pre><code>true</code></pre></td></tr>
+                <tr><td>最大值</td><td><pre><code>-1</code></pre></td></tr>
+            </tbody></table>
         </div>
-       </div>
-      </div>
-      <div style="padding: 2px;">
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.6.2&nbsp;&nbsp;</span>匹配字串
-      </div>
-      <div class="nodeValue">
-       <div style="padding: 0 0 0 120px;">
-        <div class="valueBox">
-         <div align="center">
-          <table>
-           <tbody>
-            <tr>
-             <td>脚本</td>
-             <td>
-              <pre><code>'#{列1}'.search(/Hello/ig) &gt;= 0</code></pre></td>
-            </tr>
-            <tr>
-             <td>条件</td>
-             <td>
-              <pre><code>true</code></pre></td>
-            </tr>
-            <tr>
-             <td>最大值</td>
-             <td>
-              <pre><code>-1</code></pre></td>
-            </tr>
-           </tbody>
-          </table>
-         </div>
+
+                </div></div></div>
+            </div>
+            <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item209')"><span class="SerialNumber">1.3&nbsp;&nbsp;</span>字符串</a>
+            </div>
+            <div class="TreeNode" id="item209">
+                <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.3.1&nbsp;&nbsp;</span>列值为empty
+                </div>
+                <div class="nodeValue"><div style="padding: 0 0 0 120px;"><div class="valueBox">
+                        <div align="center">
+            <table>
+                <tbody><tr><td>脚本</td><td><pre><code>#{字符串列} == ''</code></pre></td></tr>
+                <tr><td>条件</td><td><pre><code>true</code></pre></td></tr>
+                <tr><td>最大值</td><td><pre><code>-1</code></pre></td></tr>
+            </tbody></table>
         </div>
-       </div>
-      </div>
-      <div style="padding: 2px;">
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.6.3&nbsp;&nbsp;</span>子串位置
-      </div>
-      <div class="nodeValue">
-       <div style="padding: 0 0 0 120px;">
-        <div class="valueBox">
-         <div align="center">
-          <table>
-           <tbody>
-            <tr>
-             <td>脚本</td>
-             <td>
-              <pre><code>'#{列1}'.indexOf('Hello') == 3</code></pre></td>
-            </tr>
-            <tr>
-             <td>条件</td>
-             <td>
-              <pre><code>true</code></pre></td>
-            </tr>
-            <tr>
-             <td>最大值</td>
-             <td>
-              <pre><code>-1</code></pre></td>
-            </tr>
-           </tbody>
-          </table>
-         </div>
+
+                </div></div></div>
+                <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.3.2&nbsp;&nbsp;</span>列值不为null
+                </div>
+                <div class="nodeValue"><div style="padding: 0 0 0 120px;"><div class="valueBox">
+                        <div align="center">
+            <table>
+                <tbody><tr><td>脚本</td><td><pre><code>#{字符串列} != null</code></pre></td></tr>
+                <tr><td>条件</td><td><pre><code>true</code></pre></td></tr>
+                <tr><td>最大值</td><td><pre><code>-1</code></pre></td></tr>
+            </tbody></table>
         </div>
-       </div>
-      </div>
-      <div style="padding: 2px;">
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.6.4&nbsp;&nbsp;</span>特定值
-      </div>
-      <div class="nodeValue">
-       <div style="padding: 0 0 0 120px;">
-        <div class="valueBox">
-         <div align="center">
-          <table>
-           <tbody>
-            <tr>
-             <td>脚本</td>
-             <td>
-              <pre><code>var array = [ 'A', 'B', 'C', 'D' ];
-array.includes('#{列1}')</code></pre></td>
-            </tr>
-            <tr>
-             <td>条件</td>
-             <td>
-              <pre><code>true</code></pre></td>
-            </tr>
-            <tr>
-             <td>最大值</td>
-             <td>
-              <pre><code>-1</code></pre></td>
-            </tr>
-           </tbody>
-          </table>
-         </div>
+
+                </div></div></div>
+                <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.3.3&nbsp;&nbsp;</span>字串长度
+                </div>
+                <div class="nodeValue"><div style="padding: 0 0 0 120px;"><div class="valueBox">
+                        <div align="center">
+            <table>
+                <tbody><tr><td>脚本</td><td><pre><code>if ( #{字符串列} != null ) 
+    #{字符串列}.length
+else
+    -1</code></pre></td></tr>
+                <tr><td>条件</td><td><pre><code>true</code></pre></td></tr>
+                <tr><td>最大值</td><td><pre><code>-1</code></pre></td></tr>
+            </tbody></table>
         </div>
-       </div>
-      </div>
-     </div>
+
+                </div></div></div>
+                <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.3.4&nbsp;&nbsp;</span>包含子串
+                </div>
+                <div class="nodeValue"><div style="padding: 0 0 0 120px;"><div class="valueBox">
+                        <div align="center">
+            <table>
+                <tbody><tr><td>脚本</td><td><pre><code>if ( #{字符串列} != null ) 
+    #{字符串列}.search(/昔去雪如花/ig)
+else
+    -1</code></pre></td></tr>
+                <tr><td>条件</td><td><pre><code>true</code></pre></td></tr>
+                <tr><td>最大值</td><td><pre><code>-1</code></pre></td></tr>
+            </tbody></table>
+        </div>
+
+                </div></div></div>
+                <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.3.5&nbsp;&nbsp;</span>子串位置
+                </div>
+                <div class="nodeValue"><div style="padding: 0 0 0 120px;"><div class="valueBox">
+                        <div align="center">
+            <table>
+                <tbody><tr><td>脚本</td><td><pre><code>if ( #{字符串列} != null ) 
+    #{字符串列}.indexOf('今来花似雪')
+else
+    -1</code></pre></td></tr>
+                <tr><td>条件</td><td><pre><code>true</code></pre></td></tr>
+                <tr><td>最大值</td><td><pre><code>-1</code></pre></td></tr>
+            </tbody></table>
+        </div>
+
+                </div></div></div>
+                <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.3.6&nbsp;&nbsp;</span>比较
+                </div>
+                <div class="nodeValue"><div style="padding: 0 0 0 120px;"><div class="valueBox">
+                        <div align="center">
+            <table>
+                <tbody><tr><td>脚本</td><td><pre><code>#{字符串列} === '只恐夜深花睡去'</code></pre></td></tr>
+                <tr><td>条件</td><td><pre><code>true</code></pre></td></tr>
+                <tr><td>最大值</td><td><pre><code>-1</code></pre></td></tr>
+            </tbody></table>
+        </div>
+
+                </div></div></div>
+                <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.3.7&nbsp;&nbsp;</span>替换首个
+                </div>
+                <div class="nodeValue"><div style="padding: 0 0 0 120px;"><div class="valueBox">
+                        <div align="center">
+            <table>
+                <tbody><tr><td>脚本</td><td><pre><code>if ( #{字符串列} != null ) 
+    #{字符串列}.replace("敲门", "推门");
+else
+   null</code></pre></td></tr>
+                <tr><td>条件</td><td><pre><code>true</code></pre></td></tr>
+                <tr><td>最大值</td><td><pre><code>-1</code></pre></td></tr>
+            </tbody></table>
+        </div>
+
+                </div></div></div>
+                <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.3.8&nbsp;&nbsp;</span>替换所有
+                </div>
+                <div class="nodeValue"><div style="padding: 0 0 0 120px;"><div class="valueBox">
+                        <div align="center">
+            <table>
+                <tbody><tr><td>脚本</td><td><pre><code>if ( #{字符串列} != null ) 
+    #{字符串列}.replace(/怨年华/g, "鸟惊心");
+else
+   null</code></pre></td></tr>
+                <tr><td>条件</td><td><pre><code>true</code></pre></td></tr>
+                <tr><td>最大值</td><td><pre><code>-1</code></pre></td></tr>
+            </tbody></table>
+        </div>
+
+                </div></div></div>
+                <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.3.9&nbsp;&nbsp;</span>开始于
+                </div>
+                <div class="nodeValue"><div style="padding: 0 0 0 120px;"><div class="valueBox">
+                        <div align="center">
+            <table>
+                <tbody><tr><td>脚本</td><td><pre><code>if ( #{字符串列} != null ) 
+    #{字符串列}.startsWith('君不见')
+else
+   undefined</code></pre></td></tr>
+                <tr><td>条件</td><td><pre><code>true</code></pre></td></tr>
+                <tr><td>最大值</td><td><pre><code>-1</code></pre></td></tr>
+            </tbody></table>
+        </div>
+
+                </div></div></div>
+                <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.3.10&nbsp;&nbsp;</span>结尾于
+                </div>
+                <div class="nodeValue"><div style="padding: 0 0 0 120px;"><div class="valueBox">
+                        <div align="center">
+            <table>
+                <tbody><tr><td>脚本</td><td><pre><code>if ( #{字符串列} != null ) 
+    #{字符串列}.endsWith('需尽欢')
+else
+   undefined</code></pre></td></tr>
+                <tr><td>条件</td><td><pre><code>true</code></pre></td></tr>
+                <tr><td>最大值</td><td><pre><code>-1</code></pre></td></tr>
+            </tbody></table>
+        </div>
+
+                </div></div></div>
+                <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.3.11&nbsp;&nbsp;</span>特定值
+                </div>
+                <div class="nodeValue"><div style="padding: 0 0 0 120px;"><div class="valueBox">
+                        <div align="center">
+            <table>
+                <tbody><tr><td>脚本</td><td><pre><code>var array = [ 'A', 'B', 'C', 'D' ];
+array.includes(#{字符串列})</code></pre></td></tr>
+                <tr><td>条件</td><td><pre><code>true</code></pre></td></tr>
+                <tr><td>最大值</td><td><pre><code>-1</code></pre></td></tr>
+            </tbody></table>
+        </div>
+
+                </div></div></div>
+            </div>
+            <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item221')"><span class="SerialNumber">1.4&nbsp;&nbsp;</span>限制行数</a>
+            </div>
+            <div class="TreeNode" id="item221">
+                <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.1&nbsp;&nbsp;</span>最前面10行
+                </div>
+                <div class="nodeValue"><div style="padding: 0 0 0 120px;"><div class="valueBox">
+                        <div align="center">
+            <table>
+                <tbody><tr><td>条件</td><td><pre><code>true</code></pre></td></tr>
+                <tr><td>最大值</td><td><pre><code>10</code></pre></td></tr>
+            </tbody></table>
+        </div>
+
+                </div></div></div>
+            </div>
+        </div>
     </div>
-   </div>
-   <hr><treenode style="font-size:0.8em">
-    * 网页可编辑时，链接和控件可能不响应。
-    <p></p>
-   </treenode>
-  </div>
- </body>
-</html>
+
+
+</div></body></html>

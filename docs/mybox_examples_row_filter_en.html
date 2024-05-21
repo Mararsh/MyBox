@@ -1,8 +1,7 @@
-<html>
- <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <title>Row filter</title>
-  <style type="text/css">
+<html><head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>Row filter</title>
+        <style type="text/css">
                           table { max-width:95%; margin : 10px;  border-style: solid; border-width:2px; border-collapse: collapse;} 
               th, td { border-style: solid; border-width:1px; padding: 8px; border-collapse: collapse;} 
               th { font-weight:bold;  text-align:center;} 
@@ -10,14 +9,11 @@
               .center { text-align:center;  max-width:95%; } 
               .valueBox { border-style: solid; border-width:1px; border-color:black; padding: 5px; border-radius:5px;} 
               .boldText { font-weight:bold;  } 
- body { margin:0 auto; width: 900px; } 
-              img { max-width: 900px; } 
-              .valueText { color:#2e598a;  } 
 
         </style>
- </head>
- <body contenteditable="false">
-  <script>
+    </head>
+<body contenteditable="false">
+ <script>
     function nodeClicked(id) {
       var obj = document.getElementById(id);
       var objv = obj.style.display;
@@ -40,426 +36,341 @@
        }
     }
   </script>
-  <div>
-   <div>
-    <input type="checkbox" checked onclick="showClass('TreeNode', this.checked);">Unfold <input type="checkbox" checked onclick="showClass('SerialNumber', this.checked);">Hierarchy number <input type="checkbox" checked onclick="showClass('NodeTag', this.checked);">Tags <input type="checkbox" checked onclick="showClass('nodeValue', this.checked);">Values
-   </div>
-   <hr>
-   <div style="padding: 2px;">
-    &nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item580')"><span class="SerialNumber">&nbsp;&nbsp;</span>Row filter</a>
-   </div>
-   <div class="TreeNode" id="item580">
-    <div style="padding: 2px;">
-     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item4535')"><span class="SerialNumber">1&nbsp;&nbsp;</span>Examples</a>
+
+<div>
+<div>
+    <input type="checkbox" checked="" onclick="showClass('TreeNode', this.checked);">Unfold
+    <input type="checkbox" checked="" onclick="showClass('SerialNumber', this.checked);">Hierarchy number
+    <input type="checkbox" checked="" onclick="showClass('NodeTag', this.checked);">Tags
+    <input type="checkbox" checked="" onclick="showClass('nodeValue', this.checked);">Values
+</div>
+<hr>
+    <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item2')"><span class="SerialNumber">&nbsp;&nbsp;</span>Row filter</a>
     </div>
-    <div class="TreeNode" id="item4535">
-     <div style="padding: 2px;">
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1&nbsp;&nbsp;</span>Value is null or empty
-     </div>
-     <div class="nodeValue">
-      <div style="padding: 0 0 0 96px;">
-       <div class="valueBox">
-        <div align="center">
-         <table>
-          <tbody>
-           <tr>
-            <td>Script</td>
-            <td>
-             <pre><code>'#{Column1}' == ''</code></pre></td>
-           </tr>
-           <tr>
-            <td>Condition</td>
-            <td>
-             <pre><code>true</code></pre></td>
-           </tr>
-           <tr>
-            <td>Maximum</td>
-            <td>
-             <pre><code>-1</code></pre></td>
-           </tr>
-          </tbody>
-         </table>
+    <div class="TreeNode" id="item2">
+        <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item223')"><span class="SerialNumber">1&nbsp;&nbsp;</span>Examples</a>
         </div>
-       </div>
-      </div>
-     </div>
-     <div style="padding: 2px;">
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2&nbsp;&nbsp;</span>Value is not null nor empty
-     </div>
-     <div class="nodeValue">
-      <div style="padding: 0 0 0 96px;">
-       <div class="valueBox">
-        <div align="center">
-         <table>
-          <tbody>
-           <tr>
-            <td>Script</td>
-            <td>
-             <pre><code>'#{Column1}'.length &gt; 0</code></pre></td>
-           </tr>
-           <tr>
-            <td>Condition</td>
-            <td>
-             <pre><code>true</code></pre></td>
-           </tr>
-           <tr>
-            <td>Maximum</td>
-            <td>
-             <pre><code>-1</code></pre></td>
-           </tr>
-          </tbody>
-         </table>
+        <div class="TreeNode" id="item223">
+            <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item224')"><span class="SerialNumber">1.1&nbsp;&nbsp;</span>Number</a>
+            </div>
+            <div class="TreeNode" id="item224">
+                <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.1&nbsp;&nbsp;</span>Is not number
+                </div>
+                <div class="nodeValue"><div style="padding: 0 0 0 120px;"><div class="valueBox">
+                        <div align="center">
+            <table>
+                <tbody><tr><td>Script</td><td><pre><code>isNaN(#{stringColumn} - 1)</code></pre></td></tr>
+                <tr><td>Condition</td><td><pre><code>true</code></pre></td></tr>
+                <tr><td>Maximum</td><td><pre><code>-1</code></pre></td></tr>
+            </tbody></table>
         </div>
-       </div>
-      </div>
-     </div>
-     <div style="padding: 2px;">
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.3&nbsp;&nbsp;</span>10 rows in front
-     </div>
-     <div class="nodeValue">
-      <div style="padding: 0 0 0 96px;">
-       <div class="valueBox">
-        <div align="center">
-         <table>
-          <tbody>
-           <tr>
-            <td>Condition</td>
-            <td>
-             <pre><code>true</code></pre></td>
-           </tr>
-           <tr>
-            <td>Maximum</td>
-            <td>
-             <pre><code>10</code></pre></td>
-           </tr>
-          </tbody>
-         </table>
+
+                </div></div></div>
+                <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.2&nbsp;&nbsp;</span>Compare
+                </div>
+                <div class="nodeValue"><div style="padding: 0 0 0 120px;"><div class="valueBox">
+                        <div align="center">
+            <table>
+                <tbody><tr><td>Script</td><td><pre><code>#{numberColumn1} != 0 || #{numberColumn1} &lt; #{numberColumn2}</code></pre></td></tr>
+                <tr><td>Condition</td><td><pre><code>true</code></pre></td></tr>
+                <tr><td>Maximum</td><td><pre><code>-1</code></pre></td></tr>
+            </tbody></table>
         </div>
-       </div>
-      </div>
-     </div>
-     <div style="padding: 2px;">
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item4539')"><span class="SerialNumber">1.4&nbsp;&nbsp;</span>Number</a>
-     </div>
-     <div class="TreeNode" id="item4539">
-      <div style="padding: 2px;">
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.1&nbsp;&nbsp;</span>Is number
-      </div>
-      <div class="nodeValue">
-       <div style="padding: 0 0 0 120px;">
-        <div class="valueBox">
-         <div align="center">
-          <table>
-           <tbody>
-            <tr>
-             <td>Script</td>
-             <td>
-              <pre><code>Math.abs(#{Column1}) &gt;= 0</code></pre></td>
-            </tr>
-            <tr>
-             <td>Condition</td>
-             <td>
-              <pre><code>true</code></pre></td>
-            </tr>
-            <tr>
-             <td>Maximum</td>
-             <td>
-              <pre><code>-1</code></pre></td>
-            </tr>
-           </tbody>
-          </table>
-         </div>
+
+                </div></div></div>
+                <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.3&nbsp;&nbsp;</span>Compare with statistic
+                </div>
+                <div class="nodeValue"><div style="padding: 0 0 0 120px;"><div class="valueBox">
+                        <div align="center">
+            <table>
+                <tbody><tr><td>Script</td><td><pre><code>#{numberColumn} &lt; #{numberColumn-Mean}</code></pre></td></tr>
+                <tr><td>Condition</td><td><pre><code>true</code></pre></td></tr>
+                <tr><td>Maximum</td><td><pre><code>-1</code></pre></td></tr>
+            </tbody></table>
         </div>
-       </div>
-      </div>
-      <div style="padding: 2px;">
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.2&nbsp;&nbsp;</span>Compare
-      </div>
-      <div class="nodeValue">
-       <div style="padding: 0 0 0 120px;">
-        <div class="valueBox">
-         <div align="center">
-          <table>
-           <tbody>
-            <tr>
-             <td>Script</td>
-             <td>
-              <pre><code>#{Column1} != 0 || #{Column1} &lt; #{Column2}</code></pre></td>
-            </tr>
-            <tr>
-             <td>Condition</td>
-             <td>
-              <pre><code>true</code></pre></td>
-            </tr>
-            <tr>
-             <td>Maximum</td>
-             <td>
-              <pre><code>-1</code></pre></td>
-            </tr>
-           </tbody>
-          </table>
-         </div>
+
+                </div></div></div>
+            </div>
+            <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item228')"><span class="SerialNumber">1.2&nbsp;&nbsp;</span>Date</a>
+            </div>
+            <div class="TreeNode" id="item228">
+                <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.1&nbsp;&nbsp;</span>value of date
+                </div>
+                <div class="nodeValue"><div style="padding: 0 0 0 120px;"><div class="valueBox">
+                        <div align="center">
+            <table>
+                <tbody><tr><td>Script</td><td><pre><code>if (#{dateColumn} != null)
+   new Date(#{dateColumn}.getTime()
+else
+   -1;</code></pre></td></tr>
+                <tr><td>Condition</td><td><pre><code>true</code></pre></td></tr>
+                <tr><td>Maximum</td><td><pre><code>-1</code></pre></td></tr>
+            </tbody></table>
         </div>
-       </div>
-      </div>
-      <div style="padding: 2px;">
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.3&nbsp;&nbsp;</span>Compare with statistic
-      </div>
-      <div class="nodeValue">
-       <div style="padding: 0 0 0 120px;">
-        <div class="valueBox">
-         <div align="center">
-          <table>
-           <tbody>
-            <tr>
-             <td>Script</td>
-             <td>
-              <pre><code>#{Column1} &lt; #{Column1-Mean}</code></pre></td>
-            </tr>
-            <tr>
-             <td>Condition</td>
-             <td>
-              <pre><code>true</code></pre></td>
-            </tr>
-            <tr>
-             <td>Maximum</td>
-             <td>
-              <pre><code>-1</code></pre></td>
-            </tr>
-           </tbody>
-          </table>
-         </div>
+
+                </div></div></div>
+                <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.2&nbsp;&nbsp;</span>Special time
+                </div>
+                <div class="nodeValue"><div style="padding: 0 0 0 120px;"><div class="valueBox">
+                        <div align="center">
+            <table>
+                <tbody><tr><td>Script</td><td><pre><code>#{dateColumn} == '2016-05-19 11:34:28'</code></pre></td></tr>
+                <tr><td>Condition</td><td><pre><code>true</code></pre></td></tr>
+                <tr><td>Maximum</td><td><pre><code>-1</code></pre></td></tr>
+            </tbody></table>
         </div>
-       </div>
-      </div>
-     </div>
-     <div style="padding: 2px;">
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item4543')"><span class="SerialNumber">1.5&nbsp;&nbsp;</span>Date</a>
-     </div>
-     <div class="TreeNode" id="item4543">
-      <div style="padding: 2px;">
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.5.1&nbsp;&nbsp;</span>Special time
-      </div>
-      <div class="nodeValue">
-       <div style="padding: 0 0 0 120px;">
-        <div class="valueBox">
-         <div align="center">
-          <table>
-           <tbody>
-            <tr>
-             <td>Script</td>
-             <td>
-              <pre><code>'#{Date}' == '2016-05-19 11:34:28'</code></pre></td>
-            </tr>
-            <tr>
-             <td>Condition</td>
-             <td>
-              <pre><code>true</code></pre></td>
-            </tr>
-            <tr>
-             <td>Maximum</td>
-             <td>
-              <pre><code>-1</code></pre></td>
-            </tr>
-           </tbody>
-          </table>
-         </div>
+
+                </div></div></div>
+                <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.3&nbsp;&nbsp;</span>Match time
+                </div>
+                <div class="nodeValue"><div style="padding: 0 0 0 120px;"><div class="valueBox">
+                        <div align="center">
+            <table>
+                <tbody><tr><td>Script</td><td><pre><code>if (#{dateColumn} != null)
+   #{dateColumn}.startsWith('2016-05-19 09')
+else
+   undefined;</code></pre></td></tr>
+                <tr><td>Condition</td><td><pre><code>true</code></pre></td></tr>
+                <tr><td>Maximum</td><td><pre><code>-1</code></pre></td></tr>
+            </tbody></table>
         </div>
-       </div>
-      </div>
-      <div style="padding: 2px;">
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.5.2&nbsp;&nbsp;</span>Match time
-      </div>
-      <div class="nodeValue">
-       <div style="padding: 0 0 0 120px;">
-        <div class="valueBox">
-         <div align="center">
-          <table>
-           <tbody>
-            <tr>
-             <td>Script</td>
-             <td>
-              <pre><code>'#{Date}'.startsWith('2016-05-19 09')</code></pre></td>
-            </tr>
-            <tr>
-             <td>Condition</td>
-             <td>
-              <pre><code>true</code></pre></td>
-            </tr>
-            <tr>
-             <td>Maximum</td>
-             <td>
-              <pre><code>-1</code></pre></td>
-            </tr>
-           </tbody>
-          </table>
-         </div>
+
+                </div></div></div>
+                <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.4&nbsp;&nbsp;</span>Compare time
+                </div>
+                <div class="nodeValue"><div style="padding: 0 0 0 120px;"><div class="valueBox">
+                        <div align="center">
+            <table>
+                <tbody><tr><td>Script</td><td><pre><code>if (#{dateColumn} != null)
+   new Date(#{dateColumn}).getTime()  &gt; new Date('2016/05/19 09:23:12').getTime()
+else
+   undefined;</code></pre></td></tr>
+                <tr><td>Condition</td><td><pre><code>true</code></pre></td></tr>
+                <tr><td>Maximum</td><td><pre><code>-1</code></pre></td></tr>
+            </tbody></table>
         </div>
-       </div>
-      </div>
-      <div style="padding: 2px;">
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.5.3&nbsp;&nbsp;</span>Compare time
-      </div>
-      <div class="nodeValue">
-       <div style="padding: 0 0 0 120px;">
-        <div class="valueBox">
-         <div align="center">
-          <table>
-           <tbody>
-            <tr>
-             <td>Script</td>
-             <td>
-              <pre><code>new Date('#{Date}'.replace(/-/g,'/')).getTime()  &gt; new Date('2016/05/19 09:23:12').getTime()</code></pre></td>
-            </tr>
-            <tr>
-             <td>Condition</td>
-             <td>
-              <pre><code>true</code></pre></td>
-            </tr>
-            <tr>
-             <td>Maximum</td>
-             <td>
-              <pre><code>-1</code></pre></td>
-            </tr>
-           </tbody>
-          </table>
-         </div>
+
+                </div></div></div>
+                <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.5&nbsp;&nbsp;</span>Format Date
+                </div>
+                <div class="nodeValue"><div style="padding: 0 0 0 120px;"><div class="valueBox">
+                        <div align="center">
+            <table>
+                <tbody><tr><td>Script</td><td><pre><code>function formatDate(date) {
+     var y = date.getFullYear();
+     var m = date.getMonth() + 1;
+     m = m &lt; 10 ? ('0' + m) : m;
+     var d = date.getDate();
+     d = d &lt; 10 ? ('0' + d) : d;
+     var h =date.getHours();
+     h = h &lt; 10 ? ('0' + h) : h;
+     var M =date.getMinutes();
+     M = M &lt; 10 ? ('0' + M) : M;
+     var s =date.getSeconds();
+     s = s &lt; 10 ? ('0' + s) : s;
+     return y + '-' + m + '-' + d + ' ' + h + ':' + M + ':' + s;
+}
+if (#{dateColumn} != null)
+   formatDate(new Date(#{dateColumn}));
+else
+   null;</code></pre></td></tr>
+                <tr><td>Condition</td><td><pre><code>true</code></pre></td></tr>
+                <tr><td>Maximum</td><td><pre><code>-1</code></pre></td></tr>
+            </tbody></table>
         </div>
-       </div>
-      </div>
-     </div>
-     <div style="padding: 2px;">
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item4547')"><span class="SerialNumber">1.6&nbsp;&nbsp;</span>String</a>
-     </div>
-     <div class="TreeNode" id="item4547">
-      <div style="padding: 2px;">
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.6.1&nbsp;&nbsp;</span>Length
-      </div>
-      <div class="nodeValue">
-       <div style="padding: 0 0 0 120px;">
-        <div class="valueBox">
-         <div align="center">
-          <table>
-           <tbody>
-            <tr>
-             <td>Script</td>
-             <td>
-              <pre><code>'#{Column1}'.length &gt; 3</code></pre></td>
-            </tr>
-            <tr>
-             <td>Condition</td>
-             <td>
-              <pre><code>true</code></pre></td>
-            </tr>
-            <tr>
-             <td>Maximum</td>
-             <td>
-              <pre><code>-1</code></pre></td>
-            </tr>
-           </tbody>
-          </table>
-         </div>
+
+                </div></div></div>
+                <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.6&nbsp;&nbsp;</span>whether Sunday
+                </div>
+                <div class="nodeValue"><div style="padding: 0 0 0 120px;"><div class="valueBox">
+                        <div align="center">
+            <table>
+                <tbody><tr><td>Script</td><td><pre><code>if (#{dateColumn} != null)
+   new Date(#{dateColumn}).getDay() == 0
+else
+   undefined;</code></pre></td></tr>
+                <tr><td>Condition</td><td><pre><code>true</code></pre></td></tr>
+                <tr><td>Maximum</td><td><pre><code>-1</code></pre></td></tr>
+            </tbody></table>
         </div>
-       </div>
-      </div>
-      <div style="padding: 2px;">
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.6.2&nbsp;&nbsp;</span>Match
-      </div>
-      <div class="nodeValue">
-       <div style="padding: 0 0 0 120px;">
-        <div class="valueBox">
-         <div align="center">
-          <table>
-           <tbody>
-            <tr>
-             <td>Script</td>
-             <td>
-              <pre><code>'#{Column1}'.search(/Hello/ig) &gt;= 0</code></pre></td>
-            </tr>
-            <tr>
-             <td>Condition</td>
-             <td>
-              <pre><code>true</code></pre></td>
-            </tr>
-            <tr>
-             <td>Maximum</td>
-             <td>
-              <pre><code>-1</code></pre></td>
-            </tr>
-           </tbody>
-          </table>
-         </div>
+
+                </div></div></div>
+            </div>
+            <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item235')"><span class="SerialNumber">1.3&nbsp;&nbsp;</span>String</a>
+            </div>
+            <div class="TreeNode" id="item235">
+                <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.3.1&nbsp;&nbsp;</span>string is empty
+                </div>
+                <div class="nodeValue"><div style="padding: 0 0 0 120px;"><div class="valueBox">
+                        <div align="center">
+            <table>
+                <tbody><tr><td>Script</td><td><pre><code>#{stringColumn} == ''</code></pre></td></tr>
+                <tr><td>Condition</td><td><pre><code>true</code></pre></td></tr>
+                <tr><td>Maximum</td><td><pre><code>-1</code></pre></td></tr>
+            </tbody></table>
         </div>
-       </div>
-      </div>
-      <div style="padding: 2px;">
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.6.3&nbsp;&nbsp;</span>Position of sub-string
-      </div>
-      <div class="nodeValue">
-       <div style="padding: 0 0 0 120px;">
-        <div class="valueBox">
-         <div align="center">
-          <table>
-           <tbody>
-            <tr>
-             <td>Script</td>
-             <td>
-              <pre><code>'#{Column1}'.indexOf('Hello') == 3</code></pre></td>
-            </tr>
-            <tr>
-             <td>Condition</td>
-             <td>
-              <pre><code>true</code></pre></td>
-            </tr>
-            <tr>
-             <td>Maximum</td>
-             <td>
-              <pre><code>-1</code></pre></td>
-            </tr>
-           </tbody>
-          </table>
-         </div>
+
+                </div></div></div>
+                <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.3.2&nbsp;&nbsp;</span>string is not null
+                </div>
+                <div class="nodeValue"><div style="padding: 0 0 0 120px;"><div class="valueBox">
+                        <div align="center">
+            <table>
+                <tbody><tr><td>Script</td><td><pre><code>#{stringColumn} != null</code></pre></td></tr>
+                <tr><td>Condition</td><td><pre><code>true</code></pre></td></tr>
+                <tr><td>Maximum</td><td><pre><code>-1</code></pre></td></tr>
+            </tbody></table>
         </div>
-       </div>
-      </div>
-      <div style="padding: 2px;">
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.6.4&nbsp;&nbsp;</span>Special values
-      </div>
-      <div class="nodeValue">
-       <div style="padding: 0 0 0 120px;">
-        <div class="valueBox">
-         <div align="center">
-          <table>
-           <tbody>
-            <tr>
-             <td>Script</td>
-             <td>
-              <pre><code>var array = [ 'A', 'B', 'C', 'D' ];
-array.includes('#{Column1}')</code></pre></td>
-            </tr>
-            <tr>
-             <td>Condition</td>
-             <td>
-              <pre><code>true</code></pre></td>
-            </tr>
-            <tr>
-             <td>Maximum</td>
-             <td>
-              <pre><code>-1</code></pre></td>
-            </tr>
-           </tbody>
-          </table>
-         </div>
+
+                </div></div></div>
+                <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.3.3&nbsp;&nbsp;</span>string length
+                </div>
+                <div class="nodeValue"><div style="padding: 0 0 0 120px;"><div class="valueBox">
+                        <div align="center">
+            <table>
+                <tbody><tr><td>Script</td><td><pre><code>if ( #{stringColumn} != null ) 
+    #{stringColumn}.length
+else
+    -1</code></pre></td></tr>
+                <tr><td>Condition</td><td><pre><code>true</code></pre></td></tr>
+                <tr><td>Maximum</td><td><pre><code>-1</code></pre></td></tr>
+            </tbody></table>
         </div>
-       </div>
-      </div>
-     </div>
+
+                </div></div></div>
+                <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.3.4&nbsp;&nbsp;</span>contain sub-string
+                </div>
+                <div class="nodeValue"><div style="padding: 0 0 0 120px;"><div class="valueBox">
+                        <div align="center">
+            <table>
+                <tbody><tr><td>Script</td><td><pre><code>if ( #{stringColumn} != null ) 
+    #{stringColumn}.search(/hello/ig)
+else
+    -1</code></pre></td></tr>
+                <tr><td>Condition</td><td><pre><code>true</code></pre></td></tr>
+                <tr><td>Maximum</td><td><pre><code>-1</code></pre></td></tr>
+            </tbody></table>
+        </div>
+
+                </div></div></div>
+                <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.3.5&nbsp;&nbsp;</span>Position of sub-string
+                </div>
+                <div class="nodeValue"><div style="padding: 0 0 0 120px;"><div class="valueBox">
+                        <div align="center">
+            <table>
+                <tbody><tr><td>Script</td><td><pre><code>if ( #{stringColumn} != null ) 
+    #{stringColumn}.indexOf('hello')
+else
+    -1</code></pre></td></tr>
+                <tr><td>Condition</td><td><pre><code>true</code></pre></td></tr>
+                <tr><td>Maximum</td><td><pre><code>-1</code></pre></td></tr>
+            </tbody></table>
+        </div>
+
+                </div></div></div>
+                <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.3.6&nbsp;&nbsp;</span>compare strings
+                </div>
+                <div class="nodeValue"><div style="padding: 0 0 0 120px;"><div class="valueBox">
+                        <div align="center">
+            <table>
+                <tbody><tr><td>Script</td><td><pre><code>#{stringColumn} === 'hello'</code></pre></td></tr>
+                <tr><td>Condition</td><td><pre><code>true</code></pre></td></tr>
+                <tr><td>Maximum</td><td><pre><code>-1</code></pre></td></tr>
+            </tbody></table>
+        </div>
+
+                </div></div></div>
+                <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.3.7&nbsp;&nbsp;</span>replace first
+                </div>
+                <div class="nodeValue"><div style="padding: 0 0 0 120px;"><div class="valueBox">
+                        <div align="center">
+            <table>
+                <tbody><tr><td>Script</td><td><pre><code>if ( #{stringColumn} != null ) 
+    #{stringColumn}.replace("hello", "Hello");
+else
+   null</code></pre></td></tr>
+                <tr><td>Condition</td><td><pre><code>true</code></pre></td></tr>
+                <tr><td>Maximum</td><td><pre><code>-1</code></pre></td></tr>
+            </tbody></table>
+        </div>
+
+                </div></div></div>
+                <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.3.8&nbsp;&nbsp;</span>replace all
+                </div>
+                <div class="nodeValue"><div style="padding: 0 0 0 120px;"><div class="valueBox">
+                        <div align="center">
+            <table>
+                <tbody><tr><td>Script</td><td><pre><code>if ( #{stringColumn} != null ) 
+    #{stringColumn}.replace(/hello/g, "Hello");
+else
+   null</code></pre></td></tr>
+                <tr><td>Condition</td><td><pre><code>true</code></pre></td></tr>
+                <tr><td>Maximum</td><td><pre><code>-1</code></pre></td></tr>
+            </tbody></table>
+        </div>
+
+                </div></div></div>
+                <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.3.9&nbsp;&nbsp;</span>starts with
+                </div>
+                <div class="nodeValue"><div style="padding: 0 0 0 120px;"><div class="valueBox">
+                        <div align="center">
+            <table>
+                <tbody><tr><td>Script</td><td><pre><code>if ( #{stringColumn} != null ) 
+    #{stringColumn}.startsWith('Hello')
+else
+   undefined</code></pre></td></tr>
+                <tr><td>Condition</td><td><pre><code>true</code></pre></td></tr>
+                <tr><td>Maximum</td><td><pre><code>-1</code></pre></td></tr>
+            </tbody></table>
+        </div>
+
+                </div></div></div>
+                <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.3.10&nbsp;&nbsp;</span>ends with
+                </div>
+                <div class="nodeValue"><div style="padding: 0 0 0 120px;"><div class="valueBox">
+                        <div align="center">
+            <table>
+                <tbody><tr><td>Script</td><td><pre><code>if ( #{stringColumn} != null ) 
+    #{stringColumn}.endsWith('hello')
+else
+   undefined</code></pre></td></tr>
+                <tr><td>Condition</td><td><pre><code>true</code></pre></td></tr>
+                <tr><td>Maximum</td><td><pre><code>-1</code></pre></td></tr>
+            </tbody></table>
+        </div>
+
+                </div></div></div>
+                <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.3.11&nbsp;&nbsp;</span>Special values
+                </div>
+                <div class="nodeValue"><div style="padding: 0 0 0 120px;"><div class="valueBox">
+                        <div align="center">
+            <table>
+                <tbody><tr><td>Script</td><td><pre><code>var array = [ 'A', 'B', 'C', 'D' ];
+array.includes('#{stringColumn}')</code></pre></td></tr>
+                <tr><td>Condition</td><td><pre><code>true</code></pre></td></tr>
+                <tr><td>Maximum</td><td><pre><code>-1</code></pre></td></tr>
+            </tbody></table>
+        </div>
+
+                </div></div></div>
+            </div>
+            <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item247')"><span class="SerialNumber">1.4&nbsp;&nbsp;</span>Limit Rows</a>
+            </div>
+            <div class="TreeNode" id="item247">
+                <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.1&nbsp;&nbsp;</span>10 rows in front
+                </div>
+                <div class="nodeValue"><div style="padding: 0 0 0 120px;"><div class="valueBox">
+                        <div align="center">
+            <table>
+                <tbody><tr><td>Condition</td><td><pre><code>true</code></pre></td></tr>
+                <tr><td>Maximum</td><td><pre><code>10</code></pre></td></tr>
+            </tbody></table>
+        </div>
+
+                </div></div></div>
+            </div>
+        </div>
     </div>
-   </div>
-   <hr><treenode style="font-size:0.8em">
-    * Links and controls may be unresponsive when html page is editable.
-    <p></p>
-   </treenode>
-  </div>
- </body>
-</html>
+
+
+</div></body></html>

@@ -1,8 +1,7 @@
-<html>
- <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <title>JavaScript</title>
-  <style type="text/css">
+<html><head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>JavaScript</title>
+        <style type="text/css">
                           table { max-width:95%; margin : 10px;  border-style: solid; border-width:2px; border-collapse: collapse;} 
               th, td { border-style: solid; border-width:1px; padding: 8px; border-collapse: collapse;} 
               th { font-weight:bold;  text-align:center;} 
@@ -10,14 +9,11 @@
               .center { text-align:center;  max-width:95%; } 
               .valueBox { border-style: solid; border-width:1px; border-color:black; padding: 5px; border-radius:5px;} 
               .boldText { font-weight:bold;  } 
- body { margin:0 auto; width: 900px; } 
-              img { max-width: 900px; } 
-              .valueText { color:#2e598a;  } 
 
         </style>
- </head>
- <body contenteditable="false">
-  <script>
+    </head>
+<body contenteditable="false">
+ <script>
     function nodeClicked(id) {
       var obj = document.getElementById(id);
       var objv = obj.style.display;
@@ -40,556 +36,323 @@
        }
     }
   </script>
-  <div>
-   <div>
-    <input type="checkbox" checked onclick="showClass('TreeNode', this.checked);">展开 <input type="checkbox" checked onclick="showClass('SerialNumber', this.checked);">层次号 <input type="checkbox" checked onclick="showClass('NodeTag', this.checked);">标签 <input type="checkbox" checked onclick="showClass('nodeValue', this.checked);">值
-   </div>
-   <hr>
-   <div style="padding: 2px;">
-    &nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item632')"><span class="SerialNumber">&nbsp;&nbsp;</span>JavaScript</a>
-   </div>
-   <div class="TreeNode" id="item632">
-    <div style="padding: 2px;">
-     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item4021')"><span class="SerialNumber">1&nbsp;&nbsp;</span>示例</a>
+
+<div>
+<div>
+    <input type="checkbox" checked="" onclick="showClass('TreeNode', this.checked);">展开
+    <input type="checkbox" checked="" onclick="showClass('SerialNumber', this.checked);">层次号
+    <input type="checkbox" checked="" onclick="showClass('NodeTag', this.checked);">标签
+    <input type="checkbox" checked="" onclick="showClass('nodeValue', this.checked);">值
+</div>
+<hr>
+    <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item23')"><span class="SerialNumber">&nbsp;&nbsp;</span>JavaScript</a>
     </div>
-    <div class="TreeNode" id="item4021">
-     <div style="padding: 2px;">
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item4083')"><span class="SerialNumber">1.1&nbsp;&nbsp;</span>方法</a>
-     </div>
-     <div class="TreeNode" id="item4083">
-      <div style="padding: 2px;">
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.1&nbsp;&nbsp;</span>添加风格
-      </div>
-      <div class="nodeValue">
-       <div style="padding: 0 0 0 120px;">
-        <div class="valueBox">
-         <pre><code>function addStyle(style) {
-    var node = document.createElement("style");        
-    node.id = "mystyleid";        
-    node.type = "text/css";        
-    node.innerHTML = style.replace(/\n/g,"  ");        
-    document.getElementsByTagName("HEAD").item(0).appendChild(node);
-};
-addStyle("body { background-color:black; color:#CCFF99; }");</code></pre>
+    <div class="TreeNode" id="item23">
+        <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item334')"><span class="SerialNumber">1&nbsp;&nbsp;</span>示例</a>
         </div>
-       </div>
-      </div>
-      <div style="padding: 2px;">
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.2&nbsp;&nbsp;</span>删除结点
-      </div>
-      <div class="nodeValue">
-       <div style="padding: 0 0 0 120px;">
-        <div class="valueBox">
-         <pre><code>function removeNode(id) {
-    var node = document.getElementById(id);
-    if ( node != null ) 
-        node.parentNode.removeChild(node);
-};
-removeNode("mystyleid");</code></pre>
-        </div>
-       </div>
-      </div>
-     </div>
-     <div style="padding: 2px;">
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item4086')"><span class="SerialNumber">1.2&nbsp;&nbsp;</span>网页</a>
-     </div>
-     <div class="TreeNode" id="item4086">
-      <div style="padding: 2px;">
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item4087')"><span class="SerialNumber">1.2.1&nbsp;&nbsp;</span>值</a>
-      </div>
-      <div class="TreeNode" id="item4087">
-       <div style="padding: 2px;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.1.1&nbsp;&nbsp;</span>读取Cookie
-       </div>
-       <div class="nodeValue">
-        <div style="padding: 0 0 0 144px;">
-         <div class="valueBox">
-          <pre><code>document.cookie;</code></pre>
-         </div>
-        </div>
-       </div>
-       <div style="padding: 2px;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.1.2&nbsp;&nbsp;</span>页面高度
-       </div>
-       <div class="nodeValue">
-        <div style="padding: 0 0 0 144px;">
-         <div class="valueBox">
-          <pre><code>document.documentElement.scrollHeight || document.body.scrollHeight;</code></pre>
-         </div>
-        </div>
-       </div>
-       <div style="padding: 2px;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.1.3&nbsp;&nbsp;</span>页面宽度
-       </div>
-       <div class="nodeValue">
-        <div style="padding: 0 0 0 144px;">
-         <div class="valueBox">
-          <pre><code>document.documentElement.scrollWidth || document.body.scrollWidth;</code></pre>
-         </div>
-        </div>
-       </div>
-      </div>
-      <div style="padding: 2px;">
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item4091')"><span class="SerialNumber">1.2.2&nbsp;&nbsp;</span>选择</a>
-      </div>
-      <div class="TreeNode" id="item4091">
-       <div style="padding: 2px;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.2.1&nbsp;&nbsp;</span>全选
-       </div>
-       <div class="nodeValue">
-        <div style="padding: 0 0 0 144px;">
-         <div class="valueBox">
-          <pre><code>window.getSelection().removeAllRanges();     
-var selection = window.getSelection();        
-var range = document.createRange();        
-range.selectNode(document.documentElement);        
-selection.addRange(range);</code></pre>
-         </div>
-        </div>
-       </div>
-       <div style="padding: 2px;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.2.2&nbsp;&nbsp;</span>都不选
-       </div>
-       <div class="nodeValue">
-        <div style="padding: 0 0 0 144px;">
-         <div class="valueBox">
-          <pre><code>window.getSelection().removeAllRanges();</code></pre>
-         </div>
-        </div>
-       </div>
-       <div style="padding: 2px;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.2.3&nbsp;&nbsp;</span>选择结点
-       </div>
-       <div class="nodeValue">
-        <div style="padding: 0 0 0 144px;">
-         <div class="valueBox">
-          <pre><code>function selectNode(id) {
-    window.getSelection().removeAllRanges();     
-    var selection = window.getSelection();        
-    var range = document.createRange();        
-    range.selectNode(document.getElementById(id));        
-    selection.addRange(range);
-};
-selectNode("someid");</code></pre>
-         </div>
-        </div>
-       </div>
-       <div style="padding: 2px;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.2.4&nbsp;&nbsp;</span>当前选择的字串
-       </div>
-       <div class="nodeValue">
-        <div style="padding: 0 0 0 144px;">
-         <div class="valueBox">
-          <pre><code>window.getSelection().toString();</code></pre>
-         </div>
-        </div>
-       </div>
-       <div style="padding: 2px;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.2.5&nbsp;&nbsp;</span>当前选择的网页代码
-       </div>
-       <div class="nodeValue">
-        <div style="padding: 0 0 0 144px;">
-         <div class="valueBox">
-          <pre><code>var selectionObj = window.getSelection();        
-var rangeObj = selectionObj.getRangeAt(0);        
-var docFragment = rangeObj.cloneContents();        
-var div = document.createElement("div");        
-div.appendChild(docFragment);        
-div.innerHTML;</code></pre>
-         </div>
-        </div>
-       </div>
-      </div>
-      <div style="padding: 2px;">
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item4097')"><span class="SerialNumber">1.2.3&nbsp;&nbsp;</span>操作</a>
-      </div>
-      <div class="TreeNode" id="item4097">
-       <div style="padding: 2px;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.3.1&nbsp;&nbsp;</span>滚动
-       </div>
-       <div class="nodeValue">
-        <div style="padding: 0 0 0 144px;">
-         <div class="valueBox">
-          <pre><code>window.scrollTo(50,70 );</code></pre>
-         </div>
-        </div>
-       </div>
-       <div style="padding: 2px;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.3.2&nbsp;&nbsp;</span>设置网页可编辑
-       </div>
-       <div class="nodeValue">
-        <div style="padding: 0 0 0 144px;">
-         <div class="valueBox">
-          <pre><code>document.body.contentEditable=true;</code></pre>
-         </div>
-        </div>
-       </div>
-       <div style="padding: 2px;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.3.3&nbsp;&nbsp;</span>弹出信息
-       </div>
-       <div class="nodeValue">
-        <div style="padding: 0 0 0 144px;">
-         <div class="valueBox">
-          <pre><code>alert("人生得意须尽欢！");</code></pre>
-         </div>
-        </div>
-       </div>
-       <div style="padding: 2px;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.3.4&nbsp;&nbsp;</span>确认
-       </div>
-       <div class="nodeValue">
-        <div style="padding: 0 0 0 144px;">
-         <div class="valueBox">
-          <pre><code>confirm("能饮一杯无？");</code></pre>
-         </div>
-        </div>
-       </div>
-       <div style="padding: 2px;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.3.5&nbsp;&nbsp;</span>输入
-       </div>
-       <div class="nodeValue">
-        <div style="padding: 0 0 0 144px;">
-         <div class="valueBox">
-          <pre><code>prompt("君不见");</code></pre>
-         </div>
-        </div>
-       </div>
-       <div style="padding: 2px;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.3.6&nbsp;&nbsp;</span>打开网址
-       </div>
-       <div class="nodeValue">
-        <div style="padding: 0 0 0 144px;">
-         <div class="valueBox">
-          <pre><code>window.open("http://www.nlc.cn");</code></pre>
-         </div>
-        </div>
-       </div>
-      </div>
-     </div>
-     <div style="padding: 2px;">
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item4022')"><span class="SerialNumber">1.3&nbsp;&nbsp;</span>变量</a>
-     </div>
-     <div class="TreeNode" id="item4022">
-      <div style="padding: 2px;">
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.3.1&nbsp;&nbsp;</span>字串
-      </div>
-      <div class="nodeValue">
-       <div style="padding: 0 0 0 120px;">
-        <div class="valueBox">
-         <pre><code>var 字串a = "hello";
+        <div class="TreeNode" id="item334">
+            <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item335')"><span class="SerialNumber">1.1&nbsp;&nbsp;</span>变量</a>
+            </div>
+            <div class="TreeNode" id="item335">
+                <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.1&nbsp;&nbsp;</span>字串
+                </div>
+                <div class="nodeValue"><div style="padding: 0 0 0 120px;"><div class="valueBox">
+                <pre><code>var 字串a = "hello";
 字串a += " world";
 "包含e："+ (字串a.indexOf("e") &gt;= 0) + "    长度：" + 字串a.length</code></pre>
-        </div>
-       </div>
-      </div>
-      <div style="padding: 2px;">
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.3.2&nbsp;&nbsp;</span>时间
-      </div>
-      <div class="nodeValue">
-       <div style="padding: 0 0 0 120px;">
-        <div class="valueBox">
-         <pre><code>"当前时间：" + new Date() + "\n" + 
+                </div></div></div>
+                <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.2&nbsp;&nbsp;</span>时间
+                </div>
+                <div class="nodeValue"><div style="padding: 0 0 0 120px;"><div class="valueBox">
+                <pre><code>"当前时间：" + new Date() + "\n" + 
 "格式yyyy/mm/dd：" + new Date('2022/11/30 10:35:32') + "\n" + 
 "格式mm/dd/yyyy：" + new Date('11/30/2022 10:35:32') + "\n" + 
 "格式yyyy-mm-dd：" + new Date('2022-11-30 10:35:32'.replace(/-/g,'/'));</code></pre>
-        </div>
-       </div>
-      </div>
-      <div style="padding: 2px;">
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.3.3&nbsp;&nbsp;</span>数组
-      </div>
-      <div class="nodeValue">
-       <div style="padding: 0 0 0 120px;">
-        <div class="valueBox">
-         <pre><code>var 数组a =  [-1.2, 3.2, 15, 4.912];
+                </div></div></div>
+                <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.3&nbsp;&nbsp;</span>数组
+                </div>
+                <div class="nodeValue"><div style="padding: 0 0 0 120px;"><div class="valueBox">
+                <pre><code>var 数组a =  [-1.2, 3.2, 15, 4.912];
 数组a[2];</code></pre>
-        </div>
-       </div>
-      </div>
-      <div style="padding: 2px;">
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.3.4&nbsp;&nbsp;</span>对象
-      </div>
-      <div class="nodeValue">
-       <div style="padding: 0 0 0 120px;">
-        <div class="valueBox">
-         <pre><code>var 猫猫1 = {颜色:"白", 年龄:"15", 名字:"乖乖"};
+                </div></div></div>
+                <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.1.4&nbsp;&nbsp;</span>对象
+                </div>
+                <div class="nodeValue"><div style="padding: 0 0 0 120px;"><div class="valueBox">
+                <pre><code>var 猫猫1 = {颜色:"白", 年龄:"15", 名字:"乖乖"};
 猫猫1.名字</code></pre>
-        </div>
-       </div>
-      </div>
-     </div>
-     <div style="padding: 2px;">
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item4027')"><span class="SerialNumber">1.4&nbsp;&nbsp;</span>表达式</a>
-     </div>
-     <div class="TreeNode" id="item4027">
-      <div style="padding: 2px;">
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item4052')"><span class="SerialNumber">1.4.1&nbsp;&nbsp;</span>字符串处理</a>
-      </div>
-      <div class="TreeNode" id="item4052">
-       <div style="padding: 2px;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.1.1&nbsp;&nbsp;</span>比较
-       </div>
-       <div class="nodeValue">
-        <div style="padding: 0 0 0 144px;">
-         <div class="valueBox">
-          <pre><code>'Hello' == 'hello' || 'a' &lt; 'A' || 'a' != 'A'</code></pre>
-         </div>
-        </div>
-       </div>
-       <div style="padding: 2px;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.1.2&nbsp;&nbsp;</span>替换首个
-       </div>
-       <div class="nodeValue">
-        <div style="padding: 0 0 0 144px;">
-         <div class="valueBox">
-          <pre><code>"Hello World! World is yourself.".replace("World", "Feeling");</code></pre>
-         </div>
-        </div>
-       </div>
-       <div style="padding: 2px;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.1.3&nbsp;&nbsp;</span>替换所有
-       </div>
-       <div class="nodeValue">
-        <div style="padding: 0 0 0 144px;">
-         <div class="valueBox">
-          <pre><code>"Hello World! World is yourself.".replace(/World/g, "Feeling");</code></pre>
-         </div>
-        </div>
-       </div>
-       <div style="padding: 2px;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.1.4&nbsp;&nbsp;</span>开始于
-       </div>
-       <div class="nodeValue">
-        <div style="padding: 0 0 0 144px;">
-         <div class="valueBox">
-          <pre><code>'Hello'.startsWith('h')</code></pre>
-         </div>
-        </div>
-       </div>
-       <div style="padding: 2px;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.1.5&nbsp;&nbsp;</span>结尾于
-       </div>
-       <div class="nodeValue">
-        <div style="padding: 0 0 0 144px;">
-         <div class="valueBox">
-          <pre><code>'Hello'.endsWith('o')</code></pre>
-         </div>
-        </div>
-       </div>
-       <div style="padding: 2px;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.1.6&nbsp;&nbsp;</span>子串
-       </div>
-       <div class="nodeValue">
-        <div style="padding: 0 0 0 144px;">
-         <div class="valueBox">
-          <pre><code>'Hello'.substring(2, 5)</code></pre>
-         </div>
-        </div>
-       </div>
-       <div style="padding: 2px;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.1.7&nbsp;&nbsp;</span>字符
-       </div>
-       <div class="nodeValue">
-        <div style="padding: 0 0 0 144px;">
-         <div class="valueBox">
-          <pre><code>'hello'.charAt(2)</code></pre>
-         </div>
-        </div>
-       </div>
-       <div style="padding: 2px;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.1.8&nbsp;&nbsp;</span>连接
-       </div>
-       <div class="nodeValue">
-        <div style="padding: 0 0 0 144px;">
-         <div class="valueBox">
-          <pre><code>'hello'.concat(' world')</code></pre>
-         </div>
-        </div>
-       </div>
-       <div style="padding: 2px;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.1.9&nbsp;&nbsp;</span>分割
-       </div>
-       <div class="nodeValue">
-        <div style="padding: 0 0 0 144px;">
-         <div class="valueBox">
-          <pre><code>'1,2,3,4'.split(',')</code></pre>
-         </div>
-        </div>
-       </div>
-       <div style="padding: 2px;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.1.10&nbsp;&nbsp;</span>位置
-       </div>
-       <div class="nodeValue">
-        <div style="padding: 0 0 0 144px;">
-         <div class="valueBox">
-          <pre><code>'hello'.indexOf('e')</code></pre>
-         </div>
-        </div>
-       </div>
-       <div style="padding: 2px;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.1.11&nbsp;&nbsp;</span>最后位置
-       </div>
-       <div class="nodeValue">
-        <div style="padding: 0 0 0 144px;">
-         <div class="valueBox">
-          <pre><code>'hello'.lastIndexOf('l')</code></pre>
-         </div>
-        </div>
-       </div>
-       <div style="padding: 2px;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.1.12&nbsp;&nbsp;</span>长度
-       </div>
-       <div class="nodeValue">
-        <div style="padding: 0 0 0 144px;">
-         <div class="valueBox">
-          <pre><code>'hello'.length</code></pre>
-         </div>
-        </div>
-       </div>
-       <div style="padding: 2px;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.1.13&nbsp;&nbsp;</span>查找
-       </div>
-       <div class="nodeValue">
-        <div style="padding: 0 0 0 144px;">
-         <div class="valueBox">
-          <pre><code>var 字符串a = "abc1233hello";
+                </div></div></div>
+            </div>
+            <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item340')"><span class="SerialNumber">1.2&nbsp;&nbsp;</span>表达式</a>
+            </div>
+            <div class="TreeNode" id="item340">
+                <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item341')"><span class="SerialNumber">1.2.1&nbsp;&nbsp;</span>数值计算</a>
+                </div>
+                <div class="TreeNode" id="item341">
+                    <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.1.1&nbsp;&nbsp;</span>欧拉数
+                    </div>
+                    <div class="nodeValue"><div style="padding: 0 0 0 144px;"><div class="valueBox">
+                    <pre><code>Math.E</code></pre>
+                    </div></div></div>
+                    <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.1.2&nbsp;&nbsp;</span>圆周率
+                    </div>
+                    <div class="nodeValue"><div style="padding: 0 0 0 144px;"><div class="valueBox">
+                    <pre><code>Math.PI</code></pre>
+                    </div></div></div>
+                    <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.1.3&nbsp;&nbsp;</span>绝对值
+                    </div>
+                    <div class="nodeValue"><div style="padding: 0 0 0 144px;"><div class="valueBox">
+                    <pre><code>Math.abs(-5.611)</code></pre>
+                    </div></div></div>
+                    <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.1.4&nbsp;&nbsp;</span>欧拉冥
+                    </div>
+                    <div class="nodeValue"><div style="padding: 0 0 0 144px;"><div class="valueBox">
+                    <pre><code>Math.exp(2)</code></pre>
+                    </div></div></div>
+                    <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.1.5&nbsp;&nbsp;</span>平方根
+                    </div>
+                    <div class="nodeValue"><div style="padding: 0 0 0 144px;"><div class="valueBox">
+                    <pre><code>Math.sqrt(9)</code></pre>
+                    </div></div></div>
+                    <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.1.6&nbsp;&nbsp;</span>三次方根
+                    </div>
+                    <div class="nodeValue"><div style="padding: 0 0 0 144px;"><div class="valueBox">
+                    <pre><code>Math.pow(27,1/3)</code></pre>
+                    </div></div></div>
+                    <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.1.7&nbsp;&nbsp;</span>幂
+                    </div>
+                    <div class="nodeValue"><div style="padding: 0 0 0 144px;"><div class="valueBox">
+                    <pre><code>Math.pow(2,5)</code></pre>
+                    </div></div></div>
+                    <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.1.8&nbsp;&nbsp;</span>余弦
+                    </div>
+                    <div class="nodeValue"><div style="padding: 0 0 0 144px;"><div class="valueBox">
+                    <pre><code>Math.cos(0)</code></pre>
+                    </div></div></div>
+                    <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.1.9&nbsp;&nbsp;</span>正弦
+                    </div>
+                    <div class="nodeValue"><div style="padding: 0 0 0 144px;"><div class="valueBox">
+                    <pre><code>Math.sin(9)</code></pre>
+                    </div></div></div>
+                    <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.1.10&nbsp;&nbsp;</span>正切
+                    </div>
+                    <div class="nodeValue"><div style="padding: 0 0 0 144px;"><div class="valueBox">
+                    <pre><code>Math.tan(5)</code></pre>
+                    </div></div></div>
+                    <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.1.11&nbsp;&nbsp;</span>反正切
+                    </div>
+                    <div class="nodeValue"><div style="padding: 0 0 0 144px;"><div class="valueBox">
+                    <pre><code>Math.atan(-7.3)</code></pre>
+                    </div></div></div>
+                    <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.1.12&nbsp;&nbsp;</span>反余弦
+                    </div>
+                    <div class="nodeValue"><div style="padding: 0 0 0 144px;"><div class="valueBox">
+                    <pre><code>Math.acos(0.5)</code></pre>
+                    </div></div></div>
+                    <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.1.13&nbsp;&nbsp;</span>反正弦
+                    </div>
+                    <div class="nodeValue"><div style="padding: 0 0 0 144px;"><div class="valueBox">
+                    <pre><code>Math.asin(0.3)</code></pre>
+                    </div></div></div>
+                    <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.1.14&nbsp;&nbsp;</span>自然对数（底为e）
+                    </div>
+                    <div class="nodeValue"><div style="padding: 0 0 0 144px;"><div class="valueBox">
+                    <pre><code>Math.log(6)</code></pre>
+                    </div></div></div>
+                    <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.1.15&nbsp;&nbsp;</span>常用对数（底为10）
+                    </div>
+                    <div class="nodeValue"><div style="padding: 0 0 0 144px;"><div class="valueBox">
+                    <pre><code>// ECMAScript 6支持，而ECMAScript 5.1不支持
+Math.log10(6)</code></pre>
+                    </div></div></div>
+                    <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.1.16&nbsp;&nbsp;</span>以2为底的对数
+                    </div>
+                    <div class="nodeValue"><div style="padding: 0 0 0 144px;"><div class="valueBox">
+                    <pre><code>// ECMAScript 6支持，而ECMAScript 5.1不支持
+Math.log2(6)</code></pre>
+                    </div></div></div>
+                    <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.1.17&nbsp;&nbsp;</span>上舍入
+                    </div>
+                    <div class="nodeValue"><div style="padding: 0 0 0 144px;"><div class="valueBox">
+                    <pre><code>Math.ceil(4.13)</code></pre>
+                    </div></div></div>
+                    <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.1.18&nbsp;&nbsp;</span>下舍入
+                    </div>
+                    <div class="nodeValue"><div style="padding: 0 0 0 144px;"><div class="valueBox">
+                    <pre><code>Math.floor(4.67)</code></pre>
+                    </div></div></div>
+                    <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.1.19&nbsp;&nbsp;</span>四舍五入
+                    </div>
+                    <div class="nodeValue"><div style="padding: 0 0 0 144px;"><div class="valueBox">
+                    <pre><code>Math.round(4.83)</code></pre>
+                    </div></div></div>
+                    <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.1.20&nbsp;&nbsp;</span>整数部分
+                    </div>
+                    <div class="nodeValue"><div style="padding: 0 0 0 144px;"><div class="valueBox">
+                    <pre><code>Math.trunc(4.83)</code></pre>
+                    </div></div></div>
+                    <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.1.21&nbsp;&nbsp;</span>随机数
+                    </div>
+                    <div class="nodeValue"><div style="padding: 0 0 0 144px;"><div class="valueBox">
+                    <pre><code>Math.random()</code></pre>
+                    </div></div></div>
+                    <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.1.22&nbsp;&nbsp;</span>最大值
+                    </div>
+                    <div class="nodeValue"><div style="padding: 0 0 0 144px;"><div class="valueBox">
+                    <pre><code>Math.max(1,2,-3)</code></pre>
+                    </div></div></div>
+                    <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.1.23&nbsp;&nbsp;</span>最小值
+                    </div>
+                    <div class="nodeValue"><div style="padding: 0 0 0 144px;"><div class="valueBox">
+                    <pre><code>Math.min(1,2,-3)</code></pre>
+                    </div></div></div>
+                </div>
+                <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item365')"><span class="SerialNumber">1.2.2&nbsp;&nbsp;</span>字符串处理</a>
+                </div>
+                <div class="TreeNode" id="item365">
+                    <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.2.1&nbsp;&nbsp;</span>比较
+                    </div>
+                    <div class="nodeValue"><div style="padding: 0 0 0 144px;"><div class="valueBox">
+                    <pre><code>'Hello' === 'hello' || 'a' &lt; 'A' || 'a' != 'A'</code></pre>
+                    </div></div></div>
+                    <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.2.2&nbsp;&nbsp;</span>替换首个
+                    </div>
+                    <div class="nodeValue"><div style="padding: 0 0 0 144px;"><div class="valueBox">
+                    <pre><code>"Hello World! World is yourself.".replace("World", "Feeling");</code></pre>
+                    </div></div></div>
+                    <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.2.3&nbsp;&nbsp;</span>替换所有
+                    </div>
+                    <div class="nodeValue"><div style="padding: 0 0 0 144px;"><div class="valueBox">
+                    <pre><code>"Hello World! World is yourself.".replace(/World/g, "Feeling");</code></pre>
+                    </div></div></div>
+                    <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.2.4&nbsp;&nbsp;</span>开始于
+                    </div>
+                    <div class="nodeValue"><div style="padding: 0 0 0 144px;"><div class="valueBox">
+                    <pre><code>'Hello'.startsWith('h')</code></pre>
+                    </div></div></div>
+                    <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.2.5&nbsp;&nbsp;</span>结尾于
+                    </div>
+                    <div class="nodeValue"><div style="padding: 0 0 0 144px;"><div class="valueBox">
+                    <pre><code>'Hello'.endsWith('o')</code></pre>
+                    </div></div></div>
+                    <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.2.6&nbsp;&nbsp;</span>子串
+                    </div>
+                    <div class="nodeValue"><div style="padding: 0 0 0 144px;"><div class="valueBox">
+                    <pre><code>'Hello'.substring(2, 5)</code></pre>
+                    </div></div></div>
+                    <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.2.7&nbsp;&nbsp;</span>字符
+                    </div>
+                    <div class="nodeValue"><div style="padding: 0 0 0 144px;"><div class="valueBox">
+                    <pre><code>'hello'.charAt(2)</code></pre>
+                    </div></div></div>
+                    <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.2.8&nbsp;&nbsp;</span>连接
+                    </div>
+                    <div class="nodeValue"><div style="padding: 0 0 0 144px;"><div class="valueBox">
+                    <pre><code>'hello'.concat(' world')</code></pre>
+                    </div></div></div>
+                    <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.2.9&nbsp;&nbsp;</span>分割
+                    </div>
+                    <div class="nodeValue"><div style="padding: 0 0 0 144px;"><div class="valueBox">
+                    <pre><code>'1,2,3,4'.split(',')</code></pre>
+                    </div></div></div>
+                    <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.2.10&nbsp;&nbsp;</span>位置
+                    </div>
+                    <div class="nodeValue"><div style="padding: 0 0 0 144px;"><div class="valueBox">
+                    <pre><code>'hello'.indexOf('e')</code></pre>
+                    </div></div></div>
+                    <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.2.11&nbsp;&nbsp;</span>最后位置
+                    </div>
+                    <div class="nodeValue"><div style="padding: 0 0 0 144px;"><div class="valueBox">
+                    <pre><code>'hello'.lastIndexOf('l')</code></pre>
+                    </div></div></div>
+                    <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.2.12&nbsp;&nbsp;</span>长度
+                    </div>
+                    <div class="nodeValue"><div style="padding: 0 0 0 144px;"><div class="valueBox">
+                    <pre><code>'hello'.length</code></pre>
+                    </div></div></div>
+                    <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.2.13&nbsp;&nbsp;</span>查找
+                    </div>
+                    <div class="nodeValue"><div style="padding: 0 0 0 144px;"><div class="valueBox">
+                    <pre><code>var 字符串a = "abc1233hello";
 var 规则表达式a = /3{2,}/ig;
 字符串a.search(规则表达式a)</code></pre>
-         </div>
-        </div>
-       </div>
-       <div style="padding: 2px;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.1.14&nbsp;&nbsp;</span>小写
-       </div>
-       <div class="nodeValue">
-        <div style="padding: 0 0 0 144px;">
-         <div class="valueBox">
-          <pre><code>'Hello'.toLowerCase()</code></pre>
-         </div>
-        </div>
-       </div>
-       <div style="padding: 2px;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.1.15&nbsp;&nbsp;</span>大写
-       </div>
-       <div class="nodeValue">
-        <div style="padding: 0 0 0 144px;">
-         <div class="valueBox">
-          <pre><code>'Hello'.toUpperCase()</code></pre>
-         </div>
-        </div>
-       </div>
-      </div>
-      <div style="padding: 2px;">
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item4068')"><span class="SerialNumber">1.4.2&nbsp;&nbsp;</span>数组运算</a>
-      </div>
-      <div class="TreeNode" id="item4068">
-       <div style="padding: 2px;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.2.1&nbsp;&nbsp;</span>长度
-       </div>
-       <div class="nodeValue">
-        <div style="padding: 0 0 0 144px;">
-         <div class="valueBox">
-          <pre><code>var 数组a =  [-1.2, 3.2, 15, 4.912];
+                    </div></div></div>
+                    <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.2.14&nbsp;&nbsp;</span>小写
+                    </div>
+                    <div class="nodeValue"><div style="padding: 0 0 0 144px;"><div class="valueBox">
+                    <pre><code>'Hello'.toLowerCase()</code></pre>
+                    </div></div></div>
+                    <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.2.15&nbsp;&nbsp;</span>大写
+                    </div>
+                    <div class="nodeValue"><div style="padding: 0 0 0 144px;"><div class="valueBox">
+                    <pre><code>'Hello'.toUpperCase()</code></pre>
+                    </div></div></div>
+                </div>
+                <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item381')"><span class="SerialNumber">1.2.3&nbsp;&nbsp;</span>数组运算</a>
+                </div>
+                <div class="TreeNode" id="item381">
+                    <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.3.1&nbsp;&nbsp;</span>长度
+                    </div>
+                    <div class="nodeValue"><div style="padding: 0 0 0 144px;"><div class="valueBox">
+                    <pre><code>var 数组a =  [-1.2, 3.2, 15, 4.912];
 数组a.length</code></pre>
-         </div>
-        </div>
-       </div>
-       <div style="padding: 2px;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.2.2&nbsp;&nbsp;</span>添加
-       </div>
-       <div class="nodeValue">
-        <div style="padding: 0 0 0 144px;">
-         <div class="valueBox">
-          <pre><code>var 数组a =  [-1.2, 3.2, 15, 4.912];
+                    </div></div></div>
+                    <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.3.2&nbsp;&nbsp;</span>添加
+                    </div>
+                    <div class="nodeValue"><div style="padding: 0 0 0 144px;"><div class="valueBox">
+                    <pre><code>var 数组a =  [-1.2, 3.2, 15, 4.912];
 数组a.push(-47);</code></pre>
-         </div>
-        </div>
-       </div>
-       <div style="padding: 2px;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.2.3&nbsp;&nbsp;</span>删除
-       </div>
-       <div class="nodeValue">
-        <div style="padding: 0 0 0 144px;">
-         <div class="valueBox">
-          <pre><code>var 数组a =  [-1.2, 3.2, 15, 4.912];
+                    </div></div></div>
+                    <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.3.3&nbsp;&nbsp;</span>删除
+                    </div>
+                    <div class="nodeValue"><div style="padding: 0 0 0 144px;"><div class="valueBox">
+                    <pre><code>var 数组a =  [-1.2, 3.2, 15, 4.912];
 数组a.pop()</code></pre>
-         </div>
-        </div>
-       </div>
-      </div>
-      <div style="padding: 2px;">
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item4072')"><span class="SerialNumber">1.4.3&nbsp;&nbsp;</span>布尔运算</a>
-      </div>
-      <div class="TreeNode" id="item4072">
-       <div style="padding: 2px;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.3.1&nbsp;&nbsp;</span>字符串包含
-       </div>
-       <div class="nodeValue">
-        <div style="padding: 0 0 0 144px;">
-         <div class="valueBox">
-          <pre><code>var 字符串a = "abc1233hello";
+                    </div></div></div>
+                </div>
+                <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item385')"><span class="SerialNumber">1.2.4&nbsp;&nbsp;</span>布尔运算</a>
+                </div>
+                <div class="TreeNode" id="item385">
+                    <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.4.1&nbsp;&nbsp;</span>字符串包含
+                    </div>
+                    <div class="nodeValue"><div style="padding: 0 0 0 144px;"><div class="valueBox">
+                    <pre><code>var 字符串a = "abc1233hello";
 var 规则表达式a = /3{2,}/ig;
 字符串a.search(规则表达式a) &gt;= 0</code></pre>
-         </div>
-        </div>
-       </div>
-       <div style="padding: 2px;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.3.2&nbsp;&nbsp;</span>字符串匹配
-       </div>
-       <div class="nodeValue">
-        <div style="padding: 0 0 0 144px;">
-         <div class="valueBox">
-          <pre><code>var 字符串a = "abc1233hello";
+                    </div></div></div>
+                    <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.4.2&nbsp;&nbsp;</span>字符串匹配
+                    </div>
+                    <div class="nodeValue"><div style="padding: 0 0 0 144px;"><div class="valueBox">
+                    <pre><code>var 字符串a = "abc1233hello";
 var 规则表达式a = /\S*3{2,}\S*/ig;
 字符串a.search(规则表达式a) &gt;= 0</code></pre>
-         </div>
-        </div>
-       </div>
-       <div style="padding: 2px;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.3.3&nbsp;&nbsp;</span>数组包含
-       </div>
-       <div class="nodeValue">
-        <div style="padding: 0 0 0 144px;">
-         <div class="valueBox">
-          <pre><code>var 数组a =  ['A', 'B', 'C', 'D'];
+                    </div></div></div>
+                    <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.4.3&nbsp;&nbsp;</span>数组包含
+                    </div>
+                    <div class="nodeValue"><div style="padding: 0 0 0 144px;"><div class="valueBox">
+                    <pre><code>var 数组a =  ['A', 'B', 'C', 'D'];
 数组a.includes('C');</code></pre>
-         </div>
-        </div>
-       </div>
-       <div style="padding: 2px;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.3.4&nbsp;&nbsp;</span>是否为数值
-       </div>
-       <div class="nodeValue">
-        <div style="padding: 0 0 0 144px;">
-         <div class="valueBox">
-          <pre><code>Math.abs(2a) &gt;= 0</code></pre>
-         </div>
-        </div>
-       </div>
-       <div style="padding: 2px;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.3.5&nbsp;&nbsp;</span>与/或/否
-       </div>
-       <div class="nodeValue">
-        <div style="padding: 0 0 0 144px;">
-         <div class="valueBox">
-          <pre><code>var 数组a =  ['A', 'B', 'C', 'D'];
+                    </div></div></div>
+                    <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.4.4&nbsp;&nbsp;</span>不是数字
+                    </div>
+                    <div class="nodeValue"><div style="padding: 0 0 0 144px;"><div class="valueBox">
+                    <pre><code>var 值1='你好'
+isNaN(值1 - 1)</code></pre>
+                    </div></div></div>
+                    <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.4.5&nbsp;&nbsp;</span>与/或/否
+                    </div>
+                    <div class="nodeValue"><div style="padding: 0 0 0 144px;"><div class="valueBox">
+                    <pre><code>var 数组a =  ['A', 'B', 'C', 'D'];
 var 字符串a = "abc1233hello";
 数组a.includes('C') &amp;&amp; (数组a.length &gt;= 8 || 字符串a.length &lt; 5 || !字符串a.endsWith("h"));</code></pre>
-         </div>
-        </div>
-       </div>
-      </div>
-      <div style="padding: 2px;">
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item4078')"><span class="SerialNumber">1.4.4&nbsp;&nbsp;</span>时间运算</a>
-      </div>
-      <div class="TreeNode" id="item4078">
-       <div style="padding: 2px;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.4.1&nbsp;&nbsp;</span>时间的格式
-       </div>
-       <div class="nodeValue">
-        <div style="padding: 0 0 0 144px;">
-         <div class="valueBox">
-          <pre><code>"当前时间：" + "\n" + 
+                    </div></div></div>
+                </div>
+                <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item391')"><span class="SerialNumber">1.2.5&nbsp;&nbsp;</span>时间运算</a>
+                </div>
+                <div class="TreeNode" id="item391">
+                    <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.5.1&nbsp;&nbsp;</span>时间的格式
+                    </div>
+                    <div class="nodeValue"><div style="padding: 0 0 0 144px;"><div class="valueBox">
+                    <pre><code>"当前时间：" + "\n" + 
 "new Date() = " + new Date()+ "\n" + 
 "new Date().getTime() = " + new Date().getTime() + "\n" + 
 "new Date().toLocaleString() = " + new Date().toLocaleString()+ "\n" + 
@@ -602,291 +365,185 @@ var 字符串a = "abc1233hello";
 "new Date().toTimeString() = " + new Date().toTimeString()+ "\n" + 
 "new Date().toLocaleDateString() = " + new Date().toLocaleDateString()+ "\n" + 
 "new Date().toLocaleTimeString() = " + new Date().toLocaleTimeString()</code></pre>
-         </div>
-        </div>
-       </div>
-       <div style="padding: 2px;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.4.2&nbsp;&nbsp;</span>时间的解析
-       </div>
-       <div class="nodeValue">
-        <div style="padding: 0 0 0 144px;">
-         <div class="valueBox">
-          <pre><code>new Date('2022/11/30 10:35:32').toLocaleString() + "\n" + 
+                    </div></div></div>
+                    <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.5.2&nbsp;&nbsp;</span>时间的解析
+                    </div>
+                    <div class="nodeValue"><div style="padding: 0 0 0 144px;"><div class="valueBox">
+                    <pre><code>new Date('2022/11/30 10:35:32').toLocaleString() + "\n" + 
 new Date('11/30/2022 10:35:32').toLocaleString() + "\n" + 
 new Date('2022-11-30 10:35:32'.replace(/-/g,'/')).toLocaleString() + "\n" + 
 new Date('2022/11/30') + "\n" + 
 new Date('2022-11-30'.replace(/-/g,'/'))</code></pre>
-         </div>
-        </div>
-       </div>
-       <div style="padding: 2px;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.4.3&nbsp;&nbsp;</span>时间的分量
-       </div>
-       <div class="nodeValue">
-        <div style="padding: 0 0 0 144px;">
-         <div class="valueBox">
-          <pre><code>var 时间b = new Date('11/30/2022 10:35:32');
+                    </div></div></div>
+                    <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.5.3&nbsp;&nbsp;</span>格式化时间
+                    </div>
+                    <div class="nodeValue"><div style="padding: 0 0 0 144px;"><div class="valueBox">
+                    <pre><code>function formatDate(date) {
+     var y = date.getFullYear();
+     var m = date.getMonth() + 1;
+     m = m &lt; 10 ? ('0' + m) : m;
+     var d = date.getDate();
+     d = d &lt; 10 ? ('0' + d) : d;
+     var h =date.getHours();
+     h = h &lt; 10 ? ('0' + h) : h;
+     var M =date.getMinutes();
+     M = M &lt; 10 ? ('0' + M) : M;
+     var s =date.getSeconds();
+     s = s &lt; 10 ? ('0' + s) : s;
+     return y + '-' + m + '-' + d + ' ' + h + ':' + M + ':' + s;
+}
+formatDate(new Date());</code></pre>
+                    </div></div></div>
+                    <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.5.4&nbsp;&nbsp;</span>时间的分量
+                    </div>
+                    <div class="nodeValue"><div style="padding: 0 0 0 144px;"><div class="valueBox">
+                    <pre><code>var 时间b = new Date('11/30/2022 10:35:32');
 "年：" + 时间b.getFullYear() + "\n月：" + (时间b.getMonth() + 1) + "\n日：" + 时间b.getDate()
  + "\n星期：" + 时间b.getDay() + "\n小时：" + 时间b.getHours()+ "\n分钟：" + 时间b.getMinutes()
 + "\n秒：" + 时间b.getSeconds();</code></pre>
-         </div>
+                    </div></div></div>
+                    <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.5.5&nbsp;&nbsp;</span>是否为星期日
+                    </div>
+                    <div class="nodeValue"><div style="padding: 0 0 0 144px;"><div class="valueBox">
+                    <pre><code>new Date().getDay() == 0</code></pre>
+                    </div></div></div>
+                    <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.2.5.6&nbsp;&nbsp;</span>比较时间
+                    </div>
+                    <div class="nodeValue"><div style="padding: 0 0 0 144px;"><div class="valueBox">
+                    <pre><code>new Date('2012/05/19').getTime()  &gt; new Date('2016/05/19 09:23:12').getTime()</code></pre>
+                    </div></div></div>
+                </div>
+            </div>
+            <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item398')"><span class="SerialNumber">1.3&nbsp;&nbsp;</span>方法</a>
+            </div>
+            <div class="TreeNode" id="item398">
+                <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.3.1&nbsp;&nbsp;</span>添加风格
+                </div>
+                <div class="nodeValue"><div style="padding: 0 0 0 120px;"><div class="valueBox">
+                <pre><code>function addStyle(style) {
+    var node = document.createElement("style");        
+    node.id = "mystyleid";        
+    node.type = "text/css";        
+    node.innerHTML = style.replace(/\n/g,"  ");        
+    document.getElementsByTagName("HEAD").item(0).appendChild(node);
+};
+addStyle("body { background-color:black; color:#CCFF99; }");</code></pre>
+                </div></div></div>
+                <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.3.2&nbsp;&nbsp;</span>删除结点
+                </div>
+                <div class="nodeValue"><div style="padding: 0 0 0 120px;"><div class="valueBox">
+                <pre><code>function removeNode(id) {
+    var node = document.getElementById(id);
+    if ( node != null ) 
+        node.parentNode.removeChild(node);
+};
+removeNode("mystyleid");</code></pre>
+                </div></div></div>
+            </div>
+            <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item401')"><span class="SerialNumber">1.4&nbsp;&nbsp;</span>网页</a>
+            </div>
+            <div class="TreeNode" id="item401">
+                <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item402')"><span class="SerialNumber">1.4.1&nbsp;&nbsp;</span>值</a>
+                </div>
+                <div class="TreeNode" id="item402">
+                    <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.1.1&nbsp;&nbsp;</span>读取Cookie
+                    </div>
+                    <div class="nodeValue"><div style="padding: 0 0 0 144px;"><div class="valueBox">
+                    <pre><code>document.cookie;</code></pre>
+                    </div></div></div>
+                    <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.1.2&nbsp;&nbsp;</span>页面高度
+                    </div>
+                    <div class="nodeValue"><div style="padding: 0 0 0 144px;"><div class="valueBox">
+                    <pre><code>document.documentElement.scrollHeight || document.body.scrollHeight;</code></pre>
+                    </div></div></div>
+                    <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.1.3&nbsp;&nbsp;</span>页面宽度
+                    </div>
+                    <div class="nodeValue"><div style="padding: 0 0 0 144px;"><div class="valueBox">
+                    <pre><code>document.documentElement.scrollWidth || document.body.scrollWidth;</code></pre>
+                    </div></div></div>
+                </div>
+                <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item406')"><span class="SerialNumber">1.4.2&nbsp;&nbsp;</span>选择</a>
+                </div>
+                <div class="TreeNode" id="item406">
+                    <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.2.1&nbsp;&nbsp;</span>全选
+                    </div>
+                    <div class="nodeValue"><div style="padding: 0 0 0 144px;"><div class="valueBox">
+                    <pre><code>window.getSelection().removeAllRanges();     
+var selection = window.getSelection();        
+var range = document.createRange();        
+range.selectNode(document.documentElement);        
+selection.addRange(range);</code></pre>
+                    </div></div></div>
+                    <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.2.2&nbsp;&nbsp;</span>都不选
+                    </div>
+                    <div class="nodeValue"><div style="padding: 0 0 0 144px;"><div class="valueBox">
+                    <pre><code>window.getSelection().removeAllRanges();</code></pre>
+                    </div></div></div>
+                    <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.2.3&nbsp;&nbsp;</span>选择结点
+                    </div>
+                    <div class="nodeValue"><div style="padding: 0 0 0 144px;"><div class="valueBox">
+                    <pre><code>function selectNode(id) {
+    window.getSelection().removeAllRanges();     
+    var selection = window.getSelection();        
+    var range = document.createRange();        
+    range.selectNode(document.getElementById(id));        
+    selection.addRange(range);
+};
+selectNode("someid");</code></pre>
+                    </div></div></div>
+                    <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.2.4&nbsp;&nbsp;</span>当前选择的字串
+                    </div>
+                    <div class="nodeValue"><div style="padding: 0 0 0 144px;"><div class="valueBox">
+                    <pre><code>window.getSelection().toString();</code></pre>
+                    </div></div></div>
+                    <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.2.5&nbsp;&nbsp;</span>当前选择的网页代码
+                    </div>
+                    <div class="nodeValue"><div style="padding: 0 0 0 144px;"><div class="valueBox">
+                    <pre><code>var selectionObj = window.getSelection();        
+var rangeObj = selectionObj.getRangeAt(0);        
+var docFragment = rangeObj.cloneContents();        
+var div = document.createElement("div");        
+div.appendChild(docFragment);        
+div.innerHTML;</code></pre>
+                    </div></div></div>
+                </div>
+                <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item412')"><span class="SerialNumber">1.4.3&nbsp;&nbsp;</span>操作</a>
+                </div>
+                <div class="TreeNode" id="item412">
+                    <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.3.1&nbsp;&nbsp;</span>滚动
+                    </div>
+                    <div class="nodeValue"><div style="padding: 0 0 0 144px;"><div class="valueBox">
+                    <pre><code>window.scrollTo(50,70 );</code></pre>
+                    </div></div></div>
+                    <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.3.2&nbsp;&nbsp;</span>设置网页可编辑
+                    </div>
+                    <div class="nodeValue"><div style="padding: 0 0 0 144px;"><div class="valueBox">
+                    <pre><code>document.body.contentEditable=true;</code></pre>
+                    </div></div></div>
+                    <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.3.3&nbsp;&nbsp;</span>弹出信息
+                    </div>
+                    <div class="nodeValue"><div style="padding: 0 0 0 144px;"><div class="valueBox">
+                    <pre><code>alert("人生得意须尽欢！");</code></pre>
+                    </div></div></div>
+                    <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.3.4&nbsp;&nbsp;</span>确认
+                    </div>
+                    <div class="nodeValue"><div style="padding: 0 0 0 144px;"><div class="valueBox">
+                    <pre><code>confirm("能饮一杯无？");</code></pre>
+                    </div></div></div>
+                    <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.3.5&nbsp;&nbsp;</span>输入
+                    </div>
+                    <div class="nodeValue"><div style="padding: 0 0 0 144px;"><div class="valueBox">
+                    <pre><code>prompt("君不见");</code></pre>
+                    </div></div></div>
+                    <div style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.3.6&nbsp;&nbsp;</span>打开网址
+                    </div>
+                    <div class="nodeValue"><div style="padding: 0 0 0 144px;"><div class="valueBox">
+                    <pre><code>window.open("http://www.nlc.cn");</code></pre>
+                    </div></div></div>
+                </div>
+            </div>
         </div>
-       </div>
-       <div style="padding: 2px;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.4.4&nbsp;&nbsp;</span>比较时间
-       </div>
-       <div class="nodeValue">
-        <div style="padding: 0 0 0 144px;">
-         <div class="valueBox">
-          <pre><code>new Date('2012/05/19').getTime()  &gt; new Date('2016/05/19 09:23:12').getTime()</code></pre>
-         </div>
-        </div>
-       </div>
-      </div>
-      <div style="padding: 2px;">
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item4028')"><span class="SerialNumber">1.4.5&nbsp;&nbsp;</span>数值计算</a>
-      </div>
-      <div class="TreeNode" id="item4028">
-       <div style="padding: 2px;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.5.1&nbsp;&nbsp;</span>以2为底的对数
-       </div>
-       <div class="nodeValue">
-        <div style="padding: 0 0 0 144px;">
-         <div class="valueBox">
-          <pre><code>// ECMAScript 6支持，而ECMAScript 5.1不支持
-Math.log2(6)</code></pre>
-         </div>
-        </div>
-       </div>
-       <div style="padding: 2px;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.5.2&nbsp;&nbsp;</span>上舍入
-       </div>
-       <div class="nodeValue">
-        <div style="padding: 0 0 0 144px;">
-         <div class="valueBox">
-          <pre><code>Math.ceil(4.13)</code></pre>
-         </div>
-        </div>
-       </div>
-       <div style="padding: 2px;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.5.3&nbsp;&nbsp;</span>下舍入
-       </div>
-       <div class="nodeValue">
-        <div style="padding: 0 0 0 144px;">
-         <div class="valueBox">
-          <pre><code>Math.floor(4.67)</code></pre>
-         </div>
-        </div>
-       </div>
-       <div style="padding: 2px;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.5.4&nbsp;&nbsp;</span>四舍五入
-       </div>
-       <div class="nodeValue">
-        <div style="padding: 0 0 0 144px;">
-         <div class="valueBox">
-          <pre><code>Math.round(4.83)</code></pre>
-         </div>
-        </div>
-       </div>
-       <div style="padding: 2px;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.5.5&nbsp;&nbsp;</span>整数部分
-       </div>
-       <div class="nodeValue">
-        <div style="padding: 0 0 0 144px;">
-         <div class="valueBox">
-          <pre><code>Math.trunc(4.83)</code></pre>
-         </div>
-        </div>
-       </div>
-       <div style="padding: 2px;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.5.6&nbsp;&nbsp;</span>随机数
-       </div>
-       <div class="nodeValue">
-        <div style="padding: 0 0 0 144px;">
-         <div class="valueBox">
-          <pre><code>Math.random()</code></pre>
-         </div>
-        </div>
-       </div>
-       <div style="padding: 2px;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.5.7&nbsp;&nbsp;</span>最大值
-       </div>
-       <div class="nodeValue">
-        <div style="padding: 0 0 0 144px;">
-         <div class="valueBox">
-          <pre><code>Math.max(1,2,-3)</code></pre>
-         </div>
-        </div>
-       </div>
-       <div style="padding: 2px;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.5.8&nbsp;&nbsp;</span>最小值
-       </div>
-       <div class="nodeValue">
-        <div style="padding: 0 0 0 144px;">
-         <div class="valueBox">
-          <pre><code>Math.min(1,2,-3)</code></pre>
-         </div>
-        </div>
-       </div>
-       <div style="padding: 2px;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.5.9&nbsp;&nbsp;</span>欧拉数
-       </div>
-       <div class="nodeValue">
-        <div style="padding: 0 0 0 144px;">
-         <div class="valueBox">
-          <pre><code>Math.E</code></pre>
-         </div>
-        </div>
-       </div>
-       <div style="padding: 2px;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.5.10&nbsp;&nbsp;</span>圆周率
-       </div>
-       <div class="nodeValue">
-        <div style="padding: 0 0 0 144px;">
-         <div class="valueBox">
-          <pre><code>Math.PI</code></pre>
-         </div>
-        </div>
-       </div>
-       <div style="padding: 2px;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.5.11&nbsp;&nbsp;</span>绝对值
-       </div>
-       <div class="nodeValue">
-        <div style="padding: 0 0 0 144px;">
-         <div class="valueBox">
-          <pre><code>Math.abs(-5.611)</code></pre>
-         </div>
-        </div>
-       </div>
-       <div style="padding: 2px;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.5.12&nbsp;&nbsp;</span>欧拉冥
-       </div>
-       <div class="nodeValue">
-        <div style="padding: 0 0 0 144px;">
-         <div class="valueBox">
-          <pre><code>Math.exp(2)</code></pre>
-         </div>
-        </div>
-       </div>
-       <div style="padding: 2px;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.5.13&nbsp;&nbsp;</span>平方根
-       </div>
-       <div class="nodeValue">
-        <div style="padding: 0 0 0 144px;">
-         <div class="valueBox">
-          <pre><code>Math.sqrt(9)</code></pre>
-         </div>
-        </div>
-       </div>
-       <div style="padding: 2px;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.5.14&nbsp;&nbsp;</span>三次方根
-       </div>
-       <div class="nodeValue">
-        <div style="padding: 0 0 0 144px;">
-         <div class="valueBox">
-          <pre><code>Math.pow(27,1/3)</code></pre>
-         </div>
-        </div>
-       </div>
-       <div style="padding: 2px;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.5.15&nbsp;&nbsp;</span>幂
-       </div>
-       <div class="nodeValue">
-        <div style="padding: 0 0 0 144px;">
-         <div class="valueBox">
-          <pre><code>Math.pow(2,5)</code></pre>
-         </div>
-        </div>
-       </div>
-       <div style="padding: 2px;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.5.16&nbsp;&nbsp;</span>余弦
-       </div>
-       <div class="nodeValue">
-        <div style="padding: 0 0 0 144px;">
-         <div class="valueBox">
-          <pre><code>Math.cos(0)</code></pre>
-         </div>
-        </div>
-       </div>
-       <div style="padding: 2px;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.5.17&nbsp;&nbsp;</span>正弦
-       </div>
-       <div class="nodeValue">
-        <div style="padding: 0 0 0 144px;">
-         <div class="valueBox">
-          <pre><code>Math.sin(9)</code></pre>
-         </div>
-        </div>
-       </div>
-       <div style="padding: 2px;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.5.18&nbsp;&nbsp;</span>正切
-       </div>
-       <div class="nodeValue">
-        <div style="padding: 0 0 0 144px;">
-         <div class="valueBox">
-          <pre><code>Math.tan(5)</code></pre>
-         </div>
-        </div>
-       </div>
-       <div style="padding: 2px;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.5.19&nbsp;&nbsp;</span>反正切
-       </div>
-       <div class="nodeValue">
-        <div style="padding: 0 0 0 144px;">
-         <div class="valueBox">
-          <pre><code>Math.atan(-7.3)</code></pre>
-         </div>
-        </div>
-       </div>
-       <div style="padding: 2px;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.5.20&nbsp;&nbsp;</span>反余弦
-       </div>
-       <div class="nodeValue">
-        <div style="padding: 0 0 0 144px;">
-         <div class="valueBox">
-          <pre><code>Math.acos(0.5)</code></pre>
-         </div>
-        </div>
-       </div>
-       <div style="padding: 2px;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.5.21&nbsp;&nbsp;</span>反正弦
-       </div>
-       <div class="nodeValue">
-        <div style="padding: 0 0 0 144px;">
-         <div class="valueBox">
-          <pre><code>Math.asin(0.3)</code></pre>
-         </div>
-        </div>
-       </div>
-       <div style="padding: 2px;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.5.22&nbsp;&nbsp;</span>自然对数（底为e）
-       </div>
-       <div class="nodeValue">
-        <div style="padding: 0 0 0 144px;">
-         <div class="valueBox">
-          <pre><code>Math.log(6)</code></pre>
-         </div>
-        </div>
-       </div>
-       <div style="padding: 2px;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber">1.4.5.23&nbsp;&nbsp;</span>常用对数（底为10）
-       </div>
-       <div class="nodeValue">
-        <div style="padding: 0 0 0 144px;">
-         <div class="valueBox">
-          <pre><code>// ECMAScript 6支持，而ECMAScript 5.1不支持
-Math.log10(6)</code></pre>
-         </div>
-        </div>
-       </div>
-      </div>
-     </div>
     </div>
-   </div>
-   <hr><treenode style="font-size:0.8em">
-    * 网页可编辑时，链接和控件可能不响应。
-    <p></p>
-   </treenode>
-  </div>
- </body>
-</html>
+
+
+</div></body></html>
