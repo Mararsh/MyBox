@@ -5,14 +5,14 @@
 
     <groupId>mara</groupId>
     <artifactId>MyBox</artifactId>
-    <version>6.8.1</version>
+    <version>6.8.2</version>
     <packaging>jar</packaging>
     <name>MyBox</name>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <mainClass>mara.mybox.MyBox</mainClass>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
+        <maven.compiler.source>22</maven.compiler.source>
+        <maven.compiler.target>22</maven.compiler.target>
     </properties>
 
     <organization>
@@ -23,43 +23,43 @@
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-base</artifactId>
-            <version>21-ea+5</version>
+            <version>22.0.2</version>
             <classifier>${platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
-            <version>21-ea+5</version>
+            <version>22.0.2</version>
             <classifier>${platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
-            <version>21-ea+5</version>
+            <version>22.0.2</version>
             <classifier>${platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-web</artifactId>
-            <version>21-ea+5</version>
+            <version>22.0.2</version>
             <classifier>${platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-media</artifactId>
-            <version>21-ea+5</version>
+            <version>22.0.2</version>
             <classifier>${platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-graphics</artifactId>
-            <version>21-ea+5</version>
+            <version>22.0.2</version>
             <classifier>${platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-swing</artifactId>
-            <version>21-ea+5</version>
+            <version>22.0.2</version>
             <classifier>${platform}</classifier>
         </dependency>
         <dependency>
@@ -165,7 +165,7 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-compress</artifactId>
-            <version>1.25.0</version>
+            <version>1.26.0</version>
         </dependency>
         <dependency>
             <groupId>org.tukaani</groupId>
@@ -323,7 +323,7 @@
             <id>win</id>
             <properties>
                 <platform>win</platform>
-                <javaVersion>21</javaVersion>
+                <javaVersion>22</javaVersion>
             </properties>
             <activation>
                 <activeByDefault>true</activeByDefault>
@@ -333,7 +333,7 @@
             <id>linux</id>
             <properties>
                 <platform>linux</platform>
-                <javaVersion>21</javaVersion>
+                <javaVersion>22</javaVersion>
             </properties>
             <activation>
                 <activeByDefault>false</activeByDefault>
@@ -343,7 +343,7 @@
             <id>mac</id>
             <properties>
                 <platform>mac</platform>
-                <javaVersion>21</javaVersion>
+                <javaVersion>22</javaVersion>
             </properties>
             <activation>
                 <activeByDefault>false</activeByDefault>
