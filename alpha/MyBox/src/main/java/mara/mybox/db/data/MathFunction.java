@@ -7,16 +7,11 @@ import java.util.List;
  * @CreateDate 2024-8-2
  * @License Apache License Version 2.0
  */
-public class MathFunction extends TreeNode {
+public class MathFunction extends BaseData {
 
     protected long funcid;
     protected String name, expression, domain;
     protected List<String> variables;
-
-    public MathFunction() {
-        tableName = "Math_Function";
-        idName = "funcid";
-    }
 
     @Override
     public boolean valid() {

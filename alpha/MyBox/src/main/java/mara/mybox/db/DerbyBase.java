@@ -520,14 +520,6 @@ public class DerbyBase {
                 new TableNamedValues().createTable(conn);
                 loadingController.info("Named_Values");
             }
-            if (!tables.contains("Tree_Node".toLowerCase())) {
-                new TableTreeNode().createTable(conn);
-                loadingController.info("Tree_Node");
-            }
-            if (!tables.contains("Tree_Node_Tag".toLowerCase())) {
-                new TableTreeNodeTag().createTable(conn);
-                loadingController.info("Tree_Node_Tag");
-            }
             if (!tables.contains("Data2D_Style".toLowerCase())) {
                 new TableData2DStyle().createTable(conn);
                 loadingController.info("Data2D_Style");

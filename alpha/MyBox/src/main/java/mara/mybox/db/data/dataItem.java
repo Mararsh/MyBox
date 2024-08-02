@@ -5,7 +5,7 @@ package mara.mybox.db.data;
  * @CreateDate 2024-8-2
  * @License Apache License Version 2.0
  */
-public class WebFavorite extends BaseData {
+public class dataItem extends BaseData {
 
     protected long addrid;
     protected String address, icon;
@@ -18,8 +18,8 @@ public class WebFavorite extends BaseData {
     /*
         Static methods
      */
-    public static WebFavorite create() {
-        return new WebFavorite();
+    public static dataItem create() {
+        return new dataItem();
     }
 
     /*

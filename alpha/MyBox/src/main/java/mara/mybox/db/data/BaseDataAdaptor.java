@@ -28,8 +28,6 @@ import mara.mybox.db.table.TablePathConnection;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.db.table.TableTag;
 import mara.mybox.db.table.TableTextClipboard;
-import mara.mybox.db.table.TableTreeNode;
-import mara.mybox.db.table.TableTreeNodeTag;
 import mara.mybox.db.table.TableVisitHistory;
 import mara.mybox.db.table.TableWebHistory;
 import mara.mybox.dev.MyBoxLog;
@@ -79,12 +77,6 @@ public class BaseDataAdaptor {
 
         } else if (data instanceof ColorPalette) {
             return new TableColorPalette();
-
-        } else if (data instanceof InfoNode) {
-            return new TableTreeNode();
-
-        } else if (data instanceof InfoNodeTag) {
-            return new TableTreeNodeTag();
 
         } else if (data instanceof WebHistory) {
             return new TableWebHistory();

@@ -5,15 +5,10 @@ package mara.mybox.db.data;
  * @CreateDate 2024-8-2
  * @License Apache License Version 2.0
  */
-public class Note extends TreeNode {
+public class Note extends BaseData {
 
     protected long noteid;
     protected String note;
-
-    public Note() {
-        tableName = "Note";
-        idName = "noteid";
-    }
 
     @Override
     public boolean valid() {
