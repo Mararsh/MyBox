@@ -82,6 +82,10 @@ public class BaseData implements Cloneable {
         return columnName;
     }
 
+    public boolean valid() {
+        return true;
+    }
+
     /*
         static methods
      */
