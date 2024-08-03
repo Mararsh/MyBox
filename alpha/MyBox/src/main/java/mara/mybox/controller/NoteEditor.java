@@ -10,7 +10,7 @@ import mara.mybox.dev.MyBoxLog;
  * @CreateDate 2021-8-11
  * @License Apache License Version 2.0
  */
-public class NoteEditor extends InfoTreeNodeEditor {
+public class NoteEditor extends BaseDataTreeNodeController {
 
     @FXML
     protected ControlNoteEditor valueController;
@@ -21,6 +21,7 @@ public class NoteEditor extends InfoTreeNodeEditor {
             super.initControls();
 
             valueController.setParameters(this);
+            valuesEditor = valueController;
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

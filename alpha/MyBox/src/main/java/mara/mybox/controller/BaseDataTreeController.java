@@ -1,16 +1,6 @@
 package mara.mybox.controller;
 
-import javafx.event.Event;
-import javafx.event.EventHandler;
-import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.SplitPane;
-import javafx.scene.control.TextField;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.VBox;
-import mara.mybox.db.data.InfoNode;
+import mara.mybox.db.data.TreeNode;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.BaseTable;
 import mara.mybox.db.table.TableTag;
@@ -18,8 +8,6 @@ import mara.mybox.db.table.TableTree;
 import mara.mybox.db.table.TableTreeTag;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
-import mara.mybox.fxml.PopTools;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -28,49 +16,15 @@ import mara.mybox.value.UserConfig;
  */
 public abstract class BaseDataTreeController extends BaseController {
 
-    protected ControlDataTreeView infoTree;
+    protected ControlDataTreeView treeView;
     protected BaseTable dataTable;
     protected TableTree tableTree;
     protected TableTag tableTag;
     protected TableTreeTag tableTreeTag;
 
-    @FXML
-    protected ControlDataTreeView listController;
-    @FXML
-    protected ControlInfoTreeTable tableController;
-    @FXML
-    protected VBox timesBox;
-    @FXML
-    protected RadioButton findNameRadio, findValueRadio;
-    @FXML
-    protected FlowPane tagsPane;
-    @FXML
-    protected Button refreshTimesButton, queryTimesButton;
-    @FXML
-    protected InfoTreeTagsController tagsController;
-    @FXML
-    protected ControlTimesTree timesController;
-    @FXML
-    protected TextField findInput;
-    @FXML
-    protected SplitPane managePane;
-    @FXML
-    protected VBox nodesListBox;
-
     @Override
     public void setFileType() {
         setFileType(VisitHistory.FileType.Text);
-    }
-
-    @Override
-    public void initValues() {
-        try {
-            super.initValues();
-
-            infoTree = listController;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
     }
 
     public void loadData() {
@@ -82,45 +36,14 @@ public abstract class BaseDataTreeController extends BaseController {
             tableTag = new TableTag();
             tableTreeTag = new TableTreeTag(tableTree);
 
-            infoTree.setParameters(this);
-            tableController.setParameters(this);
-            tagsController.setParameters(this);
-            tagsController.loadTableData();
-
-            initTimes();
-            initFind();
+            treeView.setParameters(this);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
-    public void showNodesList(boolean show) {
-        if (isSettingValues || infoTree.nodesListCheck == null) {
-            return;
-        }
-        infoTree.isSettingValues = true;
-        infoTree.nodesListCheck.setSelected(show);
-        infoTree.isSettingValues = false;
-
-        isSettingValues = true;
-        if (show) {
-            if (!managePane.getItems().contains(nodesListBox)) {
-                managePane.getItems().add(1, nodesListBox);
-            }
-        } else {
-            if (managePane.getItems().contains(nodesListBox)) {
-                managePane.getItems().remove(nodesListBox);
-            }
-        }
-        isSettingValues = false;
-
-        if (show && leftPaneCheck != null) {
-            leftPaneCheck.setSelected(true);
-        }
-    }
-
-    public void popNode(InfoNode item) {
+    public void popNode(TreeNode item) {
         if (item == null) {
             return;
         }
@@ -133,7 +56,7 @@ public abstract class BaseDataTreeController extends BaseController {
             @Override
             protected boolean handle() {
                 try {
-                    html = InfoNode.nodeHtml(this, myController, item, null);
+                    html = item.html();
                     return html != null && !html.isBlank();
                 } catch (Exception e) {
                     error = e.toString();
@@ -148,82 +71,6 @@ public abstract class BaseDataTreeController extends BaseController {
 
         };
         start(task);
-    }
-
-    /*
-        Times
-     */
-    public void initTimes() {
-        try {
-            timesController.setParent(this, " category='" + category + "' ", "Tree_Node", "update_time");
-
-            timesController.queryNodesButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent event) {
-                    queryTimes();
-                }
-            });
-            timesController.refreshNodesButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent event) {
-                    refreshTimes();
-                }
-            });
-
-            refreshTimes();
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    @FXML
-    protected void refreshTimes() {
-        timesController.loadTree();
-    }
-
-    @FXML
-    protected void queryTimes() {
-        tableController.queryTimes(timesController.check(), timesController.getFinalTitle());
-    }
-
-    /*
-        Tags
-     */
-    protected void refreshTags() {
-        tagsController.refreshAction();
-    }
-
-    public void tagsChanged() {
-    }
-
-    /*
-        find
-     */
-    public void initFind() {
-        try {
-            findNameRadio.setText(nameMsg);
-            findValueRadio.setText(valueMsg);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    @FXML
-    protected void find() {
-        tableController.find(findInput.getText(), findNameRadio.isSelected());
-
-    }
-
-    @FXML
-    protected void showFindHistories(Event event) {
-        PopTools.popStringValues(this, findInput, event, baseName + category + "Histories", false);
-    }
-
-    @FXML
-    public void popFindHistories(Event event) {
-        if (UserConfig.getBoolean(baseName + category + "HistoriesPopWhenMouseHovering", false)) {
-            showFindHistories(event);
-        }
     }
 
 }

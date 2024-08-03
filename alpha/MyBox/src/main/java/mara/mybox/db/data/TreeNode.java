@@ -1,6 +1,7 @@
 package mara.mybox.db.data;
 
 import java.util.Date;
+import mara.mybox.db.table.BaseTable;
 import mara.mybox.dev.MyBoxLog;
 
 /**
@@ -20,14 +21,15 @@ public class TreeNode extends BaseData {
     public static final String MoreSeparater = "MyBoxTreeNodeMore:";
     public static final String Root = "Root";
 
+    protected BaseTable dataTable;
     protected long nodeid, parentid;
-    protected String category, title;
+    protected String title;
     protected Date updateTime;
 
     private void init() {
+        dataTable = null;
         nodeid = -1;
         parentid = -2;
-        category = null;
         title = null;
         updateTime = new Date();
     }
@@ -39,14 +41,14 @@ public class TreeNode extends BaseData {
     public TreeNode(TreeNode parent, String title) {
         init();
         this.parentid = parent.getNodeid();
-        this.category = parent.getCategory();
+        this.dataTable = parent.getDataTable();
         this.title = title;
     }
 
     public TreeNode copyIn(TreeNode parent) {
         TreeNode node = new TreeNode();
         node.setParentid(parent.getNodeid());
-        node.setCategory(parent.getCategory());
+        node.setDataTable(parent.getDataTable());
         node.setTitle(title);
         return node;
     }
@@ -64,14 +66,11 @@ public class TreeNode extends BaseData {
                 case "nodeid":
                     nodeid = value == null ? -1 : (long) value;
                     return true;
-                case "parentid":
-                    parentid = value == null ? -1 : (long) value;
-                    return true;
                 case "title":
                     title = value == null ? null : (String) value;
                     return true;
-                case "category":
-                    category = value == null ? null : (String) value;
+                case "parentid":
+                    parentid = value == null ? -1 : (long) value;
                     return true;
                 case "update_time":
                     updateTime = value == null ? null : (Date) value;
@@ -90,12 +89,10 @@ public class TreeNode extends BaseData {
         switch (column) {
             case "nodeid":
                 return nodeid;
-            case "parentid":
-                return parentid;
             case "title":
                 return title;
-            case "category":
-                return category;
+            case "parentid":
+                return parentid;
             case "update_time":
                 return updateTime;
         }
@@ -104,9 +101,16 @@ public class TreeNode extends BaseData {
 
     @Override
     public boolean valid() {
-        return category != null
-                && title != null && !title.isBlank()
+        return title != null && !title.isBlank()
                 && !title.contains(TitleSeparater);
+    }
+
+    public String texts() {
+        return title;
+    }
+
+    public String html() {
+        return title;
     }
 
     /*
@@ -119,6 +123,15 @@ public class TreeNode extends BaseData {
     /*
         get/set
      */
+    public BaseTable getDataTable() {
+        return dataTable;
+    }
+
+    public TreeNode setDataTable(BaseTable dataTable) {
+        this.dataTable = dataTable;
+        return this;
+    }
+
     public long getNodeid() {
         return nodeid;
     }
@@ -143,15 +156,6 @@ public class TreeNode extends BaseData {
 
     public TreeNode setTitle(String title) {
         this.title = title;
-        return this;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public TreeNode setCategory(String category) {
-        this.category = category;
         return this;
     }
 

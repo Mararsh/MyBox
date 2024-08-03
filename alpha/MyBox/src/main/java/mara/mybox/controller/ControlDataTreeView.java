@@ -4,13 +4,10 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
@@ -21,6 +18,7 @@ import javafx.scene.control.cell.TreeItemPropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.TreeNode;
+import static mara.mybox.db.data.TreeNode.TitleSeparater;
 import mara.mybox.db.table.BaseTable;
 import mara.mybox.db.table.TableTree;
 import mara.mybox.db.table.TableTreeTag;
@@ -54,8 +52,6 @@ public class ControlDataTreeView extends BaseTreeTableViewController<TreeNode> {
     protected TreeTableColumn<TreeNode, Date> timeColumn;
     @FXML
     protected Label titleLabel;
-    @FXML
-    protected CheckBox nodesListCheck;
     @FXML
     protected Button helpButton;
 
@@ -111,23 +107,10 @@ public class ControlDataTreeView extends BaseTreeTableViewController<TreeNode> {
         dataController = parent;
         tableTree = parent.tableTree;
         tableTreeTag = parent.tableTreeTag;
-        category = infoController.category;
+        dataTable = dataController.dataTable;
         parentController = parent;
-        baseName = parent.baseName + "_" + category;
-        baseTitle = category;
-
-        infoController.showNodesList(false);
-        if (nodesListCheck != null) {
-            nodesListCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    if (isSettingValues) {
-                        return;
-                    }
-                    infoController.showNodesList(nodesListCheck.isSelected());
-                }
-            });
-        }
+        baseName = dataTable.getTableName();
+        baseTitle = baseName;
 
         loadTree();
     }
@@ -157,7 +140,7 @@ public class ControlDataTreeView extends BaseTreeTableViewController<TreeNode> {
                     }
                     rootItem = new TreeItem(rootNode);
                     rootItem.setExpanded(true);
-                    int size = tableTree.categorySize(conn, category);
+                    int size = tableTree.size(conn);
                     if (size < 1) {
                         return true;
                     }
@@ -247,9 +230,8 @@ public class ControlDataTreeView extends BaseTreeTableViewController<TreeNode> {
                 for (TreeNode child : children) {
                     TreeNode newNode = TreeNode.create()
                             .setParentid(targetid)
-                            .setCategory(category)
-                            .setTitle(child.getTitle())
-                            .setInfo(child.getInfo());
+                            .setDataTable(child.getDataTable())
+                            .setTitle(child.getTitle());
                     tableTree.insertData(conn, newNode);
                     copyDescendants(conn, child, newNode);
                 }
@@ -274,7 +256,7 @@ public class ControlDataTreeView extends BaseTreeTableViewController<TreeNode> {
 
     @Override
     public String value(TreeNode node) {
-        return node == null ? null : node.getInfo();
+        return node == null ? null : node.texts();
     }
 
     @Override
@@ -292,11 +274,14 @@ public class ControlDataTreeView extends BaseTreeTableViewController<TreeNode> {
 
     @Override
     public boolean equalNode(TreeNode node1, TreeNode node2) {
-        return TreeNode.equal(node1, node2);
+        if (node1 == null || node2 == null) {
+            return false;
+        }
+        return node1.getNodeid() == node2.getNodeid();
     }
 
     public TreeNode root(Connection conn) {
-        return tableTree.findAndCreateRoot(conn, category);
+        return tableTree.findAndCreateRoot(conn);
     }
 
     public boolean isRoot(TreeNode node) {
@@ -379,27 +364,26 @@ public class ControlDataTreeView extends BaseTreeTableViewController<TreeNode> {
 
         items.add(new SeparatorMenuItem());
 
-        if (nodesListCheck != null) {
-            menu = new MenuItem(message("LoadChildren"), StyleTools.getIconImageView("iconList.png"));
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    listChildren(item);
-                }
-            });
-            items.add(menu);
-
-            menu = new MenuItem(message("LoadDescendants"), StyleTools.getIconImageView("iconList.png"));
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    listDescentants(item);
-                }
-            });
-            items.add(menu);
-
-        }
-
+//        if (nodesListCheck != null) {
+//            menu = new MenuItem(message("LoadChildren"), StyleTools.getIconImageView("iconList.png"));
+//            menu.setOnAction(new EventHandler<ActionEvent>() {
+//                @Override
+//                public void handle(ActionEvent event) {
+//                    listChildren(item);
+//                }
+//            });
+//            items.add(menu);
+//
+//            menu = new MenuItem(message("LoadDescendants"), StyleTools.getIconImageView("iconList.png"));
+//            menu.setOnAction(new EventHandler<ActionEvent>() {
+//                @Override
+//                public void handle(ActionEvent event) {
+//                    listDescentants(item);
+//                }
+//            });
+//            items.add(menu);
+//
+//        }
         menu = new MenuItem(message("Refresh"), StyleTools.getIconImageView("iconRefresh.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             refreshAction();
@@ -473,10 +457,10 @@ public class ControlDataTreeView extends BaseTreeTableViewController<TreeNode> {
     }
 
     protected void popNode(TreeItem<TreeNode> item) {
-        if (item == null || infoController == null) {
+        if (item == null || dataController == null) {
             return;
         }
-        infoController.popNode(item.getValue());
+        dataController.popNode(item.getValue());
     }
 
     @Override
@@ -561,20 +545,6 @@ public class ControlDataTreeView extends BaseTreeTableViewController<TreeNode> {
         } catch (Exception e) {
             error = e.toString();
         }
-    }
-
-    protected void listChildren(TreeItem<TreeNode> item) {
-        if (item == null || infoController == null) {
-            return;
-        }
-        infoController.tableController.loadChildren(item.getValue());
-    }
-
-    protected void listDescentants(TreeItem<TreeNode> item) {
-        if (item == null || infoController == null) {
-            return;
-        }
-        infoController.tableController.loadDescendants(item.getValue());
     }
 
     @FXML
