@@ -18,6 +18,7 @@ public class TableNote extends BaseTable<Note> {
 
     public TableNote(boolean defineColumns) {
         tableName = "Note";
+        idColumnName = "noteid";
         if (defineColumns) {
             defineColumns();
         }

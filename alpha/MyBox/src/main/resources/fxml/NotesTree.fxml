@@ -7,17 +7,12 @@ License:    Apache License Version 2.0
 -->
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SplitPane?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.FlowPane?>
-<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.NotesController">
+<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.NotesTreeController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
@@ -42,56 +37,7 @@ License:    Apache License Version 2.0
                             <content>
                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                                     <children>
-                                        <HBox alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
-                                            <children>
-                                    <ImageView fx:id="leftPaneControl" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../buttons/Red/iconDoubleLeft.png" />
-                                       </image>
-                                    </ImageView>
-                                    <FlowPane alignment="CENTER_RIGHT" hgap="2.0" maxWidth="1.7976931348623157E308" prefWrapLength="0.0" vgap="2.0" HBox.hgrow="ALWAYS">
-                                       <children>
-                                                      <Button fx:id="recoverNodeButton" mnemonicParsing="false" onAction="#recoverNode">
-                                                          <graphic>
-                                                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                  <image>
-                                                                      <Image url="@../buttons/Red/iconRecover.png" />
-                                                                  </image>
-                                                              </ImageView>
-                                                          </graphic>
-                                                      </Button>
-                                                      <Button fx:id="copyNodeButton" mnemonicParsing="false" onAction="#copyNode">
-                                                          <graphic>
-                                                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                  <image>
-                                                                      <Image url="@../buttons/Red/iconCopy.png" />
-                                                                  </image>
-                                                              </ImageView>
-                                                          </graphic>
-                                                      </Button>
-                                                      <Button fx:id="addNodeButton" mnemonicParsing="false" onAction="#addNode">
-                                                          <graphic>
-                                                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                  <image>
-                                                                      <Image url="@../buttons/Red/iconAdd.png" />
-                                                                  </image>
-                                                              </ImageView>
-                                                          </graphic>
-                                                      </Button>
-                                                      <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction">
-                                                          <graphic>
-                                                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                  <image>
-                                                                      <Image url="@../buttons/Red/iconSave.png" />
-                                                                  </image>
-                                                              </ImageView>
-                                                          </graphic>
-                                                      </Button>
-                                       </children>
-                                    </FlowPane>
-                                            </children>
-                                        </HBox>
-                                        <fx:include fx:id="editor" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="NoteEditor.fxml" VBox.vgrow="ALWAYS" />
+                              <fx:include fx:id="note" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="NoteNode.fxml" VBox.vgrow="ALWAYS" />
                                     </children>
                                     <padding>
                                         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />

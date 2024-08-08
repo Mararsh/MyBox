@@ -22,8 +22,8 @@ import static mara.mybox.value.Languages.message;
  */
 public class ControlDataTreeNodeAttributes extends BaseController {
 
-    protected DataTreeManageController manager;
-    protected BaseDataTreeNodeController editor;
+    protected BaseDataTreeController manager;
+    protected BaseDataTreeNodeController nodeController;
     protected TableTree tableTree;
     protected FxTask tagsTask;
     protected BaseTable dataTable;
@@ -54,10 +54,10 @@ public class ControlDataTreeNodeAttributes extends BaseController {
         }
     }
 
-    public void setParameters(DataTreeManageController manager) {
+    public void setParameters(BaseDataTreeController manager) {
         try {
             this.manager = manager;
-            this.editor = manager.editor;
+            this.nodeController = manager.nodeController;
             tableTree = manager.tableTree;
 
         } catch (Exception e) {
@@ -69,13 +69,13 @@ public class ControlDataTreeNodeAttributes extends BaseController {
         attributes
      */
     public void attributesChanged() {
-        if (isSettingValues || editor == null) {
+        if (isSettingValues || nodeController == null) {
             return;
         }
-        if (editor.attributesTab != null) {
-            editor.attributesTab.setText(message("Attributes") + "*");
+        if (nodeController.attributesTab != null) {
+            nodeController.attributesTab.setText(message("Attributes") + "*");
         }
-        editor.nodeChanged(true);
+        nodeController.nodeChanged(true);
     }
 
     protected void editNode(TreeNode node) {
@@ -154,7 +154,7 @@ public class ControlDataTreeNodeAttributes extends BaseController {
                     if (parentNode == null) {
                         chainName = "";
                     } else {
-                        chainName = manager.treeController.chainName(conn, parentNode);
+//                        chainName = manager.treeView.chainName(conn, parentNode);
                     }
                 } catch (Exception e) {
                     error = e.toString();

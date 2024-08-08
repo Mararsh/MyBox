@@ -15,7 +15,7 @@ public class Fxmls {
     /*
         document
      */
-    public static final String NotesFxml = "/fxml/Notes.fxml";
+    public static final String NotesTreeFxml = "/fxml/NotesTree.fxml";
 
     public static final String InfoTreeManageFxml = "/fxml/InfoTreeManage.fxml";
     public static final String InfoTreeNodeMoveFxml = "/fxml/InfoTreeNodeMove.fxml";

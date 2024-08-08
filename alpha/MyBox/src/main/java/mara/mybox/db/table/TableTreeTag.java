@@ -20,6 +20,7 @@ import mara.mybox.dev.MyBoxLog;
  */
 public class TableTreeTag extends BaseTable<TreeNodeTag> {
 
+    protected BaseTable dataTable;
     protected TableTree tableTree;
     protected TableTag tableTag;
 
@@ -28,22 +29,52 @@ public class TableTreeTag extends BaseTable<TreeNodeTag> {
         if (tableTree == null) {
             return;
         }
-        tableName = tableTree.getTableName() + "_Tag";
+        dataTable = tableTree.dataTable;
+        tableName = dataTable.tableName + "_Tag";
         idColumnName = "ttid";
         defineColumns();
+        try (Connection conn = DerbyBase.getConnection()) {
+            createTable(conn, false);
+            createIndices(conn);
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
     }
 
     public final TableTreeTag defineColumns() {
         addColumn(new ColumnDefinition("ttid", ColumnType.Long, true, true).setAuto(true));
         addColumn(new ColumnDefinition("tnodeid", ColumnType.Long)
-                .setReferName("Tree_Node_Tag_Node_fk").setReferTable("Tree_Node").setReferColumn("nodeid")
+                .setReferName(tableName + "_nodeid_fk")
+                .setReferTable(dataTable.tableName).setReferColumn(dataTable.idColumnName)
                 .setOnDelete(ColumnDefinition.OnDelete.Cascade)
         );
         addColumn(new ColumnDefinition("tagid", ColumnType.Long)
-                .setReferName("Tree_Node_Tag_Tag_fk").setReferTable("Tag").setReferColumn("tgid")
+                .setReferName(tableName + "_tagid_fk")
+                .setReferTable("Tag").setReferColumn("tgid")
                 .setOnDelete(ColumnDefinition.OnDelete.Cascade)
         );
         return this;
+    }
+
+    public final boolean createIndices(Connection conn) {
+        if (conn == null || tableName == null) {
+            return false;
+        }
+        String sql = "CREATE INDEX " + tableName + "_unique_index on " + tableName + " ( tnodeid , tagid )";
+        try (PreparedStatement statement = conn.prepareStatement(sql)) {
+            statement.executeUpdate();
+        } catch (Exception e) {
+//            MyBoxLog.debug(e);
+//            return false;
+        }
+        sql = "CREATE INDEX " + tableName + "_title_index on " + tableName + " ( parentid, title )";
+        try (PreparedStatement statement = conn.prepareStatement(sql)) {
+            statement.executeUpdate();
+        } catch (Exception e) {
+//            MyBoxLog.debug(e);
+//            return false;
+        }
+        return true;
     }
 
     public static final String Create_Unique_Index

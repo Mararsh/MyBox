@@ -31,7 +31,6 @@ import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.fxml.style.StyleTools;
-import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.Fxmls;
@@ -45,16 +44,18 @@ import mara.mybox.value.UserConfig;
  */
 public class ControlDataTreeManage extends ControlDataTreeView {
 
-    protected DataTreeManageController manager;
-    protected boolean nodeExecutable;
+    protected BaseDataTreeManageController manager;
 
-    public void setManager(DataTreeManageController parent) {
+    public void setManager(BaseDataTreeManageController parent) {
         manager = parent;
-        nodeExecutable = manager != null
-                && (manager.startButton != null || manager.goButton != null
-                || (manager.editor != null
-                && (manager.editor.startButton != null
-                || manager.editor.goButton != null)));
+        tableTree = manager.tableTree;
+        tableTreeTag = manager.tableTreeTag;
+        dataTable = manager.dataTable;
+        parentController = parent;
+        baseName = dataTable.getTableName();
+        baseTitle = baseName;
+
+        loadTree();
     }
 
     @Override
@@ -191,7 +192,7 @@ public class ControlDataTreeManage extends ControlDataTreeView {
         menu.setDisable(treeItem == null);
         items.add(menu);
 
-        if (nodeExecutable) {
+        if (manager.nodeController.nodeExecutable) {
             menu = new MenuItem(message("Execute"), StyleTools.getIconImageView("iconGo.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 executeNode(treeItem);
@@ -347,7 +348,7 @@ public class ControlDataTreeManage extends ControlDataTreeView {
 
         menu.getItems().addAll(editNodeMenu, pasteNodeMenu, popNodeMenu);
 
-        if (nodeExecutable) {
+        if (manager.nodeController.nodeExecutable) {
             RadioMenuItem executeNodeMenu = new RadioMenuItem(message("Execute"), StyleTools.getIconImageView("iconGo.png"));
             executeNodeMenu.setSelected("Execute".equals(currentClick));
             executeNodeMenu.setOnAction(new EventHandler<ActionEvent>() {
@@ -434,7 +435,7 @@ public class ControlDataTreeManage extends ControlDataTreeView {
 
     @Override
     public void nodeAdded(TreeNode parent, TreeNode newNode) {
-        manager.nodeAdded(parent, newNode);
+//        manager.nodeAdded(parent, newNode);
     }
 
     @Override
@@ -498,7 +499,7 @@ public class ControlDataTreeManage extends ControlDataTreeView {
                     }
                 }
                 popSuccessful();
-                manager.nodeDeleted(node);
+//                manager.nodeDeleted(node);
             }
 
         };
@@ -541,7 +542,7 @@ public class ControlDataTreeManage extends ControlDataTreeView {
             protected void whenSucceeded() {
                 item.setValue(updatedNode);
                 treeView.refresh();
-                manager.nodeRenamed(updatedNode);
+//                manager.nodeRenamed(updatedNode);
                 popSuccessful();
             }
         };
@@ -555,7 +556,7 @@ public class ControlDataTreeManage extends ControlDataTreeView {
         String chainName = chainName(item);
         InfoTreeNodeCopyController controller
                 = (InfoTreeNodeCopyController) childStage(Fxmls.InfoTreeNodeCopyFxml);
-        controller.setParameters(manager, item.getValue(), chainName);
+//        controller.setParameters(manager, item.getValue(), chainName);
     }
 
     protected void moveNode(TreeItem<TreeNode> item) {
@@ -564,52 +565,52 @@ public class ControlDataTreeManage extends ControlDataTreeView {
         }
         String chainName = chainName(item);
         InfoTreeNodeMoveController controller = (InfoTreeNodeMoveController) childStage(Fxmls.InfoTreeNodeMoveFxml);
-        controller.setParameters(manager, item.getValue(), chainName);
+//        controller.setParameters(manager, item.getValue(), chainName);
     }
 
     protected void nodeMoved(TreeNode parent, TreeNode node) {
-        manager.nodeMoved(parent, node);
+//        manager.nodeMoved(parent, node);
     }
 
     protected void editNode(TreeItem<TreeNode> item) {
         if (item == null) {
             return;
         }
-        manager.editNode(item.getValue());
+//        manager.editNode(item.getValue());
     }
 
     protected void pasteNode(TreeItem<TreeNode> item) {
         if (item == null) {
             return;
         }
-        manager.pasteNode(item.getValue());
+//        manager.pasteNode(item.getValue());
     }
 
     protected void executeNode(TreeItem<TreeNode> item) {
         if (item == null) {
             return;
         }
-        manager.executeNode(item.getValue());
+//        manager.executeNode(item.getValue());
     }
 
     protected void exportNode(TreeItem<TreeNode> item) {
         InfoTreeNodeExportController exportController
                 = (InfoTreeNodeExportController) childStage(Fxmls.InfoTreeNodeExportFxml);
-        exportController.setParamters(infoController, item);
+//        exportController.setParamters(infoController, item);
     }
 
     @FXML
     protected void importAction() {
         InfoTreeNodeImportController controller
                 = (InfoTreeNodeImportController) childStage(Fxmls.InfoTreeNodeImportFxml);
-        controller.setCaller(manager);
+//        controller.setCaller(manager);
     }
 
     @FXML
     protected void importExamples() {
         InfoTreeNodeImportController controller
                 = (InfoTreeNodeImportController) childStage(Fxmls.InfoTreeNodeImportFxml);
-        controller.setCaller(infoController);
+//        controller.setCaller(infoController);
         controller.importExamples();
     }
 
@@ -631,7 +632,7 @@ public class ControlDataTreeManage extends ControlDataTreeView {
 
             @Override
             protected boolean handle() {
-                file = FileTmpTools.generateFile(message(category), "htm");
+//                file = FileTmpTools.generateFile(message(category), "htm");
                 try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, Charset.forName("utf-8"), false))) {
                     writer.write(HtmlWriteTools.htmlPrefix(chainName(node), "utf-8", HtmlStyles.TableStyle));
                     // https://www.jb51.net/article/116957.htm
@@ -733,14 +734,14 @@ public class ControlDataTreeManage extends ControlDataTreeView {
                 writer.write(indentTag + "</SPAN>\n");
             }
             writer.write(indentNode + "</DIV>\n");
-            String infoDisplay = TreeNode.infoHtml(infoTask, myController, category, node.getInfo(), true, true);
-            if (infoDisplay != null && !infoDisplay.isBlank()) {
-                writer.write(indentNode + "<DIV class=\"nodeValue\">"
-                        + "<DIV style=\"padding: 0 0 0 " + (indent + 4) * 6 + "px;\">"
-                        + "<DIV class=\"valueBox\">\n");
-                writer.write(indentNode + infoDisplay + "\n");
-                writer.write(indentNode + "</DIV></DIV></DIV>\n");
-            }
+//            String infoDisplay = TreeNode.infoHtml(infoTask, myController, category, node.getInfo(), true, true);
+//            if (infoDisplay != null && !infoDisplay.isBlank()) {
+//                writer.write(indentNode + "<DIV class=\"nodeValue\">"
+//                        + "<DIV style=\"padding: 0 0 0 " + (indent + 4) * 6 + "px;\">"
+//                        + "<DIV class=\"valueBox\">\n");
+//                writer.write(indentNode + infoDisplay + "\n");
+//                writer.write(indentNode + "</DIV></DIV></DIV>\n");
+//            }
             if (children != null && !children.isEmpty()) {
                 writer.write(indentNode + "<DIV class=\"TreeNode\" id='" + nodePageid + "'>\n");
                 for (int i = 0; i < children.size(); i++) {

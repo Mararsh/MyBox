@@ -18,7 +18,6 @@ import mara.mybox.controller.JShellController;
 import mara.mybox.controller.JavaScriptController;
 import mara.mybox.controller.JexlController;
 import mara.mybox.controller.MathFunctionController;
-import mara.mybox.controller.NotesController;
 import mara.mybox.controller.RowFilterController;
 import mara.mybox.controller.WebFavoritesController;
 import mara.mybox.data.StringTable;
@@ -692,8 +691,8 @@ public class InfoNode extends BaseData {
         switch (category) {
             case InfoNode.WebFavorite:
                 return WebFavoritesController.oneOpen();
-            case InfoNode.Notebook:
-                return NotesController.oneOpen();
+//            case InfoNode.Notebook:
+//                return NotesController.oneOpen();
             case InfoNode.JShellCode:
                 return JShellController.open("");
             case InfoNode.SQL:

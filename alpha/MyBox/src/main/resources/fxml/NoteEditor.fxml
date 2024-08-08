@@ -15,7 +15,7 @@ License:    Apache License Version 2.0
     <children>
         <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" tabClosingPolicy="ALL_TABS" VBox.vgrow="ALWAYS">
             <tabs>
-                <Tab fx:id="valueTab" closable="false" text="%Value">
+                <Tab fx:id="valueTab" closable="false" text="%Values">
                     <content>
                         <VBox fx:id="viewBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" spacing="2.0">
                             <padding>

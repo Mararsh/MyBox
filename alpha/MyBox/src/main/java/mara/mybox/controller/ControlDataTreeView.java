@@ -103,7 +103,7 @@ public class ControlDataTreeView extends BaseTreeTableViewController<TreeNode> {
 
     }
 
-    public void setParameters(BaseDataTreeController parent) {
+    public void setManager(BaseDataTreeController parent) {
         dataController = parent;
         tableTree = parent.tableTree;
         tableTreeTag = parent.tableTreeTag;
@@ -551,6 +551,11 @@ public class ControlDataTreeView extends BaseTreeTableViewController<TreeNode> {
     @Override
     public void refreshAction() {
         loadTree();
+    }
+
+    @FXML
+    public void queryAction() {
+
     }
 
     @FXML

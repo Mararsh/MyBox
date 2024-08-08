@@ -67,7 +67,7 @@ public class TestCase {
         try {
             int index = 1;
             cases.add(new TestCase(index++, message("InformationInTree"), Fxmls.InfoTreeManageFxml));
-            cases.add(new TestCase(index++, message("Notes"), Fxmls.NotesFxml));
+            cases.add(new TestCase(index++, message("Notes"), Fxmls.NotesTreeFxml));
             cases.add(new TestCase(index++, message("PdfView"), Fxmls.PdfViewFxml));
             cases.add(new TestCase(index++, message("PdfConvertImagesBatch"), Fxmls.PdfConvertImagesBatchFxml));
             cases.add(new TestCase(index++, message("PdfImagesConvertBatch"), Fxmls.PdfImagesConvertBatchFxml));

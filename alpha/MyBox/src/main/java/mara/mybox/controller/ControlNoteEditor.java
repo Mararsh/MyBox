@@ -11,11 +11,11 @@ import mara.mybox.fxml.style.HtmlStyles;
  */
 public class ControlNoteEditor extends BaseHtmlFormat {
 
-    protected NoteEditor noteEditor;
+    protected NoteNodeController noteController;
 
-    public void setParameters(NoteEditor noteEditor) {
+    public void setParameters(NoteNodeController controller) {
         try {
-            this.noteEditor = noteEditor;
+            this.noteController = controller;
 
             webViewController.linkInNewTab = true;
             webViewController.defaultStyle = HtmlStyles.TableStyle;
@@ -28,8 +28,8 @@ public class ControlNoteEditor extends BaseHtmlFormat {
     @Override
     protected void updateStatus(boolean changed) {
         super.updateStatus(changed);
-        if (!isSettingValues && noteEditor != null) {
-            noteEditor.valueChanged(changed);
+        if (!isSettingValues && noteController != null) {
+            noteController.valueChanged(changed);
         }
     }
 

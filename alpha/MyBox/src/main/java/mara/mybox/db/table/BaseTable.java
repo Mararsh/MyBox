@@ -628,6 +628,26 @@ public abstract class BaseTable<D> {
         }
     }
 
+    public final boolean createTable(Connection conn, boolean dropExisted) {
+        if (conn == null || tableName == null) {
+            return false;
+        }
+        try {
+            if (DerbyBase.exist(conn, tableName) > 0) {
+                if (!dropExisted) {
+                    return true;
+                }
+                dropTable(conn);
+                conn.commit();
+            }
+            createTable(conn);
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+            return false;
+        }
+    }
+
     public boolean dropTable(Connection conn) {
         if (conn == null) {
             return false;

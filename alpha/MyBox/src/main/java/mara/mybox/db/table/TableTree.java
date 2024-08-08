@@ -29,44 +29,34 @@ public class TableTree extends BaseTable<TreeNode> {
         if (dataTable == null) {
             return;
         }
-        tableName = dataTable.getTableName() + "_Tree";
+        tableName = dataTable.tableName + "_Tree";
         idColumnName = "nodeid";
         defineColumns();
+        try (Connection conn = DerbyBase.getConnection()) {
+            createTable(conn, false);
+            createIndices(conn);
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
     }
 
     public final TableTree defineColumns() {
-        addColumn(new ColumnDefinition("nodeid", ColumnType.Long, true, true).setAuto(true));
+        addColumn(new ColumnDefinition("nodeid", ColumnType.Long, true, true)
+                .setReferName(tableName + "_nodeid_fk")
+                .setReferTable(dataTable.tableName).setReferColumn(dataTable.idColumnName)
+                .setOnDelete(ColumnDefinition.OnDelete.Cascade)
+        );
         addColumn(new ColumnDefinition("title", ColumnType.String, true).setLength(StringMaxLength));
         addColumn(new ColumnDefinition("update_time", ColumnType.Datetime));
-        addColumn(new ColumnDefinition("parentid", ColumnType.Long)
-                .setReferName("Tree_Node_parent_fk").setReferTable("Tree_Node").setReferColumn("nodeid")
+        addColumn(new ColumnDefinition("parentid", ColumnType.Long, true)
+                .setReferName(tableName + "_parentid_fk")
+                .setReferTable(dataTable.tableName).setReferColumn(dataTable.idColumnName)
                 .setOnDelete(ColumnDefinition.OnDelete.Cascade)
         );
         return this;
     }
 
-    public boolean createTable(Connection conn, boolean dropExisted) {
-        if (conn == null || tableName == null) {
-            return false;
-        }
-        try {
-            if (DerbyBase.exist(conn, tableName) > 0) {
-                if (!dropExisted) {
-                    return true;
-                }
-                dropTable(conn);
-                conn.commit();
-            }
-            createTable(conn);
-            createIndices(conn);
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-            return false;
-        }
-    }
-
-    public boolean createIndices(Connection conn) {
+    public final boolean createIndices(Connection conn) {
         if (conn == null || tableName == null) {
             return false;
         }
@@ -74,15 +64,15 @@ public class TableTree extends BaseTable<TreeNode> {
         try (PreparedStatement statement = conn.prepareStatement(sql)) {
             statement.executeUpdate();
         } catch (Exception e) {
-            MyBoxLog.debug(e);
-            return false;
+//            MyBoxLog.debug(e);
+//            return false;
         }
         sql = "CREATE INDEX " + tableName + "_title_index on " + tableName + " ( parentid, title )";
         try (PreparedStatement statement = conn.prepareStatement(sql)) {
             statement.executeUpdate();
         } catch (Exception e) {
-            MyBoxLog.debug(e);
-            return false;
+//            MyBoxLog.debug(e);
+//            return false;
         }
         return true;
     }

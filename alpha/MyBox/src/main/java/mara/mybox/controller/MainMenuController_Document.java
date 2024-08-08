@@ -13,7 +13,7 @@ public abstract class MainMenuController_Document extends MainMenuController_Win
 
     @FXML
     protected void openNotes(ActionEvent event) {
-        loadScene(Fxmls.NotesFxml);
+        loadScene(Fxmls.NotesTreeFxml);
     }
 
     @FXML

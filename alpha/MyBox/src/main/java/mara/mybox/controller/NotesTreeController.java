@@ -4,69 +4,58 @@ import java.util.ArrayList;
 import java.util.List;
 import javafx.fxml.FXML;
 import javafx.stage.Window;
-import mara.mybox.db.data.InfoNode;
-import mara.mybox.db.data.VisitHistory;
+import mara.mybox.db.table.TableNote;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
-import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
- * @CreateDate 2021-2-28
+ * @CreateDate 2024-8-8
  * @License Apache License Version 2.0
  */
-public class NotesController extends InfoTreeManageController {
+public class NotesTreeController extends BaseDataTreeManageController {
 
     @FXML
-    protected NoteEditor editorController;
+    protected NoteNodeController noteController;
 
-    public NotesController() {
+    public NotesTreeController() {
         baseTitle = Languages.message("Notes");
         TipsLabelKey = "NotesTips";
-        category = InfoNode.Notebook;
-        nameMsg = message("Title");
-        valueMsg = message("Html");
     }
 
     @Override
-    public void setFileType() {
-        setFileType(VisitHistory.FileType.Text);
-    }
-
-    @Override
-    public void initValues() {
+    public void initControls() {
         try {
-            super.initValues();
+            super.initControls();
 
-            editor = editorController;
+            initBaseTable(new TableNote(), treeController, noteController);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
-
     /*
         static methods
      */
-    public static NotesController oneOpen() {
-        NotesController controller = null;
+    public static NotesTreeController oneOpen() {
+        NotesTreeController controller = null;
         List<Window> windows = new ArrayList<>();
         windows.addAll(Window.getWindows());
         for (Window window : windows) {
             Object object = window.getUserData();
-            if (object != null && object instanceof NotesController) {
+            if (object != null && object instanceof NotesTreeController) {
                 try {
-                    controller = (NotesController) object;
+                    controller = (NotesTreeController) object;
                     break;
                 } catch (Exception e) {
                 }
             }
         }
         if (controller == null) {
-            controller = (NotesController) WindowTools.openStage(Fxmls.NotesFxml);
+            controller = (NotesTreeController) WindowTools.openStage(Fxmls.NotesTreeFxml);
         }
         controller.requestMouse();
         return controller;

@@ -1,22 +1,15 @@
 package mara.mybox.controller;
 
 import java.io.File;
-import java.nio.charset.Charset;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Tab;
+import javafx.scene.input.KeyEvent;
 import mara.mybox.db.data.TreeNode;
 import static mara.mybox.db.data.TreeNode.TitleSeparater;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.FxSingletonTask;
-import mara.mybox.fxml.FxTask;
-import mara.mybox.fxml.PopTools;
-import mara.mybox.tools.DateTools;
-import mara.mybox.tools.TextFileTools;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -25,10 +18,11 @@ import mara.mybox.value.UserConfig;
  */
 public class BaseDataTreeNodeController extends BaseController {
 
-    protected DataTreeManageController manager;
+    protected BaseDataTreeController manager;
     protected String defaultExt;
     protected final SimpleBooleanProperty nodeChanged;
     protected BaseController valuesEditor;
+    protected boolean nodeExecutable;
 
     @FXML
     protected Tab attributesTab, valueTab, tagsTab;
@@ -47,7 +41,7 @@ public class BaseDataTreeNodeController extends BaseController {
         setFileType(VisitHistory.FileType.Text);
     }
 
-    public void setManager(DataTreeManageController treeController) {
+    public void setManager(BaseDataTreeController treeController) {
         try {
             this.manager = treeController;
             attributesController.setParameters(manager);
@@ -77,16 +71,6 @@ public class BaseDataTreeNodeController extends BaseController {
     }
 
     protected void editValue(TreeNode node) {
-        if (valueInput == null) {
-            return;
-        }
-        isSettingValues = true;
-        if (node != null) {
-            valueInput.setText(node.getInfo());
-        } else {
-            valueInput.setText("");
-        }
-        isSettingValues = false;
     }
 
     public TreeNode pickNodeData() {
@@ -210,17 +194,18 @@ public class BaseDataTreeNodeController extends BaseController {
         if (node == null) {
             return null;
         }
-        String info = null;
-        if (valueInput != null) {
-            info = valueInput.getText();
-        }
-        return node.setInfo(info);
+//        String info = null;
+//        if (valueInput != null) {
+//            info = valueInput.getText();
+//        }
+//        return node.setInfo(info);
+        return null;
     }
 
     protected String nodeTitle() {
-        String title = attributesController.nameInput.getText();
+        String title = attributesController.titleInput.getText();
         if (title == null || title.isBlank()) {
-            popError(message("InvalidParameters") + ": " + manager.nameMsg);
+            popError(message("InvalidParameters") + ": " + message("Title"));
             if (tabPane != null && attributesTab != null) {
                 tabPane.getSelectionModel().select(attributesTab);
             }
@@ -242,7 +227,7 @@ public class BaseDataTreeNodeController extends BaseController {
             return;
         }
         if (valueTab != null) {
-            valueTab.setText(manager.valueMsg + (changed ? "*" : ""));
+            valueTab.setText(message("Values") + (changed ? "*" : ""));
         }
         if (changed) {
             nodeChanged(changed);
@@ -256,10 +241,13 @@ public class BaseDataTreeNodeController extends BaseController {
         nodeChanged.set(changed);
         if (!changed) {
             if (valueTab != null) {
-                valueTab.setText(manager.valueMsg);
+                valueTab.setText(message("Values"));
             }
             if (attributesTab != null) {
                 attributesTab.setText(message("Attributes"));
+            }
+            if (tagsTab != null) {
+                tagsTab.setText(message("Tags"));
             }
         }
     }
@@ -278,102 +266,128 @@ public class BaseDataTreeNodeController extends BaseController {
     @FXML
     @Override
     public void saveAsAction() {
-        if (valueInput == null) {
-            return;
-        }
-        String codes = valueInput.getText();
-        if (codes == null || codes.isBlank()) {
-            popError(message("NoData"));
-            return;
-        }
-        File file = chooseSaveFile(message(manager.category) + "-" + DateTools.nowFileString() + "." + defaultExt);
-        if (file == null) {
-            return;
-        }
-        FxTask saveAsTask = new FxTask<Void>(this) {
+//        if (valueInput == null) {
+//            return;
+//        }
+//        String codes = valueInput.getText();
+//        if (codes == null || codes.isBlank()) {
+//            popError(message("NoData"));
+//            return;
+//        }
+//        File file = chooseSaveFile(message(manager.category) + "-" + DateTools.nowFileString() + "." + defaultExt);
+//        if (file == null) {
+//            return;
+//        }
+//        FxTask saveAsTask = new FxTask<Void>(this) {
+//
+//            @Override
+//            protected boolean handle() {
+//                File tfile = TextFileTools.writeFile(file, codes, Charset.forName("UTF-8"));
+//                return tfile != null && tfile.exists();
+//            }
+//
+//            @Override
+//            protected void whenSucceeded() {
+//                popInformation(message("Saved"));
+//                recordFileWritten(file);
+//            }
+//
+//        };
+//        start(saveAsTask, false);
+    }
 
-            @Override
-            protected boolean handle() {
-                File tfile = TextFileTools.writeFile(file, codes, Charset.forName("UTF-8"));
-                return tfile != null && tfile.exists();
-            }
+    @FXML
+    @Override
+    public void saveAction() {
 
-            @Override
-            protected void whenSucceeded() {
-                popInformation(message("Saved"));
-                recordFileWritten(file);
-            }
+    }
 
-        };
-        start(saveAsTask, false);
+    @FXML
+    public void copyNode() {
+
+    }
+
+    @FXML
+    public void addNode() {
+
+    }
+
+    @FXML
+    public void recoverNode() {
+
     }
 
     @FXML
     public void clearValue() {
-        if (valueInput != null) {
-            valueInput.clear();
-        }
+//        if (valueInput != null) {
+//            valueInput.clear();
+//        }
     }
 
     @Override
     public void sourceFileChanged(File file) {
-        if (valueInput == null
-                || file == null || !file.exists()
-                || !manager.checkBeforeNextAction()) {
-            return;
-        }
-        editNode(null);
-        if (task != null) {
-            task.cancel();
-        }
-        valueInput.clear();
-        task = new FxSingletonTask<Void>(this) {
-
-            String codes;
-
-            @Override
-            protected boolean handle() {
-                codes = TextFileTools.readTexts(this, file);
-                return codes != null;
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                valueInput.setText(codes);
-                recordFileOpened(file);
-            }
-
-        };
-        start(task, thisPane);
+//        if (valueInput == null
+//                || file == null || !file.exists()
+//                || !manager.checkBeforeNextAction()) {
+//            return;
+//        }
+//        editNode(null);
+//        if (task != null) {
+//            task.cancel();
+//        }
+//        valueInput.clear();
+//        task = new FxSingletonTask<Void>(this) {
+//
+//            String codes;
+//
+//            @Override
+//            protected boolean handle() {
+//                codes = TextFileTools.readTexts(this, file);
+//                return codes != null;
+//            }
+//
+//            @Override
+//            protected void whenSucceeded() {
+//                valueInput.setText(codes);
+//                recordFileOpened(file);
+//            }
+//
+//        };
+//        start(task, thisPane);
     }
 
     public void pasteNode(TreeNode node) {
-        if (valueInput == null || node == null) {
-            return;
-        }
-        String v = TreeNode.majorInfo(node);
-        if (v == null || v.isBlank()) {
-            return;
-        }
-        valueInput.replaceText(valueInput.getSelection(), v);
-        valueInput.requestFocus();
-        tabPane.getSelectionModel().select(valueTab);
+//        if (valueInput == null || node == null) {
+//            return;
+//        }
+//        String v = TreeNode.majorInfo(node);
+//        if (v == null || v.isBlank()) {
+//            return;
+//        }
+//        valueInput.replaceText(valueInput.getSelection(), v);
+//        valueInput.requestFocus();
+//        tabPane.getSelectionModel().select(valueTab);
     }
 
-    protected String editorName() {
-        return manager.category;
-    }
-
-    @FXML
-    protected void popHistories(Event event) {
-        if (UserConfig.getBoolean(editorName() + "HistoriesPopWhenMouseHovering", false)) {
-            showHistories(event);
+    @Override
+    public boolean keyEventsFilter(KeyEvent event) {
+        if (valuesEditor == null) {
+            return super.keyEventsFilter(event);
         }
-    }
-
-    @FXML
-    protected void showHistories(Event event) {
-        PopTools.popStringValues(this, valueInput, event, editorName() + "Histories", false);
+        if (valuesEditor.thisPane.isFocused() || valuesEditor.thisPane.isFocusWithin()) {
+            if (valuesEditor.keyEventsFilter(event)) {
+                return true;
+            }
+        }
+        if (attributesController.thisPane.isFocused() || attributesController.thisPane.isFocusWithin()) {
+            if (attributesController.keyEventsFilter(event)) {
+                return true;
+            }
+        }
+        if (super.keyEventsFilter(event)) {
+            return true;
+        }
+        return valuesEditor.keyEventsFilter(event);
     }
 
 }

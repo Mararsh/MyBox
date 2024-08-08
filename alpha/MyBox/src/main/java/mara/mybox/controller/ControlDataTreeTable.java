@@ -47,7 +47,7 @@ import mara.mybox.value.UserConfig;
 public class ControlDataTreeTable extends BaseSysTableController<TreeNode> {
 
     protected BaseDataTreeController dataController;
-    protected InfoTreeManageController manager;
+    protected BaseDataTreeManageController manager;
     protected TableTree tableTree;
     protected String queryLabel;
     protected TreeNode loadedParent;
@@ -83,8 +83,8 @@ public class ControlDataTreeTable extends BaseSysTableController<TreeNode> {
             tableTree = dataController.tableTree;
             tableDefinition = dataController.tableTree;
 
-            if (dataController instanceof DataTreeManageController) {
-                manager = (DataTreeManageController) dataController;
+            if (dataController instanceof BaseDataTreeManageController) {
+                manager = (BaseDataTreeManageController) dataController;
             }
             if (manager == null) {
                 tableView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
@@ -92,16 +92,9 @@ public class ControlDataTreeTable extends BaseSysTableController<TreeNode> {
             }
 
             nodeidColumn.setCellValueFactory(new PropertyValueFactory<>("nodeid"));
-            nameColumn.setText(dataController.nameMsg);
             nameColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
-            valueColumn.setText(dataController.valueMsg);
-            if (TreeNode.WebFavorite.equals(dataController.category)) {
-                valueColumn.setCellValueFactory(new PropertyValueFactory<>("icon"));
-            } else {
-                valueColumn.setCellValueFactory(new PropertyValueFactory<>("value"));
-            }
+            valueColumn.setCellValueFactory(new PropertyValueFactory<>("value"));
             valueColumn.setCellFactory(new TableTextTrimCell());
-            timeColumn.setText(dataController.timeMsg);
             timeColumn.setCellValueFactory(new PropertyValueFactory<>("updateTime"));
 
             if (UserConfig.getBoolean(baseName + "AllDescendants", false)) {
@@ -136,11 +129,10 @@ public class ControlDataTreeTable extends BaseSysTableController<TreeNode> {
         clearQuery();
         loadedParent = parentNode;
         if (loadedParent != null) {
-            queryConditions = " category='" + dataController.category + "' AND "
-                    + "parentid=" + loadedParent.getNodeid() + " AND nodeid<>parentid";
+            queryConditions = "parentid=" + loadedParent.getNodeid() + " AND nodeid<>parentid";
             loadTableData();
         }
-        dataController.showNodesList(true);
+//        dataController.showNodesList(true);
     }
 
     public void loadChildren(TreeNode parentNode) {
@@ -265,11 +257,11 @@ public class ControlDataTreeTable extends BaseSysTableController<TreeNode> {
             popError(message("SelectToHanlde"));
             return;
         }
-        if (dataController instanceof ControlInfoTreeHandler) {
-            ((ControlInfoTreeHandler) dataController).viewNode(item);
-        } else {
-            dataController.popNode(item);
-        }
+//        if (dataController instanceof ControlInfoTreeHandler) {
+//            ((ControlInfoTreeHandler) dataController).viewNode(item);
+//        } else {
+//            dataController.popNode(item);
+//        }
 
     }
 
@@ -417,7 +409,7 @@ public class ControlDataTreeTable extends BaseSysTableController<TreeNode> {
             return;
         }
         if (loadedParent != null) {
-            manager.editor.attributesController.parentNode = loadedParent;
+            manager.nodeController.attributesController.parentNode = loadedParent;
         }
         manager.addNode();
     }
@@ -428,7 +420,7 @@ public class ControlDataTreeTable extends BaseSysTableController<TreeNode> {
         if (manager == null) {
             return;
         }
-        manager.editNode(selectedItem());
+//        manager.editNode(selectedItem());
     }
 
     @FXML
@@ -437,7 +429,7 @@ public class ControlDataTreeTable extends BaseSysTableController<TreeNode> {
         if (manager == null) {
             return;
         }
-        manager.pasteNode(selectedItem());
+//        manager.pasteNode(selectedItem());
     }
 
     public void queryTimes(String value, String title) {
@@ -446,11 +438,11 @@ public class ControlDataTreeTable extends BaseSysTableController<TreeNode> {
             return;
         }
         clearQuery();
-        queryConditions = " category='" + dataController.category + "' " + (value.isBlank() ? "" : (" AND " + value));
+        queryConditions = value;
         queryConditionsString = title;
         loadTableData();
 
-        dataController.showNodesList(true);
+//        dataController.showNodesList(true);
     }
 
     public void queryTags(List<Tag> tags) {
@@ -459,14 +451,13 @@ public class ControlDataTreeTable extends BaseSysTableController<TreeNode> {
             return;
         }
         clearQuery();
-        queryConditions = " category='" + dataController.category + "' AND "
-                + tableTree.tagsCondition(tags);
+        queryConditions = tableTree.tagsCondition(tags);
         queryConditionsString = message("Tag") + ": ";
         for (Tag tag : tags) {
             queryConditionsString += " " + tag.getTag();
         }
         loadTableData();
-        dataController.showNodesList(true);
+//        dataController.showNodesList(true);
     }
 
     public void find(String s, boolean isName) {
@@ -479,7 +470,7 @@ public class ControlDataTreeTable extends BaseSysTableController<TreeNode> {
             popError(message("InvalidParameters") + ": " + message("Find"));
             return;
         }
-        TableStringValues.add(baseName + dataController.category + "Histories", s);
+        TableStringValues.add(baseName + "Histories", s);
         clearQuery();
         if (isName) {
             queryConditions = null;
@@ -507,10 +498,9 @@ public class ControlDataTreeTable extends BaseSysTableController<TreeNode> {
                 queryConditionsString += " " + v;
             }
         }
-        queryConditions = " category='" + dataController.category + "' AND " + queryConditions;
         loadTableData();
-
-        dataController.showNodesList(true);
+//
+//        dataController.showNodesList(true);
     }
 
 }

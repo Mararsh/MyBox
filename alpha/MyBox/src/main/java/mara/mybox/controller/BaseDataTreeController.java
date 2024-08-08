@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import javafx.scene.input.KeyEvent;
 import mara.mybox.db.data.TreeNode;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.BaseTable;
@@ -17,6 +18,8 @@ import mara.mybox.fxml.FxSingletonTask;
 public abstract class BaseDataTreeController extends BaseController {
 
     protected ControlDataTreeView treeView;
+    protected BaseDataTreeNodeController nodeController;
+
     protected BaseTable dataTable;
     protected TableTree tableTree;
     protected TableTag tableTag;
@@ -27,17 +30,21 @@ public abstract class BaseDataTreeController extends BaseController {
         setFileType(VisitHistory.FileType.Text);
     }
 
-    public void loadData() {
-        if (dataTable == null) {
-            return;
-        }
+    public void initBaseTable(BaseTable baseTable,
+            ControlDataTreeView tree,
+            BaseDataTreeNodeController controller) {
         try {
+            dataTable = baseTable;
+            nodeController = controller;
+            treeView = tree;
+
             tableTree = new TableTree(dataTable);
             tableTag = new TableTag();
             tableTreeTag = new TableTreeTag(tableTree);
 
-            treeView.setParameters(this);
+            nodeController.setManager(this);
 
+            treeView.setManager(this);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -71,6 +78,22 @@ public abstract class BaseDataTreeController extends BaseController {
 
         };
         start(task);
+    }
+
+    @Override
+    public boolean keyEventsFilter(KeyEvent event) {
+        if (nodeController == null) {
+            return super.keyEventsFilter(event);
+        }
+        if (nodeController.thisPane.isFocused() || nodeController.thisPane.isFocusWithin()) {
+            if (nodeController.keyEventsFilter(event)) {
+                return true;
+            }
+        }
+        if (super.keyEventsFilter(event)) {
+            return true;
+        }
+        return nodeController.keyEventsFilter(event); // pass event to editor
     }
 
 }
