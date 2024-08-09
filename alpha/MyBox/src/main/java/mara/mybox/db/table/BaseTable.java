@@ -45,7 +45,7 @@ public abstract class BaseTable<D> {
     public final static int FilenameMaxLength = 32672;
     public final static int StringMaxLength = 32672;
 
-    protected String tableName, idColumnName, orderColumns;
+    protected String tableName, idColumnName, orderColumns, tableTitle;
     protected List<ColumnDefinition> columns, primaryColumns, foreignColumns, referredColumns;
     protected boolean supportBatchUpdate;
     protected long newID = -1;
@@ -1836,6 +1836,24 @@ public abstract class BaseTable<D> {
 
     public void setOrderColumns(String orderColumns) {
         this.orderColumns = orderColumns;
+    }
+
+    public String getTableTitle() {
+        return tableTitle != null ? tableTitle : tableName;
+    }
+
+    public BaseTable setTableTitle(String tableTitle) {
+        this.tableTitle = tableTitle;
+        return this;
+    }
+
+    public List<ColumnDefinition> getReferredColumns() {
+        return referredColumns;
+    }
+
+    public BaseTable setReferredColumns(List<ColumnDefinition> referredColumns) {
+        this.referredColumns = referredColumns;
+        return this;
     }
 
 }

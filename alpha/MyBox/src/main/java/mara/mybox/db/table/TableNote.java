@@ -3,6 +3,7 @@ package mara.mybox.db.table;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Note;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -13,6 +14,7 @@ public class TableNote extends BaseTable<Note> {
 
     public TableNote() {
         tableName = "Note";
+        tableTitle = message("Notes");
         defineColumns();
     }
 

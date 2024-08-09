@@ -48,8 +48,8 @@ public class ControlDataTreeManage extends ControlDataTreeView {
 
     public void setManager(BaseDataTreeManageController parent) {
         manager = parent;
-        tableTree = manager.tableTree;
-        tableTreeTag = manager.tableTreeTag;
+        treeTable = manager.treeTable;
+        treeTagTable = manager.treeTagTable;
         dataTable = manager.dataTable;
         parentController = parent;
         baseName = dataTable.getTableName();
@@ -475,11 +475,11 @@ public class ControlDataTreeManage extends ControlDataTreeView {
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
                     if (isRoot) {
-                        tableTree.deleteChildren(conn, node.getNodeid());
-                        TreeNode rootNode = root(conn);
-                        rootItem = new TreeItem(rootNode);
+                        treeTable.deleteChildren(conn, node.getNodeid());
+//                        TreeNode rootNode = root(conn);
+//                        rootItem = new TreeItem(rootNode);
                     } else {
-                        tableTree.deleteData(conn, node);
+                        treeTable.deleteData(conn, node);
                     }
                 } catch (Exception e) {
                     error = e.toString();
@@ -534,7 +534,7 @@ public class ControlDataTreeManage extends ControlDataTreeView {
             @Override
             protected boolean handle() {
                 nodeValue.setTitle(name);
-                updatedNode = tableTree.updateData(nodeValue);
+                updatedNode = treeTable.updateData(nodeValue);
                 return updatedNode != null;
             }
 
@@ -701,7 +701,7 @@ public class ControlDataTreeManage extends ControlDataTreeView {
             if (conn == null || node == null) {
                 return;
             }
-            List<TreeNode> children = tableTree.children(conn, node.getNodeid());
+            List<TreeNode> children = treeTable.children(conn, node.getNodeid());
             String indentNode = " ".repeat(indent);
             String spaceNode = "&nbsp;".repeat(indent);
             String nodePageid = "item" + node.getNodeid();
@@ -712,7 +712,7 @@ public class ControlDataTreeManage extends ControlDataTreeView {
             }
             writer.write(indentNode + "<DIV style=\"padding: 2px;\">" + spaceNode
                     + displayName + "\n");
-            List<TreeNodeTag> tags = tableTreeTag.nodeTags(conn, node.getNodeid());
+            List<TreeNodeTag> tags = treeTagTable.nodeTags(conn, node.getNodeid());
             if (tags != null && !tags.isEmpty()) {
                 String indentTag = " ".repeat(indent + 8);
                 String spaceTag = "&nbsp;".repeat(2);

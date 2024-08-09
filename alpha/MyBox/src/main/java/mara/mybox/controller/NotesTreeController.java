@@ -26,11 +26,13 @@ public class NotesTreeController extends BaseDataTreeManageController {
     }
 
     @Override
-    public void initControls() {
+    public void initValues() {
         try {
-            super.initControls();
+            super.initValues();
 
-            initBaseTable(new TableNote(), treeController, noteController);
+            dataTable = new TableNote();
+            nodeController = noteController;
+            treeController = treeManageController;
 
         } catch (Exception e) {
             MyBoxLog.error(e);

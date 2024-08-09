@@ -69,7 +69,7 @@ License:    Apache License Version 2.0
                 </HBox>
       <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" tabClosingPolicy="ALL_TABS" VBox.vgrow="ALWAYS">
          <tabs>
-            <Tab fx:id="valueTab" closable="false" text="%Values">
+            <Tab fx:id="valueTab" closable="false" text="%Note">
                <content>
                   <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" spacing="2.0">
                      <padding>
@@ -81,7 +81,7 @@ License:    Apache License Version 2.0
                   </VBox>
                </content>
             </Tab>
-            <Tab fx:id="attributesTab" closable="false" text="%Attributes">
+            <Tab fx:id="attributesTab" closable="false" text="%Node">
                <content>
                   <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" spacing="2.0">
                      <padding>

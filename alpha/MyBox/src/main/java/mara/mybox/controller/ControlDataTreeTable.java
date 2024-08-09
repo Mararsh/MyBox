@@ -80,8 +80,8 @@ public class ControlDataTreeTable extends BaseSysTableController<TreeNode> {
         try {
             dataController = controller;
             baseName = dataController.baseName;
-            tableTree = dataController.tableTree;
-            tableDefinition = dataController.tableTree;
+            tableTree = dataController.treeTable;
+            tableDefinition = dataController.treeTable;
 
             if (dataController instanceof BaseDataTreeManageController) {
                 manager = (BaseDataTreeManageController) dataController;

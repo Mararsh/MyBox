@@ -26,7 +26,7 @@ import static mara.mybox.value.Languages.message;
 public abstract class BaseDataTreeManageController extends BaseDataTreeController {
 
     @FXML
-    protected ControlDataTreeManage treeController;
+    protected ControlDataTreeManage treeManageController;
 
 
     /*
@@ -99,9 +99,9 @@ public abstract class BaseDataTreeManageController extends BaseDataTreeControlle
                 try (Connection conn = DerbyBase.getConnection()) {
 //                    tableController.loadedParent = tableTree.readData(conn, tableController.loadedParent);
                     nodeController.attributesController.currentNode
-                            = tableTree.readData(conn, nodeController.attributesController.currentNode);
+                            = treeTable.readData(conn, nodeController.attributesController.currentNode);
                     nodeController.attributesController.parentNode
-                            = tableTree.readData(conn, nodeController.attributesController.parentNode);
+                            = treeTable.readData(conn, nodeController.attributesController.parentNode);
                 } catch (Exception e) {
                     error = e.toString();
                     return false;

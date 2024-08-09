@@ -17,34 +17,35 @@ import mara.mybox.fxml.FxSingletonTask;
  */
 public abstract class BaseDataTreeController extends BaseController {
 
-    protected ControlDataTreeView treeView;
+    protected ControlDataTreeView treeController;
     protected BaseDataTreeNodeController nodeController;
 
     protected BaseTable dataTable;
-    protected TableTree tableTree;
-    protected TableTag tableTag;
-    protected TableTreeTag tableTreeTag;
+    protected TableTree treeTable;
+    protected TableTag tagTable;
+    protected TableTreeTag treeTagTable;
 
     @Override
     public void setFileType() {
         setFileType(VisitHistory.FileType.Text);
     }
 
-    public void initBaseTable(BaseTable baseTable,
-            ControlDataTreeView tree,
-            BaseDataTreeNodeController controller) {
+    @Override
+    public void initControls() {
         try {
-            dataTable = baseTable;
-            nodeController = controller;
-            treeView = tree;
+            super.initControls();
 
-            tableTree = new TableTree(dataTable);
-            tableTag = new TableTag();
-            tableTreeTag = new TableTreeTag(tableTree);
+            if (dataTable == null) {
+                return;
+            }
+            treeTable = new TableTree(dataTable);
+            tagTable = new TableTag();
+            treeTagTable = new TableTreeTag(treeTable);
 
-            nodeController.setManager(this);
+            nodeController.setParameters(this);
 
-            treeView.setManager(this);
+            treeController.setParameters(this);
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

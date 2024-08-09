@@ -143,9 +143,9 @@ public class ControlDataTreeNodeTags extends BaseSysTableController<Tag> {
             this.parentController = dataController;
             this.baseName = dataController.baseName;
             dataTable = dataController.dataTable;
-            tableTree = dataController.tableTree;
-            tableTag = dataController.tableTag;
-            tableTreeTag = dataController.tableTreeTag;
+            tableTree = dataController.treeTable;
+            tableTag = dataController.tagTable;
+            tableTreeTag = dataController.treeTagTable;
             setTableDefinition(tableTag);
 
             currentPage = 0;

@@ -20,6 +20,7 @@ public class TreeNode extends BaseData {
     public static final String ValueSeparater = "_:;MyBoxNodeValue;:_";
     public static final String MoreSeparater = "MyBoxTreeNodeMore:";
     public static final String Root = "Root";
+    public static final int RootID = -9;
 
     protected BaseTable dataTable;
     protected long nodeid, parentid;
@@ -113,11 +114,27 @@ public class TreeNode extends BaseData {
         return title;
     }
 
+    public String getValue() {
+        return html();
+    }
+
     /*
         Static methods
      */
     public static TreeNode create() {
         return new TreeNode();
+    }
+
+    public static TreeNode createRoot(BaseTable dataTable) {
+        if (dataTable == null) {
+            return null;
+        }
+        TreeNode root = new TreeNode()
+                .setDataTable(dataTable)
+                .setParentid(RootID)
+                .setNodeid(RootID)
+                .setTitle(dataTable.getTableTitle());
+        return root;
     }
 
     /*

@@ -22,7 +22,7 @@ import static mara.mybox.value.Languages.message;
  */
 public class ControlDataTreeNodeAttributes extends BaseController {
 
-    protected BaseDataTreeController manager;
+    protected BaseDataTreeController dataController;
     protected BaseDataTreeNodeController nodeController;
     protected TableTree tableTree;
     protected FxTask tagsTask;
@@ -54,11 +54,11 @@ public class ControlDataTreeNodeAttributes extends BaseController {
         }
     }
 
-    public void setParameters(BaseDataTreeController manager) {
+    public void setParameters(BaseDataTreeController controller) {
         try {
-            this.manager = manager;
-            this.nodeController = manager.nodeController;
-            tableTree = manager.tableTree;
+            dataController = controller;
+            nodeController = dataController.nodeController;
+            tableTree = dataController.treeTable;
 
         } catch (Exception e) {
             MyBoxLog.error(e);

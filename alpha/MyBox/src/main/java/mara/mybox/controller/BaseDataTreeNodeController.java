@@ -18,7 +18,7 @@ import static mara.mybox.value.Languages.message;
  */
 public class BaseDataTreeNodeController extends BaseController {
 
-    protected BaseDataTreeController manager;
+    protected BaseDataTreeController dataController;
     protected String defaultExt;
     protected final SimpleBooleanProperty nodeChanged;
     protected BaseController valuesEditor;
@@ -41,11 +41,11 @@ public class BaseDataTreeNodeController extends BaseController {
         setFileType(VisitHistory.FileType.Text);
     }
 
-    public void setManager(BaseDataTreeController treeController) {
+    public void setParameters(BaseDataTreeController controller) {
         try {
-            this.manager = treeController;
-            attributesController.setParameters(manager);
-            tagsController.setParameters(manager);
+            dataController = controller;
+            attributesController.setParameters(dataController);
+            tagsController.setParameters(dataController);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -63,10 +63,10 @@ public class BaseDataTreeNodeController extends BaseController {
 
     protected void updateEditorTitle(TreeNode node) {
         if (node != null) {
-            manager.setTitle(manager.baseTitle + ": "
+            dataController.setTitle(dataController.baseTitle + ": "
                     + node.getNodeid() + " - " + node.getTitle());
         } else {
-            manager.setTitle(manager.baseTitle);
+            dataController.setTitle(dataController.baseTitle);
         }
     }
 
@@ -79,7 +79,7 @@ public class BaseDataTreeNodeController extends BaseController {
             return null;
         }
         TreeNode node = TreeNode.create()
-                .setDataTable(manager.dataTable)
+                .setDataTable(dataController.dataTable)
                 .setTitle(title);
         return pickValue(node);
     }
@@ -219,7 +219,7 @@ public class BaseDataTreeNodeController extends BaseController {
     }
 
     protected void showEditorPane() {
-        manager.showRightPane();
+        dataController.showRightPane();
     }
 
     public void valueChanged(boolean changed) {
@@ -227,7 +227,7 @@ public class BaseDataTreeNodeController extends BaseController {
             return;
         }
         if (valueTab != null) {
-            valueTab.setText(message("Values") + (changed ? "*" : ""));
+            valueTab.setText(dataController.dataTable.getTableTitle() + (changed ? "*" : ""));
         }
         if (changed) {
             nodeChanged(changed);
@@ -241,10 +241,10 @@ public class BaseDataTreeNodeController extends BaseController {
         nodeChanged.set(changed);
         if (!changed) {
             if (valueTab != null) {
-                valueTab.setText(message("Values"));
+                valueTab.setText(dataController.dataTable.getTableTitle());
             }
             if (attributesTab != null) {
-                attributesTab.setText(message("Attributes"));
+                attributesTab.setText(message("Node"));
             }
             if (tagsTab != null) {
                 tagsTab.setText(message("Tags"));

@@ -22,22 +22,22 @@ License:    Apache License Version 2.0
                 <SplitPane fx:id="splitPane" dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                     <items>
                         <ScrollPane fx:id="leftPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
-                     <content>
-                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-                                            <padding>
-                                                <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                                            </padding>
-                                            <children>
-                              <fx:include fx:id="tree" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlDataTreeManage.fxml" VBox.vgrow="ALWAYS" />
-                                            </children>
-                                        </VBox>
-                     </content>
+                            <content>
+                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                    <padding>
+                                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                    </padding>
+                                    <children>
+                                        <fx:include fx:id="treeManage" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlDataTreeManage.fxml" VBox.vgrow="ALWAYS" />
+                                    </children>
+                                </VBox>
+                            </content>
                         </ScrollPane>
                         <ScrollPane fx:id="rightPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="621.0" prefViewportWidth="921.0">
                             <content>
                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                                     <children>
-                              <fx:include fx:id="note" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="NoteNode.fxml" VBox.vgrow="ALWAYS" />
+                                        <fx:include fx:id="note" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="NoteNode.fxml" VBox.vgrow="ALWAYS" />
                                     </children>
                                     <padding>
                                         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
