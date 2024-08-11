@@ -648,6 +648,36 @@ public abstract class BaseTable<D> {
         }
     }
 
+    public final boolean createTableTree(Connection conn) {
+        if (conn == null || tableName == null) {
+            return false;
+        }
+        try {
+            TableTree tableTree = new TableTree(this);
+            tableTree.createTable(conn);
+            tableTree.createIndices(conn);
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+            return false;
+        }
+    }
+
+    public final boolean createTableTree(Connection conn, boolean dropExisted) {
+        if (conn == null || tableName == null) {
+            return false;
+        }
+        try {
+            TableTree tableTree = new TableTree(this);
+            tableTree.createTable(conn, dropExisted);
+            tableTree.createIndices(conn);
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+            return false;
+        }
+    }
+
     public boolean dropTable(Connection conn) {
         if (conn == null) {
             return false;
@@ -1350,6 +1380,7 @@ public abstract class BaseTable<D> {
                             if (resultSet.next()) {
                                 newID = resultSet.getLong(1);
                                 setValue(data, idColumnName, newID);
+//                                MyBoxLog.console(tableName + "  " + newID);
                             }
                         } catch (Exception e) {
                             MyBoxLog.debug(e, tableName);
@@ -1388,11 +1419,31 @@ public abstract class BaseTable<D> {
         String sql = insertStatement();
         int count = 0;
         try (PreparedStatement statement = conn.prepareStatement(sql)) {
-            for (D data : dataList) {
-                if (setInsertStatement(conn, statement, data)) {
-                    count += statement.executeUpdate();
+            for (int i = 0; i < dataList.size(); ++i) {
+                D data = dataList.get(i);
+                if (!setInsertStatement(conn, statement, data)) {
+                    continue;
+                }
+                statement.addBatch();
+                if (i > 0 && (i % Database.BatchSize == 0)) {
+                    int[] res = statement.executeBatch();
+                    for (int r : res) {
+                        if (r > 0) {
+                            count += r;
+                        }
+                    }
+                    conn.commit();
+                    statement.clearBatch();
                 }
             }
+            int[] res = statement.executeBatch();
+            for (int r : res) {
+                if (r > 0) {
+                    count += r;
+                }
+            }
+            conn.commit();
+            statement.clearBatch();
         } catch (Exception e) {
             MyBoxLog.debug(e, sql);
         }
@@ -1487,6 +1538,7 @@ public abstract class BaseTable<D> {
                 }
             }
             conn.commit();
+            statement.clearBatch();
         } catch (Exception e) {
             MyBoxLog.debug(e, sql);
         }

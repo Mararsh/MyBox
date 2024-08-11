@@ -32,12 +32,6 @@ public class TableTree extends BaseTable<TreeNode> {
         tableName = dataTable.tableName + "_Tree";
         idColumnName = "nodeid";
         defineColumns();
-        try (Connection conn = DerbyBase.getConnection()) {
-            createTable(conn, false);
-            createIndices(conn);
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
     }
 
     public final TableTree defineColumns() {
@@ -75,6 +69,22 @@ public class TableTree extends BaseTable<TreeNode> {
 //            return false;
         }
         return true;
+    }
+
+    @Override
+    public boolean setValue(TreeNode data, String column, Object value) {
+        if (data == null || column == null) {
+            return false;
+        }
+        return data.setValue(column, value);
+    }
+
+    @Override
+    public Object getValue(TreeNode data, String column) {
+        if (data == null || column == null) {
+            return null;
+        }
+        return data.getValue(column);
     }
 
     public TreeNode find(long id) {

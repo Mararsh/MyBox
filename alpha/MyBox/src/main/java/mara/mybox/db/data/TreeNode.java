@@ -46,6 +46,19 @@ public class TreeNode extends BaseData {
         this.title = title;
     }
 
+    public boolean setValue(String column, Object value) {
+        return setValue(this, column, value);
+    }
+
+    public Object getValue(String column) {
+        return getValue(this, column);
+    }
+
+    @Override
+    public boolean valid() {
+        return valid(this);
+    }
+
     public TreeNode copyIn(TreeNode parent) {
         TreeNode node = new TreeNode();
         node.setParentid(parent.getNodeid());
@@ -56,54 +69,6 @@ public class TreeNode extends BaseData {
 
     public boolean isRoot() {
         return parentid == nodeid;
-    }
-
-    public boolean setNodeValue(String column, Object value) {
-        if (column == null) {
-            return false;
-        }
-        try {
-            switch (column) {
-                case "nodeid":
-                    nodeid = value == null ? -1 : (long) value;
-                    return true;
-                case "title":
-                    title = value == null ? null : (String) value;
-                    return true;
-                case "parentid":
-                    parentid = value == null ? -1 : (long) value;
-                    return true;
-                case "update_time":
-                    updateTime = value == null ? null : (Date) value;
-                    return true;
-            }
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
-        return false;
-    }
-
-    public Object getNodeValue(String column) {
-        if (column == null) {
-            return null;
-        }
-        switch (column) {
-            case "nodeid":
-                return nodeid;
-            case "title":
-                return title;
-            case "parentid":
-                return parentid;
-            case "update_time":
-                return updateTime;
-        }
-        return null;
-    }
-
-    @Override
-    public boolean valid() {
-        return title != null && !title.isBlank()
-                && !title.contains(TitleSeparater);
     }
 
     public String texts() {
@@ -135,6 +100,52 @@ public class TreeNode extends BaseData {
                 .setNodeid(RootID)
                 .setTitle(dataTable.getTableTitle());
         return root;
+    }
+
+    public static boolean setValue(TreeNode data, String column, Object value) {
+        if (data == null || column == null) {
+            return false;
+        }
+        try {
+            switch (column) {
+                case "nodeid":
+                    data.setNodeid(value == null ? -1 : (long) value);
+                    return true;
+                case "title":
+                    data.setTitle(value == null ? null : (String) value);
+                    return true;
+                case "parentid":
+                    data.setParentid(value == null ? -1 : (long) value);
+                    return true;
+                case "update_time":
+                    data.setUpdateTime(value == null ? null : (Date) value);
+                    return true;
+            }
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
+        return false;
+    }
+
+    public static Object getValue(TreeNode data, String column) {
+        if (data == null || column == null) {
+            return null;
+        }
+        switch (column) {
+            case "nodeid":
+                return data.getNodeid();
+            case "title":
+                return data.getTitle();
+            case "parentid":
+                return data.getParentid();
+            case "update_time":
+                return data.getUpdateTime();
+        }
+        return null;
+    }
+
+    public static boolean valid(Note data) {
+        return data != null;
     }
 
     /*

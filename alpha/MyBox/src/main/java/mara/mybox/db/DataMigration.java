@@ -16,8 +16,8 @@ import mara.mybox.bufferedimage.ImageConvertTools;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.bufferedimage.ImageScopeTools;
 import mara.mybox.data.GeoCoordinateSystem;
-import mara.mybox.data2d.tools.Data2DTableTools;
 import mara.mybox.data2d.DataTable;
+import mara.mybox.data2d.tools.Data2DTableTools;
 import mara.mybox.db.data.ColorData;
 import mara.mybox.db.data.ColorPaletteName;
 import mara.mybox.db.data.ColumnDefinition;
@@ -34,6 +34,8 @@ import mara.mybox.db.data.GeographyCodeTools;
 import mara.mybox.db.data.ImageClipboard;
 import mara.mybox.db.data.ImageEditHistory;
 import mara.mybox.db.data.InfoNode;
+import mara.mybox.db.data.Note;
+import mara.mybox.db.data.TreeNode;
 import mara.mybox.db.data.WebHistory;
 import static mara.mybox.db.table.BaseTable.StringMaxLength;
 import mara.mybox.db.table.TableAlarmClock;
@@ -48,7 +50,9 @@ import mara.mybox.db.table.TableData2DStyle;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.db.table.TableImageClipboard;
 import mara.mybox.db.table.TableImageEditHistory;
+import mara.mybox.db.table.TableNote;
 import mara.mybox.db.table.TableStringValues;
+import mara.mybox.db.table.TableTree;
 import mara.mybox.db.table.TableTreeNode;
 import mara.mybox.db.table.TableWebHistory;
 import mara.mybox.dev.DevTools;
@@ -77,6 +81,7 @@ public class DataMigration {
     public static boolean checkUpdates() {
         SystemConfig.setString("CurrentVersion", AppValues.AppVersion);
         try (Connection conn = DerbyBase.getConnection()) {
+            updateIn682(conn);
             int lastVersion = DevTools.lastVersion(conn);
             int currentVersion = DevTools.myboxVersion(AppValues.AppVersion);
             if (lastVersion != currentVersion
@@ -180,6 +185,9 @@ public class DataMigration {
                 if (lastVersion < 6008000) {
                     updateIn68(conn);
                 }
+                if (lastVersion < 6008002) {
+                    updateIn682(conn);
+                }
 
             }
             TableStringValues.add(conn, "InstalledVersions", AppValues.AppVersion);
@@ -188,6 +196,83 @@ public class DataMigration {
             MyBoxLog.debug(e);
         }
         return true;
+    }
+
+    private static void updateIn682(Connection conn) {
+        // for debug.Remove this block later
+        try (Statement statement = conn.createStatement()) {
+            conn.setAutoCommit(true);
+            statement.executeUpdate("DROP TABLE MYBOX_TMP_TREE_Migration682");
+            statement.executeUpdate("DROP TABLE Note_Tag");
+            statement.executeUpdate("DROP TABLE Note_Tree");
+            statement.executeUpdate("DROP TABLE Note");
+            TableNote tableNote = new TableNote();
+            tableNote.createTable(conn);
+            tableNote.createTableTree(conn);
+        } catch (Exception e) {
+        }
+
+        try (Statement statement = conn.createStatement()) {
+            MyBoxLog.info("Updating tables in 6.8.2...");
+
+            conn.setAutoCommit(true);
+
+            statement.executeUpdate("CREATE TABLE MYBOX_TMP_TREE_Migration682"
+                    + " ( old_nodeid BIGINT, title VARCHAR(" + StringMaxLength + "), old_parentid BIGINT, new_nodeid BIGINT)");
+            TableTreeNode tableTreeNode = new TableTreeNode();
+            TableNote tableNote = new TableNote();
+            ResultSet query = conn.createStatement().executeQuery("SELECT * FROM tree_node WHERE category='Notebook' ORDER BY nodeid");
+            conn.setAutoCommit(false);
+            long count = 0;
+            while (query.next()) {
+                try {
+                    InfoNode infoNode = tableTreeNode.readData(query);
+                    Note note = new Note()
+                            .setTitle(infoNode.getTitle())
+                            .setNote(infoNode.getInfo());
+                    note = tableNote.insertData(conn, note);
+                    if (++count % Database.BatchSize == 0) {
+                        conn.commit();
+                    }
+                    String title = infoNode.getTitle();
+                    statement.executeUpdate("INSERT INTO MYBOX_TMP_TREE_Migration682 VALUES ("
+                            + infoNode.getNodeid() + ", '" + (title != null ? title : "") + "', "
+                            + infoNode.getParentid() + ", " + note.getNoteid() + ")");
+
+                } catch (Exception e) {
+                    MyBoxLog.console(e);
+                }
+            }
+            conn.commit();
+            conn.setAutoCommit(true);
+
+            query = conn.createStatement().executeQuery("select A.new_nodeid AS nodeid,"
+                    + " A.title AS title, B.new_nodeid AS parentid "
+                    + " from MYBOX_TMP_TREE_Migration682 A, MYBOX_TMP_TREE_Migration682 AS B "
+                    + " WHERE A.old_parentid=B.old_nodeid");
+            conn.setAutoCommit(false);
+            count = 0;
+            TableTree tableTree = new TableTree(tableNote);
+            while (query.next()) {
+                try {
+                    TreeNode treeNode = new TreeNode()
+                            .setNodeid(query.getLong("nodeid"))
+                            .setTitle(query.getString("title"))
+                            .setParentid(query.getLong("parentid"));
+                    tableTree.insertData(conn, treeNode);
+                    if (++count % Database.BatchSize == 0) {
+                        conn.commit();
+                    }
+                } catch (Exception e) {
+                    MyBoxLog.console(e);
+                }
+            }
+            conn.commit();
+            conn.setAutoCommit(true);
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
     private static void updateIn68(Connection conn) {

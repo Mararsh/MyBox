@@ -194,6 +194,9 @@ public class BaseDataAdaptor {
         } else if (data instanceof PathConnection) {
             return PathConnection.valid((PathConnection) data);
 
+        } else if (data instanceof Note) {
+            return Note.valid((Note) data);
+
         } else {
             return true;
         }

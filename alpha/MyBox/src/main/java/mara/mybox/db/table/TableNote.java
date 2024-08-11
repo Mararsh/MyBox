@@ -28,8 +28,25 @@ public class TableNote extends BaseTable<Note> {
 
     public final TableNote defineColumns() {
         addColumn(new ColumnDefinition("noteid", ColumnType.Long, true, true).setAuto(true));
+        addColumn(new ColumnDefinition("title", ColumnType.String).setLength(StringMaxLength));
         addColumn(new ColumnDefinition("note", ColumnType.Clob));
         return this;
+    }
+
+    @Override
+    public boolean setValue(Note data, String column, Object value) {
+        if (data == null || column == null) {
+            return false;
+        }
+        return data.setValue(column, value);
+    }
+
+    @Override
+    public Object getValue(Note data, String column) {
+        if (data == null || column == null) {
+            return null;
+        }
+        return data.getValue(column);
     }
 
 }
