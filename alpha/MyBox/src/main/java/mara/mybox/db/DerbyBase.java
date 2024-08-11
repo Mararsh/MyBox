@@ -40,8 +40,8 @@ import mara.mybox.db.table.TableStringValues;
 import mara.mybox.db.table.TableSystemConf;
 import mara.mybox.db.table.TableTag;
 import mara.mybox.db.table.TableTextClipboard;
-import mara.mybox.db.table.TableTreeNode;
-import mara.mybox.db.table.TableTreeNodeTag;
+import mara.mybox.db.table.TableInfoNode;
+import mara.mybox.db.table.TableInfoNodeTag;
 import mara.mybox.db.table.TableUserConf;
 import mara.mybox.db.table.TableVisitHistory;
 import mara.mybox.db.table.TableWebHistory;
@@ -534,7 +534,7 @@ public class DerbyBase {
                 BaseTable t = new TableNote();
                 t.createTable(conn);
                 loadingController.info("Note");
-                t.createTableTree(conn);
+                t.initTreeTables(conn);
                 loadingController.info("Note_Tree");
             }
             return true;
@@ -613,21 +613,21 @@ public class DerbyBase {
             }
             if (!indexes.contains("Tree_Node_parent_index".toLowerCase())) {
                 try (Statement statement = conn.createStatement()) {
-                    statement.executeUpdate(TableTreeNode.Create_Parent_Index);
+                    statement.executeUpdate(TableInfoNode.Create_Parent_Index);
                 } catch (Exception e) {
                     MyBoxLog.error(e);
                 }
             }
             if (!indexes.contains("Tree_Node_title_index".toLowerCase())) {
                 try (Statement statement = conn.createStatement()) {
-                    statement.executeUpdate(TableTreeNode.Create_Title_Index);
+                    statement.executeUpdate(TableInfoNode.Create_Title_Index);
                 } catch (Exception e) {
                     MyBoxLog.error(e);
                 }
             }
             if (!indexes.contains("Tree_Node_Tag_unique_index".toLowerCase())) {
                 try (Statement statement = conn.createStatement()) {
-                    statement.executeUpdate(TableTreeNodeTag.Create_Unique_Index);
+                    statement.executeUpdate(TableInfoNodeTag.Create_Unique_Index);
                 } catch (Exception e) {
                     MyBoxLog.error(e);
                 }

@@ -5,7 +5,7 @@ import mara.mybox.db.data.TreeNode;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.BaseTable;
 import mara.mybox.db.table.TableTag;
-import mara.mybox.db.table.TableTree;
+import mara.mybox.db.table.TableTreeNode;
 import mara.mybox.db.table.TableTreeTag;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
@@ -21,7 +21,7 @@ public abstract class BaseDataTreeController extends BaseController {
     protected BaseDataTreeNodeController nodeController;
 
     protected BaseTable dataTable;
-    protected TableTree treeTable;
+    protected TableTreeNode treeTable;
     protected TableTag tagTable;
     protected TableTreeTag treeTagTable;
 
@@ -38,7 +38,7 @@ public abstract class BaseDataTreeController extends BaseController {
             if (dataTable == null) {
                 return;
             }
-            treeTable = new TableTree(dataTable);
+            treeTable = new TableTreeNode(dataTable);
             tagTable = new TableTag();
             treeTagTable = new TableTreeTag(treeTable);
 

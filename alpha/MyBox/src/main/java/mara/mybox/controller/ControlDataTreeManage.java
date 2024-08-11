@@ -19,13 +19,10 @@ import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.TreeItem;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.paint.Color;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.TreeNode;
 import static mara.mybox.db.data.TreeNode.TitleSeparater;
-import mara.mybox.db.data.TreeNodeTag;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.PopTools;
@@ -712,27 +709,27 @@ public class ControlDataTreeManage extends ControlDataTreeView {
             }
             writer.write(indentNode + "<DIV style=\"padding: 2px;\">" + spaceNode
                     + displayName + "\n");
-            List<TreeNodeTag> tags = treeTagTable.nodeTags(conn, node.getNodeid());
-            if (tags != null && !tags.isEmpty()) {
-                String indentTag = " ".repeat(indent + 8);
-                String spaceTag = "&nbsp;".repeat(2);
-                writer.write(indentTag + "<SPAN class=\"NodeTag\">\n");
-                for (TreeNodeTag nodeTag : tags) {
-                    if (infoTask != null && !infoTask.isWorking()) {
-                        return;
-                    }
-                    Color color = nodeTag.getTag().getColor();
-                    if (color == null) {
-                        color = FxColorTools.randomColor();
-                    }
-                    writer.write(indentTag + spaceTag
-                            + "<SPAN style=\"border-radius:4px; padding: 2px; font-size:0.8em;  background-color: "
-                            + FxColorTools.color2rgb(color)
-                            + "; color: " + FxColorTools.color2rgb(FxColorTools.foreColor(color))
-                            + ";\">" + nodeTag.getTag().getTag() + "</SPAN>\n");
-                }
-                writer.write(indentTag + "</SPAN>\n");
-            }
+//            List<TreeNodeTag> tags = treeTagTable.nodeTags(conn, node.getNodeid());
+//            if (tags != null && !tags.isEmpty()) {
+//                String indentTag = " ".repeat(indent + 8);
+//                String spaceTag = "&nbsp;".repeat(2);
+//                writer.write(indentTag + "<SPAN class=\"NodeTag\">\n");
+//                for (TreeNodeTag nodeTag : tags) {
+//                    if (infoTask != null && !infoTask.isWorking()) {
+//                        return;
+//                    }
+//                    Color color = nodeTag.getTag().getColor();
+//                    if (color == null) {
+//                        color = FxColorTools.randomColor();
+//                    }
+//                    writer.write(indentTag + spaceTag
+//                            + "<SPAN style=\"border-radius:4px; padding: 2px; font-size:0.8em;  background-color: "
+//                            + FxColorTools.color2rgb(color)
+//                            + "; color: " + FxColorTools.color2rgb(FxColorTools.foreColor(color))
+//                            + ";\">" + nodeTag.getTag().getTag() + "</SPAN>\n");
+//                }
+//                writer.write(indentTag + "</SPAN>\n");
+//            }
             writer.write(indentNode + "</DIV>\n");
 //            String infoDisplay = TreeNode.infoHtml(infoTask, myController, category, node.getInfo(), true, true);
 //            if (infoDisplay != null && !infoDisplay.isBlank()) {

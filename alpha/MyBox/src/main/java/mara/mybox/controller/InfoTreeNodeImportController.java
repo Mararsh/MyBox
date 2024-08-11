@@ -20,8 +20,8 @@ import mara.mybox.db.data.InfoNodeTag;
 import mara.mybox.db.data.Tag;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableTag;
-import mara.mybox.db.table.TableTreeNode;
-import mara.mybox.db.table.TableTreeNodeTag;
+import mara.mybox.db.table.TableInfoNode;
+import mara.mybox.db.table.TableInfoNodeTag;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.HelpTools;
@@ -43,8 +43,8 @@ import mara.mybox.value.UserConfig;
 public class InfoTreeNodeImportController extends BaseBatchFileController {
 
     protected BaseInfoTreeController infoController;
-    protected TableTreeNode tableTreeNode;
-    protected TableTreeNodeTag tableTreeNodeTag;
+    protected TableInfoNode tableTreeNode;
+    protected TableInfoNodeTag tableTreeNodeTag;
     protected TableTag tableTag;
     protected InfoNode rootNode;
     protected String category;
@@ -130,7 +130,7 @@ public class InfoTreeNodeImportController extends BaseBatchFileController {
             return false;
         }
         if (tableTreeNode == null) {
-            tableTreeNode = new TableTreeNode();
+            tableTreeNode = new TableInfoNode();
         }
         rootNode = tableTreeNode.findAndCreateRoot(category);
         if (rootNode == null) {

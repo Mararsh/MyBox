@@ -22,8 +22,8 @@ import javafx.scene.input.MouseEvent;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.InfoNode;
 import static mara.mybox.db.data.InfoNode.TitleSeparater;
-import mara.mybox.db.table.TableTreeNode;
-import mara.mybox.db.table.TableTreeNodeTag;
+import mara.mybox.db.table.TableInfoNode;
+import mara.mybox.db.table.TableInfoNodeTag;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.HelpTools;
@@ -44,8 +44,8 @@ public class ControlInfoTreeList extends BaseTreeTableViewController<InfoNode> {
     protected BaseInfoTreeController infoController;
     protected static final int AutoExpandThreshold = 500;
     protected boolean expandAll;
-    protected TableTreeNode tableTreeNode;
-    protected TableTreeNodeTag tableTreeNodeTag;
+    protected TableInfoNode tableTreeNode;
+    protected TableInfoNodeTag tableTreeNodeTag;
     protected String category;
 
     @FXML

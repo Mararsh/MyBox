@@ -9,7 +9,7 @@ import javafx.scene.control.TextField;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.TreeNode;
 import mara.mybox.db.table.BaseTable;
-import mara.mybox.db.table.TableTree;
+import mara.mybox.db.table.TableTreeNode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.DateTools;
@@ -24,7 +24,7 @@ public class ControlDataTreeNodeAttributes extends BaseController {
 
     protected BaseDataTreeController dataController;
     protected BaseDataTreeNodeController nodeController;
-    protected TableTree tableTree;
+    protected TableTreeNode tableTree;
     protected FxTask tagsTask;
     protected BaseTable dataTable;
     protected TreeNode parentNode, currentNode;

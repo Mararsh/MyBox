@@ -37,6 +37,19 @@ public class TreeNodeTag extends BaseData {
         this.tagid = tag == null ? -1 : tag.getTgid();
     }
 
+    public boolean setValue(String column, Object value) {
+        return setValue(this, column, value);
+    }
+
+    public Object getValue(String column) {
+        return getValue(this, column);
+    }
+
+    @Override
+    public boolean valid() {
+        return valid(this);
+    }
+
     /*
         Static methods
      */
@@ -93,40 +106,45 @@ public class TreeNodeTag extends BaseData {
         return ttid;
     }
 
-    public void setTtid(long ttid) {
+    public TreeNodeTag setTtid(long ttid) {
         this.ttid = ttid;
+        return this;
     }
 
     public long getTnodeid() {
         return tnodeid;
     }
 
-    public void setTnodeid(long tnodeid) {
+    public TreeNodeTag setTnodeid(long tnodeid) {
         this.tnodeid = tnodeid;
+        return this;
     }
 
     public long getTagid() {
         return tagid;
     }
 
-    public void setTagid(long tagid) {
+    public TreeNodeTag setTagid(long tagid) {
         this.tagid = tagid;
+        return this;
     }
 
     public TreeNode getNode() {
         return node;
     }
 
-    public void setNode(TreeNode node) {
+    public TreeNodeTag setNode(TreeNode node) {
         this.node = node;
+        return this;
     }
 
     public Tag getTag() {
         return tag;
     }
 
-    public void setTag(Tag tag) {
+    public TreeNodeTag setTag(Tag tag) {
         this.tag = tag;
+        return this;
     }
 
 }

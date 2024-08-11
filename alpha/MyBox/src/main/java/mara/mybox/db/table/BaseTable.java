@@ -648,14 +648,21 @@ public abstract class BaseTable<D> {
         }
     }
 
-    public final boolean createTableTree(Connection conn) {
+    public final boolean initTreeTables(Connection conn) {
         if (conn == null || tableName == null) {
             return false;
         }
         try {
-            TableTree tableTree = new TableTree(this);
-            tableTree.createTable(conn);
-            tableTree.createIndices(conn);
+            TableTreeNode treeTable = new TableTreeNode(this);
+            treeTable.createTable(conn);
+            treeTable.createIndices(conn);
+
+            new TableTreeTag(this).createTable(conn);
+
+            TableTreeNodeTag nodeTagTable = new TableTreeNodeTag(this);
+            nodeTagTable.createTable(conn);
+            nodeTagTable.createIndices(conn);
+
             return true;
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -668,7 +675,7 @@ public abstract class BaseTable<D> {
             return false;
         }
         try {
-            TableTree tableTree = new TableTree(this);
+            TableTreeNode tableTree = new TableTreeNode(this);
             tableTree.createTable(conn, dropExisted);
             tableTree.createIndices(conn);
             return true;

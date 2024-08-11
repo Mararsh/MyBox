@@ -36,6 +36,7 @@ import mara.mybox.db.data.ImageEditHistory;
 import mara.mybox.db.data.InfoNode;
 import mara.mybox.db.data.Note;
 import mara.mybox.db.data.TreeNode;
+import mara.mybox.db.data.TreeTag;
 import mara.mybox.db.data.WebHistory;
 import static mara.mybox.db.table.BaseTable.StringMaxLength;
 import mara.mybox.db.table.TableAlarmClock;
@@ -50,10 +51,11 @@ import mara.mybox.db.table.TableData2DStyle;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.db.table.TableImageClipboard;
 import mara.mybox.db.table.TableImageEditHistory;
+import mara.mybox.db.table.TableInfoNode;
 import mara.mybox.db.table.TableNote;
 import mara.mybox.db.table.TableStringValues;
-import mara.mybox.db.table.TableTree;
 import mara.mybox.db.table.TableTreeNode;
+import mara.mybox.db.table.TableTreeTag;
 import mara.mybox.db.table.TableWebHistory;
 import mara.mybox.dev.DevTools;
 import mara.mybox.dev.MyBoxLog;
@@ -203,12 +205,13 @@ public class DataMigration {
         try (Statement statement = conn.createStatement()) {
             conn.setAutoCommit(true);
             statement.executeUpdate("DROP TABLE MYBOX_TMP_TREE_Migration682");
-            statement.executeUpdate("DROP TABLE Note_Tag");
+            statement.executeUpdate("DROP TABLE Note_Tree_Node_Tag");
+            statement.executeUpdate("DROP TABLE Note_Tree_Tag");
             statement.executeUpdate("DROP TABLE Note_Tree");
             statement.executeUpdate("DROP TABLE Note");
             TableNote tableNote = new TableNote();
             tableNote.createTable(conn);
-            tableNote.createTableTree(conn);
+            tableNote.initTreeTables(conn);
         } catch (Exception e) {
         }
 
@@ -219,25 +222,23 @@ public class DataMigration {
 
             statement.executeUpdate("CREATE TABLE MYBOX_TMP_TREE_Migration682"
                     + " ( old_nodeid BIGINT, title VARCHAR(" + StringMaxLength + "), old_parentid BIGINT, new_nodeid BIGINT)");
-            TableTreeNode tableTreeNode = new TableTreeNode();
             TableNote tableNote = new TableNote();
             ResultSet query = conn.createStatement().executeQuery("SELECT * FROM tree_node WHERE category='Notebook' ORDER BY nodeid");
             conn.setAutoCommit(false);
             long count = 0;
             while (query.next()) {
                 try {
-                    InfoNode infoNode = tableTreeNode.readData(query);
+                    String title = query.getString("title");
                     Note note = new Note()
-                            .setTitle(infoNode.getTitle())
-                            .setNote(infoNode.getInfo());
+                            .setTitle(title)
+                            .setNote(query.getString("info"));
                     note = tableNote.insertData(conn, note);
                     if (++count % Database.BatchSize == 0) {
                         conn.commit();
                     }
-                    String title = infoNode.getTitle();
                     statement.executeUpdate("INSERT INTO MYBOX_TMP_TREE_Migration682 VALUES ("
-                            + infoNode.getNodeid() + ", '" + (title != null ? title : "") + "', "
-                            + infoNode.getParentid() + ", " + note.getNoteid() + ")");
+                            + query.getLong("nodeid") + ", '" + (title != null ? title : "") + "', "
+                            + query.getLong("parentid") + ", " + note.getNoteid() + ")");
 
                 } catch (Exception e) {
                     MyBoxLog.console(e);
@@ -252,7 +253,7 @@ public class DataMigration {
                     + " WHERE A.old_parentid=B.old_nodeid");
             conn.setAutoCommit(false);
             count = 0;
-            TableTree tableTree = new TableTree(tableNote);
+            TableTreeNode tableTree = new TableTreeNode(tableNote);
             while (query.next()) {
                 try {
                     TreeNode treeNode = new TreeNode()
@@ -270,6 +271,48 @@ public class DataMigration {
             conn.commit();
             conn.setAutoCommit(true);
 
+            query = conn.createStatement().executeQuery("select * from tag where category='Notebook' ORDER BY tgid ");
+            conn.setAutoCommit(false);
+            count = 0;
+            TableTreeTag tableTreeTag = new TableTreeTag(tableNote);
+            while (query.next()) {
+                try {
+                    TreeTag tag = new TreeTag()
+                            .setTag(query.getString("tag"))
+                            .setColorString(query.getString("color"));
+                    tableTreeTag.insertData(conn, tag);
+                    if (++count % Database.BatchSize == 0) {
+                        conn.commit();
+                    }
+                } catch (Exception e) {
+                    MyBoxLog.console(e);
+                }
+            }
+            conn.commit();
+            conn.setAutoCommit(true);
+
+//            query = conn.createStatement().executeQuery("select A.new_nodeid AS nodeid,"
+//                    + " B.tagid AS tagid "
+//                    + " from MYBOX_TMP_TREE_Migration682 A, tree_node_tag AS B "
+//                    + " WHERE A.old_nodeid=B.tnodeid");
+//            conn.setAutoCommit(false);
+//            count = 0;
+//            TableTreeTag tableTreeTag = new TableTreeTag(tableTree);
+//            while (query.next()) {
+//                try {
+//                    TreeNodeTag tag = new TreeNodeTag()
+//                            .setTnodeid(query.getLong("nodeid"))
+//                            .setTagid(query.getLong("tagid"));
+//                    tableTreeTag.insertData(conn, tag);
+//                    if (++count % Database.BatchSize == 0) {
+//                        conn.commit();
+//                    }
+//                } catch (Exception e) {
+//                    MyBoxLog.console(e);
+//                }
+//            }
+//            conn.commit();
+//            conn.setAutoCommit(true);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -280,7 +323,7 @@ public class DataMigration {
             MyBoxLog.info("Updating tables in 6.8...");
 
             conn.setAutoCommit(true);
-            TableTreeNode tableTreeNode = new TableTreeNode();
+            TableInfoNode tableTreeNode = new TableInfoNode();
             InfoNode rootNode = tableTreeNode.findAndCreateRoot(conn, InfoNode.ImageScope);
             if (rootNode == null) {
                 return;
@@ -353,7 +396,7 @@ public class DataMigration {
 
             conn.setAutoCommit(true);
             statement.executeUpdate("DROP INDEX Tree_Node_title_index");
-            statement.executeUpdate(TableTreeNode.Create_Title_Index);
+            statement.executeUpdate(TableInfoNode.Create_Title_Index);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -366,7 +409,7 @@ public class DataMigration {
 
             conn.setAutoCommit(true);
             statement.executeUpdate("ALTER TABLE Tree_Node ADD COLUMN info CLOB ");
-            TableTreeNode tableTreeNode = new TableTreeNode();
+            TableInfoNode tableTreeNode = new TableInfoNode();
             ResultSet query = statement.executeQuery("SELECT * FROM Tree_Node");
             while (query.next()) {
                 InfoNode node = tableTreeNode.readData(query);
@@ -881,7 +924,7 @@ public class DataMigration {
             statement.executeUpdate("CREATE UNIQUE INDEX Tag_unique_index on Tag (  category, tag )");
             statement.executeUpdate("UPDATE Tag SET category='" + InfoNode.Notebook + "'");
 
-            TableTreeNode tableTreeNode = new TableTreeNode();
+            TableInfoNode tableTreeNode = new TableInfoNode();
             tableTreeNode.checkBase(conn);
             statement.executeUpdate("ALTER TABLE tree_node ADD COLUMN oldNodeid BIGINT");
             statement.executeUpdate("ALTER TABLE tree_node ADD COLUMN oldParentid BIGINT");

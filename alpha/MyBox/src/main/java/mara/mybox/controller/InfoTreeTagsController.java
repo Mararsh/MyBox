@@ -17,8 +17,8 @@ import mara.mybox.db.data.InfoNode;
 import mara.mybox.db.data.Tag;
 import mara.mybox.db.table.TableColor;
 import mara.mybox.db.table.TableTag;
-import mara.mybox.db.table.TableTreeNode;
-import mara.mybox.db.table.TableTreeNodeTag;
+import mara.mybox.db.table.TableInfoNode;
+import mara.mybox.db.table.TableInfoNodeTag;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.FxTask;
@@ -35,9 +35,9 @@ import static mara.mybox.value.Languages.message;
 public class InfoTreeTagsController extends BaseSysTableController<Tag> {
 
     protected BaseInfoTreeController infoController;
-    protected TableTreeNode tableTreeNode;
+    protected TableInfoNode tableTreeNode;
     protected TableTag tableTag;
-    protected TableTreeNodeTag tableTreeNodeTag;
+    protected TableInfoNodeTag tableTreeNodeTag;
     protected String category;
     protected InfoNode currentNode;
 

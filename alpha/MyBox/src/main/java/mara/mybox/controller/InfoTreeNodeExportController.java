@@ -24,8 +24,8 @@ import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.InfoNode;
 import mara.mybox.db.data.InfoNodeTag;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.db.table.TableTreeNode;
-import mara.mybox.db.table.TableTreeNodeTag;
+import mara.mybox.db.table.TableInfoNode;
+import mara.mybox.db.table.TableInfoNodeTag;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.FxTask;
@@ -48,8 +48,8 @@ import mara.mybox.value.UserConfig;
 public class InfoTreeNodeExportController extends BaseTaskController {
 
     protected BaseInfoTreeController manager;
-    protected TableTreeNode tableTreeNode;
-    protected TableTreeNodeTag tableTreeNodeTag;
+    protected TableInfoNode tableTreeNode;
+    protected TableInfoNodeTag tableTreeNodeTag;
     protected TreeTableView<InfoNode> infoTree;
     protected TreeItem<InfoNode> selectedNode;
     protected File textsFile, xmlFile, jsonFile, htmlFile, framesetFile, framesetNavFile;

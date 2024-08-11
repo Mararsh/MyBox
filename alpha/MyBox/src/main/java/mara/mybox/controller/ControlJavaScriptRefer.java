@@ -9,8 +9,8 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TreeItem;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.db.data.InfoNode;
-import mara.mybox.db.table.TableTreeNode;
-import mara.mybox.db.table.TableTreeNodeTag;
+import mara.mybox.db.table.TableInfoNode;
+import mara.mybox.db.table.TableInfoNodeTag;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.value.UserConfig;
@@ -37,8 +37,8 @@ public class ControlJavaScriptRefer extends ControlInfoTreeList {
         try {
             super.initControls();
 
-            tableTreeNode = new TableTreeNode();
-            tableTreeNodeTag = new TableTreeNodeTag();
+            tableTreeNode = new TableInfoNode();
+            tableTreeNodeTag = new TableInfoNodeTag();
             loadTree();
 
             placeholdersList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);

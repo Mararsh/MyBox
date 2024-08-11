@@ -13,8 +13,8 @@ import javafx.scene.layout.VBox;
 import mara.mybox.db.data.InfoNode;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableTag;
-import mara.mybox.db.table.TableTreeNode;
-import mara.mybox.db.table.TableTreeNodeTag;
+import mara.mybox.db.table.TableInfoNode;
+import mara.mybox.db.table.TableInfoNodeTag;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.PopTools;
@@ -30,9 +30,9 @@ public abstract class BaseInfoTreeController extends BaseController {
 
     protected ControlInfoTreeList infoTree;
     protected String category;
-    protected TableTreeNode tableTreeNode;
+    protected TableInfoNode tableTreeNode;
     protected TableTag tableTag;
-    protected TableTreeNodeTag tableTreeNodeTag;
+    protected TableInfoNodeTag tableTreeNodeTag;
     protected String nameMsg, valueMsg, timeMsg;
 
     @FXML
@@ -76,9 +76,9 @@ public abstract class BaseInfoTreeController extends BaseController {
         try {
             super.initValues();
 
-            tableTreeNode = new TableTreeNode();
+            tableTreeNode = new TableInfoNode();
             tableTag = new TableTag();
-            tableTreeNodeTag = new TableTreeNodeTag();
+            tableTreeNodeTag = new TableInfoNodeTag();
 
             infoTree = listController;
         } catch (Exception e) {

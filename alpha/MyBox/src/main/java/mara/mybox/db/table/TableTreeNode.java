@@ -8,9 +8,9 @@ import java.util.List;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
-import mara.mybox.db.data.InfoNode;
-import static mara.mybox.db.data.InfoNode.TitleSeparater;
 import mara.mybox.db.data.Tag;
+import mara.mybox.db.data.TreeNode;
+import static mara.mybox.db.data.TreeNode.TitleSeparater;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import static mara.mybox.value.Languages.message;
@@ -20,73 +20,74 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-4-23
  * @License Apache License Version 2.0
  */
-public class TableTreeNode extends BaseTable<InfoNode> {
+public class TableTreeNode extends BaseTable<TreeNode> {
 
-    public TableTreeNode() {
-        tableName = "Tree_Node";
+    protected BaseTable dataTable;
+
+    public TableTreeNode(BaseTable data) {
+        dataTable = data;
+        if (dataTable == null) {
+            return;
+        }
+        tableName = dataTable.tableName + "_Tree_Node";
+        idColumnName = "nodeid";
         defineColumns();
     }
 
-    public TableTreeNode(boolean defineColumns) {
-        tableName = "Tree_Node";
-        if (defineColumns) {
-            defineColumns();
-        }
-    }
-
     public final TableTreeNode defineColumns() {
-        addColumn(new ColumnDefinition("nodeid", ColumnType.Long, true, true).setAuto(true));
-        addColumn(new ColumnDefinition("category", ColumnType.String, true).setLength(StringMaxLength));
+        addColumn(new ColumnDefinition("nodeid", ColumnType.Long, true, true)
+                .setReferName(tableName + "_nodeid_fk")
+                .setReferTable(dataTable.tableName).setReferColumn(dataTable.idColumnName)
+                .setOnDelete(ColumnDefinition.OnDelete.Cascade)
+        );
         addColumn(new ColumnDefinition("title", ColumnType.String, true).setLength(StringMaxLength));
-        addColumn(new ColumnDefinition("info", ColumnType.Clob));
         addColumn(new ColumnDefinition("update_time", ColumnType.Datetime));
-        addColumn(new ColumnDefinition("parentid", ColumnType.Long)
-                .setReferName("Tree_Node_parent_fk").setReferTable("Tree_Node").setReferColumn("nodeid")
+        addColumn(new ColumnDefinition("parentid", ColumnType.Long, true)
+                .setReferName(tableName + "_parentid_fk")
+                .setReferTable(dataTable.tableName).setReferColumn(dataTable.idColumnName)
                 .setOnDelete(ColumnDefinition.OnDelete.Cascade)
         );
         return this;
     }
 
-    public static final String Create_Parent_Index
-            = "CREATE INDEX Tree_Node_parent_index on Tree_Node ( parentid )";
+    public final boolean createIndices(Connection conn) {
+        if (conn == null || tableName == null) {
+            return false;
+        }
+        String sql = "CREATE INDEX " + tableName + "_parent_index on " + tableName + " ( parentid )";
+        try (PreparedStatement statement = conn.prepareStatement(sql)) {
+            statement.executeUpdate();
+        } catch (Exception e) {
+//            MyBoxLog.debug(e);
+//            return false;
+        }
+        sql = "CREATE INDEX " + tableName + "_title_index on " + tableName + " ( parentid, title )";
+        try (PreparedStatement statement = conn.prepareStatement(sql)) {
+            statement.executeUpdate();
+        } catch (Exception e) {
+//            MyBoxLog.debug(e);
+//            return false;
+        }
+        return true;
+    }
 
-    public static final String Create_Title_Index
-            = "CREATE INDEX Tree_Node_title_index on Tree_Node ( parentid, title )";
+    @Override
+    public boolean setValue(TreeNode data, String column, Object value) {
+        if (data == null || column == null) {
+            return false;
+        }
+        return data.setValue(column, value);
+    }
 
-    public static final String QueryID
-            = "SELECT * FROM Tree_Node WHERE nodeid=?";
+    @Override
+    public Object getValue(TreeNode data, String column) {
+        if (data == null || column == null) {
+            return null;
+        }
+        return data.getValue(column);
+    }
 
-    public static final String QueryRoot
-            = "SELECT * FROM Tree_Node WHERE category=? AND nodeid=parentid ORDER BY nodeid ASC";
-
-    public static final String QueryChildren
-            = "SELECT * FROM Tree_Node WHERE parentid=? AND nodeid<>parentid  ORDER BY nodeid ASC";
-
-    public static final String QueryLastChild
-            = "SELECT * FROM Tree_Node WHERE parentid=? AND title=? AND nodeid<>parentid ORDER BY nodeid DESC FETCH FIRST ROW ONLY";
-
-    public static final String DeleteID
-            = "DELETE FROM Tree_Node WHERE nodeid=?";
-
-    public static final String ChildrenCount
-            = "SELECT count(nodeid) FROM Tree_Node WHERE parentid=? AND nodeid<>parentid";
-
-    public static final String ChildrenEmpty
-            = "SELECT nodeid FROM Tree_Node WHERE parentid=? AND nodeid<>parentid FETCH FIRST ROW ONLY";
-
-    public static final String CategoryCount
-            = "SELECT count(nodeid) FROM Tree_Node WHERE category=? AND nodeid<>parentid";
-
-    public static final String CategoryEmpty
-            = "SELECT nodeid FROM Tree_Node WHERE category=? AND nodeid<>parentid FETCH FIRST ROW ONLY";
-
-    public static final String DeleteParent
-            = "DELETE FROM Tree_Node WHERE parentid=?";
-
-    public static final String DeleteChildren
-            = "DELETE FROM Tree_Node WHERE parentid=? AND nodeid<>parentid";
-
-    public InfoNode find(long id) {
+    public TreeNode find(long id) {
         if (id < 0) {
             return null;
         }
@@ -98,11 +99,12 @@ public class TableTreeNode extends BaseTable<InfoNode> {
         }
     }
 
-    public InfoNode find(Connection conn, long id) {
+    public TreeNode find(Connection conn, long id) {
         if (conn == null || id < 0) {
             return null;
         }
-        try (PreparedStatement statement = conn.prepareStatement(QueryID)) {
+        String sql = "SELECT * FROM " + tableName + " WHERE nodeid=?";
+        try (PreparedStatement statement = conn.prepareStatement(sql)) {
             statement.setLong(1, id);
             return query(conn, statement);
         } catch (Exception e) {
@@ -111,21 +113,21 @@ public class TableTreeNode extends BaseTable<InfoNode> {
         }
     }
 
-    public List<InfoNode> findRoots(String category) {
+    public List<TreeNode> findRoots() {
         try (Connection conn = DerbyBase.getConnection()) {
-            return findRoots(conn, category);
+            return findRoots(conn);
         } catch (Exception e) {
             MyBoxLog.debug(e);
             return null;
         }
     }
 
-    public List<InfoNode> findRoots(Connection conn, String category) {
-        if (conn == null || category == null) {
+    public List<TreeNode> findRoots(Connection conn) {
+        if (conn == null) {
             return null;
         }
-        try (PreparedStatement statement = conn.prepareStatement(QueryRoot)) {
-            statement.setString(1, category);
+        String sql = "SELECT * FROM " + tableName + " WHERE nodeid=parentid ORDER BY nodeid ASC";
+        try (PreparedStatement statement = conn.prepareStatement(sql)) {
             return query(statement);
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -133,7 +135,7 @@ public class TableTreeNode extends BaseTable<InfoNode> {
         }
     }
 
-    public List<InfoNode> children(long parent) {
+    public List<TreeNode> children(long parent) {
         if (parent < 0) {
             return null;
         }
@@ -145,11 +147,12 @@ public class TableTreeNode extends BaseTable<InfoNode> {
         }
     }
 
-    public List<InfoNode> children(Connection conn, long parent) {
+    public List<TreeNode> children(Connection conn, long parent) {
         if (conn == null || parent < 0) {
             return null;
         }
-        try (PreparedStatement statement = conn.prepareStatement(QueryChildren)) {
+        String sql = "SELECT * FROM " + tableName + " WHERE parentid=? AND nodeid<>parentid  ORDER BY nodeid ASC";
+        try (PreparedStatement statement = conn.prepareStatement(sql)) {
             statement.setLong(1, parent);
             return query(statement);
         } catch (Exception e) {
@@ -158,7 +161,7 @@ public class TableTreeNode extends BaseTable<InfoNode> {
         }
     }
 
-    public List<InfoNode> ancestor(long id) {
+    public List<TreeNode> ancestor(long id) {
         if (id <= 0) {
             return null;
         }
@@ -170,17 +173,17 @@ public class TableTreeNode extends BaseTable<InfoNode> {
         }
     }
 
-    public List<InfoNode> ancestor(Connection conn, long id) {
+    public List<TreeNode> ancestor(Connection conn, long id) {
         if (conn == null || id <= 0) {
             return null;
         }
-        List<InfoNode> ancestor = null;
-        InfoNode node = find(conn, id);
+        List<TreeNode> ancestor = null;
+        TreeNode node = find(conn, id);
         if (node == null || node.isRoot()) {
             return ancestor;
         }
         long parentid = node.getParentid();
-        InfoNode parent = find(conn, parentid);
+        TreeNode parent = find(conn, parentid);
         if (parent != null) {
             ancestor = ancestor(conn, parentid);
             if (ancestor == null) {
@@ -191,7 +194,7 @@ public class TableTreeNode extends BaseTable<InfoNode> {
         return ancestor;
     }
 
-    public InfoNode find(long parent, String title) {
+    public TreeNode find(long parent, String title) {
         if (title == null || title.isBlank()) {
             return null;
         }
@@ -203,11 +206,13 @@ public class TableTreeNode extends BaseTable<InfoNode> {
         }
     }
 
-    public InfoNode find(Connection conn, long parent, String title) {
+    public TreeNode find(Connection conn, long parent, String title) {
         if (conn == null || title == null || title.isBlank()) {
             return null;
         }
-        try (PreparedStatement statement = conn.prepareStatement(QueryLastChild)) {
+        String sql = "SELECT * FROM " + tableName + " WHERE parentid=? AND title=? AND nodeid<>parentid "
+                + "ORDER BY nodeid DESC FETCH FIRST ROW ONLY";
+        try (PreparedStatement statement = conn.prepareStatement(sql)) {
             statement.setLong(1, parent);
             statement.setString(2, title);
             return query(conn, statement);
@@ -217,7 +222,7 @@ public class TableTreeNode extends BaseTable<InfoNode> {
         }
     }
 
-    public InfoNode findAndCreate(long parent, String title) {
+    public TreeNode findAndCreate(long parent, String title) {
         if (title == null || title.isBlank()) {
             return null;
         }
@@ -229,15 +234,15 @@ public class TableTreeNode extends BaseTable<InfoNode> {
         }
     }
 
-    public InfoNode findAndCreate(Connection conn, long parent, String title) {
+    public TreeNode findAndCreate(Connection conn, long parent, String title) {
         if (conn == null || title == null || title.isBlank()) {
             return null;
         }
         try {
-            InfoNode node = find(conn, parent, title);
+            TreeNode node = find(conn, parent, title);
             if (node == null) {
-                InfoNode parentNode = find(conn, parent);
-                node = new InfoNode(parentNode, title);
+                TreeNode parentNode = find(conn, parent);
+                node = new TreeNode(parentNode, title);
                 node = insertData(conn, node);
                 conn.commit();
             }
@@ -248,14 +253,14 @@ public class TableTreeNode extends BaseTable<InfoNode> {
         }
     }
 
-    public InfoNode checkBase(Connection conn) {
-        InfoNode base = find(conn, 1);
+    public TreeNode findAndCreateRoot(Connection conn) {
+        TreeNode base = find(conn, 1);
         if (base == null) {
             try {
-                String sql = "INSERT INTO Tree_Node (nodeid,title,parentid,category) VALUES(1,'base',1, 'Root')";
+                String sql = "INSERT INTO " + tableName + " (nodeid,title,parentid) VALUES(1,'Root',1)";
                 update(conn, sql);
                 conn.commit();
-                sql = "ALTER TABLE Tree_Node ALTER COLUMN nodeid RESTART WITH 2";
+                sql = "ALTER TABLE " + tableName + " ALTER COLUMN nodeid RESTART WITH 2";
                 update(conn, sql);
                 conn.commit();
                 base = find(conn, 1);
@@ -266,72 +271,20 @@ public class TableTreeNode extends BaseTable<InfoNode> {
         return base;
     }
 
-    public InfoNode findAndCreateRoot(String category) {
-        try (Connection conn = DerbyBase.getConnection()) {
-            return findAndCreateRoot(conn, category);
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-            return null;
-        }
-    }
-
-    public InfoNode findAndCreateRoot(Connection conn, String category) {
-        List<InfoNode> roots = findAndCreateRoots(conn, category);
-        if (roots != null && !roots.isEmpty()) {
-            InfoNode root = roots.get(0);
-            root.setTitle(message(category));
-            return root;
-        } else {
-            return null;
-        }
-    }
-
-    public List<InfoNode> findAndCreateRoots(Connection conn, String category) {
-        if (conn == null) {
-            return null;
-        }
-        List<InfoNode> roots = findRoots(conn, category);
-        if (roots == null || roots.isEmpty()) {
-            try {
-                conn.setAutoCommit(true);
-                InfoNode base = checkBase(conn);
-                if (base == null) {
-                    return null;
-                }
-                InfoNode root = InfoNode.create().setCategory(category)
-                        .setTitle(message(category)).setParentid(base.getNodeid());
-                root = insertData(conn, root);
-                if (root == null) {
-                    return null;
-                }
-                root.setParentid(root.getNodeid());
-                root = updateData(conn, root);
-                if (root == null) {
-                    return null;
-                }
-                roots = new ArrayList<>();
-                roots.add(root);
-            } catch (Exception e) {
-//                MyBoxLog.debug(e);
-            }
-        }
-        return roots;
-    }
-
-    public InfoNode findAndCreateChain(Connection conn, InfoNode categoryRoot, String ownerChain) {
-        if (conn == null || categoryRoot == null || ownerChain == null || ownerChain.isBlank()) {
+    public TreeNode findAndCreateChain(Connection conn, TreeNode root, String ownerChain) {
+        if (conn == null || root == null || ownerChain == null || ownerChain.isBlank()) {
             return null;
         }
         try {
-            long parentid = categoryRoot.getNodeid();
+            long parentid = root.getNodeid();
             String chain = ownerChain;
-            if (chain.startsWith(categoryRoot.getTitle() + TitleSeparater)) {
-                chain = chain.substring((categoryRoot.getTitle() + TitleSeparater).length());
-            } else if (chain.startsWith(message(categoryRoot.getTitle()) + TitleSeparater)) {
-                chain = chain.substring((message(categoryRoot.getTitle()) + TitleSeparater).length());
+            if (chain.startsWith(root.getTitle() + TitleSeparater)) {
+                chain = chain.substring((root.getTitle() + TitleSeparater).length());
+            } else if (chain.startsWith(message(root.getTitle()) + TitleSeparater)) {
+                chain = chain.substring((message(root.getTitle()) + TitleSeparater).length());
             }
             String[] nodes = chain.split(TitleSeparater);
-            InfoNode owner = null;
+            TreeNode owner = null;
             for (String node : nodes) {
                 owner = findAndCreate(conn, parentid, node);
                 if (owner == null) {
@@ -346,12 +299,12 @@ public class TableTreeNode extends BaseTable<InfoNode> {
         }
     }
 
-    public List<InfoNode> decentants(Connection conn, long parentid) {
-        List<InfoNode> allChildren = new ArrayList<>();
-        List<InfoNode> children = children(conn, parentid);
+    public List<TreeNode> decentants(Connection conn, long parentid) {
+        List<TreeNode> allChildren = new ArrayList<>();
+        List<TreeNode> children = children(conn, parentid);
         if (children != null && !children.isEmpty()) {
             allChildren.addAll(allChildren);
-            for (InfoNode child : children) {
+            for (TreeNode child : children) {
                 children = decentants(conn, child.getNodeid());
                 if (children != null && !children.isEmpty()) {
                     allChildren.addAll(allChildren);
@@ -361,9 +314,10 @@ public class TableTreeNode extends BaseTable<InfoNode> {
         return allChildren;
     }
 
-    public List<InfoNode> decentants(Connection conn, long parentid, long start, long size) {
-        List<InfoNode> children = new ArrayList<>();
-        try (PreparedStatement query = conn.prepareStatement(QueryChildren)) {
+    public List<TreeNode> decentants(Connection conn, long parentid, long start, long size) {
+        List<TreeNode> children = new ArrayList<>();
+        String sql = "SELECT * FROM " + tableName + " WHERE parentid=? AND nodeid<>parentid  ORDER BY nodeid ASC";
+        try (PreparedStatement query = conn.prepareStatement(sql)) {
             decentants(conn, query, parentid, start, size, children, 0);
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -372,7 +326,7 @@ public class TableTreeNode extends BaseTable<InfoNode> {
     }
 
     public long decentants(Connection conn, PreparedStatement query,
-            long parentid, long start, long size, List<InfoNode> nodes, long index) {
+            long parentid, long start, long size, List<TreeNode> nodes, long index) {
         if (conn == null || parentid < 1 || nodes == null
                 || query == null || start < 0 || size <= 0 || nodes.size() >= size) {
             return index;
@@ -385,7 +339,7 @@ public class TableTreeNode extends BaseTable<InfoNode> {
             conn.setAutoCommit(true);
             try (ResultSet nresults = query.executeQuery()) {
                 while (nresults.next()) {
-                    InfoNode data = readData(nresults);
+                    TreeNode data = readData(nresults);
                     if (data != null) {
                         if (thisIndex >= start) {
                             nodes.add(data);
@@ -402,9 +356,9 @@ public class TableTreeNode extends BaseTable<InfoNode> {
                 MyBoxLog.debug(e, tableName);
             }
             if (!ok) {
-                List<InfoNode> children = children(conn, parentid);
+                List<TreeNode> children = children(conn, parentid);
                 if (children != null) {
-                    for (InfoNode child : children) {
+                    for (TreeNode child : children) {
                         thisIndex = decentants(conn, query, child.getNodeid(), start, size, nodes, thisIndex);
                         if (nodes.size() >= size) {
                             break;
@@ -423,7 +377,8 @@ public class TableTreeNode extends BaseTable<InfoNode> {
             return 0;
         }
         int count = 0;
-        try (PreparedStatement sizeQuery = conn.prepareStatement(ChildrenCount)) {
+        String sql = "SELECT count(nodeid) FROM " + tableName + " WHERE parentid=? AND nodeid<>parentid";
+        try (PreparedStatement sizeQuery = conn.prepareStatement(sql)) {
             count = decentantsSize(conn, sizeQuery, parentid);
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -438,9 +393,9 @@ public class TableTreeNode extends BaseTable<InfoNode> {
         int count = 0;
         try {
             count = childrenSize(sizeQuery, parentid);
-            List<InfoNode> children = children(conn, parentid);
+            List<TreeNode> children = children(conn, parentid);
             if (children != null) {
-                for (InfoNode child : children) {
+                for (TreeNode child : children) {
                     count += decentantsSize(conn, sizeQuery, child.getNodeid());
                 }
             }
@@ -488,7 +443,8 @@ public class TableTreeNode extends BaseTable<InfoNode> {
             return 0;
         }
         int size = 0;
-        try (PreparedStatement sizeQuery = conn.prepareStatement(ChildrenCount)) {
+        String sql = "SELECT count(nodeid) FROM " + tableName + " WHERE parentid=? AND nodeid<>parentid";
+        try (PreparedStatement sizeQuery = conn.prepareStatement(sql)) {
             size = childrenSize(sizeQuery, parent);
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -498,7 +454,8 @@ public class TableTreeNode extends BaseTable<InfoNode> {
 
     public boolean childrenEmpty(Connection conn, long parent) {
         boolean isEmpty = true;
-        try (PreparedStatement statement = conn.prepareStatement(ChildrenEmpty)) {
+        String sql = "SELECT nodeid FROM " + tableName + " WHERE parentid=? AND nodeid<>parentid FETCH FIRST ROW ONLY";
+        try (PreparedStatement statement = conn.prepareStatement(sql)) {
             statement.setLong(1, parent);
             conn.setAutoCommit(true);
             try (ResultSet results = statement.executeQuery()) {
@@ -510,7 +467,7 @@ public class TableTreeNode extends BaseTable<InfoNode> {
         return isEmpty;
     }
 
-    public boolean equalOrDescendant(FxTask<Void> task, Connection conn, InfoNode node1, InfoNode node2) {
+    public boolean equalOrDescendant(FxTask<Void> task, Connection conn, TreeNode node1, TreeNode node2) {
         if (conn == null || node1 == null || node2 == null) {
             if (task != null) {
                 task.setError(message("InvalidData"));
@@ -522,67 +479,18 @@ public class TableTreeNode extends BaseTable<InfoNode> {
         if (id1 == id2) {
             return true;
         }
-        InfoNode parent = parent(conn, node1);
+        TreeNode parent = parent(conn, node1);
         if (parent == null || id1 == parent.getNodeid()) {
             return false;
         }
         return equalOrDescendant(task, conn, parent(conn, node1), node2);
     }
 
-    public InfoNode parent(Connection conn, InfoNode node) {
+    public TreeNode parent(Connection conn, TreeNode node) {
         if (conn == null || node == null) {
             return null;
         }
         return find(conn, node.getParentid());
-    }
-
-    public int categorySize(String category) {
-        try (Connection conn = DerbyBase.getConnection()) {
-            return categorySize(conn, category);
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-            return -1;
-        }
-    }
-
-    public int categorySize(Connection conn, String category) {
-        if (conn == null) {
-            return 0;
-        }
-        int size = 0;
-        try (PreparedStatement statement = conn.prepareStatement(CategoryCount)) {
-            statement.setString(1, category);
-            conn.setAutoCommit(true);
-            try (ResultSet results = statement.executeQuery()) {
-                if (results != null && results.next()) {
-                    size = results.getInt(1);
-                }
-            } catch (Exception e) {
-                MyBoxLog.debug(e);
-            }
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
-        return size;
-    }
-
-    public boolean categoryEmpty(Connection conn, String category) {
-        if (conn == null) {
-            return true;
-        }
-        boolean isEmpty = true;
-        try (PreparedStatement statement = conn.prepareStatement(CategoryEmpty)) {
-            statement.setString(1, category);
-            conn.setAutoCommit(true);
-            try (ResultSet results = statement.executeQuery()) {
-                isEmpty = results == null || !results.next();
-            } catch (Exception e) {
-                MyBoxLog.debug(e);
-            }
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
-        return isEmpty;
     }
 
     public int deleteChildren(long parent) {
@@ -595,7 +503,8 @@ public class TableTreeNode extends BaseTable<InfoNode> {
     }
 
     public int deleteChildren(Connection conn, long parent) {
-        try (PreparedStatement statement = conn.prepareStatement(DeleteChildren)) {
+        String sql = "DELETE FROM " + tableName + " WHERE parentid=? AND nodeid<>parentid";
+        try (PreparedStatement statement = conn.prepareStatement(sql)) {
             statement.setLong(1, parent);
             return statement.executeUpdate();
         } catch (Exception e) {
