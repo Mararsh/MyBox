@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Locale;
 import mara.mybox.controller.MyBoxLoadingController;
 import mara.mybox.db.data.GeographyCodeTools;
-import mara.mybox.db.table.BaseTable;
 import mara.mybox.db.table.TableAlarmClock;
 import mara.mybox.db.table.TableColor;
 import mara.mybox.db.table.TableColorPalette;
@@ -28,6 +27,8 @@ import mara.mybox.db.table.TableFloatMatrix;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.db.table.TableImageClipboard;
 import mara.mybox.db.table.TableImageEditHistory;
+import mara.mybox.db.table.TableInfoNode;
+import mara.mybox.db.table.TableInfoNodeTag;
 import mara.mybox.db.table.TableMedia;
 import mara.mybox.db.table.TableMediaList;
 import mara.mybox.db.table.TableMyBoxLog;
@@ -40,8 +41,6 @@ import mara.mybox.db.table.TableStringValues;
 import mara.mybox.db.table.TableSystemConf;
 import mara.mybox.db.table.TableTag;
 import mara.mybox.db.table.TableTextClipboard;
-import mara.mybox.db.table.TableInfoNode;
-import mara.mybox.db.table.TableInfoNodeTag;
 import mara.mybox.db.table.TableUserConf;
 import mara.mybox.db.table.TableVisitHistory;
 import mara.mybox.db.table.TableWebHistory;
@@ -289,8 +288,7 @@ public class DerbyBase {
             List<String> tables = new ArrayList<>();
             String sql = "SELECT TABLENAME FROM SYS.SYSTABLES WHERE TABLETYPE='T'";
             conn.setAutoCommit(true);
-            try (Statement statement = conn.createStatement();
-                    ResultSet resultSet = statement.executeQuery(sql)) {
+            try (Statement statement = conn.createStatement(); ResultSet resultSet = statement.executeQuery(sql)) {
                 while (resultSet.next()) {
                     String savedName = resultSet.getString("TABLENAME");
                     String referredName = fixedIdentifier(savedName);
@@ -313,8 +311,7 @@ public class DerbyBase {
                     + " where t.TABLEID=c.REFERENCEID AND tablename='" + tablename.toUpperCase() + "'"
                     + " order by columnnumber";
             conn.setAutoCommit(true);
-            try (Statement statement = conn.createStatement();
-                    ResultSet resultSet = statement.executeQuery(sql)) {
+            try (Statement statement = conn.createStatement(); ResultSet resultSet = statement.executeQuery(sql)) {
                 while (resultSet.next()) {
                     String savedName = resultSet.getString("columnname");
                     String referredName = fixedIdentifier(savedName);
@@ -338,8 +335,7 @@ public class DerbyBase {
                     + " where t.TABLEID=c.REFERENCEID AND tablename='" + tablename.toUpperCase() + "'"
                     + " order by columnnumber";
             conn.setAutoCommit(true);
-            try (Statement statement = conn.createStatement();
-                    ResultSet resultSet = statement.executeQuery(sql)) {
+            try (Statement statement = conn.createStatement(); ResultSet resultSet = statement.executeQuery(sql)) {
                 while (resultSet.next()) {
                     String savedName = resultSet.getString("columnname");
                     String referredName = fixedIdentifier(savedName);
@@ -360,8 +356,7 @@ public class DerbyBase {
             List<String> indexes = new ArrayList<>();
             String sql = "SELECT CONGLOMERATENAME FROM SYS.SYSCONGLOMERATES";
             conn.setAutoCommit(true);
-            try (Statement statement = conn.createStatement();
-                    ResultSet resultSet = statement.executeQuery(sql)) {
+            try (Statement statement = conn.createStatement(); ResultSet resultSet = statement.executeQuery(sql)) {
                 while (resultSet.next()) {
                     String savedName = resultSet.getString("CONGLOMERATENAME");
                     String referredName = fixedIdentifier(savedName);
@@ -382,8 +377,7 @@ public class DerbyBase {
             List<String> tables = new ArrayList<>();
             String sql = "SELECT TABLENAME FROM SYS.SYSTABLES WHERE TABLETYPE='V'";
             conn.setAutoCommit(true);
-            try (Statement statement = conn.createStatement();
-                    ResultSet resultSet = statement.executeQuery(sql)) {
+            try (Statement statement = conn.createStatement(); ResultSet resultSet = statement.executeQuery(sql)) {
                 while (resultSet.next()) {
                     String savedName = resultSet.getString("TABLENAME");
                     String referredName = fixedIdentifier(savedName);
@@ -531,7 +525,7 @@ public class DerbyBase {
                 loadingController.info("Path_Connection");
             }
             if (!tables.contains("Note".toLowerCase())) {
-                BaseTable t = new TableNote();
+                TableNote t = new TableNote();
                 t.createTable(conn);
                 loadingController.info("Note");
                 t.initTreeTables(conn);

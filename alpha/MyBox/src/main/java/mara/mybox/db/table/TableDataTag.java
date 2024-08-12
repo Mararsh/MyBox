@@ -9,21 +9,21 @@ import mara.mybox.db.data.TreeTag;
  * @CreateDate 2021-3-3
  * @License Apache License Version 2.0
  */
-public class TableTreeTag extends BaseTable<TreeTag> {
+public class TableDataTag extends BaseTable<TreeTag> {
 
-    protected BaseTable dataTable;
+    protected BaseTreeData dataTable;
 
-    public TableTreeTag(BaseTable data) {
+    public TableDataTag(BaseTreeData data) {
         dataTable = data;
         if (dataTable == null) {
             return;
         }
-        tableName = dataTable.tableName + "_Tree_Tag";
+        tableName = dataTable.tableName + "_Tag";
         idColumnName = "tagid";
         defineColumns();
     }
 
-    public final TableTreeTag defineColumns() {
+    public final TableDataTag defineColumns() {
         addColumn(new ColumnDefinition("tagid", ColumnType.Long, true, true).setAuto(true));
         addColumn(new ColumnDefinition("tag", ColumnType.String, true).setLength(StringMaxLength));
         addColumn(new ColumnDefinition("color", ColumnType.Color, true));

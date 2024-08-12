@@ -18,43 +18,40 @@ import mara.mybox.dev.MyBoxLog;
  * @CreateDate 2021-3-3
  * @License Apache License Version 2.0
  */
-public class TableTreeNodeTag extends BaseTable<TreeNodeTag> {
+public class TableNodeTag extends BaseTable<TreeNodeTag> {
 
-    protected BaseTable dataTable;
-    protected TableTreeNode treeTable;
-    protected TableTreeTag tagTable;
+    protected BaseTreeData dataTable;
+    protected TableDataTag tagTable;
 
-    public TableTreeNodeTag(BaseTable data) {
+    public TableNodeTag(BaseTreeData data) {
         if (data == null) {
             return;
         }
         dataTable = data;
-        treeTable = new TableTreeNode(dataTable);
-        tagTable = new TableTreeTag(dataTable);
+        tagTable = new TableDataTag(dataTable);
         init();
     }
 
-    public TableTreeNodeTag(BaseTable data, TableTreeNode tree, TableTreeTag tag) {
+    public TableNodeTag(BaseTreeData data, TableDataTag tag) {
         dataTable = data;
-        treeTable = tree;
         tagTable = tag;
         init();
     }
 
     public final void init() {
-        if (dataTable == null || treeTable == null || tagTable == null) {
+        if (dataTable == null || tagTable == null) {
             return;
         }
-        tableName = dataTable.tableName + "_Tree_Node_Tag";
+        tableName = dataTable.tableName + "_Node_Tag";
         idColumnName = "tntid";
         defineColumns();
     }
 
-    public final TableTreeNodeTag defineColumns() {
+    public final TableNodeTag defineColumns() {
         addColumn(new ColumnDefinition("tntid", ColumnType.Long, true, true).setAuto(true));
         addColumn(new ColumnDefinition("tnodeid", ColumnType.Long)
                 .setReferName(tableName + "_nodeid_fk")
-                .setReferTable(treeTable.tableName).setReferColumn(treeTable.idColumnName)
+                .setReferTable(dataTable.tableName).setReferColumn(dataTable.idColumnName)
                 .setOnDelete(ColumnDefinition.OnDelete.Cascade)
         );
         addColumn(new ColumnDefinition("ttagid", ColumnType.Long)
@@ -73,7 +70,7 @@ public class TableTreeNodeTag extends BaseTable<TreeNodeTag> {
         try (PreparedStatement statement = conn.prepareStatement(sql)) {
             statement.executeUpdate();
         } catch (Exception e) {
-//            MyBoxLog.debug(e);
+            MyBoxLog.debug(e);
 //            return false;
         }
         return true;
@@ -97,14 +94,14 @@ public class TableTreeNodeTag extends BaseTable<TreeNodeTag> {
 
     @Override
     public Object readForeignValue(ResultSet results, String column) {
-        if (results == null || column == null || treeTable == null || tagTable == null) {
+        if (results == null || column == null || dataTable == null || tagTable == null) {
             return null;
         }
         try {
             if ("tnodeid".equals(column) && results.findColumn("nodeid") > 0) {
-                return treeTable.readData(results);
+                return dataTable.readData(results);
             }
-            if ("ttagid".equals(column) && results.findColumn("tgid") > 0) {
+            if ("ttagid".equals(column) && results.findColumn("tagid") > 0) {
                 return tagTable.readData(results);
             }
         } catch (Exception e) {

@@ -30,7 +30,7 @@ import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Tag;
 import mara.mybox.db.data.TreeNode;
 import mara.mybox.db.table.TableStringValues;
-import mara.mybox.db.table.TableTreeNode;
+import mara.mybox.db.table.TableNode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.cell.TableTextTrimCell;
@@ -48,7 +48,7 @@ public class ControlDataTreeTable extends BaseSysTableController<TreeNode> {
 
     protected BaseDataTreeController dataController;
     protected BaseDataTreeManageController manager;
-    protected TableTreeNode tableTree;
+    protected TableNode tableTree;
     protected String queryLabel;
     protected TreeNode loadedParent;
 

@@ -9,12 +9,12 @@ import mara.mybox.dev.MyBoxLog;
  */
 public class TreeNodeTag extends BaseData {
 
-    protected long ttid, tnodeid, tagid;
+    protected long tntid, tnodeid, ttagid;
     protected TreeNode node;
     protected Tag tag;
 
     private void init() {
-        ttid = tnodeid = tagid = -1;
+        tntid = tnodeid = ttagid = -1;
         node = null;
         tag = null;
     }
@@ -26,7 +26,7 @@ public class TreeNodeTag extends BaseData {
     public TreeNodeTag(long tnodeid, long tagid) {
         init();
         this.tnodeid = tnodeid;
-        this.tagid = tagid;
+        this.ttagid = tagid;
     }
 
     public TreeNodeTag(TreeNode node, Tag tag) {
@@ -34,7 +34,7 @@ public class TreeNodeTag extends BaseData {
         this.node = node;
         this.tag = tag;
         this.tnodeid = node == null ? -1 : node.getNodeid();
-        this.tagid = tag == null ? -1 : tag.getTgid();
+        this.ttagid = tag == null ? -1 : tag.getTgid();
     }
 
     public boolean setValue(String column, Object value) {
@@ -63,14 +63,14 @@ public class TreeNodeTag extends BaseData {
         }
         try {
             switch (column) {
-                case "ttid":
-                    data.setTtid(value == null ? -1 : (long) value);
+                case "tntid":
+                    data.setTntid(value == null ? -1 : (long) value);
                     return true;
                 case "tnodeid":
                     data.setTnodeid(value == null ? -1 : (long) value);
                     return true;
-                case "tagid":
-                    data.setTagid(value == null ? -1 : (long) value);
+                case "ttagid":
+                    data.setTtagid(value == null ? -1 : (long) value);
                     return true;
             }
         } catch (Exception e) {
@@ -84,30 +84,30 @@ public class TreeNodeTag extends BaseData {
             return null;
         }
         switch (column) {
-            case "ttid":
-                return data.getTtid();
+            case "tntid":
+                return data.getTntid();
             case "tnodeid":
                 return data.getTnodeid();
-            case "tagid":
-                return data.getTagid();
+            case "ttagid":
+                return data.getTtagid();
         }
         return null;
     }
 
     public static boolean valid(TreeNodeTag data) {
         return data != null
-                && data.getTnodeid() > 0 && data.getTagid() > 0;
+                && data.getTnodeid() > 0 && data.getTtagid() > 0;
     }
 
     /*
         get/set
      */
-    public long getTtid() {
-        return ttid;
+    public long getTntid() {
+        return tntid;
     }
 
-    public TreeNodeTag setTtid(long ttid) {
-        this.ttid = ttid;
+    public TreeNodeTag setTntid(long tntid) {
+        this.tntid = tntid;
         return this;
     }
 
@@ -120,12 +120,12 @@ public class TreeNodeTag extends BaseData {
         return this;
     }
 
-    public long getTagid() {
-        return tagid;
+    public long getTtagid() {
+        return ttagid;
     }
 
-    public TreeNodeTag setTagid(long tagid) {
-        this.tagid = tagid;
+    public TreeNodeTag setTtagid(long ttagid) {
+        this.ttagid = ttagid;
         return this;
     }
 

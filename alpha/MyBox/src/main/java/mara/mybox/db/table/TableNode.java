@@ -20,21 +20,21 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-4-23
  * @License Apache License Version 2.0
  */
-public class TableTreeNode extends BaseTable<TreeNode> {
+public class TableNode extends BaseTable<TreeNode> {
 
-    protected BaseTable dataTable;
+    protected BaseTreeData dataTable;
 
-    public TableTreeNode(BaseTable data) {
+    public TableNode(BaseTreeData data) {
         dataTable = data;
         if (dataTable == null) {
             return;
         }
-        tableName = dataTable.tableName + "_Tree_Node";
+        tableName = dataTable.tableName + "_Node";
         idColumnName = "nodeid";
         defineColumns();
     }
 
-    public final TableTreeNode defineColumns() {
+    public final TableNode defineColumns() {
         addColumn(new ColumnDefinition("nodeid", ColumnType.Long, true, true)
                 .setReferName(tableName + "_nodeid_fk")
                 .setReferTable(dataTable.tableName).setReferColumn(dataTable.idColumnName)

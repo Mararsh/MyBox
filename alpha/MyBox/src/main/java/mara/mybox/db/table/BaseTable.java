@@ -621,6 +621,7 @@ public abstract class BaseTable<D> {
         try {
             sql = createTableStatement();
             conn.createStatement().executeUpdate(sql);
+//            MyBoxLog.console(sql);
             return true;
         } catch (Exception e) {
             MyBoxLog.debug(e, sql);
@@ -641,43 +642,6 @@ public abstract class BaseTable<D> {
                 conn.commit();
             }
             createTable(conn);
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-            return false;
-        }
-    }
-
-    public final boolean initTreeTables(Connection conn) {
-        if (conn == null || tableName == null) {
-            return false;
-        }
-        try {
-            TableTreeNode treeTable = new TableTreeNode(this);
-            treeTable.createTable(conn);
-            treeTable.createIndices(conn);
-
-            new TableTreeTag(this).createTable(conn);
-
-            TableTreeNodeTag nodeTagTable = new TableTreeNodeTag(this);
-            nodeTagTable.createTable(conn);
-            nodeTagTable.createIndices(conn);
-
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-            return false;
-        }
-    }
-
-    public final boolean createTableTree(Connection conn, boolean dropExisted) {
-        if (conn == null || tableName == null) {
-            return false;
-        }
-        try {
-            TableTreeNode tableTree = new TableTreeNode(this);
-            tableTree.createTable(conn, dropExisted);
-            tableTree.createIndices(conn);
             return true;
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -832,8 +796,7 @@ public abstract class BaseTable<D> {
             String sql = sizeStatement() + c;
             int size = 0;
             conn.setAutoCommit(true);
-            try (PreparedStatement sizeQuery = conn.prepareStatement(sql);
-                    ResultSet results = sizeQuery.executeQuery()) {
+            try (PreparedStatement sizeQuery = conn.prepareStatement(sql); ResultSet results = sizeQuery.executeQuery()) {
                 if (results != null && results.next()) {
                     size = results.getInt(1);
                 }
@@ -866,8 +829,7 @@ public abstract class BaseTable<D> {
         try {
             boolean isEmpty = true;
             conn.setAutoCommit(true);
-            try (PreparedStatement statement = conn.prepareStatement(sql);
-                    ResultSet results = statement.executeQuery()) {
+            try (PreparedStatement statement = conn.prepareStatement(sql); ResultSet results = statement.executeQuery()) {
                 isEmpty = results == null || !results.next();
             } catch (Exception e) {
                 MyBoxLog.debug(e, sql);
@@ -1130,8 +1092,7 @@ public abstract class BaseTable<D> {
 
     public D queryOne(String sql) {
         D data = null;
-        try (Connection conn = DerbyBase.getConnection();
-                PreparedStatement statement = conn.prepareStatement(sql)) {
+        try (Connection conn = DerbyBase.getConnection(); PreparedStatement statement = conn.prepareStatement(sql)) {
             data = query(conn, statement);
         } catch (Exception e) {
             MyBoxLog.debug(e, sql);
@@ -1382,8 +1343,7 @@ public abstract class BaseTable<D> {
                     if (idColumnName != null) {
 //                        boolean ac = conn.getAutoCommit();
 //                        conn.setAutoCommit(true);
-                        try (Statement query = conn.createStatement();
-                                ResultSet resultSet = query.executeQuery("VALUES IDENTITY_VAL_LOCAL()")) {
+                        try (Statement query = conn.createStatement(); ResultSet resultSet = query.executeQuery("VALUES IDENTITY_VAL_LOCAL()")) {
                             if (resultSet.next()) {
                                 newID = resultSet.getLong(1);
                                 setValue(data, idColumnName, newID);

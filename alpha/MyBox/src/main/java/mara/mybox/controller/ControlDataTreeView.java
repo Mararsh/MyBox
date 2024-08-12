@@ -20,8 +20,8 @@ import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.TreeNode;
 import static mara.mybox.db.data.TreeNode.TitleSeparater;
 import mara.mybox.db.table.BaseTable;
-import mara.mybox.db.table.TableTreeNode;
-import mara.mybox.db.table.TableTreeTag;
+import mara.mybox.db.table.TableNode;
+import mara.mybox.db.table.TableDataTag;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.HelpTools;
@@ -43,8 +43,8 @@ public class ControlDataTreeView extends BaseTreeTableViewController<TreeNode> {
     protected BaseDataTreeController dataController;
     protected static final int AutoExpandThreshold = 500;
     protected boolean expandAll;
-    protected TableTreeNode treeTable;
-    protected TableTreeTag treeTagTable;
+    protected TableNode treeTable;
+    protected TableDataTag treeTagTable;
     protected BaseTable dataTable;
 
     @FXML

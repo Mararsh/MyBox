@@ -3,10 +3,10 @@ package mara.mybox.controller;
 import javafx.scene.input.KeyEvent;
 import mara.mybox.db.data.TreeNode;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.db.table.BaseTable;
+import mara.mybox.db.table.BaseTreeData;
 import mara.mybox.db.table.TableTag;
-import mara.mybox.db.table.TableTreeNode;
-import mara.mybox.db.table.TableTreeTag;
+import mara.mybox.db.table.TableNode;
+import mara.mybox.db.table.TableDataTag;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 
@@ -20,10 +20,10 @@ public abstract class BaseDataTreeController extends BaseController {
     protected ControlDataTreeView treeController;
     protected BaseDataTreeNodeController nodeController;
 
-    protected BaseTable dataTable;
-    protected TableTreeNode treeTable;
+    protected BaseTreeData dataTable;
+    protected TableNode treeTable;
     protected TableTag tagTable;
-    protected TableTreeTag treeTagTable;
+    protected TableDataTag treeTagTable;
 
     @Override
     public void setFileType() {
@@ -38,9 +38,9 @@ public abstract class BaseDataTreeController extends BaseController {
             if (dataTable == null) {
                 return;
             }
-            treeTable = new TableTreeNode(dataTable);
+            treeTable = new TableNode(dataTable);
             tagTable = new TableTag();
-            treeTagTable = new TableTreeTag(treeTable);
+            treeTagTable = new TableDataTag(dataTable);
 
             nodeController.setParameters(this);
 
