@@ -37,6 +37,21 @@ public class ImageEditHistory extends BaseData {
     }
 
     @Override
+    public boolean valid() {
+        return valid(this);
+    }
+
+    @Override
+    public boolean setValue(String column, Object value) {
+        return setValue(this, column, value);
+    }
+
+    @Override
+    public Object getValue(String column) {
+        return getValue(this, column);
+    }
+
+    @Override
     public Object clone() throws CloneNotSupportedException {
         try {
             ImageEditHistory his = (ImageEditHistory) super.clone();
@@ -107,11 +122,6 @@ public class ImageEditHistory extends BaseData {
             return null;
         }
     }
-
-    public boolean valid() {
-        return valid(this);
-    }
-
 
     /*
         static methods

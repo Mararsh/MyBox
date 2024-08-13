@@ -47,6 +47,30 @@ public class TableSystemConf extends BaseTable<StringValue> {
     final static String Delete = "DELETE FROM System_Conf WHERE key_Name=?";
     final static String DeleteLike = "DELETE FROM System_Conf WHERE key_Name like ?";
 
+    @Override
+    public boolean setValue(StringValue data, String column, Object value) {
+        if (data == null || column == null) {
+            return false;
+        }
+        return data.setValue(column, value);
+    }
+
+    @Override
+    public Object getValue(StringValue data, String column) {
+        if (data == null || column == null) {
+            return null;
+        }
+        return data.getValue(column);
+    }
+
+    @Override
+    public boolean valid(StringValue data) {
+        if (data == null) {
+            return false;
+        }
+        return data.valid();
+    }
+
     public boolean init(Connection conn) {
         try {
             if (conn == null) {
@@ -57,8 +81,7 @@ public class TableSystemConf extends BaseTable<StringValue> {
             if (values == null || values.isEmpty()) {
                 return false;
             }
-            try ( PreparedStatement intStatement = conn.prepareStatement(InsertInt);
-                     PreparedStatement stringStatement = conn.prepareStatement(InsertString)) {
+            try (PreparedStatement intStatement = conn.prepareStatement(InsertInt); PreparedStatement stringStatement = conn.prepareStatement(InsertString)) {
                 for (String key : values.keySet()) {
                     String value = values.get(key);
                     switch (value.toLowerCase()) {
@@ -96,7 +119,7 @@ public class TableSystemConf extends BaseTable<StringValue> {
     }
 
     public static String readString(String keyName, String defaultValue) {
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             return readString(conn, keyName, defaultValue);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -109,11 +132,11 @@ public class TableSystemConf extends BaseTable<StringValue> {
         if (conn == null || keyName == null) {
             return null;
         }
-        try ( PreparedStatement queryStatement = conn.prepareStatement(QueryString)) {
+        try (PreparedStatement queryStatement = conn.prepareStatement(QueryString)) {
             queryStatement.setMaxRows(1);
             queryStatement.setString(1, keyName);
             conn.setAutoCommit(true);
-            try ( ResultSet resultSet = queryStatement.executeQuery()) {
+            try (ResultSet resultSet = queryStatement.executeQuery()) {
                 if (resultSet.next()) {
                     String value = resultSet.getString(1);
                     if (value == null) {
@@ -124,7 +147,7 @@ public class TableSystemConf extends BaseTable<StringValue> {
                 }
             }
             if (defaultValue != null) {
-                try ( PreparedStatement insert = conn.prepareStatement(InsertString)) {
+                try (PreparedStatement insert = conn.prepareStatement(InsertString)) {
                     insert.setString(1, keyName);
                     insert.setString(2, defaultValue);
                     insert.executeUpdate();
@@ -142,12 +165,12 @@ public class TableSystemConf extends BaseTable<StringValue> {
     }
 
     public static int readInt(String keyName, int defaultValue) {
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             int exist = readInt(conn, keyName);
             if (exist != AppValues.InvalidInteger) {
                 return exist;
             } else {
-                try ( PreparedStatement insert = conn.prepareStatement(UpdateInt)) {
+                try (PreparedStatement insert = conn.prepareStatement(UpdateInt)) {
                     insert.setInt(1, defaultValue);
                     insert.setString(2, keyName);
                     insert.executeUpdate();
@@ -161,11 +184,11 @@ public class TableSystemConf extends BaseTable<StringValue> {
 
     public static int readInt(Connection conn, String keyName) {
         int value = AppValues.InvalidInteger;
-        try ( PreparedStatement queryStatement = conn.prepareStatement(QueryInt)) {
+        try (PreparedStatement queryStatement = conn.prepareStatement(QueryInt)) {
             queryStatement.setMaxRows(1);
             queryStatement.setString(1, keyName);
             conn.setAutoCommit(true);
-            try ( ResultSet resultSet = queryStatement.executeQuery()) {
+            try (ResultSet resultSet = queryStatement.executeQuery()) {
                 if (resultSet.next()) {
                     value = resultSet.getInt(1);
                 }
@@ -185,14 +208,14 @@ public class TableSystemConf extends BaseTable<StringValue> {
         if (keyName == null) {
             return 0;
         }
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             if (stringValue == null) {
                 return delete(conn, keyName) ? 1 : 0;
             }
             String exist = readString(conn, keyName);
             if (exist != null) {
                 if (!stringValue.equals(exist)) {
-                    try ( PreparedStatement statement = conn.prepareStatement(UpdateString)) {
+                    try (PreparedStatement statement = conn.prepareStatement(UpdateString)) {
                         statement.setString(1, stringValue);
                         statement.setString(2, keyName);
                         return statement.executeUpdate();
@@ -201,7 +224,7 @@ public class TableSystemConf extends BaseTable<StringValue> {
                     return 0;
                 }
             } else {
-                try ( PreparedStatement statement = conn.prepareStatement(InsertString)) {
+                try (PreparedStatement statement = conn.prepareStatement(InsertString)) {
                     statement.setString(1, keyName);
                     statement.setString(2, stringValue);
                     return statement.executeUpdate();
@@ -214,11 +237,11 @@ public class TableSystemConf extends BaseTable<StringValue> {
     }
 
     public static int writeInt(String keyName, int intValue) {
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             int exist = readInt(conn, keyName);
             if (exist != AppValues.InvalidInteger) {
                 if (intValue != exist) {
-                    try ( PreparedStatement statement = conn.prepareStatement(UpdateInt)) {
+                    try (PreparedStatement statement = conn.prepareStatement(UpdateInt)) {
                         statement.setInt(1, intValue);
                         statement.setString(2, keyName);
                         return statement.executeUpdate();
@@ -227,7 +250,7 @@ public class TableSystemConf extends BaseTable<StringValue> {
                     return 0;
                 }
             } else {
-                try ( PreparedStatement statement = conn.prepareStatement(InsertInt)) {
+                try (PreparedStatement statement = conn.prepareStatement(InsertInt)) {
                     statement.setString(1, keyName);
                     statement.setInt(2, intValue);
                     return statement.executeUpdate();
@@ -247,7 +270,7 @@ public class TableSystemConf extends BaseTable<StringValue> {
         if (keyName == null || keyName.isEmpty()) {
             return false;
         }
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             return delete(conn, keyName);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -259,7 +282,7 @@ public class TableSystemConf extends BaseTable<StringValue> {
         if (keyName == null || keyName.isEmpty()) {
             return false;
         }
-        try ( PreparedStatement statement = conn.prepareStatement(Delete)) {
+        try (PreparedStatement statement = conn.prepareStatement(Delete)) {
             statement.setString(1, keyName);
             return statement.executeUpdate() >= 0;
         } catch (Exception e) {
@@ -272,7 +295,7 @@ public class TableSystemConf extends BaseTable<StringValue> {
         if (keyName == null || keyName.isEmpty()) {
             return false;
         }
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             return deletePrefix(conn, keyName);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -284,7 +307,7 @@ public class TableSystemConf extends BaseTable<StringValue> {
         if (keyName == null || keyName.isEmpty()) {
             return false;
         }
-        try ( PreparedStatement statement = conn.prepareStatement(DeleteLike)) {
+        try (PreparedStatement statement = conn.prepareStatement(DeleteLike)) {
             statement.setString(1, keyName + "%");
             return statement.executeUpdate() >= 0;
         } catch (Exception e) {

@@ -28,9 +28,9 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Tag;
-import mara.mybox.db.data.TreeNode;
+import mara.mybox.db.data.DataNode;
 import mara.mybox.db.table.TableStringValues;
-import mara.mybox.db.table.TableNode;
+import mara.mybox.db.table.TableDataNode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.cell.TableTextTrimCell;
@@ -44,20 +44,20 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2022-3-9
  * @License Apache License Version 2.0
  */
-public class ControlDataTreeTable extends BaseSysTableController<TreeNode> {
+public class ControlDataTreeTable extends BaseSysTableController<DataNode> {
 
     protected BaseDataTreeController dataController;
     protected BaseDataTreeManageController manager;
-    protected TableNode tableTree;
+    protected TableDataNode tableTree;
     protected String queryLabel;
-    protected TreeNode loadedParent;
+    protected DataNode loadedParent;
 
     @FXML
-    protected TableColumn<TreeNode, Long> nodeidColumn;
+    protected TableColumn<DataNode, Long> nodeidColumn;
     @FXML
-    protected TableColumn<TreeNode, String> nameColumn, valueColumn;
+    protected TableColumn<DataNode, String> nameColumn, valueColumn;
     @FXML
-    protected TableColumn<TreeNode, Date> timeColumn;
+    protected TableColumn<DataNode, Date> timeColumn;
     @FXML
     protected VBox conditionBox;
     @FXML
@@ -125,7 +125,7 @@ public class ControlDataTreeTable extends BaseSysTableController<TreeNode> {
         startRowOfCurrentPage = 0;
     }
 
-    public void loadNodes(TreeNode parentNode) {
+    public void loadNodes(DataNode parentNode) {
         clearQuery();
         loadedParent = parentNode;
         if (loadedParent != null) {
@@ -135,12 +135,12 @@ public class ControlDataTreeTable extends BaseSysTableController<TreeNode> {
 //        dataController.showNodesList(true);
     }
 
-    public void loadChildren(TreeNode parentNode) {
+    public void loadChildren(DataNode parentNode) {
         childrenRadio.setSelected(true);
         loadNodes(parentNode);
     }
 
-    public void loadDescendants(TreeNode parentNode) {
+    public void loadDescendants(DataNode parentNode) {
         descendantsRadio.setSelected(true);
         loadNodes(parentNode);
     }
@@ -166,7 +166,7 @@ public class ControlDataTreeTable extends BaseSysTableController<TreeNode> {
             return;
         }
         FxTask loadTask = new FxTask<Void>(this) {
-            private List<TreeNode> ancestor;
+            private List<DataNode> ancestor;
 
             @Override
             protected boolean handle() {
@@ -178,7 +178,7 @@ public class ControlDataTreeTable extends BaseSysTableController<TreeNode> {
             protected void whenSucceeded() {
                 List<Node> nodes = new ArrayList<>();
                 if (ancestor != null) {
-                    for (TreeNode node : ancestor) {
+                    for (DataNode node : ancestor) {
                         Hyperlink link = new Hyperlink(node.getTitle());
                         link.setWrapText(true);
                         link.setMinHeight(Region.USE_PREF_SIZE);
@@ -223,7 +223,7 @@ public class ControlDataTreeTable extends BaseSysTableController<TreeNode> {
     }
 
     @Override
-    public List<TreeNode> readPageData(FxTask currentTask, Connection conn) {
+    public List<DataNode> readPageData(FxTask currentTask, Connection conn) {
         if (loadedParent != null && descendantsRadio.isSelected()) {
             return tableTree.decentants(conn, loadedParent.getNodeid(), startRowOfCurrentPage, pageSize);
 
@@ -252,7 +252,7 @@ public class ControlDataTreeTable extends BaseSysTableController<TreeNode> {
     @FXML
     @Override
     public void viewAction() {
-        TreeNode item = selectedItem();
+        DataNode item = selectedItem();
         if (item == null) {
             popError(message("SelectToHanlde"));
             return;

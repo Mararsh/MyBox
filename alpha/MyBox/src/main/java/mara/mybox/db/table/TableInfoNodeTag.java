@@ -94,6 +94,30 @@ public class TableInfoNodeTag extends BaseTable<InfoNodeTag> {
         return true;
     }
 
+    @Override
+    public boolean setValue(InfoNodeTag data, String column, Object value) {
+        if (data == null || column == null) {
+            return false;
+        }
+        return data.setValue(column, value);
+    }
+
+    @Override
+    public Object getValue(InfoNodeTag data, String column) {
+        if (data == null || column == null) {
+            return null;
+        }
+        return data.getValue(column);
+    }
+
+    @Override
+    public boolean valid(InfoNodeTag data) {
+        if (data == null) {
+            return false;
+        }
+        return data.valid();
+    }
+
     public List<InfoNodeTag> nodeTags(long nodeid) {
         List<InfoNodeTag> tags = new ArrayList<>();
         if (nodeid < 0) {

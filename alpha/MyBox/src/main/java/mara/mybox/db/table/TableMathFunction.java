@@ -32,4 +32,28 @@ public class TableMathFunction extends BaseTable<MathFunction> {
         return this;
     }
 
+    @Override
+    public boolean setValue(MathFunction data, String column, Object value) {
+        if (data == null || column == null) {
+            return false;
+        }
+        return data.setValue(column, value);
+    }
+
+    @Override
+    public Object getValue(MathFunction data, String column) {
+        if (data == null || column == null) {
+            return null;
+        }
+        return data.getValue(column);
+    }
+
+    @Override
+    public boolean valid(MathFunction data) {
+        if (data == null) {
+            return false;
+        }
+        return data.valid();
+    }
+
 }

@@ -114,6 +114,22 @@ public class TableVisitHistory extends BaseTable<VisitHistory> {
             + " WHERE resource_type=? AND file_type=? AND operation_type=?";
 
     @Override
+    public boolean setValue(VisitHistory data, String column, Object value) {
+        if (data == null || column == null) {
+            return false;
+        }
+        return data.setValue(column, value);
+    }
+
+    @Override
+    public Object getValue(VisitHistory data, String column) {
+        if (data == null || column == null) {
+            return null;
+        }
+        return data.getValue(column);
+    }
+
+    @Override
     public boolean valid(VisitHistory record) {
         if (record == null) {
             return false;
@@ -132,8 +148,7 @@ public class TableVisitHistory extends BaseTable<VisitHistory> {
         try {
             conn.setAutoCommit(true);
             List<String> names = new ArrayList<>();
-            try (ResultSet results = statement.executeQuery();
-                    PreparedStatement delete = conn.prepareStatement(Delete_Visit)) {
+            try (ResultSet results = statement.executeQuery(); PreparedStatement delete = conn.prepareStatement(Delete_Visit)) {
                 while (results.next()) {
                     VisitHistory data = readData(results);
                     if (valid(data)) {
@@ -168,8 +183,7 @@ public class TableVisitHistory extends BaseTable<VisitHistory> {
         if (resourceType < 0) {
             return records;
         }
-        try (Connection conn = DerbyBase.getConnection();
-                PreparedStatement statement = conn.prepareStatement(Query_Resource_Type)) {
+        try (Connection conn = DerbyBase.getConnection(); PreparedStatement statement = conn.prepareStatement(Query_Resource_Type)) {
             conn.setAutoCommit(true);
             statement.setInt(1, resourceType);
             records = read(conn, statement, count);
@@ -224,8 +238,7 @@ public class TableVisitHistory extends BaseTable<VisitHistory> {
             sql += "  AND resource_type=" + resourceType;
         }
         sql += " ORDER BY last_visit_time  DESC";
-        try (Connection conn = DerbyBase.getConnection();
-                PreparedStatement statement = conn.prepareStatement(sql)) {
+        try (Connection conn = DerbyBase.getConnection(); PreparedStatement statement = conn.prepareStatement(sql)) {
             records = read(conn, statement, count);
         } catch (Exception e) {
 //            MyBoxLog.debug(e);
@@ -297,8 +310,7 @@ public class TableVisitHistory extends BaseTable<VisitHistory> {
             sql += "  AND resource_type=" + resourceType;
         }
         sql += " ORDER BY last_visit_time  DESC  ";
-        try (Connection conn = DerbyBase.getConnection();
-                PreparedStatement statement = conn.prepareStatement(sql)) {
+        try (Connection conn = DerbyBase.getConnection(); PreparedStatement statement = conn.prepareStatement(sql)) {
             records = read(conn, statement, count);
         } catch (Exception e) {
 //            MyBoxLog.debug(e);
@@ -583,8 +595,7 @@ public class TableVisitHistory extends BaseTable<VisitHistory> {
     }
 
     public boolean clear(int resourceType, int fileType, int operationType) {
-        try (Connection conn = DerbyBase.getConnection();
-                PreparedStatement statement = conn.prepareStatement(Clear_Visit)) {
+        try (Connection conn = DerbyBase.getConnection(); PreparedStatement statement = conn.prepareStatement(Clear_Visit)) {
             statement.setInt(1, resourceType);
             statement.setInt(2, fileType);
             statement.setInt(3, operationType);
@@ -597,8 +608,7 @@ public class TableVisitHistory extends BaseTable<VisitHistory> {
 
     public int clear() {
         final String sql = "DELETE FROM visit_history";
-        try (Connection conn = DerbyBase.getConnection();
-                PreparedStatement statement = conn.prepareStatement(sql)) {
+        try (Connection conn = DerbyBase.getConnection(); PreparedStatement statement = conn.prepareStatement(sql)) {
             return statement.executeUpdate();
         } catch (Exception e) {
 //            MyBoxLog.debug(e);
@@ -607,8 +617,7 @@ public class TableVisitHistory extends BaseTable<VisitHistory> {
     }
 
     public void trim(Connection conn, int resourceType, int fileType, int operationType) {
-        try (PreparedStatement query = conn.prepareStatement(Query_Types);
-                PreparedStatement delete = conn.prepareStatement(deleteStatement())) {
+        try (PreparedStatement query = conn.prepareStatement(Query_Types); PreparedStatement delete = conn.prepareStatement(deleteStatement())) {
             conn.setAutoCommit(true);
             query.setInt(1, resourceType);
             query.setInt(2, fileType);

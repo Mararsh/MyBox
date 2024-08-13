@@ -7,10 +7,10 @@ import mara.mybox.dev.MyBoxLog;
  * @CreateDate 2022-3-11
  * @License Apache License Version 2.0
  */
-public class TreeNodeTag extends BaseData {
+public class DataNodeTag extends BaseData {
 
     protected long tntid, tnodeid, ttagid;
-    protected TreeNode node;
+    protected DataNode node;
     protected Tag tag;
 
     private void init() {
@@ -19,17 +19,17 @@ public class TreeNodeTag extends BaseData {
         tag = null;
     }
 
-    public TreeNodeTag() {
+    public DataNodeTag() {
         init();
     }
 
-    public TreeNodeTag(long tnodeid, long tagid) {
+    public DataNodeTag(long tnodeid, long tagid) {
         init();
         this.tnodeid = tnodeid;
         this.ttagid = tagid;
     }
 
-    public TreeNodeTag(TreeNode node, Tag tag) {
+    public DataNodeTag(DataNode node, Tag tag) {
         init();
         this.node = node;
         this.tag = tag;
@@ -37,10 +37,12 @@ public class TreeNodeTag extends BaseData {
         this.ttagid = tag == null ? -1 : tag.getTgid();
     }
 
+    @Override
     public boolean setValue(String column, Object value) {
         return setValue(this, column, value);
     }
 
+    @Override
     public Object getValue(String column) {
         return getValue(this, column);
     }
@@ -53,11 +55,11 @@ public class TreeNodeTag extends BaseData {
     /*
         Static methods
      */
-    public static TreeNodeTag create() {
-        return new TreeNodeTag();
+    public static DataNodeTag create() {
+        return new DataNodeTag();
     }
 
-    public static boolean setValue(TreeNodeTag data, String column, Object value) {
+    public static boolean setValue(DataNodeTag data, String column, Object value) {
         if (data == null || column == null) {
             return false;
         }
@@ -79,7 +81,7 @@ public class TreeNodeTag extends BaseData {
         return false;
     }
 
-    public static Object getValue(TreeNodeTag data, String column) {
+    public static Object getValue(DataNodeTag data, String column) {
         if (data == null || column == null) {
             return null;
         }
@@ -94,7 +96,7 @@ public class TreeNodeTag extends BaseData {
         return null;
     }
 
-    public static boolean valid(TreeNodeTag data) {
+    public static boolean valid(DataNodeTag data) {
         return data != null
                 && data.getTnodeid() > 0 && data.getTtagid() > 0;
     }
@@ -106,7 +108,7 @@ public class TreeNodeTag extends BaseData {
         return tntid;
     }
 
-    public TreeNodeTag setTntid(long tntid) {
+    public DataNodeTag setTntid(long tntid) {
         this.tntid = tntid;
         return this;
     }
@@ -115,7 +117,7 @@ public class TreeNodeTag extends BaseData {
         return tnodeid;
     }
 
-    public TreeNodeTag setTnodeid(long tnodeid) {
+    public DataNodeTag setTnodeid(long tnodeid) {
         this.tnodeid = tnodeid;
         return this;
     }
@@ -124,16 +126,16 @@ public class TreeNodeTag extends BaseData {
         return ttagid;
     }
 
-    public TreeNodeTag setTtagid(long ttagid) {
+    public DataNodeTag setTtagid(long ttagid) {
         this.ttagid = ttagid;
         return this;
     }
 
-    public TreeNode getNode() {
+    public DataNode getNode() {
         return node;
     }
 
-    public TreeNodeTag setNode(TreeNode node) {
+    public DataNodeTag setNode(DataNode node) {
         this.node = node;
         return this;
     }
@@ -142,7 +144,7 @@ public class TreeNodeTag extends BaseData {
         return tag;
     }
 
-    public TreeNodeTag setTag(Tag tag) {
+    public DataNodeTag setTag(Tag tag) {
         this.tag = tag;
         return this;
     }

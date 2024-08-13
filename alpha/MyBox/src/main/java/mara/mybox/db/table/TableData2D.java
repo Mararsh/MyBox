@@ -12,6 +12,30 @@ import mara.mybox.dev.MyBoxLog;
  */
 public class TableData2D extends BaseTable<Data2DRow> {
 
+    @Override
+    public boolean setValue(Data2DRow data, String column, Object value) {
+        if (data == null || column == null) {
+            return false;
+        }
+        return data.setValue(column, value);
+    }
+
+    @Override
+    public Object getValue(Data2DRow data, String column) {
+        if (data == null || column == null) {
+            return null;
+        }
+        return data.getValue(column);
+    }
+
+    @Override
+    public boolean valid(Data2DRow data) {
+        if (data == null) {
+            return false;
+        }
+        return data.valid();
+    }
+
     public Data2DRow newRow() {
         Data2DRow data2DRow = new Data2DRow();
         for (ColumnDefinition column : columns) {

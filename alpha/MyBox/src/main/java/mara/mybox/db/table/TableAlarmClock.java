@@ -28,6 +28,30 @@ public class TableAlarmClock extends BaseTable<AlarmClock> {
         }
     }
 
+    @Override
+    public boolean setValue(AlarmClock data, String column, Object value) {
+        if (data == null || column == null) {
+            return false;
+        }
+        return data.setValue(column, value);
+    }
+
+    @Override
+    public Object getValue(AlarmClock data, String column) {
+        if (data == null || column == null) {
+            return null;
+        }
+        return data.getValue(column);
+    }
+
+    @Override
+    public boolean valid(AlarmClock data) {
+        if (data == null) {
+            return false;
+        }
+        return data.valid();
+    }
+
     public final TableAlarmClock defineColumns() {
         addColumn(new ColumnDefinition("atid", ColumnDefinition.ColumnType.Long, true, true).setAuto(true));
         addColumn(new ColumnDefinition("alarm_type", ColumnDefinition.ColumnType.Integer, true));
@@ -68,9 +92,9 @@ public class TableAlarmClock extends BaseTable<AlarmClock> {
 
     @Override
     public long clearData(Connection conn) {
-        try ( PreparedStatement statement = conn.prepareStatement("SELECT * FROM Alarm_Clock")) {
+        try (PreparedStatement statement = conn.prepareStatement("SELECT * FROM Alarm_Clock")) {
             conn.setAutoCommit(true);
-            try ( ResultSet results = statement.executeQuery()) {
+            try (ResultSet results = statement.executeQuery()) {
                 while (results.next()) {
                     AlarmClock alarmClock = readData(results);
                     if (alarmClock != null) {

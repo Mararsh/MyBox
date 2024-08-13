@@ -12,6 +12,21 @@ import java.util.Map;
  */
 public class Data2DRow extends BaseData {
 
+    @Override
+    public boolean valid() {
+        return true;
+    }
+
+    @Override
+    public boolean setValue(String column, Object value) {
+        return setColumnValue(column, value);
+    }
+
+    @Override
+    public Object getValue(String column) {
+        return getColumnValue(column);
+    }
+
     public List<String> toStrings(List<Data2DColumn> columns) {
         List<String> row = new ArrayList<>();
         for (Data2DColumn column : columns) {

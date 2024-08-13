@@ -52,6 +52,30 @@ public class TableImageClipboard extends BaseTable<ImageClipboard> {
     public static final String DeleteFile
             = "DELETE FROM Image_Clipboard  WHERE image_file=?";
 
+    @Override
+    public boolean setValue(ImageClipboard data, String column, Object value) {
+        if (data == null || column == null) {
+            return false;
+        }
+        return data.setValue(column, value);
+    }
+
+    @Override
+    public Object getValue(ImageClipboard data, String column) {
+        if (data == null || column == null) {
+            return null;
+        }
+        return data.getValue(column);
+    }
+
+    @Override
+    public boolean valid(ImageClipboard data) {
+        if (data == null) {
+            return false;
+        }
+        return data.valid();
+    }
+
     public int clearInvalid(BaseTaskController taskController, Connection conn) {
         int count = clearInvalidRows(taskController, conn);
         return count + clearInvalidFiles(taskController, conn);
@@ -61,8 +85,7 @@ public class TableImageClipboard extends BaseTable<ImageClipboard> {
         int rowCount = 0, invalidCount = 0;
         try {
             recordInfo(taskController, message("Check") + ": " + tableName);
-            try (PreparedStatement query = conn.prepareStatement(queryAllStatement());
-                    PreparedStatement delete = conn.prepareStatement(deleteStatement())) {
+            try (PreparedStatement query = conn.prepareStatement(queryAllStatement()); PreparedStatement delete = conn.prepareStatement(deleteStatement())) {
                 conn.setAutoCommit(true);
                 try (ResultSet results = query.executeQuery()) {
                     conn.setAutoCommit(false);

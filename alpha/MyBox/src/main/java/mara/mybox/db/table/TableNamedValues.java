@@ -41,11 +41,35 @@ public class TableNamedValues extends BaseTable<NamedValues> {
     public static final String QueryKey
             = "SELECT * FROM Named_Values WHERE key_name=?";
 
+    @Override
+    public boolean setValue(NamedValues data, String column, Object value) {
+        if (data == null || column == null) {
+            return false;
+        }
+        return data.setValue(column, value);
+    }
+
+    @Override
+    public Object getValue(NamedValues data, String column) {
+        if (data == null || column == null) {
+            return null;
+        }
+        return data.getValue(column);
+    }
+
+    @Override
+    public boolean valid(NamedValues data) {
+        if (data == null) {
+            return false;
+        }
+        return data.valid();
+    }
+
     public List<NamedValues> read(String key) {
         if (key == null || key.trim().isEmpty()) {
             return new ArrayList<>();
         }
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             conn.setReadOnly(true);
             return read(conn, key);
         } catch (Exception e) {
@@ -58,7 +82,7 @@ public class TableNamedValues extends BaseTable<NamedValues> {
         if (conn == null || key == null || key.trim().isEmpty()) {
             return new ArrayList<>();
         }
-        try ( PreparedStatement statement = conn.prepareStatement(QueryKey)) {
+        try (PreparedStatement statement = conn.prepareStatement(QueryKey)) {
             statement.setString(1, key);
             return query(statement);
         } catch (Exception e) {

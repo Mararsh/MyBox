@@ -93,6 +93,29 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
     public static final String Delete_UserTable
             = "DELETE FROM Data2D_Definition WHERE data_type=5 AND sheet=?";
 
+    @Override
+    public boolean setValue(Data2DDefinition data, String column, Object value) {
+        if (data == null || column == null) {
+            return false;
+        }
+        return data.setValue(column, value);
+    }
+
+    @Override
+    public Object getValue(Data2DDefinition data, String column) {
+        if (data == null || column == null) {
+            return null;
+        }
+        return data.getValue(column);
+    }
+
+    @Override
+    public boolean valid(Data2DDefinition data) {
+        if (data == null) {
+            return false;
+        }
+        return data.valid();
+    }
 
     /*
         local methods
@@ -331,8 +354,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
             update(conn, Delete_InvalidExcelSheet);
             String sql = "SELECT * FROM Data2D_Definition WHERE data_type < 4";
             recordInfo(taskController, sql);
-            try (PreparedStatement query = conn.prepareStatement(sql);
-                    PreparedStatement delete = conn.prepareStatement(deleteStatement())) {
+            try (PreparedStatement query = conn.prepareStatement(sql); PreparedStatement delete = conn.prepareStatement(deleteStatement())) {
                 conn.setAutoCommit(true);
                 try (ResultSet results = query.executeQuery()) {
                     conn.setAutoCommit(false);
@@ -392,8 +414,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
                     + Data2D.type(Data2DDefinition.DataType.DatabaseTable);
             recordInfo(taskController, sql);
             conn.setAutoCommit(true);
-            try (ResultSet results = conn.prepareStatement(sql).executeQuery();
-                    PreparedStatement delete = conn.prepareStatement(deleteStatement())) {
+            try (ResultSet results = conn.prepareStatement(sql).executeQuery(); PreparedStatement delete = conn.prepareStatement(deleteStatement())) {
                 while (results.next()) {
                     rowCount++;
                     if (taskController != null && taskController.getTask() != null

@@ -46,6 +46,30 @@ public class TableUserConf extends BaseTable<StringValue> {
     final static String Delete = "DELETE FROM User_Conf WHERE key_Name=?";
     final static String DeleteLike = "DELETE FROM User_Conf WHERE key_Name like ?";
 
+    @Override
+    public boolean setValue(StringValue data, String column, Object value) {
+        if (data == null || column == null) {
+            return false;
+        }
+        return data.setValue(column, value);
+    }
+
+    @Override
+    public Object getValue(StringValue data, String column) {
+        if (data == null || column == null) {
+            return null;
+        }
+        return data.getValue(column);
+    }
+
+    @Override
+    public boolean valid(StringValue data) {
+        if (data == null) {
+            return false;
+        }
+        return data.valid();
+    }
+
     public boolean init(Connection conn) {
         try {
             if (conn == null) {
@@ -56,8 +80,7 @@ public class TableUserConf extends BaseTable<StringValue> {
             if (values == null || values.isEmpty()) {
                 return false;
             }
-            try (PreparedStatement intStatement = conn.prepareStatement(InsertInt);
-                    PreparedStatement stringStatement = conn.prepareStatement(InsertString)) {
+            try (PreparedStatement intStatement = conn.prepareStatement(InsertInt); PreparedStatement stringStatement = conn.prepareStatement(InsertString)) {
                 for (String key : values.keySet()) {
                     String value = values.get(key);
                     switch (value.toLowerCase()) {

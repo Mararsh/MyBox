@@ -84,11 +84,35 @@ public class TableData2DStyle extends BaseTable<Data2DStyle> {
         return true;
     }
 
+    @Override
+    public boolean setValue(Data2DStyle data, String column, Object value) {
+        if (data == null || column == null) {
+            return false;
+        }
+        return data.setValue(column, value);
+    }
+
+    @Override
+    public Object getValue(Data2DStyle data, String column) {
+        if (data == null || column == null) {
+            return null;
+        }
+        return data.getValue(column);
+    }
+
+    @Override
+    public boolean valid(Data2DStyle data) {
+        if (data == null) {
+            return false;
+        }
+        return data.valid();
+    }
+
     public boolean clear(Connection conn, long d2id) {
         if (conn == null || d2id < 0) {
             return false;
         }
-        try ( PreparedStatement statement = conn.prepareStatement(ClearStyles)) {
+        try (PreparedStatement statement = conn.prepareStatement(ClearStyles)) {
             statement.setLong(1, d2id);
             statement.executeUpdate();
             return true;
@@ -104,7 +128,7 @@ public class TableData2DStyle extends BaseTable<Data2DStyle> {
         }
         clear(conn, targetid);
         int count = 0;
-        try ( PreparedStatement statement = conn.prepareStatement(QueryStyles)) {
+        try (PreparedStatement statement = conn.prepareStatement(QueryStyles)) {
             statement.setLong(1, sourceid);
             conn.setAutoCommit(true);
             ResultSet results = statement.executeQuery();

@@ -17,13 +17,13 @@ public abstract class BaseTreeData<D> extends BaseTable<D> {
             return false;
         }
         try {
-            TableNode treeTable = new TableNode(this);
+            TableDataNode treeTable = new TableDataNode(this);
             treeTable.createTable(conn);
             treeTable.createIndices(conn);
 
             new TableDataTag(this).createTable(conn);
 
-            TableNodeTag nodeTagTable = new TableNodeTag(this);
+            TableDataNodeTag nodeTagTable = new TableDataNodeTag(this);
             nodeTagTable.createTable(conn);
             nodeTagTable.createIndices(conn);
 
@@ -39,7 +39,7 @@ public abstract class BaseTreeData<D> extends BaseTable<D> {
             return false;
         }
         try {
-            TableNode tableTree = new TableNode(this);
+            TableDataNode tableTree = new TableDataNode(this);
             tableTree.createTable(conn, dropExisted);
             tableTree.createIndices(conn);
             return true;

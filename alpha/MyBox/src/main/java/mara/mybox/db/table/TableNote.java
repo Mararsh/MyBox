@@ -52,6 +52,14 @@ public class TableNote extends BaseTreeData<Note> {
     }
 
     @Override
+    public boolean valid(Note data) {
+        if (data == null) {
+            return false;
+        }
+        return data.valid();
+    }
+
+    @Override
     public long insertData(Connection conn, String title, String info) {
         try {
             Note note = new Note()

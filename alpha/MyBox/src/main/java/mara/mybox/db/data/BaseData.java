@@ -9,21 +9,22 @@ import mara.mybox.dev.MyBoxLog;
  * @CreateDate 2020-7-19
  * @License Apache License Version 2.0
  */
-public class BaseData implements Cloneable {
+public abstract class BaseData implements Cloneable {
 
     protected Map<String, Object> columnValues;
     protected int rowIndex;
 
-    public BaseData() {
-        initValues();
-    }
+    public abstract boolean valid();
 
-    private void initValues() {
-        columnValues = new HashMap<>();
-    }
+    public abstract boolean setValue(String column, Object value);
+
+    public abstract Object getValue(String column);
 
     public boolean setColumnValue(String column, Object value) {
         try {
+            if (columnValues == null) {
+                columnValues = new HashMap<>();
+            }
             columnValues.put(column, value);
             return true;
         } catch (Exception e) {
@@ -43,9 +44,9 @@ public class BaseData implements Cloneable {
 
     public boolean isNoColumn() {
         try {
-            return columnValues.keySet().isEmpty();
+            return columnValues == null || columnValues.keySet().isEmpty();
         } catch (Exception e) {
-            MyBoxLog.debug(e);
+//            MyBoxLog.debug(e);
             return true;
         }
     }
@@ -54,7 +55,7 @@ public class BaseData implements Cloneable {
         try {
             return columnValues.toString();
         } catch (Exception e) {
-            MyBoxLog.debug(e);
+//            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -82,25 +83,17 @@ public class BaseData implements Cloneable {
         return columnName;
     }
 
-    public boolean valid() {
-        return true;
-    }
-
     /*
         static methods
      */
-    public static boolean valid(BaseData data) {
-        return data != null;
-    }
-
-    public static boolean setValue(BaseData data, String column, Object value) {
+    public static boolean setColumnValue(BaseData data, String column, Object value) {
         if (data == null || column == null) {
             return false;
         }
         return data.setColumnValue(column, value);
     }
 
-    public static Object getValue(BaseData data, String column) {
+    public static Object getColumnValue(BaseData data, String column) {
         if (data == null || column == null) {
             return null;
         }

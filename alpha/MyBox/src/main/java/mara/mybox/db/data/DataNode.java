@@ -9,7 +9,7 @@ import mara.mybox.dev.MyBoxLog;
  * @CreateDate 2021-4-23
  * @License Apache License Version 2.0
  */
-public class TreeNode extends BaseData {
+public class DataNode extends BaseData {
 
     public static final String RootIdentify = "MyBoxTreeRoot;;;";
     public static final String TitleSeparater = " > ";
@@ -35,32 +35,34 @@ public class TreeNode extends BaseData {
         updateTime = new Date();
     }
 
-    public TreeNode() {
+    public DataNode() {
         init();
     }
 
-    public TreeNode(TreeNode parent, String title) {
+    public DataNode(DataNode parent, String title) {
         init();
         this.parentid = parent.getNodeid();
         this.dataTable = parent.getDataTable();
         this.title = title;
     }
 
+    @Override
     public boolean setValue(String column, Object value) {
         return setValue(this, column, value);
     }
 
+    @Override
     public Object getValue(String column) {
         return getValue(this, column);
     }
 
     @Override
     public boolean valid() {
-        return valid(this);
+        return true;
     }
 
-    public TreeNode copyIn(TreeNode parent) {
-        TreeNode node = new TreeNode();
+    public DataNode copyIn(DataNode parent) {
+        DataNode node = new DataNode();
         node.setParentid(parent.getNodeid());
         node.setDataTable(parent.getDataTable());
         node.setTitle(title);
@@ -86,15 +88,15 @@ public class TreeNode extends BaseData {
     /*
         Static methods
      */
-    public static TreeNode create() {
-        return new TreeNode();
+    public static DataNode create() {
+        return new DataNode();
     }
 
-    public static TreeNode createRoot(BaseTable dataTable) {
+    public static DataNode createRoot(BaseTable dataTable) {
         if (dataTable == null) {
             return null;
         }
-        TreeNode root = new TreeNode()
+        DataNode root = new DataNode()
                 .setDataTable(dataTable)
                 .setParentid(RootID)
                 .setNodeid(RootID)
@@ -102,7 +104,7 @@ public class TreeNode extends BaseData {
         return root;
     }
 
-    public static boolean setValue(TreeNode data, String column, Object value) {
+    public static boolean setValue(DataNode data, String column, Object value) {
         if (data == null || column == null) {
             return false;
         }
@@ -127,7 +129,7 @@ public class TreeNode extends BaseData {
         return false;
     }
 
-    public static Object getValue(TreeNode data, String column) {
+    public static Object getValue(DataNode data, String column) {
         if (data == null || column == null) {
             return null;
         }
@@ -155,7 +157,7 @@ public class TreeNode extends BaseData {
         return dataTable;
     }
 
-    public TreeNode setDataTable(BaseTable dataTable) {
+    public DataNode setDataTable(BaseTable dataTable) {
         this.dataTable = dataTable;
         return this;
     }
@@ -164,7 +166,7 @@ public class TreeNode extends BaseData {
         return nodeid;
     }
 
-    public TreeNode setNodeid(long nodeid) {
+    public DataNode setNodeid(long nodeid) {
         this.nodeid = nodeid;
         return this;
     }
@@ -173,7 +175,7 @@ public class TreeNode extends BaseData {
         return parentid;
     }
 
-    public TreeNode setParentid(long parentid) {
+    public DataNode setParentid(long parentid) {
         this.parentid = parentid;
         return this;
     }
@@ -182,7 +184,7 @@ public class TreeNode extends BaseData {
         return title;
     }
 
-    public TreeNode setTitle(String title) {
+    public DataNode setTitle(String title) {
         this.title = title;
         return this;
     }
@@ -191,7 +193,7 @@ public class TreeNode extends BaseData {
         return updateTime;
     }
 
-    public TreeNode setUpdateTime(Date updateTime) {
+    public DataNode setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
         return this;
     }

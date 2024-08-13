@@ -5,8 +5,8 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Tab;
 import javafx.scene.input.KeyEvent;
-import mara.mybox.db.data.TreeNode;
-import static mara.mybox.db.data.TreeNode.TitleSeparater;
+import mara.mybox.db.data.DataNode;
+import static mara.mybox.db.data.DataNode.TitleSeparater;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.Languages.message;
@@ -52,7 +52,7 @@ public class BaseDataTreeNodeController extends BaseController {
         }
     }
 
-    protected boolean editNode(TreeNode node) {
+    protected boolean editNode(DataNode node) {
         updateEditorTitle(node);
         attributesController.editNode(node);
         editValue(node);
@@ -61,7 +61,7 @@ public class BaseDataTreeNodeController extends BaseController {
         return true;
     }
 
-    protected void updateEditorTitle(TreeNode node) {
+    protected void updateEditorTitle(DataNode node) {
         if (node != null) {
             dataController.setTitle(dataController.baseTitle + ": "
                     + node.getNodeid() + " - " + node.getTitle());
@@ -70,15 +70,15 @@ public class BaseDataTreeNodeController extends BaseController {
         }
     }
 
-    protected void editValue(TreeNode node) {
+    protected void editValue(DataNode node) {
     }
 
-    public TreeNode pickNodeData() {
+    public DataNode pickNodeData() {
         String title = nodeTitle();
         if (title == null || title.isBlank()) {
             return null;
         }
-        TreeNode node = TreeNode.create()
+        DataNode node = DataNode.create()
                 .setDataTable(dataController.dataTable)
                 .setTitle(title);
         return pickValue(node);
@@ -190,7 +190,7 @@ public class BaseDataTreeNodeController extends BaseController {
 //        start(task);
     }
 
-    protected TreeNode pickValue(TreeNode node) {
+    protected DataNode pickValue(DataNode node) {
         if (node == null) {
             return null;
         }
@@ -356,7 +356,7 @@ public class BaseDataTreeNodeController extends BaseController {
 //        start(task, thisPane);
     }
 
-    public void pasteNode(TreeNode node) {
+    public void pasteNode(DataNode node) {
 //        if (valueInput == null || node == null) {
 //            return;
 //        }

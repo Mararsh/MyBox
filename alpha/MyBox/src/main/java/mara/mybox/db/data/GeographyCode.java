@@ -55,6 +55,21 @@ public class GeographyCode extends BaseData {
     }
 
     @Override
+    public boolean valid() {
+        return valid(this);
+    }
+
+    @Override
+    public boolean setValue(String column, Object value) {
+        return setValue(this, column, value);
+    }
+
+    @Override
+    public Object getValue(String column) {
+        return getValue(this, column);
+    }
+
+    @Override
     public Object clone() throws CloneNotSupportedException {
         try {
             GeographyCode newCode = (GeographyCode) super.clone();
@@ -327,7 +342,7 @@ public class GeographyCode extends BaseData {
             case "building":
                 return data.getBuildingName();
         }
-        return BaseDataAdaptor.displayColumnBase(data, column, value);
+        return BaseDataTools.displayColumnBase(data, column, value);
     }
 
     public static String displayDataMore(GeographyCode data, String lineBreak) {

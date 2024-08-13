@@ -47,6 +47,30 @@ public class TableColorPaletteName extends BaseTable<ColorPaletteName> {
     public static final String QueryName
             = "SELECT * FROM Color_Palette_Name WHERE palette_name=?";
 
+    @Override
+    public boolean setValue(ColorPaletteName data, String column, Object value) {
+        if (data == null || column == null) {
+            return false;
+        }
+        return data.setValue(column, value);
+    }
+
+    @Override
+    public Object getValue(ColorPaletteName data, String column) {
+        if (data == null || column == null) {
+            return null;
+        }
+        return data.getValue(column);
+    }
+
+    @Override
+    public boolean valid(ColorPaletteName data) {
+        if (data == null) {
+            return false;
+        }
+        return data.valid();
+    }
+
     public ColorPaletteName find(String name) {
         if (name == null || name.isBlank()) {
             return null;

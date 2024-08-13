@@ -20,8 +20,8 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.TreeItem;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.data.TreeNode;
-import static mara.mybox.db.data.TreeNode.TitleSeparater;
+import mara.mybox.db.data.DataNode;
+import static mara.mybox.db.data.DataNode.TitleSeparater;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
@@ -45,8 +45,7 @@ public class ControlDataTreeManage extends ControlDataTreeView {
 
     public void setManager(BaseDataTreeManageController parent) {
         manager = parent;
-        treeTable = manager.treeTable;
-        treeTagTable = manager.treeTagTable;
+        nodeTable = manager.treeTable;
         dataTable = manager.dataTable;
         parentController = parent;
         baseName = dataTable.getTableName();
@@ -74,14 +73,14 @@ public class ControlDataTreeManage extends ControlDataTreeView {
         }
     }
 
-    public String chainName(Connection conn, TreeNode node) {
+    public String chainName(Connection conn, DataNode node) {
         if (node == null) {
             return null;
         }
         String chainName = "";
-        List<TreeNode> ancestor = ancestor(conn, node);
+        List<DataNode> ancestor = ancestor(conn, node);
         if (ancestor != null) {
-            for (TreeNode a : ancestor) {
+            for (DataNode a : ancestor) {
                 chainName += a.getTitle() + TitleSeparater;
             }
         }
@@ -90,21 +89,21 @@ public class ControlDataTreeManage extends ControlDataTreeView {
     }
 
     @Override
-    public void itemClicked(MouseEvent event, TreeItem<TreeNode> item) {
+    public void itemClicked(MouseEvent event, TreeItem<DataNode> item) {
         clicked(UserConfig.getString(baseName + "WhenLeftClickNode", "Edit"), item);
     }
 
     @Override
-    public void doubleClicked(MouseEvent event, TreeItem<TreeNode> item) {
+    public void doubleClicked(MouseEvent event, TreeItem<DataNode> item) {
         clicked(UserConfig.getString(baseName + "WhenDoubleClickNode", "PopNode"), item);
     }
 
     @Override
-    public void rightClicked(MouseEvent event, TreeItem<TreeNode> item) {
+    public void rightClicked(MouseEvent event, TreeItem<DataNode> item) {
         clicked(UserConfig.getString(baseName + "WhenRightClickNode", "PopMenu"), item);
     }
 
-    public void clicked(String clickAction, TreeItem<TreeNode> item) {
+    public void clicked(String clickAction, TreeItem<DataNode> item) {
         if (item == null || clickAction == null) {
             return;
         }
@@ -136,7 +135,7 @@ public class ControlDataTreeManage extends ControlDataTreeView {
     }
 
     @Override
-    public List<MenuItem> operationsMenuItems(TreeItem<TreeNode> treeItem) {
+    public List<MenuItem> operationsMenuItems(TreeItem<DataNode> treeItem) {
         List<MenuItem> items = new ArrayList<>();
 
         items.addAll(updateMenuItems(treeItem));
@@ -150,7 +149,7 @@ public class ControlDataTreeManage extends ControlDataTreeView {
         return items;
     }
 
-    public List<MenuItem> updateMenuItems(TreeItem<TreeNode> treeItem) {
+    public List<MenuItem> updateMenuItems(TreeItem<DataNode> treeItem) {
         boolean isRoot = treeItem == null || isRoot(treeItem.getValue());
 
         List<MenuItem> items = new ArrayList<>();
@@ -226,7 +225,7 @@ public class ControlDataTreeManage extends ControlDataTreeView {
 
     @FXML
     public void showDataMenu(Event event) {
-        TreeItem<TreeNode> item = selected();
+        TreeItem<DataNode> item = selected();
         if (item == null) {
             return;
         }
@@ -258,7 +257,7 @@ public class ControlDataTreeManage extends ControlDataTreeView {
         }
     }
 
-    public List<MenuItem> dataMenuItems(TreeItem<TreeNode> item) {
+    public List<MenuItem> dataMenuItems(TreeItem<DataNode> item) {
         if (item == null) {
             return null;
         }
@@ -291,25 +290,25 @@ public class ControlDataTreeManage extends ControlDataTreeView {
         return items;
     }
 
-    public Menu leftClickMenu(TreeItem<TreeNode> treeItem) {
+    public Menu leftClickMenu(TreeItem<DataNode> treeItem) {
         Menu clickMenu = new Menu(message("WhenLeftClickNode"), StyleTools.getIconImageView("iconSelect.png"));
         clickMenu(treeItem, clickMenu, "WhenLeftClickNode", "Edit");
         return clickMenu;
     }
 
-    public Menu doubleClickMenu(TreeItem<TreeNode> treeItem) {
+    public Menu doubleClickMenu(TreeItem<DataNode> treeItem) {
         Menu clickMenu = new Menu(message("WhenDoubleClickNode"), StyleTools.getIconImageView("iconSelectAll.png"));
         clickMenu(treeItem, clickMenu, "WhenDoubleClickNode", "PopNode");
         return clickMenu;
     }
 
-    public Menu rightClickMenu(TreeItem<TreeNode> treeItem) {
+    public Menu rightClickMenu(TreeItem<DataNode> treeItem) {
         Menu clickMenu = new Menu(message("WhenRightClickNode"), StyleTools.getIconImageView("iconSelectNone.png"));
         clickMenu(treeItem, clickMenu, "WhenRightClickNode", "PopMenu");
         return clickMenu;
     }
 
-    public Menu clickMenu(TreeItem<TreeNode> treeItem, Menu menu, String key, String defaultAction) {
+    public Menu clickMenu(TreeItem<DataNode> treeItem, Menu menu, String key, String defaultAction) {
         ToggleGroup clickGroup = new ToggleGroup();
         String currentClick = UserConfig.getString(baseName + key, defaultAction);
 
@@ -404,7 +403,7 @@ public class ControlDataTreeManage extends ControlDataTreeView {
     }
 
     @FXML
-    public void showPopMenu(TreeItem<TreeNode> item) {
+    public void showPopMenu(TreeItem<DataNode> item) {
         if (item == null) {
             return;
         }
@@ -431,21 +430,21 @@ public class ControlDataTreeManage extends ControlDataTreeView {
     }
 
     @Override
-    public void nodeAdded(TreeNode parent, TreeNode newNode) {
+    public void nodeAdded(DataNode parent, DataNode newNode) {
 //        manager.nodeAdded(parent, newNode);
     }
 
     @Override
-    protected void viewNode(TreeItem<TreeNode> item) {
+    protected void viewNode(TreeItem<DataNode> item) {
         popNode(item);
     }
 
-    protected void deleteNode(TreeItem<TreeNode> targetItem) {
+    protected void deleteNode(TreeItem<DataNode> targetItem) {
         if (targetItem == null) {
             popError(message("SelectToHandle"));
             return;
         }
-        TreeNode node = targetItem.getValue();
+        DataNode node = targetItem.getValue();
         if (node == null) {
             popError(message("SelectToHandle"));
             return;
@@ -466,17 +465,17 @@ public class ControlDataTreeManage extends ControlDataTreeView {
         }
         task = new FxSingletonTask<Void>(this) {
 
-            private TreeItem<TreeNode> rootItem;
+            private TreeItem<DataNode> rootItem;
 
             @Override
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
                     if (isRoot) {
-                        treeTable.deleteChildren(conn, node.getNodeid());
+                        nodeTable.deleteChildren(conn, node.getNodeid());
 //                        TreeNode rootNode = root(conn);
 //                        rootItem = new TreeItem(rootNode);
                     } else {
-                        treeTable.deleteData(conn, node);
+                        nodeTable.deleteData(conn, node);
                     }
                 } catch (Exception e) {
                     error = e.toString();
@@ -503,12 +502,12 @@ public class ControlDataTreeManage extends ControlDataTreeView {
         start(task, treeView);
     }
 
-    protected void renameNode(TreeItem<TreeNode> item) {
+    protected void renameNode(TreeItem<DataNode> item) {
         if (item == null) {
             popError(message("SelectToHandle"));
             return;
         }
-        TreeNode nodeValue = item.getValue();
+        DataNode nodeValue = item.getValue();
         if (nodeValue == null || isRoot(nodeValue)) {
             popError(message("SelectToHandle"));
             return;
@@ -526,12 +525,12 @@ public class ControlDataTreeManage extends ControlDataTreeView {
             task.cancel();
         }
         task = new FxSingletonTask<Void>(this) {
-            private TreeNode updatedNode;
+            private DataNode updatedNode;
 
             @Override
             protected boolean handle() {
                 nodeValue.setTitle(name);
-                updatedNode = treeTable.updateData(nodeValue);
+                updatedNode = nodeTable.updateData(nodeValue);
                 return updatedNode != null;
             }
 
@@ -546,7 +545,7 @@ public class ControlDataTreeManage extends ControlDataTreeView {
         start(task, treeView);
     }
 
-    protected void copyNode(TreeItem<TreeNode> item) {
+    protected void copyNode(TreeItem<DataNode> item) {
         if (item == null || isRoot(item.getValue())) {
             return;
         }
@@ -556,7 +555,7 @@ public class ControlDataTreeManage extends ControlDataTreeView {
 //        controller.setParameters(manager, item.getValue(), chainName);
     }
 
-    protected void moveNode(TreeItem<TreeNode> item) {
+    protected void moveNode(TreeItem<DataNode> item) {
         if (item == null || isRoot(item.getValue())) {
             return;
         }
@@ -565,32 +564,32 @@ public class ControlDataTreeManage extends ControlDataTreeView {
 //        controller.setParameters(manager, item.getValue(), chainName);
     }
 
-    protected void nodeMoved(TreeNode parent, TreeNode node) {
+    protected void nodeMoved(DataNode parent, DataNode node) {
 //        manager.nodeMoved(parent, node);
     }
 
-    protected void editNode(TreeItem<TreeNode> item) {
+    protected void editNode(TreeItem<DataNode> item) {
         if (item == null) {
             return;
         }
 //        manager.editNode(item.getValue());
     }
 
-    protected void pasteNode(TreeItem<TreeNode> item) {
+    protected void pasteNode(TreeItem<DataNode> item) {
         if (item == null) {
             return;
         }
 //        manager.pasteNode(item.getValue());
     }
 
-    protected void executeNode(TreeItem<TreeNode> item) {
+    protected void executeNode(TreeItem<DataNode> item) {
         if (item == null) {
             return;
         }
 //        manager.executeNode(item.getValue());
     }
 
-    protected void exportNode(TreeItem<TreeNode> item) {
+    protected void exportNode(TreeItem<DataNode> item) {
         InfoTreeNodeExportController exportController
                 = (InfoTreeNodeExportController) childStage(Fxmls.InfoTreeNodeExportFxml);
 //        exportController.setParamters(infoController, item);
@@ -616,11 +615,11 @@ public class ControlDataTreeManage extends ControlDataTreeView {
         infoTree(selected());
     }
 
-    public void infoTree(TreeItem<TreeNode> node) {
+    public void infoTree(TreeItem<DataNode> node) {
         if (node == null) {
             return;
         }
-        TreeNode nodeValue = node.getValue();
+        DataNode nodeValue = node.getValue();
         if (nodeValue == null) {
             return;
         }
@@ -693,12 +692,12 @@ public class ControlDataTreeManage extends ControlDataTreeView {
     }
 
     protected void treeView(FxTask infoTask, BufferedWriter writer, Connection conn,
-            TreeNode node, int indent, String serialNumber) {
+            DataNode node, int indent, String serialNumber) {
         try {
             if (conn == null || node == null) {
                 return;
             }
-            List<TreeNode> children = treeTable.children(conn, node.getNodeid());
+            List<DataNode> children = nodeTable.children(conn, node.getNodeid());
             String indentNode = " ".repeat(indent);
             String spaceNode = "&nbsp;".repeat(indent);
             String nodePageid = "item" + node.getNodeid();
@@ -745,7 +744,7 @@ public class ControlDataTreeManage extends ControlDataTreeView {
                     if (infoTask != null && !infoTask.isWorking()) {
                         return;
                     }
-                    TreeNode child = children.get(i);
+                    DataNode child = children.get(i);
                     String ps = serialNumber == null || serialNumber.isBlank() ? "" : serialNumber + ".";
                     treeView(infoTask, writer, conn, child, indent + 4, ps + (i + 1));
                 }

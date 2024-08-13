@@ -12,7 +12,7 @@ import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.data.TreeNode;
+import mara.mybox.db.data.DataNode;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -32,14 +32,14 @@ public abstract class BaseDataTreeManageController extends BaseDataTreeControlle
     /*
         synchronize
      */
-    public void nodeAdded(TreeNode parent, TreeNode newNode) {
+    public void nodeAdded(DataNode parent, DataNode newNode) {
         if (parent == null || newNode == null) {
             return;
         }
 
     }
 
-    public void nodeRenamed(TreeNode node) {
+    public void nodeRenamed(DataNode node) {
         if (node == null) {
             return;
         }
@@ -55,7 +55,7 @@ public abstract class BaseDataTreeManageController extends BaseDataTreeControlle
         }
     }
 
-    public void nodeDeleted(TreeNode node) {
+    public void nodeDeleted(DataNode node) {
         if (node == null) {
             return;
         }
@@ -64,7 +64,7 @@ public abstract class BaseDataTreeManageController extends BaseDataTreeControlle
         nodeController.editNode(null);
     }
 
-    public void nodeMoved(TreeNode parent, TreeNode node) {
+    public void nodeMoved(DataNode parent, DataNode node) {
         if (parent == null || node == null) {
             return;
         }
@@ -80,14 +80,14 @@ public abstract class BaseDataTreeManageController extends BaseDataTreeControlle
         }
     }
 
-    public void nodesMoved(TreeNode parent, List<TreeNode> nodes) {
+    public void nodesMoved(DataNode parent, List<DataNode> nodes) {
         if (parent == null || nodes == null || nodes.isEmpty()) {
             return;
         }
         treeController.loadTree(parent);
     }
 
-    public void nodesCopied(TreeNode parent) {
+    public void nodesCopied(DataNode parent) {
         treeController.loadTree(parent);
     }
 
@@ -171,7 +171,7 @@ public abstract class BaseDataTreeManageController extends BaseDataTreeControlle
     /*
         tree
      */
-    public boolean editNode(TreeNode node) {
+    public boolean editNode(DataNode node) {
         if (!checkBeforeNextAction()) {
             return false;
         }
@@ -189,11 +189,11 @@ public abstract class BaseDataTreeManageController extends BaseDataTreeControlle
 //        InfoTreeNodesMoveController.oneOpen(this);
     }
 
-    public void pasteNode(TreeNode node) {
+    public void pasteNode(DataNode node) {
         nodeController.pasteNode(node);
     }
 
-    public void executeNode(TreeNode node) {
+    public void executeNode(DataNode node) {
         if (node == null) {
             return;
         }

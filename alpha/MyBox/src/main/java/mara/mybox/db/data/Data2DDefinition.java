@@ -41,6 +41,21 @@ public class Data2DDefinition extends BaseData {
         resetDefinition();
     }
 
+    @Override
+    public boolean valid() {
+        return valid(this);
+    }
+
+    @Override
+    public boolean setValue(String column, Object value) {
+        return setValue(this, column, value);
+    }
+
+    @Override
+    public Object getValue(String column) {
+        return getValue(this, column);
+    }
+
     public Data2DDefinition cloneAll() {
         try {
             Data2DDefinition newData = new Data2DDefinition();

@@ -86,6 +86,21 @@ public class InfoNode extends BaseData {
         this.title = title;
     }
 
+    @Override
+    public boolean valid() {
+        return valid(this);
+    }
+
+    @Override
+    public boolean setValue(String column, Object value) {
+        return setValue(this, column, value);
+    }
+
+    @Override
+    public Object getValue(String column) {
+        return getValue(this, column);
+    }
+
     public InfoNode copyIn(InfoNode parent) {
         InfoNode node = new InfoNode();
         node.setParentid(parent.getNodeid());

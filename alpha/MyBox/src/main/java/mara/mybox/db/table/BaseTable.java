@@ -18,8 +18,6 @@ import java.util.List;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.Database;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.data.BaseData;
-import mara.mybox.db.data.BaseDataAdaptor;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import static mara.mybox.db.data.ColumnDefinition.ColumnType.Clob;
@@ -49,6 +47,12 @@ public abstract class BaseTable<D> {
     protected List<ColumnDefinition> columns, primaryColumns, foreignColumns, referredColumns;
     protected boolean supportBatchUpdate;
     protected long newID = -1;
+
+    public abstract boolean valid(D data);
+
+    public abstract boolean setValue(D data, String column, Object value);
+
+    public abstract Object getValue(D data, String column);
 
     /*
         methods need implemented
@@ -695,26 +699,6 @@ public abstract class BaseTable<D> {
         }
     }
 
-    public boolean setValue(D data, String column, Object value) {
-        if (column == null) {
-            return false;
-        }
-        if (data instanceof BaseData) {
-            return BaseDataAdaptor.setColumnValue((BaseData) data, column, value);
-        }
-        return false;
-    }
-
-    public Object getValue(D data, String column) {
-        if (data == null || column == null) {
-            return null;
-        }
-        if (data instanceof BaseData) {
-            return BaseDataAdaptor.getColumnValue((BaseData) data, column);
-        }
-        return null;
-    }
-
     public void setId(D source, D target) {
         if (source == null || target == null || idColumnName == null) {
             return;
@@ -733,16 +717,6 @@ public abstract class BaseTable<D> {
             MyBoxLog.debug(e);
             return null;
         }
-    }
-
-    public boolean valid(D data) {
-        if (data == null) {
-            return false;
-        }
-        if (data instanceof BaseData) {
-            return BaseDataAdaptor.valid((BaseData) data);
-        }
-        return false;
     }
 
     public String name() {

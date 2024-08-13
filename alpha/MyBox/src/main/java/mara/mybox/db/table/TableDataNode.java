@@ -8,9 +8,9 @@ import java.util.List;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
+import mara.mybox.db.data.DataNode;
+import static mara.mybox.db.data.DataNode.TitleSeparater;
 import mara.mybox.db.data.Tag;
-import mara.mybox.db.data.TreeNode;
-import static mara.mybox.db.data.TreeNode.TitleSeparater;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import static mara.mybox.value.Languages.message;
@@ -20,11 +20,11 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-4-23
  * @License Apache License Version 2.0
  */
-public class TableNode extends BaseTable<TreeNode> {
+public class TableDataNode extends BaseTable<DataNode> {
 
     protected BaseTreeData dataTable;
 
-    public TableNode(BaseTreeData data) {
+    public TableDataNode(BaseTreeData data) {
         dataTable = data;
         if (dataTable == null) {
             return;
@@ -34,7 +34,7 @@ public class TableNode extends BaseTable<TreeNode> {
         defineColumns();
     }
 
-    public final TableNode defineColumns() {
+    public final TableDataNode defineColumns() {
         addColumn(new ColumnDefinition("nodeid", ColumnType.Long, true, true)
                 .setReferName(tableName + "_nodeid_fk")
                 .setReferTable(dataTable.tableName).setReferColumn(dataTable.idColumnName)
@@ -72,7 +72,7 @@ public class TableNode extends BaseTable<TreeNode> {
     }
 
     @Override
-    public boolean setValue(TreeNode data, String column, Object value) {
+    public boolean setValue(DataNode data, String column, Object value) {
         if (data == null || column == null) {
             return false;
         }
@@ -80,14 +80,22 @@ public class TableNode extends BaseTable<TreeNode> {
     }
 
     @Override
-    public Object getValue(TreeNode data, String column) {
+    public Object getValue(DataNode data, String column) {
         if (data == null || column == null) {
             return null;
         }
         return data.getValue(column);
     }
 
-    public TreeNode find(long id) {
+    @Override
+    public boolean valid(DataNode data) {
+        if (data == null) {
+            return false;
+        }
+        return data.valid();
+    }
+
+    public DataNode find(long id) {
         if (id < 0) {
             return null;
         }
@@ -99,7 +107,7 @@ public class TableNode extends BaseTable<TreeNode> {
         }
     }
 
-    public TreeNode find(Connection conn, long id) {
+    public DataNode find(Connection conn, long id) {
         if (conn == null || id < 0) {
             return null;
         }
@@ -113,7 +121,7 @@ public class TableNode extends BaseTable<TreeNode> {
         }
     }
 
-    public List<TreeNode> findRoots() {
+    public List<DataNode> findRoots() {
         try (Connection conn = DerbyBase.getConnection()) {
             return findRoots(conn);
         } catch (Exception e) {
@@ -122,7 +130,7 @@ public class TableNode extends BaseTable<TreeNode> {
         }
     }
 
-    public List<TreeNode> findRoots(Connection conn) {
+    public List<DataNode> findRoots(Connection conn) {
         if (conn == null) {
             return null;
         }
@@ -135,7 +143,7 @@ public class TableNode extends BaseTable<TreeNode> {
         }
     }
 
-    public List<TreeNode> children(long parent) {
+    public List<DataNode> children(long parent) {
         if (parent < 0) {
             return null;
         }
@@ -147,7 +155,7 @@ public class TableNode extends BaseTable<TreeNode> {
         }
     }
 
-    public List<TreeNode> children(Connection conn, long parent) {
+    public List<DataNode> children(Connection conn, long parent) {
         if (conn == null || parent < 0) {
             return null;
         }
@@ -161,7 +169,7 @@ public class TableNode extends BaseTable<TreeNode> {
         }
     }
 
-    public List<TreeNode> ancestor(long id) {
+    public List<DataNode> ancestor(long id) {
         if (id <= 0) {
             return null;
         }
@@ -173,17 +181,17 @@ public class TableNode extends BaseTable<TreeNode> {
         }
     }
 
-    public List<TreeNode> ancestor(Connection conn, long id) {
+    public List<DataNode> ancestor(Connection conn, long id) {
         if (conn == null || id <= 0) {
             return null;
         }
-        List<TreeNode> ancestor = null;
-        TreeNode node = find(conn, id);
+        List<DataNode> ancestor = null;
+        DataNode node = find(conn, id);
         if (node == null || node.isRoot()) {
             return ancestor;
         }
         long parentid = node.getParentid();
-        TreeNode parent = find(conn, parentid);
+        DataNode parent = find(conn, parentid);
         if (parent != null) {
             ancestor = ancestor(conn, parentid);
             if (ancestor == null) {
@@ -194,7 +202,7 @@ public class TableNode extends BaseTable<TreeNode> {
         return ancestor;
     }
 
-    public TreeNode find(long parent, String title) {
+    public DataNode find(long parent, String title) {
         if (title == null || title.isBlank()) {
             return null;
         }
@@ -206,7 +214,7 @@ public class TableNode extends BaseTable<TreeNode> {
         }
     }
 
-    public TreeNode find(Connection conn, long parent, String title) {
+    public DataNode find(Connection conn, long parent, String title) {
         if (conn == null || title == null || title.isBlank()) {
             return null;
         }
@@ -222,7 +230,7 @@ public class TableNode extends BaseTable<TreeNode> {
         }
     }
 
-    public TreeNode findAndCreate(long parent, String title) {
+    public DataNode findAndCreate(long parent, String title) {
         if (title == null || title.isBlank()) {
             return null;
         }
@@ -234,15 +242,15 @@ public class TableNode extends BaseTable<TreeNode> {
         }
     }
 
-    public TreeNode findAndCreate(Connection conn, long parent, String title) {
+    public DataNode findAndCreate(Connection conn, long parent, String title) {
         if (conn == null || title == null || title.isBlank()) {
             return null;
         }
         try {
-            TreeNode node = find(conn, parent, title);
+            DataNode node = find(conn, parent, title);
             if (node == null) {
-                TreeNode parentNode = find(conn, parent);
-                node = new TreeNode(parentNode, title);
+                DataNode parentNode = find(conn, parent);
+                node = new DataNode(parentNode, title);
                 node = insertData(conn, node);
                 conn.commit();
             }
@@ -253,8 +261,8 @@ public class TableNode extends BaseTable<TreeNode> {
         }
     }
 
-    public TreeNode findAndCreateRoot(Connection conn) {
-        TreeNode base = find(conn, 1);
+    public DataNode findAndCreateRoot(Connection conn) {
+        DataNode base = find(conn, 1);
         if (base == null) {
             try {
                 String sql = "INSERT INTO " + tableName + " (nodeid,title,parentid) VALUES(1,'Root',1)";
@@ -271,7 +279,7 @@ public class TableNode extends BaseTable<TreeNode> {
         return base;
     }
 
-    public TreeNode findAndCreateChain(Connection conn, TreeNode root, String ownerChain) {
+    public DataNode findAndCreateChain(Connection conn, DataNode root, String ownerChain) {
         if (conn == null || root == null || ownerChain == null || ownerChain.isBlank()) {
             return null;
         }
@@ -284,7 +292,7 @@ public class TableNode extends BaseTable<TreeNode> {
                 chain = chain.substring((message(root.getTitle()) + TitleSeparater).length());
             }
             String[] nodes = chain.split(TitleSeparater);
-            TreeNode owner = null;
+            DataNode owner = null;
             for (String node : nodes) {
                 owner = findAndCreate(conn, parentid, node);
                 if (owner == null) {
@@ -299,12 +307,12 @@ public class TableNode extends BaseTable<TreeNode> {
         }
     }
 
-    public List<TreeNode> decentants(Connection conn, long parentid) {
-        List<TreeNode> allChildren = new ArrayList<>();
-        List<TreeNode> children = children(conn, parentid);
+    public List<DataNode> decentants(Connection conn, long parentid) {
+        List<DataNode> allChildren = new ArrayList<>();
+        List<DataNode> children = children(conn, parentid);
         if (children != null && !children.isEmpty()) {
             allChildren.addAll(allChildren);
-            for (TreeNode child : children) {
+            for (DataNode child : children) {
                 children = decentants(conn, child.getNodeid());
                 if (children != null && !children.isEmpty()) {
                     allChildren.addAll(allChildren);
@@ -314,8 +322,8 @@ public class TableNode extends BaseTable<TreeNode> {
         return allChildren;
     }
 
-    public List<TreeNode> decentants(Connection conn, long parentid, long start, long size) {
-        List<TreeNode> children = new ArrayList<>();
+    public List<DataNode> decentants(Connection conn, long parentid, long start, long size) {
+        List<DataNode> children = new ArrayList<>();
         String sql = "SELECT * FROM " + tableName + " WHERE parentid=? AND nodeid<>parentid  ORDER BY nodeid ASC";
         try (PreparedStatement query = conn.prepareStatement(sql)) {
             decentants(conn, query, parentid, start, size, children, 0);
@@ -326,7 +334,7 @@ public class TableNode extends BaseTable<TreeNode> {
     }
 
     public long decentants(Connection conn, PreparedStatement query,
-            long parentid, long start, long size, List<TreeNode> nodes, long index) {
+            long parentid, long start, long size, List<DataNode> nodes, long index) {
         if (conn == null || parentid < 1 || nodes == null
                 || query == null || start < 0 || size <= 0 || nodes.size() >= size) {
             return index;
@@ -339,7 +347,7 @@ public class TableNode extends BaseTable<TreeNode> {
             conn.setAutoCommit(true);
             try (ResultSet nresults = query.executeQuery()) {
                 while (nresults.next()) {
-                    TreeNode data = readData(nresults);
+                    DataNode data = readData(nresults);
                     if (data != null) {
                         if (thisIndex >= start) {
                             nodes.add(data);
@@ -356,9 +364,9 @@ public class TableNode extends BaseTable<TreeNode> {
                 MyBoxLog.debug(e, tableName);
             }
             if (!ok) {
-                List<TreeNode> children = children(conn, parentid);
+                List<DataNode> children = children(conn, parentid);
                 if (children != null) {
-                    for (TreeNode child : children) {
+                    for (DataNode child : children) {
                         thisIndex = decentants(conn, query, child.getNodeid(), start, size, nodes, thisIndex);
                         if (nodes.size() >= size) {
                             break;
@@ -393,9 +401,9 @@ public class TableNode extends BaseTable<TreeNode> {
         int count = 0;
         try {
             count = childrenSize(sizeQuery, parentid);
-            List<TreeNode> children = children(conn, parentid);
+            List<DataNode> children = children(conn, parentid);
             if (children != null) {
-                for (TreeNode child : children) {
+                for (DataNode child : children) {
                     count += decentantsSize(conn, sizeQuery, child.getNodeid());
                 }
             }
@@ -467,7 +475,7 @@ public class TableNode extends BaseTable<TreeNode> {
         return isEmpty;
     }
 
-    public boolean equalOrDescendant(FxTask<Void> task, Connection conn, TreeNode node1, TreeNode node2) {
+    public boolean equalOrDescendant(FxTask<Void> task, Connection conn, DataNode node1, DataNode node2) {
         if (conn == null || node1 == null || node2 == null) {
             if (task != null) {
                 task.setError(message("InvalidData"));
@@ -479,14 +487,14 @@ public class TableNode extends BaseTable<TreeNode> {
         if (id1 == id2) {
             return true;
         }
-        TreeNode parent = parent(conn, node1);
+        DataNode parent = parent(conn, node1);
         if (parent == null || id1 == parent.getNodeid()) {
             return false;
         }
         return equalOrDescendant(task, conn, parent(conn, node1), node2);
     }
 
-    public TreeNode parent(Connection conn, TreeNode node) {
+    public DataNode parent(Connection conn, DataNode node) {
         if (conn == null || node == null) {
             return null;
         }

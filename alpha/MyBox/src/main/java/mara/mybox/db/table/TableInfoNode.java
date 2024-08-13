@@ -86,6 +86,30 @@ public class TableInfoNode extends BaseTable<InfoNode> {
     public static final String DeleteChildren
             = "DELETE FROM Tree_Node WHERE parentid=? AND nodeid<>parentid";
 
+    @Override
+    public boolean setValue(InfoNode data, String column, Object value) {
+        if (data == null || column == null) {
+            return false;
+        }
+        return data.setValue(column, value);
+    }
+
+    @Override
+    public Object getValue(InfoNode data, String column) {
+        if (data == null || column == null) {
+            return null;
+        }
+        return data.getValue(column);
+    }
+
+    @Override
+    public boolean valid(InfoNode data) {
+        if (data == null) {
+            return false;
+        }
+        return data.valid();
+    }
+
     public InfoNode find(long id) {
         if (id < 0) {
             return null;

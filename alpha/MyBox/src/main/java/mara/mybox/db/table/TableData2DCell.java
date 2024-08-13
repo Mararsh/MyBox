@@ -40,4 +40,28 @@ public class TableData2DCell extends BaseTable<Data2DCell> {
     public static final String ClearData
             = "DELETE FROM Data2D_Cell WHERE dcdid=?";
 
+    @Override
+    public boolean setValue(Data2DCell data, String column, Object value) {
+        if (data == null || column == null) {
+            return false;
+        }
+        return data.setValue(column, value);
+    }
+
+    @Override
+    public Object getValue(Data2DCell data, String column) {
+        if (data == null || column == null) {
+            return null;
+        }
+        return data.getValue(column);
+    }
+
+    @Override
+    public boolean valid(Data2DCell data) {
+        if (data == null) {
+            return false;
+        }
+        return data.valid();
+    }
+
 }

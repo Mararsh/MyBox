@@ -13,6 +13,8 @@ import java.util.Random;
 import javafx.scene.paint.Color;
 import mara.mybox.calculation.DoubleStatistic;
 import mara.mybox.db.DerbyBase;
+import static mara.mybox.db.data.ColumnDefinition.getValue;
+import static mara.mybox.db.data.ColumnDefinition.setValue;
 import static mara.mybox.db.table.BaseTable.StringMaxLength;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
@@ -214,8 +216,19 @@ public class ColumnDefinition extends BaseData {
         return sql;
     }
 
+    @Override
     public boolean valid() {
         return valid(this);
+    }
+
+    @Override
+    public boolean setValue(String column, Object value) {
+        return setValue(this, column, value);
+    }
+
+    @Override
+    public Object getValue(String column) {
+        return getValue(this, column);
     }
 
     public boolean validValue(String value) {
@@ -752,6 +765,148 @@ public class ColumnDefinition extends BaseData {
         return data != null
                 && data.getType() != null
                 && data.getColumnName() != null && !data.getColumnName().isBlank();
+    }
+
+    public static Object getValue(ColumnDefinition data, String column) {
+        if (data == null || column == null) {
+            return null;
+        }
+        switch (column) {
+            case "column_type":
+                return columnType(data.getType());
+            case "column_name":
+                return data.getColumnName();
+            case "index":
+                return data.getIndex();
+            case "length":
+                return data.getLength();
+            case "width":
+                return data.getWidth();
+            case "scale":
+                return data.getScale();
+            case "color":
+                return data.getColor() == null ? null : data.getColor().toString();
+            case "is_primary":
+                return data.isIsPrimaryKey();
+            case "not_null":
+                return data.isNotNull();
+            case "is_auto":
+                return data.isAuto();
+            case "invalid_as":
+                return data.getInvalidAs().ordinal();
+            case "editable":
+                return data.isEditable();
+            case "fix_year":
+                return data.isFixTwoDigitYear();
+            case "format":
+                return data.getFormat();
+            case "century":
+                return data.getCentury();
+            case "on_delete":
+                return onDelete(data.getOnDelete());
+            case "on_update":
+                return onUpdate(data.getOnUpdate());
+            case "default_value":
+                return data.getDefaultValue();
+            case "max_value":
+                return number2String(data.getMaxValue());
+            case "min_value":
+                return number2String(data.getMinValue());
+            case "foreign_name":
+                return data.getReferName();
+            case "foreign_table":
+                return data.getReferTable();
+            case "foreign_column":
+                return data.getReferColumn();
+            case "description":
+                return data.getDescription();
+        }
+        return null;
+    }
+
+    public static boolean setValue(ColumnDefinition data, String column, Object value) {
+        if (data == null || column == null) {
+            return false;
+        }
+        try {
+            switch (column) {
+                case "column_type":
+                    data.setType(columnType((short) value));
+                    return true;
+                case "column_name":
+                    data.setColumnName(value == null ? null : (String) value);
+                    return true;
+                case "index":
+                    data.setIndex(value == null ? null : (int) value);
+                    return true;
+                case "length":
+                    data.setLength(value == null ? null : (int) value);
+                    return true;
+                case "width":
+                    data.setWidth(value == null ? null : (int) value);
+                    return true;
+                case "scale":
+                    data.setScale(value == null ? null : (int) value);
+                    return true;
+                case "color":
+                    data.setColor(value == null ? null : Color.web((String) value));
+                    return true;
+                case "is_primary":
+                    data.setIsPrimaryKey(value == null ? false : (boolean) value);
+                    return true;
+                case "is_auto":
+                    data.setAuto(value == null ? false : (boolean) value);
+                    return true;
+                case "invalid_as":
+                    data.setInvalidAs(value == null ? InvalidAs.Skip : InvalidAs.values()[(short) value]);
+                    return true;
+                case "not_null":
+                    data.setNotNull(value == null ? false : (boolean) value);
+                    return true;
+                case "editable":
+                    data.setEditable(value == null ? false : (boolean) value);
+                    return true;
+                case "format":
+                    data.setFormat(value == null ? null : (String) value);
+                    return true;
+                case "fix_year":
+                    data.setFixTwoDigitYear(value == null ? false : (boolean) value);
+                    return true;
+                case "century":
+                    data.setCentury(value == null ? null : (int) value);
+                    return true;
+                case "on_delete":
+                    data.setOnDelete(onDelete((short) value));
+                    return true;
+                case "on_update":
+                    data.setOnUpdate(onUpdate((short) value));
+                    return true;
+                case "default_value":
+                    data.setDefaultValue(value == null ? null : (String) value);
+                    return true;
+                case "max_value":
+                    data.setMaxValue(string2Number(data.getType(), (String) value));
+                    return true;
+                case "min_value":
+                    data.setMinValue(string2Number(data.getType(), (String) value));
+                    return true;
+                case "foreign_name":
+                    data.setReferName(value == null ? null : (String) value);
+                    return true;
+                case "foreign_table":
+                    data.setReferTable(value == null ? null : (String) value);
+                    return true;
+                case "foreign_column":
+                    data.setReferColumn(value == null ? null : (String) value);
+                    return true;
+                case "description":
+                    data.setDescription(value == null ? null : (String) value);
+                    return true;
+            }
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
+        return false;
     }
 
     public static short columnType(ColumnType type) {

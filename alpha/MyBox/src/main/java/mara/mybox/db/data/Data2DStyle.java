@@ -42,6 +42,21 @@ public class Data2DStyle extends BaseData {
         init();
     }
 
+    @Override
+    public boolean valid() {
+        return valid(this);
+    }
+
+    @Override
+    public boolean setValue(String column, Object value) {
+        return setValue(this, column, value);
+    }
+
+    @Override
+    public Object getValue(String column) {
+        return getValue(this, column);
+    }
+
     public Data2DStyle cloneAll() {
         try {
             Data2DStyle newData = (Data2DStyle) super.clone();

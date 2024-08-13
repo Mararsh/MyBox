@@ -7,9 +7,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.data.TreeNode;
+import mara.mybox.db.data.DataNode;
 import mara.mybox.db.table.BaseTable;
-import mara.mybox.db.table.TableNode;
+import mara.mybox.db.table.TableDataNode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.DateTools;
@@ -24,10 +24,10 @@ public class ControlDataTreeNodeAttributes extends BaseController {
 
     protected BaseDataTreeController dataController;
     protected BaseDataTreeNodeController nodeController;
-    protected TableNode tableTree;
+    protected TableDataNode tableTree;
     protected FxTask tagsTask;
     protected BaseTable dataTable;
-    protected TreeNode parentNode, currentNode;
+    protected DataNode parentNode, currentNode;
 
     @FXML
     protected TextField idInput, titleInput, timeInput;
@@ -78,7 +78,7 @@ public class ControlDataTreeNodeAttributes extends BaseController {
         nodeController.nodeChanged(true);
     }
 
-    protected void editNode(TreeNode node) {
+    protected void editNode(DataNode node) {
         currentNode = node;
         isSettingValues = true;
         if (node != null) {
@@ -125,14 +125,14 @@ public class ControlDataTreeNodeAttributes extends BaseController {
 //        InfoTreeNodeParentController.open(this);
     }
 
-    protected void checkParentNode(TreeNode node) {
+    protected void checkParentNode(DataNode node) {
         if (parentNode == null || node.getNodeid() != parentNode.getNodeid()) {
             return;
         }
         refreshParentNode();
     }
 
-    protected void setParentNode(TreeNode node) {
+    protected void setParentNode(DataNode node) {
         parentNode = node;
         refreshParentNode();
     }

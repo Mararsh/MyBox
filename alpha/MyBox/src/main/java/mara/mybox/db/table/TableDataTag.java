@@ -2,14 +2,14 @@ package mara.mybox.db.table;
 
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
-import mara.mybox.db.data.TreeTag;
+import mara.mybox.db.data.DataTag;
 
 /**
  * @Author Mara
  * @CreateDate 2021-3-3
  * @License Apache License Version 2.0
  */
-public class TableDataTag extends BaseTable<TreeTag> {
+public class TableDataTag extends BaseTable<DataTag> {
 
     protected BaseTreeData dataTable;
 
@@ -32,7 +32,7 @@ public class TableDataTag extends BaseTable<TreeTag> {
     }
 
     @Override
-    public boolean setValue(TreeTag data, String column, Object value) {
+    public boolean setValue(DataTag data, String column, Object value) {
         if (data == null || column == null) {
             return false;
         }
@@ -40,11 +40,19 @@ public class TableDataTag extends BaseTable<TreeTag> {
     }
 
     @Override
-    public Object getValue(TreeTag data, String column) {
+    public Object getValue(DataTag data, String column) {
         if (data == null || column == null) {
             return null;
         }
         return data.getValue(column);
+    }
+
+    @Override
+    public boolean valid(DataTag data) {
+        if (data == null) {
+            return false;
+        }
+        return data.valid();
     }
 
 }

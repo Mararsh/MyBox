@@ -32,6 +32,21 @@ public class Tag extends BaseData {
         this.tag = tag;
     }
 
+    @Override
+    public boolean valid() {
+        return valid(this);
+    }
+
+    @Override
+    public boolean setValue(String column, Object value) {
+        return setValue(this, column, value);
+    }
+
+    @Override
+    public Object getValue(String column) {
+        return getValue(this, column);
+    }
+
     /*
         Static methods
      */

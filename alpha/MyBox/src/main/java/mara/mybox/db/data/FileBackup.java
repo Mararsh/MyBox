@@ -35,6 +35,21 @@ public class FileBackup extends BaseData {
         recordTime = new Date();
     }
 
+    @Override
+    public boolean valid() {
+        return valid(this);
+    }
+
+    @Override
+    public boolean setValue(String column, Object value) {
+        return setValue(this, column, value);
+    }
+
+    @Override
+    public Object getValue(String column) {
+        return getValue(this, column);
+    }
+
     public String getName() {
         return backup != null ? backup.getAbsolutePath() : null;
     }
@@ -43,9 +58,6 @@ public class FileBackup extends BaseData {
         return backup != null ? backup.length() : 0;
     }
 
-    public boolean valid() {
-        return valid(this);
-    }
 
     /*
         Static methods

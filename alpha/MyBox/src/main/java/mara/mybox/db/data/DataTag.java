@@ -10,7 +10,7 @@ import mara.mybox.fximage.FxColorTools;
  * @CreateDate 2021-3-20
  * @License Apache License Version 2.0
  */
-public class TreeTag extends BaseData {
+public class DataTag extends BaseData {
 
     protected BaseTable dataTable;
     protected long tagid;
@@ -23,7 +23,7 @@ public class TreeTag extends BaseData {
         color = FxColorTools.randomColor();
     }
 
-    public TreeTag() {
+    public DataTag() {
         init();
     }
 
@@ -40,7 +40,7 @@ public class TreeTag extends BaseData {
         return valid(this);
     }
 
-    public TreeTag setColorString(String v) {
+    public DataTag setColorString(String v) {
         this.color = v == null ? FxColorTools.randomColor() : Color.web((String) v);
         return this;
     }
@@ -48,11 +48,11 @@ public class TreeTag extends BaseData {
     /*
         Static methods
      */
-    public static TreeTag create() {
-        return new TreeTag();
+    public static DataTag create() {
+        return new DataTag();
     }
 
-    public static boolean setValue(TreeTag data, String column, Object value) {
+    public static boolean setValue(DataTag data, String column, Object value) {
         if (data == null || column == null) {
             return false;
         }
@@ -75,7 +75,7 @@ public class TreeTag extends BaseData {
         return false;
     }
 
-    public static Object getValue(TreeTag data, String column) {
+    public static Object getValue(DataTag data, String column) {
         if (data == null || column == null) {
             return null;
         }
@@ -90,7 +90,7 @@ public class TreeTag extends BaseData {
         return null;
     }
 
-    public static boolean valid(TreeTag data) {
+    public static boolean valid(DataTag data) {
         return data != null
                 && data.getTag() != null && !data.getTag().isBlank();
     }
@@ -102,7 +102,7 @@ public class TreeTag extends BaseData {
         return tagid;
     }
 
-    public TreeTag setTagid(long tagid) {
+    public DataTag setTagid(long tagid) {
         this.tagid = tagid;
         return this;
     }
@@ -111,7 +111,7 @@ public class TreeTag extends BaseData {
         return tag;
     }
 
-    public TreeTag setTag(String tag) {
+    public DataTag setTag(String tag) {
         this.tag = tag;
         return this;
     }
@@ -120,7 +120,7 @@ public class TreeTag extends BaseData {
         return color;
     }
 
-    public TreeTag setColor(Color color) {
+    public DataTag setColor(Color color) {
         this.color = color;
         return this;
     }

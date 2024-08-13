@@ -1,11 +1,11 @@
 package mara.mybox.controller;
 
 import javafx.scene.input.KeyEvent;
-import mara.mybox.db.data.TreeNode;
+import mara.mybox.db.data.DataNode;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.BaseTreeData;
 import mara.mybox.db.table.TableTag;
-import mara.mybox.db.table.TableNode;
+import mara.mybox.db.table.TableDataNode;
 import mara.mybox.db.table.TableDataTag;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
@@ -21,7 +21,7 @@ public abstract class BaseDataTreeController extends BaseController {
     protected BaseDataTreeNodeController nodeController;
 
     protected BaseTreeData dataTable;
-    protected TableNode treeTable;
+    protected TableDataNode treeTable;
     protected TableTag tagTable;
     protected TableDataTag treeTagTable;
 
@@ -38,7 +38,7 @@ public abstract class BaseDataTreeController extends BaseController {
             if (dataTable == null) {
                 return;
             }
-            treeTable = new TableNode(dataTable);
+            treeTable = new TableDataNode(dataTable);
             tagTable = new TableTag();
             treeTagTable = new TableDataTag(dataTable);
 
@@ -51,7 +51,7 @@ public abstract class BaseDataTreeController extends BaseController {
         }
     }
 
-    public void popNode(TreeNode item) {
+    public void popNode(DataNode item) {
         if (item == null) {
             return;
         }

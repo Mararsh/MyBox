@@ -48,11 +48,35 @@ public class TableTag extends BaseTable<Tag> {
     public static final String QueryCategoryTags
             = "SELECT tag FROM Tag WHERE category=? ";
 
+    @Override
+    public boolean setValue(Tag data, String column, Object value) {
+        if (data == null || column == null) {
+            return false;
+        }
+        return data.setValue(column, value);
+    }
+
+    @Override
+    public Object getValue(Tag data, String column) {
+        if (data == null || column == null) {
+            return null;
+        }
+        return data.getValue(column);
+    }
+
+    @Override
+    public boolean valid(Tag data) {
+        if (data == null) {
+            return false;
+        }
+        return data.valid();
+    }
+
     public Tag queryTag(Connection conn, String category, String tag) {
         if (conn == null || tag == null) {
             return null;
         }
-        try ( PreparedStatement statement = conn.prepareStatement(TableTag.QueryTag)) {
+        try (PreparedStatement statement = conn.prepareStatement(TableTag.QueryTag)) {
             statement.setString(1, category);
             statement.setString(2, tag);
             conn.setAutoCommit(true);
@@ -69,7 +93,7 @@ public class TableTag extends BaseTable<Tag> {
     }
 
     public List<String> categoryTags(String category) {
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             return categoryTags(conn, category);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -79,7 +103,7 @@ public class TableTag extends BaseTable<Tag> {
 
     public List<String> categoryTags(Connection conn, String category) {
         List<String> tags = new ArrayList<>();
-        try ( PreparedStatement statement = conn.prepareStatement(QueryCategoryTags)) {
+        try (PreparedStatement statement = conn.prepareStatement(QueryCategoryTags)) {
             statement.setString(1, category);
             ResultSet results = statement.executeQuery();
             conn.setAutoCommit(true);

@@ -8,9 +8,9 @@ import java.util.List;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
+import mara.mybox.db.data.DataNode;
+import mara.mybox.db.data.DataNodeTag;
 import mara.mybox.db.data.Tag;
-import mara.mybox.db.data.TreeNode;
-import mara.mybox.db.data.TreeNodeTag;
 import mara.mybox.dev.MyBoxLog;
 
 /**
@@ -18,12 +18,12 @@ import mara.mybox.dev.MyBoxLog;
  * @CreateDate 2021-3-3
  * @License Apache License Version 2.0
  */
-public class TableNodeTag extends BaseTable<TreeNodeTag> {
+public class TableDataNodeTag extends BaseTable<DataNodeTag> {
 
     protected BaseTreeData dataTable;
     protected TableDataTag tagTable;
 
-    public TableNodeTag(BaseTreeData data) {
+    public TableDataNodeTag(BaseTreeData data) {
         if (data == null) {
             return;
         }
@@ -32,7 +32,7 @@ public class TableNodeTag extends BaseTable<TreeNodeTag> {
         init();
     }
 
-    public TableNodeTag(BaseTreeData data, TableDataTag tag) {
+    public TableDataNodeTag(BaseTreeData data, TableDataTag tag) {
         dataTable = data;
         tagTable = tag;
         init();
@@ -47,7 +47,7 @@ public class TableNodeTag extends BaseTable<TreeNodeTag> {
         defineColumns();
     }
 
-    public final TableNodeTag defineColumns() {
+    public final TableDataNodeTag defineColumns() {
         addColumn(new ColumnDefinition("tntid", ColumnType.Long, true, true).setAuto(true));
         addColumn(new ColumnDefinition("tnodeid", ColumnType.Long)
                 .setReferName(tableName + "_nodeid_fk")
@@ -77,7 +77,7 @@ public class TableNodeTag extends BaseTable<TreeNodeTag> {
     }
 
     @Override
-    public boolean setValue(TreeNodeTag data, String column, Object value) {
+    public boolean setValue(DataNodeTag data, String column, Object value) {
         if (data == null || column == null) {
             return false;
         }
@@ -85,11 +85,19 @@ public class TableNodeTag extends BaseTable<TreeNodeTag> {
     }
 
     @Override
-    public Object getValue(TreeNodeTag data, String column) {
+    public Object getValue(DataNodeTag data, String column) {
         if (data == null || column == null) {
             return null;
         }
         return data.getValue(column);
+    }
+
+    @Override
+    public boolean valid(DataNodeTag data) {
+        if (data == null) {
+            return false;
+        }
+        return data.valid();
     }
 
     @Override
@@ -110,12 +118,12 @@ public class TableNodeTag extends BaseTable<TreeNodeTag> {
     }
 
     @Override
-    public boolean setForeignValue(TreeNodeTag data, String column, Object value) {
+    public boolean setForeignValue(DataNodeTag data, String column, Object value) {
         if (data == null || column == null || value == null) {
             return true;
         }
-        if ("tnodeid".equals(column) && value instanceof TreeNode) {
-            data.setNode((TreeNode) value);
+        if ("tnodeid".equals(column) && value instanceof DataNode) {
+            data.setNode((DataNode) value);
         }
         if ("ttagid".equals(column) && value instanceof Tag) {
             data.setTag((Tag) value);
@@ -123,8 +131,8 @@ public class TableNodeTag extends BaseTable<TreeNodeTag> {
         return true;
     }
 
-    public List<TreeNodeTag> nodeTags(long nodeid) {
-        List<TreeNodeTag> tags = new ArrayList<>();
+    public List<DataNodeTag> nodeTags(long nodeid) {
+        List<DataNodeTag> tags = new ArrayList<>();
         if (nodeid < 0) {
             return tags;
         }
@@ -136,8 +144,8 @@ public class TableNodeTag extends BaseTable<TreeNodeTag> {
         return tags;
     }
 
-    public List<TreeNodeTag> nodeTags(Connection conn, long nodeid) {
-        List<TreeNodeTag> tags = new ArrayList<>();
+    public List<DataNodeTag> nodeTags(Connection conn, long nodeid) {
+        List<DataNodeTag> tags = new ArrayList<>();
         if (conn == null || nodeid < 0) {
             return tags;
         }
@@ -147,7 +155,7 @@ public class TableNodeTag extends BaseTable<TreeNodeTag> {
             conn.setAutoCommit(true);
             ResultSet results = statement.executeQuery();
             while (results.next()) {
-                TreeNodeTag tag = readData(results);
+                DataNodeTag tag = readData(results);
                 if (tag != null) {
                     tags.add(tag);
                 }
@@ -158,11 +166,11 @@ public class TableNodeTag extends BaseTable<TreeNodeTag> {
         return tags;
     }
 
-    public TreeNodeTag query(Connection conn, long nodeid, long tagid) {
+    public DataNodeTag query(Connection conn, long nodeid, long tagid) {
         if (conn == null || nodeid < 0 || tagid < 0) {
             return null;
         }
-        TreeNodeTag tag = null;
+        DataNodeTag tag = null;
         String sql = "SELECT * FROM " + tableName + ", Tag WHERE tnodeid=? AND tagid=?";
         try (PreparedStatement statement = conn.prepareStatement(sql)) {
             statement.setLong(1, nodeid);
@@ -202,7 +210,7 @@ public class TableNodeTag extends BaseTable<TreeNodeTag> {
             ResultSet results = statement.executeQuery();
             conn.setAutoCommit(true);
             while (results.next()) {
-                TreeNodeTag nodeTag = readData(results);
+                DataNodeTag nodeTag = readData(results);
                 if (nodeTag != null) {
                     tags.add(nodeTag.getTag().getTag());
                 }

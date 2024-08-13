@@ -74,6 +74,21 @@ public class ImageScope extends BaseData {
         clearValues();
     }
 
+    @Override
+    public boolean valid() {
+        return valid(this);
+    }
+
+    @Override
+    public boolean setValue(String column, Object value) {
+        return setValue(this, column, value);
+    }
+
+    @Override
+    public Object getValue(String column) {
+        return getValue(this, column);
+    }
+
     public final void clearValues() {
         colors = new ArrayList<>();
         points = new ArrayList<>();

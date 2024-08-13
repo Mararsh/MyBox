@@ -42,13 +42,27 @@ public class TableMediaList extends BaseTable<MediaList> {
         return this;
     }
 
+    @Override
+    public boolean setValue(MediaList data, String column, Object value) {
+        return false;
+    }
+
+    @Override
+    public Object getValue(MediaList data, String column) {
+        return null;
+    }
+
+    @Override
+    public boolean valid(MediaList data) {
+        return false;
+    }
+
     public static List<MediaList> read() {
-        try ( Connection conn = DerbyBase.getConnection();
-                 Statement statement = conn.createStatement()) {
+        try (Connection conn = DerbyBase.getConnection(); Statement statement = conn.createStatement()) {
             conn.setReadOnly(true);
             List<String> names = new ArrayList();
             String sql = " SELECT DISTINCT list_name FROM media_list";
-            try ( ResultSet results = statement.executeQuery(sql)) {
+            try (ResultSet results = statement.executeQuery(sql)) {
                 while (results.next()) {
                     names.add(results.getString("list_name"));
                 }
@@ -58,7 +72,7 @@ public class TableMediaList extends BaseTable<MediaList> {
             for (String name : names) {
                 sql = " SELECT * FROM media_list WHERE list_name='" + DerbyBase.stringValue(name) + "' ORDER BY address_index";
                 List<String> addresses;
-                try ( ResultSet results = statement.executeQuery(sql)) {
+                try (ResultSet results = statement.executeQuery(sql)) {
                     addresses = new ArrayList();
                     while (results.next()) {
                         addresses.add(results.getString("address"));
@@ -78,12 +92,11 @@ public class TableMediaList extends BaseTable<MediaList> {
     }
 
     public static List<String> names() {
-        try ( Connection conn = DerbyBase.getConnection();
-                 Statement statement = conn.createStatement()) {
+        try (Connection conn = DerbyBase.getConnection(); Statement statement = conn.createStatement()) {
             conn.setReadOnly(true);
             List<String> names = new ArrayList();
             String sql = " SELECT DISTINCT list_name FROM media_list";
-            try ( ResultSet results = statement.executeQuery(sql)) {
+            try (ResultSet results = statement.executeQuery(sql)) {
                 while (results.next()) {
                     names.add(results.getString("list_name"));
                 }
@@ -102,12 +115,11 @@ public class TableMediaList extends BaseTable<MediaList> {
         if (name == null || name.trim().isEmpty()) {
             return null;
         }
-        try ( Connection conn = DerbyBase.getConnection();
-                 Statement statement = conn.createStatement()) {
+        try (Connection conn = DerbyBase.getConnection(); Statement statement = conn.createStatement()) {
             conn.setReadOnly(true);
             String sql = " SELECT * FROM media_list WHERE list_name='" + DerbyBase.stringValue(name) + "' ORDER BY address_index";
             List<String> addresses = new ArrayList();
-            try ( ResultSet results = statement.executeQuery(sql)) {
+            try (ResultSet results = statement.executeQuery(sql)) {
                 while (results.next()) {
                     addresses.add(results.getString("address"));
                 }
@@ -130,8 +142,7 @@ public class TableMediaList extends BaseTable<MediaList> {
         if (medias == null || medias.isEmpty()) {
             return false;
         }
-        try ( Connection conn = DerbyBase.getConnection();
-                 Statement statement = conn.createStatement()) {
+        try (Connection conn = DerbyBase.getConnection(); Statement statement = conn.createStatement()) {
 //            TableMedia.write(statement, medias);
             String sql = "DELETE FROM media_list WHERE list_name='" + DerbyBase.stringValue(name) + "'";
             statement.executeUpdate(sql);
@@ -157,11 +168,10 @@ public class TableMediaList extends BaseTable<MediaList> {
     }
 
     public static boolean delete(String name) {
-        try ( Connection conn = DerbyBase.getConnection();
-                 Statement statement = conn.createStatement()) {
+        try (Connection conn = DerbyBase.getConnection(); Statement statement = conn.createStatement()) {
             List<String> addresses = new ArrayList();
             String sql = " SELECT * FROM media_list WHERE list_name='" + DerbyBase.stringValue(name) + "'";
-            try ( ResultSet results = statement.executeQuery(sql)) {
+            try (ResultSet results = statement.executeQuery(sql)) {
                 while (results.next()) {
                     addresses.add(results.getString("address"));
                 }

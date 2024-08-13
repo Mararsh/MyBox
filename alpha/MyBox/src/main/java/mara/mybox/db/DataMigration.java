@@ -34,9 +34,9 @@ import mara.mybox.db.data.GeographyCodeTools;
 import mara.mybox.db.data.ImageClipboard;
 import mara.mybox.db.data.ImageEditHistory;
 import mara.mybox.db.data.InfoNode;
-import mara.mybox.db.data.TreeNode;
-import mara.mybox.db.data.TreeNodeTag;
-import mara.mybox.db.data.TreeTag;
+import mara.mybox.db.data.DataNode;
+import mara.mybox.db.data.DataNodeTag;
+import mara.mybox.db.data.DataTag;
 import mara.mybox.db.data.WebHistory;
 import static mara.mybox.db.table.BaseTable.StringMaxLength;
 import mara.mybox.db.table.BaseTreeData;
@@ -54,8 +54,8 @@ import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.db.table.TableImageClipboard;
 import mara.mybox.db.table.TableImageEditHistory;
 import mara.mybox.db.table.TableInfoNode;
-import mara.mybox.db.table.TableNode;
-import mara.mybox.db.table.TableNodeTag;
+import mara.mybox.db.table.TableDataNode;
+import mara.mybox.db.table.TableDataNodeTag;
 import mara.mybox.db.table.TableNote;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.db.table.TableWebHistory;
@@ -276,10 +276,10 @@ public class DataMigration {
                     + " WHERE A.old_parentid=B.old_nodeid");
             conn.setAutoCommit(false);
             count = 0;
-            TableNode tableTree = new TableNode(dataTable);
+            TableDataNode tableTree = new TableDataNode(dataTable);
             while (query.next()) {
                 try {
-                    TreeNode treeNode = new TreeNode()
+                    DataNode treeNode = new DataNode()
                             .setNodeid(query.getLong("nodeid"))
                             .setTitle(query.getString("title"))
                             .setParentid(query.getLong("parentid"));
@@ -302,7 +302,7 @@ public class DataMigration {
             TableDataTag tableTreeTag = new TableDataTag(dataTable);
             while (query.next()) {
                 try {
-                    TreeTag tag = new TreeTag()
+                    DataTag tag = new DataTag()
                             .setTag(query.getString("tag"))
                             .setColorString(query.getString("color"));
                     tag = tableTreeTag.insertData(conn, tag);
@@ -323,10 +323,10 @@ public class DataMigration {
                     + " WHERE A.tnodeid=C.old_nodeid AND A.tagid=B.old_tagid ");
             conn.setAutoCommit(false);
             count = 0;
-            TableNodeTag tableTreeNodeTag = new TableNodeTag(dataTable);
+            TableDataNodeTag tableTreeNodeTag = new TableDataNodeTag(dataTable);
             while (query.next()) {
                 try {
-                    TreeNodeTag nodeTag = new TreeNodeTag()
+                    DataNodeTag nodeTag = new DataNodeTag()
                             .setTnodeid(query.getLong("mnodeid"))
                             .setTtagid(query.getLong("mtagid"));
                     tableTreeNodeTag.insertData(conn, nodeTag);

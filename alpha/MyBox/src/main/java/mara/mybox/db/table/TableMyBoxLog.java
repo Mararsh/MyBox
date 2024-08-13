@@ -46,4 +46,27 @@ public class TableMyBoxLog extends BaseTable<MyBoxLog> {
     public static final String TypeQuery
             = " SELECT * FROM MyBox_Log  WHERE log_type=? ORDER BY time DESC  ";
 
+    @Override
+    public boolean setValue(MyBoxLog data, String column, Object value) {
+        if (data == null || column == null) {
+            return false;
+        }
+        return data.setValue(column, value);
+    }
+
+    @Override
+    public Object getValue(MyBoxLog data, String column) {
+        if (data == null || column == null) {
+            return null;
+        }
+        return data.getValue(column);
+    }
+
+    @Override
+    public boolean valid(MyBoxLog data) {
+        if (data == null) {
+            return false;
+        }
+        return data.valid();
+    }
 }

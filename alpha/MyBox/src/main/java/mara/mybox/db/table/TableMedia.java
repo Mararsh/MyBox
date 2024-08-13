@@ -46,12 +46,26 @@ public class TableMedia extends BaseTable<MediaInformation> {
         return this;
     }
 
+    @Override
+    public boolean setValue(MediaInformation data, String column, Object value) {
+        return false;
+    }
+
+    @Override
+    public Object getValue(MediaInformation data, String column) {
+        return null;
+    }
+
+    @Override
+    public boolean valid(MediaInformation data) {
+        return false;
+    }
+
     public static MediaInformation read(String address) {
         if (address == null || address.trim().isEmpty()) {
             return null;
         }
-        try (Connection conn = DerbyBase.getConnection();
-                Statement statement = conn.createStatement()) {
+        try (Connection conn = DerbyBase.getConnection(); Statement statement = conn.createStatement()) {
             conn.setReadOnly(true);
             statement.setMaxRows(1);
             String sql = " SELECT * FROM media WHERE address='" + DerbyBase.stringValue(address) + "'";
@@ -128,8 +142,7 @@ public class TableMedia extends BaseTable<MediaInformation> {
         if (media == null || media.getAddress() == null) {
             return false;
         }
-        try (Connection conn = DerbyBase.getConnection();
-                Statement statement = conn.createStatement()) {
+        try (Connection conn = DerbyBase.getConnection(); Statement statement = conn.createStatement()) {
             String sql = "DELETE FROM media WHERE address='" + DerbyBase.stringValue(media.getAddress()) + "'";
             statement.executeUpdate(sql);
             sql = "INSERT INTO media(address,video_encoding,audio_encoding,duration,size,width,height,info,html,modify_time) VALUES('"
@@ -218,8 +231,7 @@ public class TableMedia extends BaseTable<MediaInformation> {
     }
 
     public static boolean delete(String address) {
-        try (Connection conn = DerbyBase.getConnection();
-                Statement statement = conn.createStatement()) {
+        try (Connection conn = DerbyBase.getConnection(); Statement statement = conn.createStatement()) {
             String sql = "DELETE FROM media WHERE address='" + DerbyBase.stringValue(address) + "'";
             statement.executeUpdate(sql);
             return true;
