@@ -20,10 +20,10 @@ import mara.mybox.dev.MyBoxLog;
  */
 public class TableDataNodeTag extends BaseTable<DataNodeTag> {
 
-    protected BaseTreeData dataTable;
+    protected BaseTableTreeData dataTable;
     protected TableDataTag tagTable;
 
-    public TableDataNodeTag(BaseTreeData data) {
+    public TableDataNodeTag(BaseTableTreeData data) {
         if (data == null) {
             return;
         }
@@ -32,7 +32,7 @@ public class TableDataNodeTag extends BaseTable<DataNodeTag> {
         init();
     }
 
-    public TableDataNodeTag(BaseTreeData data, TableDataTag tag) {
+    public TableDataNodeTag(BaseTableTreeData data, TableDataTag tag) {
         dataTable = data;
         tagTable = tag;
         init();

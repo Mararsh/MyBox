@@ -13,7 +13,7 @@ import mara.mybox.dev.MyBoxLog;
  * @CreateDate 2021-4-23
  * @License Apache License Version 2.0
  */
-public class TableMathFunction extends BaseTreeData<MathFunction> {
+public class TableMathFunction extends BaseTableTreeData<MathFunction> {
 
     public TableMathFunction() {
         tableName = "Math_Function";

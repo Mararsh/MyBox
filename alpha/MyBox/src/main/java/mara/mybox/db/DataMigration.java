@@ -39,7 +39,7 @@ import mara.mybox.db.data.ImageEditHistory;
 import mara.mybox.db.data.InfoNode;
 import mara.mybox.db.data.WebHistory;
 import static mara.mybox.db.table.BaseTable.StringMaxLength;
-import mara.mybox.db.table.BaseTreeData;
+import mara.mybox.db.table.BaseTableTreeData;
 import mara.mybox.db.table.TableAlarmClock;
 import mara.mybox.db.table.TableColor;
 import mara.mybox.db.table.TableColorPalette;
@@ -225,7 +225,7 @@ public class DataMigration {
         }
     }
 
-    private static void updateIn682_move(Connection conn, BaseTreeData dataTable, String category) {
+    private static void updateIn682_move(Connection conn, BaseTableTreeData dataTable, String category) {
         String tname = dataTable.getTableName();
         // for debug.Remove this block later
         try (Statement statement = conn.createStatement()) {
@@ -607,22 +607,22 @@ public class DataMigration {
                 while (query.next()) {
                     try {
                         Data2DRow data2DRow = tableLocations.newRow();
-                        data2DRow.setColumnValue(message("DataSet"), query.getString("data_set"));
-                        data2DRow.setColumnValue(message("Label"), query.getString("label"));
-                        data2DRow.setColumnValue(message("Address"), query.getString("address"));
-                        data2DRow.setColumnValue(message("Longitude"), query.getDouble("longitude"));
-                        data2DRow.setColumnValue(message("Latitude"), query.getDouble("latitude"));
-                        data2DRow.setColumnValue(message("Altitude"), query.getDouble("altitude"));
-                        data2DRow.setColumnValue(message("Precision"), query.getDouble("precision"));
-                        data2DRow.setColumnValue(message("Speed"), query.getDouble("speed"));
-                        data2DRow.setColumnValue(message("Direction"), query.getShort("direction"));
-                        data2DRow.setColumnValue(message("CoordinateSystem"), GeoCoordinateSystem.name(query.getShort("coordinate_system")));
-                        data2DRow.setColumnValue(message("DataValue"), query.getDouble("data_value"));
-                        data2DRow.setColumnValue(message("DataSize"), query.getDouble("data_size"));
-                        data2DRow.setColumnValue(message("StartTime"), DateTools.datetimeToString(query.getLong("start_time")));
-                        data2DRow.setColumnValue(message("EndTime"), DateTools.datetimeToString(query.getLong("end_time")));
-                        data2DRow.setColumnValue(message("Image"), query.getString("dataset_image"));
-                        data2DRow.setColumnValue(message("Comments"), query.getString("location_comments"));
+                        data2DRow.setMapValue(message("DataSet"), query.getString("data_set"));
+                        data2DRow.setMapValue(message("Label"), query.getString("label"));
+                        data2DRow.setMapValue(message("Address"), query.getString("address"));
+                        data2DRow.setMapValue(message("Longitude"), query.getDouble("longitude"));
+                        data2DRow.setMapValue(message("Latitude"), query.getDouble("latitude"));
+                        data2DRow.setMapValue(message("Altitude"), query.getDouble("altitude"));
+                        data2DRow.setMapValue(message("Precision"), query.getDouble("precision"));
+                        data2DRow.setMapValue(message("Speed"), query.getDouble("speed"));
+                        data2DRow.setMapValue(message("Direction"), query.getShort("direction"));
+                        data2DRow.setMapValue(message("CoordinateSystem"), GeoCoordinateSystem.name(query.getShort("coordinate_system")));
+                        data2DRow.setMapValue(message("DataValue"), query.getDouble("data_value"));
+                        data2DRow.setMapValue(message("DataSize"), query.getDouble("data_size"));
+                        data2DRow.setMapValue(message("StartTime"), DateTools.datetimeToString(query.getLong("start_time")));
+                        data2DRow.setMapValue(message("EndTime"), DateTools.datetimeToString(query.getLong("end_time")));
+                        data2DRow.setMapValue(message("Image"), query.getString("dataset_image"));
+                        data2DRow.setMapValue(message("Comments"), query.getString("location_comments"));
                         tableLocations.insertData(conn, insert, data2DRow);
                         if (++count % Database.BatchSize == 0) {
                             conn.commit();
@@ -679,31 +679,31 @@ public class DataMigration {
                 while (query.next()) {
                     try {
                         Data2DRow data2DRow = tableReports.newRow();
-                        data2DRow.setColumnValue(message("DataSet"), query.getString("data_set"));
-                        data2DRow.setColumnValue(message("Time"), query.getTimestamp("time"));
+                        data2DRow.setMapValue(message("DataSet"), query.getString("data_set"));
+                        data2DRow.setMapValue(message("Time"), query.getTimestamp("time"));
                         long locationid = query.getLong("locationid");
                         GeographyCode code = TableGeographyCode.readCode(conn, locationid, true);
                         if (code != null) {
                             try {
-                                data2DRow.setColumnValue(message("Address"), code.getName());
-                                data2DRow.setColumnValue(message("Longitude"), code.getLongitude());
-                                data2DRow.setColumnValue(message("Latitude"), code.getLatitude());
-                                data2DRow.setColumnValue(message("Level"), code.getLevelName());
-                                data2DRow.setColumnValue(message("Continent"), code.getContinentName());
-                                data2DRow.setColumnValue(message("Country"), code.getCountryName());
-                                data2DRow.setColumnValue(message("Province"), code.getProvinceName());
-                                data2DRow.setColumnValue(message("CoordinateSystem"), code.getCoordinateSystem().name());
-                                data2DRow.setColumnValue(message("Comments"), code.getFullName());
+                                data2DRow.setMapValue(message("Address"), code.getName());
+                                data2DRow.setMapValue(message("Longitude"), code.getLongitude());
+                                data2DRow.setMapValue(message("Latitude"), code.getLatitude());
+                                data2DRow.setMapValue(message("Level"), code.getLevelName());
+                                data2DRow.setMapValue(message("Continent"), code.getContinentName());
+                                data2DRow.setMapValue(message("Country"), code.getCountryName());
+                                data2DRow.setMapValue(message("Province"), code.getProvinceName());
+                                data2DRow.setMapValue(message("CoordinateSystem"), code.getCoordinateSystem().name());
+                                data2DRow.setMapValue(message("Comments"), code.getFullName());
                             } catch (Exception e) {
                                 MyBoxLog.console(e);
                             }
                         }
-                        data2DRow.setColumnValue(message("Confirmed"), query.getLong("confirmed"));
-                        data2DRow.setColumnValue(message("Healed"), query.getLong("healed"));
-                        data2DRow.setColumnValue(message("Dead"), query.getLong("dead"));
-                        data2DRow.setColumnValue(message("IncreasedConfirmed"), query.getLong("increased_confirmed"));
-                        data2DRow.setColumnValue(message("IncreasedHealed"), query.getLong("increased_healed"));
-                        data2DRow.setColumnValue(message("IncreasedDead"), query.getLong("increased_dead"));
+                        data2DRow.setMapValue(message("Confirmed"), query.getLong("confirmed"));
+                        data2DRow.setMapValue(message("Healed"), query.getLong("healed"));
+                        data2DRow.setMapValue(message("Dead"), query.getLong("dead"));
+                        data2DRow.setMapValue(message("IncreasedConfirmed"), query.getLong("increased_confirmed"));
+                        data2DRow.setMapValue(message("IncreasedHealed"), query.getLong("increased_healed"));
+                        data2DRow.setMapValue(message("IncreasedDead"), query.getLong("increased_dead"));
                         short sd = query.getShort("source");
                         String source;
                         source = switch (sd) {
@@ -718,7 +718,7 @@ public class DataMigration {
                             default ->
                                 message("Unknown");
                         };
-                        data2DRow.setColumnValue(message("Source"), source);
+                        data2DRow.setMapValue(message("Source"), source);
 
                         tableReports.insertData(conn, insert, data2DRow);
                         if (++count % Database.BatchSize == 0) {

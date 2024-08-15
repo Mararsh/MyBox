@@ -12,7 +12,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-4-23
  * @License Apache License Version 2.0
  */
-public class TableInfo extends BaseTreeData<InfoInTree> {
+public class TableInfo extends BaseTableTreeData<InfoInTree> {
 
     public TableInfo() {
         tableName = "Info_In_Tree";

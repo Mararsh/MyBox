@@ -69,7 +69,7 @@ public class DataTableWriter extends Data2DWriter {
             }
             printRow = new ArrayList<>();
             Data2DRow data2DRow = targetTable.makeRow(inRow, invalidAs);
-            if (data2DRow == null || data2DRow.isNoColumn()) {
+            if (data2DRow == null || data2DRow.isMapEmpty()) {
                 return;
             }
             if (tableData2D.setInsertStatement(conn, insert, data2DRow)) {

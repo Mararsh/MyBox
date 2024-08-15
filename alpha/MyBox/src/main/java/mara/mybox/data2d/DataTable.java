@@ -252,7 +252,7 @@ public class DataTable extends Data2D {
             for (int i = 0; i < Math.min(columns.size(), values.size() - 1); i++) {
                 Data2DColumn column = columns.get(i);
                 String name = column.getColumnName();
-                data2DRow.setColumnValue(name, column.fromString(values.get(i + 1), invalidAs));
+                data2DRow.setMapValue(name, column.fromString(values.get(i + 1), invalidAs));
             }
             return data2DRow;
         } catch (Exception e) {
@@ -409,7 +409,7 @@ public class DataTable extends Data2D {
                 Data2DColumn column = vColumns.get(i);
                 String name = column.getColumnName();
                 String value = i < rowSize ? values.get(i) : null;
-                data2DRow.setColumnValue(name, column.fromString(value, invalidAs));
+                data2DRow.setMapValue(name, column.fromString(value, invalidAs));
             }
             return data2DRow;
         } catch (Exception e) {

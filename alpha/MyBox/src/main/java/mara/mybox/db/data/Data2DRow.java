@@ -19,18 +19,18 @@ public class Data2DRow extends BaseData {
 
     @Override
     public boolean setValue(String column, Object value) {
-        return setColumnValue(column, value);
+        return setMapValue(column, value);
     }
 
     @Override
     public Object getValue(String column) {
-        return getColumnValue(column);
+        return getMapValue(column);
     }
 
     public List<String> toStrings(List<Data2DColumn> columns) {
         List<String> row = new ArrayList<>();
         for (Data2DColumn column : columns) {
-            Object value = getColumnValue(column.getColumnName());
+            Object value = getMapValue(column.getColumnName());
             row.add(column.toString(value));
         }
         return row;
@@ -39,7 +39,7 @@ public class Data2DRow extends BaseData {
     public Map<String, String> toNameValues(List<Data2DColumn> columns) {
         Map<String, String> values = new HashMap<>();
         for (Data2DColumn column : columns) {
-            Object value = getColumnValue(column.getColumnName());
+            Object value = getMapValue(column.getColumnName());
             values.put(column.getColumnName(), column.toString(value));
         }
         return values;

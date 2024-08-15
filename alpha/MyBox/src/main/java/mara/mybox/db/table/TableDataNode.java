@@ -22,9 +22,9 @@ import static mara.mybox.value.Languages.message;
  */
 public class TableDataNode extends BaseTable<DataNode> {
 
-    protected BaseTreeData dataTable;
+    protected BaseTableTreeData dataTable;
 
-    public TableDataNode(BaseTreeData data) {
+    public TableDataNode(BaseTableTreeData data) {
         dataTable = data;
         if (dataTable == null) {
             return;

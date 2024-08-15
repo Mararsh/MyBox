@@ -169,7 +169,7 @@ public class ColumnDefinition extends BaseData {
             value = c.value;
             maxValue = c.maxValue;
             minValue = c.minValue;
-            columnValues = c.columnValues;
+            mapValues = c.mapValues;
             statistic = c.statistic;
             description = c.description;
             fixTwoDigitYear = c.fixTwoDigitYear;

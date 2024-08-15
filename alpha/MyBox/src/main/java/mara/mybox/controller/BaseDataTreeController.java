@@ -3,7 +3,7 @@ package mara.mybox.controller;
 import javafx.scene.input.KeyEvent;
 import mara.mybox.db.data.DataNode;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.db.table.BaseTreeData;
+import mara.mybox.db.table.BaseTableTreeData;
 import mara.mybox.db.table.TableTag;
 import mara.mybox.db.table.TableDataNode;
 import mara.mybox.db.table.TableDataTag;
@@ -20,7 +20,7 @@ public abstract class BaseDataTreeController extends BaseController {
     protected ControlDataTreeView treeController;
     protected BaseDataTreeNodeController nodeController;
 
-    protected BaseTreeData dataTable;
+    protected BaseTableTreeData dataTable;
     protected TableDataNode treeTable;
     protected TableTag tagTable;
     protected TableDataTag treeTagTable;

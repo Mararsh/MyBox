@@ -12,7 +12,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-4-23
  * @License Apache License Version 2.0
  */
-public class TableNote extends BaseTreeData<Note> {
+public class TableNote extends BaseTableTreeData<Note> {
 
     public TableNote() {
         tableName = "Note";
@@ -55,9 +55,7 @@ public class TableNote extends BaseTreeData<Note> {
     @Override
     public long insertData(Connection conn, String title, String info) {
         try {
-            Note note = new Note()
-                    .setTitle(title)
-                    .setNote(info);
+            Note note = Note.fromInfo(title, info);
             note = insertData(conn, note);
             return note.getNoteid();
         } catch (Exception e) {

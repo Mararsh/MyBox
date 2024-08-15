@@ -67,7 +67,7 @@ public class DataTableSetValue extends DataTableModify {
             for (int i = 0; i < columnsNumber; ++i) {
                 Data2DColumn column = columns.get(i);
                 String name = column.getColumnName();
-                sourceTableRow.setColumnValue(name, column.fromString(targetRow.get(i)));
+                sourceTableRow.setMapValue(name, column.fromString(targetRow.get(i)));
             }
             if (tableData2D.setUpdateStatement(conn, update, sourceTableRow)) {
                 update.addBatch();

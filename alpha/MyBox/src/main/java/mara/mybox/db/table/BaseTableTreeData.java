@@ -8,10 +8,16 @@ import mara.mybox.dev.MyBoxLog;
  * @CreateDate 2024-8-12
  * @License Apache License Version 2.0
  */
-public abstract class BaseTreeData<D> extends BaseTable<D> {
+public abstract class BaseTableTreeData<D> extends BaseTable<D> {
 
+    /*
+        abstract
+     */
     public abstract long insertData(Connection conn, String title, String info);
 
+    /*
+        init
+     */
     public boolean initTreeTables(Connection conn) {
         if (conn == null || tableName == null) {
             return false;
@@ -27,21 +33,6 @@ public abstract class BaseTreeData<D> extends BaseTable<D> {
             nodeTagTable.createTable(conn);
             nodeTagTable.createIndices(conn);
 
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-            return false;
-        }
-    }
-
-    public boolean createTableTree(Connection conn, boolean dropExisted) {
-        if (conn == null || tableName == null) {
-            return false;
-        }
-        try {
-            TableDataNode tableTree = new TableDataNode(this);
-            tableTree.createTable(conn, dropExisted);
-            tableTree.createIndices(conn);
             return true;
         } catch (Exception e) {
             MyBoxLog.debug(e);

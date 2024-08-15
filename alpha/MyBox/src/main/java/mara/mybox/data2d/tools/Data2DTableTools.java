@@ -232,7 +232,7 @@ public class Data2DTableTools {
             for (List<String> row : pageRows) {
                 for (int i = 0; i < columns.size(); i++) {
                     Data2DColumn column = columns.get(i);
-                    data2DRow.setColumnValue(column.getColumnName(), column.fromString(row.get(i + 1), invalidAs));
+                    data2DRow.setMapValue(column.getColumnName(), column.fromString(row.get(i + 1), invalidAs));
                 }
                 tableData2D.insertData(conn, data2DRow);
                 if (++count % Database.BatchSize == 0) {

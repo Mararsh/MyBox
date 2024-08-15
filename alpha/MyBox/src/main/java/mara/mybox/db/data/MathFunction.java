@@ -28,16 +28,6 @@ public class MathFunction extends BaseData {
         return getValue(this, column);
     }
 
-    @Override
-    public String values() {
-        try {
-            return columnValues.toString();
-        } catch (Exception e) {
-//            MyBoxLog.debug(e);
-            return null;
-        }
-    }
-
     /*
         Static methods
      */

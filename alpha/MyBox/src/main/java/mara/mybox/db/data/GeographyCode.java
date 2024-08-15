@@ -357,7 +357,6 @@ public class GeographyCode extends BaseData {
         }
     }
 
-    @Override
     public String label(String columnName) {
         if (columnName == null) {
             return null;

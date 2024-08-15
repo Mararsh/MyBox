@@ -39,7 +39,7 @@ public class TableData2D extends BaseTable<Data2DRow> {
     public Data2DRow newRow() {
         Data2DRow data2DRow = new Data2DRow();
         for (ColumnDefinition column : columns) {
-            data2DRow.setColumnValue(column.getColumnName(),
+            data2DRow.setMapValue(column.getColumnName(),
                     column.fromString(column.getDefaultValue(), InvalidAs.Empty));
         }
         return data2DRow;

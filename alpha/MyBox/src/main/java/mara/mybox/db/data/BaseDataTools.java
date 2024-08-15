@@ -51,7 +51,7 @@ public class BaseDataTools {
                 } else {
                     info = "";
                 }
-                info += data.label(column.getColumnName()) + ": " + display;
+                info += column.getColumnName() + ": " + display;
             }
             return info + displayDataMore(data, lineBreak);
         } catch (Exception e) {
