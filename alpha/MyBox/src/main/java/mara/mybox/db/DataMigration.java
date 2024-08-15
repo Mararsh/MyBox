@@ -28,15 +28,15 @@ import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.Data2DRow;
 import mara.mybox.db.data.Data2DStyle;
+import mara.mybox.db.data.DataNode;
+import mara.mybox.db.data.DataNodeTag;
+import mara.mybox.db.data.DataTag;
 import mara.mybox.db.data.GeographyCode;
 import mara.mybox.db.data.GeographyCodeLevel;
 import mara.mybox.db.data.GeographyCodeTools;
 import mara.mybox.db.data.ImageClipboard;
 import mara.mybox.db.data.ImageEditHistory;
 import mara.mybox.db.data.InfoNode;
-import mara.mybox.db.data.DataNode;
-import mara.mybox.db.data.DataNodeTag;
-import mara.mybox.db.data.DataTag;
 import mara.mybox.db.data.WebHistory;
 import static mara.mybox.db.table.BaseTable.StringMaxLength;
 import mara.mybox.db.table.BaseTreeData;
@@ -49,13 +49,15 @@ import mara.mybox.db.table.TableData2DCell;
 import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.db.table.TableData2DStyle;
+import mara.mybox.db.table.TableDataNode;
+import mara.mybox.db.table.TableDataNodeTag;
 import mara.mybox.db.table.TableDataTag;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.db.table.TableImageClipboard;
 import mara.mybox.db.table.TableImageEditHistory;
+import mara.mybox.db.table.TableInfo;
 import mara.mybox.db.table.TableInfoNode;
-import mara.mybox.db.table.TableDataNode;
-import mara.mybox.db.table.TableDataNodeTag;
+import mara.mybox.db.table.TableMathFunction;
 import mara.mybox.db.table.TableNote;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.db.table.TableWebHistory;
@@ -207,6 +209,8 @@ public class DataMigration {
             MyBoxLog.info("Updating tables in 6.8.2...");
 
             updateIn682_move(conn, new TableNote(), "Notebook");
+            updateIn682_move(conn, new TableInfo(), "InformationInTree");
+            updateIn682_move(conn, new TableMathFunction(), "MathFunction");
 
             try (Statement statement = conn.createStatement()) {
                 conn.setAutoCommit(true);
@@ -236,6 +240,12 @@ public class DataMigration {
             statement.executeUpdate("DROP TABLE " + tname);
             dataTable.createTable(conn);
             dataTable.initTreeTables(conn);
+        } catch (Exception e) {
+            MyBoxLog.console(e);
+        }
+
+        try (Statement statement = conn.createStatement()) {
+            conn.setAutoCommit(true);
             statement.executeUpdate("DROP TABLE MYBOX_TMP_TREE_Migration682");
             statement.executeUpdate("DROP TABLE MYBOX_TMP_TAG_Migration682");
         } catch (Exception e) {

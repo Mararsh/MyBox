@@ -732,6 +732,18 @@ public abstract class BaseTable<D> {
         return names;
     }
 
+    public String values(D data) {
+        if (data == null) {
+            return null;
+        }
+        String s = "", name;
+        for (ColumnDefinition column : columns) {
+            name = column.getColumnName();
+            s += name + ": " + getValue(data, name) + "\n";
+        }
+        return s;
+    }
+
     public String sizeStatement() {
         if (tableName == null) {
             return null;

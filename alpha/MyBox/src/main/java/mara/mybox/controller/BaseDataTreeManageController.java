@@ -2,7 +2,6 @@ package mara.mybox.controller;
 
 import java.io.File;
 import java.sql.Connection;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import javafx.fxml.FXML;
@@ -10,12 +9,9 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
-import javafx.stage.Window;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.DataNode;
 import mara.mybox.fxml.FxSingletonTask;
-import mara.mybox.fxml.WindowTools;
-import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -280,30 +276,6 @@ public abstract class BaseDataTreeManageController extends BaseDataTreeControlle
                 return false;
             }
         }
-    }
-
-    /*
-        static methods
-     */
-    public static BaseDataTreeManageController oneOpen() {
-        BaseDataTreeManageController controller = null;
-        List<Window> windows = new ArrayList<>();
-        windows.addAll(Window.getWindows());
-        for (Window window : windows) {
-            Object object = window.getUserData();
-            if (object != null && object instanceof BaseDataTreeManageController) {
-                try {
-                    controller = (BaseDataTreeManageController) object;
-                    break;
-                } catch (Exception e) {
-                }
-            }
-        }
-        if (controller == null) {
-            controller = (BaseDataTreeManageController) WindowTools.openStage(Fxmls.InfoTreeManageFxml);
-        }
-        controller.requestMouse();
-        return controller;
     }
 
 }

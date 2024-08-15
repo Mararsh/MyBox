@@ -371,10 +371,7 @@ public class BaseDataTreeNodeController extends BaseController {
 
     @Override
     public boolean keyEventsFilter(KeyEvent event) {
-        if (valuesEditor == null) {
-            return super.keyEventsFilter(event);
-        }
-        if (valuesEditor.thisPane.isFocused() || valuesEditor.thisPane.isFocusWithin()) {
+        if (valuesEditor != null && valuesEditor.thisPane.isFocused() || valuesEditor.thisPane.isFocusWithin()) {
             if (valuesEditor.keyEventsFilter(event)) {
                 return true;
             }
@@ -387,7 +384,10 @@ public class BaseDataTreeNodeController extends BaseController {
         if (super.keyEventsFilter(event)) {
             return true;
         }
-        return valuesEditor.keyEventsFilter(event);
+        if (valuesEditor != null) {
+            return valuesEditor.keyEventsFilter(event);
+        }
+        return false;
     }
 
 }

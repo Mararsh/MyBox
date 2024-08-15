@@ -28,6 +28,16 @@ public class MathFunction extends BaseData {
         return getValue(this, column);
     }
 
+    @Override
+    public String values() {
+        try {
+            return columnValues.toString();
+        } catch (Exception e) {
+//            MyBoxLog.debug(e);
+            return null;
+        }
+    }
+
     /*
         Static methods
      */
@@ -84,8 +94,7 @@ public class MathFunction extends BaseData {
 
     public static boolean valid(MathFunction data) {
         return data != null
-                && data.getName() != null && !data.getName().isBlank()
-                && data.getExpression() != null && !data.getExpression().isBlank();
+                && data.getName() != null && !data.getName().isBlank();
     }
 
 
@@ -96,40 +105,45 @@ public class MathFunction extends BaseData {
         return funcid;
     }
 
-    public void setFuncid(long funcid) {
+    public MathFunction setFuncid(long funcid) {
         this.funcid = funcid;
+        return this;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public MathFunction setName(String name) {
         this.name = name;
+        return this;
     }
 
     public String getExpression() {
         return expression;
     }
 
-    public void setExpression(String expression) {
+    public MathFunction setExpression(String expression) {
         this.expression = expression;
+        return this;
     }
 
     public String getDomain() {
         return domain;
     }
 
-    public void setDomain(String domain) {
+    public MathFunction setDomain(String domain) {
         this.domain = domain;
+        return this;
     }
 
     public String getVariables() {
         return variables;
     }
 
-    public void setVariables(String variables) {
+    public MathFunction setVariables(String variables) {
         this.variables = variables;
+        return this;
     }
 
 }

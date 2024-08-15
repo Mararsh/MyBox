@@ -707,15 +707,15 @@ public class InfoNode extends BaseData {
             case InfoNode.WebFavorite:
                 return WebFavoritesController.oneOpen();
 //            case InfoNode.Notebook:
-//                return NotesController.oneOpen();
+//                return NoteTreeController.oneOpen();
             case InfoNode.JShellCode:
                 return JShellController.open("");
             case InfoNode.SQL:
                 return DatabaseSqlController.open(false);
             case InfoNode.JavaScript:
                 return JavaScriptController.loadScript("");
-            case InfoNode.InformationInTree:
-                return InfoTreeManageController.oneOpen();
+//            case InfoNode.InformationInTree:
+//                return InfoTreeController.oneOpen();
             case InfoNode.JEXLCode:
                 return JexlController.open("", "", "");
             case InfoNode.RowFilter:

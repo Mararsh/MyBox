@@ -3,7 +3,7 @@ package mara.mybox.db.table;
 import java.sql.Connection;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
-import mara.mybox.db.data.Note;
+import mara.mybox.db.data.InfoInTree;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.Languages.message;
 
@@ -12,24 +12,24 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-4-23
  * @License Apache License Version 2.0
  */
-public class TableNote extends BaseTreeData<Note> {
+public class TableInfo extends BaseTreeData<InfoInTree> {
 
-    public TableNote() {
-        tableName = "Note";
-        tableTitle = message("Notes");
+    public TableInfo() {
+        tableName = "Info_In_Tree";
+        tableTitle = message("InformationInTree");
         idColumnName = "noteid";
         defineColumns();
     }
 
-    public final TableNote defineColumns() {
-        addColumn(new ColumnDefinition("noteid", ColumnType.Long, true, true).setAuto(true));
+    public final TableInfo defineColumns() {
+        addColumn(new ColumnDefinition("infoid", ColumnType.Long, true, true).setAuto(true));
         addColumn(new ColumnDefinition("title", ColumnType.String).setLength(StringMaxLength));
-        addColumn(new ColumnDefinition("note", ColumnType.Clob));
+        addColumn(new ColumnDefinition("info", ColumnType.Clob));
         return this;
     }
 
     @Override
-    public boolean setValue(Note data, String column, Object value) {
+    public boolean setValue(InfoInTree data, String column, Object value) {
         if (data == null || column == null) {
             return false;
         }
@@ -37,7 +37,7 @@ public class TableNote extends BaseTreeData<Note> {
     }
 
     @Override
-    public Object getValue(Note data, String column) {
+    public Object getValue(InfoInTree data, String column) {
         if (data == null || column == null) {
             return null;
         }
@@ -45,7 +45,7 @@ public class TableNote extends BaseTreeData<Note> {
     }
 
     @Override
-    public boolean valid(Note data) {
+    public boolean valid(InfoInTree data) {
         if (data == null) {
             return false;
         }
@@ -55,11 +55,11 @@ public class TableNote extends BaseTreeData<Note> {
     @Override
     public long insertData(Connection conn, String title, String info) {
         try {
-            Note note = new Note()
+            InfoInTree node = new InfoInTree()
                     .setTitle(title)
-                    .setNote(info);
-            note = insertData(conn, note);
-            return note.getNoteid();
+                    .setInfo(info);
+            node = insertData(conn, node);
+            return node.getInfoid();
         } catch (Exception e) {
             MyBoxLog.console(e);
             return -1;

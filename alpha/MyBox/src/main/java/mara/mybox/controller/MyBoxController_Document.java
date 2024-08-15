@@ -35,12 +35,12 @@ public abstract class MyBoxController_Document extends MyBoxController_Base {
 
         MenuItem Notes = new MenuItem(message("Notes"));
         Notes.setOnAction((ActionEvent event1) -> {
-            loadScene(Fxmls.NotesTreeFxml);
+            loadScene(Fxmls.NoteTreeFxml);
         });
 
         MenuItem InformationInTree = new MenuItem(message("InformationInTree"));
         InformationInTree.setOnAction((ActionEvent event1) -> {
-            loadScene(Fxmls.InfoTreeManageFxml);
+            loadScene(Fxmls.InfoTreeFxml);
         });
 
         Menu pdfMenu = new Menu("PDF");

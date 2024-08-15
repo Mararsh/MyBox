@@ -15,12 +15,12 @@ import mara.mybox.value.Languages;
  * @CreateDate 2024-8-8
  * @License Apache License Version 2.0
  */
-public class NotesTreeController extends BaseDataTreeManageController {
+public class NoteTreeController extends BaseDataTreeManageController {
 
     @FXML
     protected NoteNodeController noteController;
 
-    public NotesTreeController() {
+    public NoteTreeController() {
         baseTitle = Languages.message("Notes");
         TipsLabelKey = "NotesTips";
     }
@@ -42,22 +42,22 @@ public class NotesTreeController extends BaseDataTreeManageController {
     /*
         static methods
      */
-    public static NotesTreeController oneOpen() {
-        NotesTreeController controller = null;
+    public static NoteTreeController oneOpen() {
+        NoteTreeController controller = null;
         List<Window> windows = new ArrayList<>();
         windows.addAll(Window.getWindows());
         for (Window window : windows) {
             Object object = window.getUserData();
-            if (object != null && object instanceof NotesTreeController) {
+            if (object != null && object instanceof NoteTreeController) {
                 try {
-                    controller = (NotesTreeController) object;
+                    controller = (NoteTreeController) object;
                     break;
                 } catch (Exception e) {
                 }
             }
         }
         if (controller == null) {
-            controller = (NotesTreeController) WindowTools.openStage(Fxmls.NotesTreeFxml);
+            controller = (NoteTreeController) WindowTools.openStage(Fxmls.NoteTreeFxml);
         }
         controller.requestMouse();
         return controller;

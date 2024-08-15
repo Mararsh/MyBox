@@ -27,8 +27,10 @@ import mara.mybox.db.table.TableFloatMatrix;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.db.table.TableImageClipboard;
 import mara.mybox.db.table.TableImageEditHistory;
+import mara.mybox.db.table.TableInfo;
 import mara.mybox.db.table.TableInfoNode;
 import mara.mybox.db.table.TableInfoNodeTag;
+import mara.mybox.db.table.TableMathFunction;
 import mara.mybox.db.table.TableMedia;
 import mara.mybox.db.table.TableMediaList;
 import mara.mybox.db.table.TableMyBoxLog;
@@ -530,6 +532,20 @@ public class DerbyBase {
                 loadingController.info("Note");
                 t.initTreeTables(conn);
                 loadingController.info("Note_Tree");
+            }
+            if (!tables.contains("Math_Function".toLowerCase())) {
+                TableMathFunction t = new TableMathFunction();
+                t.createTable(conn);
+                loadingController.info("Math_Function");
+                t.initTreeTables(conn);
+                loadingController.info("Math_Function_Tree");
+            }
+            if (!tables.contains("Info_In_Tree".toLowerCase())) {
+                TableInfo t = new TableInfo();
+                t.createTable(conn);
+                loadingController.info("Info_In_Tree");
+                t.initTreeTables(conn);
+                loadingController.info("Info_In_Tree_Tree");
             }
             return true;
         } catch (Exception e) {
