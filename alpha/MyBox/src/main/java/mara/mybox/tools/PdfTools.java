@@ -22,7 +22,6 @@ import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.value.AppValues;
-import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 import org.apache.pdfbox.cos.COSName;
@@ -35,6 +34,7 @@ import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType0Font;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
 import org.apache.pdfbox.pdmodel.graphics.blend.BlendMode;
 import org.apache.pdfbox.pdmodel.graphics.image.CCITTFactory;
 import org.apache.pdfbox.pdmodel.graphics.image.JPEGFactory;
@@ -47,8 +47,6 @@ import org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination.PDPa
 /**
  * @Author Mara
  * @CreateDate 2018-6-17 9:13:00
- * @Version 1.0
- * @Description
  * @License Apache License Version 2.0
  */
 public class PdfTools {
@@ -91,7 +89,7 @@ public class PdfTools {
     public static PDDocument createPDF(File file, String author) {
         PDDocument targetDoc = null;
         try {
-            PDDocument document = new PDDocument(AppVariables.PdfMemUsage);
+            PDDocument document = new PDDocument();
             setAttributes(document, author, -1);
             document.save(file);
             targetDoc = document;
@@ -321,7 +319,7 @@ public class PdfTools {
                 return false;
             }
             int count = 0, total = images.size();
-            try (PDDocument document = new PDDocument(AppVariables.PdfMemUsage)) {
+            try (PDDocument document = new PDDocument()) {
 
                 PDFont font = getFont(document, p.getFontFile());
 
@@ -369,7 +367,7 @@ public class PdfTools {
                 return false;
             }
             int count = 0, total = files.size();
-            try (PDDocument document = new PDDocument(AppVariables.PdfMemUsage)) {
+            try (PDDocument document = new PDDocument()) {
 
                 PDFont font = getFont(document, p.getFontFile());
 
@@ -421,8 +419,12 @@ public class PdfTools {
 //        pageSize.setUpperRightY(page.getTrimBox().getHeight() - 20);
     }
 
+    public static PDFont HELVETICA() {
+        return new PDType1Font(Standard14Fonts.getMappedFontName(Standard14Fonts.FontName.HELVETICA.getName()));
+    }
+
     public static PDFont getFont(PDDocument document, String fontFile) {
-        PDFont font = PDType1Font.HELVETICA;
+        PDFont font = HELVETICA();
         try {
             if (fontFile != null) {
                 font = PDType0Font.load(document, new File(TTFTools.ttf(fontFile)));
@@ -433,7 +435,7 @@ public class PdfTools {
     }
 
     public static PDFont defaultFont(PDDocument document) {
-        PDFont font = PDType1Font.HELVETICA;
+        PDFont font = HELVETICA();
         try {
             List<String> ttfList = TTFTools.ttfList();
             if (ttfList != null && !ttfList.isEmpty()) {

@@ -8,10 +8,8 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioMenuItem;
@@ -40,19 +38,6 @@ import mara.mybox.value.UserConfig;
  * @License Apache License Version 2.0
  */
 public class ControlDataTreeManage extends ControlDataTreeView {
-
-    protected BaseDataTreeManageController manager;
-
-    public void setManager(BaseDataTreeManageController parent) {
-        manager = parent;
-        nodeTable = manager.treeTable;
-        dataTable = manager.dataTable;
-        parentController = parent;
-        baseName = dataTable.getTableName();
-        baseTitle = baseName;
-
-        loadTree();
-    }
 
     @Override
     public void loadTree() {
@@ -188,7 +173,7 @@ public class ControlDataTreeManage extends ControlDataTreeView {
         menu.setDisable(treeItem == null);
         items.add(menu);
 
-        if (manager.nodeController.nodeExecutable) {
+        if (dataController.nodeController.nodeExecutable) {
             menu = new MenuItem(message("Execute"), StyleTools.getIconImageView("iconGo.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 executeNode(treeItem);
@@ -216,47 +201,7 @@ public class ControlDataTreeManage extends ControlDataTreeView {
         return items;
     }
 
-    @FXML
-    public void popDataMenu(Event event) {
-        if (UserConfig.getBoolean(baseName + "TreeDataPopWhenMouseHovering", true)) {
-            showDataMenu(event);
-        }
-    }
-
-    @FXML
-    public void showDataMenu(Event event) {
-        TreeItem<DataNode> item = selected();
-        if (item == null) {
-            return;
-        }
-        List<MenuItem> items = new ArrayList<>();
-
-        MenuItem menu = new MenuItem(StringTools.menuPrefix(label(item)));
-        menu.setStyle("-fx-text-fill: #2e598a;");
-        items.add(menu);
-        items.add(new SeparatorMenuItem());
-
-        items.addAll(dataMenuItems(item));
-
-        items.add(new SeparatorMenuItem());
-
-        CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
-        popItem.setSelected(UserConfig.getBoolean(baseName + "TreeDataPopWhenMouseHovering", true));
-        popItem.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                UserConfig.setBoolean(baseName + "TreeDataPopWhenMouseHovering", popItem.isSelected());
-            }
-        });
-        items.add(popItem);
-
-        if (event == null) {
-            popNodeMenu(treeView, items);
-        } else {
-            popEventMenu(event, items);
-        }
-    }
-
+    @Override
     public List<MenuItem> dataMenuItems(TreeItem<DataNode> item) {
         if (item == null) {
             return null;
@@ -344,7 +289,7 @@ public class ControlDataTreeManage extends ControlDataTreeView {
 
         menu.getItems().addAll(editNodeMenu, pasteNodeMenu, popNodeMenu);
 
-        if (manager.nodeController.nodeExecutable) {
+        if (dataController.nodeController.nodeExecutable) {
             RadioMenuItem executeNodeMenu = new RadioMenuItem(message("Execute"), StyleTools.getIconImageView("iconGo.png"));
             executeNodeMenu.setSelected("Execute".equals(currentClick));
             executeNodeMenu.setOnAction(new EventHandler<ActionEvent>() {
@@ -590,9 +535,9 @@ public class ControlDataTreeManage extends ControlDataTreeView {
     }
 
     protected void exportNode(TreeItem<DataNode> item) {
-        InfoTreeNodeExportController exportController
-                = (InfoTreeNodeExportController) childStage(Fxmls.InfoTreeNodeExportFxml);
-//        exportController.setParamters(infoController, item);
+        DataTreeExportController exportController
+                = (DataTreeExportController) childStage(Fxmls.DataTreeExportFxml);
+        exportController.setParamters(dataController, item);
     }
 
     @FXML

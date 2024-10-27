@@ -4,8 +4,8 @@ import javafx.scene.input.KeyEvent;
 import mara.mybox.db.data.DataNode;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.BaseTableTreeData;
-import mara.mybox.db.table.TableTag;
 import mara.mybox.db.table.TableDataNode;
+import mara.mybox.db.table.TableDataNodeTag;
 import mara.mybox.db.table.TableDataTag;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
@@ -21,9 +21,9 @@ public abstract class BaseDataTreeController extends BaseController {
     protected BaseDataTreeNodeController nodeController;
 
     protected BaseTableTreeData dataTable;
-    protected TableDataNode treeTable;
-    protected TableTag tagTable;
-    protected TableDataTag treeTagTable;
+    protected TableDataNode dataNodeTable;
+    protected TableDataTag dataTagTable;
+    protected TableDataNodeTag dataNodeTagTable;
 
     @Override
     public void setFileType() {
@@ -38,9 +38,9 @@ public abstract class BaseDataTreeController extends BaseController {
             if (dataTable == null) {
                 return;
             }
-            treeTable = new TableDataNode(dataTable);
-            tagTable = new TableTag();
-            treeTagTable = new TableDataTag(dataTable);
+            dataNodeTable = new TableDataNode(dataTable);
+            dataTagTable = new TableDataTag(dataTable);
+            dataNodeTagTable = new TableDataNodeTag(dataTable);
 
             nodeController.setParameters(this);
 

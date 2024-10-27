@@ -6,8 +6,11 @@ import java.util.Date;
 import java.util.List;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
@@ -31,7 +34,9 @@ import mara.mybox.fxml.cell.TreeTableDateCell;
 import mara.mybox.fxml.cell.TreeTableIDCell;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
+import mara.mybox.tools.StringTools;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -107,7 +112,7 @@ public class ControlDataTreeView extends BaseTreeTableViewController<DataNode> {
     public void setParameters(BaseDataTreeController controller) {
         dataController = controller;
         dataTable = dataController.dataTable;
-        nodeTable = dataController.treeTable;
+        nodeTable = dataController.dataNodeTable;
         parentController = dataController;
         baseName = dataTable.getTableName();
         baseTitle = baseName;
@@ -574,6 +579,56 @@ public class ControlDataTreeView extends BaseTreeTableViewController<DataNode> {
     @Override
     public void cancelAction() {
         closeStage();
+    }
+
+    @FXML
+    public void popDataMenu(Event event) {
+        if (UserConfig.getBoolean(baseName + "TreeDataPopWhenMouseHovering", true)) {
+            showDataMenu(event);
+        }
+    }
+
+    @FXML
+    public void showDataMenu(Event event) {
+        TreeItem<DataNode> item = selected();
+        if (item == null) {
+            return;
+        }
+        List<MenuItem> items = new ArrayList<>();
+
+        MenuItem menu = new MenuItem(StringTools.menuPrefix(label(item)));
+        menu.setStyle("-fx-text-fill: #2e598a;");
+        items.add(menu);
+        items.add(new SeparatorMenuItem());
+
+        items.addAll(dataMenuItems(item));
+
+        items.add(new SeparatorMenuItem());
+
+        CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
+        popItem.setSelected(UserConfig.getBoolean(baseName + "TreeDataPopWhenMouseHovering", true));
+        popItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                UserConfig.setBoolean(baseName + "TreeDataPopWhenMouseHovering", popItem.isSelected());
+            }
+        });
+        items.add(popItem);
+
+        if (event == null) {
+            popNodeMenu(treeView, items);
+        } else {
+            popEventMenu(event, items);
+        }
+    }
+
+    public List<MenuItem> dataMenuItems(TreeItem<DataNode> item) {
+        if (item == null) {
+            return null;
+        }
+        List<MenuItem> items = new ArrayList<>();
+
+        return items;
     }
 
 }

@@ -56,7 +56,7 @@ public class WeiboSnapController extends BaseController {
     @FXML
     protected ControlPathInput targetPathInputController;
     @FXML
-    protected ToggleGroup sizeGroup, formatGroup, categoryGroup, pdfMemGroup, pdfSizeGroup;
+    protected ToggleGroup sizeGroup, formatGroup, categoryGroup;
     @FXML
     protected ComboBox<String> addressBox, zoomBox, widthBox, retryBox,
             MarginsBox, standardSizeBox, jpegBox, pdfScaleBox;
@@ -71,9 +71,7 @@ public class WeiboSnapController extends BaseController {
             expandCommentsCheck, expandPicturesCheck, openPathCheck, closeWindowCheck,
             likeCheck, postsCheck;
     @FXML
-    protected RadioButton imageSizeRadio, monthsPathsRadio, pngRadio,
-            pdfMem500MRadio, pdfMem1GRadio, pdfMem2GRadio, pdfMemUnlimitRadio,
-            pdfSize500MRadio, pdfSize1GRadio, pdfSize2GRadio, pdfSizeUnlimitRadio;
+    protected RadioButton imageSizeRadio, monthsPathsRadio, pngRadio;
     @FXML
     protected ControlTTFSelector ttfController;
 
@@ -586,24 +584,6 @@ public class WeiboSnapController extends BaseController {
 
         ttfController.name(baseName);
 
-        String pdfSize = UserConfig.getString("WeiBoSnapPdfSize", "500M");
-        if ("1G".equals(pdfSize)) {
-            pdfSize1GRadio.setSelected(true);
-        } else if ("2G".equals(pdfSize)) {
-            pdfSize2GRadio.setSelected(true);
-        } else if (Languages.message("Unlimit").equals(pdfSize)) {
-            pdfSizeUnlimitRadio.setSelected(true);
-        } else {
-            pdfSize500MRadio.setSelected(true);
-        }
-
-        pdfSizeGroup.selectedToggleProperty().addListener((ObservableValue<? extends Toggle> ov, Toggle old_toggle, Toggle new_toggle) -> {
-            UserConfig.setString("WeiBoSnapPdfSize",
-                    ((RadioButton) pdfSizeGroup.getSelectedToggle()).getText());
-        });
-
-        checkPdfMem();
-
     }
 
     private void checkPageSize() {
@@ -887,44 +867,6 @@ public class WeiboSnapController extends BaseController {
         }
     }
 
-    protected void checkPdfMem() {
-        String pm = UserConfig.getString("PdfMemDefault", "1GB");
-        switch (pm) {
-            case "1GB":
-                pdfMem1GRadio.setSelected(true);
-                break;
-            case "2GB":
-                pdfMem2GRadio.setSelected(true);
-                break;
-            case "Unlimit":
-                pdfMemUnlimitRadio.setSelected(true);
-                break;
-            case "500MB":
-            default:
-                pdfMem500MRadio.setSelected(true);
-        }
-    }
-
-    @FXML
-    protected void PdfMem500MB(ActionEvent event) {
-        UserConfig.setPdfMem("500MB");
-    }
-
-    @FXML
-    protected void PdfMem1GB(ActionEvent event) {
-        UserConfig.setPdfMem("1GB");
-    }
-
-    @FXML
-    protected void PdfMem2GB(ActionEvent event) {
-        UserConfig.setPdfMem("2GB");
-    }
-
-    @FXML
-    protected void pdfMemUnlimit(ActionEvent event) {
-        UserConfig.setPdfMem("Unlimit");
-    }
-
     @FXML
     protected void initWebview() {
         try {
@@ -1024,7 +966,6 @@ public class WeiboSnapController extends BaseController {
         imageSizeRadio.setSelected(true);
         MarginsBox.getSelectionModel().select("20");
         pdfScaleBox.getSelectionModel().select("60");
-        pdfMem1GRadio.setSelected(true);
         monthsPathsRadio.setSelected(true);
         pngRadio.setSelected(true);
     }
@@ -1079,7 +1020,6 @@ public class WeiboSnapController extends BaseController {
             parameters.setSnapInterval(snapInterval);
             parameters.setDpi(dpi);
             parameters.setLikeStartPage(likeStartPage);
-            parameters.setMaxMergedSize(((RadioButton) pdfSizeGroup.getSelectedToggle()).getText());
             parameters.setRetried(0);
             return parameters;
         } catch (Exception e) {

@@ -22,9 +22,9 @@ import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileCopyTools;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.FileTools;
-import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.pdmodel.encryption.AccessPermission;
@@ -370,7 +370,7 @@ public class PdfAttributesBatchController extends BaseBatchPdfController {
             if (currentTask == null || !currentTask.isWorking()) {
                 return message("Canceled");
             }
-            try (PDDocument pd = PDDocument.load(tmpFile, filePassword, AppVariables.PdfMemUsage)) {
+            try (PDDocument pd = Loader.loadPDF(tmpFile, filePassword)) {
                 PDDocumentInformation docInfo = pd.getDocumentInformation();
                 if (authorCheck.isSelected()) {
                     docInfo.setAuthor(authorInput.getText());
@@ -419,7 +419,7 @@ public class PdfAttributesBatchController extends BaseBatchPdfController {
                     acc.setCanModify(permissionModifyCheck.isSelected());
                     acc.setCanModifyAnnotations(permissionModifyCheck.isSelected());
                     acc.setCanPrint(permissionPrintCheck.isSelected());
-                    acc.setCanPrintDegraded(permissionPrintCheck.isSelected());
+                    acc.setCanPrintFaithful(permissionPrintCheck.isSelected());
 
                     StandardProtectionPolicy policy = new StandardProtectionPolicy(newOwnerPassword, newUserPassword, acc);
                     pd.protect(policy);

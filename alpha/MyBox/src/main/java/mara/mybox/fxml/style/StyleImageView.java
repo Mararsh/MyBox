@@ -30,8 +30,6 @@ public class StyleImageView {
         }
         if (id.toLowerCase().endsWith("tipsview")) {
             switch (id) {
-                case "pdfMemTipsView":
-                    return new StyleData(id, "", message("PdfMemComments"), "", "iconTips.png");
                 case "pdfPageSizeTipsView":
                     return new StyleData(id, "", message("PdfPageSizeComments"), "", "iconTips.png");
                 case "preAlphaTipsView":

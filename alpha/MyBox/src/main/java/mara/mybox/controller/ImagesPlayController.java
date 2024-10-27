@@ -38,10 +38,10 @@ import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.value.AppValues;
-import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException;
 import org.apache.pdfbox.rendering.ImageType;
@@ -444,7 +444,7 @@ public class ImagesPlayController extends BaseFileController {
             return;
         }
         try {
-            pdfDoc = PDDocument.load(sourceFile, password, AppVariables.PdfMemUsage);
+            pdfDoc = Loader.loadPDF(sourceFile, password);
             pdfPassword = password;
         } catch (InvalidPasswordException e) {
             try {
@@ -467,7 +467,7 @@ public class ImagesPlayController extends BaseFileController {
                 }
                 Platform.requestNextPulse();
                 try {
-                    pdfDoc = PDDocument.load(sourceFile, pdfPassword, AppVariables.PdfMemUsage);
+                    pdfDoc = Loader.loadPDF(sourceFile, pdfPassword);
                 } catch (Exception ee) {
                     error = ee.toString();
                     sourceFile = null;

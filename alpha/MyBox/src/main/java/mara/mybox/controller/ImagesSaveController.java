@@ -50,7 +50,6 @@ import mara.mybox.tools.FileTools;
 import mara.mybox.tools.MicrosoftDocumentTools;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.tools.StringTools;
-import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -577,7 +576,7 @@ public class ImagesSaveController extends BaseTaskController {
 
     protected boolean saveAsPdf(FxTask currentTask) {
         File tmpFile = FileTmpTools.getTempFile();
-        try (PDDocument document = new PDDocument(AppVariables.PdfMemUsage)) {
+        try (PDDocument document = new PDDocument()) {
             int count = 0;
             for (int i = 0; i < imageInfos.size(); ++i) {
                 if (currentTask == null || !currentTask.isWorking()) {

@@ -14,10 +14,10 @@ import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppValues;
-import mara.mybox.value.AppVariables;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.multipdf.Splitter;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
@@ -72,8 +72,8 @@ public class PdfSplitBatchController extends BaseBatchPdfController {
             }
             currentParameters.toPage = info.getToPage();
             currentParameters.password = info.getUserPassword();
-            try (PDDocument pd = PDDocument.load(currentParameters.currentSourceFile,
-                    currentParameters.password, AppVariables.PdfMemUsage)) {
+            try (PDDocument pd = Loader.loadPDF(currentParameters.currentSourceFile,
+                    currentParameters.password)) {
                 doc = pd;
                 if (currentParameters.toPage <= 0 || currentParameters.toPage > doc.getNumberOfPages()) {
                     currentParameters.toPage = doc.getNumberOfPages();
@@ -122,7 +122,6 @@ public class PdfSplitBatchController extends BaseBatchPdfController {
             Splitter splitter = new Splitter();
             splitter.setStartPage(from);  // 1-based
             splitter.setEndPage(to);
-            splitter.setMemoryUsageSetting(AppVariables.PdfMemUsage);
             splitter.setSplitAtPage(size);
             return splitter;
         } catch (Exception e) {

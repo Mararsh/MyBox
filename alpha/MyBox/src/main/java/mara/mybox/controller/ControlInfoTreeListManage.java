@@ -594,9 +594,9 @@ public class ControlInfoTreeListManage extends ControlInfoTreeList {
     }
 
     protected void exportNode(TreeItem<InfoNode> item) {
-        InfoTreeNodeExportController exportController
-                = (InfoTreeNodeExportController) childStage(Fxmls.InfoTreeNodeExportFxml);
-        exportController.setParamters(infoController, item);
+//        InfoTreeNodeExportController exportController
+//                = (InfoTreeNodeExportController) childStage(Fxmls.InfoTreeNodeExportFxml);
+//        exportController.setParamters(infoController, item);
     }
 
     @FXML

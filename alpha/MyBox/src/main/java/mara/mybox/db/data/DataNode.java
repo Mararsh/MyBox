@@ -24,6 +24,7 @@ public class DataNode extends BaseData {
 
     protected BaseTable dataTable;
     protected long nodeid, parentid;
+    protected BaseTreeData node, parent;
     protected String title;
     protected Date updateTime;
 
@@ -33,6 +34,8 @@ public class DataNode extends BaseData {
         parentid = -2;
         title = null;
         updateTime = new Date();
+        node = null;
+        parent = null;
     }
 
     public DataNode() {
@@ -56,17 +59,24 @@ public class DataNode extends BaseData {
         return getValue(this, column);
     }
 
+    public Object getDataValue(String column) {
+        if (node == null) {
+            return null;
+        }
+        return node.getValue(column);
+    }
+
     @Override
     public boolean valid() {
         return true;
     }
 
     public DataNode copyIn(DataNode parent) {
-        DataNode node = new DataNode();
-        node.setParentid(parent.getNodeid());
-        node.setDataTable(parent.getDataTable());
-        node.setTitle(title);
-        return node;
+        DataNode nnode = new DataNode();
+        nnode.setParentid(parent.getNodeid());
+        nnode.setDataTable(parent.getDataTable());
+        nnode.setTitle(title);
+        return nnode;
     }
 
     public boolean isRoot() {
@@ -195,6 +205,24 @@ public class DataNode extends BaseData {
 
     public DataNode setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+        return this;
+    }
+
+    public BaseTreeData getNode() {
+        return node;
+    }
+
+    public DataNode setNode(BaseTreeData node) {
+        this.node = node;
+        return this;
+    }
+
+    public BaseTreeData getParent() {
+        return parent;
+    }
+
+    public DataNode setParent(BaseTreeData parent) {
+        this.parent = parent;
         return this;
     }
 

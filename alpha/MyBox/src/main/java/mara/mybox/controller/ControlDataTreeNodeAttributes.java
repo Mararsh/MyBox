@@ -58,7 +58,7 @@ public class ControlDataTreeNodeAttributes extends BaseController {
         try {
             dataController = controller;
             nodeController = dataController.nodeController;
-            tableTree = dataController.treeTable;
+            tableTree = dataController.dataNodeTable;
 
         } catch (Exception e) {
             MyBoxLog.error(e);

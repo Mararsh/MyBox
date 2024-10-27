@@ -13,12 +13,12 @@ import javafx.scene.paint.Color;
 import javafx.util.Callback;
 import javafx.util.converter.DefaultStringConverter;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.data.Tag;
 import mara.mybox.db.data.DataNode;
+import mara.mybox.db.data.Tag;
 import mara.mybox.db.table.BaseTable;
 import mara.mybox.db.table.TableColor;
-import mara.mybox.db.table.TableTag;
 import mara.mybox.db.table.TableDataNode;
+import mara.mybox.db.table.TableDataNodeTag;
 import mara.mybox.db.table.TableDataTag;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
@@ -36,9 +36,9 @@ import static mara.mybox.value.Languages.message;
 public class ControlDataTreeNodeTags extends BaseSysTableController<Tag> {
 
     protected BaseDataTreeController dataController;
-    protected TableDataNode tableTree;
-    protected TableTag tableTag;
-    protected TableDataTag tableTreeTag;
+    protected TableDataNode dataNodeTable;
+    protected TableDataTag dataTagTable;
+    protected TableDataNodeTag dataNodeTagTable;
     protected BaseTable dataTable;
     protected DataNode currentNode;
 
@@ -143,10 +143,10 @@ public class ControlDataTreeNodeTags extends BaseSysTableController<Tag> {
             this.parentController = dataController;
             this.baseName = dataController.baseName;
             dataTable = dataController.dataTable;
-            tableTree = dataController.treeTable;
-            tableTag = dataController.tagTable;
-            tableTreeTag = dataController.treeTagTable;
-            setTableDefinition(tableTag);
+            dataNodeTable = dataController.dataNodeTable;
+            dataTagTable = dataController.dataTagTable;
+            dataNodeTagTable = dataController.dataNodeTagTable;
+            setTableDefinition(dataTagTable);
 
             currentPage = 0;
             pageSize = Integer.MAX_VALUE;
@@ -195,7 +195,7 @@ public class ControlDataTreeNodeTags extends BaseSysTableController<Tag> {
             @Override
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
-                    tag = tableTag.insertData(conn, new Tag(tableTree.getTableName(), name));
+//                    tag = dataTagTable.insertData(conn, new Tag(dataNodeTable.getTableName(), name));
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -222,7 +222,8 @@ public class ControlDataTreeNodeTags extends BaseSysTableController<Tag> {
 
             @Override
             protected boolean handle() {
-                return tableTag.writeData(tag) != null;
+//                return dataTagTable.writeData(tag) != null;
+                return false;
             }
 
             @Override
@@ -273,7 +274,8 @@ public class ControlDataTreeNodeTags extends BaseSysTableController<Tag> {
 
             @Override
             protected boolean handle() {
-                return tableTag.updateList(tableData) >= 0;
+//                return dataTagTable.updateList(tableData) >= 0;
+                return false;
             }
 
             @Override

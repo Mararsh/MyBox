@@ -16,8 +16,8 @@ import mara.mybox.data.PdfInformation;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.FileTmpTools;
-import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.fit.pdfdom.PDFDomTree;
 import org.fit.pdfdom.PDFDomTreeConfig;
@@ -167,7 +167,7 @@ public abstract class PdfViewController_Html extends PdfViewController_Texts {
                 subPath.mkdirs();
                 domConfig.setFontHandler(new PDFResourceToDirHandler(subPath));
                 domConfig.setImageHandler(new PDFResourceToDirHandler(subPath));
-                try (PDDocument doc = PDDocument.load(sourceFile, password, AppVariables.PdfMemUsage)) {
+                try (PDDocument doc = Loader.loadPDF(sourceFile, password)) {
                     PDFDomTree parser = new PDFDomTree(domConfig);
                     parser.setStartPage(frameIndex + 1);
                     parser.setEndPage(frameIndex + 1);

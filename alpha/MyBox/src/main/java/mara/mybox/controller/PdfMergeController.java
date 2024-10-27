@@ -12,9 +12,9 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.PdfTools;
-import mara.mybox.value.AppVariables;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.apache.pdfbox.multipdf.PageExtractor;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -76,8 +76,8 @@ public class PdfMergeController extends BaseBatchPdfController {
             }
             actualParameters.toPage = info.getToPage();
             actualParameters.password = info.getUserPassword();
-            try (PDDocument pd = PDDocument.load(currentParameters.currentSourceFile,
-                    currentParameters.password, AppVariables.PdfMemUsage)) {
+            try (PDDocument pd = Loader.loadPDF(currentParameters.currentSourceFile,
+                    currentParameters.password)) {
                 doc = pd;
                 if (currentTask == null || !currentTask.isWorking()) {
                     return message("Canceled");

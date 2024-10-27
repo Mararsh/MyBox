@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.util.Arrays;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -41,8 +40,7 @@ public class ControlPdfWriteOptions extends BaseController {
     protected ToggleGroup sizeGroup, imageFormatGroup;
     @FXML
     protected RadioButton pixSizeRadio, standardSizeRadio, customSizeRadio,
-            pngRadio, jpgRadio, bwRadio,
-            pdfMem500MRadio, pdfMem1GRadio, pdfMem2GRadio, pdfMemUnlimitRadio;
+            pngRadio, jpgRadio, bwRadio;
     @FXML
     protected TextField authorInput, headerInput, footerInput,
             customWidthInput, customHeightInput, thresholdInput;
@@ -141,22 +139,6 @@ public class ControlPdfWriteOptions extends BaseController {
                     checkStandardValues();
                 }
             });
-
-            String pm = UserConfig.getString("PdfMemDefault", "1GB");
-            switch (pm) {
-                case "1GB":
-                    pdfMem1GRadio.setSelected(true);
-                    break;
-                case "2GB":
-                    pdfMem2GRadio.setSelected(true);
-                    break;
-                case "Unlimit":
-                    pdfMemUnlimitRadio.setSelected(true);
-                    break;
-                case "500MB":
-                default:
-                    pdfMem500MRadio.setSelected(true);
-            }
 
             initImageOptions(conn);
 
@@ -386,38 +368,6 @@ public class ControlPdfWriteOptions extends BaseController {
         } catch (Exception e) {
         }
         return true;
-    }
-
-    @FXML
-    protected void PdfMem500MB(ActionEvent event) {
-        if (isSettingValues) {
-            return;
-        }
-        UserConfig.setPdfMem("500MB");
-    }
-
-    @FXML
-    protected void PdfMem1GB(ActionEvent event) {
-        if (isSettingValues) {
-            return;
-        }
-        UserConfig.setPdfMem("1GB");
-    }
-
-    @FXML
-    protected void PdfMem2GB(ActionEvent event) {
-        if (isSettingValues) {
-            return;
-        }
-        UserConfig.setPdfMem("2GB");
-    }
-
-    @FXML
-    protected void pdfMemUnlimit(ActionEvent event) {
-        if (isSettingValues) {
-            return;
-        }
-        UserConfig.setPdfMem("Unlimit");
     }
 
     /*

@@ -24,6 +24,17 @@ public abstract class BaseDataTreeManageController extends BaseDataTreeControlle
     @FXML
     protected ControlDataTreeManage treeManageController;
 
+//    @Override
+//    public void initControls() {
+//        try {
+//            super.initControls();
+//
+//            treeManageController.setManager(this);
+//
+//        } catch (Exception e) {
+//            MyBoxLog.error(e);
+//        }
+//    }
 
     /*
         synchronize
@@ -95,9 +106,9 @@ public abstract class BaseDataTreeManageController extends BaseDataTreeControlle
                 try (Connection conn = DerbyBase.getConnection()) {
 //                    tableController.loadedParent = tableTree.readData(conn, tableController.loadedParent);
                     nodeController.attributesController.currentNode
-                            = treeTable.readData(conn, nodeController.attributesController.currentNode);
+                            = dataNodeTable.readData(conn, nodeController.attributesController.currentNode);
                     nodeController.attributesController.parentNode
-                            = treeTable.readData(conn, nodeController.attributesController.parentNode);
+                            = dataNodeTable.readData(conn, nodeController.attributesController.parentNode);
                 } catch (Exception e) {
                     error = e.toString();
                     return false;

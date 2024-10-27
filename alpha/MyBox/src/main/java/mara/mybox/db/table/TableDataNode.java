@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.db.DerbyBase;
+import mara.mybox.db.data.BaseTreeData;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.DataNode;
@@ -67,6 +68,37 @@ public class TableDataNode extends BaseTable<DataNode> {
         } catch (Exception e) {
 //            MyBoxLog.debug(e);
 //            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public Object readForeignValue(ResultSet results, String column) {
+        if (results == null || column == null) {
+            return null;
+        }
+        try {
+            if ("nodeid".equals(column) && results.findColumn(dataTable.idColumnName) > 0) {
+                return dataTable.readData(results);
+            }
+            if ("parentid".equals(column) && results.findColumn(dataTable.idColumnName) > 0) {
+                return dataTable.readData(results);
+            }
+        } catch (Exception e) {
+        }
+        return null;
+    }
+
+    @Override
+    public boolean setForeignValue(DataNode data, String column, Object value) {
+        if (data == null || column == null || value == null) {
+            return true;
+        }
+        if ("nodeid".equals(column) && value instanceof BaseTreeData) {
+            data.setNode((BaseTreeData) value);
+        }
+        if ("parentid".equals(column) && value instanceof BaseTreeData) {
+            data.setParent((BaseTreeData) value);
         }
         return true;
     }

@@ -18,9 +18,10 @@ public class Fxmls {
     public static final String NoteTreeFxml = "/fxml/NoteTree.fxml";
     public static final String InfoTreeFxml = "/fxml/InfoTree.fxml";
 
+    public static final String DataTreeExportFxml = "/fxml/DataTreeExport.fxml";
+
     public static final String InfoTreeNodeMoveFxml = "/fxml/InfoTreeNodeMove.fxml";
     public static final String InfoTreeNodeCopyFxml = "/fxml/InfoTreeNodeCopy.fxml";
-    public static final String InfoTreeNodeExportFxml = "/fxml/InfoTreeNodeExport.fxml";
     public static final String InfoTreeNodeImportFxml = "/fxml/InfoTreeNodeImport.fxml";
     public static final String InfoTreeNodesCopyFxml = "/fxml/InfoTreeNodesCopy.fxml";
     public static final String InfoTreeNodesMoveFxml = "/fxml/InfoTreeNodesMove.fxml";

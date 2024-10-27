@@ -64,7 +64,7 @@ import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
-import org.apache.pdfbox.io.MemoryUsageSetting;
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.apache.pdfbox.pdmodel.PDDocument;
 
@@ -82,7 +82,7 @@ public class WeiboSnapRunController extends BaseController {
     protected int savedHtmlCount, savedMonthPdfCount, savedPagePdfCount, completedMonthsCount, totalMonthsCount,
             savedPixCount, totalLikeCount;
     protected Timer loadTimer, snapTimer;
-    protected long loadStartTime, snapStartTime, startTime, maxMergedSize;
+    protected long loadStartTime, snapStartTime, startTime;
     protected boolean loadFailed, loadCompleted, mainCompleted,
             commentsLoaded, picturedsLoaded, startPageChecked, skipPage, parentOpened;
     protected WeiboSnapingInfoController loadingController;
@@ -99,7 +99,6 @@ public class WeiboSnapRunController extends BaseController {
     protected final String expandCommentsScript, findPicturesScript, picturesNumberScript, expandPicturesScript, clearScripts;
     protected final String AllPicturesLoaded, PictureLoaded, PictureTimeOver, CommentsLoaded, CommentsTimeOver;
     protected File tempdir;
-    protected MemoryUsageSetting memSettings;
     protected ChangeListener webEngineStateListener;
     protected SnapType snapType;
     protected SnapshotParameters snapParameters;
@@ -352,17 +351,6 @@ public class WeiboSnapRunController extends BaseController {
             snapLoopInterval = parameters.getSnapInterval();
             dpi = parameters.getDpi();
 
-            String pdfSizeS = parameters.getMaxMergedSize();
-            if ("1G".equals(pdfSizeS)) {
-                maxMergedSize = 1024 * 1024 * 1024L;
-            } else if ("2G".equals(pdfSizeS)) {
-                maxMergedSize = 2048 * 1024 * 1024L;
-            } else if (Languages.message("Unlimit").equals(pdfSizeS)) {
-                maxMergedSize = -1;
-            } else {
-                maxMergedSize = 500 * 1024 * 1024L;
-            }
-
             savedHtmlCount = savedMonthPdfCount = savedPagePdfCount = completedMonthsCount = savedPixCount = retried = 0;
             loadFailed = loadCompleted = mainCompleted = false;
             startTime = new Date().getTime();
@@ -374,7 +362,6 @@ public class WeiboSnapRunController extends BaseController {
                     tempdir = AppVariables.MyBoxTempPath;
                 }
             }
-            memSettings = AppVariables.PdfMemUsage.setTempDir(tempdir);
 
             Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
             if (parameters.getWebWidth() <= 0) {
@@ -1383,17 +1370,15 @@ public class WeiboSnapRunController extends BaseController {
             protected boolean handle() {
                 try {
                     List<File> files = new ArrayList<>();
-                    long totalSize = 0;
                     for (int i = 1; i <= pageCount; ++i) {
                         String name = path.getAbsolutePath() + File.separator + accountName + "-"
                                 + month + "-第" + i + "页.pdf";
                         File file = new File(name);
                         if (file.exists()) {
                             files.add(file);
-                            totalSize += file.length();
                         }
                     }
-                    if (files.isEmpty() || (maxMergedSize > 0 && totalSize > maxMergedSize)) {
+                    if (files.isEmpty()) {
                         pdfs.remove(month);
                         return true;
                     }
@@ -1415,9 +1400,9 @@ public class WeiboSnapRunController extends BaseController {
                         mergePdf.addSource(file);
                     }
                     mergePdf.setDestinationFileName(monthFileName);
-                    mergePdf.mergeDocuments(memSettings);
+                    mergePdf.mergeDocuments(null);
 
-                    try (PDDocument doc = PDDocument.load(monthFile, memSettings)) {
+                    try (PDDocument doc = Loader.loadPDF(monthFile)) {
                         PdfTools.setAttributes(doc, parameters.getAuthor(), parameters.getPdfScale());
 
                         doc.save(monthFile);

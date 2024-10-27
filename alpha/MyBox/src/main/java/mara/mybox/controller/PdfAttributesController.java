@@ -27,11 +27,11 @@ import mara.mybox.tools.FileCopyTools;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.PdfTools;
-import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.pdmodel.encryption.AccessPermission;
@@ -251,7 +251,7 @@ public class PdfAttributesController extends BaseController {
                 ok = false;
                 pop = false;
                 setInfo(message("LoadingFileInfo"));
-                try (PDDocument doc = PDDocument.load(sourceFile, password, AppVariables.PdfMemUsage)) {
+                try (PDDocument doc = Loader.loadPDF(sourceFile, password)) {
                     pdfInfo.setUserPassword(password);
                     pdfInfo.readInfo(this, doc);
                     doc.close();
@@ -450,7 +450,7 @@ public class PdfAttributesController extends BaseController {
         acc.setCanModify(modifyCheck.isSelected());
         acc.setCanModifyAnnotations(modifyCheck.isSelected());
         acc.setCanPrint(printCheck.isSelected());
-        acc.setCanPrintDegraded(printCheck.isSelected());
+        acc.setCanPrintFaithful(printCheck.isSelected());
         modify.setAccess(acc);
 
         if (task != null) {
@@ -480,7 +480,7 @@ public class PdfAttributesController extends BaseController {
             }
             File tmpFile = FileTmpTools.getTempFile();
             FileCopyTools.copyFile(file, tmpFile);
-            try (PDDocument doc = PDDocument.load(tmpFile, password, AppVariables.PdfMemUsage)) {
+            try (PDDocument doc = Loader.loadPDF(tmpFile, password)) {
                 PDDocumentInformation docInfo = doc.getDocumentInformation();
                 docInfo.setAuthor(info.getAuthor());
                 docInfo.setTitle(info.getTitle());

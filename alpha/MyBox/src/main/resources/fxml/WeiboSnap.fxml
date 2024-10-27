@@ -22,9 +22,8 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="thisPane" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWidth="800.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.WeiboSnapController">
+<BorderPane fx:id="thisPane" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWidth="800.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.WeiboSnapController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
@@ -281,32 +280,6 @@ License:    Apache License Version 2.0
                                             </children>
                                         </HBox>
                                         <fx:include fx:id="ttf" source="ControlTTFSelector.fxml" />
-                                        <HBox fx:id="pdfMemBox" alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
-                                            <children>
-                                                <Label text="%MaxMainMemPDF" />
-                                                <RadioButton fx:id="pdfMem500MRadio" mnemonicParsing="false" onAction="#PdfMem500MB" selected="true" text="500M">
-                                                    <toggleGroup>
-                                                        <ToggleGroup fx:id="pdfMemGroup" />
-                                                    </toggleGroup>
-                                                </RadioButton>
-                                                <RadioButton fx:id="pdfMem1GRadio" mnemonicParsing="false" onAction="#PdfMem1GB" text="1G" toggleGroup="$pdfMemGroup" />
-                                                <RadioButton fx:id="pdfMem2GRadio" mnemonicParsing="false" onAction="#PdfMem2GB" text="2G" toggleGroup="$pdfMemGroup" />
-                                                <RadioButton fx:id="pdfMemUnlimitRadio" mnemonicParsing="false" onAction="#pdfMemUnlimit" text="%Unlimit" toggleGroup="$pdfMemGroup" />
-                                            </children>
-                                        </HBox>
-                                        <HBox fx:id="pdfMemBox1" alignment="CENTER_LEFT" layoutX="10.0" layoutY="255.0" spacing="10.0">
-                                            <children>
-                                                <Label text="%MaxMergedPDFSize" />
-                                                <RadioButton fx:id="pdfSize500MRadio" mnemonicParsing="false" onAction="#PdfMem500MB" selected="true" text="500M">
-                                                    <toggleGroup>
-                                                        <ToggleGroup fx:id="pdfSizeGroup" />
-                                                    </toggleGroup>
-                                                </RadioButton>
-                                                <RadioButton fx:id="pdfSize1GRadio" mnemonicParsing="false" text="1G" toggleGroup="$pdfSizeGroup" />
-                                                <RadioButton fx:id="pdfSize2GRadio" mnemonicParsing="false" text="2G" toggleGroup="$pdfSizeGroup" />
-                                                <RadioButton fx:id="pdfSizeUnlimitRadio" mnemonicParsing="false" text="%Unlimit" toggleGroup="$pdfSizeGroup" />
-                                            </children>
-                                        </HBox>
                                     </children>
                                     <padding>
                                         <Insets top="10.0" />
@@ -384,8 +357,7 @@ License:    Apache License Version 2.0
                 </TitledPane>
                 <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT" spacing="2.0">
                     <children>
-                        <Label alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" text="%FunctionNotWork"  
-                               styleClass="bold-darkRed-label" stylesheets="@../styles/MyBox.css"  HBox.hgrow="ALWAYS"/>
+                        <Label alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" styleClass="bold-darkRed-label" stylesheets="@../styles/MyBox.css" text="%FunctionNotWork" HBox.hgrow="ALWAYS" />
                         <Button fx:id="defaultButton" mnemonicParsing="false" onAction="#suggestedSettings">
                             <graphic>
                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

@@ -23,7 +23,6 @@ import mara.mybox.fxml.TextClipboardMonitor;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.StyleData;
 import mara.mybox.fxml.style.StyleTools;
-import org.apache.pdfbox.io.MemoryUsageSetting;
 
 /**
  * @Author Mara
@@ -43,7 +42,6 @@ public class AppVariables {
     public static ScheduledExecutorService ExecutorService;
     public static Map<String, ScheduledFuture<?>> ScheduledTasks;
     public static AlarmClockController AlarmClockController;
-    public static MemoryUsageSetting PdfMemUsage;
     public static int sceneFontSize, fileRecentNumber, iconSize, thumbnailWidth;
     public static long maxDemoImage;
     public static boolean isTesting, handlingExit, ShortcutsCanNotOmitCtrlAlt, icons40px,
@@ -99,7 +97,6 @@ public class AppVariables {
             } catch (Exception e) {
                 MyBoxLog.console(e.toString());
             }
-            UserConfig.getPdfMem(conn);
             closeCurrentWhenOpenTool = UserConfig.getBoolean(conn, "CloseCurrentWhenOpenTool", false);
             recordWindowsSizeLocation = UserConfig.getBoolean(conn, "RecordWindowsSizeLocation", true);
             sceneFontSize = UserConfig.getInt(conn, "SceneFontSize", 15);

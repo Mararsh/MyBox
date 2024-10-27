@@ -11,7 +11,6 @@ import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDFont;
-import org.apache.pdfbox.pdmodel.font.PDType1Font;
 
 /**
  * Reference: https://github.com/eduardohl/Paginated-PDFBox-Table-Sample By
@@ -40,7 +39,7 @@ public class PaginatedPdfTable {
     public PaginatedPdfTable() {
         pageSize = PDRectangle.A4;
         margin = 20;
-        textFont = PDType1Font.HELVETICA;
+        textFont = PdfTools.HELVETICA();
         rowHeight = 24;
         cellMargin = 2;
         fontSize = 14;
