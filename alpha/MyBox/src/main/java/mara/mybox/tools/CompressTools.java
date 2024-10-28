@@ -31,7 +31,7 @@ import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.apache.commons.compress.compressors.CompressorInputStream;
 import org.apache.commons.compress.compressors.CompressorStreamFactory;
 import org.apache.commons.compress.compressors.lz4.BlockLZ4CompressorInputStream;
-import org.apache.commons.compress.utils.IOUtils;
+import org.apache.commons.io.IOUtils;
 
 /**
  *

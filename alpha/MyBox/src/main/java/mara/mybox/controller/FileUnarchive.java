@@ -17,7 +17,7 @@ import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry;
 import org.apache.commons.compress.archivers.sevenz.SevenZFile;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipFile;
-import org.apache.commons.compress.utils.IOUtils;
+import org.apache.commons.io.IOUtils;
 
 /**
  * @Author Mara
@@ -211,8 +211,7 @@ public class FileUnarchive {
                     archiveSuccess++;
                     continue;
                 }
-                try (FileOutputStream out = new FileOutputStream(tfile);
-                        InputStream in = zipFile.getInputStream(entry)) {
+                try (FileOutputStream out = new FileOutputStream(tfile); InputStream in = zipFile.getInputStream(entry)) {
                     if (in != null) {
                         IOUtils.copy(in, out);
                         if (verbose) {

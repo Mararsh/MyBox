@@ -30,7 +30,7 @@ import org.apache.commons.compress.archivers.sevenz.SevenZMethod;
 import org.apache.commons.compress.archivers.sevenz.SevenZOutputFile;
 import org.apache.commons.compress.compressors.CompressorOutputStream;
 import org.apache.commons.compress.compressors.CompressorStreamFactory;
-import org.apache.commons.compress.utils.IOUtils;
+import org.apache.commons.io.IOUtils;
 
 /**
  * @Author Mara
@@ -170,10 +170,8 @@ public class FilesCompressBatchController extends BaseBatchFileController {
                 }
 
             } else {
-                try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(srcFile));
-                        BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(tmpFile));
-                        CompressorOutputStream compressOut = new CompressorStreamFactory().
-                                createCompressorOutputStream(compressor, out)) {
+                try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(srcFile)); BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(tmpFile)); CompressorOutputStream compressOut = new CompressorStreamFactory().
+                        createCompressorOutputStream(compressor, out)) {
                     if (inputStream != null) {
                         IOUtils.copy(inputStream, compressOut);
                     }
