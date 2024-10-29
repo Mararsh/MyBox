@@ -149,7 +149,7 @@ public class FileUnarchive {
     }
 
     protected void unarchive7z() {
-        try (SevenZFile sevenZFile = new SevenZFile(sourceFile)) {
+        try (SevenZFile sevenZFile = SevenZFile.builder().setFile(sourceFile).get()) {
             SevenZArchiveEntry entry;
             File tfile;
             while ((entry = sevenZFile.getNextEntry()) != null) {
@@ -189,7 +189,7 @@ public class FileUnarchive {
     }
 
     protected void unarchiveZip() {
-        try (ZipFile zipFile = new ZipFile(sourceFile, charset)) {
+        try (ZipFile zipFile = ZipFile.builder().setFile(sourceFile).setCharset(charset).get()) {
             Enumeration<ZipArchiveEntry> zEntries = zipFile.getEntries();
             File tfile;
             while (zEntries.hasMoreElements()) {

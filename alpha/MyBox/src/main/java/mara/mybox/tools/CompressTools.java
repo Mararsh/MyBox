@@ -422,7 +422,7 @@ public class CompressTools {
 
     public static Map<String, Object> readEntriesZip(BaseTaskController taskController, File srcFile, String encoding) {
         Map<String, Object> unarchive = new HashMap<>();
-        try (ZipFile zipFile = new ZipFile(srcFile, encoding)) {
+        try (ZipFile zipFile = ZipFile.builder().setFile(srcFile).setCharset(encoding).get()) {
             List<FileNode> fileEntries = new ArrayList();
             Enumeration<ZipArchiveEntry> entries = zipFile.getEntries();
             while (entries.hasMoreElements()) {
@@ -444,7 +444,7 @@ public class CompressTools {
 
     public static Map<String, Object> readEntries7z(BaseTaskController taskController, File srcFile, String encoding) {
         Map<String, Object> unarchive = new HashMap<>();
-        try (SevenZFile sevenZFile = new SevenZFile(srcFile)) {
+        try (SevenZFile sevenZFile = SevenZFile.builder().setFile(srcFile).get()) {
             SevenZArchiveEntry entry;
             List<FileNode> entries = new ArrayList();
             while ((entry = sevenZFile.getNextEntry()) != null) {
