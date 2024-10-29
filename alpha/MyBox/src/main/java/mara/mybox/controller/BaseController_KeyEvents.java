@@ -164,12 +164,12 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
         } else {
             omit = true;
             code = event.getCharacter();
-            if (code == null) {
-                return false;
-            }
+        }
+        if (code == null) {
+            return false;
         }
 //        MyBoxLog.debug("input:" + input.toUpperCase());
-        switch (code) {
+        switch (code.toUpperCase()) {
             case "E":
                 return controlAltE();
 
