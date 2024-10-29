@@ -68,7 +68,7 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
         keyEvent = event;
         KeyCode code = event.getCode();
         if (code == null || code == KeyCode.UNDEFINED) {
-            return inputFilter(event.getCharacter());
+            return inputFilter(event);
         }
         switch (code) {
             case ENTER:
@@ -129,13 +129,8 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
                 return keyESC();
 
         }
-        if (AppVariables.ShortcutsCanNotOmitCtrlAlt || isPopup() || targetIsTextInput()) {
-            return false;
-        }
-        if (code == KeyCode.S || code == KeyCode.D || code == KeyCode.L) {  // to avoid accidents
-            return false;
-        }
-        return inputFilter(event.getText());
+
+        return inputFilter(event);
     }
 
     public boolean altFilter(KeyEvent event) {
@@ -156,12 +151,25 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
         return keyFilter(event);
     }
 
-    public boolean inputFilter(String input) {
-        if (input == null || input.isBlank()) {
+    public boolean inputFilter(KeyEvent event) {
+        if (event == null || isPopup() || targetIsTextInput()) {
             return false;
         }
+        String code;
+        boolean omit = false; // to avoid accidents
+        if (event.isControlDown() || event.isAltDown()) {
+            code = event.getText();
+        } else if (AppVariables.ShortcutsCanNotOmitCtrlAlt) {
+            return false;
+        } else {
+            omit = true;
+            code = event.getCharacter();
+            if (code == null) {
+                return false;
+            }
+        }
 //        MyBoxLog.debug("input:" + input.toUpperCase());
-        switch (input.toUpperCase()) {
+        switch (code) {
             case "E":
                 return controlAltE();
 
@@ -178,7 +186,7 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
                 return controlAltA();
 
             case "D":
-                return controlAltD();
+                return omit ? false : controlAltD();
 
             case "Z":
                 return controlAltZ();
@@ -196,7 +204,7 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
                 return controlAltR();
 
             case "S":
-                return controlAltS();
+                return omit ? false : controlAltS();
 
             case "F":
                 return controlAltF();
@@ -238,7 +246,7 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
                 return controlAltU();
 
             case "L":
-                return controlAltL();
+                return omit ? false : controlAltL();
 
             case "-":
                 setSceneFontSize(AppVariables.sceneFontSize - 1);
