@@ -5,7 +5,7 @@ package mara.mybox.db.data;
  * @CreateDate 2020-7-19
  * @License Apache License Version 2.0
  */
-public abstract class BaseTreeData extends BaseData {
+public abstract class BaseTreeData extends DataNode {
 
 
     /*

@@ -11,6 +11,7 @@ import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.DataNode;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import static mara.mybox.value.Languages.message;
 
@@ -179,6 +180,7 @@ public abstract class BaseDataTreeManageController extends BaseDataTreeControlle
         tree
      */
     public boolean editNode(DataNode node) {
+        MyBoxLog.debug("here");
         if (!checkBeforeNextAction()) {
             return false;
         }

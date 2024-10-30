@@ -600,7 +600,7 @@ public class DataTreeExportController extends BaseTaskController {
             List<ColumnDefinition> columns = dataTable.getColumns();
             for (ColumnDefinition column : columns) {
                 String name = column.getColumnName();
-                Object value = node.getDataValue(name);
+                Object value = node.getValue(name);
                 if (value == null) {
                     continue;
                 }

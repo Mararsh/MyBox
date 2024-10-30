@@ -727,9 +727,6 @@ public class BaseImageController extends BaseImageController_Actions {
 
     @Override
     public boolean controlAltN() {
-        if (imageView == null || imageView.getImage() == null) {
-            return false;
-        }
         createAction();
         return true;
     }

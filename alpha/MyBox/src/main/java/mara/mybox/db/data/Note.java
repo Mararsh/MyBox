@@ -13,7 +13,7 @@ import mara.mybox.tools.JsonTools;
 public class Note extends BaseTreeData {
 
     protected long noteid;
-    protected String title, note;
+    protected String note;
 
     @Override
     public boolean valid() {
@@ -21,13 +21,13 @@ public class Note extends BaseTreeData {
     }
 
     @Override
-    public boolean setValue(String column, Object value) {
-        return setValue(this, column, value);
+    public boolean setDataValue(String column, Object value) {
+        return setDataValue(this, column, value);
     }
 
     @Override
-    public Object getValue(String column) {
-        return getValue(this, column);
+    public Object getDataValue(String column) {
+        return getDataValue(this, column);
     }
 
     @Override
@@ -97,7 +97,7 @@ public class Note extends BaseTreeData {
         return new Note();
     }
 
-    public static boolean setValue(Note data, String column, Object value) {
+    public static boolean setDataValue(Note data, String column, Object value) {
         if (data == null || column == null) {
             return false;
         }
@@ -119,7 +119,7 @@ public class Note extends BaseTreeData {
         return false;
     }
 
-    public static Object getValue(Note data, String column) {
+    public static Object getDataValue(Note data, String column) {
         if (data == null || column == null) {
             return null;
         }

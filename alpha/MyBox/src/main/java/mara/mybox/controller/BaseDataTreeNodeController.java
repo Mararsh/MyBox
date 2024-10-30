@@ -16,7 +16,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2024-8-3
  * @License Apache License Version 2.0
  */
-public class BaseDataTreeNodeController extends BaseController {
+public abstract class BaseDataTreeNodeController extends BaseController {
 
     protected BaseDataTreeController dataController;
     protected String defaultExt;
@@ -36,6 +36,8 @@ public class BaseDataTreeNodeController extends BaseController {
         nodeChanged = new SimpleBooleanProperty(false);
     }
 
+    protected abstract void editValue(DataNode node);
+
     @Override
     public void setFileType() {
         setFileType(VisitHistory.FileType.Text);
@@ -53,6 +55,7 @@ public class BaseDataTreeNodeController extends BaseController {
     }
 
     protected boolean editNode(DataNode node) {
+        MyBoxLog.debug(node != null);
         updateEditorTitle(node);
         attributesController.editNode(node);
         editValue(node);
@@ -68,9 +71,6 @@ public class BaseDataTreeNodeController extends BaseController {
         } else {
             dataController.setTitle(dataController.baseTitle);
         }
-    }
-
-    protected void editValue(DataNode node) {
     }
 
     public DataNode pickNodeData() {

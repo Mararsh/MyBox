@@ -84,7 +84,7 @@ public abstract class BaseTableTreeData<D> extends BaseTable<D> {
         xml += prefix + "<Data>\n";
         for (ColumnDefinition column : columns) {
             String name = column.getColumnName();
-            Object value = node.getDataValue(name);
+            Object value = node.getValue(name);
             if (value == null) {
                 continue;
             }

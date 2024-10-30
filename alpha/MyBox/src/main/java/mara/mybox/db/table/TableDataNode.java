@@ -6,7 +6,6 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.data.BaseTreeData;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.DataNode;
@@ -94,12 +93,12 @@ public class TableDataNode extends BaseTable<DataNode> {
         if (data == null || column == null || value == null) {
             return true;
         }
-        if ("nodeid".equals(column) && value instanceof BaseTreeData) {
-            data.setNode((BaseTreeData) value);
-        }
-        if ("parentid".equals(column) && value instanceof BaseTreeData) {
-            data.setParent((BaseTreeData) value);
-        }
+//        if ("nodeid".equals(column) && value instanceof BaseTreeData) {
+//            data.setNode((BaseTreeData) value);
+//        }
+//        if ("parentid".equals(column) && value instanceof BaseTreeData) {
+//            data.setParent((BaseTreeData) value);
+//        }
         return true;
     }
 

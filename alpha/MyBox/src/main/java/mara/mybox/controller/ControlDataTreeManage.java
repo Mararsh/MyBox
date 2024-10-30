@@ -517,7 +517,7 @@ public class ControlDataTreeManage extends ControlDataTreeView {
         if (item == null) {
             return;
         }
-//        manager.editNode(item.getValue());
+        nodeController.editNode(item.getValue());
     }
 
     protected void pasteNode(TreeItem<DataNode> item) {

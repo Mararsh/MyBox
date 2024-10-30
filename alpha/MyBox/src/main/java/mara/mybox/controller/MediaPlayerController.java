@@ -29,8 +29,6 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
@@ -265,25 +263,24 @@ public class MediaPlayerController extends BaseController {
     }
 
     @Override
-    public boolean keyFilter(KeyEvent event) {
-        KeyCode code = event.getCode();
-        if (code != null) {
-            switch (code) {
-                case S:
+    public boolean inputFilter(String input, boolean omit) {
+        if (input != null) {
+            switch (input.toUpperCase()) {
+                case "S":
                     playButton.fire();
                     return true;
-                case Q:
+                case "Q":
                     stopButton.fire();
                     return true;
-                case M:
+                case "M":
                     soundButton.fire();
                     return true;
-                case F:
+                case "F":
                     fullScreenButton.fire();
                     return true;
             }
         }
-        return super.keyFilter(event);
+        return super.inputFilter(input, omit);
     }
 
     @Override

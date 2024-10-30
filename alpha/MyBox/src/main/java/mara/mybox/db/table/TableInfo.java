@@ -33,6 +33,7 @@ public class TableInfo extends BaseTableTreeData<InfoInTree> {
         if (data == null || column == null) {
             return false;
         }
+        MyBoxLog.debug(column + ": " + value);
         return data.setValue(column, value);
     }
 

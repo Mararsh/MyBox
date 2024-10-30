@@ -46,6 +46,7 @@ import mara.mybox.value.UserConfig;
 public class ControlDataTreeView extends BaseTreeTableViewController<DataNode> {
 
     protected BaseDataTreeController dataController;
+    protected BaseDataTreeNodeController nodeController;
     protected static final int AutoExpandThreshold = 500;
     protected boolean expandAll;
     protected TableDataNode nodeTable;
@@ -111,6 +112,7 @@ public class ControlDataTreeView extends BaseTreeTableViewController<DataNode> {
 
     public void setParameters(BaseDataTreeController controller) {
         dataController = controller;
+        nodeController = controller.nodeController;
         dataTable = dataController.dataTable;
         nodeTable = dataController.dataNodeTable;
         parentController = dataController;

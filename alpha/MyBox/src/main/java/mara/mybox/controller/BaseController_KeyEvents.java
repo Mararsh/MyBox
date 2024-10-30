@@ -24,13 +24,13 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
         try {
             if (thisPane != null) {
                 thisPane.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-                    keyEvent = event;
+                    MyBoxLog.debug("KeyEvent.KEY_PRESSED");
                     if (keyEventsFilter(event)) {
                         event.consume();
                     }
                 });
                 thisPane.addEventFilter(KeyEvent.KEY_TYPED, event -> {
-                    keyEvent = event;
+                    MyBoxLog.debug("KeyEvent.KEY_TYPED");
                     if (keyEventsFilter(event)) {
                         event.consume();
                     }
@@ -47,10 +47,11 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
 //            if (getMyWindow() != null) {
 //                MyBoxLog.debug("window:" + getMyWindow().getClass() + "   isFocused:" + getMyWindow().isFocused());
 //            }
-//            MyBoxLog.debug("filter:" + this.getClass()
-//                    + " text:" + event.getText() + " code:" + event.getCode() + " char:" + event.getCharacter()
-//                    + " source:" + event.getSource().getClass() + " target:" + (event.getTarget() == null ? "null" : event.getTarget()));
             keyEvent = event;
+            MyBoxLog.debug("filter:" + this.getClass()
+                    + " text:" + event.getText() + " code:" + event.getCode() + " char:" + event.getCharacter()
+                    + " source:" + event.getSource().getClass() + " target:" + (event.getTarget() == null ? "null" : event.getTarget()));
+
             if (event.isAltDown()) {
                 return altFilter(event);
 
@@ -64,8 +65,24 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
         return false;
     }
 
-    public boolean keyFilter(KeyEvent event) {
-        keyEvent = event;
+    private boolean altFilter(KeyEvent event) {
+        if (!event.isAltDown() || event.getCode() == null) {
+            return false;
+        }
+        switch (event.getCode()) {
+            case HOME:
+                return altHome();
+            case END:
+                return altEnd();
+            case PAGE_UP:
+                return altPageUp();
+            case PAGE_DOWN:
+                return altPageDown();
+        }
+        return keyFilter(event);
+    }
+
+    private boolean keyFilter(KeyEvent event) {
         KeyCode code = event.getCode();
         if (code == null || code == KeyCode.UNDEFINED) {
             return inputFilter(event);
@@ -133,43 +150,23 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
         return inputFilter(event);
     }
 
-    public boolean altFilter(KeyEvent event) {
-        keyEvent = event;
-        if (!event.isAltDown() || event.getCode() == null) {
+    public boolean inputFilter(KeyEvent event) {
+        if (event == null) {
             return false;
         }
-        switch (event.getCode()) {
-            case HOME:
-                return altHome();
-            case END:
-                return altEnd();
-            case PAGE_UP:
-                return altPageUp();
-            case PAGE_DOWN:
-                return altPageDown();
+        boolean omit = !event.isControlDown() && !event.isAltDown();
+        if (omit && targetIsTextInput()) {
+            return false;
         }
-        return keyFilter(event);
+        return inputFilter(omit ? event.getCharacter() : event.getText(), omit);
     }
 
-    public boolean inputFilter(KeyEvent event) {
-        if (event == null || isPopup() || targetIsTextInput()) {
-            return false;
-        }
-        String code;
-        boolean omit = false; // to avoid accidents
-        if (event.isControlDown() || event.isAltDown()) {
-            code = event.getText();
-        } else if (AppVariables.ShortcutsCanNotOmitCtrlAlt) {
-            return false;
-        } else {
-            omit = true;
-            code = event.getCharacter();
-        }
-        if (code == null) {
+    public boolean inputFilter(String input, boolean omit) {
+        if (input == null || (omit && AppVariables.ShortcutsCanNotOmitCtrlAlt)) {
             return false;
         }
 //        MyBoxLog.debug("input:" + input.toUpperCase());
-        switch (code.toUpperCase()) {
+        switch (input.toUpperCase()) {
             case "E":
                 return controlAltE();
 

@@ -24,7 +24,7 @@ public class DataNode extends BaseData {
 
     protected BaseTable dataTable;
     protected long nodeid, parentid;
-    protected BaseTreeData node, parent;
+    protected DataNode parentData;
     protected String title;
     protected Date updateTime;
 
@@ -34,8 +34,7 @@ public class DataNode extends BaseData {
         parentid = -2;
         title = null;
         updateTime = new Date();
-        node = null;
-        parent = null;
+        parentData = null;
     }
 
     public DataNode() {
@@ -51,19 +50,32 @@ public class DataNode extends BaseData {
 
     @Override
     public boolean setValue(String column, Object value) {
-        return setValue(this, column, value);
+        MyBoxLog.debug(column + ": " + value);
+        if (setDataValue(column, value)) {
+            return true;
+        } else {
+            return setValue(this, column, value);
+        }
+    }
+
+    public boolean setDataValue(String column, Object value) {
+        return false;
     }
 
     @Override
     public Object getValue(String column) {
-        return getValue(this, column);
+        Object v = getDataValue(column);
+        MyBoxLog.debug(column + ": " + v);
+        if (v != null) {
+            return v;
+        } else {
+            return getValue(this, column);
+        }
     }
 
     public Object getDataValue(String column) {
-        if (node == null) {
-            return null;
-        }
-        return node.getValue(column);
+        return null;
+
     }
 
     @Override
@@ -208,21 +220,12 @@ public class DataNode extends BaseData {
         return this;
     }
 
-    public BaseTreeData getNode() {
-        return node;
+    public DataNode getParentData() {
+        return parentData;
     }
 
-    public DataNode setNode(BaseTreeData node) {
-        this.node = node;
-        return this;
-    }
-
-    public BaseTreeData getParent() {
-        return parent;
-    }
-
-    public DataNode setParent(BaseTreeData parent) {
-        this.parent = parent;
+    public DataNode setParent(DataNode parent) {
+        this.parentData = parent;
         return this;
     }
 
