@@ -66,10 +66,10 @@ public class ControlDataTreeManage extends ControlDataTreeView {
         List<DataNode> ancestor = ancestor(conn, node);
         if (ancestor != null) {
             for (DataNode a : ancestor) {
-                chainName += a.getTitle() + TitleSeparater;
+                chainName += a.getNodeTitle() + TitleSeparater;
             }
         }
-        chainName += node.getTitle();
+        chainName += node.getNodeTitle();
         return chainName;
     }
 
@@ -458,7 +458,7 @@ public class ControlDataTreeManage extends ControlDataTreeView {
             return;
         }
         String chainName = chainName(item);
-        String name = PopTools.askValue(getBaseTitle(), chainName, message("RenameNode"), nodeValue.getTitle() + "m");
+        String name = PopTools.askValue(getBaseTitle(), chainName, message("RenameNode"), nodeValue.getNodeTitle() + "m");
         if (name == null || name.isBlank()) {
             return;
         }
@@ -474,7 +474,7 @@ public class ControlDataTreeManage extends ControlDataTreeView {
 
             @Override
             protected boolean handle() {
-                nodeValue.setTitle(name);
+                nodeValue.setNodeTitle(name);
                 updatedNode = nodeTable.updateData(nodeValue);
                 return updatedNode != null;
             }
@@ -646,7 +646,7 @@ public class ControlDataTreeManage extends ControlDataTreeView {
             String indentNode = " ".repeat(indent);
             String spaceNode = "&nbsp;".repeat(indent);
             String nodePageid = "item" + node.getNodeid();
-            String nodeName = node.getTitle();
+            String nodeName = node.getNodeTitle();
             String displayName = "<SPAN class=\"SerialNumber\">" + serialNumber + "&nbsp;&nbsp;</SPAN>" + nodeName;
             if (children != null && !children.isEmpty()) {
                 displayName = "<a href=\"javascript:nodeClicked('" + nodePageid + "')\">" + displayName + "</a>";

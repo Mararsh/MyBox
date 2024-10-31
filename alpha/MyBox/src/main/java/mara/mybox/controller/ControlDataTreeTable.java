@@ -27,10 +27,10 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.data.Tag;
 import mara.mybox.db.data.DataNode;
-import mara.mybox.db.table.TableStringValues;
+import mara.mybox.db.data.Tag;
 import mara.mybox.db.table.TableDataNode;
+import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.cell.TableTextTrimCell;
@@ -179,7 +179,7 @@ public class ControlDataTreeTable extends BaseSysTableController<DataNode> {
                 List<Node> nodes = new ArrayList<>();
                 if (ancestor != null) {
                     for (DataNode node : ancestor) {
-                        Hyperlink link = new Hyperlink(node.getTitle());
+                        Hyperlink link = new Hyperlink(node.getNodeTitle());
                         link.setWrapText(true);
                         link.setMinHeight(Region.USE_PREF_SIZE);
                         link.setOnAction(new EventHandler<ActionEvent>() {
@@ -192,7 +192,7 @@ public class ControlDataTreeTable extends BaseSysTableController<DataNode> {
                         nodes.add(new Label(">"));
                     }
                 }
-                Label label = new Label(loadedParent.getTitle());
+                Label label = new Label(loadedParent.getNodeTitle());
                 label.setWrapText(true);
                 label.setMinHeight(Region.USE_PREF_SIZE);
                 nodes.add(label);

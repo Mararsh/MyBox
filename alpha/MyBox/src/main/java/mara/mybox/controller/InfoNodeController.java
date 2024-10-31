@@ -54,7 +54,6 @@ public class InfoNodeController extends BaseDataTreeNodeController {
     protected void editValue(DataNode dataNode) {
         try {
             Object v = dataNode.getValue("info");
-            MyBoxLog.debug(dataNode.getValue("title") + ": " + v);
             infoInput.setText(v != null ? (String) v : null);
         } catch (Exception e) {
             MyBoxLog.error(e);

@@ -59,7 +59,7 @@ public abstract class BaseDataTreeManageController extends BaseDataTreeControlle
         }
         if (nodeController.attributesController.currentNode != null
                 && id == nodeController.attributesController.currentNode.getNodeid()) {
-            nodeController.attributesController.renamed(node.getTitle());
+            nodeController.attributesController.renamed(node.getNodeTitle());
         }
     }
 

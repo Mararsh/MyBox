@@ -17,7 +17,7 @@ public class TableInfo extends BaseTableTreeData<InfoInTree> {
     public TableInfo() {
         tableName = "Info_In_Tree";
         tableTitle = message("InformationInTree");
-        idColumnName = "noteid";
+        idColumnName = "infoid";
         defineColumns();
     }
 
@@ -33,7 +33,6 @@ public class TableInfo extends BaseTableTreeData<InfoInTree> {
         if (data == null || column == null) {
             return false;
         }
-        MyBoxLog.debug(column + ": " + value);
         return data.setValue(column, value);
     }
 
@@ -56,9 +55,8 @@ public class TableInfo extends BaseTableTreeData<InfoInTree> {
     @Override
     public long insertData(Connection conn, String title, String info) {
         try {
-            InfoInTree node = new InfoInTree()
-                    .setTitle(title)
-                    .setInfo(info);
+            InfoInTree node = new InfoInTree().setInfo(info);
+            node.setNodeTitle(title).setDataTitle(title);
             node = insertData(conn, node);
             return node.getInfoid();
         } catch (Exception e) {

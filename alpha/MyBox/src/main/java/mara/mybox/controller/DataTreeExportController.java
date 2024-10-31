@@ -506,14 +506,14 @@ public class DataTreeExportController extends BaseTaskController {
             }
             String nodeChainName;
             if (parentChainName != null && !parentChainName.isBlank()) {
-                nodeChainName = parentChainName + DataNode.TitleSeparater + node.getTitle();
+                nodeChainName = parentChainName + DataNode.TitleSeparater + node.getNodeTitle();
             } else {
-                nodeChainName = node.getTitle();
+                nodeChainName = node.getNodeTitle();
             }
             List<DataNode> children = dataNodeTable.children(conn, node.getNodeid());
 
             if (framesetNavWriter != null) {
-                String nodeTitle = node.getTitle() + "_" + node.getNodeid();
+                String nodeTitle = node.getNodeTitle() + "_" + node.getNodeid();
                 File bookNavFile = new File(framesetNavFile.getParent() + File.separator + FileNameTools.filter(nodeTitle) + "_nav.html");
                 FileWriter bookNavWriter = new FileWriter(bookNavFile, charset);
                 writeHtmlHead(bookNavWriter, nodeTitle);
@@ -527,7 +527,7 @@ public class DataTreeExportController extends BaseTaskController {
                 for (int i = 1; i < level; i++) {
                     prefix += "&nbsp;&nbsp;&nbsp;&nbsp;";
                 }
-                framesetNavWriter.write(prefix + "<A href=\"" + bookNavFile.getName() + "\"  target=booknav>" + node.getTitle() + "</A><BR>\n");
+                framesetNavWriter.write(prefix + "<A href=\"" + bookNavFile.getName() + "\"  target=booknav>" + node.getNodeTitle() + "</A><BR>\n");
 
                 writeHtml(currentTask, conn, nodeChainName, node, bookWriter, tags);
                 try {
@@ -541,11 +541,11 @@ public class DataTreeExportController extends BaseTaskController {
                 if (children != null && !children.isEmpty()) {
                     for (DataNode child : children) {
                         File childFile = new File(framesetNavFile.getParent() + File.separator
-                                + FileNameTools.filter(child.getTitle() + "_" + child.getNodeid()) + ".html");
-                        bookNavWriter.write("<A href=\"" + childFile.getName() + "\"  target=main>" + child.getTitle() + "</A><BR>\n");
+                                + FileNameTools.filter(child.getNodeTitle() + "_" + child.getNodeid()) + ".html");
+                        bookNavWriter.write("<A href=\"" + childFile.getName() + "\"  target=main>" + child.getNodeTitle() + "</A><BR>\n");
                     }
                 } else {
-                    bookNavWriter.write("<A href=\"" + nodeFile.getName() + "\"  target=main>" + node.getTitle() + "</A><BR>\n");
+                    bookNavWriter.write("<A href=\"" + nodeFile.getName() + "\"  target=main>" + node.getNodeTitle() + "</A><BR>\n");
                 }
                 try {
                     bookNavWriter.write(indent + "\n</BODY>\n</HTML>");
@@ -587,9 +587,9 @@ public class DataTreeExportController extends BaseTaskController {
                     xml += prefix + indent + "<parentid>" + node.getParentid() + "</parentid>\n";
                 }
             }
-            if (node.getTitle() != null) {
+            if (node.getNodeTitle() != null) {
                 xml += prefix + indent + "<title>\n"
-                        + prefix + indent + "<![CDATA[" + node.getTitle() + "]]>\n"
+                        + prefix + indent + "<![CDATA[" + node.getNodeTitle() + "]]>\n"
                         + prefix + indent + "</title>\n";
             }
             if (node.getUpdateTime() != null) {
@@ -629,7 +629,7 @@ public class DataTreeExportController extends BaseTaskController {
         try {
             textsWriter.write(AppValues.MyBoxSeparator + (idCheck.isSelected() ? node.getNodeid() : "") + "\n");
             textsWriter.write((parentName == null ? DataNode.RootIdentify : parentName) + "\n");
-            textsWriter.write(node.getTitle() + "\n");
+            textsWriter.write(node.getNodeTitle() + "\n");
             if (timeCheck.isSelected() && node.getUpdateTime() != null) {
                 textsWriter.write(DataNode.TimePrefix + DateTools.datetimeToString(node.getUpdateTime()) + "\n");
             }
@@ -686,7 +686,7 @@ public class DataTreeExportController extends BaseTaskController {
                 }
                 writer.write("</H4>\n");
             }
-            writer.write(indent + indent + indent + "<H4><PRE><CODE>" + node.getTitle() + "</CODE></PRE></H4>\n");
+            writer.write(indent + indent + indent + "<H4><PRE><CODE>" + node.getNodeTitle() + "</CODE></PRE></H4>\n");
 //            String infoHtml = DataNode.infoHtml(currentTask, this, node.getCategory(), node.getInfo(), iconCheck.isSelected(), true);
 //            if (infoHtml != null && !infoHtml.isBlank()) {
 //                writer.write(indent + indent + indent + infoHtml + "\n");
@@ -718,7 +718,7 @@ public class DataTreeExportController extends BaseTaskController {
             }
             s.append(indent).append(indent)
                     .append("\"").append(message("Title")).append("\": \"")
-                    .append(node.getTitle()).append("\"");
+                    .append(node.getNodeTitle()).append("\"");
             if (timeCheck.isSelected() && node.getUpdateTime() != null) {
                 s.append(",\n");
                 s.append(indent).append(indent)

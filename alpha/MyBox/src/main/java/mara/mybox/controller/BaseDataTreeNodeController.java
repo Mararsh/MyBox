@@ -1,14 +1,21 @@
 package mara.mybox.controller;
 
 import java.io.File;
+import java.sql.Connection;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Tab;
 import javafx.scene.input.KeyEvent;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.DataNode;
 import static mara.mybox.db.data.DataNode.TitleSeparater;
 import mara.mybox.db.data.VisitHistory;
+import mara.mybox.db.table.BaseTableTreeData;
+import mara.mybox.db.table.TableDataNode;
+import mara.mybox.db.table.TableDataNodeTag;
+import mara.mybox.db.table.TableDataTag;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -23,6 +30,11 @@ public abstract class BaseDataTreeNodeController extends BaseController {
     protected final SimpleBooleanProperty nodeChanged;
     protected BaseController valuesEditor;
     protected boolean nodeExecutable;
+    protected BaseTableTreeData dataTable;
+    protected TableDataNode dataNodeTable;
+    protected TableDataTag dataTagTable;
+    protected TableDataNodeTag dataNodeTagTable;
+    protected DataNode parentNode, currentNode;
 
     @FXML
     protected Tab attributesTab, valueTab, tagsTab;
@@ -38,6 +50,7 @@ public abstract class BaseDataTreeNodeController extends BaseController {
 
     protected abstract void editValue(DataNode node);
 
+//    protected abstract BaseDataValue queryValue(Connection conn, long id);
     @Override
     public void setFileType() {
         setFileType(VisitHistory.FileType.Text);
@@ -46,6 +59,11 @@ public abstract class BaseDataTreeNodeController extends BaseController {
     public void setParameters(BaseDataTreeController controller) {
         try {
             dataController = controller;
+            dataTable = dataController.dataTable;
+            dataNodeTable = dataController.dataNodeTable;
+            dataTagTable = dataController.dataTagTable;
+            dataNodeTagTable = dataController.dataNodeTagTable;
+
             attributesController.setParameters(dataController);
             tagsController.setParameters(dataController);
 
@@ -55,19 +73,54 @@ public abstract class BaseDataTreeNodeController extends BaseController {
     }
 
     protected boolean editNode(DataNode node) {
-        MyBoxLog.debug(node != null);
-        updateEditorTitle(node);
-        attributesController.editNode(node);
-        editValue(node);
-        showEditorPane();
-        nodeChanged(false);
+        if (node == null) {
+            return false;
+        }
+        if (task != null) {
+            task.cancel();
+        }
+        task = new FxTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                try (Connection conn = DerbyBase.getConnection()) {
+                    DataNode dataValue = (DataNode) dataTable.query(conn, node.getNodeid());
+                    if (dataValue == null) {
+                        return false;
+                    }
+                    for (Object column : dataTable.columnNames()) {
+                        String name = (String) column;
+                        node.setValue(name, dataValue.getValue(name));
+                    }
+                    currentNode = node;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                try {
+                    updateEditorTitle(currentNode);
+                    attributesController.editNode(currentNode);
+                    editValue(currentNode);
+                    showEditorPane();
+                    nodeChanged(false);
+                } catch (Exception e) {
+                    MyBoxLog.error(e);
+                }
+            }
+        };
+        start(task, thisPane);
         return true;
     }
 
     protected void updateEditorTitle(DataNode node) {
         if (node != null) {
             dataController.setTitle(dataController.baseTitle + ": "
-                    + node.getNodeid() + " - " + node.getTitle());
+                    + node.getNodeid() + " - " + node.getNodeTitle());
         } else {
             dataController.setTitle(dataController.baseTitle);
         }
@@ -80,7 +133,7 @@ public abstract class BaseDataTreeNodeController extends BaseController {
         }
         DataNode node = DataNode.create()
                 .setDataTable(dataController.dataTable)
-                .setTitle(title);
+                .setNodeTitle(title);
         return pickValue(node);
     }
 

@@ -64,7 +64,7 @@ public abstract class BaseDataTreeController extends BaseController {
             @Override
             protected boolean handle() {
                 try {
-                    html = item.html();
+                    html = item.toHtml();
                     return html != null && !html.isBlank();
                 } catch (Exception e) {
                     error = e.toString();

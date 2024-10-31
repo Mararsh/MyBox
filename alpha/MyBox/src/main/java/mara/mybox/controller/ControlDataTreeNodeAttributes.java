@@ -83,7 +83,7 @@ public class ControlDataTreeNodeAttributes extends BaseController {
         isSettingValues = true;
         if (node != null) {
             idInput.setText(node.getNodeid() + "");
-            titleInput.setText(node.getTitle());
+            titleInput.setText(node.getNodeTitle());
             timeInput.setText(DateTools.datetimeToString(node.getUpdateTime()));
             selectButton.setVisible(node.getNodeid() < 0 || node.getParentid() < 0);
         } else {
@@ -146,7 +146,7 @@ public class ControlDataTreeNodeAttributes extends BaseController {
                 try (Connection conn = DerbyBase.getConnection()) {
                     if (currentNode != null) {
                         if (currentNode.getParentid() >= 0) {
-                            parentNode = tableTree.find(conn, currentNode.getParentid());
+                            parentNode = tableTree.query(conn, currentNode.getParentid());
                         } else {
                             parentNode = tableTree.readData(conn, parentNode);
                         }

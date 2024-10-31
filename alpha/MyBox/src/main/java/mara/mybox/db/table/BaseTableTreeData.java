@@ -24,9 +24,8 @@ public abstract class BaseTableTreeData<D> extends BaseTable<D> {
      */
     public abstract long insertData(Connection conn, String title, String info);
 
-
     /*
-        init
+        methods
      */
     public boolean initTreeTables(Connection conn) {
         if (conn == null || tableName == null) {
@@ -72,9 +71,9 @@ public abstract class BaseTableTreeData<D> extends BaseTable<D> {
                 xml += prefix + indent + "<parentid>" + node.getParentid() + "</parentid>\n";
             }
         }
-        if (node.getTitle() != null) {
+        if (node.getNodeTitle() != null) {
             xml += prefix + indent + "<title>\n"
-                    + prefix + indent + "<![CDATA[" + node.getTitle() + "]]>\n"
+                    + prefix + indent + "<![CDATA[" + node.getNodeTitle() + "]]>\n"
                     + prefix + indent + "</title>\n";
         }
         if (node.getUpdateTime() != null) {

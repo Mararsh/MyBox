@@ -87,7 +87,7 @@ public class DataMigration {
     public static boolean checkUpdates() {
         SystemConfig.setString("CurrentVersion", AppValues.AppVersion);
         try (Connection conn = DerbyBase.getConnection()) {
-            updateIn682(conn);
+//            updateIn682(conn);
             int lastVersion = DevTools.lastVersion(conn);
             int currentVersion = DevTools.myboxVersion(AppValues.AppVersion);
             if (lastVersion != currentVersion
@@ -291,7 +291,7 @@ public class DataMigration {
                 try {
                     DataNode treeNode = new DataNode()
                             .setNodeid(query.getLong("nodeid"))
-                            .setTitle(query.getString("title"))
+                            .setNodeTitle(query.getString("title"))
                             .setParentid(query.getLong("parentid"));
                     tableTree.insertData(conn, treeNode);
                     if (++count % Database.BatchSize == 0) {

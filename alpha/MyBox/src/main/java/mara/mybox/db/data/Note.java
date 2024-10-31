@@ -1,7 +1,6 @@
 package mara.mybox.db.data;
 
 import static mara.mybox.db.data.DataNode.ValueSeparater;
-import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.HtmlReadTools;
 import mara.mybox.tools.JsonTools;
 
@@ -10,10 +9,7 @@ import mara.mybox.tools.JsonTools;
  * @CreateDate 2024-8-2
  * @License Apache License Version 2.0
  */
-public class Note extends BaseTreeData {
-
-    protected long noteid;
-    protected String note;
+public class Note extends DataNode {
 
     @Override
     public boolean valid() {
@@ -21,17 +17,9 @@ public class Note extends BaseTreeData {
     }
 
     @Override
-    public boolean setDataValue(String column, Object value) {
-        return setDataValue(this, column, value);
-    }
-
-    @Override
-    public Object getDataValue(String column) {
-        return getDataValue(this, column);
-    }
-
-    @Override
     public String toText() {
+        String note = getNote();
+        String title = getDataTitle();
         if (title == null || title.isBlank()) {
             if (note == null || note.isBlank()) {
                 return null;
@@ -49,6 +37,8 @@ public class Note extends BaseTreeData {
 
     @Override
     public String toXml(String prefix) {
+        String title = getDataTitle();
+        String note = getNote();
         String xml = prefix + "<node>\n";
         if (title != null && !title.isBlank()) {
             xml += prefix + prefix + "<title>\n"
@@ -66,6 +56,8 @@ public class Note extends BaseTreeData {
 
     @Override
     public String toHtml() {
+        String title = getDataTitle();
+        String note = getNote();
         String html = "";
         if (title != null && !title.isBlank()) {
             html += "<H2>" + title.trim() + "</H2>\n";
@@ -78,6 +70,8 @@ public class Note extends BaseTreeData {
 
     @Override
     public String toJson(String prefix) {
+        String title = getDataTitle();
+        String note = getNote();
         String json = "";
         if (title != null && !title.isBlank()) {
             json += prefix + ",\n"
@@ -97,49 +91,8 @@ public class Note extends BaseTreeData {
         return new Note();
     }
 
-    public static boolean setDataValue(Note data, String column, Object value) {
-        if (data == null || column == null) {
-            return false;
-        }
-        try {
-            switch (column) {
-                case "noteid":
-                    data.setNoteid(value == null ? -1 : (long) value);
-                    return true;
-                case "title":
-                    data.setTitle(value == null ? null : (String) value);
-                    return true;
-                case "note":
-                    data.setNote(value == null ? null : (String) value);
-                    return true;
-            }
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
-        return false;
-    }
-
-    public static Object getDataValue(Note data, String column) {
-        if (data == null || column == null) {
-            return null;
-        }
-        switch (column) {
-            case "noteid":
-                return data.getNoteid();
-            case "title":
-                return data.getTitle();
-            case "note":
-                return data.getNote();
-        }
-        return null;
-    }
-
     public static boolean valid(Note data) {
         return data != null;
-    }
-
-    public static Note fromInfo(String title, String info) {
-        return Note.create().setTitle(title).setNote(info);
     }
 
     public static Note fromText(String text) {
@@ -161,29 +114,30 @@ public class Note extends BaseTreeData {
         get/set
      */
     public long getNoteid() {
-        return noteid;
+        try {
+            Object v = getValue("noteid");
+            return v == null ? -1 : (long) v;
+        } catch (Exception e) {
+            return -1;
+        }
     }
 
     public Note setNoteid(long noteid) {
-        this.noteid = noteid;
-        return this;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public Note setTitle(String title) {
-        this.title = title;
+        setValue("noteid", noteid);
         return this;
     }
 
     public String getNote() {
-        return note;
+        try {
+            Object v = getValue("note");
+            return v == null ? null : (String) v;
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public Note setNote(String note) {
-        this.note = note;
+        setValue("note", note);
         return this;
     }
 

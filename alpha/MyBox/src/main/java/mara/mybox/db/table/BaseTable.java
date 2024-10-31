@@ -132,19 +132,22 @@ public abstract class BaseTable<D> {
                 case Image:
                 case Enumeration:
                 case EnumerationEditable:
-                    if (value == null && !notNull) {
+                    String s;
+                    try {
+                        s = (String) value;
+                    } catch (Exception ex) {
+                        try {
+                            s = (String) column.defaultValue();
+                        } catch (Exception exx) {
+                            s = null;
+                        }
+                    }
+                    if (s == null && !notNull) {
+                        s = "";
+                    }
+                    if (s == null) {
                         statement.setNull(index, Types.VARCHAR);
                     } else {
-                        String s;
-                        try {
-                            s = (String) value;
-                        } catch (Exception ex) {
-                            try {
-                                s = (String) column.defaultValue();
-                            } catch (Exception exs) {
-                                s = "";
-                            }
-                        }
                         if (column.getLength() > 0 && s.length() > column.getLength()) {
                             s = s.substring(0, column.getLength());
                         }
@@ -1055,6 +1058,9 @@ public abstract class BaseTable<D> {
         return HtmlWriteTools.html(tableName, HtmlStyles.styleValue("Default"), html);
     }
 
+    /*
+        query
+     */
     public D exist(D data) {
         return query(data);
     }
@@ -1257,6 +1263,35 @@ public abstract class BaseTable<D> {
         return query(conn, queryAllStatement());
     }
 
+    public D query(long id) {
+        if (id < 0 || idColumnName == null || idColumnName.isBlank()) {
+            return null;
+        }
+        try (Connection conn = DerbyBase.getConnection()) {
+            return query(conn, id);
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+            return null;
+        }
+    }
+
+    public D query(Connection conn, long id) {
+        if (conn == null || id < 0 || idColumnName == null || idColumnName.isBlank()) {
+            return null;
+        }
+        String sql = "SELECT * FROM " + tableName + " WHERE " + idColumnName + "=?";
+        try (PreparedStatement statement = conn.prepareStatement(sql)) {
+            statement.setLong(1, id);
+            return query(conn, statement);
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+            return null;
+        }
+    }
+
+    /*
+        update
+     */
     public D writeData(D data) {
         newID = -1;
         if (!valid(data)) {

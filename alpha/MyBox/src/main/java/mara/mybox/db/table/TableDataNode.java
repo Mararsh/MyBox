@@ -40,7 +40,7 @@ public class TableDataNode extends BaseTable<DataNode> {
                 .setReferTable(dataTable.tableName).setReferColumn(dataTable.idColumnName)
                 .setOnDelete(ColumnDefinition.OnDelete.Cascade)
         );
-        addColumn(new ColumnDefinition("title", ColumnType.String, true).setLength(StringMaxLength));
+        addColumn(new ColumnDefinition("node_title", ColumnType.String, true).setLength(StringMaxLength));
         addColumn(new ColumnDefinition("update_time", ColumnType.Datetime));
         addColumn(new ColumnDefinition("parentid", ColumnType.Long, true)
                 .setReferName(tableName + "_parentid_fk")
@@ -126,32 +126,6 @@ public class TableDataNode extends BaseTable<DataNode> {
         return data.valid();
     }
 
-    public DataNode find(long id) {
-        if (id < 0) {
-            return null;
-        }
-        try (Connection conn = DerbyBase.getConnection()) {
-            return find(conn, id);
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-            return null;
-        }
-    }
-
-    public DataNode find(Connection conn, long id) {
-        if (conn == null || id < 0) {
-            return null;
-        }
-        String sql = "SELECT * FROM " + tableName + " WHERE nodeid=?";
-        try (PreparedStatement statement = conn.prepareStatement(sql)) {
-            statement.setLong(1, id);
-            return query(conn, statement);
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-            return null;
-        }
-    }
-
     public List<DataNode> findRoots() {
         try (Connection conn = DerbyBase.getConnection()) {
             return findRoots(conn);
@@ -217,12 +191,12 @@ public class TableDataNode extends BaseTable<DataNode> {
             return null;
         }
         List<DataNode> ancestor = null;
-        DataNode node = find(conn, id);
+        DataNode node = query(conn, id);
         if (node == null || node.isRoot()) {
             return ancestor;
         }
         long parentid = node.getParentid();
-        DataNode parent = find(conn, parentid);
+        DataNode parent = query(conn, parentid);
         if (parent != null) {
             ancestor = ancestor(conn, parentid);
             if (ancestor == null) {
@@ -280,8 +254,8 @@ public class TableDataNode extends BaseTable<DataNode> {
         try {
             DataNode node = find(conn, parent, title);
             if (node == null) {
-                DataNode parentNode = find(conn, parent);
-                node = new DataNode(parentNode, title);
+                DataNode parentNode = query(conn, parent);
+                node = DataNode.createChild(parentNode, title);
                 node = insertData(conn, node);
                 conn.commit();
             }
@@ -293,7 +267,7 @@ public class TableDataNode extends BaseTable<DataNode> {
     }
 
     public DataNode findAndCreateRoot(Connection conn) {
-        DataNode base = find(conn, 1);
+        DataNode base = query(conn, 1);
         if (base == null) {
             try {
                 String sql = "INSERT INTO " + tableName + " (nodeid,title,parentid) VALUES(1,'Root',1)";
@@ -302,7 +276,7 @@ public class TableDataNode extends BaseTable<DataNode> {
                 sql = "ALTER TABLE " + tableName + " ALTER COLUMN nodeid RESTART WITH 2";
                 update(conn, sql);
                 conn.commit();
-                base = find(conn, 1);
+                base = query(conn, 1);
             } catch (Exception e) {
                 MyBoxLog.debug(e);
             }
@@ -317,10 +291,10 @@ public class TableDataNode extends BaseTable<DataNode> {
         try {
             long parentid = root.getNodeid();
             String chain = ownerChain;
-            if (chain.startsWith(root.getTitle() + TitleSeparater)) {
-                chain = chain.substring((root.getTitle() + TitleSeparater).length());
-            } else if (chain.startsWith(message(root.getTitle()) + TitleSeparater)) {
-                chain = chain.substring((message(root.getTitle()) + TitleSeparater).length());
+            if (chain.startsWith(root.getNodeTitle() + TitleSeparater)) {
+                chain = chain.substring((root.getNodeTitle() + TitleSeparater).length());
+            } else if (chain.startsWith(message(root.getNodeTitle()) + TitleSeparater)) {
+                chain = chain.substring((message(root.getNodeTitle()) + TitleSeparater).length());
             }
             String[] nodes = chain.split(TitleSeparater);
             DataNode owner = null;
@@ -529,7 +503,7 @@ public class TableDataNode extends BaseTable<DataNode> {
         if (conn == null || node == null) {
             return null;
         }
-        return find(conn, node.getParentid());
+        return query(conn, node.getParentid());
     }
 
     public int deleteChildren(long parent) {

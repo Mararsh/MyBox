@@ -33,7 +33,6 @@ public class NoteNodeController extends BaseDataTreeNodeController {
     protected void editValue(DataNode dataNode) {
         try {
             Object v = dataNode.getValue("note");
-            MyBoxLog.debug(dataNode.getValue("title") + ": " + v);
             if (v != null) {
                 valuesController.loadContents((String) v);
             } else {

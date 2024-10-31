@@ -55,7 +55,8 @@ public class TableNote extends BaseTableTreeData<Note> {
     @Override
     public long insertData(Connection conn, String title, String info) {
         try {
-            Note note = Note.fromInfo(title, info);
+            Note note = new Note().setNote(info);
+            note.setNodeTitle(title).setDataTitle(title);
             note = insertData(conn, note);
             return note.getNoteid();
         } catch (Exception e) {

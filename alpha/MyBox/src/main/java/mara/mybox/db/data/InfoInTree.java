@@ -1,7 +1,6 @@
 package mara.mybox.db.data;
 
 import static mara.mybox.db.data.DataNode.ValueSeparater;
-import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.JsonTools;
 
 /**
@@ -9,10 +8,7 @@ import mara.mybox.tools.JsonTools;
  * @CreateDate 2024-8-2
  * @License Apache License Version 2.0
  */
-public class InfoInTree extends BaseTreeData {
-
-    protected long infoid;
-    protected String info;
+public class InfoInTree extends DataNode {
 
     @Override
     public boolean valid() {
@@ -20,18 +16,9 @@ public class InfoInTree extends BaseTreeData {
     }
 
     @Override
-    public boolean setDataValue(String column, Object value) {
-        return setDataValue(this, column, value);
-    }
-
-    @Override
-    public Object getDataValue(String column) {
-        return getDataValue(this, column);
-
-    }
-
-    @Override
     public String toText() {
+        String info = getInfo();
+        String title = getDataTitle();
         if (title == null || title.isBlank()) {
             if (info == null || info.isBlank()) {
                 return null;
@@ -49,7 +36,9 @@ public class InfoInTree extends BaseTreeData {
 
     @Override
     public String toXml(String prefix) {
+        String info = getInfo();
         String xml = prefix + "<node>\n";
+        String title = getDataTitle();
         if (title != null && !title.isBlank()) {
             xml += prefix + prefix + "<title>\n"
                     + prefix + prefix + prefix + "<![CDATA[" + title.trim() + "]]>\n"
@@ -66,7 +55,9 @@ public class InfoInTree extends BaseTreeData {
 
     @Override
     public String toHtml() {
+        String info = getInfo();
         String html = "";
+        String title = getDataTitle();
         if (title != null && !title.isBlank()) {
             html += "<H2>" + title.trim() + "</H2>\n";
         }
@@ -78,6 +69,8 @@ public class InfoInTree extends BaseTreeData {
 
     @Override
     public String toJson(String prefix) {
+        String info = getInfo();
+        String title = getDataTitle();
         String json = "";
         if (title != null && !title.isBlank()) {
             json += prefix + ",\n"
@@ -98,44 +91,6 @@ public class InfoInTree extends BaseTreeData {
         return new InfoInTree();
     }
 
-    public static boolean setDataValue(InfoInTree data, String column, Object value) {
-        if (data == null || column == null) {
-            return false;
-        }
-        MyBoxLog.debug(column + ": " + value);
-        try {
-            switch (column) {
-                case "infoid":
-                    data.setInfoid(value == null ? -1 : (long) value);
-                    return true;
-                case "title":
-                    data.setTitle(value == null ? null : (String) value);
-                    return true;
-                case "info":
-                    data.setInfo(value == null ? null : (String) value);
-                    return true;
-            }
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
-        return false;
-    }
-
-    public static Object getDataValue(InfoInTree data, String column) {
-        if (data == null || column == null) {
-            return null;
-        }
-        switch (column) {
-            case "infoid":
-                return data.getInfoid();
-            case "title":
-                return data.getTitle();
-            case "info":
-                return data.getInfo();
-        }
-        return null;
-    }
-
     public static boolean valid(InfoInTree data) {
         return data != null;
     }
@@ -144,29 +99,30 @@ public class InfoInTree extends BaseTreeData {
         get/set
      */
     public long getInfoid() {
-        return infoid;
+        try {
+            Object v = getValue("infoid");
+            return v == null ? -1 : (long) v;
+        } catch (Exception e) {
+            return -1;
+        }
     }
 
     public InfoInTree setInfoid(long infoid) {
-        this.infoid = infoid;
-        return this;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public InfoInTree setTitle(String title) {
-        this.title = title;
+        setValue("infoid", infoid);
         return this;
     }
 
     public String getInfo() {
-        return info;
+        try {
+            Object v = getValue("info");
+            return v == null ? null : (String) v;
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public InfoInTree setInfo(String info) {
-        this.info = info;
+        setValue("info", info);
         return this;
     }
 
