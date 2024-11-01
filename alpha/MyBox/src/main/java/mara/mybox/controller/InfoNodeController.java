@@ -6,7 +6,7 @@ import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextArea;
-import mara.mybox.db.data.DataNode;
+import mara.mybox.db.data.DataValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.value.UserConfig;
@@ -51,9 +51,14 @@ public class InfoNodeController extends BaseDataTreeNodeController {
     }
 
     @Override
-    protected void editValue(DataNode dataNode) {
+    protected void editValues(DataValues values) {
         try {
-            Object v = dataNode.getValue("info");
+            Object v;
+            if (values == null) {
+                v = null;
+            } else {
+                v = values.getValue("info");
+            }
             infoInput.setText(v != null ? (String) v : null);
         } catch (Exception e) {
             MyBoxLog.error(e);

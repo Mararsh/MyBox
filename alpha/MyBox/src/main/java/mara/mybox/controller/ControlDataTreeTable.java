@@ -28,7 +28,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.DataNode;
-import mara.mybox.db.data.Tag;
+import mara.mybox.db.data.DataTag;
 import mara.mybox.db.table.TableDataNode;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
@@ -179,7 +179,7 @@ public class ControlDataTreeTable extends BaseSysTableController<DataNode> {
                 List<Node> nodes = new ArrayList<>();
                 if (ancestor != null) {
                     for (DataNode node : ancestor) {
-                        Hyperlink link = new Hyperlink(node.getNodeTitle());
+                        Hyperlink link = new Hyperlink(node.getTitle());
                         link.setWrapText(true);
                         link.setMinHeight(Region.USE_PREF_SIZE);
                         link.setOnAction(new EventHandler<ActionEvent>() {
@@ -192,7 +192,7 @@ public class ControlDataTreeTable extends BaseSysTableController<DataNode> {
                         nodes.add(new Label(">"));
                     }
                 }
-                Label label = new Label(loadedParent.getNodeTitle());
+                Label label = new Label(loadedParent.getTitle());
                 label.setWrapText(true);
                 label.setMinHeight(Region.USE_PREF_SIZE);
                 nodes.add(label);
@@ -445,7 +445,7 @@ public class ControlDataTreeTable extends BaseSysTableController<DataNode> {
 //        dataController.showNodesList(true);
     }
 
-    public void queryTags(List<Tag> tags) {
+    public void queryTags(List<DataTag> tags) {
         if (tags == null || tags.isEmpty()) {
             popError(message("SelectToHandle"));
             return;
@@ -453,7 +453,7 @@ public class ControlDataTreeTable extends BaseSysTableController<DataNode> {
         clearQuery();
         queryConditions = tableTree.tagsCondition(tags);
         queryConditionsString = message("Tag") + ": ";
-        for (Tag tag : tags) {
+        for (DataTag tag : tags) {
             queryConditionsString += " " + tag.getTag();
         }
         loadTableData();

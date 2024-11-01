@@ -1,11 +1,8 @@
 package mara.mybox.db.data;
 
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import mara.mybox.db.table.BaseTable;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.tools.JsonTools;
 
 /**
  * @Author Mara
@@ -26,48 +23,37 @@ public class DataNode extends BaseData {
     public static final int RootID = -9;
 
     protected BaseTable dataTable;
-    protected Map<String, Object> values;
+    protected long nodeid, parentid;
+    protected String title;
+    protected Date updateTime;
 
     private void init() {
         dataTable = null;
-        values = null;
+        nodeid = -1;
+        parentid = -2;
+        title = null;
+        updateTime = new Date();
     }
 
     public DataNode() {
         init();
     }
 
+    public DataNode(DataNode parent, String title) {
+        init();
+        this.parentid = parent.getNodeid();
+        this.dataTable = parent.getDataTable();
+        this.title = title;
+    }
+
     @Override
     public boolean setValue(String column, Object value) {
-        try {
-            if (column == null) {
-                return false;
-            }
-            if (values == null) {
-                values = new HashMap<>();
-            }
-            values.put(column, value);
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return false;
-        }
+        return setValue(this, column, value);
     }
 
     @Override
     public Object getValue(String column) {
-        if (column == null || values == null) {
-            return null;
-        }
-        return values.get(column);
-    }
-
-    public String getTitle() {
-        return getNodeTitle();
-    }
-
-    public String getValue() {
-        return getNodeTitle();
+        return getValue(this, column);
     }
 
     @Override
@@ -75,44 +61,32 @@ public class DataNode extends BaseData {
         return true;
     }
 
+    public DataNode copyIn(DataNode parent) {
+        DataNode nnode = new DataNode();
+        nnode.setParentid(parent.getNodeid());
+        nnode.setDataTable(parent.getDataTable());
+        nnode.setTitle(title);
+        return nnode;
+    }
+
     public boolean isRoot() {
-        long id = getNodeid();
-        return id >= 0 && getParentid() == id;
+        return parentid == nodeid;
+    }
+
+    public String texts() {
+        return title;
     }
 
     public String toText() {
-        return getNodeTitle();
-    }
-
-    public String toXml(String prefix) {
-        String xml = prefix + "<node>\n";
-        String title = getNodeTitle();
-        if (title != null && !title.isBlank()) {
-            xml += prefix + prefix + "<title>\n"
-                    + prefix + prefix + prefix + "<![CDATA[" + title.trim() + "]]>\n"
-                    + prefix + prefix + "</title>\n";
-        }
-        xml += prefix + "</node>\n";
-        return xml;
+        return title;
     }
 
     public String toHtml() {
-        String html = "";
-        String title = getNodeTitle();
-        if (title != null && !title.isBlank()) {
-            html += "<H2>" + title.trim() + "</H2>\n";
-        }
-        return html;
+        return title;
     }
 
-    public String toJson(String prefix) {
-        String title = getNodeTitle();
-        String json = "";
-        if (title != null && !title.isBlank()) {
-            json += prefix + ",\n"
-                    + prefix + "\"title\": " + JsonTools.encode(title.trim());
-        }
-        return json;
+    public String getValue() {
+        return title;
     }
 
     /*
@@ -130,26 +104,63 @@ public class DataNode extends BaseData {
                 .setDataTable(dataTable)
                 .setParentid(RootID)
                 .setNodeid(RootID)
-                .setNodeTitle(dataTable.getTableTitle());
+                .setTitle(dataTable.getTableTitle());
         return root;
+    }
+
+    public static boolean setValue(DataNode data, String column, Object value) {
+        if (data == null || column == null) {
+            return false;
+        }
+        try {
+            switch (column) {
+                case "nodeid":
+                    data.setNodeid(value == null ? -1 : (long) value);
+                    return true;
+                case "title":
+                    data.setTitle(value == null ? null : (String) value);
+                    return true;
+                case "parentid":
+                    data.setParentid(value == null ? -1 : (long) value);
+                    return true;
+                case "update_time":
+                    data.setUpdateTime(value == null ? null : (Date) value);
+                    return true;
+            }
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
+        return false;
+    }
+
+    public static Object getValue(DataNode data, String column) {
+        if (data == null || column == null) {
+            return null;
+        }
+        switch (column) {
+            case "nodeid":
+                return data.getNodeid();
+            case "title":
+                return data.getTitle();
+            case "parentid":
+                return data.getParentid();
+            case "update_time":
+                return data.getUpdateTime();
+        }
+        return null;
     }
 
     public static DataNode createChild(DataNode parent) {
         return create().
                 setDataTable(parent.getDataTable())
-                .setParentNode(parent)
                 .setParentid(parent.getNodeid());
     }
 
     public static DataNode createChild(DataNode parent, String title) {
-        return create().
-                setDataTable(parent.getDataTable())
-                .setParentNode(parent)
-                .setParentid(parent.getNodeid())
-                .setNodeTitle(title);
+        return createChild(parent).setTitle(title);
     }
 
-    public static boolean valid(Note data) {
+    public static boolean valid(DataNode data) {
         return data != null;
     }
 
@@ -166,95 +177,39 @@ public class DataNode extends BaseData {
     }
 
     public long getNodeid() {
-        try {
-            Object v = getValue("nodeid");
-            return v == null ? -1 : (long) v;
-        } catch (Exception e) {
-            return -1;
-        }
+        return nodeid;
     }
 
     public DataNode setNodeid(long nodeid) {
-        setValue("nodeid", nodeid);
+        this.nodeid = nodeid;
         return this;
     }
 
     public long getParentid() {
-        try {
-            Object v = getValue("parentid");
-            return v == null ? -1 : (long) v;
-        } catch (Exception e) {
-            return -1;
-        }
+        return parentid;
     }
 
     public DataNode setParentid(long parentid) {
-        setValue("parentid", parentid);
+        this.parentid = parentid;
         return this;
     }
 
-    public String getNodeTitle() {
-        try {
-            Object v = getValue("node_title");
-            return v == null ? null : (String) v;
-        } catch (Exception e) {
-            return null;
-        }
+    public String getTitle() {
+        return title;
     }
 
-    public DataNode setNodeTitle(String title) {
-        setValue("node_title", title);
+    public DataNode setTitle(String title) {
+        this.title = title;
         return this;
     }
 
     public Date getUpdateTime() {
-        try {
-            Object v = getValue("update_time");
-            return v == null ? null : (Date) v;
-        } catch (Exception e) {
-            return null;
-        }
+        return updateTime;
     }
 
     public DataNode setUpdateTime(Date updateTime) {
-        setValue("update_time", updateTime);
+        this.updateTime = updateTime;
         return this;
-    }
-
-    public DataNode getParentNode() {
-        try {
-            Object v = getValue("parentNode");
-            return v == null ? null : (DataNode) v;
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    public DataNode setParentNode(DataNode parent) {
-        setValue("parentNode", parent);
-        return this;
-    }
-
-    public String getDataTitle() {
-        try {
-            Object v = getValue("title");
-            return v == null ? null : (String) v;
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    public DataNode setDataTitle(String title) {
-        setValue("title", title);
-        return this;
-    }
-
-    public Map<String, Object> getValues() {
-        return values;
-    }
-
-    public void setValues(Map<String, Object> values) {
-        this.values = values;
     }
 
 }

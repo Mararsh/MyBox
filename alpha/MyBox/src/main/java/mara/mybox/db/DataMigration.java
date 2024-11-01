@@ -39,7 +39,7 @@ import mara.mybox.db.data.ImageEditHistory;
 import mara.mybox.db.data.InfoNode;
 import mara.mybox.db.data.WebHistory;
 import static mara.mybox.db.table.BaseTable.StringMaxLength;
-import mara.mybox.db.table.BaseTableTreeData;
+import mara.mybox.db.table.BaseDataTable;
 import mara.mybox.db.table.TableAlarmClock;
 import mara.mybox.db.table.TableColor;
 import mara.mybox.db.table.TableColorPalette;
@@ -225,7 +225,7 @@ public class DataMigration {
         }
     }
 
-    private static void updateIn682_move(Connection conn, BaseTableTreeData dataTable, String category) {
+    private static void updateIn682_move(Connection conn, BaseDataTable dataTable, String category) {
         String tname = dataTable.getTableName();
         // for debug.Remove this block later
         try (Statement statement = conn.createStatement()) {
@@ -291,7 +291,7 @@ public class DataMigration {
                 try {
                     DataNode treeNode = new DataNode()
                             .setNodeid(query.getLong("nodeid"))
-                            .setNodeTitle(query.getString("title"))
+                            .setTitle(query.getString("title"))
                             .setParentid(query.getLong("parentid"));
                     tableTree.insertData(conn, treeNode);
                     if (++count % Database.BatchSize == 0) {
@@ -602,27 +602,28 @@ public class DataMigration {
             locations = Data2DTableTools.createTable(null, conn, tableName, columns, null, null, null, false);
             TableData2D tableLocations = locations.getTableData2D();
             long count = 0;
-            try (ResultSet query = statement.executeQuery("SELECT * FROM Location_Data_View"); PreparedStatement insert = conn.prepareStatement(tableLocations.insertStatement())) {
+            try (ResultSet query = statement.executeQuery("SELECT * FROM Location_Data_View");
+                    PreparedStatement insert = conn.prepareStatement(tableLocations.insertStatement())) {
                 conn.setAutoCommit(false);
                 while (query.next()) {
                     try {
                         Data2DRow data2DRow = tableLocations.newRow();
-                        data2DRow.setMapValue(message("DataSet"), query.getString("data_set"));
-                        data2DRow.setMapValue(message("Label"), query.getString("label"));
-                        data2DRow.setMapValue(message("Address"), query.getString("address"));
-                        data2DRow.setMapValue(message("Longitude"), query.getDouble("longitude"));
-                        data2DRow.setMapValue(message("Latitude"), query.getDouble("latitude"));
-                        data2DRow.setMapValue(message("Altitude"), query.getDouble("altitude"));
-                        data2DRow.setMapValue(message("Precision"), query.getDouble("precision"));
-                        data2DRow.setMapValue(message("Speed"), query.getDouble("speed"));
-                        data2DRow.setMapValue(message("Direction"), query.getShort("direction"));
-                        data2DRow.setMapValue(message("CoordinateSystem"), GeoCoordinateSystem.name(query.getShort("coordinate_system")));
-                        data2DRow.setMapValue(message("DataValue"), query.getDouble("data_value"));
-                        data2DRow.setMapValue(message("DataSize"), query.getDouble("data_size"));
-                        data2DRow.setMapValue(message("StartTime"), DateTools.datetimeToString(query.getLong("start_time")));
-                        data2DRow.setMapValue(message("EndTime"), DateTools.datetimeToString(query.getLong("end_time")));
-                        data2DRow.setMapValue(message("Image"), query.getString("dataset_image"));
-                        data2DRow.setMapValue(message("Comments"), query.getString("location_comments"));
+                        data2DRow.setValue(message("DataSet"), query.getString("data_set"));
+                        data2DRow.setValue(message("Label"), query.getString("label"));
+                        data2DRow.setValue(message("Address"), query.getString("address"));
+                        data2DRow.setValue(message("Longitude"), query.getDouble("longitude"));
+                        data2DRow.setValue(message("Latitude"), query.getDouble("latitude"));
+                        data2DRow.setValue(message("Altitude"), query.getDouble("altitude"));
+                        data2DRow.setValue(message("Precision"), query.getDouble("precision"));
+                        data2DRow.setValue(message("Speed"), query.getDouble("speed"));
+                        data2DRow.setValue(message("Direction"), query.getShort("direction"));
+                        data2DRow.setValue(message("CoordinateSystem"), GeoCoordinateSystem.name(query.getShort("coordinate_system")));
+                        data2DRow.setValue(message("DataValue"), query.getDouble("data_value"));
+                        data2DRow.setValue(message("DataSize"), query.getDouble("data_size"));
+                        data2DRow.setValue(message("StartTime"), DateTools.datetimeToString(query.getLong("start_time")));
+                        data2DRow.setValue(message("EndTime"), DateTools.datetimeToString(query.getLong("end_time")));
+                        data2DRow.setValue(message("Image"), query.getString("dataset_image"));
+                        data2DRow.setValue(message("Comments"), query.getString("location_comments"));
                         tableLocations.insertData(conn, insert, data2DRow);
                         if (++count % Database.BatchSize == 0) {
                             conn.commit();
@@ -674,36 +675,37 @@ public class DataMigration {
             DataTable reports = Data2DTableTools.createTable(null, conn, tableName, columns, null, null, null, false);
             TableData2D tableReports = reports.getTableData2D();
             long count = 0;
-            try (ResultSet query = statement.executeQuery("SELECT * FROM Epidemic_Report"); PreparedStatement insert = conn.prepareStatement(tableReports.insertStatement())) {
+            try (ResultSet query = statement.executeQuery("SELECT * FROM Epidemic_Report");
+                    PreparedStatement insert = conn.prepareStatement(tableReports.insertStatement())) {
                 conn.setAutoCommit(false);
                 while (query.next()) {
                     try {
                         Data2DRow data2DRow = tableReports.newRow();
-                        data2DRow.setMapValue(message("DataSet"), query.getString("data_set"));
-                        data2DRow.setMapValue(message("Time"), query.getTimestamp("time"));
+                        data2DRow.setValue(message("DataSet"), query.getString("data_set"));
+                        data2DRow.setValue(message("Time"), query.getTimestamp("time"));
                         long locationid = query.getLong("locationid");
                         GeographyCode code = TableGeographyCode.readCode(conn, locationid, true);
                         if (code != null) {
                             try {
-                                data2DRow.setMapValue(message("Address"), code.getName());
-                                data2DRow.setMapValue(message("Longitude"), code.getLongitude());
-                                data2DRow.setMapValue(message("Latitude"), code.getLatitude());
-                                data2DRow.setMapValue(message("Level"), code.getLevelName());
-                                data2DRow.setMapValue(message("Continent"), code.getContinentName());
-                                data2DRow.setMapValue(message("Country"), code.getCountryName());
-                                data2DRow.setMapValue(message("Province"), code.getProvinceName());
-                                data2DRow.setMapValue(message("CoordinateSystem"), code.getCoordinateSystem().name());
-                                data2DRow.setMapValue(message("Comments"), code.getFullName());
+                                data2DRow.setValue(message("Address"), code.getName());
+                                data2DRow.setValue(message("Longitude"), code.getLongitude());
+                                data2DRow.setValue(message("Latitude"), code.getLatitude());
+                                data2DRow.setValue(message("Level"), code.getLevelName());
+                                data2DRow.setValue(message("Continent"), code.getContinentName());
+                                data2DRow.setValue(message("Country"), code.getCountryName());
+                                data2DRow.setValue(message("Province"), code.getProvinceName());
+                                data2DRow.setValue(message("CoordinateSystem"), code.getCoordinateSystem().name());
+                                data2DRow.setValue(message("Comments"), code.getFullName());
                             } catch (Exception e) {
                                 MyBoxLog.console(e);
                             }
                         }
-                        data2DRow.setMapValue(message("Confirmed"), query.getLong("confirmed"));
-                        data2DRow.setMapValue(message("Healed"), query.getLong("healed"));
-                        data2DRow.setMapValue(message("Dead"), query.getLong("dead"));
-                        data2DRow.setMapValue(message("IncreasedConfirmed"), query.getLong("increased_confirmed"));
-                        data2DRow.setMapValue(message("IncreasedHealed"), query.getLong("increased_healed"));
-                        data2DRow.setMapValue(message("IncreasedDead"), query.getLong("increased_dead"));
+                        data2DRow.setValue(message("Confirmed"), query.getLong("confirmed"));
+                        data2DRow.setValue(message("Healed"), query.getLong("healed"));
+                        data2DRow.setValue(message("Dead"), query.getLong("dead"));
+                        data2DRow.setValue(message("IncreasedConfirmed"), query.getLong("increased_confirmed"));
+                        data2DRow.setValue(message("IncreasedHealed"), query.getLong("increased_healed"));
+                        data2DRow.setValue(message("IncreasedDead"), query.getLong("increased_dead"));
                         short sd = query.getShort("source");
                         String source;
                         source = switch (sd) {
@@ -718,7 +720,7 @@ public class DataMigration {
                             default ->
                                 message("Unknown");
                         };
-                        data2DRow.setMapValue(message("Source"), source);
+                        data2DRow.setValue(message("Source"), source);
 
                         tableReports.insertData(conn, insert, data2DRow);
                         if (++count % Database.BatchSize == 0) {
@@ -1248,7 +1250,8 @@ public class DataMigration {
         try {
             MyBoxLog.info("Updating tables in 6.4.5...");
             String sql = "SELECT * FROM String_Values where key_name='ImageClipboard'";
-            try (Statement statement = conn.createStatement(); ResultSet results = statement.executeQuery(sql)) {
+            try (Statement statement = conn.createStatement();
+                    ResultSet results = statement.executeQuery(sql)) {
                 conn.setAutoCommit(false);
                 TableImageClipboard tableImageClipboard = new TableImageClipboard();
                 while (results.next()) {
@@ -1279,7 +1282,8 @@ public class DataMigration {
             MyBoxLog.info("Updating tables in 6.4.4...");
             TableWebHistory tableWebHistory = new TableWebHistory();
             String sql = "SELECT * FROM Browser_History";
-            try (Statement statement = conn.createStatement(); ResultSet results = statement.executeQuery(sql)) {
+            try (Statement statement = conn.createStatement();
+                    ResultSet results = statement.executeQuery(sql)) {
                 conn.setAutoCommit(false);
                 while (results.next()) {
                     WebHistory his = new WebHistory();
@@ -1309,7 +1313,8 @@ public class DataMigration {
         try {
             MyBoxLog.info("Updating tables in 6.4.3...");
             String sql = "SELECT * FROM Color_Data";
-            try (Statement statement = conn.createStatement(); ResultSet results = statement.executeQuery(sql)) {
+            try (Statement statement = conn.createStatement();
+                    ResultSet results = statement.executeQuery(sql)) {
                 conn.setAutoCommit(false);
                 ColorPaletteName defaultPalette = PaletteTools.defaultPalette(Languages.getLangName(), conn);
                 long paletteid = defaultPalette.getCpnid();
@@ -1349,7 +1354,8 @@ public class DataMigration {
             MyBoxLog.info("Updating tables in 6.4.1...");
             String sql = "SELECT * FROM image_history";
 
-            try (Statement statement = conn.createStatement(); ResultSet results = statement.executeQuery(sql)) {
+            try (Statement statement = conn.createStatement();
+                    ResultSet results = statement.executeQuery(sql)) {
                 TableImageEditHistory tableImageEditHistory = new TableImageEditHistory();
                 while (results.next()) {
                     ImageEditHistory his = new ImageEditHistory();
@@ -1544,7 +1550,8 @@ public class DataMigration {
     }
 
     private static void updateForeignKeysIn632(Connection conn) {
-        try (Statement query = conn.createStatement(); Statement update = conn.createStatement()) {
+        try (Statement query = conn.createStatement();
+                Statement update = conn.createStatement()) {
             conn.setAutoCommit(true);
             String sql = "SELECT tablename, constraintName FROM SYS.SYSTABLES t, SYS.SYSCONSTRAINTS c  where t.TABLEID=c.TABLEID AND type='F'";
             try (ResultSet results = query.executeQuery(sql)) {
@@ -1565,7 +1572,8 @@ public class DataMigration {
     }
 
     private static void updateGeographyCodeIn632(Connection conn) {
-        try (Statement statement = conn.createStatement(); PreparedStatement update = conn.prepareStatement(TableGeographyCode.Update)) {
+        try (Statement statement = conn.createStatement();
+                PreparedStatement update = conn.prepareStatement(TableGeographyCode.Update)) {
             conn.setAutoCommit(false);
             try (ResultSet results = statement.executeQuery("SELECT * FROM Geography_Code WHERE gcid < 5000")) {
                 while (results.next()) {
@@ -1646,7 +1654,8 @@ public class DataMigration {
         MyBoxLog.info("Migrate GeographyCode from 6.2.1...");
         String sql = "SELECT * FROM Geography_Code ORDER BY level, country, province, city";
         List<GeographyCode> codes = new ArrayList<>();
-        try (Statement statement = conn.createStatement(); ResultSet results = statement.executeQuery(sql)) {
+        try (Statement statement = conn.createStatement();
+                ResultSet results = statement.executeQuery(sql)) {
             while (results.next()) {
                 try {
                     String address = results.getString("address");
@@ -1807,7 +1816,8 @@ public class DataMigration {
 
     private static boolean migrateGeographyCode615() {
         MyBoxLog.info("migrate GeographyCode 6.1.5...");
-        try (Connection conn = DerbyBase.getConnection(); Statement statement = conn.createStatement()) {
+        try (Connection conn = DerbyBase.getConnection();
+                Statement statement = conn.createStatement()) {
             int size = DerbyBase.size("select count(*) from Geography_Code");
             if (size <= 0) {
                 return true;
@@ -1824,7 +1834,8 @@ public class DataMigration {
 
     private static boolean migrateGeographyCode621() {
         MyBoxLog.info("migrate GeographyCode 6.2.1...");
-        try (Connection conn = DerbyBase.getConnection(); Statement statement = conn.createStatement()) {
+        try (Connection conn = DerbyBase.getConnection();
+                Statement statement = conn.createStatement()) {
             String sql = "DELETE FROM Geography_Code "
                     + " WHERE country='" + Languages.message("Macao")
                     + "' OR country='" + Languages.message("Macau") + "'";

@@ -11,7 +11,7 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import mara.mybox.db.data.DataNode;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.db.table.BaseTableTreeData;
+import mara.mybox.db.table.BaseDataTable;
 import mara.mybox.db.table.TableDataNode;
 import mara.mybox.db.table.TableDataNodeTag;
 import mara.mybox.db.table.TableDataTag;
@@ -27,7 +27,7 @@ import mara.mybox.value.UserConfig;
 public class DataTreeImportController extends BaseBatchFileController {
 
     protected BaseDataTreeController dataController;
-    protected BaseTableTreeData dataTable;
+    protected BaseDataTable dataTable;
     protected TableDataNode dataNodeTable;
     protected TableDataNodeTag dataNodeTagTable;
     protected TableDataTag dataTagTable;

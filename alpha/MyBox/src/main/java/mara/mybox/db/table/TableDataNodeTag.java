@@ -10,7 +10,7 @@ import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.DataNode;
 import mara.mybox.db.data.DataNodeTag;
-import mara.mybox.db.data.Tag;
+import mara.mybox.db.data.DataTag;
 import mara.mybox.dev.MyBoxLog;
 
 /**
@@ -20,10 +20,10 @@ import mara.mybox.dev.MyBoxLog;
  */
 public class TableDataNodeTag extends BaseTable<DataNodeTag> {
 
-    protected BaseTableTreeData dataTable;
+    protected BaseDataTable dataTable;
     protected TableDataTag tagTable;
 
-    public TableDataNodeTag(BaseTableTreeData data) {
+    public TableDataNodeTag(BaseDataTable data) {
         if (data == null) {
             return;
         }
@@ -32,7 +32,7 @@ public class TableDataNodeTag extends BaseTable<DataNodeTag> {
         init();
     }
 
-    public TableDataNodeTag(BaseTableTreeData data, TableDataTag tag) {
+    public TableDataNodeTag(BaseDataTable data, TableDataTag tag) {
         dataTable = data;
         tagTable = tag;
         init();
@@ -125,8 +125,8 @@ public class TableDataNodeTag extends BaseTable<DataNodeTag> {
         if ("tnodeid".equals(column) && value instanceof DataNode) {
             data.setNode((DataNode) value);
         }
-        if ("ttagid".equals(column) && value instanceof Tag) {
-            data.setTag((Tag) value);
+        if ("ttagid".equals(column) && value instanceof DataTag) {
+            data.setTag((DataTag) value);
         }
         return true;
     }
@@ -204,15 +204,18 @@ public class TableDataNodeTag extends BaseTable<DataNodeTag> {
         if (nodeid < 0) {
             return tags;
         }
-        String sql = "SELECT * FROM " + tableName + ", Tag WHERE tnodeid=? AND tagid=tgid";
+        String sql = "SELECT * FROM " + tableName + ", " + dataTable.tableName + "_Tag" + " WHERE tnodeid=? AND ttagid=tagid";
         try (PreparedStatement statement = conn.prepareStatement(sql)) {
             statement.setLong(1, nodeid);
             ResultSet results = statement.executeQuery();
             conn.setAutoCommit(true);
             while (results.next()) {
                 DataNodeTag nodeTag = readData(results);
-                if (nodeTag != null) {
-                    tags.add(nodeTag.getTag().getTag());
+                if (nodeTag != null && nodeTag.getTag() != null) {
+                    String tag = nodeTag.getTag().getTag();
+                    if (tag != null) {
+                        tags.add(tag);
+                    }
                 }
             }
         } catch (Exception e) {

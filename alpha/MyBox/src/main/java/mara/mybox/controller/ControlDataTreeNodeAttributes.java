@@ -83,7 +83,7 @@ public class ControlDataTreeNodeAttributes extends BaseController {
         isSettingValues = true;
         if (node != null) {
             idInput.setText(node.getNodeid() + "");
-            titleInput.setText(node.getNodeTitle());
+            titleInput.setText(node.getTitle());
             timeInput.setText(DateTools.datetimeToString(node.getUpdateTime()));
             selectButton.setVisible(node.getNodeid() < 0 || node.getParentid() < 0);
         } else {
@@ -154,7 +154,7 @@ public class ControlDataTreeNodeAttributes extends BaseController {
                     if (parentNode == null) {
                         chainName = "";
                     } else {
-//                        chainName = manager.treeView.chainName(conn, parentNode);
+                        chainName = dataController.treeController.chainName(conn, parentNode);
                     }
                 } catch (Exception e) {
                     error = e.toString();

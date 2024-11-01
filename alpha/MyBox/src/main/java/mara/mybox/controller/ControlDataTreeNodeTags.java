@@ -14,7 +14,7 @@ import javafx.util.Callback;
 import javafx.util.converter.DefaultStringConverter;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.DataNode;
-import mara.mybox.db.data.Tag;
+import mara.mybox.db.data.DataTag;
 import mara.mybox.db.table.BaseTable;
 import mara.mybox.db.table.TableColor;
 import mara.mybox.db.table.TableDataNode;
@@ -33,7 +33,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-9-23
  * @License Apache License Version 2.0
  */
-public class ControlDataTreeNodeTags extends BaseSysTableController<Tag> {
+public class ControlDataTreeNodeTags extends BaseSysTableController<DataTag> {
 
     protected BaseDataTreeController dataController;
     protected TableDataNode dataNodeTable;
@@ -43,9 +43,9 @@ public class ControlDataTreeNodeTags extends BaseSysTableController<Tag> {
     protected DataNode currentNode;
 
     @FXML
-    protected TableColumn<Tag, String> tagColumn;
+    protected TableColumn<DataTag, String> tagColumn;
     @FXML
-    protected TableColumn<Tag, Color> colorColumn;
+    protected TableColumn<DataTag, Color> colorColumn;
     @FXML
     protected Button queryTagsButton, deleteTagsButton;
 
@@ -63,11 +63,11 @@ public class ControlDataTreeNodeTags extends BaseSysTableController<Tag> {
             tagColumn.setEditable(true);
             tagColumn.setCellValueFactory(new PropertyValueFactory<>("tag"));
             tagColumn.setCellFactory(TableAutoCommitCell.forStringColumn());
-            tagColumn.setCellFactory(new Callback<TableColumn<Tag, String>, TableCell<Tag, String>>() {
+            tagColumn.setCellFactory(new Callback<TableColumn<DataTag, String>, TableCell<DataTag, String>>() {
                 @Override
-                public TableCell<Tag, String> call(TableColumn<Tag, String> param) {
+                public TableCell<DataTag, String> call(TableColumn<DataTag, String> param) {
                     try {
-                        TableAutoCommitCell<Tag, String> cell = new TableAutoCommitCell<Tag, String>(new DefaultStringConverter()) {
+                        TableAutoCommitCell<DataTag, String> cell = new TableAutoCommitCell<DataTag, String>(new DefaultStringConverter()) {
 
                             @Override
                             public boolean setCellValue(String value) {
@@ -82,7 +82,7 @@ public class ControlDataTreeNodeTags extends BaseSysTableController<Tag> {
                                             return false;
                                         }
                                     }
-                                    Tag row = tableData.get(editingRow);
+                                    DataTag row = tableData.get(editingRow);
                                     if (row == null) {
                                         cancelEdit();
                                         return false;
@@ -108,10 +108,10 @@ public class ControlDataTreeNodeTags extends BaseSysTableController<Tag> {
             colorColumn.setEditable(true);
             TableColor tableColor = new TableColor();
             colorColumn.setCellValueFactory(new PropertyValueFactory<>("color"));
-            colorColumn.setCellFactory(new Callback<TableColumn<Tag, Color>, TableCell<Tag, Color>>() {
+            colorColumn.setCellFactory(new Callback<TableColumn<DataTag, Color>, TableCell<DataTag, Color>>() {
                 @Override
-                public TableCell<Tag, Color> call(TableColumn<Tag, Color> param) {
-                    TableColorEditCell<Tag> cell = new TableColorEditCell<Tag>(myController, tableColor) {
+                public TableCell<DataTag, Color> call(TableColumn<DataTag, Color> param) {
+                    TableColorEditCell<DataTag> cell = new TableColorEditCell<DataTag>(myController, tableColor) {
                         @Override
                         public void colorChanged(int index, Color color) {
                             if (isSettingValues || color == null
@@ -168,13 +168,58 @@ public class ControlDataTreeNodeTags extends BaseSysTableController<Tag> {
         }
     }
 
+    public void loadTags(DataNode node) {
+        currentNode = node;
+        tableData.clear();
+        if (currentNode == null) {
+            return;
+        }
+        if (task != null) {
+            task.cancel();
+        }
+        task = new FxTask<Void>(this) {
+            private List<DataTag> tags;
+            private List<String> nodeTagNames;
+
+            @Override
+            protected boolean handle() {
+                try (Connection conn = DerbyBase.getConnection()) {
+                    tags = tableDefinition.readAll(conn);
+                    nodeTagNames = dataNodeTagTable.nodeTagNames(conn, currentNode.getNodeid());
+                } catch (Exception e) {
+                    MyBoxLog.error(e);
+                    return false;
+                }
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                if (tags != null && !tags.isEmpty()) {
+                    tableData.setAll(tags);
+                }
+                if (nodeTagNames != null && !nodeTagNames.isEmpty()) {
+                    isSettingValues = true;
+                    for (DataTag tag : tableData) {
+                        if (nodeTagNames.contains(tag.getTag())) {
+                            tableView.getSelectionModel().select(tag);
+                        }
+                    }
+                    isSettingValues = false;
+                }
+            }
+
+        };
+        start(task, thisPane);
+    }
+
     public String askName() {
         String name = PopTools.askValue(getBaseTitle(),
                 message("Add"), message("Tag"), message("Tag") + new Date().getTime());
         if (name == null || name.isBlank()) {
             return null;
         }
-        for (Tag tag : tableData) {
+        for (DataTag tag : tableData) {
             if (name.equals(tag.getTag())) {
                 popError(message("AlreadyExisted"));
                 return null;
@@ -190,7 +235,7 @@ public class ControlDataTreeNodeTags extends BaseSysTableController<Tag> {
             return;
         }
         FxTask tagTask = new FxTask<Void>(this) {
-            private Tag tag = null;
+            private DataTag tag = null;
 
             @Override
             protected boolean handle() {
@@ -214,7 +259,7 @@ public class ControlDataTreeNodeTags extends BaseSysTableController<Tag> {
         start(tagTask, thisPane);
     }
 
-    public void saveTag(Tag tag) {
+    public void saveTag(DataTag tag) {
         if (isSettingValues) {
             return;
         }
@@ -237,7 +282,7 @@ public class ControlDataTreeNodeTags extends BaseSysTableController<Tag> {
 
     @FXML
     public void queryTags() {
-        List<Tag> selected = selectedItems();
+        List<DataTag> selected = selectedItems();
         if (selected == null || selected.isEmpty()) {
             selected = tableData;
         }

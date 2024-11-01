@@ -11,7 +11,7 @@ public class DataNodeTag extends BaseData {
 
     protected long tntid, tnodeid, ttagid;
     protected DataNode node;
-    protected Tag tag;
+    protected DataTag tag;
 
     private void init() {
         tntid = tnodeid = ttagid = -1;
@@ -29,12 +29,12 @@ public class DataNodeTag extends BaseData {
         this.ttagid = tagid;
     }
 
-    public DataNodeTag(DataNode node, Tag tag) {
+    public DataNodeTag(DataNode node, DataTag tag) {
         init();
         this.node = node;
         this.tag = tag;
         this.tnodeid = node == null ? -1 : node.getNodeid();
-        this.ttagid = tag == null ? -1 : tag.getTgid();
+        this.ttagid = tag == null ? -1 : tag.getTagid();
     }
 
     @Override
@@ -140,11 +140,11 @@ public class DataNodeTag extends BaseData {
         return this;
     }
 
-    public Tag getTag() {
+    public DataTag getTag() {
         return tag;
     }
 
-    public DataNodeTag setTag(Tag tag) {
+    public DataNodeTag setTag(DataTag tag) {
         this.tag = tag;
         return this;
     }

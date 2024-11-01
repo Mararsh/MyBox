@@ -9,8 +9,9 @@ import javafx.scene.input.KeyEvent;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.DataNode;
 import static mara.mybox.db.data.DataNode.TitleSeparater;
+import mara.mybox.db.data.DataValues;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.db.table.BaseTableTreeData;
+import mara.mybox.db.table.BaseDataTable;
 import mara.mybox.db.table.TableDataNode;
 import mara.mybox.db.table.TableDataNodeTag;
 import mara.mybox.db.table.TableDataTag;
@@ -30,11 +31,12 @@ public abstract class BaseDataTreeNodeController extends BaseController {
     protected final SimpleBooleanProperty nodeChanged;
     protected BaseController valuesEditor;
     protected boolean nodeExecutable;
-    protected BaseTableTreeData dataTable;
+    protected BaseDataTable dataTable;
     protected TableDataNode dataNodeTable;
     protected TableDataTag dataTagTable;
     protected TableDataNodeTag dataNodeTagTable;
     protected DataNode parentNode, currentNode;
+    protected DataValues dataValues;
 
     @FXML
     protected Tab attributesTab, valueTab, tagsTab;
@@ -48,9 +50,8 @@ public abstract class BaseDataTreeNodeController extends BaseController {
         nodeChanged = new SimpleBooleanProperty(false);
     }
 
-    protected abstract void editValue(DataNode node);
+    protected abstract void editValues(DataValues values);
 
-//    protected abstract BaseDataValue queryValue(Connection conn, long id);
     @Override
     public void setFileType() {
         setFileType(VisitHistory.FileType.Text);
@@ -84,14 +85,11 @@ public abstract class BaseDataTreeNodeController extends BaseController {
             @Override
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
-                    DataNode dataValue = (DataNode) dataTable.query(conn, node.getNodeid());
-                    if (dataValue == null) {
+                    DataValues values = (DataValues) dataTable.query(conn, node.getNodeid());
+                    if (values == null) {
                         return false;
                     }
-                    for (Object column : dataTable.columnNames()) {
-                        String name = (String) column;
-                        node.setValue(name, dataValue.getValue(name));
-                    }
+                    dataValues = values;
                     currentNode = node;
                 } catch (Exception e) {
                     error = e.toString();
@@ -105,7 +103,8 @@ public abstract class BaseDataTreeNodeController extends BaseController {
                 try {
                     updateEditorTitle(currentNode);
                     attributesController.editNode(currentNode);
-                    editValue(currentNode);
+                    tagsController.loadTags(currentNode);
+                    editValues(dataValues);
                     showEditorPane();
                     nodeChanged(false);
                 } catch (Exception e) {
@@ -120,7 +119,7 @@ public abstract class BaseDataTreeNodeController extends BaseController {
     protected void updateEditorTitle(DataNode node) {
         if (node != null) {
             dataController.setTitle(dataController.baseTitle + ": "
-                    + node.getNodeid() + " - " + node.getNodeTitle());
+                    + node.getNodeid() + " - " + node.getTitle());
         } else {
             dataController.setTitle(dataController.baseTitle);
         }
@@ -133,7 +132,7 @@ public abstract class BaseDataTreeNodeController extends BaseController {
         }
         DataNode node = DataNode.create()
                 .setDataTable(dataController.dataTable)
-                .setNodeTitle(title);
+                .setTitle(title);
         return pickValue(node);
     }
 

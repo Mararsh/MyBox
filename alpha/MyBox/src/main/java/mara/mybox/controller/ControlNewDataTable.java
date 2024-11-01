@@ -259,7 +259,7 @@ public class ControlNewDataTable extends BaseController {
                 int col = columnIndices.get(i);
                 Data2DColumn sourceColumn = data2D.column(col);
                 Data2DColumn targetColumn = dataTable.column(i + 1);
-                data2DRow.setMapValue(targetColumn.getColumnName(),
+                data2DRow.setValue(targetColumn.getColumnName(),
                         sourceColumn.fromString(pageRow.get(col + 1), invalidAs));
             }
             tableData2D.insertData(conn, data2DRow);

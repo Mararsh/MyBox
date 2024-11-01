@@ -2,15 +2,17 @@ package mara.mybox.db.data;
 
 import java.util.HashMap;
 import java.util.Map;
+import mara.mybox.db.table.BaseTable;
 import mara.mybox.dev.MyBoxLog;
 
 /**
  * @Author Mara
- * @CreateDate 2021-10-17
+ * @CreateDate 2024-11-1
  * @License Apache License Version 2.0
  */
-public class Data2DRow extends BaseData {
+public class DataValues extends BaseData {
 
+    protected BaseTable table;
     protected Map<String, Object> values;
 
     @Override
@@ -54,6 +56,14 @@ public class Data2DRow extends BaseData {
     /*
         get/set
      */
+    public BaseTable getTable() {
+        return table;
+    }
+
+    public void setTable(BaseTable table) {
+        this.table = table;
+    }
+
     public Map<String, Object> getValues() {
         return values;
     }

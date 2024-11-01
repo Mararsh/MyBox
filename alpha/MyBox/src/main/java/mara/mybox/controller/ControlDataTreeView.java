@@ -245,7 +245,7 @@ public class ControlDataTreeView extends BaseTreeTableViewController<DataNode> {
                     DataNode newNode = DataNode.create()
                             .setParentid(targetid)
                             .setDataTable(child.getDataTable())
-                            .setNodeTitle(child.getNodeTitle());
+                            .setTitle(child.getTitle());
                     nodeTable.insertData(conn, newNode);
                     copyDescendants(conn, child, newNode);
                 }
@@ -265,7 +265,7 @@ public class ControlDataTreeView extends BaseTreeTableViewController<DataNode> {
      */
     @Override
     public String title(DataNode node) {
-        return node == null ? null : node.getNodeTitle();
+        return node == null ? null : node.getTitle();
     }
 
     @Override
@@ -340,6 +340,20 @@ public class ControlDataTreeView extends BaseTreeTableViewController<DataNode> {
         return chainName;
     }
 
+    public String chainName(Connection conn, DataNode node) {
+        if (node == null) {
+            return null;
+        }
+        String chainName = "";
+        List<DataNode> ancestor = ancestor(conn, node);
+        if (ancestor != null) {
+            for (DataNode a : ancestor) {
+                chainName += a.getTitle() + TitleSeparater;
+            }
+        }
+        chainName += node.getTitle();
+        return chainName;
+    }
 
     /*
         actions

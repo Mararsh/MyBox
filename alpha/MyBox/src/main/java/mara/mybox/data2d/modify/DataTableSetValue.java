@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import mara.mybox.data.SetValue;
 import mara.mybox.data2d.DataTable;
+import mara.mybox.data2d.tools.Data2DRowTools;
 import mara.mybox.db.Database;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DColumn;
@@ -39,7 +40,7 @@ public class DataTableSetValue extends DataTableModify {
             update = dUpdate;
             while (results.next() && !stopped && !reachMax) {
                 sourceTableRow = tableData2D.readData(results);
-                sourceRow = sourceTableRow.toStrings(columns);
+                sourceRow = Data2DRowTools.toStrings(sourceTableRow, columns);
                 sourceRowIndex++;
                 setValue(sourceRow, sourceRowIndex);
             }
@@ -67,7 +68,7 @@ public class DataTableSetValue extends DataTableModify {
             for (int i = 0; i < columnsNumber; ++i) {
                 Data2DColumn column = columns.get(i);
                 String name = column.getColumnName();
-                sourceTableRow.setMapValue(name, column.fromString(targetRow.get(i)));
+                sourceTableRow.setValue(name, column.fromString(targetRow.get(i)));
             }
             if (tableData2D.setUpdateStatement(conn, update, sourceTableRow)) {
                 update.addBatch();

@@ -3,6 +3,7 @@ package mara.mybox.data2d.reader;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import mara.mybox.data2d.DataTable;
+import mara.mybox.data2d.tools.Data2DRowTools;
 import mara.mybox.db.data.Data2DRow;
 import mara.mybox.db.table.TableData2D;
 
@@ -100,7 +101,7 @@ public class DataTableReader extends Data2DReader {
 
     public void makeRecord(Data2DRow row) {
         try {
-            sourceRow = row.toStrings(readerTable.getColumns());
+            sourceRow = Data2DRowTools.toStrings(row, readerTable.getColumns());
         } catch (Exception e) {
             showError(e.toString());
             setFailed();

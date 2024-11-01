@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.List;
 import mara.mybox.data2d.DataTable;
+import mara.mybox.data2d.tools.Data2DRowTools;
 import mara.mybox.db.Database;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
@@ -37,7 +38,7 @@ public class DataTableDelete extends DataTableModify {
             delete = dDelete;
             while (results.next() && !stopped && !reachMax) {
                 sourceTableRow = tableData2D.readData(results);
-                sourceRow = sourceTableRow.toStrings(columns);
+                sourceRow = Data2DRowTools.toStrings(sourceTableRow, columns);
                 sourceRowIndex++;
                 handleRow(sourceRow, sourceRowIndex);
             }

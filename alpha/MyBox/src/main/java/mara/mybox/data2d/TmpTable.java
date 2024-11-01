@@ -242,7 +242,7 @@ public class TmpTable extends DataTable {
             if (includeRowNumber) {
                 String rowNum = sourceRow.get(0);
                 index = Long.parseLong(rowNum);
-                data2DRow.setMapValue(column(1).getColumnName(), index);
+                data2DRow.setValue(column(1).getColumnName(), index);
                 values = sourceRow.subList(1, sourceRow.size());
             } else {
                 index = -1;
@@ -335,7 +335,7 @@ public class TmpTable extends DataTable {
                             tmpValue = targetColumn.fromString(sourceValue, invalidAs);
                     }
                 }
-                data2DRow.setMapValue(targetColumn.getColumnName(), tmpValue);
+                data2DRow.setValue(targetColumn.getColumnName(), tmpValue);
             }
             return data2DRow;
         } catch (Exception e) {
@@ -442,12 +442,12 @@ public class TmpTable extends DataTable {
                 Data2DRow dataRow = tableData2D.readData(query);
                 List<String> rowValues = new ArrayList<>();
                 if (includeRowNumber) {
-                    Object v = dataRow.getMapValue(numberName);
+                    Object v = dataRow.getValue(numberName);
                     rowValues.add(v == null ? null : v + "");
                 }
                 for (int i = 0; i < sourcePickIndice.size(); i++) {
                     Data2DColumn tmpColumn = columns.get(i + valueIndexOffset);
-                    Object v = dataRow.getMapValue(tmpColumn.getColumnName());
+                    Object v = dataRow.getValue(tmpColumn.getColumnName());
                     rowValues.add(v == null ? null : v + "");
                 }
                 writer.writeRow(rowValues);
@@ -591,7 +591,7 @@ public class TmpTable extends DataTable {
         return tmpScript;
     }
 
-    /* 
+    /*
         static
      */
     public static String tmpTableName() {

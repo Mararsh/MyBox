@@ -11,9 +11,9 @@ import mara.mybox.db.data.DataTag;
  */
 public class TableDataTag extends BaseTable<DataTag> {
 
-    protected BaseTableTreeData dataTable;
+    protected BaseDataTable dataTable;
 
-    public TableDataTag(BaseTableTreeData data) {
+    public TableDataTag(BaseDataTable data) {
         dataTable = data;
         if (dataTable == null) {
             return;

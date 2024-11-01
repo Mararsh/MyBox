@@ -51,7 +51,7 @@ public class Data2DSingleColumn extends Data2DOperate {
                     Data2DColumn targetColumn = writerTable.columnByName("data");
                     String value = sourceRow.get(col);
                     if (targetColumn != null) {
-                        data2DRow.setMapValue("data", targetColumn.fromString(value, InvalidAs.Empty));
+                        data2DRow.setValue("data", targetColumn.fromString(value, InvalidAs.Empty));
                         writerTableData2D.insertData(conn, data2DRow);
                         if (++count % Database.BatchSize == 0) {
                             conn.commit();

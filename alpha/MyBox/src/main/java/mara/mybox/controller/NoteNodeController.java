@@ -1,7 +1,7 @@
 package mara.mybox.controller;
 
 import javafx.fxml.FXML;
-import mara.mybox.db.data.DataNode;
+import mara.mybox.db.data.DataValues;
 import mara.mybox.db.data.InfoNode;
 import mara.mybox.dev.MyBoxLog;
 
@@ -30,9 +30,14 @@ public class NoteNodeController extends BaseDataTreeNodeController {
     }
 
     @Override
-    protected void editValue(DataNode dataNode) {
+    protected void editValues(DataValues values) {
         try {
-            Object v = dataNode.getValue("note");
+            Object v;
+            if (values == null) {
+                v = null;
+            } else {
+                v = values.getValue("note");
+            }
             if (v != null) {
                 valuesController.loadContents((String) v);
             } else {

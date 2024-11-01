@@ -10,7 +10,7 @@ import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.DataNode;
 import static mara.mybox.db.data.DataNode.TitleSeparater;
-import mara.mybox.db.data.Tag;
+import mara.mybox.db.data.DataTag;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import static mara.mybox.value.Languages.message;
@@ -22,9 +22,9 @@ import static mara.mybox.value.Languages.message;
  */
 public class TableDataNode extends BaseTable<DataNode> {
 
-    protected BaseTableTreeData dataTable;
+    protected BaseDataTable dataTable;
 
-    public TableDataNode(BaseTableTreeData data) {
+    public TableDataNode(BaseDataTable data) {
         dataTable = data;
         if (dataTable == null) {
             return;
@@ -40,7 +40,7 @@ public class TableDataNode extends BaseTable<DataNode> {
                 .setReferTable(dataTable.tableName).setReferColumn(dataTable.idColumnName)
                 .setOnDelete(ColumnDefinition.OnDelete.Cascade)
         );
-        addColumn(new ColumnDefinition("node_title", ColumnType.String, true).setLength(StringMaxLength));
+        addColumn(new ColumnDefinition("title", ColumnType.String, true).setLength(StringMaxLength));
         addColumn(new ColumnDefinition("update_time", ColumnType.Datetime));
         addColumn(new ColumnDefinition("parentid", ColumnType.Long, true)
                 .setReferName(tableName + "_parentid_fk")
@@ -291,10 +291,11 @@ public class TableDataNode extends BaseTable<DataNode> {
         try {
             long parentid = root.getNodeid();
             String chain = ownerChain;
-            if (chain.startsWith(root.getNodeTitle() + TitleSeparater)) {
-                chain = chain.substring((root.getNodeTitle() + TitleSeparater).length());
-            } else if (chain.startsWith(message(root.getNodeTitle()) + TitleSeparater)) {
-                chain = chain.substring((message(root.getNodeTitle()) + TitleSeparater).length());
+            String title = root.getTitle();
+            if (chain.startsWith(title + TitleSeparater)) {
+                chain = chain.substring((title + TitleSeparater).length());
+            } else if (chain.startsWith(message(title) + TitleSeparater)) {
+                chain = chain.substring((message(title) + TitleSeparater).length());
             }
             String[] nodes = chain.split(TitleSeparater);
             DataNode owner = null;
@@ -526,13 +527,13 @@ public class TableDataNode extends BaseTable<DataNode> {
         }
     }
 
-    public String tagsCondition(List<Tag> tags) {
+    public String tagsCondition(List<DataTag> tags) {
         if (tags == null || tags.isEmpty()) {
             return null;
         }
-        String condition = " nodeid IN ( SELECT tnodeid FROM Tree_Node_Tag WHERE tagid IN ( " + tags.get(0).getTgid();
+        String condition = " nodeid IN ( SELECT tnodeid FROM Tree_Node_Tag WHERE tagid IN ( " + tags.get(0).getTagid();
         for (int i = 1; i < tags.size(); ++i) {
-            condition += ", " + tags.get(i).getTgid();
+            condition += ", " + tags.get(i).getTagid();
         }
         condition += " ) ) ";
         return condition;

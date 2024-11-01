@@ -1,9 +1,5 @@
 package mara.mybox.db.data;
 
-import java.util.HashMap;
-import java.util.Map;
-import mara.mybox.dev.MyBoxLog;
-
 /**
  * @Author Mara
  * @CreateDate 2020-7-19
@@ -11,7 +7,6 @@ import mara.mybox.dev.MyBoxLog;
  */
 public abstract class BaseData implements Cloneable {
 
-    protected Map<String, Object> mapValues;
     protected int rowIndex;
 
     /*
@@ -23,39 +18,6 @@ public abstract class BaseData implements Cloneable {
 
     public abstract Object getValue(String column);
 
-    /*
-        Map
-     */
-    public boolean setMapValue(String column, Object value) {
-        try {
-            if (mapValues == null) {
-                mapValues = new HashMap<>();
-            }
-            mapValues.put(column, value);
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-            return false;
-        }
-    }
-
-    public Object getMapValue(String column) {
-        try {
-            return mapValues.get(column);
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-            return null;
-        }
-    }
-
-    public boolean isMapEmpty() {
-        try {
-            return mapValues == null || mapValues.keySet().isEmpty();
-        } catch (Exception e) {
-//            MyBoxLog.debug(e);
-            return true;
-        }
-    }
 
     /*
         others
@@ -74,34 +36,10 @@ public abstract class BaseData implements Cloneable {
         return columnName;
     }
 
-    /*
-        static methods
-     */
-    public static boolean setColumnValue(BaseData data, String column, Object value) {
-        if (data == null || column == null) {
-            return false;
-        }
-        return data.setMapValue(column, value);
-    }
-
-    public static Object getColumnValue(BaseData data, String column) {
-        if (data == null || column == null) {
-            return null;
-        }
-        return data.getMapValue(column);
-    }
 
     /*
         get/set
      */
-    public Map<String, Object> getMapValues() {
-        return mapValues;
-    }
-
-    public void setColumValues(Map<String, Object> values) {
-        this.mapValues = values;
-    }
-
     public int getRowIndex() {
         return rowIndex;
     }

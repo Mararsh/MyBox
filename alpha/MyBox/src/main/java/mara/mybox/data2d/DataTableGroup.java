@@ -15,6 +15,7 @@ import javafx.scene.control.IndexRange;
 import mara.mybox.controller.ControlData2DGroup;
 import mara.mybox.data.DataSort;
 import mara.mybox.data.ValueRange;
+import mara.mybox.data2d.tools.Data2DRowTools;
 import mara.mybox.data2d.tools.Data2DTableTools;
 import mara.mybox.db.Database;
 import mara.mybox.db.DerbyBase;
@@ -332,8 +333,8 @@ public class DataTableGroup {
                         } else {
                             groupChanged = false;
                             for (String group : mappedGroupNames) {
-                                Object tv = tmpRow.getMapValue(group);
-                                Object lv = lastRow.getMapValue(group);
+                                Object tv = tmpRow.getValue(group);
+                                Object lv = lastRow.getValue(group);
                                 if (tv == null) {
                                     if (lv != null) {
                                         groupChanged = true;
@@ -353,7 +354,7 @@ public class DataTableGroup {
                             parameterValue = null;
                             groupMap.clear();
                             for (int i = 0; i < groupNames.size(); i++) {
-                                groupMap.put(groupNames.get(i), tmpRow.getMapValue(mappedGroupNames.get(i)));
+                                groupMap.put(groupNames.get(i), tmpRow.getValue(mappedGroupNames.get(i)));
                             }
                             parameterValue = groupMap.toString();
                             recordGroup(groupid, parameterValue);
@@ -619,7 +620,7 @@ public class DataTableGroup {
                     }
                     try {
                         Data2DRow tmpRow = tableTmpData.readData(query);
-                        Object tv = tmpRow.getMapValue(tmpTimeName);
+                        Object tv = tmpRow.getValue(tmpTimeName);
                         timeValue = tv == null ? null : (long) tv;
                         groupChanged = lastTimeValue == Long.MAX_VALUE || lastTimeValue != timeValue;
                         if (groupChanged) {
@@ -724,7 +725,7 @@ public class DataTableGroup {
                     }
                     try {
                         Data2DRow tmpRow = tableTmpData.readData(query);
-                        expValue = tmpRow.getMapValue(tmpExpName);
+                        expValue = tmpRow.getValue(tmpExpName);
                         groupChanged = expColumn.compare(lastExpValue, expValue) != 0;
                         if (groupChanged) {
                             groupChanged();
@@ -960,7 +961,7 @@ public class DataTableGroup {
                         }
                         try {
                             tmpRow = tableTmpData.readData(query);
-                            List<String> rowStrings = tmpRow.toStrings(tmpColumns);
+                            List<String> rowStrings = Data2DRowTools.toStrings(tmpRow, tmpColumns);
                             rowIndex = Long.parseLong(rowStrings.get(1));
                             if (filter.filterDataRow(tmpData, rowStrings, rowIndex)) {
                                 if (++groupCurrentSize <= fmax) {
@@ -1000,8 +1001,8 @@ public class DataTableGroup {
     private boolean recordGroup(long index, String value) {
         try {
             Data2DRow group = tableGroupParameters.newRow();
-            group.setMapValue("group_index", index);
-            group.setMapValue("group_parameters", value);
+            group.setValue("group_index", index);
+            group.setValue("group_parameters", value);
             tableGroupParameters.insertData(conn, group);
             if (task != null) {
                 task.setInfo(message("GroupID") + ": " + groupid);
@@ -1043,19 +1044,19 @@ public class DataTableGroup {
                         targetValueOffset++;
                     }
                     Data2DRow data2DRow = tableTarget.newRow();
-                    data2DRow.setMapValue(mappedIdColName, groupid);
-                    data2DRow.setMapValue(mappedParameterName, parameterValue);
+                    data2DRow.setValue(mappedIdColName, groupid);
+                    data2DRow.setValue(mappedParameterName, parameterValue);
                     if (includeRowNumber) {
-                        data2DRow.setMapValue(finalColumns.get(3).getColumnName(),
-                                tmpRow.getMapValue(tmpData.columnName(1)));
+                        data2DRow.setValue(finalColumns.get(3).getColumnName(),
+                                tmpRow.getValue(tmpData.columnName(1)));
                     }
                     for (int i = 0; i < sourcePickIndice.size(); i++) {
-                        Object value = tmpRow.getMapValue(tmpData.columnName(sourcePickIndice.get(i) + tmpValueOffset));
+                        Object value = tmpRow.getValue(tmpData.columnName(sourcePickIndice.get(i) + tmpValueOffset));
                         Data2DColumn finalColumn = finalColumns.get(i + targetValueOffset);
                         if (finalColumn.needScale() && scale >= 0 && value != null) {
                             value = DoubleTools.scaleString(value + "", invalidAs, scale);
                         }
-                        data2DRow.setMapValue(finalColumn.getColumnName(),
+                        data2DRow.setValue(finalColumn.getColumnName(),
                                 finalColumn.fromString(value == null ? null : value + ""));
                     }
                     if (tableTarget.setInsertStatement(conn, insert, data2DRow)) {
@@ -1091,11 +1092,11 @@ public class DataTableGroup {
                     fileRow.add(groupid + "");
                     fileRow.add(parameterValue);
                     if (includeRowNumber) {
-                        Object value = tmpRow.getMapValue(tmpData.columnName(1));
+                        Object value = tmpRow.getValue(tmpData.columnName(1));
                         fileRow.add(value == null ? null : value + "");
                     }
                     for (int i = 0; i < sourcePickIndice.size(); i++) {
-                        Object value = tmpRow.getMapValue(tmpData.columnName(sourcePickIndice.get(i) + tmpValueOffset));
+                        Object value = tmpRow.getValue(tmpData.columnName(sourcePickIndice.get(i) + tmpValueOffset));
                         Data2DColumn finalColumn = finalColumns.get(i + targetValueOffset);
                         if (finalColumn.needScale() && scale >= 0 && value != null) {
                             value = DoubleTools.scaleString(value + "", invalidAs, scale);
@@ -1234,7 +1235,7 @@ public class DataTableGroup {
                 + " WHERE group_index=" + index;
         try (PreparedStatement statement = qconn.prepareStatement(sql)) {
             Data2DRow row = tableGroupParameters.query(qconn, statement);
-            Object v = row.getMapValue("group_parameters");
+            Object v = row.getValue("group_parameters");
             return v == null ? null : (String) v;
         } catch (Exception e) {
             return null;

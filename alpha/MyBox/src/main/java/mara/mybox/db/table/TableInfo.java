@@ -3,7 +3,7 @@ package mara.mybox.db.table;
 import java.sql.Connection;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
-import mara.mybox.db.data.InfoInTree;
+import mara.mybox.db.data.DataValues;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.Languages.message;
 
@@ -12,7 +12,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-4-23
  * @License Apache License Version 2.0
  */
-public class TableInfo extends BaseTableTreeData<InfoInTree> {
+public class TableInfo extends BaseDataTable<DataValues> {
 
     public TableInfo() {
         tableName = "Info_In_Tree";
@@ -29,7 +29,7 @@ public class TableInfo extends BaseTableTreeData<InfoInTree> {
     }
 
     @Override
-    public boolean setValue(InfoInTree data, String column, Object value) {
+    public boolean setValue(DataValues data, String column, Object value) {
         if (data == null || column == null) {
             return false;
         }
@@ -37,7 +37,7 @@ public class TableInfo extends BaseTableTreeData<InfoInTree> {
     }
 
     @Override
-    public Object getValue(InfoInTree data, String column) {
+    public Object getValue(DataValues data, String column) {
         if (data == null || column == null) {
             return null;
         }
@@ -45,7 +45,7 @@ public class TableInfo extends BaseTableTreeData<InfoInTree> {
     }
 
     @Override
-    public boolean valid(InfoInTree data) {
+    public boolean valid(DataValues data) {
         if (data == null) {
             return false;
         }
@@ -55,10 +55,11 @@ public class TableInfo extends BaseTableTreeData<InfoInTree> {
     @Override
     public long insertData(Connection conn, String title, String info) {
         try {
-            InfoInTree node = new InfoInTree().setInfo(info);
-            node.setNodeTitle(title).setDataTitle(title);
+            DataValues node = new DataValues();
+            node.setValue("info", info);
+            node.setValue("title", title);
             node = insertData(conn, node);
-            return node.getInfoid();
+            return (long) node.getValue(idColumnName);
         } catch (Exception e) {
             MyBoxLog.console(e);
             return -1;

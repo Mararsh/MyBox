@@ -17,7 +17,7 @@ import mara.mybox.value.Languages;
  * @CreateDate 2024-8-12
  * @License Apache License Version 2.0
  */
-public abstract class BaseTableTreeData<D> extends BaseTable<D> {
+public abstract class BaseDataTable<D> extends BaseTable<D> {
 
     /*
         abstract
@@ -71,9 +71,9 @@ public abstract class BaseTableTreeData<D> extends BaseTable<D> {
                 xml += prefix + indent + "<parentid>" + node.getParentid() + "</parentid>\n";
             }
         }
-        if (node.getNodeTitle() != null) {
+        if (node.getTitle() != null) {
             xml += prefix + indent + "<title>\n"
-                    + prefix + indent + "<![CDATA[" + node.getNodeTitle() + "]]>\n"
+                    + prefix + indent + "<![CDATA[" + node.getTitle() + "]]>\n"
                     + prefix + indent + "</title>\n";
         }
         if (node.getUpdateTime() != null) {

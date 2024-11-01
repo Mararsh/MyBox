@@ -5,20 +5,14 @@ import mara.mybox.tools.JsonTools;
 
 /**
  * @Author Mara
- * @CreateDate 2024-8-2
+ * @CreateDate 2024-11-1
  * @License Apache License Version 2.0
  */
-public class InfoInTree extends DataNode {
+public class DataValuesTools {
 
-    @Override
-    public boolean valid() {
-        return valid(this);
-    }
-
-    @Override
-    public String toText() {
-        String info = getInfo();
-        String title = getDataTitle();
+    public static String toText(DataValues data) {
+        String info = (String) data.getValue("info");
+        String title = (String) data.getValue("title");
         if (title == null || title.isBlank()) {
             if (info == null || info.isBlank()) {
                 return null;
@@ -34,11 +28,10 @@ public class InfoInTree extends DataNode {
         }
     }
 
-    @Override
-    public String toXml(String prefix) {
-        String info = getInfo();
+    public static String toXml(DataValues data, String prefix) {
         String xml = prefix + "<node>\n";
-        String title = getDataTitle();
+        String info = (String) data.getValue("info");
+        String title = (String) data.getValue("title");
         if (title != null && !title.isBlank()) {
             xml += prefix + prefix + "<title>\n"
                     + prefix + prefix + prefix + "<![CDATA[" + title.trim() + "]]>\n"
@@ -53,11 +46,10 @@ public class InfoInTree extends DataNode {
         return xml;
     }
 
-    @Override
-    public String toHtml() {
-        String info = getInfo();
+    public static String toHtml(DataValues data) {
         String html = "";
-        String title = getDataTitle();
+        String info = (String) data.getValue("info");
+        String title = (String) data.getValue("title");
         if (title != null && !title.isBlank()) {
             html += "<H2>" + title.trim() + "</H2>\n";
         }
@@ -67,11 +59,10 @@ public class InfoInTree extends DataNode {
         return html;
     }
 
-    @Override
-    public String toJson(String prefix) {
-        String info = getInfo();
-        String title = getDataTitle();
+    public static String toJson(DataValues data, String prefix) {
         String json = "";
+        String info = (String) data.getValue("info");
+        String title = (String) data.getValue("title");
         if (title != null && !title.isBlank()) {
             json += prefix + ",\n"
                     + prefix + "\"title\": " + JsonTools.encode(title.trim());
@@ -81,49 +72,6 @@ public class InfoInTree extends DataNode {
                     + prefix + "\"info\": " + JsonTools.encode(info.trim());
         }
         return json;
-    }
-
-
-    /*
-        Static methods
-     */
-    public static InfoInTree create() {
-        return new InfoInTree();
-    }
-
-    public static boolean valid(InfoInTree data) {
-        return data != null;
-    }
-
-    /*
-        get/set
-     */
-    public long getInfoid() {
-        try {
-            Object v = getValue("infoid");
-            return v == null ? -1 : (long) v;
-        } catch (Exception e) {
-            return -1;
-        }
-    }
-
-    public InfoInTree setInfoid(long infoid) {
-        setValue("infoid", infoid);
-        return this;
-    }
-
-    public String getInfo() {
-        try {
-            Object v = getValue("info");
-            return v == null ? null : (String) v;
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    public InfoInTree setInfo(String info) {
-        setValue("info", info);
-        return this;
     }
 
 }

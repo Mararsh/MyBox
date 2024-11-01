@@ -58,21 +58,6 @@ public class ControlDataTreeManage extends ControlDataTreeView {
         }
     }
 
-    public String chainName(Connection conn, DataNode node) {
-        if (node == null) {
-            return null;
-        }
-        String chainName = "";
-        List<DataNode> ancestor = ancestor(conn, node);
-        if (ancestor != null) {
-            for (DataNode a : ancestor) {
-                chainName += a.getNodeTitle() + TitleSeparater;
-            }
-        }
-        chainName += node.getNodeTitle();
-        return chainName;
-    }
-
     @Override
     public void itemClicked(MouseEvent event, TreeItem<DataNode> item) {
         clicked(UserConfig.getString(baseName + "WhenLeftClickNode", "Edit"), item);
@@ -458,7 +443,7 @@ public class ControlDataTreeManage extends ControlDataTreeView {
             return;
         }
         String chainName = chainName(item);
-        String name = PopTools.askValue(getBaseTitle(), chainName, message("RenameNode"), nodeValue.getNodeTitle() + "m");
+        String name = PopTools.askValue(getBaseTitle(), chainName, message("RenameNode"), nodeValue.getTitle() + "m");
         if (name == null || name.isBlank()) {
             return;
         }
@@ -474,7 +459,7 @@ public class ControlDataTreeManage extends ControlDataTreeView {
 
             @Override
             protected boolean handle() {
-                nodeValue.setNodeTitle(name);
+                nodeValue.setTitle(name);
                 updatedNode = nodeTable.updateData(nodeValue);
                 return updatedNode != null;
             }
@@ -646,7 +631,7 @@ public class ControlDataTreeManage extends ControlDataTreeView {
             String indentNode = " ".repeat(indent);
             String spaceNode = "&nbsp;".repeat(indent);
             String nodePageid = "item" + node.getNodeid();
-            String nodeName = node.getNodeTitle();
+            String nodeName = node.getTitle();
             String displayName = "<SPAN class=\"SerialNumber\">" + serialNumber + "&nbsp;&nbsp;</SPAN>" + nodeName;
             if (children != null && !children.isEmpty()) {
                 displayName = "<a href=\"javascript:nodeClicked('" + nodePageid + "')\">" + displayName + "</a>";

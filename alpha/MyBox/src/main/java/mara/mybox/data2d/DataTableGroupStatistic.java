@@ -91,7 +91,7 @@ public class DataTableGroupStatistic {
                     Data2DRow data2DRow = tableGroup.newRow();
                     for (String name : calNames) {
                         Object v = groupColumn(name).value(query);
-                        data2DRow.setMapValue(groupColumnName(name), v);
+                        data2DRow.setValue(groupColumnName(name), v);
                     }
                     if (groupid > 0 && groupid != currentGroupid) {
                         insert.executeBatch();
@@ -243,13 +243,13 @@ public class DataTableGroupStatistic {
             }
             for (int i = 0; i < colSize; i++) {
                 Data2DRow data2DRow = tableStatistic.newRow();
-                data2DRow.setMapValue(statisticData.columnName(1), groupid);
-                data2DRow.setMapValue(statisticData.columnName(2), parameterValue);
-                data2DRow.setMapValue(statisticData.columnName(3), calNames.get(i));
+                data2DRow.setValue(statisticData.columnName(1), groupid);
+                data2DRow.setValue(statisticData.columnName(2), parameterValue);
+                data2DRow.setValue(statisticData.columnName(3), calNames.get(i));
                 DoubleStatistic s = sData[i];
                 for (int k = 0; k < calculation.types.size(); k++) {
                     StatisticType type = calculation.types.get(k);
-                    data2DRow.setMapValue(statisticData.columnName(k + 4),
+                    data2DRow.setValue(statisticData.columnName(k + 4),
                             DoubleTools.scale(s.value(type), scale));
                 }
                 if (tableStatistic.setInsertStatement(conn, statisticInsert, data2DRow)) {
