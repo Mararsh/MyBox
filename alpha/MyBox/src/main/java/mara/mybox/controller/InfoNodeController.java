@@ -65,6 +65,11 @@ public class InfoNodeController extends BaseDataTreeNodeController {
         }
     }
 
+    @Override
+    protected DataValues pickNodeValues() {
+        return null;
+    }
+
     @FXML
     protected void popHistories(Event event) {
         if (UserConfig.getBoolean(baseName + "HistoriesPopWhenMouseHovering", false)) {

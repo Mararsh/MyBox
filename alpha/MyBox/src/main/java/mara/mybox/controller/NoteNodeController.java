@@ -50,14 +50,21 @@ public class NoteNodeController extends BaseDataTreeNodeController {
     }
 
     @Override
-    public void nodeChanged(boolean changed) {
+    public void valueChanged(boolean changed) {
         if (isSettingValues) {
             return;
         }
-        super.nodeChanged(changed);
+        super.valueChanged(changed);
         if (!changed) {
+            valuesController.isSettingValues = true;
             valuesController.updateStatus(false);
+            valuesController.isSettingValues = false;
         }
+    }
+
+    @Override
+    protected DataValues pickNodeValues() {
+        return null;
     }
 
     protected InfoNode pickValue(InfoNode node) {

@@ -130,7 +130,6 @@ public abstract class BaseTableViewController<P> extends BaseFileController {
                 @Override
                 public void onChanged(ListChangeListener.Change<? extends P> c) {
                     tableChanged();
-                    checkSelected();
                 }
             });
 

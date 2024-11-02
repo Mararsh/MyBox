@@ -785,7 +785,8 @@ public abstract class BaseTable<D> {
             String sql = sizeStatement() + c;
             int size = 0;
             conn.setAutoCommit(true);
-            try (PreparedStatement sizeQuery = conn.prepareStatement(sql); ResultSet results = sizeQuery.executeQuery()) {
+            try (PreparedStatement sizeQuery = conn.prepareStatement(sql);
+                    ResultSet results = sizeQuery.executeQuery()) {
                 if (results != null && results.next()) {
                     size = results.getInt(1);
                 }
@@ -818,7 +819,8 @@ public abstract class BaseTable<D> {
         try {
             boolean isEmpty = true;
             conn.setAutoCommit(true);
-            try (PreparedStatement statement = conn.prepareStatement(sql); ResultSet results = statement.executeQuery()) {
+            try (PreparedStatement statement = conn.prepareStatement(sql);
+                    ResultSet results = statement.executeQuery()) {
                 isEmpty = results == null || !results.next();
             } catch (Exception e) {
                 MyBoxLog.debug(e, sql);
@@ -1084,7 +1086,8 @@ public abstract class BaseTable<D> {
 
     public D queryOne(String sql) {
         D data = null;
-        try (Connection conn = DerbyBase.getConnection(); PreparedStatement statement = conn.prepareStatement(sql)) {
+        try (Connection conn = DerbyBase.getConnection();
+                PreparedStatement statement = conn.prepareStatement(sql)) {
             data = query(conn, statement);
         } catch (Exception e) {
             MyBoxLog.debug(e, sql);
@@ -1364,7 +1367,8 @@ public abstract class BaseTable<D> {
                     if (idColumnName != null) {
 //                        boolean ac = conn.getAutoCommit();
 //                        conn.setAutoCommit(true);
-                        try (Statement query = conn.createStatement(); ResultSet resultSet = query.executeQuery("VALUES IDENTITY_VAL_LOCAL()")) {
+                        try (Statement query = conn.createStatement();
+                                ResultSet resultSet = query.executeQuery("VALUES IDENTITY_VAL_LOCAL()")) {
                             if (resultSet.next()) {
                                 newID = resultSet.getLong(1);
                                 setValue(data, idColumnName, newID);
@@ -1407,6 +1411,7 @@ public abstract class BaseTable<D> {
         String sql = insertStatement();
         int count = 0;
         try (PreparedStatement statement = conn.prepareStatement(sql)) {
+            conn.setAutoCommit(false);
             for (int i = 0; i < dataList.size(); ++i) {
                 D data = dataList.get(i);
                 if (!setInsertStatement(conn, statement, data)) {
@@ -1502,6 +1507,7 @@ public abstract class BaseTable<D> {
         String sql = updateStatement();
         int count = 0;
         try (PreparedStatement statement = conn.prepareStatement(sql)) {
+            conn.setAutoCommit(false);
             for (int i = 0; i < dataList.size(); ++i) {
                 D data = dataList.get(i);
                 if (!setUpdateStatement(conn, statement, data)) {
@@ -1571,6 +1577,69 @@ public abstract class BaseTable<D> {
         }
     }
 
+    public int setAll(Connection conn, List<D> dataList) {
+        if (conn == null || dataList == null) {
+            return -1;
+        }
+        List<D> shouldDelete = new ArrayList<>();
+        List<D> shouldUpdate = new ArrayList<>();
+        try (PreparedStatement query = conn.prepareStatement(queryAllStatement());
+                ResultSet results = query.executeQuery()) {
+            conn.setAutoCommit(true);
+            while (results != null && results.next()) {
+                D tableItem = readData(results);
+                if (tableItem == null) {
+                    continue;
+                }
+                boolean inList = false;
+                for (D listItem : dataList) {
+                    if (sameRow(tableItem, listItem)) {
+                        inList = true;
+                        break;
+                    }
+                }
+                if (inList) {
+                    shouldUpdate.add(tableItem);
+                } else {
+                    shouldDelete.add(tableItem);
+                }
+            }
+        } catch (Exception e) {
+            MyBoxLog.debug(e, tableName);
+        }
+        int count = 0;
+        try {
+            deleteData(conn, shouldDelete);
+            int ret = updateList(conn, shouldUpdate);
+            if (ret > 0) {
+                count += ret;
+            }
+            List<D> shouldInsert = new ArrayList<>();
+            for (D item : dataList) {
+                if (!valid(item)) {
+                    continue;
+                }
+                boolean inList = false;
+                for (D update : shouldUpdate) {
+                    if (sameRow(item, update)) {
+                        inList = true;
+                        break;
+                    }
+                }
+                if (!inList) {
+                    shouldInsert.add(item);
+                }
+            }
+            ret = insertList(conn, shouldInsert);
+            if (ret > 0) {
+                count += ret;
+            }
+        } catch (Exception e) {
+            MyBoxLog.debug(e, tableName);
+        }
+        return count;
+    }
+
     public int deleteData(D data) {
         try (Connection conn = DerbyBase.getConnection()) {
             return deleteData(conn, data);
@@ -1633,6 +1702,7 @@ public abstract class BaseTable<D> {
                 }
             }
             conn.commit();
+            statement.clearBatch();
         } catch (Exception e) {
             MyBoxLog.debug(e, tableName);
         }

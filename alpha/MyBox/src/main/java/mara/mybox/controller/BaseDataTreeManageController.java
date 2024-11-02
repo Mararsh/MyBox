@@ -143,7 +143,7 @@ public abstract class BaseDataTreeManageController extends BaseDataTreeControlle
 //            }
 //        }
         treeController.updateNode(nodeController.attributesController.currentNode);
-        nodeController.nodeChanged(false);
+        nodeController.resetStatus();
     }
 
     public void newNodeSaved() {
@@ -156,7 +156,7 @@ public abstract class BaseDataTreeManageController extends BaseDataTreeControlle
 //                && nodeController.attributesController.parentNode.getNodeid() == tableController.loadedParent.getNodeid()) {
 //            tableController.loadNodes(nodeController.attributesController.currentNode);
 //        }
-        nodeController.nodeChanged(false);
+        nodeController.resetStatus();
     }
 
     public void nodeChanged() {

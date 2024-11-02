@@ -1,8 +1,12 @@
 package mara.mybox.db.table;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.DataTag;
+import mara.mybox.dev.MyBoxLog;
 
 /**
  * @Author Mara
@@ -53,6 +57,24 @@ public class TableDataTag extends BaseTable<DataTag> {
             return false;
         }
         return data.valid();
+    }
+
+    public DataTag queryTag(Connection conn, String tag) {
+        if (conn == null || tag == null || tag.isBlank()) {
+            return null;
+        }
+        DataTag dataTag = null;
+        String sql = "SELECT * FROM " + tableName + " WHERE tag=?  FETCH FIRST ROW ONLY";
+        try (PreparedStatement statement = conn.prepareStatement(sql)) {
+            statement.setString(1, tag);
+            ResultSet results = statement.executeQuery();
+            if (results.next()) {
+                dataTag = readData(results);
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+        return dataTag;
     }
 
 }

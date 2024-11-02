@@ -247,22 +247,28 @@ public class TableDataNodeTag extends BaseTable<DataNodeTag> {
         }
     }
 
-    public int writeTags(Connection conn, long nodeid, String category, List<String> tags) {
-        if (tagTable == null || conn == null || nodeid < 0 || category == null || category.isBlank()
-                || tags == null || tags.isEmpty()) {
+    public int setAll(Connection conn, long nodeid, List<DataTag> tags) {
+        if (dataTable == null || conn == null || nodeid < 0) {
             return -1;
+        }
+        removeTags(conn, nodeid);
+        if (tags == null || tags.isEmpty()) {
+            return 0;
         }
         int count = 0;
         try {
-            for (String name : tags) {
-//                Tag tag = tagTable.findAndCreate(conn, category, name);
-//                if (tag == null) {
-//                    continue;
-//                }
-//                if (query(conn, nodeid, tag.getTgid()) == null) {
-//                    TreeNodeTag nodeTag = new TreeNodeTag(nodeid, tag.getTgid());
-//                    count += insertData(conn, nodeTag) == null ? 0 : 1;
-//                }
+            if (tagTable == null) {
+                tagTable = new TableDataTag(dataTable);
+            }
+            for (DataTag dataTag : tags) {
+                String tag = dataTag.getTag();
+                DataTag exist = tagTable.queryTag(conn, tag);
+                if (exist == null) {
+                    exist = tagTable.insertData(conn, dataTag);
+                }
+                DataNodeTag nodeTag = DataNodeTag.create()
+                        .setTnodeid(nodeid).setTtagid(exist.getTagid());
+                count += insertData(conn, nodeTag) == null ? 0 : 1;
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
