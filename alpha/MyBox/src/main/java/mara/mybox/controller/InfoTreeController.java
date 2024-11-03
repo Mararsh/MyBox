@@ -26,14 +26,10 @@ public class InfoTreeController extends BaseDataTreeManageController {
     }
 
     @Override
-    public void initValues() {
+    public void initTreeValues() {
         try {
-            super.initValues();
-
             dataTable = new TableInfo();
             nodeController = infoController;
-            treeController = treeManageController;
-
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

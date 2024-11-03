@@ -1,6 +1,9 @@
 package mara.mybox.controller;
 
+import java.sql.Connection;
+import java.util.List;
 import javafx.scene.input.KeyEvent;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.DataNode;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.BaseDataTable;
@@ -95,6 +98,128 @@ public abstract class BaseDataTreeController extends BaseController {
             return true;
         }
         return nodeController.keyEventsFilter(event); // pass event to editor
+    }
+
+    /*
+        synchronize
+     */
+    public void nodeAdded(DataNode parent, DataNode newNode) {
+        if (parent == null || newNode == null) {
+            return;
+        }
+
+    }
+
+    public void nodeRenamed(DataNode node) {
+        if (node == null) {
+            return;
+        }
+        long id = node.getNodeid();
+
+        if (nodeController.attributesController.parentNode != null
+                && id == nodeController.attributesController.parentNode.getNodeid()) {
+            nodeController.attributesController.setParentNode(node);
+        }
+        if (nodeController.attributesController.currentNode != null
+                && id == nodeController.attributesController.currentNode.getNodeid()) {
+            nodeController.attributesController.renamed(node.getTitle());
+        }
+    }
+
+    public void nodeDeleted(DataNode node) {
+        if (node == null) {
+            return;
+        }
+        long id = node.getNodeid();
+
+        nodeController.editNode(null);
+    }
+
+    public void nodeMoved(DataNode parent, DataNode node) {
+        if (parent == null || node == null) {
+            return;
+        }
+        long id = node.getNodeid();
+
+        if (nodeController.attributesController.currentNode != null
+                && id == nodeController.attributesController.currentNode.getNodeid()) {
+            nodeController.attributesController.setParentNode(parent);
+        }
+        if (nodeController.attributesController.parentNode != null
+                && id == nodeController.attributesController.parentNode.getNodeid()) {
+            nodeController.attributesController.setParentNode(node);
+        }
+    }
+
+    public void nodesMoved(DataNode parent, List<DataNode> nodes) {
+        if (parent == null || nodes == null || nodes.isEmpty()) {
+            return;
+        }
+        treeController.loadTree(parent);
+    }
+
+    public void nodesCopied(DataNode parent) {
+        treeController.loadTree(parent);
+    }
+
+    public void nodesDeleted() {
+        task = new FxSingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                try (Connection conn = DerbyBase.getConnection()) {
+//                    tableController.loadedParent = tableTree.readData(conn, tableController.loadedParent);
+                    nodeController.attributesController.currentNode
+                            = dataNodeTable.readData(conn, nodeController.attributesController.currentNode);
+                    nodeController.attributesController.parentNode
+                            = dataNodeTable.readData(conn, nodeController.attributesController.parentNode);
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                nodeController.editNode(nodeController.attributesController.currentNode);
+//                treeController.loadTree(tableController.loadedParent);
+            }
+        };
+        start(task);
+    }
+
+    public void nodeSaved() {
+        if (nodeController.attributesController.currentNode == null) {
+            return;
+        }
+        treeController.updateNode(nodeController.attributesController.currentNode);
+        nodeController.resetStatus();
+    }
+
+    public void newNodeSaved() {
+        if (nodeController.attributesController.currentNode == null) {
+            return;
+        }
+        treeController.addNewNode(treeController.find(nodeController.attributesController.parentNode),
+                nodeController.attributesController.currentNode, false);
+        nodeController.resetStatus();
+    }
+
+    public void nodeChanged() {
+        if (isSettingValues) {
+            return;
+        }
+        String currentTitle = getTitle();
+        if (nodeController.nodeChanged.get()) {
+            if (!currentTitle.endsWith(" *")) {
+                setTitle(currentTitle + " *");
+            }
+        } else {
+            if (currentTitle.endsWith(" *")) {
+                setTitle(currentTitle.substring(0, currentTitle.length() - 2));
+            }
+        }
     }
 
 }

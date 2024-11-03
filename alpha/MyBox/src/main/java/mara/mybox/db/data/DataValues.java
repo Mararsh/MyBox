@@ -53,6 +53,39 @@ public class DataValues extends BaseData {
         }
     }
 
+    public DataValues copy() {
+        try {
+            DataValues data = new DataValues();
+            data.setTable(table);
+            if (values != null) {
+                for (String key : values.keySet()) {
+                    data.setValue(key, values.get(key));
+                }
+            }
+            return data;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    @Override
+    public String toString() {
+        try {
+            String s = "";
+            if (table != null) {
+                s += "table: " + table.getTableName() + "\n";
+            }
+            if (values != null) {
+                for (String key : values.keySet()) {
+                    s += key + ": " + values.get(key) + "\n";
+                }
+            }
+            return s;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     /*
         get/set
      */

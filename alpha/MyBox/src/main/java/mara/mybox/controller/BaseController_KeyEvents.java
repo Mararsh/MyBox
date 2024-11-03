@@ -24,13 +24,13 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
         try {
             if (thisPane != null) {
                 thisPane.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-                    MyBoxLog.debug("KeyEvent.KEY_PRESSED");
+//                    MyBoxLog.debug("KeyEvent.KEY_PRESSED");
                     if (keyEventsFilter(event)) {
                         event.consume();
                     }
                 });
                 thisPane.addEventFilter(KeyEvent.KEY_TYPED, event -> {
-                    MyBoxLog.debug("KeyEvent.KEY_TYPED");
+//                    MyBoxLog.debug("KeyEvent.KEY_TYPED");
                     if (keyEventsFilter(event)) {
                         event.consume();
                     }
@@ -48,9 +48,9 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
 //                MyBoxLog.debug("window:" + getMyWindow().getClass() + "   isFocused:" + getMyWindow().isFocused());
 //            }
             keyEvent = event;
-            MyBoxLog.debug("filter:" + this.getClass()
-                    + " text:" + event.getText() + " code:" + event.getCode() + " char:" + event.getCharacter()
-                    + " source:" + event.getSource().getClass() + " target:" + (event.getTarget() == null ? "null" : event.getTarget()));
+//            MyBoxLog.debug("filter:" + this.getClass()
+//                    + " text:" + event.getText() + " code:" + event.getCode() + " char:" + event.getCharacter()
+//                    + " source:" + event.getSource().getClass() + " target:" + (event.getTarget() == null ? "null" : event.getTarget()));
 
             if (event.isAltDown()) {
                 return altFilter(event);

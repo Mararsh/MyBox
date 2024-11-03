@@ -18,6 +18,8 @@ import mara.mybox.value.UserConfig;
  */
 public class InfoNodeController extends BaseDataTreeNodeController {
 
+    protected DataValues currentValues;
+
     @FXML
     protected TextArea infoInput;
     @FXML
@@ -53,6 +55,7 @@ public class InfoNodeController extends BaseDataTreeNodeController {
     @Override
     protected void editValues(DataValues values) {
         try {
+            currentValues = values;
             Object v;
             if (values == null) {
                 v = null;
@@ -67,7 +70,19 @@ public class InfoNodeController extends BaseDataTreeNodeController {
 
     @Override
     protected DataValues pickNodeValues() {
-        return null;
+        try {
+            DataValues data;
+            if (currentValues != null) {
+                data = currentValues.copy();
+            } else {
+                data = new DataValues();
+            }
+            data.setValue("info", infoInput.getText());
+            return data;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
     }
 
     @FXML

@@ -31,6 +31,7 @@ import static mara.mybox.value.Languages.message;
 public abstract class BaseDataTreeNodeController extends BaseController {
 
     protected BaseDataTreeController dataController;
+    protected ControlDataTreeView treeController;
     protected String defaultExt;
     protected final SimpleBooleanProperty nodeChanged;
     protected BaseController valuesEditor;
@@ -70,6 +71,7 @@ public abstract class BaseDataTreeNodeController extends BaseController {
             dataNodeTable = dataController.dataNodeTable;
             dataTagTable = dataController.dataTagTable;
             dataNodeTagTable = dataController.dataNodeTagTable;
+            treeController = dataController.treeController;
 
             attributesController.setParameters(dataController);
             tagsController.setParameters(this);
@@ -239,56 +241,52 @@ public abstract class BaseDataTreeNodeController extends BaseController {
             popError(message("Invalid") + ": " + message("Value"));
             return;
         }
+        MyBoxLog.console(values.toString());
         if (task != null) {
             task.cancel();
         }
         task = new FxSingletonTask<Void>(this) {
-            private boolean newData = false;
+            private DataNode savedNode;
 
             @Override
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
-                    node.setUpdateTime(new Date());
-                    if (currentNode != null) {
-                        currentNode = dataNodeTable.readData(conn, currentNode);
-                        if (currentNode == null) {
-                            conn.close();
-                            return true;
-                        }
-                        if (currentNode.getParentid() >= 0) {
-                            parentNode = dataNodeTable.query(conn, currentNode.getParentid());
-                        } else {
-                            parentNode = dataNodeTable.readData(conn, parentNode);
-                        }
-                        if (parentNode == null) {
-                            currentNode = null;
-                            conn.close();
-                            return true;
-                        } else {
-                            node.setNodeid(currentNode.getNodeid());
-                            node.setParentid(parentNode.getNodeid());
-                            currentNode = dataNodeTable.updateData(conn, node);
-                            newData = false;
-                        }
-                    } else {
-                        node.setParentid(parentNode.getNodeid());
-                        currentNode = dataNodeTable.insertData(conn, node);
-                        newData = true;
+                    DataValues savedValues = (DataValues) dataTable.writeData(conn, values);
+                    conn.commit();
+                    if (savedValues == null) {
+                        conn.close();
+                        error = message("Failed");
+                        return false;
                     }
-                    if (currentNode == null) {
+                    MyBoxLog.console(savedValues.toString());
+                    long nodeid = (long) savedValues.getValue(dataTable.getIdColumnName());
+                    MyBoxLog.console(nodeid);
+                    if (nodeid < 0) {
+                        conn.close();
+                        error = message("Failed");
+                        return false;
+                    }
+                    node.setNodeid(nodeid);
+                    node.setUpdateTime(new Date());
+                    savedNode = dataNodeTable.writeData(conn, node);
+                    if (savedNode == null) {
                         conn.close();
                         return false;
                     }
                     conn.commit();
-                    long nodeid = currentNode.getNodeid();
+                    nodeid = savedNode.getNodeid();
+                    MyBoxLog.console(nodeid);
                     List<DataTag> tags = tagsController.tableData;
                     if (tags == null || tags.isEmpty()) {
                         dataTagTable.clearData(conn);
+                        MyBoxLog.console("emptyTags");
                     } else {
                         dataTagTable.setAll(conn, tags);
+                        MyBoxLog.console(tags.size());
                     }
                     List<DataTag> selectedTags = tagsController.selectedItems();
                     if (selectedTags == null || selectedTags.isEmpty()) {
+                        MyBoxLog.console(selectedTags.size());
                         dataNodeTagTable.setAll(conn, nodeid, selectedTags);
                     }
                 } catch (Exception e) {
@@ -296,17 +294,24 @@ public abstract class BaseDataTreeNodeController extends BaseController {
                     MyBoxLog.error(e);
                     return false;
                 }
-                return currentNode != null;
+                return savedNode != null;
             }
 
             @Override
             protected void whenSucceeded() {
-                editNode(currentNode);
-//                if (newData) {
-//                    dataController.newNodeSaved();
-//                } else {
-//                    dataController.nodeSaved();
-//                }
+                long id;
+                try {
+                    id = (long) values.getValue(dataTable.getIdColumnName());
+                } catch (Exception e) {
+                    id = -2;
+                }
+                MyBoxLog.console(id);
+                if (id < 0) {
+                    treeController.addNewNode(treeController.find(parentNode), savedNode, false);
+                } else {
+                    treeController.updateNode(savedNode);
+                }
+                editNode(savedNode);
                 popSaved();
             }
 
@@ -416,9 +421,11 @@ public abstract class BaseDataTreeNodeController extends BaseController {
 
     @Override
     public boolean keyEventsFilter(KeyEvent event) {
-        if (valuesEditor != null && valuesEditor.thisPane.isFocused() || valuesEditor.thisPane.isFocusWithin()) {
-            if (valuesEditor.keyEventsFilter(event)) {
-                return true;
+        if (valuesEditor != null) {
+            if (valuesEditor.thisPane.isFocused() || valuesEditor.thisPane.isFocusWithin()) {
+                if (valuesEditor.keyEventsFilter(event)) {
+                    return true;
+                }
             }
         }
         if (attributesController.thisPane.isFocused() || attributesController.thisPane.isFocusWithin()) {
