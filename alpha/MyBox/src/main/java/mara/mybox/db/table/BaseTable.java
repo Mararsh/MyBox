@@ -117,7 +117,8 @@ public abstract class BaseTable<D> {
         return column.value(results);
     }
 
-    public boolean setColumnValue(PreparedStatement statement, ColumnDefinition column, D data, int index) {
+    public boolean setColumnValue(PreparedStatement statement,
+            ColumnDefinition column, D data, int index) {
         if (statement == null || data == null || column == null || index < 0) {
             return false;
         }
@@ -382,7 +383,8 @@ public abstract class BaseTable<D> {
         }
     }
 
-    public int setColumnsValues(PreparedStatement statement, List<ColumnDefinition> valueColumns, D data, int startIndex) {
+    public int setColumnsValues(PreparedStatement statement,
+            List<ColumnDefinition> valueColumns, D data, int startIndex) {
         if (statement == null || data == null || startIndex < 0) {
             return -1;
         }
@@ -401,7 +403,8 @@ public abstract class BaseTable<D> {
         }
     }
 
-    public int setColumnNamesValues(PreparedStatement statement, List<String> valueColumns, D data, int startIndex) {
+    public int setColumnNamesValues(PreparedStatement statement,
+            List<String> valueColumns, D data, int startIndex) {
         if (statement == null || data == null || startIndex < 0) {
             return -1;
         }
@@ -420,14 +423,16 @@ public abstract class BaseTable<D> {
         }
     }
 
-    public boolean setInsertStatement(Connection conn, PreparedStatement statement, D data) {
+    public boolean setInsertStatement(Connection conn,
+            PreparedStatement statement, D data) {
         if (conn == null || statement == null || data == null) {
             return false;
         }
         return setColumnsValues(statement, insertColumns(), data, 1) > 0;
     }
 
-    public boolean setUpdateStatement(Connection conn, PreparedStatement statement, D data) {
+    public boolean setUpdateStatement(Connection conn,
+            PreparedStatement statement, D data) {
         if (conn == null || statement == null || !valid(data)) {
             return false;
         }
@@ -443,7 +448,8 @@ public abstract class BaseTable<D> {
         }
     }
 
-    public boolean setDeleteStatement(Connection conn, PreparedStatement statement, D data) {
+    public boolean setDeleteStatement(Connection conn,
+            PreparedStatement statement, D data) {
         if (conn == null || statement == null || data == null) {
             return false;
         }
@@ -1130,7 +1136,8 @@ public abstract class BaseTable<D> {
         }
     }
 
-    public List<D> queryPreLike(Connection conn, PreparedStatement statement, String value) {
+    public List<D> queryPreLike(Connection conn, PreparedStatement statement,
+            String value) {
         List<D> dataList = new ArrayList<>();
         if (conn == null || statement == null || value == null) {
             return dataList;
@@ -1210,7 +1217,8 @@ public abstract class BaseTable<D> {
         return readData(sql);
     }
 
-    public List<D> queryConditions(String condition, String orderby, long start, long size) {
+    public List<D> queryConditions(String condition, String orderby, long start,
+            long size) {
         List<D> dataList = new ArrayList<>();
         if (start < 0 || size <= 0) {
             return dataList;
@@ -1223,7 +1231,8 @@ public abstract class BaseTable<D> {
         }
     }
 
-    public List<D> queryConditions(Connection conn, String condition, String orderby, long start, long size) {
+    public List<D> queryConditions(Connection conn, String condition,
+            String orderby, long start, long size) {
         if (conn == null || start < 0 || size <= 0) {
             return new ArrayList<>();
         }
@@ -1552,7 +1561,8 @@ public abstract class BaseTable<D> {
         }
     }
 
-    public int updatePreLike(Connection conn, PreparedStatement statement, String value) {
+    public int updatePreLike(Connection conn, PreparedStatement statement,
+            String value) {
         if (conn == null || statement == null || value == null) {
             return -1;
         }
@@ -1573,6 +1583,15 @@ public abstract class BaseTable<D> {
             return statement.executeUpdate();
         } catch (Exception e) {
             MyBoxLog.debug(e, sql);
+            return -1;
+        }
+    }
+
+    public int setAll(List<D> dataList) {
+        try (Connection conn = DerbyBase.getConnection()) {
+            return setAll(conn, dataList);
+        } catch (Exception e) {
+            MyBoxLog.debug(e, tableName);
             return -1;
         }
     }

@@ -21,47 +21,20 @@ License:    Apache License Version 2.0
         <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0">
             <children>
                 <Label maxWidth="1.7976931348623157E308" wrapText="true" HBox.hgrow="ALWAYS" />
+            <Button fx:id="manageButton" layoutX="108.0" layoutY="10.0" mnemonicParsing="false" onAction="#manageAction">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconManage.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
                 <Button fx:id="recoverTagsButton" mnemonicParsing="false" onAction="#recoverAction">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
                                 <Image url="@../buttons/Red/iconRecover.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
-            <Button fx:id="clearItemsButton" mnemonicParsing="false" onAction="#clearAction">
-               <graphic>
-                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/Red/iconClear.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
-            <Button fx:id="deleteRowsButton" disable="true" mnemonicParsing="false" onAction="#deleteAction">
-               <graphic>
-                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/Red/iconDelete.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
-            <Button fx:id="randomColorsButton" mnemonicParsing="false" onAction="#randomColors">
-               <graphic>
-                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/Red/iconRandom.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
-                <Button fx:id="newItemButton" mnemonicParsing="false" onAction="#addAction">
-                    <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../buttons/Red/iconNewItem.png" />
                             </image>
                         </ImageView>
                     </graphic>
@@ -75,8 +48,8 @@ License:    Apache License Version 2.0
                         <CheckBox fx:id="allRowsCheck" mnemonicParsing="false" text="%TableRow" />
                     </graphic>
                 </TableColumn>
-                <TableColumn fx:id="colorColumn" prefWidth="75.0" text="%Color" />
-                <TableColumn fx:id="tagColumn" prefWidth="200.0" text="%Tag" />
+                <TableColumn fx:id="colorColumn" editable="false" prefWidth="75.0" text="%Color" />
+                <TableColumn fx:id="tagColumn" editable="false" prefWidth="200.0" text="%Tag" />
             </columns>
         </TableView>
     </children>
