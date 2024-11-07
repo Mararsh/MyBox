@@ -40,7 +40,6 @@ public abstract class BaseDataTable<D> extends BaseTable<D> {
 
             TableDataNodeTag nodeTagTable = new TableDataNodeTag(this);
             nodeTagTable.createTable(conn);
-            nodeTagTable.createIndices(conn);
 
             return true;
         } catch (Exception e) {

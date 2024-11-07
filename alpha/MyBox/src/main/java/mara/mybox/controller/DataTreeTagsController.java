@@ -1,6 +1,7 @@
 package mara.mybox.controller;
 
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
@@ -38,6 +39,7 @@ public class DataTreeTagsController extends BaseTableViewController<DataTag> {
     protected TableDataNode dataNodeTable;
     protected TableDataTag dataTagTable;
     protected BaseTable dataTable;
+    protected List<DataTag> deleted = new ArrayList<>();
 
     @FXML
     protected TableColumn<DataTag, String> tagColumn;
@@ -125,7 +127,6 @@ public class DataTreeTagsController extends BaseTableViewController<DataTag> {
             colorColumn.getStyleClass().add("editable-column");
 
             checkButtons();
-
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -152,6 +153,7 @@ public class DataTreeTagsController extends BaseTableViewController<DataTag> {
             task.cancel();
         }
         tableData.clear();
+        deleted.clear();
         if (dataTagTable == null) {
             return;
         }
@@ -210,6 +212,26 @@ public class DataTreeTagsController extends BaseTableViewController<DataTag> {
     }
 
     @FXML
+    @Override
+    public void deleteAction() {
+        try {
+            List<DataTag> selected = selectedItems();
+            if (selected == null || selected.isEmpty()) {
+                clearAction();
+                return;
+            }
+            for (DataTag tag : selected) {
+                if (tag.getTagid() >= 0 && !deleted.contains(tag)) {
+                    deleted.add(tag);
+                }
+            }
+            tableData.removeAll(selected);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    @FXML
     public void randomColors() {
         try {
             isSettingValues = true;
@@ -235,11 +257,29 @@ public class DataTreeTagsController extends BaseTableViewController<DataTag> {
 
             @Override
             protected boolean handle() {
-                return dataTagTable.setAll(tableData) >= 0;
+                try (Connection conn = DerbyBase.getConnection()) {
+                    conn.setAutoCommit(false);
+                    for (DataTag tag : tableData) {
+                        if (tag.getTagid() >= 0) {
+                            dataTagTable.updateData(conn, tag);
+                        } else {
+                            dataTagTable.insertData(conn, tag);
+                        }
+                    }
+                    for (DataTag tag : deleted) {
+                        dataTagTable.deleteData(conn, tag);
+                    }
+                    conn.commit();
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+                return true;
             }
 
             @Override
             protected void whenSucceeded() {
+                deleted.clear();
                 tableChanged(false);
                 if (nodeTagsController != null) {
                     nodeTagsController.recoverAction();

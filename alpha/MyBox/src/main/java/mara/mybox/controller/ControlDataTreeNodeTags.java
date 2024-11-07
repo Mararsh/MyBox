@@ -8,6 +8,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.paint.Color;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.DataNode;
+import mara.mybox.db.data.DataNodeTag;
 import mara.mybox.db.data.DataTag;
 import mara.mybox.db.table.BaseTable;
 import mara.mybox.db.table.TableDataNode;
@@ -74,14 +75,14 @@ public class ControlDataTreeNodeTags extends BaseTableViewController<DataTag> {
         }
         task = new FxTask<Void>(this) {
             private List<DataTag> tags;
-            private List<String> nodeTagNames;
+            private List<DataNodeTag> nodeTags;
 
             @Override
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
                     tags = dataTagTable.readAll(conn);
                     if (currentNode != null) {
-                        nodeTagNames = dataNodeTagTable.nodeTagNames(conn, currentNode.getNodeid());
+                        nodeTags = dataNodeTagTable.nodeTags(conn, currentNode.getNodeid());
                     }
                 } catch (Exception e) {
                     MyBoxLog.error(e);
@@ -94,11 +95,15 @@ public class ControlDataTreeNodeTags extends BaseTableViewController<DataTag> {
             protected void whenSucceeded() {
                 if (tags != null && !tags.isEmpty()) {
                     tableData.setAll(tags);
-                    if (nodeTagNames != null && !nodeTagNames.isEmpty()) {
+                    if (nodeTags != null && !nodeTags.isEmpty()) {
                         isSettingValues = true;
                         for (DataTag tag : tableData) {
-                            if (nodeTagNames.contains(tag.getTag())) {
-                                tableView.getSelectionModel().select(tag);
+                            long tagid = tag.getTagid();
+                            for (DataNodeTag nodeTag : nodeTags) {
+                                if (nodeTag.getTtagid() == tagid) {
+                                    tableView.getSelectionModel().select(tag);
+                                    break;
+                                }
                             }
                         }
                         isSettingValues = false;
@@ -114,27 +119,6 @@ public class ControlDataTreeNodeTags extends BaseTableViewController<DataTag> {
 
         };
         start(task, thisPane);
-    }
-
-    public void saveTags() {
-        if (isSettingValues) {
-            return;
-        }
-        FxTask saveTask = new FxTask<Void>(this) {
-
-            @Override
-            protected boolean handle() {
-//                return dataTagTable.updateList(tableData) >= 0;
-                return false;
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                tableChanged(false);
-            }
-
-        };
-        start(saveTask, false);
     }
 
     @FXML

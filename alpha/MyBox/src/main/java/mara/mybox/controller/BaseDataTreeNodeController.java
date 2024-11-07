@@ -3,7 +3,6 @@ package mara.mybox.controller;
 import java.io.File;
 import java.sql.Connection;
 import java.util.Date;
-import java.util.List;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Tab;
@@ -11,7 +10,6 @@ import javafx.scene.input.KeyEvent;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.DataNode;
 import static mara.mybox.db.data.DataNode.TitleSeparater;
-import mara.mybox.db.data.DataTag;
 import mara.mybox.db.data.DataValues;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.BaseDataTable;
@@ -241,26 +239,25 @@ public abstract class BaseDataTreeNodeController extends BaseController {
             popError(message("Invalid") + ": " + message("Value"));
             return;
         }
-        MyBoxLog.console(values.toString());
         if (task != null) {
             task.cancel();
         }
         task = new FxSingletonTask<Void>(this) {
             private DataNode savedNode;
+            private long nodeid;
 
             @Override
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
                     DataValues savedValues = (DataValues) dataTable.writeData(conn, values);
-                    conn.commit();
                     if (savedValues == null) {
                         conn.close();
                         error = message("Failed");
                         return false;
                     }
-                    MyBoxLog.console(savedValues.toString());
-                    long nodeid = (long) savedValues.getValue(dataTable.getIdColumnName());
-                    MyBoxLog.console(nodeid);
+                    conn.commit();
+
+                    nodeid = (long) savedValues.getValue(dataTable.getIdColumnName());
                     if (nodeid < 0) {
                         conn.close();
                         error = message("Failed");
@@ -274,21 +271,10 @@ public abstract class BaseDataTreeNodeController extends BaseController {
                         return false;
                     }
                     conn.commit();
-                    nodeid = savedNode.getNodeid();
-                    MyBoxLog.console(nodeid);
-                    List<DataTag> tags = tagsController.tableData;
-                    if (tags == null || tags.isEmpty()) {
-                        dataTagTable.clearData(conn);
-                        MyBoxLog.console("emptyTags");
-                    } else {
-                        dataTagTable.setAll(conn, tags);
-                        MyBoxLog.console(tags.size());
-                    }
-                    List<DataTag> selectedTags = tagsController.selectedItems();
-                    if (selectedTags == null || selectedTags.isEmpty()) {
-                        MyBoxLog.console(selectedTags.size());
-                        dataNodeTagTable.setAll(conn, nodeid, selectedTags);
-                    }
+
+                    dataNodeTagTable.setAll(conn, savedNode.getNodeid(),
+                            tagsController.selectedItems());
+                    conn.commit();
                 } catch (Exception e) {
                     error = e.toString();
                     MyBoxLog.error(e);
@@ -305,7 +291,6 @@ public abstract class BaseDataTreeNodeController extends BaseController {
                 } catch (Exception e) {
                     id = -2;
                 }
-                MyBoxLog.console(id);
                 if (id < 0) {
                     treeController.addNewNode(treeController.find(parentNode), savedNode, false);
                 } else {

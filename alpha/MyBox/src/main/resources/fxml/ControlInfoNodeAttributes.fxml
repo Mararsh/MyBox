@@ -17,7 +17,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlInfoNodeAttributes">
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlInfoNodeAttributes">
     <children>
         <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0">
             <children>
@@ -49,7 +49,7 @@ License:    Apache License Version 2.0
         <HBox alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" spacing="5.0">
             <children>
                 <Label fx:id="timeLabel" minHeight="-Infinity" text="%UpdateTime" wrapText="true" />
-                <TextField fx:id="timeInput" editable="false" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                <TextField fx:id="timeInput" disable="true" editable="false" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
             </children>
         </HBox>
         <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0">

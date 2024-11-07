@@ -9,12 +9,12 @@ import mara.mybox.dev.MyBoxLog;
  */
 public class DataNodeTag extends BaseData {
 
-    protected long tntid, tnodeid, ttagid;
+    protected long tnodeid, ttagid;
     protected DataNode node;
     protected DataTag tag;
 
     private void init() {
-        tntid = tnodeid = ttagid = -1;
+        tnodeid = ttagid = -1;
         node = null;
         tag = null;
     }
@@ -65,9 +65,6 @@ public class DataNodeTag extends BaseData {
         }
         try {
             switch (column) {
-                case "tntid":
-                    data.setTntid(value == null ? -1 : (long) value);
-                    return true;
                 case "tnodeid":
                     data.setTnodeid(value == null ? -1 : (long) value);
                     return true;
@@ -86,8 +83,6 @@ public class DataNodeTag extends BaseData {
             return null;
         }
         switch (column) {
-            case "tntid":
-                return data.getTntid();
             case "tnodeid":
                 return data.getTnodeid();
             case "ttagid":
@@ -104,15 +99,6 @@ public class DataNodeTag extends BaseData {
     /*
         get/set
      */
-    public long getTntid() {
-        return tntid;
-    }
-
-    public DataNodeTag setTntid(long tntid) {
-        this.tntid = tntid;
-        return this;
-    }
-
     public long getTnodeid() {
         return tnodeid;
     }

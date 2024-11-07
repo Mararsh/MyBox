@@ -193,7 +193,13 @@ public class ControlDataTreeManage extends ControlDataTreeView {
         }
         List<MenuItem> items = new ArrayList<>();
 
-        MenuItem menu = new MenuItem(message("TreeView"), StyleTools.getIconImageView("iconHtml.png"));
+        MenuItem menu = new MenuItem(message("Tags"), StyleTools.getIconImageView("iconTag.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            nodeController.tagsController.manageAction();
+        });
+        items.add(menu);
+
+        menu = new MenuItem(message("TreeView"), StyleTools.getIconImageView("iconHtml.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             infoTree();
         });
