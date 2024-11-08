@@ -27,7 +27,6 @@ public class ControlDataTreeNodeAttributes extends BaseController {
     protected BaseDataTreeNodeController nodeController;
     protected BaseDataTable dataTable;
     protected TableDataNode dataNodeTable;
-    protected DataNode parentNode, currentNode;
     protected boolean changed;
 
     @FXML
@@ -35,14 +34,14 @@ public class ControlDataTreeNodeAttributes extends BaseController {
     @FXML
     protected Label chainLabel;
 
-    public ControlDataTreeNodeAttributes() {
-    }
-
-    @Override
-    public void initControls() {
+    public void setParameters(BaseDataTreeController controller) {
         try {
-            super.initControls();
+            dataController = controller;
+            nodeController = dataController.nodeController;
+            dataTable = dataController.dataTable;
+            dataNodeTable = dataController.dataNodeTable;
 
+            titleInput = nodeController.titleInput;
             titleInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue v, String ov, String nv) {
@@ -55,36 +54,24 @@ public class ControlDataTreeNodeAttributes extends BaseController {
         }
     }
 
-    public void setParameters(BaseDataTreeController controller) {
-        try {
-            dataController = controller;
-            nodeController = dataController.nodeController;
-            dataTable = dataController.dataTable;
-            dataNodeTable = dataController.dataNodeTable;
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
     /*
         attributes
      */
-    protected void loadAttributes(DataNode node) {
-        currentNode = node;
-        isSettingValues = true;
-        if (node != null) {
-            idInput.setText(node.getNodeid() + "");
-            titleInput.setText(node.getTitle());
-            timeInput.setText(DateTools.datetimeToString(node.getUpdateTime()));
-            selectButton.setVisible(node.getNodeid() < 0 || node.getParentid() < 0);
-        } else {
-            idInput.setText(message("NewData"));
-            titleInput.setText("");
-            timeInput.setText("");
-            selectButton.setVisible(true);
+    protected void loadAttributes() {
+        if (nodeController.currentNode == null) {
+            return;
         }
+        isSettingValues = true;
+        titleInput.setText(nodeController.currentNode.getTitle());
         isSettingValues = false;
+
+        if (nodeController.currentNode.getNodeid() < 0) {
+            idInput.setText(message("NewData"));
+        } else {
+            idInput.setText(nodeController.currentNode.getNodeid() + "");
+        }
+        timeInput.setText(DateTools.datetimeToString(nodeController.currentNode.getUpdateTime()));
+        selectButton.setVisible(nodeController.currentNode.getNodeid() < 0 || nodeController.parentNode == null);
         refreshParentNode();
         attributesChanged(false);
     }
@@ -94,7 +81,7 @@ public class ControlDataTreeNodeAttributes extends BaseController {
         parentController.setTitle(parentController.baseTitle + ": " + message("NewData"));
         idInput.setText(message("NewData"));
         titleInput.appendText(" " + message("Copy"));
-        currentNode = null;
+        nodeController.currentNode = null;
         selectButton.setVisible(true);
         isSettingValues = false;
         attributesChanged(true);
@@ -123,12 +110,12 @@ public class ControlDataTreeNodeAttributes extends BaseController {
             return null;
         }
         DataNode node = DataNode.create();
-        if (currentNode != null) {
-            node.setNodeid(currentNode.getNodeid());
+        if (nodeController.currentNode != null) {
+            node.setNodeid(nodeController.currentNode.getNodeid());
             node.setDataTable(dataTable);
         }
-        if (parentNode != null) {
-            node.setParentid(parentNode.getNodeid());
+        if (nodeController.parentNode != null) {
+            node.setParentid(nodeController.parentNode.getNodeid());
         }
         node.setTitle(title);
         node.setUpdateTime(new Date());
@@ -142,37 +129,30 @@ public class ControlDataTreeNodeAttributes extends BaseController {
     public void selectParent() {
 //        InfoTreeNodeParentController.open(this);
     }
-
-    protected void checkParentNode(DataNode node) {
-        if (parentNode == null || node.getNodeid() != parentNode.getNodeid()) {
-            return;
-        }
-        refreshParentNode();
-    }
-
-    protected void setParentNode(DataNode node) {
-        parentNode = node;
-        refreshParentNode();
-    }
+//
+//    protected void checkParentNode(DataNode node) {
+//        if (parentNode == null || node.getNodeid() != parentNode.getNodeid()) {
+//            return;
+//        }
+//        refreshParentNode();
+//    }
+//
+//    protected void setParentNode(DataNode node) {
+//        parentNode = node;
+//        refreshParentNode();
+//    }
 
     protected void refreshParentNode() {
-        FxTask updateTask = new FxTask<Void>(this) {
+        task = new FxTask<Void>(this) {
             private String chainName;
 
             @Override
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
-                    if (currentNode != null) {
-                        if (currentNode.getParentid() >= 0) {
-                            parentNode = dataNodeTable.query(conn, currentNode.getParentid());
-                        } else {
-                            parentNode = dataNodeTable.readData(conn, parentNode);
-                        }
-                    }
-                    if (parentNode == null) {
+                    if (nodeController.parentNode == null) {
                         chainName = "";
                     } else {
-                        chainName = dataController.treeController.chainName(conn, parentNode);
+                        chainName = dataController.treeController.chainName(conn, nodeController.parentNode);
                     }
                 } catch (Exception e) {
                     error = e.toString();
@@ -186,7 +166,7 @@ public class ControlDataTreeNodeAttributes extends BaseController {
                 chainLabel.setText(chainName);
             }
         };
-        start(updateTask, false);
+        start(task, thisPane);
     }
 
 }

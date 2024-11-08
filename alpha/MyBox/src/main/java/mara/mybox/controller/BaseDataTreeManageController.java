@@ -81,33 +81,6 @@ public abstract class BaseDataTreeManageController extends BaseDataTreeControlle
     /*
         node
      */
-    @FXML
-    protected void addNode() {
-        if (editNode(null)) {
-            nodeController.newNodeCreated();
-        }
-    }
-
-    @FXML
-    protected void copyNode() {
-        if (!checkBeforeNextAction()) {
-            return;
-        }
-        nodeController.attributesController.copyNode();
-        nodeController.newNodeCreated();
-    }
-
-    @FXML
-    protected void recoverNode() {
-        nodeController.editNode(nodeController.attributesController.currentNode);
-    }
-
-    @FXML
-    @Override
-    public void saveAction() {
-//        nodeController.attributesController.saveNode();
-    }
-
     @Override
     public void sourceFileChanged(File file) {
         nodeController.sourceFileChanged(file);

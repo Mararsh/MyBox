@@ -37,16 +37,10 @@ License:    Apache License Version 2.0
                 <TextField fx:id="idInput" disable="true" editable="false" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
             </children>
         </HBox>
-        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
-            <children>
-                <Label fx:id="nameLabel" minHeight="-Infinity" text="%Title" wrapText="true" />
-                <TextField fx:id="titleInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-            </children>
-        </HBox>
         <HBox alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" spacing="5.0">
             <children>
                 <Label fx:id="timeLabel" minHeight="-Infinity" text="%UpdateTime" wrapText="true" />
-                <TextField fx:id="timeInput" editable="false" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                <TextField fx:id="timeInput" disable="true" editable="false" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
             </children>
         </HBox>
     </children>

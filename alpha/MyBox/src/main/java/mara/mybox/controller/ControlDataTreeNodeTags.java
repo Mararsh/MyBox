@@ -30,7 +30,6 @@ public class ControlDataTreeNodeTags extends BaseTableViewController<DataTag> {
     protected TableDataTag dataTagTable;
     protected TableDataNodeTag dataNodeTagTable;
     protected BaseTable dataTable;
-    protected DataNode currentNode;
     protected boolean changed;
 
     @FXML
@@ -68,7 +67,6 @@ public class ControlDataTreeNodeTags extends BaseTableViewController<DataTag> {
     }
 
     public void loadTags(DataNode node) {
-        currentNode = node;
         tableData.clear();
         if (task != null) {
             task.cancel();
@@ -81,8 +79,8 @@ public class ControlDataTreeNodeTags extends BaseTableViewController<DataTag> {
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
                     tags = dataTagTable.readAll(conn);
-                    if (currentNode != null) {
-                        nodeTags = dataNodeTagTable.nodeTags(conn, currentNode.getNodeid());
+                    if (nodeController.currentNode != null) {
+                        nodeTags = dataNodeTagTable.nodeTags(conn, nodeController.currentNode.getNodeid());
                     }
                 } catch (Exception e) {
                     MyBoxLog.error(e);
@@ -124,7 +122,7 @@ public class ControlDataTreeNodeTags extends BaseTableViewController<DataTag> {
     @FXML
     @Override
     public void recoverAction() {
-        loadTags(currentNode);
+        loadTags(nodeController.currentNode);
     }
 
     @FXML

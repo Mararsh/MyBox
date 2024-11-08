@@ -2,6 +2,7 @@ package mara.mybox.controller;
 
 import java.sql.Connection;
 import java.util.List;
+import javafx.fxml.FXML;
 import javafx.scene.input.KeyEvent;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.DataNode;
@@ -100,6 +101,38 @@ public abstract class BaseDataTreeController extends BaseController {
         return nodeController.keyEventsFilter(event); // pass event to editor
     }
 
+    @FXML
+    @Override
+    public void saveAction() {
+        if (nodeController != null) {
+            nodeController.saveAction();
+        }
+    }
+
+    @FXML
+    @Override
+    public void addAction() {
+        if (nodeController != null) {
+            nodeController.addAction();
+        }
+    }
+
+    @FXML
+    @Override
+    public void copyAction() {
+        if (nodeController != null) {
+            nodeController.copyAction();
+        }
+    }
+
+    @FXML
+    @Override
+    public void recoverAction() {
+        if (nodeController != null) {
+            nodeController.recoverAction();
+        }
+    }
+
     /*
         synchronize
      */
@@ -116,12 +149,12 @@ public abstract class BaseDataTreeController extends BaseController {
         }
         long id = node.getNodeid();
 
-        if (nodeController.attributesController.parentNode != null
-                && id == nodeController.attributesController.parentNode.getNodeid()) {
-            nodeController.attributesController.setParentNode(node);
+        if (nodeController.parentNode != null
+                && id == nodeController.parentNode.getNodeid()) {
+//            nodeController.attributesController.setParentNode(node);
         }
-        if (nodeController.attributesController.currentNode != null
-                && id == nodeController.attributesController.currentNode.getNodeid()) {
+        if (nodeController.currentNode != null
+                && id == nodeController.currentNode.getNodeid()) {
             nodeController.attributesController.renamed(node.getTitle());
         }
     }
@@ -141,13 +174,13 @@ public abstract class BaseDataTreeController extends BaseController {
         }
         long id = node.getNodeid();
 
-        if (nodeController.attributesController.currentNode != null
-                && id == nodeController.attributesController.currentNode.getNodeid()) {
-            nodeController.attributesController.setParentNode(parent);
+        if (nodeController.currentNode != null
+                && id == nodeController.currentNode.getNodeid()) {
+//            nodeController.attributesController.setParentNode(parent);
         }
-        if (nodeController.attributesController.parentNode != null
-                && id == nodeController.attributesController.parentNode.getNodeid()) {
-            nodeController.attributesController.setParentNode(node);
+        if (nodeController.parentNode != null
+                && id == nodeController.parentNode.getNodeid()) {
+//            nodeController.attributesController.setParentNode(node);
         }
     }
 
@@ -169,10 +202,10 @@ public abstract class BaseDataTreeController extends BaseController {
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
 //                    tableController.loadedParent = tableTree.readData(conn, tableController.loadedParent);
-                    nodeController.attributesController.currentNode
-                            = dataNodeTable.readData(conn, nodeController.attributesController.currentNode);
-                    nodeController.attributesController.parentNode
-                            = dataNodeTable.readData(conn, nodeController.attributesController.parentNode);
+                    nodeController.currentNode
+                            = dataNodeTable.readData(conn, nodeController.currentNode);
+                    nodeController.parentNode
+                            = dataNodeTable.readData(conn, nodeController.parentNode);
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -182,7 +215,7 @@ public abstract class BaseDataTreeController extends BaseController {
 
             @Override
             protected void whenSucceeded() {
-                nodeController.editNode(nodeController.attributesController.currentNode);
+                nodeController.editNode(nodeController.currentNode);
 //                treeController.loadTree(tableController.loadedParent);
             }
         };
@@ -190,19 +223,19 @@ public abstract class BaseDataTreeController extends BaseController {
     }
 
     public void nodeSaved() {
-        if (nodeController.attributesController.currentNode == null) {
+        if (nodeController.currentNode == null) {
             return;
         }
-        treeController.updateNode(nodeController.attributesController.currentNode);
+        treeController.updateNode(nodeController.currentNode);
         nodeController.resetStatus();
     }
 
     public void newNodeSaved() {
-        if (nodeController.attributesController.currentNode == null) {
+        if (nodeController.currentNode == null) {
             return;
         }
-        treeController.addNewNode(treeController.find(nodeController.attributesController.parentNode),
-                nodeController.attributesController.currentNode, false);
+        treeController.addNewNode(treeController.find(nodeController.parentNode),
+                nodeController.currentNode, false);
         nodeController.resetStatus();
     }
 

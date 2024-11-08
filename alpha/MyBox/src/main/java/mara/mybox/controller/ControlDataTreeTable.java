@@ -409,9 +409,9 @@ public class ControlDataTreeTable extends BaseSysTableController<DataNode> {
             return;
         }
         if (loadedParent != null) {
-            manager.nodeController.attributesController.parentNode = loadedParent;
+            manager.nodeController.parentNode = loadedParent;
         }
-        manager.addNode();
+        manager.addAction();
     }
 
     @FXML
