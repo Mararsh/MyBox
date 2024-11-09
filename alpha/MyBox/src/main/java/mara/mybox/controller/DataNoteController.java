@@ -9,11 +9,11 @@ import mara.mybox.fxml.style.HtmlStyles;
  * @CreateDate 2018-7-31
  * @License Apache License Version 2.0
  */
-public class ControlNoteEditor extends BaseHtmlFormat {
+public class DataNoteController extends BaseHtmlFormat {
 
-    protected ControlDataNote noteController;
+    protected NoteNodeController noteController;
 
-    public void setParameters(ControlDataNote controller) {
+    public void setParameters(NoteNodeController controller) {
         try {
             this.noteController = controller;
 
@@ -29,7 +29,7 @@ public class ControlNoteEditor extends BaseHtmlFormat {
     protected void updateStatus(boolean changed) {
         super.updateStatus(changed);
         if (!isSettingValues && noteController != null) {
-            noteController.nodeEditor.valueChanged(changed);
+            noteController.valueChanged(changed);
         }
     }
 

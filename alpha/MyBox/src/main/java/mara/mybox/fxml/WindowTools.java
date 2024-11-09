@@ -12,7 +12,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Popup;
@@ -29,6 +28,7 @@ import mara.mybox.db.DerbyBase;
 import mara.mybox.db.DerbyBase.DerbyStatus;
 import mara.mybox.db.table.TableUserConf;
 import mara.mybox.dev.MyBoxLog;
+import static mara.mybox.value.AppValues.AppIcon;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.UserConfig;
 
@@ -39,7 +39,6 @@ import mara.mybox.value.UserConfig;
  */
 public class WindowTools {
 
-    public static final Image AppIcon = new Image("img/MyBox.png");
 
     /*
      * make stage

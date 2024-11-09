@@ -9,7 +9,6 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import mara.mybox.controller.MyBoxLoadingController;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
@@ -55,7 +54,7 @@ public class MainApp extends Application {
             Pane pane = fxmlLoader.load();
             Scene scene = new Scene(pane);
             stage.setTitle("MyBox v" + AppValues.AppVersion);
-            stage.getIcons().add(WindowTools.AppIcon);
+            stage.getIcons().add(AppValues.AppIcon);
             stage.setScene(scene);
             stage.show();
 
@@ -78,7 +77,7 @@ public class MainApp extends Application {
             Pane pane = fxmlLoader.load();
             Scene scene = new Scene(pane);
             stage.setTitle("MyBox v" + AppValues.AppVersion);
-            stage.getIcons().add(WindowTools.AppIcon);
+            stage.getIcons().add(AppValues.AppIcon);
             stage.setScene(scene);
             stage.show();
             MyBoxLoadingController loadController = (MyBoxLoadingController) fxmlLoader.getController();

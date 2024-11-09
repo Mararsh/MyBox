@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.util.Date;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
@@ -20,6 +21,7 @@ import mara.mybox.db.table.TableDataTag;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
+import mara.mybox.fxml.WindowTools;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -27,10 +29,12 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2024-8-3
  * @License Apache License Version 2.0
  */
-public abstract class BaseDataTreeNodeController extends BaseController {
+public class ControlDataNodeEditor extends BaseController {
 
-    protected BaseDataTreeController dataController;
+    protected DataTreeController dataController;
     protected ControlDataTreeView treeController;
+    protected BaseDataNodeValues dataEditor;
+
     protected String defaultExt;
     protected final SimpleBooleanProperty nodeChanged;
     protected BaseController valuesEditor;
@@ -47,25 +51,23 @@ public abstract class BaseDataTreeNodeController extends BaseController {
     @FXML
     protected TextField titleInput;
     @FXML
-    protected ControlDataTreeNodeAttributes attributesController;
+    protected ScrollPane dataPane;
+    @FXML
+    protected ControlDataNodeAttributes attributesController;
     @FXML
     protected ControlDataNodeTags tagsController;
 
-    public BaseDataTreeNodeController() {
+    public ControlDataNodeEditor() {
         defaultExt = "txt";
         nodeChanged = new SimpleBooleanProperty(false);
     }
-
-    protected abstract void editValues(DataValues values);
-
-    protected abstract DataValues pickNodeValues();
 
     @Override
     public void setFileType() {
         setFileType(VisitHistory.FileType.Text);
     }
 
-    public void setParameters(BaseDataTreeController controller) {
+    public void setParameters(DataTreeController controller) {
         try {
             dataController = controller;
             dataTable = dataController.dataTable;
@@ -79,7 +81,11 @@ public abstract class BaseDataTreeNodeController extends BaseController {
             recoverButton = controller.recoverButton;
 
             attributesController.setParameters(dataController);
-//            tagsController.setParameters(this);
+            tagsController.setParameters(this);
+
+            dataEditor = (BaseDataNodeValues) WindowTools.loadFxml(dataTable.getFxml());
+            dataPane.setContent(dataEditor.getMyScene().getRoot());
+            dataEditor.refreshStyle();
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -127,7 +133,7 @@ public abstract class BaseDataTreeNodeController extends BaseController {
         try {
             attributesController.loadAttributes();
             tagsController.loadTags(currentNode);
-            editValues(dataValues);
+            dataEditor.editValues(dataValues);
             resetStatus();
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -239,7 +245,7 @@ public abstract class BaseDataTreeNodeController extends BaseController {
             popError(message("Invalid") + ": " + message("Node"));
             return;
         }
-        DataValues values = pickNodeValues();
+        DataValues values = dataEditor.pickNodeValues();
         if (values == null) {
             popError(message("Invalid") + ": " + message("Value"));
             return;
@@ -321,7 +327,7 @@ public abstract class BaseDataTreeNodeController extends BaseController {
             dataValues = null;
             attributesController.loadAttributes();
             tagsController.loadTags(currentNode);
-            editValues(dataValues);
+            dataEditor.editValues(dataValues);
             valueChanged = false;
             tagsController.changed = false;
             attributesController.changed = true;

@@ -1,44 +1,52 @@
 package mara.mybox.controller;
 
+import java.io.File;
 import java.sql.Connection;
 import java.util.List;
+import java.util.Optional;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.Region;
+import javafx.stage.Stage;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.DataNode;
-import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.BaseDataTable;
 import mara.mybox.db.table.TableDataNode;
 import mara.mybox.db.table.TableDataNodeTag;
 import mara.mybox.db.table.TableDataTag;
+import mara.mybox.db.table.TableInfo;
+import mara.mybox.db.table.TableNote;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.WindowTools;
+import mara.mybox.value.Fxmls;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
- * @CreateDate 2022-3-9
+ * @CreateDate 2024-8-8
  * @License Apache License Version 2.0
  */
-public abstract class BaseDataTreeController extends BaseController {
-
-    protected ControlDataTreeView treeController;
-    protected BaseDataTreeNodeController nodeController;
+public class DataTreeController extends BaseController {
 
     protected BaseDataTable dataTable;
     protected TableDataNode dataNodeTable;
     protected TableDataTag dataTagTable;
     protected TableDataNodeTag dataNodeTagTable;
 
-    @Override
-    public void setFileType() {
-        setFileType(VisitHistory.FileType.Text);
-    }
+    @FXML
+    protected ControlDataTreeManage treeController;
+    @FXML
+    protected ControlDataNodeEditor nodeController;
 
-    public void initTree() {
+    public void initTree(BaseDataTable table) {
         try {
-            if (dataTable == null || nodeController == null || treeController == null) {
+            if (table == null) {
                 return;
             }
+            dataTable = table;
             dataNodeTable = new TableDataNode(dataTable);
             dataTagTable = new TableDataTag(dataTable);
             dataNodeTagTable = new TableDataNodeTag(dataTable);
@@ -49,6 +57,117 @@ public abstract class BaseDataTreeController extends BaseController {
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+    }
+
+    /*
+        tree
+     */
+    public boolean editNode(DataNode node) {
+        if (!checkBeforeNextAction()) {
+            return false;
+        }
+        return nodeController.editNode(node);
+    }
+
+    @FXML
+    protected void moveAction() {
+//        InfoTreeNodesMoveController.oneOpen(this);
+    }
+
+    public void pasteNode(DataNode node) {
+        nodeController.pasteNode(node);
+    }
+
+    public void executeNode(DataNode node) {
+        if (node == null) {
+            return;
+        }
+        editNode(node);
+        if (nodeController.startButton != null) {
+            nodeController.startAction();
+        } else if (nodeController.goButton != null) {
+            nodeController.goAction();
+        } else if (startButton != null) {
+            startAction();
+        } else if (goButton != null) {
+            goAction();
+        }
+    }
+
+
+    /*
+        node
+     */
+    @Override
+    public void sourceFileChanged(File file) {
+        nodeController.sourceFileChanged(file);
+    }
+
+    public boolean isNodeChanged() {
+        return nodeController.nodeChanged.get();
+    }
+
+    @Override
+    public boolean checkBeforeNextAction() {
+        if (!isNodeChanged()) {
+            return true;
+        } else {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle(getMyStage().getTitle());
+            alert.setContentText(message("DataChanged"));
+            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+            ButtonType buttonSave = new ButtonType(message("Save"));
+            ButtonType buttonNotSave = new ButtonType(message("NotSave"));
+            ButtonType buttonCancel = new ButtonType(message("Cancel"));
+            alert.getButtonTypes().setAll(buttonSave, buttonNotSave, buttonCancel);
+            Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+            stage.setAlwaysOnTop(true);
+            stage.toFront();
+
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result == null || !result.isPresent()) {
+                return false;
+            }
+            if (result.get() == buttonSave) {
+                saveAction();
+                return false;
+            } else if (result.get() == buttonNotSave) {
+                nodeController.nodeChanged.set(false);
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+
+    public void popNode(DataNode item) {
+        if (item == null) {
+            return;
+        }
+        if (task != null) {
+            task.cancel();
+        }
+        task = new FxSingletonTask<Void>(this) {
+            private String html;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    html = item.toHtml();
+                    return html != null && !html.isBlank();
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                HtmlTableController.open(null, html);
+            }
+
+        };
+        start(task);
     }
 
     @Override
@@ -219,6 +338,25 @@ public abstract class BaseDataTreeController extends BaseController {
                 setTitle(currentTitle.substring(0, currentTitle.length() - 2));
             }
         }
+    }
+
+
+    /*
+        static methods
+     */
+    public static DataTreeController open(BaseDataTable table) {
+        DataTreeController controller = (DataTreeController) WindowTools.openStage(Fxmls.DataTreeFxml);
+        controller.requestMouse();
+        controller.initTree(table);
+        return controller;
+    }
+
+    public static DataTreeController infoTree() {
+        return open(new TableInfo());
+    }
+
+    public static DataTreeController noteTree() {
+        return open(new TableNote());
     }
 
 }

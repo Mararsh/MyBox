@@ -23,9 +23,9 @@ import mara.mybox.fxml.cell.TableColorCell;
  * @CreateDate 2024-11-1
  * @License Apache License Version 2.0
  */
-public class ControlDataTreeNodeTags extends BaseTableViewController<DataTag> {
+public class ControlDataNodeTags extends BaseTableViewController<DataTag> {
 
-    protected BaseDataTreeNodeController nodeController;
+    protected ControlDataNodeEditor nodeEditor;
     protected TableDataNode dataNodeTable;
     protected TableDataTag dataTagTable;
     protected TableDataNodeTag dataNodeTagTable;
@@ -52,15 +52,15 @@ public class ControlDataTreeNodeTags extends BaseTableViewController<DataTag> {
         }
     }
 
-    public void setParameters(BaseDataTreeNodeController controller) {
+    public void setParameters(ControlDataNodeEditor controller) {
         try {
-            this.nodeController = controller;
-            this.parentController = nodeController;
-            this.baseName = nodeController.baseName;
-            dataTable = nodeController.dataTable;
-            dataNodeTable = nodeController.dataNodeTable;
-            dataTagTable = nodeController.dataTagTable;
-            dataNodeTagTable = nodeController.dataNodeTagTable;
+            this.nodeEditor = controller;
+            this.parentController = nodeEditor;
+            this.baseName = nodeEditor.baseName;
+            dataTable = nodeEditor.dataTable;
+            dataNodeTable = nodeEditor.dataNodeTable;
+            dataTagTable = nodeEditor.dataTagTable;
+            dataNodeTagTable = nodeEditor.dataNodeTagTable;
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -79,8 +79,8 @@ public class ControlDataTreeNodeTags extends BaseTableViewController<DataTag> {
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
                     tags = dataTagTable.readAll(conn);
-                    if (nodeController.currentNode != null) {
-                        nodeTags = dataNodeTagTable.nodeTags(conn, nodeController.currentNode.getNodeid());
+                    if (nodeEditor.currentNode != null) {
+                        nodeTags = dataNodeTagTable.nodeTags(conn, nodeEditor.currentNode.getNodeid());
                     }
                 } catch (Exception e) {
                     MyBoxLog.error(e);
@@ -122,7 +122,7 @@ public class ControlDataTreeNodeTags extends BaseTableViewController<DataTag> {
     @FXML
     @Override
     public void recoverAction() {
-        loadTags(nodeController.currentNode);
+        loadTags(nodeEditor.currentNode);
     }
 
     @FXML
@@ -132,12 +132,12 @@ public class ControlDataTreeNodeTags extends BaseTableViewController<DataTag> {
 
     @Override
     public void tableChanged(boolean tableChanged) {
-        if (isSettingValues || nodeController == null) {
+        if (isSettingValues || nodeEditor == null) {
             return;
         }
         super.tableChanged(changed);
         changed = tableChanged;
-        nodeController.tagsChanged();
+        nodeEditor.tagsChanged();
     }
 
 }

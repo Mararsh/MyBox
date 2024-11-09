@@ -1,5 +1,7 @@
 package mara.mybox.value;
 
+import javafx.scene.image.Image;
+
 /**
  * @Author Mara
  * @CreateDate 2021-8-1
@@ -13,6 +15,7 @@ public class AppValues {
     public static final String AppDerbyUser = "mara";
     public static final String AppDerbyPassword = "mybox";
     public static final int AppYear = 2024;
+    public static final Image AppIcon = new Image("img/MyBox.png");
 
     public static final String MyBoxSeparator = "##MyBox#";
     public static final String MyBoxStyle = "/styles/MyBox.css";

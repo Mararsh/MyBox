@@ -45,7 +45,7 @@ import mara.mybox.value.UserConfig;
  */
 public class ControlDataTreeView extends BaseTreeTableViewController<DataNode> {
 
-    protected BaseDataTreeController dataController;
+    protected BaseDataTreeController treeController;
     protected BaseDataTreeNodeController nodeController;
     protected static final int AutoExpandThreshold = 500;
     protected boolean expandAll;
@@ -111,11 +111,11 @@ public class ControlDataTreeView extends BaseTreeTableViewController<DataNode> {
     }
 
     public void setParameters(BaseDataTreeController controller) {
-        dataController = controller;
+        treeController = controller;
         nodeController = controller.nodeController;
-        dataTable = dataController.dataTable;
-        nodeTable = dataController.dataNodeTable;
-        parentController = dataController;
+        dataTable = treeController.dataTable;
+        nodeTable = treeController.dataNodeTable;
+        parentController = treeController;
         baseName = dataTable.getTableName();
         baseTitle = baseName;
 
@@ -485,10 +485,33 @@ public class ControlDataTreeView extends BaseTreeTableViewController<DataNode> {
     }
 
     protected void popNode(TreeItem<DataNode> item) {
-        if (item == null || dataController == null) {
+        if (item == null || item.getValue() == null) {
             return;
         }
-        dataController.popNode(item.getValue());
+        if (task != null) {
+            task.cancel();
+        }
+        task = new FxSingletonTask<Void>(this) {
+            private String html;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    html = item.getValue().toHtml();
+                    return html != null && !html.isBlank();
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                HtmlTableController.open(null, html);
+            }
+
+        };
+        start(task);
     }
 
     @Override

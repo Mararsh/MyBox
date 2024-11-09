@@ -5,6 +5,7 @@ import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.DataValues;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -18,6 +19,7 @@ public class TableNote extends BaseDataTable<DataValues> {
         tableName = "Note";
         tableTitle = message("Notes");
         idColumnName = "noteid";
+        fxml = Fxmls.ControlDataNoteFxml;
         defineColumns();
     }
 

@@ -19,6 +19,8 @@ import mara.mybox.value.Languages;
  */
 public abstract class BaseDataTable<D> extends BaseTable<D> {
 
+    protected String fxml;
+
     /*
         abstract
      */
@@ -102,6 +104,17 @@ public abstract class BaseDataTable<D> extends BaseTable<D> {
             xml += prefix + "</Tags>\n";
         }
         return xml;
+    }
+
+    /*
+        get/set
+     */
+    public String getFxml() {
+        return fxml;
+    }
+
+    public void setFxml(String fxml) {
+        this.fxml = fxml;
     }
 
 }

@@ -35,7 +35,7 @@ import static mara.mybox.value.Languages.message;
  */
 public class DataTreeTagsController extends BaseTableViewController<DataTag> {
 
-    protected ControlDataTreeNodeTags nodeTagsController;
+    protected ControlDataNodeTags nodeTagsController;
     protected TableDataNode dataNodeTable;
     protected TableDataTag dataTagTable;
     protected BaseTable dataTable;
@@ -132,7 +132,7 @@ public class DataTreeTagsController extends BaseTableViewController<DataTag> {
         }
     }
 
-    public void setParameters(ControlDataTreeNodeTags controller) {
+    public void setParameters(ControlDataNodeTags controller) {
         try {
             nodeTagsController = controller;
             parentController = controller;
@@ -314,7 +314,7 @@ public class DataTreeTagsController extends BaseTableViewController<DataTag> {
     /*
         static methods
      */
-    public static DataTreeTagsController open(ControlDataTreeNodeTags tagsController) {
+    public static DataTreeTagsController open(ControlDataNodeTags tagsController) {
         DataTreeTagsController controller = (DataTreeTagsController) WindowTools.branchStage(
                 tagsController, Fxmls.DataTreeTagsFxml);
         controller.setParameters(tagsController);

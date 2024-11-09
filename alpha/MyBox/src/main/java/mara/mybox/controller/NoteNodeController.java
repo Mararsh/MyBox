@@ -22,8 +22,7 @@ public class NoteNodeController extends BaseDataTreeNodeController {
 
             valuesEditor = valuesController;
 
-            valuesController.setParameters(this);
-
+//            valuesController.setParameters(this);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

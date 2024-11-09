@@ -39,6 +39,21 @@ import mara.mybox.value.UserConfig;
  */
 public class ControlDataTreeManage extends ControlDataTreeView {
 
+    protected DataTreeController dataController;
+    protected ControlDataNodeEditor nodeEditor;
+
+    public void setParameters(DataTreeController controller) {
+        dataController = controller;
+        dataTable = dataController.dataTable;
+        nodeTable = dataController.dataNodeTable;
+        parentController = dataController;
+        nodeEditor = dataController.nodeController;
+        baseName = dataTable.getTableName();
+        baseTitle = baseName;
+
+        loadTree();
+    }
+
     @Override
     public void loadTree() {
         try (Connection conn = DerbyBase.getConnection()) {
@@ -158,7 +173,7 @@ public class ControlDataTreeManage extends ControlDataTreeView {
         menu.setDisable(treeItem == null);
         items.add(menu);
 
-        if (dataController.nodeController.nodeExecutable) {
+        if (nodeEditor.nodeExecutable) {
             menu = new MenuItem(message("Execute"), StyleTools.getIconImageView("iconGo.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 executeNode(treeItem);
@@ -195,7 +210,7 @@ public class ControlDataTreeManage extends ControlDataTreeView {
 
         MenuItem menu = new MenuItem(message("Tags"), StyleTools.getIconImageView("iconTag.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
-            nodeController.tagsController.manageAction();
+            nodeEditor.tagsController.manageAction();
         });
         items.add(menu);
 
@@ -280,7 +295,7 @@ public class ControlDataTreeManage extends ControlDataTreeView {
 
         menu.getItems().addAll(editNodeMenu, pasteNodeMenu, popNodeMenu);
 
-        if (dataController.nodeController.nodeExecutable) {
+        if (nodeEditor.nodeExecutable) {
             RadioMenuItem executeNodeMenu = new RadioMenuItem(message("Execute"), StyleTools.getIconImageView("iconGo.png"));
             executeNodeMenu.setSelected("Execute".equals(currentClick));
             executeNodeMenu.setOnAction(new EventHandler<ActionEvent>() {
@@ -508,7 +523,7 @@ public class ControlDataTreeManage extends ControlDataTreeView {
         if (item == null) {
             return;
         }
-        nodeController.editNode(item.getValue());
+        nodeEditor.editNode(item.getValue());
     }
 
     protected void pasteNode(TreeItem<DataNode> item) {
@@ -528,7 +543,7 @@ public class ControlDataTreeManage extends ControlDataTreeView {
     protected void exportNode(TreeItem<DataNode> item) {
         DataTreeExportController exportController
                 = (DataTreeExportController) childStage(Fxmls.DataTreeExportFxml);
-        exportController.setParamters(dataController, item);
+//        exportController.setParamters(dataController, item);
     }
 
     @FXML
