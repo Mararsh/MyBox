@@ -191,6 +191,10 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
         showItemMenu(item);
     }
 
+    public void addNewNode(NodeP parent, NodeP node) {
+        addNewNode(find(parent), node, false);
+    }
+
     public void addNewNode(TreeItem<NodeP> parent, NodeP node, boolean select) {
         if (parent == null || node == null) {
             return;

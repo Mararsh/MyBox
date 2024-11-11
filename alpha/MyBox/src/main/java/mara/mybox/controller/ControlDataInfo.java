@@ -16,7 +16,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2024-8-8
  * @License Apache License Version 2.0
  */
-public class ControlDataInfo extends BaseDataNodeValues {
+public class ControlDataInfo extends BaseDataNodeValuesController {
 
     @FXML
     protected TextArea infoInput;
@@ -29,7 +29,7 @@ public class ControlDataInfo extends BaseDataNodeValues {
             infoInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue v, String ov, String nv) {
-                    nodeEditor.valueChanged(true);
+                    valueChanged(true);
                 }
             });
 

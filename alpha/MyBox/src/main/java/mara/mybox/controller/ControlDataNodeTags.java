@@ -1,6 +1,7 @@
 package mara.mybox.controller;
 
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
@@ -31,6 +32,7 @@ public class ControlDataNodeTags extends BaseTableViewController<DataTag> {
     protected TableDataNodeTag dataNodeTagTable;
     protected BaseTable dataTable;
     protected boolean changed;
+    protected List<Long> loadedTags = new ArrayList<>();
 
     @FXML
     protected TableColumn<DataTag, String> tagColumn;
@@ -58,9 +60,9 @@ public class ControlDataNodeTags extends BaseTableViewController<DataTag> {
             this.parentController = nodeEditor;
             this.baseName = nodeEditor.baseName;
             dataTable = nodeEditor.dataTable;
-            dataNodeTable = nodeEditor.dataNodeTable;
-            dataTagTable = nodeEditor.dataTagTable;
-            dataNodeTagTable = nodeEditor.dataNodeTagTable;
+            dataNodeTable = nodeEditor.nodeTable;
+            dataTagTable = nodeEditor.tagTable;
+            dataNodeTagTable = nodeEditor.nodeTagsTable;
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -68,6 +70,7 @@ public class ControlDataNodeTags extends BaseTableViewController<DataTag> {
 
     public void loadTags(DataNode node) {
         tableData.clear();
+        loadedTags.clear();
         if (task != null) {
             task.cancel();
         }
@@ -79,8 +82,15 @@ public class ControlDataNodeTags extends BaseTableViewController<DataTag> {
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
                     tags = dataTagTable.readAll(conn);
-                    if (nodeEditor.currentNode != null) {
-                        nodeTags = dataNodeTagTable.nodeTags(conn, nodeEditor.currentNode.getNodeid());
+                    if (nodeEditor.currentNode != null
+                            && nodeEditor.currentNode.getNodeid() >= 0) {
+                        nodeTags = dataNodeTagTable.nodeTags(conn,
+                                nodeEditor.currentNode.getNodeid());
+                        if (nodeTags != null && !nodeTags.isEmpty()) {
+                            for (DataNodeTag nodeTag : nodeTags) {
+                                loadedTags.add(nodeTag.getTtagid());
+                            }
+                        }
                     }
                 } catch (Exception e) {
                     MyBoxLog.error(e);
@@ -93,26 +103,16 @@ public class ControlDataNodeTags extends BaseTableViewController<DataTag> {
             protected void whenSucceeded() {
                 if (tags != null && !tags.isEmpty()) {
                     tableData.setAll(tags);
-                    if (nodeTags != null && !nodeTags.isEmpty()) {
+                    if (!loadedTags.isEmpty()) {
                         isSettingValues = true;
                         for (DataTag tag : tableData) {
-                            long tagid = tag.getTagid();
-                            for (DataNodeTag nodeTag : nodeTags) {
-                                if (nodeTag.getTtagid() == tagid) {
-                                    tableView.getSelectionModel().select(tag);
-                                    break;
-                                }
+                            if (loadedTags.contains(tag.getTagid())) {
+                                tableView.getSelectionModel().select(tag);
                             }
                         }
                         isSettingValues = false;
                     }
                 }
-            }
-
-            @Override
-            protected void finalAction() {
-                super.finalAction();
-                tableChanged(false);
             }
 
         };
@@ -131,13 +131,41 @@ public class ControlDataNodeTags extends BaseTableViewController<DataTag> {
     }
 
     @Override
-    public void tableChanged(boolean tableChanged) {
+    public void notifySelected() {
         if (isSettingValues || nodeEditor == null) {
             return;
         }
-        super.tableChanged(changed);
-        changed = tableChanged;
-        nodeEditor.tagsChanged();
+        isSettingValues = true;
+        changed = false;
+        List<DataTag> selected = tableView.getSelectionModel().getSelectedItems();
+        if (selected == null || selected.isEmpty()) {
+            changed = !loadedTags.isEmpty();
+        } else {
+            if (loadedTags.isEmpty()) {
+                changed = true;
+            } else {
+                List<Long> selectedIDs = new ArrayList<>();
+                for (DataTag tag : selected) {
+                    selectedIDs.add(tag.getTagid());
+                }
+                for (long id : selectedIDs) {
+                    if (!loadedTags.contains(id)) {
+                        changed = true;
+                        break;
+                    }
+                }
+                if (!changed) {
+                    for (long id : loadedTags) {
+                        if (!selectedIDs.contains(id)) {
+                            changed = true;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        isSettingValues = false;
+        nodeEditor.updateStatus();
     }
 
 }

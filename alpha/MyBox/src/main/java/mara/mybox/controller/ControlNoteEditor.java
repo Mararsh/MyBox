@@ -29,7 +29,7 @@ public class ControlNoteEditor extends BaseHtmlFormat {
     protected void updateStatus(boolean changed) {
         super.updateStatus(changed);
         if (!isSettingValues && noteController != null) {
-            noteController.nodeEditor.valueChanged(changed);
+            noteController.valueChanged(changed);
         }
     }
 

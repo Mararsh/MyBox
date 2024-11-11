@@ -9,7 +9,7 @@ import mara.mybox.dev.MyBoxLog;
  * @CreateDate 2024-8-8
  * @License Apache License Version 2.0
  */
-public class ControlDataNote extends BaseDataNodeValues {
+public class ControlDataNote extends BaseDataNodeValuesController {
 
     @FXML
     protected ControlNoteEditor noteController;

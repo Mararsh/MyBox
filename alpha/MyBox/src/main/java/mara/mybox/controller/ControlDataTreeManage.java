@@ -42,18 +42,6 @@ public class ControlDataTreeManage extends ControlDataTreeView {
     protected DataTreeController dataController;
     protected ControlDataNodeEditor nodeEditor;
 
-    public void setParameters(DataTreeController controller) {
-        dataController = controller;
-        dataTable = dataController.dataTable;
-        nodeTable = dataController.dataNodeTable;
-        parentController = dataController;
-        nodeEditor = dataController.nodeController;
-        baseName = dataTable.getTableName();
-        baseTitle = baseName;
-
-        loadTree();
-    }
-
     @Override
     public void loadTree() {
         try (Connection conn = DerbyBase.getConnection()) {

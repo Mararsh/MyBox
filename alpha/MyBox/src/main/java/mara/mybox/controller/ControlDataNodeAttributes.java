@@ -26,7 +26,7 @@ public class ControlDataNodeAttributes extends BaseController {
     protected DataTreeController treeController;
     protected ControlDataNodeEditor nodeEditor;
     protected BaseDataTable dataTable;
-    protected TableDataNode dataNodeTable;
+    protected TableDataNode nodeTable;
     protected boolean changed;
 
     @FXML
@@ -39,7 +39,7 @@ public class ControlDataNodeAttributes extends BaseController {
             treeController = controller;
             nodeEditor = treeController.nodeController;
             dataTable = treeController.dataTable;
-            dataNodeTable = treeController.dataNodeTable;
+            nodeTable = treeController.nodeTable;
 
             titleInput = nodeEditor.titleInput;
             titleInput.textProperty().addListener(new ChangeListener<String>() {
@@ -76,15 +76,13 @@ public class ControlDataNodeAttributes extends BaseController {
         attributesChanged(false);
     }
 
-    protected void copyNode() {
+    protected void copyAttributes() {
         isSettingValues = true;
-        parentController.setTitle(parentController.baseTitle + ": " + message("NewData"));
         idInput.setText(message("NewData"));
         titleInput.appendText(" " + message("Copy"));
-        nodeEditor.currentNode = null;
         selectButton.setVisible(true);
+        changed = true;
         isSettingValues = false;
-        attributesChanged(true);
     }
 
     public void renamed(String newName) {
@@ -101,7 +99,7 @@ public class ControlDataNodeAttributes extends BaseController {
             return;
         }
         this.changed = changed;
-        nodeEditor.attributesChanged();
+        nodeEditor.updateStatus();
     }
 
     protected DataNode pickAttributes() {
@@ -152,7 +150,7 @@ public class ControlDataNodeAttributes extends BaseController {
                     if (nodeEditor.parentNode == null) {
                         chainName = "";
                     } else {
-                        chainName = treeController.treeController.chainName(conn, nodeEditor.parentNode);
+                        chainName = treeController.chainName(conn, nodeEditor.parentNode);
                     }
                 } catch (Exception e) {
                     error = e.toString();

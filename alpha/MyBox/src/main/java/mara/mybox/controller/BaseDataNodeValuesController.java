@@ -9,7 +9,7 @@ import mara.mybox.dev.MyBoxLog;
  * @CreateDate 2024-11-9
  * @License Apache License Version 2.0
  */
-public abstract class BaseDataNodeValues extends BaseController {
+public abstract class BaseDataNodeValuesController extends BaseController {
 
     protected ControlDataNodeEditor nodeEditor;
     protected BaseTable dataTable;
@@ -34,6 +34,25 @@ public abstract class BaseDataNodeValues extends BaseController {
 
     public void initEditor() {
 
+    }
+
+    public void valueChanged(boolean changed) {
+        if (isSettingValues || nodeEditor == null) {
+            return;
+        }
+        this.changed = changed;
+        nodeEditor.updateStatus();
+    }
+
+    protected DataValues copyValues() {
+        try {
+            currentValues = pickNodeValues();
+            currentValues.setValue(dataTable.getIdColumnName(), (long) -1);
+            return currentValues;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
     }
 
 }
