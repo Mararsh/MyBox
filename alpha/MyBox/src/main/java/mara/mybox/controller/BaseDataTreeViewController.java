@@ -181,7 +181,7 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
             return;
         }
         treeItem.setValue(node);
-        unfold(treeItem, false);
+//        unfold(treeItem, false);
     }
 
     /*

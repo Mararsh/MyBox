@@ -8,7 +8,6 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.paint.Color;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.data.DataNode;
 import mara.mybox.db.data.DataNodeTag;
 import mara.mybox.db.data.DataTag;
 import mara.mybox.db.table.BaseTable;
@@ -68,7 +67,58 @@ public class ControlDataNodeTags extends BaseTableViewController<DataTag> {
         }
     }
 
-    public void loadTags(DataNode node) {
+    public void loadTags() {
+        tableData.clear();
+        loadedTags.clear();
+        if (task != null) {
+            task.cancel();
+        }
+        task = new FxTask<Void>(this) {
+            private List<DataTag> tags;
+            private List<DataNodeTag> nodeTags;
+
+            @Override
+            protected boolean handle() {
+                try (Connection conn = DerbyBase.getConnection()) {
+                    tags = dataTagTable.readAll(conn);
+                    if (nodeEditor.currentNode != null
+                            && nodeEditor.currentNode.getNodeid() >= 0) {
+                        nodeTags = dataNodeTagTable.nodeTags(conn,
+                                nodeEditor.currentNode.getNodeid());
+                        if (nodeTags != null && !nodeTags.isEmpty()) {
+                            for (DataNodeTag nodeTag : nodeTags) {
+                                loadedTags.add(nodeTag.getTtagid());
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    MyBoxLog.error(e);
+                    return false;
+                }
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                if (tags != null && !tags.isEmpty()) {
+                    tableData.setAll(tags);
+                    if (!loadedTags.isEmpty()) {
+                        isSettingValues = true;
+                        for (DataTag tag : tableData) {
+                            if (loadedTags.contains(tag.getTagid())) {
+                                tableView.getSelectionModel().select(tag);
+                            }
+                        }
+                        isSettingValues = false;
+                    }
+                }
+            }
+
+        };
+        start(task, thisPane);
+    }
+
+    public void copyTags() {
         tableData.clear();
         loadedTags.clear();
         if (task != null) {
@@ -122,7 +172,7 @@ public class ControlDataNodeTags extends BaseTableViewController<DataTag> {
     @FXML
     @Override
     public void recoverAction() {
-        loadTags(nodeEditor.currentNode);
+        loadTags();
     }
 
     @FXML

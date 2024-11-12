@@ -76,15 +76,6 @@ public class ControlDataNodeAttributes extends BaseController {
         attributesChanged(false);
     }
 
-    protected void copyAttributes() {
-        isSettingValues = true;
-        idInput.setText(message("NewData"));
-        titleInput.appendText(" " + message("Copy"));
-        selectButton.setVisible(true);
-        changed = true;
-        isSettingValues = false;
-    }
-
     public void renamed(String newName) {
         if (titleInput == null) {
             return;
@@ -107,10 +98,9 @@ public class ControlDataNodeAttributes extends BaseController {
         if (title == null || title.isBlank()) {
             return null;
         }
-        DataNode node = DataNode.create();
+        DataNode node = DataNode.create().setDataTable(dataTable);
         if (nodeEditor.currentNode != null) {
             node.setNodeid(nodeEditor.currentNode.getNodeid());
-            node.setDataTable(dataTable);
         }
         if (nodeEditor.parentNode != null) {
             node.setParentid(nodeEditor.parentNode.getNodeid());

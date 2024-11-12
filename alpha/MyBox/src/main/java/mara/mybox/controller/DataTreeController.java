@@ -41,6 +41,7 @@ import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.StringTools;
+import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -1005,12 +1006,21 @@ public class DataTreeController extends BaseDataTreeViewController {
         static methods
      */
     public static DataTreeController open(BaseController pController, BaseDataTable table) {
-        DataTreeController controller = (DataTreeController) (pController != null
-                ? pController.loadScene(Fxmls.DataTreeFxml)
-                : WindowTools.openStage(Fxmls.DataTreeFxml));
-        controller.requestMouse();
-        controller.initTree(table);
-        return controller;
+        try {
+            DataTreeController controller;
+            if (AppVariables.closeCurrentWhenOpenTool || pController == null) {
+                controller = (DataTreeController) WindowTools.openStage(Fxmls.DataTreeFxml);
+            } else {
+                controller = (DataTreeController) pController.loadScene(Fxmls.DataTreeFxml);
+            }
+            controller.requestMouse();
+            controller.initTree(table);
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+
     }
 
     public static DataTreeController infoTree(BaseController pController) {

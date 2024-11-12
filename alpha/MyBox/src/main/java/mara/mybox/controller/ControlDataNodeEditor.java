@@ -32,7 +32,7 @@ import static mara.mybox.value.Languages.message;
 public class ControlDataNodeEditor extends BaseController {
 
     protected DataTreeController treeController;
-    protected BaseDataNodeValuesController dataController;
+    protected BaseDataValuesController dataController;
 
     protected String defaultExt;
     protected final SimpleBooleanProperty nodeChanged;
@@ -80,7 +80,7 @@ public class ControlDataNodeEditor extends BaseController {
             attributesController.setParameters(treeController);
             tagsController.setParameters(this);
 
-            dataController = (BaseDataNodeValuesController) WindowTools.loadFxml(dataTable.getFxml());
+            dataController = (BaseDataValuesController) WindowTools.loadFxml(dataTable.getFxml());
             dataPane.setContent(dataController.getMyScene().getRoot());
             dataController.refreshStyle();
             dataController.setParameters(this);
@@ -107,22 +107,22 @@ public class ControlDataNodeEditor extends BaseController {
                     if (values == null) {
                         return false;
                     }
-                    dataValues = values;
+                    dataValues = values.setTable(dataTable);
                     currentNode = node;
                     parentNode = nodeTable.query(conn, currentNode.getParentid());
+                    return true;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
                 }
-                return currentNode != null;
             }
 
             @Override
             protected void whenSucceeded() {
                 try {
                     attributesController.loadAttributes();
-                    tagsController.loadTags(currentNode);
-                    dataController.editValues(dataValues);
+                    tagsController.loadTags();
+                    dataController.editValues();
                     resetStatus();
                 } catch (Exception e) {
                     MyBoxLog.error(e);
@@ -208,7 +208,7 @@ public class ControlDataNodeEditor extends BaseController {
             popError(message("Invalid") + ": " + message("Node"));
             return;
         }
-        DataValues values = dataController.pickNodeValues();
+        DataValues values = dataController.pickValues();
         if (values == null) {
             popError(message("Invalid") + ": " + message("Value"));
             return;
@@ -250,12 +250,12 @@ public class ControlDataNodeEditor extends BaseController {
                     nodeTagsTable.setAll(conn, savedNode.getNodeid(),
                             tagsController.selectedItems());
                     conn.commit();
+                    return true;
                 } catch (Exception e) {
                     error = e.toString();
                     MyBoxLog.error(e);
                     return false;
                 }
-                return savedNode != null;
             }
 
             @Override
@@ -282,12 +282,14 @@ public class ControlDataNodeEditor extends BaseController {
             currentNode.setParentid(parentNode != null ? parentNode.getNodeid() : -1);
             currentNode.setTitle(message("Node") + new Date().getTime());
             dataValues = null;
+
             attributesController.loadAttributes();
-            tagsController.loadTags(currentNode);
-            dataController.editValues(dataValues);
+            tagsController.loadTags();
+            dataController.editValues();
+
             dataController.changed = false;
             tagsController.changed = false;
-            attributesController.changed = true;
+            attributesController.changed = false;
             updateStatus();
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -302,12 +304,19 @@ public class ControlDataNodeEditor extends BaseController {
                 addAction();
                 return;
             }
-            currentNode.setNodeid(-1);
-            currentNode.setTitle(currentNode.getTitle() + " " + message("Copy"));
+            currentNode = currentNode.copy();
+            if (dataValues != null) {
+                dataValues = dataValues.copy();
+                dataValues.setValue(dataTable.getIdColumnName(), (long) -1);
+            }
 
-            attributesController.copyAttributes();
-            dataValues = dataController.copyValues();
+            attributesController.loadAttributes();
+            tagsController.loadedTags.clear();
+            dataController.editValues();
 
+            dataController.changed = true;
+            tagsController.changed = true;
+            attributesController.changed = true;
             updateStatus();
         } catch (Exception e) {
             MyBoxLog.error(e);

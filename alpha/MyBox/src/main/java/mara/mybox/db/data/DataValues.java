@@ -56,12 +56,12 @@ public class DataValues extends BaseData {
     public DataValues copy() {
         try {
             DataValues data = new DataValues();
-            data.setTable(table);
             if (values != null) {
                 for (String key : values.keySet()) {
                     data.setValue(key, values.get(key));
                 }
             }
+            data.setTable(table);
             return data;
         } catch (Exception e) {
             return null;
@@ -93,16 +93,18 @@ public class DataValues extends BaseData {
         return table;
     }
 
-    public void setTable(BaseTable table) {
+    public DataValues setTable(BaseTable table) {
         this.table = table;
+        return this;
     }
 
     public Map<String, Object> getValues() {
         return values;
     }
 
-    public void setValues(Map<String, Object> values) {
+    public DataValues setValues(Map<String, Object> values) {
         this.values = values;
+        return this;
     }
 
 }

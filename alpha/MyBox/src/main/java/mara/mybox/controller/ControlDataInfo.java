@@ -16,7 +16,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2024-8-8
  * @License Apache License Version 2.0
  */
-public class ControlDataInfo extends BaseDataNodeValuesController {
+public class ControlDataInfo extends BaseDataValuesController {
 
     @FXML
     protected TextArea infoInput;
@@ -49,14 +49,13 @@ public class ControlDataInfo extends BaseDataNodeValuesController {
     }
 
     @Override
-    protected void editValues(DataValues values) {
+    protected void editValues() {
         try {
-            currentValues = values;
             Object v;
-            if (values == null) {
+            if (nodeEditor.dataValues == null) {
                 v = null;
             } else {
-                v = values.getValue("info");
+                v = nodeEditor.dataValues.getValue("info");
             }
             infoInput.setText(v != null ? (String) v : null);
         } catch (Exception e) {
@@ -65,16 +64,17 @@ public class ControlDataInfo extends BaseDataNodeValuesController {
     }
 
     @Override
-    protected DataValues pickNodeValues() {
+    protected DataValues pickValues() {
         try {
             DataValues data;
-            if (currentValues != null) {
-                data = currentValues.copy();
+            if (nodeEditor.dataValues != null) {
+                data = nodeEditor.dataValues.copy();
             } else {
                 data = new DataValues();
             }
+            data.setValue("title", nodeEditor.titleInput.getText());
             data.setValue("info", infoInput.getText());
-            return data;
+            return data.setTable(dataTable);
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;

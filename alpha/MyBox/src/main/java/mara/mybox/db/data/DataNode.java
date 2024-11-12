@@ -3,6 +3,7 @@ package mara.mybox.db.data;
 import java.util.Date;
 import mara.mybox.db.table.BaseTable;
 import mara.mybox.dev.MyBoxLog;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -39,13 +40,6 @@ public class DataNode extends BaseData {
         init();
     }
 
-    public DataNode(DataNode parent, String title) {
-        init();
-        this.parentid = parent.getNodeid();
-        this.dataTable = parent.getDataTable();
-        this.title = title;
-    }
-
     @Override
     public boolean setValue(String column, Object value) {
         return setValue(this, column, value);
@@ -61,16 +55,12 @@ public class DataNode extends BaseData {
         return true;
     }
 
-    public DataNode copyIn(DataNode parent) {
-        DataNode nnode = new DataNode();
-        nnode.setParentid(parent.getNodeid());
-        nnode.setDataTable(parent.getDataTable());
-        nnode.setTitle(title);
-        return nnode;
-    }
-
     public boolean isRoot() {
         return parentid == nodeid;
+    }
+
+    public DataNode copy() {
+        return copy(this);
     }
 
     public String texts() {
@@ -94,18 +84,6 @@ public class DataNode extends BaseData {
      */
     public static DataNode create() {
         return new DataNode();
-    }
-
-    public static DataNode createRoot(BaseTable dataTable) {
-        if (dataTable == null) {
-            return null;
-        }
-        DataNode root = new DataNode()
-                .setDataTable(dataTable)
-                .setParentid(RootID)
-                .setNodeid(RootID)
-                .setTitle(dataTable.getTableTitle());
-        return root;
     }
 
     public static boolean setValue(DataNode data, String column, Object value) {
@@ -150,6 +128,22 @@ public class DataNode extends BaseData {
         return null;
     }
 
+    public static boolean valid(DataNode data) {
+        return data != null;
+    }
+
+    public static DataNode createRoot(BaseTable dataTable) {
+        if (dataTable == null) {
+            return null;
+        }
+        DataNode root = new DataNode()
+                .setDataTable(dataTable)
+                .setParentid(RootID)
+                .setNodeid(RootID)
+                .setTitle(dataTable.getTableTitle());
+        return root;
+    }
+
     public static DataNode createChild(DataNode parent) {
         return create().
                 setDataTable(parent.getDataTable())
@@ -160,8 +154,11 @@ public class DataNode extends BaseData {
         return createChild(parent).setTitle(title);
     }
 
-    public static boolean valid(DataNode data) {
-        return data != null;
+    public static DataNode copy(DataNode data) {
+        return create().
+                setDataTable(data.getDataTable())
+                .setParentid(data.getParentid())
+                .setTitle(data.getTitle() + " " + message("Copy"));
     }
 
     /*

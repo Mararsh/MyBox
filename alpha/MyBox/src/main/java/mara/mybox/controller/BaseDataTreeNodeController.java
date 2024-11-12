@@ -115,23 +115,19 @@ public abstract class BaseDataTreeNodeController extends BaseController {
 
             @Override
             protected void whenSucceeded() {
-                loadNode();
+                try {
+                    attributesController.loadAttributes();
+                    tagsController.loadTags();
+                    editValues(dataValues);
+                    resetStatus();
+                } catch (Exception e) {
+                    MyBoxLog.error(e);
+                }
             }
 
         };
         start(task, thisPane);
         return true;
-    }
-
-    protected void loadNode() {
-        try {
-            attributesController.loadAttributes();
-            tagsController.loadTags(currentNode);
-            editValues(dataValues);
-            resetStatus();
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
     }
 
     protected String nodeTitle() {
@@ -320,7 +316,7 @@ public abstract class BaseDataTreeNodeController extends BaseController {
             currentNode.setTitle(message("Node") + new Date().getTime());
             dataValues = null;
             attributesController.loadAttributes();
-            tagsController.loadTags(currentNode);
+            tagsController.loadTags();
             editValues(dataValues);
             valueChanged = false;
             tagsController.changed = false;

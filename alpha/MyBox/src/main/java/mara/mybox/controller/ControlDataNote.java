@@ -9,7 +9,7 @@ import mara.mybox.dev.MyBoxLog;
  * @CreateDate 2024-8-8
  * @License Apache License Version 2.0
  */
-public class ControlDataNote extends BaseDataNodeValuesController {
+public class ControlDataNote extends BaseDataValuesController {
 
     @FXML
     protected ControlNoteEditor noteController;
@@ -27,13 +27,13 @@ public class ControlDataNote extends BaseDataNodeValuesController {
     }
 
     @Override
-    protected void editValues(DataValues values) {
+    protected void editValues() {
         try {
             Object v;
-            if (values == null) {
+            if (nodeEditor.dataValues == null) {
                 v = null;
             } else {
-                v = values.getValue("note");
+                v = nodeEditor.dataValues.getValue("note");
             }
             if (v != null) {
                 noteController.loadContents((String) v);
@@ -47,8 +47,21 @@ public class ControlDataNote extends BaseDataNodeValuesController {
     }
 
     @Override
-    protected DataValues pickNodeValues() {
-        return null;
+    protected DataValues pickValues() {
+        try {
+            DataValues data;
+            if (nodeEditor.dataValues != null) {
+                data = nodeEditor.dataValues.copy();
+            } else {
+                data = new DataValues();
+            }
+            data.setValue("title", nodeEditor.titleInput.getText());
+            data.setValue("note", noteController.currentHtml());
+            return data.setTable(dataTable);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
     }
 
 }
