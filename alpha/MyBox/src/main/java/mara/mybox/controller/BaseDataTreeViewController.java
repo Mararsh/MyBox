@@ -49,6 +49,7 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
     protected boolean expandAll;
     protected TableDataNode nodeTable;
     protected BaseDataTable dataTable;
+    protected String dataName;
 
     @FXML
     protected TreeTableColumn<DataNode, Long> idColumn;

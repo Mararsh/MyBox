@@ -32,7 +32,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2020-5-7
  * @License Apache License Version 2.0
  */
-public class BaseTaskController extends BaseLogs {
+public class BaseTaskController extends BaseLogsController {
 
     protected boolean taskCancelled, taskSuccessed;
     protected Date startTime, endTime;

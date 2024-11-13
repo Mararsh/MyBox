@@ -22,10 +22,12 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.DataNode;
 import static mara.mybox.db.data.DataNode.TitleSeparater;
+import mara.mybox.db.data.DataNodeTag;
 import mara.mybox.db.table.BaseDataTable;
 import mara.mybox.db.table.TableDataNode;
 import mara.mybox.db.table.TableDataNodeTag;
@@ -33,12 +35,14 @@ import mara.mybox.db.table.TableDataTag;
 import mara.mybox.db.table.TableInfo;
 import mara.mybox.db.table.TableNote;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.fxml.style.StyleTools;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
@@ -68,6 +72,8 @@ public class DataTreeController extends BaseDataTreeViewController {
             nodeTable = new TableDataNode(dataTable);
             tagTable = new TableDataTag(dataTable);
             nodeTagsTable = new TableDataNodeTag(dataTable);
+            baseTitle = message("DataTree") + "-" + dataTable.getTableTitle();
+            dataName = dataTable.getTableName();
 
             nodeController.setParameters(this);
             loadTree();
@@ -591,8 +597,8 @@ public class DataTreeController extends BaseDataTreeViewController {
 
     protected void exportNode(TreeItem<DataNode> item) {
         DataTreeExportController exportController
-                = (DataTreeExportController) childStage(Fxmls.DataTreeExportFxml);
-//        exportController.setParamters(dataController, item);
+                = (DataTreeExportController) branchStage(Fxmls.DataTreeExportFxml);
+        exportController.setParamters(this, item);
     }
 
     @FXML
@@ -628,7 +634,7 @@ public class DataTreeController extends BaseDataTreeViewController {
 
             @Override
             protected boolean handle() {
-//                file = FileTmpTools.generateFile(message(category), "htm");
+                file = FileTmpTools.generateFile(dataName, "htm");
                 try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, Charset.forName("utf-8"), false))) {
                     writer.write(HtmlWriteTools.htmlPrefix(chainName(node), "utf-8", HtmlStyles.TableStyle));
                     // https://www.jb51.net/article/116957.htm
@@ -697,6 +703,7 @@ public class DataTreeController extends BaseDataTreeViewController {
             if (conn == null || node == null) {
                 return;
             }
+            node.setDataTable(dataTable);
             List<DataNode> children = nodeTable.children(conn, node.getNodeid());
             String indentNode = " ".repeat(indent);
             String spaceNode = "&nbsp;".repeat(indent);
@@ -708,36 +715,37 @@ public class DataTreeController extends BaseDataTreeViewController {
             }
             writer.write(indentNode + "<DIV style=\"padding: 2px;\">" + spaceNode
                     + displayName + "\n");
-//            List<TreeNodeTag> tags = treeTagTable.nodeTags(conn, node.getNodeid());
-//            if (tags != null && !tags.isEmpty()) {
-//                String indentTag = " ".repeat(indent + 8);
-//                String spaceTag = "&nbsp;".repeat(2);
-//                writer.write(indentTag + "<SPAN class=\"NodeTag\">\n");
-//                for (TreeNodeTag nodeTag : tags) {
-//                    if (infoTask != null && !infoTask.isWorking()) {
-//                        return;
-//                    }
-//                    Color color = nodeTag.getTag().getColor();
-//                    if (color == null) {
-//                        color = FxColorTools.randomColor();
-//                    }
-//                    writer.write(indentTag + spaceTag
-//                            + "<SPAN style=\"border-radius:4px; padding: 2px; font-size:0.8em;  background-color: "
-//                            + FxColorTools.color2rgb(color)
-//                            + "; color: " + FxColorTools.color2rgb(FxColorTools.foreColor(color))
-//                            + ";\">" + nodeTag.getTag().getTag() + "</SPAN>\n");
-//                }
-//                writer.write(indentTag + "</SPAN>\n");
-//            }
+            List<DataNodeTag> tags = nodeTagsTable.nodeTags(conn, node.getNodeid());
+            if (tags != null && !tags.isEmpty()) {
+                String indentTag = " ".repeat(indent + 8);
+                String spaceTag = "&nbsp;".repeat(2);
+                writer.write(indentTag + "<SPAN class=\"NodeTag\">\n");
+                for (DataNodeTag nodeTag : tags) {
+                    if (infoTask != null && !infoTask.isWorking()) {
+                        return;
+                    }
+                    Color color = nodeTag.getTag().getColor();
+                    if (color == null) {
+                        color = FxColorTools.randomColor();
+                    }
+                    writer.write(indentTag + spaceTag
+                            + "<SPAN style=\"border-radius:4px; padding: 2px; font-size:0.8em;  background-color: "
+                            + FxColorTools.color2rgb(color)
+                            + "; color: " + FxColorTools.color2rgb(FxColorTools.foreColor(color))
+                            + ";\">" + nodeTag.getTag().getTag() + "</SPAN>\n");
+                }
+                writer.write(indentTag + "</SPAN>\n");
+            }
             writer.write(indentNode + "</DIV>\n");
-//            String infoDisplay = TreeNode.infoHtml(infoTask, myController, category, node.getInfo(), true, true);
-//            if (infoDisplay != null && !infoDisplay.isBlank()) {
-//                writer.write(indentNode + "<DIV class=\"nodeValue\">"
-//                        + "<DIV style=\"padding: 0 0 0 " + (indent + 4) * 6 + "px;\">"
-//                        + "<DIV class=\"valueBox\">\n");
-//                writer.write(indentNode + infoDisplay + "\n");
-//                writer.write(indentNode + "</DIV></DIV></DIV>\n");
-//            }
+
+            String dataHtml = dataTable.valuesHtml(infoTask, conn, myController, node);
+            if (dataHtml != null && !dataHtml.isBlank()) {
+                writer.write(indentNode + "<DIV class=\"nodeValue\">"
+                        + "<DIV style=\"padding: 0 0 0 " + (indent + 4) * 6 + "px;\">"
+                        + "<DIV class=\"valueBox\">\n");
+                writer.write(indentNode + dataHtml + "\n");
+                writer.write(indentNode + "</DIV></DIV></DIV>\n");
+            }
             if (children != null && !children.isEmpty()) {
                 writer.write(indentNode + "<DIV class=\"TreeNode\" id='" + nodePageid + "'>\n");
                 for (int i = 0; i < children.size(); i++) {

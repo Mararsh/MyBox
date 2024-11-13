@@ -7,6 +7,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.Event;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Region;
@@ -36,6 +37,8 @@ public class ControlFileSelecter extends BaseController {
     protected Label label;
     @FXML
     protected TextField fileInput;
+    @FXML
+    protected Button openTargetButton;
 
     public ControlFileSelecter() {
         initSelecter();
@@ -170,6 +173,9 @@ public class ControlFileSelecter extends BaseController {
             }
         }
         notify.set(!notify.get());
+        if (openTargetButton != null) {
+            openTargetButton.setDisable(file == null || !file.exists());
+        }
         return file;
     }
 
@@ -344,6 +350,16 @@ public class ControlFileSelecter extends BaseController {
         if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)) {
             showRecentFilesMenu(event);
         }
+    }
+
+    @FXML
+    @Override
+    public void openTarget() {
+        if (file == null || !file.exists()) {
+            return;
+        }
+        browseURI(file.toURI());
+        recordFileOpened(file);
     }
 
     @Override

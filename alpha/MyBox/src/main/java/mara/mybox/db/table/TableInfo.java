@@ -1,10 +1,13 @@
 package mara.mybox.db.table;
 
 import java.sql.Connection;
+import mara.mybox.controller.BaseController;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
+import mara.mybox.db.data.DataNode;
 import mara.mybox.db.data.DataValues;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -55,6 +58,18 @@ public class TableInfo extends BaseDataTable<DataValues> {
     }
 
     @Override
+    public String valuesHtml(FxTask task, Connection conn, BaseController controller, DataNode node) {
+        try {
+            DataValues values = node.setDataTable(this).dataValues(conn);
+            String info = (String) values.getValue("info");
+            return info == null || info.isBlank() ? null
+                    : ("<PRE><CODE>" + info + "</CODE></PRE>");
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    @Override
     public long insertData(Connection conn, String title, String info) {
         try {
             DataValues node = new DataValues();
@@ -63,7 +78,7 @@ public class TableInfo extends BaseDataTable<DataValues> {
             node = insertData(conn, node);
             return (long) node.getValue(idColumnName);
         } catch (Exception e) {
-            MyBoxLog.console(e);
+            MyBoxLog.error(e);
             return -1;
         }
     }

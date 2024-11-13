@@ -2,7 +2,7 @@ package mara.mybox.db.data;
 
 import java.util.HashMap;
 import java.util.Map;
-import mara.mybox.db.table.BaseTable;
+import mara.mybox.db.table.BaseDataTable;
 import mara.mybox.dev.MyBoxLog;
 
 /**
@@ -12,7 +12,7 @@ import mara.mybox.dev.MyBoxLog;
  */
 public class DataValues extends BaseData {
 
-    protected BaseTable table;
+    protected BaseDataTable table;
     protected Map<String, Object> values;
 
     @Override
@@ -89,11 +89,11 @@ public class DataValues extends BaseData {
     /*
         get/set
      */
-    public BaseTable getTable() {
+    public BaseDataTable getTable() {
         return table;
     }
 
-    public DataValues setTable(BaseTable table) {
+    public DataValues setTable(BaseDataTable table) {
         this.table = table;
         return this;
     }

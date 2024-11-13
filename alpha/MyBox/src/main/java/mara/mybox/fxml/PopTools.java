@@ -49,7 +49,7 @@ import jdk.jshell.JShell;
 import jdk.jshell.SourceCodeAnalysis;
 import mara.mybox.controller.BaseController;
 import mara.mybox.controller.BaseController_Attributes;
-import mara.mybox.controller.BaseLogs;
+import mara.mybox.controller.BaseLogsController;
 import mara.mybox.controller.ControlWebView;
 import mara.mybox.controller.HtmlStyleInputController;
 import mara.mybox.controller.MenuController;
@@ -252,8 +252,8 @@ public class PopTools {
     public static void showError(BaseController controller, String error) {
         if (controller == null) {
             MyBoxLog.error(error);
-        } else if (controller instanceof BaseLogs) {
-            ((BaseLogs) controller).updateLogs(error, true, true);
+        } else if (controller instanceof BaseLogsController) {
+            ((BaseLogsController) controller).updateLogs(error, true, true);
         } else if (controller.getTask() != null) {
             controller.getTask().setError(error);
         } else {

@@ -19,7 +19,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2018-6-11 8:14:06
  * @License Apache License Version 2.0
  */
-public class LoadingController extends BaseLogs {
+public class LoadingController extends BaseLogsController {
 
     private Task<?> loadingTask;
     protected SimpleBooleanProperty canceled;

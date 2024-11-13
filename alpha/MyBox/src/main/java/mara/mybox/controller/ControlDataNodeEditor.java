@@ -103,11 +103,11 @@ public class ControlDataNodeEditor extends BaseController {
             @Override
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
-                    DataValues values = (DataValues) dataTable.query(conn, node.getNodeid());
+                    DataValues values = node.setDataTable(dataTable).dataValues(conn);
                     if (values == null) {
                         return false;
                     }
-                    dataValues = values.setTable(dataTable);
+                    dataValues = values;
                     currentNode = node;
                     parentNode = nodeTable.query(conn, currentNode.getParentid());
                     return true;
@@ -172,7 +172,7 @@ public class ControlDataNodeEditor extends BaseController {
             tagsTab.setText(message("Tags") + (tagsController.changed ? "*" : ""));
         }
         boolean changed = dataController.changed || attributesController.changed || tagsController.changed;
-        String title = treeController.baseTitle + " - " + message(dataTable.getTableTitle());
+        String title = treeController.baseTitle;
         if (currentNode != null) {
             title += ": "
                     + (currentNode.getNodeid() < 0 ? message("NewData") : currentNode.getNodeid())
@@ -246,6 +246,7 @@ public class ControlDataNodeEditor extends BaseController {
                         return false;
                     }
                     conn.commit();
+                    savedNode.setDataTable(dataTable);
 
                     nodeTagsTable.setAll(conn, savedNode.getNodeid(),
                             tagsController.selectedItems());

@@ -17,7 +17,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2022-11-4
  * @License Apache License Version 2.0
  */
-public class BaseLogs extends BaseController {
+public class BaseLogsController extends BaseController {
 
     protected long logsMaxChars, logsTotalLines, logsTotalchars, logsNewlines;
     protected StringBuffer newLogs;
@@ -25,11 +25,34 @@ public class BaseLogs extends BaseController {
     protected final Object lock = new Object();
 
     @FXML
-    protected CheckBox verboseCheck;
-    @FXML
     protected TextArea logsTextArea;
     @FXML
     protected TextField maxCharsinput;
+    @FXML
+    protected CheckBox verboseCheck;
+    @FXML
+    protected BaseLogsController logsController;
+
+    @Override
+    public void initValues() {
+        try {
+            super.initValues();
+
+            if (logsController != null) {
+                if (logsTextArea == null) {
+                    logsTextArea = logsController.logsTextArea;
+                }
+                if (maxCharsinput == null) {
+                    maxCharsinput = logsController.maxCharsinput;
+                }
+                if (verboseCheck == null) {
+                    verboseCheck = logsController.verboseCheck;
+                }
+            }
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
+    }
 
     @Override
     public void initControls() {

@@ -574,8 +574,8 @@ public abstract class BaseController_Attributes {
     }
 
     public void handleInfo(String text, boolean pop) {
-        if (this instanceof BaseLogs) {
-            ((BaseLogs) this).updateLogs(text);
+        if (this instanceof BaseLogsController) {
+            ((BaseLogsController) this).updateLogs(text);
         } else if (task != null && task.isWorking()) {
             task.setInfo(text);
         } else if (pop) {
@@ -586,8 +586,8 @@ public abstract class BaseController_Attributes {
     }
 
     public void handleError(String text, boolean pop) {
-        if (this instanceof BaseLogs) {
-            ((BaseLogs) this).updateLogs(text, true, true);
+        if (this instanceof BaseLogsController) {
+            ((BaseLogsController) this).updateLogs(text, true, true);
         } else if (task != null && task.isWorking()) {
             task.setError(text);
         } else if (pop) {

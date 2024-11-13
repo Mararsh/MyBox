@@ -8,7 +8,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import javafx.application.Platform;
 import mara.mybox.controller.BaseController;
-import mara.mybox.controller.BaseLogs;
+import mara.mybox.controller.BaseLogsController;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.Data2D_Edit;
 import mara.mybox.data2d.reader.Data2DReader;
@@ -257,8 +257,8 @@ public abstract class Data2DOperate {
             return;
         }
         if (controller != null) {
-            if (controller instanceof BaseLogs) {
-                ((BaseLogs) controller).updateLogs(info);
+            if (controller instanceof BaseLogsController) {
+                ((BaseLogsController) controller).updateLogs(info);
             } else if (task != null) {
                 task.setInfo(info);
             } else {
@@ -274,8 +274,8 @@ public abstract class Data2DOperate {
             return;
         }
         if (controller != null) {
-            if (controller instanceof BaseLogs) {
-                ((BaseLogs) controller).showLogs(error);
+            if (controller instanceof BaseLogsController) {
+                ((BaseLogsController) controller).showLogs(error);
             } else if (task != null) {
                 task.setError(error);
             } else {

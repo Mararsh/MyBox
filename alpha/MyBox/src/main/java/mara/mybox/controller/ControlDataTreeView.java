@@ -22,7 +22,7 @@ import javafx.scene.input.MouseEvent;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.DataNode;
 import static mara.mybox.db.data.DataNode.TitleSeparater;
-import mara.mybox.db.table.BaseTable;
+import mara.mybox.db.table.BaseDataTable;
 import mara.mybox.db.table.TableDataNode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
@@ -50,7 +50,7 @@ public class ControlDataTreeView extends BaseTreeTableViewController<DataNode> {
     protected static final int AutoExpandThreshold = 500;
     protected boolean expandAll;
     protected TableDataNode nodeTable;
-    protected BaseTable dataTable;
+    protected BaseDataTable dataTable;
 
     @FXML
     protected TreeTableColumn<DataNode, Long> idColumn;
