@@ -28,7 +28,6 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.HelpTools;
-import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.cell.TreeTableDateCell;
 import mara.mybox.fxml.cell.TreeTableIDCell;
@@ -167,15 +166,6 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
         start(task, thisPane);
     }
 
-    public DataNode createNode(DataNode targetNode, String name) {
-        if (targetNode == null) {
-            return null;
-        }
-        DataNode newNode = DataNode.createChild(targetNode, name);
-        newNode = nodeTable.insertData(newNode);
-        return newNode;
-    }
-
     public void updateNode(DataNode node) {
         TreeItem<DataNode> treeItem = find(node);
         if (treeItem == null) {
@@ -231,7 +221,6 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
                 for (DataNode child : children) {
                     DataNode newNode = DataNode.create()
                             .setParentid(targetid)
-                            .setDataTable(child.getDataTable())
                             .setTitle(child.getTitle());
                     nodeTable.insertData(conn, newNode);
                     copyDescendants(conn, child, newNode);
@@ -419,56 +408,6 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
     @Override
     public void doubleClicked(MouseEvent event, TreeItem<DataNode> item) {
         popNode(item);
-    }
-
-    @FXML
-    @Override
-    public void addAction() {
-        addChild(selected());
-    }
-
-    public void addChild(TreeItem<DataNode> targetItem) {
-        if (targetItem == null) {
-            popError(message("SelectToHandle"));
-            return;
-        }
-        DataNode targetNode = targetItem.getValue();
-        if (targetNode == null) {
-            popError(message("SelectToHandle"));
-            return;
-        }
-        String chainName = chainName(targetItem);
-        String name = PopTools.askValue(getBaseTitle(), chainName, message("Add"), message("Node") + "m");
-        if (name == null || name.isBlank()) {
-            return;
-        }
-        if (name.contains(TitleSeparater)) {
-            popError(message("NameShouldNotInclude") + " \"" + TitleSeparater + "\"");
-            return;
-        }
-        if (task != null && !task.isQuit()) {
-            return;
-        }
-        task = new FxSingletonTask<Void>(this) {
-            private DataNode newNode;
-
-            @Override
-            protected boolean handle() {
-                newNode = createNode(targetNode, name);
-                return newNode != null;
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                TreeItem<DataNode> newItem = new TreeItem<>(newNode);
-                targetItem.getChildren().add(newItem);
-                targetItem.setExpanded(true);
-                nodeAdded(targetNode, newNode);
-                popSuccessful();
-            }
-
-        };
-        start(task, thisPane);
     }
 
     protected void popNode(TreeItem<DataNode> item) {

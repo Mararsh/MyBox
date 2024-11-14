@@ -39,13 +39,11 @@ public class DataNode extends BaseData {
     public static final String Root = "Root";
     public static final int RootID = -9;
 
-    protected BaseDataTable dataTable;
     protected long nodeid, parentid;
     protected String title;
     protected Date updateTime;
 
     private void init() {
-        dataTable = null;
         nodeid = -1;
         parentid = -2;
         title = null;
@@ -71,8 +69,8 @@ public class DataNode extends BaseData {
         return true;
     }
 
-    public DataValues dataValues(Connection conn) {
-        return dataValues(conn, this);
+    public DataValues dataValues(Connection conn, BaseDataTable dataTable) {
+        return dataValues(conn, dataTable, this);
     }
 
     public boolean isRoot() {
@@ -157,7 +155,6 @@ public class DataNode extends BaseData {
             return null;
         }
         DataNode root = new DataNode()
-                .setDataTable(dataTable)
                 .setParentid(RootID)
                 .setNodeid(RootID)
                 .setTitle(dataTable.getTableTitle());
@@ -165,9 +162,7 @@ public class DataNode extends BaseData {
     }
 
     public static DataNode createChild(DataNode parent) {
-        return create().
-                setDataTable(parent.getDataTable())
-                .setParentid(parent.getNodeid());
+        return create().setParentid(parent.getNodeid());
     }
 
     public static DataNode createChild(DataNode parent, String title) {
@@ -175,17 +170,14 @@ public class DataNode extends BaseData {
     }
 
     public static DataNode copy(DataNode node) {
-        return create().
-                setDataTable(node.getDataTable())
+        return create()
                 .setParentid(node.getParentid())
                 .setTitle(node.getTitle() + " " + message("Copy"));
     }
 
-    public static DataValues dataValues(Connection conn, DataNode node) {
+    public static DataValues dataValues(Connection conn, BaseDataTable dataTable, DataNode node) {
         try {
-            DataValues values = (DataValues) node.getDataTable().query(conn, node.getNodeid());
-            values.setTable(node.getDataTable());
-            return values;
+            return (DataValues) dataTable.query(conn, node.getNodeid());
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;
@@ -270,15 +262,6 @@ public class DataNode extends BaseData {
     /*
         get/set
      */
-    public BaseDataTable getDataTable() {
-        return dataTable;
-    }
-
-    public DataNode setDataTable(BaseDataTable dataTable) {
-        this.dataTable = dataTable;
-        return this;
-    }
-
     public long getNodeid() {
         return nodeid;
     }

@@ -57,7 +57,7 @@ public class ControlDataNote extends BaseDataValuesController {
             }
             data.setValue("title", nodeEditor.titleInput.getText());
             data.setValue("note", noteController.currentHtml());
-            return data.setTable(dataTable);
+            return data;
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;

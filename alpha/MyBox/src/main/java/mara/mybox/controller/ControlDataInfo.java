@@ -74,7 +74,7 @@ public class ControlDataInfo extends BaseDataValuesController {
             }
             data.setValue("title", nodeEditor.titleInput.getText());
             data.setValue("info", infoInput.getText());
-            return data.setTable(dataTable);
+            return data;
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;

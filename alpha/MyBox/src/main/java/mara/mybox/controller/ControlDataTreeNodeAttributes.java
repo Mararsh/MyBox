@@ -112,7 +112,6 @@ public class ControlDataTreeNodeAttributes extends BaseController {
         DataNode node = DataNode.create();
         if (nodeController.currentNode != null) {
             node.setNodeid(nodeController.currentNode.getNodeid());
-            node.setDataTable(dataTable);
         }
         if (nodeController.parentNode != null) {
             node.setParentid(nodeController.parentNode.getNodeid());

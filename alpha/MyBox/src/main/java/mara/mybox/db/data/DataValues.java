@@ -3,7 +3,6 @@ package mara.mybox.db.data;
 import java.util.HashMap;
 import java.util.Map;
 import mara.mybox.db.table.BaseDataTable;
-import mara.mybox.dev.MyBoxLog;
 
 /**
  * @Author Mara
@@ -12,7 +11,6 @@ import mara.mybox.dev.MyBoxLog;
  */
 public class DataValues extends BaseData {
 
-    protected BaseDataTable table;
     protected Map<String, Object> values;
 
     @Override
@@ -29,7 +27,6 @@ public class DataValues extends BaseData {
             values.put(column, value);
             return true;
         } catch (Exception e) {
-            MyBoxLog.debug(e);
             return false;
         }
     }
@@ -39,8 +36,23 @@ public class DataValues extends BaseData {
         try {
             return values.get(column);
         } catch (Exception e) {
-            MyBoxLog.debug(e);
             return null;
+        }
+    }
+
+    public long getId(BaseDataTable dataTable) {
+        try {
+            return (long) getValue(dataTable.getIdColumnName());
+        } catch (Exception e) {
+            return -1;
+        }
+    }
+
+    public boolean setId(BaseDataTable dataTable, long id) {
+        try {
+            return setValue(dataTable.getIdColumnName(), id);
+        } catch (Exception e) {
+            return false;
         }
     }
 
@@ -48,7 +60,6 @@ public class DataValues extends BaseData {
         try {
             return values == null || values.keySet().isEmpty();
         } catch (Exception e) {
-//            MyBoxLog.debug(e);
             return true;
         }
     }
@@ -56,12 +67,9 @@ public class DataValues extends BaseData {
     public DataValues copy() {
         try {
             DataValues data = new DataValues();
-            if (values != null) {
-                for (String key : values.keySet()) {
-                    data.setValue(key, values.get(key));
-                }
+            for (String key : values.keySet()) {
+                data.setValue(key, values.get(key));
             }
-            data.setTable(table);
             return data;
         } catch (Exception e) {
             return null;
@@ -72,13 +80,8 @@ public class DataValues extends BaseData {
     public String toString() {
         try {
             String s = "";
-            if (table != null) {
-                s += "table: " + table.getTableName() + "\n";
-            }
-            if (values != null) {
-                for (String key : values.keySet()) {
-                    s += key + ": " + values.get(key) + "\n";
-                }
+            for (String key : values.keySet()) {
+                s += key + ": " + values.get(key) + "\n";
             }
             return s;
         } catch (Exception e) {
@@ -89,15 +92,6 @@ public class DataValues extends BaseData {
     /*
         get/set
      */
-    public BaseDataTable getTable() {
-        return table;
-    }
-
-    public DataValues setTable(BaseDataTable table) {
-        this.table = table;
-        return this;
-    }
-
     public Map<String, Object> getValues() {
         return values;
     }

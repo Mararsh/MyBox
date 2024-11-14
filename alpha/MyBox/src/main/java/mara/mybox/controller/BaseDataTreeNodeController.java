@@ -258,7 +258,7 @@ public abstract class BaseDataTreeNodeController extends BaseController {
                     }
                     conn.commit();
 
-                    nodeid = (long) savedValues.getValue(dataTable.getIdColumnName());
+                    nodeid = savedValues.getId(dataTable);
                     if (nodeid < 0) {
                         conn.close();
                         error = message("Failed");
@@ -288,7 +288,7 @@ public abstract class BaseDataTreeNodeController extends BaseController {
             protected void whenSucceeded() {
                 long id;
                 try {
-                    id = (long) values.getValue(dataTable.getIdColumnName());
+                    id = values.getId(dataTable);
                 } catch (Exception e) {
                     id = -2;
                 }
@@ -309,7 +309,7 @@ public abstract class BaseDataTreeNodeController extends BaseController {
     @Override
     public void addAction() {
         try {
-            currentNode = DataNode.create().setDataTable(dataTable);
+            currentNode = DataNode.create();
             if (parentNode != null) {
                 currentNode.setParentid(parentNode.getNodeid());
             }

@@ -29,11 +29,6 @@ public abstract class BaseDataTable<D> extends BaseTable<D> {
     protected String fxml;
 
     /*
-        abstract
-     */
-    public abstract long insertData(Connection conn, String title, String info);
-
-    /*
         methods
      */
     public boolean initTreeTables(Connection conn) {
@@ -117,13 +112,12 @@ public abstract class BaseDataTable<D> extends BaseTable<D> {
         if (conn == null || node == null) {
             return null;
         }
-        DataValues values = node.setDataTable(this).dataValues(conn);
+        DataValues values = node.dataValues(conn, this);
         if (values == null || values.isEmpty()) {
             return null;
         }
         StringTable table = new StringTable();
-        List<ColumnDefinition> dataColumns = node.getDataTable().getColumns();
-        for (ColumnDefinition column : dataColumns) {
+        for (ColumnDefinition column : columns) {
             String name = column.getColumnName();
             Object value = values.getValue(name);
             if (value == null) {

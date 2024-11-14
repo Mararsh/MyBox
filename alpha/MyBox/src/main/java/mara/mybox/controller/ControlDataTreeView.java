@@ -244,7 +244,6 @@ public class ControlDataTreeView extends BaseTreeTableViewController<DataNode> {
                 for (DataNode child : children) {
                     DataNode newNode = DataNode.create()
                             .setParentid(targetid)
-                            .setDataTable(child.getDataTable())
                             .setTitle(child.getTitle());
                     nodeTable.insertData(conn, newNode);
                     copyDescendants(conn, child, newNode);

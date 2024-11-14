@@ -91,6 +91,9 @@ public class ControlDataNodeEditor extends BaseController {
     }
 
     protected boolean editNode(DataNode node) {
+        if (!treeController.checkBeforeNextAction()) {
+            return false;
+        }
         if (node == null) {
             addAction();
             return false;
@@ -103,7 +106,7 @@ public class ControlDataNodeEditor extends BaseController {
             @Override
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
-                    DataValues values = node.setDataTable(dataTable).dataValues(conn);
+                    DataValues values = node.dataValues(conn, dataTable);
                     if (values == null) {
                         return false;
                     }
@@ -231,7 +234,7 @@ public class ControlDataNodeEditor extends BaseController {
                     }
                     conn.commit();
 
-                    nodeid = (long) savedValues.getValue(dataTable.getIdColumnName());
+                    nodeid = savedValues.getId(dataTable);
                     if (nodeid < 0) {
                         conn.close();
                         error = message("Failed");
@@ -246,9 +249,8 @@ public class ControlDataNodeEditor extends BaseController {
                         return false;
                     }
                     conn.commit();
-                    savedNode.setDataTable(dataTable);
 
-                    nodeTagsTable.setAll(conn, savedNode.getNodeid(),
+                    nodeTagsTable.setAll(conn, nodeid,
                             tagsController.selectedItems());
                     conn.commit();
                     return true;
@@ -266,6 +268,7 @@ public class ControlDataNodeEditor extends BaseController {
                 } else {
                     treeController.updateNode(savedNode);
                 }
+                resetStatus();
                 editNode(savedNode);
                 popSaved();
             }
@@ -278,8 +281,11 @@ public class ControlDataNodeEditor extends BaseController {
     @Override
     public void addAction() {
         try {
+            if (!treeController.checkBeforeNextAction()) {
+                return;
+            }
             parentNode = currentNode;
-            currentNode = DataNode.create().setDataTable(dataTable);
+            currentNode = DataNode.create();
             currentNode.setParentid(parentNode != null ? parentNode.getNodeid() : -1);
             currentNode.setTitle(message("Node") + new Date().getTime());
             dataValues = null;
@@ -301,6 +307,9 @@ public class ControlDataNodeEditor extends BaseController {
     @Override
     public void copyAction() {
         try {
+            if (!treeController.checkBeforeNextAction()) {
+                return;
+            }
             if (currentNode == null) {
                 addAction();
                 return;
@@ -308,7 +317,7 @@ public class ControlDataNodeEditor extends BaseController {
             currentNode = currentNode.copy();
             if (dataValues != null) {
                 dataValues = dataValues.copy();
-                dataValues.setValue(dataTable.getIdColumnName(), (long) -1);
+                dataValues.setId(dataTable, -1);
             }
 
             attributesController.loadAttributes();
@@ -327,6 +336,7 @@ public class ControlDataNodeEditor extends BaseController {
     @FXML
     @Override
     public void recoverAction() {
+        resetStatus();
         editNode(currentNode);
     }
 

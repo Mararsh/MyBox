@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import javafx.event.ActionEvent;
@@ -28,6 +29,7 @@ import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.DataNode;
 import static mara.mybox.db.data.DataNode.TitleSeparater;
 import mara.mybox.db.data.DataNodeTag;
+import mara.mybox.db.data.DataValues;
 import mara.mybox.db.table.BaseDataTable;
 import mara.mybox.db.table.TableDataNode;
 import mara.mybox.db.table.TableDataNodeTag;
@@ -106,9 +108,6 @@ public class DataTreeController extends BaseDataTreeViewController {
     }
 
     public boolean editNode(DataNode node) {
-        if (!checkBeforeNextAction()) {
-            return false;
-        }
         return nodeController.editNode(node);
     }
 
@@ -449,6 +448,78 @@ public class DataTreeController extends BaseDataTreeViewController {
         popNode(item);
     }
 
+    public void addChild(TreeItem<DataNode> targetItem) {
+        if (targetItem == null) {
+            popError(message("SelectToHandle"));
+            return;
+        }
+        DataNode targetNode = targetItem.getValue();
+        if (targetNode == null) {
+            popError(message("SelectToHandle"));
+            return;
+        }
+        String chainName = chainName(targetItem);
+        String title = PopTools.askValue(getBaseTitle(), chainName, message("Add"), message("Node") + "m");
+        if (title == null || title.isBlank()) {
+            return;
+        }
+        if (title.contains(TitleSeparater)) {
+            popError(message("NameShouldNotInclude") + " \"" + TitleSeparater + "\"");
+            return;
+        }
+        if (task != null) {
+            task.cancel();
+        }
+        task = new FxSingletonTask<Void>(this) {
+            private DataNode newNode;
+
+            @Override
+            protected boolean handle() {
+                try (Connection conn = DerbyBase.getConnection()) {
+                    DataValues savedValues = (DataValues) dataTable.writeData(conn, new DataValues());
+                    if (savedValues == null) {
+                        conn.close();
+                        error = message("Failed");
+                        return false;
+                    }
+                    conn.commit();
+
+                    long nodeid = savedValues.getId(dataTable);
+                    if (nodeid < 0) {
+                        conn.close();
+                        error = message("Failed");
+                        return false;
+                    }
+                    newNode = DataNode.create().setNodeid(nodeid)
+                            .setParentid(targetNode.getNodeid())
+                            .setTitle(title).setUpdateTime(new Date());
+
+                    DataNode savedNode = nodeTable.writeData(conn, newNode);
+                    if (savedNode == null) {
+                        conn.close();
+                        return false;
+                    }
+                    conn.commit();
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                TreeItem<DataNode> newItem = new TreeItem<>(newNode);
+                targetItem.getChildren().add(newItem);
+                targetItem.setExpanded(true);
+                nodeAdded(targetItem.getValue(), newNode);
+                popSuccessful();
+            }
+
+        };
+        start(task);
+    }
+
     protected void deleteNode(TreeItem<DataNode> targetItem) {
         if (targetItem == null) {
             popError(message("SelectToHandle"));
@@ -578,7 +649,7 @@ public class DataTreeController extends BaseDataTreeViewController {
         if (item == null) {
             return;
         }
-        nodeController.editNode(item.getValue());
+        editNode(item.getValue());
     }
 
     protected void pasteNode(TreeItem<DataNode> item) {
@@ -703,7 +774,6 @@ public class DataTreeController extends BaseDataTreeViewController {
             if (conn == null || node == null) {
                 return;
             }
-            node.setDataTable(dataTable);
             List<DataNode> children = nodeTable.children(conn, node.getNodeid());
             String indentNode = " ".repeat(indent);
             String spaceNode = "&nbsp;".repeat(indent);

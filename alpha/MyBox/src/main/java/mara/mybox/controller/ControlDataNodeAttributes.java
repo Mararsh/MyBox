@@ -98,7 +98,7 @@ public class ControlDataNodeAttributes extends BaseController {
         if (title == null || title.isBlank()) {
             return null;
         }
-        DataNode node = DataNode.create().setDataTable(dataTable);
+        DataNode node = DataNode.create();
         if (nodeEditor.currentNode != null) {
             node.setNodeid(nodeEditor.currentNode.getNodeid());
         }
