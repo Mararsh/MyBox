@@ -22,6 +22,7 @@ public class TableInfo extends BaseDataTable<DataValues> {
         tableTitle = message("InformationInTree");
         idColumnName = "infoid";
         fxml = Fxmls.ControlDataInfoFxml;
+        examplesFile = exampleFile();
         defineColumns();
     }
 

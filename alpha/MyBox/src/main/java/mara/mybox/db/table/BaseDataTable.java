@@ -15,7 +15,9 @@ import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.fxml.FxFileTools.getInternalFile;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.DateTools;
+import mara.mybox.tools.JsonTools;
 import mara.mybox.tools.XmlTools;
+import static mara.mybox.value.AppValues.Indent;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 
@@ -27,6 +29,7 @@ import static mara.mybox.value.Languages.message;
 public abstract class BaseDataTable<D> extends BaseTable<D> {
 
     protected String fxml;
+    protected File examplesFile;
 
     /*
         methods
@@ -108,7 +111,8 @@ public abstract class BaseDataTable<D> extends BaseTable<D> {
         return xml;
     }
 
-    public String valuesHtml(FxTask task, Connection conn, BaseController controller, DataNode node) {
+    public String valuesHtml(FxTask task, Connection conn,
+            BaseController controller, DataNode node) {
         if (conn == null || node == null) {
             return null;
         }
@@ -132,6 +136,55 @@ public abstract class BaseDataTable<D> extends BaseTable<D> {
         return table.div();
     }
 
+    public String valuesXml(FxTask task, Connection conn,
+            BaseController controller, String prefix, DataNode node) {
+        if (conn == null || node == null) {
+            return null;
+        }
+        DataValues values = node.dataValues(conn, this);
+        if (values == null || values.isEmpty()) {
+            return null;
+        }
+        String prefix2 = prefix + Indent;
+        String prefix3 = prefix2 + Indent;
+        String xml = prefix + "<Data>\n";
+        for (ColumnDefinition column : columns) {
+            String name = column.getColumnName();
+            Object value = values.getValue(name);
+            if (value == null) {
+                continue;
+            }
+            xml += prefix2 + "<" + name + ">\n";
+            xml += prefix3 + "<![CDATA[" + column.toString(value) + "]]>\n";
+            xml += prefix2 + "</" + name + ">\n";
+        }
+        xml += prefix + "</Data>\n";
+        return xml;
+    }
+
+    public String valuesJson(FxTask task, Connection conn,
+            BaseController controller, String prefix, DataNode node) {
+        if (conn == null || node == null) {
+            return null;
+        }
+        DataValues values = node.dataValues(conn, this);
+        if (values == null || values.isEmpty()) {
+            return null;
+        }
+        String json = "";
+        for (ColumnDefinition column : columns) {
+            String name = column.getColumnName();
+            Object value = values.getValue(name);
+            if (value == null) {
+                continue;
+            }
+            json += prefix + ",\n"
+                    + prefix + "\"" + message(name) + "\": "
+                    + JsonTools.encode(column.toString(value));
+        }
+        return json;
+    }
+
     /*
         get/set
      */
@@ -141,6 +194,14 @@ public abstract class BaseDataTable<D> extends BaseTable<D> {
 
     public void setFxml(String fxml) {
         this.fxml = fxml;
+    }
+
+    public File getExamplesFile() {
+        return examplesFile;
+    }
+
+    public void setExamplesFile(File examplesFile) {
+        this.examplesFile = examplesFile;
     }
 
 }

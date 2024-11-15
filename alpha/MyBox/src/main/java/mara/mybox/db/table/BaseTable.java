@@ -806,9 +806,9 @@ public abstract class BaseTable<D> {
         }
     }
 
-    public boolean isEmpty() {
+    public boolean isEmpty(Connection conn) {
         String sql = "SELECT * FROM " + DerbyBase.fixedIdentifier(tableName) + " FETCH FIRST ROW ONLY";
-        return isEmpty(sql);
+        return isEmpty(conn, sql);
     }
 
     public boolean isEmpty(String sql) {

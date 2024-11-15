@@ -53,6 +53,8 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
     @FXML
     protected TreeTableColumn<DataNode, Long> idColumn;
     @FXML
+    protected TreeTableColumn<DataNode, Float> orderColumn;
+    @FXML
     protected TreeTableColumn<DataNode, Date> timeColumn;
     @FXML
     protected Label titleLabel;
@@ -98,6 +100,8 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
                 idColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("nodeid"));
                 idColumn.setCellFactory(new TreeTableIDCell());
             }
+
+            orderColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("orderNumber"));
 
             timeColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("updateTime"));
             timeColumn.setCellFactory(new TreeTableDateCell());

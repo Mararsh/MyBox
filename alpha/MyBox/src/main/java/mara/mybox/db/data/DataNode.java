@@ -1,24 +1,9 @@
 package mara.mybox.db.data;
 
-import java.io.File;
 import java.sql.Connection;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import mara.mybox.bufferedimage.ImageScope;
-import mara.mybox.bufferedimage.ImageScopeTools;
-import mara.mybox.controller.BaseController;
-import mara.mybox.data.StringTable;
-import mara.mybox.data2d.DataFileCSV;
-import mara.mybox.data2d.tools.Data2DDefinitionTools;
-import static mara.mybox.db.data.InfoNode.parseInfo;
 import mara.mybox.db.table.BaseDataTable;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.FxImageTools;
-import mara.mybox.fxml.FxTask;
-import mara.mybox.tools.HtmlReadTools;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -28,25 +13,20 @@ import static mara.mybox.value.Languages.message;
  */
 public class DataNode extends BaseData {
 
-    public static final String RootIdentify = "MyBoxTreeRoot;;;";
+    public static final int RootID = 0;
     public static final String TitleSeparater = " > ";
-    public static final String IDPrefix = "ID:";
-    public static final String TimePrefix = "Time:";
-    public static final String TagsPrefix = "Tags:";
     public static final String TagSeparater = ";;;";
-    public static final String ValueSeparater = "_:;MyBoxNodeValue;:_";
-    public static final String MoreSeparater = "MyBoxTreeNodeMore:";
-    public static final String Root = "Root";
-    public static final int RootID = -9;
 
     protected long nodeid, parentid;
     protected String title;
+    protected float orderNumber;
     protected Date updateTime;
 
     private void init() {
         nodeid = -1;
         parentid = -2;
         title = null;
+        orderNumber = 0f;
         updateTime = new Date();
     }
 
@@ -113,11 +93,14 @@ public class DataNode extends BaseData {
                 case "nodeid":
                     node.setNodeid(value == null ? -1 : (long) value);
                     return true;
+                case "parentid":
+                    node.setParentid(value == null ? -1 : (long) value);
+                    return true;
                 case "title":
                     node.setTitle(value == null ? null : (String) value);
                     return true;
-                case "parentid":
-                    node.setParentid(value == null ? -1 : (long) value);
+                case "order_number":
+                    node.setOrderNumber(value == null ? 0f : (float) value);
                     return true;
                 case "update_time":
                     node.setUpdateTime(value == null ? null : (Date) value);
@@ -136,10 +119,12 @@ public class DataNode extends BaseData {
         switch (column) {
             case "nodeid":
                 return node.getNodeid();
-            case "title":
-                return node.getTitle();
             case "parentid":
                 return node.getParentid();
+            case "title":
+                return node.getTitle();
+            case "order_number":
+                return node.getOrderNumber();
             case "update_time":
                 return node.getUpdateTime();
         }
@@ -184,81 +169,6 @@ public class DataNode extends BaseData {
         }
     }
 
-    public static String valuesHtml(FxTask task, BaseController controller,
-            String category, String s, boolean showIcon, boolean singleNotIn) {
-        if (s == null || s.isBlank()) {
-            return "";
-        }
-        String html = "";
-        switch (category) {
-            case InfoNode.Notebook:
-                html = HtmlReadTools.body(s, false);
-                break;
-            case InfoNode.WebFavorite: {
-                Map<String, String> values = InfoNode.parseInfo(category, s);
-                if (values != null) {
-                    String address = values.get("Address");
-                    if (address != null && !address.isBlank()) {
-                        html = "<A href=\"" + address + "\">";
-                        String icon = values.get("Icon");
-                        if (showIcon && icon != null && !icon.isBlank()) {
-                            try {
-                                String base64 = FxImageTools.base64(null, new File(icon), "png");
-                                if (base64 != null) {
-                                    html += "<img src=\"data:image/png;base64," + base64 + "\" width=" + 40 + " >";
-                                }
-                            } catch (Exception e) {
-                            }
-                        }
-                        html += address + "</A>\n";
-                    }
-                }
-                break;
-            }
-            case InfoNode.Data2DDefinition: {
-                DataFileCSV csv = Data2DDefinitionTools.definitionFromXML(task, controller, s);
-                if (csv != null) {
-                    html = Data2DDefinitionTools.definitionToHtml(csv);
-                }
-                break;
-            }
-            case InfoNode.ImageScope: {
-                ImageScope scope = ImageScopeTools.fromXML(task, controller, s);
-                if (scope != null) {
-                    html = ImageScopeTools.toHtml(task, scope);
-                }
-                break;
-            }
-            default: {
-                Map<String, String> values = parseInfo(category, s);
-                if (values != null) {
-                    StringTable table = new StringTable();
-                    String pv = s;
-                    for (String key : values.keySet()) {
-                        String v = values.get(key);
-                        if (v == null || v.isBlank()) {
-                            continue;
-                        }
-                        pv = "<PRE><CODE>" + v + "</CODE></PRE>";
-                        List<String> row = new ArrayList<>();
-                        row.addAll(Arrays.asList(message(key), pv));
-                        table.add(row);
-                    }
-                    if (!table.isEmpty()) {
-                        if (singleNotIn && table.size() == 1) {
-                            html = pv;
-                        } else {
-                            html = table.div();
-                        }
-                    }
-                }
-                break;
-            }
-        }
-        return html;
-    }
-
-
     /*
         get/set
      */
@@ -286,6 +196,15 @@ public class DataNode extends BaseData {
 
     public DataNode setTitle(String title) {
         this.title = title;
+        return this;
+    }
+
+    public float getOrderNumber() {
+        return orderNumber;
+    }
+
+    public DataNode setOrderNumber(float orderNumber) {
+        this.orderNumber = orderNumber;
         return this;
     }
 

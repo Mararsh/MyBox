@@ -41,12 +41,14 @@ public class TableDataNode extends BaseTable<DataNode> {
                 .setOnDelete(ColumnDefinition.OnDelete.Cascade)
         );
         addColumn(new ColumnDefinition("title", ColumnType.String, true).setLength(StringMaxLength));
+        addColumn(new ColumnDefinition("order_number", ColumnType.Float));
         addColumn(new ColumnDefinition("update_time", ColumnType.Datetime));
         addColumn(new ColumnDefinition("parentid", ColumnType.Long, true)
                 .setReferName(tableName + "_parentid_fk")
                 .setReferTable(dataTable.tableName).setReferColumn(dataTable.idColumnName)
                 .setOnDelete(ColumnDefinition.OnDelete.Cascade)
         );
+        orderColumns = "nodeid ASC";
         return this;
     }
 
@@ -68,37 +70,13 @@ public class TableDataNode extends BaseTable<DataNode> {
 //            MyBoxLog.debug(e);
 //            return false;
         }
-        return true;
-    }
-
-    @Override
-    public Object readForeignValue(ResultSet results, String column) {
-        if (results == null || column == null) {
-            return null;
-        }
-        try {
-            if ("nodeid".equals(column) && results.findColumn(dataTable.idColumnName) > 0) {
-                return dataTable.readData(results);
-            }
-            if ("parentid".equals(column) && results.findColumn(dataTable.idColumnName) > 0) {
-                return dataTable.readData(results);
-            }
+        sql = "CREATE INDEX " + tableName + "_order_index on " + tableName + " ( parentid, order_number )";
+        try (PreparedStatement statement = conn.prepareStatement(sql)) {
+            statement.executeUpdate();
         } catch (Exception e) {
+//            MyBoxLog.debug(e);
+//            return false;
         }
-        return null;
-    }
-
-    @Override
-    public boolean setForeignValue(DataNode data, String column, Object value) {
-        if (data == null || column == null || value == null) {
-            return true;
-        }
-//        if ("nodeid".equals(column) && value instanceof BaseTreeData) {
-//            data.setNode((BaseTreeData) value);
-//        }
-//        if ("parentid".equals(column) && value instanceof BaseTreeData) {
-//            data.setParent((BaseTreeData) value);
-//        }
         return true;
     }
 
@@ -139,7 +117,8 @@ public class TableDataNode extends BaseTable<DataNode> {
         if (conn == null) {
             return null;
         }
-        String sql = "SELECT * FROM " + tableName + " WHERE nodeid=parentid ORDER BY nodeid ASC";
+        String sql = "SELECT * FROM " + tableName
+                + " WHERE parentid=nodeid ORDER BY parentid ASC";
         try (PreparedStatement statement = conn.prepareStatement(sql)) {
             return query(statement);
         } catch (Exception e) {
@@ -164,7 +143,8 @@ public class TableDataNode extends BaseTable<DataNode> {
         if (conn == null || parent < 0) {
             return null;
         }
-        String sql = "SELECT * FROM " + tableName + " WHERE parentid=? AND nodeid<>parentid  ORDER BY nodeid ASC";
+        String sql = "SELECT * FROM " + tableName
+                + " WHERE parentid=? AND parentid<>nodeid  ORDER BY " + orderColumns;
         try (PreparedStatement statement = conn.prepareStatement(sql)) {
             statement.setLong(1, parent);
             return query(statement);
@@ -223,7 +203,8 @@ public class TableDataNode extends BaseTable<DataNode> {
         if (conn == null || title == null || title.isBlank()) {
             return null;
         }
-        String sql = "SELECT * FROM " + tableName + " WHERE parentid=? AND title=? AND nodeid<>parentid "
+        String sql = "SELECT * FROM " + tableName
+                + " WHERE parentid=? AND parentid<> nodeid AND title=? "
                 + "ORDER BY nodeid DESC FETCH FIRST ROW ONLY";
         try (PreparedStatement statement = conn.prepareStatement(sql)) {
             statement.setLong(1, parent);
@@ -264,24 +245,6 @@ public class TableDataNode extends BaseTable<DataNode> {
             MyBoxLog.debug(e);
             return null;
         }
-    }
-
-    public DataNode findAndCreateRoot(Connection conn) {
-        DataNode base = query(conn, 1);
-        if (base == null) {
-            try {
-                String sql = "INSERT INTO " + tableName + " (nodeid,title,parentid) VALUES(1,'Root',1)";
-                update(conn, sql);
-                conn.commit();
-                sql = "ALTER TABLE " + tableName + " ALTER COLUMN nodeid RESTART WITH 2";
-                update(conn, sql);
-                conn.commit();
-                base = query(conn, 1);
-            } catch (Exception e) {
-                MyBoxLog.debug(e);
-            }
-        }
-        return base;
     }
 
     public DataNode findAndCreateChain(Connection conn, DataNode root, String ownerChain) {
@@ -330,7 +293,8 @@ public class TableDataNode extends BaseTable<DataNode> {
 
     public List<DataNode> decentants(Connection conn, long parentid, long start, long size) {
         List<DataNode> children = new ArrayList<>();
-        String sql = "SELECT * FROM " + tableName + " WHERE parentid=? AND nodeid<>parentid  ORDER BY nodeid ASC";
+        String sql = "SELECT * FROM " + tableName
+                + " WHERE parentid=? AND parentid<>nodeid  ORDER BY " + orderColumns;
         try (PreparedStatement query = conn.prepareStatement(sql)) {
             decentants(conn, query, parentid, start, size, children, 0);
         } catch (Exception e) {
@@ -391,7 +355,8 @@ public class TableDataNode extends BaseTable<DataNode> {
             return 0;
         }
         int count = 0;
-        String sql = "SELECT count(nodeid) FROM " + tableName + " WHERE parentid=? AND nodeid<>parentid";
+        String sql = "SELECT count(nodeid) FROM " + tableName
+                + " WHERE parentid=? AND parentid<>nodeid";
         try (PreparedStatement sizeQuery = conn.prepareStatement(sql)) {
             count = decentantsSize(conn, sizeQuery, parentid);
         } catch (Exception e) {
@@ -457,7 +422,8 @@ public class TableDataNode extends BaseTable<DataNode> {
             return 0;
         }
         int size = 0;
-        String sql = "SELECT count(nodeid) FROM " + tableName + " WHERE parentid=? AND nodeid<>parentid";
+        String sql = "SELECT count(nodeid) FROM " + tableName
+                + " WHERE parentid=? AND parentid<>nodeid";
         try (PreparedStatement sizeQuery = conn.prepareStatement(sql)) {
             size = childrenSize(sizeQuery, parent);
         } catch (Exception e) {
@@ -468,7 +434,8 @@ public class TableDataNode extends BaseTable<DataNode> {
 
     public boolean childrenEmpty(Connection conn, long parent) {
         boolean isEmpty = true;
-        String sql = "SELECT nodeid FROM " + tableName + " WHERE parentid=? AND nodeid<>parentid FETCH FIRST ROW ONLY";
+        String sql = "SELECT nodeid FROM " + tableName
+                + " WHERE parentid=? AND parentid<>nodeid FETCH FIRST ROW ONLY";
         try (PreparedStatement statement = conn.prepareStatement(sql)) {
             statement.setLong(1, parent);
             conn.setAutoCommit(true);
@@ -517,7 +484,8 @@ public class TableDataNode extends BaseTable<DataNode> {
     }
 
     public int deleteChildren(Connection conn, long parent) {
-        String sql = "DELETE FROM " + tableName + " WHERE parentid=? AND nodeid<>parentid";
+        String sql = "DELETE FROM " + tableName
+                + " WHERE parentid=? AND parentid<>nodeid";
         try (PreparedStatement statement = conn.prepareStatement(sql)) {
             statement.setLong(1, parent);
             return statement.executeUpdate();
@@ -531,7 +499,8 @@ public class TableDataNode extends BaseTable<DataNode> {
         if (tags == null || tags.isEmpty()) {
             return null;
         }
-        String condition = " nodeid IN ( SELECT tnodeid FROM Tree_Node_Tag WHERE tagid IN ( " + tags.get(0).getTagid();
+        String condition = " nodeid IN ( SELECT tnodeid FROM Tree_Node_Tag "
+                + " WHERE tagid IN ( " + tags.get(0).getTagid();
         for (int i = 1; i < tags.size(); ++i) {
             condition += ", " + tags.get(i).getTagid();
         }

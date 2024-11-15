@@ -18,22 +18,18 @@ import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TreeItem;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.paint.Color;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.DataNode;
 import mara.mybox.db.data.DataNodeTag;
+import mara.mybox.db.data.DataNodeTools;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.BaseDataTable;
 import mara.mybox.db.table.TableDataNode;
 import mara.mybox.db.table.TableDataNodeTag;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.style.HtmlStyles;
-import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileNameTools;
-import mara.mybox.tools.JsonTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.tools.XmlTools;
 import static mara.mybox.value.AppValues.Indent;
@@ -60,21 +56,39 @@ public class DataTreeExportController extends BaseTaskController {
     protected boolean firstRow;
 
     @FXML
-    protected CheckBox idCheck, timeCheck, tagsCheck,
+    protected CheckBox idCheck, timeCheck, tagsCheck, orderCheck,
             htmlCheck, xmlCheck, jsonCheck, framesetCheck;
     @FXML
     protected ComboBox<String> charsetSelector;
     @FXML
     protected TextArea styleInput;
 
-    public DataTreeExportController() {
-        baseTitle = message("Export");
+    public void setParamters(DataTreeController controller, TreeItem<DataNode> item) {
+        try {
+            if (controller == null || item == null || item.getValue() == null) {
+                close();
+                return;
+            }
+            this.treeController = controller;
+            this.dataTable = controller.dataTable;
+            this.nodeTable = controller.nodeTable;
+            this.nodeTagsTable = controller.nodeTagsTable;
+            this.dataName = controller.dataName;
+            selectedNode = item;
+
+            baseName = baseName = baseName + "_" + dataName;
+            baseTitle = treeController.baseTitle + " - " + message("Export") + " : " + item.getValue().getTitle();
+
+            setControls();
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
-    @Override
-    public void initControls() {
+    public void setControls() {
         try {
-            super.initControls();
+            setTitle(baseTitle);
 
             idCheck.setSelected(UserConfig.getBoolean(baseName + "ID", false));
             idCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -97,6 +111,14 @@ public class DataTreeExportController extends BaseTaskController {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
                     UserConfig.setBoolean(baseName + "Tags", tagsCheck.isSelected());
+                }
+            });
+
+            orderCheck.setSelected(UserConfig.getBoolean(baseName + "Order", true));
+            orderCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
+                    UserConfig.setBoolean(baseName + "Order", orderCheck.isSelected());
                 }
             });
 
@@ -149,27 +171,6 @@ public class DataTreeExportController extends BaseTaskController {
             });
 
             styleInput.setText(UserConfig.getString(baseName + "Style", HtmlStyles.styleValue("Default")));
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    public void setParamters(DataTreeController controller, TreeItem<DataNode> item) {
-        try {
-            if (controller == null || item == null || item.getValue() == null) {
-                close();
-                return;
-            }
-            this.treeController = controller;
-            this.dataTable = controller.dataTable;
-            this.nodeTable = controller.nodeTable;
-            this.nodeTagsTable = controller.nodeTagsTable;
-            this.dataName = controller.dataName;
-            selectedNode = item;
-
-            baseTitle = treeController.baseTitle + " - " + message("Export") + " : " + item.getValue().getTitle();
-            setTitle(baseTitle);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -319,7 +320,7 @@ public class DataTreeExportController extends BaseTaskController {
                     StringBuilder s = new StringBuilder();
                     s.append("<?xml version=\"1.0\" encoding=\"")
                             .append(charset.name()).append("\"?>\n")
-                            .append("<").append(XmlTools.xmlTag(dataName)).append(">\n");
+                            .append("<").append(XmlTools.xmlTag(dataTable.getTableTitle())).append(">\n");
                     xmlWriter.write(s.toString());
                 } else if (targetPathController.isSkip()) {
                     updateLogs(message("Skipped"));
@@ -331,7 +332,7 @@ public class DataTreeExportController extends BaseTaskController {
                     updateLogs(message("Writing") + " " + jsonFile.getAbsolutePath());
                     jsonWriter = new FileWriter(jsonFile, Charset.forName("UTF-8"));
                     StringBuilder s = new StringBuilder();
-                    s.append("{\"").append(message(dataName)).append("\": [\n");
+                    s.append("{\"").append(dataTable.getTableTitle()).append("\": [\n");
                     jsonWriter.write(s.toString());
                 } else if (targetPathController.isSkip()) {
                     updateLogs(message("Skipped"));
@@ -407,7 +408,7 @@ public class DataTreeExportController extends BaseTaskController {
         }
         if (xmlWriter != null) {
             try {
-                xmlWriter.write("</" + XmlTools.xmlTag(dataTable.getTableName()) + ">\n");
+                xmlWriter.write("</" + XmlTools.xmlTag(dataTable.getTableTitle()) + ">\n");
                 xmlWriter.flush();
                 xmlWriter.close();
                 xmlWriter = null;
@@ -451,8 +452,8 @@ public class DataTreeExportController extends BaseTaskController {
                 writeHtml(currentTask, conn, parentChainName, node, htmlWriter, tags);
             }
             if (xmlWriter != null) {
-                xmlWriter.write(xmlPrefix + "<TreeNode>\n");
-                writeXML(currentTask, conn, parentChainName, xmlPrefix, node, tags);
+                xmlWriter.write(xmlPrefix + "<Node>\n");
+                writeXML(currentTask, conn, xmlPrefix, parentChainName, node, tags);
             }
             if (jsonWriter != null) {
                 writeJson(currentTask, conn, parentChainName, node, tags);
@@ -524,7 +525,7 @@ public class DataTreeExportController extends BaseTaskController {
                 }
             }
             if (xmlWriter != null) {
-                xmlWriter.write(xmlPrefix + "</TreeNode>\n");
+                xmlWriter.write(xmlPrefix + "</Node>\n");
             }
         } catch (Exception e) {
             updateLogs(e.toString());
@@ -535,50 +536,9 @@ public class DataTreeExportController extends BaseTaskController {
     protected void writeXML(FxTask currentTask, Connection conn, String prefix,
             String parentName, DataNode node, List<DataNodeTag> tags) {
         try {
-            String xml = prefix + "<Attributes>\n";
-            if (idCheck.isSelected()) {
-                if (node.getNodeid() >= 0) {
-                    xml += prefix + Indent + "<nodeid>" + node.getNodeid() + "</nodeid>\n";
-                }
-                if (node.getParentid() >= 0) {
-                    xml += prefix + Indent + "<parentid>" + node.getParentid() + "</parentid>\n";
-                }
-            }
-            if (parentName != null) {
-                xml += prefix + Indent + "<parentName>" + parentName + "</parentName>\n";
-            }
-            if (node.getTitle() != null) {
-                xml += prefix + Indent + "<title>\n"
-                        + prefix + Indent + "<![CDATA[" + node.getTitle() + "]]>\n"
-                        + prefix + Indent + "</title>\n";
-            }
-            if (node.getUpdateTime() != null) {
-                xml += prefix + "<updateTime>" + DateTools.datetimeToString(node.getUpdateTime()) + "</updateTime>\n";
-            }
-            xml += prefix + "</Attributes>\n";
-            xml += prefix + "<Data>\n";
-            List<ColumnDefinition> columns = dataTable.getColumns();
-            for (ColumnDefinition column : columns) {
-                String name = column.getColumnName();
-                Object value = node.getValue(name);
-                if (value == null) {
-                    continue;
-                }
-                String tname = XmlTools.xmlTag(name);
-                xml += prefix + Indent + "<" + tname + ">\n";
-                xml += prefix + Indent + Indent + "<![CDATA[" + column.toString(value) + "]]>\n";
-                xml += prefix + Indent + "</" + tname + ">\n";
-            }
-            xml += prefix + "</Data>\n";
-            if (tags != null && !tags.isEmpty()) {
-                xml += prefix + "<Tags>\n";
-                for (DataNodeTag tag : tags) {
-                    xml += prefix + Indent + "<Tag>\n";
-                    xml += prefix + Indent + Indent + "<![CDATA[" + tag.getTag().getTag() + "]]>\n";
-                    xml += prefix + Indent + "</Tag>\n";
-                }
-                xml += prefix + "</Tags>\n";
-            }
+            String xml = DataNodeTools.toXML(currentTask, conn,
+                    myController, dataTable, prefix, parentName, node, tags,
+                    idCheck.isSelected(), timeCheck.isSelected(), orderCheck.isSelected());
             xmlWriter.write(xml);
         } catch (Exception e) {
             updateLogs(e.toString());
@@ -588,42 +548,10 @@ public class DataTreeExportController extends BaseTaskController {
     protected void writeHtml(FxTask currentTask, Connection conn,
             String parentName, DataNode node, FileWriter writer, List<DataNodeTag> tags) {
         try {
-            writer.write(Indent + Indent + "<div id=\"" + node.getNodeid() + "\">\n");
-            if (idCheck.isSelected()) {
-                if (node.getNodeid() >= 0) {
-                    writer.write(Indent + Indent + Indent + "<H3>" + message("ID") + ": " + node.getNodeid() + "</H3>\n");
-                }
-                if (node.getParentid() >= 0) {
-                    writer.write(Indent + Indent + Indent + "<H3>" + message("ParentID") + ": " + node.getParentid() + "</H3>\n");
-                }
-            }
-            if (parentName != null) {
-                writer.write(Indent + Indent + Indent + "<H3>" + message("Parent") + ": "
-                        + "<PRE><CODE>" + parentName + "</CODE></PRE></H3>\n");
-            }
-            if (timeCheck.isSelected() && node.getUpdateTime() != null) {
-                writer.write(Indent + Indent + Indent + "<H5>" + DateTools.datetimeToString(node.getUpdateTime()) + "</H5>\n");
-            }
-            if (tags != null && !tags.isEmpty()) {
-                writer.write(Indent + Indent + Indent + "<H4>");
-                for (DataNodeTag nodeTag : tags) {
-                    Color color = nodeTag.getTag().getColor();
-                    if (color == null) {
-                        color = FxColorTools.randomColor();
-                    }
-                    writer.write("<SPAN style=\"border-radius:4px; padding: 2px; font-size:0.8em;  background-color: "
-                            + FxColorTools.color2rgb(color) + "; color: "
-                            + FxColorTools.color2rgb(FxColorTools.foreColor(color)) + ";\">"
-                            + nodeTag.getTag().getTag() + "</SPAN>\n");
-                }
-                writer.write("</H4>\n");
-            }
-            writer.write(Indent + Indent + Indent + "<H4><PRE><CODE>" + node.getTitle() + "</CODE></PRE></H4>\n");
-            String dataHtml = dataTable.valuesHtml(currentTask, conn, myController, node);
-            if (dataHtml != null && !dataHtml.isBlank()) {
-                writer.write(Indent + Indent + Indent + dataHtml + "\n");
-            }
-            writer.write(Indent + Indent + "</div><HR>\n\n");
+            String html = DataNodeTools.toHtml(currentTask, conn,
+                    myController, dataTable, parentName, node, tags,
+                    idCheck.isSelected(), timeCheck.isSelected(), orderCheck.isSelected());
+            writer.write(html);
         } catch (Exception e) {
             updateLogs(e.toString());
         }
@@ -632,61 +560,15 @@ public class DataTreeExportController extends BaseTaskController {
     protected void writeJson(FxTask currentTask, Connection conn,
             String parentName, DataNode node, List<DataNodeTag> tags) {
         try {
-            StringBuilder s = new StringBuilder();
             if (!firstRow) {
-                s.append(",\n");
+                jsonWriter.write(",\n");
             } else {
                 firstRow = false;
             }
-            s.append(Indent).append("{").append("\n");
-            if (idCheck.isSelected()) {
-                if (node.getNodeid() >= 0) {
-                    s.append(Indent).append(Indent)
-                            .append("\"").append(message("ID")).append("\": ")
-                            .append(node.getNodeid()).append(",\n");
-                }
-                if (node.getParentid() >= 0) {
-                    s.append(Indent).append(Indent)
-                            .append("\"").append(message("ParentID")).append("\": ")
-                            .append(node.getParentid()).append(",\n");
-                }
-            }
-            if (parentName != null) {
-                s.append(Indent).append(Indent)
-                        .append("\"").append(message("Parent")).append("\": \"")
-                        .append(parentName).append("\",\n");
-            }
-            s.append(Indent).append(Indent)
-                    .append("\"").append(message("Title")).append("\": \"")
-                    .append(node.getTitle()).append("\"");
-            if (timeCheck.isSelected() && node.getUpdateTime() != null) {
-                s.append(",\n");
-                s.append(Indent).append(Indent)
-                        .append("\"").append("UpdateTime").append("\": \"")
-                        .append(node.getUpdateTime()).append("\"");
-            }
-            if (tags != null && !tags.isEmpty()) {
-                String t = null;
-                for (DataNodeTag tag : tags) {
-                    String v = tag.getTag().getTag();
-                    if (t == null) {
-                        t = v;
-                    } else {
-                        t += DataNode.TagSeparater + v;
-                    }
-                }
-                s.append(",\n");
-                s.append(Indent).append(Indent)
-                        .append("\"").append(message("Tags")).append("\": ")
-                        .append(JsonTools.encode(t));
-            }
-//            String infoJson = DataNode.infoJson(currentTask, this, node.getCategory(), node.getInfo(), Indent + Indent);
-//            if (infoJson != null && !infoJson.isBlank()) {
-//                s.append(infoJson);
-//            }
-            s.append("\n");
-            s.append(Indent).append("}").append("\n");
-            jsonWriter.write(s.toString());
+            String json = DataNodeTools.toJson(currentTask, conn,
+                    myController, dataTable, parentName, node, tags,
+                    idCheck.isSelected(), timeCheck.isSelected(), orderCheck.isSelected());
+            jsonWriter.write(json);
         } catch (Exception e) {
             updateLogs(e.toString());
         }

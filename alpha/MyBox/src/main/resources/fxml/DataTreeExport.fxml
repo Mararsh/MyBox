@@ -46,6 +46,7 @@ License:    Apache License Version 2.0
                               <CheckBox fx:id="idCheck" layoutX="60.0" layoutY="10.0" mnemonicParsing="false" text="%ID" />
                                               <CheckBox fx:id="timeCheck" mnemonicParsing="false" text="%Time" />
                                               <CheckBox fx:id="tagsCheck" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%Tags" />
+                              <CheckBox fx:id="orderCheck" layoutX="132.0" layoutY="10.0" mnemonicParsing="false" text="%OrderNumber" />
                                           </children>
                                       </FlowPane>
                                       <fx:include fx:id="targetPath" source="ControlTargetPath.fxml" />

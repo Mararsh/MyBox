@@ -25,6 +25,7 @@ public abstract class BaseDataValuesController extends BaseController {
             this.parentController = nodeEditor;
             this.baseName = nodeEditor.baseName;
             dataTable = nodeEditor.dataTable;
+
             initEditor();
         } catch (Exception e) {
             MyBoxLog.error(e);

@@ -72,6 +72,8 @@ public class ControlDataNodeEditor extends BaseController {
             nodeTable = treeController.nodeTable;
             tagTable = treeController.tagTable;
             nodeTagsTable = treeController.nodeTagsTable;
+
+            baseName = baseName + "_" + dataTable.getTableName();
             saveButton = controller.saveButton;
             addButton = controller.addButton;
             copyButton = controller.copyButton;
@@ -103,14 +105,12 @@ public class ControlDataNodeEditor extends BaseController {
         }
         task = new FxTask<Void>(this) {
 
+            protected DataValues values;
+
             @Override
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
-                    DataValues values = node.dataValues(conn, dataTable);
-                    if (values == null) {
-                        return false;
-                    }
-                    dataValues = values;
+                    dataValues = node.dataValues(conn, dataTable);
                     currentNode = node;
                     parentNode = nodeTable.query(conn, currentNode.getParentid());
                     return true;
@@ -187,6 +187,13 @@ public class ControlDataNodeEditor extends BaseController {
         saveButton.setDisable(!changed);
         recoverButton.setDisable(!changed);
         copyButton.setDisable(currentNode == null);
+
+        boolean isValid = dataValues != null && parentNode != null;
+        thisPane.setVisible(isValid);
+        saveButton.setVisible(isValid);
+        addButton.setVisible(isValid);
+        copyButton.setVisible(isValid);
+        recoverButton.setVisible(isValid);
 
         nodeChanged.set(changed);
         isSettingValues = false;
@@ -281,6 +288,7 @@ public class ControlDataNodeEditor extends BaseController {
     @Override
     public void addAction() {
         try {
+            MyBoxLog.console(currentNode != null);
             if (!treeController.checkBeforeNextAction()) {
                 return;
             }

@@ -41,6 +41,7 @@ public class ControlDataNodeAttributes extends BaseController {
             dataTable = treeController.dataTable;
             nodeTable = treeController.nodeTable;
 
+            baseName = baseName + "_" + dataTable.getTableName();
             titleInput = nodeEditor.titleInput;
             titleInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override

@@ -57,11 +57,12 @@ public class ControlDataNodeTags extends BaseTableViewController<DataTag> {
         try {
             this.nodeEditor = controller;
             this.parentController = nodeEditor;
-            this.baseName = nodeEditor.baseName;
             dataTable = nodeEditor.dataTable;
             dataNodeTable = nodeEditor.nodeTable;
             dataTagTable = nodeEditor.tagTable;
             dataNodeTagTable = nodeEditor.nodeTagsTable;
+
+            baseName = baseName + "_" + dataTable.getTableName();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

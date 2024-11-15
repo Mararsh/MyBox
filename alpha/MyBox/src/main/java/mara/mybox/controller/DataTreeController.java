@@ -74,8 +74,13 @@ public class DataTreeController extends BaseDataTreeViewController {
             nodeTable = new TableDataNode(dataTable);
             tagTable = new TableDataTag(dataTable);
             nodeTagsTable = new TableDataNodeTag(dataTable);
-            baseTitle = message("DataTree") + "-" + dataTable.getTableTitle();
+
             dataName = dataTable.getTableName();
+            baseName = baseName + "_" + dataName;
+            baseTitle = message("DataTree") + "-" + dataTable.getTableTitle();
+            setTitle(baseTitle);
+
+            MyBoxLog.console(baseTitle);
 
             nodeController.setParameters(this);
             loadTree();
@@ -91,16 +96,16 @@ public class DataTreeController extends BaseDataTreeViewController {
     @Override
     public void loadTree() {
         try (Connection conn = DerbyBase.getConnection()) {
-//            if (tableTree.categoryEmpty(conn)) {
-//                File file = TreeNode.exampleFile(category);
-//                if (file != null) {
-//                    if (AppVariables.isTesting
-//                            || PopTools.askSure(getTitle(), message("ImportExamples") + ": " + message(category))) {
-//                        importExamples();
-//                        return;
-//                    }
-//                }
-//            }
+            if (dataTable.isEmpty(conn)) {
+                File file = dataTable.getExamplesFile();
+                if (file != null) {
+                    if (AppVariables.isTesting
+                            || PopTools.askSure(getTitle(), message("ImportExamples") + ": " + dataTable.getTableTitle())) {
+                        importExamples();
+                        return;
+                    }
+                }
+            }
             loadTree(null);
         } catch (Exception e) {
             MyBoxLog.debug(e);

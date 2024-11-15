@@ -4,8 +4,6 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import mara.mybox.db.Database;
-import static mara.mybox.db.data.DataNode.MoreSeparater;
-import static mara.mybox.db.data.DataNode.ValueSeparater;
 import mara.mybox.db.table.BaseDataTable;
 import static mara.mybox.db.table.BaseTable.StringMaxLength;
 import mara.mybox.db.table.TableDataNode;
@@ -20,24 +18,6 @@ import mara.mybox.tools.JsonTools;
  * @License Apache License Version 2.0
  */
 public class DataValuesTools {
-
-    public static String toText(DataValues data) {
-        String info = (String) data.getValue("info");
-        String title = (String) data.getValue("title");
-        if (title == null || title.isBlank()) {
-            if (info == null || info.isBlank()) {
-                return null;
-            } else {
-                return ValueSeparater + "\n" + info.trim();
-            }
-        } else {
-            if (info == null || info.isBlank()) {
-                return title.trim() + ValueSeparater;
-            } else {
-                return title.trim() + ValueSeparater + "\n" + info.trim();
-            }
-        }
-    }
 
     public static String toXml(DataValues data, String prefix) {
         String xml = prefix + "<node>\n";
@@ -223,11 +203,16 @@ public class DataValuesTools {
     // only for migration
     public static DataValues fromText(BaseDataTable dataTable, String text) {
         try {
-            if (dataTable == null || text == null || text.isBlank()) {
+            if (dataTable == null) {
                 return null;
             }
             DataValues values = new DataValues();
             values.setId(dataTable, -1);
+            if (text == null || text.isBlank()) {
+                return values;
+            }
+            String ValueSeparater = "_:;MyBoxNodeValue;:_";
+            String MoreSeparater = "MyBoxTreeNodeMore:";
             String info = text.trim();
             switch (dataTable.getTableName()) {
                 case "Info_In_Tree":
