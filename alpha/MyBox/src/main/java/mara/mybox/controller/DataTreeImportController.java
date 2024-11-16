@@ -11,8 +11,7 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import mara.mybox.db.data.DataNode;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.db.table.BaseDataTable;
-import mara.mybox.db.table.TableDataNode;
+import mara.mybox.db.table.BaseNodeTable;
 import mara.mybox.db.table.TableDataNodeTag;
 import mara.mybox.db.table.TableDataTag;
 import mara.mybox.dev.MyBoxLog;
@@ -26,11 +25,10 @@ import mara.mybox.value.UserConfig;
  */
 public class DataTreeImportController extends BaseBatchFileController {
 
-    protected BaseDataTreeController dataController;
-    protected BaseDataTable dataTable;
-    protected TableDataNode dataNodeTable;
-    protected TableDataNodeTag dataNodeTagTable;
-    protected TableDataTag dataTagTable;
+    protected DataTreeController dataController;
+    protected BaseNodeTable nodeTable;
+    protected TableDataNodeTag nodeTagsTable;
+    protected TableDataTag tagTable;
     protected DataNode rootNode;
 
     @FXML
@@ -85,16 +83,15 @@ public class DataTreeImportController extends BaseBatchFileController {
         }
     }
 
-    public void setCaller(BaseDataTreeController controller) {
+    public void setCaller(DataTreeController controller) {
         this.dataController = controller;
-        dataTable = dataController.dataTable;
-        dataNodeTable = dataController.dataNodeTable;
-        dataNodeTagTable = dataController.dataNodeTagTable;
-        dataTagTable = dataController.dataTagTable;
+        nodeTable = dataController.nodeTable;
+        nodeTagsTable = dataController.nodeTagsTable;
+        tagTable = dataController.tagTable;
     }
 
     public void importExamples() {
-        File file = dataTable.exampleFile();
+        File file = nodeTable.exampleFile();
         if (file == null) {
             return;
         }

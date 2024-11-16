@@ -6,7 +6,7 @@ import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextArea;
-import mara.mybox.db.data.DataValues;
+import mara.mybox.db.data.DataNode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.value.UserConfig;
@@ -52,10 +52,10 @@ public class ControlDataInfo extends BaseDataValuesController {
     protected void editValues() {
         try {
             Object v;
-            if (nodeEditor.dataValues == null) {
+            if (nodeEditor.currentNode == null) {
                 v = null;
             } else {
-                v = nodeEditor.dataValues.getValue("info");
+                v = nodeEditor.currentNode.getValue("info");
             }
             infoInput.setText(v != null ? (String) v : null);
         } catch (Exception e) {
@@ -64,17 +64,11 @@ public class ControlDataInfo extends BaseDataValuesController {
     }
 
     @Override
-    protected DataValues pickValues() {
+    protected DataNode pickValues(DataNode node) {
         try {
-            DataValues data;
-            if (nodeEditor.dataValues != null) {
-                data = nodeEditor.dataValues.copy();
-            } else {
-                data = new DataValues();
-            }
-            data.setValue("title", nodeEditor.titleInput.getText());
-            data.setValue("info", infoInput.getText());
-            return data;
+            node.setValue("title", nodeEditor.titleInput.getText());
+            node.setValue("info", infoInput.getText());
+            return node;
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;

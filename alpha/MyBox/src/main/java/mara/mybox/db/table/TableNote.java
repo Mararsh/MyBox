@@ -1,11 +1,11 @@
 package mara.mybox.db.table;
 
 import java.sql.Connection;
+import java.util.Map;
 import mara.mybox.controller.BaseController;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.DataNode;
-import mara.mybox.db.data.DataValues;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -15,51 +15,27 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-4-23
  * @License Apache License Version 2.0
  */
-public class TableNote extends BaseDataTable<DataValues> {
+public class TableNote extends BaseNodeTable {
 
     public TableNote() {
         tableName = "Note";
         tableTitle = message("Notes");
-        idColumnName = "noteid";
         fxml = Fxmls.ControlDataNoteFxml;
+        examplesFile = exampleFile();
         defineColumns();
     }
 
     public final TableNote defineColumns() {
-        addColumn(new ColumnDefinition("noteid", ColumnType.Long, true, true).setAuto(true));
+        defineNodeColumns();
         addColumn(new ColumnDefinition("note", ColumnType.Clob));
         return this;
     }
 
     @Override
-    public boolean setValue(DataValues data, String column, Object value) {
-        if (data == null || column == null) {
-            return false;
-        }
-        return data.setValue(column, value);
-    }
-
-    @Override
-    public Object getValue(DataValues data, String column) {
-        if (data == null || column == null) {
-            return null;
-        }
-        return data.getValue(column);
-    }
-
-    @Override
-    public boolean valid(DataValues data) {
-        if (data == null) {
-            return false;
-        }
-        return data.valid();
-    }
-
-    @Override
     public String valuesHtml(FxTask task, Connection conn, BaseController controller, DataNode node) {
         try {
-            DataValues values = node.dataValues(conn, this);
-            return (String) values.getValue("note");
+            Map<String, Object> values = node.getValues();
+            return (String) values.get("note");
         } catch (Exception e) {
             return null;
         }

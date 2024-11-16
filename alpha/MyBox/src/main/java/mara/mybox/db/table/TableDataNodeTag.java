@@ -20,36 +20,36 @@ import mara.mybox.dev.MyBoxLog;
  */
 public class TableDataNodeTag extends BaseTable<DataNodeTag> {
 
-    protected BaseDataTable dataTable;
+    protected BaseNodeTable nodeTable;
     protected TableDataTag tagTable;
 
-    public TableDataNodeTag(BaseDataTable data) {
-        if (data == null) {
+    public TableDataNodeTag(BaseNodeTable table) {
+        if (table == null) {
             return;
         }
-        dataTable = data;
-        tagTable = new TableDataTag(dataTable);
+        nodeTable = table;
+        tagTable = new TableDataTag(nodeTable);
         init();
     }
 
-    public TableDataNodeTag(BaseDataTable data, TableDataTag tag) {
-        dataTable = data;
+    public TableDataNodeTag(BaseNodeTable data, TableDataTag tag) {
+        nodeTable = data;
         tagTable = tag;
         init();
     }
 
     public final void init() {
-        if (dataTable == null || tagTable == null) {
+        if (nodeTable == null || tagTable == null) {
             return;
         }
-        tableName = dataTable.tableName + "_Node_Tag";
+        tableName = nodeTable.tableName + "_Node_Tag";
         defineColumns();
     }
 
     public final TableDataNodeTag defineColumns() {
         addColumn(new ColumnDefinition("tnodeid", ColumnType.Long, true, true)
                 .setReferName(tableName + "_nodeid_fk")
-                .setReferTable(dataTable.tableName).setReferColumn(dataTable.idColumnName)
+                .setReferTable(nodeTable.tableName).setReferColumn(nodeTable.idColumnName)
                 .setOnDelete(ColumnDefinition.OnDelete.Cascade)
         );
         addColumn(new ColumnDefinition("ttagid", ColumnType.Long, true, true)
@@ -86,12 +86,12 @@ public class TableDataNodeTag extends BaseTable<DataNodeTag> {
 
     @Override
     public Object readForeignValue(ResultSet results, String column) {
-        if (results == null || column == null || dataTable == null || tagTable == null) {
+        if (results == null || column == null || nodeTable == null || tagTable == null) {
             return null;
         }
         try {
             if ("tnodeid".equals(column) && results.findColumn("nodeid") > 0) {
-                return dataTable.readData(results);
+                return nodeTable.readData(results);
             }
             if ("ttagid".equals(column) && results.findColumn("tagid") > 0) {
                 return tagTable.readData(results);
@@ -133,7 +133,7 @@ public class TableDataNodeTag extends BaseTable<DataNodeTag> {
         if (conn == null || nodeid < 0) {
             return tags;
         }
-        String sql = "SELECT * FROM " + tableName + ", " + dataTable.tableName + "_Tag" + " WHERE tnodeid=? AND ttagid=tagid";
+        String sql = "SELECT * FROM " + tableName + ", " + nodeTable.tableName + "_Tag" + " WHERE tnodeid=? AND ttagid=tagid";
         try (PreparedStatement statement = conn.prepareStatement(sql)) {
             statement.setLong(1, nodeid);
             conn.setAutoCommit(true);
@@ -151,7 +151,7 @@ public class TableDataNodeTag extends BaseTable<DataNodeTag> {
     }
 
     public int setAll(Connection conn, long nodeid, List<DataTag> tags) {
-        if (dataTable == null || conn == null || nodeid < 0) {
+        if (nodeTable == null || conn == null || nodeid < 0) {
             return -1;
         }
         removeTags(conn, nodeid);

@@ -15,9 +15,8 @@ import javafx.util.Callback;
 import javafx.util.converter.DefaultStringConverter;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.DataTag;
-import mara.mybox.db.table.BaseTable;
+import mara.mybox.db.table.BaseNodeTable;
 import mara.mybox.db.table.TableColor;
-import mara.mybox.db.table.TableDataNode;
 import mara.mybox.db.table.TableDataTag;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
@@ -36,9 +35,8 @@ import static mara.mybox.value.Languages.message;
 public class DataTreeTagsController extends BaseTableViewController<DataTag> {
 
     protected ControlDataNodeTags nodeTagsController;
-    protected TableDataNode dataNodeTable;
-    protected TableDataTag dataTagTable;
-    protected BaseTable dataTable;
+    protected BaseNodeTable nodeTable;
+    protected TableDataTag tagTable;
     protected List<DataTag> deleted = new ArrayList<>();
 
     @FXML
@@ -137,10 +135,9 @@ public class DataTreeTagsController extends BaseTableViewController<DataTag> {
             nodeTagsController = controller;
             parentController = controller;
             baseName = controller.baseName;
-            dataTable = controller.dataTable;
-            dataNodeTable = controller.dataNodeTable;
-            dataTagTable = controller.dataTagTable;
-            baseTitle = message("Tags") + " - " + message(dataTable.getTableName());
+            nodeTable = controller.nodeTable;
+            tagTable = controller.tagTable;
+            baseTitle = message("Tags") + " - " + nodeTable.getTableTitle();
 
             loadTags();
         } catch (Exception e) {
@@ -154,7 +151,7 @@ public class DataTreeTagsController extends BaseTableViewController<DataTag> {
         }
         tableData.clear();
         deleted.clear();
-        if (dataTagTable == null) {
+        if (tagTable == null) {
             return;
         }
         task = new FxTask<Void>(this) {
@@ -163,7 +160,7 @@ public class DataTreeTagsController extends BaseTableViewController<DataTag> {
             @Override
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
-                    tags = dataTagTable.readAll(conn);
+                    tags = tagTable.readAll(conn);
                 } catch (Exception e) {
                     MyBoxLog.error(e);
                     return false;
@@ -261,13 +258,13 @@ public class DataTreeTagsController extends BaseTableViewController<DataTag> {
                     conn.setAutoCommit(false);
                     for (DataTag tag : tableData) {
                         if (tag.getTagid() >= 0) {
-                            dataTagTable.updateData(conn, tag);
+                            tagTable.updateData(conn, tag);
                         } else {
-                            dataTagTable.insertData(conn, tag);
+                            tagTable.insertData(conn, tag);
                         }
                     }
                     for (DataTag tag : deleted) {
-                        dataTagTable.deleteData(conn, tag);
+                        tagTable.deleteData(conn, tag);
                     }
                     conn.commit();
                 } catch (Exception e) {

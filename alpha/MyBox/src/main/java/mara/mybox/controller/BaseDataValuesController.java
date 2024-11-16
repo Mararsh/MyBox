@@ -1,7 +1,7 @@
 package mara.mybox.controller;
 
-import mara.mybox.db.data.DataValues;
-import mara.mybox.db.table.BaseDataTable;
+import mara.mybox.db.data.DataNode;
+import mara.mybox.db.table.BaseNodeTable;
 import mara.mybox.dev.MyBoxLog;
 
 /**
@@ -12,19 +12,19 @@ import mara.mybox.dev.MyBoxLog;
 public abstract class BaseDataValuesController extends BaseController {
 
     protected ControlDataNodeEditor nodeEditor;
-    protected BaseDataTable dataTable;
+    protected BaseNodeTable nodeTable;
     protected boolean changed;
 
     protected abstract void editValues();
 
-    protected abstract DataValues pickValues();
+    protected abstract DataNode pickValues(DataNode node);
 
     public void setParameters(ControlDataNodeEditor controller) {
         try {
             this.nodeEditor = controller;
             this.parentController = nodeEditor;
             this.baseName = nodeEditor.baseName;
-            dataTable = nodeEditor.dataTable;
+            nodeTable = nodeEditor.nodeTable;
 
             initEditor();
         } catch (Exception e) {

@@ -23,8 +23,7 @@ import mara.mybox.db.data.DataNode;
 import mara.mybox.db.data.DataNodeTag;
 import mara.mybox.db.data.DataNodeTools;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.db.table.BaseDataTable;
-import mara.mybox.db.table.TableDataNode;
+import mara.mybox.db.table.BaseNodeTable;
 import mara.mybox.db.table.TableDataNodeTag;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
@@ -44,8 +43,7 @@ import mara.mybox.value.UserConfig;
 public class DataTreeExportController extends BaseTaskController {
 
     protected DataTreeController treeController;
-    protected BaseDataTable dataTable;
-    protected TableDataNode nodeTable;
+    protected BaseNodeTable nodeTable;
     protected TableDataNodeTag nodeTagsTable;
     protected TreeItem<DataNode> selectedNode;
     protected File textsFile, xmlFile, jsonFile, htmlFile, framesetFile, framesetNavFile;
@@ -70,7 +68,6 @@ public class DataTreeExportController extends BaseTaskController {
                 return;
             }
             this.treeController = controller;
-            this.dataTable = controller.dataTable;
             this.nodeTable = controller.nodeTable;
             this.nodeTagsTable = controller.nodeTagsTable;
             this.dataName = controller.dataName;
@@ -320,7 +317,7 @@ public class DataTreeExportController extends BaseTaskController {
                     StringBuilder s = new StringBuilder();
                     s.append("<?xml version=\"1.0\" encoding=\"")
                             .append(charset.name()).append("\"?>\n")
-                            .append("<").append(XmlTools.xmlTag(dataTable.getTableTitle())).append(">\n");
+                            .append("<").append(XmlTools.xmlTag(nodeTable.getTableTitle())).append(">\n");
                     xmlWriter.write(s.toString());
                 } else if (targetPathController.isSkip()) {
                     updateLogs(message("Skipped"));
@@ -332,7 +329,7 @@ public class DataTreeExportController extends BaseTaskController {
                     updateLogs(message("Writing") + " " + jsonFile.getAbsolutePath());
                     jsonWriter = new FileWriter(jsonFile, Charset.forName("UTF-8"));
                     StringBuilder s = new StringBuilder();
-                    s.append("{\"").append(dataTable.getTableTitle()).append("\": [\n");
+                    s.append("{\"").append(nodeTable.getTableTitle()).append("\": [\n");
                     jsonWriter.write(s.toString());
                 } else if (targetPathController.isSkip()) {
                     updateLogs(message("Skipped"));
@@ -408,7 +405,7 @@ public class DataTreeExportController extends BaseTaskController {
         }
         if (xmlWriter != null) {
             try {
-                xmlWriter.write("</" + XmlTools.xmlTag(dataTable.getTableTitle()) + ">\n");
+                xmlWriter.write("</" + XmlTools.xmlTag(nodeTable.getTableTitle()) + ">\n");
                 xmlWriter.flush();
                 xmlWriter.close();
                 xmlWriter = null;
@@ -537,7 +534,7 @@ public class DataTreeExportController extends BaseTaskController {
             String parentName, DataNode node, List<DataNodeTag> tags) {
         try {
             String xml = DataNodeTools.toXML(currentTask, conn,
-                    myController, dataTable, prefix, parentName, node, tags,
+                    myController, nodeTable, prefix, parentName, node, tags,
                     idCheck.isSelected(), timeCheck.isSelected(), orderCheck.isSelected());
             xmlWriter.write(xml);
         } catch (Exception e) {
@@ -549,7 +546,7 @@ public class DataTreeExportController extends BaseTaskController {
             String parentName, DataNode node, FileWriter writer, List<DataNodeTag> tags) {
         try {
             String html = DataNodeTools.toHtml(currentTask, conn,
-                    myController, dataTable, parentName, node, tags,
+                    myController, nodeTable, parentName, node, tags,
                     idCheck.isSelected(), timeCheck.isSelected(), orderCheck.isSelected());
             writer.write(html);
         } catch (Exception e) {
@@ -566,7 +563,7 @@ public class DataTreeExportController extends BaseTaskController {
                 firstRow = false;
             }
             String json = DataNodeTools.toJson(currentTask, conn,
-                    myController, dataTable, parentName, node, tags,
+                    myController, nodeTable, parentName, node, tags,
                     idCheck.isSelected(), timeCheck.isSelected(), orderCheck.isSelected());
             jsonWriter.write(json);
         } catch (Exception e) {

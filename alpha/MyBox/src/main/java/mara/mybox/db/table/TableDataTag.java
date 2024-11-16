@@ -15,14 +15,14 @@ import mara.mybox.dev.MyBoxLog;
  */
 public class TableDataTag extends BaseTable<DataTag> {
 
-    protected BaseDataTable dataTable;
+    protected BaseNodeTable nodeTable;
 
-    public TableDataTag(BaseDataTable data) {
-        dataTable = data;
-        if (dataTable == null) {
+    public TableDataTag(BaseNodeTable table) {
+        if (table == null) {
             return;
         }
-        tableName = dataTable.tableName + "_Tag";
+        nodeTable = table;
+        tableName = nodeTable.tableName + "_Tag";
         idColumnName = "tagid";
         defineColumns();
     }

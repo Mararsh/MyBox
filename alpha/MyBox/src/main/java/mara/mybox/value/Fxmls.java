@@ -15,14 +15,9 @@ public class Fxmls {
     /*
         document
      */
-    public static final String NoteTreeFxml = "/fxml/NoteTree.fxml";
-    public static final String InfoTreeFxml = "/fxml/InfoTree.fxml";
-
     public static final String DataTreeFxml = "/fxml/DataTree.fxml";
-
     public static final String ControlDataInfoFxml = "/fxml/ControlDataInfo.fxml";
     public static final String ControlDataNoteFxml = "/fxml/ControlDataNote.fxml";
-
     public static final String DataTreeTagsFxml = "/fxml/DataTreeTags.fxml";
     public static final String DataTreeExportFxml = "/fxml/DataTreeExport.fxml";
 

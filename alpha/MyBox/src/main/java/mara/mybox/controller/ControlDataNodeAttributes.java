@@ -9,8 +9,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.DataNode;
-import mara.mybox.db.table.BaseDataTable;
-import mara.mybox.db.table.TableDataNode;
+import mara.mybox.db.table.BaseNodeTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.DateTools;
@@ -25,8 +24,7 @@ public class ControlDataNodeAttributes extends BaseController {
 
     protected DataTreeController treeController;
     protected ControlDataNodeEditor nodeEditor;
-    protected BaseDataTable dataTable;
-    protected TableDataNode nodeTable;
+    protected BaseNodeTable nodeTable;
     protected boolean changed;
 
     @FXML
@@ -38,10 +36,9 @@ public class ControlDataNodeAttributes extends BaseController {
         try {
             treeController = controller;
             nodeEditor = treeController.nodeController;
-            dataTable = treeController.dataTable;
             nodeTable = treeController.nodeTable;
 
-            baseName = baseName + "_" + dataTable.getTableName();
+            baseName = baseName + "_" + nodeTable.getTableName();
             titleInput = nodeEditor.titleInput;
             titleInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override

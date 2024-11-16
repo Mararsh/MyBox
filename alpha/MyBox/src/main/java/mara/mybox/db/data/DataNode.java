@@ -1,9 +1,9 @@
 package mara.mybox.db.data;
 
-import java.sql.Connection;
 import java.util.Date;
-import mara.mybox.db.table.BaseDataTable;
-import mara.mybox.dev.MyBoxLog;
+import java.util.HashMap;
+import java.util.Map;
+import static mara.mybox.db.table.BaseNodeTable.RootID;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -13,7 +13,6 @@ import static mara.mybox.value.Languages.message;
  */
 public class DataNode extends BaseData {
 
-    public static final int RootID = 0;
     public static final String TitleSeparater = " > ";
     public static final String TagSeparater = ";;;";
 
@@ -21,10 +20,11 @@ public class DataNode extends BaseData {
     protected String title;
     protected float orderNumber;
     protected Date updateTime;
+    protected Map<String, Object> values;
 
     private void init() {
         nodeid = -1;
-        parentid = -2;
+        parentid = RootID;
         title = null;
         orderNumber = 0f;
         updateTime = new Date();
@@ -36,12 +36,56 @@ public class DataNode extends BaseData {
 
     @Override
     public boolean setValue(String column, Object value) {
-        return setValue(this, column, value);
+        try {
+            switch (column) {
+                case "nodeid":
+                    setNodeid(value == null ? -1 : (long) value);
+                    return true;
+                case "parentid":
+                    setParentid(value == null ? -1 : (long) value);
+                    return true;
+                case "title":
+                    setTitle(value == null ? null : (String) value);
+                    return true;
+                case "order_number":
+                    setOrderNumber(value == null ? 0f : (float) value);
+                    return true;
+                case "update_time":
+                    setUpdateTime(value == null ? null : (Date) value);
+                    return true;
+            }
+            if (values == null) {
+                values = new HashMap<>();
+            }
+            values.put(column, value);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     @Override
     public Object getValue(String column) {
-        return getValue(this, column);
+        try {
+            if (column == null) {
+                return null;
+            }
+            switch (column) {
+                case "nodeid":
+                    return getNodeid();
+                case "parentid":
+                    return getParentid();
+                case "title":
+                    return getTitle();
+                case "order_number":
+                    return getOrderNumber();
+                case "update_time":
+                    return getUpdateTime();
+            }
+            return values.get(column);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     @Override
@@ -49,16 +93,23 @@ public class DataNode extends BaseData {
         return true;
     }
 
-    public DataValues dataValues(Connection conn, BaseDataTable dataTable) {
-        return dataValues(conn, dataTable, this);
-    }
-
     public boolean isRoot() {
-        return parentid == nodeid;
+        return nodeid == RootID;
     }
 
     public DataNode copy() {
-        return copy(this);
+        try {
+            DataNode node = create()
+                    .setParentid(parentid)
+                    .setTitle(title + " " + message("Copy"));
+            if (values != null);
+            for (String key : values.keySet()) {
+                node.setValue(key, values.get(key));
+            }
+            return node;
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public String texts() {
@@ -84,66 +135,8 @@ public class DataNode extends BaseData {
         return new DataNode();
     }
 
-    public static boolean setValue(DataNode node, String column, Object value) {
-        if (node == null || column == null) {
-            return false;
-        }
-        try {
-            switch (column) {
-                case "nodeid":
-                    node.setNodeid(value == null ? -1 : (long) value);
-                    return true;
-                case "parentid":
-                    node.setParentid(value == null ? -1 : (long) value);
-                    return true;
-                case "title":
-                    node.setTitle(value == null ? null : (String) value);
-                    return true;
-                case "order_number":
-                    node.setOrderNumber(value == null ? 0f : (float) value);
-                    return true;
-                case "update_time":
-                    node.setUpdateTime(value == null ? null : (Date) value);
-                    return true;
-            }
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
-        return false;
-    }
-
-    public static Object getValue(DataNode node, String column) {
-        if (node == null || column == null) {
-            return null;
-        }
-        switch (column) {
-            case "nodeid":
-                return node.getNodeid();
-            case "parentid":
-                return node.getParentid();
-            case "title":
-                return node.getTitle();
-            case "order_number":
-                return node.getOrderNumber();
-            case "update_time":
-                return node.getUpdateTime();
-        }
-        return null;
-    }
-
     public static boolean valid(DataNode node) {
         return node != null;
-    }
-
-    public static DataNode createRoot(BaseDataTable dataTable) {
-        if (dataTable == null) {
-            return null;
-        }
-        DataNode root = new DataNode()
-                .setParentid(RootID)
-                .setNodeid(RootID)
-                .setTitle(dataTable.getTableTitle());
-        return root;
     }
 
     public static DataNode createChild(DataNode parent) {
@@ -152,21 +145,6 @@ public class DataNode extends BaseData {
 
     public static DataNode createChild(DataNode parent, String title) {
         return createChild(parent).setTitle(title);
-    }
-
-    public static DataNode copy(DataNode node) {
-        return create()
-                .setParentid(node.getParentid())
-                .setTitle(node.getTitle() + " " + message("Copy"));
-    }
-
-    public static DataValues dataValues(Connection conn, BaseDataTable dataTable, DataNode node) {
-        try {
-            return (DataValues) dataTable.query(conn, node.getNodeid());
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
     }
 
     /*
@@ -214,6 +192,15 @@ public class DataNode extends BaseData {
 
     public DataNode setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+        return this;
+    }
+
+    public Map<String, Object> getValues() {
+        return values;
+    }
+
+    public DataNode setValues(Map<String, Object> values) {
+        this.values = values;
         return this;
     }
 

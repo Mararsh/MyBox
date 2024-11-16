@@ -12,10 +12,8 @@ import javafx.scene.input.KeyEvent;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.DataNode;
 import static mara.mybox.db.data.DataNode.TitleSeparater;
-import mara.mybox.db.data.DataValues;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.db.table.BaseDataTable;
-import mara.mybox.db.table.TableDataNode;
+import mara.mybox.db.table.BaseNodeTable;
 import mara.mybox.db.table.TableDataNodeTag;
 import mara.mybox.db.table.TableDataTag;
 import mara.mybox.dev.MyBoxLog;
@@ -37,12 +35,10 @@ public class ControlDataNodeEditor extends BaseController {
     protected String defaultExt;
     protected final SimpleBooleanProperty nodeChanged;
     protected boolean nodeExecutable;
-    protected BaseDataTable dataTable;
-    protected TableDataNode nodeTable;
+    protected BaseNodeTable nodeTable;
     protected TableDataTag tagTable;
     protected TableDataNodeTag nodeTagsTable;
     protected DataNode parentNode, currentNode;
-    protected DataValues dataValues;
 
     @FXML
     protected Tab nodeTab, dataTab, tagsTab;
@@ -68,12 +64,11 @@ public class ControlDataNodeEditor extends BaseController {
     public void setParameters(DataTreeController controller) {
         try {
             treeController = controller;
-            dataTable = treeController.dataTable;
             nodeTable = treeController.nodeTable;
             tagTable = treeController.tagTable;
             nodeTagsTable = treeController.nodeTagsTable;
 
-            baseName = baseName + "_" + dataTable.getTableName();
+            baseName = baseName + "_" + nodeTable.getTableName();
             saveButton = controller.saveButton;
             addButton = controller.addButton;
             copyButton = controller.copyButton;
@@ -82,7 +77,7 @@ public class ControlDataNodeEditor extends BaseController {
             attributesController.setParameters(treeController);
             tagsController.setParameters(this);
 
-            dataController = (BaseDataValuesController) WindowTools.loadFxml(dataTable.getFxml());
+            dataController = (BaseDataValuesController) WindowTools.loadFxml(nodeTable.getFxml());
             dataPane.setContent(dataController.getMyScene().getRoot());
             dataController.refreshStyle();
             dataController.setParameters(this);
@@ -105,13 +100,10 @@ public class ControlDataNodeEditor extends BaseController {
         }
         task = new FxTask<Void>(this) {
 
-            protected DataValues values;
-
             @Override
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
-                    dataValues = node.dataValues(conn, dataTable);
-                    currentNode = node;
+                    currentNode = nodeTable.query(conn, node.getNodeid());
                     parentNode = nodeTable.query(conn, currentNode.getParentid());
                     return true;
                 } catch (Exception e) {
@@ -166,7 +158,7 @@ public class ControlDataNodeEditor extends BaseController {
         }
         isSettingValues = true;
         if (dataTab != null) {
-            dataTab.setText(message(dataTable.getTableTitle()) + (dataController.changed ? "*" : ""));
+            dataTab.setText(message(nodeTable.getTableTitle()) + (dataController.changed ? "*" : ""));
         }
         if (nodeTab != null) {
             nodeTab.setText(message("Node") + (attributesController.changed ? "*" : ""));
@@ -188,7 +180,7 @@ public class ControlDataNodeEditor extends BaseController {
         recoverButton.setDisable(!changed);
         copyButton.setDisable(currentNode == null);
 
-        boolean isValid = dataValues != null && parentNode != null;
+        boolean isValid = currentNode != null && parentNode != null;
         thisPane.setVisible(isValid);
         saveButton.setVisible(isValid);
         addButton.setVisible(isValid);
@@ -213,13 +205,13 @@ public class ControlDataNodeEditor extends BaseController {
     @FXML
     @Override
     public void saveAction() {
-        DataNode node = attributesController.pickAttributes();
-        if (node == null) {
+        DataNode attributes = attributesController.pickAttributes();
+        if (attributes == null) {
             popError(message("Invalid") + ": " + message("Node"));
             return;
         }
-        DataValues values = dataController.pickValues();
-        if (values == null) {
+        DataNode node = dataController.pickValues(attributes);
+        if (node == null) {
             popError(message("Invalid") + ": " + message("Value"));
             return;
         }
@@ -233,29 +225,22 @@ public class ControlDataNodeEditor extends BaseController {
             @Override
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
-                    DataValues savedValues = (DataValues) dataTable.writeData(conn, values);
-                    if (savedValues == null) {
+                    node.setNodeid(attributes.getNodeid());
+                    node.setUpdateTime(new Date());
+                    savedNode = nodeTable.writeData(conn, node);
+                    if (savedNode == null) {
                         conn.close();
                         error = message("Failed");
                         return false;
                     }
                     conn.commit();
 
-                    nodeid = savedValues.getId(dataTable);
+                    nodeid = savedNode.getNodeid();
                     if (nodeid < 0) {
                         conn.close();
                         error = message("Failed");
                         return false;
                     }
-                    node.setNodeid(nodeid);
-                    node.setUpdateTime(new Date());
-
-                    savedNode = nodeTable.writeData(conn, node);
-                    if (savedNode == null) {
-                        conn.close();
-                        return false;
-                    }
-                    conn.commit();
 
                     nodeTagsTable.setAll(conn, nodeid,
                             tagsController.selectedItems());
@@ -296,7 +281,6 @@ public class ControlDataNodeEditor extends BaseController {
             currentNode = DataNode.create();
             currentNode.setParentid(parentNode != null ? parentNode.getNodeid() : -1);
             currentNode.setTitle(message("Node") + new Date().getTime());
-            dataValues = null;
 
             attributesController.loadAttributes();
             tagsController.loadTags();
@@ -323,10 +307,6 @@ public class ControlDataNodeEditor extends BaseController {
                 return;
             }
             currentNode = currentNode.copy();
-            if (dataValues != null) {
-                dataValues = dataValues.copy();
-                dataValues.setId(dataTable, -1);
-            }
 
             attributesController.loadAttributes();
             tagsController.loadedTags.clear();

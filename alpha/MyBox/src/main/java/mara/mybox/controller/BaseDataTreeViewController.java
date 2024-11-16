@@ -22,8 +22,8 @@ import javafx.scene.input.MouseEvent;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.DataNode;
 import static mara.mybox.db.data.DataNode.TitleSeparater;
-import mara.mybox.db.table.BaseDataTable;
-import mara.mybox.db.table.TableDataNode;
+import mara.mybox.db.table.BaseNodeTable;
+import static mara.mybox.db.table.BaseNodeTable.RootID;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
@@ -46,8 +46,7 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
 
     protected static final int AutoExpandThreshold = 500;
     protected boolean expandAll;
-    protected TableDataNode nodeTable;
-    protected BaseDataTable dataTable;
+    protected BaseNodeTable nodeTable;
     protected String dataName;
 
     @FXML
@@ -131,27 +130,19 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
 
             protected boolean handle() {
                 rootItem = null;
-                if (dataTable == null) {
+                if (nodeTable == null) {
                     return true;
                 }
                 try (Connection conn = DerbyBase.getConnection()) {
-                    DataNode rootNode = DataNode.createRoot(dataTable);
+                    DataNode rootNode = nodeTable.getRoot(conn);
+                    if (rootNode == null) {
+                        return false;
+                    }
                     rootItem = new TreeItem(rootNode);
                     rootItem.setExpanded(true);
-                    List<DataNode> nodes = roots(conn);
-                    if (nodes == null || nodes.isEmpty()) {
-                        return true;
-                    }
-                    for (DataNode node : nodes) {
-                        if (task == null || isCancelled()) {
-                            return false;
-                        }
-                        TreeItem nodeItem = new TreeItem(node);
-                        rootItem.getChildren().add(nodeItem);
-                        nodeItem.getChildren().add(new TreeItem(new DataNode()));
-                        int size = nodeTable.childrenSize(conn, node.getNodeid());
-                        unfold(this, conn, nodeItem, size < AutoExpandThreshold);
-                    }
+                    rootItem.getChildren().add(new TreeItem(new DataNode()));
+                    int size = nodeTable.childrenSize(conn, rootNode.getNodeid());
+                    unfold(this, conn, rootItem, size < AutoExpandThreshold);
 
                 } catch (Exception e) {
                     error = e.toString();
@@ -274,15 +265,11 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
         return node1.getNodeid() == node2.getNodeid();
     }
 
-    public List<DataNode> roots(Connection conn) {
-        return nodeTable.findRoots(conn);
-    }
-
     public boolean isRoot(DataNode node) {
         if (treeView.getRoot() == null || node == null) {
             return false;
         }
-        return equalNode(treeView.getRoot().getValue(), node);
+        return node.getNodeid() == RootID;
     }
 
     public List<DataNode> ancestor(Connection conn, DataNode node) {

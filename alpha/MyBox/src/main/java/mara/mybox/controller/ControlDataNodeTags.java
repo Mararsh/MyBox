@@ -10,8 +10,7 @@ import javafx.scene.paint.Color;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.DataNodeTag;
 import mara.mybox.db.data.DataTag;
-import mara.mybox.db.table.BaseTable;
-import mara.mybox.db.table.TableDataNode;
+import mara.mybox.db.table.BaseNodeTable;
 import mara.mybox.db.table.TableDataNodeTag;
 import mara.mybox.db.table.TableDataTag;
 import mara.mybox.dev.MyBoxLog;
@@ -26,10 +25,9 @@ import mara.mybox.fxml.cell.TableColorCell;
 public class ControlDataNodeTags extends BaseTableViewController<DataTag> {
 
     protected ControlDataNodeEditor nodeEditor;
-    protected TableDataNode dataNodeTable;
-    protected TableDataTag dataTagTable;
-    protected TableDataNodeTag dataNodeTagTable;
-    protected BaseTable dataTable;
+    protected BaseNodeTable nodeTable;
+    protected TableDataTag tagTable;
+    protected TableDataNodeTag nodeTagsTable;
     protected boolean changed;
     protected List<Long> loadedTags = new ArrayList<>();
 
@@ -57,12 +55,11 @@ public class ControlDataNodeTags extends BaseTableViewController<DataTag> {
         try {
             this.nodeEditor = controller;
             this.parentController = nodeEditor;
-            dataTable = nodeEditor.dataTable;
-            dataNodeTable = nodeEditor.nodeTable;
-            dataTagTable = nodeEditor.tagTable;
-            dataNodeTagTable = nodeEditor.nodeTagsTable;
+            nodeTable = nodeEditor.nodeTable;
+            tagTable = nodeEditor.tagTable;
+            nodeTagsTable = nodeEditor.nodeTagsTable;
 
-            baseName = baseName + "_" + dataTable.getTableName();
+            baseName = baseName + "_" + nodeTable.getTableName();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -81,10 +78,10 @@ public class ControlDataNodeTags extends BaseTableViewController<DataTag> {
             @Override
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
-                    tags = dataTagTable.readAll(conn);
+                    tags = tagTable.readAll(conn);
                     if (nodeEditor.currentNode != null
                             && nodeEditor.currentNode.getNodeid() >= 0) {
-                        nodeTags = dataNodeTagTable.nodeTags(conn,
+                        nodeTags = nodeTagsTable.nodeTags(conn,
                                 nodeEditor.currentNode.getNodeid());
                         if (nodeTags != null && !nodeTags.isEmpty()) {
                             for (DataNodeTag nodeTag : nodeTags) {
@@ -132,10 +129,10 @@ public class ControlDataNodeTags extends BaseTableViewController<DataTag> {
             @Override
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
-                    tags = dataTagTable.readAll(conn);
+                    tags = tagTable.readAll(conn);
                     if (nodeEditor.currentNode != null
                             && nodeEditor.currentNode.getNodeid() >= 0) {
-                        nodeTags = dataNodeTagTable.nodeTags(conn,
+                        nodeTags = nodeTagsTable.nodeTags(conn,
                                 nodeEditor.currentNode.getNodeid());
                         if (nodeTags != null && !nodeTags.isEmpty()) {
                             for (DataNodeTag nodeTag : nodeTags) {

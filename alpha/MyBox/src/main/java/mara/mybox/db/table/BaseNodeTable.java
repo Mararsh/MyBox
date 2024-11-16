@@ -1,10 +1,15 @@
 package mara.mybox.db.table;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import mara.mybox.controller.BaseController;
+import mara.mybox.data.StringTable;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
@@ -12,7 +17,11 @@ import mara.mybox.db.data.DataNode;
 import static mara.mybox.db.data.DataNode.TitleSeparater;
 import mara.mybox.db.data.DataTag;
 import mara.mybox.dev.MyBoxLog;
+import static mara.mybox.fxml.FxFileTools.getInternalFile;
 import mara.mybox.fxml.FxTask;
+import mara.mybox.tools.JsonTools;
+import static mara.mybox.value.AppValues.Indent;
+import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -20,35 +29,27 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-4-23
  * @License Apache License Version 2.0
  */
-public class TableDataNode extends BaseTable<DataNode> {
+public class BaseNodeTable extends BaseTable<DataNode> {
 
-    protected BaseDataTable dataTable;
+    public static final long RootID = 1l;
+    protected String fxml;
+    protected File examplesFile;
 
-    public TableDataNode(BaseDataTable data) {
-        dataTable = data;
-        if (dataTable == null) {
-            return;
-        }
-        tableName = dataTable.tableName + "_Node";
+    public BaseNodeTable() {
         idColumnName = "nodeid";
-        defineColumns();
+        orderColumns = "nodeid ASC";
     }
 
-    public final TableDataNode defineColumns() {
-        addColumn(new ColumnDefinition("nodeid", ColumnType.Long, true, true)
-                .setReferName(tableName + "_nodeid_fk")
-                .setReferTable(dataTable.tableName).setReferColumn(dataTable.idColumnName)
-                .setOnDelete(ColumnDefinition.OnDelete.Cascade)
-        );
-        addColumn(new ColumnDefinition("title", ColumnType.String, true).setLength(StringMaxLength));
+    public final BaseNodeTable defineNodeColumns() {
+        addColumn(new ColumnDefinition("nodeid", ColumnType.Long, true, true).setAuto(true));
+        addColumn(new ColumnDefinition("title", ColumnType.String, true).setLength(256));
         addColumn(new ColumnDefinition("order_number", ColumnType.Float));
         addColumn(new ColumnDefinition("update_time", ColumnType.Datetime));
         addColumn(new ColumnDefinition("parentid", ColumnType.Long, true)
                 .setReferName(tableName + "_parentid_fk")
-                .setReferTable(dataTable.tableName).setReferColumn(dataTable.idColumnName)
+                .setReferTable(tableName).setReferColumn(idColumnName)
                 .setOnDelete(ColumnDefinition.OnDelete.Cascade)
         );
-        orderColumns = "nodeid ASC";
         return this;
     }
 
@@ -104,25 +105,160 @@ public class TableDataNode extends BaseTable<DataNode> {
         return data.valid();
     }
 
-    public List<DataNode> findRoots() {
+    /*
+        values
+     */
+    public boolean initTreeTables(Connection conn) {
+        if (conn == null || tableName == null) {
+            return false;
+        }
+        try {
+            createTable(conn);
+            createIndices(conn);
+            getRoot(conn);
+
+            new TableDataTag(this).createTable(conn);
+
+            TableDataNodeTag nodeTagTable = new TableDataNodeTag(this);
+            nodeTagTable.createTable(conn);
+
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+            return false;
+        }
+    }
+
+    public File exampleFile() {
+        if (tableName == null || columns == null) {
+            return null;
+        }
+        String lang = Languages.embedFileLang();
+        return getInternalFile("/data/examples/" + tableName + "_Examples_" + lang + ".txt",
+                "data", tableName + "_Examples_" + lang + ".txt", true);
+    }
+
+    public String valuesHtml(FxTask task, Connection conn,
+            BaseController controller, DataNode node) {
+        if (conn == null || node == null) {
+            return null;
+        }
+        Map<String, Object> values = node.getValues();
+        if (values == null || values.isEmpty()) {
+            return null;
+        }
+        StringTable table = new StringTable();
+        for (ColumnDefinition column : columns) {
+            String name = column.getColumnName();
+            Object value = values.get(name);
+            if (value == null) {
+                continue;
+            }
+
+            List<String> row = new ArrayList<>();
+            row.addAll(Arrays.asList(message(name),
+                    "<PRE><CODE>" + column.toString(value) + "</CODE></PRE>"));
+            table.add(row);
+        }
+        return table.div();
+    }
+
+    public String valuesXml(FxTask task, Connection conn,
+            BaseController controller, String prefix, DataNode node) {
+        if (conn == null || node == null) {
+            return null;
+        }
+        Map<String, Object> values = node.getValues();
+        if (values == null || values.isEmpty()) {
+            return null;
+        }
+        String prefix2 = prefix + Indent;
+        String prefix3 = prefix2 + Indent;
+        String xml = prefix + "<Data>\n";
+        for (ColumnDefinition column : columns) {
+            String name = column.getColumnName();
+            Object value = values.get(name);
+            if (value == null) {
+                continue;
+            }
+            xml += prefix2 + "<" + name + ">\n";
+            xml += prefix3 + "<![CDATA[" + column.toString(value) + "]]>\n";
+            xml += prefix2 + "</" + name + ">\n";
+        }
+        xml += prefix + "</Data>\n";
+        return xml;
+    }
+
+    public String valuesJson(FxTask task, Connection conn,
+            BaseController controller, String prefix, DataNode node) {
+        if (conn == null || node == null) {
+            return null;
+        }
+        Map<String, Object> values = node.getValues();
+        if (values == null || values.isEmpty()) {
+            return null;
+        }
+        String json = "";
+        for (ColumnDefinition column : columns) {
+            String name = column.getColumnName();
+            Object value = values.get(name);
+            if (value == null) {
+                continue;
+            }
+            json += prefix + ",\n"
+                    + prefix + "\"" + message(name) + "\": "
+                    + JsonTools.encode(column.toString(value));
+        }
+        return json;
+    }
+
+    /*
+        rows
+     */
+    @Override
+    public DataNode newData() {
+        return DataNode.create();
+    }
+
+    public DataNode getRoot() {
         try (Connection conn = DerbyBase.getConnection()) {
-            return findRoots(conn);
+            return getRoot(conn);
         } catch (Exception e) {
             MyBoxLog.debug(e);
             return null;
         }
     }
 
-    public List<DataNode> findRoots(Connection conn) {
-        if (conn == null) {
+    public DataNode getRoot(Connection conn) {
+        if (conn == null || tableName == null) {
             return null;
         }
-        String sql = "SELECT * FROM " + tableName
-                + " WHERE parentid=nodeid ORDER BY parentid ASC";
-        try (PreparedStatement statement = conn.prepareStatement(sql)) {
-            return query(statement);
+        String sql = "SELECT * FROM " + tableName + " WHERE nodeid=" + RootID + " FETCH FIRST ROW ONLY";
+        MyBoxLog.console(sql);
+        try (PreparedStatement statement = conn.prepareStatement(sql);
+                ResultSet results = statement.executeQuery()) {
+            DataNode node = null;
+            if (results.next()) {
+                node = readData(results);
+            }
+            MyBoxLog.console(node != null);
+            if (node == null) {
+                //                clearData(conn);
+                node = new DataNode()
+                        .setNodeid(RootID)
+                        .setParentid(RootID)
+                        .setTitle(tableTitle);
+                node = insertData(conn, node);
+                if (node != null) {
+                    conn.commit();
+                    sql = "ALTER TABLE " + tableName + " ALTER COLUMN nodeid RESTART WITH 2";
+                    update(conn, sql);
+                    conn.commit();
+                }
+            }
+            return node;
         } catch (Exception e) {
-            MyBoxLog.debug(e);
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -508,4 +644,24 @@ public class TableDataNode extends BaseTable<DataNode> {
         return condition;
     }
 
+    /*
+        get/set
+     */
+    public String getFxml() {
+        return fxml;
+    }
+
+    public BaseNodeTable setFxml(String fxml) {
+        this.fxml = fxml;
+        return this;
+    }
+
+    public File getExamplesFile() {
+        return examplesFile;
+    }
+
+    public BaseNodeTable setExamplesFile(File examplesFile) {
+        this.examplesFile = examplesFile;
+        return this;
+    }
 }

@@ -29,9 +29,7 @@ import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.DataNode;
 import static mara.mybox.db.data.DataNode.TitleSeparater;
 import mara.mybox.db.data.DataNodeTag;
-import mara.mybox.db.data.DataValues;
-import mara.mybox.db.table.BaseDataTable;
-import mara.mybox.db.table.TableDataNode;
+import mara.mybox.db.table.BaseNodeTable;
 import mara.mybox.db.table.TableDataNodeTag;
 import mara.mybox.db.table.TableDataTag;
 import mara.mybox.db.table.TableInfo;
@@ -65,19 +63,18 @@ public class DataTreeController extends BaseDataTreeViewController {
     @FXML
     protected ControlDataNodeEditor nodeController;
 
-    public void initTree(BaseDataTable table) {
+    public void initTree(BaseNodeTable table) {
         try {
             if (table == null) {
                 return;
             }
-            dataTable = table;
-            nodeTable = new TableDataNode(dataTable);
-            tagTable = new TableDataTag(dataTable);
-            nodeTagsTable = new TableDataNodeTag(dataTable);
+            nodeTable = table;
+            tagTable = new TableDataTag(nodeTable);
+            nodeTagsTable = new TableDataNodeTag(nodeTable);
 
-            dataName = dataTable.getTableName();
+            dataName = nodeTable.getTableName();
             baseName = baseName + "_" + dataName;
-            baseTitle = message("DataTree") + "-" + dataTable.getTableTitle();
+            baseTitle = nodeTable.getTableTitle();
             setTitle(baseTitle);
 
             MyBoxLog.console(baseTitle);
@@ -96,11 +93,11 @@ public class DataTreeController extends BaseDataTreeViewController {
     @Override
     public void loadTree() {
         try (Connection conn = DerbyBase.getConnection()) {
-            if (dataTable.isEmpty(conn)) {
-                File file = dataTable.getExamplesFile();
+            if (nodeTable.isEmpty(conn)) {
+                File file = nodeTable.getExamplesFile();
                 if (file != null) {
                     if (AppVariables.isTesting
-                            || PopTools.askSure(getTitle(), message("ImportExamples") + ": " + dataTable.getTableTitle())) {
+                            || PopTools.askSure(getTitle(), message("ImportExamples") + ": " + nodeTable.getTableTitle())) {
                         importExamples();
                         return;
                     }
@@ -481,7 +478,7 @@ public class DataTreeController extends BaseDataTreeViewController {
             @Override
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
-                    DataValues savedValues = (DataValues) dataTable.writeData(conn, new DataValues());
+                    DataNode savedValues = nodeTable.writeData(conn, new DataNode());
                     if (savedValues == null) {
                         conn.close();
                         error = message("Failed");
@@ -489,7 +486,7 @@ public class DataTreeController extends BaseDataTreeViewController {
                     }
                     conn.commit();
 
-                    long nodeid = savedValues.getId(dataTable);
+                    long nodeid = savedValues.getNodeid();
                     if (nodeid < 0) {
                         conn.close();
                         error = message("Failed");
@@ -813,7 +810,7 @@ public class DataTreeController extends BaseDataTreeViewController {
             }
             writer.write(indentNode + "</DIV>\n");
 
-            String dataHtml = dataTable.valuesHtml(infoTask, conn, myController, node);
+            String dataHtml = nodeTable.valuesHtml(infoTask, conn, myController, node);
             if (dataHtml != null && !dataHtml.isBlank()) {
                 writer.write(indentNode + "<DIV class=\"nodeValue\">"
                         + "<DIV style=\"padding: 0 0 0 " + (indent + 4) * 6 + "px;\">"
@@ -1088,7 +1085,7 @@ public class DataTreeController extends BaseDataTreeViewController {
     /*
         static methods
      */
-    public static DataTreeController open(BaseController pController, BaseDataTable table) {
+    public static DataTreeController open(BaseController pController, BaseNodeTable table) {
         try {
             DataTreeController controller;
             if (AppVariables.closeCurrentWhenOpenTool || pController == null) {
