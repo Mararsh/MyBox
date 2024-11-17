@@ -16,8 +16,9 @@ public class Fxmls {
         document
      */
     public static final String DataTreeFxml = "/fxml/DataTree.fxml";
-    public static final String ControlDataInfoFxml = "/fxml/ControlDataInfo.fxml";
-    public static final String ControlDataNoteFxml = "/fxml/ControlDataNote.fxml";
+    public static final String ControlDataTextFxml = "/fxml/ControlDataText.fxml";
+    public static final String ControlDataHtmlFxml = "/fxml/ControlDataHtml.fxml";
+    public static final String ControlDataMathFunctionFxml = "/fxml/ControlDataMathFunction.fxml";
     public static final String DataTreeTagsFxml = "/fxml/DataTreeTags.fxml";
     public static final String DataTreeExportFxml = "/fxml/DataTreeExport.fxml";
 

@@ -442,18 +442,21 @@ public class ColumnDefinition extends BaseData {
     // But we need distinct zero and null.
     // https://docs.oracle.com/en/java/javase/18/docs/api/java.sql/java/sql/ResultSet.html#getDouble(java.lang.String)
     public Object value(ResultSet results) {
+        Object o;
+        String savedName;
         try {
             if (results == null || type == null || columnName == null) {
                 return null;
             }
-            String savedName = DerbyBase.savedName(columnName);
-            if (savedName == null || results.findColumn(savedName) < 0) {
-                return null;
-            }
-            Object o = results.getObject(savedName);
+            savedName = DerbyBase.savedName(columnName);
+            o = results.getObject(savedName);
             if (o == null) {
                 return null;
             }
+        } catch (Exception e) {
+            return null;
+        }
+        try {
             String s = o + "";
 //            MyBoxLog.console(columnName + " " + type + " " + savedName + "  " + o + " " + o.getClass());
             switch (type) {
@@ -529,6 +532,7 @@ public class ColumnDefinition extends BaseData {
                 case Date:
                     return toDate(o + "");
                 case Clob:
+//                    MyBoxLog.console(columnName + " " + type + " " + savedName + "  " + o + " " + o.getClass());
                     Clob clob = (Clob) o;
                     return clob.getSubString(1, (int) clob.length());
                 case Blob:

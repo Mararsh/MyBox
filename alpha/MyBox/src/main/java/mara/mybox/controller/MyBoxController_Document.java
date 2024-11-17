@@ -33,15 +33,19 @@ public abstract class MyBoxController_Document extends MyBoxController_Base {
     @FXML
     protected void showDocumentMenu(Event event) {
 
-        MenuItem Notes = new MenuItem(message("Notes"));
-        Notes.setOnAction((ActionEvent event1) -> {
-            DataTreeController.noteTree(this);
+        Menu treeMenu = new Menu(message("InformationInTree"));
+
+        MenuItem TextTree = new MenuItem(message("TextTree"));
+        TextTree.setOnAction((ActionEvent event1) -> {
+            DataTreeController.textTree(this);
         });
 
-        MenuItem InformationInTree = new MenuItem(message("InformationInTree"));
-        InformationInTree.setOnAction((ActionEvent event1) -> {
-            DataTreeController.infoTree(this);
+        MenuItem HtmlTree = new MenuItem(message("HtmlTree"));
+        HtmlTree.setOnAction((ActionEvent event1) -> {
+            DataTreeController.htmlTree(this);
         });
+
+        treeMenu.getItems().addAll(TextTree, HtmlTree);
 
         Menu pdfMenu = new Menu("PDF");
 
@@ -433,7 +437,7 @@ public abstract class MyBoxController_Document extends MyBoxController_Base {
         );
 
         List<MenuItem> items = new ArrayList<>();
-        items.addAll(Arrays.asList(Notes, InformationInTree, new SeparatorMenuItem(),
+        items.addAll(Arrays.asList(treeMenu, new SeparatorMenuItem(),
                 pdfMenu, markdownMenu, jsonMenu, xmlMenu, htmlMenu, textsMenu, msMenu, bytesMenu, new SeparatorMenuItem(),
                 TextInMyBoxClipboard, TextInSystemClipboard));
 

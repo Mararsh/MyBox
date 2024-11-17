@@ -245,7 +245,6 @@ public class DataNodeTools {
         try (Statement statement = conn.createStatement()) {
             statement.executeUpdate("DROP TABLE " + tname);
             dataTable.createTable(conn);
-            dataTable.initTreeTables(conn);
         } catch (Exception e) {
             MyBoxLog.console(e);
         }
@@ -292,7 +291,6 @@ public class DataNodeTools {
                 }
             }
             conn.commit();
-            conn.setAutoCommit(true);
 
             query = conn.createStatement().executeQuery("select A.new_nodeid AS nodeid,"
                     + " B.new_nodeid AS parentid "
@@ -317,7 +315,6 @@ public class DataNodeTools {
                 }
             }
             conn.commit();
-            conn.setAutoCommit(true);
 
             statement.executeUpdate("CREATE TABLE MYBOX_TMP_TAG_Migration682"
                     + " ( old_tagid BIGINT, new_tagid BIGINT)");
@@ -331,17 +328,16 @@ public class DataNodeTools {
                             .setTag(query.getString("tag"))
                             .setColorString(query.getString("color"));
                     tag = tableTreeTag.insertData(conn, tag);
+                    statement.executeUpdate("INSERT INTO MYBOX_TMP_TAG_Migration682 VALUES ("
+                            + query.getLong("tgid") + ", " + tag.getTagid() + ")");
                     if (++count % Database.BatchSize == 0) {
                         conn.commit();
                     }
-                    statement.executeUpdate("INSERT INTO MYBOX_TMP_TAG_Migration682 VALUES ("
-                            + query.getLong("tgid") + ", " + tag.getTagid() + ")");
                 } catch (Exception e) {
                     MyBoxLog.console(e);
                 }
             }
             conn.commit();
-            conn.setAutoCommit(true);
 
             query = conn.createStatement().executeQuery("select  C.new_nodeid AS mnodeid, B.new_tagid AS mtagid "
                     + " from tree_node_tag A, MYBOX_TMP_TAG_Migration682 AS B, MYBOX_TMP_TREE_Migration682 AS C"
@@ -384,11 +380,11 @@ public class DataNodeTools {
             String MoreSeparater = "MyBoxTreeNodeMore:";
             String info = text.trim();
             switch (tableName) {
-                case "Info_In_Tree":
-                    node.setValue("info", text);
+                case "Node_Text":
+                    node.setValue("text", text);
                     break;
-                case "Note":
-                    node.setValue("note", text);
+                case "Node_Html":
+                    node.setValue("html", text);
                     break;
                 case InfoNode.WebFavorite:
                     node.setValue("Address", null);
@@ -423,9 +419,6 @@ public class DataNodeTools {
                     break;
                 case InfoNode.JavaScript:
                     node.setValue("Script", info);
-                    break;
-                case InfoNode.InformationInTree:
-                    node.setValue("Info", info);
                     break;
                 case InfoNode.JEXLCode:
                     node.setValue("Script", null);

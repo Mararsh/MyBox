@@ -317,7 +317,7 @@ public class DataTreeExportController extends BaseTaskController {
                     StringBuilder s = new StringBuilder();
                     s.append("<?xml version=\"1.0\" encoding=\"")
                             .append(charset.name()).append("\"?>\n")
-                            .append("<").append(XmlTools.xmlTag(nodeTable.getTableTitle())).append(">\n");
+                            .append("<").append(XmlTools.xmlTag(nodeTable.getTreeName())).append(">\n");
                     xmlWriter.write(s.toString());
                 } else if (targetPathController.isSkip()) {
                     updateLogs(message("Skipped"));
@@ -329,7 +329,7 @@ public class DataTreeExportController extends BaseTaskController {
                     updateLogs(message("Writing") + " " + jsonFile.getAbsolutePath());
                     jsonWriter = new FileWriter(jsonFile, Charset.forName("UTF-8"));
                     StringBuilder s = new StringBuilder();
-                    s.append("{\"").append(nodeTable.getTableTitle()).append("\": [\n");
+                    s.append("{\"").append(nodeTable.getTreeName()).append("\": [\n");
                     jsonWriter.write(s.toString());
                 } else if (targetPathController.isSkip()) {
                     updateLogs(message("Skipped"));
@@ -405,7 +405,7 @@ public class DataTreeExportController extends BaseTaskController {
         }
         if (xmlWriter != null) {
             try {
-                xmlWriter.write("</" + XmlTools.xmlTag(nodeTable.getTableTitle()) + ">\n");
+                xmlWriter.write("</" + XmlTools.xmlTag(nodeTable.getTreeName()) + ">\n");
                 xmlWriter.flush();
                 xmlWriter.close();
                 xmlWriter = null;

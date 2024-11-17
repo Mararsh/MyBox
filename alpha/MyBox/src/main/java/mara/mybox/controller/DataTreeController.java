@@ -32,8 +32,8 @@ import mara.mybox.db.data.DataNodeTag;
 import mara.mybox.db.table.BaseNodeTable;
 import mara.mybox.db.table.TableDataNodeTag;
 import mara.mybox.db.table.TableDataTag;
-import mara.mybox.db.table.TableInfo;
-import mara.mybox.db.table.TableNote;
+import mara.mybox.db.table.TableNodeHtml;
+import mara.mybox.db.table.TableNodeText;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.FxSingletonTask;
@@ -74,10 +74,8 @@ public class DataTreeController extends BaseDataTreeViewController {
 
             dataName = nodeTable.getTableName();
             baseName = baseName + "_" + dataName;
-            baseTitle = nodeTable.getTableTitle();
+            baseTitle = nodeTable.getTreeName();
             setTitle(baseTitle);
-
-            MyBoxLog.console(baseTitle);
 
             nodeController.setParameters(this);
             loadTree();
@@ -94,10 +92,10 @@ public class DataTreeController extends BaseDataTreeViewController {
     public void loadTree() {
         try (Connection conn = DerbyBase.getConnection()) {
             if (nodeTable.isEmpty(conn)) {
-                File file = nodeTable.getExamplesFile();
+                File file = nodeTable.exampleFile();
                 if (file != null) {
                     if (AppVariables.isTesting
-                            || PopTools.askSure(getTitle(), message("ImportExamples") + ": " + nodeTable.getTableTitle())) {
+                            || PopTools.askSure(getTitle(), message("ImportExamples") + ": " + nodeTable.getTreeName())) {
                         importExamples();
                         return;
                     }
@@ -1103,12 +1101,12 @@ public class DataTreeController extends BaseDataTreeViewController {
 
     }
 
-    public static DataTreeController infoTree(BaseController pController) {
-        return open(pController, new TableInfo());
+    public static DataTreeController textTree(BaseController pController) {
+        return open(pController, new TableNodeText());
     }
 
-    public static DataTreeController noteTree(BaseController pController) {
-        return open(pController, new TableNote());
+    public static DataTreeController htmlTree(BaseController pController) {
+        return open(pController, new TableNodeHtml());
     }
 
 }

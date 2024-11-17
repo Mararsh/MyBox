@@ -16,17 +16,17 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2024-8-8
  * @License Apache License Version 2.0
  */
-public class ControlDataInfo extends BaseDataValuesController {
+public class ControlDataText extends BaseDataValuesController {
 
     @FXML
-    protected TextArea infoInput;
+    protected TextArea textInput;
     @FXML
     protected CheckBox wrapCheck;
 
     @Override
     public void initEditor() {
         try {
-            infoInput.textProperty().addListener(new ChangeListener<String>() {
+            textInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue v, String ov, String nv) {
                     valueChanged(true);
@@ -38,10 +38,10 @@ public class ControlDataInfo extends BaseDataValuesController {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) {
                     UserConfig.setBoolean(baseName + "Wrap", newValue);
-                    infoInput.setWrapText(newValue);
+                    textInput.setWrapText(newValue);
                 }
             });
-            infoInput.setWrapText(wrapCheck.isSelected());
+            textInput.setWrapText(wrapCheck.isSelected());
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -55,9 +55,9 @@ public class ControlDataInfo extends BaseDataValuesController {
             if (nodeEditor.currentNode == null) {
                 v = null;
             } else {
-                v = nodeEditor.currentNode.getValue("info");
+                v = nodeEditor.currentNode.getValue("text");
             }
-            infoInput.setText(v != null ? (String) v : null);
+            textInput.setText(v != null ? (String) v : null);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -67,7 +67,7 @@ public class ControlDataInfo extends BaseDataValuesController {
     protected DataNode pickValues(DataNode node) {
         try {
             node.setValue("title", nodeEditor.titleInput.getText());
-            node.setValue("info", infoInput.getText());
+            node.setValue("text", textInput.getText());
             return node;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -77,7 +77,7 @@ public class ControlDataInfo extends BaseDataValuesController {
 
     @FXML
     public void clearValue() {
-        infoInput.clear();
+        textInput.clear();
     }
 
     @FXML
@@ -89,7 +89,7 @@ public class ControlDataInfo extends BaseDataValuesController {
 
     @FXML
     protected void showHistories(Event event) {
-        PopTools.popStringValues(this, infoInput, event, baseName + "Histories", false);
+        PopTools.popStringValues(this, textInput, event, baseName + "Histories", false);
     }
 
 }

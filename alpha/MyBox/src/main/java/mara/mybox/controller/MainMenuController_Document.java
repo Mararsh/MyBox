@@ -12,13 +12,13 @@ import mara.mybox.value.Fxmls;
 public abstract class MainMenuController_Document extends MainMenuController_Window {
 
     @FXML
-    protected void openNotes(ActionEvent event) {
-        DataTreeController.noteTree(parentController);
+    protected void HtmlTree(ActionEvent event) {
+        DataTreeController.htmlTree(parentController);
     }
 
     @FXML
-    protected void InformationInTree(ActionEvent event) {
-        DataTreeController.infoTree(parentController);
+    protected void TextTree(ActionEvent event) {
+        DataTreeController.textTree(parentController);
     }
 
     @FXML

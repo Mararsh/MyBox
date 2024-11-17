@@ -13,10 +13,10 @@ import static mara.mybox.value.Languages.message;
 public class TableMathFunction extends BaseNodeTable {
 
     public TableMathFunction() {
-        tableName = "Math_Function";
-        tableTitle = message("Notes");
-        fxml = Fxmls.ControlDataNoteFxml;
-        examplesFile = exampleFile();
+        tableName = "Node_Math_Function";
+        tableTitle = message("MathFunction");
+        dataFxml = Fxmls.ControlDataMathFunctionFxml;
+        examplesFileName = "MathFunction";
         defineColumns();
     }
 

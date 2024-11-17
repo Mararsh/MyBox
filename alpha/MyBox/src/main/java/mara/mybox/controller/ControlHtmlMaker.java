@@ -9,13 +9,13 @@ import mara.mybox.fxml.style.HtmlStyles;
  * @CreateDate 2018-7-31
  * @License Apache License Version 2.0
  */
-public class ControlNoteEditor extends BaseHtmlFormat {
+public class ControlHtmlMaker extends BaseHtmlFormat {
 
-    protected ControlDataNote noteController;
+    protected ControlDataHtml htmlController;
 
-    public void setParameters(ControlDataNote controller) {
+    public void setParameters(ControlDataHtml controller) {
         try {
-            this.noteController = controller;
+            this.htmlController = controller;
 
             webViewController.linkInNewTab = true;
             webViewController.defaultStyle = HtmlStyles.TableStyle;
@@ -28,8 +28,8 @@ public class ControlNoteEditor extends BaseHtmlFormat {
     @Override
     protected void updateStatus(boolean changed) {
         super.updateStatus(changed);
-        if (!isSettingValues && noteController != null) {
-            noteController.valueChanged(changed);
+        if (!isSettingValues && htmlController != null) {
+            htmlController.valueChanged(changed);
         }
     }
 

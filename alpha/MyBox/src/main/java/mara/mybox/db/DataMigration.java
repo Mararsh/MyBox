@@ -49,10 +49,10 @@ import mara.mybox.db.table.TableData2DStyle;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.db.table.TableImageClipboard;
 import mara.mybox.db.table.TableImageEditHistory;
-import mara.mybox.db.table.TableInfo;
+import mara.mybox.db.table.TableNodeText;
 import mara.mybox.db.table.TableInfoNode;
 import mara.mybox.db.table.TableMathFunction;
-import mara.mybox.db.table.TableNote;
+import mara.mybox.db.table.TableNodeHtml;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.db.table.TableWebHistory;
 import mara.mybox.dev.DevTools;
@@ -202,8 +202,8 @@ public class DataMigration {
         try {
             MyBoxLog.info("Updating tables in 6.8.2...");
 
-            updateIn682_move(conn, new TableNote(), "Notebook");
-            updateIn682_move(conn, new TableInfo(), "InformationInTree");
+            updateIn682_move(conn, new TableNodeHtml(), "Notebook");
+            updateIn682_move(conn, new TableNodeText(), "InformationInTree");
             updateIn682_move(conn, new TableMathFunction(), "MathFunction");
 
             try (Statement statement = conn.createStatement()) {

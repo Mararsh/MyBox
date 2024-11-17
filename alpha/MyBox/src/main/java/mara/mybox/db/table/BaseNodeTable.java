@@ -32,8 +32,9 @@ import static mara.mybox.value.Languages.message;
 public class BaseNodeTable extends BaseTable<DataNode> {
 
     public static final long RootID = 1l;
-    protected String fxml;
-    protected File examplesFile;
+    public static final String NodeFields = "nodeid,title,order_number,update_time,parentid";
+
+    protected String treeName, dataName, dataFxml, examplesFileName;
 
     public BaseNodeTable() {
         idColumnName = "nodeid";
@@ -53,7 +54,73 @@ public class BaseNodeTable extends BaseTable<DataNode> {
         return this;
     }
 
-    public final boolean createIndices(Connection conn) {
+    @Override
+    public boolean setValue(DataNode data, String column, Object value) {
+        if (data == null || column == null) {
+            return false;
+        }
+        return data.setValue(column, value);
+    }
+
+    @Override
+    public Object getValue(DataNode data, String column) {
+        if (data == null || column == null) {
+            return null;
+        }
+        return data.getValue(column);
+    }
+
+    @Override
+    public boolean valid(DataNode data) {
+        if (data == null) {
+            return false;
+        }
+        return data.valid();
+    }
+
+    @Override
+    public boolean createTable(Connection conn) {
+        try {
+            if (!super.createTable(conn)) {
+                return false;
+            }
+
+            conn.setAutoCommit(true);
+
+            createIndices(conn);
+
+            if (createRoot(conn) == null) {
+                return false;
+            }
+
+            new TableDataTag(this).createTable(conn);
+
+            new TableDataNodeTag(this).createTable(conn);
+
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+            return false;
+        }
+    }
+
+    private DataNode createRoot(Connection conn) {
+        try {
+            String sql = "INSERT INTO " + tableName + " ( nodeid, title, parentid ) "
+                    + " VALUES ( " + RootID + ", '" + treeName + "', " + RootID + " )";
+            update(conn, sql);
+
+            sql = "ALTER TABLE " + tableName + " ALTER COLUMN nodeid RESTART WITH 2";
+            update(conn, sql);
+
+            return query(conn, RootID);
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+            return null;
+        }
+    }
+
+    private boolean createIndices(Connection conn) {
         if (conn == null || tableName == null) {
             return false;
         }
@@ -81,136 +148,6 @@ public class BaseNodeTable extends BaseTable<DataNode> {
         return true;
     }
 
-    @Override
-    public boolean setValue(DataNode data, String column, Object value) {
-        if (data == null || column == null) {
-            return false;
-        }
-        return data.setValue(column, value);
-    }
-
-    @Override
-    public Object getValue(DataNode data, String column) {
-        if (data == null || column == null) {
-            return null;
-        }
-        return data.getValue(column);
-    }
-
-    @Override
-    public boolean valid(DataNode data) {
-        if (data == null) {
-            return false;
-        }
-        return data.valid();
-    }
-
-    /*
-        values
-     */
-    public boolean initTreeTables(Connection conn) {
-        if (conn == null || tableName == null) {
-            return false;
-        }
-        try {
-            createTable(conn);
-            createIndices(conn);
-            getRoot(conn);
-
-            new TableDataTag(this).createTable(conn);
-
-            TableDataNodeTag nodeTagTable = new TableDataNodeTag(this);
-            nodeTagTable.createTable(conn);
-
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-            return false;
-        }
-    }
-
-    public File exampleFile() {
-        if (tableName == null || columns == null) {
-            return null;
-        }
-        String lang = Languages.embedFileLang();
-        return getInternalFile("/data/examples/" + tableName + "_Examples_" + lang + ".txt",
-                "data", tableName + "_Examples_" + lang + ".txt", true);
-    }
-
-    public String valuesHtml(FxTask task, Connection conn,
-            BaseController controller, DataNode node) {
-        if (conn == null || node == null) {
-            return null;
-        }
-        Map<String, Object> values = node.getValues();
-        if (values == null || values.isEmpty()) {
-            return null;
-        }
-        StringTable table = new StringTable();
-        for (ColumnDefinition column : columns) {
-            String name = column.getColumnName();
-            Object value = values.get(name);
-            if (value == null) {
-                continue;
-            }
-
-            List<String> row = new ArrayList<>();
-            row.addAll(Arrays.asList(message(name),
-                    "<PRE><CODE>" + column.toString(value) + "</CODE></PRE>"));
-            table.add(row);
-        }
-        return table.div();
-    }
-
-    public String valuesXml(FxTask task, Connection conn,
-            BaseController controller, String prefix, DataNode node) {
-        if (conn == null || node == null) {
-            return null;
-        }
-        Map<String, Object> values = node.getValues();
-        if (values == null || values.isEmpty()) {
-            return null;
-        }
-        String prefix2 = prefix + Indent;
-        String prefix3 = prefix2 + Indent;
-        String xml = prefix + "<Data>\n";
-        for (ColumnDefinition column : columns) {
-            String name = column.getColumnName();
-            Object value = values.get(name);
-            if (value == null) {
-                continue;
-            }
-            xml += prefix2 + "<" + name + ">\n";
-            xml += prefix3 + "<![CDATA[" + column.toString(value) + "]]>\n";
-            xml += prefix2 + "</" + name + ">\n";
-        }
-        xml += prefix + "</Data>\n";
-        return xml;
-    }
-
-    public String valuesJson(FxTask task, Connection conn,
-            BaseController controller, String prefix, DataNode node) {
-        if (conn == null || node == null) {
-            return null;
-        }
-        Map<String, Object> values = node.getValues();
-        if (values == null || values.isEmpty()) {
-            return null;
-        }
-        String json = "";
-        for (ColumnDefinition column : columns) {
-            String name = column.getColumnName();
-            Object value = values.get(name);
-            if (value == null) {
-                continue;
-            }
-            json += prefix + ",\n"
-                    + prefix + "\"" + message(name) + "\": "
-                    + JsonTools.encode(column.toString(value));
-        }
-        return json;
-    }
 
     /*
         rows
@@ -218,6 +155,24 @@ public class BaseNodeTable extends BaseTable<DataNode> {
     @Override
     public DataNode newData() {
         return DataNode.create();
+    }
+
+    public DataNode readNode(ResultSet results) {
+        if (results == null) {
+            return null;
+        }
+        try {
+            DataNode data = DataNode.create();
+            for (int i = 0; i < 5; ++i) {
+                ColumnDefinition column = column("nodeid");
+                Object value = readColumnValue(results, column);
+                setValue(data, column.getColumnName(), value);
+            }
+            return data;
+        } catch (Exception e) {
+            MyBoxLog.debug(e, tableName);
+        }
+        return null;
     }
 
     public DataNode getRoot() {
@@ -233,32 +188,45 @@ public class BaseNodeTable extends BaseTable<DataNode> {
         if (conn == null || tableName == null) {
             return null;
         }
-        String sql = "SELECT * FROM " + tableName + " WHERE nodeid=" + RootID + " FETCH FIRST ROW ONLY";
-        MyBoxLog.console(sql);
+        DataNode root = query(conn, RootID);
+        if (root == null) {
+            root = createRoot(conn);
+        }
+        return root;
+//        String sql = "SELECT * FROM " + tableName
+//                + " WHERE nodeid=" + RootID + " FETCH FIRST ROW ONLY";
+//        try (PreparedStatement statement = conn.prepareStatement(sql);
+//                ResultSet results = statement.executeQuery()) {
+//            DataNode node = null;
+//            if (results.next()) {
+//                node = readData(results);
+//            }
+//            if (node == null) {
+//                //                clearData(conn);
+//                node = createRoot(conn);
+//            }
+//            return node;
+//        } catch (Exception e) {
+//            MyBoxLog.error(e);
+//            return null;
+//        }
+    }
+
+    public DataNode queryNode(Connection conn, long nodeid) {
+        if (conn == null || nodeid < 0) {
+            return null;
+        }
+        String sql = "SELECT " + NodeFields + " FROM " + tableName
+                + " WHERE nodeid=" + nodeid + " FETCH FIRST ROW ONLY";
         try (PreparedStatement statement = conn.prepareStatement(sql);
                 ResultSet results = statement.executeQuery()) {
             DataNode node = null;
             if (results.next()) {
-                node = readData(results);
-            }
-            MyBoxLog.console(node != null);
-            if (node == null) {
-                //                clearData(conn);
-                node = new DataNode()
-                        .setNodeid(RootID)
-                        .setParentid(RootID)
-                        .setTitle(tableTitle);
-                node = insertData(conn, node);
-                if (node != null) {
-                    conn.commit();
-                    sql = "ALTER TABLE " + tableName + " ALTER COLUMN nodeid RESTART WITH 2";
-                    update(conn, sql);
-                    conn.commit();
-                }
+                node = readNode(results);
             }
             return node;
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -279,7 +247,7 @@ public class BaseNodeTable extends BaseTable<DataNode> {
         if (conn == null || parent < 0) {
             return null;
         }
-        String sql = "SELECT * FROM " + tableName
+        String sql = "SELECT " + NodeFields + " FROM " + tableName
                 + " WHERE parentid=? AND parentid<>nodeid  ORDER BY " + orderColumns;
         try (PreparedStatement statement = conn.prepareStatement(sql)) {
             statement.setLong(1, parent);
@@ -645,23 +613,131 @@ public class BaseNodeTable extends BaseTable<DataNode> {
     }
 
     /*
-        get/set
+        values
      */
-    public String getFxml() {
-        return fxml;
+    public File exampleFile() {
+        return exampleFile(examplesFileName);
     }
 
-    public BaseNodeTable setFxml(String fxml) {
-        this.fxml = fxml;
+    public File exampleFile(String name) {
+        if (name == null || columns == null) {
+            return null;
+        }
+        String lang = Languages.embedFileLang();
+        return getInternalFile("/data/examples/" + name + "_Examples_" + lang + ".txt",
+                "data", name + "_Examples_" + lang + ".txt", true);
+    }
+
+    public String valuesHtml(FxTask task, Connection conn,
+            BaseController controller, DataNode node) {
+        if (conn == null || node == null) {
+            return null;
+        }
+        Map<String, Object> values = node.getValues();
+        if (values == null || values.isEmpty()) {
+            return null;
+        }
+        StringTable table = new StringTable();
+        for (ColumnDefinition column : columns) {
+            String name = column.getColumnName();
+            Object value = values.get(name);
+            if (value == null) {
+                continue;
+            }
+
+            List<String> row = new ArrayList<>();
+            row.addAll(Arrays.asList(message(name),
+                    "<PRE><CODE>" + column.toString(value) + "</CODE></PRE>"));
+            table.add(row);
+        }
+        return table.div();
+    }
+
+    public String valuesXml(FxTask task, Connection conn,
+            BaseController controller, String prefix, DataNode node) {
+        if (conn == null || node == null) {
+            return null;
+        }
+        Map<String, Object> values = node.getValues();
+        if (values == null || values.isEmpty()) {
+            return null;
+        }
+        String prefix2 = prefix + Indent;
+        String prefix3 = prefix2 + Indent;
+        String xml = prefix + "<Data>\n";
+        for (ColumnDefinition column : columns) {
+            String name = column.getColumnName();
+            Object value = values.get(name);
+            if (value == null) {
+                continue;
+            }
+            xml += prefix2 + "<" + name + ">\n";
+            xml += prefix3 + "<![CDATA[" + column.toString(value) + "]]>\n";
+            xml += prefix2 + "</" + name + ">\n";
+        }
+        xml += prefix + "</Data>\n";
+        return xml;
+    }
+
+    public String valuesJson(FxTask task, Connection conn,
+            BaseController controller, String prefix, DataNode node) {
+        if (conn == null || node == null) {
+            return null;
+        }
+        Map<String, Object> values = node.getValues();
+        if (values == null || values.isEmpty()) {
+            return null;
+        }
+        String json = "";
+        for (ColumnDefinition column : columns) {
+            String name = column.getColumnName();
+            Object value = values.get(name);
+            if (value == null) {
+                continue;
+            }
+            json += prefix + ",\n"
+                    + prefix + "\"" + message(name) + "\": "
+                    + JsonTools.encode(column.toString(value));
+        }
+        return json;
+    }
+
+    public String getDataName() {
+        return dataName;
+    }
+
+    /*
+    get/set
+     */
+    public void setDataName(String dataName) {
+        this.dataName = dataName;
+    }
+
+    public String getDataFxml() {
+        return dataFxml;
+    }
+
+    public BaseNodeTable setDataFxml(String dataFxml) {
+        this.dataFxml = dataFxml;
         return this;
     }
 
-    public File getExamplesFile() {
-        return examplesFile;
+    public String getTreeName() {
+        return treeName;
     }
 
-    public BaseNodeTable setExamplesFile(File examplesFile) {
-        this.examplesFile = examplesFile;
+    public BaseNodeTable setTreeName(String treeName) {
+        this.treeName = treeName;
         return this;
     }
+
+    public String getExamplesFileName() {
+        return examplesFileName;
+    }
+
+    public BaseNodeTable setExamplesFileName(String examplesFileName) {
+        this.examplesFileName = examplesFileName;
+        return this;
+    }
+
 }

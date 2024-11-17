@@ -141,8 +141,8 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
                     rootItem = new TreeItem(rootNode);
                     rootItem.setExpanded(true);
                     rootItem.getChildren().add(new TreeItem(new DataNode()));
-                    int size = nodeTable.childrenSize(conn, rootNode.getNodeid());
-                    unfold(this, conn, rootItem, size < AutoExpandThreshold);
+                    unfold(this, conn, rootItem,
+                            nodeTable.size(conn) < AutoExpandThreshold);
 
                 } catch (Exception e) {
                     error = e.toString();

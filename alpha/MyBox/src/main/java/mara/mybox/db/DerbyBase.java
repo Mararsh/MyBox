@@ -27,7 +27,6 @@ import mara.mybox.db.table.TableFloatMatrix;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.db.table.TableImageClipboard;
 import mara.mybox.db.table.TableImageEditHistory;
-import mara.mybox.db.table.TableInfo;
 import mara.mybox.db.table.TableInfoNode;
 import mara.mybox.db.table.TableInfoNodeTag;
 import mara.mybox.db.table.TableMathFunction;
@@ -35,7 +34,8 @@ import mara.mybox.db.table.TableMedia;
 import mara.mybox.db.table.TableMediaList;
 import mara.mybox.db.table.TableMyBoxLog;
 import mara.mybox.db.table.TableNamedValues;
-import mara.mybox.db.table.TableNote;
+import mara.mybox.db.table.TableNodeHtml;
+import mara.mybox.db.table.TableNodeText;
 import mara.mybox.db.table.TablePathConnection;
 import mara.mybox.db.table.TableQueryCondition;
 import mara.mybox.db.table.TableStringValue;
@@ -290,7 +290,8 @@ public class DerbyBase {
             List<String> tables = new ArrayList<>();
             String sql = "SELECT TABLENAME FROM SYS.SYSTABLES WHERE TABLETYPE='T'";
             conn.setAutoCommit(true);
-            try (Statement statement = conn.createStatement(); ResultSet resultSet = statement.executeQuery(sql)) {
+            try (Statement statement = conn.createStatement();
+                    ResultSet resultSet = statement.executeQuery(sql)) {
                 while (resultSet.next()) {
                     String savedName = resultSet.getString("TABLENAME");
                     String referredName = fixedIdentifier(savedName);
@@ -313,7 +314,8 @@ public class DerbyBase {
                     + " where t.TABLEID=c.REFERENCEID AND tablename='" + tablename.toUpperCase() + "'"
                     + " order by columnnumber";
             conn.setAutoCommit(true);
-            try (Statement statement = conn.createStatement(); ResultSet resultSet = statement.executeQuery(sql)) {
+            try (Statement statement = conn.createStatement();
+                    ResultSet resultSet = statement.executeQuery(sql)) {
                 while (resultSet.next()) {
                     String savedName = resultSet.getString("columnname");
                     String referredName = fixedIdentifier(savedName);
@@ -337,7 +339,8 @@ public class DerbyBase {
                     + " where t.TABLEID=c.REFERENCEID AND tablename='" + tablename.toUpperCase() + "'"
                     + " order by columnnumber";
             conn.setAutoCommit(true);
-            try (Statement statement = conn.createStatement(); ResultSet resultSet = statement.executeQuery(sql)) {
+            try (Statement statement = conn.createStatement();
+                    ResultSet resultSet = statement.executeQuery(sql)) {
                 while (resultSet.next()) {
                     String savedName = resultSet.getString("columnname");
                     String referredName = fixedIdentifier(savedName);
@@ -358,7 +361,8 @@ public class DerbyBase {
             List<String> indexes = new ArrayList<>();
             String sql = "SELECT CONGLOMERATENAME FROM SYS.SYSCONGLOMERATES";
             conn.setAutoCommit(true);
-            try (Statement statement = conn.createStatement(); ResultSet resultSet = statement.executeQuery(sql)) {
+            try (Statement statement = conn.createStatement();
+                    ResultSet resultSet = statement.executeQuery(sql)) {
                 while (resultSet.next()) {
                     String savedName = resultSet.getString("CONGLOMERATENAME");
                     String referredName = fixedIdentifier(savedName);
@@ -379,7 +383,8 @@ public class DerbyBase {
             List<String> tables = new ArrayList<>();
             String sql = "SELECT TABLENAME FROM SYS.SYSTABLES WHERE TABLETYPE='V'";
             conn.setAutoCommit(true);
-            try (Statement statement = conn.createStatement(); ResultSet resultSet = statement.executeQuery(sql)) {
+            try (Statement statement = conn.createStatement();
+                    ResultSet resultSet = statement.executeQuery(sql)) {
                 while (resultSet.next()) {
                     String savedName = resultSet.getString("TABLENAME");
                     String referredName = fixedIdentifier(savedName);
@@ -527,25 +532,19 @@ public class DerbyBase {
                 loadingController.info("Path_Connection");
             }
             if (!tables.contains("Note".toLowerCase())) {
-                TableNote t = new TableNote();
+                TableNodeHtml t = new TableNodeHtml();
                 t.createTable(conn);
-                loadingController.info("Note");
-                t.initTreeTables(conn);
-                loadingController.info("Note_Tree");
+                loadingController.info(t.getTreeName());
             }
             if (!tables.contains("Math_Function".toLowerCase())) {
                 TableMathFunction t = new TableMathFunction();
                 t.createTable(conn);
-                loadingController.info("Math_Function");
-                t.initTreeTables(conn);
-                loadingController.info("Math_Function_Tree");
+                loadingController.info(t.getTreeName());
             }
             if (!tables.contains("Info_In_Tree".toLowerCase())) {
-                TableInfo t = new TableInfo();
+                TableNodeText t = new TableNodeText();
                 t.createTable(conn);
-                loadingController.info("Info_In_Tree");
-                t.initTreeTables(conn);
-                loadingController.info("Info_In_Tree_Tree");
+                loadingController.info(t.getTreeName());
             }
             return true;
         } catch (Exception e) {

@@ -77,7 +77,7 @@ public class ControlDataNodeEditor extends BaseController {
             attributesController.setParameters(treeController);
             tagsController.setParameters(this);
 
-            dataController = (BaseDataValuesController) WindowTools.loadFxml(nodeTable.getFxml());
+            dataController = (BaseDataValuesController) WindowTools.loadFxml(nodeTable.getDataFxml());
             dataPane.setContent(dataController.getMyScene().getRoot());
             dataController.refreshStyle();
             dataController.setParameters(this);
@@ -158,7 +158,7 @@ public class ControlDataNodeEditor extends BaseController {
         }
         isSettingValues = true;
         if (dataTab != null) {
-            dataTab.setText(message(nodeTable.getTableTitle()) + (dataController.changed ? "*" : ""));
+            dataTab.setText(nodeTable.getDataName() + (dataController.changed ? "*" : ""));
         }
         if (nodeTab != null) {
             nodeTab.setText(message("Node") + (attributesController.changed ? "*" : ""));
@@ -175,10 +175,6 @@ public class ControlDataNodeEditor extends BaseController {
             treeController.showRightPane();
         }
         setTitle(title + (changed ? " *" : ""));
-
-        saveButton.setDisable(!changed);
-        recoverButton.setDisable(!changed);
-        copyButton.setDisable(currentNode == null);
 
         boolean isValid = currentNode != null && parentNode != null;
         thisPane.setVisible(isValid);

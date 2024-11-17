@@ -137,7 +137,7 @@ public class DataTreeTagsController extends BaseTableViewController<DataTag> {
             baseName = controller.baseName;
             nodeTable = controller.nodeTable;
             tagTable = controller.tagTable;
-            baseTitle = message("Tags") + " - " + nodeTable.getTableTitle();
+            baseTitle = message("Tags") + " - " + nodeTable.getTreeName();
 
             loadTags();
         } catch (Exception e) {

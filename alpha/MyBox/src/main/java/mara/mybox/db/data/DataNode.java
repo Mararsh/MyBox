@@ -26,7 +26,7 @@ public class DataNode extends BaseData {
         nodeid = -1;
         parentid = RootID;
         title = null;
-        orderNumber = 0f;
+        orderNumber = 1f;
         updateTime = new Date();
     }
 
@@ -42,16 +42,16 @@ public class DataNode extends BaseData {
                     setNodeid(value == null ? -1 : (long) value);
                     return true;
                 case "parentid":
-                    setParentid(value == null ? -1 : (long) value);
+                    setParentid(value == null ? RootID : (long) value);
                     return true;
                 case "title":
                     setTitle(value == null ? null : (String) value);
                     return true;
                 case "order_number":
-                    setOrderNumber(value == null ? 0f : (float) value);
+                    setOrderNumber(value == null ? 1f : (float) value);
                     return true;
                 case "update_time":
-                    setUpdateTime(value == null ? null : (Date) value);
+                    setUpdateTime(value == null ? new Date() : (Date) value);
                     return true;
             }
             if (values == null) {
@@ -102,9 +102,10 @@ public class DataNode extends BaseData {
             DataNode node = create()
                     .setParentid(parentid)
                     .setTitle(title + " " + message("Copy"));
-            if (values != null);
-            for (String key : values.keySet()) {
-                node.setValue(key, values.get(key));
+            if (values != null) {
+                for (String key : values.keySet()) {
+                    node.setValue(key, values.get(key));
+                }
             }
             return node;
         } catch (Exception e) {

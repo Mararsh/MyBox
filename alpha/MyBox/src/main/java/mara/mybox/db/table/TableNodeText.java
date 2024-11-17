@@ -15,19 +15,20 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-4-23
  * @License Apache License Version 2.0
  */
-public class TableInfo extends BaseNodeTable {
+public class TableNodeText extends BaseNodeTable {
 
-    public TableInfo() {
-        tableName = "Info_In_Tree";
-        tableTitle = message("InformationInTree");
-        fxml = Fxmls.ControlDataInfoFxml;
-        examplesFile = exampleFile();
+    public TableNodeText() {
+        tableName = "Node_Text";
+        treeName = message("TextTree");
+        dataName = message("Texts");
+        dataFxml = Fxmls.ControlDataTextFxml;
+        examplesFileName = "TextTree";
         defineColumns();
     }
 
-    public final TableInfo defineColumns() {
+    public final TableNodeText defineColumns() {
         defineNodeColumns();
-        addColumn(new ColumnDefinition("info", ColumnType.Clob));
+        addColumn(new ColumnDefinition("text", ColumnType.Clob));
         return this;
     }
 
@@ -35,9 +36,9 @@ public class TableInfo extends BaseNodeTable {
     public String valuesHtml(FxTask task, Connection conn, BaseController controller, DataNode node) {
         try {
             Map<String, Object> values = node.getValues();
-            String info = (String) values.get("info");
-            return info == null || info.isBlank() ? null
-                    : ("<PRE><CODE>" + info + "</CODE></PRE>");
+            String text = (String) values.get("text");
+            return text == null || text.isBlank() ? null
+                    : ("<PRE><CODE>" + text + "</CODE></PRE>");
         } catch (Exception e) {
             return null;
         }
