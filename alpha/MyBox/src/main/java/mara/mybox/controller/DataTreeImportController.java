@@ -1,22 +1,38 @@
 package mara.mybox.controller;
 
 import java.io.File;
+import java.sql.Connection;
+import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import mara.mybox.db.Database;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.DataNode;
+import mara.mybox.db.data.DataNodeTag;
+import mara.mybox.db.data.DataTag;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.BaseNodeTable;
+import static mara.mybox.db.table.BaseNodeTable.RootID;
 import mara.mybox.db.table.TableDataNodeTag;
 import mara.mybox.db.table.TableDataTag;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxTask;
+import mara.mybox.fxml.HelpTools;
+import mara.mybox.fxml.SoundTools;
+import mara.mybox.tools.FileTools;
+import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXParseException;
+import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * @Author Mara
@@ -25,7 +41,7 @@ import mara.mybox.value.UserConfig;
  */
 public class DataTreeImportController extends BaseBatchFileController {
 
-    protected DataTreeController dataController;
+    protected DataTreeController treeController;
     protected BaseNodeTable nodeTable;
     protected TableDataNodeTag nodeTagsTable;
     protected TableDataTag tagTable;
@@ -36,23 +52,19 @@ public class DataTreeImportController extends BaseBatchFileController {
     @FXML
     protected RadioButton updateRadio, skipRadio, createRadio;
     @FXML
-    protected CheckBox iconCheck;
-    @FXML
     protected Label formatLabel;
-
-    public DataTreeImportController() {
-        baseTitle = message("Import");
-    }
 
     @Override
     public void setFileType() {
-        setFileType(VisitHistory.FileType.Text);
+        setFileType(VisitHistory.FileType.XML);
     }
 
-    @Override
-    public void initControls() {
+    public void setParamters(DataTreeController controller) {
         try {
-            super.initControls();
+            this.treeController = controller;
+            nodeTable = treeController.nodeTable;
+            nodeTagsTable = treeController.nodeTagsTable;
+            tagTable = treeController.tagTable;
 
             String existed = UserConfig.getString(baseName + "Existed", "Update");
             if ("Create".equalsIgnoreCase(existed)) {
@@ -83,13 +95,6 @@ public class DataTreeImportController extends BaseBatchFileController {
         }
     }
 
-    public void setCaller(DataTreeController controller) {
-        this.dataController = controller;
-        nodeTable = dataController.nodeTable;
-        nodeTagsTable = dataController.nodeTagsTable;
-        tagTable = dataController.tagTable;
-    }
-
     public void importExamples() {
         File file = nodeTable.exampleFile();
         if (file == null) {
@@ -97,429 +102,210 @@ public class DataTreeImportController extends BaseBatchFileController {
         }
         isSettingValues = true;
         updateRadio.setSelected(true);
-        iconCheck.setSelected(false);
         isSettingValues = false;
         startFile(file);
     }
 
-//    @Override
-//    public boolean makeMoreParameters() {
-//        if (category == null) {
-//            return false;
-//        }
-//        if (dataNodeTable == null) {
-//            dataNodeTable = new TableInfoNode();
-//        }
-//        rootNode = dataNodeTable.findAndCreateRoot(category);
-//        if (rootNode == null) {
-//            return false;
-//        }
-//        downIcon = isWebFavorite && iconCheck.isSelected();
-//        return super.makeMoreParameters();
-//    }
-//
-//    @Override
-//    public String handleFile(FxTask currentTask, File srcFile, File targetPath) {
-//        try {
-//            long count = importFile(currentTask, srcFile);
+    @Override
+    public boolean makeMoreParameters() {
+        rootNode = treeController.getRootNode();
+        if (rootNode == null) {
+            return false;
+        }
+        return super.makeMoreParameters();
+    }
+
+    @Override
+    public String handleFile(FxTask currentTask, File srcFile, File targetPath) {
+        File validFile = FileTools.removeBOM(currentTask, srcFile);
+        if (validFile == null) {
+            return message("Failed");
+        }
+        try {
+            SAXParserFactory factory = SAXParserFactory.newInstance();
+            SAXParser saxParser = factory.newSAXParser();
+            saxParser.parse(validFile, new DataTreeParser());
+
 //            if (count >= 0) {
 //                totalItemsHandled += count;
 //                return message("Imported") + ": " + count;
 //            } else {
 //                return message("Failed");
 //            }
-//        } catch (Exception e) {
-//            return e.toString();
-//        }
-//    }
-//
-//    public long importFile(FxTask currentTask, File file) {
-//        if (file == null || !file.exists()) {
-//            return -1;
-//        }
-//        File validFile = FileTools.removeBOM(currentTask, file);
-//        if (currentTask != null && !currentTask.isWorking()) {
-//            return -4;
-//        }
-//        if (validFile == null) {
-//            return -1;
-//        }
-//        try (Connection conn = DerbyBase.getConnection(); BufferedReader reader = new BufferedReader(new FileReader(validFile, TextFileTools.charset(validFile)))) {
-//            conn.setAutoCommit(false);
-//            String line;
-//            while ((line = reader.readLine()) != null && line.isBlank()) {
-//                if (currentTask != null && !currentTask.isWorking()) {
-//                    return -4;
-//                }
-//            }
-//            if (line == null) {
-//                return -2;
-//            }
-//            if (line.startsWith(AppValues.MyBoxSeparator)) {
-//                return importByMyBoxSeparator(currentTask, conn, reader);
-//            } else {
-//                return importByBlankLine(currentTask, conn, reader, line);
-//            }
-//        } catch (Exception e) {
-//            showLogs(e.toString());
-//            return -3;
-//        }
-//    }
-//
-//    public long importByBlankLine(FxTask currentTask, Connection conn, BufferedReader reader, String firstLine) {
-//        if (conn == null || reader == null || rootNode == null) {
-//            return -1;
-//        }
-//        long count = 0;
-//        try {
-//            conn.setAutoCommit(false);
-//            String line = firstLine, name, value, more, tagsString;
-//            Date time;
-//            long parentid, baseTime = new Date().getTime();
-//            while (line != null) {
-//                if (currentTask != null && !currentTask.isWorking()) {
-//                    return -4;
-//                }
-//                parentid = getParent(currentTask, conn, line);
-//                if (parentid < -1) {
-//                    break;
-//                }
-//                line = reader.readLine();
-//                if (line == null) {
-//                    break;
-//                }
-//                if (line.isBlank()) {
-//                    while ((line = reader.readLine()) != null && line.isBlank()) {
-//                        if (currentTask != null && !currentTask.isWorking()) {
-//                            return -4;
-//                        }
-//                    }
-//                    continue;
-//                }
-//                name = line;
-//                line = reader.readLine();
-//                value = null;
-//                time = null;
-//                more = null;
-//                tagsString = null;
-//                if (line != null && !line.isBlank()) {
-//                    if (line.startsWith(InfoNode.TimePrefix)) {
-//                        time = DateTools.encodeDate(line.substring(InfoNode.TimePrefix.length()));
-//                        line = reader.readLine();
-//                    } else {
-//                        time = DateTools.encodeDate(line);
-//                        if (time != null) {
-//                            line = reader.readLine();
-//                        }
-//                    }
-//                    if (line.startsWith(InfoNode.TagsPrefix)) {
-//                        tagsString = line.substring(InfoNode.TagsPrefix.length());
-//                        line = reader.readLine();
-//                    }
-//                    value = line;
-//                    if (value != null && !line.isBlank()) {
-//                        while ((line = reader.readLine()) != null && !line.isBlank()) {
-//                            if (currentTask != null && !currentTask.isWorking()) {
-//                                return -4;
-//                            }
-//                            value += System.lineSeparator() + line;
-//                        }
-//                        if (isWebFavorite) {
-//                            String[] lines = value.split("\n");
-//                            if (lines.length > 1) {
-//                                value = lines[0];
-//                                more = lines[1];
-//                            }
-//                            if (more == null || more.isBlank()) {
-//                                try {
-//                                    File iconFile = IconTools.readIcon(currentTask, value, downIcon);
-//                                    if (iconFile != null && iconFile.exists()) {
-//                                        more = iconFile.getAbsolutePath();
-//                                    }
-//                                } catch (Exception e) {
-//                                }
-//                            }
-//                            if (more != null && !more.isBlank()) {
-//                                value += InfoNode.ValueSeparater + "\n" + more;
-//                            }
-//                        }
-//                    }
-//                }
-//                if (time == null) {
-//                    time = new Date(baseTime - count * 1000); // to keep the order of id
-//                }
-//                if (writeNode(conn, parentid, time, name, value, tagsString)) {
-//                    count++;
-//                }
-//                while ((line = reader.readLine()) != null && line.isBlank()) {
-//                    if (currentTask != null && !currentTask.isWorking()) {
-//                        return -4;
-//                    }
-//                }
-//            }
-//            conn.commit();
-//        } catch (Exception e) {
-//            updateLogs(e.toString());
-//        }
-//        return count;
-//    }
-//
-//    public long importByMyBoxSeparator(FxTask currentTask, Connection conn, BufferedReader reader) {
-//        if (conn == null || reader == null || rootNode == null) {
-//            return -1;
-//        }
-//        long count = 0;
-//        try {
-//            conn.setAutoCommit(false);
-//            String line, name, info, tagsString;
-//            Date time;
-//            long parentid, baseTime = new Date().getTime();
-//            while ((line = reader.readLine()) != null && !line.isBlank()) {
-//                if (currentTask != null && !currentTask.isWorking()) {
-//                    return -4;
-//                }
-//                parentid = getParent(currentTask, conn, line);
-//                if (currentTask != null && !currentTask.isWorking()) {
-//                    return -4;
-//                }
-//                if (parentid < -1) {
-//                    break;
-//                }
-//                info = null;
-//                time = null;
-//                tagsString = null;
-//                while ((line = reader.readLine()) != null && line.isBlank()) {
-//                    if (currentTask != null && !currentTask.isWorking()) {
-//                        return -4;
-//                    }
-//                }
-//                if (line == null) {
-//                    break;
-//                }
-//                if (line.startsWith(AppValues.MyBoxSeparator)) {
-//                    continue;
-//                }
-//                name = line;
-//                while ((line = reader.readLine()) != null && line.isBlank()) {
-//                    if (currentTask != null && !currentTask.isWorking()) {
-//                        return -4;
-//                    }
-//                }
-//                if (line != null && !line.startsWith(AppValues.MyBoxSeparator)) {
-//                    if (line.startsWith(InfoNode.TimePrefix)) {
-//                        time = DateTools.encodeDate(line.substring(InfoNode.TimePrefix.length()));
-//                        line = reader.readLine();
-//                    } else {
-//                        time = DateTools.encodeDate(line);
-//                        if (time != null) {
-//                            line = reader.readLine();
-//                        }
-//                    }
-//                    if (line.startsWith(InfoNode.TagsPrefix)) {
-//                        tagsString = line.substring(InfoNode.TagsPrefix.length());
-//                        line = reader.readLine();
-//                    }
-//                    info = line;
-//                    if (info != null && !info.startsWith(AppValues.MyBoxSeparator)) {
-//                        while ((line = reader.readLine()) != null && !line.startsWith(AppValues.MyBoxSeparator)) {
-//                            if (currentTask != null && !currentTask.isWorking()) {
-//                                return -4;
-//                            }
-//                            info += "\n" + line;
-//                        }
-//                    }
-//                    if (info != null && !info.isBlank() && isWebFavorite) {
+            return message("Successful");
+        } catch (Exception e) {
+            return e.toString();
+        }
+    }
+
+    class DataTreeParser extends DefaultHandler {
+
+        private Connection conn;
+        private String currentTag;
+        protected DataNode dataNode;
+        protected DataTag dataTag;
+        protected List<String> columnNames;
+        protected long parentid, count;
+
+        @Override
+        public void startDocument() {
+            try {
+                conn = DerbyBase.getConnection();
+                conn.setAutoCommit(false);
+                columnNames = nodeTable.columnNames();
+                count = 0;
+                parentid = -1;
+            } catch (Exception e) {
+
+            }
+        }
+
+        @Override
+        public void startElement(String uri, String localName, String qName, Attributes attrs) {
+            try {
+                if (localName == null || localName.isBlank()) {
+                    return;
+                }
+                currentTag = localName.toLowerCase();
+                switch (currentTag) {
+                    case "node":
+                        if (dataNode != null) {
+                            parentid = dataNode.getNodeid();
+                        }
+                        dataNode = null;
+                        break;
+                    case "node_attributes":
+                        dataNode = new DataNode();
+                        break;
+                }
+            } catch (Exception e) {
+                showLogs(e.toString());
+            }
+        }
+
+        @Override
+        public void characters(char ch[], int start, int length) {
+            try {
+                if (dataNode == null || currentTag == null || ch == null) {
+                    return;
+                }
+                String value = new String(ch, start, length);
+                switch (currentTag) {
+                    case "nodeid":
+//                        long nodeid = -1;
 //                        try {
-//                            File iconFile = IconTools.readIcon(currentTask, info, downIcon);
-//                            if (iconFile != null && iconFile.exists()) {
-//                                info += InfoNode.ValueSeparater + "\n" + iconFile.getAbsolutePath();
-//                            }
+//                            nodeid = Long.parseLong(value);
 //                        } catch (Exception e) {
 //                        }
-//                    }
-//                }
-//                if (time == null) {
-//                    time = new Date(baseTime - count * 1000); // to keep the order of id
-//                }
-//                if (writeNode(conn, parentid, time, name, info, tagsString)) {
-//                    count++;
-//                }
-//            }
-//            conn.commit();
-//        } catch (Exception e) {
-//            showLogs(e.toString());
-//        }
-//        return count;
-//    }
-//
-//    public long getParent(FxTask currentTask, Connection conn, String parentChain) {
-//        try {
-//            if (parentChain == null || parentChain.isBlank()) {
-//                return -2;
-//            }
-//            if (InfoNode.RootIdentify.equals(parentChain)) {
-//                return -1;
-//            } else {
-//                long parentid = rootNode.getNodeid();
-//                String rootTitle = rootNode.getTitle();
-//                String rootTitleMsg = message(rootTitle);
-//                if (parentChain.equals(rootTitle) || parentChain.equals(rootTitleMsg)) {
-//                    return parentid;
-//                }
-//                String chain = parentChain;
-//                String prefix = rootTitle + InfoNode.TitleSeparater;
-//                if (chain.startsWith(prefix)) {
-//                    chain = chain.substring(prefix.length());
-//                } else {
-//                    prefix = rootTitleMsg + InfoNode.TitleSeparater;
-//                    if (chain.startsWith(prefix)) {
-//                        chain = chain.substring(prefix.length());
-//                    }
-//                }
-//                String[] names = chain.split(InfoNode.TitleSeparater);
-//                for (String name : names) {
-//                    if (currentTask != null && !currentTask.isWorking()) {
-//                        return -4;
-//                    }
-////                    InfoNode parentNode = dataNodeTable.find(conn, parentid, name);
-////                    if (parentNode == null) {
-////                        parentNode = InfoNode.create()
-////                                .setCategory(category)
-////                                .setParentid(parentid)
-////                                .setUpdateTime(new Date())
-////                                .setTitle(name);
-////                        parentNode = dataNodeTable.insertData(conn, parentNode);
-////                    }
-////                    parentid = parentNode.getNodeid();
-//                }
-//                return parentid;
-//            }
-//        } catch (Exception e) {
-//            showLogs(e.toString());
-//            MyBoxLog.console(e);
-//            return -3;
-//        }
-//    }
-//
-//    public boolean writeNode(Connection conn, long parentid, Date time,
-//            String name, String info, String tags) {
-//        try {
-//            if (conn == null || name == null || name.isBlank()) {
-//                return false;
-//            }
-//            InfoNode currentNode = null;
-//            if (parentid < 0) {
-//                if (name.equals(category) || name.equals(message(category))) {
-//                    currentNode = dataNodeTable.findAndCreateRoot(conn, category);
-//                }
-//            } else {
-//                info = InfoNode.encodeInfo(category, info);
-//                currentNode = dataNodeTable.find(conn, parentid, name);
-//                if (currentNode != null) {
-//                    if (updateRadio.isSelected()) {
-//                        currentNode.setInfo(info)
-//                                .setUpdateTime(time);
-//                        currentNode = dataNodeTable.updateData(conn, currentNode);
-//
-//                    } else if (createRadio.isSelected()) {
-//                        currentNode = InfoNode.create()
-//                                .setCategory(category)
-//                                .setParentid(parentid)
-//                                .setTitle(name)
-//                                .setInfo(info)
-//                                .setUpdateTime(time);
-//                        currentNode = dataNodeTable.insertData(conn, currentNode);
-//                    } else {
-//                        return false;
-//                    }
-//                } else {
-//                    currentNode = InfoNode.create()
-//                            .setCategory(category)
-//                            .setParentid(parentid)
-//                            .setTitle(name)
-//                            .setInfo(info)
-//                            .setUpdateTime(time);
-//                    currentNode = dataNodeTable.insertData(conn, currentNode);
-//                }
-//
-//            }
-//            if (currentNode == null) {
-//                return false;
-//            }
-//            writeTags(conn, currentNode.getNodeid(), tags);
-//            return true;
-//        } catch (Exception e) {
-//            showLogs(e.toString());
-//            return false;
-//        }
-//    }
-//
-//    public void writeTags(Connection conn, long nodeid, String s) {
-//        try {
-//            if (conn == null || s == null || s.isBlank()) {
-//                return;
-//            }
-//            String[] values = s.split(InfoNode.TagSeparater);
-//            if (values == null || values.length == 0) {
-//                return;
-//            }
-//            for (int i = 0; i < values.length; i = i + 2) {
-//                String tagName = values[i];
-//                Color color = null;
-//                try {
-//                    color = Color.web(values[i + 1]);
-//                } catch (Exception e) {
-//                }
-//                Tag tag = dataTagTable.findAndCreate(conn, category, tagName);
-//                tag.setColor(color);
-//                tag = dataTagTable.updateData(conn, tag);
-//                if (tag == null) {
-//                    continue;
-//                }
-//                if (dataNodeTagTable.query(conn, nodeid, tag.getTgid()) == null) {
-//                    InfoNodeTag nodeTag = new InfoNodeTag(nodeid, tag.getTgid());
-//                    dataNodeTagTable.insertData(conn, nodeTag);
-//                }
-//            }
-//        } catch (Exception e) {
-//            showLogs(e.toString());
-//        }
-//    }
-//
-//    @Override
-//    public void afterTask(boolean ok) {
-//        if (dataController != null) {
-//            dataController.infoTree.loadTree();
-//
-//            if (!isPreview) {
-//                closeStage();
-//            }
-//
-//            dataController.refreshTags();
-//            dataController.refreshTimes();
-//            if (!AppVariables.isTesting) {
-//                dataController.popInformation(message("Imported") + ": " + totalItemsHandled);
-//            }
-//
-//        } else {
-//            tableView.refresh();
-//            if (miaoCheck != null && miaoCheck.isSelected()) {
-//                SoundTools.miao3();
-//            }
-//        }
-//    }
-//
-//    @FXML
-//    public void exampleData() {
-//        File file = InfoNode.exampleFile(category);
-//        if (file == null) {
-//            file = InfoNode.exampleFile(InfoNode.Notebook);
-//        }
-//        TextEditorController.open(file);
-//    }
-//
-//    @FXML
-//    public void aboutTreeInformation() {
-//        openHtml(HelpTools.aboutTreeInformation());
-//    }
+//                        dataNode.setNodeid(nodeid);
+                        break;
+                    case "tag":
+                        dataTag = DataTag.create().setTag(value);
+                        break;
+                    default:
+                        if (columnNames.contains(currentTag)) {
+                            dataNode.setValue(currentTag, value);
+                        }
+                }
+            } catch (Exception e) {
+                showLogs(e.toString());
+            }
+        }
+
+        @Override
+        public void endElement(String uri, String localName, String qName) {
+            try {
+                if (dataNode == null
+                        || localName == null || localName.isBlank()) {
+                    return;
+                }
+                switch (localName.toLowerCase()) {
+                    case "node_attributes":
+                        if (parentid < 0) {
+                            parentid = RootID;
+                        }
+                        dataNode.setParentid(parentid);
+                        dataNode = nodeTable.insertData(conn, dataNode);
+                        parentid = dataNode.getNodeid();
+                        break;
+                    case "node":
+                        parentid = dataNode.getParentid();
+                        dataNode = null;
+                        break;
+                    case "tag":
+                        if (dataTag != null) {
+                            dataTag = tagTable.insertData(conn, dataTag);
+                            nodeTagsTable.insertData(conn,
+                                    new DataNodeTag(dataNode.getNodeid(), dataTag.getTagid()));
+                            dataTag = null;
+                        }
+                        dataNode = null;
+                        break;
+                }
+                if (++count % Database.BatchSize == 0) {
+                    conn.commit();
+                }
+            } catch (Exception e) {
+                showLogs(e.toString());
+            }
+        }
+
+        @Override
+        public void endDocument() {
+            try {
+                if (conn != null) {
+                    conn.commit();
+                    conn.close();
+                }
+            } catch (Exception e) {
+                showLogs(e.toString());
+            }
+        }
+
+        @Override
+        public void warning(SAXParseException e) {
+            showLogs(e.toString());
+        }
+
+        @Override
+        public void error(SAXParseException e) {
+            showLogs(e.toString());
+        }
+
+        @Override
+        public void fatalError(SAXParseException e) {
+            showLogs(e.toString());
+        }
+
+    }
+
+    @Override
+    public void afterTask(boolean ok) {
+        treeController.loadTree();
+        tableView.refresh();
+        if (miaoCheck != null && miaoCheck.isSelected()) {
+            SoundTools.miao3();
+        }
+        if (!isPreview) {
+            closeStage();
+        }
+        if (!AppVariables.isTesting) {
+            treeController.popInformation(message("Imported") + ": " + totalItemsHandled);
+        }
+    }
+
+    @FXML
+    public void exampleData() {
+        File file = nodeTable.exampleFile();
+        if (file == null) {
+            file = nodeTable.exampleFile("TextTree");
+        }
+        TextEditorController.open(file);
+    }
+
+    @FXML
+    public void aboutTreeInformation() {
+        openHtml(HelpTools.aboutTreeInformation());
+    }
+
 }

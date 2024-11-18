@@ -46,8 +46,8 @@ public class DataTreeExportController extends BaseTaskController {
     protected BaseNodeTable nodeTable;
     protected TableDataNodeTag nodeTagsTable;
     protected TreeItem<DataNode> selectedNode;
-    protected File textsFile, xmlFile, jsonFile, htmlFile, framesetFile, framesetNavFile;
-    protected FileWriter textsWriter, htmlWriter, xmlWriter, jsonWriter, framesetNavWriter;
+    protected File xmlFile, jsonFile, htmlFile, framesetFile, framesetNavFile;
+    protected FileWriter htmlWriter, xmlWriter, jsonWriter, framesetNavWriter;
     protected String dataName;
     protected int count, level;
     protected Charset charset;
@@ -74,7 +74,7 @@ public class DataTreeExportController extends BaseTaskController {
             selectedNode = item;
 
             baseName = baseName = baseName + "_" + dataName;
-            baseTitle = treeController.baseTitle + " - " + message("Export") + " : " + item.getValue().getTitle();
+            baseTitle = nodeTable.getTreeName() + " - " + message("Export") + " : " + item.getValue().getTitle();
 
             setControls();
 
@@ -180,12 +180,10 @@ public class DataTreeExportController extends BaseTaskController {
             close();
             return false;
         }
-        textsFile = null;
         xmlFile = null;
         htmlFile = null;
         jsonFile = null;
         framesetFile = null;
-        textsWriter = null;
         htmlWriter = null;
         xmlWriter = null;
         jsonWriter = null;
@@ -368,17 +366,6 @@ public class DataTreeExportController extends BaseTaskController {
             return false;
         }
         boolean well = true;
-        if (textsWriter != null) {
-            try {
-                textsWriter.flush();
-                textsWriter.close();
-                textsWriter = null;
-                targetFileGenerated(textsFile, VisitHistory.FileType.Text);
-            } catch (Exception e) {
-                updateLogs(e.toString());
-                well = false;
-            }
-        }
         if (htmlWriter != null) {
             try {
                 htmlWriter.write(Indent + "</BODY>\n</HTML>\n");
@@ -449,8 +436,8 @@ public class DataTreeExportController extends BaseTaskController {
                 writeHtml(currentTask, conn, parentChainName, node, htmlWriter, tags);
             }
             if (xmlWriter != null) {
-                xmlWriter.write(xmlPrefix + "<Node>\n");
-                writeXML(currentTask, conn, xmlPrefix, parentChainName, node, tags);
+                xmlWriter.write(xmlPrefix + "<node>\n");
+                writeXML(currentTask, conn, xmlPrefix + Indent, parentChainName, node, tags);
             }
             if (jsonWriter != null) {
                 writeJson(currentTask, conn, parentChainName, node, tags);
@@ -522,7 +509,7 @@ public class DataTreeExportController extends BaseTaskController {
                 }
             }
             if (xmlWriter != null) {
-                xmlWriter.write(xmlPrefix + "</Node>\n");
+                xmlWriter.write(xmlPrefix + "</node>\n");
             }
         } catch (Exception e) {
             updateLogs(e.toString());
@@ -587,9 +574,6 @@ public class DataTreeExportController extends BaseTaskController {
                 }
                 if (jsonFile != null && jsonFile.exists()) {
                     JsonEditorController.open(jsonFile);
-                }
-                if (textsFile != null && textsFile.exists()) {
-                    TextEditorController.open(textsFile);
                 }
             }
             popInformation(message("Count") + ": " + count);

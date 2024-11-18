@@ -99,7 +99,7 @@ public class XmlTools {
      */
     public static Document textToDoc(FxTask task, BaseController controller, String xml) {
         try {
-            return doc(task, controller, new InputSource(new StringReader(xml)));
+            return readSource(task, controller, new InputSource(new StringReader(xml)));
         } catch (Exception e) {
             PopTools.showError(controller, e.toString());
             return null;
@@ -108,14 +108,14 @@ public class XmlTools {
 
     public static Document fileToDoc(FxTask task, BaseController controller, File file) {
         try {
-            return doc(task, controller, new InputSource(new FileReader(file)));
+            return readSource(task, controller, new InputSource(new FileReader(file)));
         } catch (Exception e) {
             PopTools.showError(controller, e.toString());
             return null;
         }
     }
 
-    public static Document doc(FxTask task, BaseController controller, InputSource inputSource) {
+    public static Document readSource(FxTask task, BaseController controller, InputSource inputSource) {
         try {
             Document doc = builder(controller).parse(inputSource);
             if (doc == null) {

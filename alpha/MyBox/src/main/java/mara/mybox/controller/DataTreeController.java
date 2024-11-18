@@ -674,17 +674,17 @@ public class DataTreeController extends BaseDataTreeViewController {
 
     @FXML
     protected void importAction() {
-        InfoTreeNodeImportController controller
-                = (InfoTreeNodeImportController) childStage(Fxmls.InfoTreeNodeImportFxml);
-//        controller.setCaller(manager);
+        DataTreeImportController importController
+                = (DataTreeImportController) childStage(Fxmls.DataTreeImportFxml);
+        importController.setParamters(this);
     }
 
     @FXML
     protected void importExamples() {
-        InfoTreeNodeImportController controller
-                = (InfoTreeNodeImportController) childStage(Fxmls.InfoTreeNodeImportFxml);
-//        controller.setCaller(infoController);
-        controller.importExamples();
+        DataTreeImportController importController
+                = (DataTreeImportController) childStage(Fxmls.DataTreeImportFxml);
+        importController.setParamters(this);
+        importController.importExamples();
     }
 
     @FXML

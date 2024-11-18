@@ -59,6 +59,7 @@ public class DataNodeTools {
             }
             if (withTime && node.getUpdateTime() != null) {
                 s.append(indent3).append("<H5>")
+                        .append(message("UpdateTime")).append(": ")
                         .append(DateTools.datetimeToString(node.getUpdateTime()))
                         .append("</H5>\n");
             }
@@ -77,11 +78,13 @@ public class DataNodeTools {
                 }
                 s.append("</H4>\n");
             }
-            s.append(indent3).append("<H4><PRE><CODE>")
-                    .append(node.getTitle()).append("</CODE></PRE></H4>\n");
+            s.append(indent3).append("<H5>")
+                    .append(message("Title")).append(": ")
+                    .append("<PRE><CODE>").append(node.getTitle()).append("</CODE></PRE>\n")
+                    .append("</H5>\n");
             String valuesHtml = dataTable.valuesHtml(fxTask, conn, controller, node);
             if (valuesHtml != null && !valuesHtml.isBlank()) {
-                s.append(indent3).append(valuesHtml).append("\n");
+                s.append(indent3).append("<DIV>").append(valuesHtml).append("</DIV>").append("\n");
             }
             s.append(indent2).append("</DIV><HR>\n\n");
             return s.toString();
@@ -103,7 +106,7 @@ public class DataNodeTools {
             StringBuilder s = new StringBuilder();
             String prefix2 = prefix + Indent;
             String prefix3 = prefix2 + Indent;
-            s.append(prefix).append("<Attributes>\n");
+            s.append(prefix).append("<node_attributes>\n");
             if (withId) {
                 if (node.getNodeid() >= 0) {
                     s.append(prefix2).append("<nodeid>").append(node.getNodeid()).append("</nodeid>\n");
@@ -114,12 +117,12 @@ public class DataNodeTools {
             }
             if (parentName != null) {
                 s.append(prefix2).append("<parent_name>\n");
-                s.append(prefix2).append("<![CDATA[").append(parentName).append("]]>\n");
+                s.append(prefix3).append("<![CDATA[").append(parentName).append("]]>\n");
                 s.append(prefix2).append("</parent_name>\n");
             }
             if (node.getTitle() != null) {
                 s.append(prefix2).append("<title>\n");
-                s.append(prefix2).append("<![CDATA[").append(node.getTitle()).append("]]>\n");
+                s.append(prefix3).append("<![CDATA[").append(node.getTitle()).append("]]>\n");
                 s.append(prefix2).append("</title>\n");
             }
             if (withOrder) {
@@ -130,19 +133,19 @@ public class DataNodeTools {
                         .append(DateTools.datetimeToString(node.getUpdateTime()))
                         .append("</updateTime>\n");
             }
-            s.append(prefix).append("</Attributes>\n");
-            String valuesXml = dataTable.valuesXml(fxTask, conn, controller, prefix, node);
+            String valuesXml = dataTable.valuesXml(fxTask, conn, controller, prefix2, node);
             if (valuesXml != null && !valuesXml.isBlank()) {
                 s.append(valuesXml);
             }
+            s.append(prefix).append("</node_attributes>\n");
             if (tags != null && !tags.isEmpty()) {
-                s.append(prefix).append("<Tags>\n");
+                s.append(prefix).append("<tags>\n");
                 for (DataNodeTag tag : tags) {
-                    s.append(prefix2).append("<Tag>\n");
+                    s.append(prefix2).append("<tag>\n");
                     s.append(prefix3).append("<![CDATA[").append(tag.getTag().getTag()).append("]]>\n");
-                    s.append(prefix2).append("</Tag>\n");
+                    s.append(prefix2).append("</tag>\n");
                 }
-                s.append(prefix).append("</Tags>\n");
+                s.append(prefix).append("</tags>\n");
             }
             return s.toString();
         } catch (Exception e) {
@@ -204,16 +207,17 @@ public class DataNodeTools {
                 String t = null;
                 for (DataNodeTag tag : tags) {
                     String v = tag.getTag().getTag();
+                    v = JsonTools.encode(v);
                     if (t == null) {
                         t = v;
                     } else {
-                        t += DataNode.TagSeparater + v;
+                        t += "," + v;
                     }
                 }
                 s.append(",\n");
                 s.append(indent2)
                         .append("\"").append(message("Tags")).append("\": ")
-                        .append(JsonTools.encode(t));
+                        .append("[").append(t).append("]");
             }
             String valuesJson = dataTable.valuesJson(fxTask, conn, controller, indent2, node);
             if (valuesJson != null && !valuesJson.isBlank()) {

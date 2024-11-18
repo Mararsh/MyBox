@@ -38,7 +38,7 @@ public class BaseNodeTable extends BaseTable<DataNode> {
 
     public BaseNodeTable() {
         idColumnName = "nodeid";
-        orderColumns = "nodeid ASC";
+        orderColumns = "order_number, nodeid ASC";
     }
 
     public final BaseNodeTable defineNodeColumns() {
@@ -663,19 +663,17 @@ public class BaseNodeTable extends BaseTable<DataNode> {
             return null;
         }
         String prefix2 = prefix + Indent;
-        String prefix3 = prefix2 + Indent;
-        String xml = prefix + "<Data>\n";
+        String xml = "";
         for (ColumnDefinition column : columns) {
             String name = column.getColumnName();
             Object value = values.get(name);
             if (value == null) {
                 continue;
             }
-            xml += prefix2 + "<" + name + ">\n";
-            xml += prefix3 + "<![CDATA[" + column.toString(value) + "]]>\n";
-            xml += prefix2 + "</" + name + ">\n";
+            xml += prefix + "<" + name + ">\n";
+            xml += prefix2 + "<![CDATA[" + column.toString(value) + "]]>\n";
+            xml += prefix + "</" + name + ">\n";
         }
-        xml += prefix + "</Data>\n";
         return xml;
     }
 

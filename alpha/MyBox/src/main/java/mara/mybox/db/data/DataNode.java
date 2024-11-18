@@ -14,10 +14,10 @@ import static mara.mybox.value.Languages.message;
 public class DataNode extends BaseData {
 
     public static final String TitleSeparater = " > ";
-    public static final String TagSeparater = ";;;";
+    public static final String NodeTag = "Node";
 
     protected long nodeid, parentid;
-    protected String title;
+    protected String title, hierarchyNumber;
     protected float orderNumber;
     protected Date updateTime;
     protected Map<String, Object> values;
@@ -26,8 +26,8 @@ public class DataNode extends BaseData {
         nodeid = -1;
         parentid = RootID;
         title = null;
-        orderNumber = 1f;
         updateTime = new Date();
+        orderNumber = updateTime.getTime();
     }
 
     public DataNode() {
@@ -48,7 +48,7 @@ public class DataNode extends BaseData {
                     setTitle(value == null ? null : (String) value);
                     return true;
                 case "order_number":
-                    setOrderNumber(value == null ? 1f : (float) value);
+                    setOrderNumber(value == null ? new Date().getTime() : (float) value);
                     return true;
                 case "update_time":
                     setUpdateTime(value == null ? new Date() : (Date) value);
@@ -203,6 +203,14 @@ public class DataNode extends BaseData {
     public DataNode setValues(Map<String, Object> values) {
         this.values = values;
         return this;
+    }
+
+    public String getHierarchyNumber() {
+        return hierarchyNumber;
+    }
+
+    public void setHierarchyNumber(String hierarchyNumber) {
+        this.hierarchyNumber = hierarchyNumber;
     }
 
 }

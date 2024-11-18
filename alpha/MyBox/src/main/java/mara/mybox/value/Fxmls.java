@@ -21,6 +21,7 @@ public class Fxmls {
     public static final String ControlDataMathFunctionFxml = "/fxml/ControlDataMathFunction.fxml";
     public static final String DataTreeTagsFxml = "/fxml/DataTreeTags.fxml";
     public static final String DataTreeExportFxml = "/fxml/DataTreeExport.fxml";
+    public static final String DataTreeImportFxml = "/fxml/DataTreeImport.fxml";
 
     public static final String InfoTreeNodeMoveFxml = "/fxml/InfoTreeNodeMove.fxml";
     public static final String InfoTreeNodeCopyFxml = "/fxml/InfoTreeNodeCopy.fxml";

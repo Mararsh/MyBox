@@ -173,6 +173,11 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
         loadedNotify.set(!loadedNotify.get());
     }
 
+    public NodeP getRootNode() {
+        TreeItem<NodeP> root = treeView.getRoot();
+        return root != null ? root.getValue() : null;
+    }
+
     public boolean isLoaded(TreeItem<NodeP> item) {
         try {
             return title(item.getChildren().get(0).getValue()) != null;
