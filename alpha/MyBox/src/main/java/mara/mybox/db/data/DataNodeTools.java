@@ -49,8 +49,8 @@ public class DataNodeTools {
             }
             if (parentName != null) {
                 s.append(indent3).append("<H5>")
-                        .append(message("Parent")).append(": <PRE><CODE>").append(parentName)
-                        .append("</CODE></PRE></H5>\n");
+                        .append(message("Parent")).append(": <CODE>").append(parentName)
+                        .append("</CODE></H5>\n");
             }
             if (withOrder) {
                 s.append(indent3).append("<H5>")
@@ -79,8 +79,7 @@ public class DataNodeTools {
                 s.append("</H4>\n");
             }
             s.append(indent3).append("<H5>")
-                    .append(message("Title")).append(": ")
-                    .append("<PRE><CODE>").append(node.getTitle()).append("</CODE></PRE>\n")
+                    .append(message("Title")).append(": ").append(node.getTitle())
                     .append("</H5>\n");
             String valuesHtml = dataTable.valuesHtml(fxTask, conn, controller, node);
             if (valuesHtml != null && !valuesHtml.isBlank()) {
@@ -106,7 +105,7 @@ public class DataNodeTools {
             StringBuilder s = new StringBuilder();
             String prefix2 = prefix + Indent;
             String prefix3 = prefix2 + Indent;
-            s.append(prefix).append("<node_attributes>\n");
+            s.append(prefix).append("<NodeAttributes>\n");
             if (withId) {
                 if (node.getNodeid() >= 0) {
                     s.append(prefix2).append("<nodeid>").append(node.getNodeid()).append("</nodeid>\n");
@@ -129,23 +128,21 @@ public class DataNodeTools {
                 s.append(prefix2).append("<order_number>").append(node.getOrderNumber()).append("</order_number>\n");
             }
             if (withTime && node.getUpdateTime() != null) {
-                s.append(prefix2).append("<updateTime>")
+                s.append(prefix2).append("<update_time>")
                         .append(DateTools.datetimeToString(node.getUpdateTime()))
-                        .append("</updateTime>\n");
+                        .append("</update_time>\n");
             }
             String valuesXml = dataTable.valuesXml(fxTask, conn, controller, prefix2, node);
             if (valuesXml != null && !valuesXml.isBlank()) {
                 s.append(valuesXml);
             }
-            s.append(prefix).append("</node_attributes>\n");
+            s.append(prefix).append("</NodeAttributes>\n");
             if (tags != null && !tags.isEmpty()) {
-                s.append(prefix).append("<tags>\n");
                 for (DataNodeTag tag : tags) {
-                    s.append(prefix2).append("<tag>\n");
-                    s.append(prefix3).append("<![CDATA[").append(tag.getTag().getTag()).append("]]>\n");
-                    s.append(prefix2).append("</tag>\n");
+                    s.append(prefix).append("<NodeTag>\n");
+                    s.append(prefix2).append("<![CDATA[").append(tag.getTag().getTag()).append("]]>\n");
+                    s.append(prefix).append("</NodeTag>\n");
                 }
-                s.append(prefix).append("</tags>\n");
             }
             return s.toString();
         } catch (Exception e) {
@@ -236,6 +233,9 @@ public class DataNodeTools {
         }
     }
 
+    /*
+        only for migration
+     */
     public static void updateIn682_move(Connection conn, BaseNodeTable dataTable, String category) {
         String tname = dataTable.getTableName();
         // for debug.Remove this block later
@@ -370,7 +370,6 @@ public class DataNodeTools {
         }
     }
 
-    // only for migration
     public static DataNode fromText(String tableName, String text) {
         try {
             if (tableName == null) {

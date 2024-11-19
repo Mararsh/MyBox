@@ -167,7 +167,16 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
             return;
         }
         treeItem.setValue(node);
-//        unfold(treeItem, false);
+//        refreshItem(treeItem);
+    }
+
+    public void refreshItem(TreeItem<DataNode> item) {
+        if (item == null) {
+            return;
+        }
+        item.getChildren().clear();
+        item.getChildren().add(new TreeItem(new DataNode()));
+        unfold(item, false);
     }
 
     /*
@@ -322,6 +331,15 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
         return chainName;
     }
 
+    @Override
+    public String hierarchyNumber(TreeItem<DataNode> item) {
+        String num = super.hierarchyNumber(item);
+        if (item != null && item.getValue() != null) {
+            item.getValue().setHierarchyNumber(num);
+        }
+        return num;
+    }
+
     /*
         actions
      */
@@ -436,8 +454,22 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
         if (item == null) {
             return;
         }
-        if (task != null && !task.isQuit()) {
-            return;
+        if (task != null) {
+            task.cancel();
+        }
+        // make the node unvisible temporaryly
+        TreeItem<DataNode> parentItem = item.getParent();
+        int itemIndex;
+        if (parentItem != null) {
+            itemIndex = parentItem.getChildren().indexOf(item);
+            if (itemIndex >= 0) {
+                parentItem.getChildren().remove(item);
+            }
+        } else if (treeView.getRoot() == item) {
+            itemIndex = -100;
+            treeView.setRoot(null);
+        } else {
+            itemIndex = -200;
         }
         task = new FxSingletonTask<Void>(this) {
 
@@ -454,13 +486,19 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
 
             @Override
             protected void whenSucceeded() {
-                treeView.refresh();
+                if (itemIndex >= 0) {
+                    parentItem.getChildren().add(itemIndex, item);
+                } else if (itemIndex == -100) {
+                    treeView.setRoot(item);
+                }
+                focusItem(item);
             }
 
         };
         start(task, thisPane);
     }
 
+    // item should be unvisible in the treeView while doing this
     public void unfold(FxTask task, Connection conn, TreeItem<DataNode> item, boolean descendants) {
         try {
             if (item == null || item.isLeaf()) {

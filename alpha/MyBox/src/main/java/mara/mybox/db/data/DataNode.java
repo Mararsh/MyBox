@@ -14,7 +14,6 @@ import static mara.mybox.value.Languages.message;
 public class DataNode extends BaseData {
 
     public static final String TitleSeparater = " > ";
-    public static final String NodeTag = "Node";
 
     protected long nodeid, parentid;
     protected String title, hierarchyNumber;

@@ -13,6 +13,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextArea;
@@ -45,7 +46,7 @@ public class DataTreeExportController extends BaseTaskController {
     protected DataTreeController treeController;
     protected BaseNodeTable nodeTable;
     protected TableDataNodeTag nodeTagsTable;
-    protected TreeItem<DataNode> selectedNode;
+    protected TreeItem<DataNode> sourceItem;
     protected File xmlFile, jsonFile, htmlFile, framesetFile, framesetNavFile;
     protected FileWriter htmlWriter, xmlWriter, jsonWriter, framesetNavWriter;
     protected String dataName;
@@ -60,10 +61,12 @@ public class DataTreeExportController extends BaseTaskController {
     protected ComboBox<String> charsetSelector;
     @FXML
     protected TextArea styleInput;
+    @FXML
+    protected Label nodeLabel;
 
     public void setParamters(DataTreeController controller, TreeItem<DataNode> item) {
         try {
-            if (controller == null || item == null || item.getValue() == null) {
+            if (controller == null) {
                 close();
                 return;
             }
@@ -71,10 +74,12 @@ public class DataTreeExportController extends BaseTaskController {
             this.nodeTable = controller.nodeTable;
             this.nodeTagsTable = controller.nodeTagsTable;
             this.dataName = controller.dataName;
-            selectedNode = item;
+            sourceItem = item;
+            sourceItem = item != null ? item : treeController.treeView.getRoot();
 
             baseName = baseName = baseName + "_" + dataName;
-            baseTitle = nodeTable.getTreeName() + " - " + message("Export") + " : " + item.getValue().getTitle();
+            baseTitle = nodeTable.getTreeName() + " - "
+                    + message("Export") + " : " + sourceItem.getValue().getTitle();
 
             setControls();
 
@@ -86,6 +91,11 @@ public class DataTreeExportController extends BaseTaskController {
     public void setControls() {
         try {
             setTitle(baseTitle);
+
+            nodeLabel.setText(message("Node") + ": "
+                    + sourceItem.getValue().getHierarchyNumber() + " - "
+                    + sourceItem.getValue().getNodeid() + " - "
+                    + treeController.chainName(sourceItem));
 
             idCheck.setSelected(UserConfig.getBoolean(baseName + "ID", false));
             idCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -176,7 +186,7 @@ public class DataTreeExportController extends BaseTaskController {
 
     @Override
     public boolean checkOptions() {
-        if (treeController == null || selectedNode == null || selectedNode.getValue() == null) {
+        if (treeController == null || sourceItem == null || sourceItem.getValue() == null) {
             close();
             return false;
         }
@@ -235,7 +245,7 @@ public class DataTreeExportController extends BaseTaskController {
 
     @Override
     public boolean doTask(FxTask currentTask) {
-        if (selectedNode == null || targetPath == null) {
+        if (sourceItem == null || targetPath == null) {
             return false;
         }
         if (!openWriters()) {
@@ -245,8 +255,8 @@ public class DataTreeExportController extends BaseTaskController {
         count = level = 0;
         firstRow = true;
         try (Connection conn = DerbyBase.getConnection()) {
-            exportNode(currentTask, conn, selectedNode.getValue(),
-                    treeController.chainName(selectedNode.getParent()));
+            exportNode(currentTask, conn, sourceItem.getValue(),
+                    treeController.chainName(sourceItem.getParent()));
         } catch (Exception e) {
             updateLogs(e.toString());
         }
@@ -254,20 +264,20 @@ public class DataTreeExportController extends BaseTaskController {
     }
 
     protected boolean openWriters() {
-        if (selectedNode == null || targetPath == null) {
+        if (sourceItem == null || targetPath == null) {
             return false;
         }
         try {
-            String nodeName = treeController.chainName(selectedNode);
-            String prefix = nodeName.replaceAll(DataNode.TitleSeparater, "-");
+            String chainName = treeController.chainName(sourceItem);
+            String prefix = chainName.replaceAll(DataNode.TitleSeparater, "-");
 
             if (htmlCheck.isSelected()) {
                 htmlFile = makeTargetFile(prefix, ".html", targetPath);
                 if (htmlFile != null) {
                     updateLogs(message("Writing") + " " + htmlFile.getAbsolutePath());
                     htmlWriter = new FileWriter(htmlFile, charset);
-                    writeHtmlHead(htmlWriter, nodeName);
-                    htmlWriter.write(Indent + "<BODY>\n" + Indent + Indent + "<H2>" + nodeName + "</H2>\n");
+                    writeHtmlHead(htmlWriter, chainName);
+                    htmlWriter.write(Indent + "<BODY>\n" + Indent + Indent + "<H2>" + chainName + "</H2>\n");
                 } else if (targetPathController.isSkip()) {
                     updateLogs(message("Skipped"));
                 }
@@ -283,12 +293,12 @@ public class DataTreeExportController extends BaseTaskController {
                     framesetNavFile = new File(path.getAbsolutePath() + File.separator + "nav.html");
                     File coverFile = new File(path.getAbsolutePath() + File.separator + "cover.html");
                     try (FileWriter coverWriter = new FileWriter(coverFile, charset)) {
-                        writeHtmlHead(coverWriter, nodeName);
+                        writeHtmlHead(coverWriter, chainName);
                         coverWriter.write("<BODY>\n<BR><BR><BR><BR><H1>" + message("Notes") + "</H1>\n</BODY></HTML>");
                         coverWriter.flush();
                     }
                     try (FileWriter framesetWriter = new FileWriter(framesetFile, charset)) {
-                        writeHtmlHead(framesetWriter, nodeName);
+                        writeHtmlHead(framesetWriter, chainName);
                         s = new StringBuilder();
                         s.append("<FRAMESET border=2 cols=240,240,*>\n")
                                 .append("<FRAME name=nav src=\"").append(subPath).append("/").append(framesetNavFile.getName()).append("\" />\n")
@@ -298,10 +308,10 @@ public class DataTreeExportController extends BaseTaskController {
                         framesetWriter.flush();
                     }
                     framesetNavWriter = new FileWriter(framesetNavFile, charset);
-                    writeHtmlHead(framesetNavWriter, nodeName);
+                    writeHtmlHead(framesetNavWriter, chainName);
                     s = new StringBuilder();
                     s.append(Indent).append("<BODY>\n");
-                    s.append(Indent).append(Indent).append("<H2>").append(nodeName).append("</H2>\n");
+                    s.append(Indent).append(Indent).append("<H2>").append(chainName).append("</H2>\n");
                     framesetNavWriter.write(s.toString());
                 } else if (targetPathController.isSkip()) {
                     updateLogs(message("Skipped"));
@@ -362,7 +372,7 @@ public class DataTreeExportController extends BaseTaskController {
     }
 
     protected boolean closeWriters() {
-        if (selectedNode == null || targetPath == null) {
+        if (sourceItem == null || targetPath == null) {
             return false;
         }
         boolean well = true;
@@ -436,7 +446,7 @@ public class DataTreeExportController extends BaseTaskController {
                 writeHtml(currentTask, conn, parentChainName, node, htmlWriter, tags);
             }
             if (xmlWriter != null) {
-                xmlWriter.write(xmlPrefix + "<node>\n");
+                xmlWriter.write(xmlPrefix + "<TreeNode>\n");
                 writeXML(currentTask, conn, xmlPrefix + Indent, parentChainName, node, tags);
             }
             if (jsonWriter != null) {
@@ -509,7 +519,7 @@ public class DataTreeExportController extends BaseTaskController {
                 }
             }
             if (xmlWriter != null) {
-                xmlWriter.write(xmlPrefix + "</node>\n");
+                xmlWriter.write(xmlPrefix + "</TreeNode>\n");
             }
         } catch (Exception e) {
             updateLogs(e.toString());
@@ -561,7 +571,6 @@ public class DataTreeExportController extends BaseTaskController {
     @Override
     public void afterSuccess() {
         try {
-            openTarget();
             if (openCheck.isSelected()) {
                 if (framesetFile != null && framesetFile.exists()) {
                     WebBrowserController.openFile(framesetFile);

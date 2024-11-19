@@ -49,10 +49,10 @@ import mara.mybox.db.table.TableData2DStyle;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.db.table.TableImageClipboard;
 import mara.mybox.db.table.TableImageEditHistory;
-import mara.mybox.db.table.TableNodeText;
 import mara.mybox.db.table.TableInfoNode;
 import mara.mybox.db.table.TableMathFunction;
 import mara.mybox.db.table.TableNodeHtml;
+import mara.mybox.db.table.TableNodeText;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.db.table.TableWebHistory;
 import mara.mybox.dev.DevTools;
@@ -81,7 +81,7 @@ public class DataMigration {
     public static boolean checkUpdates() {
         SystemConfig.setString("CurrentVersion", AppValues.AppVersion);
         try (Connection conn = DerbyBase.getConnection()) {
-            updateIn682(conn);
+//            updateIn682(conn);
             int lastVersion = DevTools.lastVersion(conn);
             int currentVersion = DevTools.myboxVersion(AppValues.AppVersion);
             if (lastVersion != currentVersion

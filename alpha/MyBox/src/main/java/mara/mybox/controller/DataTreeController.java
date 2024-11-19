@@ -96,7 +96,7 @@ public class DataTreeController extends BaseDataTreeViewController {
                 if (file != null) {
                     if (AppVariables.isTesting
                             || PopTools.askSure(getTitle(), message("ImportExamples") + ": " + nodeTable.getTreeName())) {
-                        importExamples();
+                        importExamples(null);
                         return;
                     }
                 }
@@ -285,7 +285,7 @@ public class DataTreeController extends BaseDataTreeViewController {
 
         menu = new MenuItem(message("Examples"), StyleTools.getIconImageView("iconExamples.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
-            importExamples();
+            importExamples(item);
         });
         items.add(menu);
 
@@ -297,7 +297,7 @@ public class DataTreeController extends BaseDataTreeViewController {
 
         menu = new MenuItem(message("Import"), StyleTools.getIconImageView("iconImport.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
-            importAction();
+            importAction(item);
         });
         items.add(menu);
 
@@ -673,17 +673,17 @@ public class DataTreeController extends BaseDataTreeViewController {
     }
 
     @FXML
-    protected void importAction() {
+    protected void importAction(TreeItem<DataNode> item) {
         DataTreeImportController importController
-                = (DataTreeImportController) childStage(Fxmls.DataTreeImportFxml);
-        importController.setParamters(this);
+                = (DataTreeImportController) branchStage(Fxmls.DataTreeImportFxml);
+        importController.setParamters(this, item);
     }
 
     @FXML
-    protected void importExamples() {
+    protected void importExamples(TreeItem<DataNode> item) {
         DataTreeImportController importController
-                = (DataTreeImportController) childStage(Fxmls.DataTreeImportFxml);
-        importController.setParamters(this);
+                = (DataTreeImportController) branchStage(Fxmls.DataTreeImportFxml);
+        importController.setParamters(this, item);
         importController.importExamples();
     }
 

@@ -45,16 +45,18 @@ License:    Apache License Version 2.0
                                             <content>
                                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                                     <children>
+                                                          <Label fx:id="parentLabel" minHeight="-Infinity" text="%ParentNode" wrapText="true" />
+                                          <Separator layoutX="20.0" layoutY="81.0" prefWidth="200.0" />
+                                          <Label layoutX="20.0" layoutY="20.0" minHeight="-Infinity" text="%WhenExistedNodeUnderSameParent" wrapText="true" />
                                                         <HBox alignment="CENTER_LEFT" spacing="5.0">
                                                             <children>
-                                                                <Label text="%ExistedNode" />
-                                                                <RadioButton fx:id="updateRadio" mnemonicParsing="false" selected="true" text="%ChangeAttributes">
+                                                                <RadioButton fx:id="updateRadio" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%ChangeAttributes" wrapText="true">
                                                                     <toggleGroup>
                                                                         <ToggleGroup fx:id="existedGroup" />
                                                                     </toggleGroup>
                                                                 </RadioButton>
+                                                                <RadioButton fx:id="createRadio" layoutX="101.0" layoutY="10.0" minHeight="-Infinity" mnemonicParsing="false" text="%CreateSameTitleChild" toggleGroup="$existedGroup" wrapText="true" />
                                                                 <RadioButton fx:id="skipRadio" layoutX="51.0" layoutY="10.0" mnemonicParsing="false" text="%Skip" toggleGroup="$existedGroup" />
-                                                                <RadioButton fx:id="createRadio" layoutX="101.0" layoutY="10.0" mnemonicParsing="false" text="%CreateDuplicatedChild" toggleGroup="$existedGroup" />
                                                             </children>
                                                         </HBox>
                                                         <Separator prefWidth="200.0" />

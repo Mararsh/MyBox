@@ -10,6 +10,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.TreeItem;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import mara.mybox.db.Database;
@@ -27,7 +28,6 @@ import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.tools.FileTools;
-import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 import org.xml.sax.Attributes;
@@ -45,26 +45,53 @@ public class DataTreeImportController extends BaseBatchFileController {
     protected BaseNodeTable nodeTable;
     protected TableDataNodeTag nodeTagsTable;
     protected TableDataTag tagTable;
-    protected DataNode rootNode;
+    protected TreeItem<DataNode> parentItem;
+    protected String dataName;
 
     @FXML
     protected ToggleGroup existedGroup;
     @FXML
     protected RadioButton updateRadio, skipRadio, createRadio;
     @FXML
-    protected Label formatLabel;
+    protected Label parentLabel, formatLabel;
 
     @Override
     public void setFileType() {
         setFileType(VisitHistory.FileType.XML);
     }
 
-    public void setParamters(DataTreeController controller) {
+    public void setParamters(DataTreeController controller, TreeItem<DataNode> item) {
         try {
-            this.treeController = controller;
+            if (controller == null) {
+                close();
+                return;
+            }
+            treeController = controller;
+            parentItem = item != null ? item : treeController.treeView.getRoot();
+
             nodeTable = treeController.nodeTable;
             nodeTagsTable = treeController.nodeTagsTable;
             tagTable = treeController.tagTable;
+            dataName = treeController.dataName;
+
+            baseName = baseName + "_" + dataName;
+            baseTitle = nodeTable.getTreeName() + " - "
+                    + message("Import") + " : " + parentItem.getValue().getTitle();
+
+            setControls();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    public void setControls() {
+        try {
+            setTitle(baseTitle);
+
+            parentLabel.setText(message("ParentNode") + ": "
+                    + parentItem.getValue().getHierarchyNumber() + " - "
+                    + parentItem.getValue().getNodeid() + " - "
+                    + treeController.chainName(parentItem));
 
             String existed = UserConfig.getString(baseName + "Existed", "Update");
             if ("Create".equalsIgnoreCase(existed)) {
@@ -107,15 +134,6 @@ public class DataTreeImportController extends BaseBatchFileController {
     }
 
     @Override
-    public boolean makeMoreParameters() {
-        rootNode = treeController.getRootNode();
-        if (rootNode == null) {
-            return false;
-        }
-        return super.makeMoreParameters();
-    }
-
-    @Override
     public String handleFile(FxTask currentTask, File srcFile, File targetPath) {
         File validFile = FileTools.removeBOM(currentTask, srcFile);
         if (validFile == null) {
@@ -138,14 +156,24 @@ public class DataTreeImportController extends BaseBatchFileController {
         }
     }
 
+    public DataNode saveNode(Connection conn, DataNode node) {
+        try {
+            return nodeTable.insertData(conn, node);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
     class DataTreeParser extends DefaultHandler {
 
-        private Connection conn;
-        private String currentTag;
+        protected Connection conn;
+        protected String currentTag;
+        protected StringBuilder value;
         protected DataNode dataNode;
         protected DataTag dataTag;
         protected List<String> columnNames;
-        protected long parentid, count;
+        protected long parentid;
 
         @Override
         public void startDocument() {
@@ -153,31 +181,33 @@ public class DataTreeImportController extends BaseBatchFileController {
                 conn = DerbyBase.getConnection();
                 conn.setAutoCommit(false);
                 columnNames = nodeTable.columnNames();
-                count = 0;
-                parentid = -1;
+                totalItemsHandled = 0;
+                parentid = parentItem.getValue().getNodeid();
+                value = new StringBuilder();
             } catch (Exception e) {
-
+                showLogs(e.toString());
             }
         }
 
         @Override
         public void startElement(String uri, String localName, String qName, Attributes attrs) {
             try {
-                if (localName == null || localName.isBlank()) {
+                if (qName == null || qName.isBlank()) {
                     return;
                 }
-                currentTag = localName.toLowerCase();
+                currentTag = qName;
                 switch (currentTag) {
-                    case "node":
+                    case "TreeNode":
                         if (dataNode != null) {
                             parentid = dataNode.getNodeid();
                         }
                         dataNode = null;
                         break;
-                    case "node_attributes":
+                    case "NodeAttributes":
                         dataNode = new DataNode();
                         break;
                 }
+                value.setLength(0);
             } catch (Exception e) {
                 showLogs(e.toString());
             }
@@ -186,27 +216,10 @@ public class DataTreeImportController extends BaseBatchFileController {
         @Override
         public void characters(char ch[], int start, int length) {
             try {
-                if (dataNode == null || currentTag == null || ch == null) {
+                if (ch == null) {
                     return;
                 }
-                String value = new String(ch, start, length);
-                switch (currentTag) {
-                    case "nodeid":
-//                        long nodeid = -1;
-//                        try {
-//                            nodeid = Long.parseLong(value);
-//                        } catch (Exception e) {
-//                        }
-//                        dataNode.setNodeid(nodeid);
-                        break;
-                    case "tag":
-                        dataTag = DataTag.create().setTag(value);
-                        break;
-                    default:
-                        if (columnNames.contains(currentTag)) {
-                            dataNode.setValue(currentTag, value);
-                        }
-                }
+                value.append(ch, start, length);
             } catch (Exception e) {
                 showLogs(e.toString());
             }
@@ -215,12 +228,23 @@ public class DataTreeImportController extends BaseBatchFileController {
         @Override
         public void endElement(String uri, String localName, String qName) {
             try {
-                if (dataNode == null
-                        || localName == null || localName.isBlank()) {
+                if (dataNode == null || qName == null || qName.isBlank()) {
                     return;
                 }
-                switch (localName.toLowerCase()) {
-                    case "node_attributes":
+                String s = value.toString().trim();
+                switch (qName) {
+                    case "title":
+                        dataNode.setTitle(s);
+                        break;
+                    case "NodeTag":
+                        dataTag = DataTag.create().setTag(s);
+                        dataTag = tagTable.insertData(conn, dataTag);
+                        nodeTagsTable.insertData(conn,
+                                new DataNodeTag(dataNode.getNodeid(), dataTag.getTagid()));
+                        dataTag = null;
+                        dataNode = null;
+                        break;
+                    case "NodeAttributes":
                         if (parentid < 0) {
                             parentid = RootID;
                         }
@@ -228,21 +252,16 @@ public class DataTreeImportController extends BaseBatchFileController {
                         dataNode = nodeTable.insertData(conn, dataNode);
                         parentid = dataNode.getNodeid();
                         break;
-                    case "node":
+                    case "TreeNode":
                         parentid = dataNode.getParentid();
                         dataNode = null;
                         break;
-                    case "tag":
-                        if (dataTag != null) {
-                            dataTag = tagTable.insertData(conn, dataTag);
-                            nodeTagsTable.insertData(conn,
-                                    new DataNodeTag(dataNode.getNodeid(), dataTag.getTagid()));
-                            dataTag = null;
+                    default:
+                        if (columnNames.contains(qName)) {
+                            dataNode.setValue(qName, s);
                         }
-                        dataNode = null;
-                        break;
                 }
-                if (++count % Database.BatchSize == 0) {
+                if (++totalItemsHandled % Database.BatchSize == 0) {
                     conn.commit();
                 }
             } catch (Exception e) {
@@ -281,16 +300,11 @@ public class DataTreeImportController extends BaseBatchFileController {
 
     @Override
     public void afterTask(boolean ok) {
-        treeController.loadTree();
+        showCost();
+        treeController.refreshItem(parentItem);
         tableView.refresh();
         if (miaoCheck != null && miaoCheck.isSelected()) {
             SoundTools.miao3();
-        }
-        if (!isPreview) {
-            closeStage();
-        }
-        if (!AppVariables.isTesting) {
-            treeController.popInformation(message("Imported") + ": " + totalItemsHandled);
         }
     }
 
