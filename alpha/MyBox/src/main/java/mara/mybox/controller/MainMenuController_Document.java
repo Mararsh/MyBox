@@ -13,12 +13,12 @@ public abstract class MainMenuController_Document extends MainMenuController_Win
 
     @FXML
     protected void HtmlTree(ActionEvent event) {
-        DataTreeController.htmlTree(parentController);
+        DataTreeController.htmlTree(parentController, false);
     }
 
     @FXML
     protected void TextTree(ActionEvent event) {
-        DataTreeController.textTree(parentController);
+        DataTreeController.textTree(parentController, false);
     }
 
     @FXML

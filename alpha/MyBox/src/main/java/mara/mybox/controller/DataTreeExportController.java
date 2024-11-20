@@ -55,7 +55,7 @@ public class DataTreeExportController extends BaseTaskController {
     protected boolean firstRow;
 
     @FXML
-    protected CheckBox idCheck, timeCheck, tagsCheck, orderCheck,
+    protected CheckBox idCheck, timeCheck, tagsCheck, orderCheck, parentCheck,
             htmlCheck, xmlCheck, jsonCheck, framesetCheck;
     @FXML
     protected ComboBox<String> charsetSelector;
@@ -123,6 +123,14 @@ public class DataTreeExportController extends BaseTaskController {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
                     UserConfig.setBoolean(baseName + "Order", orderCheck.isSelected());
+                }
+            });
+
+            parentCheck.setSelected(UserConfig.getBoolean(baseName + "Parent", false));
+            parentCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
+                    UserConfig.setBoolean(baseName + "Parent", parentCheck.isSelected());
                 }
             });
 
@@ -424,14 +432,15 @@ public class DataTreeExportController extends BaseTaskController {
         return well;
     }
 
-    public void exportNode(FxTask currentTask, Connection conn, DataNode node, String parentChainName) {
+    public void exportNode(FxTask currentTask, Connection conn, DataNode inNode, String parentChainName) {
         level++;
-        if (conn == null || node == null) {
+        if (conn == null || inNode == null) {
             return;
         }
         try {
             count++;
 
+            DataNode node = nodeTable.query(conn, inNode.getNodeid());
             List<DataNodeTag> tags = null;
             if (tagsCheck.isSelected()) {
                 tags = nodeTagsTable.nodeTags(conn, node.getNodeid());
@@ -442,15 +451,16 @@ public class DataTreeExportController extends BaseTaskController {
                 for (int i = 1; i < level; i++) {
                     xmlPrefix += Indent;
                 }
+                String pname = parentCheck.isSelected() ? parentChainName : null;
                 if (xmlWriter != null) {
-                    xmlWriter.write(xmlPrefix + "<TreeNode title=\"" + node.getTitle() + "\">\n");
-                    writeXML(currentTask, conn, xmlPrefix + Indent, parentChainName, node, tags);
+                    xmlWriter.write(xmlPrefix + "<TreeNode>\n");
+                    writeXML(currentTask, conn, xmlPrefix + Indent, pname, node, tags);
                 }
                 if (jsonWriter != null) {
-                    writeJson(currentTask, conn, parentChainName, node, tags);
+                    writeJson(currentTask, conn, pname, node, tags);
                 }
                 if (htmlWriter != null) {
-                    writeHtml(currentTask, conn, parentChainName, node, htmlWriter, tags);
+                    writeHtml(currentTask, conn, pname, node, htmlWriter, tags);
                 }
             }
 
@@ -534,7 +544,7 @@ public class DataTreeExportController extends BaseTaskController {
         try {
             String xml = DataNodeTools.toXML(currentTask, conn,
                     myController, nodeTable, prefix, parentName, node, tags,
-                    false, idCheck.isSelected(), timeCheck.isSelected(), orderCheck.isSelected());
+                    idCheck.isSelected(), timeCheck.isSelected(), orderCheck.isSelected());
             xmlWriter.write(xml);
         } catch (Exception e) {
             updateLogs(e.toString());

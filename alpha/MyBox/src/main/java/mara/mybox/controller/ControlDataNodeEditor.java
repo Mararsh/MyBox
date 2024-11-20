@@ -105,7 +105,11 @@ public class ControlDataNodeEditor extends BaseController {
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
                     currentNode = nodeTable.query(conn, node.getNodeid());
-                    parentNode = nodeTable.query(conn, currentNode.getParentid());
+                    if (currentNode != null) {
+                        parentNode = nodeTable.query(conn, currentNode.getParentid());
+                    } else {
+                        parentNode = null;
+                    }
                     return true;
                 } catch (Exception e) {
                     error = e.toString();

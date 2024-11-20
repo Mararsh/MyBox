@@ -94,7 +94,7 @@ public class DataNodeTools {
     public static String toXML(FxTask fxTask, Connection conn,
             BaseController controller, BaseNodeTable dataTable,
             String prefix, String parentName, DataNode node, List<DataNodeTag> tags,
-            boolean withTitle, boolean withId, boolean withTime, boolean withOrder) {
+            boolean withId, boolean withTime, boolean withOrder) {
         try {
             StringBuilder s = new StringBuilder();
             String prefix2 = prefix + Indent;
@@ -113,7 +113,7 @@ public class DataNodeTools {
                 s.append(prefix3).append("<![CDATA[").append(parentName).append("]]>\n");
                 s.append(prefix2).append("</parent_name>\n");
             }
-            if (withTitle && node.getTitle() != null) {
+            if (node.getTitle() != null) {
                 s.append(prefix2).append("<title>\n");
                 s.append(prefix3).append("<![CDATA[").append(node.getTitle()).append("]]>\n");
                 s.append(prefix2).append("</title>\n");

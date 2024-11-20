@@ -124,10 +124,11 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
         }
         clearTree();
         task = new FxSingletonTask<Void>(this) {
+
             private TreeItem<DataNode> rootItem;
+            private int size;
 
             @Override
-
             protected boolean handle() {
                 rootItem = null;
                 if (nodeTable == null) {
@@ -141,8 +142,10 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
                     rootItem = new TreeItem(rootNode);
                     rootItem.setExpanded(true);
                     rootItem.getChildren().add(new TreeItem(new DataNode()));
-                    unfold(this, conn, rootItem,
-                            nodeTable.size(conn) < AutoExpandThreshold);
+                    size = nodeTable.size(conn);
+                    if (size > 1) {
+                        unfold(this, conn, rootItem, size < AutoExpandThreshold);
+                    }
 
                 } catch (Exception e) {
                     error = e.toString();
@@ -155,10 +158,16 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
             protected void whenSucceeded() {
                 focusNode = selectNode;
                 setRoot(rootItem);
+                if (size <= 1) {
+                    whenTreeEmpty();
+                }
             }
 
         };
         start(task, thisPane);
+    }
+
+    public void whenTreeEmpty() {
     }
 
     public void updateNode(DataNode node) {

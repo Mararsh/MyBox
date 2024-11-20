@@ -26,7 +26,7 @@ public class DataNode extends BaseData {
         parentid = RootID;
         title = null;
         updateTime = new Date();
-        orderNumber = updateTime.getTime();
+        orderNumber = 0f;
     }
 
     public DataNode() {
@@ -47,7 +47,7 @@ public class DataNode extends BaseData {
                     setTitle(value == null ? null : (String) value);
                     return true;
                 case "order_number":
-                    setOrderNumber(value == null ? new Date().getTime() : (float) value);
+                    setOrderNumber(value == null ? 0f : (float) value);
                     return true;
                 case "update_time":
                     setUpdateTime(value == null ? new Date() : (Date) value);

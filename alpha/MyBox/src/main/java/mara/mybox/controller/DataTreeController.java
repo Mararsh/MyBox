@@ -89,21 +89,13 @@ public class DataTreeController extends BaseDataTreeViewController {
         tree
      */
     @Override
-    public void loadTree() {
-        try (Connection conn = DerbyBase.getConnection()) {
-            if (nodeTable.isEmpty(conn)) {
-                File file = nodeTable.exampleFile();
-                if (file != null) {
-                    if (AppVariables.isTesting
-                            || PopTools.askSure(getTitle(), message("ImportExamples") + ": " + nodeTable.getTreeName())) {
-                        importExamples(null);
-                        return;
-                    }
-                }
+    public void whenTreeEmpty() {
+        File file = nodeTable.exampleFile();
+        if (file != null) {
+            if (AppVariables.isTesting
+                    || PopTools.askSure(getTitle(), message("ImportExamples") + ": " + nodeTable.getTreeName())) {
+                importExamples(null);
             }
-            loadTree(null);
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
         }
     }
 
@@ -554,11 +546,7 @@ public class DataTreeController extends BaseDataTreeViewController {
             @Override
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
-                    if (isRoot) {
-                        return nodeTable.clearData(conn) >= 0;
-                    } else {
-                        return nodeTable.deleteNodeAndDecentants(conn, node.getNodeid()) >= 0;
-                    }
+                    return nodeTable.deleteNode(conn, node.getNodeid()) >= 0;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -609,11 +597,7 @@ public class DataTreeController extends BaseDataTreeViewController {
             @Override
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
-                    if (isRoot) {
-                        return nodeTable.clearData(conn) >= 0;
-                    } else {
-                        return nodeTable.deleteDecentants(conn, node.getNodeid()) >= 0;
-                    }
+                    return nodeTable.deleteDecentants(conn, node.getNodeid()) >= 0;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -1092,13 +1076,13 @@ public class DataTreeController extends BaseDataTreeViewController {
     /*
         static methods
      */
-    public static DataTreeController open(BaseController pController, BaseNodeTable table) {
+    public static DataTreeController open(BaseController pController, boolean shouldLoad, BaseNodeTable table) {
         try {
             DataTreeController controller;
-            if (AppVariables.closeCurrentWhenOpenTool || pController == null) {
-                controller = (DataTreeController) WindowTools.openStage(Fxmls.DataTreeFxml);
-            } else {
+            if ((shouldLoad || AppVariables.closeCurrentWhenOpenTool) && pController != null) {
                 controller = (DataTreeController) pController.loadScene(Fxmls.DataTreeFxml);
+            } else {
+                controller = (DataTreeController) WindowTools.openStage(Fxmls.DataTreeFxml);
             }
             controller.requestMouse();
             controller.initTree(table);
@@ -1107,15 +1091,14 @@ public class DataTreeController extends BaseDataTreeViewController {
             MyBoxLog.error(e);
             return null;
         }
-
     }
 
-    public static DataTreeController textTree(BaseController pController) {
-        return open(pController, new TableNodeText());
+    public static DataTreeController textTree(BaseController pController, boolean shouldLoad) {
+        return open(pController, shouldLoad, new TableNodeText());
     }
 
-    public static DataTreeController htmlTree(BaseController pController) {
-        return open(pController, new TableNodeHtml());
+    public static DataTreeController htmlTree(BaseController pController, boolean shouldLoad) {
+        return open(pController, shouldLoad, new TableNodeHtml());
     }
 
 }

@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.io.File;
 import java.sql.Connection;
 import java.util.List;
+import java.util.Stack;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -164,6 +165,7 @@ public class DataTreeImportController extends BaseBatchFileController {
         protected DataTag dataTag;
         protected List<String> columnNames;
         protected long parentid;
+        protected Stack<Long> parentStack;
 
         @Override
         public void startDocument() {
@@ -172,12 +174,10 @@ public class DataTreeImportController extends BaseBatchFileController {
                 conn.setAutoCommit(false);
                 columnNames = nodeTable.columnNames();
                 totalItemsHandled = 0;
+                parentStack = new Stack<>();
                 parentid = parentItem.getValue().getNodeid();
                 value = new StringBuilder();
                 showLogs(message("ParentNode") + ": " + treeController.shortDescription(parentItem));
-                if (isLogsVerbose()) {
-                    showLogs("parentid= " + parentid);
-                }
             } catch (Exception e) {
                 showLogs(e.toString());
             }
@@ -193,13 +193,11 @@ public class DataTreeImportController extends BaseBatchFileController {
                 switch (currentTag) {
                     case "TreeNode":
                         dataNode = new DataNode();
-                        if (isLogsVerbose()) {
-                            showLogs("New node starting. parentid= " + parentid);
-                        }
                         dataNode.setParentid(parentid);
-                        if (attrs != null) {
-                            dataNode.setTitle(attrs.getValue("title"));
-                        }
+                        parentStack.push(parentid);
+//                        if (isLogsVerbose()) {
+//                            showLogs("New node starting. parentid= " + parentid + ", and it is pushed in stack");
+//                        }
                         break;
                 }
                 value.setLength(0);
@@ -223,17 +221,10 @@ public class DataTreeImportController extends BaseBatchFileController {
         @Override
         public void endElement(String uri, String localName, String qName) {
             try {
-                if (qName == null || qName.isBlank()) {
+                if (dataNode == null || qName == null || qName.isBlank()) {
                     return;
                 }
                 String s = value.toString().trim();
-                if (dataNode == null) {
-                    if (qName.equals("TreeNode")) {
-                        dataNode = nodeTable.query(conn, parentid);
-                    } else {
-                        return;
-                    }
-                }
                 switch (qName) {
                     case "title":
                         dataNode.setTitle(s);
@@ -251,18 +242,22 @@ public class DataTreeImportController extends BaseBatchFileController {
                                     + " nodeid=" + dataNode.getNodeid() + " title=" + dataNode.getTitle());
                         }
                         parentid = dataNode.getNodeid();
+//                        if (isLogsVerbose()) {
+//                            showLogs("Now parentid " + parentid);
+//                        }
                         break;
                     case "TreeNode":
-                        parentid = dataNode.getParentid();
-                        if (isLogsVerbose()) {
-                            showLogs("The node ended. Now parentid " + parentid);
-                        }
-                        dataNode = null;
+                        parentid = parentStack.pop();
+//                        if (isLogsVerbose()) {
+//                            showLogs("The node ended. " + parentid + " is popped from stack");
+//                        }
                         break;
                     default:
                         if (columnNames.contains(qName)) {
                             dataNode.setValue(qName, s);
-//                            showLogs(qName + "=" + s);
+//                            if (isLogsVerbose()) {
+//                                showLogs(qName + "=" + s);
+//                            }
                         }
                 }
                 if (++totalItemsHandled % Database.BatchSize == 0) {

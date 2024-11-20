@@ -37,12 +37,12 @@ public abstract class MyBoxController_Document extends MyBoxController_Base {
 
         MenuItem TextTree = new MenuItem(message("TextTree"));
         TextTree.setOnAction((ActionEvent event1) -> {
-            DataTreeController.textTree(this);
+            DataTreeController.textTree(this, true);
         });
 
         MenuItem HtmlTree = new MenuItem(message("HtmlTree"));
         HtmlTree.setOnAction((ActionEvent event1) -> {
-            DataTreeController.htmlTree(this);
+            DataTreeController.htmlTree(this, true);
         });
 
         treeMenu.getItems().addAll(TextTree, HtmlTree);

@@ -32,7 +32,6 @@ import static mara.mybox.value.Languages.message;
 public class BaseNodeTable extends BaseTable<DataNode> {
 
     public static final long RootID = 1l;
-    public static final int TitleMaxLength = 256;
     public static final String NodeFields = "nodeid,title,order_number,update_time,parentid";
 
     protected String treeName, dataName, dataFxml, examplesFileName;
@@ -44,7 +43,7 @@ public class BaseNodeTable extends BaseTable<DataNode> {
 
     public final BaseNodeTable defineNodeColumns() {
         addColumn(new ColumnDefinition("nodeid", ColumnType.Long, true, true).setAuto(true));
-        addColumn(new ColumnDefinition("title", ColumnType.String, true).setLength(TitleMaxLength));
+        addColumn(new ColumnDefinition("title", ColumnType.String, true).setLength(StringMaxLength));
         addColumn(new ColumnDefinition("order_number", ColumnType.Float));
         addColumn(new ColumnDefinition("update_time", ColumnType.Datetime));
         addColumn(new ColumnDefinition("parentid", ColumnType.Long, true)
@@ -246,12 +245,13 @@ public class BaseNodeTable extends BaseTable<DataNode> {
         }
     }
 
+    // its decentants will be deleted automatically
     public long deleteNode(Connection conn, long nodeid) {
         if (conn == null || nodeid < 0) {
             return -1;
         }
         if (nodeid == RootID) {
-            return 0;
+            return deleteDecentants(conn, nodeid);
         }
         String sql = "DELETE FROM " + tableName + " WHERE nodeid=?";
         try (PreparedStatement statement = conn.prepareStatement(sql)) {
@@ -263,68 +263,19 @@ public class BaseNodeTable extends BaseTable<DataNode> {
         }
     }
 
-    public long deleteNodeAndDecentants(long nodeid) {
-        if (nodeid < 0) {
+    public long deleteDecentants(Connection conn, long nodeid) {
+        if (conn == null || nodeid < 0) {
             return -1;
         }
-        try (Connection conn = DerbyBase.getConnection()) {
-            return deleteNodeAndDecentants(conn, nodeid);
+        String sql = "DELETE FROM " + tableName
+                + " WHERE parentid=? AND parentid<>nodeid";
+        try (PreparedStatement statement = conn.prepareStatement(sql)) {
+            statement.setLong(1, nodeid);
+            return statement.executeUpdate();
         } catch (Exception e) {
             MyBoxLog.debug(e);
             return -2;
         }
-    }
-
-    public long deleteNodeAndDecentants(Connection conn, long nodeid) {
-        if (conn == null || nodeid < 0) {
-            return -1;
-        }
-        long count = deleteDecentants(conn, nodeid, 0);
-        if (nodeid == RootID) {
-            return count;
-        }
-        long ret = deleteNode(conn, nodeid);
-        if (ret > 0) {
-            count += ret;
-        }
-        return count;
-    }
-
-    public long deleteDecentants(Connection conn, long nodeid) {
-        return deleteDecentants(conn, nodeid, 0);
-    }
-
-    private long deleteDecentants(Connection conn, long nodeid, long count) {
-        if (conn == null || nodeid < 0) {
-            return -1;
-        }
-        String sql = "SELECT nodeid FROM " + tableName
-                + " WHERE parentid=? AND parentid<>nodeid";
-        long ncount = count, childid;
-        try (PreparedStatement statement = conn.prepareStatement(sql)) {
-            statement.setLong(1, nodeid);
-            try (ResultSet results = statement.executeQuery()) {
-                while (results != null && results.next()) {
-                    childid = results.getLong("nodeid");
-                    long ret = deleteDecentants(conn, childid, ncount);
-                    if (ret > 0) {
-                        ncount += ret;
-                    }
-                    ret = deleteNode(conn, childid);
-                    if (ret > 0) {
-                        ncount += ret;
-                    }
-                }
-            } catch (Exception e) {
-                MyBoxLog.debug(e, tableName);
-                return -2;
-            }
-        } catch (Exception e) {
-            MyBoxLog.debug(e, tableName);
-            return -3;
-        }
-
-        return ncount;
     }
 
     /*
@@ -671,12 +622,12 @@ public class BaseNodeTable extends BaseTable<DataNode> {
     }
 
     public File exampleFile(String name) {
-        if (name == null || columns == null) {
+        if (name == null) {
             return null;
         }
         String lang = Languages.embedFileLang();
-        return getInternalFile("/data/examples/" + name + "_Examples_" + lang + ".txt",
-                "data", name + "_Examples_" + lang + ".txt", true);
+        return getInternalFile("/data/examples/" + name + "_Examples_" + lang + ".xml",
+                "data", name + "_Examples_" + lang + ".xml", true);
     }
 
     public String valuesHtml(FxTask task, Connection conn,
