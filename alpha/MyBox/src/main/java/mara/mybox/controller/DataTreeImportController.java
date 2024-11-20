@@ -20,7 +20,6 @@ import mara.mybox.db.data.DataNodeTag;
 import mara.mybox.db.data.DataTag;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.BaseNodeTable;
-import static mara.mybox.db.table.BaseNodeTable.RootID;
 import mara.mybox.db.table.TableDataNodeTag;
 import mara.mybox.db.table.TableDataTag;
 import mara.mybox.dev.MyBoxLog;
@@ -79,6 +78,7 @@ public class DataTreeImportController extends BaseBatchFileController {
                     + message("Import") + " : " + parentItem.getValue().getTitle();
 
             setControls();
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -88,10 +88,7 @@ public class DataTreeImportController extends BaseBatchFileController {
         try {
             setTitle(baseTitle);
 
-            parentLabel.setText(message("ParentNode") + ": "
-                    + parentItem.getValue().getHierarchyNumber() + " - "
-                    + parentItem.getValue().getNodeid() + " - "
-                    + treeController.chainName(parentItem));
+            parentLabel.setText(message("ParentNode") + ": " + treeController.shortDescription(parentItem));
 
             String existed = UserConfig.getString(baseName + "Existed", "Update");
             if ("Create".equalsIgnoreCase(existed)) {
@@ -143,14 +140,7 @@ public class DataTreeImportController extends BaseBatchFileController {
             SAXParserFactory factory = SAXParserFactory.newInstance();
             SAXParser saxParser = factory.newSAXParser();
             saxParser.parse(validFile, new DataTreeParser());
-
-//            if (count >= 0) {
-//                totalItemsHandled += count;
-//                return message("Imported") + ": " + count;
-//            } else {
-//                return message("Failed");
-//            }
-            return message("Successful");
+            return totalItemsHandled > 0 ? message("Successful") : message("Failed");
         } catch (Exception e) {
             return e.toString();
         }
@@ -184,6 +174,10 @@ public class DataTreeImportController extends BaseBatchFileController {
                 totalItemsHandled = 0;
                 parentid = parentItem.getValue().getNodeid();
                 value = new StringBuilder();
+                showLogs(message("ParentNode") + ": " + treeController.shortDescription(parentItem));
+                if (isLogsVerbose()) {
+                    showLogs("parentid= " + parentid);
+                }
             } catch (Exception e) {
                 showLogs(e.toString());
             }
@@ -198,13 +192,14 @@ public class DataTreeImportController extends BaseBatchFileController {
                 currentTag = qName;
                 switch (currentTag) {
                     case "TreeNode":
-                        if (dataNode != null) {
-                            parentid = dataNode.getNodeid();
-                        }
-                        dataNode = null;
-                        break;
-                    case "NodeAttributes":
                         dataNode = new DataNode();
+                        if (isLogsVerbose()) {
+                            showLogs("New node starting. parentid= " + parentid);
+                        }
+                        dataNode.setParentid(parentid);
+                        if (attrs != null) {
+                            dataNode.setTitle(attrs.getValue("title"));
+                        }
                         break;
                 }
                 value.setLength(0);
@@ -228,10 +223,17 @@ public class DataTreeImportController extends BaseBatchFileController {
         @Override
         public void endElement(String uri, String localName, String qName) {
             try {
-                if (dataNode == null || qName == null || qName.isBlank()) {
+                if (qName == null || qName.isBlank()) {
                     return;
                 }
                 String s = value.toString().trim();
+                if (dataNode == null) {
+                    if (qName.equals("TreeNode")) {
+                        dataNode = nodeTable.query(conn, parentid);
+                    } else {
+                        return;
+                    }
+                }
                 switch (qName) {
                     case "title":
                         dataNode.setTitle(s);
@@ -241,24 +243,26 @@ public class DataTreeImportController extends BaseBatchFileController {
                         dataTag = tagTable.insertData(conn, dataTag);
                         nodeTagsTable.insertData(conn,
                                 new DataNodeTag(dataNode.getNodeid(), dataTag.getTagid()));
-                        dataTag = null;
-                        dataNode = null;
                         break;
                     case "NodeAttributes":
-                        if (parentid < 0) {
-                            parentid = RootID;
-                        }
-                        dataNode.setParentid(parentid);
                         dataNode = nodeTable.insertData(conn, dataNode);
+                        if (isLogsVerbose()) {
+                            showLogs("New node saved. parentid=" + dataNode.getParentid()
+                                    + " nodeid=" + dataNode.getNodeid() + " title=" + dataNode.getTitle());
+                        }
                         parentid = dataNode.getNodeid();
                         break;
                     case "TreeNode":
                         parentid = dataNode.getParentid();
+                        if (isLogsVerbose()) {
+                            showLogs("The node ended. Now parentid " + parentid);
+                        }
                         dataNode = null;
                         break;
                     default:
                         if (columnNames.contains(qName)) {
                             dataNode.setValue(qName, s);
+//                            showLogs(qName + "=" + s);
                         }
                 }
                 if (++totalItemsHandled % Database.BatchSize == 0) {

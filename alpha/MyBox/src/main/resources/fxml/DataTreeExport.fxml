@@ -35,8 +35,8 @@ License:    Apache License Version 2.0
                                       <FlowPane hgap="5.0" vgap="5.0">
                                           <children>
                                             <Label text="%Format" />
-                                              <CheckBox mnemonicParsing="false" selected="true" text="xml" fx:id="xmlCheck" />
-                                              <CheckBox fx:id="jsonCheck" layoutX="767.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="json" />
+                                              <CheckBox mnemonicParsing="false" selected="true" text="%XMLforImport" fx:id="xmlCheck" />
+                                              <CheckBox fx:id="jsonCheck" layoutX="767.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="JSON" />
                                               <CheckBox fx:id="htmlCheck" mnemonicParsing="false" selected="true" text="%SingleHtml" />
                                               <CheckBox fx:id="framesetCheck" mnemonicParsing="false" selected="true" text="%HtmlsFrameset" />
                                           </children>

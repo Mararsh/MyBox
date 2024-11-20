@@ -370,7 +370,7 @@ public class ControlXmlTree extends BaseTreeTableViewController<XmlTreeNode> {
                 || treeItem.getValue() == null || !treeItem.getValue().canAddNode());
         items.add(menu);
 
-        menu = new MenuItem(message("DeleteNode"), StyleTools.getIconImageView("iconDelete.png"));
+        menu = new MenuItem(message("DeleteNodeAndDescendants"), StyleTools.getIconImageView("iconDelete.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             deleteNode(treeItem);
         });

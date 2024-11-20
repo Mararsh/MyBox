@@ -340,6 +340,13 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
         return num;
     }
 
+    public String shortDescription(TreeItem<DataNode> item) {
+        if (item == null) {
+            return null;
+        }
+        return item.getValue().shortDescription(chainName(item));
+    }
+
     /*
         actions
      */
@@ -457,41 +464,44 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
         if (task != null) {
             task.cancel();
         }
-        // make the node unvisible temporaryly
-        TreeItem<DataNode> parentItem = item.getParent();
-        int itemIndex;
-        if (parentItem != null) {
-            itemIndex = parentItem.getChildren().indexOf(item);
-            if (itemIndex >= 0) {
-                parentItem.getChildren().remove(item);
-            }
-        } else if (treeView.getRoot() == item) {
-            itemIndex = -100;
-            treeView.setRoot(null);
-        } else {
-            itemIndex = -200;
-        }
         task = new FxSingletonTask<Void>(this) {
+
+            private TreeItem<DataNode> parentItem, tempItem;
+            private int itemIndex;
 
             @Override
             protected boolean handle() {
+                itemIndex = -100;
+                parentItem = item.getParent();
+                if (parentItem != null) {
+                    itemIndex = parentItem.getChildren().indexOf(item);
+                    if (itemIndex < 0) {
+                        return false;
+                    }
+                } else if (treeView.getRoot() != item) {
+                    return false;
+                }
                 try (Connection conn = DerbyBase.getConnection()) {
-                    unfold(this, conn, item, descendants);
+                    tempItem = new TreeItem(item.getValue());
+                    tempItem.getChildren().add(new TreeItem(new DataNode()));
+                    unfold(this, conn, tempItem, descendants);
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
                 }
-                return true;
+                return tempItem != null;
             }
 
             @Override
             protected void whenSucceeded() {
-                if (itemIndex >= 0) {
-                    parentItem.getChildren().add(itemIndex, item);
-                } else if (itemIndex == -100) {
-                    treeView.setRoot(item);
+                if (treeView.getRoot() == item) {
+                    setRoot(tempItem);
+                } else if (itemIndex >= 0) {
+                    parentItem.getChildren().set(itemIndex, tempItem);
+                    treeView.refresh();
+                    focusItem(tempItem);
                 }
-                focusItem(item);
+
             }
 
         };

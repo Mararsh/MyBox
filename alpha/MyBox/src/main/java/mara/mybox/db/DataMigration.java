@@ -18,6 +18,7 @@ import mara.mybox.bufferedimage.ImageScopeTools;
 import mara.mybox.data.GeoCoordinateSystem;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.data2d.tools.Data2DTableTools;
+import static mara.mybox.db.DataMigrationTools.updateIn682_move;
 import mara.mybox.db.data.ColorData;
 import mara.mybox.db.data.ColorPaletteName;
 import mara.mybox.db.data.ColumnDefinition;
@@ -28,7 +29,6 @@ import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.Data2DRow;
 import mara.mybox.db.data.Data2DStyle;
-import static mara.mybox.db.data.DataNodeTools.updateIn682_move;
 import mara.mybox.db.data.GeographyCode;
 import mara.mybox.db.data.GeographyCodeLevel;
 import mara.mybox.db.data.GeographyCodeTools;
@@ -81,7 +81,7 @@ public class DataMigration {
     public static boolean checkUpdates() {
         SystemConfig.setString("CurrentVersion", AppValues.AppVersion);
         try (Connection conn = DerbyBase.getConnection()) {
-//            updateIn682(conn);
+            updateIn682(conn);
             int lastVersion = DevTools.lastVersion(conn);
             int currentVersion = DevTools.myboxVersion(AppValues.AppVersion);
             if (lastVersion != currentVersion

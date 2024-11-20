@@ -96,11 +96,20 @@ public class DataNode extends BaseData {
         return nodeid == RootID;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        try {
+            return ((DataNode) obj).getNodeid() == nodeid;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     public DataNode copy() {
         try {
             DataNode node = create()
                     .setParentid(parentid)
-                    .setTitle(title + " " + message("Copy"));
+                    .setTitle(message("Copy") + " " + title);
             if (values != null) {
                 for (String key : values.keySet()) {
                     node.setValue(key, values.get(key));
@@ -110,10 +119,6 @@ public class DataNode extends BaseData {
         } catch (Exception e) {
             return null;
         }
-    }
-
-    public String texts() {
-        return title;
     }
 
     public String toText() {
@@ -127,6 +132,23 @@ public class DataNode extends BaseData {
     public String getValue() {
         return title;
     }
+
+    public String shortDescription() {
+        return shortDescription(title);
+    }
+
+    public String shortDescription(String name) {
+        String s = "";
+        if (hierarchyNumber != null && !hierarchyNumber.isBlank()) {
+            s += hierarchyNumber + " - ";
+        }
+        if (nodeid > 0) {
+            s += nodeid + " - ";
+        }
+        s += name;
+        return s;
+    }
+
 
     /*
         Static methods

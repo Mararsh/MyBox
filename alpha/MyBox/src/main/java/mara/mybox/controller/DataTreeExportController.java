@@ -92,10 +92,7 @@ public class DataTreeExportController extends BaseTaskController {
         try {
             setTitle(baseTitle);
 
-            nodeLabel.setText(message("Node") + ": "
-                    + sourceItem.getValue().getHierarchyNumber() + " - "
-                    + sourceItem.getValue().getNodeid() + " - "
-                    + treeController.chainName(sourceItem));
+            nodeLabel.setText(message("Node") + ": " + treeController.shortDescription(sourceItem));
 
             idCheck.setSelected(UserConfig.getBoolean(baseName + "ID", false));
             idCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -434,24 +431,29 @@ public class DataTreeExportController extends BaseTaskController {
         }
         try {
             count++;
-            String xmlPrefix = "";
-            for (int i = 1; i < level; i++) {
-                xmlPrefix += Indent;
-            }
+
             List<DataNodeTag> tags = null;
             if (tagsCheck.isSelected()) {
                 tags = nodeTagsTable.nodeTags(conn, node.getNodeid());
             }
-            if (htmlWriter != null) {
-                writeHtml(currentTask, conn, parentChainName, node, htmlWriter, tags);
+            String xmlPrefix = "";
+            boolean isRootNode = node.isRoot();
+            if (!isRootNode) {
+                for (int i = 1; i < level; i++) {
+                    xmlPrefix += Indent;
+                }
+                if (xmlWriter != null) {
+                    xmlWriter.write(xmlPrefix + "<TreeNode title=\"" + node.getTitle() + "\">\n");
+                    writeXML(currentTask, conn, xmlPrefix + Indent, parentChainName, node, tags);
+                }
+                if (jsonWriter != null) {
+                    writeJson(currentTask, conn, parentChainName, node, tags);
+                }
+                if (htmlWriter != null) {
+                    writeHtml(currentTask, conn, parentChainName, node, htmlWriter, tags);
+                }
             }
-            if (xmlWriter != null) {
-                xmlWriter.write(xmlPrefix + "<TreeNode>\n");
-                writeXML(currentTask, conn, xmlPrefix + Indent, parentChainName, node, tags);
-            }
-            if (jsonWriter != null) {
-                writeJson(currentTask, conn, parentChainName, node, tags);
-            }
+
             if (currentTask == null || !currentTask.isWorking()) {
                 return;
             }
@@ -518,7 +520,7 @@ public class DataTreeExportController extends BaseTaskController {
                     exportNode(currentTask, conn, child, nodeChainName);
                 }
             }
-            if (xmlWriter != null) {
+            if (!isRootNode && xmlWriter != null) {
                 xmlWriter.write(xmlPrefix + "</TreeNode>\n");
             }
         } catch (Exception e) {
@@ -532,7 +534,7 @@ public class DataTreeExportController extends BaseTaskController {
         try {
             String xml = DataNodeTools.toXML(currentTask, conn,
                     myController, nodeTable, prefix, parentName, node, tags,
-                    idCheck.isSelected(), timeCheck.isSelected(), orderCheck.isSelected());
+                    false, idCheck.isSelected(), timeCheck.isSelected(), orderCheck.isSelected());
             xmlWriter.write(xml);
         } catch (Exception e) {
             updateLogs(e.toString());

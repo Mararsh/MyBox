@@ -208,12 +208,17 @@ public class DataTreeController extends BaseDataTreeViewController {
         });
         items.add(menu);
 
-        menu = new MenuItem(message("DeleteNode"), StyleTools.getIconImageView("iconDelete.png"));
+        menu = new MenuItem(message("DeleteNodeAndDescendants"), StyleTools.getIconImageView("iconDelete.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
-            deleteNode(treeItem);
+            deleteNodeAndDescendants(treeItem);
         });
         items.add(menu);
 
+        menu = new MenuItem(message("DeleteDescendants"), StyleTools.getIconImageView("iconDelete.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            deleteDescendants(treeItem);
+        });
+        items.add(menu);
         menu = new MenuItem(message("RenameNode"), StyleTools.getIconImageView("iconInput.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             renameNode(treeItem);
@@ -520,24 +525,24 @@ public class DataTreeController extends BaseDataTreeViewController {
         start(task);
     }
 
-    protected void deleteNode(TreeItem<DataNode> targetItem) {
-        if (targetItem == null) {
+    protected void deleteNodeAndDescendants(TreeItem<DataNode> item) {
+        if (item == null) {
             popError(message("SelectToHandle"));
             return;
         }
-        DataNode node = targetItem.getValue();
+        DataNode node = item.getValue();
         if (node == null) {
             popError(message("SelectToHandle"));
             return;
         }
         boolean isRoot = isRoot(node);
         if (isRoot) {
-            if (!PopTools.askSure(getTitle(), message("Delete"), message("SureDeleteAll"))) {
+            if (!PopTools.askSure(getTitle(), message("DeleteNodeAndDescendants"), message("SureDeleteAll"))) {
                 return;
             }
         } else {
-            String chainName = chainName(targetItem);
-            if (!PopTools.askSure(getTitle(), chainName, message("Delete"))) {
+            String chainName = chainName(item);
+            if (!PopTools.askSure(getTitle(), chainName, message("DeleteNodeAndDescendants"))) {
                 return;
             }
         }
@@ -546,37 +551,80 @@ public class DataTreeController extends BaseDataTreeViewController {
         }
         task = new FxSingletonTask<Void>(this) {
 
-            private TreeItem<DataNode> rootItem;
-
             @Override
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
                     if (isRoot) {
-                        nodeTable.deleteChildren(conn, node.getNodeid());
-//                        TreeNode rootNode = root(conn);
-//                        rootItem = new TreeItem(rootNode);
+                        return nodeTable.clearData(conn) >= 0;
                     } else {
-                        nodeTable.deleteData(conn, node);
+                        return nodeTable.deleteNodeAndDecentants(conn, node.getNodeid()) >= 0;
                     }
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
                 }
-                return true;
             }
 
             @Override
             protected void whenSucceeded() {
+                nodeController.refreshNode();
                 if (isRoot) {
-                    setRoot(rootItem);
+                    loadTree(null);
                 } else {
-                    targetItem.getChildren().clear();
-                    if (targetItem.getParent() != null) {
-                        targetItem.getParent().getChildren().remove(targetItem);
-                    }
+                    item.getParent().getChildren().remove(item);
                 }
                 popSuccessful();
-//                manager.nodeDeleted(node);
+            }
+
+        };
+        start(task, treeView);
+    }
+
+    protected void deleteDescendants(TreeItem<DataNode> item) {
+        if (item == null) {
+            popError(message("SelectToHandle"));
+            return;
+        }
+        DataNode node = item.getValue();
+        if (node == null) {
+            popError(message("SelectToHandle"));
+            return;
+        }
+        boolean isRoot = isRoot(node);
+        if (isRoot) {
+            if (!PopTools.askSure(getTitle(), message("DeleteDescendants"), message("SureDeleteAll"))) {
+                return;
+            }
+        } else {
+            String chainName = chainName(item);
+            if (!PopTools.askSure(getTitle(), chainName, message("DeleteDescendants"))) {
+                return;
+            }
+        }
+        if (task != null) {
+            task.cancel();
+        }
+        task = new FxSingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                try (Connection conn = DerbyBase.getConnection()) {
+                    if (isRoot) {
+                        return nodeTable.clearData(conn) >= 0;
+                    } else {
+                        return nodeTable.deleteDecentants(conn, node.getNodeid()) >= 0;
+                    }
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                nodeController.refreshNode();
+                item.getChildren().clear();
+                popSuccessful();
             }
 
         };
@@ -692,11 +740,11 @@ public class DataTreeController extends BaseDataTreeViewController {
         treeView(selected());
     }
 
-    public void treeView(TreeItem<DataNode> node) {
-        if (node == null) {
+    public void treeView(TreeItem<DataNode> item) {
+        if (item == null) {
             return;
         }
-        DataNode nodeValue = node.getValue();
+        DataNode nodeValue = item.getValue();
         if (nodeValue == null) {
             return;
         }
@@ -707,7 +755,7 @@ public class DataTreeController extends BaseDataTreeViewController {
             protected boolean handle() {
                 file = FileTmpTools.generateFile(dataName, "htm");
                 try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, Charset.forName("utf-8"), false))) {
-                    writer.write(HtmlWriteTools.htmlPrefix(chainName(node), "utf-8", HtmlStyles.TableStyle));
+                    writer.write(HtmlWriteTools.htmlPrefix(chainName(item), "utf-8", HtmlStyles.TableStyle));
                     // https://www.jb51.net/article/116957.htm
                     writer.write("<BODY>\n");
                     writer.write(" <script>\n"
@@ -885,36 +933,6 @@ public class DataTreeController extends BaseDataTreeViewController {
         }
     }
 
-    public void popNode(DataNode item) {
-        if (item == null) {
-            return;
-        }
-        if (task != null) {
-            task.cancel();
-        }
-        task = new FxSingletonTask<Void>(this) {
-            private String html;
-
-            @Override
-            protected boolean handle() {
-                try {
-                    html = item.toHtml();
-                    return html != null && !html.isBlank();
-                } catch (Exception e) {
-                    error = e.toString();
-                    return false;
-                }
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                HtmlTableController.open(null, html);
-            }
-
-        };
-        start(task);
-    }
-
     @Override
     public boolean keyEventsFilter(KeyEvent event) {
         if (nodeController == null) {
@@ -988,15 +1006,6 @@ public class DataTreeController extends BaseDataTreeViewController {
                 && id == nodeController.currentNode.getNodeid()) {
             nodeController.attributesController.renamed(node.getTitle());
         }
-    }
-
-    public void nodeDeleted(DataNode node) {
-        if (node == null) {
-            return;
-        }
-        long id = node.getNodeid();
-
-        nodeController.editNode(null);
     }
 
     public void nodeMoved(DataNode parent, DataNode node) {

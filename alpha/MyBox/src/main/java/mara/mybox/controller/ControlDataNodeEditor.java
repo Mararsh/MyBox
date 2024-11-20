@@ -92,6 +92,7 @@ public class ControlDataNodeEditor extends BaseController {
             return false;
         }
         if (node == null) {
+            currentNode = null;
             addAction();
             return false;
         }
@@ -198,9 +199,33 @@ public class ControlDataNodeEditor extends BaseController {
         return currentNode == null || currentNode.getNodeid() < 0;
     }
 
+    public void refreshNode() {
+        if (parentNode != null) {
+            parentNode = nodeTable.query(parentNode.getNodeid());
+            if (parentNode == null) {
+                resetStatus();
+                editNode(null);
+                return;
+            }
+        }
+
+        if (currentNode != null) {
+            currentNode = nodeTable.query(currentNode.getNodeid());
+            if (currentNode == null) {
+                resetStatus();
+                editNode(null);
+            }
+        }
+
+    }
+
     @FXML
     @Override
     public void saveAction() {
+        if (parentNode == null) {
+            popError(message("Invalid") + ": " + message("ParentNode"));
+            return;
+        }
         DataNode attributes = attributesController.pickAttributes();
         if (attributes == null) {
             popError(message("Invalid") + ": " + message("Node"));
@@ -269,7 +294,6 @@ public class ControlDataNodeEditor extends BaseController {
     @Override
     public void addAction() {
         try {
-            MyBoxLog.console(currentNode != null);
             if (!treeController.checkBeforeNextAction()) {
                 return;
             }

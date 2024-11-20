@@ -20,6 +20,8 @@ import mara.mybox.dev.MyBoxLog;
  */
 public class TableDataNodeTag extends BaseTable<DataNodeTag> {
 
+    public static final String TableNameSuffix = "_Node_Tag";
+
     protected BaseNodeTable nodeTable;
     protected TableDataTag tagTable;
 
@@ -42,7 +44,7 @@ public class TableDataNodeTag extends BaseTable<DataNodeTag> {
         if (nodeTable == null || tagTable == null) {
             return;
         }
-        tableName = nodeTable.tableName + "_Node_Tag";
+        tableName = nodeTable.tableName + TableNameSuffix;
         defineColumns();
     }
 

@@ -32,6 +32,7 @@ import static mara.mybox.value.Languages.message;
 public class BaseNodeTable extends BaseTable<DataNode> {
 
     public static final long RootID = 1l;
+    public static final int TitleMaxLength = 256;
     public static final String NodeFields = "nodeid,title,order_number,update_time,parentid";
 
     protected String treeName, dataName, dataFxml, examplesFileName;
@@ -43,7 +44,7 @@ public class BaseNodeTable extends BaseTable<DataNode> {
 
     public final BaseNodeTable defineNodeColumns() {
         addColumn(new ColumnDefinition("nodeid", ColumnType.Long, true, true).setAuto(true));
-        addColumn(new ColumnDefinition("title", ColumnType.String, true).setLength(256));
+        addColumn(new ColumnDefinition("title", ColumnType.String, true).setLength(TitleMaxLength));
         addColumn(new ColumnDefinition("order_number", ColumnType.Float));
         addColumn(new ColumnDefinition("update_time", ColumnType.Datetime));
         addColumn(new ColumnDefinition("parentid", ColumnType.Long, true)
@@ -89,34 +90,14 @@ public class BaseNodeTable extends BaseTable<DataNode> {
 
             createIndices(conn);
 
-            if (createRoot(conn) == null) {
-                return false;
-            }
-
             new TableDataTag(this).createTable(conn);
 
             new TableDataNodeTag(this).createTable(conn);
 
-            return true;
+            return createRoot(conn) != null;
         } catch (Exception e) {
             MyBoxLog.debug(e);
             return false;
-        }
-    }
-
-    private DataNode createRoot(Connection conn) {
-        try {
-            String sql = "INSERT INTO " + tableName + " ( nodeid, title, parentid ) "
-                    + " VALUES ( " + RootID + ", '" + treeName + "', " + RootID + " )";
-            update(conn, sql);
-
-            sql = "ALTER TABLE " + tableName + " ALTER COLUMN nodeid RESTART WITH 2";
-            update(conn, sql);
-
-            return query(conn, RootID);
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-            return null;
         }
     }
 
@@ -157,22 +138,28 @@ public class BaseNodeTable extends BaseTable<DataNode> {
         return DataNode.create();
     }
 
-    public DataNode readNode(ResultSet results) {
-        if (results == null) {
+    private DataNode createRoot(Connection conn) {
+        try {
+            if (clearData(conn) < 0) {
+                return null;
+            }
+
+            String sql = "INSERT INTO " + tableName + " ( nodeid, title, parentid ) "
+                    + " VALUES ( " + RootID + ", '" + treeName + "', " + RootID + " )";
+            if (update(conn, sql) < 0) {
+                return null;
+            }
+
+            sql = "ALTER TABLE " + tableName + " ALTER COLUMN nodeid RESTART WITH 2";
+            if (update(conn, sql) < 0) {
+                return null;
+            }
+
+            return query(conn, RootID);
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
             return null;
         }
-        try {
-            DataNode data = DataNode.create();
-            for (int i = 0; i < 5; ++i) {
-                ColumnDefinition column = column("nodeid");
-                Object value = readColumnValue(results, column);
-                setValue(data, column.getColumnName(), value);
-            }
-            return data;
-        } catch (Exception e) {
-            MyBoxLog.debug(e, tableName);
-        }
-        return null;
     }
 
     public DataNode getRoot() {
@@ -193,23 +180,24 @@ public class BaseNodeTable extends BaseTable<DataNode> {
             root = createRoot(conn);
         }
         return root;
-//        String sql = "SELECT * FROM " + tableName
-//                + " WHERE nodeid=" + RootID + " FETCH FIRST ROW ONLY";
-//        try (PreparedStatement statement = conn.prepareStatement(sql);
-//                ResultSet results = statement.executeQuery()) {
-//            DataNode node = null;
-//            if (results.next()) {
-//                node = readData(results);
-//            }
-//            if (node == null) {
-//                //                clearData(conn);
-//                node = createRoot(conn);
-//            }
-//            return node;
-//        } catch (Exception e) {
-//            MyBoxLog.error(e);
-//            return null;
-//        }
+    }
+
+    public DataNode readNode(ResultSet results) {
+        if (results == null) {
+            return null;
+        }
+        try {
+            DataNode data = DataNode.create();
+            for (int i = 0; i < 5; ++i) {
+                ColumnDefinition column = column("nodeid");
+                Object value = readColumnValue(results, column);
+                setValue(data, column.getColumnName(), value);
+            }
+            return data;
+        } catch (Exception e) {
+            MyBoxLog.debug(e, tableName);
+        }
+        return null;
     }
 
     public DataNode queryNode(Connection conn, long nodeid) {
@@ -258,6 +246,90 @@ public class BaseNodeTable extends BaseTable<DataNode> {
         }
     }
 
+    public long deleteNode(Connection conn, long nodeid) {
+        if (conn == null || nodeid < 0) {
+            return -1;
+        }
+        if (nodeid == RootID) {
+            return 0;
+        }
+        String sql = "DELETE FROM " + tableName + " WHERE nodeid=?";
+        try (PreparedStatement statement = conn.prepareStatement(sql)) {
+            statement.setLong(1, nodeid);
+            return statement.executeUpdate();
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+            return -2;
+        }
+    }
+
+    public long deleteNodeAndDecentants(long nodeid) {
+        if (nodeid < 0) {
+            return -1;
+        }
+        try (Connection conn = DerbyBase.getConnection()) {
+            return deleteNodeAndDecentants(conn, nodeid);
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+            return -2;
+        }
+    }
+
+    public long deleteNodeAndDecentants(Connection conn, long nodeid) {
+        if (conn == null || nodeid < 0) {
+            return -1;
+        }
+        long count = deleteDecentants(conn, nodeid, 0);
+        if (nodeid == RootID) {
+            return count;
+        }
+        long ret = deleteNode(conn, nodeid);
+        if (ret > 0) {
+            count += ret;
+        }
+        return count;
+    }
+
+    public long deleteDecentants(Connection conn, long nodeid) {
+        return deleteDecentants(conn, nodeid, 0);
+    }
+
+    private long deleteDecentants(Connection conn, long nodeid, long count) {
+        if (conn == null || nodeid < 0) {
+            return -1;
+        }
+        String sql = "SELECT nodeid FROM " + tableName
+                + " WHERE parentid=? AND parentid<>nodeid";
+        long ncount = count, childid;
+        try (PreparedStatement statement = conn.prepareStatement(sql)) {
+            statement.setLong(1, nodeid);
+            try (ResultSet results = statement.executeQuery()) {
+                while (results != null && results.next()) {
+                    childid = results.getLong("nodeid");
+                    long ret = deleteDecentants(conn, childid, ncount);
+                    if (ret > 0) {
+                        ncount += ret;
+                    }
+                    ret = deleteNode(conn, childid);
+                    if (ret > 0) {
+                        ncount += ret;
+                    }
+                }
+            } catch (Exception e) {
+                MyBoxLog.debug(e, tableName);
+                return -2;
+            }
+        } catch (Exception e) {
+            MyBoxLog.debug(e, tableName);
+            return -3;
+        }
+
+        return ncount;
+    }
+
+    /*
+    aa
+     */
     public List<DataNode> ancestor(long id) {
         if (id <= 0) {
             return null;
@@ -576,27 +648,6 @@ public class BaseNodeTable extends BaseTable<DataNode> {
             return null;
         }
         return query(conn, node.getParentid());
-    }
-
-    public int deleteChildren(long parent) {
-        try (Connection conn = DerbyBase.getConnection()) {
-            return deleteChildren(conn, parent);
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-            return -1;
-        }
-    }
-
-    public int deleteChildren(Connection conn, long parent) {
-        String sql = "DELETE FROM " + tableName
-                + " WHERE parentid=? AND parentid<>nodeid";
-        try (PreparedStatement statement = conn.prepareStatement(sql)) {
-            statement.setLong(1, parent);
-            return statement.executeUpdate();
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-            return -1;
-        }
     }
 
     public String tagsCondition(List<DataTag> tags) {

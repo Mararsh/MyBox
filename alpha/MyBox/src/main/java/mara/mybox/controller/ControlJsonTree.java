@@ -276,7 +276,7 @@ public class ControlJsonTree extends BaseTreeTableViewController<JsonTreeNode> {
 
         }
 
-        menu = new MenuItem(message("DeleteNode"), StyleTools.getIconImageView("iconDelete.png"));
+        menu = new MenuItem(message("DeleteNodeAndDescendants"), StyleTools.getIconImageView("iconDelete.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             deleteNode(treeItem);
         });

@@ -15,6 +15,8 @@ import mara.mybox.dev.MyBoxLog;
  */
 public class TableDataTag extends BaseTable<DataTag> {
 
+    public static final String TableNameSuffix = "_Tag";
+
     protected BaseNodeTable nodeTable;
 
     public TableDataTag(BaseNodeTable table) {
@@ -22,7 +24,7 @@ public class TableDataTag extends BaseTable<DataTag> {
             return;
         }
         nodeTable = table;
-        tableName = nodeTable.tableName + "_Tag";
+        tableName = nodeTable.tableName + TableNameSuffix;
         idColumnName = "tagid";
         defineColumns();
     }
@@ -75,6 +77,27 @@ public class TableDataTag extends BaseTable<DataTag> {
             MyBoxLog.error(e);
         }
         return dataTag;
+    }
+
+    @Override
+    public long clearData(Connection conn) {
+        try {
+            String sql = "DELETE FROM " + tableName + TableDataNodeTag.TableNameSuffix;
+            long count = update(conn, sql);
+            if (count < 0) {
+                return -2;
+            }
+
+            sql = "DELETE FROM " + tableName;
+            count = update(conn, sql);
+            if (count < 0) {
+                return -4;
+            }
+            return count;
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+            return -1;
+        }
     }
 
 }

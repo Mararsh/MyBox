@@ -26,11 +26,11 @@ import org.jsoup.nodes.Element;
  * @License Apache License Version 2.0
  */
 public class ControlHtmlDomManage extends BaseHtmlTreeController {
-    
+
     protected ObservableList<Attribute> attributesData;
     protected BaseHtmlFormat htmlEditor;
     protected TreeItem<HtmlNode> currentItem, copiedItem;
-    
+
     @FXML
     protected ControlHtmlDomNode nodeController;
     @FXML
@@ -39,18 +39,18 @@ public class ControlHtmlDomManage extends BaseHtmlTreeController {
     protected Tab attributesTab, codesTab;
     @FXML
     protected Label tagLabel;
-    
+
     public void setEditor(BaseHtmlFormat htmlEditor) {
         try {
             super.initValues();
-            
+
             this.htmlEditor = htmlEditor;
-            
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
-    
+
     @Override
     public void setControlsStyle() {
         try {
@@ -68,7 +68,7 @@ public class ControlHtmlDomManage extends BaseHtmlTreeController {
     public void itemClicked(MouseEvent event, TreeItem<HtmlNode> item) {
         editNode(item);
     }
-    
+
     @Override
     public List<MenuItem> moreMenu(TreeItem<HtmlNode> item) {
         List<MenuItem> items = new ArrayList<>();
@@ -80,65 +80,65 @@ public class ControlHtmlDomManage extends BaseHtmlTreeController {
             add(item);
         });
         items.add(menuItem);
-        
-        menuItem = new MenuItem(message("DeleteNode"), StyleTools.getIconImageView("iconDelete.png"));
+
+        menuItem = new MenuItem(message("DeleteNodeAndDescendants"), StyleTools.getIconImageView("iconDelete.png"));
         menuItem.setOnAction((ActionEvent menuItemEvent) -> {
             delete(item);
         });
         items.add(menuItem);
-        
+
         menuItem = new MenuItem(message("DeleteNodes"), StyleTools.getIconImageView("iconDelete.png"));
         menuItem.setOnAction((ActionEvent menuItemEvent) -> {
             deleteNodes(item);
         });
         items.add(menuItem);
-        
+
         if (treeView.getTreeItemLevel(item) > 1) {
             menuItem = new MenuItem(message("CopyNodes"), StyleTools.getIconImageView("iconCopy.png"));
             menuItem.setOnAction((ActionEvent menuItemEvent) -> {
                 copy(item);
             });
             items.add(menuItem);
-            
+
             menuItem = new MenuItem(message("DuplicateAfterNode"), StyleTools.getIconImageView("iconCopy.png"));
             menuItem.setOnAction((ActionEvent menuItemEvent) -> {
                 duplicate(item, true);
             });
             items.add(menuItem);
-            
+
             menuItem = new MenuItem(message("DuplicateToParentEnd"), StyleTools.getIconImageView("iconCopy.png"));
             menuItem.setOnAction((ActionEvent menuItemEvent) -> {
                 duplicate(item, false);
             });
             items.add(menuItem);
-            
+
             menuItem = new MenuItem(message("MoveUp"), StyleTools.getIconImageView("iconUp.png"));
             menuItem.setOnAction((ActionEvent menuItemEvent) -> {
                 up(item);
             });
             items.add(menuItem);
-            
+
             menuItem = new MenuItem(message("MoveDown"), StyleTools.getIconImageView("iconDown.png"));
             menuItem.setOnAction((ActionEvent menuItemEvent) -> {
                 down(item);
             });
             items.add(menuItem);
-            
+
             menuItem = new MenuItem(message("MoveNodes"), StyleTools.getIconImageView("iconMove.png"));
             menuItem.setOnAction((ActionEvent menuItemEvent) -> {
                 move(item);
             });
             items.add(menuItem);
-            
+
             items.add(new SeparatorMenuItem());
         }
-        
+
         menuItem = new MenuItem(message("EditNode"), StyleTools.getIconImageView("iconEdit.png"));
         menuItem.setOnAction((ActionEvent menuItemEvent) -> {
             editNode(item);
         });
         items.add(menuItem);
-        
+
         if (htmlEditor != null && htmlEditor.sourceFile != null && htmlEditor.sourceFile.exists()) {
             items.add(new SeparatorMenuItem());
             menuItem = new MenuItem(message("Recover"), StyleTools.getIconImageView("iconRecover.png"));
@@ -147,14 +147,14 @@ public class ControlHtmlDomManage extends BaseHtmlTreeController {
             });
             items.add(menuItem);
         }
-        
+
         return items;
     }
-    
+
     public void add(TreeItem<HtmlNode> item) {
         HtmlDomAddController.open(htmlEditor, item);
     }
-    
+
     public void delete(TreeItem<HtmlNode> inItem) {
         TreeItem<HtmlNode> item = validItem(inItem);
         if (item == null) {
@@ -170,15 +170,15 @@ public class ControlHtmlDomManage extends BaseHtmlTreeController {
         }
         htmlEditor.domChanged(true);
     }
-    
+
     public void deleteNodes(TreeItem<HtmlNode> item) {
         HtmlDomDeleteController.open(htmlEditor, item);
     }
-    
+
     public void copy(TreeItem<HtmlNode> item) {
         HtmlDomCopyController.open(htmlEditor, item);
     }
-    
+
     public void duplicate(TreeItem<HtmlNode> inItem, boolean after) {
         TreeItem<HtmlNode> item = validItem(inItem);
         if (item == null) {
@@ -200,7 +200,7 @@ public class ControlHtmlDomManage extends BaseHtmlTreeController {
         updateTreeItem(parent);
         htmlEditor.domChanged(true);
     }
-    
+
     public void up(TreeItem<HtmlNode> inItem) {
         TreeItem<HtmlNode> item = validItem(inItem);
         if (item == null) {
@@ -231,7 +231,7 @@ public class ControlHtmlDomManage extends BaseHtmlTreeController {
         updateTreeItem(previousItem, thisElement);
         htmlEditor.domChanged(true);
     }
-    
+
     public void down(TreeItem<HtmlNode> inItem) {
         TreeItem<HtmlNode> item = validItem(inItem);
         if (item == null) {
@@ -261,11 +261,11 @@ public class ControlHtmlDomManage extends BaseHtmlTreeController {
         updateTreeItem(nextItem, thisElement);
         htmlEditor.domChanged(true);
     }
-    
+
     public void move(TreeItem<HtmlNode> item) {
         HtmlDomMoveController.open(htmlEditor, item);
     }
-    
+
     @FXML
     @Override
     public void recoverAction() {
@@ -274,7 +274,7 @@ public class ControlHtmlDomManage extends BaseHtmlTreeController {
             htmlEditor.sourceFileChanged(htmlEditor.sourceFile);
         }
     }
-    
+
     @FXML
     @Override
     public void clearTree() {
@@ -296,7 +296,7 @@ public class ControlHtmlDomManage extends BaseHtmlTreeController {
         setCodes();
         tabPane.setDisable(false);
     }
-    
+
     @FXML
     public void okAttrs() {
         if (currentItem == null) {
@@ -304,7 +304,7 @@ public class ControlHtmlDomManage extends BaseHtmlTreeController {
         }
         okNode(nodeController.pickValues());
     }
-    
+
     public void okNode(Element element) {
         if (currentItem == null || element == null) {
             return;
@@ -314,12 +314,12 @@ public class ControlHtmlDomManage extends BaseHtmlTreeController {
         htmlEditor.domChanged(true);
         htmlEditor.popInformation(message("UpdateSuccessfully"));
     }
-    
+
     @FXML
     public void recoverAttrs() {
         nodeController.recover();
     }
-    
+
     @FXML
     public void okCodes() {
         if (currentItem == null) {
@@ -329,7 +329,7 @@ public class ControlHtmlDomManage extends BaseHtmlTreeController {
         element.html(codesArea.getText());
         okNode(element);
     }
-    
+
     public void setCodes() {
         if (currentItem == null) {
             return;
@@ -338,12 +338,12 @@ public class ControlHtmlDomManage extends BaseHtmlTreeController {
         tagLabel.setText(element.tagName());
         codesArea.setText(element.html());
     }
-    
+
     @FXML
     public void recoverCodes() {
         setCodes();
     }
-    
+
     protected void clearNode() {
         currentItem = null;
         nodeController.load(null);
@@ -358,10 +358,10 @@ public class ControlHtmlDomManage extends BaseHtmlTreeController {
     @Override
     public void cleanPane() {
         try {
-            
+
         } catch (Exception e) {
         }
         super.cleanPane();
     }
-    
+
 }

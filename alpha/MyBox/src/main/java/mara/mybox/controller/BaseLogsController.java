@@ -93,6 +93,10 @@ public class BaseLogsController extends BaseController {
         }
     }
 
+    public boolean isLogsVerbose() {
+        return verboseCheck != null ? verboseCheck.isSelected() : false;
+    }
+
     @FXML
     public void clearLogs() {
         if (logsTextArea == null) {
