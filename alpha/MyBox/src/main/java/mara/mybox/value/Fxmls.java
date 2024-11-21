@@ -20,6 +20,13 @@ public class Fxmls {
     public static final String ControlDataHtmlFxml = "/fxml/ControlDataHtml.fxml";
     public static final String ControlDataMathFunctionFxml = "/fxml/ControlDataMathFunction.fxml";
     public static final String ControlDataWebPageAddressFxml = "/fxml/ControlDataWebPageAddress.fxml";
+    public static final String ControlDataSQLFxml = "/fxml/ControlDataSQL.fxml";
+    public static final String ControlDataJShellFxml = "/fxml/ControlDataJShell.fxml";
+    public static final String ControlDataJEXLFxml = "/fxml/ControlDataJEXL.fxml";
+    public static final String ControlDataJavaScriptFxml = "/fxml/ControlDataJavaScript.fxml";
+    public static final String ControlDataRowFilterFxml = "/fxml/ControlDataRowFilter.fxml";
+    public static final String ControlDataImageScopeFxml = "/fxml/ControlDataImageScope.fxml";
+    public static final String ControlDataData2DDefinitionFxml = "/fxml/ControlDataData2DDefinition.fxml";
 
     public static final String DataTreeTagsFxml = "/fxml/DataTreeTags.fxml";
     public static final String DataTreeExportFxml = "/fxml/DataTreeExport.fxml";
@@ -375,7 +382,6 @@ public class Fxmls {
     public static final String MatrixUnaryCalculationFxml = "/fxml/MatrixUnaryCalculation.fxml";
     public static final String MatricesBinaryCalculationFxml = "/fxml/MatricesBinaryCalculation.fxml";
 
-    public static final String DatabaseSqlFxml = "/fxml/DatabaseSql.fxml";
     public static final String DatabaseTableDefinitionFxml = "/fxml/DatabaseTableDefinition.fxml";
     public static final String DataTablesFxml = "/fxml/DataTables.fxml";
 

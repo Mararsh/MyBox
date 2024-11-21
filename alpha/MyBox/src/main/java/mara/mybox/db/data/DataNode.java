@@ -87,6 +87,30 @@ public class DataNode extends BaseData {
         }
     }
 
+    public String getStringValue(String column) {
+        try {
+            return (String) getValue(column);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public int getIntValue(String column) {
+        try {
+            return (int) getValue(column);
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
+    public boolean getBooleanValue(String column) {
+        try {
+            return (boolean) getValue(column);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     @Override
     public boolean valid() {
         return true;
@@ -122,10 +146,6 @@ public class DataNode extends BaseData {
     }
 
     public String toText() {
-        return title;
-    }
-
-    public String toHtml() {
         return title;
     }
 

@@ -21,12 +21,12 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
-import mara.mybox.data2d.tools.Data2DTableTools;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataInternalTable;
-import mara.mybox.data2d.DataTable;
 import mara.mybox.data2d.tools.Data2DConvertTools;
+import mara.mybox.data2d.tools.Data2DTableTools;
 import mara.mybox.db.DerbyBase;
+import mara.mybox.db.data.DataNode;
 import mara.mybox.db.table.TableData2D;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
@@ -43,7 +43,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2022-2-14
  * @License Apache License Version 2.0
  */
-public class DatabaseSqlEditor extends InfoTreeNodeEditor {
+public class ControlDataSQL extends BaseDataValuesController {
 
     protected boolean internal;
 
@@ -52,17 +52,13 @@ public class DatabaseSqlEditor extends InfoTreeNodeEditor {
     @FXML
     protected Tab resultsTab, dataTab;
     @FXML
-    protected TextArea outputArea;
+    protected TextArea sqlArea, outputArea;
     @FXML
     protected Button listButton, tableDefinitionButton;
     @FXML
     protected ControlData2DView dataController;
     @FXML
-    protected CheckBox wrapOutputsCheck;
-
-    public DatabaseSqlEditor() {
-        defaultExt = "sql";
-    }
+    protected CheckBox wrapCheck, wrapOutputsCheck;
 
     @Override
     public void setControlsStyle() {
@@ -72,15 +68,31 @@ public class DatabaseSqlEditor extends InfoTreeNodeEditor {
     }
 
     @Override
-    public void setManager(InfoTreeManageController treeController) {
+    public void initEditor() {
         try {
-            super.setManager(treeController);
 
-            wrapOutputsCheck.setSelected(UserConfig.getBoolean(manager.category + "OutputsWrap", false));
+            sqlArea.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue v, String ov, String nv) {
+                    valueChanged(true);
+                }
+            });
+
+            wrapCheck.setSelected(UserConfig.getBoolean(baseName + "ValueWrap", false));
+            wrapCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(baseName + "ValueWrap", newValue);
+                    sqlArea.setWrapText(newValue);
+                }
+            });
+            sqlArea.setWrapText(wrapCheck.isSelected());
+
+            wrapOutputsCheck.setSelected(UserConfig.getBoolean(baseName + "OutputsWrap", false));
             wrapOutputsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(manager.category + "OutputsWrap", newValue);
+                    UserConfig.setBoolean(baseName + "OutputsWrap", newValue);
                     outputArea.setWrapText(newValue);
                 }
             });
@@ -91,17 +103,47 @@ public class DatabaseSqlEditor extends InfoTreeNodeEditor {
         }
     }
 
+    @Override
+    protected void editValues() {
+        try {
+            Object v;
+            if (nodeEditor.currentNode == null) {
+                v = null;
+            } else {
+                v = nodeEditor.currentNode.getValue("statement");
+            }
+            sqlArea.setText(v != null ? (String) v : null);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    @Override
+    protected DataNode pickValues(DataNode node) {
+        try {
+            String sql = sqlArea.getText();
+            node.setValue("statement", sql == null ? null : sql.trim());
+            return node;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    /*
+        execution
+     */
     @FXML
     @Override
     public void startAction() {
-        String s = valueInput.getText();
+        String s = sqlArea.getText();
         if (s == null || s.isBlank()) {
-            popError(message("InvalidParameters") + ": " + message("Codes"));
+            popError(message("InvalidParameters") + ": " + message("SQL"));
             return;
         }
         String[] lines = s.split("\n", -1);
         if (lines == null || lines.length == 0) {
-            popError(message("InvalidParameters") + ": " + message("Codes"));
+            popError(message("InvalidParameters") + ": " + message("SQL"));
             return;
         }
         List<String> sqls = new ArrayList<>();
@@ -112,7 +154,7 @@ public class DatabaseSqlEditor extends InfoTreeNodeEditor {
             sqls.add(line.trim());
         }
         if (sqls.isEmpty()) {
-            popError(message("InvalidParameters") + ": " + message("Codes"));
+            popError(message("InvalidParameters") + ": " + message("SQL"));
             return;
         }
         if (task != null) {
@@ -129,7 +171,7 @@ public class DatabaseSqlEditor extends InfoTreeNodeEditor {
                         Statement statement = conn.createStatement()) {
                     for (String sql : sqls) {
                         try {
-                            TableStringValues.add(conn, editorName(), sql);
+                            TableStringValues.add(conn, "SQL" + (internal ? "Internal" : ""), sql);
                             outputArea.appendText(DateTools.nowString() + "  " + sql + "\n");
                             if (statement.execute(sql)) {
                                 int count = statement.getUpdateCount();
@@ -169,8 +211,27 @@ public class DatabaseSqlEditor extends InfoTreeNodeEditor {
     }
 
     @FXML
+    public void clearValue() {
+        sqlArea.clear();
+    }
+
+    @FXML
     public void clearOutput() {
         outputArea.clear();
+    }
+
+    @FXML
+    protected void popHistories(Event event) {
+        if (UserConfig.getBoolean("SQL" + (internal ? "Internal" : "")
+                + "HistoriesPopWhenMouseHovering", false)) {
+            showHistories(event);
+        }
+    }
+
+    @FXML
+    protected void showHistories(Event event) {
+        PopTools.popStringValues(this, sqlArea, event,
+                "SQL" + (internal ? "Internal" : "") + "Histories", false);
     }
 
     @FXML
@@ -182,17 +243,13 @@ public class DatabaseSqlEditor extends InfoTreeNodeEditor {
 
     @FXML
     protected void showExamplesMenu(Event event) {
-        PopTools.popSqlExamples(this, valueInput, null, false, event);
-    }
-
-    @Override
-    protected String editorName() {
-        return "SQLHistories" + (internal ? "Internal" : "");
+        PopTools.popSqlExamples(this, sqlArea, null, false, event);
     }
 
     @FXML
     protected void popTableNames(MouseEvent event) {
-        if (UserConfig.getBoolean("TableNamesPopWhenMouseHovering" + (internal ? "Internal" : ""), false)) {
+        if (UserConfig.getBoolean("TableNamesPopWhenMouseHovering"
+                + (internal ? "Internal" : ""), false)) {
             tableNames(event);
         }
     }
@@ -204,7 +261,7 @@ public class DatabaseSqlEditor extends InfoTreeNodeEditor {
 
     protected void tableNames(Event event) {
         try {
-            MenuController controller = MenuController.open(this, valueInput, event, "TableNames", false);
+            MenuController controller = MenuController.open(this, sqlArea, event, "TableNames", false);
 
             List<Node> topButtons = new ArrayList<>();
             topButtons.add(new Label(message("TableName")));
@@ -237,9 +294,9 @@ public class DatabaseSqlEditor extends InfoTreeNodeEditor {
                 button.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
-                        valueInput.replaceText(valueInput.getSelection(), name);
+                        sqlArea.replaceText(sqlArea.getSelection(), name);
                         controller.getThisPane().requestFocus();
-                        valueInput.requestFocus();
+                        sqlArea.requestFocus();
                     }
                 });
                 valueButtons.add(button);
@@ -262,7 +319,7 @@ public class DatabaseSqlEditor extends InfoTreeNodeEditor {
 
     protected void tableDefinition(Event event) {
         try {
-            MenuController controller = MenuController.open(this, valueInput, event, "TableDefinition", false);
+            MenuController controller = MenuController.open(this, sqlArea, event, "TableDefinition", false);
 
             List<Node> topButtons = new ArrayList<>();
             topButtons.add(new Label(message("TableDefinition")));

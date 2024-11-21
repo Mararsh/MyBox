@@ -35,6 +35,7 @@ import mara.mybox.db.table.BaseNodeTable;
 import mara.mybox.db.table.TableDataNodeTag;
 import mara.mybox.db.table.TableDataTag;
 import mara.mybox.db.table.TableNodeHtml;
+import mara.mybox.db.table.TableNodeSQL;
 import mara.mybox.db.table.TableNodeText;
 import mara.mybox.db.table.TableNodeWebFavorite;
 import mara.mybox.dev.MyBoxLog;
@@ -1118,6 +1119,10 @@ public class DataTreeController extends BaseDataTreeViewController {
 
     public static DataTreeController webFavorite(BaseController pController, boolean shouldLoad) {
         return open(pController, shouldLoad, new TableNodeWebFavorite());
+    }
+
+    public static DataTreeController sql(BaseController pController, boolean shouldLoad) {
+        return open(pController, shouldLoad, new TableNodeSQL());
     }
 
 }

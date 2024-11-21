@@ -47,6 +47,7 @@ License:    Apache License Version 2.0
                                         <MenuItem mnemonicParsing="false" onAction="#TextTree" text="%Texts" />
                                         <MenuItem mnemonicParsing="false" onAction="#HtmlTree" text="%Html" />
                                         <MenuItem mnemonicParsing="false" onAction="#WebPageAddress" text="%WebPageAddress" />
+                                        <MenuItem mnemonicParsing="false" onAction="#sql" text="%DatabaseSQL" />
                                     </items>
                                 </Menu>
                                 <SeparatorMenuItem mnemonicParsing="false" />

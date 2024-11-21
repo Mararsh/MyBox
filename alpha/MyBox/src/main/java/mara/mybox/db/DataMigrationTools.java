@@ -3,6 +3,8 @@ package mara.mybox.db;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import mara.mybox.bufferedimage.ImageScope;
+import mara.mybox.bufferedimage.ImageScopeTools;
 import mara.mybox.db.data.*;
 import mara.mybox.db.table.BaseNodeTable;
 import static mara.mybox.db.table.BaseNodeTable.RootID;
@@ -29,6 +31,10 @@ public class DataMigrationTools {
         }
         try (Statement statement = conn.createStatement()) {
             statement.executeUpdate("DROP TABLE " + tname);
+        } catch (Exception e) {
+            MyBoxLog.console(e);
+        }
+        try {
             dataTable.createTable(conn);
         } catch (Exception e) {
             MyBoxLog.console(e);
@@ -195,16 +201,22 @@ public class DataMigrationTools {
                         }
                     }
                     break;
-                case InfoNode.JShellCode:
+                case "Node_SQL":
+                    node.setValue("statement", info);
+                    break;
+                case "Node_Image_Scope":
+                    ImageScope scope = ImageScopeTools.fromXML(null, null, info);
+                    if (scope == null) {
+                        return null;
+                    }
+                    return ImageScopeTools.toDataNode(scope);
+                case "Node_JShell":
                     node.setValue("Codes", info);
                     break;
-                case InfoNode.SQL:
-                    node.setValue("SQL", info);
-                    break;
-                case InfoNode.JavaScript:
+                case "Node_JavaScript":
                     node.setValue("Script", info);
                     break;
-                case InfoNode.JEXLCode:
+                case "Node_JEXL":
                     node.setValue("Script", null);
                     node.setValue("Context", null);
                     node.setValue("Parameters", null);
@@ -230,7 +242,7 @@ public class DataMigrationTools {
                         }
                     }
                     break;
-                case InfoNode.RowFilter:
+                case "Node_RowFilter":
                     node.setValue("Script", null);
                     node.setValue("Condition", "true");
                     node.setValue("Maximum", "-1");
@@ -263,7 +275,7 @@ public class DataMigrationTools {
                         }
                     }
                     break;
-                case InfoNode.MathFunction:
+                case "Node_MathFunction":
                     node.setValue("MathFunctionName", null);
                     node.setValue("Variables", null);
                     node.setValue("Expression", null);
@@ -319,13 +331,10 @@ public class DataMigrationTools {
                         }
                     }
                     break;
-                case InfoNode.ImageMaterial:
+                case "Node_Data2DDefinition":
                     node.setValue("Value", info);
                     break;
-                case InfoNode.Data2DDefinition:
-                case InfoNode.ImageScope:
-                    node.setValue("XML", info);
-                    break;
+
             }
             return node;
         } catch (Exception e) {

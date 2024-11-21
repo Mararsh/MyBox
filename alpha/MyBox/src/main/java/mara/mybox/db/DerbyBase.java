@@ -35,6 +35,8 @@ import mara.mybox.db.table.TableMediaList;
 import mara.mybox.db.table.TableMyBoxLog;
 import mara.mybox.db.table.TableNamedValues;
 import mara.mybox.db.table.TableNodeHtml;
+import mara.mybox.db.table.TableNodeImageScope;
+import mara.mybox.db.table.TableNodeSQL;
 import mara.mybox.db.table.TableNodeText;
 import mara.mybox.db.table.TableNodeWebFavorite;
 import mara.mybox.db.table.TablePathConnection;
@@ -549,6 +551,16 @@ public class DerbyBase {
             }
             if (!tables.contains("Node_Math_Function".toLowerCase())) {
                 TableMathFunction t = new TableMathFunction();
+                t.createTable(conn);
+                loadingController.info(t.getTreeName());
+            }
+            if (!tables.contains("Node_SQL".toLowerCase())) {
+                TableNodeSQL t = new TableNodeSQL();
+                t.createTable(conn);
+                loadingController.info(t.getTreeName());
+            }
+            if (!tables.contains("Node_Image_Scope".toLowerCase())) {
+                TableNodeImageScope t = new TableNodeImageScope();
                 t.createTable(conn);
                 loadingController.info(t.getTreeName());
             }

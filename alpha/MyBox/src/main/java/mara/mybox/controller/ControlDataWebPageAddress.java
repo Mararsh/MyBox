@@ -34,6 +34,14 @@ public class ControlDataWebPageAddress extends BaseDataValuesController {
     @Override
     public void initEditor() {
         try {
+
+            addressInput.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue v, String ov, String nv) {
+                    valueChanged(true);
+                }
+            });
+
             iconController.isDirectory(false).isSource(true)
                     .mustExist(true).permitNull(true)
                     .type(VisitHistory.FileType.Image)
@@ -42,6 +50,7 @@ public class ControlDataWebPageAddress extends BaseDataValuesController {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldTab, Boolean newTab) {
                     updateIcon(iconController.text());
+                    valueChanged(true);
                 }
             });
 
@@ -76,14 +85,9 @@ public class ControlDataWebPageAddress extends BaseDataValuesController {
     protected DataNode pickValues(DataNode node) {
         try {
             String address = addressInput.getText();
-            if (address == null || address.isBlank()) {
-                return null;
-            }
             String icon = iconController.fileInput.getText();
-
-            node.setValue("address", address.trim());
-            node.setValue("icon", icon == null ? "" : icon.trim());
-
+            node.setValue("address", icon == null ? null : address.trim());
+            node.setValue("icon", icon == null ? null : icon.trim());
             return node;
         } catch (Exception e) {
             MyBoxLog.error(e);

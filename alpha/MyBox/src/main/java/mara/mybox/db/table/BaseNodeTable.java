@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import javafx.scene.paint.Color;
 import mara.mybox.controller.BaseController;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.DerbyBase;
@@ -15,8 +16,10 @@ import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.DataNode;
 import static mara.mybox.db.data.DataNode.TitleSeparater;
+import mara.mybox.db.data.DataNodeTag;
 import mara.mybox.db.data.DataTag;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fximage.FxColorTools;
 import static mara.mybox.fxml.FxFileTools.getInternalFile;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.JsonTools;
@@ -665,13 +668,63 @@ public class BaseNodeTable extends BaseTable<DataNode> {
         return json;
     }
 
+    public String nodeHtml(FxTask task, Connection conn,
+            BaseController controller, DataNode node, int indent) {
+        try {
+            if (conn == null || node == null) {
+                return null;
+            }
+            String indentNode = " ".repeat(indent);
+            String spaceNode = "&nbsp;".repeat(indent);
+            String nodeName = node.getTitle();
+            String displayName = "<SPAN class=\"SerialNumber\">" + node.getHierarchyNumber() + "&nbsp;&nbsp;</SPAN>" + nodeName;
+
+            String html = indentNode + "<DIV style=\"padding: 2px;\">" + spaceNode + displayName + "\n";
+            List<DataNodeTag> tags = new TableDataNodeTag(this).nodeTags(conn, node.getNodeid());
+            if (tags != null && !tags.isEmpty()) {
+                String indentTag = " ".repeat(indent + 8);
+                String spaceTag = "&nbsp;".repeat(2);
+                html += indentTag + "<SPAN class=\"NodeTag\">\n";
+                for (DataNodeTag nodeTag : tags) {
+                    if (task != null && !task.isWorking()) {
+                        return null;
+                    }
+                    Color color = nodeTag.getTag().getColor();
+                    if (color == null) {
+                        color = FxColorTools.randomColor();
+                    }
+                    html += indentTag + spaceTag
+                            + "<SPAN style=\"border-radius:4px; padding: 2px; font-size:0.8em;  background-color: "
+                            + FxColorTools.color2rgb(color)
+                            + "; color: " + FxColorTools.color2rgb(FxColorTools.foreColor(color))
+                            + ";\">" + nodeTag.getTag().getTag() + "</SPAN>\n";
+                }
+                html += indentTag + "</SPAN>\n";
+            }
+            html += indentNode + "</DIV>\n";
+
+            String dataHtml = valuesHtml(task, conn, controller, node);
+            if (dataHtml != null && !dataHtml.isBlank()) {
+                html += indentNode + "<DIV class=\"nodeValue\">"
+                        + "<DIV style=\"padding: 0 0 0 " + (indent + 4) * 6 + "px;\">"
+                        + "<DIV class=\"valueBox\">\n";
+                html += indentNode + dataHtml + "\n";
+                html += indentNode + "</DIV></DIV></DIV>\n";
+            }
+            return html;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    /*
+        get/set
+     */
     public String getDataName() {
         return dataName;
     }
 
-    /*
-    get/set
-     */
     public void setDataName(String dataName) {
         this.dataName = dataName;
     }

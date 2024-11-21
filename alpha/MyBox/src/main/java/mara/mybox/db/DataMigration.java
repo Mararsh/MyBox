@@ -51,6 +51,8 @@ import mara.mybox.db.table.TableImageClipboard;
 import mara.mybox.db.table.TableImageEditHistory;
 import mara.mybox.db.table.TableInfoNode;
 import mara.mybox.db.table.TableNodeHtml;
+import mara.mybox.db.table.TableNodeImageScope;
+import mara.mybox.db.table.TableNodeSQL;
 import mara.mybox.db.table.TableNodeText;
 import mara.mybox.db.table.TableNodeWebFavorite;
 import mara.mybox.db.table.TableStringValues;
@@ -205,6 +207,8 @@ public class DataMigration {
             updateIn682_move(conn, new TableNodeHtml(), "Notebook");
             updateIn682_move(conn, new TableNodeText(), "InformationInTree");
             updateIn682_move(conn, new TableNodeWebFavorite(), "WebFavorite");
+            updateIn682_move(conn, new TableNodeSQL(), "SQL");
+            updateIn682_move(conn, new TableNodeImageScope(), "ImageScope");
 
             try (Statement statement = conn.createStatement()) {
                 conn.setAutoCommit(true);

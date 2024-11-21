@@ -50,7 +50,12 @@ public abstract class MyBoxController_Document extends MyBoxController_Base {
             DataTreeController.webFavorite(this, true);
         });
 
-        treeMenu.getItems().addAll(TextTree, HtmlTree, WebPageAddress);
+        MenuItem sql = new MenuItem(message("DatabaseSQL"));
+        sql.setOnAction((ActionEvent event1) -> {
+            DataTreeController.sql(this, true);
+        });
+
+        treeMenu.getItems().addAll(TextTree, HtmlTree, WebPageAddress, sql);
 
         Menu pdfMenu = new Menu("PDF");
 

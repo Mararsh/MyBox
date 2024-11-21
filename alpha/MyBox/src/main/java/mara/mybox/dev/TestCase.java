@@ -177,7 +177,7 @@ public class TestCase {
             cases.add(new TestCase(index++, message("MatrixUnaryCalculation"), Fxmls.MatrixUnaryCalculationFxml));
             cases.add(new TestCase(index++, message("MatricesBinaryCalculation"), Fxmls.MatricesBinaryCalculationFxml));
             cases.add(new TestCase(index++, message("DatabaseTable"), Fxmls.DataTablesFxml));
-            cases.add(new TestCase(index++, message("DatabaseSQL"), Fxmls.DatabaseSqlFxml));
+//            cases.add(new TestCase(index++, message("DatabaseSQL"), Fxmls.DatabaseSqlFxml));
             cases.add(new TestCase(index++, message("JShell"), Fxmls.JShellFxml));
             cases.add(new TestCase(index++, message("GeographyCode"), Fxmls.GeographyCodeFxml));
             cases.add(new TestCase(index++, message("ConvertCoordinate"), Fxmls.ConvertCoordinateFxml));

@@ -449,8 +449,8 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
 
             @Override
             protected boolean handle() {
-                try {
-                    html = item.getValue().toHtml();
+                try (Connection conn = DerbyBase.getConnection()) {
+                    html = nodeTable.nodeHtml(this, conn, controller, item.getValue(), 4);
                     return html != null && !html.isBlank();
                 } catch (Exception e) {
                     error = e.toString();

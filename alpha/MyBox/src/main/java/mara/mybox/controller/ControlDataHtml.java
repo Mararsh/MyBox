@@ -47,8 +47,6 @@ public class ControlDataHtml extends BaseDataValuesController {
     @Override
     protected DataNode pickValues(DataNode node) {
         try {
-
-            node.setValue("title", nodeEditor.titleInput.getText());
             node.setValue("html", htmlController.currentHtml());
             return node;
         } catch (Exception e) {

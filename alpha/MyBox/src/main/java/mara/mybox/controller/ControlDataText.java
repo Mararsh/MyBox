@@ -66,8 +66,8 @@ public class ControlDataText extends BaseDataValuesController {
     @Override
     protected DataNode pickValues(DataNode node) {
         try {
-            node.setValue("title", nodeEditor.titleInput.getText());
-            node.setValue("text", textInput.getText());
+            String text = textInput.getText();
+            node.setValue("text", text == null ? null : text.trim());
             return node;
         } catch (Exception e) {
             MyBoxLog.error(e);

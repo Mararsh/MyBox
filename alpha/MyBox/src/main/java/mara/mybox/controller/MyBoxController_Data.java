@@ -144,7 +144,7 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
 
         MenuItem DatabaseSQL = new MenuItem(message("DatabaseSQL"));
         DatabaseSQL.setOnAction((ActionEvent event1) -> {
-            loadScene(Fxmls.DatabaseSqlFxml);
+            DataTreeController.sql(this, true);
         });
 
         MenuItem DatabaseTable = new MenuItem(message("DatabaseTable"));

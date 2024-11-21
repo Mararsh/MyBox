@@ -108,7 +108,7 @@ public abstract class MainMenuController_Data extends MainMenuController_Network
 
     @FXML
     protected void DatabaseSQL(ActionEvent event) {
-        loadScene(Fxmls.DatabaseSqlFxml);
+        DataTreeController.sql(parentController, false);
     }
 
     @FXML

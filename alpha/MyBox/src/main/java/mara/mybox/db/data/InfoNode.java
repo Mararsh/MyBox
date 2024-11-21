@@ -11,7 +11,6 @@ import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.bufferedimage.ImageScopeTools;
 import mara.mybox.controller.BaseController;
 import mara.mybox.controller.Data2DDefinitionController;
-import mara.mybox.controller.DatabaseSqlController;
 import mara.mybox.controller.ImageScopeController;
 import mara.mybox.controller.InfoTreeManageController;
 import mara.mybox.controller.JShellController;
@@ -709,8 +708,8 @@ public class InfoNode extends BaseData {
 //                return NoteTreeController.oneOpen();
             case InfoNode.JShellCode:
                 return JShellController.open("");
-            case InfoNode.SQL:
-                return DatabaseSqlController.open(false);
+//            case InfoNode.SQL:
+//                return DatabaseSqlController.open(false);
             case InfoNode.JavaScript:
                 return JavaScriptController.loadScript("");
 //            case InfoNode.InformationInTree:
