@@ -92,12 +92,12 @@ public class WebFavoriteAddController extends ControlInfoTreeList {
                         error = message("NoData");
                         return false;
                     }
-                    newNode = InfoNode.create()
-                            .setParentid(selectedItem.getValue().getNodeid())
-                            .setCategory(category)
-                            .setTitle(title)
-                            .setInfo(info);
-                    newNode = tableTreeNode.insertData(newNode);
+//                    newNode = InfoNode.create()
+//                            .setParentid(selectedItem.getValue().getNodeid())
+//                            .setCategory(category)
+//                            .setTitle(title)
+//                            .setInfo(info);
+//                    newNode = tableTreeNode.insertData(newNode);
                     return newNode != null;
                 } catch (Exception e) {
                     error = e.toString();
@@ -107,10 +107,10 @@ public class WebFavoriteAddController extends ControlInfoTreeList {
 
             @Override
             protected void whenSucceeded() {
-                WebFavoritesController c = WebFavoritesController.oneOpen();
-                if (!c.treeController.focusNode(newNode)) {
-                    c.treeController.loadTree(newNode);
-                }
+                DataTreeController c = DataTreeController.webFavorite(myController, false);
+//                if (!c.focusNode(newNode)) {
+//                    c.loadTree(newNode);
+//                }
                 closeStage();
             }
         };

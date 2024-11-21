@@ -17,8 +17,6 @@ public class ControlDataHtml extends BaseDataValuesController {
     @Override
     public void initEditor() {
         try {
-            super.initControls();
-
             htmlController.setParameters(this);
 
         } catch (Exception e) {

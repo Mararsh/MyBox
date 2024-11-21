@@ -50,9 +50,9 @@ import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.db.table.TableImageClipboard;
 import mara.mybox.db.table.TableImageEditHistory;
 import mara.mybox.db.table.TableInfoNode;
-import mara.mybox.db.table.TableMathFunction;
 import mara.mybox.db.table.TableNodeHtml;
 import mara.mybox.db.table.TableNodeText;
+import mara.mybox.db.table.TableNodeWebFavorite;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.db.table.TableWebHistory;
 import mara.mybox.dev.DevTools;
@@ -204,7 +204,7 @@ public class DataMigration {
 
             updateIn682_move(conn, new TableNodeHtml(), "Notebook");
             updateIn682_move(conn, new TableNodeText(), "InformationInTree");
-            updateIn682_move(conn, new TableMathFunction(), "MathFunction");
+            updateIn682_move(conn, new TableNodeWebFavorite(), "WebFavorite");
 
             try (Statement statement = conn.createStatement()) {
                 conn.setAutoCommit(true);

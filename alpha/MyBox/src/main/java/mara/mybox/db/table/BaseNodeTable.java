@@ -181,43 +181,6 @@ public class BaseNodeTable extends BaseTable<DataNode> {
         return root;
     }
 
-    public DataNode readNode(ResultSet results) {
-        if (results == null) {
-            return null;
-        }
-        try {
-            DataNode data = DataNode.create();
-            for (int i = 0; i < 5; ++i) {
-                ColumnDefinition column = column("nodeid");
-                Object value = readColumnValue(results, column);
-                setValue(data, column.getColumnName(), value);
-            }
-            return data;
-        } catch (Exception e) {
-            MyBoxLog.debug(e, tableName);
-        }
-        return null;
-    }
-
-    public DataNode queryNode(Connection conn, long nodeid) {
-        if (conn == null || nodeid < 0) {
-            return null;
-        }
-        String sql = "SELECT " + NodeFields + " FROM " + tableName
-                + " WHERE nodeid=" + nodeid + " FETCH FIRST ROW ONLY";
-        try (PreparedStatement statement = conn.prepareStatement(sql);
-                ResultSet results = statement.executeQuery()) {
-            DataNode node = null;
-            if (results.next()) {
-                node = readNode(results);
-            }
-            return node;
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-            return null;
-        }
-    }
-
     public List<DataNode> children(long parent) {
         if (parent < 0) {
             return null;
@@ -276,6 +239,22 @@ public class BaseNodeTable extends BaseTable<DataNode> {
             MyBoxLog.debug(e);
             return -2;
         }
+    }
+
+    public boolean hasChildren(Connection conn, long nodeid) {
+        boolean hasChildren = false;
+        String sql = "SELECT nodeid FROM " + tableName
+                + " WHERE parentid=? AND parentid<>nodeid FETCH FIRST ROW ONLY";
+        try (PreparedStatement statement = conn.prepareStatement(sql)) {
+            statement.setLong(1, nodeid);
+            conn.setAutoCommit(true);
+            try (ResultSet results = statement.executeQuery()) {
+                hasChildren = results != null && results.next();
+            }
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
+        return hasChildren;
     }
 
     /*
@@ -557,22 +536,6 @@ public class BaseNodeTable extends BaseTable<DataNode> {
             MyBoxLog.debug(e);
         }
         return size;
-    }
-
-    public boolean childrenEmpty(Connection conn, long parent) {
-        boolean isEmpty = true;
-        String sql = "SELECT nodeid FROM " + tableName
-                + " WHERE parentid=? AND parentid<>nodeid FETCH FIRST ROW ONLY";
-        try (PreparedStatement statement = conn.prepareStatement(sql)) {
-            statement.setLong(1, parent);
-            conn.setAutoCommit(true);
-            try (ResultSet results = statement.executeQuery()) {
-                isEmpty = results == null || !results.next();
-            }
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
-        return isEmpty;
     }
 
     public boolean equalOrDescendant(FxTask<Void> task, Connection conn, DataNode node1, DataNode node2) {

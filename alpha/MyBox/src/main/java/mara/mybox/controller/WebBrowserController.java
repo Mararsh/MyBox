@@ -222,7 +222,7 @@ public class WebBrowserController extends BaseController {
 
             menu = new MenuItem(message("WebFavorites"), StyleTools.getIconImageView("iconStarFilled.png"));
             menu.setOnAction((ActionEvent event) -> {
-                WebFavoritesController.oneOpen();
+                DataTreeController.webFavorite(myController, false);
             });
             items.add(menu);
 

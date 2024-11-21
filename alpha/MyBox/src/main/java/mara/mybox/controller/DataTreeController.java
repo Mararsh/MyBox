@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.nio.charset.Charset;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -34,6 +36,7 @@ import mara.mybox.db.table.TableDataNodeTag;
 import mara.mybox.db.table.TableDataTag;
 import mara.mybox.db.table.TableNodeHtml;
 import mara.mybox.db.table.TableNodeText;
+import mara.mybox.db.table.TableNodeWebFavorite;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.FxSingletonTask;
@@ -728,8 +731,8 @@ public class DataTreeController extends BaseDataTreeViewController {
         if (item == null) {
             return;
         }
-        DataNode nodeValue = item.getValue();
-        if (nodeValue == null) {
+        DataNode node = item.getValue();
+        if (node == null) {
             return;
         }
         FxTask infoTask = new FxTask<Void>(this) {
@@ -776,7 +779,7 @@ public class DataTreeController extends BaseDataTreeViewController {
                             + message("Values") + "</INPUT>\n"
                             + "</DIV>\n<HR>\n");
                     try (Connection conn = DerbyBase.getConnection()) {
-                        treeView(this, writer, conn, nodeValue, 4, "");
+                        treeView(this, writer, conn, node.getNodeid(), 4, "");
                     } catch (Exception e) {
                         error = e.toString();
                         return false;
@@ -801,23 +804,23 @@ public class DataTreeController extends BaseDataTreeViewController {
     }
 
     protected void treeView(FxTask infoTask, BufferedWriter writer, Connection conn,
-            DataNode node, int indent, String serialNumber) {
+            long nodeid, int indent, String serialNumber) {
         try {
-            if (conn == null || node == null) {
+            if (conn == null || nodeid < 0) {
                 return;
             }
-            List<DataNode> children = nodeTable.children(conn, node.getNodeid());
+            DataNode node = nodeTable.query(conn, nodeid);
             String indentNode = " ".repeat(indent);
             String spaceNode = "&nbsp;".repeat(indent);
             String nodePageid = "item" + node.getNodeid();
             String nodeName = node.getTitle();
             String displayName = "<SPAN class=\"SerialNumber\">" + serialNumber + "&nbsp;&nbsp;</SPAN>" + nodeName;
-            if (children != null && !children.isEmpty()) {
+            boolean hasChildren = nodeTable.hasChildren(conn, nodeid);
+            if (hasChildren) {
                 displayName = "<a href=\"javascript:nodeClicked('" + nodePageid + "')\">" + displayName + "</a>";
             }
-            writer.write(indentNode + "<DIV style=\"padding: 2px;\">" + spaceNode
-                    + displayName + "\n");
-            List<DataNodeTag> tags = nodeTagsTable.nodeTags(conn, node.getNodeid());
+            writer.write(indentNode + "<DIV style=\"padding: 2px;\">" + spaceNode + displayName + "\n");
+            List<DataNodeTag> tags = nodeTagsTable.nodeTags(conn, nodeid);
             if (tags != null && !tags.isEmpty()) {
                 String indentTag = " ".repeat(indent + 8);
                 String spaceTag = "&nbsp;".repeat(2);
@@ -848,15 +851,27 @@ public class DataTreeController extends BaseDataTreeViewController {
                 writer.write(indentNode + dataHtml + "\n");
                 writer.write(indentNode + "</DIV></DIV></DIV>\n");
             }
-            if (children != null && !children.isEmpty()) {
+            if (hasChildren) {
                 writer.write(indentNode + "<DIV class=\"TreeNode\" id='" + nodePageid + "'>\n");
-                for (int i = 0; i < children.size(); i++) {
-                    if (infoTask != null && !infoTask.isWorking()) {
-                        return;
+                String sql = "SELECT nodeid FROM " + nodeTable.getTableName()
+                        + " WHERE parentid=? AND parentid<>nodeid  ORDER BY " + nodeTable.getOrderColumns();
+                try (PreparedStatement statement = conn.prepareStatement(sql)) {
+                    statement.setLong(1, nodeid);
+                    try (ResultSet results = statement.executeQuery()) {
+                        int count = 0;
+                        String ps = serialNumber == null || serialNumber.isBlank() ? "" : serialNumber + ".";
+                        while (results != null && results.next()) {
+                            if (infoTask != null && !infoTask.isWorking()) {
+                                break;
+                            }
+                            treeView(infoTask, writer, conn, results.getLong("nodeid"),
+                                    indent + 4, ps + ++count);
+                        }
+                    } catch (Exception e) {
+                        MyBoxLog.error(e);
                     }
-                    DataNode child = children.get(i);
-                    String ps = serialNumber == null || serialNumber.isBlank() ? "" : serialNumber + ".";
-                    treeView(infoTask, writer, conn, child, indent + 4, ps + (i + 1));
+                } catch (Exception e) {
+                    MyBoxLog.error(e);
                 }
                 writer.write(indentNode + "</DIV>\n");
             }
@@ -1099,6 +1114,10 @@ public class DataTreeController extends BaseDataTreeViewController {
 
     public static DataTreeController htmlTree(BaseController pController, boolean shouldLoad) {
         return open(pController, shouldLoad, new TableNodeHtml());
+    }
+
+    public static DataTreeController webFavorite(BaseController pController, boolean shouldLoad) {
+        return open(pController, shouldLoad, new TableNodeWebFavorite());
     }
 
 }

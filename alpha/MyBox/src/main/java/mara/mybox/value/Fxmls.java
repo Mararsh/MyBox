@@ -19,6 +19,8 @@ public class Fxmls {
     public static final String ControlDataTextFxml = "/fxml/ControlDataText.fxml";
     public static final String ControlDataHtmlFxml = "/fxml/ControlDataHtml.fxml";
     public static final String ControlDataMathFunctionFxml = "/fxml/ControlDataMathFunction.fxml";
+    public static final String ControlDataWebPageAddressFxml = "/fxml/ControlDataWebPageAddress.fxml";
+
     public static final String DataTreeTagsFxml = "/fxml/DataTreeTags.fxml";
     public static final String DataTreeExportFxml = "/fxml/DataTreeExport.fxml";
     public static final String DataTreeImportFxml = "/fxml/DataTreeImport.fxml";
@@ -457,7 +459,6 @@ public class Fxmls {
 
     public static final String WebHistoriesFxml = "/fxml/WebHistories.fxml";
 
-    public static final String WebFavoritesFxml = "/fxml/WebFavorites.fxml";
     public static final String WebFavoriteAddFxml = "/fxml/WebFavoriteAdd.fxml";
 
     public static final String NetworkConvertUrlFxml = "/fxml/NetworkConvertUrl.fxml";

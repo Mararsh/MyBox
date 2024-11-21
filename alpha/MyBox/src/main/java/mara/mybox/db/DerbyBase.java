@@ -36,6 +36,7 @@ import mara.mybox.db.table.TableMyBoxLog;
 import mara.mybox.db.table.TableNamedValues;
 import mara.mybox.db.table.TableNodeHtml;
 import mara.mybox.db.table.TableNodeText;
+import mara.mybox.db.table.TableNodeWebFavorite;
 import mara.mybox.db.table.TablePathConnection;
 import mara.mybox.db.table.TableQueryCondition;
 import mara.mybox.db.table.TableStringValue;
@@ -531,21 +532,27 @@ public class DerbyBase {
                 new TablePathConnection().createTable(conn);
                 loadingController.info("Path_Connection");
             }
-            if (!tables.contains("Note".toLowerCase())) {
+            if (!tables.contains("Node_Html".toLowerCase())) {
                 TableNodeHtml t = new TableNodeHtml();
                 t.createTable(conn);
                 loadingController.info(t.getTreeName());
             }
-            if (!tables.contains("Math_Function".toLowerCase())) {
-                TableMathFunction t = new TableMathFunction();
-                t.createTable(conn);
-                loadingController.info(t.getTreeName());
-            }
-            if (!tables.contains("Info_In_Tree".toLowerCase())) {
+            if (!tables.contains("Node_Text".toLowerCase())) {
                 TableNodeText t = new TableNodeText();
                 t.createTable(conn);
                 loadingController.info(t.getTreeName());
             }
+            if (!tables.contains("Node_Web_Addresses".toLowerCase())) {
+                TableNodeWebFavorite t = new TableNodeWebFavorite();
+                t.createTable(conn);
+                loadingController.info(t.getTreeName());
+            }
+            if (!tables.contains("Node_Math_Function".toLowerCase())) {
+                TableMathFunction t = new TableMathFunction();
+                t.createTable(conn);
+                loadingController.info(t.getTreeName());
+            }
+
             return true;
         } catch (Exception e) {
             MyBoxLog.console(e);

@@ -1,10 +1,9 @@
 package mara.mybox.db;
 
-import mara.mybox.db.data.*;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import mara.mybox.db.Database;
+import mara.mybox.db.data.*;
 import mara.mybox.db.table.BaseNodeTable;
 import static mara.mybox.db.table.BaseNodeTable.RootID;
 import mara.mybox.db.table.TableDataNodeTag;
@@ -166,33 +165,33 @@ public class DataMigrationTools {
             String info = text.trim();
             switch (tableName) {
                 case "Node_Text":
-                    node.setValue("text", text);
+                    node.setValue("text", info);
                     break;
                 case "Node_Html":
-                    node.setValue("html", text);
+                    node.setValue("html", info);
                     break;
-                case InfoNode.WebFavorite:
-                    node.setValue("Address", null);
-                    node.setValue("Icon", null);
+                case "Node_Web_Addresses":
+                    node.setValue("address", null);
+                    node.setValue("icon", null);
                     if (info != null) {
                         if (info.contains(ValueSeparater)) {
                             String[] ss = info.split(ValueSeparater);
                             if (ss.length > 0) {
-                                node.setValue("Address", ss[0].trim());
+                                node.setValue("address", ss[0].trim());
                             }
                             if (ss.length > 1) {
-                                node.setValue("Icon", ss[1].trim());
+                                node.setValue("icon", ss[1].trim());
                             }
                         } else if (info.contains(MoreSeparater)) {
                             String[] ss = info.split(MoreSeparater);
                             if (ss.length > 0) {
-                                node.setValue("Address", ss[0].trim());
+                                node.setValue("address", ss[0].trim());
                             }
                             if (ss.length > 1) {
-                                node.setValue("Icon", ss[1].trim());
+                                node.setValue("icon", ss[1].trim());
                             }
                         } else {
-                            node.setValue("Address", info);
+                            node.setValue("address", info);
                         }
                     }
                     break;

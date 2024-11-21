@@ -23,7 +23,7 @@ public abstract class MainMenuController_Network extends MainMenuController_File
 
     @FXML
     protected void webFavorites(ActionEvent event) {
-        loadScene(Fxmls.WebFavoritesFxml);
+        DataTreeController.webFavorite(parentController, false);
     }
 
     @FXML

@@ -181,19 +181,19 @@ public class InfoTreeNodeExportController extends BaseTaskController {
         this.manager = selector;
         this.tableTreeNode = selector.tableTreeNode;
         this.tableTreeNodeTag = selector.tableTreeNodeTag;
-        if (selector instanceof WebFavoritesController) {
-            iconCheck.setVisible(true);
-            iconCheck.setSelected(UserConfig.getBoolean(baseName + "Icon", false));
-            iconCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
-                    UserConfig.setBoolean(baseName + "Icon", iconCheck.isSelected());
-                }
-            });
-        } else {
-            iconCheck.setSelected(false);
-            iconCheck.setVisible(false);
-        }
+//        if (selector instanceof WebFavoritesController) {
+//            iconCheck.setVisible(true);
+//            iconCheck.setSelected(UserConfig.getBoolean(baseName + "Icon", false));
+//            iconCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+//                @Override
+//                public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
+//                    UserConfig.setBoolean(baseName + "Icon", iconCheck.isSelected());
+//                }
+//            });
+//        } else {
+//            iconCheck.setSelected(false);
+//            iconCheck.setVisible(false);
+//        }
         listController.setParameters(manager);
         listController.loadTree();
         if (item == null) {

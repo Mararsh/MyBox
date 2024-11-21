@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.nio.charset.Charset;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
@@ -260,7 +262,7 @@ public class DataTreeExportController extends BaseTaskController {
         count = level = 0;
         firstRow = true;
         try (Connection conn = DerbyBase.getConnection()) {
-            exportNode(currentTask, conn, sourceItem.getValue(),
+            exportNode(currentTask, conn, sourceItem.getValue().getNodeid(),
                     treeController.chainName(sourceItem.getParent()));
         } catch (Exception e) {
             updateLogs(e.toString());
@@ -432,15 +434,15 @@ public class DataTreeExportController extends BaseTaskController {
         return well;
     }
 
-    public void exportNode(FxTask currentTask, Connection conn, DataNode inNode, String parentChainName) {
+    public void exportNode(FxTask currentTask, Connection conn, long nodeid, String parentChainName) {
         level++;
-        if (conn == null || inNode == null) {
+        if (conn == null || nodeid < 0) {
             return;
         }
         try {
             count++;
 
-            DataNode node = nodeTable.query(conn, inNode.getNodeid());
+            DataNode node = nodeTable.query(conn, nodeid);
             List<DataNodeTag> tags = null;
             if (tagsCheck.isSelected()) {
                 tags = nodeTagsTable.nodeTags(conn, node.getNodeid());
@@ -473,7 +475,6 @@ public class DataTreeExportController extends BaseTaskController {
             } else {
                 nodeChainName = node.getTitle();
             }
-            List<DataNode> children = nodeTable.children(conn, node.getNodeid());
 
             if (framesetNavWriter != null) {
                 String nodeTitle = node.getTitle() + "_" + node.getNodeid();
@@ -501,13 +502,32 @@ public class DataTreeExportController extends BaseTaskController {
                     updateLogs(e.toString());
                 }
 
-                if (children != null && !children.isEmpty()) {
-                    for (DataNode child : children) {
-                        File childFile = new File(framesetNavFile.getParent() + File.separator
-                                + FileNameTools.filter(child.getTitle() + "_" + child.getNodeid()) + ".html");
-                        bookNavWriter.write("<A href=\"" + childFile.getName() + "\"  target=main>" + child.getTitle() + "</A><BR>\n");
+                String sql = "SELECT nodeid, title FROM " + nodeTable.getTableName()
+                        + " WHERE parentid=? AND parentid<>nodeid  ORDER BY " + nodeTable.getOrderColumns();
+                boolean hasChildren = false;
+                try (PreparedStatement statement = conn.prepareStatement(sql)) {
+                    statement.setLong(1, nodeid);
+                    try (ResultSet results = statement.executeQuery()) {
+                        String title;
+                        while (results != null && results.next()) {
+                            if (currentTask == null || !currentTask.isWorking()) {
+                                return;
+                            }
+                            exportNode(currentTask, conn, results.getLong("nodeid"), nodeChainName);
+                            title = results.getString("title");
+                            File childFile = new File(framesetNavFile.getParent() + File.separator
+                                    + FileNameTools.filter(title + "_" + results.getLong("nodeid")) + ".html");
+                            bookNavWriter.write("<A href=\"" + childFile.getName() + "\"  target=main>" + title + "</A><BR>\n");
+                            hasChildren = true;
+                        }
+                    } catch (Exception e) {
+                        updateLogs(e.toString());
                     }
-                } else {
+                } catch (Exception e) {
+                    updateLogs(e.toString());
+                }
+
+                if (!hasChildren) {
                     bookNavWriter.write("<A href=\"" + nodeFile.getName() + "\"  target=main>" + node.getTitle() + "</A><BR>\n");
                 }
                 try {
@@ -522,14 +542,24 @@ public class DataTreeExportController extends BaseTaskController {
                 return;
             }
 
-            if (children != null) {
-                for (DataNode child : children) {
-                    if (currentTask == null || !currentTask.isWorking()) {
-                        return;
+            String sql = "SELECT nodeid FROM " + nodeTable.getTableName()
+                    + " WHERE parentid=? AND parentid<>nodeid  ORDER BY " + nodeTable.getOrderColumns();
+            try (PreparedStatement statement = conn.prepareStatement(sql)) {
+                statement.setLong(1, nodeid);
+                try (ResultSet results = statement.executeQuery()) {
+                    while (results != null && results.next()) {
+                        if (currentTask == null || !currentTask.isWorking()) {
+                            return;
+                        }
+                        exportNode(currentTask, conn, results.getLong("nodeid"), nodeChainName);
                     }
-                    exportNode(currentTask, conn, child, nodeChainName);
+                } catch (Exception e) {
+                    updateLogs(e.toString());
                 }
+            } catch (Exception e) {
+                updateLogs(e.toString());
             }
+
             if (!isRootNode && xmlWriter != null) {
                 xmlWriter.write(xmlPrefix + "</TreeNode>\n");
             }

@@ -43,7 +43,7 @@ public abstract class MyBoxController_Network extends MyBoxController_File {
 
         MenuItem WebFavorites = new MenuItem(message("WebFavorites"));
         WebFavorites.setOnAction((ActionEvent event1) -> {
-            loadScene(Fxmls.WebFavoritesFxml);
+            DataTreeController.webFavorite(this, true);
         });
 
         MenuItem WebHistories = new MenuItem(message("WebHistories"));

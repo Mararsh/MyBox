@@ -220,7 +220,7 @@ public class TestCase {
             cases.add(new TestCase(index++, message("GameMine"), Fxmls.GameMineFxml));
 
             cases.add(new TestCase(index++, message("WebBrowser"), Fxmls.WebBrowserFxml));
-            cases.add(new TestCase(index++, message("WebFavorites"), Fxmls.WebFavoritesFxml));
+//            cases.add(new TestCase(index++, message("WebFavorites"), Fxmls.WebFavoritesFxml));
             cases.add(new TestCase(index++, message("WebHistories"), Fxmls.WebHistoriesFxml));
             cases.add(new TestCase(index++, message("QueryNetworkAddress"), Fxmls.NetworkQueryAddressFxml));
             cases.add(new TestCase(index++, message("QueryDNSBatch"), Fxmls.NetworkQueryDNSBatchFxml));

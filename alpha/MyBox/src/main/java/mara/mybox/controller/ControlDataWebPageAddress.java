@@ -3,14 +3,13 @@ package mara.mybox.controller;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.net.URI;
-import java.util.Map;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
+import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
-import mara.mybox.db.data.InfoNode;
-import static mara.mybox.db.data.InfoNode.ValueSeparater;
+import mara.mybox.db.data.DataNode;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
@@ -23,29 +22,18 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-3-11
  * @License Apache License Version 2.0
  */
-public class WebFavoriteEditor extends InfoTreeNodeEditor {
+public class ControlDataWebPageAddress extends BaseDataValuesController {
 
+    @FXML
+    protected TextField addressInput;
     @FXML
     protected ControlFileSelecter iconController;
     @FXML
     protected ImageView iconView;
 
     @Override
-    public void initValues() {
+    public void initEditor() {
         try {
-            super.initValues();
-
-            moreInput = iconController.fileInput;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    @Override
-    public void initControls() {
-        try {
-            super.initControls();
-
             iconController.isDirectory(false).isSource(true)
                     .mustExist(true).permitNull(true)
                     .type(VisitHistory.FileType.Image)
@@ -63,34 +51,44 @@ public class WebFavoriteEditor extends InfoTreeNodeEditor {
     }
 
     @Override
-    protected void editValue(InfoNode node) {
-        Map<String, String> values = InfoNode.parseInfo(node);
-        if (values != null) {
-            valueInput.setText(values.get("Address"));
-            moreInput.setText(values.get("Icon"));
-            updateIcon(values.get("Icon"));
-        } else {
-            valueInput.setText("");
-            moreInput.setText("");
-            updateIcon(null);
+    protected void editValues() {
+        try {
+            String address = null, icon = null;
+            if (nodeEditor.currentNode != null) {
+                Object v = nodeEditor.currentNode.getValue("address");
+                if (v != null) {
+                    address = (String) v;
+                }
+                v = nodeEditor.currentNode.getValue("icon");
+                if (v != null) {
+                    icon = (String) v;
+                }
+            }
+            addressInput.setText(address);
+            updateIcon(icon);
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
         }
     }
 
     @Override
-    protected InfoNode pickValue(InfoNode node) {
-        if (node == null) {
+    protected DataNode pickValues(DataNode node) {
+        try {
+            String address = addressInput.getText();
+            if (address == null || address.isBlank()) {
+                return null;
+            }
+            String icon = iconController.fileInput.getText();
+
+            node.setValue("address", address.trim());
+            node.setValue("icon", icon == null ? "" : icon.trim());
+
+            return node;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
             return null;
         }
-        String address = valueInput.getText();
-        String icon = moreInput.getText();
-        String info;
-        if (icon == null || icon.isBlank()) {
-            info = address == null || address.isBlank() ? null : address.trim();
-        } else {
-            info = (address == null ? "" : address.trim()) + ValueSeparater + "\n"
-                    + icon.trim();
-        }
-        return node.setInfo(info);
     }
 
     protected void updateIcon(String icon) {
@@ -114,7 +112,7 @@ public class WebFavoriteEditor extends InfoTreeNodeEditor {
     protected void downloadIcon() {
         String address;
         try {
-            URI uri = new URI(valueInput.getText());
+            URI uri = new URI(addressInput.getText());
             address = uri.toString();
         } catch (Exception e) {
             popError(message("InvalidData"));
@@ -143,8 +141,9 @@ public class WebFavoriteEditor extends InfoTreeNodeEditor {
     @FXML
     @Override
     public void goAction() {
-        String address = valueInput.getText();
+        String address = addressInput.getText();
         if (address == null || address.isBlank()) {
+            popError(message("InvalidData") + ": " + message("Address"));
             return;
         }
         WebBrowserController.openAddress(address, true);

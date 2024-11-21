@@ -1,6 +1,8 @@
 package mara.mybox.controller;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -540,31 +542,42 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
                 if (node == null) {
                     return;
                 }
-                List<DataNode> children = nodeTable.children(conn, node.getNodeid());
-                if (children != null) {
-                    for (DataNode childNode : children) {
-                        if (task == null || task.isCancelled()) {
-                            return;
+
+                String sql = "SELECT " + BaseNodeTable.NodeFields + " FROM " + nodeTable.getTableName()
+                        + " WHERE parentid=? AND parentid<>nodeid  ORDER BY " + nodeTable.getOrderColumns();
+                try (PreparedStatement statement = conn.prepareStatement(sql)) {
+                    statement.setLong(1, node.getNodeid());
+                    try (ResultSet results = statement.executeQuery()) {
+                        while (results != null && results.next()) {
+                            if (task == null || task.isCancelled()) {
+                                return;
+                            }
+                            DataNode childNode = nodeTable.readData(results);
+                            TreeItem<DataNode> childItem = new TreeItem(childNode);
+                            item.getChildren().add(childItem);
+                            if (nodeTable.hasChildren(conn, childNode.getNodeid())) {
+                                childItem.expandedProperty().addListener(
+                                        (ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) -> {
+                                            if (newVal && !childItem.isLeaf() && !isLoaded(childItem)) {
+                                                unfold(childItem, false);
+                                            }
+                                        });
+                                TreeItem<DataNode> dummyItem = new TreeItem(new DataNode());
+                                childItem.getChildren().add(dummyItem);
+                            }
+                            if (descendants) {
+                                unfold(task, conn, childItem, true);
+                            } else {
+                                childItem.setExpanded(false);
+                            }
                         }
-                        TreeItem<DataNode> childItem = new TreeItem(childNode);
-                        item.getChildren().add(childItem);
-                        if (!nodeTable.childrenEmpty(conn, childNode.getNodeid())) {
-                            childItem.expandedProperty().addListener(
-                                    (ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) -> {
-                                        if (newVal && !childItem.isLeaf() && !isLoaded(childItem)) {
-                                            unfold(childItem, false);
-                                        }
-                                    });
-                            TreeItem<DataNode> dummyItem = new TreeItem(new DataNode());
-                            childItem.getChildren().add(dummyItem);
-                        }
-                        if (descendants) {
-                            unfold(task, conn, childItem, true);
-                        } else {
-                            childItem.setExpanded(false);
-                        }
+                    } catch (Exception e) {
+                        MyBoxLog.error(e.toString());
                     }
+                } catch (Exception e) {
+                    MyBoxLog.error(e.toString());
                 }
+
             }
             item.setExpanded(true);
         } catch (Exception e) {

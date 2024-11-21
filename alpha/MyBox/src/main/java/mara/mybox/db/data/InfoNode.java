@@ -19,7 +19,6 @@ import mara.mybox.controller.JavaScriptController;
 import mara.mybox.controller.JexlController;
 import mara.mybox.controller.MathFunctionController;
 import mara.mybox.controller.RowFilterController;
-import mara.mybox.controller.WebFavoritesController;
 import mara.mybox.data.StringTable;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.tools.Data2DDefinitionTools;
@@ -704,8 +703,8 @@ public class InfoNode extends BaseData {
             return null;
         }
         switch (category) {
-            case InfoNode.WebFavorite:
-                return WebFavoritesController.oneOpen();
+//            case InfoNode.WebFavorite:
+//                return WebFavoritesController.oneOpen();
 //            case InfoNode.Notebook:
 //                return NoteTreeController.oneOpen();
             case InfoNode.JShellCode:

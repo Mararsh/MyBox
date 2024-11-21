@@ -1282,7 +1282,7 @@ public class ControlWebView extends BaseController {
 
             menu = new MenuItem(message("WebFavorites"), StyleTools.getIconImageView("iconStarFilled.png"));
             menu.setOnAction((ActionEvent event) -> {
-                WebFavoritesController.oneOpen();
+                DataTreeController.webFavorite(myController, false);
             });
             viewMenu.getItems().add(menu);
 
