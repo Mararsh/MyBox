@@ -40,7 +40,8 @@ public class ControlSelectPixels extends BaseImageScope {
 
     @FXML
     public void saveScope() {
-        ImageScopeController.load(scope);
+        DataTreeController controller = DataTreeController.imageScope(this, false);
+        ((ControlDataImageScope) controller.nodeController.dataController).loadScope(scope);
     }
 
     @FXML

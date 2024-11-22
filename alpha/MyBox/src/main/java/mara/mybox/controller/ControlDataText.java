@@ -77,7 +77,8 @@ public class ControlDataText extends BaseDataValuesController {
     }
 
     @FXML
-    public void clearValue() {
+    @Override
+    public void clearAction() {
         textInput.clear();
     }
 

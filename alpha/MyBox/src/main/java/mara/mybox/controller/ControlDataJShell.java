@@ -4,20 +4,26 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import jdk.jshell.JShell;
 import jdk.jshell.SourceCodeAnalysis;
+import mara.mybox.db.data.DataNode;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
+import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.fxml.style.NodeStyleTools;
@@ -33,23 +39,85 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2022-3-11
  * @License Apache License Version 2.0
  */
-public class JShellEditor extends InfoTreeNodeEditor {
+public class ControlDataJShell extends BaseDataValuesController {
 
-    protected JShellController jShellController;
     protected String outputs = "";
     protected JShell jShell;
     protected FxTask resetTask;
 
     @FXML
+    protected TextArea codesInput;
+    @FXML
+    protected CheckBox wrapCheck;
+    @FXML
     protected Button clearCodesButton, suggestionsButton;
+    @FXML
+    protected ControlWebView webViewController;
+    @FXML
+    protected JShellSnippets snippetsController;
+    @FXML
+    protected JShellPaths pathsController;
 
-    public JShellEditor() {
-        defaultExt = "java";
+    public ControlDataJShell() {
+        TipsLabelKey = "JShellTips";
     }
 
-    protected void setParameters(JShellController jShellController) {
-        this.jShellController = jShellController;
-        resetJShell();
+    @Override
+    public void initEditor() {
+        try {
+            codesInput.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue v, String ov, String nv) {
+                    valueChanged(true);
+                }
+            });
+
+            wrapCheck.setSelected(UserConfig.getBoolean(baseName + "Wrap", false));
+            wrapCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(baseName + "Wrap", newValue);
+                    codesInput.setWrapText(newValue);
+                }
+            });
+            codesInput.setWrapText(wrapCheck.isSelected());
+
+            webViewController.setParent(nodeEditor, ControlWebView.ScrollType.Bottom);
+            snippetsController.setParameters(this);
+
+            resetJShell();
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    @Override
+    protected void editValues() {
+        try {
+            isSettingValues = true;
+            if (nodeEditor.currentNode != null) {
+                codesInput.setText(nodeEditor.currentNode.getStringValue("codes"));
+            } else {
+                codesInput.clear();
+            }
+            isSettingValues = false;
+            valueChanged(false);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    @Override
+    protected DataNode pickValues(DataNode node) {
+        try {
+            String text = codesInput.getText();
+            node.setValue("codes", text == null ? null : text.trim());
+            return node;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
     }
 
     @FXML
@@ -71,22 +139,18 @@ public class JShellEditor extends InfoTreeNodeEditor {
 
             @Override
             protected void whenSucceeded() {
-                jShellController.pathsController.resetPaths(jShell);
-                jShellController.snippetsController.refreshSnippets();
+                pathsController.resetPaths(jShell);
+                snippetsController.refreshSnippets();
             }
 
         };
         start(resetTask, true);
     }
 
-    @Override
-    protected void showEditorPane() {
-    }
-
     @FXML
     @Override
     public void startAction() {
-        String codes = valueInput.getText();
+        String codes = codesInput.getText();
         if (codes == null || codes.isBlank()) {
             popError(message("NoInput"));
             return;
@@ -98,7 +162,7 @@ public class JShellEditor extends InfoTreeNodeEditor {
         StyleTools.setNameIcon(startButton, message("Stop"), "iconStop.png");
         startButton.applyCss();
         startButton.setUserData("started");
-        jShellController.rightPaneCheck.setSelected(true);
+        showRightPane();
         task = new FxSingletonTask<Void>(this) {
             @Override
             protected boolean handle() {
@@ -169,6 +233,16 @@ public class JShellEditor extends InfoTreeNodeEditor {
         return true;
     }
 
+    @FXML
+    @Override
+    public void clearAction() {
+        codesInput.clear();
+    }
+
+    public void edit(String script) {
+        codesInput.setText(script);
+    }
+
     @Override
     public void cancelAction() {
         if (task != null) {
@@ -184,7 +258,7 @@ public class JShellEditor extends InfoTreeNodeEditor {
         if (jShell != null) {
             jShell.stop();
         }
-        jShellController.snippetsController.refreshSnippets();
+        snippetsController.refreshSnippets();
         StyleTools.setNameIcon(startButton, message("Start"), "iconStart.png");
         startButton.applyCss();
         startButton.setUserData(null);
@@ -194,9 +268,21 @@ public class JShellEditor extends InfoTreeNodeEditor {
         Platform.runLater(() -> {
             outputs += msg + "<br><br>";
             String html = HtmlWriteTools.html(null, HtmlStyles.DefaultStyle, "<body>" + outputs + "</body>");
-            jShellController.webViewController.loadContents(html);
+            webViewController.loadContents(html);
         });
         Platform.requestNextPulse();
+    }
+
+    @FXML
+    protected void popHistories(Event event) {
+        if (UserConfig.getBoolean(baseName + "CodesHistoriesPopWhenMouseHovering", false)) {
+            showHistories(event);
+        }
+    }
+
+    @FXML
+    protected void showHistories(Event event) {
+        PopTools.popStringValues(this, codesInput, event, baseName + "CodesHistories", false);
     }
 
     // https://stackoverflow.com/questions/53867043/what-are-the-limits-to-jshell?r=SearchResults
@@ -211,7 +297,7 @@ public class JShellEditor extends InfoTreeNodeEditor {
     protected void showSyntaxMenu(Event event) {
         try {
             String menuName = interfaceName + "Syntax";
-            MenuController controller = MenuController.open(jShellController, valueInput, event, menuName, false);
+            MenuController controller = MenuController.open(nodeEditor, codesInput, event, menuName, false);
             controller.setTitleLabel(message("Syntax"));
 
             List<Node> topButtons = new ArrayList<>();
@@ -221,8 +307,8 @@ public class JShellEditor extends InfoTreeNodeEditor {
             newLineButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    valueInput.replaceText(valueInput.getSelection(), "\n");
-                    valueInput.requestFocus();
+                    codesInput.replaceText(codesInput.getSelection(), "\n");
+                    codesInput.requestFocus();
                 }
             });
             topButtons.add(newLineButton);
@@ -233,14 +319,14 @@ public class JShellEditor extends InfoTreeNodeEditor {
             clearInputButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    valueInput.clear();
+                    codesInput.clear();
                 }
             });
             topButtons.add(clearInputButton);
 
             controller.addFlowPane(topButtons);
 
-            PopTools.addButtonsPane(controller, valueInput, Arrays.asList(
+            PopTools.addButtonsPane(controller, codesInput, Arrays.asList(
                     "int maxInt = Integer.MAX_VALUE, minInt = Integer.MIN_VALUE;",
                     "double maxDouble = Double.MAX_VALUE, minDouble = -Double.MAX_VALUE;",
                     "float maxFloat = Float.MAX_VALUE, minFloat = Float.MIN_VALUE;",
@@ -249,13 +335,13 @@ public class JShellEditor extends InfoTreeNodeEditor {
                     "String s1 =\"Hello\";",
                     "String[] sArray = new String[3]; "
             ));
-            PopTools.addButtonsPane(controller, valueInput, Arrays.asList(
+            PopTools.addButtonsPane(controller, codesInput, Arrays.asList(
                     ";", " , ", "( )", " = ", " { } ", "[ ]", "\"", " + ", " - ", " * ", " / "
             ));
-            PopTools.addButtonsPane(controller, valueInput, Arrays.asList(
+            PopTools.addButtonsPane(controller, codesInput, Arrays.asList(
                     " == ", " != ", " >= ", " > ", " <= ", " < ", " && ", " || ", " ! "
             ));
-            PopTools.addButtonsPane(controller, valueInput, Arrays.asList(
+            PopTools.addButtonsPane(controller, codesInput, Arrays.asList(
                     "if (3 > 2) {\n"
                     + "   int a = 1;\n"
                     + "}",
@@ -275,7 +361,45 @@ public class JShellEditor extends InfoTreeNodeEditor {
 
     @FXML
     public void popSuggesions() {
-        PopTools.popJShellSuggesions(this, jShell, valueInput);
+        PopTools.popJShellSuggesions(nodeEditor, jShell, codesInput);
+    }
+
+    @FXML
+    public void popJavaHelps(Event event) {
+        if (UserConfig.getBoolean("JavaHelpsPopWhenMouseHovering", false)) {
+            showJavaHelps(event);
+        }
+    }
+
+    @FXML
+    public void showJavaHelps(Event event) {
+        popEventMenu(event, HelpTools.javaHelps());
+    }
+
+    /*
+        right pane
+     */
+    @FXML
+    protected void showHtmlStyle(Event event) {
+        PopTools.popHtmlStyle(event, webViewController);
+    }
+
+    @FXML
+    protected void popHtmlStyle(Event event) {
+        if (UserConfig.getBoolean("HtmlStylesPopWhenMouseHovering", false)) {
+            showHtmlStyle(event);
+        }
+    }
+
+    @FXML
+    public void editResults() {
+        webViewController.editAction();
+    }
+
+    @FXML
+    public void clearResults() {
+        outputs = "";
+        webViewController.clear();
     }
 
     @Override

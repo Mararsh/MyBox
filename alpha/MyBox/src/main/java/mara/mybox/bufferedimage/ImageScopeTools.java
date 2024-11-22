@@ -314,7 +314,7 @@ public class ImageScopeTools {
             decodeOutline(task, scope);
             return scope;
         } catch (Exception e) {
-            MyBoxLog.error(e);
+//            MyBoxLog.error(e);
             return null;
         }
     }

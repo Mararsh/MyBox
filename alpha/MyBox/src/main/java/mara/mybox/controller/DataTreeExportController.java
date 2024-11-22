@@ -518,7 +518,6 @@ public class DataTreeExportController extends BaseTaskController {
                             if (currentTask == null || !currentTask.isWorking()) {
                                 return;
                             }
-                            exportNode(currentTask, conn, results.getLong("nodeid"), nodeChainName);
                             title = results.getString("title");
                             File childFile = new File(framesetNavFile.getParent() + File.separator
                                     + FileNameTools.filter(title + "_" + results.getLong("nodeid")) + ".html");

@@ -1,7 +1,6 @@
 package mara.mybox.db.table;
 
 import java.sql.Connection;
-import java.util.Map;
 import mara.mybox.controller.BaseController;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
@@ -18,27 +17,24 @@ import static mara.mybox.value.Languages.message;
 public class TableNodeJShell extends BaseNodeTable {
 
     public TableNodeJShell() {
-        tableName = "Node_SQL";
-        treeName = message("JShellCode");
-        dataName = message("JShellCode");
-        dataFxml = Fxmls.ControlDataSQLFxml;
-        examplesFileName = "JShellCode";
+        tableName = "Node_JShell";
+        treeName = message("JShell");
+        dataName = message("JShell");
+        dataFxml = Fxmls.ControlDataJShellFxml;
+        examplesFileName = "JShell";
         defineColumns();
     }
 
     public final TableNodeJShell defineColumns() {
         defineNodeColumns();
-        addColumn(new ColumnDefinition("statement", ColumnType.String).setLength(FilenameMaxLength));
+        addColumn(new ColumnDefinition("codes", ColumnType.Clob));
         return this;
     }
 
     @Override
     public String valuesHtml(FxTask task, Connection conn, BaseController controller, DataNode node) {
         try {
-            Map<String, Object> values = node.getValues();
-            String sql = (String) values.get("statement");
-            return sql == null || sql.isBlank() ? null
-                    : ("<CODE>" + sql + "</CODE>");
+            return node.getStringValue("codes");
         } catch (Exception e) {
             return null;
         }

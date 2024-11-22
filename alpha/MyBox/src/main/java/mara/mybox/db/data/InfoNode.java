@@ -11,11 +11,8 @@ import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.bufferedimage.ImageScopeTools;
 import mara.mybox.controller.BaseController;
 import mara.mybox.controller.Data2DDefinitionController;
-import mara.mybox.controller.ImageScopeController;
 import mara.mybox.controller.InfoTreeManageController;
-import mara.mybox.controller.JShellController;
 import mara.mybox.controller.JavaScriptController;
-import mara.mybox.controller.JexlController;
 import mara.mybox.controller.RowFilterController;
 import mara.mybox.data.StringTable;
 import mara.mybox.data2d.DataFileCSV;
@@ -705,16 +702,16 @@ public class InfoNode extends BaseData {
 //                return WebFavoritesController.oneOpen();
 //            case InfoNode.Notebook:
 //                return NoteTreeController.oneOpen();
-            case InfoNode.JShellCode:
-                return JShellController.open("");
+//            case InfoNode.JShellCode:
+//                return JShellController.open("");
 //            case InfoNode.SQL:
 //                return DatabaseSqlController.open(false);
             case InfoNode.JavaScript:
                 return JavaScriptController.loadScript("");
 //            case InfoNode.InformationInTree:
 //                return InfoTreeController.oneOpen();
-            case InfoNode.JEXLCode:
-                return JexlController.open("", "", "");
+//            case InfoNode.JEXLCode:
+//                return JexlController.open("", "", "");
             case InfoNode.RowFilter:
                 return RowFilterController.open();
 //            case InfoNode.MathFunction:
@@ -723,8 +720,8 @@ public class InfoNode extends BaseData {
 //                return ImageMaterialController.open();
             case InfoNode.Data2DDefinition:
                 return Data2DDefinitionController.open();
-            case InfoNode.ImageScope:
-                return ImageScopeController.open();
+//            case InfoNode.ImageScope:
+//                return ImageScopeController.open();
 
         }
         return null;

@@ -206,20 +206,17 @@ public class DataMigrationTools {
                     break;
                 case "Node_Image_Scope":
                     ImageScope scope = ImageScopeTools.fromXML(null, null, info);
-                    if (scope == null) {
-                        return null;
-                    }
                     return ImageScopeTools.toDataNode(scope);
                 case "Node_JShell":
-                    node.setValue("Codes", info);
+                    node.setValue("codes", info);
                     break;
                 case "Node_JavaScript":
                     node.setValue("Script", info);
                     break;
                 case "Node_JEXL":
-                    node.setValue("Script", null);
-                    node.setValue("Context", null);
-                    node.setValue("Parameters", null);
+                    node.setValue("script", null);
+                    node.setValue("context", null);
+                    node.setValue("parameters", null);
                     if (info != null) {
                         String[] ss = null;
                         if (info.contains(ValueSeparater)) {
@@ -229,16 +226,16 @@ public class DataMigrationTools {
                         }
                         if (ss != null) {
                             if (ss.length > 0) {
-                                node.setValue("Script", ss[0].trim());
+                                node.setValue("script", ss[0].trim());
                             }
                             if (ss.length > 1) {
-                                node.setValue("Context", ss[1].trim());
+                                node.setValue("context", ss[1].trim());
                             }
                             if (ss.length > 2) {
-                                node.setValue("Parameters", ss[2].trim());
+                                node.setValue("parameters", ss[2].trim());
                             }
                         } else {
-                            node.setValue("Script", info);
+                            node.setValue("script", info);
                         }
                     }
                     break;

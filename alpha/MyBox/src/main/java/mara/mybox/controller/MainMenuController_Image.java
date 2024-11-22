@@ -178,7 +178,7 @@ public abstract class MainMenuController_Image extends MainMenuController_Docume
 
     @FXML
     protected void imageScope(ActionEvent event) {
-        loadScene(Fxmls.ImageScopeFxml);
+        DataTreeController.imageScope(parentController, false);
     }
 
     @FXML

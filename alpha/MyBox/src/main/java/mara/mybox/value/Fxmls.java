@@ -184,7 +184,6 @@ public class Fxmls {
     public static final String ImageSVGPathFxml = "/fxml/ImageSVGPath.fxml";
     public static final String ImageTextFxml = "/fxml/ImageText.fxml";
 
-    public static final String ImageScopeFxml = "/fxml/ImageScope.fxml";
     public static final String ImageCanvasInputFxml = "/fxml/ImageCanvasInput.fxml";
     public static final String ImageHistoriesFxml = "/fxml/ImageHistories.fxml";
     public static final String ImageScopeViewsFxml = "/fxml/ImageScopeViews.fxml";
@@ -355,8 +354,6 @@ public class Fxmls {
     public static final String Data2DChartGroupBoxWhiskerFxml = "/fxml/Data2DChartGroupBoxWhisker.fxml";
     public static final String ValueRangeInputFxml = "/fxml/ValueRangeInput.fxml";
 
-    public static final String JShellFxml = "/fxml/JShell.fxml";
-    public static final String JexlFxml = "/fxml/Jexl.fxml";
     public static final String JavaScriptFxml = "/fxml/JavaScript.fxml";
 
     public static final String MathFunctionDataFxml = "/fxml/MathFunctionData.fxml";

@@ -29,13 +29,15 @@ import mara.mybox.db.table.TableImageClipboard;
 import mara.mybox.db.table.TableImageEditHistory;
 import mara.mybox.db.table.TableInfoNode;
 import mara.mybox.db.table.TableInfoNodeTag;
-import mara.mybox.db.table.TableNodeMathFunction;
 import mara.mybox.db.table.TableMedia;
 import mara.mybox.db.table.TableMediaList;
 import mara.mybox.db.table.TableMyBoxLog;
 import mara.mybox.db.table.TableNamedValues;
 import mara.mybox.db.table.TableNodeHtml;
 import mara.mybox.db.table.TableNodeImageScope;
+import mara.mybox.db.table.TableNodeJEXL;
+import mara.mybox.db.table.TableNodeJShell;
+import mara.mybox.db.table.TableNodeMathFunction;
 import mara.mybox.db.table.TableNodeSQL;
 import mara.mybox.db.table.TableNodeText;
 import mara.mybox.db.table.TableNodeWebFavorite;
@@ -561,6 +563,16 @@ public class DerbyBase {
             }
             if (!tables.contains("Node_Image_Scope".toLowerCase())) {
                 TableNodeImageScope t = new TableNodeImageScope();
+                t.createTable(conn);
+                loadingController.info(t.getTreeName());
+            }
+            if (!tables.contains("Node_JShell".toLowerCase())) {
+                TableNodeJShell t = new TableNodeJShell();
+                t.createTable(conn);
+                loadingController.info(t.getTreeName());
+            }
+            if (!tables.contains("Node_JEXL".toLowerCase())) {
+                TableNodeJEXL t = new TableNodeJEXL();
                 t.createTable(conn);
                 loadingController.info(t.getTreeName());
             }

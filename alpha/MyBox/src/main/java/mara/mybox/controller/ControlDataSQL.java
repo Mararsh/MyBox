@@ -212,7 +212,8 @@ public class ControlDataSQL extends BaseDataValuesController {
     }
 
     @FXML
-    public void clearValue() {
+    @Override
+    public void clearAction() {
         sqlArea.clear();
     }
 

@@ -3,12 +3,8 @@ package mara.mybox.controller;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
-import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.style.NodeStyleTools;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -25,17 +21,6 @@ public class JavaScriptEditor extends InfoTreeNodeEditor {
 
     public JavaScriptEditor() {
         defaultExt = "js";
-    }
-
-    @Override
-    public void setControlsStyle() {
-        try {
-            super.setControlsStyle();
-
-            NodeStyleTools.setTooltip(clearCodesButton, new Tooltip(message("Clear") + "\nCTRL+g"));
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
     }
 
     protected void setParameters(JavaScriptController jsController) {

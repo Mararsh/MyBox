@@ -109,7 +109,7 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                              </graphic>
                                           </Button>
-                                                      <Button fx:id="clearExpressionButton" mnemonicParsing="false" onAction="#clearExpression">
+                                                      <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction">
                                                           <graphic>
                                                               <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                   <image>

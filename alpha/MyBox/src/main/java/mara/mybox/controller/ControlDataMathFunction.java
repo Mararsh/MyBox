@@ -394,7 +394,8 @@ public class ControlDataMathFunction extends BaseDataValuesController {
     }
 
     @FXML
-    public void clearExpression() {
+    @Override
+    public void clearAction() {
         expressionInput.clear();
     }
 

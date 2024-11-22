@@ -113,7 +113,6 @@ public class StyleButton {
         if (id.startsWith("clear")) {
             switch (id) {
                 case "clearButton":
-                case "clearCodesButton":
                     return new StyleData(id, message("Clear"), "CTRL+L / ALT+L", "iconClear.png");
                 default:
                     return new StyleData(id, message("Clear"), "", "iconClear.png");

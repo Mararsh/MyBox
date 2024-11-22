@@ -123,12 +123,12 @@ public abstract class MainMenuController_Data extends MainMenuController_Network
 
     @FXML
     protected void JShell(ActionEvent event) {
-        loadScene(Fxmls.JShellFxml);
+        DataTreeController.jShell(parentController, false);
     }
 
     @FXML
     protected void JEXL(ActionEvent event) {
-        loadScene(Fxmls.JexlFxml);
+        DataTreeController.jexl(parentController, false);
     }
 
     @FXML

@@ -3,7 +3,6 @@ package mara.mybox.controller;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -11,14 +10,15 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Separator;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
-import mara.mybox.db.data.InfoNode;
-import static mara.mybox.db.data.InfoNode.ValueSeparater;
+import mara.mybox.db.data.DataNode;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
+import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
@@ -32,13 +32,51 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2022-5-17
  * @License Apache License Version 2.0
  */
-public class JexlEditor extends JShellEditor {
+public class ControlDataJEXL extends ControlDataJShell {
 
+    @FXML
+    protected TextArea contextInput;
     @FXML
     protected TextField parametersInput;
 
-    public JexlEditor() {
-        defaultExt = "txt";
+    public ControlDataJEXL() {
+        TipsLabelKey = "JEXLTips";
+    }
+
+    @Override
+    protected void editValues() {
+        try {
+            isSettingValues = true;
+            if (nodeEditor.currentNode != null) {
+                codesInput.setText(nodeEditor.currentNode.getStringValue("script"));
+                contextInput.setText(nodeEditor.currentNode.getStringValue("context"));
+                parametersInput.setText(nodeEditor.currentNode.getStringValue("parameters"));
+            } else {
+                codesInput.clear();
+                contextInput.clear();
+                parametersInput.clear();
+            }
+            isSettingValues = false;
+            valueChanged(false);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    @Override
+    protected DataNode pickValues(DataNode node) {
+        try {
+            String script = codesInput.getText();
+            node.setValue("script", script == null ? null : script.trim());
+            String context = contextInput.getText();
+            node.setValue("context", context == null ? null : context.trim());
+            String parameters = parametersInput.getText();
+            node.setValue("parameters", parameters == null ? null : parameters.trim());
+            return node;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
     }
 
     @FXML
@@ -64,45 +102,11 @@ public class JexlEditor extends JShellEditor {
 
             @Override
             protected void whenSucceeded() {
-                jShellController.pathsController.pathsArea.setText(paths);
+                pathsController.pathsArea.setText(paths);
             }
 
         };
         start(resetTask, true);
-    }
-
-    @Override
-    protected void showEditorPane() {
-    }
-
-    @Override
-    protected void editValue(InfoNode node) {
-        if (node != null) {
-            Map<String, String> values = InfoNode.parseInfo(node);
-            valueInput.setText(values.get("Script"));
-            moreInput.setText(values.get("Context"));
-            parametersInput.setText(values.get("Parameters"));
-        }
-    }
-
-    @Override
-    protected InfoNode pickValue(InfoNode node) {
-        if (node == null) {
-            return null;
-        }
-        String script = valueInput.getText();
-        String context = moreInput.getText();
-        String parameters = parametersInput.getText();
-        String info;
-        if ((parameters == null || parameters.isBlank())
-                && (context == null || context.isBlank())) {
-            info = script == null || script.isBlank() ? null : script.trim();
-        } else {
-            info = (script == null ? "" : script.trim()) + ValueSeparater + "\n"
-                    + (context == null ? "" : context.trim()) + ValueSeparater + "\n"
-                    + (parameters == null ? "" : parameters.trim());
-        }
-        return node.setInfo(info);
     }
 
     @Override
@@ -114,7 +118,7 @@ public class JexlEditor extends JShellEditor {
             TableStringValues.add("JexlScriptHistories", script.trim());
             String jexlContext = "jexlContext.clear();";
             runSnippet(jexlContext, jexlContext);
-            String contexts = moreInput.getText();
+            String contexts = contextInput.getText();
             if (contexts != null && !contexts.isBlank()) {
                 jexlContext = contexts.trim();
                 TableStringValues.add("JexlContextHistories", jexlContext);
@@ -146,6 +150,12 @@ public class JexlEditor extends JShellEditor {
         }
     }
 
+    public void edit(String script, String context, String parameters) {
+        codesInput.setText(script);
+        contextInput.setText(context);
+        parametersInput.setText(parameters);
+    }
+
     @FXML
     protected void popScriptExamples(MouseEvent event) {
         if (UserConfig.getBoolean(interfaceName + "ScriptExamplesPopWhenMouseHovering", false)) {
@@ -161,7 +171,7 @@ public class JexlEditor extends JShellEditor {
     protected void jexlScriptExamples(Event event) {
         try {
             String menuName = interfaceName + "ScriptExamples";
-            MenuController controller = MenuController.open(this, valueInput, event, menuName, false);
+            MenuController controller = MenuController.open(this, codesInput, event, menuName, false);
             controller.setTitleLabel(message("Syntax"));
 
             List<Node> topButtons = new ArrayList<>();
@@ -171,8 +181,8 @@ public class JexlEditor extends JShellEditor {
             newLineButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    valueInput.replaceText(valueInput.getSelection(), "\n");
-                    valueInput.requestFocus();
+                    codesInput.replaceText(codesInput.getSelection(), "\n");
+                    codesInput.requestFocus();
                 }
             });
             topButtons.add(newLineButton);
@@ -183,7 +193,7 @@ public class JexlEditor extends JShellEditor {
             clearInputButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    valueInput.clear();
+                    codesInput.clear();
                 }
             });
             topButtons.add(clearInputButton);
@@ -191,27 +201,27 @@ public class JexlEditor extends JShellEditor {
             controller.addFlowPane(topButtons);
             controller.addNode(new Separator());
 
-            PopTools.addButtonsPane(controller, valueInput, Arrays.asList(
+            PopTools.addButtonsPane(controller, codesInput, Arrays.asList(
                     " new('java.math.BigDecimal', 9) ", " new('java.lang.Double', 10d) ",
                     " new('java.lang.Long', 10) ", " new('java.lang.Integer', 10) ",
                     " new('java.lang.String', 'Hello') ", "  new('java.util.Date') "
             ));
-            PopTools.addButtonsPane(controller, valueInput, Arrays.asList(
+            PopTools.addButtonsPane(controller, codesInput, Arrays.asList(
                     " true ", " false ", " null ", " empty(x) ", " size(x) ",
                     " 3 =~ [1,'2',3, 'hello'] ", " 2 !~ {1,'2',3, 'hello'} ",
                     " 'hello'.startsWith('hell') ", " 'hello'.endsWith('ll') ",
                     " not 'hello'.startsWith('hell') "
             ));
-            PopTools.addButtonsPane(controller, valueInput, Arrays.asList(
+            PopTools.addButtonsPane(controller, codesInput, Arrays.asList(
                     " = ", " + ", " - ", " * ", " / ", ";", " , ",
                     "( )", " { } ", "[ ]", "\"\"", "''", " : ", " .. "
             ));
-            PopTools.addButtonsPane(controller, valueInput, Arrays.asList(
+            PopTools.addButtonsPane(controller, codesInput, Arrays.asList(
                     " == ", " != ", " >= ", " > ", " <= ", " < ",
                     " && ", " and ", " || ", " or ", " !", " not ",
                     " =~ ", " !~ "
             ));
-            PopTools.addButtonsPane(controller, valueInput, Arrays.asList(
+            PopTools.addButtonsPane(controller, codesInput, Arrays.asList(
                     "var list = [ 'A', 'B', 'C', 'D' ];\n"
                     + "return list.size();",
                     "var set = { 'A', 'B', 'C', 'D' };\n"
@@ -225,17 +235,17 @@ public class JexlEditor extends JShellEditor {
             includeButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    valueInput.setText(includeButton.getText());
+                    codesInput.setText(includeButton.getText());
                     controller.getThisPane().requestFocus();
-                    valueInput.requestFocus();
+                    codesInput.requestFocus();
 
-                    if (moreInput.getText() == null
-                            || !moreInput.getText().contains("jexlContext.set(\"StringTools\", mara.mybox.tools.StringTools.class);")) {
-                        moreInput.appendText("jexlContext.set(\"StringTools\", mara.mybox.tools.StringTools.class);\n");
+                    if (contextInput.getText() == null
+                            || !contextInput.getText().contains("jexlContext.set(\"StringTools\", mara.mybox.tools.StringTools.class);")) {
+                        contextInput.appendText("jexlContext.set(\"StringTools\", mara.mybox.tools.StringTools.class);\n");
                     }
-                    if (moreInput.getText() == null
-                            || !moreInput.getText().contains("jexlContext.set(\"caseInsensitive\",")) {
-                        moreInput.appendText("jexlContext.set(\"caseInsensitive\", true);\n");
+                    if (contextInput.getText() == null
+                            || !contextInput.getText().contains("jexlContext.set(\"caseInsensitive\",")) {
+                        contextInput.appendText("jexlContext.set(\"caseInsensitive\", true);\n");
                     }
                 }
             });
@@ -245,17 +255,17 @@ public class JexlEditor extends JShellEditor {
             matchButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    valueInput.setText(matchButton.getText());
+                    codesInput.setText(matchButton.getText());
                     controller.getThisPane().requestFocus();
-                    valueInput.requestFocus();
+                    codesInput.requestFocus();
 
-                    if (moreInput.getText() == null
-                            || !moreInput.getText().contains("jexlContext.set(\"StringTools\", mara.mybox.tools.StringTools.class);")) {
-                        moreInput.appendText("jexlContext.set(\"StringTools\", mara.mybox.tools.StringTools.class);\n");
+                    if (contextInput.getText() == null
+                            || !contextInput.getText().contains("jexlContext.set(\"StringTools\", mara.mybox.tools.StringTools.class);")) {
+                        contextInput.appendText("jexlContext.set(\"StringTools\", mara.mybox.tools.StringTools.class);\n");
                     }
-                    if (moreInput.getText() == null
-                            || !moreInput.getText().contains("jexlContext.set(\"caseInsensitive\",")) {
-                        moreInput.appendText("jexlContext.set(\"caseInsensitive\", true);\n");
+                    if (contextInput.getText() == null
+                            || !contextInput.getText().contains("jexlContext.set(\"caseInsensitive\",")) {
+                        contextInput.appendText("jexlContext.set(\"caseInsensitive\", true);\n");
                     }
                 }
             });
@@ -265,13 +275,13 @@ public class JexlEditor extends JShellEditor {
             scaleButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    valueInput.setText(scaleButton.getText());
+                    codesInput.setText(scaleButton.getText());
                     controller.getThisPane().requestFocus();
-                    valueInput.requestFocus();
+                    codesInput.requestFocus();
 
-                    if (moreInput.getText() == null
-                            || !moreInput.getText().contains("jexlContext.set(\"DoubleTools\", mara.mybox.tools.DoubleTools.class);")) {
-                        moreInput.appendText("jexlContext.set(\"DoubleTools\", mara.mybox.tools.DoubleTools.class);\n");
+                    if (contextInput.getText() == null
+                            || !contextInput.getText().contains("jexlContext.set(\"DoubleTools\", mara.mybox.tools.DoubleTools.class);")) {
+                        contextInput.appendText("jexlContext.set(\"DoubleTools\", mara.mybox.tools.DoubleTools.class);\n");
                     }
                 }
             });
@@ -281,13 +291,13 @@ public class JexlEditor extends JShellEditor {
             formatButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    valueInput.setText(formatButton.getText());
+                    codesInput.setText(formatButton.getText());
                     controller.getThisPane().requestFocus();
-                    valueInput.requestFocus();
+                    codesInput.requestFocus();
 
-                    if (moreInput.getText() == null
-                            || !moreInput.getText().contains("jexlContext.set(\"DoubleTools\", mara.mybox.tools.DoubleTools.class);")) {
-                        moreInput.appendText("jexlContext.set(\"DoubleTools\", mara.mybox.tools.DoubleTools.class);\n");
+                    if (contextInput.getText() == null
+                            || !contextInput.getText().contains("jexlContext.set(\"DoubleTools\", mara.mybox.tools.DoubleTools.class);")) {
+                        contextInput.appendText("jexlContext.set(\"DoubleTools\", mara.mybox.tools.DoubleTools.class);\n");
                     }
                 }
             });
@@ -297,13 +307,13 @@ public class JexlEditor extends JShellEditor {
             percentageButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    valueInput.setText(percentageButton.getText());
+                    codesInput.setText(percentageButton.getText());
                     controller.getThisPane().requestFocus();
-                    valueInput.requestFocus();
+                    codesInput.requestFocus();
 
-                    if (moreInput.getText() == null
-                            || !moreInput.getText().contains("jexlContext.set(\"DoubleTools\", mara.mybox.tools.DoubleTools.class);")) {
-                        moreInput.appendText("jexlContext.set(\"DoubleTools\", mara.mybox.tools.DoubleTools.class);\n");
+                    if (contextInput.getText() == null
+                            || !contextInput.getText().contains("jexlContext.set(\"DoubleTools\", mara.mybox.tools.DoubleTools.class);")) {
+                        contextInput.appendText("jexlContext.set(\"DoubleTools\", mara.mybox.tools.DoubleTools.class);\n");
                     }
                 }
             });
@@ -316,17 +326,17 @@ public class JexlEditor extends JShellEditor {
             mathButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    valueInput.setText(mathButton.getText());
+                    codesInput.setText(mathButton.getText());
                     controller.getThisPane().requestFocus();
-                    valueInput.requestFocus();
+                    codesInput.requestFocus();
 
-                    if (moreInput.getText() == null
-                            || !moreInput.getText().contains("jexlContext.set(\"Math\", Math.class);")) {
-                        moreInput.appendText("jexlContext.set(\"Math\", Math.class);\n");
+                    if (contextInput.getText() == null
+                            || !contextInput.getText().contains("jexlContext.set(\"Math\", Math.class);")) {
+                        contextInput.appendText("jexlContext.set(\"Math\", Math.class);\n");
                     }
-                    if (moreInput.getText() == null
-                            || !moreInput.getText().contains("jexlContext.set(\"x\",")) {
-                        moreInput.appendText("jexlContext.set(\"x\", 9);\n");
+                    if (contextInput.getText() == null
+                            || !contextInput.getText().contains("jexlContext.set(\"x\",")) {
+                        contextInput.appendText("jexlContext.set(\"x\", 9);\n");
                     }
                 }
             });
@@ -338,13 +348,13 @@ public class JexlEditor extends JShellEditor {
             funButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    valueInput.setText(funButton.getText());
+                    codesInput.setText(funButton.getText());
                     controller.getThisPane().requestFocus();
-                    valueInput.requestFocus();
+                    codesInput.requestFocus();
 
-                    if (moreInput.getText() == null
-                            || !moreInput.getText().contains("jexlContext.set(\"Math\", Math.class);")) {
-                        moreInput.appendText("jexlContext.set(\"Math\", Math.class);\n");
+                    if (contextInput.getText() == null
+                            || !contextInput.getText().contains("jexlContext.set(\"Math\", Math.class);")) {
+                        contextInput.appendText("jexlContext.set(\"Math\", Math.class);\n");
                     }
                 }
             });
@@ -358,13 +368,13 @@ public class JexlEditor extends JShellEditor {
             whileButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    valueInput.setText(whileButton.getText());
+                    codesInput.setText(whileButton.getText());
                     controller.getThisPane().requestFocus();
-                    valueInput.requestFocus();
+                    codesInput.requestFocus();
 
-                    if (moreInput.getText() == null
-                            || !moreInput.getText().contains("jexlContext.set(\"len\",")) {
-                        moreInput.appendText("jexlContext.set(\"len\", 8);\n");
+                    if (contextInput.getText() == null
+                            || !contextInput.getText().contains("jexlContext.set(\"len\",")) {
+                        contextInput.appendText("jexlContext.set(\"len\", 8);\n");
                     }
                 }
             });
@@ -386,17 +396,17 @@ public class JexlEditor extends JShellEditor {
 
     @FXML
     protected void showScriptHistories(Event event) {
-        PopTools.popStringValues(this, valueInput, event, "JexlScriptHistories", false);
+        PopTools.popStringValues(this, codesInput, event, "JexlScriptHistories", false);
     }
 
     @FXML
     public void addContext() {
-        moreInput.appendText("jexlContext.set(\"name\", value);\n");
+        contextInput.appendText("jexlContext.set(\"name\", value);\n");
     }
 
     @FXML
     public void clearContext() {
-        moreInput.clear();
+        contextInput.clear();
     }
 
     @FXML
@@ -414,7 +424,7 @@ public class JexlEditor extends JShellEditor {
     protected void jexlContextExamples(Event event) {
         try {
             String menuName = interfaceName + "ContextExamples";
-            MenuController controller = MenuController.open(this, moreInput, event, menuName, false);
+            MenuController controller = MenuController.open(this, contextInput, event, menuName, false);
             controller.setTitleLabel(message("Syntax"));
 
             List<Node> topButtons = new ArrayList<>();
@@ -424,8 +434,8 @@ public class JexlEditor extends JShellEditor {
             newLineButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    moreInput.replaceText(moreInput.getSelection(), "\n");
-                    moreInput.requestFocus();
+                    contextInput.replaceText(contextInput.getSelection(), "\n");
+                    contextInput.requestFocus();
                 }
             });
             topButtons.add(newLineButton);
@@ -436,7 +446,7 @@ public class JexlEditor extends JShellEditor {
             clearInputButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    moreInput.clear();
+                    contextInput.clear();
                 }
             });
             topButtons.add(clearInputButton);
@@ -444,7 +454,7 @@ public class JexlEditor extends JShellEditor {
             controller.addFlowPane(topButtons);
             controller.addNode(new Separator());
 
-            PopTools.addButtonsPane(controller, moreInput, Arrays.asList(
+            PopTools.addButtonsPane(controller, contextInput, Arrays.asList(
                     "jexlContext.set(\"Math\", Math.class);\n",
                     "jexlContext.set(\"BigDecimal\", new java.math.BigDecimal(10));\n",
                     "jexlContext.set(\"df\", \"#,###\");\n"
@@ -465,13 +475,13 @@ public class JexlEditor extends JShellEditor {
     @FXML
     protected void popContextHistories(MouseEvent mouseEvent) {
         if (UserConfig.getBoolean("JexlContextHistoriesPopWhenMouseHovering", false)) {
-            PopTools.popStringValues(this, moreInput, mouseEvent, "JexlContextHistories", false);
+            PopTools.popStringValues(this, contextInput, mouseEvent, "JexlContextHistories", false);
         }
     }
 
     @FXML
     protected void showContextHistories(ActionEvent event) {
-        PopTools.popStringValues(this, moreInput, event, "JexlContextHistories", false);
+        PopTools.popStringValues(this, contextInput, event, "JexlContextHistories", false);
     }
 
     @FXML
@@ -489,6 +499,18 @@ public class JexlEditor extends JShellEditor {
     @FXML
     protected void showParametersHistories(ActionEvent event) {
         PopTools.popStringValues(this, parametersInput, event, "JexlParamtersHistories", false);
+    }
+
+    @FXML
+    public void popJexlHelps(Event event) {
+        if (UserConfig.getBoolean("JexlHelpsPopWhenMouseHovering", false)) {
+            showJexlHelps(event);
+        }
+    }
+
+    @FXML
+    public void showJexlHelps(Event event) {
+        popEventMenu(event, HelpTools.jexlHelps());
     }
 
 }

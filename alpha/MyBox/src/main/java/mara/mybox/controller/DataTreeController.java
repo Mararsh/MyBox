@@ -35,6 +35,9 @@ import mara.mybox.db.table.BaseNodeTable;
 import mara.mybox.db.table.TableDataNodeTag;
 import mara.mybox.db.table.TableDataTag;
 import mara.mybox.db.table.TableNodeHtml;
+import mara.mybox.db.table.TableNodeImageScope;
+import mara.mybox.db.table.TableNodeJEXL;
+import mara.mybox.db.table.TableNodeJShell;
 import mara.mybox.db.table.TableNodeMathFunction;
 import mara.mybox.db.table.TableNodeSQL;
 import mara.mybox.db.table.TableNodeText;
@@ -1128,6 +1131,18 @@ public class DataTreeController extends BaseDataTreeViewController {
 
     public static DataTreeController mathFunction(BaseController pController, boolean shouldLoad) {
         return open(pController, shouldLoad, new TableNodeMathFunction());
+    }
+
+    public static DataTreeController imageScope(BaseController pController, boolean shouldLoad) {
+        return open(pController, shouldLoad, new TableNodeImageScope());
+    }
+
+    public static DataTreeController jShell(BaseController pController, boolean shouldLoad) {
+        return open(pController, shouldLoad, new TableNodeJShell());
+    }
+
+    public static DataTreeController jexl(BaseController pController, boolean shouldLoad) {
+        return open(pController, shouldLoad, new TableNodeJEXL());
     }
 
 }

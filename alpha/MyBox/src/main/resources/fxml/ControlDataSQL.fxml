@@ -87,7 +87,7 @@ License:    Apache License Version 2.0
                         </ImageView>
                      </graphic>
                   </Button>
-                            <Button fx:id="clearCommandButton" mnemonicParsing="false" onAction="#clearValue">
+                            <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction">
                                 <graphic>
                                     <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                         <image>
@@ -129,7 +129,7 @@ License:    Apache License Version 2.0
                                                       </ImageView>
                                                   </graphic>
                                               </CheckBox>
-                                              <Button fx:id="clearOuputButton1" mnemonicParsing="false" onAction="#clearOutput">
+                                              <Button fx:id="clearOuputButton" mnemonicParsing="false" onAction="#clearOutput">
                                                   <graphic>
                                                       <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                           <image>

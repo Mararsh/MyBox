@@ -164,12 +164,12 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
 
         MenuItem jshell = new MenuItem(message("JShell"));
         jshell.setOnAction((ActionEvent event1) -> {
-            loadScene(Fxmls.JShellFxml);
+            DataTreeController.jShell(this, true);
         });
 
         MenuItem jexl = new MenuItem(message("JEXL"));
         jexl.setOnAction((ActionEvent event1) -> {
-            loadScene(Fxmls.JexlFxml);
+            DataTreeController.jexl(this, true);
         });
 
         MenuItem JavaScript = new MenuItem("JavaScript");
