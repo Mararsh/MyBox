@@ -51,13 +51,14 @@ public class ControlDataText extends BaseDataValuesController {
     @Override
     protected void editValues() {
         try {
-            Object v;
-            if (nodeEditor.currentNode == null) {
-                v = null;
+            isSettingValues = true;
+            if (nodeEditor.currentNode != null) {
+                textInput.setText(nodeEditor.currentNode.getStringValue("text"));
             } else {
-                v = nodeEditor.currentNode.getValue("text");
+                textInput.clear();
             }
-            textInput.setText(v != null ? (String) v : null);
+            isSettingValues = false;
+            valueChanged(false);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

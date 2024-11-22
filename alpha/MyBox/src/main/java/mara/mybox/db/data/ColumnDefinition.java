@@ -756,6 +756,9 @@ public class ColumnDefinition extends BaseData {
         }
     }
 
+    public String label() {
+        return columnName;
+    }
 
     /*
         static methods

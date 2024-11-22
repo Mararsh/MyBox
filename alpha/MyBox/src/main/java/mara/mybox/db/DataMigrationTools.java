@@ -275,25 +275,24 @@ public class DataMigrationTools {
                         }
                     }
                     break;
-                case "Node_MathFunction":
-                    node.setValue("MathFunctionName", null);
-                    node.setValue("Variables", null);
-                    node.setValue("Expression", null);
-                    node.setValue("FunctionDomain", null);
+                case "Node_Math_Function":
+                    node.setValue("variables", null);
+                    node.setValue("expression", null);
+                    node.setValue("domain", null);
                     if (info != null) {
                         if (info.contains(ValueSeparater)) {
                             String[] ss = info.split(ValueSeparater);
                             if (ss.length > 0) {
-                                node.setValue("MathFunctionName", ss[0].trim());
+                                node.setTitle(ss[0].trim());
                             }
                             if (ss.length > 1) {
-                                node.setValue("Variables", ss[1].trim());
+                                node.setValue("variables", ss[1].trim());
                             }
                             if (ss.length > 2) {
-                                node.setValue("Expression", ss[2].trim());
+                                node.setValue("expression", ss[2].trim());
                             }
                             if (ss.length > 3) {
-                                node.setValue("FunctionDomain", ss[3].trim());
+                                node.setValue("domain", ss[3].trim());
                             }
                         } else {
                             String prefix = "Names:::";
@@ -310,23 +309,23 @@ public class DataMigrationTools {
                                 }
                                 pos = names.indexOf(",");
                                 if (pos >= 0) {
-                                    node.setValue("MathFunctionName", names.substring(0, pos));
+                                    node.setTitle(names.substring(0, pos));
                                     String vs = names.substring(pos).trim();
                                     if (vs.length() > 0) {
-                                        node.setValue("Variables", vs.substring(1));
+                                        node.setValue("variables", vs.substring(1));
                                     }
                                 } else {
-                                    node.setValue("MathFunctionName", names);
+                                    node.setTitle(names);
                                 }
                             }
                             if (info != null && info.contains(MoreSeparater)) {
                                 String[] ss = info.split(MoreSeparater);
-                                node.setValue("Expression", ss[0].trim());
+                                node.setValue("expression", ss[0].trim());
                                 if (ss.length > 1) {
-                                    node.setValue("FunctionDomain", ss[1].trim());
+                                    node.setValue("domain", ss[1].trim());
                                 }
                             } else {
-                                node.setValue("Expression", info);
+                                node.setValue("expression", info);
                             }
                         }
                     }

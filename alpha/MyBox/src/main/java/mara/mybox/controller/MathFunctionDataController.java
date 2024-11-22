@@ -37,7 +37,7 @@ import org.apache.commons.csv.CSVPrinter;
  */
 public class MathFunctionDataController extends BaseChildController {
 
-    protected MathFunctionEditor editorController;
+    protected ControlDataMathFunction editorController;
     protected String expression, domain, outputs = "";
 
     protected int dataScale, variablesSize;
@@ -56,7 +56,7 @@ public class MathFunctionDataController extends BaseChildController {
         baseTitle = message("MathFunction");
     }
 
-    public void setParameters(MathFunctionEditor editor) {
+    public void setParameters(ControlDataMathFunction editor) {
         try {
             this.editorController = editor;
 
@@ -125,7 +125,7 @@ public class MathFunctionDataController extends BaseChildController {
                 return null;
             }
             count = 0;
-            File csvFile = generateFile(editorController.titleName(), "csv");
+            File csvFile = generateFile(editorController.functionName(), "csv");
             List<Data2DColumn> db2Columns = new ArrayList<>();
             try (CSVPrinter printer = CsvTools.csvPrinter(csvFile)) {
                 csvPrinter = printer;
@@ -286,7 +286,7 @@ public class MathFunctionDataController extends BaseChildController {
     }
 
     public String title() {
-        String title = editorController.attributesController.nameInput.getText();
+        String title = editorController.functionName();
         if (title == null || title.isBlank()) {
             int pos = expression.indexOf("\n");
             title = pos < 0 ? expression : expression.substring(0, pos);
@@ -297,10 +297,10 @@ public class MathFunctionDataController extends BaseChildController {
     /*
         static
      */
-    public static MathFunctionDataController open(MathFunctionEditor editorController) {
+    public static MathFunctionDataController open(ControlDataMathFunction editorController) {
         try {
             MathFunctionDataController controller = (MathFunctionDataController) WindowTools.branchStage(
-                    editorController, Fxmls.MathFunctionDataFxml);
+                    editorController.nodeEditor, Fxmls.MathFunctionDataFxml);
             controller.setParameters(editorController);
             controller.requestMouse();
             return controller;

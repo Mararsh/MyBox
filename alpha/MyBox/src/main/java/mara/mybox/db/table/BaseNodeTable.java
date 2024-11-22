@@ -5,7 +5,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import javafx.scene.paint.Color;
@@ -596,6 +595,10 @@ public class BaseNodeTable extends BaseTable<DataNode> {
                 "data", name + "_Examples_" + lang + ".xml", true);
     }
 
+    public String label(String columnName) {
+        return columnName;
+    }
+
     public String valuesHtml(FxTask task, Connection conn,
             BaseController controller, DataNode node) {
         if (conn == null || node == null) {
@@ -608,14 +611,13 @@ public class BaseNodeTable extends BaseTable<DataNode> {
         StringTable table = new StringTable();
         for (ColumnDefinition column : columns) {
             String name = column.getColumnName();
-            Object value = values.get(name);
-            if (value == null) {
+            String value = column.toString(values.get(name));
+            if (value == null || value.isBlank()) {
                 continue;
             }
-
             List<String> row = new ArrayList<>();
-            row.addAll(Arrays.asList(message(name),
-                    "<PRE><CODE>" + column.toString(value) + "</CODE></PRE>"));
+            row.add(label(name));
+            row.add("<CODE>" + value + "</CODE>");
             table.add(row);
         }
         return table.div();
@@ -674,13 +676,14 @@ public class BaseNodeTable extends BaseTable<DataNode> {
             if (conn == null || node == null) {
                 return null;
             }
+            long nodeid = node.getNodeid();
             String indentNode = " ".repeat(indent);
             String spaceNode = "&nbsp;".repeat(indent);
             String nodeName = node.getTitle();
             String displayName = "<SPAN class=\"SerialNumber\">" + node.getHierarchyNumber() + "&nbsp;&nbsp;</SPAN>" + nodeName;
 
             String html = indentNode + "<DIV style=\"padding: 2px;\">" + spaceNode + displayName + "\n";
-            List<DataNodeTag> tags = new TableDataNodeTag(this).nodeTags(conn, node.getNodeid());
+            List<DataNodeTag> tags = new TableDataNodeTag(this).nodeTags(conn, nodeid);
             if (tags != null && !tags.isEmpty()) {
                 String indentTag = " ".repeat(indent + 8);
                 String spaceTag = "&nbsp;".repeat(2);
@@ -703,7 +706,7 @@ public class BaseNodeTable extends BaseTable<DataNode> {
             }
             html += indentNode + "</DIV>\n";
 
-            String dataHtml = valuesHtml(task, conn, controller, node);
+            String dataHtml = valuesHtml(task, conn, controller, query(conn, nodeid));
             if (dataHtml != null && !dataHtml.isBlank()) {
                 html += indentNode + "<DIV class=\"nodeValue\">"
                         + "<DIV style=\"padding: 0 0 0 " + (indent + 4) * 6 + "px;\">"

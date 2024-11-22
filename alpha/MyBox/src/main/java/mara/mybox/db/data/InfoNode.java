@@ -16,7 +16,6 @@ import mara.mybox.controller.InfoTreeManageController;
 import mara.mybox.controller.JShellController;
 import mara.mybox.controller.JavaScriptController;
 import mara.mybox.controller.JexlController;
-import mara.mybox.controller.MathFunctionController;
 import mara.mybox.controller.RowFilterController;
 import mara.mybox.data.StringTable;
 import mara.mybox.data2d.DataFileCSV;
@@ -718,8 +717,8 @@ public class InfoNode extends BaseData {
                 return JexlController.open("", "", "");
             case InfoNode.RowFilter:
                 return RowFilterController.open();
-            case InfoNode.MathFunction:
-                return MathFunctionController.open();
+//            case InfoNode.MathFunction:
+//                return MathFunctionController.open();
 //            case InfoNode.ImageMaterial:
 //                return ImageMaterialController.open();
             case InfoNode.Data2DDefinition:

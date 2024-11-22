@@ -115,9 +115,13 @@ public class ControlFileSelecter extends BaseController {
     }
 
     public void inputFile(File file) {
-        if (fileInput != null && file != null) {
+        if (fileInput != null) {
             isSettingValues = true;
-            fileInput.setText(file.getAbsolutePath());
+            if (file != null) {
+                fileInput.setText(file.getAbsolutePath());
+            } else {
+                fileInput.clear();
+            }
             isSettingValues = false;
         }
         setFile(file);
@@ -129,7 +133,11 @@ public class ControlFileSelecter extends BaseController {
             fileInput.setText(string);
             isSettingValues = false;
         }
-        setFile(new File(string));
+        if (string != null) {
+            setFile(new File(string));
+        } else {
+            setFile(null);
+        }
     }
 
     public File pickFile() {

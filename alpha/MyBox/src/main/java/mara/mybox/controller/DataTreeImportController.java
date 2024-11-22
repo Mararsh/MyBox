@@ -225,6 +225,7 @@ public class DataTreeImportController extends BaseBatchFileController {
                     return;
                 }
                 String s = value.toString().trim();
+                boolean written = false;
                 switch (qName) {
                     case "title":
                         dataNode.setTitle(s);
@@ -234,6 +235,7 @@ public class DataTreeImportController extends BaseBatchFileController {
                         dataTag = tagTable.insertData(conn, dataTag);
                         nodeTagsTable.insertData(conn,
                                 new DataNodeTag(dataNode.getNodeid(), dataTag.getTagid()));
+                        written = true;
                         break;
                     case "NodeAttributes":
                         dataNode = nodeTable.insertData(conn, dataNode);
@@ -242,6 +244,7 @@ public class DataTreeImportController extends BaseBatchFileController {
                                     + " nodeid=" + dataNode.getNodeid() + " title=" + dataNode.getTitle());
                         }
                         parentid = dataNode.getNodeid();
+                        written = true;
 //                        if (isLogsVerbose()) {
 //                            showLogs("Now parentid " + parentid);
 //                        }
@@ -260,7 +263,7 @@ public class DataTreeImportController extends BaseBatchFileController {
 //                            }
                         }
                 }
-                if (++totalItemsHandled % Database.BatchSize == 0) {
+                if (written && (++totalItemsHandled % Database.BatchSize == 0)) {
                     conn.commit();
                 }
             } catch (Exception e) {

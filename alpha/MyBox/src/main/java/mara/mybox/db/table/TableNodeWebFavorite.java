@@ -2,7 +2,6 @@ package mara.mybox.db.table;
 
 import java.io.File;
 import java.sql.Connection;
-import java.util.Map;
 import mara.mybox.controller.BaseController;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
@@ -38,9 +37,8 @@ public class TableNodeWebFavorite extends BaseNodeTable {
     @Override
     public String valuesHtml(FxTask task, Connection conn, BaseController controller, DataNode node) {
         try {
-            Map<String, Object> values = node.getValues();
-            String address = (String) values.get("address");
-            String icon = (String) values.get("icon");
+            String address = node.getStringValue("address");
+            String icon = node.getStringValue("icon");
             if (address == null || address.isBlank()) {
                 return null;
             }

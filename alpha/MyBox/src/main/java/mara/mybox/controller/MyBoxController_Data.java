@@ -184,7 +184,7 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
 
         MenuItem MathFunction = new MenuItem(message("MathFunction"));
         MathFunction.setOnAction((ActionEvent event1) -> {
-            loadScene(Fxmls.MathFunctionFxml);
+            DataTreeController.mathFunction(this, true);
         });
 
         MenuItem barcodeCreator = new MenuItem(message("BarcodeCreator"));

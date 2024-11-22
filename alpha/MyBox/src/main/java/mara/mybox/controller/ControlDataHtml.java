@@ -27,18 +27,15 @@ public class ControlDataHtml extends BaseDataValuesController {
     @Override
     protected void editValues() {
         try {
-            Object v;
-            if (nodeEditor.currentNode == null) {
-                v = null;
-            } else {
-                v = nodeEditor.currentNode.getValue("html");
-            }
-            if (v != null) {
-                htmlController.loadContents((String) v);
+            isSettingValues = true;
+            if (nodeEditor.currentNode != null) {
+                htmlController.loadContents(nodeEditor.currentNode.getStringValue("html"));
             } else {
                 htmlController.loadContents(null);
             }
             htmlController.updateStatus(false);
+            isSettingValues = false;
+            valueChanged(false);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

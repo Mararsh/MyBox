@@ -138,7 +138,7 @@ public abstract class MainMenuController_Data extends MainMenuController_Network
 
     @FXML
     protected void MathFunction(ActionEvent event) {
-        loadScene(Fxmls.MathFunctionFxml);
+        DataTreeController.mathFunction(parentController, false);
     }
 
 }

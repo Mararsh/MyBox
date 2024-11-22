@@ -35,6 +35,7 @@ import mara.mybox.db.table.BaseNodeTable;
 import mara.mybox.db.table.TableDataNodeTag;
 import mara.mybox.db.table.TableDataTag;
 import mara.mybox.db.table.TableNodeHtml;
+import mara.mybox.db.table.TableNodeMathFunction;
 import mara.mybox.db.table.TableNodeSQL;
 import mara.mybox.db.table.TableNodeText;
 import mara.mybox.db.table.TableNodeWebFavorite;
@@ -97,7 +98,7 @@ public class DataTreeController extends BaseDataTreeViewController {
         File file = nodeTable.exampleFile();
         if (file != null) {
             if (AppVariables.isTesting
-                    || PopTools.askSure(getTitle(), message("ImportExamples") + ": " + nodeTable.getTreeName())) {
+                    || PopTools.askSure(getTitle(), message("ImportExamples") + ": " + baseTitle)) {
                 importExamples(null);
             }
         }
@@ -1123,6 +1124,10 @@ public class DataTreeController extends BaseDataTreeViewController {
 
     public static DataTreeController sql(BaseController pController, boolean shouldLoad) {
         return open(pController, shouldLoad, new TableNodeSQL());
+    }
+
+    public static DataTreeController mathFunction(BaseController pController, boolean shouldLoad) {
+        return open(pController, shouldLoad, new TableNodeMathFunction());
     }
 
 }

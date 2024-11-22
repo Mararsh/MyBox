@@ -1,7 +1,6 @@
 package mara.mybox.db.table;
 
 import java.sql.Connection;
-import java.util.Map;
 import mara.mybox.controller.BaseController;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
@@ -35,8 +34,7 @@ public class TableNodeText extends BaseNodeTable {
     @Override
     public String valuesHtml(FxTask task, Connection conn, BaseController controller, DataNode node) {
         try {
-            Map<String, Object> values = node.getValues();
-            String text = (String) values.get("text");
+            String text = node.getStringValue("text");
             return text == null || text.isBlank() ? null
                     : ("<PRE><CODE>" + text + "</CODE></PRE>");
         } catch (Exception e) {

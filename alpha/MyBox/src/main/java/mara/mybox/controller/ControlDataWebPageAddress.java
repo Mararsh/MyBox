@@ -49,6 +49,9 @@ public class ControlDataWebPageAddress extends BaseDataValuesController {
             iconController.notify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldTab, Boolean newTab) {
+                    if (isSettingValues) {
+                        return;
+                    }
                     updateIcon(iconController.text());
                     valueChanged(true);
                 }
@@ -62,20 +65,17 @@ public class ControlDataWebPageAddress extends BaseDataValuesController {
     @Override
     protected void editValues() {
         try {
-            String address = null, icon = null;
+            isSettingValues = true;
             if (nodeEditor.currentNode != null) {
-                Object v = nodeEditor.currentNode.getValue("address");
-                if (v != null) {
-                    address = (String) v;
-                }
-                v = nodeEditor.currentNode.getValue("icon");
-                if (v != null) {
-                    icon = (String) v;
-                }
+                addressInput.setText(nodeEditor.currentNode.getStringValue("address"));
+                updateIcon(nodeEditor.currentNode.getStringValue("icon"));
+            } else {
+                addressInput.clear();
+                updateIcon(null);
             }
-            addressInput.setText(address);
-            updateIcon(icon);
-
+            iconController.input(null);
+            isSettingValues = false;
+            valueChanged(false);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

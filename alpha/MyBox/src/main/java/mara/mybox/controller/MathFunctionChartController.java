@@ -19,19 +19,19 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-9-2
  * @License Apache License Version 2.0
  */
-public class MathFunctionChart extends MathFunctionDataController {
+public class MathFunctionChartController extends MathFunctionDataController {
 
     @FXML
     protected VBox xyzChartBox;
     @FXML
     protected ControlChartXYZ xyzController;
 
-    public MathFunctionChart() {
+    public MathFunctionChartController() {
         baseTitle = message("MathFunction");
     }
 
     @Override
-    public void setParameters(MathFunctionEditor editor) {
+    public void setParameters(ControlDataMathFunction editor) {
         try {
             super.setParameters(editor);
 
@@ -159,10 +159,10 @@ public class MathFunctionChart extends MathFunctionDataController {
     /*
         static
      */
-    public static MathFunctionChart open(MathFunctionEditor editorController) {
+    public static MathFunctionChartController open(ControlDataMathFunction editorController) {
         try {
-            MathFunctionChart controller = (MathFunctionChart) WindowTools.branchStage(
-                    editorController, Fxmls.MathFunctionChartFxml);
+            MathFunctionChartController controller = (MathFunctionChartController) WindowTools.branchStage(
+                    editorController.nodeEditor, Fxmls.MathFunctionChartFxml);
             controller.setParameters(editorController);
             controller.requestMouse();
             return controller;

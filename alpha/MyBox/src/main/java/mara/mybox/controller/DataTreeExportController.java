@@ -262,8 +262,10 @@ public class DataTreeExportController extends BaseTaskController {
         count = level = 0;
         firstRow = true;
         try (Connection conn = DerbyBase.getConnection()) {
-            exportNode(currentTask, conn, sourceItem.getValue().getNodeid(),
-                    treeController.chainName(sourceItem.getParent()));
+            long nodeid = sourceItem.getValue().getNodeid();
+            String chainName = treeController.chainName(sourceItem.getParent());
+            showLogs("Export started. Node: " + nodeid + " - " + chainName);
+            exportNode(currentTask, conn, nodeid, chainName);
         } catch (Exception e) {
             updateLogs(e.toString());
         }
@@ -281,18 +283,18 @@ public class DataTreeExportController extends BaseTaskController {
             if (htmlCheck.isSelected()) {
                 htmlFile = makeTargetFile(prefix, ".html", targetPath);
                 if (htmlFile != null) {
-                    updateLogs(message("Writing") + " " + htmlFile.getAbsolutePath());
+                    showLogs(message("Writing") + " " + htmlFile.getAbsolutePath());
                     htmlWriter = new FileWriter(htmlFile, charset);
                     writeHtmlHead(htmlWriter, chainName);
                     htmlWriter.write(Indent + "<BODY>\n" + Indent + Indent + "<H2>" + chainName + "</H2>\n");
                 } else if (targetPathController.isSkip()) {
-                    updateLogs(message("Skipped"));
+                    showLogs(message("Skipped"));
                 }
             }
             if (framesetCheck.isSelected()) {
                 framesetFile = makeTargetFile(prefix, "-frameset.html", targetPath);
                 if (framesetFile != null) {
-                    updateLogs(message("Writing") + " " + framesetFile.getAbsolutePath());
+                    showLogs(message("Writing") + " " + framesetFile.getAbsolutePath());
                     StringBuilder s;
                     String subPath = FileNameTools.filter(prefix) + "-frameset";
                     File path = new File(targetPath + File.separator + subPath + File.separator);
@@ -321,13 +323,13 @@ public class DataTreeExportController extends BaseTaskController {
                     s.append(Indent).append(Indent).append("<H2>").append(chainName).append("</H2>\n");
                     framesetNavWriter.write(s.toString());
                 } else if (targetPathController.isSkip()) {
-                    updateLogs(message("Skipped"));
+                    showLogs(message("Skipped"));
                 }
             }
             if (xmlCheck.isSelected()) {
                 xmlFile = makeTargetFile(prefix, ".xml", targetPath);
                 if (xmlFile != null) {
-                    updateLogs(message("Writing") + " " + xmlFile.getAbsolutePath());
+                    showLogs(message("Writing") + " " + xmlFile.getAbsolutePath());
                     xmlWriter = new FileWriter(xmlFile, charset);
                     StringBuilder s = new StringBuilder();
                     s.append("<?xml version=\"1.0\" encoding=\"")
@@ -335,19 +337,19 @@ public class DataTreeExportController extends BaseTaskController {
                             .append("<").append(XmlTools.xmlTag(nodeTable.getTreeName())).append(">\n");
                     xmlWriter.write(s.toString());
                 } else if (targetPathController.isSkip()) {
-                    updateLogs(message("Skipped"));
+                    showLogs(message("Skipped"));
                 }
             }
             if (jsonCheck.isSelected()) {
                 jsonFile = makeTargetFile(prefix, ".json", targetPath);
                 if (jsonFile != null) {
-                    updateLogs(message("Writing") + " " + jsonFile.getAbsolutePath());
+                    showLogs(message("Writing") + " " + jsonFile.getAbsolutePath());
                     jsonWriter = new FileWriter(jsonFile, Charset.forName("UTF-8"));
                     StringBuilder s = new StringBuilder();
                     s.append("{\"").append(nodeTable.getTreeName()).append("\": [\n");
                     jsonWriter.write(s.toString());
                 } else if (targetPathController.isSkip()) {
-                    updateLogs(message("Skipped"));
+                    showLogs(message("Skipped"));
                 }
             }
         } catch (Exception e) {
@@ -443,6 +445,15 @@ public class DataTreeExportController extends BaseTaskController {
             count++;
 
             DataNode node = nodeTable.query(conn, nodeid);
+            String nodeChainName;
+            if (parentChainName != null && !parentChainName.isBlank()) {
+                nodeChainName = parentChainName + DataNode.TitleSeparater + node.getTitle();
+            } else {
+                nodeChainName = node.getTitle();
+            }
+            if (isLogsVerbose()) {
+                showLogs("Handling node: " + node.getNodeid() + " - " + nodeChainName);
+            }
             List<DataNodeTag> tags = null;
             if (tagsCheck.isSelected()) {
                 tags = nodeTagsTable.nodeTags(conn, node.getNodeid());
@@ -469,12 +480,6 @@ public class DataTreeExportController extends BaseTaskController {
             if (currentTask == null || !currentTask.isWorking()) {
                 return;
             }
-            String nodeChainName;
-            if (parentChainName != null && !parentChainName.isBlank()) {
-                nodeChainName = parentChainName + DataNode.TitleSeparater + node.getTitle();
-            } else {
-                nodeChainName = node.getTitle();
-            }
 
             if (framesetNavWriter != null) {
                 String nodeTitle = node.getTitle() + "_" + node.getNodeid();
@@ -499,7 +504,7 @@ public class DataTreeExportController extends BaseTaskController {
                     bookWriter.flush();
                     bookWriter.close();
                 } catch (Exception e) {
-                    updateLogs(e.toString());
+                    showLogs(e.toString());
                 }
 
                 String sql = "SELECT nodeid, title FROM " + nodeTable.getTableName()
@@ -521,10 +526,10 @@ public class DataTreeExportController extends BaseTaskController {
                             hasChildren = true;
                         }
                     } catch (Exception e) {
-                        updateLogs(e.toString());
+                        showLogs(e.toString());
                     }
                 } catch (Exception e) {
-                    updateLogs(e.toString());
+                    showLogs(e.toString());
                 }
 
                 if (!hasChildren) {
@@ -535,7 +540,7 @@ public class DataTreeExportController extends BaseTaskController {
                     bookNavWriter.flush();
                     bookNavWriter.close();
                 } catch (Exception e) {
-                    updateLogs(e.toString());
+                    showLogs(e.toString());
                 }
             }
             if (currentTask == null || !currentTask.isWorking()) {
@@ -554,17 +559,17 @@ public class DataTreeExportController extends BaseTaskController {
                         exportNode(currentTask, conn, results.getLong("nodeid"), nodeChainName);
                     }
                 } catch (Exception e) {
-                    updateLogs(e.toString());
+                    showLogs(e.toString());
                 }
             } catch (Exception e) {
-                updateLogs(e.toString());
+                showLogs(e.toString());
             }
 
             if (!isRootNode && xmlWriter != null) {
                 xmlWriter.write(xmlPrefix + "</TreeNode>\n");
             }
         } catch (Exception e) {
-            updateLogs(e.toString());
+            showLogs(e.toString());
         }
         level--;
     }
@@ -627,7 +632,7 @@ public class DataTreeExportController extends BaseTaskController {
                     JsonEditorController.open(jsonFile);
                 }
             }
-            popInformation(message("Count") + ": " + count);
+            showLogs(message("Count") + ": " + count);
         } catch (Exception e) {
             updateLogs(e.toString());
         }

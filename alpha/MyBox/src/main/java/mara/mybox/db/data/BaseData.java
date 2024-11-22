@@ -32,11 +32,6 @@ public abstract class BaseData implements Cloneable {
         }
     }
 
-    public String label(String columnName) {
-        return columnName;
-    }
-
-
     /*
         get/set
      */

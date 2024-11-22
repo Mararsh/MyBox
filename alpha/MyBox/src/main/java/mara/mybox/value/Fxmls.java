@@ -359,11 +359,10 @@ public class Fxmls {
     public static final String JexlFxml = "/fxml/Jexl.fxml";
     public static final String JavaScriptFxml = "/fxml/JavaScript.fxml";
 
-    public static final String MathFunctionFxml = "/fxml/MathFunction.fxml";
     public static final String MathFunctionDataFxml = "/fxml/MathFunctionData.fxml";
     public static final String MathFunctionChartFxml = "/fxml/MathFunctionChart.fxml";
-    public static final String ControlDataSplitFxml = "/fxml/ControlDataSplit.fxml";
     public static final String MathFunctionXYChartFxml = "/fxml/MathFunctionXYChart.fxml";
+    public static final String ControlDataSplitFxml = "/fxml/ControlDataSplit.fxml";
 
     public static final String DataFileCSVFormatFxml = "/fxml/DataFileCSVFormat.fxml";
     public static final String DataFileCSVConvertFxml = "/fxml/DataFileCSVConvert.fxml";

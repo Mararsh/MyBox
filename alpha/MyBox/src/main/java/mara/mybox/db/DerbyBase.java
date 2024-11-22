@@ -29,7 +29,7 @@ import mara.mybox.db.table.TableImageClipboard;
 import mara.mybox.db.table.TableImageEditHistory;
 import mara.mybox.db.table.TableInfoNode;
 import mara.mybox.db.table.TableInfoNodeTag;
-import mara.mybox.db.table.TableMathFunction;
+import mara.mybox.db.table.TableNodeMathFunction;
 import mara.mybox.db.table.TableMedia;
 import mara.mybox.db.table.TableMediaList;
 import mara.mybox.db.table.TableMyBoxLog;
@@ -550,7 +550,7 @@ public class DerbyBase {
                 loadingController.info(t.getTreeName());
             }
             if (!tables.contains("Node_Math_Function".toLowerCase())) {
-                TableMathFunction t = new TableMathFunction();
+                TableNodeMathFunction t = new TableNodeMathFunction();
                 t.createTable(conn);
                 loadingController.info(t.getTreeName());
             }

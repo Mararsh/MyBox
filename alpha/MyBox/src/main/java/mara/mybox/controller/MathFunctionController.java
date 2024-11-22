@@ -20,13 +20,11 @@ import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.StringTools;
-import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -230,16 +228,15 @@ public class MathFunctionController extends InfoTreeManageController {
         outputController.clear();
     }
 
-    @FXML
-    public void dataAction() {
-        MathFunctionDataController.open(editorController);
-    }
-
-    @FXML
-    public void chartAction() {
-        MathFunctionChart.open(editorController);
-    }
-
+//    @FXML
+//    public void dataAction() {
+//        MathFunctionDataController.open(editorController);
+//    }
+//
+//    @FXML
+//    public void chartAction() {
+//        MathFunctionChartController.open(editorController);
+//    }
     @FXML
     public void popMathFunctionHelps(Event event) {
         if (UserConfig.getBoolean("JavaScriptHelpsPopWhenMouseHovering", false)) {
@@ -255,15 +252,14 @@ public class MathFunctionController extends InfoTreeManageController {
     /*
         static
      */
-    public static MathFunctionController open() {
-        try {
-            MathFunctionController controller = (MathFunctionController) WindowTools.openStage(Fxmls.MathFunctionFxml);
-            controller.requestMouse();
-            return controller;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
-    }
-
+//    public static MathFunctionController open() {
+//        try {
+//            MathFunctionController controller = (MathFunctionController) WindowTools.openStage(Fxmls.MathFunctionFxml);
+//            controller.requestMouse();
+//            return controller;
+//        } catch (Exception e) {
+//            MyBoxLog.error(e);
+//            return null;
+//        }
+//    }
 }

@@ -106,13 +106,14 @@ public class ControlDataSQL extends BaseDataValuesController {
     @Override
     protected void editValues() {
         try {
-            Object v;
-            if (nodeEditor.currentNode == null) {
-                v = null;
+            isSettingValues = true;
+            if (nodeEditor.currentNode != null) {
+                sqlArea.setText(nodeEditor.currentNode.getStringValue("statement"));
             } else {
-                v = nodeEditor.currentNode.getValue("statement");
+                sqlArea.clear();
             }
-            sqlArea.setText(v != null ? (String) v : null);
+            isSettingValues = false;
+            valueChanged(false);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
