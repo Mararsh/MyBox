@@ -33,12 +33,14 @@ import mara.mybox.db.table.TableMedia;
 import mara.mybox.db.table.TableMediaList;
 import mara.mybox.db.table.TableMyBoxLog;
 import mara.mybox.db.table.TableNamedValues;
+import mara.mybox.db.table.TableNodeData2DDefinition;
 import mara.mybox.db.table.TableNodeHtml;
 import mara.mybox.db.table.TableNodeImageScope;
 import mara.mybox.db.table.TableNodeJEXL;
 import mara.mybox.db.table.TableNodeJShell;
 import mara.mybox.db.table.TableNodeJavaScript;
 import mara.mybox.db.table.TableNodeMathFunction;
+import mara.mybox.db.table.TableNodeRowFilter;
 import mara.mybox.db.table.TableNodeSQL;
 import mara.mybox.db.table.TableNodeText;
 import mara.mybox.db.table.TableNodeWebFavorite;
@@ -579,6 +581,16 @@ public class DerbyBase {
             }
             if (!tables.contains("Node_JavaScript".toLowerCase())) {
                 TableNodeJavaScript t = new TableNodeJavaScript();
+                t.createTable(conn);
+                loadingController.info(t.getTreeName());
+            }
+            if (!tables.contains("Node_Row_Filter".toLowerCase())) {
+                TableNodeRowFilter t = new TableNodeRowFilter();
+                t.createTable(conn);
+                loadingController.info(t.getTreeName());
+            }
+            if (!tables.contains("Node_Data2D_Definition".toLowerCase())) {
+                TableNodeData2DDefinition t = new TableNodeData2DDefinition();
                 t.createTable(conn);
                 loadingController.info(t.getTreeName());
             }

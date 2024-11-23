@@ -264,7 +264,7 @@ public class ControlData2DColumns extends BaseData2DColumnsController {
                 if (node == null) {
                     return;
                 }
-                addColumns(Data2DDefinitionTools.definitionFromXML(null, myController, node.getInfo()));
+                addColumns(Data2DDefinitionTools.fromXML(node.getInfo()));
                 controller.close();
             }
         });
@@ -324,7 +324,7 @@ public class ControlData2DColumns extends BaseData2DColumnsController {
             popError(message("NoData"));
             return;
         }
-        Data2DDefinitionController.load(currentData);
+        ControlDataData2DDefinition.loadData(currentData);
     }
 
 }

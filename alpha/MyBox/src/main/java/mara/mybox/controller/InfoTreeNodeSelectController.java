@@ -39,8 +39,8 @@ public class InfoTreeNodeSelectController extends BaseInfoTreeHandleController {
 
     @FXML
     public void dataAction() {
-        InfoTreeManageController c = InfoNode.openManager(handlerController.category);
-        c.setAlwaysTop(true, false);
+//        InfoTreeManageController c = InfoNode.openManager(handlerController.category);
+//        c.setAlwaysTop(true, false);
     }
 
     public SimpleBooleanProperty getNotify() {

@@ -334,10 +334,9 @@ public class DataMigrationTools {
                         }
                     }
                     break;
-                case "Node_Data2DDefinition":
-                    node.setValue("Value", info);
+                case "Node_Data2D_Definition":
+                    node.setValue("data2d_definition", info);
                     break;
-
             }
             return node;
         } catch (Exception e) {

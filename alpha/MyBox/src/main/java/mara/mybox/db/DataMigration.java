@@ -50,6 +50,7 @@ import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.db.table.TableImageClipboard;
 import mara.mybox.db.table.TableImageEditHistory;
 import mara.mybox.db.table.TableInfoNode;
+import mara.mybox.db.table.TableNodeData2DDefinition;
 import mara.mybox.db.table.TableNodeHtml;
 import mara.mybox.db.table.TableNodeImageScope;
 import mara.mybox.db.table.TableNodeJEXL;
@@ -219,6 +220,7 @@ public class DataMigration {
             updateIn682_move(conn, new TableNodeJEXL(), "JEXLCode");
             updateIn682_move(conn, new TableNodeJavaScript(), "JavaScript");
             updateIn682_move(conn, new TableNodeRowFilter(), "RowFilter");
+            updateIn682_move(conn, new TableNodeData2DDefinition(), "Data2DDefinition");
 
             try (Statement statement = conn.createStatement()) {
                 conn.setAutoCommit(true);

@@ -1,8 +1,9 @@
 package mara.mybox.db.table;
 
 import java.sql.Connection;
-import java.util.Map;
 import mara.mybox.controller.BaseController;
+import mara.mybox.data2d.DataFileCSV;
+import mara.mybox.data2d.tools.Data2DDefinitionTools;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.DataNode;
@@ -18,27 +19,25 @@ import static mara.mybox.value.Languages.message;
 public class TableNodeData2DDefinition extends BaseNodeTable {
 
     public TableNodeData2DDefinition() {
-        tableName = "Node_SQL";
-        treeName = message("DatabaseSQL");
-        dataName = message("SQL");
-        dataFxml = Fxmls.ControlDataSQLFxml;
-        examplesFileName = "SQL";
+        tableName = "Node_Data2D_Definition";
+        treeName = message("Data2DDefinition");
+        dataName = message("DataDefinition");
+        dataFxml = Fxmls.ControlDataData2DDefinitionFxml;
+        examplesFileName = "DataDefinition";
         defineColumns();
     }
 
     public final TableNodeData2DDefinition defineColumns() {
         defineNodeColumns();
-        addColumn(new ColumnDefinition("statement", ColumnType.String).setLength(FilenameMaxLength));
+        addColumn(new ColumnDefinition("data2d_definition", ColumnType.Clob));
         return this;
     }
 
     @Override
     public String valuesHtml(FxTask task, Connection conn, BaseController controller, DataNode node) {
         try {
-            Map<String, Object> values = node.getValues();
-            String sql = (String) values.get("statement");
-            return sql == null || sql.isBlank() ? null
-                    : ("<CODE>" + sql + "</CODE>");
+            DataFileCSV def = Data2DDefinitionTools.fromDataNode(node);
+            return Data2DDefinitionTools.toHtml(def);
         } catch (Exception e) {
             return null;
         }

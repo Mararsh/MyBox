@@ -664,7 +664,7 @@ public class BaseNodeTable extends BaseTable<DataNode> {
                 continue;
             }
             json += prefix + ",\n"
-                    + prefix + "\"" + message(name) + "\": "
+                    + prefix + "\"" + label(name) + "\": "
                     + JsonTools.encode(column.toString(value));
         }
         return json;

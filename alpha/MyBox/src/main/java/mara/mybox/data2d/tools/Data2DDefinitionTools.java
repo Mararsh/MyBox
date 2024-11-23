@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javafx.scene.paint.Color;
-import mara.mybox.controller.BaseController;
 import mara.mybox.data.StringTable;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataFileCSV;
@@ -16,8 +15,8 @@ import mara.mybox.data2d.DataFileExcel;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Data2DColumn;
+import mara.mybox.db.data.DataNode;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.FileTools;
@@ -46,7 +45,7 @@ import org.w3c.dom.NodeList;
  */
 public class Data2DDefinitionTools {
 
-    public static List<Data2DColumn> definition() {
+    public static List<Data2DColumn> columns() {
         List<Data2DColumn> columns = new ArrayList<>();
         columns.add(new Data2DColumn(message("ColumnName"), ColumnType.String));
         columns.add(new Data2DColumn(message("Type"), ColumnType.String));
@@ -67,7 +66,7 @@ public class Data2DDefinitionTools {
         return columns;
     }
 
-    public static String definitionToHtml(Data2D data2d) {
+    public static String toHtml(Data2D data2d) {
         try {
             if (data2d == null) {
                 return null;
@@ -187,7 +186,7 @@ public class Data2DDefinitionTools {
         }
     }
 
-    public static String definitionToXML(Data2D data2d, boolean withAttributes, String prefix) {
+    public static String toXML(Data2D data2d, boolean withAttributes, String prefix) {
         try {
             if (data2d == null) {
                 return null;
@@ -265,7 +264,7 @@ public class Data2DDefinitionTools {
         }
     }
 
-    public static String definitionToJSON(Data2D data2d, boolean withAttributes, String prefix) {
+    public static String toJSON(Data2D data2d, boolean withAttributes, String prefix) {
         try {
             if (data2d == null) {
                 return null;
@@ -345,13 +344,13 @@ public class Data2DDefinitionTools {
         }
     }
 
-    public static DataFileCSV definitionToCSVFile(Data2D data2d, File file) {
+    public static DataFileCSV toCSVFile(Data2D data2d, File file) {
         try {
             if (data2d == null || file == null) {
                 return null;
             }
             File tmpFile = FileTmpTools.getTempFile();
-            List<Data2DColumn> definition = definition();
+            List<Data2DColumn> definition = columns();
             try (CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, Charset.forName("UTF-8")), CsvTools.csvFormat(",", true))) {
                 List<String> row = new ArrayList<>();
                 for (Data2DColumn col : definition) {
@@ -418,10 +417,10 @@ public class Data2DDefinitionTools {
         }
     }
 
-    public static DataFileExcel definitionToExcelFile(Data2D data2d, File file) {
+    public static DataFileExcel toExcelFile(Data2D data2d, File file) {
         try {
             File tmpFile = FileTmpTools.getTempFile();
-            List<Data2DColumn> definition = definition();
+            List<Data2DColumn> definition = columns();
             try (XSSFWorkbook xssfBook = new XSSFWorkbook()) {
                 XSSFSheet xssfSheet = xssfBook.createSheet("sheet1");
                 xssfSheet.setDefaultColumnWidth(20);
@@ -498,12 +497,12 @@ public class Data2DDefinitionTools {
         }
     }
 
-    public static DataFileCSV definitionFromXML(FxTask task, BaseController controller, String s) {
+    public static DataFileCSV fromXML(String s) {
         try {
             if (s == null || s.isBlank()) {
                 return null;
             }
-            Element e = XmlTools.toElement(task, controller, s);
+            Element e = XmlTools.toElement(null, null, s);
             if (e == null) {
                 return null;
             }
@@ -649,6 +648,13 @@ public class Data2DDefinitionTools {
             MyBoxLog.error(e);
             return null;
         }
+    }
+
+    public static DataFileCSV fromDataNode(DataNode node) {
+        if (node == null) {
+            return null;
+        }
+        return fromXML(node.getStringValue("data2d_definition"));
     }
 
 }

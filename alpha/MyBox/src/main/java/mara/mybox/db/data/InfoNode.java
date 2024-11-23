@@ -10,8 +10,6 @@ import java.util.Map;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.bufferedimage.ImageScopeTools;
 import mara.mybox.controller.BaseController;
-import mara.mybox.controller.Data2DDefinitionController;
-import mara.mybox.controller.InfoTreeManageController;
 import mara.mybox.data.StringTable;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.tools.Data2DDefinitionTools;
@@ -564,9 +562,9 @@ public class InfoNode extends BaseData {
                 break;
             }
             case InfoNode.Data2DDefinition: {
-                DataFileCSV csv = Data2DDefinitionTools.definitionFromXML(task, controller, s);
+                DataFileCSV csv = Data2DDefinitionTools.fromXML(s);
                 if (csv != null) {
-                    html = Data2DDefinitionTools.definitionToHtml(csv);
+                    html = Data2DDefinitionTools.toHtml(csv);
                 }
                 break;
             }
@@ -644,10 +642,10 @@ public class InfoNode extends BaseData {
         String json = "";
         switch (category) {
             case InfoNode.Data2DDefinition: {
-                DataFileCSV csv = Data2DDefinitionTools.definitionFromXML(task, controller, s);
+                DataFileCSV csv = Data2DDefinitionTools.fromXML(s);
                 if (csv != null) {
                     json = prefix + ",\n"
-                            + Data2DDefinitionTools.definitionToJSON(csv, true, prefix);
+                            + Data2DDefinitionTools.toJSON(csv, true, prefix);
                 }
                 break;
             }
@@ -691,39 +689,39 @@ public class InfoNode extends BaseData {
         return Languages.matchIgnoreCase(category, InfoNode.Notebook);
     }
 
-    public static InfoTreeManageController openManager(String category) {
-        if (category == null) {
-            return null;
-        }
-        switch (category) {
-//            case InfoNode.WebFavorite:
-//                return WebFavoritesController.oneOpen();
-//            case InfoNode.Notebook:
-//                return NoteTreeController.oneOpen();
-//            case InfoNode.JShellCode:
-//                return JShellController.open("");
-//            case InfoNode.SQL:
-//                return DatabaseSqlController.open(false);
-//            case InfoNode.JavaScript:
-//                return JavaScriptController.loadScript("");
-//            case InfoNode.InformationInTree:
-//                return InfoTreeController.oneOpen();
-//            case InfoNode.JEXLCode:
-//                return JexlController.open("", "", "");
-//            case InfoNode.RowFilter:
-//                return RowFilterController.open();
-//            case InfoNode.MathFunction:
-//                return MathFunctionController.open();
-//            case InfoNode.ImageMaterial:
-//                return ImageMaterialController.open();
-            case InfoNode.Data2DDefinition:
-                return Data2DDefinitionController.open();
-//            case InfoNode.ImageScope:
-//                return ImageScopeController.open();
-
-        }
-        return null;
-    }
+//    public static InfoTreeManageController openManager(String category) {
+//        if (category == null) {
+//            return null;
+//        }
+//        switch (category) {
+////            case InfoNode.WebFavorite:
+////                return WebFavoritesController.oneOpen();
+////            case InfoNode.Notebook:
+////                return NoteTreeController.oneOpen();
+////            case InfoNode.JShellCode:
+////                return JShellController.open("");
+////            case InfoNode.SQL:
+////                return DatabaseSqlController.open(false);
+////            case InfoNode.JavaScript:
+////                return JavaScriptController.loadScript("");
+////            case InfoNode.InformationInTree:
+////                return InfoTreeController.oneOpen();
+////            case InfoNode.JEXLCode:
+////                return JexlController.open("", "", "");
+////            case InfoNode.RowFilter:
+////                return RowFilterController.open();
+////            case InfoNode.MathFunction:
+////                return MathFunctionController.open();
+////            case InfoNode.ImageMaterial:
+////                return ImageMaterialController.open();
+////            case InfoNode.Data2DDefinition:
+////                return Data2DDefinitionController.open();
+////            case InfoNode.ImageScope:
+////                return ImageScopeController.open();
+//
+//        }
+//        return null;
+//    }
 
     /*
         get/set

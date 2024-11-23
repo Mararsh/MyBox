@@ -597,6 +597,17 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
     }
 
     @FXML
+    @Override
+    public boolean popAction() {
+        TreeItem<DataNode> item = selected();
+        if (item == null) {
+            return false;
+        }
+        popNode(item);
+        return true;
+    }
+
+    @FXML
     public void aboutTreeInformation() {
         openHtml(HelpTools.aboutTreeInformation());
     }

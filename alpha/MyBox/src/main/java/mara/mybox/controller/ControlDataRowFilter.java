@@ -44,22 +44,9 @@ public class ControlDataRowFilter extends BaseDataValuesController {
     @Override
     public void initEditor() {
         try {
-            scriptInput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue v, String ov, String nv) {
-                    valueChanged(true);
-                }
-            });
-
-            wrapCheck.setSelected(UserConfig.getBoolean(baseName + "Wrap", false));
-            wrapCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "Wrap", newValue);
-                    scriptInput.setWrapText(newValue);
-                }
-            });
-            scriptInput.setWrapText(wrapCheck.isSelected());
+            valueInput = scriptInput;
+            valueWrapCheck = wrapCheck;
+            super.initEditor();
 
             takeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
@@ -126,12 +113,6 @@ public class ControlDataRowFilter extends BaseDataValuesController {
             MyBoxLog.error(e);
             return null;
         }
-    }
-
-    @FXML
-    @Override
-    public void clearAction() {
-        scriptInput.clear();
     }
 
     public void edit(String script, boolean matchTrue, long max) {

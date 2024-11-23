@@ -13,6 +13,7 @@ import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
@@ -54,6 +55,8 @@ public class ControlDataMathFunction extends BaseDataValuesController {
     @FXML
     protected TextArea expressionInput, domainInput;
     @FXML
+    protected CheckBox wrapCheck;
+    @FXML
     protected VBox inputsBox;
     @FXML
     protected ComboBox<String> calculateScaleSelector;
@@ -74,8 +77,11 @@ public class ControlDataMathFunction extends BaseDataValuesController {
     @Override
     public void initEditor() {
         try {
-
             calculator = new ExpressionCalculator();
+
+            valueInput = expressionInput;
+            valueWrapCheck = wrapCheck;
+            super.initEditor();
 
             variablesInput.focusedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -85,16 +91,6 @@ public class ControlDataMathFunction extends BaseDataValuesController {
                     }
                     valueChanged(true);
                     checkVariables();
-                }
-            });
-
-            expressionInput.focusedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue v, Boolean ov, Boolean nv) {
-                    if (isSettingValues || nv) {
-                        return;
-                    }
-                    valueChanged(true);
                 }
             });
 
@@ -151,11 +147,13 @@ public class ControlDataMathFunction extends BaseDataValuesController {
     @Override
     protected DataNode pickValues(DataNode node) {
         try {
-            String expression = expressionInput.getText();
+            expression = expressionInput.getText();
             node.setValue("expression", expression == null ? null : expression.trim());
+
             String variables = variablesInput.getText();
             node.setValue("variables", variables == null ? null : variables.trim());
-            String domain = domainInput.getText();
+
+            domain = domainInput.getText();
             node.setValue("domain", domain == null ? null : domain.trim());
             return node;
         } catch (Exception e) {
@@ -420,18 +418,6 @@ public class ControlDataMathFunction extends BaseDataValuesController {
     @FXML
     protected void showScriptExamples(Event event) {
         PopTools.popJavaScriptExamples(this, event, expressionInput, "FunctionScriptExamples", null);
-    }
-
-    @FXML
-    protected void popScriptHistories(Event event) {
-        if (UserConfig.getBoolean("FunctionScriptHistoriesPopWhenMouseHovering", false)) {
-            showScriptHistories(event);
-        }
-    }
-
-    @FXML
-    protected void showScriptHistories(Event event) {
-        PopTools.popStringValues(this, expressionInput, event, "FunctionScriptHistories", false);
     }
 
     @FXML

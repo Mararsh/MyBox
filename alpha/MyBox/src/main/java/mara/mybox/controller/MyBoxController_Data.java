@@ -54,7 +54,7 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
 
         MenuItem Data2DDefinition = new MenuItem(message("Data2DDefinition"));
         Data2DDefinition.setOnAction((ActionEvent event1) -> {
-            loadScene(Fxmls.Data2DDefinitionFxml);
+            DataTreeController.data2DDefinition(this, true);
         });
 
         MenuItem DataInSystemClipboard = new MenuItem(message("DataInSystemClipboard"));

@@ -33,7 +33,7 @@ public abstract class MainMenuController_Data extends MainMenuController_Network
 
     @FXML
     protected void Data2DDefinition(ActionEvent event) {
-        loadScene(Fxmls.Data2DDefinitionFxml);
+        DataTreeController.data2DDefinition(parentController, false);
     }
 
     @FXML

@@ -97,7 +97,7 @@ public abstract class Data2D extends Data2D_Operations {
     }
 
     public String dataInfo() {
-        return pageInfo() + "<BR>" + Data2DDefinitionTools.definitionToHtml(this);
+        return pageInfo() + "<BR>" + Data2DDefinitionTools.toHtml(this);
     }
 
     /*

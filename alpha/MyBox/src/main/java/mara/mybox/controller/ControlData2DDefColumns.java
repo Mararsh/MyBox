@@ -15,7 +15,7 @@ import mara.mybox.fxml.cell.TableCheckboxCell;
  */
 public class ControlData2DDefColumns extends BaseData2DColumnsController {
 
-    protected Data2DDefinitionEditor editor;
+    protected ControlDataData2DDefinition editor;
 
     public ControlData2DDefColumns() {
     }
@@ -118,7 +118,7 @@ public class ControlData2DDefColumns extends BaseData2DColumnsController {
         }
     }
 
-    protected void setParameters(Data2DDefinitionEditor defEditor) {
+    protected void setParameters(ControlDataData2DDefinition defEditor) {
         editor = defEditor;
         data2D = null;
     }

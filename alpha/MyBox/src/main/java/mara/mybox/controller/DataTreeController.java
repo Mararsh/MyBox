@@ -29,6 +29,7 @@ import mara.mybox.db.data.DataNodeTag;
 import mara.mybox.db.table.BaseNodeTable;
 import mara.mybox.db.table.TableDataNodeTag;
 import mara.mybox.db.table.TableDataTag;
+import mara.mybox.db.table.TableNodeData2DDefinition;
 import mara.mybox.db.table.TableNodeHtml;
 import mara.mybox.db.table.TableNodeImageScope;
 import mara.mybox.db.table.TableNodeJEXL;
@@ -1116,6 +1117,10 @@ public class DataTreeController extends BaseDataTreeViewController {
 
     public static DataTreeController rowFilter(BaseController pController, boolean shouldLoad) {
         return open(pController, shouldLoad, new TableNodeRowFilter());
+    }
+
+    public static DataTreeController data2DDefinition(BaseController pController, boolean shouldLoad) {
+        return open(pController, shouldLoad, new TableNodeData2DDefinition());
     }
 
 }
