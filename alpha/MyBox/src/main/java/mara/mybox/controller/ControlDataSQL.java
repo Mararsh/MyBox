@@ -26,7 +26,6 @@ import mara.mybox.data2d.DataInternalTable;
 import mara.mybox.data2d.tools.Data2DConvertTools;
 import mara.mybox.data2d.tools.Data2DTableTools;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.data.DataNode;
 import mara.mybox.db.table.TableData2D;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
@@ -70,23 +69,11 @@ public class ControlDataSQL extends BaseDataValuesController {
     @Override
     public void initEditor() {
         try {
-
-            sqlArea.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue v, String ov, String nv) {
-                    valueChanged(true);
-                }
-            });
-
-            wrapCheck.setSelected(UserConfig.getBoolean(baseName + "ValueWrap", false));
-            wrapCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "ValueWrap", newValue);
-                    sqlArea.setWrapText(newValue);
-                }
-            });
-            sqlArea.setWrapText(wrapCheck.isSelected());
+            valueInput = sqlArea;
+            valueWrapCheck = wrapCheck;
+            valueName = "statement";
+            baseName = baseName + (internal ? "Internal" : "");
+            super.initEditor();
 
             wrapOutputsCheck.setSelected(UserConfig.getBoolean(baseName + "OutputsWrap", false));
             wrapOutputsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -100,34 +87,6 @@ public class ControlDataSQL extends BaseDataValuesController {
 
         } catch (Exception e) {
             MyBoxLog.error(e);
-        }
-    }
-
-    @Override
-    protected void editValues() {
-        try {
-            isSettingValues = true;
-            if (nodeEditor.currentNode != null) {
-                sqlArea.setText(nodeEditor.currentNode.getStringValue("statement"));
-            } else {
-                sqlArea.clear();
-            }
-            isSettingValues = false;
-            valueChanged(false);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    @Override
-    protected DataNode pickValues(DataNode node) {
-        try {
-            String sql = sqlArea.getText();
-            node.setValue("statement", sql == null ? null : sql.trim());
-            return node;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
         }
     }
 
@@ -212,28 +171,8 @@ public class ControlDataSQL extends BaseDataValuesController {
     }
 
     @FXML
-    @Override
-    public void clearAction() {
-        sqlArea.clear();
-    }
-
-    @FXML
     public void clearOutput() {
         outputArea.clear();
-    }
-
-    @FXML
-    protected void popHistories(Event event) {
-        if (UserConfig.getBoolean("SQL" + (internal ? "Internal" : "")
-                + "HistoriesPopWhenMouseHovering", false)) {
-            showHistories(event);
-        }
-    }
-
-    @FXML
-    protected void showHistories(Event event) {
-        PopTools.popStringValues(this, sqlArea, event,
-                "SQL" + (internal ? "Internal" : "") + "Histories", false);
     }
 
     @FXML

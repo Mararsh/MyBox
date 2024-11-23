@@ -10,12 +10,9 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioMenuItem;
@@ -24,9 +21,7 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.TreeItem;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
-import javafx.stage.Stage;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.DataNode;
 import static mara.mybox.db.data.DataNode.TitleSeparater;
@@ -38,7 +33,9 @@ import mara.mybox.db.table.TableNodeHtml;
 import mara.mybox.db.table.TableNodeImageScope;
 import mara.mybox.db.table.TableNodeJEXL;
 import mara.mybox.db.table.TableNodeJShell;
+import mara.mybox.db.table.TableNodeJavaScript;
 import mara.mybox.db.table.TableNodeMathFunction;
+import mara.mybox.db.table.TableNodeRowFilter;
 import mara.mybox.db.table.TableNodeSQL;
 import mara.mybox.db.table.TableNodeText;
 import mara.mybox.db.table.TableNodeWebFavorite;
@@ -900,41 +897,9 @@ public class DataTreeController extends BaseDataTreeViewController {
         nodeController.sourceFileChanged(file);
     }
 
-    public boolean isNodeChanged() {
-        return nodeController.nodeChanged.get();
-    }
-
     @Override
     public boolean checkBeforeNextAction() {
-        if (!isNodeChanged()) {
-            return true;
-        } else {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle(getMyStage().getTitle());
-            alert.setContentText(message("DataChanged"));
-            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-            ButtonType buttonSave = new ButtonType(message("Save"));
-            ButtonType buttonNotSave = new ButtonType(message("NotSave"));
-            ButtonType buttonCancel = new ButtonType(message("Cancel"));
-            alert.getButtonTypes().setAll(buttonSave, buttonNotSave, buttonCancel);
-            Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-            stage.setAlwaysOnTop(true);
-            stage.toFront();
-
-            Optional<ButtonType> result = alert.showAndWait();
-            if (result == null || !result.isPresent()) {
-                return false;
-            }
-            if (result.get() == buttonSave) {
-                saveAction();
-                return false;
-            } else if (result.get() == buttonNotSave) {
-                nodeController.nodeChanged.set(false);
-                return true;
-            } else {
-                return false;
-            }
-        }
+        return nodeController.checkBeforeNextAction();
     }
 
     @Override
@@ -1143,6 +1108,14 @@ public class DataTreeController extends BaseDataTreeViewController {
 
     public static DataTreeController jexl(BaseController pController, boolean shouldLoad) {
         return open(pController, shouldLoad, new TableNodeJEXL());
+    }
+
+    public static DataTreeController javascript(BaseController pController, boolean shouldLoad) {
+        return open(pController, shouldLoad, new TableNodeJavaScript());
+    }
+
+    public static DataTreeController rowFilter(BaseController pController, boolean shouldLoad) {
+        return open(pController, shouldLoad, new TableNodeRowFilter());
     }
 
 }

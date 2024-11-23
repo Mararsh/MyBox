@@ -37,6 +37,7 @@ import mara.mybox.db.table.TableNodeHtml;
 import mara.mybox.db.table.TableNodeImageScope;
 import mara.mybox.db.table.TableNodeJEXL;
 import mara.mybox.db.table.TableNodeJShell;
+import mara.mybox.db.table.TableNodeJavaScript;
 import mara.mybox.db.table.TableNodeMathFunction;
 import mara.mybox.db.table.TableNodeSQL;
 import mara.mybox.db.table.TableNodeText;
@@ -573,6 +574,11 @@ public class DerbyBase {
             }
             if (!tables.contains("Node_JEXL".toLowerCase())) {
                 TableNodeJEXL t = new TableNodeJEXL();
+                t.createTable(conn);
+                loadingController.info(t.getTreeName());
+            }
+            if (!tables.contains("Node_JavaScript".toLowerCase())) {
+                TableNodeJavaScript t = new TableNodeJavaScript();
                 t.createTable(conn);
                 loadingController.info(t.getTreeName());
             }

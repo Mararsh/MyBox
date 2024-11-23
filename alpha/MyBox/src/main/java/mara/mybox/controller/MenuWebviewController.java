@@ -321,7 +321,7 @@ public class MenuWebviewController extends MenuController {
         if (webViewController == null) {
             return;
         }
-        JavaScriptController.open(webViewController);
+        ControlDataJavascript.open(webViewController);
     }
 
     @Override

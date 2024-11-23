@@ -3,18 +3,18 @@ package mara.mybox.controller;
 import java.io.File;
 import javafx.event.Event;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Tab;
-import mara.mybox.db.data.InfoNode;
+import javafx.scene.control.TextArea;
+import javafx.scene.input.MouseEvent;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.HtmlWriteTools;
-import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -23,26 +23,24 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2022-3-20
  * @License Apache License Version 2.0
  */
-public class JavaScriptController extends InfoTreeManageController {
+public class ControlDataJavascript extends BaseDataValuesController {
 
     protected ControlWebView htmlWebView;
     protected String outputs = "";
 
     @FXML
-    protected Tab htmlTab;
+    protected TextArea scriptInput;
     @FXML
-    protected JavaScriptEditor editorController;
+    protected CheckBox wrapCheck;
+    @FXML
+    protected Tab htmlTab;
     @FXML
     protected ControlWebView outputController;
     @FXML
     protected WebAddressController htmlController;
 
-    public JavaScriptController() {
-        baseTitle = "JavaScript";
+    public ControlDataJavascript() {
         TipsLabelKey = "JavaScriptTips";
-        category = InfoNode.JavaScript;
-        nameMsg = message("Name");
-        valueMsg = "JavaScript";
     }
 
     @Override
@@ -51,12 +49,13 @@ public class JavaScriptController extends InfoTreeManageController {
     }
 
     @Override
-    public void initControls() {
+    public void initEditor() {
         try {
-            editor = editorController;
-            super.initControls();
+            valueInput = scriptInput;
+            valueWrapCheck = wrapCheck;
+            valueName = "script";
+            super.initEditor();
 
-            editorController.setParameters(this);
             outputController.setParent(this, ControlWebView.ScrollType.Bottom);
 
             htmlWebView = htmlController.webViewController;
@@ -64,8 +63,9 @@ public class JavaScriptController extends InfoTreeManageController {
                 htmlController.webViewController.setParent(this, ControlWebView.ScrollType.Bottom);
                 htmlController.loadContents(HtmlWriteTools.emptyHmtl(message("AppTitle")));
             }
+
         } catch (Exception e) {
-            MyBoxLog.debug(e);
+            MyBoxLog.error(e);
         }
     }
 
@@ -75,31 +75,13 @@ public class JavaScriptController extends InfoTreeManageController {
     }
 
     @FXML
-    protected void showHtmlStyle(Event event) {
-        PopTools.popHtmlStyle(event, outputController);
+    @Override
+    public void startAction() {
+        runScirpt(getScript());
     }
 
-    @FXML
-    protected void popHtmlStyle(Event event) {
-        if (UserConfig.getBoolean("HtmlStylesPopWhenMouseHovering", false)) {
-            showHtmlStyle(event);
-        }
-    }
-
-    @FXML
-    public void editResults() {
-        outputController.editAction();
-    }
-
-    @FXML
-    public void clearResults() {
-        outputs = "";
-        outputController.clear();
-    }
-
-    public void edit(String script) {
-        editNode(null);
-        editorController.valueInput.setText(script);
+    public String getScript() {
+        return scriptInput.getText();
     }
 
     public void runScirpt(String script) {
@@ -150,14 +132,64 @@ public class JavaScriptController extends InfoTreeManageController {
         popEventMenu(event, HelpTools.javascriptHelps());
     }
 
+    @FXML
+    protected void popExamplesMenu(MouseEvent event) {
+        if (UserConfig.getBoolean(interfaceName + "ExamplesPopWhenMouseHovering", false)) {
+            showExamplesMenu(event);
+        }
+    }
+
+    @FXML
+    protected void showExamplesMenu(Event event) {
+        PopTools.popJavaScriptExamples(this, event, scriptInput, interfaceName + "Examples", null);
+    }
+
+    /*
+        right pane
+     */
+    @FXML
+    public void editResults() {
+        outputController.editAction();
+    }
+
+    @FXML
+    public void clearResults() {
+        outputs = "";
+        outputController.clear();
+    }
+
+    public void edit(String script) {
+        scriptInput.setText(script);
+    }
+
+    @FXML
+    protected void showHtmlStyle(Event event) {
+        PopTools.popHtmlStyle(event, outputController);
+    }
+
+    @FXML
+    protected void popHtmlStyle(Event event) {
+        if (UserConfig.getBoolean("HtmlStylesPopWhenMouseHovering", false)) {
+            showHtmlStyle(event);
+        }
+    }
+
+    @Override
+    public void cleanPane() {
+        try {
+            cancelAction();
+        } catch (Exception e) {
+        }
+        super.cleanPane();
+    }
+
     /*
         static
      */
-    public static JavaScriptController open(ControlWebView controlWebView) {
+    public static DataTreeController open(ControlWebView controlWebView) {
         try {
-            JavaScriptController controller = (JavaScriptController) WindowTools.branchStage(
-                    controlWebView, Fxmls.JavaScriptFxml);
-            controller.setParameters(controlWebView);
+            DataTreeController controller = DataTreeController.javascript(controlWebView, false);
+            ((ControlDataJavascript) controller.nodeController.dataController).setParameters(controlWebView);
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
@@ -166,10 +198,10 @@ public class JavaScriptController extends InfoTreeManageController {
         }
     }
 
-    public static JavaScriptController loadScript(String script) {
+    public static DataTreeController loadScript(String script) {
         try {
-            JavaScriptController controller = (JavaScriptController) WindowTools.openStage(Fxmls.JavaScriptFxml);
-            controller.edit(script);
+            DataTreeController controller = DataTreeController.javascript(null, false);
+            ((ControlDataJavascript) controller.nodeController.dataController).edit(script);
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
@@ -178,10 +210,10 @@ public class JavaScriptController extends InfoTreeManageController {
         }
     }
 
-    public static JavaScriptController openFile(File file) {
+    public static DataTreeController openFile(File file) {
         try {
-            JavaScriptController controller = (JavaScriptController) WindowTools.openStage(Fxmls.JavaScriptFxml);
-            controller.selectSourceFile(file);
+            DataTreeController controller = DataTreeController.javascript(null, false);
+            ((ControlDataJavascript) controller.nodeController.dataController).selectSourceFile(file);
             controller.requestMouse();
             return controller;
         } catch (Exception e) {

@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -18,7 +16,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import jdk.jshell.JShell;
 import jdk.jshell.SourceCodeAnalysis;
-import mara.mybox.db.data.DataNode;
+import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
@@ -63,24 +61,17 @@ public class ControlDataJShell extends BaseDataValuesController {
     }
 
     @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.Text);
+    }
+
+    @Override
     public void initEditor() {
         try {
-            codesInput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue v, String ov, String nv) {
-                    valueChanged(true);
-                }
-            });
-
-            wrapCheck.setSelected(UserConfig.getBoolean(baseName + "Wrap", false));
-            wrapCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "Wrap", newValue);
-                    codesInput.setWrapText(newValue);
-                }
-            });
-            codesInput.setWrapText(wrapCheck.isSelected());
+            valueInput = codesInput;
+            valueWrapCheck = wrapCheck;
+            valueName = "codes";
+            super.initEditor();
 
             webViewController.setParent(nodeEditor, ControlWebView.ScrollType.Bottom);
             snippetsController.setParameters(this);
@@ -89,34 +80,6 @@ public class ControlDataJShell extends BaseDataValuesController {
 
         } catch (Exception e) {
             MyBoxLog.error(e);
-        }
-    }
-
-    @Override
-    protected void editValues() {
-        try {
-            isSettingValues = true;
-            if (nodeEditor.currentNode != null) {
-                codesInput.setText(nodeEditor.currentNode.getStringValue("codes"));
-            } else {
-                codesInput.clear();
-            }
-            isSettingValues = false;
-            valueChanged(false);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    @Override
-    protected DataNode pickValues(DataNode node) {
-        try {
-            String text = codesInput.getText();
-            node.setValue("codes", text == null ? null : text.trim());
-            return node;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
         }
     }
 
@@ -233,12 +196,6 @@ public class ControlDataJShell extends BaseDataValuesController {
         return true;
     }
 
-    @FXML
-    @Override
-    public void clearAction() {
-        codesInput.clear();
-    }
-
     public void edit(String script) {
         codesInput.setText(script);
     }
@@ -271,18 +228,6 @@ public class ControlDataJShell extends BaseDataValuesController {
             webViewController.loadContents(html);
         });
         Platform.requestNextPulse();
-    }
-
-    @FXML
-    protected void popHistories(Event event) {
-        if (UserConfig.getBoolean(baseName + "CodesHistoriesPopWhenMouseHovering", false)) {
-            showHistories(event);
-        }
-    }
-
-    @FXML
-    protected void showHistories(Event event) {
-        PopTools.popStringValues(this, codesInput, event, baseName + "CodesHistories", false);
     }
 
     // https://stackoverflow.com/questions/53867043/what-are-the-limits-to-jshell?r=SearchResults

@@ -171,13 +171,13 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
     @FXML
     @Override
     public void editAction() {
-        RowFilterController.open(scriptInput.getText(), trueRadio.isSelected(), maxFilteredNumber);
+        ControlDataRowFilter.open(scriptInput.getText(), trueRadio.isSelected(), maxFilteredNumber);
     }
 
     @FXML
     @Override
     public void manageAction() {
-        RowFilterController.open();
+        DataTreeController.rowFilter(this, false);
     }
 
 }

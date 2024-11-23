@@ -49,7 +49,7 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
 
         MenuItem RowFilter = new MenuItem(message("RowFilter"));
         RowFilter.setOnAction((ActionEvent event1) -> {
-            loadScene(Fxmls.RowFilterFxml);
+            DataTreeController.rowFilter(this, true);
         });
 
         MenuItem Data2DDefinition = new MenuItem(message("Data2DDefinition"));
@@ -174,7 +174,7 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
 
         MenuItem JavaScript = new MenuItem("JavaScript");
         JavaScript.setOnAction((ActionEvent event1) -> {
-            loadScene(Fxmls.JavaScriptFxml);
+            DataTreeController.javascript(this, true);
         });
 
         Menu calculation = new Menu(message("ScriptAndExperssion"));

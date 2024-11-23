@@ -388,18 +388,6 @@ public class ControlDataJEXL extends ControlDataJShell {
     }
 
     @FXML
-    protected void popScriptHistories(Event event) {
-        if (UserConfig.getBoolean("JexlScriptHistoriesPopWhenMouseHovering", false)) {
-            showScriptHistories(event);
-        }
-    }
-
-    @FXML
-    protected void showScriptHistories(Event event) {
-        PopTools.popStringValues(this, codesInput, event, "JexlScriptHistories", false);
-    }
-
-    @FXML
     public void addContext() {
         contextInput.appendText("jexlContext.set(\"name\", value);\n");
     }

@@ -11,6 +11,7 @@ import static mara.mybox.db.table.BaseNodeTable.RootID;
 import mara.mybox.db.table.TableDataNodeTag;
 import mara.mybox.db.table.TableDataTag;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.tools.StringTools;
 
 /**
  * @Author Mara
@@ -211,7 +212,7 @@ public class DataMigrationTools {
                     node.setValue("codes", info);
                     break;
                 case "Node_JavaScript":
-                    node.setValue("Script", info);
+                    node.setValue("script", info);
                     break;
                 case "Node_JEXL":
                     node.setValue("script", null);
@@ -239,36 +240,42 @@ public class DataMigrationTools {
                         }
                     }
                     break;
-                case "Node_RowFilter":
-                    node.setValue("Script", null);
-                    node.setValue("Condition", "true");
-                    node.setValue("Maximum", "-1");
+                case "Node_Row_Filter":
+                    node.setValue("script", null);
+                    node.setValue("match_true", true);
+                    node.setValue("max_match", -1);
                     if (info != null) {
                         if (info.contains(ValueSeparater)) {
                             String[] ss = info.split(ValueSeparater);
                             if (ss.length > 0) {
-                                node.setValue("Script", ss[0].trim());
+                                node.setValue("script", ss[0].trim());
                             }
                             if (ss.length > 1) {
-                                node.setValue("Condition", ss[1].trim());
+                                node.setValue("match_true", !StringTools.isFalse(ss[1].trim()));
                             }
                             if (ss.length > 2) {
-                                node.setValue("Maximum", ss[2].trim());
+                                try {
+                                    node.setValue("max_match", Long.valueOf(ss[2].trim()));
+                                } catch (Exception e) {
+                                }
                             }
                         } else if (info.contains(MoreSeparater)) {
                             String[] ss = info.split(MoreSeparater);
-                            node.setValue("Script", ss[0].trim());
+                            node.setValue("script", ss[0].trim());
                             if (ss.length > 1) {
                                 ss = ss[1].split(";;;");
                                 if (ss.length > 0) {
-                                    node.setValue("Condition", ss[0].trim());
+                                    node.setValue("match_true", !StringTools.isFalse(ss[0].trim()));
                                 }
                                 if (ss.length > 1) {
-                                    node.setValue("Maximum", ss[1].trim());
+                                    try {
+                                        node.setValue("max_match", Long.valueOf(ss[1].trim()));
+                                    } catch (Exception e) {
+                                    }
                                 }
                             }
                         } else {
-                            node.setValue("Script", info);
+                            node.setValue("script", info);
                         }
                     }
                     break;

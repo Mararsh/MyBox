@@ -86,12 +86,12 @@ public class ControlJavaScriptRefer extends ControlInfoTreeList {
 
     @FXML
     public void editAction() {
-        JavaScriptController.loadScript(scriptInput.getText());
+        ControlDataJavascript.loadScript(scriptInput.getText());
     }
 
     @FXML
     public void manageAction() {
-        JavaScriptController.loadScript("");
+        ControlDataJavascript.loadScript("");
     }
 
     public void clear() {

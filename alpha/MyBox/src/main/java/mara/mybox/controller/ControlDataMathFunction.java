@@ -24,6 +24,7 @@ import javax.script.Bindings;
 import mara.mybox.calculation.ExpressionCalculator;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.DataNode;
+import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
@@ -63,6 +64,11 @@ public class ControlDataMathFunction extends BaseDataValuesController {
 
     public ControlDataMathFunction() {
         TipsLabelKey = "MathFunctionTips";
+    }
+
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.Text);
     }
 
     @Override

@@ -54,7 +54,9 @@ import mara.mybox.db.table.TableNodeHtml;
 import mara.mybox.db.table.TableNodeImageScope;
 import mara.mybox.db.table.TableNodeJEXL;
 import mara.mybox.db.table.TableNodeJShell;
+import mara.mybox.db.table.TableNodeJavaScript;
 import mara.mybox.db.table.TableNodeMathFunction;
+import mara.mybox.db.table.TableNodeRowFilter;
 import mara.mybox.db.table.TableNodeSQL;
 import mara.mybox.db.table.TableNodeText;
 import mara.mybox.db.table.TableNodeWebFavorite;
@@ -215,6 +217,8 @@ public class DataMigration {
             updateIn682_move(conn, new TableNodeImageScope(), "ImageScope");
             updateIn682_move(conn, new TableNodeJShell(), "JShellCode");
             updateIn682_move(conn, new TableNodeJEXL(), "JEXLCode");
+            updateIn682_move(conn, new TableNodeJavaScript(), "JavaScript");
+            updateIn682_move(conn, new TableNodeRowFilter(), "RowFilter");
 
             try (Statement statement = conn.createStatement()) {
                 conn.setAutoCommit(true);

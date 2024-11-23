@@ -19,7 +19,7 @@ public class TableNodeJShell extends BaseNodeTable {
     public TableNodeJShell() {
         tableName = "Node_JShell";
         treeName = message("JShell");
-        dataName = message("JShell");
+        dataName = message("Codes");
         dataFxml = Fxmls.ControlDataJShellFxml;
         examplesFileName = "JShell";
         defineColumns();

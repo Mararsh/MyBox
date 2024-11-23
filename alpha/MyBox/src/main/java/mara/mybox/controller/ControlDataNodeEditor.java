@@ -1,14 +1,18 @@
 package mara.mybox.controller;
 
-import java.io.File;
 import java.sql.Connection;
 import java.util.Date;
+import java.util.Optional;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.Region;
+import javafx.stage.Stage;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.DataNode;
 import static mara.mybox.db.data.DataNode.TitleSeparater;
@@ -82,13 +86,15 @@ public class ControlDataNodeEditor extends BaseController {
             dataController.refreshStyle();
             dataController.setParameters(this);
 
+            updateStatus();
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
     protected boolean editNode(DataNode node) {
-        if (!treeController.checkBeforeNextAction()) {
+        if (!checkBeforeNextAction()) {
             return false;
         }
         if (node == null) {
@@ -132,6 +138,39 @@ public class ControlDataNodeEditor extends BaseController {
         };
         start(task, thisPane);
         return true;
+    }
+
+    @Override
+    public boolean checkBeforeNextAction() {
+        if (!nodeChanged.get()) {
+            return true;
+        } else {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle(getMyStage().getTitle());
+            alert.setContentText(message("DataChanged"));
+            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+            ButtonType buttonSave = new ButtonType(message("Save"));
+            ButtonType buttonNotSave = new ButtonType(message("NotSave"));
+            ButtonType buttonCancel = new ButtonType(message("Cancel"));
+            alert.getButtonTypes().setAll(buttonSave, buttonNotSave, buttonCancel);
+            Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+            stage.setAlwaysOnTop(true);
+            stage.toFront();
+
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result == null || !result.isPresent()) {
+                return false;
+            }
+            if (result.get() == buttonSave) {
+                saveAction();
+                return false;
+            } else if (result.get() == buttonNotSave) {
+                nodeChanged.set(false);
+                return true;
+            } else {
+                return false;
+            }
+        }
     }
 
     protected String nodeTitle() {
@@ -181,12 +220,7 @@ public class ControlDataNodeEditor extends BaseController {
         }
         setTitle(title + (changed ? " *" : ""));
 
-        boolean isValid = currentNode != null && parentNode != null;
-        thisPane.setVisible(isValid);
-        saveButton.setVisible(isValid);
-        addButton.setVisible(isValid);
-        copyButton.setVisible(isValid);
-        recoverButton.setVisible(isValid);
+        thisPane.setVisible(currentNode != null && parentNode != null);
 
         nodeChanged.set(changed);
         isSettingValues = false;
@@ -237,7 +271,7 @@ public class ControlDataNodeEditor extends BaseController {
         }
         DataNode node = dataController.pickValues(attributes);
         if (node == null) {
-            popError(message("Invalid") + ": " + message("Value"));
+            popError(message("Invalid") + ": " + message("Data"));
             return;
         }
         if (task != null) {
@@ -350,71 +384,6 @@ public class ControlDataNodeEditor extends BaseController {
     public void recoverAction() {
         resetStatus();
         editNode(currentNode);
-    }
-
-    @FXML
-    @Override
-    public void saveAsAction() {
-//        if (valueInput == null) {
-//            return;
-//        }
-//        String codes = valueInput.getText();
-//        if (codes == null || codes.isBlank()) {
-//            popError(message("NoData"));
-//            return;
-//        }
-//        File file = chooseSaveFile(message(manager.category) + "-" + DateTools.nowFileString() + "." + defaultExt);
-//        if (file == null) {
-//            return;
-//        }
-//        FxTask saveAsTask = new FxTask<Void>(this) {
-//
-//            @Override
-//            protected boolean handle() {
-//                File tfile = TextFileTools.writeFile(file, codes, Charset.forName("UTF-8"));
-//                return tfile != null && tfile.exists();
-//            }
-//
-//            @Override
-//            protected void whenSucceeded() {
-//                popInformation(message("Saved"));
-//                recordFileWritten(file);
-//            }
-//
-//        };
-//        start(saveAsTask, false);
-    }
-
-    @Override
-    public void sourceFileChanged(File file) {
-//        if (valueInput == null
-//                || file == null || !file.exists()
-//                || !manager.checkBeforeNextAction()) {
-//            return;
-//        }
-//        editNode(null);
-//        if (task != null) {
-//            task.cancel();
-//        }
-//        valueInput.clear();
-//        task = new FxSingletonTask<Void>(this) {
-//
-//            String codes;
-//
-//            @Override
-//            protected boolean handle() {
-//                codes = TextFileTools.readTexts(this, file);
-//                return codes != null;
-//            }
-//
-//            @Override
-//            protected void whenSucceeded() {
-//                valueInput.setText(codes);
-//                recordFileOpened(file);
-//            }
-//
-//        };
-//        start(task, thisPane);
     }
 
     public void pasteNode(DataNode node) {

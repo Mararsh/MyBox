@@ -346,15 +346,12 @@ public class Fxmls {
     public static final String Data2DGroupFxml = "/fxml/Data2DGroup.fxml";
     public static final String Data2DLocationDistributionFxml = "/fxml/Data2DLocationDistribution.fxml";
     public static final String Data2DRowFilterEditFxml = "/fxml/Data2DRowFilterEdit.fxml";
-    public static final String RowFilterFxml = "/fxml/RowFilter.fxml";
     public static final String Data2DChartGroupXYFxml = "/fxml/Data2DChartGroupXY.fxml";
     public static final String Data2DChartGroupPieFxml = "/fxml/Data2DChartGroupPie.fxml";
     public static final String Data2DChartGroupComparisonBarsFxml = "/fxml/Data2DChartGroupComparisonBars.fxml";
     public static final String Data2DChartGroupSelfComparisonBarsFxml = "/fxml/Data2DChartGroupSelfComparisonBars.fxml";
     public static final String Data2DChartGroupBoxWhiskerFxml = "/fxml/Data2DChartGroupBoxWhisker.fxml";
     public static final String ValueRangeInputFxml = "/fxml/ValueRangeInput.fxml";
-
-    public static final String JavaScriptFxml = "/fxml/JavaScript.fxml";
 
     public static final String MathFunctionDataFxml = "/fxml/MathFunctionData.fxml";
     public static final String MathFunctionChartFxml = "/fxml/MathFunctionChart.fxml";

@@ -1,12 +1,7 @@
 package mara.mybox.db.table;
 
-import java.sql.Connection;
-import java.util.Map;
-import mara.mybox.controller.BaseController;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
-import mara.mybox.db.data.DataNode;
-import mara.mybox.fxml.FxTask;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -18,30 +13,36 @@ import static mara.mybox.value.Languages.message;
 public class TableNodeRowFilter extends BaseNodeTable {
 
     public TableNodeRowFilter() {
-        tableName = "Node_SQL";
-        treeName = message("DatabaseSQL");
-        dataName = message("SQL");
-        dataFxml = Fxmls.ControlDataSQLFxml;
-        examplesFileName = "SQL";
+        tableName = "Node_Row_Filter";
+        treeName = message("RowFilter");
+        dataName = message("RowFilter");
+        dataFxml = Fxmls.ControlDataRowFilterFxml;
+        examplesFileName = "RowFilter";
         defineColumns();
     }
 
     public final TableNodeRowFilter defineColumns() {
         defineNodeColumns();
-        addColumn(new ColumnDefinition("statement", ColumnType.String).setLength(FilenameMaxLength));
+        addColumn(new ColumnDefinition("max_match", ColumnType.Long));
+        addColumn(new ColumnDefinition("match_true", ColumnType.Boolean));
+        addColumn(new ColumnDefinition("script", ColumnType.Clob));
         return this;
     }
 
     @Override
-    public String valuesHtml(FxTask task, Connection conn, BaseController controller, DataNode node) {
-        try {
-            Map<String, Object> values = node.getValues();
-            String sql = (String) values.get("statement");
-            return sql == null || sql.isBlank() ? null
-                    : ("<CODE>" + sql + "</CODE>");
-        } catch (Exception e) {
-            return null;
+    public String label(String name) {
+        if (name == null || name.isBlank()) {
+            return name;
         }
+        switch (name) {
+            case "max_match":
+                return message("MaximumNumber");
+            case "match_true":
+                return message("MatchTrue");
+            case "script":
+                return message("JavaScript");
+        }
+        return name;
     }
 
 }

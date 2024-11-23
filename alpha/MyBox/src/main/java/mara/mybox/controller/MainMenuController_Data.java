@@ -28,7 +28,7 @@ public abstract class MainMenuController_Data extends MainMenuController_Network
 
     @FXML
     protected void RowFilter(ActionEvent event) {
-        loadScene(Fxmls.RowFilterFxml);
+        DataTreeController.rowFilter(parentController, false);
     }
 
     @FXML
@@ -133,7 +133,7 @@ public abstract class MainMenuController_Data extends MainMenuController_Network
 
     @FXML
     protected void JavaScript(ActionEvent event) {
-        loadScene(Fxmls.JavaScriptFxml);
+        DataTreeController.javascript(parentController, false);
     }
 
     @FXML
