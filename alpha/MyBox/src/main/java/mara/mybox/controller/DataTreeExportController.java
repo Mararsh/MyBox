@@ -33,7 +33,6 @@ import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.TextTools;
-import mara.mybox.tools.XmlTools;
 import static mara.mybox.value.AppValues.Indent;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -334,7 +333,7 @@ public class DataTreeExportController extends BaseTaskController {
                     StringBuilder s = new StringBuilder();
                     s.append("<?xml version=\"1.0\" encoding=\"")
                             .append(charset.name()).append("\"?>\n")
-                            .append("<").append(XmlTools.xmlTag(nodeTable.getTreeName())).append(">\n");
+                            .append("<").append(nodeTable.getTableName()).append(">\n");
                     xmlWriter.write(s.toString());
                 } else if (targetPathController.isSkip()) {
                     showLogs(message("Skipped"));
@@ -411,7 +410,7 @@ public class DataTreeExportController extends BaseTaskController {
         }
         if (xmlWriter != null) {
             try {
-                xmlWriter.write("</" + XmlTools.xmlTag(nodeTable.getTreeName()) + ">\n");
+                xmlWriter.write("</" + nodeTable.getTableName() + ">\n");
                 xmlWriter.flush();
                 xmlWriter.close();
                 xmlWriter = null;

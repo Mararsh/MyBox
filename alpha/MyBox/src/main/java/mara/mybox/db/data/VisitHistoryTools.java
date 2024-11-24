@@ -14,6 +14,7 @@ import javafx.event.EventHandler;
 import javafx.scene.control.MenuItem;
 import javafx.stage.FileChooser;
 import mara.mybox.controller.BaseController;
+import mara.mybox.controller.DataTreeController;
 import static mara.mybox.db.data.VisitHistory.Default_Max_Histories;
 import mara.mybox.db.data.VisitHistory.FileType;
 import mara.mybox.db.data.VisitHistory.OperationType;
@@ -23,7 +24,7 @@ import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.FileFilters;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -243,18 +244,54 @@ public class VisitHistoryTools {
         for (VisitHistory h : his) {
             final String fname = h.getResourceValue();
             final String fxml = h.getDataMore();
-            if (valid.contains(fxml)) {
-                continue;
-            }
-            valid.add(fxml);
-            MenuItem menu = new MenuItem(Languages.message(fname));
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    controller.loadScene(fxml);
+            if (fxml.endsWith("/DataTree.fxml")) {
+                if (!valid.contains(fname)) {
+                    valid.add(fname);
+                    MenuItem menu = new MenuItem(fname);
+                    menu.setOnAction(new EventHandler<ActionEvent>() {
+                        @Override
+                        public void handle(ActionEvent event) {
+                            if (message("TextTree").equals(fname)) {
+                                DataTreeController.textTree(controller, false);
+                            } else if (message("HtmlTree").equals(fname)) {
+                                DataTreeController.htmlTree(controller, false);
+                            } else if (message("WebFavorite").equals(fname)) {
+                                DataTreeController.webFavorite(controller, false);
+                            } else if (message("DatabaseSQL").equals(fname)) {
+                                DataTreeController.sql(controller, false);
+                            } else if (message("MathFunction").equals(fname)) {
+                                DataTreeController.mathFunction(controller, false);
+                            } else if (message("ImageScope").equals(fname)) {
+                                DataTreeController.imageScope(controller, false);
+                            } else if (message("JShell").equals(fname)) {
+                                DataTreeController.jShell(controller, false);
+                            } else if (message("JEXL").equals(fname)) {
+                                DataTreeController.jexl(controller, false);
+                            } else if (message("JavaScript").equals(fname)) {
+                                DataTreeController.javascript(controller, false);
+                            } else if (message("RowFilter").equals(fname)) {
+                                DataTreeController.rowFilter(controller, false);
+                            } else if (message("Data2DDefinition").equals(fname)) {
+                                DataTreeController.data2DDefinition(controller, false);
+                            }
+                        }
+                    });
+                    menus.add(menu);
                 }
-            });
-            menus.add(menu);
+            } else {
+                if (!valid.contains(fxml)) {
+                    valid.add(fxml);
+                    MenuItem menu = new MenuItem(fname);
+                    menu.setOnAction(new EventHandler<ActionEvent>() {
+                        @Override
+                        public void handle(ActionEvent event) {
+                            controller.loadScene(fxml);
+                        }
+                    });
+                    menus.add(menu);
+                }
+            }
+
         }
         return menus;
 

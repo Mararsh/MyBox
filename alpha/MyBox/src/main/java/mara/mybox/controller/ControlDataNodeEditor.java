@@ -4,9 +4,12 @@ import java.sql.Connection;
 import java.util.Date;
 import java.util.Optional;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
@@ -24,6 +27,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.tools.DateTools;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -38,7 +42,7 @@ public class ControlDataNodeEditor extends BaseController {
 
     protected String defaultExt;
     protected final SimpleBooleanProperty nodeChanged;
-    protected boolean nodeExecutable;
+    protected boolean nodeExecutable, attributesChanged;
     protected BaseNodeTable nodeTable;
     protected TableDataTag tagTable;
     protected TableDataNodeTag nodeTagsTable;
@@ -47,11 +51,11 @@ public class ControlDataNodeEditor extends BaseController {
     @FXML
     protected Tab nodeTab, dataTab, tagsTab;
     @FXML
-    protected TextField titleInput;
-    @FXML
     protected ScrollPane dataPane;
     @FXML
-    protected ControlDataNodeAttributes attributesController;
+    protected TextField idInput, titleInput, orderInput, timeInput;
+    @FXML
+    protected Label chainLabel;
     @FXML
     protected ControlDataNodeTags tagsController;
 
@@ -78,7 +82,20 @@ public class ControlDataNodeEditor extends BaseController {
             copyButton = controller.copyButton;
             recoverButton = controller.recoverButton;
 
-            attributesController.setParameters(treeController);
+            titleInput.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue v, String ov, String nv) {
+                    attributesChanged(true);
+                }
+            });
+
+            orderInput.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue v, String ov, String nv) {
+                    attributesChanged(true);
+                }
+            });
+
             tagsController.setParameters(this);
 
             dataController = (BaseDataValuesController) WindowTools.loadFxml(nodeTable.getDataFxml());
@@ -126,7 +143,7 @@ public class ControlDataNodeEditor extends BaseController {
             @Override
             protected void whenSucceeded() {
                 try {
-                    attributesController.loadAttributes();
+                    loadAttributes();
                     tagsController.loadTags();
                     dataController.editValues();
                     resetStatus();
@@ -174,7 +191,7 @@ public class ControlDataNodeEditor extends BaseController {
     }
 
     protected String nodeTitle() {
-        String title = attributesController.titleInput.getText();
+        String title = titleInput.getText();
         if (title == null || title.isBlank()) {
             popError(message("InvalidParameters") + ": " + message("Title"));
             if (tabPane != null && nodeTab != null) {
@@ -192,7 +209,7 @@ public class ControlDataNodeEditor extends BaseController {
     public void resetStatus() {
         dataController.changed = false;
         tagsController.changed = false;
-        attributesController.changed = false;
+        attributesChanged = false;
         updateStatus();
     }
 
@@ -205,12 +222,12 @@ public class ControlDataNodeEditor extends BaseController {
             dataTab.setText(nodeTable.getDataName() + (dataController.changed ? "*" : ""));
         }
         if (nodeTab != null) {
-            nodeTab.setText(message("Node") + (attributesController.changed ? "*" : ""));
+            nodeTab.setText(message("Node") + (attributesChanged ? "*" : ""));
         }
         if (tagsTab != null) {
             tagsTab.setText(message("Tags") + (tagsController.changed ? "*" : ""));
         }
-        boolean changed = dataController.changed || attributesController.changed || tagsController.changed;
+        boolean changed = dataController.changed || attributesChanged || tagsController.changed;
         String title = treeController.baseTitle;
         if (currentNode != null) {
             title += ": "
@@ -257,6 +274,120 @@ public class ControlDataNodeEditor extends BaseController {
 
     }
 
+    /*
+        attributes
+     */
+    protected void loadAttributes() {
+        if (currentNode == null) {
+            return;
+        }
+        isSettingValues = true;
+        titleInput.setText(currentNode.getTitle());
+        if (currentNode.getNodeid() < 0) {
+            idInput.setText(message("NewData"));
+        } else {
+            idInput.setText(currentNode.getNodeid() + "");
+        }
+        orderInput.setText(currentNode.getOrderNumber() + "");
+        timeInput.setText(DateTools.datetimeToString(currentNode.getUpdateTime()));
+        isSettingValues = false;
+
+        selectButton.setVisible(currentNode.getNodeid() < 0 || parentNode == null);
+        refreshParentNode();
+        attributesChanged(false);
+    }
+
+    public void renamed(String newName) {
+        if (titleInput == null) {
+            return;
+        }
+        isSettingValues = true;
+        titleInput.setText(newName);
+        isSettingValues = false;
+    }
+
+    public void attributesChanged(boolean changed) {
+        if (isSettingValues) {
+            return;
+        }
+        attributesChanged = changed;
+        updateStatus();
+    }
+
+    protected DataNode pickAttributes() {
+        String title = titleInput.getText();
+        if (title == null || title.isBlank()) {
+            popError(message("Invalid") + ": " + message("Title"));
+            return null;
+        }
+        float orderNum;
+        try {
+            orderNum = Float.parseFloat(orderInput.getText());
+        } catch (Exception e) {
+            popError(message("Invalid") + ": " + message("OrderNumber"));
+            return null;
+        }
+
+        DataNode node = DataNode.create();
+        if (currentNode != null) {
+            node.setNodeid(currentNode.getNodeid());
+        }
+        if (parentNode != null) {
+            node.setParentid(parentNode.getNodeid());
+        }
+        node.setTitle(title);
+        node.setOrderNumber(orderNum);
+        node.setUpdateTime(new Date());
+        return node;
+    }
+
+    @FXML
+    public void selectParent() {
+//        InfoTreeNodeParentController.open(this);
+    }
+//
+//    protected void checkParentNode(DataNode node) {
+//        if (parentNode == null || node.getNodeid() != parentNode.getNodeid()) {
+//            return;
+//        }
+//        refreshParentNode();
+//    }
+//
+//    protected void setParentNode(DataNode node) {
+//        parentNode = node;
+//        refreshParentNode();
+//    }
+
+    protected void refreshParentNode() {
+        task = new FxTask<Void>(this) {
+            private String chainName;
+
+            @Override
+            protected boolean handle() {
+                try (Connection conn = DerbyBase.getConnection()) {
+                    if (parentNode == null) {
+                        chainName = "";
+                    } else {
+                        chainName = treeController.chainName(conn, parentNode);
+                    }
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                chainLabel.setText(message("ParentNode") + ": " + chainName);
+            }
+        };
+        start(task, thisPane);
+    }
+
+    /*
+        actions
+     */
     @FXML
     @Override
     public void saveAction() {
@@ -264,9 +395,8 @@ public class ControlDataNodeEditor extends BaseController {
             popError(message("Invalid") + ": " + message("ParentNode"));
             return;
         }
-        DataNode attributes = attributesController.pickAttributes();
+        DataNode attributes = pickAttributes();
         if (attributes == null) {
-            popError(message("Invalid") + ": " + message("Node"));
             return;
         }
         DataNode node = dataController.pickValues(attributes);
@@ -340,13 +470,13 @@ public class ControlDataNodeEditor extends BaseController {
             currentNode.setParentid(parentNode != null ? parentNode.getNodeid() : -1);
             currentNode.setTitle(message("Node") + new Date().getTime());
 
-            attributesController.loadAttributes();
+            loadAttributes();
             tagsController.loadTags();
             dataController.editValues();
 
             dataController.changed = false;
             tagsController.changed = false;
-            attributesController.changed = false;
+            attributesChanged = false;
             updateStatus();
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -366,13 +496,13 @@ public class ControlDataNodeEditor extends BaseController {
             }
             currentNode = currentNode.copy();
 
-            attributesController.loadAttributes();
+            loadAttributes();
             tagsController.loadedTags.clear();
             dataController.editValues();
 
             dataController.changed = true;
             tagsController.changed = true;
-            attributesController.changed = true;
+            attributesChanged = true;
             updateStatus();
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -406,11 +536,6 @@ public class ControlDataNodeEditor extends BaseController {
                 if (dataController.keyEventsFilter(event)) {
                     return true;
                 }
-            }
-        }
-        if (attributesController.thisPane.isFocused() || attributesController.thisPane.isFocusWithin()) {
-            if (attributesController.keyEventsFilter(event)) {
-                return true;
             }
         }
         if (super.keyEventsFilter(event)) {

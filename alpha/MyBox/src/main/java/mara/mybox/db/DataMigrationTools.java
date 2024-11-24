@@ -58,6 +58,7 @@ public class DataMigrationTools {
                     "SELECT * FROM tree_node WHERE category='" + category + "' ORDER BY nodeid");
             conn.setAutoCommit(false);
             long count = 0;
+            float orderNum = 0;
             while (query.next()) {
                 try {
                     DataNode node = fromText(tname, query.getString("info"));
@@ -67,6 +68,7 @@ public class DataMigrationTools {
                     long nodeid = query.getLong("nodeid");
                     long parentid = query.getLong("parentid");
                     node.setNodeid(-1).setParentid(RootID)
+                            .setOrderNumber(++orderNum)
                             .setTitle(query.getString("title"));
                     node = dataTable.insertData(conn, node);
                     long newNodeid = node.getNodeid();

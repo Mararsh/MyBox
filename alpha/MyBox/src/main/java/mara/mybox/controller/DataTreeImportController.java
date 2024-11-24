@@ -14,6 +14,7 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.TreeItem;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+import mara.mybox.data2d.tools.Data2DDefinitionTools;
 import mara.mybox.db.Database;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.DataNode;
@@ -23,6 +24,7 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.BaseNodeTable;
 import mara.mybox.db.table.TableDataNodeTag;
 import mara.mybox.db.table.TableDataTag;
+import mara.mybox.db.table.TableNodeData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.HelpTools;
@@ -166,17 +168,23 @@ public class DataTreeImportController extends BaseBatchFileController {
         protected List<String> columnNames;
         protected long parentid;
         protected Stack<Long> parentStack;
+        protected float orderNumber;
+        protected Stack<Float> orderStack;
+        protected boolean isData2DDefinition;
 
         @Override
         public void startDocument() {
             try {
                 conn = DerbyBase.getConnection();
                 conn.setAutoCommit(false);
-                columnNames = nodeTable.columnNames();
+                columnNames = nodeTable.dataColumnNames();
                 totalItemsHandled = 0;
                 parentStack = new Stack<>();
                 parentid = parentItem.getValue().getNodeid();
+                orderStack = new Stack<>();
+                orderNumber = 0f;
                 value = new StringBuilder();
+                isData2DDefinition = nodeTable instanceof TableNodeData2DDefinition;
                 showLogs(message("ParentNode") + ": " + treeController.shortDescription(parentItem));
             } catch (Exception e) {
                 showLogs(e.toString());
@@ -193,8 +201,9 @@ public class DataTreeImportController extends BaseBatchFileController {
                 switch (currentTag) {
                     case "TreeNode":
                         dataNode = new DataNode();
-                        dataNode.setParentid(parentid);
+                        dataNode.setParentid(parentid).setOrderNumber(++orderNumber);
                         parentStack.push(parentid);
+                        orderStack.push(orderNumber);
 //                        if (isLogsVerbose()) {
 //                            showLogs("New node starting. parentid= " + parentid + ", and it is pushed in stack");
 //                        }
@@ -244,6 +253,7 @@ public class DataTreeImportController extends BaseBatchFileController {
                                     + " nodeid=" + dataNode.getNodeid() + " title=" + dataNode.getTitle());
                         }
                         parentid = dataNode.getNodeid();
+                        orderNumber = 0f;
                         written = true;
 //                        if (isLogsVerbose()) {
 //                            showLogs("Now parentid " + parentid);
@@ -251,12 +261,16 @@ public class DataTreeImportController extends BaseBatchFileController {
                         break;
                     case "TreeNode":
                         parentid = parentStack.pop();
+                        orderNumber = orderStack.pop();
 //                        if (isLogsVerbose()) {
 //                            showLogs("The node ended. " + parentid + " is popped from stack");
 //                        }
                         break;
                     default:
                         if (columnNames.contains(qName)) {
+                            if (isData2DDefinition) {
+                                s = Data2DDefinitionTools.asXML(s);
+                            }
                             dataNode.setValue(qName, s);
 //                            if (isLogsVerbose()) {
 //                                showLogs(qName + "=" + s);

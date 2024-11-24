@@ -34,6 +34,17 @@ public class TableNodeData2DDefinition extends BaseNodeTable {
     }
 
     @Override
+    public String escapeXML(String column, String value) {
+        if (value == null || value.isBlank()) {
+            return value;
+        }
+        if ("data2d_definition".equals(column)) {
+            return Data2DDefinitionTools.escapeXML(value);
+        }
+        return value;
+    }
+
+    @Override
     public String valuesHtml(FxTask task, Connection conn, BaseController controller, DataNode node) {
         try {
             DataFileCSV def = Data2DDefinitionTools.fromDataNode(node);

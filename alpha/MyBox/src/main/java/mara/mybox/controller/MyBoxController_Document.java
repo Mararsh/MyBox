@@ -45,17 +45,7 @@ public abstract class MyBoxController_Document extends MyBoxController_Base {
             DataTreeController.htmlTree(this, true);
         });
 
-        MenuItem WebPageAddress = new MenuItem(message("WebPageAddress"));
-        WebPageAddress.setOnAction((ActionEvent event1) -> {
-            DataTreeController.webFavorite(this, true);
-        });
-
-        MenuItem sql = new MenuItem(message("DatabaseSQL"));
-        sql.setOnAction((ActionEvent event1) -> {
-            DataTreeController.sql(this, true);
-        });
-
-        treeMenu.getItems().addAll(TextTree, HtmlTree, WebPageAddress, sql);
+        treeMenu.getItems().addAll(TextTree, HtmlTree);
 
         Menu pdfMenu = new Menu("PDF");
 

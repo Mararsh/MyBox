@@ -109,31 +109,6 @@ public class DataTreeController extends BaseDataTreeViewController {
         return nodeController.editNode(node);
     }
 
-    @FXML
-    protected void moveAction() {
-//        InfoTreeNodesMoveController.oneOpen(this);
-    }
-
-    public void pasteNode(DataNode node) {
-        nodeController.pasteNode(node);
-    }
-
-    public void executeNode(DataNode node) {
-        if (node == null) {
-            return;
-        }
-        editNode(node);
-        if (nodeController.startButton != null) {
-            nodeController.startAction();
-        } else if (nodeController.goButton != null) {
-            nodeController.goAction();
-        } else if (startButton != null) {
-            startAction();
-        } else if (goButton != null) {
-            goAction();
-        }
-    }
-
     @Override
     public void itemClicked(MouseEvent event, TreeItem<DataNode> item) {
         clicked(UserConfig.getString(baseName + "WhenLeftClickNode", "Edit"), item);
@@ -180,6 +155,9 @@ public class DataTreeController extends BaseDataTreeViewController {
         }
     }
 
+    /*
+        menu
+     */
     @Override
     public List<MenuItem> operationsMenuItems(TreeItem<DataNode> treeItem) {
         List<MenuItem> items = new ArrayList<>();
@@ -657,7 +635,7 @@ public class DataTreeController extends BaseDataTreeViewController {
             protected void whenSucceeded() {
                 item.setValue(updatedNode);
                 treeView.refresh();
-//                manager.nodeRenamed(updatedNode);
+                nodeRenamed(updatedNode);
                 popSuccessful();
             }
         };
@@ -951,6 +929,31 @@ public class DataTreeController extends BaseDataTreeViewController {
         }
     }
 
+    @FXML
+    protected void moveAction() {
+//        InfoTreeNodesMoveController.oneOpen(this);
+    }
+
+    public void pasteNode(DataNode node) {
+        nodeController.pasteNode(node);
+    }
+
+    public void executeNode(DataNode node) {
+        if (node == null) {
+            return;
+        }
+        editNode(node);
+        if (nodeController.startButton != null) {
+            nodeController.startAction();
+        } else if (nodeController.goButton != null) {
+            nodeController.goAction();
+        } else if (startButton != null) {
+            startAction();
+        } else if (goButton != null) {
+            goAction();
+        }
+    }
+
     /*
         synchronize
      */
@@ -970,11 +973,11 @@ public class DataTreeController extends BaseDataTreeViewController {
 
         if (nodeController.parentNode != null
                 && id == nodeController.parentNode.getNodeid()) {
-//            nodeController.attributesController.setParentNode(node);
+            nodeController.parentNode = node;
         }
         if (nodeController.currentNode != null
                 && id == nodeController.currentNode.getNodeid()) {
-            nodeController.attributesController.renamed(node.getTitle());
+            nodeController.renamed(node.getTitle());
         }
     }
 

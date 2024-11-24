@@ -45,6 +45,8 @@ import org.w3c.dom.NodeList;
  */
 public class Data2DDefinitionTools {
 
+    public static final String DataQuote = "MyBox_DATAQUOTE";
+
     public static List<Data2DColumn> columns() {
         List<Data2DColumn> columns = new ArrayList<>();
         columns.add(new Data2DColumn(message("ColumnName"), ColumnType.String));
@@ -655,6 +657,22 @@ public class Data2DDefinitionTools {
             return null;
         }
         return fromXML(node.getStringValue("data2d_definition"));
+    }
+
+    public static String escapeXML(String value) {
+        if (value == null || value.isBlank()) {
+            return value;
+        }
+        return value.replaceAll("<!\\[CDATA\\[", "<" + DataQuote + ">")
+                .replaceAll("\\]\\]>", "</" + DataQuote + ">");
+    }
+
+    public static String asXML(String value) {
+        if (value == null || value.isBlank()) {
+            return value;
+        }
+        return value.replaceAll("<" + DataQuote + ">", "<![CDATA]")
+                .replaceAll("</" + DataQuote + ">", "]]>");
     }
 
 }

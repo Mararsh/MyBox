@@ -22,16 +22,6 @@ public abstract class MainMenuController_Document extends MainMenuController_Win
     }
 
     @FXML
-    protected void WebPageAddress(ActionEvent event) {
-        DataTreeController.webFavorite(parentController, false);
-    }
-
-    @FXML
-    protected void sql(ActionEvent event) {
-        DataTreeController.sql(parentController, false);
-    }
-
-    @FXML
     protected void openPdfView(ActionEvent event) {
         loadScene(Fxmls.PdfViewFxml);
     }

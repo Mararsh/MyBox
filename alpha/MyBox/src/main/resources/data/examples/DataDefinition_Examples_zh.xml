@@ -1,23 +1,32 @@
-##MyBox#
-MyBoxTreeRoot;;;
-定义数据
-
-##MyBox#
-定义数据
-我的数据
-
-##MyBox#
-定义数据 > 我的数据
-笔记
-<数据定义>
+<?xml version="1.0" encoding="UTF-8"?>
+<Node_Data2D_Definition>
+<TreeNode>
+    <NodeAttributes>
+        <title>
+            <![CDATA[示例]]>
+        </title>
+    </NodeAttributes>
+    <TreeNode>
+        <NodeAttributes>
+            <title>
+                <![CDATA[我的数据]]>
+            </title>
+        </NodeAttributes>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[笔记]]>
+                </title>
+                <data2d_definition>
+                    <![CDATA[<数据定义>
     <属性>
-        <数据名><![CDATA[笔记]]></数据名>
+        <数据名><MyBox_DATAQUOTE>笔记</MyBox_DATAQUOTE></数据名>
         <小数位数>2</小数位数>
         <随机数的最大值>1000</随机数的最大值>
     </属性>
     <列定义>
         <列>
-            <列名><![CDATA[时间]]></列名>
+            <列名><MyBox_DATAQUOTE>时间</MyBox_DATAQUOTE></列名>
             <类型>Datetime</类型>
             <宽度>180</宽度>
             <非空>false</非空>
@@ -31,7 +40,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[标题]]></列名>
+            <列名><MyBox_DATAQUOTE>标题</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>180</宽度>
@@ -46,7 +55,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[相关的对象]]></列名>
+            <列名><MyBox_DATAQUOTE>相关的对象</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>100</宽度>
@@ -61,7 +70,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[位置]]></列名>
+            <列名><MyBox_DATAQUOTE>位置</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>100</宽度>
@@ -76,7 +85,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[说明]]></列名>
+            <列名><MyBox_DATAQUOTE>说明</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>300</宽度>
@@ -91,20 +100,25 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
     </列定义>
-</数据定义>
-
-##MyBox#
-定义数据 > 我的数据
-通讯录
-<数据定义>
+</数据定义>]]>
+                </data2d_definition>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[通讯录]]>
+                </title>
+                <data2d_definition>
+                    <![CDATA[<数据定义>
     <属性>
-        <数据名><![CDATA[通讯录]]></数据名>
+        <数据名><MyBox_DATAQUOTE>通讯录</MyBox_DATAQUOTE></数据名>
         <小数位数>2</小数位数>
         <随机数的最大值>1000</随机数的最大值>
     </属性>
     <列定义>
         <列>
-            <列名><![CDATA[名字]]></列名>
+            <列名><MyBox_DATAQUOTE>名字</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>100</宽度>
@@ -119,7 +133,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[关系]]></列名>
+            <列名><MyBox_DATAQUOTE>关系</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>100</宽度>
@@ -134,7 +148,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[手机号1]]></列名>
+            <列名><MyBox_DATAQUOTE>手机号1</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>100</宽度>
@@ -149,7 +163,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[手机号2]]></列名>
+            <列名><MyBox_DATAQUOTE>手机号2</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>100</宽度>
@@ -164,7 +178,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[邮箱]]></列名>
+            <列名><MyBox_DATAQUOTE>邮箱</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>100</宽度>
@@ -179,7 +193,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[地址]]></列名>
+            <列名><MyBox_DATAQUOTE>地址</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>100</宽度>
@@ -194,7 +208,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[生日]]></列名>
+            <列名><MyBox_DATAQUOTE>生日</MyBox_DATAQUOTE></列名>
             <类型>Datetime</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -208,7 +222,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[爱好]]></列名>
+            <列名><MyBox_DATAQUOTE>爱好</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>100</宽度>
@@ -223,7 +237,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[说明]]></列名>
+            <列名><MyBox_DATAQUOTE>说明</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>300</宽度>
@@ -238,20 +252,25 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
     </列定义>
-</数据定义>
-
-##MyBox#
-定义数据 > 我的数据
-资金流
-<数据定义>
+</数据定义>]]>
+                </data2d_definition>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[资金流]]>
+                </title>
+                <data2d_definition>
+                    <![CDATA[<数据定义>
     <属性>
-        <数据名><![CDATA[资金流]]></数据名>
+        <数据名><MyBox_DATAQUOTE>资金流</MyBox_DATAQUOTE></数据名>
         <小数位数>2</小数位数>
         <随机数的最大值>1000</随机数的最大值>
     </属性>
     <列定义>
         <列>
-            <列名><![CDATA[时间]]></列名>
+            <列名><MyBox_DATAQUOTE>时间</MyBox_DATAQUOTE></列名>
             <类型>Datetime</类型>
             <宽度>180</宽度>
             <非空>false</非空>
@@ -265,7 +284,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[数额]]></列名>
+            <列名><MyBox_DATAQUOTE>数额</MyBox_DATAQUOTE></列名>
             <类型>Float</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -279,7 +298,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[类型]]></列名>
+            <列名><MyBox_DATAQUOTE>类型</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>100</宽度>
@@ -294,7 +313,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[账户]]></列名>
+            <列名><MyBox_DATAQUOTE>账户</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>100</宽度>
@@ -309,7 +328,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[相关的对象]]></列名>
+            <列名><MyBox_DATAQUOTE>相关的对象</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>100</宽度>
@@ -324,7 +343,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[说明]]></列名>
+            <列名><MyBox_DATAQUOTE>说明</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>300</宽度>
@@ -339,20 +358,25 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
     </列定义>
-</数据定义>
-
-##MyBox#
-定义数据 > 我的数据
-个人财产
-<数据定义>
+</数据定义>]]>
+                </data2d_definition>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[个人财产]]>
+                </title>
+                <data2d_definition>
+                    <![CDATA[<数据定义>
     <属性>
-        <数据名><![CDATA[个人财产]]></数据名>
+        <数据名><MyBox_DATAQUOTE>个人财产</MyBox_DATAQUOTE></数据名>
         <小数位数>2</小数位数>
         <随机数的最大值>1000</随机数的最大值>
     </属性>
     <列定义>
         <列>
-            <列名><![CDATA[时间]]></列名>
+            <列名><MyBox_DATAQUOTE>时间</MyBox_DATAQUOTE></列名>
             <类型>Datetime</类型>
             <宽度>180</宽度>
             <非空>false</非空>
@@ -366,7 +390,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[数额]]></列名>
+            <列名><MyBox_DATAQUOTE>数额</MyBox_DATAQUOTE></列名>
             <类型>Float</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -380,7 +404,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[类型]]></列名>
+            <列名><MyBox_DATAQUOTE>类型</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>100</宽度>
@@ -395,7 +419,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[账户]]></列名>
+            <列名><MyBox_DATAQUOTE>账户</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>100</宽度>
@@ -410,7 +434,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[说明]]></列名>
+            <列名><MyBox_DATAQUOTE>说明</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>300</宽度>
@@ -425,20 +449,25 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
     </列定义>
-</数据定义>
-
-##MyBox#
-定义数据 > 我的数据
-视力
-<数据定义>
+</数据定义>]]>
+                </data2d_definition>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[视力]]>
+                </title>
+                <data2d_definition>
+                    <![CDATA[<数据定义>
     <属性>
-        <数据名><![CDATA[视力]]></数据名>
+        <数据名><MyBox_DATAQUOTE>视力</MyBox_DATAQUOTE></数据名>
         <小数位数>2</小数位数>
         <随机数的最大值>1000</随机数的最大值>
     </属性>
     <列定义>
         <列>
-            <列名><![CDATA[时间]]></列名>
+            <列名><MyBox_DATAQUOTE>时间</MyBox_DATAQUOTE></列名>
             <类型>Datetime</类型>
             <宽度>180</宽度>
             <非空>true</非空>
@@ -452,7 +481,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[左眼]]></列名>
+            <列名><MyBox_DATAQUOTE>左眼</MyBox_DATAQUOTE></列名>
             <类型>Short</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -466,7 +495,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[右眼]]></列名>
+            <列名><MyBox_DATAQUOTE>右眼</MyBox_DATAQUOTE></列名>
             <类型>Short</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -480,7 +509,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[基弧]]></列名>
+            <列名><MyBox_DATAQUOTE>基弧</MyBox_DATAQUOTE></列名>
             <类型>Short</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -494,7 +523,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[说明]]></列名>
+            <列名><MyBox_DATAQUOTE>说明</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>300</宽度>
@@ -509,20 +538,25 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
     </列定义>
-</数据定义>
-
-##MyBox#
-定义数据 > 我的数据
-重量
-<数据定义>
+</数据定义>]]>
+                </data2d_definition>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[重量]]>
+                </title>
+                <data2d_definition>
+                    <![CDATA[<数据定义>
     <属性>
-        <数据名><![CDATA[重量]]></数据名>
+        <数据名><MyBox_DATAQUOTE>重量</MyBox_DATAQUOTE></数据名>
         <小数位数>2</小数位数>
         <随机数的最大值>1000</随机数的最大值>
     </属性>
     <列定义>
         <列>
-            <列名><![CDATA[时间]]></列名>
+            <列名><MyBox_DATAQUOTE>时间</MyBox_DATAQUOTE></列名>
             <类型>Datetime</类型>
             <宽度>180</宽度>
             <非空>true</非空>
@@ -536,7 +570,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[重量(kg)]]></列名>
+            <列名><MyBox_DATAQUOTE>重量(kg)</MyBox_DATAQUOTE></列名>
             <类型>Float</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -550,7 +584,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[说明]]></列名>
+            <列名><MyBox_DATAQUOTE>说明</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>300</宽度>
@@ -565,20 +599,25 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
     </列定义>
-</数据定义>
-
-##MyBox#
-定义数据 > 我的数据
-高度
-<数据定义>
+</数据定义>]]>
+                </data2d_definition>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[高度]]>
+                </title>
+                <data2d_definition>
+                    <![CDATA[<数据定义>
     <属性>
-        <数据名><![CDATA[高度]]></数据名>
+        <数据名><MyBox_DATAQUOTE>高度</MyBox_DATAQUOTE></数据名>
         <小数位数>2</小数位数>
         <随机数的最大值>1000</随机数的最大值>
     </属性>
     <列定义>
         <列>
-            <列名><![CDATA[时间]]></列名>
+            <列名><MyBox_DATAQUOTE>时间</MyBox_DATAQUOTE></列名>
             <类型>Datetime</类型>
             <宽度>180</宽度>
             <非空>true</非空>
@@ -592,7 +631,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[高度(cm)]]></列名>
+            <列名><MyBox_DATAQUOTE>高度(cm)</MyBox_DATAQUOTE></列名>
             <类型>Float</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -606,7 +645,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[说明]]></列名>
+            <列名><MyBox_DATAQUOTE>说明</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>300</宽度>
@@ -621,20 +660,25 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
     </列定义>
-</数据定义>
-
-##MyBox#
-定义数据 > 我的数据
-月经
-<数据定义>
+</数据定义>]]>
+                </data2d_definition>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[月经]]>
+                </title>
+                <data2d_definition>
+                    <![CDATA[<数据定义>
     <属性>
-        <数据名><![CDATA[月经]]></数据名>
+        <数据名><MyBox_DATAQUOTE>月经</MyBox_DATAQUOTE></数据名>
         <小数位数>2</小数位数>
         <随机数的最大值>1000</随机数的最大值>
     </属性>
     <列定义>
         <列>
-            <列名><![CDATA[开始时间]]></列名>
+            <列名><MyBox_DATAQUOTE>开始时间</MyBox_DATAQUOTE></列名>
             <类型>Datetime</类型>
             <宽度>180</宽度>
             <非空>true</非空>
@@ -648,7 +692,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[结束时间]]></列名>
+            <列名><MyBox_DATAQUOTE>结束时间</MyBox_DATAQUOTE></列名>
             <类型>Datetime</类型>
             <宽度>180</宽度>
             <非空>true</非空>
@@ -662,7 +706,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[疼痛]]></列名>
+            <列名><MyBox_DATAQUOTE>疼痛</MyBox_DATAQUOTE></列名>
             <类型>Short</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -676,7 +720,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[卫生巾]]></列名>
+            <列名><MyBox_DATAQUOTE>卫生巾</MyBox_DATAQUOTE></列名>
             <类型>Short</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -690,7 +734,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[说明]]></列名>
+            <列名><MyBox_DATAQUOTE>说明</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>300</宽度>
@@ -705,25 +749,33 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
     </列定义>
-</数据定义>
-
-##MyBox#
-定义数据
-中国的统计数据
-
-##MyBox#
-定义数据 > 中国的统计数据
-中国人口
-<数据定义>
+</数据定义>]]>
+                </data2d_definition>
+            </NodeAttributes>
+        </TreeNode>
+    </TreeNode>
+    <TreeNode>
+        <NodeAttributes>
+            <title>
+                <![CDATA[中国的统计数据]]>
+            </title>
+        </NodeAttributes>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[中国人口]]>
+                </title>
+                <data2d_definition>
+                    <![CDATA[<数据定义>
     <属性>
-        <数据名><![CDATA[中国人口]]></数据名>
+        <数据名><MyBox_DATAQUOTE>中国人口</MyBox_DATAQUOTE></数据名>
         <小数位数>2</小数位数>
         <随机数的最大值>1000</随机数的最大值>
-        <描述><![CDATA[https://data.stats.gov.cn/index.htm]]></描述>
+        <描述><MyBox_DATAQUOTE>https://data.stats.gov.cn/index.htm</MyBox_DATAQUOTE></描述>
     </属性>
     <列定义>
         <列>
-            <列名><![CDATA[年]]></列名>
+            <列名><MyBox_DATAQUOTE>年</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>100</宽度>
@@ -738,7 +790,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[年末总人口(万人)]]></列名>
+            <列名><MyBox_DATAQUOTE>年末总人口(万人)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -752,7 +804,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[男性人口(万人)]]></列名>
+            <列名><MyBox_DATAQUOTE>男性人口(万人)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -766,7 +818,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[女性人口(万人)]]></列名>
+            <列名><MyBox_DATAQUOTE>女性人口(万人)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -780,7 +832,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[城镇人口(万人)]]></列名>
+            <列名><MyBox_DATAQUOTE>城镇人口(万人)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -794,7 +846,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[乡村人口(万人)]]></列名>
+            <列名><MyBox_DATAQUOTE>乡村人口(万人)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -808,21 +860,26 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
     </列定义>
-</数据定义>
-
-##MyBox#
-定义数据 > 中国的统计数据
-中国的人口普查
-<数据定义>
+</数据定义>]]>
+                </data2d_definition>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[中国的人口普查]]>
+                </title>
+                <data2d_definition>
+                    <![CDATA[<数据定义>
     <属性>
-        <数据名><![CDATA[中国的人口普查]]></数据名>
+        <数据名><MyBox_DATAQUOTE>中国的人口普查</MyBox_DATAQUOTE></数据名>
         <小数位数>2</小数位数>
         <随机数的最大值>1000</随机数的最大值>
-        <描述><![CDATA[https://data.stats.gov.cn/index.htm]]></描述>
+        <描述><MyBox_DATAQUOTE>https://data.stats.gov.cn/index.htm</MyBox_DATAQUOTE></描述>
     </属性>
     <列定义>
         <列>
-            <列名><![CDATA[年]]></列名>
+            <列名><MyBox_DATAQUOTE>年</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>100</宽度>
@@ -837,7 +894,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[人口普查总人口(万人)]]></列名>
+            <列名><MyBox_DATAQUOTE>人口普查总人口(万人)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -851,7 +908,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[男性(万人)]]></列名>
+            <列名><MyBox_DATAQUOTE>男性(万人)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -865,7 +922,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[女性(万人)]]></列名>
+            <列名><MyBox_DATAQUOTE>女性(万人)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -879,7 +936,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[性别比(女=100)]]></列名>
+            <列名><MyBox_DATAQUOTE>性别比(女=100)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -893,7 +950,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[城镇(万人)]]></列名>
+            <列名><MyBox_DATAQUOTE>城镇(万人)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -907,7 +964,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[乡村(万人)]]></列名>
+            <列名><MyBox_DATAQUOTE>乡村(万人)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -921,7 +978,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[家庭户规模(人/户)]]></列名>
+            <列名><MyBox_DATAQUOTE>家庭户规模(人/户)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -935,7 +992,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[0-14岁占比(%)]]></列名>
+            <列名><MyBox_DATAQUOTE>0-14岁占比(%)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -949,7 +1006,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[15-64岁占比(%)]]></列名>
+            <列名><MyBox_DATAQUOTE>15-64岁占比(%)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -963,7 +1020,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[65岁及以上占比(%)]]></列名>
+            <列名><MyBox_DATAQUOTE>65岁及以上占比(%)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -977,7 +1034,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[汉族(万人)]]></列名>
+            <列名><MyBox_DATAQUOTE>汉族(万人)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -991,7 +1048,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[汉族占比(%)]]></列名>
+            <列名><MyBox_DATAQUOTE>汉族占比(%)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -1005,7 +1062,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[少数民族(万人)]]></列名>
+            <列名><MyBox_DATAQUOTE>少数民族(万人)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -1019,7 +1076,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[少数民族占比(%)]]></列名>
+            <列名><MyBox_DATAQUOTE>少数民族占比(%)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -1033,7 +1090,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[每十万人口中受大专及以上教育人口数(人)]]></列名>
+            <列名><MyBox_DATAQUOTE>每十万人口中受大专及以上教育人口数(人)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -1047,7 +1104,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[每十万人口中受高中和中专教育人口数(人)]]></列名>
+            <列名><MyBox_DATAQUOTE>每十万人口中受高中和中专教育人口数(人)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -1061,7 +1118,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[每十万人口中受初中教育人口数(人)]]></列名>
+            <列名><MyBox_DATAQUOTE>每十万人口中受初中教育人口数(人)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -1075,7 +1132,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[每十万人口中受小学教育人口数(人)]]></列名>
+            <列名><MyBox_DATAQUOTE>每十万人口中受小学教育人口数(人)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -1089,7 +1146,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[文盲人口数(万人)]]></列名>
+            <列名><MyBox_DATAQUOTE>文盲人口数(万人)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -1103,7 +1160,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[文盲率(%)]]></列名>
+            <列名><MyBox_DATAQUOTE>文盲率(%)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -1117,7 +1174,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[城镇化率(%)]]></列名>
+            <列名><MyBox_DATAQUOTE>城镇化率(%)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -1131,7 +1188,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[平均预期寿命(岁)]]></列名>
+            <列名><MyBox_DATAQUOTE>平均预期寿命(岁)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -1145,7 +1202,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[男性平均预期寿命(岁)]]></列名>
+            <列名><MyBox_DATAQUOTE>男性平均预期寿命(岁)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -1159,7 +1216,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[女性平均预期寿命(岁)]]></列名>
+            <列名><MyBox_DATAQUOTE>女性平均预期寿命(岁)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -1173,21 +1230,26 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
     </列定义>
-</数据定义>
-
-##MyBox#
-定义数据 > 中国的统计数据
-中国的国内生产总值(GDP)
-<数据定义>
+</数据定义>]]>
+                </data2d_definition>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[中国的国内生产总值(GDP)]]>
+                </title>
+                <data2d_definition>
+                    <![CDATA[<数据定义>
     <属性>
-        <数据名><![CDATA[中国的国内生产总值(GDP)]]></数据名>
+        <数据名><MyBox_DATAQUOTE>中国的国内生产总值(GDP)</MyBox_DATAQUOTE></数据名>
         <小数位数>2</小数位数>
         <随机数的最大值>1000</随机数的最大值>
-        <描述><![CDATA[https://data.stats.gov.cn/index.htm]]></描述>
+        <描述><MyBox_DATAQUOTE>https://data.stats.gov.cn/index.htm</MyBox_DATAQUOTE></描述>
     </属性>
     <列定义>
         <列>
-            <列名><![CDATA[年]]></列名>
+            <列名><MyBox_DATAQUOTE>年</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>100</宽度>
@@ -1202,7 +1264,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[国民总收入(GNI 亿元)]]></列名>
+            <列名><MyBox_DATAQUOTE>国民总收入(GNI 亿元)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -1216,7 +1278,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[国内生产总值(GDP 亿元)]]></列名>
+            <列名><MyBox_DATAQUOTE>国内生产总值(GDP 亿元)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -1230,7 +1292,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[第一产业增加值(VA1 亿元)]]></列名>
+            <列名><MyBox_DATAQUOTE>第一产业增加值(VA1 亿元)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -1244,7 +1306,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[第二产业增加值(VA2 亿元)]]></列名>
+            <列名><MyBox_DATAQUOTE>第二产业增加值(VA2 亿元)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -1258,7 +1320,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[第三产业增加值(VA3 亿元)]]></列名>
+            <列名><MyBox_DATAQUOTE>第三产业增加值(VA3 亿元)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -1272,7 +1334,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[人均国内生产总值(元)]]></列名>
+            <列名><MyBox_DATAQUOTE>人均国内生产总值(元)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -1286,21 +1348,26 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
     </列定义>
-</数据定义>
-
-##MyBox#
-定义数据 > 中国的统计数据
-中国的居民消费价格指数(CPI)
-<数据定义>
+</数据定义>]]>
+                </data2d_definition>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[中国的居民消费价格指数(CPI)]]>
+                </title>
+                <data2d_definition>
+                    <![CDATA[<数据定义>
     <属性>
-        <数据名><![CDATA[中国的居民消费价格指数(CPI)]]></数据名>
+        <数据名><MyBox_DATAQUOTE>中国的居民消费价格指数(CPI)</MyBox_DATAQUOTE></数据名>
         <小数位数>2</小数位数>
         <随机数的最大值>1000</随机数的最大值>
-        <描述><![CDATA[https://data.stats.gov.cn/index.htm]]></描述>
+        <描述><MyBox_DATAQUOTE>https://data.stats.gov.cn/index.htm</MyBox_DATAQUOTE></描述>
     </属性>
     <列定义>
         <列>
-            <列名><![CDATA[年]]></列名>
+            <列名><MyBox_DATAQUOTE>年</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>100</宽度>
@@ -1315,7 +1382,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[居民消费价格指数(CPI 上年=100)]]></列名>
+            <列名><MyBox_DATAQUOTE>居民消费价格指数(CPI 上年=100)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -1329,7 +1396,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[城市居民消费价格指数(上年=100)]]></列名>
+            <列名><MyBox_DATAQUOTE>城市居民消费价格指数(上年=100)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -1343,7 +1410,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[农村居民消费价格指数(上年=100)]]></列名>
+            <列名><MyBox_DATAQUOTE>农村居民消费价格指数(上年=100)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -1357,7 +1424,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[商品零售价格指数(RPI 上年=100)]]></列名>
+            <列名><MyBox_DATAQUOTE>商品零售价格指数(RPI 上年=100)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -1371,7 +1438,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[工业生产者出厂价格指数(PPI 上年=100)]]></列名>
+            <列名><MyBox_DATAQUOTE>工业生产者出厂价格指数(PPI 上年=100)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -1385,7 +1452,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[工业生产者购进价格指数(PPIRM 上年=100)]]></列名>
+            <列名><MyBox_DATAQUOTE>工业生产者购进价格指数(PPIRM 上年=100)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -1399,7 +1466,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[固定资产投资价格指数(上年=100)]]></列名>
+            <列名><MyBox_DATAQUOTE>固定资产投资价格指数(上年=100)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -1413,21 +1480,26 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
     </列定义>
-</数据定义>
-
-##MyBox#
-定义数据 > 中国的统计数据
-中国的居民主要食品消费量
-<数据定义>
+</数据定义>]]>
+                </data2d_definition>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[中国的居民主要食品消费量]]>
+                </title>
+                <data2d_definition>
+                    <![CDATA[<数据定义>
     <属性>
-        <数据名><![CDATA[中国的居民主要食品消费量]]></数据名>
+        <数据名><MyBox_DATAQUOTE>中国的居民主要食品消费量</MyBox_DATAQUOTE></数据名>
         <小数位数>2</小数位数>
         <随机数的最大值>1000</随机数的最大值>
-        <描述><![CDATA[https://data.stats.gov.cn/index.htm]]></描述>
+        <描述><MyBox_DATAQUOTE>https://data.stats.gov.cn/index.htm</MyBox_DATAQUOTE></描述>
     </属性>
     <列定义>
         <列>
-            <列名><![CDATA[指标]]></列名>
+            <列名><MyBox_DATAQUOTE>指标</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>100</宽度>
@@ -1442,7 +1514,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[2020年]]></列名>
+            <列名><MyBox_DATAQUOTE>2020年</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -1456,7 +1528,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[2019年]]></列名>
+            <列名><MyBox_DATAQUOTE>2019年</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -1470,7 +1542,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[2018年]]></列名>
+            <列名><MyBox_DATAQUOTE>2018年</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -1484,7 +1556,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[2017年]]></列名>
+            <列名><MyBox_DATAQUOTE>2017年</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -1498,7 +1570,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[2016年]]></列名>
+            <列名><MyBox_DATAQUOTE>2016年</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -1512,7 +1584,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[2015年]]></列名>
+            <列名><MyBox_DATAQUOTE>2015年</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -1526,7 +1598,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[2014年]]></列名>
+            <列名><MyBox_DATAQUOTE>2014年</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -1540,7 +1612,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[2013年]]></列名>
+            <列名><MyBox_DATAQUOTE>2013年</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -1554,21 +1626,26 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
     </列定义>
-</数据定义>
-
-##MyBox#
-定义数据 > 中国的统计数据
-中国的毕业生数
-<数据定义>
+</数据定义>]]>
+                </data2d_definition>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[中国的毕业生数]]>
+                </title>
+                <data2d_definition>
+                    <![CDATA[<数据定义>
     <属性>
-        <数据名><![CDATA[中国的毕业生数]]></数据名>
+        <数据名><MyBox_DATAQUOTE>中国的毕业生数</MyBox_DATAQUOTE></数据名>
         <小数位数>2</小数位数>
         <随机数的最大值>1000</随机数的最大值>
-        <描述><![CDATA[https://data.stats.gov.cn/index.htm]]></描述>
+        <描述><MyBox_DATAQUOTE>https://data.stats.gov.cn/index.htm</MyBox_DATAQUOTE></描述>
     </属性>
     <列定义>
         <列>
-            <列名><![CDATA[年]]></列名>
+            <列名><MyBox_DATAQUOTE>年</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>100</宽度>
@@ -1583,7 +1660,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[普通高等学校毕业生数(万人)]]></列名>
+            <列名><MyBox_DATAQUOTE>普通高等学校毕业生数(万人)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -1597,7 +1674,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[普通中学毕业生数(万人)]]></列名>
+            <列名><MyBox_DATAQUOTE>普通中学毕业生数(万人)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -1611,7 +1688,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[普通高中毕业生数(万人)]]></列名>
+            <列名><MyBox_DATAQUOTE>普通高中毕业生数(万人)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -1625,7 +1702,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[初中毕业生数(万人)]]></列名>
+            <列名><MyBox_DATAQUOTE>初中毕业生数(万人)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -1639,7 +1716,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[职业中学毕业生数(万人)]]></列名>
+            <列名><MyBox_DATAQUOTE>职业中学毕业生数(万人)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -1653,7 +1730,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[普通小学毕业生数(万人)]]></列名>
+            <列名><MyBox_DATAQUOTE>普通小学毕业生数(万人)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -1667,7 +1744,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[特殊教育学校毕业生数(万人)]]></列名>
+            <列名><MyBox_DATAQUOTE>特殊教育学校毕业生数(万人)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -1681,21 +1758,26 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
     </列定义>
-</数据定义>
-
-##MyBox#
-定义数据 > 中国的统计数据
-中国的博物馆
-<数据定义>
+</数据定义>]]>
+                </data2d_definition>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[中国的博物馆]]>
+                </title>
+                <data2d_definition>
+                    <![CDATA[<数据定义>
     <属性>
-        <数据名><![CDATA[中国的博物馆]]></数据名>
+        <数据名><MyBox_DATAQUOTE>中国的博物馆</MyBox_DATAQUOTE></数据名>
         <小数位数>2</小数位数>
         <随机数的最大值>1000</随机数的最大值>
-        <描述><![CDATA[https://data.stats.gov.cn/index.htm]]></描述>
+        <描述><MyBox_DATAQUOTE>https://data.stats.gov.cn/index.htm</MyBox_DATAQUOTE></描述>
     </属性>
     <列定义>
         <列>
-            <列名><![CDATA[年]]></列名>
+            <列名><MyBox_DATAQUOTE>年</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>100</宽度>
@@ -1710,7 +1792,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[博物馆机构数(个)]]></列名>
+            <列名><MyBox_DATAQUOTE>博物馆机构数(个)</MyBox_DATAQUOTE></列名>
             <类型>Long</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -1724,7 +1806,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[博物馆从业人员(人)]]></列名>
+            <列名><MyBox_DATAQUOTE>博物馆从业人员(人)</MyBox_DATAQUOTE></列名>
             <类型>Long</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -1738,7 +1820,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[博物馆文物藏品(件/套)]]></列名>
+            <列名><MyBox_DATAQUOTE>博物馆文物藏品(件/套)</MyBox_DATAQUOTE></列名>
             <类型>Long</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -1752,7 +1834,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[本年博物馆从有关部门接收文物数(件/套)]]></列名>
+            <列名><MyBox_DATAQUOTE>本年博物馆从有关部门接收文物数(件/套)</MyBox_DATAQUOTE></列名>
             <类型>Long</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -1766,7 +1848,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[本年博物馆修复文物数(件/套)]]></列名>
+            <列名><MyBox_DATAQUOTE>本年博物馆修复文物数(件/套)</MyBox_DATAQUOTE></列名>
             <类型>Long</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -1780,7 +1862,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[博物馆考古发掘项目(个)]]></列名>
+            <列名><MyBox_DATAQUOTE>博物馆考古发掘项目(个)</MyBox_DATAQUOTE></列名>
             <类型>Long</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -1794,7 +1876,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[博物馆基本陈列(个)]]></列名>
+            <列名><MyBox_DATAQUOTE>博物馆基本陈列(个)</MyBox_DATAQUOTE></列名>
             <类型>Long</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -1808,7 +1890,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[博物馆举办展览(个)]]></列名>
+            <列名><MyBox_DATAQUOTE>博物馆举办展览(个)</MyBox_DATAQUOTE></列名>
             <类型>Long</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -1822,7 +1904,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[博物馆参观人次(万人次)]]></列名>
+            <列名><MyBox_DATAQUOTE>博物馆参观人次(万人次)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -1836,21 +1918,26 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
     </列定义>
-</数据定义>
-
-##MyBox#
-定义数据 > 中国的统计数据
-中国的卫生人员
-<数据定义>
+</数据定义>]]>
+                </data2d_definition>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[中国的卫生人员]]>
+                </title>
+                <data2d_definition>
+                    <![CDATA[<数据定义>
     <属性>
-        <数据名><![CDATA[中国的卫生人员]]></数据名>
+        <数据名><MyBox_DATAQUOTE>中国的卫生人员</MyBox_DATAQUOTE></数据名>
         <小数位数>2</小数位数>
         <随机数的最大值>1000</随机数的最大值>
-        <描述><![CDATA[https://data.stats.gov.cn/index.htm]]></描述>
+        <描述><MyBox_DATAQUOTE>https://data.stats.gov.cn/index.htm</MyBox_DATAQUOTE></描述>
     </属性>
     <列定义>
         <列>
-            <列名><![CDATA[年]]></列名>
+            <列名><MyBox_DATAQUOTE>年</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>100</宽度>
@@ -1865,7 +1952,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[卫生人员数(万人)]]></列名>
+            <列名><MyBox_DATAQUOTE>卫生人员数(万人)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -1879,7 +1966,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[卫生技术人员数(万人)]]></列名>
+            <列名><MyBox_DATAQUOTE>卫生技术人员数(万人)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -1893,7 +1980,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[执业(助理)医师数(万人)]]></列名>
+            <列名><MyBox_DATAQUOTE>执业(助理)医师数(万人)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -1907,7 +1994,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[执业医师数(万人)]]></列名>
+            <列名><MyBox_DATAQUOTE>执业医师数(万人)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -1921,7 +2008,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[注册护士数(万人)]]></列名>
+            <列名><MyBox_DATAQUOTE>注册护士数(万人)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -1935,7 +2022,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[药师数(万人)]]></列名>
+            <列名><MyBox_DATAQUOTE>药师数(万人)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -1949,7 +2036,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[乡村医生和卫生员数(万人)]]></列名>
+            <列名><MyBox_DATAQUOTE>乡村医生和卫生员数(万人)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -1963,7 +2050,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[其他技术人员数(万人)]]></列名>
+            <列名><MyBox_DATAQUOTE>其他技术人员数(万人)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -1977,7 +2064,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[管理人员数(万人)]]></列名>
+            <列名><MyBox_DATAQUOTE>管理人员数(万人)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -1991,7 +2078,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[工勤技能人员数(万人)]]></列名>
+            <列名><MyBox_DATAQUOTE>工勤技能人员数(万人)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -2005,21 +2092,26 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
     </列定义>
-</数据定义>
-
-##MyBox#
-定义数据 > 中国的统计数据
-中国的婚姻
-<数据定义>
+</数据定义>]]>
+                </data2d_definition>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[中国的婚姻]]>
+                </title>
+                <data2d_definition>
+                    <![CDATA[<数据定义>
     <属性>
-        <数据名><![CDATA[中国的婚姻]]></数据名>
+        <数据名><MyBox_DATAQUOTE>中国的婚姻</MyBox_DATAQUOTE></数据名>
         <小数位数>2</小数位数>
         <随机数的最大值>1000</随机数的最大值>
-        <描述><![CDATA[https://data.stats.gov.cn/index.htm]]></描述>
+        <描述><MyBox_DATAQUOTE>https://data.stats.gov.cn/index.htm</MyBox_DATAQUOTE></描述>
     </属性>
     <列定义>
         <列>
-            <列名><![CDATA[年]]></列名>
+            <列名><MyBox_DATAQUOTE>年</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>100</宽度>
@@ -2034,7 +2126,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[结婚登记(万对)]]></列名>
+            <列名><MyBox_DATAQUOTE>结婚登记(万对)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -2048,7 +2140,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[内地居民登记结婚(万对)]]></列名>
+            <列名><MyBox_DATAQUOTE>内地居民登记结婚(万对)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -2062,7 +2154,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[内地居民初婚登记(万人)]]></列名>
+            <列名><MyBox_DATAQUOTE>内地居民初婚登记(万人)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -2076,7 +2168,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[内地居民再婚登记(万人)]]></列名>
+            <列名><MyBox_DATAQUOTE>内地居民再婚登记(万人)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -2090,7 +2182,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[涉外及港澳台居民登记结婚(万对)]]></列名>
+            <列名><MyBox_DATAQUOTE>涉外及港澳台居民登记结婚(万对)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -2104,7 +2196,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[离婚登记(万对)]]></列名>
+            <列名><MyBox_DATAQUOTE>离婚登记(万对)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -2118,7 +2210,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[粗离婚率(千分比)]]></列名>
+            <列名><MyBox_DATAQUOTE>粗离婚率(千分比)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -2132,21 +2224,26 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
     </列定义>
-</数据定义>
-
-##MyBox#
-定义数据 > 中国的统计数据
-中国的体育世界冠军
-<数据定义>
+</数据定义>]]>
+                </data2d_definition>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[中国的体育世界冠军]]>
+                </title>
+                <data2d_definition>
+                    <![CDATA[<数据定义>
     <属性>
-        <数据名><![CDATA[中国的体育世界冠军]]></数据名>
+        <数据名><MyBox_DATAQUOTE>中国的体育世界冠军</MyBox_DATAQUOTE></数据名>
         <小数位数>2</小数位数>
         <随机数的最大值>1000</随机数的最大值>
-        <描述><![CDATA[https://data.stats.gov.cn/index.htm]]></描述>
+        <描述><MyBox_DATAQUOTE>https://data.stats.gov.cn/index.htm</MyBox_DATAQUOTE></描述>
     </属性>
     <列定义>
         <列>
-            <列名><![CDATA[年]]></列名>
+            <列名><MyBox_DATAQUOTE>年</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>100</宽度>
@@ -2161,7 +2258,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[世界冠军项数]]></列名>
+            <列名><MyBox_DATAQUOTE>世界冠军项数</MyBox_DATAQUOTE></列名>
             <类型>Integer</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -2175,7 +2272,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[女子世界冠军项数]]></列名>
+            <列名><MyBox_DATAQUOTE>女子世界冠军项数</MyBox_DATAQUOTE></列名>
             <类型>Integer</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -2189,7 +2286,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[世界冠军人数]]></列名>
+            <列名><MyBox_DATAQUOTE>世界冠军人数</MyBox_DATAQUOTE></列名>
             <类型>Integer</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -2203,7 +2300,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[女子世界冠军人数]]></列名>
+            <列名><MyBox_DATAQUOTE>女子世界冠军人数</MyBox_DATAQUOTE></列名>
             <类型>Integer</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -2217,7 +2314,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[世界冠军个数]]></列名>
+            <列名><MyBox_DATAQUOTE>世界冠军个数</MyBox_DATAQUOTE></列名>
             <类型>Integer</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -2231,7 +2328,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[女子世界冠军个数]]></列名>
+            <列名><MyBox_DATAQUOTE>女子世界冠军个数</MyBox_DATAQUOTE></列名>
             <类型>Integer</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -2245,21 +2342,26 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
     </列定义>
-</数据定义>
-
-##MyBox#
-定义数据 > 中国的统计数据
-中国公安机关立案的刑事案件
-<数据定义>
+</数据定义>]]>
+                </data2d_definition>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[中国公安机关立案的刑事案件]]>
+                </title>
+                <data2d_definition>
+                    <![CDATA[<数据定义>
     <属性>
-        <数据名><![CDATA[中国公安机关立案的刑事案件]]></数据名>
+        <数据名><MyBox_DATAQUOTE>中国公安机关立案的刑事案件</MyBox_DATAQUOTE></数据名>
         <小数位数>2</小数位数>
         <随机数的最大值>1000</随机数的最大值>
-        <描述><![CDATA[https://data.stats.gov.cn/index.htm]]></描述>
+        <描述><MyBox_DATAQUOTE>https://data.stats.gov.cn/index.htm</MyBox_DATAQUOTE></描述>
     </属性>
     <列定义>
         <列>
-            <列名><![CDATA[年]]></列名>
+            <列名><MyBox_DATAQUOTE>年</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>100</宽度>
@@ -2274,7 +2376,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[立案的刑事案件]]></列名>
+            <列名><MyBox_DATAQUOTE>立案的刑事案件</MyBox_DATAQUOTE></列名>
             <类型>Integer</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -2288,7 +2390,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[杀人]]></列名>
+            <列名><MyBox_DATAQUOTE>杀人</MyBox_DATAQUOTE></列名>
             <类型>Integer</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -2302,7 +2404,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[伤害]]></列名>
+            <列名><MyBox_DATAQUOTE>伤害</MyBox_DATAQUOTE></列名>
             <类型>Integer</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -2316,7 +2418,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[抢劫]]></列名>
+            <列名><MyBox_DATAQUOTE>抢劫</MyBox_DATAQUOTE></列名>
             <类型>Integer</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -2330,7 +2432,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[强奸]]></列名>
+            <列名><MyBox_DATAQUOTE>强奸</MyBox_DATAQUOTE></列名>
             <类型>Integer</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -2344,7 +2446,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[拐卖妇女儿童]]></列名>
+            <列名><MyBox_DATAQUOTE>拐卖妇女儿童</MyBox_DATAQUOTE></列名>
             <类型>Integer</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -2358,7 +2460,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[盗窃]]></列名>
+            <列名><MyBox_DATAQUOTE>盗窃</MyBox_DATAQUOTE></列名>
             <类型>Integer</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -2372,7 +2474,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[诈骗]]></列名>
+            <列名><MyBox_DATAQUOTE>诈骗</MyBox_DATAQUOTE></列名>
             <类型>Integer</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -2386,7 +2488,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[走私]]></列名>
+            <列名><MyBox_DATAQUOTE>走私</MyBox_DATAQUOTE></列名>
             <类型>Integer</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -2400,7 +2502,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[假币]]></列名>
+            <列名><MyBox_DATAQUOTE>假币</MyBox_DATAQUOTE></列名>
             <类型>Integer</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -2414,7 +2516,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[其他]]></列名>
+            <列名><MyBox_DATAQUOTE>其他</MyBox_DATAQUOTE></列名>
             <类型>Integer</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -2428,21 +2530,26 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
     </列定义>
-</数据定义>
-
-##MyBox#
-定义数据 > 中国的统计数据
-中国人民检察院直接立案侦查案件受案数
-<数据定义>
+</数据定义>]]>
+                </data2d_definition>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[中国人民检察院直接立案侦查案件受案数]]>
+                </title>
+                <data2d_definition>
+                    <![CDATA[<数据定义>
     <属性>
-        <数据名><![CDATA[中国人民检察院直接立案侦查案件受案数]]></数据名>
+        <数据名><MyBox_DATAQUOTE>中国人民检察院直接立案侦查案件受案数</MyBox_DATAQUOTE></数据名>
         <小数位数>2</小数位数>
         <随机数的最大值>1000</随机数的最大值>
-        <描述><![CDATA[https://data.stats.gov.cn/index.htm]]></描述>
+        <描述><MyBox_DATAQUOTE>https://data.stats.gov.cn/index.htm</MyBox_DATAQUOTE></描述>
     </属性>
     <列定义>
         <列>
-            <列名><![CDATA[年]]></列名>
+            <列名><MyBox_DATAQUOTE>年</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>100</宽度>
@@ -2457,7 +2564,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[受案数]]></列名>
+            <列名><MyBox_DATAQUOTE>受案数</MyBox_DATAQUOTE></列名>
             <类型>Integer</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -2471,7 +2578,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[贪污贿赂]]></列名>
+            <列名><MyBox_DATAQUOTE>贪污贿赂</MyBox_DATAQUOTE></列名>
             <类型>Integer</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -2485,7 +2592,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[贪污]]></列名>
+            <列名><MyBox_DATAQUOTE>贪污</MyBox_DATAQUOTE></列名>
             <类型>Integer</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -2499,7 +2606,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[贿赂]]></列名>
+            <列名><MyBox_DATAQUOTE>贿赂</MyBox_DATAQUOTE></列名>
             <类型>Integer</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -2513,7 +2620,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[挪用公款]]></列名>
+            <列名><MyBox_DATAQUOTE>挪用公款</MyBox_DATAQUOTE></列名>
             <类型>Integer</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -2527,7 +2634,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[集体私分]]></列名>
+            <列名><MyBox_DATAQUOTE>集体私分</MyBox_DATAQUOTE></列名>
             <类型>Integer</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -2541,7 +2648,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[巨额财产来源不明]]></列名>
+            <列名><MyBox_DATAQUOTE>巨额财产来源不明</MyBox_DATAQUOTE></列名>
             <类型>Integer</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -2555,7 +2662,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[其他贪污贿赂]]></列名>
+            <列名><MyBox_DATAQUOTE>其他贪污贿赂</MyBox_DATAQUOTE></列名>
             <类型>Integer</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -2569,7 +2676,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[渎职]]></列名>
+            <列名><MyBox_DATAQUOTE>渎职</MyBox_DATAQUOTE></列名>
             <类型>Integer</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -2583,7 +2690,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[滥用职权]]></列名>
+            <列名><MyBox_DATAQUOTE>滥用职权</MyBox_DATAQUOTE></列名>
             <类型>Integer</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -2597,7 +2704,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[玩忽职守]]></列名>
+            <列名><MyBox_DATAQUOTE>玩忽职守</MyBox_DATAQUOTE></列名>
             <类型>Integer</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -2611,7 +2718,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[徇私舞弊]]></列名>
+            <列名><MyBox_DATAQUOTE>徇私舞弊</MyBox_DATAQUOTE></列名>
             <类型>Integer</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -2625,7 +2732,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[其他渎职]]></列名>
+            <列名><MyBox_DATAQUOTE>其他渎职</MyBox_DATAQUOTE></列名>
             <类型>Integer</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -2639,25 +2746,33 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
     </列定义>
-</数据定义>
-
-##MyBox#
-定义数据
-回归数据
-
-##MyBox#
-定义数据 > 回归数据
-收入与快乐
-<数据定义>
+</数据定义>]]>
+                </data2d_definition>
+            </NodeAttributes>
+        </TreeNode>
+    </TreeNode>
+    <TreeNode>
+        <NodeAttributes>
+            <title>
+                <![CDATA[回归数据]]>
+            </title>
+        </NodeAttributes>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[收入与快乐]]>
+                </title>
+                <data2d_definition>
+                    <![CDATA[<数据定义>
     <属性>
-        <数据名><![CDATA[收入与快乐]]></数据名>
+        <数据名><MyBox_DATAQUOTE>收入与快乐</MyBox_DATAQUOTE></数据名>
         <小数位数>2</小数位数>
         <随机数的最大值>1000</随机数的最大值>
-        <描述><![CDATA[https://www.scribbr.com/statistics/simple-linear-regression/]]></描述>
+        <描述><MyBox_DATAQUOTE>https://www.scribbr.com/statistics/simple-linear-regression/</MyBox_DATAQUOTE></描述>
     </属性>
     <列定义>
         <列>
-            <列名><![CDATA[收入]]></列名>
+            <列名><MyBox_DATAQUOTE>收入</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>true</非空>
@@ -2671,7 +2786,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[快乐]]></列名>
+            <列名><MyBox_DATAQUOTE>快乐</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>true</非空>
@@ -2685,21 +2800,26 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
     </列定义>
-</数据定义>
-
-##MyBox#
-定义数据 > 回归数据
-工作经验与薪资
-<数据定义>
+</数据定义>]]>
+                </data2d_definition>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[工作经验与薪资]]>
+                </title>
+                <data2d_definition>
+                    <![CDATA[<数据定义>
     <属性>
-        <数据名><![CDATA[工作经验与薪资]]></数据名>
+        <数据名><MyBox_DATAQUOTE>工作经验与薪资</MyBox_DATAQUOTE></数据名>
         <小数位数>2</小数位数>
         <随机数的最大值>1000</随机数的最大值>
-        <描述><![CDATA[https://github.com/krishnaik06/simple-Linear-Regression]]></描述>
+        <描述><MyBox_DATAQUOTE>https://github.com/krishnaik06/simple-Linear-Regression</MyBox_DATAQUOTE></描述>
     </属性>
     <列定义>
         <列>
-            <列名><![CDATA[工作经验]]></列名>
+            <列名><MyBox_DATAQUOTE>工作经验</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>true</非空>
@@ -2713,7 +2833,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[薪资]]></列名>
+            <列名><MyBox_DATAQUOTE>薪资</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>true</非空>
@@ -2727,21 +2847,26 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
     </列定义>
-</数据定义>
-
-##MyBox#
-定义数据 > 回归数据
-鸢尾花的种类
-<数据定义>
+</数据定义>]]>
+                </data2d_definition>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[鸢尾花的种类]]>
+                </title>
+                <data2d_definition>
+                    <![CDATA[<数据定义>
     <属性>
-        <数据名><![CDATA[鸢尾花的种类]]></数据名>
+        <数据名><MyBox_DATAQUOTE>鸢尾花的种类</MyBox_DATAQUOTE></数据名>
         <小数位数>2</小数位数>
         <随机数的最大值>1000</随机数的最大值>
-        <描述><![CDATA[http://archive.ics.uci.edu/ml/datasets/Iris]]></描述>
+        <描述><MyBox_DATAQUOTE>http://archive.ics.uci.edu/ml/datasets/Iris</MyBox_DATAQUOTE></描述>
     </属性>
     <列定义>
         <列>
-            <列名><![CDATA[花萼长度(cm)]]></列名>
+            <列名><MyBox_DATAQUOTE>花萼长度(cm)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>true</非空>
@@ -2755,7 +2880,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[花萼宽度(cm)]]></列名>
+            <列名><MyBox_DATAQUOTE>花萼宽度(cm)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>true</非空>
@@ -2769,7 +2894,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[花瓣长度(cm)]]></列名>
+            <列名><MyBox_DATAQUOTE>花瓣长度(cm)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>true</非空>
@@ -2783,7 +2908,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[花瓣宽度(cm)]]></列名>
+            <列名><MyBox_DATAQUOTE>花瓣宽度(cm)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>true</非空>
@@ -2797,7 +2922,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[种类]]></列名>
+            <列名><MyBox_DATAQUOTE>种类</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>100</宽度>
@@ -2812,21 +2937,26 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
     </列定义>
-</数据定义>
-
-##MyBox#
-定义数据 > 回归数据
-糖尿病的病情预测
-<数据定义>
+</数据定义>]]>
+                </data2d_definition>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[糖尿病的病情预测]]>
+                </title>
+                <data2d_definition>
+                    <![CDATA[<数据定义>
     <属性>
-        <数据名><![CDATA[糖尿病的病情预测]]></数据名>
+        <数据名><MyBox_DATAQUOTE>糖尿病的病情预测</MyBox_DATAQUOTE></数据名>
         <小数位数>2</小数位数>
         <随机数的最大值>1000</随机数的最大值>
-        <描述><![CDATA[https://hastie.su.domains/Papers/LARS/]]></描述>
+        <描述><MyBox_DATAQUOTE>https://hastie.su.domains/Papers/LARS/</MyBox_DATAQUOTE></描述>
     </属性>
     <列定义>
         <列>
-            <列名><![CDATA[年龄]]></列名>
+            <列名><MyBox_DATAQUOTE>年龄</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -2840,7 +2970,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[性别]]></列名>
+            <列名><MyBox_DATAQUOTE>性别</MyBox_DATAQUOTE></列名>
             <类型>Short</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -2854,7 +2984,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[BMI(体质指数)]]></列名>
+            <列名><MyBox_DATAQUOTE>BMI(体质指数)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -2868,7 +2998,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[BP(平均血压)]]></列名>
+            <列名><MyBox_DATAQUOTE>BP(平均血压)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -2882,7 +3012,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[S1(血清指标1)]]></列名>
+            <列名><MyBox_DATAQUOTE>S1(血清指标1)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -2896,7 +3026,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[S2(血清指标2)]]></列名>
+            <列名><MyBox_DATAQUOTE>S2(血清指标2)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -2910,7 +3040,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[S3(血清指标3)]]></列名>
+            <列名><MyBox_DATAQUOTE>S3(血清指标3)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -2924,7 +3054,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[S4(血清指标4)]]></列名>
+            <列名><MyBox_DATAQUOTE>S4(血清指标4)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -2938,7 +3068,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[S5(血清指标5)]]></列名>
+            <列名><MyBox_DATAQUOTE>S5(血清指标5)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -2952,7 +3082,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[S6(血清指标6)]]></列名>
+            <列名><MyBox_DATAQUOTE>S6(血清指标6)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -2966,7 +3096,7 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[一年后病情进展]]></列名>
+            <列名><MyBox_DATAQUOTE>一年后病情进展</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -2980,22 +3110,27 @@ MyBoxTreeRoot;;;
             <补足两位年份>false</补足两位年份>
         </列>
     </列定义>
-</数据定义>
-
-##MyBox#
-定义数据 > 回归数据
-糖尿病的病情预测-标准化
-<数据定义>
+</数据定义>]]>
+                </data2d_definition>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[糖尿病的病情预测-标准化]]>
+                </title>
+                <data2d_definition>
+                    <![CDATA[<数据定义>
     <属性>
-        <数据名><![CDATA[糖尿病的病情预测-标准化]]></数据名>
+        <数据名><MyBox_DATAQUOTE>糖尿病的病情预测-标准化</MyBox_DATAQUOTE></数据名>
         <小数位数>2</小数位数>
         <随机数的最大值>1000</随机数的最大值>
-        <描述><![CDATA[https://hastie.su.domains/Papers/LARS/ 
-first 10 columns have been normalized to have mean 0 and Euclidean norm 1 and the last column y has been centered (mean 0).]]></描述>
+        <描述><MyBox_DATAQUOTE>https://hastie.su.domains/Papers/LARS/ 
+first 10 columns have been normalized to have mean 0 and Euclidean norm 1 and the last column y has been centered (mean 0).</MyBox_DATAQUOTE></描述>
     </属性>
     <列定义>
         <列>
-            <列名><![CDATA[年龄]]></列名>
+            <列名><MyBox_DATAQUOTE>年龄</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -3009,7 +3144,7 @@ first 10 columns have been normalized to have mean 0 and Euclidean norm 1 and th
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[性别]]></列名>
+            <列名><MyBox_DATAQUOTE>性别</MyBox_DATAQUOTE></列名>
             <类型>Short</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -3023,7 +3158,7 @@ first 10 columns have been normalized to have mean 0 and Euclidean norm 1 and th
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[BMI(体质指数)]]></列名>
+            <列名><MyBox_DATAQUOTE>BMI(体质指数)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -3037,7 +3172,7 @@ first 10 columns have been normalized to have mean 0 and Euclidean norm 1 and th
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[BP(平均血压)]]></列名>
+            <列名><MyBox_DATAQUOTE>BP(平均血压)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -3051,7 +3186,7 @@ first 10 columns have been normalized to have mean 0 and Euclidean norm 1 and th
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[S1(血清指标1)]]></列名>
+            <列名><MyBox_DATAQUOTE>S1(血清指标1)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -3065,7 +3200,7 @@ first 10 columns have been normalized to have mean 0 and Euclidean norm 1 and th
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[S2(血清指标2)]]></列名>
+            <列名><MyBox_DATAQUOTE>S2(血清指标2)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -3079,7 +3214,7 @@ first 10 columns have been normalized to have mean 0 and Euclidean norm 1 and th
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[S3(血清指标3)]]></列名>
+            <列名><MyBox_DATAQUOTE>S3(血清指标3)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -3093,7 +3228,7 @@ first 10 columns have been normalized to have mean 0 and Euclidean norm 1 and th
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[S4(血清指标4)]]></列名>
+            <列名><MyBox_DATAQUOTE>S4(血清指标4)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -3107,7 +3242,7 @@ first 10 columns have been normalized to have mean 0 and Euclidean norm 1 and th
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[S5(血清指标5)]]></列名>
+            <列名><MyBox_DATAQUOTE>S5(血清指标5)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -3121,7 +3256,7 @@ first 10 columns have been normalized to have mean 0 and Euclidean norm 1 and th
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[S6(血清指标6)]]></列名>
+            <列名><MyBox_DATAQUOTE>S6(血清指标6)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -3135,7 +3270,7 @@ first 10 columns have been normalized to have mean 0 and Euclidean norm 1 and th
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[一年后病情进展]]></列名>
+            <列名><MyBox_DATAQUOTE>一年后病情进展</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -3149,22 +3284,27 @@ first 10 columns have been normalized to have mean 0 and Euclidean norm 1 and th
             <补足两位年份>false</补足两位年份>
         </列>
     </列定义>
-</数据定义>
-
-##MyBox#
-定义数据 > 回归数据
-心力衰竭
-<数据定义>
+</数据定义>]]>
+                </data2d_definition>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[心力衰竭]]>
+                </title>
+                <data2d_definition>
+                    <![CDATA[<数据定义>
     <属性>
-        <数据名><![CDATA[心力衰竭]]></数据名>
+        <数据名><MyBox_DATAQUOTE>心力衰竭</MyBox_DATAQUOTE></数据名>
         <小数位数>2</小数位数>
         <随机数的最大值>1000</随机数的最大值>
-        <描述><![CDATA[http://archive.ics.uci.edu/ml/datasets/Heart+failure+clinical+records 
-Davide Chicco, Giuseppe Jurman: "Machine learning can predict survival of patients with heart failure from serum creatinine and ejection fraction alone". BMC Medical Informatics and Decision Making 20, 16 (2020)]]></描述>
+        <描述><MyBox_DATAQUOTE>http://archive.ics.uci.edu/ml/datasets/Heart+failure+clinical+records 
+Davide Chicco, Giuseppe Jurman: "Machine learning can predict survival of patients with heart failure from serum creatinine and ejection fraction alone". BMC Medical Informatics and Decision Making 20, 16 (2020)</MyBox_DATAQUOTE></描述>
     </属性>
     <列定义>
         <列>
-            <列名><![CDATA[年龄]]></列名>
+            <列名><MyBox_DATAQUOTE>年龄</MyBox_DATAQUOTE></列名>
             <类型>Integer</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -3178,7 +3318,7 @@ Davide Chicco, Giuseppe Jurman: "Machine learning can predict survival of patien
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[贫血]]></列名>
+            <列名><MyBox_DATAQUOTE>贫血</MyBox_DATAQUOTE></列名>
             <类型>Boolean</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -3190,10 +3330,10 @@ Davide Chicco, Giuseppe Jurman: "Machine learning can predict survival of patien
             <小数位数>8</小数位数>
             <世纪>2000</世纪>
             <补足两位年份>false</补足两位年份>
-            <描述><![CDATA[decrease of red blood cells or hemoglobin (boolean)]]></描述>
+            <描述><MyBox_DATAQUOTE>decrease of red blood cells or hemoglobin (boolean)</MyBox_DATAQUOTE></描述>
         </列>
         <列>
-            <列名><![CDATA[肌酐磷酸激酶(CPK_mcg/L)]]></列名>
+            <列名><MyBox_DATAQUOTE>肌酐磷酸激酶(CPK_mcg/L)</MyBox_DATAQUOTE></列名>
             <类型>Integer</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -3207,7 +3347,7 @@ Davide Chicco, Giuseppe Jurman: "Machine learning can predict survival of patien
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[糖尿病]]></列名>
+            <列名><MyBox_DATAQUOTE>糖尿病</MyBox_DATAQUOTE></列名>
             <类型>Boolean</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -3221,7 +3361,7 @@ Davide Chicco, Giuseppe Jurman: "Machine learning can predict survival of patien
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[喷血分数]]></列名>
+            <列名><MyBox_DATAQUOTE>喷血分数</MyBox_DATAQUOTE></列名>
             <类型>Integer</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -3233,10 +3373,10 @@ Davide Chicco, Giuseppe Jurman: "Machine learning can predict survival of patien
             <小数位数>8</小数位数>
             <世纪>2000</世纪>
             <补足两位年份>false</补足两位年份>
-            <描述><![CDATA[percentage of blood leaving the heart at each contraction (percentage)]]></描述>
+            <描述><MyBox_DATAQUOTE>percentage of blood leaving the heart at each contraction (percentage)</MyBox_DATAQUOTE></描述>
         </列>
         <列>
-            <列名><![CDATA[高血压]]></列名>
+            <列名><MyBox_DATAQUOTE>高血压</MyBox_DATAQUOTE></列名>
             <类型>Boolean</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -3250,7 +3390,7 @@ Davide Chicco, Giuseppe Jurman: "Machine learning can predict survival of patien
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[血小板(kiloplatelets/mL)]]></列名>
+            <列名><MyBox_DATAQUOTE>血小板(kiloplatelets/mL)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -3264,7 +3404,7 @@ Davide Chicco, Giuseppe Jurman: "Machine learning can predict survival of patien
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[血清肌酸酐(mg/dL)]]></列名>
+            <列名><MyBox_DATAQUOTE>血清肌酸酐(mg/dL)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -3278,7 +3418,7 @@ Davide Chicco, Giuseppe Jurman: "Machine learning can predict survival of patien
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[血清钠(mEq/L)]]></列名>
+            <列名><MyBox_DATAQUOTE>血清钠(mEq/L)</MyBox_DATAQUOTE></列名>
             <类型>Integer</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -3292,7 +3432,7 @@ Davide Chicco, Giuseppe Jurman: "Machine learning can predict survival of patien
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[性别]]></列名>
+            <列名><MyBox_DATAQUOTE>性别</MyBox_DATAQUOTE></列名>
             <类型>Boolean</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -3306,7 +3446,7 @@ Davide Chicco, Giuseppe Jurman: "Machine learning can predict survival of patien
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[抽烟]]></列名>
+            <列名><MyBox_DATAQUOTE>抽烟</MyBox_DATAQUOTE></列名>
             <类型>Boolean</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -3320,7 +3460,7 @@ Davide Chicco, Giuseppe Jurman: "Machine learning can predict survival of patien
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[观察期]]></列名>
+            <列名><MyBox_DATAQUOTE>观察期</MyBox_DATAQUOTE></列名>
             <类型>Short</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -3334,7 +3474,7 @@ Davide Chicco, Giuseppe Jurman: "Machine learning can predict survival of patien
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[死亡]]></列名>
+            <列名><MyBox_DATAQUOTE>死亡</MyBox_DATAQUOTE></列名>
             <类型>Boolean</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -3348,22 +3488,27 @@ Davide Chicco, Giuseppe Jurman: "Machine learning can predict survival of patien
             <补足两位年份>false</补足两位年份>
         </列>
     </列定义>
-</数据定义>
-
-##MyBox#
-定义数据 > 回归数据
-混凝土抗压强度
-<数据定义>
+</数据定义>]]>
+                </data2d_definition>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[混凝土抗压强度]]>
+                </title>
+                <data2d_definition>
+                    <![CDATA[<数据定义>
     <属性>
-        <数据名><![CDATA[混凝土抗压强度]]></数据名>
+        <数据名><MyBox_DATAQUOTE>混凝土抗压强度</MyBox_DATAQUOTE></数据名>
         <小数位数>2</小数位数>
         <随机数的最大值>1000</随机数的最大值>
-        <描述><![CDATA[http://archive.ics.uci.edu/ml/datasets/Concrete+Compressive+Strength 
-https://zhuanlan.zhihu.com/p/168747748]]></描述>
+        <描述><MyBox_DATAQUOTE>http://archive.ics.uci.edu/ml/datasets/Concrete+Compressive+Strength 
+https://zhuanlan.zhihu.com/p/168747748</MyBox_DATAQUOTE></描述>
     </属性>
     <列定义>
         <列>
-            <列名><![CDATA[水泥(公斤)]]></列名>
+            <列名><MyBox_DATAQUOTE>水泥(公斤)</MyBox_DATAQUOTE></列名>
             <类型>Short</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -3377,7 +3522,7 @@ https://zhuanlan.zhihu.com/p/168747748]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[矿渣(公斤)]]></列名>
+            <列名><MyBox_DATAQUOTE>矿渣(公斤)</MyBox_DATAQUOTE></列名>
             <类型>Short</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -3391,7 +3536,7 @@ https://zhuanlan.zhihu.com/p/168747748]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[煤灰(公斤)]]></列名>
+            <列名><MyBox_DATAQUOTE>煤灰(公斤)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -3405,7 +3550,7 @@ https://zhuanlan.zhihu.com/p/168747748]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[水(公斤)]]></列名>
+            <列名><MyBox_DATAQUOTE>水(公斤)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -3419,7 +3564,7 @@ https://zhuanlan.zhihu.com/p/168747748]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[塑化剂(公斤)]]></列名>
+            <列名><MyBox_DATAQUOTE>塑化剂(公斤)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -3433,7 +3578,7 @@ https://zhuanlan.zhihu.com/p/168747748]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[粗颗粒(公斤)]]></列名>
+            <列名><MyBox_DATAQUOTE>粗颗粒(公斤)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -3447,7 +3592,7 @@ https://zhuanlan.zhihu.com/p/168747748]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[细颗料(公斤)]]></列名>
+            <列名><MyBox_DATAQUOTE>细颗料(公斤)</MyBox_DATAQUOTE></列名>
             <类型>Short</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -3461,7 +3606,7 @@ https://zhuanlan.zhihu.com/p/168747748]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[已使用天数]]></列名>
+            <列名><MyBox_DATAQUOTE>已使用天数</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -3475,7 +3620,7 @@ https://zhuanlan.zhihu.com/p/168747748]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[1立方米混凝土抗压强度(兆帕)]]></列名>
+            <列名><MyBox_DATAQUOTE>1立方米混凝土抗压强度(兆帕)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -3489,22 +3634,27 @@ https://zhuanlan.zhihu.com/p/168747748]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
     </列定义>
-</数据定义>
-
-##MyBox#
-定义数据 > 回归数据
-狗狗手术后X光片的变化
-<数据定义>
+</数据定义>]]>
+                </data2d_definition>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[狗狗手术后X光片的变化]]>
+                </title>
+                <data2d_definition>
+                    <![CDATA[<数据定义>
     <属性>
-        <数据名><![CDATA[狗狗手术后X光片的变化]]></数据名>
+        <数据名><MyBox_DATAQUOTE>狗狗手术后X光片的变化</MyBox_DATAQUOTE></数据名>
         <小数位数>2</小数位数>
         <随机数的最大值>1000</随机数的最大值>
-        <描述><![CDATA[https://www4.stat.ncsu.edu/~boos/var.select/lucency.html 
-Radiographic and Clinical Changes of the Tibial Tuberosity after Tibial Plateau Leveling Osteomtomy.]]></描述>
+        <描述><MyBox_DATAQUOTE>https://www4.stat.ncsu.edu/~boos/var.select/lucency.html 
+Radiographic and Clinical Changes of the Tibial Tuberosity after Tibial Plateau Leveling Osteomtomy.</MyBox_DATAQUOTE></描述>
     </属性>
     <列定义>
         <列>
-            <列名><![CDATA[透亮度有改变]]></列名>
+            <列名><MyBox_DATAQUOTE>透亮度有改变</MyBox_DATAQUOTE></列名>
             <类型>Boolean</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -3516,10 +3666,10 @@ Radiographic and Clinical Changes of the Tibial Tuberosity after Tibial Plateau 
             <小数位数>8</小数位数>
             <世纪>2000</世纪>
             <补足两位年份>false</补足两位年份>
-            <描述><![CDATA[changed(1) or not changed(0)]]></描述>
+            <描述><MyBox_DATAQUOTE>changed(1) or not changed(0)</MyBox_DATAQUOTE></描述>
         </列>
         <列>
-            <列名><![CDATA[刀片尺寸]]></列名>
+            <列名><MyBox_DATAQUOTE>刀片尺寸</MyBox_DATAQUOTE></列名>
             <类型>Short</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -3533,7 +3683,7 @@ Radiographic and Clinical Changes of the Tibial Tuberosity after Tibial Plateau 
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[胫骨结节面积]]></列名>
+            <列名><MyBox_DATAQUOTE>胫骨结节面积</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -3547,7 +3697,7 @@ Radiographic and Clinical Changes of the Tibial Tuberosity after Tibial Plateau 
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[胫骨结节宽度]]></列名>
+            <列名><MyBox_DATAQUOTE>胫骨结节宽度</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -3561,7 +3711,7 @@ Radiographic and Clinical Changes of the Tibial Tuberosity after Tibial Plateau 
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[年龄(年)]]></列名>
+            <列名><MyBox_DATAQUOTE>年龄(年)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -3575,7 +3725,7 @@ Radiographic and Clinical Changes of the Tibial Tuberosity after Tibial Plateau 
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[重量(公斤)]]></列名>
+            <列名><MyBox_DATAQUOTE>重量(公斤)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -3589,7 +3739,7 @@ Radiographic and Clinical Changes of the Tibial Tuberosity after Tibial Plateau 
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[抗滚针的位置]]></列名>
+            <列名><MyBox_DATAQUOTE>抗滚针的位置</MyBox_DATAQUOTE></列名>
             <类型>Boolean</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -3603,7 +3753,7 @@ Radiographic and Clinical Changes of the Tibial Tuberosity after Tibial Plateau 
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[双侧手术]]></列名>
+            <列名><MyBox_DATAQUOTE>双侧手术</MyBox_DATAQUOTE></列名>
             <类型>Boolean</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -3615,25 +3765,30 @@ Radiographic and Clinical Changes of the Tibial Tuberosity after Tibial Plateau 
             <小数位数>8</小数位数>
             <世纪>2000</世纪>
             <补足两位年份>false</补足两位年份>
-            <描述><![CDATA[bilateral surgery(1) or unilateral surgery(0)]]></描述>
+            <描述><MyBox_DATAQUOTE>bilateral surgery(1) or unilateral surgery(0)</MyBox_DATAQUOTE></描述>
         </列>
     </列定义>
-</数据定义>
-
-##MyBox#
-定义数据 > 回归数据
-垒球球员的薪水
-<数据定义>
+</数据定义>]]>
+                </data2d_definition>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[垒球球员的薪水]]>
+                </title>
+                <data2d_definition>
+                    <![CDATA[<数据定义>
     <属性>
-        <数据名><![CDATA[垒球球员的薪水]]></数据名>
+        <数据名><MyBox_DATAQUOTE>垒球球员的薪水</MyBox_DATAQUOTE></数据名>
         <小数位数>2</小数位数>
         <随机数的最大值>1000</随机数的最大值>
-        <描述><![CDATA[https://www4.stat.ncsu.edu/~boos/var.select/baseball.html 
-Salary information for 337 Major League Baseball (MLB) players who are not pitchers and played at least one game during both the 1991 and 1992 seasons.]]></描述>
+        <描述><MyBox_DATAQUOTE>https://www4.stat.ncsu.edu/~boos/var.select/baseball.html 
+Salary information for 337 Major League Baseball (MLB) players who are not pitchers and played at least one game during both the 1991 and 1992 seasons.</MyBox_DATAQUOTE></描述>
     </属性>
     <列定义>
         <列>
-            <列名><![CDATA[薪水(千美元)]]></列名>
+            <列名><MyBox_DATAQUOTE>薪水(千美元)</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -3647,7 +3802,7 @@ Salary information for 337 Major League Baseball (MLB) players who are not pitch
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[击球平均得分数]]></列名>
+            <列名><MyBox_DATAQUOTE>击球平均得分数</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -3661,7 +3816,7 @@ Salary information for 337 Major League Baseball (MLB) players who are not pitch
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[上垒率]]></列名>
+            <列名><MyBox_DATAQUOTE>上垒率</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -3675,7 +3830,7 @@ Salary information for 337 Major League Baseball (MLB) players who are not pitch
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[跑动数]]></列名>
+            <列名><MyBox_DATAQUOTE>跑动数</MyBox_DATAQUOTE></列名>
             <类型>Short</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -3689,7 +3844,7 @@ Salary information for 337 Major League Baseball (MLB) players who are not pitch
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[击球数]]></列名>
+            <列名><MyBox_DATAQUOTE>击球数</MyBox_DATAQUOTE></列名>
             <类型>Short</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -3703,7 +3858,7 @@ Salary information for 337 Major League Baseball (MLB) players who are not pitch
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[二垒数]]></列名>
+            <列名><MyBox_DATAQUOTE>二垒数</MyBox_DATAQUOTE></列名>
             <类型>Short</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -3717,7 +3872,7 @@ Salary information for 337 Major League Baseball (MLB) players who are not pitch
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[三垒数]]></列名>
+            <列名><MyBox_DATAQUOTE>三垒数</MyBox_DATAQUOTE></列名>
             <类型>Short</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -3731,7 +3886,7 @@ Salary information for 337 Major League Baseball (MLB) players who are not pitch
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[全垒数]]></列名>
+            <列名><MyBox_DATAQUOTE>全垒数</MyBox_DATAQUOTE></列名>
             <类型>Short</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -3745,7 +3900,7 @@ Salary information for 337 Major League Baseball (MLB) players who are not pitch
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[打点数]]></列名>
+            <列名><MyBox_DATAQUOTE>打点数</MyBox_DATAQUOTE></列名>
             <类型>Short</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -3759,7 +3914,7 @@ Salary information for 337 Major League Baseball (MLB) players who are not pitch
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[走动数]]></列名>
+            <列名><MyBox_DATAQUOTE>走动数</MyBox_DATAQUOTE></列名>
             <类型>Short</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -3773,7 +3928,7 @@ Salary information for 337 Major League Baseball (MLB) players who are not pitch
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[三振出局数]]></列名>
+            <列名><MyBox_DATAQUOTE>三振出局数</MyBox_DATAQUOTE></列名>
             <类型>Short</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -3787,7 +3942,7 @@ Salary information for 337 Major League Baseball (MLB) players who are not pitch
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[盗垒数]]></列名>
+            <列名><MyBox_DATAQUOTE>盗垒数</MyBox_DATAQUOTE></列名>
             <类型>Short</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -3801,7 +3956,7 @@ Salary information for 337 Major League Baseball (MLB) players who are not pitch
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[失误数]]></列名>
+            <列名><MyBox_DATAQUOTE>失误数</MyBox_DATAQUOTE></列名>
             <类型>Short</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -3815,7 +3970,7 @@ Salary information for 337 Major League Baseball (MLB) players who are not pitch
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[自由球员资格]]></列名>
+            <列名><MyBox_DATAQUOTE>自由球员资格</MyBox_DATAQUOTE></列名>
             <类型>Boolean</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -3829,7 +3984,7 @@ Salary information for 337 Major League Baseball (MLB) players who are not pitch
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[1991/2的自由球员]]></列名>
+            <列名><MyBox_DATAQUOTE>1991/2的自由球员</MyBox_DATAQUOTE></列名>
             <类型>Boolean</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -3843,7 +3998,7 @@ Salary information for 337 Major League Baseball (MLB) players who are not pitch
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[仲裁资格]]></列名>
+            <列名><MyBox_DATAQUOTE>仲裁资格</MyBox_DATAQUOTE></列名>
             <类型>Boolean</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -3857,7 +4012,7 @@ Salary information for 337 Major League Baseball (MLB) players who are not pitch
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[于1991/2仲裁]]></列名>
+            <列名><MyBox_DATAQUOTE>于1991/2仲裁</MyBox_DATAQUOTE></列名>
             <类型>Boolean</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -3871,22 +4026,27 @@ Salary information for 337 Major League Baseball (MLB) players who are not pitch
             <补足两位年份>false</补足两位年份>
         </列>
     </列定义>
-</数据定义>
-
-##MyBox#
-定义数据 > 回归数据
-德国南部的信用卡数据
-<数据定义>
+</数据定义>]]>
+                </data2d_definition>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[德国南部的信用卡数据]]>
+                </title>
+                <data2d_definition>
+                    <![CDATA[<数据定义>
     <属性>
-        <数据名><![CDATA[德国南部的信用卡数据]]></数据名>
+        <数据名><MyBox_DATAQUOTE>德国南部的信用卡数据</MyBox_DATAQUOTE></数据名>
         <小数位数>2</小数位数>
         <随机数的最大值>1000</随机数的最大值>
-        <描述><![CDATA[http://archive.ics.uci.edu/ml/datasets/South+German+Credit
-700 good and 300 bad credits with 20 predictor variables. Data from 1973 to 1975. Stratified sample from actual credits with bad credits heavily oversampled. A cost matrix can be used.]]></描述>
+        <描述><MyBox_DATAQUOTE>http://archive.ics.uci.edu/ml/datasets/South+German+Credit
+700 good and 300 bad credits with 20 predictor variables. Data from 1973 to 1975. Stratified sample from actual credits with bad credits heavily oversampled. A cost matrix can be used.</MyBox_DATAQUOTE></描述>
     </属性>
     <列定义>
         <列>
-            <列名><![CDATA[状态]]></列名>
+            <列名><MyBox_DATAQUOTE>状态</MyBox_DATAQUOTE></列名>
             <类型>Short</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -3898,15 +4058,15 @@ Salary information for 337 Major League Baseball (MLB) players who are not pitch
             <小数位数>8</小数位数>
             <世纪>2000</世纪>
             <补足两位年份>false</补足两位年份>
-            <描述><![CDATA[status of the debtor's checking account with the bank
+            <描述><MyBox_DATAQUOTE>status of the debtor's checking account with the bank
 1:no checking account   
 2: ... < 0 DM    
 3: 0<= ... < 200 DM   
 4: >= 200 DM 
-salary for at least 1 year]]></描述>
+salary for at least 1 year</MyBox_DATAQUOTE></描述>
         </列>
         <列>
-            <列名><![CDATA[持续时间(月)]]></列名>
+            <列名><MyBox_DATAQUOTE>持续时间(月)</MyBox_DATAQUOTE></列名>
             <类型>Short</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -3918,10 +4078,10 @@ salary for at least 1 year]]></描述>
             <小数位数>8</小数位数>
             <世纪>2000</世纪>
             <补足两位年份>false</补足两位年份>
-            <描述><![CDATA[credit duration in months]]></描述>
+            <描述><MyBox_DATAQUOTE>credit duration in months</MyBox_DATAQUOTE></描述>
         </列>
         <列>
-            <列名><![CDATA[信用卡历史]]></列名>
+            <列名><MyBox_DATAQUOTE>信用卡历史</MyBox_DATAQUOTE></列名>
             <类型>Short</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -3933,15 +4093,15 @@ salary for at least 1 year]]></描述>
             <小数位数>8</小数位数>
             <世纪>2000</世纪>
             <补足两位年份>false</补足两位年份>
-            <描述><![CDATA[history of compliance with previous or concurrent credit contracts
+            <描述><MyBox_DATAQUOTE>history of compliance with previous or concurrent credit contracts
  0 : delay in paying off in the past   
  1 : critical account/other credits elsewhere 
  2 : no credits taken/all credits paid back duly
  3 : existing credits paid back duly till now   
- 4 : all credits at this bank paid back duly ]]></描述>
+ 4 : all credits at this bank paid back duly </MyBox_DATAQUOTE></描述>
         </列>
         <列>
-            <列名><![CDATA[用途]]></列名>
+            <列名><MyBox_DATAQUOTE>用途</MyBox_DATAQUOTE></列名>
             <类型>Short</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -3953,7 +4113,7 @@ salary for at least 1 year]]></描述>
             <小数位数>8</小数位数>
             <世纪>2000</世纪>
             <补足两位年份>false</补足两位年份>
-            <描述><![CDATA[purpose for which the credit is needed
+            <描述><MyBox_DATAQUOTE>purpose for which the credit is needed
  0 : others             
  1 : car (new)          
  2 : car (used)         
@@ -3964,10 +4124,10 @@ salary for at least 1 year]]></描述>
  7 : education          
  8 : vacation           
  9 : retraining         
- 10 : business  ]]></描述>
+ 10 : business  </MyBox_DATAQUOTE></描述>
         </列>
         <列>
-            <列名><![CDATA[金额]]></列名>
+            <列名><MyBox_DATAQUOTE>金额</MyBox_DATAQUOTE></列名>
             <类型>Short</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -3979,10 +4139,10 @@ salary for at least 1 year]]></描述>
             <小数位数>8</小数位数>
             <世纪>2000</世纪>
             <补足两位年份>false</补足两位年份>
-            <描述><![CDATA[credit amount in DM (quantitative; result of monotonic transformation; actual data and type of transformation unknown)]]></描述>
+            <描述><MyBox_DATAQUOTE>credit amount in DM (quantitative; result of monotonic transformation; actual data and type of transformation unknown)</MyBox_DATAQUOTE></描述>
         </列>
         <列>
-            <列名><![CDATA[储蓄]]></列名>
+            <列名><MyBox_DATAQUOTE>储蓄</MyBox_DATAQUOTE></列名>
             <类型>Short</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -3994,15 +4154,15 @@ salary for at least 1 year]]></描述>
             <小数位数>8</小数位数>
             <世纪>2000</世纪>
             <补足两位年份>false</补足两位年份>
-            <描述><![CDATA[debtor's savings
+            <描述><MyBox_DATAQUOTE>debtor's savings
  1 : unknown/no savings account
  2 : ... <  100 DM             
  3 : 100 <= ... <  500 DM      
  4 : 500 <= ... < 1000 DM      
- 5 : ... >= 1000 DM   ]]></描述>
+ 5 : ... >= 1000 DM   </MyBox_DATAQUOTE></描述>
         </列>
         <列>
-            <列名><![CDATA[职业年限]]></列名>
+            <列名><MyBox_DATAQUOTE>职业年限</MyBox_DATAQUOTE></列名>
             <类型>Short</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -4014,15 +4174,15 @@ salary for at least 1 year]]></描述>
             <小数位数>8</小数位数>
             <世纪>2000</世纪>
             <补足两位年份>false</补足两位年份>
-            <描述><![CDATA[duration of debtor's employment with current employer
+            <描述><MyBox_DATAQUOTE>duration of debtor's employment with current employer
  1 : unemployed      
  2 : < 1 yr          
  3 : 1 <= ... < 4 yrs
  4 : 4 <= ... < 7 yrs
- 5 : >= 7 yrs ]]></描述>
+ 5 : >= 7 yrs </MyBox_DATAQUOTE></描述>
         </列>
         <列>
-            <列名><![CDATA[信贷率]]></列名>
+            <列名><MyBox_DATAQUOTE>信贷率</MyBox_DATAQUOTE></列名>
             <类型>Short</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -4034,14 +4194,14 @@ salary for at least 1 year]]></描述>
             <小数位数>8</小数位数>
             <世纪>2000</世纪>
             <补足两位年份>false</补足两位年份>
-            <描述><![CDATA[credit installments as a percentage of debtor's disposable income
+            <描述><MyBox_DATAQUOTE>credit installments as a percentage of debtor's disposable income
 1 : >= 35         
  2 : 25 <= ... < 35
  3 : 20 <= ... < 25
- 4 : < 20  ]]></描述>
+ 4 : < 20  </MyBox_DATAQUOTE></描述>
         </列>
         <列>
-            <列名><![CDATA[个人状态]]></列名>
+            <列名><MyBox_DATAQUOTE>个人状态</MyBox_DATAQUOTE></列名>
             <类型>Short</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -4053,14 +4213,14 @@ salary for at least 1 year]]></描述>
             <小数位数>8</小数位数>
             <世纪>2000</世纪>
             <补足两位年份>false</补足两位年份>
-            <描述><![CDATA[combined information on sex and marital status
+            <描述><MyBox_DATAQUOTE>combined information on sex and marital status
  1 : male : divorced/separated           
  2 : female : non-single or male : single
  3 : male : married/widowed              
- 4 : female : single ]]></描述>
+ 4 : female : single </MyBox_DATAQUOTE></描述>
         </列>
         <列>
-            <列名><![CDATA[其他债务人]]></列名>
+            <列名><MyBox_DATAQUOTE>其他债务人</MyBox_DATAQUOTE></列名>
             <类型>Short</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -4072,13 +4232,13 @@ salary for at least 1 year]]></描述>
             <小数位数>8</小数位数>
             <世纪>2000</世纪>
             <补足两位年份>false</补足两位年份>
-            <描述><![CDATA[Is there another debtor or a guarantor for the credit
+            <描述><MyBox_DATAQUOTE>Is there another debtor or a guarantor for the credit
  1 : none        
  2 : co-applicant
- 3 : guarantor ]]></描述>
+ 3 : guarantor </MyBox_DATAQUOTE></描述>
         </列>
         <列>
-            <列名><![CDATA[当前居住年限(年)]]></列名>
+            <列名><MyBox_DATAQUOTE>当前居住年限(年)</MyBox_DATAQUOTE></列名>
             <类型>Short</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -4090,14 +4250,14 @@ salary for at least 1 year]]></描述>
             <小数位数>8</小数位数>
             <世纪>2000</世纪>
             <补足两位年份>false</补足两位年份>
-            <描述><![CDATA[length of time (in years) the debtor lives in the present residence
+            <描述><MyBox_DATAQUOTE>length of time (in years) the debtor lives in the present residence
  1 : < 1 yr          
  2 : 1 <= ... < 4 yrs
  3 : 4 <= ... < 7 yrs
- 4 : >= 7 yrs ]]></描述>
+ 4 : >= 7 yrs </MyBox_DATAQUOTE></描述>
         </列>
         <列>
-            <列名><![CDATA[财产]]></列名>
+            <列名><MyBox_DATAQUOTE>财产</MyBox_DATAQUOTE></列名>
             <类型>Short</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -4109,14 +4269,14 @@ salary for at least 1 year]]></描述>
             <小数位数>8</小数位数>
             <世纪>2000</世纪>
             <补足两位年份>false</补足两位年份>
-            <描述><![CDATA[the debtor's most valuable property
+            <描述><MyBox_DATAQUOTE>the debtor's most valuable property
  1 : unknown / no property                    
  2 : car or other                             
  3 : building soc. savings agr./life insurance
- 4 : real estate   ]]></描述>
+ 4 : real estate   </MyBox_DATAQUOTE></描述>
         </列>
         <列>
-            <列名><![CDATA[年龄]]></列名>
+            <列名><MyBox_DATAQUOTE>年龄</MyBox_DATAQUOTE></列名>
             <类型>Short</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -4130,7 +4290,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[其它贷款计划]]></列名>
+            <列名><MyBox_DATAQUOTE>其它贷款计划</MyBox_DATAQUOTE></列名>
             <类型>Short</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -4142,13 +4302,13 @@ salary for at least 1 year]]></描述>
             <小数位数>8</小数位数>
             <世纪>2000</世纪>
             <补足两位年份>false</补足两位年份>
-            <描述><![CDATA[installment plans from providers other than the credit-giving bank
+            <描述><MyBox_DATAQUOTE>installment plans from providers other than the credit-giving bank
  1 : bank  
  2 : stores
- 3 : none]]></描述>
+ 3 : none</MyBox_DATAQUOTE></描述>
         </列>
         <列>
-            <列名><![CDATA[居所类型]]></列名>
+            <列名><MyBox_DATAQUOTE>居所类型</MyBox_DATAQUOTE></列名>
             <类型>Short</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -4160,13 +4320,13 @@ salary for at least 1 year]]></描述>
             <小数位数>8</小数位数>
             <世纪>2000</世纪>
             <补足两位年份>false</补足两位年份>
-            <描述><![CDATA[type of housing the debtor lives in
+            <描述><MyBox_DATAQUOTE>type of housing the debtor lives in
  1 : for free
  2 : rent    
- 3 : own ]]></描述>
+ 3 : own </MyBox_DATAQUOTE></描述>
         </列>
         <列>
-            <列名><![CDATA[信用卡数目]]></列名>
+            <列名><MyBox_DATAQUOTE>信用卡数目</MyBox_DATAQUOTE></列名>
             <类型>Short</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -4178,14 +4338,14 @@ salary for at least 1 year]]></描述>
             <小数位数>8</小数位数>
             <世纪>2000</世纪>
             <补足两位年份>false</补足两位年份>
-            <描述><![CDATA[number of credits including the current one the debtor has (or had) at this bank
+            <描述><MyBox_DATAQUOTE>number of credits including the current one the debtor has (or had) at this bank
  1 : 1   
  2 : 2-3 
  3 : 4-5 
- 4 : >= 6]]></描述>
+ 4 : >= 6</MyBox_DATAQUOTE></描述>
         </列>
         <列>
-            <列名><![CDATA[工作类型]]></列名>
+            <列名><MyBox_DATAQUOTE>工作类型</MyBox_DATAQUOTE></列名>
             <类型>Short</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -4197,13 +4357,13 @@ salary for at least 1 year]]></描述>
             <小数位数>8</小数位数>
             <世纪>2000</世纪>
             <补足两位年份>false</补足两位年份>
-            <描述><![CDATA[ 1 : unemployed/unskilled - non-resident       
+            <描述><MyBox_DATAQUOTE> 1 : unemployed/unskilled - non-resident       
  2 : unskilled - resident                      
  3 : skilled employee/official                 
- 4 : manager/self-empl./highly qualif. employee]]></描述>
+ 4 : manager/self-empl./highly qualif. employee</MyBox_DATAQUOTE></描述>
         </列>
         <列>
-            <列名><![CDATA[被依赖人数]]></列名>
+            <列名><MyBox_DATAQUOTE>被依赖人数</MyBox_DATAQUOTE></列名>
             <类型>Short</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -4215,12 +4375,12 @@ salary for at least 1 year]]></描述>
             <小数位数>8</小数位数>
             <世纪>2000</世纪>
             <补足两位年份>false</补足两位年份>
-            <描述><![CDATA[number of persons who financially depend on the debtor
+            <描述><MyBox_DATAQUOTE>number of persons who financially depend on the debtor
  1 : 3 or more
- 2 : 0 to 2]]></描述>
+ 2 : 0 to 2</MyBox_DATAQUOTE></描述>
         </列>
         <列>
-            <列名><![CDATA[有电话]]></列名>
+            <列名><MyBox_DATAQUOTE>有电话</MyBox_DATAQUOTE></列名>
             <类型>Short</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -4232,12 +4392,12 @@ salary for at least 1 year]]></描述>
             <小数位数>8</小数位数>
             <世纪>2000</世纪>
             <补足两位年份>false</补足两位年份>
-            <描述><![CDATA[Is there a telephone landline registered on the debtor's name? (binary; remember that the data are from the 1970s)
+            <描述><MyBox_DATAQUOTE>Is there a telephone landline registered on the debtor's name? (binary; remember that the data are from the 1970s)
  1 : no                       
- 2 : yes (under customer name)]]></描述>
+ 2 : yes (under customer name)</MyBox_DATAQUOTE></描述>
         </列>
         <列>
-            <列名><![CDATA[是外籍雇员]]></列名>
+            <列名><MyBox_DATAQUOTE>是外籍雇员</MyBox_DATAQUOTE></列名>
             <类型>Short</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -4249,12 +4409,12 @@ salary for at least 1 year]]></描述>
             <小数位数>8</小数位数>
             <世纪>2000</世纪>
             <补足两位年份>false</补足两位年份>
-            <描述><![CDATA[Is the debtor a foreign worker
+            <描述><MyBox_DATAQUOTE>Is the debtor a foreign worker
  1 : yes
- 2 : no ]]></描述>
+ 2 : no </MyBox_DATAQUOTE></描述>
         </列>
         <列>
-            <列名><![CDATA[信用风险]]></列名>
+            <列名><MyBox_DATAQUOTE>信用风险</MyBox_DATAQUOTE></列名>
             <类型>Short</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -4266,26 +4426,31 @@ salary for at least 1 year]]></描述>
             <小数位数>8</小数位数>
             <世纪>2000</世纪>
             <补足两位年份>false</补足两位年份>
-            <描述><![CDATA[Has the credit contract been complied with (good) or not (bad) ?
+            <描述><MyBox_DATAQUOTE>Has the credit contract been complied with (good) or not (bad) ?
  0 : bad 
- 1 : good]]></描述>
+ 1 : good</MyBox_DATAQUOTE></描述>
         </列>
     </列定义>
-</数据定义>
-
-##MyBox#
-定义数据 > 回归数据
-波士顿房屋价格
-<数据定义>
+</数据定义>]]>
+                </data2d_definition>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[波士顿房屋价格]]>
+                </title>
+                <data2d_definition>
+                    <![CDATA[<数据定义>
     <属性>
-        <数据名><![CDATA[波士顿房屋价格]]></数据名>
+        <数据名><MyBox_DATAQUOTE>波士顿房屋价格</MyBox_DATAQUOTE></数据名>
         <小数位数>2</小数位数>
         <随机数的最大值>1000</随机数的最大值>
-        <描述><![CDATA[https://github.com/tomsharp/SVR/tree/master/data]]></描述>
+        <描述><MyBox_DATAQUOTE>https://github.com/tomsharp/SVR/tree/master/data</MyBox_DATAQUOTE></描述>
     </属性>
     <列定义>
         <列>
-            <列名><![CDATA[镇]]></列名>
+            <列名><MyBox_DATAQUOTE>镇</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>100</宽度>
@@ -4300,7 +4465,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[经度]]></列名>
+            <列名><MyBox_DATAQUOTE>经度</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -4314,7 +4479,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[纬度]]></列名>
+            <列名><MyBox_DATAQUOTE>纬度</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -4328,7 +4493,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[犯罪率]]></列名>
+            <列名><MyBox_DATAQUOTE>犯罪率</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -4342,7 +4507,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[超过25000平米的区]]></列名>
+            <列名><MyBox_DATAQUOTE>超过25000平米的区</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -4356,7 +4521,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[工业用地]]></列名>
+            <列名><MyBox_DATAQUOTE>工业用地</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -4370,7 +4535,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[靠近查理斯河]]></列名>
+            <列名><MyBox_DATAQUOTE>靠近查理斯河</MyBox_DATAQUOTE></列名>
             <类型>Boolean</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -4384,7 +4549,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[一氧化氮浓度]]></列名>
+            <列名><MyBox_DATAQUOTE>一氧化氮浓度</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -4398,7 +4563,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[平均房间数]]></列名>
+            <列名><MyBox_DATAQUOTE>平均房间数</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -4412,7 +4577,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[早于1940建成比率]]></列名>
+            <列名><MyBox_DATAQUOTE>早于1940建成比率</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -4426,7 +4591,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[到达市中心的距离]]></列名>
+            <列名><MyBox_DATAQUOTE>到达市中心的距离</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -4440,7 +4605,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[公路可达性]]></列名>
+            <列名><MyBox_DATAQUOTE>公路可达性</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -4454,7 +4619,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[税率]]></列名>
+            <列名><MyBox_DATAQUOTE>税率</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -4468,7 +4633,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[学生教师比]]></列名>
+            <列名><MyBox_DATAQUOTE>学生教师比</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -4482,7 +4647,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[低收入比]]></列名>
+            <列名><MyBox_DATAQUOTE>低收入比</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -4496,7 +4661,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[价格中位数]]></列名>
+            <列名><MyBox_DATAQUOTE>价格中位数</MyBox_DATAQUOTE></列名>
             <类型>Double</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -4510,24 +4675,32 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
     </列定义>
-</数据定义>
-
-##MyBox#
-定义数据
-位置数据
-
-##MyBox#
-定义数据 > 位置数据
-中国历代国都
-<数据定义>
+</数据定义>]]>
+                </data2d_definition>
+            </NodeAttributes>
+        </TreeNode>
+    </TreeNode>
+    <TreeNode>
+        <NodeAttributes>
+            <title>
+                <![CDATA[位置数据]]>
+            </title>
+        </NodeAttributes>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[中国历代国都]]>
+                </title>
+                <data2d_definition>
+                    <![CDATA[<数据定义>
     <属性>
-        <数据名><![CDATA[中国历代国都]]></数据名>
+        <数据名><MyBox_DATAQUOTE>中国历代国都</MyBox_DATAQUOTE></数据名>
         <小数位数>2</小数位数>
         <随机数的最大值>1000</随机数的最大值>
     </属性>
     <列定义>
         <列>
-            <列名><![CDATA[国家]]></列名>
+            <列名><MyBox_DATAQUOTE>国家</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>140</宽度>
@@ -4542,7 +4715,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[国都]]></列名>
+            <列名><MyBox_DATAQUOTE>国都</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>200</宽度>
@@ -4557,7 +4730,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[经度]]></列名>
+            <列名><MyBox_DATAQUOTE>经度</MyBox_DATAQUOTE></列名>
             <类型>Longitude</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -4571,7 +4744,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[纬度]]></列名>
+            <列名><MyBox_DATAQUOTE>纬度</MyBox_DATAQUOTE></列名>
             <类型>Latitude</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -4585,7 +4758,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[开始时间]]></列名>
+            <列名><MyBox_DATAQUOTE>开始时间</MyBox_DATAQUOTE></列名>
             <类型>Era</类型>
             <宽度>100</宽度>
             <显示格式>Gy</显示格式>
@@ -4600,7 +4773,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[结束时间]]></列名>
+            <列名><MyBox_DATAQUOTE>结束时间</MyBox_DATAQUOTE></列名>
             <类型>Era</类型>
             <宽度>100</宽度>
             <显示格式>Gy</显示格式>
@@ -4615,7 +4788,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[说明]]></列名>
+            <列名><MyBox_DATAQUOTE>说明</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>100</宽度>
@@ -4630,21 +4803,26 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
     </列定义>
-</数据定义>
-
-##MyBox#
-定义数据 > 位置数据
-欧洲赤膀鸭的秋季迁徙模式
-<数据定义>
+</数据定义>]]>
+                </data2d_definition>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[欧洲赤膀鸭的秋季迁徙模式]]>
+                </title>
+                <data2d_definition>
+                    <![CDATA[<数据定义>
     <属性>
-        <数据名><![CDATA[欧洲赤膀鸭的秋季迁徙模式]]></数据名>
+        <数据名><MyBox_DATAQUOTE>欧洲赤膀鸭的秋季迁徙模式</MyBox_DATAQUOTE></数据名>
         <小数位数>2</小数位数>
         <随机数的最大值>1000</随机数的最大值>
-        <描述><![CDATA[https://www.datarepository.movebank.org/handle/10255/move.346]]></描述>
+        <描述><MyBox_DATAQUOTE>https://www.datarepository.movebank.org/handle/10255/move.346</MyBox_DATAQUOTE></描述>
     </属性>
     <列定义>
         <列>
-            <列名><![CDATA[开始时间]]></列名>
+            <列名><MyBox_DATAQUOTE>开始时间</MyBox_DATAQUOTE></列名>
             <类型>Datetime</类型>
             <宽度>180</宽度>
             <非空>false</非空>
@@ -4658,7 +4836,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>true</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[结束时间]]></列名>
+            <列名><MyBox_DATAQUOTE>结束时间</MyBox_DATAQUOTE></列名>
             <类型>Datetime</类型>
             <宽度>180</宽度>
             <非空>false</非空>
@@ -4672,7 +4850,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>true</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[经度]]></列名>
+            <列名><MyBox_DATAQUOTE>经度</MyBox_DATAQUOTE></列名>
             <类型>Longitude</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -4686,7 +4864,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[纬度]]></列名>
+            <列名><MyBox_DATAQUOTE>纬度</MyBox_DATAQUOTE></列名>
             <类型>Latitude</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -4700,7 +4878,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[坐标系统]]></列名>
+            <列名><MyBox_DATAQUOTE>坐标系统</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>100</宽度>
@@ -4715,7 +4893,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[说明]]></列名>
+            <列名><MyBox_DATAQUOTE>说明</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>100</宽度>
@@ -4730,21 +4908,26 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
     </列定义>
-</数据定义>
-
-##MyBox#
-定义数据 > 位置数据
-墨西哥湾的抹香鲸
-<数据定义>
+</数据定义>]]>
+                </data2d_definition>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[墨西哥湾的抹香鲸]]>
+                </title>
+                <data2d_definition>
+                    <![CDATA[<数据定义>
     <属性>
-        <数据名><![CDATA[墨西哥湾的抹香鲸]]></数据名>
+        <数据名><MyBox_DATAQUOTE>墨西哥湾的抹香鲸</MyBox_DATAQUOTE></数据名>
         <小数位数>2</小数位数>
         <随机数的最大值>1000</随机数的最大值>
-        <描述><![CDATA[https://www.datarepository.movebank.org/handle/10255/move.1059]]></描述>
+        <描述><MyBox_DATAQUOTE>https://www.datarepository.movebank.org/handle/10255/move.1059</MyBox_DATAQUOTE></描述>
     </属性>
     <列定义>
         <列>
-            <列名><![CDATA[时间]]></列名>
+            <列名><MyBox_DATAQUOTE>时间</MyBox_DATAQUOTE></列名>
             <类型>Datetime</类型>
             <宽度>180</宽度>
             <非空>false</非空>
@@ -4758,7 +4941,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>true</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[经度]]></列名>
+            <列名><MyBox_DATAQUOTE>经度</MyBox_DATAQUOTE></列名>
             <类型>Longitude</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -4772,7 +4955,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[纬度]]></列名>
+            <列名><MyBox_DATAQUOTE>纬度</MyBox_DATAQUOTE></列名>
             <类型>Latitude</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -4786,7 +4969,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[坐标系统]]></列名>
+            <列名><MyBox_DATAQUOTE>坐标系统</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>100</宽度>
@@ -4801,7 +4984,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[说明]]></列名>
+            <列名><MyBox_DATAQUOTE>说明</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>100</宽度>
@@ -4816,21 +4999,26 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
     </列定义>
-</数据定义>
-
-##MyBox#
-定义数据 > 位置数据
-疫情报告: 来自约翰霍普金斯大学的COVID-19数据
-<数据定义>
+</数据定义>]]>
+                </data2d_definition>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[疫情报告: 来自约翰霍普金斯大学的COVID-19数据]]>
+                </title>
+                <data2d_definition>
+                    <![CDATA[<数据定义>
     <属性>
-        <数据名><![CDATA[疫情报告: 来自约翰霍普金斯大学的COVID-19数据]]></数据名>
+        <数据名><MyBox_DATAQUOTE>疫情报告: 来自约翰霍普金斯大学的COVID-19数据</MyBox_DATAQUOTE></数据名>
         <小数位数>2</小数位数>
         <随机数的最大值>1000</随机数的最大值>
-        <描述><![CDATA[https://github.com/CSSEGISandData/COVID-19]]></描述>
+        <描述><MyBox_DATAQUOTE>https://github.com/CSSEGISandData/COVID-19</MyBox_DATAQUOTE></描述>
     </属性>
     <列定义>
         <列>
-            <列名><![CDATA[日期]]></列名>
+            <列名><MyBox_DATAQUOTE>日期</MyBox_DATAQUOTE></列名>
             <类型>Date</类型>
             <宽度>100</宽度>
             <显示格式>yyyy-MM-dd</显示格式>
@@ -4845,7 +5033,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[国家]]></列名>
+            <列名><MyBox_DATAQUOTE>国家</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>100</宽度>
@@ -4860,7 +5048,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[省]]></列名>
+            <列名><MyBox_DATAQUOTE>省</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>100</宽度>
@@ -4875,7 +5063,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[确认]]></列名>
+            <列名><MyBox_DATAQUOTE>确认</MyBox_DATAQUOTE></列名>
             <类型>Integer</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -4889,7 +5077,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[治愈]]></列名>
+            <列名><MyBox_DATAQUOTE>治愈</MyBox_DATAQUOTE></列名>
             <类型>Integer</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -4903,7 +5091,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[死亡]]></列名>
+            <列名><MyBox_DATAQUOTE>死亡</MyBox_DATAQUOTE></列名>
             <类型>Integer</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -4917,7 +5105,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[经度]]></列名>
+            <列名><MyBox_DATAQUOTE>经度</MyBox_DATAQUOTE></列名>
             <类型>Longitude</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -4931,7 +5119,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[纬度]]></列名>
+            <列名><MyBox_DATAQUOTE>纬度</MyBox_DATAQUOTE></列名>
             <类型>Latitude</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -4945,24 +5133,32 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
     </列定义>
-</数据定义>
-
-##MyBox#
-定义数据
-项目管理
-
-##MyBox#
-定义数据 > 项目管理
-项目登记
-<数据定义>
+</数据定义>]]>
+                </data2d_definition>
+            </NodeAttributes>
+        </TreeNode>
+    </TreeNode>
+    <TreeNode>
+        <NodeAttributes>
+            <title>
+                <![CDATA[项目管理]]>
+            </title>
+        </NodeAttributes>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[项目登记]]>
+                </title>
+                <data2d_definition>
+                    <![CDATA[<数据定义>
     <属性>
-        <数据名><![CDATA[项目登记]]></数据名>
+        <数据名><MyBox_DATAQUOTE>项目登记</MyBox_DATAQUOTE></数据名>
         <小数位数>2</小数位数>
         <随机数的最大值>1000</随机数的最大值>
     </属性>
     <列定义>
         <列>
-            <列名><![CDATA[配置编号]]></列名>
+            <列名><MyBox_DATAQUOTE>配置编号</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>140</宽度>
@@ -4977,7 +5173,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[名字]]></列名>
+            <列名><MyBox_DATAQUOTE>名字</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>200</宽度>
@@ -4992,11 +5188,11 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[最后状态]]></列名>
+            <列名><MyBox_DATAQUOTE>最后状态</MyBox_DATAQUOTE></列名>
             <类型>Enumeration</类型>
             <宽度>100</宽度>
             <显示格式>
-            <![CDATA[申请
+            <MyBox_DATAQUOTE>申请
 已批准
 需求分析
 设计
@@ -5007,7 +5203,7 @@ salary for at least 1 year]]></描述>
 已完成
 被否定
 失败
-已取消]]>
+已取消</MyBox_DATAQUOTE>
         </显示格式>
             <非空>false</非空>
             <可编辑>true</可编辑>
@@ -5020,7 +5216,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[项目经理]]></列名>
+            <列名><MyBox_DATAQUOTE>项目经理</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>100</宽度>
@@ -5035,7 +5231,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[批准者]]></列名>
+            <列名><MyBox_DATAQUOTE>批准者</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>100</宽度>
@@ -5050,7 +5246,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[开始时间]]></列名>
+            <列名><MyBox_DATAQUOTE>开始时间</MyBox_DATAQUOTE></列名>
             <类型>Datetime</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -5064,7 +5260,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[关闭时间]]></列名>
+            <列名><MyBox_DATAQUOTE>关闭时间</MyBox_DATAQUOTE></列名>
             <类型>Datetime</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -5078,7 +5274,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[说明]]></列名>
+            <列名><MyBox_DATAQUOTE>说明</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>100</宽度>
@@ -5093,20 +5289,25 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
     </列定义>
-</数据定义>
-
-##MyBox#
-定义数据 > 项目管理
-项目状态
-<数据定义>
+</数据定义>]]>
+                </data2d_definition>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[项目状态]]>
+                </title>
+                <data2d_definition>
+                    <![CDATA[<数据定义>
     <属性>
-        <数据名><![CDATA[项目状态]]></数据名>
+        <数据名><MyBox_DATAQUOTE>项目状态</MyBox_DATAQUOTE></数据名>
         <小数位数>2</小数位数>
         <随机数的最大值>1000</随机数的最大值>
     </属性>
     <列定义>
         <列>
-            <列名><![CDATA[项目编号]]></列名>
+            <列名><MyBox_DATAQUOTE>项目编号</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>140</宽度>
@@ -5121,11 +5322,11 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[状态]]></列名>
+            <列名><MyBox_DATAQUOTE>状态</MyBox_DATAQUOTE></列名>
             <类型>Enumeration</类型>
             <宽度>100</宽度>
             <显示格式>
-            <![CDATA[申请
+            <MyBox_DATAQUOTE>申请
 已批准
 需求分析
 设计
@@ -5136,7 +5337,7 @@ salary for at least 1 year]]></描述>
 已完成
 被否定
 失败
-已取消]]>
+已取消</MyBox_DATAQUOTE>
         </显示格式>
             <非空>false</非空>
             <可编辑>true</可编辑>
@@ -5149,7 +5350,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[说明]]></列名>
+            <列名><MyBox_DATAQUOTE>说明</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>100</宽度>
@@ -5164,7 +5365,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[记录者]]></列名>
+            <列名><MyBox_DATAQUOTE>记录者</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>100</宽度>
@@ -5179,7 +5380,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[记录时间]]></列名>
+            <列名><MyBox_DATAQUOTE>记录时间</MyBox_DATAQUOTE></列名>
             <类型>Datetime</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -5193,20 +5394,25 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
     </列定义>
-</数据定义>
-
-##MyBox#
-定义数据 > 项目管理
-任务登记
-<数据定义>
+</数据定义>]]>
+                </data2d_definition>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[任务登记]]>
+                </title>
+                <data2d_definition>
+                    <![CDATA[<数据定义>
     <属性>
-        <数据名><![CDATA[任务登记]]></数据名>
+        <数据名><MyBox_DATAQUOTE>任务登记</MyBox_DATAQUOTE></数据名>
         <小数位数>2</小数位数>
         <随机数的最大值>1000</随机数的最大值>
     </属性>
     <列定义>
         <列>
-            <列名><![CDATA[配置编号]]></列名>
+            <列名><MyBox_DATAQUOTE>配置编号</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>140</宽度>
@@ -5221,7 +5427,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[项目编号]]></列名>
+            <列名><MyBox_DATAQUOTE>项目编号</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>140</宽度>
@@ -5236,7 +5442,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[名字]]></列名>
+            <列名><MyBox_DATAQUOTE>名字</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>200</宽度>
@@ -5251,15 +5457,15 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[最后状态]]></列名>
+            <列名><MyBox_DATAQUOTE>最后状态</MyBox_DATAQUOTE></列名>
             <类型>Enumeration</类型>
             <宽度>100</宽度>
             <显示格式>
-            <![CDATA[分派
+            <MyBox_DATAQUOTE>分派
 执行
 完成
 失败
-取消]]>
+取消</MyBox_DATAQUOTE>
         </显示格式>
             <非空>false</非空>
             <可编辑>true</可编辑>
@@ -5272,7 +5478,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[执行者]]></列名>
+            <列名><MyBox_DATAQUOTE>执行者</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>100</宽度>
@@ -5287,7 +5493,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[开始时间]]></列名>
+            <列名><MyBox_DATAQUOTE>开始时间</MyBox_DATAQUOTE></列名>
             <类型>Datetime</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -5301,7 +5507,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[关闭时间]]></列名>
+            <列名><MyBox_DATAQUOTE>关闭时间</MyBox_DATAQUOTE></列名>
             <类型>Datetime</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -5315,7 +5521,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[说明]]></列名>
+            <列名><MyBox_DATAQUOTE>说明</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>100</宽度>
@@ -5330,20 +5536,25 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
     </列定义>
-</数据定义>
-
-##MyBox#
-定义数据 > 项目管理
-任务状态
-<数据定义>
+</数据定义>]]>
+                </data2d_definition>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[任务状态]]>
+                </title>
+                <data2d_definition>
+                    <![CDATA[<数据定义>
     <属性>
-        <数据名><![CDATA[任务状态]]></数据名>
+        <数据名><MyBox_DATAQUOTE>任务状态</MyBox_DATAQUOTE></数据名>
         <小数位数>2</小数位数>
         <随机数的最大值>1000</随机数的最大值>
     </属性>
     <列定义>
         <列>
-            <列名><![CDATA[任务编号]]></列名>
+            <列名><MyBox_DATAQUOTE>任务编号</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>140</宽度>
@@ -5358,15 +5569,15 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[状态]]></列名>
+            <列名><MyBox_DATAQUOTE>状态</MyBox_DATAQUOTE></列名>
             <类型>Enumeration</类型>
             <宽度>100</宽度>
             <显示格式>
-            <![CDATA[计划
+            <MyBox_DATAQUOTE>计划
 执行
 完成
 失败
-取消]]>
+取消</MyBox_DATAQUOTE>
         </显示格式>
             <非空>false</非空>
             <可编辑>true</可编辑>
@@ -5379,7 +5590,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[说明]]></列名>
+            <列名><MyBox_DATAQUOTE>说明</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>100</宽度>
@@ -5394,7 +5605,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[记录者]]></列名>
+            <列名><MyBox_DATAQUOTE>记录者</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>100</宽度>
@@ -5409,7 +5620,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[记录时间]]></列名>
+            <列名><MyBox_DATAQUOTE>记录时间</MyBox_DATAQUOTE></列名>
             <类型>Datetime</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -5423,20 +5634,25 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
     </列定义>
-</数据定义>
-
-##MyBox#
-定义数据 > 项目管理
-人员登记
-<数据定义>
+</数据定义>]]>
+                </data2d_definition>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[人员登记]]>
+                </title>
+                <data2d_definition>
+                    <![CDATA[<数据定义>
     <属性>
-        <数据名><![CDATA[人员登记]]></数据名>
+        <数据名><MyBox_DATAQUOTE>人员登记</MyBox_DATAQUOTE></数据名>
         <小数位数>2</小数位数>
         <随机数的最大值>1000</随机数的最大值>
     </属性>
     <列定义>
         <列>
-            <列名><![CDATA[配置编号]]></列名>
+            <列名><MyBox_DATAQUOTE>配置编号</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>140</宽度>
@@ -5451,7 +5667,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[任务编号]]></列名>
+            <列名><MyBox_DATAQUOTE>任务编号</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>140</宽度>
@@ -5466,18 +5682,18 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[Role]]></列名>
+            <列名><MyBox_DATAQUOTE>Role</MyBox_DATAQUOTE></列名>
             <类型>Enumeration</类型>
             <宽度>100</宽度>
             <显示格式>
-            <![CDATA[投资人
+            <MyBox_DATAQUOTE>投资人
 监管者
 项目经理
 组长
 设计者
 编程者
 测试者
-其他/她]]>
+其他/她</MyBox_DATAQUOTE>
         </显示格式>
             <非空>false</非空>
             <可编辑>true</可编辑>
@@ -5490,7 +5706,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[名字]]></列名>
+            <列名><MyBox_DATAQUOTE>名字</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>100</宽度>
@@ -5505,7 +5721,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[手机号]]></列名>
+            <列名><MyBox_DATAQUOTE>手机号</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>100</宽度>
@@ -5520,7 +5736,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[说明]]></列名>
+            <列名><MyBox_DATAQUOTE>说明</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>100</宽度>
@@ -5535,20 +5751,25 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
     </列定义>
-</数据定义>
-
-##MyBox#
-定义数据 > 项目管理
-人员状态
-<数据定义>
+</数据定义>]]>
+                </data2d_definition>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[人员状态]]>
+                </title>
+                <data2d_definition>
+                    <![CDATA[<数据定义>
     <属性>
-        <数据名><![CDATA[人员状态]]></数据名>
+        <数据名><MyBox_DATAQUOTE>人员状态</MyBox_DATAQUOTE></数据名>
         <小数位数>2</小数位数>
         <随机数的最大值>1000</随机数的最大值>
     </属性>
     <列定义>
         <列>
-            <列名><![CDATA[人员编号]]></列名>
+            <列名><MyBox_DATAQUOTE>人员编号</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>140</宽度>
@@ -5563,13 +5784,13 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[状态]]></列名>
+            <列名><MyBox_DATAQUOTE>状态</MyBox_DATAQUOTE></列名>
             <类型>Enumeration</类型>
             <宽度>100</宽度>
             <显示格式>
-            <![CDATA[加入
+            <MyBox_DATAQUOTE>加入
 修改信息
-退出]]>
+退出</MyBox_DATAQUOTE>
         </显示格式>
             <非空>false</非空>
             <可编辑>true</可编辑>
@@ -5582,7 +5803,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[说明]]></列名>
+            <列名><MyBox_DATAQUOTE>说明</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>100</宽度>
@@ -5597,7 +5818,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[记录者]]></列名>
+            <列名><MyBox_DATAQUOTE>记录者</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>100</宽度>
@@ -5612,7 +5833,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[记录时间]]></列名>
+            <列名><MyBox_DATAQUOTE>记录时间</MyBox_DATAQUOTE></列名>
             <类型>Datetime</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -5626,20 +5847,25 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
     </列定义>
-</数据定义>
-
-##MyBox#
-定义数据 > 项目管理
-资源登记
-<数据定义>
+</数据定义>]]>
+                </data2d_definition>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[资源登记]]>
+                </title>
+                <data2d_definition>
+                    <![CDATA[<数据定义>
     <属性>
-        <数据名><![CDATA[资源登记]]></数据名>
+        <数据名><MyBox_DATAQUOTE>资源登记</MyBox_DATAQUOTE></数据名>
         <小数位数>2</小数位数>
         <随机数的最大值>1000</随机数的最大值>
     </属性>
     <列定义>
         <列>
-            <列名><![CDATA[配置编号]]></列名>
+            <列名><MyBox_DATAQUOTE>配置编号</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>140</宽度>
@@ -5654,7 +5880,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[任务编号]]></列名>
+            <列名><MyBox_DATAQUOTE>任务编号</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>140</宽度>
@@ -5669,16 +5895,16 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[类型]]></列名>
+            <列名><MyBox_DATAQUOTE>类型</MyBox_DATAQUOTE></列名>
             <类型>Enumeration</类型>
             <宽度>100</宽度>
             <显示格式>
-            <![CDATA[设备
+            <MyBox_DATAQUOTE>设备
 程序
 源代码
 文档
 数据
-其它]]>
+其它</MyBox_DATAQUOTE>
         </显示格式>
             <非空>false</非空>
             <可编辑>true</可编辑>
@@ -5691,7 +5917,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[名字]]></列名>
+            <列名><MyBox_DATAQUOTE>名字</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>100</宽度>
@@ -5706,16 +5932,16 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[最后状态]]></列名>
+            <列名><MyBox_DATAQUOTE>最后状态</MyBox_DATAQUOTE></列名>
             <类型>Enumeration</类型>
             <宽度>100</宽度>
             <显示格式>
-            <![CDATA[正常
+            <MyBox_DATAQUOTE>正常
 出借
 出售
 废弃
 损毁
-丢失]]>
+丢失</MyBox_DATAQUOTE>
         </显示格式>
             <非空>false</非空>
             <可编辑>true</可编辑>
@@ -5728,7 +5954,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[保管者]]></列名>
+            <列名><MyBox_DATAQUOTE>保管者</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>100</宽度>
@@ -5743,7 +5969,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[登记时间]]></列名>
+            <列名><MyBox_DATAQUOTE>登记时间</MyBox_DATAQUOTE></列名>
             <类型>Datetime</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -5757,7 +5983,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[失效时间]]></列名>
+            <列名><MyBox_DATAQUOTE>失效时间</MyBox_DATAQUOTE></列名>
             <类型>Datetime</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -5771,7 +5997,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[说明]]></列名>
+            <列名><MyBox_DATAQUOTE>说明</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>100</宽度>
@@ -5786,20 +6012,25 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
     </列定义>
-</数据定义>
-
-##MyBox#
-定义数据 > 项目管理
-资源状态
-<数据定义>
+</数据定义>]]>
+                </data2d_definition>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[资源状态]]>
+                </title>
+                <data2d_definition>
+                    <![CDATA[<数据定义>
     <属性>
-        <数据名><![CDATA[资源状态]]></数据名>
+        <数据名><MyBox_DATAQUOTE>资源状态</MyBox_DATAQUOTE></数据名>
         <小数位数>2</小数位数>
         <随机数的最大值>1000</随机数的最大值>
     </属性>
     <列定义>
         <列>
-            <列名><![CDATA[资源编号]]></列名>
+            <列名><MyBox_DATAQUOTE>资源编号</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>140</宽度>
@@ -5814,16 +6045,16 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[状态]]></列名>
+            <列名><MyBox_DATAQUOTE>状态</MyBox_DATAQUOTE></列名>
             <类型>Enumeration</类型>
             <宽度>100</宽度>
             <显示格式>
-            <![CDATA[正常
+            <MyBox_DATAQUOTE>正常
 出借
 出售
 废弃
 损毁
-丢失]]>
+丢失</MyBox_DATAQUOTE>
         </显示格式>
             <非空>false</非空>
             <可编辑>true</可编辑>
@@ -5836,7 +6067,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[说明]]></列名>
+            <列名><MyBox_DATAQUOTE>说明</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>100</宽度>
@@ -5851,7 +6082,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[记录者]]></列名>
+            <列名><MyBox_DATAQUOTE>记录者</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>100</宽度>
@@ -5866,7 +6097,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[记录时间]]></列名>
+            <列名><MyBox_DATAQUOTE>记录时间</MyBox_DATAQUOTE></列名>
             <类型>Datetime</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -5880,20 +6111,25 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
     </列定义>
-</数据定义>
-
-##MyBox#
-定义数据 > 项目管理
-风险分析
-<数据定义>
+</数据定义>]]>
+                </data2d_definition>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[风险分析]]>
+                </title>
+                <data2d_definition>
+                    <![CDATA[<数据定义>
     <属性>
-        <数据名><![CDATA[风险分析]]></数据名>
+        <数据名><MyBox_DATAQUOTE>风险分析</MyBox_DATAQUOTE></数据名>
         <小数位数>2</小数位数>
         <随机数的最大值>1000</随机数的最大值>
     </属性>
     <列定义>
         <列>
-            <列名><![CDATA[配置编号]]></列名>
+            <列名><MyBox_DATAQUOTE>配置编号</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>140</宽度>
@@ -5908,7 +6144,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[任务编号]]></列名>
+            <列名><MyBox_DATAQUOTE>任务编号</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>140</宽度>
@@ -5923,18 +6159,18 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[类型]]></列名>
+            <列名><MyBox_DATAQUOTE>类型</MyBox_DATAQUOTE></列名>
             <类型>Enumeration</类型>
             <宽度>100</宽度>
             <显示格式>
-            <![CDATA[范围
+            <MyBox_DATAQUOTE>范围
 质量
 时间
 资金
 技术
 人力
 法律
-其它]]>
+其它</MyBox_DATAQUOTE>
         </显示格式>
             <非空>false</非空>
             <可编辑>true</可编辑>
@@ -5947,7 +6183,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[风险项]]></列名>
+            <列名><MyBox_DATAQUOTE>风险项</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>100</宽度>
@@ -5962,7 +6198,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[可能性]]></列名>
+            <列名><MyBox_DATAQUOTE>可能性</MyBox_DATAQUOTE></列名>
             <类型>Integer</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -5976,7 +6212,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[严重性]]></列名>
+            <列名><MyBox_DATAQUOTE>严重性</MyBox_DATAQUOTE></列名>
             <类型>Integer</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -5990,7 +6226,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[优先级]]></列名>
+            <列名><MyBox_DATAQUOTE>优先级</MyBox_DATAQUOTE></列名>
             <类型>Integer</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -6004,7 +6240,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[描述]]></列名>
+            <列名><MyBox_DATAQUOTE>描述</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>100</宽度>
@@ -6019,7 +6255,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[影响]]></列名>
+            <列名><MyBox_DATAQUOTE>影响</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>100</宽度>
@@ -6034,7 +6270,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[应急措施]]></列名>
+            <列名><MyBox_DATAQUOTE>应急措施</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>100</宽度>
@@ -6049,7 +6285,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[分析者]]></列名>
+            <列名><MyBox_DATAQUOTE>分析者</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>100</宽度>
@@ -6064,7 +6300,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[分析时间]]></列名>
+            <列名><MyBox_DATAQUOTE>分析时间</MyBox_DATAQUOTE></列名>
             <类型>Datetime</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -6078,20 +6314,25 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
     </列定义>
-</数据定义>
-
-##MyBox#
-定义数据 > 项目管理
-成本记录
-<数据定义>
+</数据定义>]]>
+                </data2d_definition>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[成本记录]]>
+                </title>
+                <data2d_definition>
+                    <![CDATA[<数据定义>
     <属性>
-        <数据名><![CDATA[成本记录]]></数据名>
+        <数据名><MyBox_DATAQUOTE>成本记录</MyBox_DATAQUOTE></数据名>
         <小数位数>2</小数位数>
         <随机数的最大值>1000</随机数的最大值>
     </属性>
     <列定义>
         <列>
-            <列名><![CDATA[任务编号]]></列名>
+            <列名><MyBox_DATAQUOTE>任务编号</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>140</宽度>
@@ -6106,7 +6347,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[计划开始日期]]></列名>
+            <列名><MyBox_DATAQUOTE>计划开始日期</MyBox_DATAQUOTE></列名>
             <类型>Date</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -6120,7 +6361,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[计划结束日期]]></列名>
+            <列名><MyBox_DATAQUOTE>计划结束日期</MyBox_DATAQUOTE></列名>
             <类型>Date</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -6134,7 +6375,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[计划工作量（人月）]]></列名>
+            <列名><MyBox_DATAQUOTE>计划工作量（人月）</MyBox_DATAQUOTE></列名>
             <类型>Float</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -6148,7 +6389,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[计划成本（元）]]></列名>
+            <列名><MyBox_DATAQUOTE>计划成本（元）</MyBox_DATAQUOTE></列名>
             <类型>Float</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -6162,7 +6403,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[计划产出]]></列名>
+            <列名><MyBox_DATAQUOTE>计划产出</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>100</宽度>
@@ -6177,7 +6418,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[实际开始日期]]></列名>
+            <列名><MyBox_DATAQUOTE>实际开始日期</MyBox_DATAQUOTE></列名>
             <类型>Date</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -6191,7 +6432,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[实际结束日期]]></列名>
+            <列名><MyBox_DATAQUOTE>实际结束日期</MyBox_DATAQUOTE></列名>
             <类型>Date</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -6205,7 +6446,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[实际工作量（人月）]]></列名>
+            <列名><MyBox_DATAQUOTE>实际工作量（人月）</MyBox_DATAQUOTE></列名>
             <类型>Float</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -6219,7 +6460,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[实际成本（元）]]></列名>
+            <列名><MyBox_DATAQUOTE>实际成本（元）</MyBox_DATAQUOTE></列名>
             <类型>Float</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -6233,7 +6474,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[实际产出]]></列名>
+            <列名><MyBox_DATAQUOTE>实际产出</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>100</宽度>
@@ -6248,7 +6489,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[记录者]]></列名>
+            <列名><MyBox_DATAQUOTE>记录者</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>100</宽度>
@@ -6263,7 +6504,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[记录时间]]></列名>
+            <列名><MyBox_DATAQUOTE>记录时间</MyBox_DATAQUOTE></列名>
             <类型>Datetime</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -6277,20 +6518,25 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
     </列定义>
-</数据定义>
-
-##MyBox#
-定义数据 > 项目管理
-检验记录
-<数据定义>
+</数据定义>]]>
+                </data2d_definition>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[检验记录]]>
+                </title>
+                <data2d_definition>
+                    <![CDATA[<数据定义>
     <属性>
-        <数据名><![CDATA[检验记录]]></数据名>
+        <数据名><MyBox_DATAQUOTE>检验记录</MyBox_DATAQUOTE></数据名>
         <小数位数>2</小数位数>
         <随机数的最大值>1000</随机数的最大值>
     </属性>
     <列定义>
         <列>
-            <列名><![CDATA[任务编号]]></列名>
+            <列名><MyBox_DATAQUOTE>任务编号</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>140</宽度>
@@ -6305,7 +6551,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[事项]]></列名>
+            <列名><MyBox_DATAQUOTE>事项</MyBox_DATAQUOTE></列名>
             <类型>Integer</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -6319,7 +6565,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[通过]]></列名>
+            <列名><MyBox_DATAQUOTE>通过</MyBox_DATAQUOTE></列名>
             <类型>Boolean</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -6333,7 +6579,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[严重性]]></列名>
+            <列名><MyBox_DATAQUOTE>严重性</MyBox_DATAQUOTE></列名>
             <类型>Integer</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -6347,7 +6593,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[描述]]></列名>
+            <列名><MyBox_DATAQUOTE>描述</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>100</宽度>
@@ -6362,7 +6608,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[影响]]></列名>
+            <列名><MyBox_DATAQUOTE>影响</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>100</宽度>
@@ -6377,7 +6623,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[建议]]></列名>
+            <列名><MyBox_DATAQUOTE>建议</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>100</宽度>
@@ -6392,7 +6638,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[检验者]]></列名>
+            <列名><MyBox_DATAQUOTE>检验者</MyBox_DATAQUOTE></列名>
             <类型>String</类型>
             <长度>32672</长度>
             <宽度>100</宽度>
@@ -6407,7 +6653,7 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
         <列>
-            <列名><![CDATA[检验时间]]></列名>
+            <列名><MyBox_DATAQUOTE>检验时间</MyBox_DATAQUOTE></列名>
             <类型>Datetime</类型>
             <宽度>100</宽度>
             <非空>false</非空>
@@ -6421,4 +6667,10 @@ salary for at least 1 year]]></描述>
             <补足两位年份>false</补足两位年份>
         </列>
     </列定义>
-</数据定义>
+</数据定义>]]>
+                </data2d_definition>
+            </NodeAttributes>
+        </TreeNode>
+    </TreeNode>
+</TreeNode>
+</Node_Data2D_Definition>

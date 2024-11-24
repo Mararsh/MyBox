@@ -1,0 +1,897 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Node_JavaScript>
+<TreeNode>
+    <NodeAttributes>
+        <title>
+            <![CDATA[示例]]>
+        </title>
+    </NodeAttributes>
+    <TreeNode>
+        <NodeAttributes>
+            <title>
+                <![CDATA[变量]]>
+            </title>
+        </NodeAttributes>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[字串]]>
+                </title>
+                <script>
+                    <![CDATA[var 字串a = "hello";
+字串a += " world";
+"包含e："+ (字串a.indexOf("e") >= 0) + "    长度：" + 字串a.length]]>
+                </script>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[时间]]>
+                </title>
+                <script>
+                    <![CDATA["当前时间：" + new Date() + "\n" + 
+"格式yyyy/mm/dd：" + new Date('2022/11/30 10:35:32') + "\n" + 
+"格式mm/dd/yyyy：" + new Date('11/30/2022 10:35:32') + "\n" + 
+"格式yyyy-mm-dd：" + new Date('2022-11-30 10:35:32'.replace(/-/g,'/'));]]>
+                </script>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[数组]]>
+                </title>
+                <script>
+                    <![CDATA[var 数组a =  [-1.2, 3.2, 15, 4.912];
+数组a[2];]]>
+                </script>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[对象]]>
+                </title>
+                <script>
+                    <![CDATA[var 猫猫1 = {颜色:"白", 年龄:"15", 名字:"乖乖"};
+猫猫1.名字]]>
+                </script>
+            </NodeAttributes>
+        </TreeNode>
+    </TreeNode>
+    <TreeNode>
+        <NodeAttributes>
+            <title>
+                <![CDATA[表达式]]>
+            </title>
+        </NodeAttributes>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[数值计算]]>
+                </title>
+            </NodeAttributes>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[欧拉数]]>
+                    </title>
+                    <script>
+                        <![CDATA[Math.E]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[圆周率]]>
+                    </title>
+                    <script>
+                        <![CDATA[Math.PI]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[绝对值]]>
+                    </title>
+                    <script>
+                        <![CDATA[Math.abs(-5.611)]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[欧拉冥]]>
+                    </title>
+                    <script>
+                        <![CDATA[Math.exp(2)]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[平方根]]>
+                    </title>
+                    <script>
+                        <![CDATA[Math.sqrt(9)]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[三次方根]]>
+                    </title>
+                    <script>
+                        <![CDATA[Math.pow(27,1/3)]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[幂]]>
+                    </title>
+                    <script>
+                        <![CDATA[Math.pow(2,5)]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[余弦]]>
+                    </title>
+                    <script>
+                        <![CDATA[Math.cos(0)]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[正弦]]>
+                    </title>
+                    <script>
+                        <![CDATA[Math.sin(9)]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[正切]]>
+                    </title>
+                    <script>
+                        <![CDATA[Math.tan(5)]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[反正切]]>
+                    </title>
+                    <script>
+                        <![CDATA[Math.atan(-7.3)]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[反余弦]]>
+                    </title>
+                    <script>
+                        <![CDATA[Math.acos(0.5)]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[反正弦]]>
+                    </title>
+                    <script>
+                        <![CDATA[Math.asin(0.3)]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[自然对数（底为e）]]>
+                    </title>
+                    <script>
+                        <![CDATA[Math.log(6)]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[常用对数（底为10）]]>
+                    </title>
+                    <script>
+                        <![CDATA[// ECMAScript 6支持，而ECMAScript 5.1不支持
+Math.log10(6)]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[以2为底的对数]]>
+                    </title>
+                    <script>
+                        <![CDATA[// ECMAScript 6支持，而ECMAScript 5.1不支持
+Math.log2(6)]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[上舍入]]>
+                    </title>
+                    <script>
+                        <![CDATA[Math.ceil(4.13)]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[下舍入]]>
+                    </title>
+                    <script>
+                        <![CDATA[Math.floor(4.67)]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[四舍五入]]>
+                    </title>
+                    <script>
+                        <![CDATA[Math.round(4.83)]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[整数部分]]>
+                    </title>
+                    <script>
+                        <![CDATA[Math.trunc(4.83)]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[随机数]]>
+                    </title>
+                    <script>
+                        <![CDATA[Math.random()]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[最大值]]>
+                    </title>
+                    <script>
+                        <![CDATA[Math.max(1,2,-3)]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[最小值]]>
+                    </title>
+                    <script>
+                        <![CDATA[Math.min(1,2,-3)]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[字符串处理]]>
+                </title>
+            </NodeAttributes>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[比较]]>
+                    </title>
+                    <script>
+                        <![CDATA['Hello' === 'hello' || 'a' < 'A' || 'a' != 'A']]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[替换首个]]>
+                    </title>
+                    <script>
+                        <![CDATA["Hello World! World is yourself.".replace("World", "Feeling");]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[替换所有]]>
+                    </title>
+                    <script>
+                        <![CDATA["Hello World! World is yourself.".replace(/World/g, "Feeling");]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[开始于]]>
+                    </title>
+                    <script>
+                        <![CDATA['Hello'.startsWith('h')]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[结尾于]]>
+                    </title>
+                    <script>
+                        <![CDATA['Hello'.endsWith('o')]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[子串]]>
+                    </title>
+                    <script>
+                        <![CDATA['Hello'.substring(2, 5)]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[字符]]>
+                    </title>
+                    <script>
+                        <![CDATA['hello'.charAt(2)]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[连接]]>
+                    </title>
+                    <script>
+                        <![CDATA['hello'.concat(' world')]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[分割]]>
+                    </title>
+                    <script>
+                        <![CDATA['1,2,3,4'.split(',')]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[位置]]>
+                    </title>
+                    <script>
+                        <![CDATA['hello'.indexOf('e')]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[最后位置]]>
+                    </title>
+                    <script>
+                        <![CDATA['hello'.lastIndexOf('l')]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[长度]]>
+                    </title>
+                    <script>
+                        <![CDATA['hello'.length]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[查找]]>
+                    </title>
+                    <script>
+                        <![CDATA[var 字符串a = "abc1233hello";
+var 规则表达式a = /3{2,}/ig;
+字符串a.search(规则表达式a)]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[小写]]>
+                    </title>
+                    <script>
+                        <![CDATA['Hello'.toLowerCase()]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[大写]]>
+                    </title>
+                    <script>
+                        <![CDATA['Hello'.toUpperCase()]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[数组运算]]>
+                </title>
+            </NodeAttributes>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[长度]]>
+                    </title>
+                    <script>
+                        <![CDATA[var 数组a =  [-1.2, 3.2, 15, 4.912];
+数组a.length]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[添加]]>
+                    </title>
+                    <script>
+                        <![CDATA[var 数组a =  [-1.2, 3.2, 15, 4.912];
+数组a.push(-47);]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[删除]]>
+                    </title>
+                    <script>
+                        <![CDATA[var 数组a =  [-1.2, 3.2, 15, 4.912];
+数组a.pop()]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[布尔运算]]>
+                </title>
+            </NodeAttributes>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[字符串包含]]>
+                    </title>
+                    <script>
+                        <![CDATA[var 字符串a = "abc1233hello";
+var 规则表达式a = /3{2,}/ig;
+字符串a.search(规则表达式a) >= 0]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[字符串匹配]]>
+                    </title>
+                    <script>
+                        <![CDATA[var 字符串a = "abc1233hello";
+var 规则表达式a = /\S*3{2,}\S*/ig;
+字符串a.search(规则表达式a) >= 0]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[数组包含]]>
+                    </title>
+                    <script>
+                        <![CDATA[var 数组a =  ['A', 'B', 'C', 'D'];
+数组a.includes('C');]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[不是数字]]>
+                    </title>
+                    <script>
+                        <![CDATA[var 值1='你好'
+isNaN(值1 - 1)]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[与/或/否]]>
+                    </title>
+                    <script>
+                        <![CDATA[var 数组a =  ['A', 'B', 'C', 'D'];
+var 字符串a = "abc1233hello";
+数组a.includes('C') && (数组a.length >= 8 || 字符串a.length < 5 || !字符串a.endsWith("h"));]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[时间运算]]>
+                </title>
+            </NodeAttributes>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[时间的格式]]>
+                    </title>
+                    <script>
+                        <![CDATA["当前时间：" + "\n" + 
+"new Date() = " + new Date()+ "\n" + 
+"new Date().getTime() = " + new Date().getTime() + "\n" + 
+"new Date().toLocaleString() = " + new Date().toLocaleString()+ "\n" + 
+"new Date().toGMTString() = " + new Date().toGMTString()+ "\n" + 
+"new Date().toISOString() = " + new Date().toISOString()+ "\n" + 
+"new Date().toUTCString() = " + new Date().toUTCString()+ "\n" + 
+"new Date().toString() = " + new Date().toString()+ "\n" + 
+"new Date().toJSON() = " + new Date().toJSON()+ "\n" + 
+"new Date().toDateString() = " + new Date().toDateString()+ "\n" + 
+"new Date().toTimeString() = " + new Date().toTimeString()+ "\n" + 
+"new Date().toLocaleDateString() = " + new Date().toLocaleDateString()+ "\n" + 
+"new Date().toLocaleTimeString() = " + new Date().toLocaleTimeString()]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[时间的解析]]>
+                    </title>
+                    <script>
+                        <![CDATA[new Date('2022/11/30 10:35:32').toLocaleString() + "\n" + 
+new Date('11/30/2022 10:35:32').toLocaleString() + "\n" + 
+new Date('2022-11-30 10:35:32'.replace(/-/g,'/')).toLocaleString() + "\n" + 
+new Date('2022/11/30') + "\n" + 
+new Date('2022-11-30'.replace(/-/g,'/'))]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[格式化时间]]>
+                    </title>
+                    <script>
+                        <![CDATA[function formatDate(date) {
+     var y = date.getFullYear();
+     var m = date.getMonth() + 1;
+     m = m < 10 ? ('0' + m) : m;
+     var d = date.getDate();
+     d = d < 10 ? ('0' + d) : d;
+     var h =date.getHours();
+     h = h < 10 ? ('0' + h) : h;
+     var M =date.getMinutes();
+     M = M < 10 ? ('0' + M) : M;
+     var s =date.getSeconds();
+     s = s < 10 ? ('0' + s) : s;
+     return y + '-' + m + '-' + d + ' ' + h + ':' + M + ':' + s;
+}
+formatDate(new Date());]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[时间的分量]]>
+                    </title>
+                    <script>
+                        <![CDATA[var 时间b = new Date('11/30/2022 10:35:32');
+"年：" + 时间b.getFullYear() + "\n月：" + (时间b.getMonth() + 1) + "\n日：" + 时间b.getDate()
+ + "\n星期：" + 时间b.getDay() + "\n小时：" + 时间b.getHours()+ "\n分钟：" + 时间b.getMinutes()
++ "\n秒：" + 时间b.getSeconds();]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[是否为星期日]]>
+                    </title>
+                    <script>
+                        <![CDATA[new Date().getDay() == 0]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[比较时间]]>
+                    </title>
+                    <script>
+                        <![CDATA[new Date('2012/05/19').getTime()  > new Date('2016/05/19 09:23:12').getTime()]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+        </TreeNode>
+    </TreeNode>
+    <TreeNode>
+        <NodeAttributes>
+            <title>
+                <![CDATA[方法]]>
+            </title>
+        </NodeAttributes>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[添加风格]]>
+                </title>
+                <script>
+                    <![CDATA[function addStyle(style) {
+    var node = document.createElement("style");        
+    node.id = "mystyleid";        
+    node.type = "text/css";        
+    node.innerHTML = style.replace(/\n/g,"  ");        
+    document.getElementsByTagName("HEAD").item(0).appendChild(node);
+};
+addStyle("body { background-color:black; color:#CCFF99; }");]]>
+                </script>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[删除结点]]>
+                </title>
+                <script>
+                    <![CDATA[function removeNode(id) {
+    var node = document.getElementById(id);
+    if ( node != null ) 
+        node.parentNode.removeChild(node);
+};
+removeNode("mystyleid");]]>
+                </script>
+            </NodeAttributes>
+        </TreeNode>
+    </TreeNode>
+    <TreeNode>
+        <NodeAttributes>
+            <title>
+                <![CDATA[网页]]>
+            </title>
+        </NodeAttributes>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[值]]>
+                </title>
+            </NodeAttributes>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[读取Cookie]]>
+                    </title>
+                    <script>
+                        <![CDATA[document.cookie;]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[页面高度]]>
+                    </title>
+                    <script>
+                        <![CDATA[document.documentElement.scrollHeight || document.body.scrollHeight;]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[页面宽度]]>
+                    </title>
+                    <script>
+                        <![CDATA[document.documentElement.scrollWidth || document.body.scrollWidth;]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[选择]]>
+                </title>
+            </NodeAttributes>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[全选]]>
+                    </title>
+                    <script>
+                        <![CDATA[window.getSelection().removeAllRanges();     
+var selection = window.getSelection();        
+var range = document.createRange();        
+range.selectNode(document.documentElement);        
+selection.addRange(range);]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[都不选]]>
+                    </title>
+                    <script>
+                        <![CDATA[window.getSelection().removeAllRanges();]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[选择结点]]>
+                    </title>
+                    <script>
+                        <![CDATA[function selectNode(id) {
+    window.getSelection().removeAllRanges();     
+    var selection = window.getSelection();        
+    var range = document.createRange();        
+    range.selectNode(document.getElementById(id));        
+    selection.addRange(range);
+};
+selectNode("someid");]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[当前选择的字串]]>
+                    </title>
+                    <script>
+                        <![CDATA[window.getSelection().toString();]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[当前选择的网页代码]]>
+                    </title>
+                    <script>
+                        <![CDATA[var selectionObj = window.getSelection();        
+var rangeObj = selectionObj.getRangeAt(0);        
+var docFragment = rangeObj.cloneContents();        
+var div = document.createElement("div");        
+div.appendChild(docFragment);        
+div.innerHTML;]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[操作]]>
+                </title>
+            </NodeAttributes>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[滚动]]>
+                    </title>
+                    <script>
+                        <![CDATA[window.scrollTo(50,70 );]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[设置网页可编辑]]>
+                    </title>
+                    <script>
+                        <![CDATA[document.body.contentEditable=true;]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[弹出信息]]>
+                    </title>
+                    <script>
+                        <![CDATA[alert("人生得意须尽欢！");]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[确认]]>
+                    </title>
+                    <script>
+                        <![CDATA[confirm("能饮一杯无？");]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[输入]]>
+                    </title>
+                    <script>
+                        <![CDATA[prompt("君不见");]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[打开网址]]>
+                    </title>
+                    <script>
+                        <![CDATA[window.open("http://www.nlc.cn");]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+        </TreeNode>
+    </TreeNode>
+</TreeNode>
+</Node_JavaScript>

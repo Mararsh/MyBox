@@ -40,7 +40,7 @@ public class BaseNodeTable extends BaseTable<DataNode> {
 
     public BaseNodeTable() {
         idColumnName = "nodeid";
-        orderColumns = "order_number, nodeid ASC";
+        orderColumns = "order_number,nodeid ASC";
     }
 
     public final BaseNodeTable defineNodeColumns() {
@@ -249,6 +249,22 @@ public class BaseNodeTable extends BaseTable<DataNode> {
                 + " WHERE parentid=? AND parentid<>nodeid FETCH FIRST ROW ONLY";
         try (PreparedStatement statement = conn.prepareStatement(sql)) {
             statement.setLong(1, nodeid);
+            conn.setAutoCommit(true);
+            try (ResultSet results = statement.executeQuery()) {
+                hasChildren = results != null && results.next();
+            }
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
+        return hasChildren;
+    }
+
+    public boolean trimOrders(Connection conn, long parentid) {
+        boolean hasChildren = false;
+        String sql = "SELECT " + NodeFields + " FROM " + tableName
+                + " WHERE parentid=? AND parentid<>nodeid  ORDER BY " + orderColumns;
+        try (PreparedStatement statement = conn.prepareStatement(sql)) {
+            statement.setLong(1, parentid);
             conn.setAutoCommit(true);
             try (ResultSet results = statement.executeQuery()) {
                 hasChildren = results != null && results.next();
@@ -599,6 +615,15 @@ public class BaseNodeTable extends BaseTable<DataNode> {
         return columnName;
     }
 
+    public List<String> dataColumnNames() {
+        List<String> names = new ArrayList<>();
+        for (int i = 5; i < columns.size(); ++i) {
+            ColumnDefinition column = columns.get(i);
+            names.add(column.getColumnName());
+        }
+        return names;
+    }
+
     public String valuesHtml(FxTask task, Connection conn,
             BaseController controller, DataNode node) {
         if (conn == null || node == null) {
@@ -623,6 +648,10 @@ public class BaseNodeTable extends BaseTable<DataNode> {
         return table.div();
     }
 
+    public String escapeXML(String column, String value) {
+        return value;
+    }
+
     public String valuesXml(FxTask task, Connection conn,
             BaseController controller, String prefix, DataNode node) {
         if (conn == null || node == null) {
@@ -640,8 +669,12 @@ public class BaseNodeTable extends BaseTable<DataNode> {
             if (value == null) {
                 continue;
             }
+            String escapeXML = escapeXML(name, column.toString(value));
+            if (escapeXML == null || escapeXML.isBlank()) {
+                continue;
+            }
             xml += prefix + "<" + name + ">\n";
-            xml += prefix2 + "<![CDATA[" + column.toString(value) + "]]>\n";
+            xml += prefix2 + "<![CDATA[" + escapeXML + "]]>\n";
             xml += prefix + "</" + name + ">\n";
         }
         return xml;

@@ -1,0 +1,718 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Node_JShell>
+<TreeNode>
+    <NodeAttributes>
+        <title>
+            <![CDATA[示例]]>
+        </title>
+    </NodeAttributes>
+    <TreeNode>
+        <NodeAttributes>
+            <title>
+                <![CDATA[对象]]>
+            </title>
+        </NodeAttributes>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[字串]]>
+                </title>
+                <codes>
+                    <![CDATA[String exampleString = "hello";
+exampleString += " world";
+"包含e："+ exampleString.contains("e") + "    长度：" + exampleString.length();]]>
+                </codes>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[时间]]>
+                </title>
+                <codes>
+                    <![CDATA[import java.util.Date;
+Date exampleDate = new Date();
+"当前时间：" + exampleDate.toString() + "     值：" + exampleDate.getTime();]]>
+                </codes>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[数组]]>
+                </title>
+                <codes>
+                    <![CDATA[import java.util.Arrays;
+double[] exampleArray =  new double[5];
+for (int i=0; i<exampleArray.length; i++ ) {
+    exampleArray[i] = i * 2;
+}
+exampleArray[2];]]>
+                </codes>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[列表]]>
+                </title>
+                <codes>
+                    <![CDATA[import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+List<String> exampleList = new ArrayList<>();
+exampleList.addAll(Arrays.asList("a", "b", "c", "d", "e"));
+exampleList.toString();]]>
+                </codes>
+            </NodeAttributes>
+        </TreeNode>
+    </TreeNode>
+    <TreeNode>
+        <NodeAttributes>
+            <title>
+                <![CDATA[表达式]]>
+            </title>
+        </NodeAttributes>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[数值计算]]>
+                </title>
+            </NodeAttributes>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[欧拉数]]>
+                    </title>
+                    <codes>
+                        <![CDATA[Math.E]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[圆周率]]>
+                    </title>
+                    <codes>
+                        <![CDATA[Math.PI]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[绝对值]]>
+                    </title>
+                    <codes>
+                        <![CDATA[Math.abs(-5.611)]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[平方根]]>
+                    </title>
+                    <codes>
+                        <![CDATA[Math.sqrt(9)]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[三次方根]]>
+                    </title>
+                    <codes>
+                        <![CDATA[Math.cbrt(27)]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[幂]]>
+                    </title>
+                    <codes>
+                        <![CDATA[Math.pow(2,5)]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[欧拉冥]]>
+                    </title>
+                    <codes>
+                        <![CDATA[Math.exp(2)]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[自然对数（底为e）]]>
+                    </title>
+                    <codes>
+                        <![CDATA[Math.log(6)]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[常用对数（底为10）]]>
+                    </title>
+                    <codes>
+                        <![CDATA[Math.log10(6)]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[余弦]]>
+                    </title>
+                    <codes>
+                        <![CDATA[Math.cos(0)]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[正弦]]>
+                    </title>
+                    <codes>
+                        <![CDATA[Math.sin(9)]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[正切]]>
+                    </title>
+                    <codes>
+                        <![CDATA[Math.tan(5)]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[反正切]]>
+                    </title>
+                    <codes>
+                        <![CDATA[Math.atan(-7.3)]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[反余弦]]>
+                    </title>
+                    <codes>
+                        <![CDATA[Math.acos(0.5)]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[反正弦]]>
+                    </title>
+                    <codes>
+                        <![CDATA[Math.asin(0.3)]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[上舍入]]>
+                    </title>
+                    <codes>
+                        <![CDATA[Math.ceil(4.13)]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[下舍入]]>
+                    </title>
+                    <codes>
+                        <![CDATA[Math.floor(4.67)]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[四舍五入]]>
+                    </title>
+                    <codes>
+                        <![CDATA[Math.round(4.83)]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[随机数]]>
+                    </title>
+                    <codes>
+                        <![CDATA[Math.random()]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[大值]]>
+                    </title>
+                    <codes>
+                        <![CDATA[Math.max(1,-3)]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[小值]]>
+                    </title>
+                    <codes>
+                        <![CDATA[Math.min(1,-3)]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[字符串处理]]>
+                </title>
+            </NodeAttributes>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[忽略大小写的等于]]>
+                    </title>
+                    <codes>
+                        <![CDATA["Hello".equalsIgnoreCase("hello")]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[等于]]>
+                    </title>
+                    <codes>
+                        <![CDATA["Hello".equals("hello")]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[替换首个]]>
+                    </title>
+                    <codes>
+                        <![CDATA["Hello World! World is yourself.".replace("World", "Feeling");]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[替换所有]]>
+                    </title>
+                    <codes>
+                        <![CDATA["Hello World! World is yourself.".replaceAll("World", "Feeling");]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[开始于]]>
+                    </title>
+                    <codes>
+                        <![CDATA["Hello".startsWith("h")]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[结尾于]]>
+                    </title>
+                    <codes>
+                        <![CDATA["Hello".endsWith("o")]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[子串]]>
+                    </title>
+                    <codes>
+                        <![CDATA["Hello".substring(2, 5)]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[字符]]>
+                    </title>
+                    <codes>
+                        <![CDATA["hello".charAt(2)]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[连接]]>
+                    </title>
+                    <codes>
+                        <![CDATA["hello".concat(" world")]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[分割]]>
+                    </title>
+                    <codes>
+                        <![CDATA["1,2,3,4".split(",")]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[位置]]>
+                    </title>
+                    <codes>
+                        <![CDATA["hello".indexOf("e")]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[最后位置]]>
+                    </title>
+                    <codes>
+                        <![CDATA["hello".lastIndexOf("l")]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[长度]]>
+                    </title>
+                    <codes>
+                        <![CDATA["hello".length()]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[小写]]>
+                    </title>
+                    <codes>
+                        <![CDATA["Hello".toLowerCase()]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[大写]]>
+                    </title>
+                    <codes>
+                        <![CDATA["Hello".toUpperCase()]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[包含]]>
+                    </title>
+                    <codes>
+                        <![CDATA["Hello".contains("el")]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[删除首尾空白字符]]>
+                    </title>
+                    <codes>
+                        <![CDATA[" Hello  ".trim()]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[为空白字符串]]>
+                    </title>
+                    <codes>
+                        <![CDATA["  ".isBlank()]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[为空]]>
+                    </title>
+                    <codes>
+                        <![CDATA["".isEmpty()]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[布尔运算]]>
+                </title>
+            </NodeAttributes>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[列表包含]]>
+                    </title>
+                    <codes>
+                        <![CDATA[import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+List<String> exampleListC = new ArrayList<>();
+exampleListC.addAll(Arrays.asList("a", "b", "c", "d", "e"));
+String exampleStringC = "c";
+exampleListC.contains(exampleStringC);]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[字符串匹配]]>
+                    </title>
+                    <codes>
+                        <![CDATA[// MyBox类路径应当已添加到JShell环境中
+import mara.mybox.tools.StringTools;
+String exampleStringM = "abc1233hello";
+String exampleRegexM = "\\S*3{2,}\\S*";  
+boolean exampleCaseInsensitiveM = true;
+StringTools.match(exampleStringM,exampleRegexM,exampleCaseInsensitiveM);]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[字符串包含]]>
+                    </title>
+                    <codes>
+                        <![CDATA[// MyBox类路径应当已添加到JShell环境中
+import mara.mybox.tools.StringTools;
+String exampleStringI = "abc1233hello";
+String exampleRegexI = "3{2}";
+boolean exampleCaseInsensitiveI = true;
+StringTools.include(exampleStringI,exampleRegexI,exampleCaseInsensitiveI);]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[与/或/否]]>
+                    </title>
+                    <codes>
+                        <![CDATA[import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+List<String> exampleListB = new ArrayList<>();
+exampleListB.addAll(Arrays.asList("a", "b", "c", "d", "e"));
+String exampleStringB = "c";
+exampleListB.contains(exampleStringB) && 
+(exampleListB.size() >= 8 || exampleStringB.length() != 1 || !exampleStringB.startsWith("h"));]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+        </TreeNode>
+    </TreeNode>
+    <TreeNode>
+        <NodeAttributes>
+            <title>
+                <![CDATA[方法]]>
+            </title>
+        </NodeAttributes>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[圆的面积]]>
+                </title>
+                <codes>
+                    <![CDATA[double circleAreaByDiameter(double diameter) {        
+    double radius = diameter / 2;        
+    return   Math.PI *  radius * radius ;        
+}
+circleAreaByDiameter(120) + circleAreaByDiameter(30)]]>
+                </codes>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[四舍五入]]>
+                </title>
+                <codes>
+                    <![CDATA[import java.math.BigDecimal;        
+import java.math.RoundingMode;        
+double scale(double v, int scale) {        
+    BigDecimal b = new BigDecimal(v);        
+    return b.setScale(scale, RoundingMode.HALF_UP).doubleValue();        
+}    
+scale(Math.PI, 3)]]>
+                </codes>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[格式化数值]]>
+                </title>
+                <codes>
+                    <![CDATA[import java.math.BigDecimal;        
+import java.math.RoundingMode;        
+double scale(double v, int scale) {        
+    BigDecimal b = new BigDecimal(v);        
+    return b.setScale(scale, RoundingMode.HALF_UP).doubleValue();        
+}        
+                                     
+import java.text.DecimalFormat;        
+String formatDouble(double data, int scale) {        
+    try {        
+        String format = "#,###";        
+        if (scale > 0) {        
+            format += "." + "#".repeat(scale);        
+        }        
+        DecimalFormat df = new DecimalFormat(format);        
+        return df.format(scale(data, scale));        
+    } catch (Exception e) {        
+        return e.toString();        
+    }        
+}        
+                                     
+double circleAreaByRadius(double radius) {        
+    return   Math.PI *  radius * radius ;        
+}        
+                                     
+formatDouble(circleAreaByRadius(273.4), 4)]]>
+                </codes>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[格式化时间]]>
+                </title>
+                <codes>
+                    <![CDATA[import java.util.Date;
+import java.util.TimeZone;
+import java.text.SimpleDateFormat;
+
+String DatetimeFormat = "yyyy-MM-dd HH:mm:ss.SSS";
+
+String datetimeToString(Date theDate, String format, TimeZone theZone) {
+    if (theDate == null || theZone == null) {
+            return null;
+    }
+    SimpleDateFormat formatter = new SimpleDateFormat(format);
+    formatter.setTimeZone(theZone);
+    String dateString = formatter.format(theDate);
+    return dateString;
+}
+
+datetimeToString(new Date(), DatetimeFormat, TimeZone.getDefault());]]>
+                </codes>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[匹配字符串]]>
+                </title>
+                <codes>
+                    <![CDATA[import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+boolean match(String string, String find, boolean isRegex,
+            boolean dotAll, boolean multiline, boolean caseInsensitive) {
+        if (string == null || find == null || find.isEmpty()) {
+            return false;
+        }
+        try {
+            int mode = (isRegex ? 0x00 : Pattern.LITERAL)
+                    | (caseInsensitive ? Pattern.CASE_INSENSITIVE : 0x00)
+                    | (dotAll ? Pattern.DOTALL : 0x00)
+                    | (multiline ? Pattern.MULTILINE : 0x00);
+            Pattern pattern = Pattern.compile(find, mode);
+            Matcher matcher = pattern.matcher(string);
+            return matcher.matches();
+        } catch (Exception e) {
+            return false;
+        }
+}
+
+match("Hello1233World", "\\S*3{2,}\\S*", true, true, true, true);]]>
+                </codes>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[包含字符串]]>
+                </title>
+                <codes>
+                    <![CDATA[import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+boolean include(String string, String find, boolean caseInsensitive) {
+        if (string == null || find == null || find.isEmpty()) {
+            return false;
+        }
+        try {
+            int mode = (caseInsensitive ? Pattern.CASE_INSENSITIVE : 0x00) | Pattern.MULTILINE;
+            Pattern pattern = Pattern.compile(find, mode);
+            Matcher matcher = pattern.matcher(string);
+            return matcher.find();
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+include("Hello1233World", "3{2}", true);]]>
+                </codes>
+            </NodeAttributes>
+        </TreeNode>
+    </TreeNode>
+</TreeNode>
+</Node_JShell>

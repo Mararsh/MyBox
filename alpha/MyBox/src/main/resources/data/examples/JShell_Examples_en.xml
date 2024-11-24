@@ -1,0 +1,718 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Node_JShell>
+<TreeNode>
+    <NodeAttributes>
+        <title>
+            <![CDATA[Examples]]>
+        </title>
+    </NodeAttributes>
+    <TreeNode>
+        <NodeAttributes>
+            <title>
+                <![CDATA[Object]]>
+            </title>
+        </NodeAttributes>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[string]]>
+                </title>
+                <codes>
+                    <![CDATA[String exampleString = "hello";
+exampleString += " world";
+"Contains e:"+ exampleString.contains("e") + "   length:" + exampleString.length();]]>
+                </codes>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[time]]>
+                </title>
+                <codes>
+                    <![CDATA[import java.util.Date;
+Date exampleDate = new Date();
+"current time:" + exampleDate.toString() + "     value:" + exampleDate.getTime();]]>
+                </codes>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[array]]>
+                </title>
+                <codes>
+                    <![CDATA[import java.util.Arrays;
+double[] exampleArray =  new double[5];
+for (int i=0; i<exampleArray.length; i++ ) {
+    exampleArray[i] = i * 2;
+}
+exampleArray[2];]]>
+                </codes>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[list]]>
+                </title>
+                <codes>
+                    <![CDATA[import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+List<String> exampleList = new ArrayList<>();
+exampleList.addAll(Arrays.asList("a", "b", "c", "d", "e"));
+exampleList.toString();]]>
+                </codes>
+            </NodeAttributes>
+        </TreeNode>
+    </TreeNode>
+    <TreeNode>
+        <NodeAttributes>
+            <title>
+                <![CDATA[Expressions]]>
+            </title>
+        </NodeAttributes>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[Numeric operations]]>
+                </title>
+            </NodeAttributes>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[e]]>
+                    </title>
+                    <codes>
+                        <![CDATA[Math.E]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[pi]]>
+                    </title>
+                    <codes>
+                        <![CDATA[Math.PI]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[absoluate]]>
+                    </title>
+                    <codes>
+                        <![CDATA[Math.abs(-5.611)]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[square root]]>
+                    </title>
+                    <codes>
+                        <![CDATA[Math.sqrt(9)]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[cubic root]]>
+                    </title>
+                    <codes>
+                        <![CDATA[Math.cbrt(27)]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[power]]>
+                    </title>
+                    <codes>
+                        <![CDATA[Math.pow(2,5)]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[power of e]]>
+                    </title>
+                    <codes>
+                        <![CDATA[Math.exp(2)]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[natural logarithm(base e)]]>
+                    </title>
+                    <codes>
+                        <![CDATA[Math.log(6)]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[common logarithm(base 10)]]>
+                    </title>
+                    <codes>
+                        <![CDATA[Math.log10(6)]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[cosine]]>
+                    </title>
+                    <codes>
+                        <![CDATA[Math.cos(0)]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[sine]]>
+                    </title>
+                    <codes>
+                        <![CDATA[Math.sin(9)]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[tangent]]>
+                    </title>
+                    <codes>
+                        <![CDATA[Math.tan(5)]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[arc tangent]]>
+                    </title>
+                    <codes>
+                        <![CDATA[Math.atan(-7.3)]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[arc cosine]]>
+                    </title>
+                    <codes>
+                        <![CDATA[Math.acos(0.5)]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[arc sine]]>
+                    </title>
+                    <codes>
+                        <![CDATA[Math.asin(0.3)]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[round up]]>
+                    </title>
+                    <codes>
+                        <![CDATA[Math.ceil(4.13)]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[round down]]>
+                    </title>
+                    <codes>
+                        <![CDATA[Math.floor(4.67)]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[round]]>
+                    </title>
+                    <codes>
+                        <![CDATA[Math.round(4.83)]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[random]]>
+                    </title>
+                    <codes>
+                        <![CDATA[Math.random()]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[maximum]]>
+                    </title>
+                    <codes>
+                        <![CDATA[Math.max(1,-3)]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[minimum]]>
+                    </title>
+                    <codes>
+                        <![CDATA[Math.min(1,-3)]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[Strings operations]]>
+                </title>
+            </NodeAttributes>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[equals while ignore case]]>
+                    </title>
+                    <codes>
+                        <![CDATA["Hello".equalsIgnoreCase("hello")]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[equals]]>
+                    </title>
+                    <codes>
+                        <![CDATA["Hello".equals("hello")]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[replace first]]>
+                    </title>
+                    <codes>
+                        <![CDATA["Hello World! World is yourself.".replace("World", "Feeling");]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[replace all]]>
+                    </title>
+                    <codes>
+                        <![CDATA["Hello World! World is yourself.".replace(/World/g, "Feeling");]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[starts with]]>
+                    </title>
+                    <codes>
+                        <![CDATA["Hello".startsWith("h")]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[end with]]>
+                    </title>
+                    <codes>
+                        <![CDATA["Hello".endsWith("o")]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[subString]]>
+                    </title>
+                    <codes>
+                        <![CDATA["Hello".substring(2, 5)]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[char at]]>
+                    </title>
+                    <codes>
+                        <![CDATA["hello".charAt(2)]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[concat]]>
+                    </title>
+                    <codes>
+                        <![CDATA["hello".concat(" world")]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[split]]>
+                    </title>
+                    <codes>
+                        <![CDATA["1,2,3,4".split(",")]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[indexOf]]>
+                    </title>
+                    <codes>
+                        <![CDATA["hello".indexOf("e")]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[lastIndexOf]]>
+                    </title>
+                    <codes>
+                        <![CDATA["hello".lastIndexOf("l")]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[length]]>
+                    </title>
+                    <codes>
+                        <![CDATA["hello".length()]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[toLowerCase]]>
+                    </title>
+                    <codes>
+                        <![CDATA["Hello".toLowerCase()]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[toUpperCase]]>
+                    </title>
+                    <codes>
+                        <![CDATA["Hello".toUpperCase()]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[contains]]>
+                    </title>
+                    <codes>
+                        <![CDATA["Hello".contains("el")]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[trim]]>
+                    </title>
+                    <codes>
+                        <![CDATA[" Hello  ".trim()]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[isBlank]]>
+                    </title>
+                    <codes>
+                        <![CDATA["  ".isBlank()]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[isEmpty]]>
+                    </title>
+                    <codes>
+                        <![CDATA["".isEmpty()]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[Boolean operations]]>
+                </title>
+            </NodeAttributes>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[list include]]>
+                    </title>
+                    <codes>
+                        <![CDATA[import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+List<String> exampleListC = new ArrayList<>();
+exampleListC.addAll(Arrays.asList("a", "b", "c", "d", "e"));
+String exampleStringC = "c";
+exampleListC.contains(exampleStringC);]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[string match]]>
+                    </title>
+                    <codes>
+                        <![CDATA[// MyBox library paths should have been added in JShell environment
+import mara.mybox.tools.StringTools;
+String exampleStringM = "abc1233hello";
+String exampleRegexM = "\\S*3{2,}\\S*";  
+boolean exampleCaseInsensitiveM = true;
+StringTools.match(exampleStringM,exampleRegexM,exampleCaseInsensitiveM);]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[string include]]>
+                    </title>
+                    <codes>
+                        <![CDATA[// MyBox library paths should have been added in JShell environment
+import mara.mybox.tools.StringTools;
+String exampleStringI = "abc1233hello";
+String exampleRegexI = "3{2}";
+boolean exampleCaseInsensitiveI = true;
+StringTools.include(exampleStringI,exampleRegexI,exampleCaseInsensitiveI);]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[and/or/not]]>
+                    </title>
+                    <codes>
+                        <![CDATA[import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+List<String> exampleListB = new ArrayList<>();
+exampleListB.addAll(Arrays.asList("a", "b", "c", "d", "e"));
+String exampleStringB = "c";
+exampleListB.contains(exampleStringB) && 
+(exampleListB.size() >= 8 || exampleStringB.length() != 1 || !exampleStringB.startsWith("h"));]]>
+                    </codes>
+                </NodeAttributes>
+            </TreeNode>
+        </TreeNode>
+    </TreeNode>
+    <TreeNode>
+        <NodeAttributes>
+            <title>
+                <![CDATA[Methods]]>
+            </title>
+        </NodeAttributes>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[Area of circle]]>
+                </title>
+                <codes>
+                    <![CDATA[double circleAreaByDiameter(double diameter) {        
+    double radius = diameter / 2;        
+    return   Math.PI *  radius * radius ;        
+}
+circleAreaByDiameter(120) + circleAreaByDiameter(30)]]>
+                </codes>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[Round value]]>
+                </title>
+                <codes>
+                    <![CDATA[import java.math.BigDecimal;        
+import java.math.RoundingMode;        
+double scale(double v, int scale) {        
+    BigDecimal b = new BigDecimal(v);        
+    return b.setScale(scale, RoundingMode.HALF_UP).doubleValue();        
+}    
+scale(Math.PI, 3)]]>
+                </codes>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[Format number]]>
+                </title>
+                <codes>
+                    <![CDATA[import java.math.BigDecimal;        
+import java.math.RoundingMode;        
+double scale(double v, int scale) {        
+    BigDecimal b = new BigDecimal(v);        
+    return b.setScale(scale, RoundingMode.HALF_UP).doubleValue();        
+}        
+                                     
+import java.text.DecimalFormat;        
+String formatDouble(double data, int scale) {        
+    try {        
+        String format = "#,###";        
+        if (scale > 0) {        
+            format += "." + "#".repeat(scale);        
+        }        
+        DecimalFormat df = new DecimalFormat(format);        
+        return df.format(scale(data, scale));        
+    } catch (Exception e) {        
+        return e.toString();        
+    }        
+}        
+                                     
+double circleAreaByRadius(double radius) {        
+    return   Math.PI *  radius * radius ;        
+}        
+                                     
+formatDouble(circleAreaByRadius(273.4), 4)]]>
+                </codes>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[Format date]]>
+                </title>
+                <codes>
+                    <![CDATA[import java.util.Date;
+import java.util.TimeZone;
+import java.text.SimpleDateFormat;
+
+String DatetimeFormat = "yyyy-MM-dd HH:mm:ss.SSS";
+
+String datetimeToString(Date theDate, String format, TimeZone theZone) {
+    if (theDate == null || theZone == null) {
+            return null;
+    }
+    SimpleDateFormat formatter = new SimpleDateFormat(format);
+    formatter.setTimeZone(theZone);
+    String dateString = formatter.format(theDate);
+    return dateString;
+}
+
+datetimeToString(new Date(), DatetimeFormat, TimeZone.getDefault());]]>
+                </codes>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[string match]]>
+                </title>
+                <codes>
+                    <![CDATA[import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+boolean match(String string, String find, boolean isRegex,
+            boolean dotAll, boolean multiline, boolean caseInsensitive) {
+        if (string == null || find == null || find.isEmpty()) {
+            return false;
+        }
+        try {
+            int mode = (isRegex ? 0x00 : Pattern.LITERAL)
+                    | (caseInsensitive ? Pattern.CASE_INSENSITIVE : 0x00)
+                    | (dotAll ? Pattern.DOTALL : 0x00)
+                    | (multiline ? Pattern.MULTILINE : 0x00);
+            Pattern pattern = Pattern.compile(find, mode);
+            Matcher matcher = pattern.matcher(string);
+            return matcher.matches();
+        } catch (Exception e) {
+            return false;
+        }
+}
+
+match("Hello1233World", "\\S*3{2,}\\S*", true, true, true, true);]]>
+                </codes>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[string include]]>
+                </title>
+                <codes>
+                    <![CDATA[import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+boolean include(String string, String find, boolean caseInsensitive) {
+        if (string == null || find == null || find.isEmpty()) {
+            return false;
+        }
+        try {
+            int mode = (caseInsensitive ? Pattern.CASE_INSENSITIVE : 0x00) | Pattern.MULTILINE;
+            Pattern pattern = Pattern.compile(find, mode);
+            Matcher matcher = pattern.matcher(string);
+            return matcher.find();
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+include("Hello1233World", "3{2}", true);]]>
+                </codes>
+            </NodeAttributes>
+        </TreeNode>
+    </TreeNode>
+</TreeNode>
+</Node_JShell>
