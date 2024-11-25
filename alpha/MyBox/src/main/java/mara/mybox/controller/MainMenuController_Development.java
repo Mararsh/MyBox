@@ -290,12 +290,12 @@ public abstract class MainMenuController_Development extends MainMenuController_
 
     @FXML
     protected void MyBoxTables(ActionEvent event) {
-        loadScene(Fxmls.MyBoxTablesFxml);
+        openScene(Fxmls.MyBoxTablesFxml);
     }
 
     @FXML
     protected void runSystemCommand(ActionEvent event) {
-        loadScene(Fxmls.RunSystemCommandFxml);
+        openScene(Fxmls.RunSystemCommandFxml);
     }
 
     @FXML
@@ -313,13 +313,13 @@ public abstract class MainMenuController_Development extends MainMenuController_
 
     @FXML
     protected void openTTC2TTF(ActionEvent event) {
-        loadScene(Fxmls.FileTTC2TTFFxml);
+        openScene(Fxmls.FileTTC2TTFFxml);
     }
 
     // This is for developement to generate Icons automatically in different color style
     @FXML
     public void makeIcons() {
-        loadScene(Fxmls.MyBoxIconsFxml);
+        openScene(Fxmls.MyBoxIconsFxml);
     }
 
     @FXML
@@ -330,7 +330,7 @@ public abstract class MainMenuController_Development extends MainMenuController_
 
     @FXML
     public void autoTesting() {
-        loadScene(Fxmls.AutoTestingCasesFxml);
+        openScene(Fxmls.AutoTestingCasesFxml);
     }
 
     @FXML

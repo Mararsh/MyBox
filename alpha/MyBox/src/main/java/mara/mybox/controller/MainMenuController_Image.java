@@ -13,167 +13,167 @@ public abstract class MainMenuController_Image extends MainMenuController_Docume
 
     @FXML
     protected void openImageEditor(ActionEvent event) {
-        loadScene(Fxmls.ImageEditorFxml);
+        openScene(Fxmls.ImageEditorFxml);
     }
 
     @FXML
     protected void openImagesBrowser(ActionEvent event) {
-        loadScene(Fxmls.ImagesBrowserFxml);
+        openScene(Fxmls.ImagesBrowserFxml);
     }
 
     @FXML
     protected void openImageAnalyse(ActionEvent event) {
-        loadScene(Fxmls.ImageAnalyseFxml);
+        openScene(Fxmls.ImageAnalyseFxml);
     }
 
     @FXML
     protected void openImageConverterBatch(ActionEvent event) {
-        loadScene(Fxmls.ImageConverterBatchFxml);
+        openScene(Fxmls.ImageConverterBatchFxml);
     }
 
     @FXML
     protected void openImageSizeBatch(ActionEvent event) {
-        loadScene(Fxmls.ImageSizeBatchFxml);
+        openScene(Fxmls.ImageSizeBatchFxml);
     }
 
     @FXML
     protected void openImageCropBatch(ActionEvent event) {
-        loadScene(Fxmls.ImageCropBatchFxml);
+        openScene(Fxmls.ImageCropBatchFxml);
     }
 
     @FXML
     protected void openImagePasteBatch(ActionEvent event) {
-        loadScene(Fxmls.ImagePasteBatchFxml);
+        openScene(Fxmls.ImagePasteBatchFxml);
     }
 
     @FXML
     protected void openImageAdjustColorBatch(ActionEvent event) {
-        loadScene(Fxmls.ImageAdjustColorBatchFxml);
+        openScene(Fxmls.ImageAdjustColorBatchFxml);
     }
 
     @FXML
     protected void openImageReduceColorsBatch(ActionEvent event) {
-        loadScene(Fxmls.ImageReduceColorsBatchFxml);
+        openScene(Fxmls.ImageReduceColorsBatchFxml);
     }
 
     @FXML
     protected void openImageReplaceColorBatch(ActionEvent event) {
-        loadScene(Fxmls.ImageReplaceColorBatchFxml);
+        openScene(Fxmls.ImageReplaceColorBatchFxml);
     }
 
     @FXML
     protected void openImageBlendColorBatch(ActionEvent event) {
-        loadScene(Fxmls.ImageBlendColorBatchFxml);
+        openScene(Fxmls.ImageBlendColorBatchFxml);
     }
 
     @FXML
     protected void openImageGreyBatch(ActionEvent event) {
-        loadScene(Fxmls.ImageGreyBatchFxml);
+        openScene(Fxmls.ImageGreyBatchFxml);
     }
 
     @FXML
     protected void openImageBlackWhiteBatch(ActionEvent event) {
-        loadScene(Fxmls.ImageBlackWhiteBatchFxml);
+        openScene(Fxmls.ImageBlackWhiteBatchFxml);
     }
 
     @FXML
     protected void openImageSepiaBatch(ActionEvent event) {
-        loadScene(Fxmls.ImageSepiaBatchFxml);
+        openScene(Fxmls.ImageSepiaBatchFxml);
     }
 
     @FXML
     protected void openImageThresholdingBatch(ActionEvent event) {
-        loadScene(Fxmls.ImageThresholdingBatchFxml);
+        openScene(Fxmls.ImageThresholdingBatchFxml);
     }
 
     @FXML
     protected void openImageMosaicBatch(ActionEvent event) {
-        loadScene(Fxmls.ImageMosaicBatchFxml);
+        openScene(Fxmls.ImageMosaicBatchFxml);
     }
 
     @FXML
     protected void openImageGlassBatch(ActionEvent event) {
-        loadScene(Fxmls.ImageGlassBatchFxml);
+        openScene(Fxmls.ImageGlassBatchFxml);
     }
 
     @FXML
     protected void openImageEdgeBatch(ActionEvent event) {
-        loadScene(Fxmls.ImageEdgeBatchFxml);
+        openScene(Fxmls.ImageEdgeBatchFxml);
     }
 
     @FXML
     protected void openImageEmbossBatch(ActionEvent event) {
-        loadScene(Fxmls.ImageEmbossBatchFxml);
+        openScene(Fxmls.ImageEmbossBatchFxml);
     }
 
     @FXML
     protected void openImageSharpenBatch(ActionEvent event) {
-        loadScene(Fxmls.ImageSharpenBatchFxml);
+        openScene(Fxmls.ImageSharpenBatchFxml);
     }
 
     @FXML
     protected void openImageSmoothBatch(ActionEvent event) {
-        loadScene(Fxmls.ImageSmoothBatchFxml);
+        openScene(Fxmls.ImageSmoothBatchFxml);
     }
 
     @FXML
     protected void openImageContrastBatch(ActionEvent event) {
-        loadScene(Fxmls.ImageContrastBatchFxml);
+        openScene(Fxmls.ImageContrastBatchFxml);
     }
 
     @FXML
     protected void openImageConvolutionBatch(ActionEvent event) {
-        loadScene(Fxmls.ImageConvolutionBatchFxml);
+        openScene(Fxmls.ImageConvolutionBatchFxml);
     }
 
     @FXML
     protected void openImageTextBatch(ActionEvent event) {
-        loadScene(Fxmls.ImageTextBatchFxml);
+        openScene(Fxmls.ImageTextBatchFxml);
     }
 
     @FXML
     protected void openImageRoundBatch(ActionEvent event) {
-        loadScene(Fxmls.ImageRoundBatchFxml);
+        openScene(Fxmls.ImageRoundBatchFxml);
     }
 
     @FXML
     protected void openImageShadowBatch(ActionEvent event) {
-        loadScene(Fxmls.ImageShadowBatchFxml);
+        openScene(Fxmls.ImageShadowBatchFxml);
     }
 
     @FXML
     protected void openImageShearBatch(ActionEvent event) {
-        loadScene(Fxmls.ImageShearBatchFxml);
+        openScene(Fxmls.ImageShearBatchFxml);
     }
 
     @FXML
     protected void openImageMirrorBatch(ActionEvent event) {
-        loadScene(Fxmls.ImageMirrorBatchFxml);
+        openScene(Fxmls.ImageMirrorBatchFxml);
     }
 
     @FXML
     protected void openImageRotateBatch(ActionEvent event) {
-        loadScene(Fxmls.ImageRotateBatchFxml);
+        openScene(Fxmls.ImageRotateBatchFxml);
     }
 
     @FXML
     protected void openImageMarginsBatch(ActionEvent event) {
-        loadScene(Fxmls.ImageMarginsBatchFxml);
+        openScene(Fxmls.ImageMarginsBatchFxml);
     }
 
     @FXML
     protected void openImageSplit(ActionEvent event) {
-        loadScene(Fxmls.ImageSplitFxml);
+        openScene(Fxmls.ImageSplitFxml);
     }
 
     @FXML
     protected void openImageSample(ActionEvent event) {
-        loadScene(Fxmls.ImageSampleFxml);
+        openScene(Fxmls.ImageSampleFxml);
     }
 
     @FXML
     protected void ImagesEditor(ActionEvent event) {
-        loadScene(Fxmls.ImagesEditorFxml);
+        openScene(Fxmls.ImagesEditorFxml);
     }
 
     @FXML
@@ -183,67 +183,67 @@ public abstract class MainMenuController_Image extends MainMenuController_Docume
 
     @FXML
     protected void ImagesSplice(ActionEvent event) {
-        loadScene(Fxmls.ImagesSpliceFxml);
+        openScene(Fxmls.ImagesSpliceFxml);
     }
 
     @FXML
     protected void ImageRepeat(ActionEvent event) {
-        loadScene(Fxmls.ImageRepeatFxml);
+        openScene(Fxmls.ImageRepeatFxml);
     }
 
     @FXML
     protected void ImagesPlay(ActionEvent event) {
-        loadScene(Fxmls.ImagesPlayFxml);
+        openScene(Fxmls.ImagesPlayFxml);
     }
 
     @FXML
     protected void openImageAlphaExtract(ActionEvent event) {
-        loadScene(Fxmls.ImageAlphaExtractBatchFxml);
+        openScene(Fxmls.ImageAlphaExtractBatchFxml);
     }
 
     @FXML
     protected void openImageAlphaAdd(ActionEvent event) {
-        loadScene(Fxmls.ImageAlphaAddBatchFxml);
+        openScene(Fxmls.ImageAlphaAddBatchFxml);
     }
 
     @FXML
     protected void openImageOCR(ActionEvent event) {
-        loadScene(Fxmls.ImageOCRFxml);
+        openScene(Fxmls.ImageOCRFxml);
     }
 
     @FXML
     protected void openImageOCRBatch(ActionEvent event) {
-        loadScene(Fxmls.ImageOCRBatchFxml);
+        openScene(Fxmls.ImageOCRBatchFxml);
     }
 
     @FXML
     protected void openSVGEditor(ActionEvent event) {
-        loadScene(Fxmls.SvgEditorFxml);
+        openScene(Fxmls.SvgEditorFxml);
     }
 
     @FXML
     protected void SvgTypesetting(ActionEvent event) {
-        loadScene(Fxmls.SvgTypesettingFxml);
+        openScene(Fxmls.SvgTypesettingFxml);
     }
 
     @FXML
     protected void SvgToImage(ActionEvent event) {
-        loadScene(Fxmls.SvgToImageFxml);
+        openScene(Fxmls.SvgToImageFxml);
     }
 
     @FXML
     protected void SvgToPDF(ActionEvent event) {
-        loadScene(Fxmls.SvgToPDFFxml);
+        openScene(Fxmls.SvgToPDFFxml);
     }
 
     @FXML
     protected void ImageToSvg(ActionEvent event) {
-        loadScene(Fxmls.SvgFromImageBatchFxml);
+        openScene(Fxmls.SvgFromImageBatchFxml);
     }
 
     @FXML
     protected void imageOptions(ActionEvent event) {
-        loadScene(Fxmls.ImageShapeOptionsFxml);
+        openScene(Fxmls.ImageShapeOptionsFxml);
     }
 
     @FXML
@@ -258,12 +258,12 @@ public abstract class MainMenuController_Image extends MainMenuController_Docume
 
     @FXML
     protected void openConvolutionKernelManager(ActionEvent event) {
-        loadScene(Fxmls.ConvolutionKernelManagerFxml);
+        openScene(Fxmls.ConvolutionKernelManagerFxml);
     }
 
     @FXML
     protected void ImageMaterial(ActionEvent event) {
-        loadScene(Fxmls.ImageMaterialFxml);
+        openScene(Fxmls.ImageMaterialFxml);
     }
 
     @FXML
@@ -278,42 +278,42 @@ public abstract class MainMenuController_Image extends MainMenuController_Docume
 
     @FXML
     protected void openIccProfileEditor(ActionEvent event) {
-        loadScene(Fxmls.IccProfileEditorFxml);
+        openScene(Fxmls.IccProfileEditorFxml);
     }
 
     @FXML
     protected void openChromaticityDiagram(ActionEvent event) {
-        loadScene(Fxmls.ChromaticityDiagramFxml);
+        openScene(Fxmls.ChromaticityDiagramFxml);
     }
 
     @FXML
     protected void openChromaticAdaptationMatrix(ActionEvent event) {
-        loadScene(Fxmls.ChromaticAdaptationMatrixFxml);
+        openScene(Fxmls.ChromaticAdaptationMatrixFxml);
     }
 
     @FXML
     protected void openColorConversion(ActionEvent event) {
-        loadScene(Fxmls.ColorConversionFxml);
+        openScene(Fxmls.ColorConversionFxml);
     }
 
     @FXML
     protected void openRGBColorSpaces(ActionEvent event) {
-        loadScene(Fxmls.RGBColorSpacesFxml);
+        openScene(Fxmls.RGBColorSpacesFxml);
     }
 
     @FXML
     protected void openRGB2XYZConversionMatrix(ActionEvent event) {
-        loadScene(Fxmls.RGB2XYZConversionMatrixFxml);
+        openScene(Fxmls.RGB2XYZConversionMatrixFxml);
     }
 
     @FXML
     protected void openRGB2RGBConversionMatrix(ActionEvent event) {
-        loadScene(Fxmls.RGB2RGBConversionMatrixFxml);
+        openScene(Fxmls.RGB2RGBConversionMatrixFxml);
     }
 
     @FXML
     protected void openIlluminants(ActionEvent event) {
-        loadScene(Fxmls.IlluminantsFxml);
+        openScene(Fxmls.IlluminantsFxml);
     }
 
     @FXML
@@ -323,7 +323,7 @@ public abstract class MainMenuController_Image extends MainMenuController_Docume
 
     @FXML
     protected void ImageBase64(ActionEvent event) {
-        loadScene(Fxmls.ImageBase64Fxml);
+        openScene(Fxmls.ImageBase64Fxml);
     }
 
 }

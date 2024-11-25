@@ -28,6 +28,8 @@ public class Fxmls {
     public static final String ControlDataImageScopeFxml = "/fxml/ControlDataImageScope.fxml";
     public static final String ControlDataData2DDefinitionFxml = "/fxml/ControlDataData2DDefinition.fxml";
 
+    public static final String DataTreeParentFxml = "/fxml/DataTreeParent.fxml";
+    public static final String DataTreeNodeSelectFxml = "/fxml/DataTreeNodeSelect.fxml";
     public static final String DataTreeTagsFxml = "/fxml/DataTreeTags.fxml";
     public static final String DataTreeExportFxml = "/fxml/DataTreeExport.fxml";
     public static final String DataTreeImportFxml = "/fxml/DataTreeImport.fxml";

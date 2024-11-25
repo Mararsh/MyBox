@@ -49,6 +49,7 @@ public class DataTreeImportController extends BaseBatchFileController {
     protected TableDataTag tagTable;
     protected TreeItem<DataNode> parentItem;
     protected String dataName;
+    protected boolean isExmaple;
 
     @FXML
     protected ToggleGroup existedGroup;
@@ -122,7 +123,9 @@ public class DataTreeImportController extends BaseBatchFileController {
         }
     }
 
-    public void importExamples() {
+    public void importExamples(DataTreeController controller, TreeItem<DataNode> item) {
+        setParamters(controller, item);
+
         File file = nodeTable.exampleFile();
         if (file == null) {
             return;
@@ -130,6 +133,7 @@ public class DataTreeImportController extends BaseBatchFileController {
         isSettingValues = true;
         updateRadio.setSelected(true);
         isSettingValues = false;
+        isExmaple = true;
         startFile(file);
     }
 
@@ -151,7 +155,17 @@ public class DataTreeImportController extends BaseBatchFileController {
 
     public DataNode saveNode(Connection conn, DataNode node) {
         try {
-            return nodeTable.insertData(conn, node);
+            if (createRadio.isSelected()) {
+                return nodeTable.insertData(conn, node);
+            }
+            DataNode existed = nodeTable.find(conn, node.getParentid(), node.getTitle());
+            if (existed == null) {
+                return nodeTable.insertData(conn, node);
+            }
+            if (skipRadio.isSelected()) {
+                return node;
+            }
+            return nodeTable.updateData(conn, existed);
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;
@@ -240,14 +254,19 @@ public class DataTreeImportController extends BaseBatchFileController {
                         dataNode.setTitle(s);
                         break;
                     case "NodeTag":
-                        dataTag = DataTag.create().setTag(s);
-                        dataTag = tagTable.insertData(conn, dataTag);
-                        nodeTagsTable.insertData(conn,
-                                new DataNodeTag(dataNode.getNodeid(), dataTag.getTagid()));
-                        written = true;
+                        if (!s.isBlank()) {
+                            dataTag = tagTable.queryTag(conn, s);
+                            if (dataTag == null) {
+                                dataTag = DataTag.create().setTag(s);
+                                dataTag = tagTable.insertData(conn, dataTag);
+                            }
+                            nodeTagsTable.insertData(conn,
+                                    new DataNodeTag(dataNode.getNodeid(), dataTag.getTagid()));
+                            written = true;
+                        }
                         break;
                     case "NodeAttributes":
-                        dataNode = nodeTable.insertData(conn, dataNode);
+                        dataNode = saveNode(conn, dataNode);
                         if (isLogsVerbose()) {
                             showLogs("New node saved. parentid=" + dataNode.getParentid()
                                     + " nodeid=" + dataNode.getNodeid() + " title=" + dataNode.getTitle());
@@ -318,9 +337,14 @@ public class DataTreeImportController extends BaseBatchFileController {
     public void afterTask(boolean ok) {
         showCost();
         treeController.refreshItem(parentItem);
-        tableView.refresh();
+
         if (miaoCheck != null && miaoCheck.isSelected()) {
             SoundTools.miao3();
+        }
+        if (isExmaple) {
+            close();
+        } else {
+            tableView.refresh();
         }
     }
 
@@ -330,7 +354,7 @@ public class DataTreeImportController extends BaseBatchFileController {
         if (file == null) {
             file = nodeTable.exampleFile("TextTree");
         }
-        TextEditorController.open(file);
+        XmlEditorController.open(file);
     }
 
     @FXML

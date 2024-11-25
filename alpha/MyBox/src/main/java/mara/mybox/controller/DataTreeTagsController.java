@@ -229,6 +229,21 @@ public class DataTreeTagsController extends BaseTableViewController<DataTag> {
     }
 
     @FXML
+    @Override
+    public void clearAction() {
+        try {
+            for (DataTag tag : tableData) {
+                if (tag.getTagid() >= 0 && !deleted.contains(tag)) {
+                    deleted.add(tag);
+                }
+            }
+            tableData.clear();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    @FXML
     public void randomColors() {
         try {
             isSettingValues = true;
@@ -256,15 +271,19 @@ public class DataTreeTagsController extends BaseTableViewController<DataTag> {
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
                     conn.setAutoCommit(false);
-                    for (DataTag tag : tableData) {
-                        if (tag.getTagid() >= 0) {
-                            tagTable.updateData(conn, tag);
-                        } else {
-                            tagTable.insertData(conn, tag);
+                    if (tableData.isEmpty()) {
+                        tagTable.clearData(conn);
+                    } else {
+                        for (DataTag tag : tableData) {
+                            if (tag.getTagid() >= 0) {
+                                tagTable.updateData(conn, tag);
+                            } else {
+                                tagTable.insertData(conn, tag);
+                            }
                         }
-                    }
-                    for (DataTag tag : deleted) {
-                        tagTable.deleteData(conn, tag);
+                        for (DataTag tag : deleted) {
+                            tagTable.deleteData(conn, tag);
+                        }
                     }
                     conn.commit();
                 } catch (Exception e) {

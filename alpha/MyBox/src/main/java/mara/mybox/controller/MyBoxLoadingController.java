@@ -105,7 +105,7 @@ public class MyBoxLoadingController implements Initializable {
 
                             info(message(lang, "CheckingMigration"));
                             MyBoxLog.console(message(lang, "CheckingMigration"));
-                            if (!DataMigration.checkUpdates()) {
+                            if (!DataMigration.checkUpdates(loadingController)) {
                                 cancel();
                                 return null;
                             }

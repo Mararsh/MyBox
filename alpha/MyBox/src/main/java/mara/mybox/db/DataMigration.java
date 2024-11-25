@@ -15,6 +15,7 @@ import mara.mybox.bufferedimage.ImageAttributes;
 import mara.mybox.bufferedimage.ImageConvertTools;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.bufferedimage.ImageScopeTools;
+import mara.mybox.controller.MyBoxLoadingController;
 import mara.mybox.data.GeoCoordinateSystem;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.data2d.tools.Data2DTableTools;
@@ -86,10 +87,11 @@ import mara.mybox.value.TimeFormats;
  */
 public class DataMigration {
 
-    public static boolean checkUpdates() {
+    public static boolean checkUpdates(MyBoxLoadingController controller) {
         SystemConfig.setString("CurrentVersion", AppValues.AppVersion);
+        controller.info("CurrentVersion: " + AppValues.AppVersion);
         try (Connection conn = DerbyBase.getConnection()) {
-            updateIn682(conn);
+//            updateIn682(controller, conn);
             int lastVersion = DevTools.lastVersion(conn);
             int currentVersion = DevTools.myboxVersion(AppValues.AppVersion);
             if (lastVersion != currentVersion
@@ -101,6 +103,7 @@ public class DataMigration {
                 return true;
             }
             MyBoxLog.info("Last version: " + lastVersion + " " + "Current version: " + currentVersion);
+            controller.info("Last version: " + lastVersion + " " + "Current version: " + currentVersion);
             if (lastVersion > 0) {
 
                 if (lastVersion < 6002001) {
@@ -194,7 +197,7 @@ public class DataMigration {
                     updateIn68(conn);
                 }
                 if (lastVersion < 6008002) {
-                    updateIn682(conn);
+                    updateIn682(controller, conn);
                 }
 
             }
@@ -206,21 +209,22 @@ public class DataMigration {
         return true;
     }
 
-    private static void updateIn682(Connection conn) {
+    private static void updateIn682(MyBoxLoadingController controller, Connection conn) {
         try {
             MyBoxLog.info("Updating tables in 6.8.2...");
+            controller.info("Updating tables in 6.8.2...");
 
-            updateIn682_move(conn, new TableNodeHtml(), "Notebook");
-            updateIn682_move(conn, new TableNodeText(), "InformationInTree");
-            updateIn682_move(conn, new TableNodeWebFavorite(), "WebFavorite");
-            updateIn682_move(conn, new TableNodeSQL(), "SQL");
-            updateIn682_move(conn, new TableNodeMathFunction(), "MathFunction");
-            updateIn682_move(conn, new TableNodeImageScope(), "ImageScope");
-            updateIn682_move(conn, new TableNodeJShell(), "JShellCode");
-            updateIn682_move(conn, new TableNodeJEXL(), "JEXLCode");
-            updateIn682_move(conn, new TableNodeJavaScript(), "JavaScript");
-            updateIn682_move(conn, new TableNodeRowFilter(), "RowFilter");
-            updateIn682_move(conn, new TableNodeData2DDefinition(), "Data2DDefinition");
+            updateIn682_move(controller, conn, new TableNodeHtml(), "Notebook");
+            updateIn682_move(controller, conn, new TableNodeText(), "InformationInTree");
+            updateIn682_move(controller, conn, new TableNodeWebFavorite(), "WebFavorite");
+            updateIn682_move(controller, conn, new TableNodeSQL(), "SQL");
+            updateIn682_move(controller, conn, new TableNodeMathFunction(), "MathFunction");
+            updateIn682_move(controller, conn, new TableNodeImageScope(), "ImageScope");
+            updateIn682_move(controller, conn, new TableNodeJShell(), "JShellCode");
+            updateIn682_move(controller, conn, new TableNodeJEXL(), "JEXLCode");
+            updateIn682_move(controller, conn, new TableNodeJavaScript(), "JavaScript");
+            updateIn682_move(controller, conn, new TableNodeRowFilter(), "RowFilter");
+            updateIn682_move(controller, conn, new TableNodeData2DDefinition(), "Data2DDefinition");
 
             try (Statement statement = conn.createStatement()) {
                 conn.setAutoCommit(true);

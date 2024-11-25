@@ -55,7 +55,7 @@ public class ControlDataNodeEditor extends BaseController {
     @FXML
     protected TextField idInput, titleInput, orderInput, timeInput;
     @FXML
-    protected Label chainLabel;
+    protected Label parentLabel;
     @FXML
     protected ControlDataNodeTags tagsController;
 
@@ -115,9 +115,8 @@ public class ControlDataNodeEditor extends BaseController {
             return false;
         }
         if (node == null) {
-            currentNode = null;
-            addAction();
-            return false;
+            editNull();
+            return true;
         }
         if (task != null) {
             task.cancel();
@@ -155,6 +154,11 @@ public class ControlDataNodeEditor extends BaseController {
         };
         start(task, thisPane);
         return true;
+    }
+
+    protected void editNull() {
+        currentNode = null;
+        addAction();
     }
 
     @Override
@@ -257,18 +261,14 @@ public class ControlDataNodeEditor extends BaseController {
     public void refreshNode() {
         if (parentNode != null) {
             parentNode = nodeTable.query(parentNode.getNodeid());
-            if (parentNode == null) {
-                resetStatus();
-                editNode(null);
-                return;
-            }
+            refreshParentNode();
         }
 
         if (currentNode != null) {
             currentNode = nodeTable.query(currentNode.getNodeid());
             if (currentNode == null) {
                 resetStatus();
-                editNode(null);
+                editNull();
             }
         }
 
@@ -292,7 +292,7 @@ public class ControlDataNodeEditor extends BaseController {
         timeInput.setText(DateTools.datetimeToString(currentNode.getUpdateTime()));
         isSettingValues = false;
 
-        selectButton.setVisible(currentNode.getNodeid() < 0 || parentNode == null);
+//        selectButton.setVisible(currentNode.getNodeid() < 0 || parentNode == null);
         refreshParentNode();
         attributesChanged(false);
     }
@@ -343,22 +343,19 @@ public class ControlDataNodeEditor extends BaseController {
 
     @FXML
     public void selectParent() {
-//        InfoTreeNodeParentController.open(this);
+        DataTreeParentController.open(treeController, currentNode);
     }
-//
-//    protected void checkParentNode(DataNode node) {
-//        if (parentNode == null || node.getNodeid() != parentNode.getNodeid()) {
-//            return;
-//        }
-//        refreshParentNode();
-//    }
-//
-//    protected void setParentNode(DataNode node) {
-//        parentNode = node;
-//        refreshParentNode();
-//    }
+
+    protected void setParentNode(DataNode node) {
+        parentNode = node;
+        attributesChanged(true);
+        refreshParentNode();
+    }
 
     protected void refreshParentNode() {
+        if (task != null) {
+            task.cancel();
+        }
         task = new FxTask<Void>(this) {
             private String chainName;
 
@@ -379,7 +376,11 @@ public class ControlDataNodeEditor extends BaseController {
 
             @Override
             protected void whenSucceeded() {
-                chainLabel.setText(message("ParentNode") + ": " + chainName);
+                if (parentNode != null) {
+                    parentLabel.setText(parentNode.shortDescription(chainName));
+                } else {
+                    parentLabel.setText("");
+                }
             }
         };
         start(task, thisPane);
@@ -391,7 +392,8 @@ public class ControlDataNodeEditor extends BaseController {
     @FXML
     @Override
     public void saveAction() {
-        if (parentNode == null) {
+        if (parentNode == null || parentNode.getNodeid() < 0) {
+            tabPane.getSelectionModel().select(nodeTab);
             popError(message("Invalid") + ": " + message("ParentNode"));
             return;
         }
@@ -404,6 +406,9 @@ public class ControlDataNodeEditor extends BaseController {
             popError(message("Invalid") + ": " + message("Data"));
             return;
         }
+        boolean isNewNode = node.getNodeid() < 0;
+        boolean isParentChanged = currentNode == null
+                || currentNode.getParentid() != parentNode.getNodeid();
         if (task != null) {
             task.cancel();
         }
@@ -414,7 +419,6 @@ public class ControlDataNodeEditor extends BaseController {
             @Override
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
-                    node.setNodeid(attributes.getNodeid());
                     node.setUpdateTime(new Date());
                     savedNode = nodeTable.writeData(conn, node);
                     if (savedNode == null) {
@@ -444,8 +448,10 @@ public class ControlDataNodeEditor extends BaseController {
 
             @Override
             protected void whenSucceeded() {
-                if (isNewNode()) {
+                if (isNewNode) {
                     treeController.addNewNode(parentNode, savedNode);
+                } else if (isParentChanged) {
+                    treeController.updateNode(parentNode, savedNode);
                 } else {
                     treeController.updateNode(savedNode);
                 }

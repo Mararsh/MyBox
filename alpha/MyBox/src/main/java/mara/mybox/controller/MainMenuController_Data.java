@@ -13,17 +13,17 @@ public abstract class MainMenuController_Data extends MainMenuController_Network
 
     @FXML
     protected void DataManufacture(ActionEvent event) {
-        loadScene(Fxmls.Data2DManufactureFxml);
+        openScene(Fxmls.Data2DManufactureFxml);
     }
 
     @FXML
     protected void manageData(ActionEvent event) {
-        loadScene(Fxmls.Data2DManageFxml);
+        openScene(Fxmls.Data2DManageFxml);
     }
 
     @FXML
     protected void SpliceData(ActionEvent event) {
-        loadScene(Fxmls.Data2DSpliceFxml);
+        openScene(Fxmls.Data2DSpliceFxml);
     }
 
     @FXML
@@ -38,32 +38,32 @@ public abstract class MainMenuController_Data extends MainMenuController_Network
 
     @FXML
     protected void openMatricesManage(ActionEvent event) {
-        loadScene(Fxmls.MatricesManageFxml);
+        openScene(Fxmls.MatricesManageFxml);
     }
 
     @FXML
     protected void openMatrixUnaryCalculation(ActionEvent event) {
-        loadScene(Fxmls.MatrixUnaryCalculationFxml);
+        openScene(Fxmls.MatrixUnaryCalculationFxml);
     }
 
     @FXML
     protected void openMatricesBinaryCalculation(ActionEvent event) {
-        loadScene(Fxmls.MatricesBinaryCalculationFxml);
+        openScene(Fxmls.MatricesBinaryCalculationFxml);
     }
 
     @FXML
     protected void openGeographyCode(ActionEvent event) {
-        loadScene(Fxmls.GeographyCodeFxml);
+        openScene(Fxmls.GeographyCodeFxml);
     }
 
     @FXML
     protected void openLocationInMap(ActionEvent event) {
-        loadScene(Fxmls.LocationInMapFxml);
+        openScene(Fxmls.LocationInMapFxml);
     }
 
     @FXML
     protected void ConvertCoordinate(ActionEvent event) {
-        loadScene(Fxmls.ConvertCoordinateFxml);
+        openScene(Fxmls.ConvertCoordinateFxml);
     }
 
     @FXML
@@ -78,32 +78,32 @@ public abstract class MainMenuController_Data extends MainMenuController_Network
 
     @FXML
     protected void openExcelConvert(ActionEvent event) {
-        loadScene(Fxmls.DataFileExcelConvertFxml);
+        openScene(Fxmls.DataFileExcelConvertFxml);
     }
 
     @FXML
     protected void openExcelMerge(ActionEvent event) {
-        loadScene(Fxmls.DataFileExcelMergeFxml);
+        openScene(Fxmls.DataFileExcelMergeFxml);
     }
 
     @FXML
     protected void openCsvConvert(ActionEvent event) {
-        loadScene(Fxmls.DataFileCSVConvertFxml);
+        openScene(Fxmls.DataFileCSVConvertFxml);
     }
 
     @FXML
     protected void openCsvMerge(ActionEvent event) {
-        loadScene(Fxmls.DataFileCSVMergeFxml);
+        openScene(Fxmls.DataFileCSVMergeFxml);
     }
 
     @FXML
     protected void openTextDataConvert(ActionEvent event) {
-        loadScene(Fxmls.DataFileTextConvertFxml);
+        openScene(Fxmls.DataFileTextConvertFxml);
     }
 
     @FXML
     protected void openTextDataMerge(ActionEvent event) {
-        loadScene(Fxmls.DataFileTextMergeFxml);
+        openScene(Fxmls.DataFileTextMergeFxml);
     }
 
     @FXML
@@ -113,12 +113,12 @@ public abstract class MainMenuController_Data extends MainMenuController_Network
 
     @FXML
     protected void DatabaseTable(ActionEvent event) {
-        loadScene(Fxmls.DataTablesFxml);
+        openScene(Fxmls.DataTablesFxml);
     }
 
     @FXML
     protected void databaseTableDefinition(ActionEvent event) {
-        loadScene(Fxmls.DatabaseTableDefinitionFxml);
+        openScene(Fxmls.DatabaseTableDefinitionFxml);
     }
 
     @FXML

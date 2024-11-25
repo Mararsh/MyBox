@@ -699,8 +699,7 @@ public class DataTreeController extends BaseDataTreeViewController {
     protected void importExamples(TreeItem<DataNode> item) {
         DataTreeImportController importController
                 = (DataTreeImportController) branchStage(Fxmls.DataTreeImportFxml);
-        importController.setParamters(this, item);
-        importController.importExamples();
+        importController.importExamples(this, item);
     }
 
     @FXML

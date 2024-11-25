@@ -78,7 +78,7 @@ public class DataTreeExportController extends BaseTaskController {
             sourceItem = item;
             sourceItem = item != null ? item : treeController.treeView.getRoot();
 
-            baseName = baseName = baseName + "_" + dataName;
+            baseName = baseName + "_" + dataName;
             baseTitle = nodeTable.getTreeName() + " - "
                     + message("Export") + " : " + sourceItem.getValue().getTitle();
 

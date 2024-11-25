@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.bufferedimage.ImageScopeTools;
+import mara.mybox.controller.MyBoxLoadingController;
 import mara.mybox.db.data.*;
 import mara.mybox.db.table.BaseNodeTable;
 import static mara.mybox.db.table.BaseNodeTable.RootID;
@@ -20,8 +21,10 @@ import mara.mybox.tools.StringTools;
  */
 public class DataMigrationTools {
 
-    public static void updateIn682_move(Connection conn, BaseNodeTable dataTable, String category) {
+    public static void updateIn682_move(MyBoxLoadingController controller, Connection conn,
+            BaseNodeTable dataTable, String category) {
         String tname = dataTable.getTableName();
+        controller.info("Moving data: " + dataTable.getTreeName());
         // for debug.Remove this block later
         try (Statement statement = conn.createStatement()) {
             conn.setAutoCommit(true);
@@ -85,6 +88,7 @@ public class DataMigrationTools {
                 }
             }
             conn.commit();
+            controller.info("Saved: " + dataTable.getTreeName() + " count:" + count);
 
             query = conn.createStatement().executeQuery("select A.new_nodeid AS nodeid,"
                     + " B.new_nodeid AS parentid "
@@ -109,6 +113,7 @@ public class DataMigrationTools {
                 }
             }
             conn.commit();
+            controller.info("Moved: " + dataTable.getTreeName() + " count:" + count);
 
             statement.executeUpdate("CREATE TABLE MYBOX_TMP_TAG_Migration682"
                     + " ( old_tagid BIGINT, new_tagid BIGINT)");
@@ -132,6 +137,7 @@ public class DataMigrationTools {
                 }
             }
             conn.commit();
+            controller.info("Tags saved: " + dataTable.getTreeName() + " count:" + count);
 
             query = conn.createStatement().executeQuery("select  C.new_nodeid AS mnodeid, B.new_tagid AS mtagid "
                     + " from tree_node_tag A, MYBOX_TMP_TAG_Migration682 AS B, MYBOX_TMP_TREE_Migration682 AS C"
@@ -154,6 +160,7 @@ public class DataMigrationTools {
             }
             conn.commit();
             conn.setAutoCommit(true);
+            controller.info("Tags moved: " + dataTable.getTreeName() + " count:" + count);
 
         } catch (Exception e) {
             MyBoxLog.error(e);

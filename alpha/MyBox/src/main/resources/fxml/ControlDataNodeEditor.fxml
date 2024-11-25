@@ -10,6 +10,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextField?>
@@ -47,20 +48,6 @@ License:    Apache License Version 2.0
                         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                      </padding>
                      <children>
-                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0">
-                           <children>
-                              <Label fx:id="chainLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" HBox.hgrow="ALWAYS" />
-                              <Button fx:id="selectButton" mnemonicParsing="false" onAction="#selectParent">
-                                 <graphic>
-                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../buttons/Red/iconSelect.png" />
-                                       </image>
-                                    </ImageView>
-                                 </graphic>
-                              </Button>
-                           </children>
-                        </HBox>
                         <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
                            <children>
                               <Label fx:id="idLabel" minHeight="-Infinity" text="%ID" wrapText="true" />
@@ -79,6 +66,22 @@ License:    Apache License Version 2.0
                               <TextField fx:id="timeInput" disable="true" editable="false" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                            </children>
                         </HBox>
+                        <Separator prefWidth="200.0" />
+                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0">
+                           <children>
+                              <Label maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%ParentNode" wrapText="true" HBox.hgrow="ALWAYS" />
+                              <Button fx:id="selectButton" mnemonicParsing="false" onAction="#selectParent">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconSelect.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                           </children>
+                        </HBox>
+                        <Label fx:id="parentLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" />
                      </children>
                   </VBox>
                </content>

@@ -173,14 +173,24 @@ public class BaseNodeTable extends BaseTable<DataNode> {
     }
 
     public DataNode getRoot(Connection conn) {
-        if (conn == null || tableName == null) {
+        try {
+            if (conn == null || tableName == null) {
+                return null;
+            }
+            DataNode root = query(conn, RootID);
+            if (root == null) {
+                root = createRoot(conn);
+            } else {
+                if (treeName != null && !treeName.equals(root.getTitle())) {
+                    root.setTitle(treeName);
+                    root = updateData(conn, root);
+                }
+            }
+            return root;
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
             return null;
         }
-        DataNode root = query(conn, RootID);
-        if (root == null) {
-            root = createRoot(conn);
-        }
-        return root;
     }
 
     public List<DataNode> children(long parent) {

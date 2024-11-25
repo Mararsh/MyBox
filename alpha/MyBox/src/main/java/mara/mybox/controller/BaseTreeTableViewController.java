@@ -252,6 +252,11 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
         return validItem(selecteItem);
     }
 
+    public NodeP selectedValue() {
+        TreeItem<NodeP> selecteItem = selected();
+        return selecteItem != null ? selecteItem.getValue() : null;
+    }
+
     public TreeItem<NodeP> validItem(TreeItem<NodeP> item) {
         TreeItem<NodeP> validItem = item;
         if (validItem == null) {

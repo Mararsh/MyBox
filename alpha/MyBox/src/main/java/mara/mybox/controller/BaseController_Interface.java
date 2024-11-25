@@ -747,6 +747,19 @@ public abstract class BaseController_Interface extends BaseController_Files {
         }
     }
 
+    public BaseController openScene(String newFxml) {
+        try {
+            if (AppVariables.closeCurrentWhenOpenTool) {
+                return loadScene(newFxml);
+            } else {
+                return openStage(newFxml);
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
     public BaseController loadScene(String newFxml) {
         try {
             if (!leavingScene()) {

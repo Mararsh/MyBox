@@ -79,25 +79,4 @@ public class TableDataTag extends BaseTable<DataTag> {
         return dataTag;
     }
 
-    @Override
-    public long clearData(Connection conn) {
-        try {
-            String sql = "DELETE FROM " + tableName + TableDataNodeTag.TableNameSuffix;
-            long count = update(conn, sql);
-            if (count < 0) {
-                return -2;
-            }
-
-            sql = "DELETE FROM " + tableName;
-            count = update(conn, sql);
-            if (count < 0) {
-                return -4;
-            }
-            return count;
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-            return -1;
-        }
-    }
-
 }

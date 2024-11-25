@@ -163,6 +163,7 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
                 if (size <= 1) {
                     whenTreeEmpty();
                 }
+                afterTreeLoaded();
             }
 
         };
@@ -172,13 +173,42 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
     public void whenTreeEmpty() {
     }
 
+    public void afterTreeLoaded() {
+    }
+
+    public void updateNode(DataNode parent, DataNode node) {
+        try {
+            TreeItem<DataNode> nodeItem = find(node);
+            if (nodeItem == null) {
+                addNewNode(parent, node);
+                return;
+            }
+            try {
+                nodeItem.getParent().getChildren().remove(nodeItem);
+            } catch (Exception e) {
+            }
+            TreeItem<DataNode> parentNode = find(parent);
+            if (parentNode == null) {
+                return;
+            }
+            try {
+                parentNode.getChildren().add(nodeItem);
+            } catch (Exception e) {
+                return;
+            }
+            nodeItem.setExpanded(false);
+            focusItem(nodeItem);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
     public void updateNode(DataNode node) {
         TreeItem<DataNode> treeItem = find(node);
         if (treeItem == null) {
             return;
         }
         treeItem.setValue(node);
-//        refreshItem(treeItem);
     }
 
     public void refreshItem(TreeItem<DataNode> item) {

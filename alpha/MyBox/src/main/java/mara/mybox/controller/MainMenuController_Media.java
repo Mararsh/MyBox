@@ -13,57 +13,57 @@ public abstract class MainMenuController_Media extends MainMenuController_Data {
 
     @FXML
     protected void openMediaPlayer(ActionEvent event) {
-        loadScene(Fxmls.MediaPlayerFxml);
+        openScene(Fxmls.MediaPlayerFxml);
     }
 
     @FXML
     protected void openMediaList(ActionEvent event) {
-        loadScene(Fxmls.MediaListFxml);
+        openScene(Fxmls.MediaListFxml);
     }
 
     @FXML
     protected void openScreenRecorder(ActionEvent event) {
-        loadScene(Fxmls.FFmpegScreenRecorderFxml);
+        openScene(Fxmls.FFmpegScreenRecorderFxml);
     }
 
     @FXML
     protected void openFFmpegMergeImages(ActionEvent event) {
-        loadScene(Fxmls.FFmpegMergeImagesFxml);
+        openScene(Fxmls.FFmpegMergeImagesFxml);
     }
 
     @FXML
     protected void openFFmpegMergeImageFiles(ActionEvent event) {
-        loadScene(Fxmls.FFmpegMergeImageFilesFxml);
+        openScene(Fxmls.FFmpegMergeImageFilesFxml);
     }
 
     @FXML
     protected void openFFmpegInformation(ActionEvent event) {
-        loadScene(Fxmls.FFmpegInformationFxml);
+        openScene(Fxmls.FFmpegInformationFxml);
     }
 
     @FXML
     protected void openFFmpegProbeMediaInformation(ActionEvent event) {
-        loadScene(Fxmls.FFmpegProbeMediaInformationFxml);
+        openScene(Fxmls.FFmpegProbeMediaInformationFxml);
     }
 
     @FXML
     protected void openFFmpegConvertMediaFiles(ActionEvent event) {
-        loadScene(Fxmls.FFmpegConvertMediaFilesFxml);
+        openScene(Fxmls.FFmpegConvertMediaFilesFxml);
     }
 
     @FXML
     protected void openFFmpegConvertMediaStreams(ActionEvent event) {
-        loadScene(Fxmls.FFmpegConvertMediaStreamsFxml);
+        openScene(Fxmls.FFmpegConvertMediaStreamsFxml);
     }
 
     @FXML
     protected void openGameElimniation(ActionEvent event) {
-        loadScene(Fxmls.GameElimniationFxml);
+        openScene(Fxmls.GameElimniationFxml);
     }
 
     @FXML
     protected void openGameMine(ActionEvent event) {
-        loadScene(Fxmls.GameMineFxml);
+        openScene(Fxmls.GameMineFxml);
     }
 
 }

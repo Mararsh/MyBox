@@ -132,7 +132,7 @@ public abstract class BaseDataValuesController extends BaseController {
                 || !nodeEditor.checkBeforeNextAction()) {
             return;
         }
-        nodeEditor.editNode(null);
+        nodeEditor.editNull();
         if (task != null) {
             task.cancel();
         }

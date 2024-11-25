@@ -285,7 +285,7 @@ public class VisitHistoryTools {
                     menu.setOnAction(new EventHandler<ActionEvent>() {
                         @Override
                         public void handle(ActionEvent event) {
-                            controller.loadScene(fxml);
+                            controller.openScene(fxml);
                         }
                     });
                     menus.add(menu);
