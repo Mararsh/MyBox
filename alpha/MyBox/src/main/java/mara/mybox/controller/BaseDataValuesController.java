@@ -28,7 +28,7 @@ import mara.mybox.value.UserConfig;
  */
 public abstract class BaseDataValuesController extends BaseController {
 
-    protected ControlDataNodeEditor nodeEditor;
+    protected DataTreeNodeEditorController nodeEditor;
     protected BaseNodeTable nodeTable;
     protected boolean changed;
     protected TextInputControl valueInput;
@@ -40,7 +40,7 @@ public abstract class BaseDataValuesController extends BaseController {
         setFileType(VisitHistory.FileType.Text);
     }
 
-    public void setParameters(ControlDataNodeEditor controller) {
+    public void setParameters(DataTreeNodeEditorController controller) {
         try {
             this.nodeEditor = controller;
             this.parentController = nodeEditor;
@@ -132,7 +132,7 @@ public abstract class BaseDataValuesController extends BaseController {
                 || !nodeEditor.checkBeforeNextAction()) {
             return;
         }
-        nodeEditor.editNull();
+        nodeEditor.editNode(null);
         if (task != null) {
             task.cancel();
         }

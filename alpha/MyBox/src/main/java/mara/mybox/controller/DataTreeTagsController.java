@@ -130,10 +130,27 @@ public class DataTreeTagsController extends BaseTableViewController<DataTag> {
         }
     }
 
-    public void setParameters(ControlDataNodeTags controller) {
+    public void setEditor(ControlDataNodeTags controller) {
         try {
             nodeTagsController = controller;
             parentController = controller;
+
+            baseName = controller.baseName;
+            nodeTable = controller.nodeTable;
+            tagTable = controller.tagTable;
+            baseTitle = message("Tags") + " - " + nodeTable.getTreeName();
+
+            loadTags();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    public void setTree(DataTreeController controller) {
+        try {
+            nodeTagsController = null;
+            parentController = controller;
+
             baseName = controller.baseName;
             nodeTable = controller.nodeTable;
             tagTable = controller.tagTable;
@@ -330,10 +347,18 @@ public class DataTreeTagsController extends BaseTableViewController<DataTag> {
     /*
         static methods
      */
-    public static DataTreeTagsController open(ControlDataNodeTags tagsController) {
+    public static DataTreeTagsController edit(ControlDataNodeTags tagsController) {
         DataTreeTagsController controller = (DataTreeTagsController) WindowTools.branchStage(
                 tagsController, Fxmls.DataTreeTagsFxml);
-        controller.setParameters(tagsController);
+        controller.setEditor(tagsController);
+        controller.requestMouse();
+        return controller;
+    }
+
+    public static DataTreeTagsController manage(DataTreeController treeController) {
+        DataTreeTagsController controller = (DataTreeTagsController) WindowTools.branchStage(
+                treeController, Fxmls.DataTreeTagsFxml);
+        controller.setTree(treeController);
         controller.requestMouse();
         return controller;
     }

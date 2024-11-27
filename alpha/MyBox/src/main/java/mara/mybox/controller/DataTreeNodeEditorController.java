@@ -2,23 +2,17 @@ package mara.mybox.controller;
 
 import java.sql.Connection;
 import java.util.Date;
-import java.util.Optional;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.Region;
-import javafx.stage.Stage;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.DataNode;
-import static mara.mybox.db.data.DataNode.TitleSeparater;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.BaseNodeTable;
 import mara.mybox.db.table.TableDataNodeTag;
@@ -28,6 +22,7 @@ import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.DateTools;
+import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -35,13 +30,12 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2024-8-3
  * @License Apache License Version 2.0
  */
-public class ControlDataNodeEditor extends BaseController {
+public class DataTreeNodeEditorController extends BaseController {
 
-    protected DataTreeController treeController;
+    protected BaseDataTreeViewController treeController;
     protected BaseDataValuesController dataController;
 
-    protected String defaultExt;
-    protected final SimpleBooleanProperty nodeChanged;
+    protected SimpleBooleanProperty nodeChanged;
     protected boolean nodeExecutable, attributesChanged;
     protected BaseNodeTable nodeTable;
     protected TableDataTag tagTable;
@@ -59,9 +53,7 @@ public class ControlDataNodeEditor extends BaseController {
     @FXML
     protected ControlDataNodeTags tagsController;
 
-    public ControlDataNodeEditor() {
-        defaultExt = "txt";
-        nodeChanged = new SimpleBooleanProperty(false);
+    public DataTreeNodeEditorController() {
     }
 
     @Override
@@ -69,18 +61,14 @@ public class ControlDataNodeEditor extends BaseController {
         setFileType(VisitHistory.FileType.Text);
     }
 
-    public void setParameters(DataTreeController controller) {
+    public void setParameters(BaseDataTreeViewController controller) {
         try {
             treeController = controller;
             nodeTable = treeController.nodeTable;
             tagTable = treeController.tagTable;
             nodeTagsTable = treeController.nodeTagsTable;
-
             baseName = baseName + "_" + nodeTable.getTableName();
-            saveButton = controller.saveButton;
-            addButton = controller.addButton;
-            copyButton = controller.copyButton;
-            recoverButton = controller.recoverButton;
+            nodeChanged = new SimpleBooleanProperty(false);
 
             titleInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
@@ -103,36 +91,32 @@ public class ControlDataNodeEditor extends BaseController {
             dataController.refreshStyle();
             dataController.setParameters(this);
 
-            updateStatus();
-
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
-    protected boolean editNode(DataNode node) {
-        if (!checkBeforeNextAction()) {
-            return false;
-        }
+    public void editNode(DataNode node) {
         if (node == null) {
-            editNull();
-            return true;
+            currentNode = DataNode.createChild(parentNode, message("NewData"));
+            addNode(parentNode);
+            return;
         }
         if (task != null) {
             task.cancel();
         }
         task = new FxTask<Void>(this) {
+            private DataNode savedNode, savedParent;
 
             @Override
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
-                    currentNode = nodeTable.query(conn, node.getNodeid());
-                    if (currentNode != null) {
-                        parentNode = nodeTable.query(conn, currentNode.getParentid());
-                    } else {
-                        parentNode = null;
+                    savedNode = nodeTable.query(conn, node.getNodeid());
+                    if (savedNode == null) {
+                        return false;
                     }
-                    return true;
+                    savedParent = nodeTable.query(conn, savedNode.getParentid());
+                    return savedParent != null;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -141,73 +125,66 @@ public class ControlDataNodeEditor extends BaseController {
 
             @Override
             protected void whenSucceeded() {
-                try {
-                    loadAttributes();
-                    tagsController.loadTags();
-                    dataController.editValues();
-                    resetStatus();
-                } catch (Exception e) {
-                    MyBoxLog.error(e);
-                }
+                currentNode = savedNode;
+                parentNode = savedParent;
+                loadData();
+            }
+
+            @Override
+            protected void whenFailed() {
+                close();
+                treeController.popError(message("Invalid") + ": " + message("Node"));
             }
 
         };
         start(task, thisPane);
-        return true;
     }
 
-    protected void editNull() {
-        currentNode = null;
-        addAction();
+    public void addNode(DataNode parent) {
+        if (task != null) {
+            task.cancel();
+        }
+        task = new FxTask<Void>(this) {
+
+            private DataNode savedParent;
+
+            @Override
+            protected boolean handle() {
+                try (Connection conn = DerbyBase.getConnection()) {
+                    savedParent = nodeTable.query(conn, parent.getNodeid());
+                    return savedParent != null;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                parentNode = savedParent;
+                currentNode = DataNode.createChild(parentNode, message("NewData"));
+                loadData();
+            }
+
+            @Override
+            protected void whenFailed() {
+                close();
+                treeController.popError(message("Invalid") + ": " + message("Node"));
+            }
+
+        };
+        start(task);
     }
 
-    @Override
-    public boolean checkBeforeNextAction() {
-        if (!nodeChanged.get()) {
-            return true;
-        } else {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle(getMyStage().getTitle());
-            alert.setContentText(message("DataChanged"));
-            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-            ButtonType buttonSave = new ButtonType(message("Save"));
-            ButtonType buttonNotSave = new ButtonType(message("NotSave"));
-            ButtonType buttonCancel = new ButtonType(message("Cancel"));
-            alert.getButtonTypes().setAll(buttonSave, buttonNotSave, buttonCancel);
-            Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-            stage.setAlwaysOnTop(true);
-            stage.toFront();
-
-            Optional<ButtonType> result = alert.showAndWait();
-            if (result == null || !result.isPresent()) {
-                return false;
-            }
-            if (result.get() == buttonSave) {
-                saveAction();
-                return false;
-            } else if (result.get() == buttonNotSave) {
-                nodeChanged.set(false);
-                return true;
-            } else {
-                return false;
-            }
+    protected void loadData() {
+        try {
+            loadAttributes();
+            tagsController.loadTags();
+            dataController.editValues();
+            resetStatus();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
         }
-    }
-
-    protected String nodeTitle() {
-        String title = titleInput.getText();
-        if (title == null || title.isBlank()) {
-            popError(message("InvalidParameters") + ": " + message("Title"));
-            if (tabPane != null && nodeTab != null) {
-                tabPane.getSelectionModel().select(nodeTab);
-            }
-            return null;
-        }
-        if (title.contains(TitleSeparater)) {
-            popError(message("NameShouldNotInclude") + " \"" + TitleSeparater + "\"");
-            return null;
-        }
-        return title;
     }
 
     public void resetStatus() {
@@ -237,41 +214,38 @@ public class ControlDataNodeEditor extends BaseController {
             title += ": "
                     + (currentNode.getNodeid() < 0 ? message("NewData") : currentNode.getNodeid())
                     + " - " + currentNode.getTitle();
-            treeController.showRightPane();
         }
         setTitle(title + (changed ? " *" : ""));
-
-        thisPane.setVisible(currentNode != null && parentNode != null);
 
         nodeChanged.set(changed);
         isSettingValues = false;
     }
 
-    public void newNodeCreated() {
-        popInformation(message("InputNewNode"));
-        if (tabPane != null && nodeTab != null) {
-            tabPane.getSelectionModel().select(nodeTab);
-        }
-    }
-
     public boolean isNewNode() {
-        return currentNode == null || currentNode.getNodeid() < 0;
+        return currentNode.getNodeid() < 0;
     }
 
-    public void refreshNode() {
-        if (parentNode != null) {
-            parentNode = nodeTable.query(parentNode.getNodeid());
-            refreshParentNode();
+    public void refreshNode2() {
+        if (parentNode == null) {
+            popError(message("Invalid") + ": " + message("ParentNode"));
+            return;
         }
-
-        if (currentNode != null) {
-            currentNode = nodeTable.query(currentNode.getNodeid());
-            if (currentNode == null) {
-                resetStatus();
-                editNull();
-            }
+        parentNode = nodeTable.query(parentNode.getNodeid());
+        if (parentNode == null) {
+            close();
+            return;
         }
+        refreshParentNode();
 
+        if (currentNode == null) {
+            close();
+            return;
+        }
+        currentNode = nodeTable.query(currentNode.getNodeid());
+        if (currentNode == null) {
+            currentNode = DataNode.createChild(parentNode, message("NewData"));
+        }
+        loadData();
     }
 
     /*
@@ -292,18 +266,8 @@ public class ControlDataNodeEditor extends BaseController {
         timeInput.setText(DateTools.datetimeToString(currentNode.getUpdateTime()));
         isSettingValues = false;
 
-//        selectButton.setVisible(currentNode.getNodeid() < 0 || parentNode == null);
         refreshParentNode();
         attributesChanged(false);
-    }
-
-    public void renamed(String newName) {
-        if (titleInput == null) {
-            return;
-        }
-        isSettingValues = true;
-        titleInput.setText(newName);
-        isSettingValues = false;
     }
 
     public void attributesChanged(boolean changed) {
@@ -353,20 +317,13 @@ public class ControlDataNodeEditor extends BaseController {
     }
 
     protected void refreshParentNode() {
-        if (task != null) {
-            task.cancel();
-        }
-        task = new FxTask<Void>(this) {
+        FxTask ptask = new FxTask<Void>(this) {
             private String chainName;
 
             @Override
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
-                    if (parentNode == null) {
-                        chainName = "";
-                    } else {
-                        chainName = treeController.chainName(conn, parentNode);
-                    }
+                    chainName = treeController.chainName(conn, parentNode);
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -376,14 +333,10 @@ public class ControlDataNodeEditor extends BaseController {
 
             @Override
             protected void whenSucceeded() {
-                if (parentNode != null) {
-                    parentLabel.setText(parentNode.shortDescription(chainName));
-                } else {
-                    parentLabel.setText("");
-                }
+                parentLabel.setText(parentNode.shortDescription(chainName));
             }
         };
-        start(task, thisPane);
+        start(ptask, thisPane);
     }
 
     /*
@@ -415,10 +368,17 @@ public class ControlDataNodeEditor extends BaseController {
         task = new FxSingletonTask<Void>(this) {
             private DataNode savedNode;
             private long nodeid;
+            private boolean invalidParent;
 
             @Override
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
+                    parentNode = nodeTable.query(conn, parentNode.getNodeid());
+                    if (parentNode == null) {
+                        conn.close();
+                        invalidParent = true;
+                        return false;
+                    }
                     node.setUpdateTime(new Date());
                     savedNode = nodeTable.writeData(conn, node);
                     if (savedNode == null) {
@@ -455,64 +415,22 @@ public class ControlDataNodeEditor extends BaseController {
                 } else {
                     treeController.updateNode(savedNode);
                 }
+                treeController.popSaved();
                 resetStatus();
-                editNode(savedNode);
-                popSaved();
+                close();
+            }
+
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                if (invalidParent) {
+                    tabPane.getSelectionModel().select(nodeTab);
+                    popError(message("Invalid") + ": " + message("ParentNode"));
+                }
             }
 
         };
         start(task);
-    }
-
-    @FXML
-    @Override
-    public void addAction() {
-        try {
-            if (!treeController.checkBeforeNextAction()) {
-                return;
-            }
-            parentNode = currentNode;
-            currentNode = DataNode.create();
-            currentNode.setParentid(parentNode != null ? parentNode.getNodeid() : -1);
-            currentNode.setTitle(message("Node") + new Date().getTime());
-
-            loadAttributes();
-            tagsController.loadTags();
-            dataController.editValues();
-
-            dataController.changed = false;
-            tagsController.changed = false;
-            attributesChanged = false;
-            updateStatus();
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    @FXML
-    @Override
-    public void copyAction() {
-        try {
-            if (!treeController.checkBeforeNextAction()) {
-                return;
-            }
-            if (currentNode == null) {
-                addAction();
-                return;
-            }
-            currentNode = currentNode.copy();
-
-            loadAttributes();
-            tagsController.loadedTags.clear();
-            dataController.editValues();
-
-            dataController.changed = true;
-            tagsController.changed = true;
-            attributesChanged = true;
-            updateStatus();
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
     }
 
     @FXML
@@ -522,17 +440,10 @@ public class ControlDataNodeEditor extends BaseController {
         editNode(currentNode);
     }
 
-    public void pasteNode(DataNode node) {
-//        if (valueInput == null || node == null) {
-//            return;
-//        }
-//        String v = TreeNode.majorInfo(node);
-//        if (v == null || v.isBlank()) {
-//            return;
-//        }
-//        valueInput.replaceText(valueInput.getSelection(), v);
-//        valueInput.requestFocus();
-//        tabPane.getSelectionModel().select(valueTab);
+    @FXML
+    @Override
+    public void cancelAction() {
+        close();
     }
 
     @Override
@@ -551,6 +462,27 @@ public class ControlDataNodeEditor extends BaseController {
             return dataController.keyEventsFilter(event);
         }
         return false;
+    }
+
+    /*
+        static methods
+     */
+    public static DataTreeNodeEditorController editNode(BaseDataTreeViewController parent, DataNode node) {
+        DataTreeNodeEditorController controller = (DataTreeNodeEditorController) WindowTools.branchStage(
+                parent, Fxmls.DataTreeNodeEditorFxml);
+        controller.setParameters(parent);
+        controller.editNode(node);
+        controller.requestMouse();
+        return controller;
+    }
+
+    public static DataTreeNodeEditorController addNode(BaseDataTreeViewController parent, DataNode parentNode) {
+        DataTreeNodeEditorController controller = (DataTreeNodeEditorController) WindowTools.branchStage(
+                parent, Fxmls.DataTreeNodeEditorFxml);
+        controller.setParameters(parent);
+        controller.addNode(parentNode);
+        controller.requestMouse();
+        return controller;
     }
 
 }

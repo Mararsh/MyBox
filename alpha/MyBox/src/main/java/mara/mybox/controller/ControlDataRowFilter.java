@@ -169,7 +169,7 @@ public class ControlDataRowFilter extends BaseDataValuesController {
     public static DataTreeController open(String script, boolean matchTrue, long max) {
         try {
             DataTreeController controller = DataTreeController.rowFilter(null, false);
-            ((ControlDataRowFilter) controller.nodeController.dataController).edit(script, matchTrue, max);
+//            ((ControlDataRowFilter) controller.nodeController.dataController).edit(script, matchTrue, max);  ###########
             controller.requestMouse();
             return controller;
         } catch (Exception e) {

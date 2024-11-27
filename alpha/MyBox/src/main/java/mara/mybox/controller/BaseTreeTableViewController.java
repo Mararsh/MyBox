@@ -206,6 +206,7 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
         }
         TreeItem<NodeP> child = new TreeItem(node);
         parent.getChildren().add(child);
+        hierarchyNumber(child);
         child.setExpanded(false);
         if (select) {
             focusItem(child);

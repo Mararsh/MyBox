@@ -24,7 +24,7 @@ import mara.mybox.fxml.cell.TableColorCell;
  */
 public class ControlDataNodeTags extends BaseTableViewController<DataTag> {
 
-    protected ControlDataNodeEditor nodeEditor;
+    protected DataTreeNodeEditorController nodeEditor;
     protected BaseNodeTable nodeTable;
     protected TableDataTag tagTable;
     protected TableDataNodeTag nodeTagsTable;
@@ -51,7 +51,7 @@ public class ControlDataNodeTags extends BaseTableViewController<DataTag> {
         }
     }
 
-    public void setParameters(ControlDataNodeEditor controller) {
+    public void setParameters(DataTreeNodeEditorController controller) {
         try {
             this.nodeEditor = controller;
             this.parentController = nodeEditor;
@@ -175,7 +175,7 @@ public class ControlDataNodeTags extends BaseTableViewController<DataTag> {
 
     @FXML
     public void manageAction() {
-        DataTreeTagsController.open(this);
+        DataTreeTagsController.edit(this);
     }
 
     @Override

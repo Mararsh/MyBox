@@ -189,7 +189,7 @@ public class ControlDataJavascript extends BaseDataValuesController {
     public static DataTreeController open(ControlWebView controlWebView) {
         try {
             DataTreeController controller = DataTreeController.javascript(controlWebView, false);
-            ((ControlDataJavascript) controller.nodeController.dataController).setParameters(controlWebView);
+//            ((ControlDataJavascript) controller.nodeController.dataController).setParameters(controlWebView); ###########
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
@@ -201,7 +201,7 @@ public class ControlDataJavascript extends BaseDataValuesController {
     public static DataTreeController loadScript(String script) {
         try {
             DataTreeController controller = DataTreeController.javascript(null, false);
-            ((ControlDataJavascript) controller.nodeController.dataController).edit(script);
+//            ((ControlDataJavascript) controller.nodeController.dataController).edit(script);  ###########
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
@@ -213,7 +213,7 @@ public class ControlDataJavascript extends BaseDataValuesController {
     public static DataTreeController openFile(File file) {
         try {
             DataTreeController controller = DataTreeController.javascript(null, false);
-            ((ControlDataJavascript) controller.nodeController.dataController).selectSourceFile(file);
+//            ((ControlDataJavascript) controller.nodeController.dataController).selectSourceFile(file); ###########
             controller.requestMouse();
             return controller;
         } catch (Exception e) {

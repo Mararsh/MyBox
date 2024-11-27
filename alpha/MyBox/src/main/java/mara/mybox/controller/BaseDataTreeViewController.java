@@ -26,6 +26,8 @@ import mara.mybox.db.data.DataNode;
 import static mara.mybox.db.data.DataNode.TitleSeparater;
 import mara.mybox.db.table.BaseNodeTable;
 import static mara.mybox.db.table.BaseNodeTable.RootID;
+import mara.mybox.db.table.TableDataNodeTag;
+import mara.mybox.db.table.TableDataTag;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
@@ -33,6 +35,7 @@ import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.cell.TreeTableDateCell;
 import mara.mybox.fxml.cell.TreeTableIDCell;
+import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.StringTools;
@@ -49,7 +52,10 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
     protected static final int AutoExpandThreshold = 500;
     protected boolean expandAll;
     protected BaseNodeTable nodeTable;
+    protected TableDataTag tagTable;
+    protected TableDataNodeTag nodeTagsTable;
     protected String dataName;
+    protected DataNode currentNode;
 
     @FXML
     protected TreeTableColumn<DataNode, Long> idColumn;
@@ -61,11 +67,27 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
     protected Label titleLabel;
     @FXML
     protected Button helpButton;
+    @FXML
+    protected ControlWebView viewController;
 
 
     /*
         init
      */
+    @Override
+    public void initValues() {
+        try {
+            super.initValues();
+
+            if (viewController != null) {
+                viewController.initStyle = HtmlStyles.styleValue("Table");
+            }
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
     @Override
     public void initControls() {
         try {
@@ -116,6 +138,27 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
     /*
         tree
      */
+    public void initTree(BaseNodeTable table) {
+        try {
+            if (table == null) {
+                return;
+            }
+            nodeTable = table;
+            tagTable = new TableDataTag(nodeTable);
+            nodeTagsTable = new TableDataNodeTag(nodeTable);
+
+            dataName = nodeTable.getTableName();
+            baseName = baseName + "_" + dataName;
+            baseTitle = nodeTable.getTreeName();
+            setTitle(baseTitle);
+
+            loadTree();
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
     public void loadTree() {
         loadTree(null);
     }
@@ -178,6 +221,9 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
 
     public void updateNode(DataNode parent, DataNode node) {
         try {
+            if (currentNode != null && currentNode.equals(node)) {
+                showNode(node);
+            }
             TreeItem<DataNode> nodeItem = find(node);
             if (nodeItem == null) {
                 addNewNode(parent, node);
@@ -193,6 +239,7 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
             }
             try {
                 parentNode.getChildren().add(nodeItem);
+                hierarchyNumber(nodeItem);
             } catch (Exception e) {
                 return;
             }
@@ -204,11 +251,17 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
     }
 
     public void updateNode(DataNode node) {
-        TreeItem<DataNode> treeItem = find(node);
-        if (treeItem == null) {
+        if (node == null) {
             return;
         }
-        treeItem.setValue(node);
+        TreeItem<DataNode> treeItem = find(node);
+        if (treeItem != null) {
+            treeItem.setValue(node);
+            hierarchyNumber(treeItem);
+        }
+        if (currentNode != null && currentNode.equals(node)) {
+            showNode(node);
+        }
     }
 
     public void refreshItem(TreeItem<DataNode> item) {
@@ -400,7 +453,7 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
 
         MenuItem menu = new MenuItem(message("PopNode"), StyleTools.getIconImageView("iconPop.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
-            popNode(item);
+            popNode(item.getValue());
         });
         menu.setDisable(item == null);
         items.add(menu);
@@ -463,12 +516,15 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
     }
 
     @Override
-    public void doubleClicked(MouseEvent event, TreeItem<DataNode> item) {
-        popNode(item);
+    public void itemClicked(MouseEvent event, TreeItem<DataNode> item) {
+        if (item == null) {
+            return;
+        }
+        showNode(item.getValue());
     }
 
-    protected void popNode(TreeItem<DataNode> item) {
-        if (item == null || item.getValue() == null) {
+    protected void showNode(DataNode node) {
+        if (node == null || viewController == null) {
             return;
         }
         if (task != null) {
@@ -480,7 +536,60 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
             @Override
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
-                    html = nodeTable.nodeHtml(this, conn, controller, item.getValue(), 4);
+                    html = nodeTable.nodeHtml(this, conn, controller, node, 4);
+                    return html != null && !html.isBlank();
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                viewController.loadContents(html);
+                currentNode = node;
+            }
+
+        };
+        start(task, rightPane);
+    }
+
+    protected void editNode(DataNode node) {
+        if (node == null) {
+            return;
+        }
+        DataTreeNodeEditorController.editNode(this, node);
+    }
+
+    protected void addChild(DataNode node) {
+        if (node == null) {
+            return;
+        }
+        DataTreeNodeEditorController.addNode(this, node);
+    }
+
+    @Override
+    public void doubleClicked(MouseEvent event, TreeItem<DataNode> item) {
+        if (item == null) {
+            return;
+        }
+        popNode(item.getValue());
+    }
+
+    protected void popNode(DataNode node) {
+        if (node == null) {
+            return;
+        }
+        if (task != null) {
+            task.cancel();
+        }
+        task = new FxSingletonTask<Void>(this) {
+            private String html;
+
+            @Override
+            protected boolean handle() {
+                try (Connection conn = DerbyBase.getConnection()) {
+                    html = nodeTable.nodeHtml(this, conn, controller, node, 4);
                     return html != null && !html.isBlank();
                 } catch (Exception e) {
                     error = e.toString();
@@ -633,8 +742,20 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
         if (item == null) {
             return false;
         }
-        popNode(item);
+        popNode(item.getValue());
         return true;
+    }
+
+    @FXML
+    public void dataAction() {
+        if (currentNode == null) {
+            TreeItem<DataNode> item = selected();
+            if (item == null) {
+                return;
+            }
+            currentNode = item.getValue();
+        }
+        DataTreeNodeEditorController.editNode(this, currentNode);
     }
 
     @FXML

@@ -8,7 +8,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -19,7 +18,6 @@ import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.TreeItem;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import mara.mybox.db.DerbyBase;
@@ -27,8 +25,6 @@ import mara.mybox.db.data.DataNode;
 import static mara.mybox.db.data.DataNode.TitleSeparater;
 import mara.mybox.db.data.DataNodeTag;
 import mara.mybox.db.table.BaseNodeTable;
-import mara.mybox.db.table.TableDataNodeTag;
-import mara.mybox.db.table.TableDataTag;
 import mara.mybox.db.table.TableNodeData2DDefinition;
 import mara.mybox.db.table.TableNodeHtml;
 import mara.mybox.db.table.TableNodeImageScope;
@@ -63,34 +59,6 @@ import mara.mybox.value.UserConfig;
  */
 public class DataTreeController extends BaseDataTreeViewController {
 
-    protected TableDataTag tagTable;
-    protected TableDataNodeTag nodeTagsTable;
-
-    @FXML
-    protected ControlDataNodeEditor nodeController;
-
-    public void initTree(BaseNodeTable table) {
-        try {
-            if (table == null) {
-                return;
-            }
-            nodeTable = table;
-            tagTable = new TableDataTag(nodeTable);
-            nodeTagsTable = new TableDataNodeTag(nodeTable);
-
-            dataName = nodeTable.getTableName();
-            baseName = baseName + "_" + dataName;
-            baseTitle = nodeTable.getTreeName();
-            setTitle(baseTitle);
-
-            nodeController.setParameters(this);
-            loadTree();
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
     /*
         tree
      */
@@ -103,15 +71,6 @@ public class DataTreeController extends BaseDataTreeViewController {
                 importExamples(null);
             }
         }
-    }
-
-    public boolean editNode(DataNode node) {
-        return nodeController.editNode(node);
-    }
-
-    @Override
-    public void itemClicked(MouseEvent event, TreeItem<DataNode> item) {
-        clicked(UserConfig.getString(baseName + "WhenLeftClickNode", "Edit"), item);
     }
 
     @Override
@@ -132,24 +91,15 @@ public class DataTreeController extends BaseDataTreeViewController {
             case "PopMenu":
                 showPopMenu(item);
                 break;
-            case "Edit":
-                editNode(item);
-                break;
-            case "Paste":
-                pasteNode(item);
+            case "EditNode":
+                editNode(item.getValue());
                 break;
             case "PopNode":
-                popNode(item);
+                popNode(item.getValue());
                 break;
-            case "Execute":
+            case "ExecuteNode":
                 executeNode(item);
                 break;
-//            case "LoadChildren":
-//                listChildren(item);
-//                break;
-//            case "LoadDescendants":
-//                listDescentants(item);
-//                break;
             default:
                 break;
         }
@@ -166,7 +116,6 @@ public class DataTreeController extends BaseDataTreeViewController {
 
         items.add(new SeparatorMenuItem());
 
-        items.add(leftClickMenu(treeItem));
         items.add(doubleClickMenu(treeItem));
         items.add(rightClickMenu(treeItem));
 
@@ -174,13 +123,16 @@ public class DataTreeController extends BaseDataTreeViewController {
     }
 
     public List<MenuItem> updateMenuItems(TreeItem<DataNode> treeItem) {
-        boolean isRoot = treeItem == null || isRoot(treeItem.getValue());
+        if (treeItem == null) {
+            return null;
+        }
+        boolean isRoot = isRoot(treeItem.getValue());
 
         List<MenuItem> items = new ArrayList<>();
 
         MenuItem menu = new MenuItem(message("AddNode"), StyleTools.getIconImageView("iconAdd.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
-            addChild(treeItem);
+            addChild(treeItem.getValue());
         });
         items.add(menu);
 
@@ -195,6 +147,7 @@ public class DataTreeController extends BaseDataTreeViewController {
             deleteDescendants(treeItem);
         });
         items.add(menu);
+
         menu = new MenuItem(message("RenameNode"), StyleTools.getIconImageView("iconInput.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             renameNode(treeItem);
@@ -214,10 +167,9 @@ public class DataTreeController extends BaseDataTreeViewController {
             moveNode(treeItem);
         });
         menu.setDisable(isRoot);
-        menu.setDisable(treeItem == null);
         items.add(menu);
 
-        if (nodeController.nodeExecutable) {
+        if (nodeTable.isNodeExecutable()) {
             menu = new MenuItem(message("Execute"), StyleTools.getIconImageView("iconGo.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 executeNode(treeItem);
@@ -228,17 +180,7 @@ public class DataTreeController extends BaseDataTreeViewController {
 
         menu = new MenuItem(message("EditNode"), StyleTools.getIconImageView("iconEdit.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
-            editNode(treeItem);
-        });
-        menu.setDisable(treeItem == null);
-        items.add(menu);
-
-        menu = new MenuItem(message("PasteNodeValueToCurrentEdit"), StyleTools.getIconImageView("iconPaste.png"));
-        menu.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                pasteNode(treeItem);
-            }
+            editNode(treeItem.getValue());
         });
         items.add(menu);
 
@@ -254,7 +196,7 @@ public class DataTreeController extends BaseDataTreeViewController {
 
         MenuItem menu = new MenuItem(message("Tags"), StyleTools.getIconImageView("iconTag.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
-            nodeController.tagsController.manageAction();
+            DataTreeTagsController.manage(this);
         });
         items.add(menu);
 
@@ -285,12 +227,6 @@ public class DataTreeController extends BaseDataTreeViewController {
         return items;
     }
 
-    public Menu leftClickMenu(TreeItem<DataNode> treeItem) {
-        Menu clickMenu = new Menu(message("WhenLeftClickNode"), StyleTools.getIconImageView("iconSelect.png"));
-        clickMenu(treeItem, clickMenu, "WhenLeftClickNode", "Edit");
-        return clickMenu;
-    }
-
     public Menu doubleClickMenu(TreeItem<DataNode> treeItem) {
         Menu clickMenu = new Menu(message("WhenDoubleClickNode"), StyleTools.getIconImageView("iconSelectAll.png"));
         clickMenu(treeItem, clickMenu, "WhenDoubleClickNode", "PopNode");
@@ -308,11 +244,11 @@ public class DataTreeController extends BaseDataTreeViewController {
         String currentClick = UserConfig.getString(baseName + key, defaultAction);
 
         RadioMenuItem editNodeMenu = new RadioMenuItem(message("EditNode"), StyleTools.getIconImageView("iconEdit.png"));
-        editNodeMenu.setSelected("Edit".equals(currentClick));
+        editNodeMenu.setSelected("EditNode".equals(currentClick));
         editNodeMenu.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                UserConfig.setString(baseName + key, "Edit");
+                UserConfig.setString(baseName + key, "EditNode");
             }
         });
         editNodeMenu.setToggleGroup(clickGroup);
@@ -327,50 +263,20 @@ public class DataTreeController extends BaseDataTreeViewController {
         });
         popNodeMenu.setToggleGroup(clickGroup);
 
-        RadioMenuItem pasteNodeMenu = new RadioMenuItem(message("PasteNodeValueToCurrentEdit"), StyleTools.getIconImageView("iconPaste.png"));
-        pasteNodeMenu.setSelected("Paste".equals(currentClick));
-        pasteNodeMenu.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                UserConfig.setString(baseName + key, "Paste");
-            }
-        });
-        pasteNodeMenu.setToggleGroup(clickGroup);
+        menu.getItems().addAll(editNodeMenu, popNodeMenu);
 
-        menu.getItems().addAll(editNodeMenu, pasteNodeMenu, popNodeMenu);
-
-        if (nodeController.nodeExecutable) {
+        if (nodeTable.isNodeExecutable()) {
             RadioMenuItem executeNodeMenu = new RadioMenuItem(message("Execute"), StyleTools.getIconImageView("iconGo.png"));
-            executeNodeMenu.setSelected("Execute".equals(currentClick));
+            executeNodeMenu.setSelected("ExecuteNode".equals(currentClick));
             executeNodeMenu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    UserConfig.setString(baseName + key, "Execute");
+                    UserConfig.setString(baseName + key, "ExecuteNode");
                 }
             });
             executeNodeMenu.setToggleGroup(clickGroup);
             menu.getItems().add(executeNodeMenu);
         }
-
-        RadioMenuItem loadChildrenMenu = new RadioMenuItem(message("LoadChildren"), StyleTools.getIconImageView("iconList.png"));
-        loadChildrenMenu.setSelected("LoadChildren".equals(currentClick));
-        loadChildrenMenu.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                UserConfig.setString(baseName + key, "LoadChildren");
-            }
-        });
-        loadChildrenMenu.setToggleGroup(clickGroup);
-
-        RadioMenuItem loadDescendantsMenu = new RadioMenuItem(message("LoadDescendants"), StyleTools.getIconImageView("iconList.png"));
-        loadDescendantsMenu.setSelected("LoadDescendants".equals(currentClick));
-        loadDescendantsMenu.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                UserConfig.setString(baseName + key, "LoadDescendants");
-            }
-        });
-        loadDescendantsMenu.setToggleGroup(clickGroup);
 
         RadioMenuItem nothingMenu = new RadioMenuItem(message("DoNothing"));
         nothingMenu.setSelected(currentClick == null || "DoNothing".equals(currentClick));
@@ -392,7 +298,7 @@ public class DataTreeController extends BaseDataTreeViewController {
         });
         clickPopMenu.setToggleGroup(clickGroup);
 
-        menu.getItems().addAll(loadChildrenMenu, loadDescendantsMenu, clickPopMenu, nothingMenu);
+        menu.getItems().addAll(clickPopMenu, nothingMenu);
 
         return menu;
     }
@@ -422,83 +328,6 @@ public class DataTreeController extends BaseDataTreeViewController {
         items.addAll(operationsMenuItems(item));
 
         popNodeMenu(treeView, items);
-    }
-
-    @Override
-    protected void viewNode(TreeItem<DataNode> item) {
-        popNode(item);
-    }
-
-    public void addChild(TreeItem<DataNode> targetItem) {
-        if (targetItem == null) {
-            popError(message("SelectToHandle"));
-            return;
-        }
-        DataNode targetNode = targetItem.getValue();
-        if (targetNode == null) {
-            popError(message("SelectToHandle"));
-            return;
-        }
-        String chainName = chainName(targetItem);
-        String title = PopTools.askValue(getBaseTitle(), chainName, message("Add"), message("Node") + "m");
-        if (title == null || title.isBlank()) {
-            return;
-        }
-        if (title.contains(TitleSeparater)) {
-            popError(message("NameShouldNotInclude") + " \"" + TitleSeparater + "\"");
-            return;
-        }
-        if (task != null) {
-            task.cancel();
-        }
-        task = new FxSingletonTask<Void>(this) {
-            private DataNode newNode;
-
-            @Override
-            protected boolean handle() {
-                try (Connection conn = DerbyBase.getConnection()) {
-                    DataNode savedValues = nodeTable.writeData(conn, new DataNode());
-                    if (savedValues == null) {
-                        conn.close();
-                        error = message("Failed");
-                        return false;
-                    }
-                    conn.commit();
-
-                    long nodeid = savedValues.getNodeid();
-                    if (nodeid < 0) {
-                        conn.close();
-                        error = message("Failed");
-                        return false;
-                    }
-                    newNode = DataNode.create().setNodeid(nodeid)
-                            .setParentid(targetNode.getNodeid())
-                            .setTitle(title).setUpdateTime(new Date());
-
-                    DataNode savedNode = nodeTable.writeData(conn, newNode);
-                    if (savedNode == null) {
-                        conn.close();
-                        return false;
-                    }
-                    conn.commit();
-                    return true;
-                } catch (Exception e) {
-                    error = e.toString();
-                    return false;
-                }
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                TreeItem<DataNode> newItem = new TreeItem<>(newNode);
-                targetItem.getChildren().add(newItem);
-                targetItem.setExpanded(true);
-                nodeAdded(targetItem.getValue(), newNode);
-                popSuccessful();
-            }
-
-        };
-        start(task);
     }
 
     protected void deleteNodeAndDescendants(TreeItem<DataNode> item) {
@@ -539,7 +368,6 @@ public class DataTreeController extends BaseDataTreeViewController {
 
             @Override
             protected void whenSucceeded() {
-                nodeController.refreshNode();
                 if (isRoot) {
                     loadTree(null);
                 } else {
@@ -590,7 +418,6 @@ public class DataTreeController extends BaseDataTreeViewController {
 
             @Override
             protected void whenSucceeded() {
-                nodeController.refreshNode();
                 item.getChildren().clear();
                 popSuccessful();
             }
@@ -635,7 +462,6 @@ public class DataTreeController extends BaseDataTreeViewController {
             protected void whenSucceeded() {
                 item.setValue(updatedNode);
                 treeView.refresh();
-                nodeRenamed(updatedNode);
                 popSuccessful();
             }
         };
@@ -659,20 +485,6 @@ public class DataTreeController extends BaseDataTreeViewController {
         String chainName = chainName(item);
         InfoTreeNodeMoveController controller = (InfoTreeNodeMoveController) childStage(Fxmls.InfoTreeNodeMoveFxml);
 //        controller.setParameters(manager, item.getValue(), chainName);
-    }
-
-    protected void editNode(TreeItem<DataNode> item) {
-        if (item == null) {
-            return;
-        }
-        editNode(item.getValue());
-    }
-
-    protected void pasteNode(TreeItem<DataNode> item) {
-        if (item == null) {
-            return;
-        }
-//        manager.pasteNode(item.getValue());
     }
 
     protected void executeNode(TreeItem<DataNode> item) {
@@ -866,198 +678,16 @@ public class DataTreeController extends BaseDataTreeViewController {
 
     }
 
-
-    /*
-        node
-     */
-    @Override
-    public void sourceFileChanged(File file) {
-        nodeController.sourceFileChanged(file);
-    }
-
-    @Override
-    public boolean checkBeforeNextAction() {
-        return nodeController.checkBeforeNextAction();
-    }
-
-    @Override
-    public boolean keyEventsFilter(KeyEvent event) {
-        if (nodeController == null) {
-            return super.keyEventsFilter(event);
-        }
-        if (nodeController.thisPane.isFocused() || nodeController.thisPane.isFocusWithin()) {
-            if (nodeController.keyEventsFilter(event)) {
-                return true;
-            }
-        }
-        if (super.keyEventsFilter(event)) {
-            return true;
-        }
-        return nodeController.keyEventsFilter(event); // pass event to editor
-    }
-
-    @FXML
-    @Override
-    public void saveAction() {
-        if (nodeController != null) {
-            nodeController.saveAction();
-        }
-    }
-
-    @FXML
-    @Override
-    public void addAction() {
-        if (nodeController != null) {
-            nodeController.addAction();
-        }
-    }
-
-    @FXML
-    @Override
-    public void copyAction() {
-        if (nodeController != null) {
-            nodeController.copyAction();
-        }
-    }
-
-    @FXML
-    @Override
-    public void recoverAction() {
-        if (nodeController != null) {
-            nodeController.recoverAction();
-        }
-    }
-
     @FXML
     protected void moveAction() {
 //        InfoTreeNodesMoveController.oneOpen(this);
-    }
-
-    public void pasteNode(DataNode node) {
-        nodeController.pasteNode(node);
     }
 
     public void executeNode(DataNode node) {
         if (node == null) {
             return;
         }
-        editNode(node);
-        if (nodeController.startButton != null) {
-            nodeController.startAction();
-        } else if (nodeController.goButton != null) {
-            nodeController.goAction();
-        } else if (startButton != null) {
-            startAction();
-        } else if (goButton != null) {
-            goAction();
-        }
-    }
 
-    /*
-        synchronize
-     */
-    @Override
-    public void nodeAdded(DataNode parent, DataNode newNode) {
-        if (parent == null || newNode == null) {
-            return;
-        }
-
-    }
-
-    public void nodeRenamed(DataNode node) {
-        if (node == null) {
-            return;
-        }
-        long id = node.getNodeid();
-
-        if (nodeController.parentNode != null
-                && id == nodeController.parentNode.getNodeid()) {
-            nodeController.parentNode = node;
-        }
-        if (nodeController.currentNode != null
-                && id == nodeController.currentNode.getNodeid()) {
-            nodeController.renamed(node.getTitle());
-        }
-    }
-
-    public void nodeMoved(DataNode parent, DataNode node) {
-        if (parent == null || node == null) {
-            return;
-        }
-        long id = node.getNodeid();
-
-        if (nodeController.currentNode != null
-                && id == nodeController.currentNode.getNodeid()) {
-//            nodeController.attributesController.setParentNode(parent);
-        }
-        if (nodeController.parentNode != null
-                && id == nodeController.parentNode.getNodeid()) {
-//            nodeController.attributesController.setParentNode(node);
-        }
-    }
-
-    public void nodesCopied(DataNode parent) {
-        loadTree(parent);
-    }
-
-    public void nodesDeleted() {
-        task = new FxSingletonTask<Void>(this) {
-
-            @Override
-            protected boolean handle() {
-                try (Connection conn = DerbyBase.getConnection()) {
-//                    tableController.loadedParent = tableTree.readData(conn, tableController.loadedParent);
-                    nodeController.currentNode
-                            = nodeTable.readData(conn, nodeController.currentNode);
-                    nodeController.parentNode
-                            = nodeTable.readData(conn, nodeController.parentNode);
-                } catch (Exception e) {
-                    error = e.toString();
-                    return false;
-                }
-                return true;
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                nodeController.editNode(nodeController.currentNode);
-//                treeController.loadTree(tableController.loadedParent);
-            }
-        };
-        start(task);
-    }
-
-    public void nodeSaved() {
-        if (nodeController.currentNode == null) {
-            return;
-        }
-        updateNode(nodeController.currentNode);
-        nodeController.resetStatus();
-    }
-
-    public void newNodeSaved() {
-        if (nodeController.currentNode == null) {
-            return;
-        }
-        addNewNode(find(nodeController.parentNode),
-                nodeController.currentNode, false);
-        nodeController.resetStatus();
-    }
-
-    public void nodeChanged() {
-        if (isSettingValues) {
-            return;
-        }
-        String currentTitle = getTitle();
-        if (nodeController.nodeChanged.get()) {
-            if (!currentTitle.endsWith(" *")) {
-                setTitle(currentTitle + " *");
-            }
-        } else {
-            if (currentTitle.endsWith(" *")) {
-                setTitle(currentTitle.substring(0, currentTitle.length() - 2));
-            }
-        }
     }
 
 

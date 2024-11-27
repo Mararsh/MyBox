@@ -51,7 +51,7 @@ public class DataTreeParentController extends DataTreeNodeSelectController {
 
             @Override
             protected void whenSucceeded() {
-                treeController.nodeController.setParentNode(targetNode);
+//                treeController.nodeController.setParentNode(targetNode);
                 close();
             }
         };
@@ -62,7 +62,7 @@ public class DataTreeParentController extends DataTreeNodeSelectController {
     /*
         static methods
      */
-    public static DataTreeParentController open(DataTreeController parent, DataNode node) {
+    public static DataTreeParentController open(BaseDataTreeViewController parent, DataNode node) {
         DataTreeParentController controller = (DataTreeParentController) WindowTools.childStage(
                 parent, Fxmls.DataTreeParentFxml);
         controller.setParameters(parent, node);

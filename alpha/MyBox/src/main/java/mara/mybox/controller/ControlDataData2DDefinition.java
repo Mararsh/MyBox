@@ -214,7 +214,7 @@ public class ControlDataData2DDefinition extends BaseDataValuesController {
     public static DataTreeController loadData(Data2D data) {
         try {
             DataTreeController controller = DataTreeController.data2DDefinition(null, false);
-            ((ControlDataData2DDefinition) controller.nodeController.dataController).load(data);
+//            ((ControlDataData2DDefinition) controller.nodeController.dataController).load(data); ###########
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
@@ -222,5 +222,4 @@ public class ControlDataData2DDefinition extends BaseDataValuesController {
             return null;
         }
     }
-
 }

@@ -37,10 +37,12 @@ public class BaseNodeTable extends BaseTable<DataNode> {
     public static final String NodeFields = "nodeid,title,order_number,update_time,parentid";
 
     protected String treeName, dataName, dataFxml, examplesFileName;
+    protected boolean nodeExecutable;
 
     public BaseNodeTable() {
         idColumnName = "nodeid";
         orderColumns = "order_number,nodeid ASC";
+        nodeExecutable = false;
     }
 
     public final BaseNodeTable defineNodeColumns() {
@@ -723,7 +725,10 @@ public class BaseNodeTable extends BaseTable<DataNode> {
             String indentNode = " ".repeat(indent);
             String spaceNode = "&nbsp;".repeat(indent);
             String nodeName = node.getTitle();
-            String displayName = "<SPAN class=\"SerialNumber\">" + node.getHierarchyNumber() + "&nbsp;&nbsp;</SPAN>" + nodeName;
+            String hierarchyNumber = node.getHierarchyNumber();
+            String displayName = "<SPAN class=\"SerialNumber\">"
+                    + (hierarchyNumber != null ? hierarchyNumber : "")
+                    + "&nbsp;&nbsp;</SPAN>" + nodeName;
 
             String html = indentNode + "<DIV style=\"padding: 2px;\">" + spaceNode + displayName + "\n";
             List<DataNodeTag> tags = new TableDataNodeTag(this).nodeTags(conn, nodeid);
@@ -800,6 +805,14 @@ public class BaseNodeTable extends BaseTable<DataNode> {
     public BaseNodeTable setExamplesFileName(String examplesFileName) {
         this.examplesFileName = examplesFileName;
         return this;
+    }
+
+    public boolean isNodeExecutable() {
+        return nodeExecutable;
+    }
+
+    public void setNodeExecutable(boolean nodeExecutable) {
+        this.nodeExecutable = nodeExecutable;
     }
 
 }

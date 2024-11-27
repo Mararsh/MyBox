@@ -110,47 +110,11 @@ License:    Apache License Version 2.0
                                     </ImageView>
                                     <FlowPane fx:id="opPane" alignment="CENTER_RIGHT" hgap="2.0" maxWidth="1.7976931348623157E308" vgap="2.0" HBox.hgrow="ALWAYS">
                                        <children>
-                                          <Button fx:id="popButton" layoutX="319.0" layoutY="10.0" mnemonicParsing="false" onAction="#popAction">
+                                          <Button fx:id="dataButton" mnemonicParsing="false" onAction="#dataAction">
                                              <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                    <image>
-                                                      <Image url="@../buttons/Red/iconPop.png" />
-                                                   </image>
-                                                </ImageView>
-                                             </graphic>
-                                          </Button>
-                                          <Button fx:id="recoverButton" mnemonicParsing="false" onAction="#recoverAction">
-                                             <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../buttons/Red/iconRecover.png" />
-                                                   </image>
-                                                </ImageView>
-                                             </graphic>
-                                          </Button>
-                                          <Button fx:id="copyButton" mnemonicParsing="false" onAction="#copyAction">
-                                             <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../buttons/Red/iconCopy.png" />
-                                                   </image>
-                                                </ImageView>
-                                             </graphic>
-                                          </Button>
-                                          <Button fx:id="addButton" mnemonicParsing="false" onAction="#addAction">
-                                             <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../buttons/Red/iconAdd.png" />
-                                                   </image>
-                                                </ImageView>
-                                             </graphic>
-                                          </Button>
-                                          <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction">
-                                             <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../buttons/Red/iconSave.png" />
+                                                      <Image url="@../buttons/Red/iconData.png" />
                                                    </image>
                                                 </ImageView>
                                              </graphic>
@@ -159,7 +123,7 @@ License:    Apache License Version 2.0
                                     </FlowPane>
                                  </children>
                               </HBox>
-                              <fx:include fx:id="node" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlDataNodeEditor.fxml" VBox.vgrow="ALWAYS" />
+                              <fx:include fx:id="view" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlHtmlView.fxml" VBox.vgrow="ALWAYS" />
                                     </children>
                                     <padding>
                                         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />

@@ -7,12 +7,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TreeItem;
 import javafx.scene.input.MouseEvent;
-import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.DataNode;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
-import mara.mybox.fxml.style.HtmlStyles;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -22,27 +19,13 @@ import static mara.mybox.value.Languages.message;
  */
 public class DataTreeNodeSelectController extends BaseDataTreeViewController {
 
-    protected DataTreeController treeController;
+    protected BaseDataTreeViewController treeController;
     protected DataNode sourceNode;
 
     @FXML
     protected Label nodeLabel;
-    @FXML
-    protected ControlWebView viewController;
 
-    @Override
-    public void initValues() {
-        try {
-            super.initValues();
-
-            viewController.initStyle = HtmlStyles.styleValue("Table");
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    public void setParameters(DataTreeController controller, DataNode node) {
+    public void setParameters(BaseDataTreeViewController controller, DataNode node) {
         try {
             this.treeController = controller;
             if (!treeRunning()) {
@@ -81,37 +64,6 @@ public class DataTreeNodeSelectController extends BaseDataTreeViewController {
     @Override
     public boolean isSourceNode(DataNode node) {
         return equalNode(node, sourceNode);
-    }
-
-    @Override
-    public void itemClicked(MouseEvent event, TreeItem<DataNode> item) {
-        if (item == null || item.getValue() == null) {
-            return;
-        }
-        if (task != null) {
-            task.cancel();
-        }
-        task = new FxSingletonTask<Void>(this) {
-            private String html;
-
-            @Override
-            protected boolean handle() {
-                try (Connection conn = DerbyBase.getConnection()) {
-                    html = nodeTable.nodeHtml(this, conn, controller, item.getValue(), 4);
-                    return html != null && !html.isBlank();
-                } catch (Exception e) {
-                    error = e.toString();
-                    return false;
-                }
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                viewController.loadContents(html);
-            }
-
-        };
-        start(task, thisPane);
     }
 
     @Override
