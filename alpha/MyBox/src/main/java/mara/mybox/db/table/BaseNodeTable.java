@@ -657,7 +657,11 @@ public class BaseNodeTable extends BaseTable<DataNode> {
             row.add("<CODE>" + value + "</CODE>");
             table.add(row);
         }
-        return table.div();
+        if (table.isEmpty()) {
+            return null;
+        } else {
+            return table.div();
+        }
     }
 
     public String escapeXML(String column, String value) {

@@ -1041,6 +1041,10 @@ public class Data2DManufactureController extends BaseData2DViewController {
         }
     }
 
+    public static Data2DManufactureController openCSVFile(File file) {
+        return openCSVFile(file, Charset.forName("UTF-8"), true, ",");
+    }
+
     public static Data2DManufactureController openExcelFile(File file, String sheet, boolean withNames) {
         try {
             Data2DManufactureController controller = open();

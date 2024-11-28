@@ -31,11 +31,13 @@ import mara.mybox.db.table.TableDataNodeTag;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.style.HtmlStyles;
+import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.TextTools;
 import static mara.mybox.value.AppValues.Indent;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
+import org.apache.commons.csv.CSVPrinter;
 
 /**
  * @Author Mara
@@ -48,8 +50,11 @@ public class DataTreeExportController extends BaseTaskController {
     protected BaseNodeTable nodeTable;
     protected TableDataNodeTag nodeTagsTable;
     protected TreeItem<DataNode> sourceItem;
-    protected File xmlFile, jsonFile, htmlFile, framesetFile, framesetNavFile;
-    protected FileWriter htmlWriter, xmlWriter, jsonWriter, framesetNavWriter;
+    protected File treeXmlFile, treeHtmlFile, listJsonFile, listHtmlFile, listXmlFile,
+            listCsvFile, framesetFile, framesetNavFile;
+    protected FileWriter treeHtmlWriter, treeXmlWriter, listJsonWriter, listHtmlWriter,
+            listXmlWriter, framesetNavWriter;
+    protected CSVPrinter csvPrinter;
     protected String dataName;
     protected int count, level;
     protected Charset charset;
@@ -57,7 +62,8 @@ public class DataTreeExportController extends BaseTaskController {
 
     @FXML
     protected CheckBox idCheck, timeCheck, tagsCheck, orderCheck, parentCheck,
-            htmlCheck, xmlCheck, jsonCheck, framesetCheck;
+            dataCheck, treeXmlCheck, treeHtmlCheck, listJsonCheck, listCsvCheck,
+            listXmlCheck, listHtmlCheck, framesetCheck;
     @FXML
     protected ComboBox<String> charsetSelector;
     @FXML
@@ -135,11 +141,59 @@ public class DataTreeExportController extends BaseTaskController {
                 }
             });
 
-            htmlCheck.setSelected(UserConfig.getBoolean(baseName + "Html", false));
-            htmlCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            dataCheck.setSelected(UserConfig.getBoolean(baseName + "Data", true));
+            dataCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
-                    UserConfig.setBoolean(baseName + "Html", htmlCheck.isSelected());
+                    UserConfig.setBoolean(baseName + "Data", dataCheck.isSelected());
+                }
+            });
+
+            treeHtmlCheck.setSelected(UserConfig.getBoolean(baseName + "TreeHtml", true));
+            treeHtmlCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
+                    UserConfig.setBoolean(baseName + "TreeHtml", treeHtmlCheck.isSelected());
+                }
+            });
+
+            treeXmlCheck.setSelected(UserConfig.getBoolean(baseName + "TreeXml", true));
+            treeXmlCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
+                    UserConfig.setBoolean(baseName + "TreeXml", treeXmlCheck.isSelected());
+                }
+            });
+
+            listHtmlCheck.setSelected(UserConfig.getBoolean(baseName + "ListHtml", false));
+            listHtmlCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
+                    UserConfig.setBoolean(baseName + "ListHtml", listHtmlCheck.isSelected());
+                }
+            });
+
+            listXmlCheck.setSelected(UserConfig.getBoolean(baseName + "ListXML", false));
+            listXmlCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
+                    UserConfig.setBoolean(baseName + "ListXML", listXmlCheck.isSelected());
+                }
+            });
+
+            listCsvCheck.setSelected(UserConfig.getBoolean(baseName + "ListCSV", false));
+            listCsvCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
+                    UserConfig.setBoolean(baseName + "ListCSV", listCsvCheck.isSelected());
+                }
+            });
+
+            listJsonCheck.setSelected(UserConfig.getBoolean(baseName + "ListJson", false));
+            listJsonCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
+                    UserConfig.setBoolean(baseName + "ListJson", listJsonCheck.isSelected());
                 }
             });
 
@@ -148,22 +202,6 @@ public class DataTreeExportController extends BaseTaskController {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
                     UserConfig.setBoolean(baseName + "Frameset", framesetCheck.isSelected());
-                }
-            });
-
-            xmlCheck.setSelected(UserConfig.getBoolean(baseName + "Xml", false));
-            xmlCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
-                    UserConfig.setBoolean(baseName + "Xml", xmlCheck.isSelected());
-                }
-            });
-
-            jsonCheck.setSelected(UserConfig.getBoolean(baseName + "Json", false));
-            jsonCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
-                    UserConfig.setBoolean(baseName + "Json", jsonCheck.isSelected());
                 }
             });
 
@@ -196,17 +234,26 @@ public class DataTreeExportController extends BaseTaskController {
             close();
             return false;
         }
-        xmlFile = null;
-        htmlFile = null;
-        jsonFile = null;
+        treeXmlFile = null;
+        treeHtmlFile = null;
+        listJsonFile = null;
+        listHtmlFile = null;
+        listXmlFile = null;
+        listCsvFile = null;
         framesetFile = null;
-        htmlWriter = null;
-        xmlWriter = null;
-        jsonWriter = null;
+        framesetNavFile = null;
+        treeXmlWriter = null;
+        treeHtmlWriter = null;
+        listHtmlWriter = null;
+        listXmlWriter = null;
+        listJsonWriter = null;
         framesetNavWriter = null;
+        csvPrinter = null;
         level = count = 0;
-        if (!htmlCheck.isSelected() && !framesetCheck.isSelected()
-                && !xmlCheck.isSelected() && !jsonCheck.isSelected()) {
+        if (!listHtmlCheck.isSelected() && !framesetCheck.isSelected()
+                && !treeXmlCheck.isSelected() && !treeHtmlCheck.isSelected()
+                && !listCsvCheck.isSelected() && !listXmlCheck.isSelected()
+                && !listJsonCheck.isSelected()) {
             popError(message("NothingSave"));
             return false;
         }
@@ -279,13 +326,13 @@ public class DataTreeExportController extends BaseTaskController {
             String chainName = treeController.chainName(sourceItem);
             String prefix = chainName.replaceAll(DataNode.TitleSeparater, "-");
 
-            if (htmlCheck.isSelected()) {
-                htmlFile = makeTargetFile(prefix, ".html", targetPath);
-                if (htmlFile != null) {
-                    showLogs(message("Writing") + " " + htmlFile.getAbsolutePath());
-                    htmlWriter = new FileWriter(htmlFile, charset);
-                    writeHtmlHead(htmlWriter, chainName);
-                    htmlWriter.write(Indent + "<BODY>\n" + Indent + Indent + "<H2>" + chainName + "</H2>\n");
+            if (listHtmlCheck.isSelected()) {
+                listHtmlFile = makeTargetFile(prefix, ".html", targetPath);
+                if (listHtmlFile != null) {
+                    showLogs(message("Writing") + " " + listHtmlFile.getAbsolutePath());
+                    listHtmlWriter = new FileWriter(listHtmlFile, charset);
+                    writeListHtmlHead(listHtmlWriter, chainName);
+                    listHtmlWriter.write(Indent + "<BODY>\n" + Indent + Indent + "<H2>" + chainName + "</H2>\n");
                 } else if (targetPathController.isSkip()) {
                     showLogs(message("Skipped"));
                 }
@@ -301,12 +348,12 @@ public class DataTreeExportController extends BaseTaskController {
                     framesetNavFile = new File(path.getAbsolutePath() + File.separator + "nav.html");
                     File coverFile = new File(path.getAbsolutePath() + File.separator + "cover.html");
                     try (FileWriter coverWriter = new FileWriter(coverFile, charset)) {
-                        writeHtmlHead(coverWriter, chainName);
+                        writeListHtmlHead(coverWriter, chainName);
                         coverWriter.write("<BODY>\n<BR><BR><BR><BR><H1>" + message("Notes") + "</H1>\n</BODY></HTML>");
                         coverWriter.flush();
                     }
                     try (FileWriter framesetWriter = new FileWriter(framesetFile, charset)) {
-                        writeHtmlHead(framesetWriter, chainName);
+                        writeListHtmlHead(framesetWriter, chainName);
                         s = new StringBuilder();
                         s.append("<FRAMESET border=2 cols=240,240,*>\n")
                                 .append("<FRAME name=nav src=\"").append(subPath).append("/").append(framesetNavFile.getName()).append("\" />\n")
@@ -316,7 +363,7 @@ public class DataTreeExportController extends BaseTaskController {
                         framesetWriter.flush();
                     }
                     framesetNavWriter = new FileWriter(framesetNavFile, charset);
-                    writeHtmlHead(framesetNavWriter, chainName);
+                    writeListHtmlHead(framesetNavWriter, chainName);
                     s = new StringBuilder();
                     s.append(Indent).append("<BODY>\n");
                     s.append(Indent).append(Indent).append("<H2>").append(chainName).append("</H2>\n");
@@ -325,28 +372,63 @@ public class DataTreeExportController extends BaseTaskController {
                     showLogs(message("Skipped"));
                 }
             }
-            if (xmlCheck.isSelected()) {
-                xmlFile = makeTargetFile(prefix, ".xml", targetPath);
-                if (xmlFile != null) {
-                    showLogs(message("Writing") + " " + xmlFile.getAbsolutePath());
-                    xmlWriter = new FileWriter(xmlFile, charset);
+            if (treeXmlCheck.isSelected()) {
+                treeXmlFile = makeTargetFile(prefix, ".xml", targetPath);
+                if (treeXmlFile != null) {
+                    showLogs(message("Writing") + " " + treeXmlFile.getAbsolutePath());
+                    treeXmlWriter = new FileWriter(treeXmlFile, charset);
                     StringBuilder s = new StringBuilder();
                     s.append("<?xml version=\"1.0\" encoding=\"")
                             .append(charset.name()).append("\"?>\n")
                             .append("<").append(nodeTable.getTableName()).append(">\n");
-                    xmlWriter.write(s.toString());
+                    treeXmlWriter.write(s.toString());
                 } else if (targetPathController.isSkip()) {
                     showLogs(message("Skipped"));
                 }
             }
-            if (jsonCheck.isSelected()) {
-                jsonFile = makeTargetFile(prefix, ".json", targetPath);
-                if (jsonFile != null) {
-                    showLogs(message("Writing") + " " + jsonFile.getAbsolutePath());
-                    jsonWriter = new FileWriter(jsonFile, Charset.forName("UTF-8"));
+            if (listJsonCheck.isSelected()) {
+                listJsonFile = makeTargetFile(prefix, ".json", targetPath);
+                if (listJsonFile != null) {
+                    showLogs(message("Writing") + " " + listJsonFile.getAbsolutePath());
+                    listJsonWriter = new FileWriter(listJsonFile, Charset.forName("UTF-8"));
                     StringBuilder s = new StringBuilder();
                     s.append("{\"").append(nodeTable.getTreeName()).append("\": [\n");
-                    jsonWriter.write(s.toString());
+                    listJsonWriter.write(s.toString());
+                } else if (targetPathController.isSkip()) {
+                    showLogs(message("Skipped"));
+                }
+            }
+            if (listCsvCheck.isSelected()) {
+                listCsvFile = makeTargetFile(prefix, ".csv", targetPath);
+                if (listCsvFile != null) {
+                    showLogs(message("Writing") + " " + listCsvFile.getAbsolutePath());
+                    csvPrinter = new CSVPrinter(new FileWriter(listCsvFile, charset), CsvTools.csvFormat());
+
+                    List<String> names = new ArrayList<>();
+                    if (idCheck.isSelected()) {
+                        names.add(message("NodeID"));
+                        names.add(message("ParentID"));
+                    }
+                    if (parentCheck.isSelected()) {
+                        names.add(message("ParentName"));
+                    }
+                    names.add(message("Title"));
+                    if (orderCheck.isSelected()) {
+                        names.add(message("OrderNumber"));
+                    }
+                    if (timeCheck.isSelected()) {
+                        names.add(message("Update_Time"));
+                    }
+                    if (tagsCheck.isSelected()) {
+                        names.add(message("Tags"));
+                    }
+                    if (dataCheck.isSelected()) {
+                        for (String name : nodeTable.dataColumnNames()) {
+                            names.add(name);
+                        }
+                    }
+                    csvPrinter.printRecord(names);
+
                 } else if (targetPathController.isSkip()) {
                     showLogs(message("Skipped"));
                 }
@@ -358,39 +440,18 @@ public class DataTreeExportController extends BaseTaskController {
         return true;
     }
 
-    protected void writeHtmlHead(FileWriter writer, String title) {
-        try {
-            StringBuilder s = new StringBuilder();
-            s.append("<HTML>\n").append(Indent).append("<HEAD>\n")
-                    .append(Indent).append(Indent).append("<title>").append(title).append("</title>\n")
-                    .append(Indent).append(Indent)
-                    .append("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=")
-                    .append(charset.name()).append("\" />\n");
-            String style = styleInput.getText();
-            if (style != null && !style.isBlank()) {
-                s.append(Indent).append(Indent).append("<style type=\"text/css\">\n");
-                s.append(Indent).append(Indent).append(Indent).append(style).append("\n");
-                s.append(Indent).append(Indent).append("</style>\n");
-            }
-            s.append(Indent).append("</HEAD>\n");
-            writer.write(s.toString());
-        } catch (Exception e) {
-            updateLogs(e.toString());
-        }
-    }
-
     protected boolean closeWriters() {
         if (sourceItem == null || targetPath == null) {
             return false;
         }
         boolean well = true;
-        if (htmlWriter != null) {
+        if (listHtmlWriter != null) {
             try {
-                htmlWriter.write(Indent + "</BODY>\n</HTML>\n");
-                htmlWriter.flush();
-                htmlWriter.close();
-                htmlWriter = null;
-                targetFileGenerated(htmlFile, VisitHistory.FileType.Html);
+                listHtmlWriter.write(Indent + "</BODY>\n</HTML>\n");
+                listHtmlWriter.flush();
+                listHtmlWriter.close();
+                listHtmlWriter = null;
+                targetFileGenerated(listHtmlFile, VisitHistory.FileType.Html);
             } catch (Exception e) {
                 updateLogs(e.toString());
                 well = false;
@@ -408,25 +469,36 @@ public class DataTreeExportController extends BaseTaskController {
                 well = false;
             }
         }
-        if (xmlWriter != null) {
+        if (treeXmlWriter != null) {
             try {
-                xmlWriter.write("</" + nodeTable.getTableName() + ">\n");
-                xmlWriter.flush();
-                xmlWriter.close();
-                xmlWriter = null;
-                targetFileGenerated(xmlFile, VisitHistory.FileType.XML);
+                treeXmlWriter.write("</" + nodeTable.getTableName() + ">\n");
+                treeXmlWriter.flush();
+                treeXmlWriter.close();
+                treeXmlWriter = null;
+                targetFileGenerated(treeXmlFile, VisitHistory.FileType.XML);
             } catch (Exception e) {
                 updateLogs(e.toString());
                 well = false;
             }
         }
-        if (jsonWriter != null) {
+        if (listJsonWriter != null) {
             try {
-                jsonWriter.write("\n]}\n");
-                jsonWriter.flush();
-                jsonWriter.close();
-                jsonWriter = null;
-                targetFileGenerated(jsonFile, VisitHistory.FileType.JSON);
+                listJsonWriter.write("\n]}\n");
+                listJsonWriter.flush();
+                listJsonWriter.close();
+                listJsonWriter = null;
+                targetFileGenerated(listJsonFile, VisitHistory.FileType.JSON);
+            } catch (Exception e) {
+                updateLogs(e.toString());
+                well = false;
+            }
+        }
+        if (csvPrinter != null) {
+            try {
+                csvPrinter.flush();
+                csvPrinter.close();
+                csvPrinter = null;
+                targetFileGenerated(listCsvFile, VisitHistory.FileType.CSV);
             } catch (Exception e) {
                 updateLogs(e.toString());
                 well = false;
@@ -464,15 +536,18 @@ public class DataTreeExportController extends BaseTaskController {
                     xmlPrefix += Indent;
                 }
                 String pname = parentCheck.isSelected() ? parentChainName : null;
-                if (xmlWriter != null) {
-                    xmlWriter.write(xmlPrefix + "<TreeNode>\n");
-                    writeXML(currentTask, conn, xmlPrefix + Indent, pname, node, tags);
+                if (treeXmlWriter != null) {
+                    treeXmlWriter.write(xmlPrefix + "<TreeNode>\n");
+                    writeTreeXML(currentTask, conn, xmlPrefix + Indent, pname, node, tags);
                 }
-                if (jsonWriter != null) {
-                    writeJson(currentTask, conn, pname, node, tags);
+                if (listJsonWriter != null) {
+                    writeListJson(currentTask, conn, pname, node, tags);
                 }
-                if (htmlWriter != null) {
-                    writeHtml(currentTask, conn, pname, node, htmlWriter, tags);
+                if (csvPrinter != null) {
+                    writeListCsv(currentTask, conn, pname, node, tags);
+                }
+                if (listHtmlWriter != null) {
+                    writeListHtml(currentTask, conn, pname, node, listHtmlWriter, tags);
                 }
             }
 
@@ -484,12 +559,12 @@ public class DataTreeExportController extends BaseTaskController {
                 String nodeTitle = node.getTitle() + "_" + node.getNodeid();
                 File bookNavFile = new File(framesetNavFile.getParent() + File.separator + FileNameTools.filter(nodeTitle) + "_nav.html");
                 FileWriter bookNavWriter = new FileWriter(bookNavFile, charset);
-                writeHtmlHead(bookNavWriter, nodeTitle);
+                writeListHtmlHead(bookNavWriter, nodeTitle);
                 bookNavWriter.write(Indent + "<BODY>\n");
 
                 File nodeFile = new File(framesetNavFile.getParent() + File.separator + FileNameTools.filter(nodeTitle) + ".html");
                 FileWriter bookWriter = new FileWriter(nodeFile, charset);
-                writeHtmlHead(bookWriter, nodeTitle);
+                writeListHtmlHead(bookWriter, nodeTitle);
                 bookWriter.write(Indent + "<BODY>\n");
                 String prefix = "";
                 for (int i = 1; i < level; i++) {
@@ -497,7 +572,7 @@ public class DataTreeExportController extends BaseTaskController {
                 }
                 framesetNavWriter.write(prefix + "<A href=\"" + bookNavFile.getName() + "\"  target=booknav>" + node.getTitle() + "</A><BR>\n");
 
-                writeHtml(currentTask, conn, nodeChainName, node, bookWriter, tags);
+                writeListHtml(currentTask, conn, nodeChainName, node, bookWriter, tags);
                 try {
                     bookWriter.write(Indent + "\n</BODY>\n</HTML>");
                     bookWriter.flush();
@@ -563,8 +638,8 @@ public class DataTreeExportController extends BaseTaskController {
                 showLogs(e.toString());
             }
 
-            if (!isRootNode && xmlWriter != null) {
-                xmlWriter.write(xmlPrefix + "</TreeNode>\n");
+            if (!isRootNode && treeXmlWriter != null) {
+                treeXmlWriter.write(xmlPrefix + "</TreeNode>\n");
             }
         } catch (Exception e) {
             showLogs(e.toString());
@@ -572,42 +647,81 @@ public class DataTreeExportController extends BaseTaskController {
         level--;
     }
 
-    protected void writeXML(FxTask currentTask, Connection conn, String prefix,
-            String parentName, DataNode node, List<DataNodeTag> tags) {
+    protected void writeListHtmlHead(FileWriter writer, String title) {
         try {
-            String xml = DataNodeTools.toXML(currentTask, conn,
-                    myController, nodeTable, prefix, parentName, node, tags,
-                    idCheck.isSelected(), timeCheck.isSelected(), orderCheck.isSelected());
-            xmlWriter.write(xml);
+            StringBuilder s = new StringBuilder();
+            s.append("<HTML>\n").append(Indent).append("<HEAD>\n")
+                    .append(Indent).append(Indent).append("<title>").append(title).append("</title>\n")
+                    .append(Indent).append(Indent)
+                    .append("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=")
+                    .append(charset.name()).append("\" />\n");
+            String style = styleInput.getText();
+            if (style != null && !style.isBlank()) {
+                s.append(Indent).append(Indent).append("<style type=\"text/css\">\n");
+                s.append(Indent).append(Indent).append(Indent).append(style).append("\n");
+                s.append(Indent).append(Indent).append("</style>\n");
+            }
+            s.append(Indent).append("</HEAD>\n");
+            writer.write(s.toString());
         } catch (Exception e) {
             updateLogs(e.toString());
         }
     }
 
-    protected void writeHtml(FxTask currentTask, Connection conn,
+    protected void writeTreeXML(FxTask currentTask, Connection conn, String prefix,
+            String parentName, DataNode node, List<DataNodeTag> tags) {
+        try {
+            String xml = DataNodeTools.toXML(currentTask, conn,
+                    myController, nodeTable, prefix, parentName, node, tags,
+                    idCheck.isSelected(), timeCheck.isSelected(),
+                    orderCheck.isSelected(), dataCheck.isSelected());
+            treeXmlWriter.write(xml);
+        } catch (Exception e) {
+            updateLogs(e.toString());
+        }
+    }
+
+    protected void writeListHtml(FxTask currentTask, Connection conn,
             String parentName, DataNode node, FileWriter writer, List<DataNodeTag> tags) {
         try {
             String html = DataNodeTools.toHtml(currentTask, conn,
                     myController, nodeTable, parentName, node, tags,
-                    idCheck.isSelected(), timeCheck.isSelected(), orderCheck.isSelected());
+                    idCheck.isSelected(), timeCheck.isSelected(),
+                    orderCheck.isSelected(), dataCheck.isSelected());
             writer.write(html);
         } catch (Exception e) {
             updateLogs(e.toString());
         }
     }
 
-    protected void writeJson(FxTask currentTask, Connection conn,
+    protected void writeListJson(FxTask currentTask, Connection conn,
             String parentName, DataNode node, List<DataNodeTag> tags) {
         try {
             if (!firstRow) {
-                jsonWriter.write(",\n");
+                listJsonWriter.write(",\n");
             } else {
                 firstRow = false;
             }
             String json = DataNodeTools.toJson(currentTask, conn,
                     myController, nodeTable, parentName, node, tags,
-                    idCheck.isSelected(), timeCheck.isSelected(), orderCheck.isSelected());
-            jsonWriter.write(json);
+                    idCheck.isSelected(), timeCheck.isSelected(),
+                    orderCheck.isSelected(), dataCheck.isSelected());
+            listJsonWriter.write(json);
+        } catch (Exception e) {
+            updateLogs(e.toString());
+        }
+    }
+
+    protected void writeListCsv(FxTask currentTask, Connection conn,
+            String parentName, DataNode node, List<DataNodeTag> tags) {
+        try {
+            List<String> row = DataNodeTools.toCsv(currentTask, conn,
+                    myController, nodeTable, parentName, node, tags,
+                    idCheck.isSelected(), timeCheck.isSelected(),
+                    orderCheck.isSelected(), dataCheck.isSelected());
+            if (row != null) {
+                csvPrinter.printRecord(row);
+            }
         } catch (Exception e) {
             updateLogs(e.toString());
         }
@@ -620,14 +734,17 @@ public class DataTreeExportController extends BaseTaskController {
                 if (framesetFile != null && framesetFile.exists()) {
                     WebBrowserController.openFile(framesetFile);
                 }
-                if (htmlFile != null && htmlFile.exists()) {
-                    WebBrowserController.openFile(htmlFile);
+                if (listHtmlFile != null && listHtmlFile.exists()) {
+                    WebBrowserController.openFile(listHtmlFile);
                 }
-                if (xmlFile != null && xmlFile.exists()) {
-                    XmlEditorController.open(xmlFile);
+                if (treeXmlFile != null && treeXmlFile.exists()) {
+                    XmlEditorController.open(treeXmlFile);
                 }
-                if (jsonFile != null && jsonFile.exists()) {
-                    JsonEditorController.open(jsonFile);
+                if (listJsonFile != null && listJsonFile.exists()) {
+                    JsonEditorController.open(listJsonFile);
+                }
+                if (listCsvFile != null && listCsvFile.exists()) {
+                    Data2DManufactureController.openCSVFile(listCsvFile);
                 }
             }
             showLogs(message("Count") + ": " + count);

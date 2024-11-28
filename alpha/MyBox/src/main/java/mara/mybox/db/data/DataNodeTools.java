@@ -1,9 +1,11 @@
 package mara.mybox.db.data;
 
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.List;
 import javafx.scene.paint.Color;
 import mara.mybox.controller.BaseController;
+import static mara.mybox.db.data.DataNode.TagsSeparater;
 import mara.mybox.db.table.BaseNodeTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
@@ -23,7 +25,7 @@ public class DataNodeTools {
     public static String toHtml(FxTask fxTask, Connection conn,
             BaseController controller, BaseNodeTable dataTable,
             String parentName, DataNode node, List<DataNodeTag> tags,
-            boolean withId, boolean withTime, boolean withOrder) {
+            boolean withId, boolean withTime, boolean withOrder, boolean withData) {
         try {
             StringBuilder s = new StringBuilder();
             String indent2 = Indent + Indent;
@@ -75,9 +77,11 @@ public class DataNodeTools {
             s.append(indent3).append("<H5>")
                     .append(message("Title")).append(": ").append(node.getTitle())
                     .append("</H5>\n");
-            String valuesHtml = dataTable.valuesHtml(fxTask, conn, controller, node);
-            if (valuesHtml != null && !valuesHtml.isBlank()) {
-                s.append(indent3).append("<DIV>").append(valuesHtml).append("</DIV>").append("\n");
+            if (withData) {
+                String valuesHtml = dataTable.valuesHtml(fxTask, conn, controller, node);
+                if (valuesHtml != null && !valuesHtml.isBlank()) {
+                    s.append(indent3).append("<DIV>").append(valuesHtml).append("</DIV>").append("\n");
+                }
             }
             s.append(indent2).append("</DIV><HR>\n\n");
             return s.toString();
@@ -94,7 +98,7 @@ public class DataNodeTools {
     public static String toXML(FxTask fxTask, Connection conn,
             BaseController controller, BaseNodeTable dataTable,
             String prefix, String parentName, DataNode node, List<DataNodeTag> tags,
-            boolean withId, boolean withTime, boolean withOrder) {
+            boolean withId, boolean withTime, boolean withOrder, boolean withData) {
         try {
             StringBuilder s = new StringBuilder();
             String prefix2 = prefix + Indent;
@@ -126,9 +130,11 @@ public class DataNodeTools {
                         .append(DateTools.datetimeToString(node.getUpdateTime()))
                         .append("</update_time>\n");
             }
-            String valuesXml = dataTable.valuesXml(fxTask, conn, controller, prefix2, node);
-            if (valuesXml != null && !valuesXml.isBlank()) {
-                s.append(valuesXml);
+            if (withData) {
+                String valuesXml = dataTable.valuesXml(fxTask, conn, controller, prefix2, node);
+                if (valuesXml != null && !valuesXml.isBlank()) {
+                    s.append(valuesXml);
+                }
             }
             s.append(prefix).append("</NodeAttributes>\n");
             if (tags != null && !tags.isEmpty()) {
@@ -152,7 +158,7 @@ public class DataNodeTools {
     public static String toJson(FxTask fxTask, Connection conn,
             BaseController controller, BaseNodeTable dataTable,
             String parentName, DataNode node, List<DataNodeTag> tags,
-            boolean withId, boolean withTime, boolean withOrder) {
+            boolean withId, boolean withTime, boolean withOrder, boolean withData) {
         try {
             StringBuilder s = new StringBuilder();
             String indent2 = Indent + Indent;
@@ -210,13 +216,66 @@ public class DataNodeTools {
                         .append("\"").append(message("Tags")).append("\": ")
                         .append("[").append(t).append("]");
             }
-            String valuesJson = dataTable.valuesJson(fxTask, conn, controller, indent2, node);
-            if (valuesJson != null && !valuesJson.isBlank()) {
-                s.append(valuesJson);
+            if (withData) {
+                String valuesJson = dataTable.valuesJson(fxTask, conn, controller, indent2, node);
+                if (valuesJson != null && !valuesJson.isBlank()) {
+                    s.append(valuesJson);
+                }
             }
             s.append("\n");
             s.append(Indent).append("}").append("\n");
             return s.toString();
+        } catch (Exception e) {
+            if (fxTask != null) {
+                fxTask.setError(e.toString());
+            } else {
+                MyBoxLog.error(e.toString());
+            }
+            return null;
+        }
+    }
+
+    public static List<String> toCsv(FxTask fxTask, Connection conn,
+            BaseController controller, BaseNodeTable dataTable,
+            String parentName, DataNode node, List<DataNodeTag> tags,
+            boolean withId, boolean withTime, boolean withOrder, boolean withData) {
+        try {
+            List<String> row = new ArrayList<>();
+            if (withId) {
+                row.add(node.getNodeid() + "");
+                row.add(node.getParentid() + "");
+            }
+            if (parentName != null) {
+                row.add(parentName);
+            }
+            row.add(node.getTitle());
+
+            if (withOrder) {
+                row.add(node.getOrderNumber() + "");
+            }
+            if (withTime && node.getUpdateTime() != null) {
+                row.add(node.getUpdateTime() + "");
+            }
+            if (tags != null) {
+                String t = null;
+                for (DataNodeTag tag : tags) {
+                    String v = tag.getTag().getTag();
+                    if (t == null) {
+                        t = v;
+                    } else {
+                        t += TagsSeparater + v;
+                    }
+                }
+                row.add(t);
+            }
+            if (withData) {
+                for (String name : dataTable.dataColumnNames()) {
+                    Object value = node.getValue(name);
+                    String v = dataTable.column(name).toString(value);
+                    row.add(v);
+                }
+            }
+            return row;
         } catch (Exception e) {
             if (fxTask != null) {
                 fxTask.setError(e.toString());

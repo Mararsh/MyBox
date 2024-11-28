@@ -4,6 +4,7 @@ import java.sql.Connection;
 import javafx.fxml.FXML;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.DataNode;
+import mara.mybox.db.table.BaseNodeTable;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -25,7 +26,7 @@ public class DataTreeParentController extends DataTreeNodeSelectController {
     @FXML
     @Override
     public void okAction() {
-        if (!treeRunning()) {
+        if (!parentRunning()) {
             close();
             return;
         }
@@ -62,10 +63,10 @@ public class DataTreeParentController extends DataTreeNodeSelectController {
     /*
         static methods
      */
-    public static DataTreeParentController open(BaseDataTreeViewController parent, DataNode node) {
+    public static DataTreeParentController open(BaseController parent, BaseNodeTable table, DataNode node) {
         DataTreeParentController controller = (DataTreeParentController) WindowTools.childStage(
                 parent, Fxmls.DataTreeParentFxml);
-        controller.setParameters(parent, node);
+        controller.setParameters(parent, table, node);
         controller.requestMouse();
         return controller;
     }

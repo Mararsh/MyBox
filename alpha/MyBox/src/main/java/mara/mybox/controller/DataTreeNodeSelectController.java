@@ -8,6 +8,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TreeItem;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.db.data.DataNode;
+import mara.mybox.db.table.BaseNodeTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import static mara.mybox.value.Languages.message;
@@ -19,21 +20,20 @@ import static mara.mybox.value.Languages.message;
  */
 public class DataTreeNodeSelectController extends BaseDataTreeViewController {
 
-    protected BaseDataTreeViewController treeController;
     protected DataNode sourceNode;
 
     @FXML
     protected Label nodeLabel;
 
-    public void setParameters(BaseDataTreeViewController controller, DataNode node) {
+    public void setParameters(BaseController parent, BaseNodeTable table, DataNode node) {
         try {
-            this.treeController = controller;
-            if (!treeRunning()) {
+            parentController = parent;
+            if (!parentRunning()) {
                 close();
                 return;
             }
-            this.nodeTable = treeController.nodeTable;
-            this.dataName = treeController.dataName;
+            this.nodeTable = table;
+            this.dataName = table.getDataName();
 
             baseName = baseName + "_" + dataName;
 
@@ -55,10 +55,10 @@ public class DataTreeNodeSelectController extends BaseDataTreeViewController {
 
     }
 
-    public boolean treeRunning() {
-        return treeController != null
-                && treeController.getMyStage() != null
-                && treeController.getMyStage().isShowing();
+    public boolean parentRunning() {
+        return parentController != null
+                && parentController.getMyStage() != null
+                && parentController.getMyStage().isShowing();
     }
 
     @Override

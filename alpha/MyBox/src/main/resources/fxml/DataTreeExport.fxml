@@ -35,9 +35,12 @@ License:    Apache License Version 2.0
                                       <FlowPane hgap="5.0" vgap="5.0">
                                           <children>
                                             <Label text="%Format" />
-                                              <CheckBox mnemonicParsing="false" selected="true" text="%XMLforImport" fx:id="xmlCheck" />
-                                              <CheckBox fx:id="jsonCheck" layoutX="767.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="JSON" />
-                                              <CheckBox fx:id="htmlCheck" mnemonicParsing="false" selected="true" text="%SingleHtml" />
+                                              <CheckBox fx:id="treeXmlCheck" mnemonicParsing="false" selected="true" text="%TreeXML" />
+                              <CheckBox fx:id="treeHtmlCheck" layoutX="39.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%TreeHtml" />
+                                              <CheckBox fx:id="listJsonCheck" layoutX="767.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%ListJson" />
+                              <CheckBox fx:id="listXmlCheck" layoutX="506.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%ListXML" />
+                              <CheckBox fx:id="listCsvCheck" layoutX="344.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%ListCSV" />
+                                              <CheckBox fx:id="listHtmlCheck" mnemonicParsing="false" selected="true" text="%ListHtml" />
                                               <CheckBox fx:id="framesetCheck" mnemonicParsing="false" selected="true" text="%HtmlsFrameset" />
                                           </children>
                                       </FlowPane>
@@ -49,6 +52,7 @@ License:    Apache License Version 2.0
                               <CheckBox fx:id="orderCheck" layoutX="132.0" layoutY="10.0" mnemonicParsing="false" text="%OrderNumber" />
                               <CheckBox fx:id="parentCheck" layoutX="180.0" layoutY="10.0" mnemonicParsing="false" text="%ParentNode" />
                                               <CheckBox fx:id="tagsCheck" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%Tags" />
+                              <CheckBox fx:id="dataCheck" layoutX="252.0" layoutY="10.0" mnemonicParsing="false" text="%Data" />
                                           </children>
                                       </FlowPane>
                                       <fx:include fx:id="targetPath" source="ControlTargetPath.fxml" />

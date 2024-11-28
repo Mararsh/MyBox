@@ -11,7 +11,10 @@ import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.tools.Data2DDefinitionTools;
 import mara.mybox.db.data.DataNode;
+import mara.mybox.db.table.TableNodeData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.WindowTools;
+import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -211,10 +214,12 @@ public class ControlDataData2DDefinition extends BaseDataValuesController {
     /*
         static
      */
-    public static DataTreeController loadData(Data2D data) {
+    public static DataTreeNodeEditorController loadData(Data2D data) {
         try {
-            DataTreeController controller = DataTreeController.data2DDefinition(null, false);
-//            ((ControlDataData2DDefinition) controller.nodeController.dataController).load(data); ###########
+            DataTreeNodeEditorController controller
+                    = (DataTreeNodeEditorController) WindowTools.openStage(Fxmls.DataTreeNodeEditorFxml);
+            controller.setTable(new TableNodeData2DDefinition());
+            ((ControlDataData2DDefinition) controller.dataController).load(data);
             controller.requestMouse();
             return controller;
         } catch (Exception e) {

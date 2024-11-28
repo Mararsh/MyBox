@@ -747,7 +747,7 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
     }
 
     @FXML
-    public void dataAction() {
+    public void editAction() {
         if (currentNode == null) {
             TreeItem<DataNode> item = selected();
             if (item == null) {

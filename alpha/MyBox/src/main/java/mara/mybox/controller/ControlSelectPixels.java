@@ -6,7 +6,10 @@ import javafx.fxml.FXML;
 import javafx.scene.image.Image;
 import mara.mybox.bufferedimage.ImageScopeTools;
 import mara.mybox.db.data.InfoNode;
+import mara.mybox.db.table.TableNodeImageScope;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.WindowTools;
+import mara.mybox.value.Fxmls;
 
 /**
  * @Author Mara
@@ -40,8 +43,11 @@ public class ControlSelectPixels extends BaseImageScope {
 
     @FXML
     public void saveScope() {
-        DataTreeController controller = DataTreeController.imageScope(this, false);
-//        ((ControlDataImageScope) controller.nodeController.dataController).loadScope(scope);  ###########
+        DataTreeNodeEditorController controller
+                = (DataTreeNodeEditorController) WindowTools.openStage(Fxmls.DataTreeNodeEditorFxml);
+        controller.setTable(new TableNodeImageScope());
+        ((ControlDataImageScope) controller.dataController).loadScope(scope);
+        controller.requestMouse();
     }
 
     @FXML

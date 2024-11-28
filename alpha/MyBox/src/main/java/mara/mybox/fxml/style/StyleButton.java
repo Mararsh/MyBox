@@ -520,10 +520,13 @@ public class StyleButton {
             return new StyleData(id, message("Fold"), "", "iconMinus.png");
         }
         if (id.startsWith("unfold")) {
-            return new StyleData(id, message("Unfold"), "", "iconTree.png");
+            return new StyleData(id, message("Unfold"), "", "iconPlus.png");
         }
         if (id.startsWith("moveData")) {
             return new StyleData(id, message("Move"), "", "iconMove.png");
+        }
+        if (id.startsWith("tree")) {
+            return new StyleData(id, message("DataTree"), "", "iconTree.png");
         }
         if (id.startsWith("csv")) {
             return new StyleData(id, "CSV", "", "iconCSV.png");

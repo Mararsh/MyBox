@@ -2,15 +2,20 @@ package mara.mybox.controller;
 
 import java.sql.Connection;
 import java.util.Date;
+import java.util.Optional;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.Region;
+import javafx.stage.Stage;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.DataNode;
 import mara.mybox.db.data.VisitHistory;
@@ -61,13 +66,39 @@ public class DataTreeNodeEditorController extends BaseController {
         setFileType(VisitHistory.FileType.Text);
     }
 
-    public void setParameters(BaseDataTreeViewController controller) {
+    public void setTree(BaseDataTreeViewController controller) {
         try {
             treeController = controller;
             nodeTable = treeController.nodeTable;
             tagTable = treeController.tagTable;
             nodeTagsTable = treeController.nodeTagsTable;
+
+            initEditor();
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    public void setTable(BaseNodeTable table) {
+        try {
+            nodeTable = table;
+            tagTable = new TableDataTag(nodeTable);
+            nodeTagsTable = new TableDataNodeTag(nodeTable);
+
+            initEditor();
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    public void initEditor() {
+        try {
             baseName = baseName + "_" + nodeTable.getTableName();
+            baseTitle = nodeTable.getTreeName();
+            setTitle(baseTitle);
+
             nodeChanged = new SimpleBooleanProperty(false);
 
             titleInput.textProperty().addListener(new ChangeListener<String>() {
@@ -90,6 +121,8 @@ public class DataTreeNodeEditorController extends BaseController {
             dataPane.setContent(dataController.getMyScene().getRoot());
             dataController.refreshStyle();
             dataController.setParameters(this);
+
+            setAlwaysTop(true, false);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -132,8 +165,10 @@ public class DataTreeNodeEditorController extends BaseController {
 
             @Override
             protected void whenFailed() {
-                close();
-                treeController.popError(message("Invalid") + ": " + message("Node"));
+                if (treeController != null) {
+                    close();
+                    treeController.popError(message("Invalid") + ": " + message("Node"));
+                }
             }
 
         };
@@ -168,8 +203,10 @@ public class DataTreeNodeEditorController extends BaseController {
 
             @Override
             protected void whenFailed() {
-                close();
-                treeController.popError(message("Invalid") + ": " + message("Node"));
+                if (treeController != null) {
+                    close();
+                    treeController.popError(message("Invalid") + ": " + message("Node"));
+                }
             }
 
         };
@@ -209,7 +246,7 @@ public class DataTreeNodeEditorController extends BaseController {
             tagsTab.setText(message("Tags") + (tagsController.changed ? "*" : ""));
         }
         boolean changed = dataController.changed || attributesChanged || tagsController.changed;
-        String title = treeController.baseTitle;
+        String title = baseTitle;
         if (currentNode != null) {
             title += ": "
                     + (currentNode.getNodeid() < 0 ? message("NewData") : currentNode.getNodeid())
@@ -307,7 +344,7 @@ public class DataTreeNodeEditorController extends BaseController {
 
     @FXML
     public void selectParent() {
-        DataTreeParentController.open(treeController, currentNode);
+        DataTreeParentController.open(this, nodeTable, currentNode);
     }
 
     protected void setParentNode(DataNode node) {
@@ -441,9 +478,51 @@ public class DataTreeNodeEditorController extends BaseController {
     }
 
     @FXML
+    public void treeAction() {
+        if (treeController != null) {
+            treeController.requestMouse();
+        }
+        DataTreeController.open(null, false, nodeTable);
+
+    }
+
+    @FXML
     @Override
     public void cancelAction() {
         close();
+    }
+
+    @Override
+    public boolean checkBeforeNextAction() {
+        if (!nodeChanged.get()) {
+            return true;
+        } else {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle(getMyStage().getTitle());
+            alert.setContentText(message("DataChanged"));
+            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+            ButtonType buttonSave = new ButtonType(message("Save"));
+            ButtonType buttonNotSave = new ButtonType(message("NotSave"));
+            ButtonType buttonCancel = new ButtonType(message("Cancel"));
+            alert.getButtonTypes().setAll(buttonSave, buttonNotSave, buttonCancel);
+            Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+            stage.setAlwaysOnTop(true);
+            stage.toFront();
+
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result == null || !result.isPresent()) {
+                return false;
+            }
+            if (result.get() == buttonSave) {
+                saveAction();
+                return false;
+            } else if (result.get() == buttonNotSave) {
+                nodeChanged.set(false);
+                return true;
+            } else {
+                return false;
+            }
+        }
     }
 
     @Override
@@ -468,18 +547,18 @@ public class DataTreeNodeEditorController extends BaseController {
         static methods
      */
     public static DataTreeNodeEditorController editNode(BaseDataTreeViewController parent, DataNode node) {
-        DataTreeNodeEditorController controller = (DataTreeNodeEditorController) WindowTools.branchStage(
-                parent, Fxmls.DataTreeNodeEditorFxml);
-        controller.setParameters(parent);
+        DataTreeNodeEditorController controller
+                = (DataTreeNodeEditorController) WindowTools.openStage(Fxmls.DataTreeNodeEditorFxml);
+        controller.setTree(parent);
         controller.editNode(node);
         controller.requestMouse();
         return controller;
     }
 
     public static DataTreeNodeEditorController addNode(BaseDataTreeViewController parent, DataNode parentNode) {
-        DataTreeNodeEditorController controller = (DataTreeNodeEditorController) WindowTools.branchStage(
-                parent, Fxmls.DataTreeNodeEditorFxml);
-        controller.setParameters(parent);
+        DataTreeNodeEditorController controller
+                = (DataTreeNodeEditorController) WindowTools.openStage(Fxmls.DataTreeNodeEditorFxml);
+        controller.setTree(parent);
         controller.addNode(parentNode);
         controller.requestMouse();
         return controller;

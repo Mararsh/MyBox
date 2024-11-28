@@ -1,7 +1,6 @@
 package mara.mybox.controller;
 
 import java.io.File;
-import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
@@ -498,7 +497,7 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
             protected void whenSucceeded() {
                 if (file.exists()) {
                     recordFileWritten(file, FileType.Text);
-                    Data2DManufactureController.openCSVFile(file, Charset.forName("UTF-8"), true, ",");
+                    Data2DManufactureController.openCSVFile(file);
                 }
             }
         };

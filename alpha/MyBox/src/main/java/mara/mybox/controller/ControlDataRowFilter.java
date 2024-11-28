@@ -13,9 +13,12 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.db.data.DataNode;
 import mara.mybox.db.data.VisitHistory;
+import mara.mybox.db.table.TableNodeRowFilter;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.WindowTools;
+import mara.mybox.value.Fxmls;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -166,10 +169,12 @@ public class ControlDataRowFilter extends BaseDataValuesController {
     /*
         static
      */
-    public static DataTreeController open(String script, boolean matchTrue, long max) {
+    public static DataTreeNodeEditorController open(String script, boolean matchTrue, long max) {
         try {
-            DataTreeController controller = DataTreeController.rowFilter(null, false);
-//            ((ControlDataRowFilter) controller.nodeController.dataController).edit(script, matchTrue, max);  ###########
+            DataTreeNodeEditorController controller
+                    = (DataTreeNodeEditorController) WindowTools.openStage(Fxmls.DataTreeNodeEditorFxml);
+            controller.setTable(new TableNodeRowFilter());
+            ((ControlDataRowFilter) controller.dataController).edit(script, matchTrue, max);
             controller.requestMouse();
             return controller;
         } catch (Exception e) {

@@ -8,13 +8,16 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.db.data.VisitHistory;
+import mara.mybox.db.table.TableNodeJavaScript;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.HtmlWriteTools;
+import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -186,10 +189,12 @@ public class ControlDataJavascript extends BaseDataValuesController {
     /*
         static
      */
-    public static DataTreeController open(ControlWebView controlWebView) {
+    public static DataTreeNodeEditorController open(ControlWebView controlWebView) {
         try {
-            DataTreeController controller = DataTreeController.javascript(controlWebView, false);
-//            ((ControlDataJavascript) controller.nodeController.dataController).setParameters(controlWebView); ###########
+            DataTreeNodeEditorController controller
+                    = (DataTreeNodeEditorController) WindowTools.openStage(Fxmls.DataTreeNodeEditorFxml);
+            controller.setTable(new TableNodeJavaScript());
+            ((ControlDataJavascript) controller.dataController).setParameters(controlWebView);
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
@@ -198,10 +203,12 @@ public class ControlDataJavascript extends BaseDataValuesController {
         }
     }
 
-    public static DataTreeController loadScript(String script) {
+    public static DataTreeNodeEditorController loadScript(String script) {
         try {
-            DataTreeController controller = DataTreeController.javascript(null, false);
-//            ((ControlDataJavascript) controller.nodeController.dataController).edit(script);  ###########
+            DataTreeNodeEditorController controller
+                    = (DataTreeNodeEditorController) WindowTools.openStage(Fxmls.DataTreeNodeEditorFxml);
+            controller.setTable(new TableNodeJavaScript());
+            ((ControlDataJavascript) controller.dataController).edit(script);
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
@@ -210,10 +217,12 @@ public class ControlDataJavascript extends BaseDataValuesController {
         }
     }
 
-    public static DataTreeController openFile(File file) {
+    public static DataTreeNodeEditorController openFile(File file) {
         try {
-            DataTreeController controller = DataTreeController.javascript(null, false);
-//            ((ControlDataJavascript) controller.nodeController.dataController).selectSourceFile(file); ###########
+            DataTreeNodeEditorController controller
+                    = (DataTreeNodeEditorController) WindowTools.openStage(Fxmls.DataTreeNodeEditorFxml);
+            controller.setTable(new TableNodeJavaScript());
+            ((ControlDataJavascript) controller.dataController).selectSourceFile(file);
             controller.requestMouse();
             return controller;
         } catch (Exception e) {

@@ -110,11 +110,11 @@ License:    Apache License Version 2.0
                                     </ImageView>
                                     <FlowPane fx:id="opPane" alignment="CENTER_RIGHT" hgap="2.0" maxWidth="1.7976931348623157E308" vgap="2.0" HBox.hgrow="ALWAYS">
                                        <children>
-                                          <Button fx:id="dataButton" mnemonicParsing="false" onAction="#dataAction">
+                                          <Button fx:id="editButton" mnemonicParsing="false" onAction="#editAction">
                                              <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                    <image>
-                                                      <Image url="@../buttons/Red/iconData.png" />
+                                                      <Image url="@../buttons/Red/iconEdit.png" />
                                                    </image>
                                                 </ImageView>
                                              </graphic>
@@ -123,7 +123,7 @@ License:    Apache License Version 2.0
                                     </FlowPane>
                                  </children>
                               </HBox>
-                              <fx:include fx:id="view" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlHtmlView.fxml" VBox.vgrow="ALWAYS" />
+                              <fx:include fx:id="view" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlWebView.fxml" VBox.vgrow="ALWAYS" />
                                     </children>
                                     <padding>
                                         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />

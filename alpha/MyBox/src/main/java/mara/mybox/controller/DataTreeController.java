@@ -696,6 +696,9 @@ public class DataTreeController extends BaseDataTreeViewController {
      */
     public static DataTreeController open(BaseController pController, boolean shouldLoad, BaseNodeTable table) {
         try {
+            if (table == null) {
+                return null;
+            }
             DataTreeController controller;
             if ((shouldLoad || AppVariables.closeCurrentWhenOpenTool) && pController != null) {
                 controller = (DataTreeController) pController.loadScene(Fxmls.DataTreeFxml);
