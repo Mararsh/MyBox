@@ -36,6 +36,7 @@ License:    Apache License Version 2.0
                                           <children>
                                             <Label text="%Format" />
                                               <CheckBox fx:id="treeXmlCheck" mnemonicParsing="false" selected="true" text="%TreeXML" />
+                              <CheckBox fx:id="treeJsonCheck" layoutX="175.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%TreeJSON" />
                               <CheckBox fx:id="treeHtmlCheck" layoutX="39.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%TreeHtml" />
                                               <CheckBox fx:id="listJsonCheck" layoutX="767.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%ListJson" />
                               <CheckBox fx:id="listXmlCheck" layoutX="506.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%ListXML" />

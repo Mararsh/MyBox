@@ -157,46 +157,48 @@ public class DataNodeTools {
 
     public static String toJson(FxTask fxTask, Connection conn,
             BaseController controller, BaseNodeTable dataTable,
-            String parentName, DataNode node, List<DataNodeTag> tags,
+            String prefix, String parentName, DataNode node, List<DataNodeTag> tags,
             boolean withId, boolean withTime, boolean withOrder, boolean withData) {
         try {
             StringBuilder s = new StringBuilder();
-            String indent2 = Indent + Indent;
-            s.append(Indent).append("{").append("\n");
             if (withId) {
                 if (node.getNodeid() >= 0) {
-                    s.append(indent2)
+                    s.append(prefix)
                             .append("\"").append(message("ID")).append("\": ")
                             .append(node.getNodeid());
                 }
                 if (node.getParentid() >= 0) {
-                    s.append(",\n");
-                    s.append(indent2)
+                    if (!s.isEmpty()) {
+                        s.append(",\n");
+                    }
+                    s.append(prefix)
                             .append("\"").append(message("ParentID")).append("\": ")
                             .append(node.getParentid());
                 }
             }
             if (parentName != null) {
-                s.append(",\n");
-                s.append(indent2)
+                if (!s.isEmpty()) {
+                    s.append(",\n");
+                }
+                s.append(prefix)
                         .append("\"").append(message("Parent")).append("\": \"")
                         .append(parentName).append("\"");
             }
-            if (node.getTitle() != null) {
+            if (!s.isEmpty()) {
                 s.append(",\n");
-                s.append(indent2)
-                        .append("\"").append(message("Title")).append("\": \"")
-                        .append(node.getTitle()).append("\"");
             }
+            s.append(prefix)
+                    .append("\"").append(message("Title")).append("\": \"")
+                    .append(node.getTitle()).append("\"");
             if (withOrder) {
                 s.append(",\n");
-                s.append(indent2)
+                s.append(prefix)
                         .append("\"").append(message("OrderNumber")).append("\": \"")
                         .append(node.getOrderNumber()).append("\"");
             }
             if (withTime && node.getUpdateTime() != null) {
                 s.append(",\n");
-                s.append(indent2)
+                s.append(prefix)
                         .append("\"").append(message("UpdateTime")).append("\": \"")
                         .append(node.getUpdateTime()).append("\"");
             }
@@ -212,18 +214,16 @@ public class DataNodeTools {
                     }
                 }
                 s.append(",\n");
-                s.append(indent2)
+                s.append(prefix)
                         .append("\"").append(message("Tags")).append("\": ")
                         .append("[").append(t).append("]");
             }
             if (withData) {
-                String valuesJson = dataTable.valuesJson(fxTask, conn, controller, indent2, node);
+                String valuesJson = dataTable.valuesJson(fxTask, conn, controller, prefix, node);
                 if (valuesJson != null && !valuesJson.isBlank()) {
                     s.append(valuesJson);
                 }
             }
-            s.append("\n");
-            s.append(Indent).append("}").append("\n");
             return s.toString();
         } catch (Exception e) {
             if (fxTask != null) {
