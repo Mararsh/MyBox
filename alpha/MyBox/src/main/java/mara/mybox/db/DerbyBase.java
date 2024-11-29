@@ -296,7 +296,7 @@ public class DerbyBase {
     public static List<String> allTables(Connection conn) {
         try {
             List<String> tables = new ArrayList<>();
-            String sql = "SELECT TABLENAME FROM SYS.SYSTABLES WHERE TABLETYPE='T'";
+            String sql = "SELECT TABLENAME FROM SYS.SYSTABLES WHERE TABLETYPE='T' ORDER BY TABLENAME";
             conn.setAutoCommit(true);
             try (Statement statement = conn.createStatement();
                     ResultSet resultSet = statement.executeQuery(sql)) {

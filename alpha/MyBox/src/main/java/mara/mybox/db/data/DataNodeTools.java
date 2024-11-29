@@ -24,7 +24,8 @@ public class DataNodeTools {
 
     public static String toHtml(FxTask fxTask, Connection conn,
             BaseController controller, BaseNodeTable dataTable,
-            String parentName, DataNode node, List<DataNodeTag> tags,
+            String parentName, String hierarchyNumber,
+            DataNode node, List<DataNodeTag> tags,
             boolean withId, boolean withTime, boolean withOrder, boolean withData) {
         try {
             StringBuilder s = new StringBuilder();
@@ -74,9 +75,12 @@ public class DataNodeTools {
                 }
                 s.append("</H4>\n");
             }
-            s.append(indent3).append("<H5>")
-                    .append(message("Title")).append(": ").append(node.getTitle())
-                    .append("</H5>\n");
+
+            s.append(indent3).append("<H5>").append(message("Title")).append(": ");
+            if (hierarchyNumber != null) {
+                s.append(hierarchyNumber).append("&nbsp;&nbsp;");
+            }
+            s.append(node.getTitle()).append("</H5>\n");
             if (withData) {
                 String valuesHtml = dataTable.valuesHtml(fxTask, conn, controller, node);
                 if (valuesHtml != null && !valuesHtml.isBlank()) {
@@ -95,9 +99,65 @@ public class DataNodeTools {
         }
     }
 
+    public static String treeHtml(FxTask fxTask, Connection conn,
+            BaseController controller, BaseNodeTable nodeTable,
+            DataNode node, List<DataNodeTag> tags,
+            String nodePageid, int indent, String serialNumber) {
+        try {
+            StringBuilder s = new StringBuilder();
+            String indentNode = " ".repeat(indent);
+            String spaceNode = "&nbsp;".repeat(indent);
+            String nodeName = node.getTitle();
+            long nodeid = node.getNodeid();
+            String displayName = "<SPAN class=\"SerialNumber\">" + serialNumber + "&nbsp;&nbsp;</SPAN>" + nodeName;
+            boolean hasChildren = nodeTable.hasChildren(conn, nodeid);
+            if (hasChildren) {
+                displayName = "<a href=\"javascript:nodeClicked('" + nodePageid + "')\">" + displayName + "</a>";
+            }
+            s.append(indentNode).append("<DIV style=\"padding: 2px;\">")
+                    .append(spaceNode).append(displayName).append("\n");
+            if (tags != null && !tags.isEmpty()) {
+                String indentTag = " ".repeat(indent + 8);
+                String spaceTag = "&nbsp;".repeat(2);
+                s.append(indentTag).append("<SPAN class=\"NodeTag\">\n");
+                for (DataNodeTag nodeTag : tags) {
+                    Color color = nodeTag.getTag().getColor();
+                    if (color == null) {
+                        color = FxColorTools.randomColor();
+                    }
+                    s.append(indentTag).append(spaceTag)
+                            .append("<SPAN style=\"border-radius:4px; padding: 2px; font-size:0.8em;  background-color: ")
+                            .append(FxColorTools.color2rgb(color))
+                            .append("; color: ").append(FxColorTools.color2rgb(FxColorTools.foreColor(color)))
+                            .append(";\">").append(nodeTag.getTag().getTag()).append("</SPAN>\n");
+                }
+                s.append(indentTag).append("</SPAN>\n");
+            }
+            s.append(indentNode).append("</DIV>\n");
+
+            String dataHtml = nodeTable.valuesHtml(fxTask, conn, controller, node);
+            if (dataHtml != null && !dataHtml.isBlank()) {
+                s.append(indentNode).append("<DIV class=\"nodeValue\"><DIV style=\"padding: 0 0 0 ")
+                        .append((indent + 4) * 6).append("px;\"><DIV class=\"valueBox\">\n");
+                s.append(indentNode).append(dataHtml).append("\n");
+                s.append(indentNode).append("</DIV></DIV></DIV>\n");
+            }
+
+            return s.toString();
+        } catch (Exception e) {
+            if (fxTask != null) {
+                fxTask.setError(e.toString());
+            } else {
+                MyBoxLog.error(e.toString());
+            }
+            return null;
+        }
+    }
+
     public static String toXML(FxTask fxTask, Connection conn,
             BaseController controller, BaseNodeTable dataTable,
-            String prefix, String parentName, DataNode node, List<DataNodeTag> tags,
+            String prefix, String parentName, String hierarchyNumber,
+            DataNode node, List<DataNodeTag> tags,
             boolean withId, boolean withTime, boolean withOrder, boolean withData) {
         try {
             StringBuilder s = new StringBuilder();
@@ -116,6 +176,9 @@ public class DataNodeTools {
                 s.append(prefix2).append("<parent_name>\n");
                 s.append(prefix3).append("<![CDATA[").append(parentName).append("]]>\n");
                 s.append(prefix2).append("</parent_name>\n");
+            }
+            if (hierarchyNumber != null) {
+                s.append(prefix2).append("<hierarchy_number>").append(hierarchyNumber).append("</hierarchy_number>\n");
             }
             if (node.getTitle() != null) {
                 s.append(prefix2).append("<title>\n");
@@ -157,7 +220,8 @@ public class DataNodeTools {
 
     public static String toJson(FxTask fxTask, Connection conn,
             BaseController controller, BaseNodeTable dataTable,
-            String prefix, String parentName, DataNode node, List<DataNodeTag> tags,
+            String prefix, String parentName, String hierarchyNumber,
+            DataNode node, List<DataNodeTag> tags,
             boolean withId, boolean withTime, boolean withOrder, boolean withData) {
         try {
             StringBuilder s = new StringBuilder();
@@ -181,15 +245,23 @@ public class DataNodeTools {
                     s.append(",\n");
                 }
                 s.append(prefix)
-                        .append("\"").append(message("Parent")).append("\": \"")
-                        .append(parentName).append("\"");
+                        .append("\"").append(message("Parent")).append("\": ")
+                        .append(JsonTools.encode(parentName));
+            }
+            if (hierarchyNumber != null) {
+                if (!s.isEmpty()) {
+                    s.append(",\n");
+                }
+                s.append(prefix)
+                        .append("\"").append(message("HierarchyNumber")).append("\": \"")
+                        .append(hierarchyNumber).append("\"");
             }
             if (!s.isEmpty()) {
                 s.append(",\n");
             }
             s.append(prefix)
-                    .append("\"").append(message("Title")).append("\": \"")
-                    .append(node.getTitle()).append("\"");
+                    .append("\"").append(message("Title")).append("\": ")
+                    .append(JsonTools.encode(node.getTitle()));
             if (withOrder) {
                 s.append(",\n");
                 s.append(prefix)
@@ -237,7 +309,8 @@ public class DataNodeTools {
 
     public static List<String> toCsv(FxTask fxTask, Connection conn,
             BaseController controller, BaseNodeTable dataTable,
-            String parentName, DataNode node, List<DataNodeTag> tags,
+            String parentName, String hierarchyNumber,
+            DataNode node, List<DataNodeTag> tags,
             boolean withId, boolean withTime, boolean withOrder, boolean withData) {
         try {
             List<String> row = new ArrayList<>();
@@ -247,6 +320,9 @@ public class DataNodeTools {
             }
             if (parentName != null) {
                 row.add(parentName);
+            }
+            if (hierarchyNumber != null) {
+                row.add(hierarchyNumber);
             }
             row.add(node.getTitle());
 

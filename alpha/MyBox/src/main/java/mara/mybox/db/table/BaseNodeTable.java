@@ -271,22 +271,6 @@ public class BaseNodeTable extends BaseTable<DataNode> {
         return hasChildren;
     }
 
-    public boolean trimOrders(Connection conn, long parentid) {
-        boolean hasChildren = false;
-        String sql = "SELECT " + NodeFields + " FROM " + tableName
-                + " WHERE parentid=? AND parentid<>nodeid  ORDER BY " + orderColumns;
-        try (PreparedStatement statement = conn.prepareStatement(sql)) {
-            statement.setLong(1, parentid);
-            conn.setAutoCommit(true);
-            try (ResultSet results = statement.executeQuery()) {
-                hasChildren = results != null && results.next();
-            }
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
-        return hasChildren;
-    }
-
     /*
     aa
      */

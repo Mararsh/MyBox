@@ -18,6 +18,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import mara.mybox.data2d.DataFileCSV;
+import mara.mybox.data2d.DataInternalTable;
 import mara.mybox.data2d.tools.Data2DExampleTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FloatTools;
@@ -331,6 +332,11 @@ public abstract class MainMenuController_Development extends MainMenuController_
     @FXML
     public void autoTesting() {
         openScene(Fxmls.AutoTestingCasesFxml);
+    }
+
+    @FXML
+    public void allTableNames() {
+        TextPopController.loadText(DataInternalTable.allTableNames());
     }
 
     @FXML

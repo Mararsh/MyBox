@@ -49,6 +49,7 @@ License:    Apache License Version 2.0
                                           <children>
                                               <Label text="%Export" />
                               <CheckBox fx:id="idCheck" layoutX="60.0" layoutY="10.0" mnemonicParsing="false" text="%ID" />
+                              <CheckBox fx:id="hierarchyCheck" layoutX="36.0" layoutY="10.0" mnemonicParsing="false" text="%HierarchyNumber" />
                                               <CheckBox fx:id="timeCheck" mnemonicParsing="false" text="%Time" />
                               <CheckBox fx:id="orderCheck" layoutX="132.0" layoutY="10.0" mnemonicParsing="false" text="%OrderNumber" />
                               <CheckBox fx:id="parentCheck" layoutX="180.0" layoutY="10.0" mnemonicParsing="false" text="%ParentNode" />
@@ -65,7 +66,7 @@ License:    Apache License Version 2.0
                                       </FlowPane>
                                       <HBox alignment="CENTER_LEFT" spacing="5.0">
                                           <children>
-                                              <Label maxWidth="1.7976931348623157E308" text="%HtmlStyle" HBox.hgrow="ALWAYS" />
+                                              <Label text="%HtmlStyle" HBox.hgrow="ALWAYS" />
                                               <Button fx:id="helpButton" mnemonicParsing="false" onAction="#showHtmlHelps" onMouseEntered="#popHtmlHelps">
                                                   <graphic>
                                                       <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">

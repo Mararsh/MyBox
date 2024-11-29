@@ -572,6 +572,7 @@ License:    Apache License Version 2.0
                                 <MenuItem mnemonicParsing="false" onAction="#makeIcons" text="%MakeIcons" />
                                 <MenuItem mnemonicParsing="false" onAction="#makeDocuments" text="%MakeDocuments" />
                                 <MenuItem mnemonicParsing="false" onAction="#autoTesting" text="%AutoTesting" />
+                                <MenuItem mnemonicParsing="false" onAction="#allTableNames" text="%AllTableNames" />
                                 <MenuItem mnemonicParsing="false" onAction="#myBoxBaseVerificationList" text="%MyBoxBaseVerificationList" />
                                 <!--                                <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#messageAuthor" text="%MessageAuthor" />-->

@@ -1,12 +1,7 @@
 package mara.mybox.controller;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
-import java.nio.charset.Charset;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.event.ActionEvent;
@@ -19,11 +14,9 @@ import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.TreeItem;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.paint.Color;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.DataNode;
 import static mara.mybox.db.data.DataNode.TitleSeparater;
-import mara.mybox.db.data.DataNodeTag;
 import mara.mybox.db.table.BaseNodeTable;
 import mara.mybox.db.table.TableNodeData2DDefinition;
 import mara.mybox.db.table.TableNodeHtml;
@@ -37,15 +30,10 @@ import mara.mybox.db.table.TableNodeSQL;
 import mara.mybox.db.table.TableNodeText;
 import mara.mybox.db.table.TableNodeWebFavorite;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.FxSingletonTask;
-import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.WindowTools;
-import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.fxml.style.StyleTools;
-import mara.mybox.tools.FileTmpTools;
-import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
@@ -197,12 +185,6 @@ public class DataTreeController extends BaseDataTreeViewController {
         MenuItem menu = new MenuItem(message("Tags"), StyleTools.getIconImageView("iconTag.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             DataTreeTagsController.manage(this);
-        });
-        items.add(menu);
-
-        menu = new MenuItem(message("TreeView"), StyleTools.getIconImageView("iconHtml.png"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            treeView();
         });
         items.add(menu);
 
@@ -512,164 +494,6 @@ public class DataTreeController extends BaseDataTreeViewController {
         DataTreeImportController importController
                 = (DataTreeImportController) branchStage(Fxmls.DataTreeImportFxml);
         importController.importExamples(this, item);
-    }
-
-    @FXML
-    public void treeView() {
-        treeView(selected());
-    }
-
-    public void treeView(TreeItem<DataNode> item) {
-        if (item == null) {
-            return;
-        }
-        DataNode node = item.getValue();
-        if (node == null) {
-            return;
-        }
-        FxTask infoTask = new FxTask<Void>(this) {
-            private File file;
-
-            @Override
-            protected boolean handle() {
-                file = FileTmpTools.generateFile(dataName, "htm");
-                try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, Charset.forName("utf-8"), false))) {
-                    writer.write(HtmlWriteTools.htmlPrefix(chainName(item), "utf-8", HtmlStyles.TableStyle));
-                    // https://www.jb51.net/article/116957.htm
-                    writer.write("<BODY>\n");
-                    writer.write(" <script>\n"
-                            + "    function nodeClicked(id) {\n"
-                            + "      var obj = document.getElementById(id);\n"
-                            + "      var objv = obj.style.display;\n"
-                            + "      if (objv == 'none') {\n"
-                            + "        obj.style.display = 'block';\n"
-                            + "      } else {\n"
-                            + "        obj.style.display = 'none';\n"
-                            + "      }\n"
-                            + "    }\n"
-                            + "    function showClass(className, show) {\n"
-                            + "      var nodes = document.getElementsByClassName(className);  　\n"
-                            + "      if ( show) {\n"
-                            + "           for (var i = 0 ; i < nodes.length; i++) {\n"
-                            + "              nodes[i].style.display = '';\n"
-                            + "           }\n"
-                            + "       } else {\n"
-                            + "           for (var i = 0 ; i < nodes.length; i++) {\n"
-                            + "              nodes[i].style.display = 'none';\n"
-                            + "           }\n"
-                            + "       }\n"
-                            + "    }\n"
-                            + "  </script>\n\n");
-                    writer.write("<DIV>\n<DIV>\n"
-                            + "    <INPUT type=\"checkbox\" checked onclick=\"showClass('TreeNode', this.checked);\">"
-                            + message("Unfold") + "</INPUT>\n"
-                            + "    <INPUT type=\"checkbox\" checked onclick=\"showClass('SerialNumber', this.checked);\">"
-                            + message("HierarchyNumber") + "</INPUT>\n"
-                            + "    <INPUT type=\"checkbox\" checked onclick=\"showClass('NodeTag', this.checked);\">"
-                            + message("Tags") + "</INPUT>\n"
-                            + "    <INPUT type=\"checkbox\" checked onclick=\"showClass('nodeValue', this.checked);\">"
-                            + message("Values") + "</INPUT>\n"
-                            + "</DIV>\n<HR>\n");
-                    try (Connection conn = DerbyBase.getConnection()) {
-                        treeView(this, writer, conn, node.getNodeid(), 4, "");
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
-//                    writer.write("\n<HR>\n<TreeNode style=\"font-size:0.8em\">* "
-//                            + message("HtmlEditableComments") + "</P>\n");
-                    writer.write("</BODY>\n</HTML>\n");
-                    writer.flush();
-                    return true;
-                } catch (Exception e) {
-                    error = e.toString();
-                    return false;
-                }
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                WebBrowserController.openFile(file);
-            }
-        };
-        start(infoTask, false);
-    }
-
-    protected void treeView(FxTask infoTask, BufferedWriter writer, Connection conn,
-            long nodeid, int indent, String serialNumber) {
-        try {
-            if (conn == null || nodeid < 0) {
-                return;
-            }
-            DataNode node = nodeTable.query(conn, nodeid);
-            String indentNode = " ".repeat(indent);
-            String spaceNode = "&nbsp;".repeat(indent);
-            String nodePageid = "item" + node.getNodeid();
-            String nodeName = node.getTitle();
-            String displayName = "<SPAN class=\"SerialNumber\">" + serialNumber + "&nbsp;&nbsp;</SPAN>" + nodeName;
-            boolean hasChildren = nodeTable.hasChildren(conn, nodeid);
-            if (hasChildren) {
-                displayName = "<a href=\"javascript:nodeClicked('" + nodePageid + "')\">" + displayName + "</a>";
-            }
-            writer.write(indentNode + "<DIV style=\"padding: 2px;\">" + spaceNode + displayName + "\n");
-            List<DataNodeTag> tags = nodeTagsTable.nodeTags(conn, nodeid);
-            if (tags != null && !tags.isEmpty()) {
-                String indentTag = " ".repeat(indent + 8);
-                String spaceTag = "&nbsp;".repeat(2);
-                writer.write(indentTag + "<SPAN class=\"NodeTag\">\n");
-                for (DataNodeTag nodeTag : tags) {
-                    if (infoTask != null && !infoTask.isWorking()) {
-                        return;
-                    }
-                    Color color = nodeTag.getTag().getColor();
-                    if (color == null) {
-                        color = FxColorTools.randomColor();
-                    }
-                    writer.write(indentTag + spaceTag
-                            + "<SPAN style=\"border-radius:4px; padding: 2px; font-size:0.8em;  background-color: "
-                            + FxColorTools.color2rgb(color)
-                            + "; color: " + FxColorTools.color2rgb(FxColorTools.foreColor(color))
-                            + ";\">" + nodeTag.getTag().getTag() + "</SPAN>\n");
-                }
-                writer.write(indentTag + "</SPAN>\n");
-            }
-            writer.write(indentNode + "</DIV>\n");
-
-            String dataHtml = nodeTable.valuesHtml(infoTask, conn, myController, node);
-            if (dataHtml != null && !dataHtml.isBlank()) {
-                writer.write(indentNode + "<DIV class=\"nodeValue\">"
-                        + "<DIV style=\"padding: 0 0 0 " + (indent + 4) * 6 + "px;\">"
-                        + "<DIV class=\"valueBox\">\n");
-                writer.write(indentNode + dataHtml + "\n");
-                writer.write(indentNode + "</DIV></DIV></DIV>\n");
-            }
-            if (hasChildren) {
-                writer.write(indentNode + "<DIV class=\"TreeNode\" id='" + nodePageid + "'>\n");
-                String sql = "SELECT nodeid FROM " + nodeTable.getTableName()
-                        + " WHERE parentid=? AND parentid<>nodeid  ORDER BY " + nodeTable.getOrderColumns();
-                try (PreparedStatement statement = conn.prepareStatement(sql)) {
-                    statement.setLong(1, nodeid);
-                    try (ResultSet results = statement.executeQuery()) {
-                        int count = 0;
-                        String ps = serialNumber == null || serialNumber.isBlank() ? "" : serialNumber + ".";
-                        while (results != null && results.next()) {
-                            if (infoTask != null && !infoTask.isWorking()) {
-                                break;
-                            }
-                            treeView(infoTask, writer, conn, results.getLong("nodeid"),
-                                    indent + 4, ps + ++count);
-                        }
-                    } catch (Exception e) {
-                        MyBoxLog.error(e);
-                    }
-                } catch (Exception e) {
-                    MyBoxLog.error(e);
-                }
-                writer.write(indentNode + "</DIV>\n");
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
     }
 
     @FXML
