@@ -18,11 +18,9 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeTableCell;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.cell.TreeItemPropertyValueFactory;
 import javafx.scene.input.MouseEvent;
-import javafx.util.Callback;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.DataNode;
 import static mara.mybox.db.data.DataNode.TitleSeparater;
@@ -41,7 +39,6 @@ import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.StringTools;
-import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -66,8 +63,6 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
     protected TreeTableColumn<DataNode, Float> orderColumn;
     @FXML
     protected TreeTableColumn<DataNode, Date> timeColumn;
-    @FXML
-    protected TreeTableColumn<DataNode, String> dataColumn;
     @FXML
     protected Label titleLabel;
     @FXML
@@ -97,31 +92,6 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
     public void initControls() {
         try {
             super.initControls();
-
-            dataColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("title"));
-            dataColumn.setCellFactory(new Callback<TreeTableColumn<DataNode, String>, TreeTableCell<DataNode, String>>() {
-                @Override
-                public TreeTableCell<DataNode, String> call(TreeTableColumn<DataNode, String> param) {
-
-                    TreeTableCell<DataNode, String> cell = new TreeTableCell<DataNode, String>() {
-                        @Override
-                        public void updateItem(String item, boolean empty) {
-                            setGraphic(null);
-                            if (empty || item == null) {
-                                setText(null);
-                                return;
-                            }
-                            try {
-                                DataNode node = getTableRow().getItem();
-                                String values = nodeTable.valuesString(node);
-                                setText(StringTools.abbreviate(values, AppVariables.titleTrimSize));
-                            } catch (Exception e) {
-                            }
-                        }
-                    };
-                    return cell;
-                }
-            });
 
             if (okButton != null) {
                 okButton.disableProperty().bind(treeView.getSelectionModel().selectedItemProperty().isNull());
@@ -712,7 +682,7 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
                     return;
                 }
 
-                String sql = "SELECT * FROM " + nodeTable.getTableName()
+                String sql = "SELECT " + BaseNodeTable.NodeFields + " FROM " + nodeTable.getTableName()
                         + " WHERE parentid=? AND parentid<>nodeid  ORDER BY " + nodeTable.getOrderColumns();
                 try (PreparedStatement statement = conn.prepareStatement(sql)) {
                     statement.setLong(1, node.getNodeid());

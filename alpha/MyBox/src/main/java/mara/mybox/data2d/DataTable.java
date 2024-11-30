@@ -64,7 +64,6 @@ public class DataTable extends Data2D {
     @Override
     public void resetData() {
         super.resetData();
-        MyBoxLog.console(">>>>" + file + ">>>>");
         tableData2D.reset();
     }
 
@@ -73,12 +72,10 @@ public class DataTable extends Data2D {
             if (conn == null || tname == null) {
                 return false;
             }
-            MyBoxLog.console(">>>>" + file + ">>>>");
             resetData();
             sheet = DerbyBase.fixedIdentifier(tname);
             tableData2D.setTableName(sheet);
             tableData2D.readDefinitionFromDB(conn, sheet);
-            MyBoxLog.console(">>>>" + file + ">>>>");
             List<ColumnDefinition> dbColumns = tableData2D.getColumns();
             List<Data2DColumn> dataColumns = new ArrayList<>();
             if (dbColumns != null) {
@@ -105,12 +102,10 @@ public class DataTable extends Data2D {
             dataName = sheet;
             colsNumber = dataColumns.size();
             this.comments = comments;
-            MyBoxLog.console(">>>>" + file + ">>>>");
             if (InternalTables.contains(dataName.toUpperCase())) {
                 dataType = DataType.InternalTable;
             }
             tableData2DDefinition.writeTable(conn, this);
-            MyBoxLog.console(">>>>" + file + ">>>>");
             conn.commit();
 
             for (Data2DColumn column : dataColumns) {

@@ -34,6 +34,7 @@ import static mara.mybox.value.Languages.message;
 public class BaseNodeTable extends BaseTable<DataNode> {
 
     public static final long RootID = 1l;
+    public static final String NodeFields = "nodeid,title,order_number,update_time,parentid";
 
     protected String treeName, dataName, dataFxml, examplesFileName;
     protected boolean nodeExecutable;
@@ -209,7 +210,7 @@ public class BaseNodeTable extends BaseTable<DataNode> {
         if (conn == null || parent < 0) {
             return null;
         }
-        String sql = "SELECT * FROM " + tableName
+        String sql = "SELECT " + NodeFields + " FROM " + tableName
                 + " WHERE parentid=? AND parentid<>nodeid  ORDER BY " + orderColumns;
         try (PreparedStatement statement = conn.prepareStatement(sql)) {
             statement.setLong(1, parent);
