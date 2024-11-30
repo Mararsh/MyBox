@@ -52,7 +52,7 @@ public class DataTableReader extends Data2DReader {
     public void readPage() {
         sourceIndex = sourceData.startRowOfCurrentPage;
         String sql = readerTable.pageQuery();
-        showInfo(sql);
+//        showInfo(sql);
         try (PreparedStatement statement = conn().prepareStatement(sql);
                 ResultSet results = statement.executeQuery()) {
             while (results.next()) {
@@ -73,7 +73,7 @@ public class DataTableReader extends Data2DReader {
         long startIndex = sourceData.startRowOfCurrentPage;
         long endIndex = sourceData.endRowOfCurrentPage;
         String sql = "SELECT * FROM " + readerTable.getSheet();
-        showInfo(sql);
+//        showInfo(sql);
         try (PreparedStatement statement = conn().prepareStatement(sql);
                 ResultSet results = statement.executeQuery()) {
             while (results.next() && !isStopped()) {

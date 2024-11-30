@@ -299,8 +299,10 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
             return null;
         }
         if (queryTable(conn, table.getSheet(), table.getType()) != null) {
+            MyBoxLog.console(">>>>" + table.getFile() + ">>>>");
             return updateData(conn, table);
         } else {
+            MyBoxLog.console(">>>>" + table.getFile() + ">>>>");
             return insertData(conn, table);
         }
     }
@@ -354,7 +356,8 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
             update(conn, Delete_InvalidExcelSheet);
             String sql = "SELECT * FROM Data2D_Definition WHERE data_type < 4";
             recordInfo(taskController, sql);
-            try (PreparedStatement query = conn.prepareStatement(sql); PreparedStatement delete = conn.prepareStatement(deleteStatement())) {
+            try (PreparedStatement query = conn.prepareStatement(sql);
+                    PreparedStatement delete = conn.prepareStatement(deleteStatement())) {
                 conn.setAutoCommit(true);
                 try (ResultSet results = query.executeQuery()) {
                     conn.setAutoCommit(false);
@@ -414,7 +417,8 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
                     + Data2D.type(Data2DDefinition.DataType.DatabaseTable);
             recordInfo(taskController, sql);
             conn.setAutoCommit(true);
-            try (ResultSet results = conn.prepareStatement(sql).executeQuery(); PreparedStatement delete = conn.prepareStatement(deleteStatement())) {
+            try (ResultSet results = conn.prepareStatement(sql).executeQuery();
+                    PreparedStatement delete = conn.prepareStatement(deleteStatement())) {
                 while (results.next()) {
                     rowCount++;
                     if (taskController != null && taskController.getTask() != null

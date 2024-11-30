@@ -379,7 +379,9 @@ public class Data2DTableTools {
         }
         if (file != null && file.exists()) {
             DataFileCSV targetData = new DataFileCSV();
-            targetData.setColumns(dataTable.getColumns()).setDataName(dataTable.dataName()).setFile(file).setCharset(Charset.forName("UTF-8")).setDelimiter(",").setHasHeader(true).setColsNumber(tcolsNumber).setRowsNumber(trowsNumber);
+            targetData.setColumns(dataTable.getColumns()).setDataName(dataTable.dataName())
+                    .setFile(file).setCharset(Charset.forName("UTF-8")).setDelimiter(",").setHasHeader(true)
+                    .setColsNumber(tcolsNumber).setRowsNumber(trowsNumber);
             if (save) {
                 targetData.saveAttributes();
             }
@@ -446,7 +448,9 @@ public class Data2DTableTools {
         }
         if (excelFile != null && excelFile.exists()) {
             DataFileExcel targetData = new DataFileExcel();
-            targetData.setColumns(dataTable.getColumns()).setFile(excelFile).setSheet(targetSheetName).setDataName(dataTable.dataName()).setHasHeader(true).setColsNumber(tcolsNumber).setRowsNumber(trowsNumber);
+            targetData.setColumns(dataTable.getColumns()).setFile(excelFile)
+                    .setSheet(targetSheetName).setDataName(dataTable.dataName())
+                    .setHasHeader(true).setColsNumber(tcolsNumber).setRowsNumber(trowsNumber);
             targetData.saveAttributes();
             return targetData;
         } else {

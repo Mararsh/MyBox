@@ -28,6 +28,7 @@ import mara.mybox.fxml.cell.TreeTableTextTrimCell;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.StringTools;
+import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -110,7 +111,7 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
                                 setGraphic(null);
                                 return;
                             }
-                            setText(StringTools.abbreviate(item, 60));
+                            setText(StringTools.abbreviate(item, AppVariables.titleTrimSize));
                             setGraphic(null);
                             if (isSourceNode(getTableRow().getItem())) {
                                 setStyle(NodeStyleTools.darkRedTextStyle());
@@ -123,8 +124,10 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
                 }
             });
 
-            valueColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("value"));
-            valueColumn.setCellFactory(new TreeTableTextTrimCell());
+            if (valueColumn != null) {
+                valueColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("value"));
+                valueColumn.setCellFactory(new TreeTableTextTrimCell());
+            }
 
             treeView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
             treeView.setOnMouseClicked(new EventHandler<MouseEvent>() {

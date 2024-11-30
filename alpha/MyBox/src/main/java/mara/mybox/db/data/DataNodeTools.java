@@ -293,7 +293,7 @@ public class DataNodeTools {
             if (withData) {
                 String valuesJson = dataTable.valuesJson(fxTask, conn, controller, prefix, node);
                 if (valuesJson != null && !valuesJson.isBlank()) {
-                    s.append(valuesJson);
+                    s.append(",\n").append(valuesJson);
                 }
             }
             return s.toString();

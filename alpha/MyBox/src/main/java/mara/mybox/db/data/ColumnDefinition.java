@@ -843,16 +843,16 @@ public class ColumnDefinition extends BaseData {
                     data.setColumnName(value == null ? null : (String) value);
                     return true;
                 case "index":
-                    data.setIndex(value == null ? null : (int) value);
+                    data.setIndex(value == null ? -1 : (int) value);
                     return true;
                 case "length":
-                    data.setLength(value == null ? null : (int) value);
+                    data.setLength(value == null ? StringMaxLength : (int) value);
                     return true;
                 case "width":
-                    data.setWidth(value == null ? null : (int) value);
+                    data.setWidth(value == null ? 100 : (int) value);
                     return true;
                 case "scale":
-                    data.setScale(value == null ? null : (int) value);
+                    data.setScale(value == null ? 8 : (int) value);
                     return true;
                 case "color":
                     data.setColor(value == null ? null : Color.web((String) value));
@@ -879,7 +879,7 @@ public class ColumnDefinition extends BaseData {
                     data.setFixTwoDigitYear(value == null ? false : (boolean) value);
                     return true;
                 case "century":
-                    data.setCentury(value == null ? null : (int) value);
+                    data.setCentury(value == null ? 2000 : (int) value);
                     return true;
                 case "on_delete":
                     data.setOnDelete(onDelete((short) value));
@@ -910,7 +910,7 @@ public class ColumnDefinition extends BaseData {
                     return true;
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e);
+            MyBoxLog.debug(e + " column:" + column + " value:" + value);
         }
         return false;
     }

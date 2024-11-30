@@ -410,7 +410,9 @@ public class Data2DDefinitionTools {
                 return null;
             }
             DataFileCSV csv = new DataFileCSV();
-            csv.setColumns(definition).setFile(file).setCharset(Charset.forName("UTF-8")).setDelimiter(",").setHasHeader(true).setColsNumber(definition.size());
+            csv.setColumns(definition).setFile(file)
+                    .setCharset(Charset.forName("UTF-8")).setDelimiter(",").setHasHeader(true)
+                    .setColsNumber(definition.size());
             csv.saveAttributes();
             return csv;
         } catch (Exception e) {

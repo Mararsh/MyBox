@@ -368,7 +368,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
         if (!isDataChanged()) {
             goOn = true;
         } else {
-            if (data2D != null && data2D.isTmpFile()) {
+            if (data2D != null && data2D.isDataFile() && data2D.isTmpFile()) {
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                 alert.setTitle(getTitle());
                 alert.setHeaderText(getTitle());
@@ -433,7 +433,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
 
     @Override
     public boolean leavingScene() {
-        if (data2D != null && data2D.isTmpFile()
+        if (data2D != null && data2D.isDataFile() && data2D.isTmpFile()
                 && !isDataChanged()
                 && !askedTmp
                 && UserConfig.getBoolean("Data2DPromptTemporaryWhenClose", true)) {
@@ -745,6 +745,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
 
             @Override
             protected void whenSucceeded() {
+                MyBoxLog.console(data2D.isTableChanged());
                 popInformation(message("Saved"));
                 notifySaved();
                 loadPage(false);

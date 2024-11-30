@@ -9,6 +9,8 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
+import java.util.Timer;
+import java.util.TimerTask;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -28,6 +30,7 @@ import mara.mybox.db.data.DataNodeTag;
 import mara.mybox.db.data.DataNodeTools;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.BaseNodeTable;
+import static mara.mybox.db.table.BaseNodeTable.RootID;
 import mara.mybox.db.table.TableDataNodeTag;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
@@ -661,11 +664,11 @@ public class DataTreeExportController extends BaseTaskController {
                 nodeChainName = node.getTitle();
             }
             if (isLogsVerbose()) {
-                showLogs("Handling node: " + node.getNodeid() + " - " + nodeChainName);
+                showLogs("Handling node: " + nodeid + " - " + nodeChainName);
             }
             List<DataNodeTag> tags = null;
             if (tagsCheck.isSelected()) {
-                tags = nodeTagsTable.nodeTags(conn, node.getNodeid());
+                tags = nodeTagsTable.nodeTags(conn, nodeid);
             }
             String nodePrefix = "";
 
@@ -676,7 +679,9 @@ public class DataTreeExportController extends BaseTaskController {
             String nodePageid = "item" + node.getNodeid();
             String hieNumber = hierarchyCheck.isSelected() ? hierarchyNumber : null;
             if (treeXmlWriter != null) {
-                treeXmlWriter.write(nodePrefix + "<TreeNode>\n");
+                if (nodeid != RootID) {
+                    treeXmlWriter.write(nodePrefix + "<TreeNode>\n");
+                }
                 writeTreeXML(currentTask, conn, nodePrefix, pname, hieNumber, node, tags);
             }
             if (listXmlWriter != null) {
@@ -807,7 +812,7 @@ public class DataTreeExportController extends BaseTaskController {
                 childrenNumber = childrenNumberStack.pop();
             }
 
-            if (treeXmlWriter != null) {
+            if (nodeid != RootID && treeXmlWriter != null) {
                 treeXmlWriter.write(nodePrefix + "</TreeNode>\n");
             }
 
@@ -896,7 +901,7 @@ public class DataTreeExportController extends BaseTaskController {
             String parentName, String hierarchyNumber, DataNode node, List<DataNodeTag> tags) {
         try {
             if (childrenNumber == 1) {
-                if (sourceid != node.getNodeid()) {
+                if (node.getNodeid() != RootID && sourceid != node.getNodeid()) {
                     treeJsonWriter.write(",\n");
                 }
                 treeJsonWriter.write(prefix + "\"" + message("ChildrenNodes") + "\":[\n");
@@ -917,7 +922,7 @@ public class DataTreeExportController extends BaseTaskController {
     protected void writeListJson(FxTask currentTask, Connection conn,
             String parentName, String hierarchyNumber, DataNode node, List<DataNodeTag> tags) {
         try {
-            if (sourceid != node.getNodeid()) {
+            if (node.getNodeid() != RootID && sourceid != node.getNodeid()) {
                 listJsonWriter.write(Indent + ",\n");
             }
             listJsonWriter.write(Indent + "{\n");
@@ -961,21 +966,29 @@ public class DataTreeExportController extends BaseTaskController {
                 if (treeHtmlFile != null && treeHtmlFile.exists()) {
                     WebBrowserController.openFile(treeHtmlFile);
                 }
-                if (treeXmlFile != null && treeXmlFile.exists()) {
-                    XmlEditorController.open(treeXmlFile);
-                }
-                if (listXmlFile != null && listXmlFile.exists()) {
-                    XmlEditorController.open(listXmlFile);
-                }
-                if (listJsonFile != null && listJsonFile.exists()) {
-                    JsonEditorController.open(listJsonFile);
-                }
-                if (treeJsonFile != null && treeJsonFile.exists()) {
-                    JsonEditorController.open(treeJsonFile);
-                }
+
                 if (listCsvFile != null && listCsvFile.exists()) {
                     Data2DManufactureController.openCSVFile(listCsvFile);
                 }
+                timer = new Timer();
+                timer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        if (listJsonFile != null && listJsonFile.exists()) {
+                            JsonEditorController.open(listJsonFile);
+                        }
+                        if (treeJsonFile != null && treeJsonFile.exists()) {
+                            JsonEditorController.open(treeJsonFile);
+                        }
+                        if (treeXmlFile != null && treeXmlFile.exists()) {
+                            XmlEditorController.open(treeXmlFile);
+                        }
+                        if (listXmlFile != null && listXmlFile.exists()) {
+                            XmlEditorController.open(listXmlFile);
+                        }
+                    }
+                }, 1000);
+
             }
             showLogs(message("Count") + ": " + count);
         } catch (Exception e) {

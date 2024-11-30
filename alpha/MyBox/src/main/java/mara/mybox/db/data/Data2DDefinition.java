@@ -352,6 +352,7 @@ public class Data2DDefinition extends BaseData {
                     data.setDataName(value == null ? null : (String) value);
                     return true;
                 case "file":
+                    MyBoxLog.debug(">>>>" + value + "<<<<");
                     data.setFile(value == null ? null : new File((String) value));
                     return true;
                 case "sheet":

@@ -245,7 +245,6 @@ public class BaseData2DViewController extends BaseData2DLoadController {
                 showCsv();
 
             }
-
             refreshStyle(mainAreaBox);
 
         } catch (Exception e) {

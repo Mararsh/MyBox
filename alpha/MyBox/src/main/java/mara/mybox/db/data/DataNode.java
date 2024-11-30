@@ -146,14 +146,6 @@ public class DataNode extends BaseData {
         }
     }
 
-    public String toText() {
-        return title;
-    }
-
-    public String getValue() {
-        return title;
-    }
-
     public String shortDescription() {
         return shortDescription(title);
     }

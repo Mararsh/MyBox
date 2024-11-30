@@ -1077,7 +1077,7 @@ public class PopTools {
 
             for (SourceCodeAnalysis.Suggestion suggestion : suggestions) {
                 String c = suggestion.continuation();
-                menu = new MenuItem(StringTools.abbreviate(c, 100));
+                menu = new MenuItem(StringTools.menuPrefix(c));
                 menu.setOnAction((ActionEvent event) -> {
                     scriptInput.replaceText(scriptInput.getSelection(), c);
                 });

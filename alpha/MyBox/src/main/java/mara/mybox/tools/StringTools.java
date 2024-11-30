@@ -14,6 +14,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.AppValues;
+import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -22,8 +23,6 @@ import static mara.mybox.value.Languages.message;
  * @License Apache License Version 2.0
  */
 public class StringTools {
-
-    public static final int MenuMaxLen = 80;
 
     public static String start(String string, int maxLen) {
         if (string == null) {
@@ -53,14 +52,14 @@ public class StringTools {
         if (name == null) {
             return null;
         }
-        return end(name.replaceAll("_|\r\n|\r|\n", " ").strip(), MenuMaxLen);
+        return end(name.replaceAll("_|\r\n|\r|\n", " ").strip(), AppVariables.menuMaxLen);
     }
 
     public static String menuPrefix(String name) {
         if (name == null) {
             return null;
         }
-        return start(name.replaceAll("_|\r\n|\r|\n", " ").strip(), MenuMaxLen);
+        return start(name.replaceAll("_|\r\n|\r|\n", " ").strip(), AppVariables.menuMaxLen);
     }
 
     public static String replaceLineBreak(String string) {

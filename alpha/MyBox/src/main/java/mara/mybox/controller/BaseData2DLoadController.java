@@ -134,7 +134,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
             loadNull();
             return;
         }
-        if (!checkInvalidFile()) {
+        if (!checkFileValid()) {
             return;
         }
         resetStatus();
@@ -192,12 +192,18 @@ public class BaseData2DLoadController extends BaseData2DTableController {
         }
     }
 
-    public boolean checkInvalidFile() {
+    public boolean checkFileValid() {
         if (data2D == null) {
             return false;
         }
+        if (!data2D.isDataFile()) {
+            return true;
+        }
         File file = data2D.getFile();
-        if (file == null || file.exists()) {
+        if (file == null) {
+            return false;
+        }
+        if (!file.isDirectory() && file.exists()) {
             return true;
         }
         FxTask nullTask = new FxTask<Void>(this) {
@@ -210,6 +216,10 @@ public class BaseData2DLoadController extends BaseData2DTableController {
                     error = e.toString();
                     return false;
                 }
+            }
+
+            @Override
+            protected void whenSucceeded() {
             }
 
             @Override
@@ -410,7 +420,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
             }
 
         };
-        start(task, thisPane);
+        start(task);
 
     }
 
@@ -470,7 +480,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
             }
 
         };
-        start(task, thisPane);
+        start(task);
     }
 
     /*

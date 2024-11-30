@@ -54,4 +54,13 @@ public class TableNodeData2DDefinition extends BaseNodeTable {
         }
     }
 
+    @Override
+    public String valuesString(DataNode node) {
+        try {
+            return node.getStringValue("html");
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
 }

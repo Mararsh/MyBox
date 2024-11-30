@@ -73,6 +73,7 @@ public class FxTask<Void> extends BaseTask<Void> {
             return;
         }
         if (controller != null) {
+            MyBoxLog.debug(controller.getClass());
             controller.displayInfo(message("Successful"));
         }
     }
