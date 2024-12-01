@@ -285,7 +285,7 @@ public abstract class Data2D_Data extends Data2D_Attributes {
     }
 
     public boolean isTmpFile() {
-        return file == null || FileTmpTools.isTmpFile(file);
+        return FileTmpTools.isTmpFile(file);
     }
 
     public boolean needBackup() {

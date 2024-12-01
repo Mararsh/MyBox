@@ -299,10 +299,8 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
             return null;
         }
         if (queryTable(conn, table.getSheet(), table.getType()) != null) {
-            MyBoxLog.console(">>>>" + table.getFile() + ">>>>");
             return updateData(conn, table);
         } else {
-            MyBoxLog.console(">>>>" + table.getFile() + ">>>>");
             return insertData(conn, table);
         }
     }

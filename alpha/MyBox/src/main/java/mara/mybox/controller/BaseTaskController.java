@@ -218,6 +218,12 @@ public class BaseTaskController extends BaseLogsController {
         }
     }
 
+    @Override
+    public boolean keyESC() {
+        cancelAction();
+        return true;
+    }
+
     protected void taskCanceled() {
         taskCancelled = true;
         showLogs(message("Cancelled"));

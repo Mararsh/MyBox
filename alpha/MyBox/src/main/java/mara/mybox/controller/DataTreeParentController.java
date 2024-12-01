@@ -4,7 +4,7 @@ import java.sql.Connection;
 import javafx.fxml.FXML;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.DataNode;
-import mara.mybox.db.table.BaseNodeTable;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -17,10 +17,20 @@ import static mara.mybox.value.Languages.message;
  */
 public class DataTreeParentController extends DataTreeNodeSelectController {
 
-    @Override
-    public void initMore() {
-        baseTitle = nodeTable.getTreeName() + " - " + message("SelectParentNode");
-        setTitle(baseTitle);
+    protected DataTreeNodeEditorController editor;
+
+    public void setParameters(DataTreeNodeEditorController parent, DataNode node) {
+        try {
+            editor = parent;
+
+            setParameters(parent, editor.nodeTable, node);
+
+            baseTitle = nodeTable.getTreeName() + " - " + message("SelectParentNode");
+            setTitle(baseTitle);
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
     @FXML
@@ -52,7 +62,7 @@ public class DataTreeParentController extends DataTreeNodeSelectController {
 
             @Override
             protected void whenSucceeded() {
-//                treeController.nodeController.setParentNode(targetNode);
+                editor.setParentNode(targetNode);
                 close();
             }
         };
@@ -63,10 +73,10 @@ public class DataTreeParentController extends DataTreeNodeSelectController {
     /*
         static methods
      */
-    public static DataTreeParentController open(BaseController parent, BaseNodeTable table, DataNode node) {
+    public static DataTreeParentController open(DataTreeNodeEditorController parent, DataNode node) {
         DataTreeParentController controller = (DataTreeParentController) WindowTools.childStage(
                 parent, Fxmls.DataTreeParentFxml);
-        controller.setParameters(parent, table, node);
+        controller.setParameters(parent, node);
         controller.requestMouse();
         return controller;
     }

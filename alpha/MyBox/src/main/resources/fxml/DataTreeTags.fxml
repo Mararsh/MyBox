@@ -19,19 +19,9 @@ License:    Apache License Version 2.0
 
 <VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="500.0" prefWidth="700.0" spacing="2.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.DataTreeTagsController">
     <children>
-      <HBox alignment="CENTER_LEFT" layoutX="12.0" layoutY="12.0" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" spacing="2.0">
-         <children>
-            <Label fx:id="titleLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-            <Button fx:id="closeButton" mnemonicParsing="false" onAction="#closeAction">
-               <graphic>
-                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/Red/iconClose.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
-            <Button fx:id="saveButton1" mnemonicParsing="false" onAction="#saveAction">
+        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" spacing="2.0">
+            <children>
+            <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction">
                <graphic>
                   <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -40,10 +30,6 @@ License:    Apache License Version 2.0
                   </ImageView>
                </graphic>
             </Button>
-         </children>
-      </HBox>
-        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" spacing="2.0">
-            <children>
                 <Button fx:id="recoverButton" mnemonicParsing="false" onAction="#recoverAction">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -89,6 +75,16 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button>
+            <Label fx:id="titleLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+            <Button fx:id="closeButton" mnemonicParsing="false" onAction="#closeAction">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconClose.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
             </children>
         </HBox>
         <TableView fx:id="tableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">

@@ -39,7 +39,7 @@ public class DataTreeNodeSelectController extends BaseDataTreeViewController {
 
             sourceNode = node;
             if (sourceNode != null) {
-                nodeLabel.setText(message("Node") + ": " + sourceNode.shortDescription());
+                nodeLabel.setText(message("SourceNode") + ": " + sourceNode.shortDescription());
             }
 
             initMore();

@@ -96,7 +96,7 @@ public class DataTreeNodeEditorController extends BaseController {
     public void initEditor() {
         try {
             baseName = baseName + "_" + nodeTable.getTableName();
-            baseTitle = nodeTable.getTreeName();
+            baseTitle = nodeTable.getTreeName() + " - " + message("EditNode");
             setTitle(baseTitle);
 
             nodeChanged = new SimpleBooleanProperty(false);
@@ -262,29 +262,6 @@ public class DataTreeNodeEditorController extends BaseController {
         return currentNode.getNodeid() < 0;
     }
 
-    public void refreshNode2() {
-        if (parentNode == null) {
-            popError(message("Invalid") + ": " + message("ParentNode"));
-            return;
-        }
-        parentNode = nodeTable.query(parentNode.getNodeid());
-        if (parentNode == null) {
-            close();
-            return;
-        }
-        refreshParentNode();
-
-        if (currentNode == null) {
-            close();
-            return;
-        }
-        currentNode = nodeTable.query(currentNode.getNodeid());
-        if (currentNode == null) {
-            currentNode = DataNode.createChild(parentNode, message("NewData"));
-        }
-        loadData();
-    }
-
     /*
         attributes
      */
@@ -344,7 +321,7 @@ public class DataTreeNodeEditorController extends BaseController {
 
     @FXML
     public void selectParent() {
-        DataTreeParentController.open(this, nodeTable, currentNode);
+        DataTreeParentController.open(this, currentNode);
     }
 
     protected void setParentNode(DataNode node) {
@@ -354,6 +331,10 @@ public class DataTreeNodeEditorController extends BaseController {
     }
 
     protected void refreshParentNode() {
+        if (parentNode == null) {
+            parentLabel.setText(null);
+            return;
+        }
         FxTask ptask = new FxTask<Void>(this) {
             private String chainName;
 
@@ -484,12 +465,6 @@ public class DataTreeNodeEditorController extends BaseController {
         }
         DataTreeController.open(null, false, nodeTable);
 
-    }
-
-    @FXML
-    @Override
-    public void cancelAction() {
-        close();
     }
 
     @Override

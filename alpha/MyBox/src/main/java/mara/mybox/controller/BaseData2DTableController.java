@@ -271,7 +271,9 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
         try {
             isSettingValues = true;
             tableData.clear();
-            tableView.getColumns().remove(rowsSelectionColumn != null ? 2 : 1, tableView.getColumns().size());
+            tableView.getColumns().remove(
+                    rowsSelectionColumn != null && tableView.getColumns().contains(rowsSelectionColumn) ? 2 : 1,
+                    tableView.getColumns().size());
             tableView.setItems(tableData);
             isSettingValues = false;
             widthChanged = false;

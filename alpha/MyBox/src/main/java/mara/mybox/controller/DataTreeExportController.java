@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Stack;
 import java.util.Timer;
 import java.util.TimerTask;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -974,18 +975,20 @@ public class DataTreeExportController extends BaseTaskController {
                 timer.schedule(new TimerTask() {
                     @Override
                     public void run() {
-                        if (listJsonFile != null && listJsonFile.exists()) {
-                            JsonEditorController.open(listJsonFile);
-                        }
-                        if (treeJsonFile != null && treeJsonFile.exists()) {
-                            JsonEditorController.open(treeJsonFile);
-                        }
-                        if (treeXmlFile != null && treeXmlFile.exists()) {
-                            XmlEditorController.open(treeXmlFile);
-                        }
-                        if (listXmlFile != null && listXmlFile.exists()) {
-                            XmlEditorController.open(listXmlFile);
-                        }
+                        Platform.runLater(() -> {
+                            if (listJsonFile != null && listJsonFile.exists()) {
+                                JsonEditorController.open(listJsonFile);
+                            }
+                            if (treeJsonFile != null && treeJsonFile.exists()) {
+                                JsonEditorController.open(treeJsonFile);
+                            }
+                            if (treeXmlFile != null && treeXmlFile.exists()) {
+                                XmlEditorController.open(treeXmlFile);
+                            }
+                            if (listXmlFile != null && listXmlFile.exists()) {
+                                XmlEditorController.open(listXmlFile);
+                            }
+                        });
                     }
                 }, 1000);
 

@@ -444,6 +444,9 @@ public class DataTreeController extends BaseDataTreeViewController {
             protected void whenSucceeded() {
                 item.setValue(updatedNode);
                 treeView.refresh();
+                if (currentNode != null && currentNode.equals(updatedNode)) {
+                    showNode(updatedNode);
+                }
                 popSuccessful();
             }
         };
@@ -454,10 +457,7 @@ public class DataTreeController extends BaseDataTreeViewController {
         if (item == null || isRoot(item.getValue())) {
             return;
         }
-        String chainName = chainName(item);
-        InfoTreeNodeCopyController controller
-                = (InfoTreeNodeCopyController) childStage(Fxmls.InfoTreeNodeCopyFxml);
-//        controller.setParameters(manager, item.getValue(), chainName);
+        DataTreeCopyController.open(this, item.getValue());
     }
 
     protected void moveNode(TreeItem<DataNode> item) {
@@ -518,13 +518,13 @@ public class DataTreeController extends BaseDataTreeViewController {
     /*
         static methods
      */
-    public static DataTreeController open(BaseController pController, boolean shouldLoad, BaseNodeTable table) {
+    public static DataTreeController open(BaseController pController, boolean replaceScene, BaseNodeTable table) {
         try {
             if (table == null) {
                 return null;
             }
             DataTreeController controller;
-            if ((shouldLoad || AppVariables.closeCurrentWhenOpenTool) && pController != null) {
+            if ((replaceScene || AppVariables.closeCurrentWhenOpenTool) && pController != null) {
                 controller = (DataTreeController) pController.loadScene(Fxmls.DataTreeFxml);
             } else {
                 controller = (DataTreeController) WindowTools.openStage(Fxmls.DataTreeFxml);
@@ -538,48 +538,48 @@ public class DataTreeController extends BaseDataTreeViewController {
         }
     }
 
-    public static DataTreeController textTree(BaseController pController, boolean shouldLoad) {
-        return open(pController, shouldLoad, new TableNodeText());
+    public static DataTreeController textTree(BaseController pController, boolean replaceScene) {
+        return open(pController, replaceScene, new TableNodeText());
     }
 
-    public static DataTreeController htmlTree(BaseController pController, boolean shouldLoad) {
-        return open(pController, shouldLoad, new TableNodeHtml());
+    public static DataTreeController htmlTree(BaseController pController, boolean replaceScene) {
+        return open(pController, replaceScene, new TableNodeHtml());
     }
 
-    public static DataTreeController webFavorite(BaseController pController, boolean shouldLoad) {
-        return open(pController, shouldLoad, new TableNodeWebFavorite());
+    public static DataTreeController webFavorite(BaseController pController, boolean replaceScene) {
+        return open(pController, replaceScene, new TableNodeWebFavorite());
     }
 
-    public static DataTreeController sql(BaseController pController, boolean shouldLoad) {
-        return open(pController, shouldLoad, new TableNodeSQL());
+    public static DataTreeController sql(BaseController pController, boolean replaceScene) {
+        return open(pController, replaceScene, new TableNodeSQL());
     }
 
-    public static DataTreeController mathFunction(BaseController pController, boolean shouldLoad) {
-        return open(pController, shouldLoad, new TableNodeMathFunction());
+    public static DataTreeController mathFunction(BaseController pController, boolean replaceScene) {
+        return open(pController, replaceScene, new TableNodeMathFunction());
     }
 
-    public static DataTreeController imageScope(BaseController pController, boolean shouldLoad) {
-        return open(pController, shouldLoad, new TableNodeImageScope());
+    public static DataTreeController imageScope(BaseController pController, boolean replaceScene) {
+        return open(pController, replaceScene, new TableNodeImageScope());
     }
 
-    public static DataTreeController jShell(BaseController pController, boolean shouldLoad) {
-        return open(pController, shouldLoad, new TableNodeJShell());
+    public static DataTreeController jShell(BaseController pController, boolean replaceScene) {
+        return open(pController, replaceScene, new TableNodeJShell());
     }
 
-    public static DataTreeController jexl(BaseController pController, boolean shouldLoad) {
-        return open(pController, shouldLoad, new TableNodeJEXL());
+    public static DataTreeController jexl(BaseController pController, boolean replaceScene) {
+        return open(pController, replaceScene, new TableNodeJEXL());
     }
 
-    public static DataTreeController javascript(BaseController pController, boolean shouldLoad) {
-        return open(pController, shouldLoad, new TableNodeJavaScript());
+    public static DataTreeController javascript(BaseController pController, boolean replaceScene) {
+        return open(pController, replaceScene, new TableNodeJavaScript());
     }
 
-    public static DataTreeController rowFilter(BaseController pController, boolean shouldLoad) {
-        return open(pController, shouldLoad, new TableNodeRowFilter());
+    public static DataTreeController rowFilter(BaseController pController, boolean replaceScene) {
+        return open(pController, replaceScene, new TableNodeRowFilter());
     }
 
-    public static DataTreeController data2DDefinition(BaseController pController, boolean shouldLoad) {
-        return open(pController, shouldLoad, new TableNodeData2DDefinition());
+    public static DataTreeController data2DDefinition(BaseController pController, boolean replaceScene) {
+        return open(pController, replaceScene, new TableNodeData2DDefinition());
     }
 
 }

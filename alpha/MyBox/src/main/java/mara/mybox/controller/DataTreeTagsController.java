@@ -336,14 +336,6 @@ public class DataTreeTagsController extends BaseTableViewController<DataTag> {
 //        dataController.tableController.queryTags(selected);
     }
 
-    @Override
-    public boolean keyESC() {
-        cancelAction();
-        close();
-        return true;
-    }
-
-
     /*
         static methods
      */

@@ -420,7 +420,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
             }
 
         };
-        start(task);
+        start(task, thisPane);
 
     }
 
@@ -480,7 +480,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
             }
 
         };
-        start(task);
+        start(task, thisPane);
     }
 
     /*
@@ -533,7 +533,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
             }
 
         };
-        start(task);
+        start(task, thisPane);
     }
 
     @FXML

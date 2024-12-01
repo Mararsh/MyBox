@@ -234,7 +234,7 @@ public class VisitHistoryTools {
         return VisitHistories.read(ResourceType.Menu, Default_Max_Histories);
     }
 
-    public static List<MenuItem> getRecentMenu(BaseController controller) {
+    public static List<MenuItem> getRecentMenu(BaseController controller, boolean replaceScene) {
         List<MenuItem> menus = new ArrayList();
         List<VisitHistory> his = VisitHistoryTools.getRecentMenu();
         if (his == null || his.isEmpty()) {
@@ -252,27 +252,27 @@ public class VisitHistoryTools {
                         @Override
                         public void handle(ActionEvent event) {
                             if (message("TextTree").equals(fname)) {
-                                DataTreeController.textTree(controller, false);
+                                DataTreeController.textTree(controller, replaceScene);
                             } else if (message("HtmlTree").equals(fname)) {
-                                DataTreeController.htmlTree(controller, false);
+                                DataTreeController.htmlTree(controller, replaceScene);
                             } else if (message("WebFavorite").equals(fname)) {
-                                DataTreeController.webFavorite(controller, false);
+                                DataTreeController.webFavorite(controller, replaceScene);
                             } else if (message("DatabaseSQL").equals(fname)) {
-                                DataTreeController.sql(controller, false);
+                                DataTreeController.sql(controller, replaceScene);
                             } else if (message("MathFunction").equals(fname)) {
-                                DataTreeController.mathFunction(controller, false);
+                                DataTreeController.mathFunction(controller, replaceScene);
                             } else if (message("ImageScope").equals(fname)) {
-                                DataTreeController.imageScope(controller, false);
+                                DataTreeController.imageScope(controller, replaceScene);
                             } else if (message("JShell").equals(fname)) {
-                                DataTreeController.jShell(controller, false);
+                                DataTreeController.jShell(controller, replaceScene);
                             } else if (message("JEXL").equals(fname)) {
-                                DataTreeController.jexl(controller, false);
+                                DataTreeController.jexl(controller, replaceScene);
                             } else if (message("JavaScript").equals(fname)) {
-                                DataTreeController.javascript(controller, false);
+                                DataTreeController.javascript(controller, replaceScene);
                             } else if (message("RowFilter").equals(fname)) {
-                                DataTreeController.rowFilter(controller, false);
+                                DataTreeController.rowFilter(controller, replaceScene);
                             } else if (message("Data2DDefinition").equals(fname)) {
-                                DataTreeController.data2DDefinition(controller, false);
+                                DataTreeController.data2DDefinition(controller, replaceScene);
                             }
                         }
                     });
@@ -285,7 +285,11 @@ public class VisitHistoryTools {
                     menu.setOnAction(new EventHandler<ActionEvent>() {
                         @Override
                         public void handle(ActionEvent event) {
-                            controller.openScene(fxml);
+                            if (replaceScene) {
+                                controller.loadScene(fxml);
+                            } else {
+                                controller.openScene(fxml);
+                            }
                         }
                     });
                     menus.add(menu);

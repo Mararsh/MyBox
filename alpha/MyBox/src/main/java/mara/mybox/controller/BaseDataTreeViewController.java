@@ -264,6 +264,10 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
         }
     }
 
+    public void refreshNode(DataNode node) {
+        refreshItem(find(node));
+    }
+
     public void refreshItem(TreeItem<DataNode> item) {
         if (item == null) {
             return;
@@ -272,67 +276,6 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
         item.getChildren().add(new TreeItem(new DataNode()));
         unfold(item, false);
     }
-
-    /*
-        data
-     */
-    public DataNode copyNode(Connection conn, DataNode sourceNode, DataNode targetNode) {
-        if (conn == null || sourceNode == null || targetNode == null) {
-            if (task != null) {
-                task.setError(message("InvalidData"));
-            }
-            return null;
-        }
-        try {
-            DataNode newNode = DataNode.createChild(targetNode);
-            newNode = nodeTable.insertData(conn, newNode);
-            if (newNode == null) {
-                return null;
-            }
-            conn.commit();
-            return newNode;
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            return null;
-        }
-    }
-
-    public boolean copyNodeAndDescendants(Connection conn, DataNode sourceNode, DataNode targetNode) {
-        return copyDescendants(conn, sourceNode, copyNode(conn, sourceNode, targetNode));
-    }
-
-    public boolean copyDescendants(Connection conn, DataNode sourceNode, DataNode targetNode) {
-        if (conn == null || sourceNode == null || targetNode == null) {
-            if (task != null) {
-                task.setError(message("InvalidData"));
-            }
-            return false;
-        }
-        try {
-            long sourceid = sourceNode.getNodeid();
-            long targetid = targetNode.getNodeid();
-            List<DataNode> children = nodeTable.children(conn, sourceid);
-            if (children != null && !children.isEmpty()) {
-                conn.setAutoCommit(true);
-                for (DataNode child : children) {
-                    DataNode newNode = DataNode.create()
-                            .setParentid(targetid)
-                            .setTitle(child.getTitle());
-                    nodeTable.insertData(conn, newNode);
-                    copyDescendants(conn, child, newNode);
-                }
-            }
-            return true;
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            return false;
-        }
-    }
-
 
     /*
         values

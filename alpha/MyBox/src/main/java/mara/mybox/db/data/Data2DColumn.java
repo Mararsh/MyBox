@@ -115,7 +115,7 @@ public class Data2DColumn extends ColumnDefinition {
     }
 
     public String info() {
-        return Data2DColumnTools.toString(this);
+        return Data2DColumnTools.info(this);
     }
 
     /*

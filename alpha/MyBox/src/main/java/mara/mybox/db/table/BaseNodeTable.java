@@ -10,6 +10,7 @@ import java.util.Map;
 import javafx.scene.paint.Color;
 import mara.mybox.controller.BaseController;
 import mara.mybox.data.StringTable;
+import mara.mybox.db.Database;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
@@ -268,6 +269,93 @@ public class BaseNodeTable extends BaseTable<DataNode> {
             MyBoxLog.debug(e);
         }
         return hasChildren;
+    }
+
+    public DataNode copyNode(Connection conn, DataNode sourceNode, DataNode targetNode) {
+        if (conn == null || sourceNode == null || targetNode == null) {
+            return null;
+        }
+        try {
+            DataNode newNode = sourceNode.copy()
+                    .setNodeid(-1).setParentid(targetNode.getNodeid());
+            newNode = insertData(conn, newNode);
+            if (newNode == null) {
+                return null;
+            }
+            conn.commit();
+            return newNode;
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+            return null;
+        }
+    }
+
+    public int copyDescendants(FxTask task, Connection conn,
+            DataNode sourceNode, DataNode targetNode, int inCount) {
+        int count = inCount;
+        try {
+            if (conn == null || sourceNode == null || targetNode == null) {
+                return count;
+            }
+            long sourceid = sourceNode.getNodeid();
+            long targetid = targetNode.getNodeid();
+            if (sourceid < 0 || targetid < 0 || (task != null && !task.isWorking())) {
+                return count;
+            }
+            conn.setAutoCommit(false);
+            String sql = "SELECT * FROM " + tableName
+                    + " WHERE parentid=? AND parentid<>nodeid  ORDER BY " + orderColumns;
+            try (PreparedStatement statement = conn.prepareStatement(sql)) {
+                statement.setLong(1, sourceid);
+                try (ResultSet results = statement.executeQuery()) {
+                    while (results != null && results.next()) {
+                        if (task != null && !task.isWorking()) {
+                            return count;
+                        }
+                        DataNode childNode = readData(results);
+                        DataNode newNode = childNode.copy()
+                                .setNodeid(-1).setParentid(targetid);
+                        newNode = insertData(conn, newNode);
+                        if (newNode == null) {
+                            return count;
+                        }
+                        if (++count % Database.BatchSize == 0) {
+                            conn.commit();
+                        }
+                        copyDescendants(task, conn, childNode, newNode, count);
+                    }
+                } catch (Exception e) {
+                    if (task != null) {
+                        task.setError(e.toString());
+                    } else {
+                        MyBoxLog.error(e.toString());
+                    }
+                }
+            } catch (Exception e) {
+                if (task != null) {
+                    task.setError(e.toString());
+                } else {
+                    MyBoxLog.error(e.toString());
+                }
+            }
+            conn.commit();
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e.toString());
+            }
+        }
+        return count;
+    }
+
+    public int copyNodeAndDescendants(FxTask task, Connection conn,
+            DataNode sourceNode, DataNode targetNode) {
+        DataNode copiedNode = copyNode(conn, sourceNode, targetNode);
+        if (copiedNode == null) {
+            return 0;
+        }
+        return copyDescendants(task, conn, sourceNode, copiedNode, 1);
     }
 
     /*

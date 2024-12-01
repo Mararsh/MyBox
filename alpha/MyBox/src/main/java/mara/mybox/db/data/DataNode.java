@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import static mara.mybox.db.table.BaseNodeTable.RootID;
-import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -134,7 +133,8 @@ public class DataNode extends BaseData {
         try {
             DataNode node = create()
                     .setParentid(parentid)
-                    .setTitle(message("Copy") + " " + title);
+                    .setTitle(title)
+                    .setOrderNumber(orderNumber);
             if (values != null) {
                 for (String key : values.keySet()) {
                     node.setValue(key, values.get(key));
