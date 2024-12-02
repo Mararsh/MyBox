@@ -629,4 +629,10 @@ public class WindowTools {
         return null;
     }
 
+    public static boolean isRunning(BaseController controller) {
+        return controller != null
+                && controller.getMyStage() != null
+                && controller.getMyStage().isShowing();
+    }
+
 }

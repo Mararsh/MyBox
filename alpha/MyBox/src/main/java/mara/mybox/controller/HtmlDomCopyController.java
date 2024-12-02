@@ -123,7 +123,7 @@ public class HtmlDomCopyController extends BaseChildController {
             editorElement = null;
             String copyiedHtml = null;
 
-            String targetLocation = targetController.hierarchyNumber(targetItem);
+            String targetLocation = targetController.makeHierarchyNumber(targetItem);
             if (targetLocation == null) {
                 error = message("SelectNodeCopyInto");
                 return false;

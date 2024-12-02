@@ -969,6 +969,10 @@ public abstract class BaseController_Interface extends BaseController_Files {
         return close();
     }
 
+    public boolean isRunning() {
+        return getMyStage() != null && getMyStage().isShowing();
+    }
+
     /*
         split panes
      */

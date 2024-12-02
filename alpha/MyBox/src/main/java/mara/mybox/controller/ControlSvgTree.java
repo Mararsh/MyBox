@@ -208,7 +208,7 @@ public class ControlSvgTree extends ControlXmlTree {
 
     @FXML
     public void showAddShapeMenu(Event event) {
-        TreeItem<XmlTreeNode> treeItem = selected();
+        TreeItem<XmlTreeNode> treeItem = selectedItem();
         if (treeItem == null) {
             return;
         }
@@ -247,7 +247,7 @@ public class ControlSvgTree extends ControlXmlTree {
 
     @FXML
     public void drawShape() {
-        TreeItem<XmlTreeNode> treeItem = selected();
+        TreeItem<XmlTreeNode> treeItem = selectedItem();
         if (treeItem == null) {
             popInformation(message("SelectToHandle"));
             return;

@@ -66,7 +66,7 @@ public class WebFavoriteAddController extends ControlInfoTreeList {
         if (title == null || title.isBlank()) {
             title = address;
         }
-        TreeItem<InfoNode> selectedItem = selected();
+        TreeItem<InfoNode> selectedItem = selectedItem();
         if (selectedItem == null) {
             alertError(message("SelectNodeAddInto"));
             return;

@@ -75,7 +75,7 @@ public class ControlHtmlDomManage extends BaseHtmlTreeController {
         if (item == null) {
             return items;
         }
-        MenuItem menuItem = new MenuItem(message("AddNode"), StyleTools.getIconImageView("iconAdd.png"));
+        MenuItem menuItem = new MenuItem(message("AddChildNode"), StyleTools.getIconImageView("iconAdd.png"));
         menuItem.setOnAction((ActionEvent menuItemEvent) -> {
             add(item);
         });
@@ -100,13 +100,13 @@ public class ControlHtmlDomManage extends BaseHtmlTreeController {
             });
             items.add(menuItem);
 
-            menuItem = new MenuItem(message("DuplicateAfterNode"), StyleTools.getIconImageView("iconCopy.png"));
+            menuItem = new MenuItem(message("DuplicateNodeAndDescendantsAfterIt"), StyleTools.getIconImageView("iconCopy.png"));
             menuItem.setOnAction((ActionEvent menuItemEvent) -> {
                 duplicate(item, true);
             });
             items.add(menuItem);
 
-            menuItem = new MenuItem(message("DuplicateToParentEnd"), StyleTools.getIconImageView("iconCopy.png"));
+            menuItem = new MenuItem(message("DuplicateNodeAndDescendantsToParentEnd"), StyleTools.getIconImageView("iconCopy.png"));
             menuItem.setOnAction((ActionEvent menuItemEvent) -> {
                 duplicate(item, false);
             });

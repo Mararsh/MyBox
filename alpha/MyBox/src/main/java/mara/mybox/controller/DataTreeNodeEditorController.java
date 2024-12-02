@@ -35,14 +35,11 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2024-8-3
  * @License Apache License Version 2.0
  */
-public class DataTreeNodeEditorController extends BaseController {
+public class DataTreeNodeEditorController extends BaseDataTreeHandleController {
 
-    protected BaseDataTreeViewController treeController;
     protected BaseDataValuesController dataController;
-
     protected SimpleBooleanProperty nodeChanged;
     protected boolean nodeExecutable, attributesChanged;
-    protected BaseNodeTable nodeTable;
     protected TableDataTag tagTable;
     protected TableDataNodeTag nodeTagsTable;
     protected DataNode parentNode, currentNode;
@@ -341,7 +338,7 @@ public class DataTreeNodeEditorController extends BaseController {
             @Override
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
-                    chainName = treeController.chainName(conn, parentNode);
+                    chainName = nodeTable.chainName(this, conn, parentNode);
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -456,15 +453,6 @@ public class DataTreeNodeEditorController extends BaseController {
     public void recoverAction() {
         resetStatus();
         editNode(currentNode);
-    }
-
-    @FXML
-    public void treeAction() {
-        if (treeController != null) {
-            treeController.requestMouse();
-        }
-        DataTreeController.open(null, false, nodeTable);
-
     }
 
     @Override

@@ -221,7 +221,7 @@ public class InfoTreeNodeExportController extends BaseTaskController {
             popError(message("NothingSave"));
             return false;
         }
-        selectedNode = listController.selected();
+        selectedNode = listController.selectedItem();
         if (selectedNode == null || selectedNode.getValue() == null) {
             popError(message("SelectToHandle"));
             return false;

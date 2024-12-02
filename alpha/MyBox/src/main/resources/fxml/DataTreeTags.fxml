@@ -76,11 +76,20 @@ License:    Apache License Version 2.0
                     </graphic>
                 </Button>
             <Label fx:id="titleLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-            <Button fx:id="closeButton" mnemonicParsing="false" onAction="#closeAction">
+            <Button fx:id="treeButton" mnemonicParsing="false" onAction="#treeAction">
                <graphic>
                   <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../buttons/Red/iconClose.png" />
+                        <Image url="@../buttons/Red/iconTree.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconCancel.png" />
                      </image>
                   </ImageView>
                </graphic>

@@ -282,14 +282,14 @@ public class ControlJsonTree extends BaseTreeTableViewController<JsonTreeNode> {
         });
         items.add(menu);
 
-        menu = new MenuItem(message("DuplicateAfterNode"), StyleTools.getIconImageView("iconCopy.png"));
+        menu = new MenuItem(message("DuplicateNodeAndDescendantsAfterIt"), StyleTools.getIconImageView("iconCopy.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             duplicate(treeItem, true);
         });
         menu.setDisable(treeItem.getParent() == null);
         items.add(menu);
 
-        menu = new MenuItem(message("DuplicateToParentEnd"), StyleTools.getIconImageView("iconCopy.png"));
+        menu = new MenuItem(message("DuplicateNodeAndDescendantsToParentEnd"), StyleTools.getIconImageView("iconCopy.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             duplicate(treeItem, false);
         });

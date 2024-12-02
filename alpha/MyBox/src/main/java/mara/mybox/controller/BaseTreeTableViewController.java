@@ -2,9 +2,11 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -18,6 +20,7 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableCell;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
+import javafx.scene.control.cell.CheckBoxTreeTableCell;
 import javafx.scene.control.cell.TreeItemPropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -41,11 +44,14 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
 
     protected final SimpleBooleanProperty loadedNotify;
     protected NodeP focusNode;
+    protected List<TreeItem<NodeP>> selectedItems;
 
     @FXML
     protected TreeTableView<NodeP> treeView;
     @FXML
     protected TreeTableColumn<NodeP, String> hierarchyColumn, titleColumn, valueColumn;
+    @FXML
+    protected TreeTableColumn<NodeP, Boolean> selectColumn;
     @FXML
     protected Label treeLabel;
 
@@ -59,7 +65,6 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
     public abstract String title(NodeP node);
 
     public abstract String value(NodeP node);
-
 
     /*
         init
@@ -91,7 +96,7 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
                                 setText(null);
                                 return;
                             }
-                            setText(hierarchyNumber(getTreeTableView().getTreeItem(getIndex())));
+                            setText(makeHierarchyNumber(getTreeTableView().getTreeItem(getIndex())));
                         }
                     };
                     return cell;
@@ -129,6 +134,19 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
                 valueColumn.setCellFactory(new TreeTableTextTrimCell());
             }
 
+            if (selectColumn != null) {
+                selectColumn.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<NodeP, Boolean>, ObservableValue<Boolean>>() {
+                    @Override
+                    public ObservableValue<Boolean> call(TreeTableColumn.CellDataFeatures<NodeP, Boolean> param) {
+                        if (param.getValue() != null) {
+                            return getSelectedProperty(param.getValue().getValue());
+                        }
+                        return null;
+                    }
+                });
+                selectColumn.setCellFactory(CheckBoxTreeTableCell.forTreeTableColumn(selectColumn));
+            }
+
             treeView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
             treeView.setOnMouseClicked(new EventHandler<MouseEvent>() {
                 @Override
@@ -136,7 +154,7 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
                     if (popMenu != null && popMenu.isShowing()) {
                         popMenu.hide();
                     }
-                    TreeItem<NodeP> item = selected();
+                    TreeItem<NodeP> item = selectedItem();
                     if (event.getButton() == MouseButton.SECONDARY) {
                         rightClicked(event, item);
                     } else if (event.getClickCount() > 1) {
@@ -209,7 +227,7 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
         }
         TreeItem<NodeP> child = new TreeItem(node);
         parent.getChildren().add(child);
-        hierarchyNumber(child);
+        makeHierarchyNumber(child);
         child.setExpanded(false);
         if (select) {
             focusItem(child);
@@ -251,13 +269,17 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
     /*
         values
      */
-    public TreeItem<NodeP> selected() {
+    public BooleanProperty getSelectedProperty(NodeP node) {
+        return null;
+    }
+
+    public TreeItem<NodeP> selectedItem() {
         TreeItem<NodeP> selecteItem = treeView.getSelectionModel().getSelectedItem();
         return validItem(selecteItem);
     }
 
     public NodeP selectedValue() {
-        TreeItem<NodeP> selecteItem = selected();
+        TreeItem<NodeP> selecteItem = selectedItem();
         return selecteItem != null ? selecteItem.getValue() : null;
     }
 
@@ -276,15 +298,6 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
         return node != null;
     }
 
-    public boolean equalItem(TreeItem<NodeP> item1, TreeItem<NodeP> item2) {
-        if (item1 == null || item2 == null) {
-            return false;
-        }
-        String s1 = hierarchyNumber(item1);
-        String s2 = hierarchyNumber(item2);
-        return s1.equals(s2);
-    }
-
     public boolean equalNode(NodeP node1, NodeP node2) {
         if (node1 == null || node2 == null) {
             return false;
@@ -296,17 +309,10 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
         return false;
     }
 
-    public boolean equalOrDescendant(TreeItem<NodeP> item1, TreeItem<NodeP> item2) {
-        if (item1 == null || item2 == null) {
-            return false;
-        }
-        if (equalItem(item1, item2)) {
-            return true;
-        }
-        return equalOrDescendant(item1.getParent(), item2);
+    public void setHierarchyNumber(NodeP node, String hierarchyNumber) {
     }
 
-    public String hierarchyNumber(TreeItem<NodeP> item) {
+    public String makeHierarchyNumber(TreeItem<NodeP> item) {
         if (item == null) {
             return "";
         }
@@ -325,6 +331,7 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
         if (h.startsWith(".")) {
             h = h.substring(1, h.length());
         }
+        setHierarchyNumber(item.getValue(), h);
         return h;
     }
 
@@ -332,7 +339,7 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
         if (item == null) {
             return "";
         }
-        return hierarchyNumber(item) + " " + title(item.getValue());
+        return makeHierarchyNumber(item) + " " + title(item.getValue());
     }
 
     public TreeItem<NodeP> find(NodeP node) {
@@ -400,6 +407,61 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
         return message("CopyValue");
     }
 
+    public List<NodeP> selectedNodes() {
+        List<TreeItem<NodeP>> items = selectedItems();
+        if (items == null) {
+            return null;
+        }
+        List<NodeP> selectedNodes = new ArrayList<>();
+        for (TreeItem<NodeP> item : items) {
+            selectedNodes.add(item.getValue());
+        }
+        return selectedNodes;
+    }
+
+    public List<TreeItem<NodeP>> selectedItems() {
+        selectedItems = new ArrayList<>();
+        if (selectColumn == null) {
+            TreeItem<NodeP> item = selectedItem();
+            if (item != null) {
+                selectedItems.add(item);
+            }
+            return selectedItems;
+        }
+        checkSelectedItems(treeView.getRoot());
+        return selectedItems;
+    }
+
+    private void checkSelectedItems(TreeItem<NodeP> item) {
+        try {
+            if (item == null || selectColumn == null) {
+                return;
+            }
+            NodeP node = item.getValue();
+            if (node == null) {
+                return;
+            }
+            BooleanProperty selectedProperty = getSelectedProperty(node);
+            if (selectedProperty == null) {
+                return;
+            }
+            if (selectedProperty.get()) {
+                selectedItems.add(item);
+            }
+            ObservableList<TreeItem<NodeP>> children = item.getChildren();
+            if (children == null) {
+                return;
+            }
+            for (TreeItem<NodeP> child : children) {
+                checkSelectedItems(child);
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+
+    }
+
+
     /*
         actions
      */
@@ -414,7 +476,7 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
     @FXML
     @Override
     public void showViewMenu(Event event) {
-        TreeItem<NodeP> item = selected();
+        TreeItem<NodeP> item = selectedItem();
         if (item == null) {
             return;
         }
@@ -501,7 +563,7 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
     @FXML
     @Override
     public void showFunctionsMenu(Event event) {
-        TreeItem<NodeP> treeItem = selected();
+        TreeItem<NodeP> treeItem = selectedItem();
         if (treeItem == null) {
             return;
         }
@@ -590,12 +652,12 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
 
     @FXML
     public void foldNode() {
-        fold(selected(), false);
+        fold(selectedItem(), false);
     }
 
     @FXML
     public void foldNodeAndDecendants() {
-        fold(selected(), true);
+        fold(selectedItem(), true);
     }
 
     public void fold(TreeItem<NodeP> item, boolean descendants) {
@@ -616,12 +678,12 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
 
     @FXML
     public void unfoldNode() {
-        unfold(selected(), false);
+        unfold(selectedItem(), false);
     }
 
     @FXML
     public void unfoldNodeAndDecendants() {
-        unfold(selected(), true);
+        unfold(selectedItem(), true);
     }
 
     public void unfold(TreeItem<NodeP> item, boolean descendants) {
@@ -653,7 +715,7 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
     @FXML
     @Override
     public void showOperationsMenu(Event event) {
-        TreeItem<NodeP> item = selected();
+        TreeItem<NodeP> item = selectedItem();
         if (item == null) {
             return;
         }

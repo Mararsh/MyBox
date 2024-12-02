@@ -2,6 +2,9 @@ package mara.mybox.controller;
 
 import java.sql.Connection;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
+import javafx.scene.control.TreeItem;
+import javafx.scene.input.MouseEvent;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.DataNode;
 import mara.mybox.dev.MyBoxLog;
@@ -15,34 +18,54 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-3-14
  * @License Apache License Version 2.0
  */
-public class DataTreeParentController extends DataTreeNodeSelectController {
+public class DataTreeParentController extends BaseDataTreeViewController {
 
     protected DataTreeNodeEditorController editor;
+    protected DataNode sourceNode;
+
+    @FXML
+    protected Label nodeLabel;
 
     public void setParameters(DataTreeNodeEditorController parent, DataNode node) {
         try {
+            if (parent == null || node == null) {
+                close();
+                return;
+            }
             editor = parent;
+            nodeTable = editor.nodeTable;
+            dataName = nodeTable.getDataName();
+            baseName = baseName + "_" + dataName;
 
-            setParameters(parent, editor.nodeTable, node);
+            sourceNode = node;
+            nodeLabel.setText(message("SourceNode") + ": " + sourceNode.shortDescription());
 
             baseTitle = nodeTable.getTreeName() + " - " + message("SelectParentNode");
             setTitle(baseTitle);
+
+            loadTree();
 
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
+    @Override
+    public boolean isSourceNode(DataNode node) {
+        return equalNode(node, sourceNode);
+    }
+
+    @Override
+    public void doubleClicked(MouseEvent event, TreeItem<DataNode> item) {
+        okAction();
+    }
+
     @FXML
     @Override
     public void okAction() {
-        if (!parentRunning()) {
-            close();
-            return;
-        }
         DataNode targetNode = selectedValue();
         if (targetNode == null) {
-            popError(message("SelectNodeComments"));
+            popError(message("SelectToHandle"));
             return;
         }
         if (task != null) {
@@ -53,7 +76,11 @@ public class DataTreeParentController extends DataTreeNodeSelectController {
             @Override
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
-                    return checkOptions(this, conn, targetNode);
+                    if (nodeTable.equalOrDescendant(this, conn, targetNode, sourceNode)) {
+                        error = message("TreeTargetComments");
+                        return false;
+                    }
+                    return true;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -68,6 +95,11 @@ public class DataTreeParentController extends DataTreeNodeSelectController {
         };
         start(task);
 
+    }
+
+    @FXML
+    public void treeAction() {
+        DataTreeController.open(null, false, nodeTable);
     }
 
     /*

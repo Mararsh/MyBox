@@ -295,12 +295,12 @@ public class BaseNodeTable extends BaseTable<DataNode> {
         int count = inCount;
         try {
             if (conn == null || sourceNode == null || targetNode == null) {
-                return count;
+                return -count;
             }
             long sourceid = sourceNode.getNodeid();
             long targetid = targetNode.getNodeid();
             if (sourceid < 0 || targetid < 0 || (task != null && !task.isWorking())) {
-                return count;
+                return -count;
             }
             conn.setAutoCommit(false);
             String sql = "SELECT * FROM " + tableName
@@ -310,14 +310,14 @@ public class BaseNodeTable extends BaseTable<DataNode> {
                 try (ResultSet results = statement.executeQuery()) {
                     while (results != null && results.next()) {
                         if (task != null && !task.isWorking()) {
-                            return count;
+                            return -count;
                         }
                         DataNode childNode = readData(results);
                         DataNode newNode = childNode.copy()
                                 .setNodeid(-1).setParentid(targetid);
                         newNode = insertData(conn, newNode);
                         if (newNode == null) {
-                            return count;
+                            return -count;
                         }
                         if (++count % Database.BatchSize == 0) {
                             conn.commit();
@@ -330,6 +330,7 @@ public class BaseNodeTable extends BaseTable<DataNode> {
                     } else {
                         MyBoxLog.error(e.toString());
                     }
+                    return -count;
                 }
             } catch (Exception e) {
                 if (task != null) {
@@ -337,6 +338,7 @@ public class BaseNodeTable extends BaseTable<DataNode> {
                 } else {
                     MyBoxLog.error(e.toString());
                 }
+                return -count;
             }
             conn.commit();
         } catch (Exception e) {
@@ -345,6 +347,7 @@ public class BaseNodeTable extends BaseTable<DataNode> {
             } else {
                 MyBoxLog.error(e.toString());
             }
+            return -count;
         }
         return count;
     }
@@ -356,6 +359,44 @@ public class BaseNodeTable extends BaseTable<DataNode> {
             return 0;
         }
         return copyDescendants(task, conn, sourceNode, copiedNode, 1);
+    }
+
+    public boolean equalOrDescendant(FxTask<Void> task, Connection conn,
+            DataNode targetNode, DataNode sourceNode) {
+        if (conn == null || targetNode == null || sourceNode == null
+                || (task != null && !task.isWorking())) {
+            return false;
+        }
+        long targetID = targetNode.getNodeid();
+        long sourceID = sourceNode.getNodeid();
+        if (targetID == sourceID) {
+            return true;
+        }
+        DataNode parent = parent(conn, targetNode);
+        if (parent == null || targetID == parent.getNodeid()) {
+            return false;
+        }
+        return equalOrDescendant(task, conn, parent, sourceNode);
+    }
+
+    public String chainName(FxTask<Void> task, Connection conn, DataNode node) {
+        if (conn == null || node == null) {
+            return null;
+        }
+        String chainName = "";
+        DataNode cnode = node;
+        while (cnode.getNodeid() != cnode.getParentid()) {
+            if (conn == null || (task != null && !task.isWorking())) {
+                return null;
+            }
+            cnode = query(conn, cnode.getParentid());
+            if (cnode == null) {
+                break;
+            }
+            chainName = cnode.getTitle() + TitleSeparater + chainName;
+        }
+        chainName += node.getTitle();
+        return chainName;
     }
 
     /*
@@ -637,25 +678,6 @@ public class BaseNodeTable extends BaseTable<DataNode> {
             MyBoxLog.debug(e);
         }
         return size;
-    }
-
-    public boolean equalOrDescendant(FxTask<Void> task, Connection conn, DataNode node1, DataNode node2) {
-        if (conn == null || node1 == null || node2 == null) {
-            if (task != null) {
-                task.setError(message("InvalidData"));
-            }
-            return false;
-        }
-        long id1 = node1.getNodeid();
-        long id2 = node2.getNodeid();
-        if (id1 == id2) {
-            return true;
-        }
-        DataNode parent = parent(conn, node1);
-        if (parent == null || id1 == parent.getNodeid()) {
-            return false;
-        }
-        return equalOrDescendant(task, conn, parent(conn, node1), node2);
     }
 
     public DataNode parent(Connection conn, DataNode node) {

@@ -239,7 +239,7 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
             }
             try {
                 parentNode.getChildren().add(nodeItem);
-                hierarchyNumber(nodeItem);
+                makeHierarchyNumber(nodeItem);
             } catch (Exception e) {
                 return;
             }
@@ -257,7 +257,7 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
         TreeItem<DataNode> treeItem = find(node);
         if (treeItem != null) {
             treeItem.setValue(node);
-            hierarchyNumber(treeItem);
+            makeHierarchyNumber(treeItem);
         }
         if (currentNode != null && currentNode.equals(node)) {
             showNode(node);
@@ -296,11 +296,10 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
     }
 
     @Override
-    public boolean equalItem(TreeItem<DataNode> item1, TreeItem<DataNode> item2) {
-        if (item1 == null || item2 == null) {
-            return false;
+    public void setHierarchyNumber(DataNode node, String hierarchyNumber) {
+        if (node != null) {
+            node.setHierarchyNumber(hierarchyNumber);
         }
-        return equalNode(item1.getValue(), item2.getValue());
     }
 
     @Override
@@ -353,35 +352,30 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
         return chainName;
     }
 
-    public String chainName(Connection conn, DataNode node) {
-        if (node == null) {
-            return null;
-        }
-        String chainName = "";
-        List<DataNode> ancestor = ancestor(conn, node);
-        if (ancestor != null) {
-            for (DataNode a : ancestor) {
-                chainName += a.getTitle() + TitleSeparater;
-            }
-        }
-        chainName += node.getTitle();
-        return chainName;
-    }
-
-    @Override
-    public String hierarchyNumber(TreeItem<DataNode> item) {
-        String num = super.hierarchyNumber(item);
-        if (item != null && item.getValue() != null) {
-            item.getValue().setHierarchyNumber(num);
-        }
-        return num;
-    }
-
     public String shortDescription(TreeItem<DataNode> item) {
         if (item == null) {
             return null;
         }
         return item.getValue().shortDescription(chainName(item));
+    }
+
+    public boolean equalOrDescendant(FxTask<Void> currentTask, Connection conn,
+            DataNode targetNode, List<DataNode> sourceNodes) {
+        if (sourceNodes == null || sourceNodes.isEmpty()) {
+            displayError(message("SelectSourceNodes"));
+            return false;
+        }
+        if (targetNode == null) {
+            displayError(message("SelectTargetNode"));
+            return false;
+        }
+        for (DataNode source : sourceNodes) {
+            if (nodeTable.equalOrDescendant(currentTask, conn, targetNode, source)) {
+                displayError(message("TreeTargetComments"));
+                return false;
+            }
+        }
+        return true;
     }
 
     /*
@@ -681,7 +675,7 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
     @FXML
     @Override
     public boolean popAction() {
-        TreeItem<DataNode> item = selected();
+        TreeItem<DataNode> item = selectedItem();
         if (item == null) {
             return false;
         }
@@ -692,7 +686,7 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
     @FXML
     public void editAction() {
         if (currentNode == null) {
-            TreeItem<DataNode> item = selected();
+            TreeItem<DataNode> item = selectedItem();
             if (item == null) {
                 return;
             }
@@ -721,7 +715,7 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
 
     @FXML
     public void showDataMenu(Event event) {
-        TreeItem<DataNode> item = selected();
+        TreeItem<DataNode> item = selectedItem();
         if (item == null) {
             return;
         }

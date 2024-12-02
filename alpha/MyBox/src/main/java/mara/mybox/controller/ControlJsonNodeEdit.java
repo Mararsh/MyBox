@@ -68,7 +68,7 @@ public class ControlJsonNodeEdit extends ControlJsonNodeBase {
             return;
         }
         thisPane.setDisable(false);
-        infoLabel.setText(treeController.hierarchyNumber(item));
+        infoLabel.setText(treeController.makeHierarchyNumber(item));
         TreeItem<JsonTreeNode> parentItem = item.getParent();
         JsonTreeNode parentNode = parentItem == null ? null : parentItem.getValue();
         nameInput.setText(currentTreeNode.getTitle());

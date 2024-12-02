@@ -158,7 +158,7 @@ public class ControlInfoTreeListManage extends ControlInfoTreeList {
 
         List<MenuItem> items = new ArrayList<>();
 
-        MenuItem menu = new MenuItem(message("AddNode"), StyleTools.getIconImageView("iconAdd.png"));
+        MenuItem menu = new MenuItem(message("AddChildNode"), StyleTools.getIconImageView("iconAdd.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             addChild(treeItem);
         });
@@ -170,7 +170,7 @@ public class ControlInfoTreeListManage extends ControlInfoTreeList {
         });
         items.add(menu);
 
-        menu = new MenuItem(message("RenameNode"), StyleTools.getIconImageView("iconInput.png"));
+        menu = new MenuItem(message("ChangeNodeTitle"), StyleTools.getIconImageView("iconInput.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             renameNode(treeItem);
         });
@@ -229,7 +229,7 @@ public class ControlInfoTreeListManage extends ControlInfoTreeList {
 
     @FXML
     public void showDataMenu(Event event) {
-        TreeItem<InfoNode> item = selected();
+        TreeItem<InfoNode> item = selectedItem();
         if (item == null) {
             return;
         }
@@ -517,7 +517,7 @@ public class ControlInfoTreeListManage extends ControlInfoTreeList {
             return;
         }
         String chainName = chainName(item);
-        String name = PopTools.askValue(getBaseTitle(), chainName, message("RenameNode"), nodeValue.getTitle() + "m");
+        String name = PopTools.askValue(getBaseTitle(), chainName, message("ChangeNodeTitle"), nodeValue.getTitle() + "m");
         if (name == null || name.isBlank()) {
             return;
         }
@@ -616,7 +616,7 @@ public class ControlInfoTreeListManage extends ControlInfoTreeList {
 
     @FXML
     public void infoTree() {
-        infoTree(selected());
+        infoTree(selectedItem());
     }
 
     public void infoTree(TreeItem<InfoNode> node) {

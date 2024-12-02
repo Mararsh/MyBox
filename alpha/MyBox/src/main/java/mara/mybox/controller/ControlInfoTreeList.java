@@ -283,14 +283,6 @@ public class ControlInfoTreeList extends BaseTreeTableViewController<InfoNode> {
     }
 
     @Override
-    public boolean equalItem(TreeItem<InfoNode> item1, TreeItem<InfoNode> item2) {
-        if (item1 == null || item2 == null) {
-            return false;
-        }
-        return equalNode(item1.getValue(), item2.getValue());
-    }
-
-    @Override
     public boolean equalNode(InfoNode node1, InfoNode node2) {
         return InfoNode.equal(node1, node2);
     }
@@ -425,7 +417,7 @@ public class ControlInfoTreeList extends BaseTreeTableViewController<InfoNode> {
     @FXML
     @Override
     public void addAction() {
-        addChild(selected());
+        addChild(selectedItem());
     }
 
     public void addChild(TreeItem<InfoNode> targetItem) {

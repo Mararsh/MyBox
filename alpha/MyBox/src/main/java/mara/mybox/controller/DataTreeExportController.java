@@ -30,7 +30,6 @@ import mara.mybox.db.data.DataNode;
 import mara.mybox.db.data.DataNodeTag;
 import mara.mybox.db.data.DataNodeTools;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.db.table.BaseNodeTable;
 import static mara.mybox.db.table.BaseNodeTable.RootID;
 import mara.mybox.db.table.TableDataNodeTag;
 import mara.mybox.dev.MyBoxLog;
@@ -49,10 +48,8 @@ import org.apache.commons.csv.CSVPrinter;
  * @CreateDate 2021-4-30
  * @License Apache License Version 2.0
  */
-public class DataTreeExportController extends BaseTaskController {
+public class DataTreeExportController extends BaseDataTreeHandleController {
 
-    protected DataTreeController treeController;
-    protected BaseNodeTable nodeTable;
     protected TableDataNodeTag nodeTagsTable;
     protected TreeItem<DataNode> sourceItem;
     protected long sourceid;
@@ -61,7 +58,7 @@ public class DataTreeExportController extends BaseTaskController {
     protected FileWriter treeHtmlWriter, treeXmlWriter, treeJsonWriter,
             listJsonWriter, listHtmlWriter, listXmlWriter, framesetNavWriter;
     protected CSVPrinter csvPrinter;
-    protected String dataName, hierarchyNumber;
+    protected String hierarchyNumber;
     protected int count, level, childrenNumber;
     protected Charset charset;
     protected Stack<Integer> childrenNumberStack;
@@ -94,6 +91,7 @@ public class DataTreeExportController extends BaseTaskController {
             baseName = baseName + "_" + dataName;
             baseTitle = nodeTable.getTreeName() + " - "
                     + message("Export") + " : " + sourceItem.getValue().getTitle();
+            chainName = treeController.shortDescription(sourceItem);
 
             setControls();
 
@@ -106,7 +104,7 @@ public class DataTreeExportController extends BaseTaskController {
         try {
             setTitle(baseTitle);
 
-            nodeLabel.setText(message("Node") + ": " + treeController.shortDescription(sourceItem));
+            nodeLabel.setText(message("Node") + ": " + chainName);
 
             idCheck.setSelected(UserConfig.getBoolean(baseName + "ID", false));
             idCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -245,7 +243,7 @@ public class DataTreeExportController extends BaseTaskController {
 
     @Override
     public boolean checkOptions() {
-        if (treeController == null || sourceItem == null || sourceItem.getValue() == null) {
+        if (sourceItem == null || sourceItem.getValue() == null) {
             close();
             return false;
         }
@@ -316,16 +314,16 @@ public class DataTreeExportController extends BaseTaskController {
         if (sourceItem == null || targetPath == null) {
             return false;
         }
-        if (!openWriters()) {
-            closeWriters();
-            return false;
-        }
         count = level = 0;
         childrenNumberStack = new Stack();
+        childrenNumber = 0;
         try (Connection conn = DerbyBase.getConnection()) {
-            String chainName = treeController.chainName(sourceItem);
+            chainName = nodeTable.chainName(currentTask, conn, sourceItem.getValue());
             showLogs("Export started. Node: " + sourceid + " - " + chainName);
-            childrenNumber = 0;
+            if (!openWriters()) {
+                closeWriters();
+                return false;
+            }
             exportNode(currentTask, conn, sourceid, chainName, "");
         } catch (Exception e) {
             updateLogs(e.toString());
@@ -334,11 +332,10 @@ public class DataTreeExportController extends BaseTaskController {
     }
 
     protected boolean openWriters() {
-        if (sourceItem == null || targetPath == null) {
+        if (sourceItem == null || targetPath == null || chainName == null) {
             return false;
         }
         try {
-            String chainName = treeController.chainName(sourceItem);
             String prefix = chainName.replaceAll(DataNode.TitleSeparater, "-");
 
             if (treeXmlCheck.isSelected()) {

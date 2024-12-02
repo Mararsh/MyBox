@@ -16,7 +16,7 @@ License:    Apache License Version 2.0
 
 <VBox fx:id="thisPane" prefHeight="600.0" prefWidth="700.0" spacing="2.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.HtmlDomAddController">
     <children>
-      <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="%AddNode" textAlignment="CENTER" />
+      <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="%AddChildNode" textAlignment="CENTER" />
       <HBox alignment="CENTER_LEFT" spacing="2.0">
          <children>
             <Label minHeight="-Infinity" text="%Target" wrapText="true" />

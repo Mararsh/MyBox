@@ -118,7 +118,7 @@ public class DataTreeController extends BaseDataTreeViewController {
 
         List<MenuItem> items = new ArrayList<>();
 
-        MenuItem menu = new MenuItem(message("AddNode"), StyleTools.getIconImageView("iconAdd.png"));
+        MenuItem menu = new MenuItem(message("AddChildNode"), StyleTools.getIconImageView("iconAdd.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             addChild(treeItem.getValue());
         });
@@ -136,7 +136,7 @@ public class DataTreeController extends BaseDataTreeViewController {
         });
         items.add(menu);
 
-        menu = new MenuItem(message("RenameNode"), StyleTools.getIconImageView("iconInput.png"));
+        menu = new MenuItem(message("ChangeNodeTitle"), StyleTools.getIconImageView("iconInput.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             renameNode(treeItem);
         });
@@ -419,7 +419,7 @@ public class DataTreeController extends BaseDataTreeViewController {
             return;
         }
         String chainName = chainName(item);
-        String name = PopTools.askValue(getBaseTitle(), chainName, message("RenameNode"), nodeValue.getTitle() + "m");
+        String name = PopTools.askValue(getBaseTitle(), chainName, message("ChangeNodeTitle"), nodeValue.getTitle() + "m");
         if (name == null || name.isBlank()) {
             return;
         }
@@ -478,21 +478,21 @@ public class DataTreeController extends BaseDataTreeViewController {
 
     protected void exportNode(TreeItem<DataNode> item) {
         DataTreeExportController exportController
-                = (DataTreeExportController) branchStage(Fxmls.DataTreeExportFxml);
+                = (DataTreeExportController) openStage(Fxmls.DataTreeExportFxml);
         exportController.setParamters(this, item);
     }
 
     @FXML
     protected void importAction(TreeItem<DataNode> item) {
         DataTreeImportController importController
-                = (DataTreeImportController) branchStage(Fxmls.DataTreeImportFxml);
+                = (DataTreeImportController) openStage(Fxmls.DataTreeImportFxml);
         importController.setParamters(this, item);
     }
 
     @FXML
     protected void importExamples(TreeItem<DataNode> item) {
         DataTreeImportController importController
-                = (DataTreeImportController) branchStage(Fxmls.DataTreeImportFxml);
+                = (DataTreeImportController) openStage(Fxmls.DataTreeImportFxml);
         importController.importExamples(this, item);
     }
 

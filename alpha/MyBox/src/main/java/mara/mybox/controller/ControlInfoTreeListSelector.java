@@ -183,7 +183,7 @@ public class ControlInfoTreeListSelector extends ControlInfoTreeList {
 
         items.add(new SeparatorMenuItem());
 
-        menu = new MenuItem(message("AddNode"), StyleTools.getIconImageView("iconAdd.png"));
+        menu = new MenuItem(message("AddChildNode"), StyleTools.getIconImageView("iconAdd.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             addChild(item);
         });

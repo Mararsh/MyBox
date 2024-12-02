@@ -3,6 +3,8 @@ package mara.mybox.db.data;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import static mara.mybox.db.table.BaseNodeTable.RootID;
 
 /**
@@ -20,6 +22,7 @@ public class DataNode extends BaseData {
     protected float orderNumber;
     protected Date updateTime;
     protected Map<String, Object> values;
+    protected final BooleanProperty selected = new SimpleBooleanProperty(false);
 
     private void init() {
         nodeid = -1;
@@ -245,6 +248,10 @@ public class DataNode extends BaseData {
 
     public void setHierarchyNumber(String hierarchyNumber) {
         this.hierarchyNumber = hierarchyNumber;
+    }
+
+    public BooleanProperty getSelected() {
+        return selected;
     }
 
 }

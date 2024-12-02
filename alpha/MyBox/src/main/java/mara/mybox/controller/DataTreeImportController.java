@@ -21,7 +21,6 @@ import mara.mybox.db.data.DataNode;
 import mara.mybox.db.data.DataNodeTag;
 import mara.mybox.db.data.DataTag;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.db.table.BaseNodeTable;
 import mara.mybox.db.table.TableDataNodeTag;
 import mara.mybox.db.table.TableDataTag;
 import mara.mybox.db.table.TableNodeData2DDefinition;
@@ -41,14 +40,11 @@ import org.xml.sax.helpers.DefaultHandler;
  * @CreateDate 2022-3-9
  * @License Apache License Version 2.0
  */
-public class DataTreeImportController extends BaseBatchFileController {
+public class DataTreeImportController extends BaseDataTreeHandleController {
 
-    protected DataTreeController treeController;
-    protected BaseNodeTable nodeTable;
     protected TableDataNodeTag nodeTagsTable;
     protected TableDataTag tagTable;
     protected TreeItem<DataNode> parentItem;
-    protected String dataName;
     protected boolean isExmaple;
 
     @FXML
@@ -80,6 +76,7 @@ public class DataTreeImportController extends BaseBatchFileController {
             baseName = baseName + "_" + dataName;
             baseTitle = nodeTable.getTreeName() + " - "
                     + message("Import") + " : " + parentItem.getValue().getTitle();
+            chainName = treeController.shortDescription(parentItem);
 
             setControls();
 
@@ -92,7 +89,7 @@ public class DataTreeImportController extends BaseBatchFileController {
         try {
             setTitle(baseTitle);
 
-            parentLabel.setText(message("ParentNode") + ": " + treeController.shortDescription(parentItem));
+            parentLabel.setText(message("ParentNode") + ": " + chainName);
 
             String existed = UserConfig.getString(baseName + "Existed", "Update");
             if ("Create".equalsIgnoreCase(existed)) {
@@ -199,7 +196,7 @@ public class DataTreeImportController extends BaseBatchFileController {
                 orderNumber = 0f;
                 value = new StringBuilder();
                 isData2DDefinition = nodeTable instanceof TableNodeData2DDefinition;
-                showLogs(message("ParentNode") + ": " + treeController.shortDescription(parentItem));
+                showLogs(message("ParentNode") + ": " + chainName);
             } catch (Exception e) {
                 showLogs(e.toString());
             }
@@ -336,15 +333,17 @@ public class DataTreeImportController extends BaseBatchFileController {
     @Override
     public void afterTask(boolean ok) {
         showCost();
-        treeController.refreshItem(parentItem);
 
         if (miaoCheck != null && miaoCheck.isSelected()) {
             SoundTools.miao3();
         }
-        if (isExmaple) {
-            close();
-        } else {
-            tableView.refresh();
+
+        tableView.refresh();
+        if (treeRunning()) {
+            treeController.refreshItem(parentItem);
+            if (isExmaple) {
+                close();
+            }
         }
     }
 

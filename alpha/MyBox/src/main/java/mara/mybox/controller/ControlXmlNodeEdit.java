@@ -41,7 +41,7 @@ public class ControlXmlNodeEdit extends ControlXmlNodeBase {
             return;
         }
         thisPane.setDisable(false);
-        infoLabel.setText(treeController.hierarchyNumber(item));
+        infoLabel.setText(treeController.makeHierarchyNumber(item));
         
         node = currentTreeNode.getNode();
         if (node == null) {

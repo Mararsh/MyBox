@@ -336,20 +336,25 @@ public class DataTreeTagsController extends BaseTableViewController<DataTag> {
 //        dataController.tableController.queryTags(selected);
     }
 
+    @FXML
+    public void treeAction() {
+        DataTreeController.open(null, false, nodeTable);
+    }
+
     /*
         static methods
      */
     public static DataTreeTagsController edit(ControlDataNodeTags tagsController) {
-        DataTreeTagsController controller = (DataTreeTagsController) WindowTools.branchStage(
-                tagsController, Fxmls.DataTreeTagsFxml);
+        DataTreeTagsController controller
+                = (DataTreeTagsController) WindowTools.openStage(Fxmls.DataTreeTagsFxml);
         controller.setEditor(tagsController);
         controller.requestMouse();
         return controller;
     }
 
     public static DataTreeTagsController manage(DataTreeController treeController) {
-        DataTreeTagsController controller = (DataTreeTagsController) WindowTools.branchStage(
-                treeController, Fxmls.DataTreeTagsFxml);
+        DataTreeTagsController controller
+                = (DataTreeTagsController) WindowTools.openStage(Fxmls.DataTreeTagsFxml);
         controller.setTree(treeController);
         controller.requestMouse();
         return controller;

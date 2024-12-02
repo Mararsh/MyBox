@@ -209,7 +209,7 @@ public class ControlXmlTree extends BaseTreeTableViewController<XmlTreeNode> {
         values
      */
     public Node selectedNode() {
-        TreeItem<XmlTreeNode> selecteItem = selected();
+        TreeItem<XmlTreeNode> selecteItem = selectedItem();
         return selecteItem == null ? null : selecteItem.getValue().getNode();
     }
 
@@ -354,7 +354,7 @@ public class ControlXmlTree extends BaseTreeTableViewController<XmlTreeNode> {
         }
         List<MenuItem> items = new ArrayList<>();
 
-        MenuItem menu = new MenuItem(message("AddNode"), StyleTools.getIconImageView("iconAdd.png"));
+        MenuItem menu = new MenuItem(message("AddChildNode"), StyleTools.getIconImageView("iconAdd.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             XmlAddNodeController.open(this, treeItem);
         });
@@ -376,14 +376,14 @@ public class ControlXmlTree extends BaseTreeTableViewController<XmlTreeNode> {
         });
         items.add(menu);
 
-        menu = new MenuItem(message("DuplicateAfterNode"), StyleTools.getIconImageView("iconCopy.png"));
+        menu = new MenuItem(message("DuplicateNodeAndDescendantsAfterIt"), StyleTools.getIconImageView("iconCopy.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             duplicate(treeItem, true);
         });
         menu.setDisable(treeItem.getParent() == null);
         items.add(menu);
 
-        menu = new MenuItem(message("DuplicateToParentEnd"), StyleTools.getIconImageView("iconCopy.png"));
+        menu = new MenuItem(message("DuplicateNodeAndDescendantsToParentEnd"), StyleTools.getIconImageView("iconCopy.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             duplicate(treeItem, false);
         });
