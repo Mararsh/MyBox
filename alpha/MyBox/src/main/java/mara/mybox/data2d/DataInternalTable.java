@@ -67,4 +67,11 @@ public class DataInternalTable extends DataTable {
         }
     }
 
+    public static boolean isInternalTable(String name) {
+        if (name == null) {
+            return false;
+        }
+        return InternalTables.contains(name.toUpperCase());
+    }
+
 }

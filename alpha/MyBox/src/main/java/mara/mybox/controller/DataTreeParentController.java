@@ -98,7 +98,7 @@ public class DataTreeParentController extends BaseDataTreeViewController {
     }
 
     @FXML
-    public void treeAction() {
+    public void manageAction() {
         DataTreeController.open(null, false, nodeTable);
     }
 

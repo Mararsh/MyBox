@@ -14,6 +14,8 @@ import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.TreeItem;
 import javafx.scene.input.MouseEvent;
+import mara.mybox.data2d.DataInternalTable;
+import mara.mybox.data2d.DataTable;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.DataNode;
 import static mara.mybox.db.data.DataNode.TitleSeparater;
@@ -128,11 +130,18 @@ public class DataTreeController extends BaseDataTreeViewController {
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             deleteNodeAndDescendants(treeItem);
         });
+        menu.setDisable(isRoot);
         items.add(menu);
 
         menu = new MenuItem(message("DeleteDescendants"), StyleTools.getIconImageView("iconDelete.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             deleteDescendants(treeItem);
+        });
+        items.add(menu);
+
+        menu = new MenuItem(message("DeleteNodes"), StyleTools.getIconImageView("iconDelete.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            deleteNodes();
         });
         items.add(menu);
 
@@ -145,16 +154,14 @@ public class DataTreeController extends BaseDataTreeViewController {
 
         menu = new MenuItem(message("CopyNodes"), StyleTools.getIconImageView("iconCopy.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
-            copyNode(treeItem);
+            copyNodes();
         });
-        menu.setDisable(isRoot);
         items.add(menu);
 
         menu = new MenuItem(message("MoveNodes"), StyleTools.getIconImageView("iconMove.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
-            moveNode(treeItem);
+            moveNodes();
         });
-        menu.setDisable(isRoot);
         items.add(menu);
 
         if (nodeTable.isNodeExecutable()) {
@@ -203,6 +210,12 @@ public class DataTreeController extends BaseDataTreeViewController {
         menu = new MenuItem(message("Import"), StyleTools.getIconImageView("iconImport.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             importAction(item);
+        });
+        items.add(menu);
+
+        menu = new MenuItem(message("DataManufacture"), StyleTools.getIconImageView("iconDatabase.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            manufactureData();
         });
         items.add(menu);
 
@@ -408,6 +421,10 @@ public class DataTreeController extends BaseDataTreeViewController {
         start(task, treeView);
     }
 
+    public void deleteNodes() {
+        DataTreeDeleteController.open(this);
+    }
+
     protected void renameNode(TreeItem<DataNode> item) {
         if (item == null) {
             popError(message("SelectToHandle"));
@@ -453,20 +470,12 @@ public class DataTreeController extends BaseDataTreeViewController {
         start(task, treeView);
     }
 
-    protected void copyNode(TreeItem<DataNode> item) {
-        if (item == null || isRoot(item.getValue())) {
-            return;
-        }
-        DataTreeCopyController.open(this, item.getValue());
+    protected void copyNodes() {
+        DataTreeCopyController.open(this);
     }
 
-    protected void moveNode(TreeItem<DataNode> item) {
-        if (item == null || isRoot(item.getValue())) {
-            return;
-        }
-        String chainName = chainName(item);
-        InfoTreeNodeMoveController controller = (InfoTreeNodeMoveController) childStage(Fxmls.InfoTreeNodeMoveFxml);
-//        controller.setParameters(manager, item.getValue(), chainName);
+    protected void moveNodes() {
+        DataTreeMoveController.open(this);
     }
 
     protected void executeNode(TreeItem<DataNode> item) {
@@ -494,6 +503,14 @@ public class DataTreeController extends BaseDataTreeViewController {
         DataTreeImportController importController
                 = (DataTreeImportController) openStage(Fxmls.DataTreeImportFxml);
         importController.importExamples(this, item);
+    }
+
+    protected void manufactureData() {
+        String tname = nodeTable.getTableName();
+        DataTable dataTable = DataInternalTable.isInternalTable(tname)
+                ? new DataInternalTable() : new DataTable();
+        dataTable.setDataName(nodeTable.getTreeName()).setSheet(tname);
+        Data2DManufactureController.openDef(dataTable);
     }
 
     @FXML

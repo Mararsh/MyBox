@@ -8,13 +8,10 @@ License:    Apache License Version 2.0
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.RadioButton?>
-<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.control.TreeTableColumn?>
 <?import javafx.scene.control.TreeTableView?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
@@ -44,17 +41,5 @@ License:    Apache License Version 2.0
          </columns>
         </TreeTableView>
       <Label fx:id="treeLabel" />
-        <FlowPane hgap="2.0" vgap="2.0">
-            <children>
-                <Label minHeight="-Infinity" text="%Position" wrapText="true" />
-                <RadioButton fx:id="inRadio" mnemonicParsing="false" selected="true" text="%In">
-                    <toggleGroup>
-                        <ToggleGroup fx:id="positionGroup" />
-                    </toggleGroup>
-                </RadioButton>
-                <RadioButton fx:id="afterRadio" mnemonicParsing="false" text="%After" toggleGroup="$positionGroup" />
-                <RadioButton fx:id="beforeRadio" mnemonicParsing="false" text="%Before" toggleGroup="$positionGroup" />
-            </children>
-        </FlowPane>
     </children>
 </VBox>

@@ -35,6 +35,8 @@ public class Fxmls {
     public static final String DataTreeExportFxml = "/fxml/DataTreeExport.fxml";
     public static final String DataTreeImportFxml = "/fxml/DataTreeImport.fxml";
     public static final String DataTreeCopyFxml = "/fxml/DataTreeCopy.fxml";
+    public static final String DataTreeMoveFxml = "/fxml/DataTreeMove.fxml";
+    public static final String DataTreeDeleteFxml = "/fxml/DataTreeDelete.fxml";
 
     public static final String InfoTreeNodeMoveFxml = "/fxml/InfoTreeNodeMove.fxml";
     public static final String InfoTreeNodeCopyFxml = "/fxml/InfoTreeNodeCopy.fxml";

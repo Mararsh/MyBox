@@ -124,15 +124,15 @@ License:    Apache License Version 2.0
                                                 <children>
                                           <HBox alignment="CENTER_LEFT" spacing="2.0">
                                              <children>
-                                                <Button fx:id="treeButton" mnemonicParsing="false" onAction="#treeAction">
-                                                   <graphic>
-                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                         <image>
-                                                            <Image url="@../buttons/Red/iconTree.png" />
-                                                         </image>
-                                                      </ImageView>
-                                                   </graphic>
-                                                </Button>
+                                                                <Button fx:id="manageButton" mnemonicParsing="false" onAction="#manageAction">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/Red/iconManage.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </Button>
                                                 <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                                 <ImageView fx:id="rightPaneControl" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                    <image>

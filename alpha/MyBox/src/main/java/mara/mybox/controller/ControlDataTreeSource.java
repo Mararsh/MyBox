@@ -1,9 +1,7 @@
 package mara.mybox.controller;
 
-import javafx.beans.property.BooleanProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import mara.mybox.db.data.DataNode;
 import mara.mybox.dev.MyBoxLog;
 
 /**
@@ -16,16 +14,11 @@ public class ControlDataTreeSource extends BaseDataTreeViewController {
     @FXML
     protected Label topLabel;
 
-    @Override
-    public BooleanProperty getSelectedProperty(DataNode node) {
-        return node.getSelected();
-    }
-
-    public void setParameters(DataTreeController parent, DataNode node) {
+    public void setParameters(DataTreeController parent) {
         try {
             initTree(parent.nodeTable);
 
-            loadTree(node);
+            loadTree();
 
         } catch (Exception e) {
             MyBoxLog.error(e);

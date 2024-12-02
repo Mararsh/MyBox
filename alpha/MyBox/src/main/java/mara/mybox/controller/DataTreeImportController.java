@@ -21,6 +21,7 @@ import mara.mybox.db.data.DataNode;
 import mara.mybox.db.data.DataNodeTag;
 import mara.mybox.db.data.DataTag;
 import mara.mybox.db.data.VisitHistory;
+import mara.mybox.db.table.BaseNodeTable;
 import mara.mybox.db.table.TableDataNodeTag;
 import mara.mybox.db.table.TableDataTag;
 import mara.mybox.db.table.TableNodeData2DDefinition;
@@ -28,6 +29,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.SoundTools;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.FileTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -40,8 +42,11 @@ import org.xml.sax.helpers.DefaultHandler;
  * @CreateDate 2022-3-9
  * @License Apache License Version 2.0
  */
-public class DataTreeImportController extends BaseDataTreeHandleController {
+public class DataTreeImportController extends BaseBatchFileController {
 
+    protected BaseDataTreeViewController treeController;
+    protected BaseNodeTable nodeTable;
+    protected String dataName, chainName;
     protected TableDataNodeTag nodeTagsTable;
     protected TableDataTag tagTable;
     protected TreeItem<DataNode> parentItem;
@@ -339,7 +344,7 @@ public class DataTreeImportController extends BaseDataTreeHandleController {
         }
 
         tableView.refresh();
-        if (treeRunning()) {
+        if (WindowTools.isRunning(treeController)) {
             treeController.refreshItem(parentItem);
             if (isExmaple) {
                 close();
@@ -354,6 +359,11 @@ public class DataTreeImportController extends BaseDataTreeHandleController {
             file = nodeTable.exampleFile("TextTree");
         }
         XmlEditorController.open(file);
+    }
+
+    @FXML
+    public void manageAction() {
+        DataTreeController.open(null, false, nodeTable);
     }
 
     @FXML

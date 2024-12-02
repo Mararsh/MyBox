@@ -163,9 +163,11 @@ public class DataTreeNodeEditorController extends BaseDataTreeHandleController {
             @Override
             protected void whenFailed() {
                 if (treeController != null) {
-                    close();
                     treeController.popError(message("Invalid") + ": " + message("Node"));
+                } else {
+                    popError(message("Invalid") + ": " + message("Node"));
                 }
+                close();
             }
 
         };
@@ -201,9 +203,11 @@ public class DataTreeNodeEditorController extends BaseDataTreeHandleController {
             @Override
             protected void whenFailed() {
                 if (treeController != null) {
-                    close();
                     treeController.popError(message("Invalid") + ": " + message("Node"));
+                } else {
+                    popError(message("Invalid") + ": " + message("Node"));
                 }
+                close();
             }
 
         };
@@ -268,6 +272,7 @@ public class DataTreeNodeEditorController extends BaseDataTreeHandleController {
         }
         isSettingValues = true;
         titleInput.setText(currentNode.getTitle());
+        titleInput.setDisable(currentNode.isRoot());
         if (currentNode.getNodeid() < 0) {
             idInput.setText(message("NewData"));
         } else {
@@ -423,16 +428,20 @@ public class DataTreeNodeEditorController extends BaseDataTreeHandleController {
 
             @Override
             protected void whenSucceeded() {
-                if (isNewNode) {
-                    treeController.addNewNode(parentNode, savedNode);
-                } else if (isParentChanged) {
-                    treeController.updateNode(parentNode, savedNode);
+                if (treeRunning()) {
+                    if (isNewNode) {
+                        treeController.addNewNode(parentNode, savedNode);
+                    } else if (isParentChanged) {
+                        treeController.updateNode(parentNode, savedNode);
+                    } else {
+                        treeController.updateNode(savedNode);
+                    }
+                    treeController.popSaved();
+                    resetStatus();
+                    close();
                 } else {
-                    treeController.updateNode(savedNode);
+                    resetStatus();
                 }
-                treeController.popSaved();
-                resetStatus();
-                close();
             }
 
             @Override

@@ -74,21 +74,15 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
     @FXML
     protected Label nodeLabel;
 
-    public void setParamters(DataTreeController controller, TreeItem<DataNode> item) {
+    public void setParamters(DataTreeController parent, TreeItem<DataNode> item) {
         try {
-            if (controller == null) {
-                close();
-                return;
-            }
-            this.treeController = controller;
-            this.nodeTable = controller.nodeTable;
-            this.nodeTagsTable = controller.nodeTagsTable;
-            this.dataName = controller.dataName;
+            super.setParameters(parent);
+
+            this.nodeTagsTable = parent.nodeTagsTable;
             sourceItem = item;
             sourceItem = item != null ? item : treeController.treeView.getRoot();
             sourceid = sourceItem.getValue().getNodeid();
 
-            baseName = baseName + "_" + dataName;
             baseTitle = nodeTable.getTreeName() + " - "
                     + message("Export") + " : " + sourceItem.getValue().getTitle();
             chainName = treeController.shortDescription(sourceItem);

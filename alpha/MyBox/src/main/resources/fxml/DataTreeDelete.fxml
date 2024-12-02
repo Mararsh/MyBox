@@ -18,11 +18,11 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="600.0" prefWidth="900.0" spacing="2.0" VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.DataTreeParentController">
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="600.0" prefWidth="800.0" spacing="2.0" VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.DataTreeDeleteController">
     <children>
       <HBox alignment="CENTER_RIGHT" spacing="5.0">
          <children>
-            <Label fx:id="nodeLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%SourceNode" wrapText="true" HBox.hgrow="ALWAYS" />
+            <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="%DeleteNodes" HBox.hgrow="ALWAYS" />
                                                                 <Button fx:id="manageButton" mnemonicParsing="false" onAction="#manageAction">
                                                                     <graphic>
                                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -72,7 +72,7 @@ License:    Apache License Version 2.0
                                     </ImageView>
                                  </graphic>
                               </Button>
-                              <Label maxWidth="1.7976931348623157E308" text="%SelectParentNode" HBox.hgrow="ALWAYS" />
+                              <Label maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%SelectNodes" wrapText="true" HBox.hgrow="ALWAYS" />
                               <ImageView fx:id="rightPaneControl" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
                                     <Image url="@../buttons/Red/iconDoubleRight.png" />
@@ -80,10 +80,11 @@ License:    Apache License Version 2.0
                               </ImageView>
                            </children>
                         </HBox>
-                        <TreeTableView fx:id="treeView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
+                        <TreeTableView fx:id="treeView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
                            <columns>
                               <TreeTableColumn fx:id="titleColumn" prefWidth="200.0" text="%Title" />
                               <TreeTableColumn fx:id="hierarchyColumn" prefWidth="120.0" text="%HierarchyNumber" />
+                              <TreeTableColumn fx:id="selectColumn" minWidth="-1.0" prefWidth="50.0" text="%Select" />
                               <TreeTableColumn fx:id="idColumn" text="%ID" />
                               <TreeTableColumn fx:id="orderColumn" text="%OrderFloat" />
                               <TreeTableColumn fx:id="timeColumn" prefWidth="180.0" text="%ModifiedTime" />
@@ -117,7 +118,6 @@ License:    Apache License Version 2.0
             </ScrollPane>
          </items>
       </SplitPane>
-      <Label maxWidth="1.7976931348623157E308" text="%SelectNodeComments" textAlignment="CENTER" />
     </children>
     <padding>
         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

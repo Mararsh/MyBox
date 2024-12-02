@@ -337,7 +337,7 @@ public class DataTreeTagsController extends BaseTableViewController<DataTag> {
     }
 
     @FXML
-    public void treeAction() {
+    public void manageAction() {
         DataTreeController.open(null, false, nodeTable);
     }
 

@@ -1,9 +1,9 @@
 package mara.mybox.controller;
 
 import java.sql.Connection;
+import java.util.Date;
 import java.util.List;
 import javafx.fxml.FXML;
-import javafx.scene.control.RadioButton;
 import javafx.scene.control.TreeItem;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.DataNode;
@@ -18,14 +18,12 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-3-14
  * @License Apache License Version 2.0
  */
-public class DataTreeCopyController extends BaseDataTreeHandleController {
+public class DataTreeMoveController extends BaseDataTreeHandleController {
 
     @FXML
     protected ControlDataTreeSource sourceController;
     @FXML
     protected ControlDataTreeTarget targetController;
-    @FXML
-    protected RadioButton nodeAndDescendantsRadio, descendantsRadio, nodeRadio;
 
     public void setParameters(DataTreeController parent) {
         try {
@@ -34,7 +32,7 @@ public class DataTreeCopyController extends BaseDataTreeHandleController {
             sourceController.setParameters(parent);
             targetController.setParameters(parent);
 
-            baseTitle = nodeTable.getTreeName() + " - " + message("CopyNodes");
+            baseTitle = nodeTable.getTreeName() + " - " + message("MoveNodes");
             setTitle(baseTitle);
 
         } catch (Exception e) {
@@ -71,19 +69,14 @@ public class DataTreeCopyController extends BaseDataTreeHandleController {
                         error = message("TreeTargetComments");
                         return false;
                     }
+                    long targetid = targetNode.getNodeid();
                     for (DataNode sourceNode : sourceNodes) {
-                        int ret;
-                        if (nodeAndDescendantsRadio.isSelected()) {
-                            ret = nodeTable.copyNodeAndDescendants(this, conn, sourceNode, targetNode);
-                        } else if (descendantsRadio.isSelected()) {
-                            ret = nodeTable.copyDescendants(this, conn, sourceNode, targetNode, 0);
-                        } else {
-                            ret = nodeTable.copyNode(conn, sourceNode, targetNode) != null ? 1 : 0;
-                        }
-                        if (ret <= 0) {
+                        sourceNode.setParentid(targetid).setUpdateTime(new Date());
+                        sourceNode = nodeTable.updateData(conn, sourceNode);
+                        if (nodeTable.updateData(conn, sourceNode) == null) {
                             return false;
                         }
-                        count += ret;
+                        count++;
                     }
                 } catch (Exception e) {
                     error = e.toString();
@@ -94,11 +87,11 @@ public class DataTreeCopyController extends BaseDataTreeHandleController {
 
             @Override
             protected void whenSucceeded() {
-                popInformation(message("Copied") + ": " + count);
-                sourceController.refreshNode(targetNode);
-                targetController.refreshNode(targetNode);
+                popInformation(message("Moved") + ": " + count);
+                sourceController.loadTree(targetNode);
+                targetController.loadTree(targetNode);
                 if (treeRunning()) {
-                    treeController.refreshNode(targetNode);
+                    treeController.loadTree(targetNode);
                 }
             }
         };
@@ -108,9 +101,9 @@ public class DataTreeCopyController extends BaseDataTreeHandleController {
     /*
         static methods
      */
-    public static DataTreeCopyController open(DataTreeController parent) {
-        DataTreeCopyController controller
-                = (DataTreeCopyController) WindowTools.openStage(Fxmls.DataTreeCopyFxml);
+    public static DataTreeMoveController open(DataTreeController parent) {
+        DataTreeMoveController controller
+                = (DataTreeMoveController) WindowTools.openStage(Fxmls.DataTreeMoveFxml);
         controller.setParameters(parent);
         controller.requestMouse();
         return controller;

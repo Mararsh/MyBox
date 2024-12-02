@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
@@ -49,7 +50,7 @@ import mara.mybox.value.UserConfig;
  */
 public class BaseDataTreeViewController extends BaseTreeTableViewController<DataNode> {
 
-    protected static final int AutoExpandThreshold = 500;
+    protected static final int AutoExpandThreshold = 50;
     protected boolean expandAll;
     protected BaseNodeTable nodeTable;
     protected TableDataTag tagTable;
@@ -378,6 +379,11 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
         return true;
     }
 
+    @Override
+    public BooleanProperty getSelectedProperty(DataNode node) {
+        return node.getSelected();
+    }
+
     /*
         actions
      */
@@ -395,12 +401,14 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
         menu.setDisable(item == null);
         items.add(menu);
 
-        menu = new MenuItem(copyValueMessage(), StyleTools.getIconImageView("iconCopySystem.png"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            TextClipboardTools.copyToSystemClipboard(this, value(item.getValue()));
-        });
-        menu.setDisable(item == null);
-        items.add(menu);
+        if (valueColumn != null) {
+            menu = new MenuItem(copyValueMessage(), StyleTools.getIconImageView("iconCopySystem.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                TextClipboardTools.copyToSystemClipboard(this, value(item.getValue()));
+            });
+            menu.setDisable(item == null);
+            items.add(menu);
+        }
 
         menu = new MenuItem(copyTitleMessage(), StyleTools.getIconImageView("iconCopySystem.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
