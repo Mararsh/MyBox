@@ -8,8 +8,8 @@ License:    Apache License Version 2.0
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
-<?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
@@ -17,222 +17,227 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="thisPane" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.MyBoxController">
-    <top>
-        <HBox id="MyBoxMenuBar" alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseEntered="#hideMenu" stylesheets="@../styles/MyBox.css" BorderPane.alignment="CENTER_LEFT">
-            <children>
-                <ImageView fitHeight="80.0" fitWidth="80.0" pickOnBounds="true" preserveRatio="true">
-                    <image>
-                        <Image url="@../img/MyBox.png" />
-                    </image>
-                </ImageView>
-                <Label fx:id="titleLabel" maxWidth="1.7976931348623157E308" text="%AppTitle" HBox.hgrow="ALWAYS">
-                    <font>
-                        <Font size="18.0" />
-                    </font>
-                </Label>
-            </children>
-            <padding>
-                <Insets left="5.0" right="5.0" />
-            </padding>
-            <BorderPane.margin>
-                <Insets />
-            </BorderPane.margin>
-        </HBox>
-    </top>
-    <padding>
-        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-    </padding>
-    <center>
-        <VBox fx:id="menuBox" spacing="10.0" BorderPane.alignment="CENTER">
-            <children>
-                <HBox alignment="CENTER" spacing="10.0">
-                    <children>
-                        <VBox fx:id="documentBox" alignment="CENTER" onMouseClicked="#showDocumentMenu" onMouseEntered="#popDocumentMenu" prefHeight="150.0" prefWidth="250.0">
-                            <children>
-                                <HBox alignment="CENTER" maxHeight="150.0" maxWidth="150.0" prefHeight="150.0" prefWidth="150.0">
-                                    <children>
-                                        <ImageView fitHeight="150.0" fitWidth="150.0" preserveRatio="true" smooth="false">
-                                            <image>
-                                                <Image url="@../img/cover2024g1.png" />
-                                            </image>
-                                        </ImageView>
-                                    </children>
-                                </HBox>
-                                <Label text="%DocumentTools">
-                                    <font>
-                                        <Font size="18.0" />
-                                    </font>
-                                </Label>
-                            </children>
-                            <cursor>
-                                <Cursor fx:constant="OPEN_HAND" />
-                            </cursor>
-                        </VBox>
-                        <VBox fx:id="imageBox" alignment="CENTER" onMouseClicked="#showImageMenu" onMouseEntered="#popImageMenu" prefHeight="150.0" prefWidth="250.0">
-                            <children>
-                                <HBox alignment="CENTER" maxHeight="150.0" maxWidth="150.0" prefHeight="150.0" prefWidth="150.0" VBox.vgrow="NEVER">
-                                    <children>
-                                        <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../img/cover2024g2.png" />
-                                            </image>
-                                        </ImageView>
-                                    </children>
-                                </HBox>
-                                <Label text="%ImageTools">
-                                    <font>
-                                        <Font size="18.0" />
-                                    </font>
-                                </Label>
-                            </children>
-                            <cursor>
-                                <Cursor fx:constant="OPEN_HAND" />
-                            </cursor>
-                        </VBox>
-                        <VBox fx:id="fileBox" alignment="CENTER" onMouseClicked="#showFileMenu" onMouseEntered="#popFileMenu" prefHeight="150.0" prefWidth="250.0">
-                            <children>
-                                <HBox alignment="CENTER" maxHeight="150.0" maxWidth="150.0" prefHeight="150.0" prefWidth="150.0" VBox.vgrow="NEVER">
-                                    <children>
-                                        <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../img/cover2024g3.png" />
-                                            </image>
-                                        </ImageView>
-                                    </children>
-                                </HBox>
-                                <Label text="%FileTools">
-                                    <font>
-                                        <Font size="18.0" />
-                                    </font>
-                                </Label>
-                            </children>
-                        </VBox>
-                    </children>
-                    <cursor>
-                        <Cursor fx:constant="OPEN_HAND" />
-                    </cursor>
-                </HBox>
-                <HBox alignment="CENTER" spacing="10.0">
-                    <children>
-                        <VBox fx:id="networkBox" alignment="CENTER" onMouseClicked="#showNetworkMenu" onMouseEntered="#popNetworkMenu" prefHeight="150.0" prefWidth="250.0">
-                            <children>
-                                <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../img/cover2024g4.png" />
-                                    </image>
-                                </ImageView>
-                                <Label text="%NetworkTools">
-                                    <font>
-                                        <Font size="18.0" />
-                                    </font>
-                                </Label>
-                            </children>
-                            <cursor>
-                                <Cursor fx:constant="OPEN_HAND" />
-                            </cursor>
-                        </VBox>
-                        <VBox fx:id="dataBox" alignment="CENTER" onMouseClicked="#showDataMenu" onMouseEntered="#popDataMenu" prefHeight="150.0" prefWidth="250.0">
-                            <children>
-                                <HBox alignment="CENTER" maxHeight="200.0" maxWidth="200.0" prefHeight="200.0" prefWidth="200.0">
-                                    <children>
-                                        <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../img/cover2024g5.png" />
-                                            </image>
-                                        </ImageView>
-                                    </children>
-                                </HBox>
-                                <Label text="%DataTools">
-                                    <font>
-                                        <Font size="18.0" />
-                                    </font>
-                                </Label>
-                            </children>
-                            <cursor>
-                                <Cursor fx:constant="OPEN_HAND" />
-                            </cursor>
-                        </VBox>
-                        <VBox fx:id="mediaBox" alignment="CENTER" onMouseClicked="#showMediaMenu" onMouseEntered="#popMediaMenu" prefHeight="150.0" prefWidth="250.0">
-                            <children>
-                                <HBox alignment="CENTER" maxHeight="200.0" maxWidth="200.0" prefHeight="200.0" prefWidth="200.0">
-                                    <children>
-                                        <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../img/cover2024g6.png" />
-                                            </image>
-                                        </ImageView>
-                                    </children>
-                                </HBox>
-                                <Label text="%MediaTools">
-                                    <font>
-                                        <Font size="18.0" />
-                                    </font>
-                                </Label>
-                            </children>
-                            <cursor>
-                                <Cursor fx:constant="OPEN_HAND" />
-                            </cursor>
-                        </VBox>
-                    </children>
-                </HBox>
-                <HBox alignment="CENTER" spacing="10.0">
-                    <children>
-                        <VBox fx:id="recentBox" alignment="CENTER" onMouseClicked="#showRecentMenu" onMouseEntered="#popRecentMenu" prefHeight="150.0" prefWidth="250.0">
-                            <children>
-                                <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../img/cover2024g7.png" />
-                                    </image>
-                                </ImageView>
-                                <Label text="%RecentAccessed">
-                                    <font>
-                                        <Font size="18.0" />
-                                    </font>
-                                </Label>
-                            </children>
-                            <cursor>
-                                <Cursor fx:constant="OPEN_HAND" />
-                            </cursor>
-                        </VBox>
-                        <VBox fx:id="settingsBox" alignment="CENTER" onMouseClicked="#showSettingsMenu" onMouseEntered="#popSettingsMenu" prefHeight="150.0" prefWidth="250.0">
-                            <children>
-                                <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../img/cover2024g8.png" />
-                                    </image>
-                                </ImageView>
-                                <Label text="Settings/设置">
-                                    <font>
-                                        <Font size="18.0" />
-                                    </font>
-                                </Label>
-                            </children>
-                            <cursor>
-                                <Cursor fx:constant="OPEN_HAND" />
-                            </cursor>
-                        </VBox>
-                        <VBox fx:id="aboutBox" alignment="CENTER" layoutX="384.0" layoutY="10.0" onMouseClicked="#showAboutMenu" onMouseEntered="#popAboutMenu" prefHeight="150.0" prefWidth="250.0">
-                            <children>
-                                <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../img/cover2024g9.png" />
-                                    </image>
-                                </ImageView>
-                                <Label text="%About">
-                                    <font>
-                                        <Font size="18.0" />
-                                    </font>
-                                </Label>
-                            </children>
-                            <cursor>
-                                <Cursor fx:constant="OPEN_HAND" />
-                            </cursor>
-                        </VBox>
-                    </children>
-                </HBox>
-                <Label fx:id="bottomLabel" maxWidth="1.7976931348623157E308" textFill="#942c2c" VBox.vgrow="NEVER" />
-            </children>
-        </VBox>
-    </center>
-</BorderPane>
+
+<ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.MyBoxController">
+   <content>
+      <BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+          <top>
+              <HBox id="MyBoxMenuBar" alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseEntered="#hideMenu" stylesheets="@../styles/MyBox.css" BorderPane.alignment="CENTER_LEFT">
+                  <children>
+                      <ImageView fitHeight="80.0" fitWidth="80.0" pickOnBounds="true" preserveRatio="true">
+                          <image>
+                              <Image url="@../img/MyBox.png" />
+                          </image>
+                      </ImageView>
+                      <Label fx:id="titleLabel" maxWidth="1.7976931348623157E308" text="%AppTitle" HBox.hgrow="ALWAYS">
+                          <font>
+                              <Font size="18.0" />
+                          </font>
+                      </Label>
+                  </children>
+                  <padding>
+                      <Insets left="5.0" right="5.0" />
+                  </padding>
+                  <BorderPane.margin>
+                      <Insets />
+                  </BorderPane.margin>
+              </HBox>
+          </top>
+          <padding>
+              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+          </padding>
+          <center>
+              <VBox fx:id="menuBox" spacing="10.0" BorderPane.alignment="CENTER">
+                  <children>
+                      <HBox alignment="CENTER" spacing="10.0">
+                          <children>
+                              <VBox fx:id="documentBox" alignment="CENTER" onMouseClicked="#showDocumentMenu" onMouseEntered="#popDocumentMenu" prefHeight="150.0" prefWidth="250.0">
+                                  <children>
+                                      <HBox alignment="CENTER" maxHeight="150.0" maxWidth="150.0" prefHeight="150.0" prefWidth="150.0">
+                                          <children>
+                                              <ImageView fitHeight="150.0" fitWidth="150.0" preserveRatio="true" smooth="false">
+                                                  <image>
+                                                      <Image url="@../img/cover2024g1.png" />
+                                                  </image>
+                                              </ImageView>
+                                          </children>
+                                      </HBox>
+                                      <Label text="%DocumentTools">
+                                          <font>
+                                              <Font size="18.0" />
+                                          </font>
+                                      </Label>
+                                  </children>
+                                  <cursor>
+                                      <Cursor fx:constant="OPEN_HAND" />
+                                  </cursor>
+                              </VBox>
+                              <VBox fx:id="imageBox" alignment="CENTER" onMouseClicked="#showImageMenu" onMouseEntered="#popImageMenu" prefHeight="150.0" prefWidth="250.0">
+                                  <children>
+                                      <HBox alignment="CENTER" maxHeight="150.0" maxWidth="150.0" prefHeight="150.0" prefWidth="150.0" VBox.vgrow="NEVER">
+                                          <children>
+                                              <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
+                                                  <image>
+                                                      <Image url="@../img/cover2024g2.png" />
+                                                  </image>
+                                              </ImageView>
+                                          </children>
+                                      </HBox>
+                                      <Label text="%ImageTools">
+                                          <font>
+                                              <Font size="18.0" />
+                                          </font>
+                                      </Label>
+                                  </children>
+                                  <cursor>
+                                      <Cursor fx:constant="OPEN_HAND" />
+                                  </cursor>
+                              </VBox>
+                              <VBox fx:id="fileBox" alignment="CENTER" onMouseClicked="#showFileMenu" onMouseEntered="#popFileMenu" prefHeight="150.0" prefWidth="250.0">
+                                  <children>
+                                      <HBox alignment="CENTER" maxHeight="150.0" maxWidth="150.0" prefHeight="150.0" prefWidth="150.0" VBox.vgrow="NEVER">
+                                          <children>
+                                              <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
+                                                  <image>
+                                                      <Image url="@../img/cover2024g3.png" />
+                                                  </image>
+                                              </ImageView>
+                                          </children>
+                                      </HBox>
+                                      <Label text="%FileTools">
+                                          <font>
+                                              <Font size="18.0" />
+                                          </font>
+                                      </Label>
+                                  </children>
+                              </VBox>
+                          </children>
+                          <cursor>
+                              <Cursor fx:constant="OPEN_HAND" />
+                          </cursor>
+                      </HBox>
+                      <HBox alignment="CENTER" spacing="10.0">
+                          <children>
+                              <VBox fx:id="networkBox" alignment="CENTER" onMouseClicked="#showNetworkMenu" onMouseEntered="#popNetworkMenu" prefHeight="150.0" prefWidth="250.0">
+                                  <children>
+                                      <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
+                                          <image>
+                                              <Image url="@../img/cover2024g4.png" />
+                                          </image>
+                                      </ImageView>
+                                      <Label text="%NetworkTools">
+                                          <font>
+                                              <Font size="18.0" />
+                                          </font>
+                                      </Label>
+                                  </children>
+                                  <cursor>
+                                      <Cursor fx:constant="OPEN_HAND" />
+                                  </cursor>
+                              </VBox>
+                              <VBox fx:id="dataBox" alignment="CENTER" onMouseClicked="#showDataMenu" onMouseEntered="#popDataMenu" prefHeight="150.0" prefWidth="250.0">
+                                  <children>
+                                      <HBox alignment="CENTER" maxHeight="200.0" maxWidth="200.0" prefHeight="200.0" prefWidth="200.0">
+                                          <children>
+                                              <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
+                                                  <image>
+                                                      <Image url="@../img/cover2024g5.png" />
+                                                  </image>
+                                              </ImageView>
+                                          </children>
+                                      </HBox>
+                                      <Label text="%DataTools">
+                                          <font>
+                                              <Font size="18.0" />
+                                          </font>
+                                      </Label>
+                                  </children>
+                                  <cursor>
+                                      <Cursor fx:constant="OPEN_HAND" />
+                                  </cursor>
+                              </VBox>
+                              <VBox fx:id="mediaBox" alignment="CENTER" onMouseClicked="#showMediaMenu" onMouseEntered="#popMediaMenu" prefHeight="150.0" prefWidth="250.0">
+                                  <children>
+                                      <HBox alignment="CENTER" maxHeight="200.0" maxWidth="200.0" prefHeight="200.0" prefWidth="200.0">
+                                          <children>
+                                              <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
+                                                  <image>
+                                                      <Image url="@../img/cover2024g6.png" />
+                                                  </image>
+                                              </ImageView>
+                                          </children>
+                                      </HBox>
+                                      <Label text="%MediaTools">
+                                          <font>
+                                              <Font size="18.0" />
+                                          </font>
+                                      </Label>
+                                  </children>
+                                  <cursor>
+                                      <Cursor fx:constant="OPEN_HAND" />
+                                  </cursor>
+                              </VBox>
+                          </children>
+                      </HBox>
+                      <HBox alignment="CENTER" spacing="10.0">
+                          <children>
+                              <VBox fx:id="recentBox" alignment="CENTER" onMouseClicked="#showRecentMenu" onMouseEntered="#popRecentMenu" prefHeight="150.0" prefWidth="250.0">
+                                  <children>
+                                      <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
+                                          <image>
+                                              <Image url="@../img/cover2024g7.png" />
+                                          </image>
+                                      </ImageView>
+                                      <Label text="%RecentAccessed">
+                                          <font>
+                                              <Font size="18.0" />
+                                          </font>
+                                      </Label>
+                                  </children>
+                                  <cursor>
+                                      <Cursor fx:constant="OPEN_HAND" />
+                                  </cursor>
+                              </VBox>
+                              <VBox fx:id="settingsBox" alignment="CENTER" onMouseClicked="#showSettingsMenu" onMouseEntered="#popSettingsMenu" prefHeight="150.0" prefWidth="250.0">
+                                  <children>
+                                      <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
+                                          <image>
+                                              <Image url="@../img/cover2024g8.png" />
+                                          </image>
+                                      </ImageView>
+                                      <Label text="Settings/设置">
+                                          <font>
+                                              <Font size="18.0" />
+                                          </font>
+                                      </Label>
+                                  </children>
+                                  <cursor>
+                                      <Cursor fx:constant="OPEN_HAND" />
+                                  </cursor>
+                              </VBox>
+                              <VBox fx:id="aboutBox" alignment="CENTER" layoutX="384.0" layoutY="10.0" onMouseClicked="#showAboutMenu" onMouseEntered="#popAboutMenu" prefHeight="150.0" prefWidth="250.0">
+                                  <children>
+                                      <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
+                                          <image>
+                                              <Image url="@../img/cover2024g9.png" />
+                                          </image>
+                                      </ImageView>
+                                      <Label text="%About">
+                                          <font>
+                                              <Font size="18.0" />
+                                          </font>
+                                      </Label>
+                                  </children>
+                                  <cursor>
+                                      <Cursor fx:constant="OPEN_HAND" />
+                                  </cursor>
+                              </VBox>
+                          </children>
+                      </HBox>
+                      <Label fx:id="bottomLabel" maxWidth="1.7976931348623157E308" textFill="#942c2c" VBox.vgrow="NEVER" />
+                  </children>
+              </VBox>
+          </center>
+      </BorderPane>
+   </content>
+</ScrollPane>

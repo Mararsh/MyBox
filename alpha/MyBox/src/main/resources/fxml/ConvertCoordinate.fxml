@@ -22,7 +22,11 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.web.WebView?>
 
-<BorderPane fx:id="thisPane" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ConvertCoordinateController">
+
+<?import javafx.scene.control.ScrollPane?>
+<ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ConvertCoordinateController">
+   <content>
+<BorderPane fx:id="thisPane" prefHeight="600.0" prefWidth="1000.0" >
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
@@ -134,3 +138,5 @@ License:    Apache License Version 2.0
         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
     </padding>
 </BorderPane>
+   </content>
+</ScrollPane>

@@ -351,4 +351,9 @@ public abstract class MainMenuController_Development extends MainMenuController_
         openStage(Fxmls.MessageAuthorFxml);
     }
 
+    @FXML
+    protected void DevTmp(ActionEvent event) {
+        DevTmpController.open();
+    }
+
 }

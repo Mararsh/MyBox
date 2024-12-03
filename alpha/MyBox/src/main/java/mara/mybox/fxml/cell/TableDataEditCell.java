@@ -23,7 +23,7 @@ public class TableDataEditCell extends TableDataCell {
     @Override
     public void editCell() {
         String s = getItem();
-        if (supportMultipleLine && s != null && s.contains("\n")) {
+        if (supportMultipleLine && s != null && (s.contains("\n") || s.length() > 200)) {
             TextInputController inputController = TextInputController.open(dataTable, name(), s);
             inputController.getNotify().addListener(new ChangeListener<Boolean>() {
                 @Override

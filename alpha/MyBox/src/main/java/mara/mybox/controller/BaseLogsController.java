@@ -144,19 +144,26 @@ public class BaseLogsController extends BaseController {
             return;
         }
         if (Platform.isFxApplicationThread()) {
-            if (logsTextArea == null) {
-                popInformation(line);
-            } else {
-                writeLogs(line, showTime, immediate);
-            }
+            handleLogs(line, showTime, immediate);
         } else {
             Platform.runLater(() -> {
-                if (logsTextArea == null) {
-                    popInformation(line);
-                } else {
-                    writeLogs(line, showTime, immediate);
-                }
+                handleLogs(line, showTime, immediate);
             });
+        }
+    }
+
+    protected void handleLogs(String line, boolean showTime, boolean immediate) {
+        if (line == null) {
+            return;
+        }
+        if (logsTextArea == null) {
+            if (task != null && task.isWorking()) {
+                task.setInfo(line);
+            } else {
+                popInformation(line);
+            }
+        } else {
+            writeLogs(line, showTime, immediate);
         }
     }
 

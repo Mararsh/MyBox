@@ -217,6 +217,7 @@ public class ShortcutsController extends BaseTablePagesController<ShortCut> {
             tableData.add(new ShortCut("", "", message(lang, "Statistic"), "", "iconStatistic.png"));
             tableData.add(new ShortCut("", "", message(lang, "Style"), "", "iconStyle.png"));
             tableData.add(new ShortCut("", "", message(lang, "SVG"), "", "iconSVG.png"));
+            tableData.add(new ShortCut("", "", message(lang, "Tag"), "", "iconTag.png"));
             tableData.add(new ShortCut("", "", message(lang, "Input"), "", "iconInput.png"));
             tableData.add(new ShortCut("", "", message(lang, "Validate"), "", "iconVerify.png"));
             tableData.add(new ShortCut("", "", message(lang, "Transparent"), "", "iconOpacity.png"));
@@ -279,6 +280,7 @@ public class ShortcutsController extends BaseTablePagesController<ShortCut> {
                     file = HelpTools.usefulLinks(lang);
                     FileCopyTools.copyFile(file, new File(path, file.getName()), true, true);
                     task.setInfo(file.getAbsolutePath());
+
                     file = imageStories(this, true, lang);
                     FileCopyTools.copyFile(file, new File(path, file.getName()), true, true);
                     task.setInfo(file.getAbsolutePath());

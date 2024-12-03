@@ -506,6 +506,8 @@ public class Fxmls {
     public static final String AutoTestingExecutionFxml = "/fxml/AutoTestingExecution.fxml";
     public static final String RunCommandFxml = "/fxml/RunCommand.fxml";
     public static final String RunSystemCommandFxml = "/fxml/RunSystemCommand.fxml";
+    public static final String DevTmpFxml = "/fxml/DevTmp.fxml";
+
 
     /*
         common

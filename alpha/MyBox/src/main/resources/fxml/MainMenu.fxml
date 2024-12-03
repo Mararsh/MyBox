@@ -551,6 +551,7 @@ License:    Apache License Version 2.0
                         </Menu>
                         <Menu fx:id="devMenu" mnemonicParsing="false" text="%Development">
                             <items>
+                                <!--<MenuItem mnemonicParsing="false" onAction="#DevTmp" text="DevTmp" />-->
                                 <CheckMenuItem fx:id="monitorMemroyCheck" mnemonicParsing="false" onAction="#checkMemroyMonitor" text="%MonitorMemory" />
                                 <CheckMenuItem fx:id="monitorCpuCheck" mnemonicParsing="false" onAction="#checkCpuMonitor" text="%MonitorCpu" />
                                 <CheckMenuItem fx:id="detailedDebugCheck" mnemonicParsing="false" onAction="#detailedDebug" text="%DetailedDebugLogs" />

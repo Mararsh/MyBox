@@ -50,7 +50,7 @@ import mara.mybox.value.UserConfig;
  */
 public class BaseDataTreeViewController extends BaseTreeTableViewController<DataNode> {
 
-    protected static final int AutoExpandThreshold = 50;
+    protected static final int AutoExpandThreshold = 500;
     protected boolean expandAll;
     protected BaseNodeTable nodeTable;
     protected TableDataTag tagTable;

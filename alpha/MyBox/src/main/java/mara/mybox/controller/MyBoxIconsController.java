@@ -8,7 +8,6 @@ import java.util.Comparator;
 import java.util.List;
 import javafx.fxml.FXML;
 import javax.imageio.ImageIO;
-import mara.mybox.bufferedimage.PixelsOperation;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
@@ -169,11 +168,6 @@ public class MyBoxIconsController extends BaseBatchFileController {
         } catch (Exception e) {
             return file + " " + e.toString();
         }
-    }
-
-    public void makeIcon(BufferedImage srcImage, PixelsOperation p1, PixelsOperation p2) {
-        SoundTools.miao3();
-        popInformation(message("TakeEffectWhenReboot"));
     }
 
     @Override
