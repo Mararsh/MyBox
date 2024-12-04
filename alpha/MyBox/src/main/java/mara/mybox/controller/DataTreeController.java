@@ -117,65 +117,89 @@ public class DataTreeController extends BaseDataTreeViewController {
             return null;
         }
         boolean isRoot = isRoot(treeItem.getValue());
+        boolean isLeaf = treeItem.isLeaf();
 
         List<MenuItem> items = new ArrayList<>();
 
-        MenuItem menu = new MenuItem(message("AddChildNode"), StyleTools.getIconImageView("iconAdd.png"));
+        MenuItem menu = new MenuItem(message("EditNode"), StyleTools.getIconImageView("iconEdit.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            editNode(treeItem.getValue());
+        });
+        items.add(menu);
+
+        menu = new MenuItem(message("AddChildNode"), StyleTools.getIconImageView("iconAdd.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             addChild(treeItem.getValue());
         });
         items.add(menu);
 
-        menu = new MenuItem(message("DeleteNodeAndDescendants"), StyleTools.getIconImageView("iconDelete.png"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            deleteNodeAndDescendants(treeItem);
-        });
-        menu.setDisable(isRoot);
-        items.add(menu);
+        if (!isRoot) {
+            menu = new MenuItem(message("ChangeNodeTitle"), StyleTools.getIconImageView("iconInput.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                renameNode(treeItem);
+            });
+            items.add(menu);
 
-        menu = new MenuItem(message("DeleteDescendants"), StyleTools.getIconImageView("iconDelete.png"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            deleteDescendants(treeItem);
-        });
-        items.add(menu);
+            menu = new MenuItem(message("ChangeNodeOrder"), StyleTools.getIconImageView("iconInput.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                reorderNode(treeItem);
+            });
+            items.add(menu);
+        }
 
-        menu = new MenuItem(message("DeleteNodes"), StyleTools.getIconImageView("iconDelete.png"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            deleteNodes();
-        });
-        items.add(menu);
+        if (!isLeaf) {
+            menu = new MenuItem(message("TrimDescendantsOrders"), StyleTools.getIconImageView("iconClean.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                trimDescendantsOrders(treeItem, true);
+            });
+            items.add(menu);
 
-        menu = new MenuItem(message("ChangeNodeTitle"), StyleTools.getIconImageView("iconInput.png"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            renameNode(treeItem);
-        });
-        menu.setDisable(isRoot);
-        items.add(menu);
-
-        menu = new MenuItem(message("CopyNodes"), StyleTools.getIconImageView("iconCopy.png"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            copyNodes();
-        });
-        items.add(menu);
-
-        menu = new MenuItem(message("MoveNodes"), StyleTools.getIconImageView("iconMove.png"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            moveNodes();
-        });
-        items.add(menu);
+            menu = new MenuItem(message("TrimChildrenOrders"), StyleTools.getIconImageView("iconClean.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                trimDescendantsOrders(treeItem, false);
+            });
+            items.add(menu);
+        }
 
         if (nodeTable.isNodeExecutable()) {
             menu = new MenuItem(message("Execute"), StyleTools.getIconImageView("iconGo.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 executeNode(treeItem);
             });
-            menu.setDisable(treeItem == null);
             items.add(menu);
         }
 
-        menu = new MenuItem(message("EditNode"), StyleTools.getIconImageView("iconEdit.png"));
+        menu = new MenuItem(message("CopyNodes"), StyleTools.getIconImageView("iconCopy.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
-            editNode(treeItem.getValue());
+            copyNodes(treeItem);
+        });
+        items.add(menu);
+
+        menu = new MenuItem(message("MoveNodes"), StyleTools.getIconImageView("iconMove.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            moveNodes(treeItem);
+        });
+        items.add(menu);
+
+        if (!isRoot) {
+            menu = new MenuItem(message("DeleteNodeAndDescendants"), StyleTools.getIconImageView("iconDelete.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                deleteNodeAndDescendants(treeItem);
+            });
+            items.add(menu);
+        }
+
+        if (!isLeaf) {
+            menu = new MenuItem(message("DeleteDescendants"), StyleTools.getIconImageView("iconDelete.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                deleteDescendants(treeItem);
+            });
+            items.add(menu);
+        }
+
+        menu = new MenuItem(message("DeleteNodes"), StyleTools.getIconImageView("iconDelete.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            deleteNodes(treeItem);
         });
         items.add(menu);
 
@@ -421,8 +445,47 @@ public class DataTreeController extends BaseDataTreeViewController {
         start(task, treeView);
     }
 
-    public void deleteNodes() {
-        DataTreeDeleteController.open(this);
+    protected void trimDescendantsOrders(TreeItem<DataNode> item, boolean allDescendants) {
+        if (item == null) {
+            popError(message("SelectToHandle"));
+            return;
+        }
+        DataNode node = item.getValue();
+        if (node == null) {
+            popError(message("SelectToHandle"));
+            return;
+        }
+        if (task != null) {
+            task.cancel();
+        }
+        task = new FxSingletonTask<Void>(this) {
+            private int count;
+
+            @Override
+            protected boolean handle() {
+                try (Connection conn = DerbyBase.getConnection()) {
+                    count = nodeTable.trimDescedentsOrders(this, conn, node, allDescendants, 0);
+                } catch (Exception e) {
+//                    error = e.toString();
+//                    return false;
+                }
+                return count >= 0;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                if (count > 0) {
+                    refreshItem(item);
+                }
+                popSuccessful();
+            }
+
+        };
+        start(task, treeView);
+    }
+
+    public void deleteNodes(TreeItem<DataNode> item) {
+        DataTreeDeleteController.open(this, item != null ? item.getValue() : null);
     }
 
     protected void renameNode(TreeItem<DataNode> item) {
@@ -436,7 +499,8 @@ public class DataTreeController extends BaseDataTreeViewController {
             return;
         }
         String chainName = chainName(item);
-        String name = PopTools.askValue(getBaseTitle(), chainName, message("ChangeNodeTitle"), nodeValue.getTitle() + "m");
+        String name = PopTools.askValue(getBaseTitle(), chainName,
+                message("ChangeNodeTitle"), nodeValue.getTitle() + "m");
         if (name == null || name.isBlank()) {
             return;
         }
@@ -462,7 +526,7 @@ public class DataTreeController extends BaseDataTreeViewController {
                 item.setValue(updatedNode);
                 treeView.refresh();
                 if (currentNode != null && currentNode.equals(updatedNode)) {
-                    showNode(updatedNode);
+                    loadNode(updatedNode);
                 }
                 popSuccessful();
             }
@@ -470,12 +534,58 @@ public class DataTreeController extends BaseDataTreeViewController {
         start(task, treeView);
     }
 
-    protected void copyNodes() {
-        DataTreeCopyController.open(this);
+    protected void reorderNode(TreeItem<DataNode> item) {
+        if (item == null) {
+            popError(message("SelectToHandle"));
+            return;
+        }
+        DataNode nodeValue = item.getValue();
+        if (nodeValue == null || isRoot(nodeValue)) {
+            popError(message("SelectToHandle"));
+            return;
+        }
+        float fvalue;
+        try {
+            String value = PopTools.askValue(getBaseTitle(),
+                    chainName(item) + "\n" + message("NodeOrderComments"),
+                    message("ChangeNodeOrder"),
+                    nodeValue.getOrderNumber() + "");
+            fvalue = Float.parseFloat(value);
+        } catch (Exception e) {
+            popError(message("InvalidValue"));
+            return;
+        }
+        if (task != null) {
+            task.cancel();
+        }
+        task = new FxSingletonTask<Void>(this) {
+            private DataNode updatedNode;
+
+            @Override
+            protected boolean handle() {
+                nodeValue.setOrderNumber(fvalue);
+                updatedNode = nodeTable.updateData(nodeValue);
+                return updatedNode != null;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                reorderChildlren(item.getParent());
+                if (currentNode != null && currentNode.equals(updatedNode)) {
+                    loadNode(updatedNode);
+                }
+                popSuccessful();
+            }
+        };
+        start(task, treeView);
     }
 
-    protected void moveNodes() {
-        DataTreeMoveController.open(this);
+    protected void copyNodes(TreeItem<DataNode> item) {
+        DataTreeCopyController.open(this, item != null ? item.getValue() : null);
+    }
+
+    protected void moveNodes(TreeItem<DataNode> item) {
+        DataTreeMoveController.open(this, item != null ? item.getValue() : null);
     }
 
     protected void executeNode(TreeItem<DataNode> item) {
@@ -491,6 +601,9 @@ public class DataTreeController extends BaseDataTreeViewController {
         exportController.setParamters(this, item);
     }
 
+    /*
+        action
+     */
     @FXML
     protected void importAction(TreeItem<DataNode> item) {
         DataTreeImportController importController

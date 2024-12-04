@@ -25,13 +25,14 @@ public class DataTreeCopyController extends BaseDataTreeHandleController {
     @FXML
     protected ControlDataTreeTarget targetController;
     @FXML
-    protected RadioButton nodeAndDescendantsRadio, descendantsRadio, nodeRadio;
+    protected RadioButton nodeAndDescendantsRadio, descendantsRadio,
+            nodeAndChildrenRadio, childrenRadio, nodeRadio;
 
-    public void setParameters(DataTreeController parent) {
+    public void setParameters(DataTreeController parent, DataNode node) {
         try {
             super.setParameters(parent);
 
-            sourceController.setParameters(parent);
+            sourceController.setParameters(parent, node);
             targetController.setParameters(parent);
 
             baseTitle = nodeTable.getTreeName() + " - " + message("CopyNodes");
@@ -74,9 +75,13 @@ public class DataTreeCopyController extends BaseDataTreeHandleController {
                     for (DataNode sourceNode : sourceNodes) {
                         int ret;
                         if (nodeAndDescendantsRadio.isSelected()) {
-                            ret = nodeTable.copyNodeAndDescendants(this, conn, sourceNode, targetNode);
+                            ret = nodeTable.copyNodeAndDescendants(this, conn, sourceNode, targetNode, true);
                         } else if (descendantsRadio.isSelected()) {
-                            ret = nodeTable.copyDescendants(this, conn, sourceNode, targetNode, 0);
+                            ret = nodeTable.copyDescendants(this, conn, sourceNode, targetNode, true, 0);
+                        } else if (nodeAndChildrenRadio.isSelected()) {
+                            ret = nodeTable.copyNodeAndDescendants(this, conn, sourceNode, targetNode, false);
+                        } else if (childrenRadio.isSelected()) {
+                            ret = nodeTable.copyDescendants(this, conn, sourceNode, targetNode, false, 0);
                         } else {
                             ret = nodeTable.copyNode(conn, sourceNode, targetNode) != null ? 1 : 0;
                         }
@@ -108,10 +113,10 @@ public class DataTreeCopyController extends BaseDataTreeHandleController {
     /*
         static methods
      */
-    public static DataTreeCopyController open(DataTreeController parent) {
+    public static DataTreeCopyController open(DataTreeController parent, DataNode node) {
         DataTreeCopyController controller
                 = (DataTreeCopyController) WindowTools.openStage(Fxmls.DataTreeCopyFxml);
-        controller.setParameters(parent);
+        controller.setParameters(parent, node);
         controller.requestMouse();
         return controller;
     }

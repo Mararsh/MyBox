@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import javafx.beans.property.BooleanProperty;
@@ -192,7 +194,6 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
                         rootItem.getChildren().add(new TreeItem(new DataNode()));
                         unfold(this, conn, rootItem, size < AutoExpandThreshold);
                     }
-
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -218,64 +219,6 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
     }
 
     public void afterTreeLoaded() {
-    }
-
-    public void updateNode(DataNode parent, DataNode node) {
-        try {
-            if (currentNode != null && currentNode.equals(node)) {
-                showNode(node);
-            }
-            TreeItem<DataNode> nodeItem = find(node);
-            if (nodeItem == null) {
-                addNewNode(parent, node);
-                return;
-            }
-            try {
-                nodeItem.getParent().getChildren().remove(nodeItem);
-            } catch (Exception e) {
-            }
-            TreeItem<DataNode> parentNode = find(parent);
-            if (parentNode == null) {
-                return;
-            }
-            try {
-                parentNode.getChildren().add(nodeItem);
-                makeHierarchyNumber(nodeItem);
-            } catch (Exception e) {
-                return;
-            }
-            nodeItem.setExpanded(false);
-            focusItem(nodeItem);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    public void updateNode(DataNode node) {
-        if (node == null) {
-            return;
-        }
-        TreeItem<DataNode> treeItem = find(node);
-        if (treeItem != null) {
-            treeItem.setValue(node);
-            makeHierarchyNumber(treeItem);
-        }
-        if (currentNode != null && currentNode.equals(node)) {
-            showNode(node);
-        }
-    }
-
-    public void refreshNode(DataNode node) {
-        refreshItem(find(node));
-    }
-
-    public void refreshItem(TreeItem<DataNode> item) {
-        if (item == null) {
-            return;
-        }
-        item.getChildren().clear();
-        item.getChildren().add(new TreeItem(new DataNode()));
-        unfold(item, false);
     }
 
     /*
@@ -318,18 +261,14 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
         return node.getNodeid() == RootID;
     }
 
-    public List<DataNode> ancestor(Connection conn, DataNode node) {
-        return nodeTable.ancestor(conn, node.getNodeid());
-    }
-
-    public List<TreeItem<DataNode>> ancestor(TreeItem<DataNode> item) {
+    public List<TreeItem<DataNode>> ancestorItems(TreeItem<DataNode> item) {
         if (item == null) {
             return null;
         }
         List<TreeItem<DataNode>> ancestor = null;
         TreeItem<DataNode> parent = item.getParent();
         if (parent != null) {
-            ancestor = ancestor(parent);
+            ancestor = ancestorItems(parent);
             if (ancestor == null) {
                 ancestor = new ArrayList<>();
             }
@@ -343,9 +282,9 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
             return null;
         }
         String chainName = "";
-        List<TreeItem<DataNode>> ancestor = ancestor(item);
-        if (ancestor != null) {
-            for (TreeItem<DataNode> a : ancestor) {
+        List<TreeItem<DataNode>> ancestors = ancestorItems(item);
+        if (ancestors != null) {
+            for (TreeItem<DataNode> a : ancestors) {
                 chainName += title(a.getValue()) + TitleSeparater;
             }
         }
@@ -385,7 +324,7 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
     }
 
     /*
-        actions
+        operations
      */
     @Override
     public List<MenuItem> viewMenuItems(TreeItem<DataNode> item) {
@@ -465,10 +404,18 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
         if (item == null) {
             return;
         }
-        showNode(item.getValue());
+        loadNode(item.getValue());
     }
 
-    protected void showNode(DataNode node) {
+    @Override
+    public void doubleClicked(MouseEvent event, TreeItem<DataNode> item) {
+        if (item == null) {
+            return;
+        }
+        popNode(item.getValue());
+    }
+
+    protected void loadNode(DataNode node) {
         if (node == null || viewController == null) {
             return;
         }
@@ -511,14 +458,6 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
             return;
         }
         DataTreeNodeEditorController.addNode(this, node);
-    }
-
-    @Override
-    public void doubleClicked(MouseEvent event, TreeItem<DataNode> item) {
-        if (item == null) {
-            return;
-        }
-        popNode(item.getValue());
     }
 
     protected void popNode(DataNode node) {
@@ -669,6 +608,173 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
         }
     }
 
+    public void unfoldAncestors(DataNode node) {
+        if (node == null || node.isRoot()) {
+            return;
+        }
+        if (task != null) {
+            task.cancel();
+        }
+        TreeItem<DataNode> rootItem = getRootItem();
+        if (rootItem == null) {
+            return;
+        }
+        treeView.setRoot(null);
+        task = new FxSingletonTask<Void>(this) {
+
+            private TreeItem<DataNode> item;
+
+            @Override
+            protected boolean handle() {
+                try (Connection conn = DerbyBase.getConnection()) {
+                    List<DataNode> ancestors = nodeTable.ancestors(conn, node.getNodeid());
+                    if (ancestors == null || ancestors.isEmpty()) {
+                        return false;
+                    }
+                    item = rootItem;
+                    for (DataNode ancestor : ancestors) {
+                        item = findChild(item, ancestor);
+                        if (item == null) {
+                            return false;
+                        }
+                        unfold(this, conn, item, false);
+                    }
+                    item = findChild(item, node);
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+                return item != null;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+            }
+
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                treeView.setRoot(rootItem);
+                treeView.refresh();
+                if (item != null) {
+                    focusItem(item);
+                }
+            }
+
+        };
+        start(task, thisPane);
+    }
+
+    @Override
+    public boolean focusNode(DataNode node) {
+        if (treeView == null || node == null) {
+            return false;
+        }
+        focusNode = null;
+        unfoldAncestors(node);
+        return treeView.getRoot() != null;
+    }
+
+    public void updateNode(DataNode parent, DataNode node) {
+        try {
+            if (currentNode != null && currentNode.equals(node)) {
+                loadNode(node);
+            }
+            TreeItem<DataNode> nodeItem = find(node);
+            if (nodeItem == null) {
+                addNewNode(parent, node);
+                return;
+            }
+            try {
+                nodeItem.getParent().getChildren().remove(nodeItem);
+            } catch (Exception e) {
+            }
+            TreeItem<DataNode> parentNode = find(parent);
+            if (parentNode == null) {
+                return;
+            }
+            try {
+                parentNode.getChildren().add(nodeItem);
+                makeHierarchyNumber(nodeItem);
+            } catch (Exception e) {
+                return;
+            }
+            nodeItem.setExpanded(false);
+            focusItem(nodeItem);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public void updateNode(DataNode node) {
+        if (node == null) {
+            return;
+        }
+        TreeItem<DataNode> treeItem = find(node);
+        if (treeItem != null) {
+            treeItem.setValue(node);
+            makeHierarchyNumber(treeItem);
+        }
+        if (currentNode != null && currentNode.equals(node)) {
+            loadNode(node);
+        }
+    }
+
+    public void refreshNode(DataNode node) {
+        refreshItem(find(node));
+    }
+
+    public void refreshItem(TreeItem<DataNode> item) {
+        if (item == null) {
+            return;
+        }
+        item.getChildren().clear();
+        item.getChildren().add(new TreeItem(new DataNode()));
+        unfold(item, false);
+    }
+
+    public void reorderChildlren(TreeItem<DataNode> item) {
+        if (item == null) {
+            return;
+        }
+        List<TreeItem<DataNode>> children = item.getChildren();
+        if (children == null || children.isEmpty()) {
+            return;
+        }
+        List<TreeItem<DataNode>> items = new ArrayList<>();
+        for (TreeItem<DataNode> child : children) {
+            items.add(child);
+        }
+        item.getChildren().clear();
+        Collections.sort(items, new Comparator<TreeItem<DataNode>>() {
+            @Override
+            public int compare(TreeItem<DataNode> v1, TreeItem<DataNode> v2) {
+                DataNode node1 = v1.getValue();
+                DataNode node2 = v2.getValue();
+                if (node1 == null) {
+                    return -1;
+                }
+                if (node2 == null) {
+                    return 1;
+                }
+                float diff = node1.getOrderNumber() - node2.getOrderNumber();
+                if (diff == 0) {
+                    return 0;
+                } else if (diff > 0) {
+                    return 1;
+                } else {
+                    return -1;
+                }
+            }
+        });
+        for (TreeItem<DataNode> child : items) {
+            item.getChildren().add(child);
+        }
+    }
+
+    /*
+        action
+     */
     @FXML
     @Override
     public void refreshAction() {

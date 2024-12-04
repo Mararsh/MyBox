@@ -56,11 +56,13 @@ License:    Apache License Version 2.0
          <children>
             <RadioButton fx:id="nodeAndDescendantsRadio" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%CopyNodeAndDescendants" wrapText="true">
                <toggleGroup>
-                  <ToggleGroup fx:id="copyGroup1" />
+                  <ToggleGroup fx:id="copyGroup" />
                </toggleGroup>
             </RadioButton>
-            <RadioButton fx:id="descendantsRadio" minHeight="-Infinity" mnemonicParsing="false" text="%CopyDescendants" toggleGroup="$copyGroup1" wrapText="true" />
-            <RadioButton fx:id="nodeRadio" minHeight="-Infinity" mnemonicParsing="false" text="%CopyNode" toggleGroup="$copyGroup1" wrapText="true" />
+            <RadioButton fx:id="descendantsRadio" minHeight="-Infinity" mnemonicParsing="false" text="%CopyDescendants" toggleGroup="$copyGroup" wrapText="true" />
+            <RadioButton fx:id="nodeAndChildrenRadio" layoutX="10.0" layoutY="10.0" minHeight="-Infinity" mnemonicParsing="false" text="%CopyNodeAndChildren" toggleGroup="$copyGroup" wrapText="true" />
+            <RadioButton fx:id="childrenRadio" layoutX="130.0" layoutY="10.0" minHeight="-Infinity" mnemonicParsing="false" text="%CopyChildren" toggleGroup="$copyGroup" wrapText="true" />
+            <RadioButton fx:id="nodeRadio" minHeight="-Infinity" mnemonicParsing="false" text="%CopyNode" toggleGroup="$copyGroup" wrapText="true" />
          </children>
       </FlowPane>
       <SplitPane fx:id="splitPane" dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">

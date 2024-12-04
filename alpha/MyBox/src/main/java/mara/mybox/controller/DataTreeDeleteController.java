@@ -20,7 +20,7 @@ public class DataTreeDeleteController extends BaseDataTreeViewController {
 
     protected BaseDataTreeViewController treeController;
 
-    public void setParameters(DataTreeController parent) {
+    public void setParameters(DataTreeController parent, DataNode node) {
         try {
             if (parent == null) {
                 close();
@@ -34,7 +34,7 @@ public class DataTreeDeleteController extends BaseDataTreeViewController {
             baseTitle = nodeTable.getTreeName() + " - " + message("DeleteNodes");
             setTitle(baseTitle);
 
-            loadTree();
+            loadTree(node);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -90,10 +90,10 @@ public class DataTreeDeleteController extends BaseDataTreeViewController {
     /*
         static methods
      */
-    public static DataTreeDeleteController open(DataTreeController parent) {
+    public static DataTreeDeleteController open(DataTreeController parent, DataNode node) {
         DataTreeDeleteController controller
                 = (DataTreeDeleteController) WindowTools.openStage(Fxmls.DataTreeDeleteFxml);
-        controller.setParameters(parent);
+        controller.setParameters(parent, node);
         controller.requestMouse();
         return controller;
     }

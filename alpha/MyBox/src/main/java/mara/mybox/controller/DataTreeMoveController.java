@@ -25,11 +25,11 @@ public class DataTreeMoveController extends BaseDataTreeHandleController {
     @FXML
     protected ControlDataTreeTarget targetController;
 
-    public void setParameters(DataTreeController parent) {
+    public void setParameters(DataTreeController parent, DataNode node) {
         try {
             super.setParameters(parent);
 
-            sourceController.setParameters(parent);
+            sourceController.setParameters(parent, node);
             targetController.setParameters(parent);
 
             baseTitle = nodeTable.getTreeName() + " - " + message("MoveNodes");
@@ -101,10 +101,10 @@ public class DataTreeMoveController extends BaseDataTreeHandleController {
     /*
         static methods
      */
-    public static DataTreeMoveController open(DataTreeController parent) {
+    public static DataTreeMoveController open(DataTreeController parent, DataNode node) {
         DataTreeMoveController controller
                 = (DataTreeMoveController) WindowTools.openStage(Fxmls.DataTreeMoveFxml);
-        controller.setParameters(parent);
+        controller.setParameters(parent, node);
         controller.requestMouse();
         return controller;
     }

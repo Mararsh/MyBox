@@ -17,7 +17,6 @@ import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.DataNode;
 import static mara.mybox.db.data.DataNode.TitleSeparater;
 import mara.mybox.db.data.DataNodeTag;
-import mara.mybox.db.data.DataTag;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import static mara.mybox.fxml.FxFileTools.getInternalFile;
@@ -25,7 +24,6 @@ import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.JsonTools;
 import static mara.mybox.value.AppValues.Indent;
 import mara.mybox.value.Languages;
-import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -291,7 +289,7 @@ public class BaseNodeTable extends BaseTable<DataNode> {
     }
 
     public int copyDescendants(FxTask task, Connection conn,
-            DataNode sourceNode, DataNode targetNode, int inCount) {
+            DataNode sourceNode, DataNode targetNode, boolean allDescendants, int inCount) {
         int count = inCount;
         try {
             if (conn == null || sourceNode == null || targetNode == null) {
@@ -322,7 +320,10 @@ public class BaseNodeTable extends BaseTable<DataNode> {
                         if (++count % Database.BatchSize == 0) {
                             conn.commit();
                         }
-                        copyDescendants(task, conn, childNode, newNode, count);
+                        if (allDescendants) {
+                            copyDescendants(task, conn, childNode, newNode,
+                                    allDescendants, count);
+                        }
                     }
                 } catch (Exception e) {
                     if (task != null) {
@@ -353,12 +354,12 @@ public class BaseNodeTable extends BaseTable<DataNode> {
     }
 
     public int copyNodeAndDescendants(FxTask task, Connection conn,
-            DataNode sourceNode, DataNode targetNode) {
+            DataNode sourceNode, DataNode targetNode, boolean allDescendants) {
         DataNode copiedNode = copyNode(conn, sourceNode, targetNode);
         if (copiedNode == null) {
             return 0;
         }
-        return copyDescendants(task, conn, sourceNode, copiedNode, 1);
+        return copyDescendants(task, conn, sourceNode, copiedNode, allDescendants, 1);
     }
 
     public boolean equalOrDescendant(FxTask<Void> task, Connection conn,
@@ -372,7 +373,7 @@ public class BaseNodeTable extends BaseTable<DataNode> {
         if (targetID == sourceID) {
             return true;
         }
-        DataNode parent = parent(conn, targetNode);
+        DataNode parent = query(conn, targetNode.getParentid());
         if (parent == null || targetID == parent.getNodeid()) {
             return false;
         }
@@ -391,7 +392,7 @@ public class BaseNodeTable extends BaseTable<DataNode> {
             }
             cnode = query(conn, cnode.getParentid());
             if (cnode == null) {
-                break;
+                return null;
             }
             chainName = cnode.getTitle() + TitleSeparater + chainName;
         }
@@ -399,52 +400,37 @@ public class BaseNodeTable extends BaseTable<DataNode> {
         return chainName;
     }
 
-    /*
-    aa
-     */
-    public List<DataNode> ancestor(long id) {
-        if (id <= 0) {
+    public List<DataNode> ancestors(long id) {
+        if (id < 0) {
             return null;
         }
         try (Connection conn = DerbyBase.getConnection()) {
-            return ancestor(conn, id);
+            return ancestors(conn, id);
         } catch (Exception e) {
             MyBoxLog.debug(e);
             return null;
         }
     }
 
-    public List<DataNode> ancestor(Connection conn, long id) {
-        if (conn == null || id <= 0) {
+    public List<DataNode> ancestors(Connection conn, long id) {
+        if (conn == null || id < 0) {
             return null;
         }
-        List<DataNode> ancestor = null;
+        List<DataNode> ancestors = null;
         DataNode node = query(conn, id);
         if (node == null || node.isRoot()) {
-            return ancestor;
+            return ancestors;
         }
         long parentid = node.getParentid();
         DataNode parent = query(conn, parentid);
         if (parent != null) {
-            ancestor = ancestor(conn, parentid);
-            if (ancestor == null) {
-                ancestor = new ArrayList<>();
+            ancestors = ancestors(conn, parentid);
+            if (ancestors == null) {
+                ancestors = new ArrayList<>();
             }
-            ancestor.add(parent);
+            ancestors.add(parent);
         }
-        return ancestor;
-    }
-
-    public DataNode find(long parent, String title) {
-        if (title == null || title.isBlank()) {
-            return null;
-        }
-        try (Connection conn = DerbyBase.getConnection()) {
-            return find(conn, parent, title);
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-            return null;
-        }
+        return ancestors;
     }
 
     public DataNode find(Connection conn, long parent, String title) {
@@ -464,240 +450,58 @@ public class BaseNodeTable extends BaseTable<DataNode> {
         }
     }
 
-    public DataNode findAndCreate(long parent, String title) {
-        if (title == null || title.isBlank()) {
-            return null;
+    public int trimDescedentsOrders(FxTask task, Connection conn,
+            DataNode node, boolean allDescendants, int inCount) {
+        if (node == null) {
+            return -inCount;
         }
-        try (Connection conn = DerbyBase.getConnection()) {
-            return findAndCreate(conn, parent, title);
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-            return null;
+        long nodeid = node.getNodeid();
+        if (nodeid < 0 || (task != null && !task.isWorking())) {
+            return -inCount;
         }
-    }
-
-    public DataNode findAndCreate(Connection conn, long parent, String title) {
-        if (conn == null || title == null || title.isBlank()) {
-            return null;
-        }
-        try {
-            DataNode node = find(conn, parent, title);
-            if (node == null) {
-                DataNode parentNode = query(conn, parent);
-                node = DataNode.createChild(parentNode, title);
-                node = insertData(conn, node);
-                conn.commit();
-            }
-            return node;
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-            return null;
-        }
-    }
-
-    public DataNode findAndCreateChain(Connection conn, DataNode root, String ownerChain) {
-        if (conn == null || root == null || ownerChain == null || ownerChain.isBlank()) {
-            return null;
-        }
-        try {
-            long parentid = root.getNodeid();
-            String chain = ownerChain;
-            String title = root.getTitle();
-            if (chain.startsWith(title + TitleSeparater)) {
-                chain = chain.substring((title + TitleSeparater).length());
-            } else if (chain.startsWith(message(title) + TitleSeparater)) {
-                chain = chain.substring((message(title) + TitleSeparater).length());
-            }
-            String[] nodes = chain.split(TitleSeparater);
-            DataNode owner = null;
-            for (String node : nodes) {
-                owner = findAndCreate(conn, parentid, node);
-                if (owner == null) {
-                    return null;
-                }
-                parentid = owner.getNodeid();
-            }
-            return owner;
-        } catch (Exception e) {
-            MyBoxLog.console(e);
-            return null;
-        }
-    }
-
-    public List<DataNode> decentants(Connection conn, long parentid) {
-        List<DataNode> allChildren = new ArrayList<>();
-        List<DataNode> children = children(conn, parentid);
-        if (children != null && !children.isEmpty()) {
-            allChildren.addAll(allChildren);
-            for (DataNode child : children) {
-                children = decentants(conn, child.getNodeid());
-                if (children != null && !children.isEmpty()) {
-                    allChildren.addAll(allChildren);
-                }
-            }
-        }
-        return allChildren;
-    }
-
-    public List<DataNode> decentants(Connection conn, long parentid, long start, long size) {
-        List<DataNode> children = new ArrayList<>();
+        int count = inCount;
         String sql = "SELECT * FROM " + tableName
                 + " WHERE parentid=? AND parentid<>nodeid  ORDER BY " + orderColumns;
-        try (PreparedStatement query = conn.prepareStatement(sql)) {
-            decentants(conn, query, parentid, start, size, children, 0);
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
-        return children;
-    }
-
-    public long decentants(Connection conn, PreparedStatement query,
-            long parentid, long start, long size, List<DataNode> nodes, long index) {
-        if (conn == null || parentid < 1 || nodes == null
-                || query == null || start < 0 || size <= 0 || nodes.size() >= size) {
-            return index;
-        }
-        long thisIndex = index;
-        try {
-            int thisSize = nodes.size();
-            boolean ok = false;
-            query.setLong(1, parentid);
-            conn.setAutoCommit(true);
-            try (ResultSet nresults = query.executeQuery()) {
-                while (nresults.next()) {
-                    DataNode data = readData(nresults);
-                    if (data != null) {
-                        if (thisIndex >= start) {
-                            nodes.add(data);
-                            thisSize++;
-                        }
-                        thisIndex++;
-                        if (thisSize >= size) {
-                            ok = true;
-                            break;
-                        }
+        try (PreparedStatement statement = conn.prepareStatement(sql)) {
+            conn.setAutoCommit(false);
+            int num = 0;
+            statement.setLong(1, nodeid);
+            try (ResultSet results = statement.executeQuery()) {
+                while (results != null && results.next()) {
+                    if (task != null && !task.isWorking()) {
+                        return -count;
+                    }
+                    DataNode childNode = readData(results);
+                    if (childNode == null) {
+                        continue;
+                    }
+                    childNode.setOrderNumber(++num);
+                    childNode = updateData(conn, childNode);
+                    if (childNode == null) {
+                        return -count;
+                    }
+                    if (++count % Database.BatchSize == 0) {
+                        conn.commit();
+                    }
+                    if (allDescendants) {
+                        count = trimDescedentsOrders(task, conn, childNode,
+                                allDescendants, count);
                     }
                 }
             } catch (Exception e) {
-                MyBoxLog.debug(e, tableName);
+                MyBoxLog.console(e.toString());
+                return -count;
             }
-            if (!ok) {
-                List<DataNode> children = children(conn, parentid);
-                if (children != null) {
-                    for (DataNode child : children) {
-                        thisIndex = decentants(conn, query, child.getNodeid(), start, size, nodes, thisIndex);
-                        if (nodes.size() >= size) {
-                            break;
-                        }
-                    }
-                }
-            }
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
-        return thisIndex;
-    }
 
-    public int decentantsSize(Connection conn, long parentid) {
-        if (conn == null || parentid < 0) {
-            return 0;
-        }
-        int count = 0;
-        String sql = "SELECT count(nodeid) FROM " + tableName
-                + " WHERE parentid=? AND parentid<>nodeid";
-        try (PreparedStatement sizeQuery = conn.prepareStatement(sql)) {
-            count = decentantsSize(conn, sizeQuery, parentid);
+            MyBoxLog.console(num);
+            if (num > 0) {
+                conn.commit();
+            }
         } catch (Exception e) {
-            MyBoxLog.debug(e);
+            MyBoxLog.console(e.toString());
+            return -count;
         }
         return count;
-    }
-
-    public int decentantsSize(Connection conn, PreparedStatement sizeQuery, long parentid) {
-        if (conn == null || sizeQuery == null || parentid < 0) {
-            return 0;
-        }
-        int count = 0;
-        try {
-            count = childrenSize(sizeQuery, parentid);
-            List<DataNode> children = children(conn, parentid);
-            if (children != null) {
-                for (DataNode child : children) {
-                    count += decentantsSize(conn, sizeQuery, child.getNodeid());
-                }
-            }
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
-        return count;
-    }
-
-    public int childrenSize(PreparedStatement sizeQuery, long parent) {
-        if (sizeQuery == null || parent < 0) {
-            return 0;
-        }
-        int size = 0;
-        try {
-            sizeQuery.setLong(1, parent);
-            sizeQuery.getConnection().setAutoCommit(true);
-            try (ResultSet results = sizeQuery.executeQuery()) {
-                if (results != null && results.next()) {
-                    size = results.getInt(1);
-                }
-            } catch (Exception e) {
-                MyBoxLog.debug(e);
-            }
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
-        return size;
-    }
-
-    public int childrenSize(long parent) {
-        if (parent < 0) {
-            return 0;
-        }
-        try (Connection conn = DerbyBase.getConnection()) {
-            return childrenSize(conn, parent);
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-            return -1;
-        }
-    }
-
-    public int childrenSize(Connection conn, long parent) {
-        if (conn == null || parent < 0) {
-            return 0;
-        }
-        int size = 0;
-        String sql = "SELECT count(nodeid) FROM " + tableName
-                + " WHERE parentid=? AND parentid<>nodeid";
-        try (PreparedStatement sizeQuery = conn.prepareStatement(sql)) {
-            size = childrenSize(sizeQuery, parent);
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
-        return size;
-    }
-
-    public DataNode parent(Connection conn, DataNode node) {
-        if (conn == null || node == null) {
-            return null;
-        }
-        return query(conn, node.getParentid());
-    }
-
-    public String tagsCondition(List<DataTag> tags) {
-        if (tags == null || tags.isEmpty()) {
-            return null;
-        }
-        String condition = " nodeid IN ( SELECT tnodeid FROM Tree_Node_Tag "
-                + " WHERE tagid IN ( " + tags.get(0).getTagid();
-        for (int i = 1; i < tags.size(); ++i) {
-            condition += ", " + tags.get(i).getTagid();
-        }
-        condition += " ) ) ";
-        return condition;
     }
 
     /*

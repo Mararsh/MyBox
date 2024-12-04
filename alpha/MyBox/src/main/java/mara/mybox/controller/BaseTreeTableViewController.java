@@ -182,8 +182,13 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
     /*
         tree
      */
+    public TreeItem<NodeP> getRootItem() {
+        return treeView.getRoot();
+    }
+
     public void setRoot(TreeItem<NodeP> root) {
         treeView.setRoot(root);
+        treeView.refresh();
         if (root != null) {
             root.setExpanded(true);
             if (focusNode != null) {
@@ -195,7 +200,7 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
     }
 
     public NodeP getRootNode() {
-        TreeItem<NodeP> root = treeView.getRoot();
+        TreeItem<NodeP> root = getRootItem();
         return root != null ? root.getValue() : null;
     }
 
@@ -346,24 +351,43 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
         if (treeView == null || node == null) {
             return null;
         }
-        return find(treeView.getRoot(), node);
+        return findDescendant(treeView.getRoot(), node);
     }
 
-    public TreeItem<NodeP> find(TreeItem<NodeP> item, NodeP node) {
-        if (item == null || node == null) {
+    public TreeItem<NodeP> findDescendant(TreeItem<NodeP> fromItem, NodeP node) {
+        if (fromItem == null || node == null) {
             return null;
         }
-        if (equalNode(node, item.getValue())) {
-            return item;
+        if (equalNode(node, fromItem.getValue())) {
+            return fromItem;
         }
-        List<TreeItem<NodeP>> children = item.getChildren();
+        List<TreeItem<NodeP>> children = fromItem.getChildren();
         if (children == null) {
             return null;
         }
         for (TreeItem<NodeP> child : children) {
-            TreeItem<NodeP> find = find(child, node);
+            TreeItem<NodeP> find = findDescendant(child, node);
             if (find != null) {
                 return find;
+            }
+        }
+        return null;
+    }
+
+    public TreeItem<NodeP> findChild(TreeItem<NodeP> parentItem, NodeP node) {
+        if (parentItem == null || node == null) {
+            return null;
+        }
+        if (equalNode(node, parentItem.getValue())) {
+            return parentItem;
+        }
+        List<TreeItem<NodeP>> children = parentItem.getChildren();
+        if (children == null) {
+            return null;
+        }
+        for (TreeItem<NodeP> child : children) {
+            if (equalNode(node, child.getValue())) {
+                return child;
             }
         }
         return null;

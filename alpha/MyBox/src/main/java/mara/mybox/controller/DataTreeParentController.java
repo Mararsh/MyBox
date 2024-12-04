@@ -43,7 +43,7 @@ public class DataTreeParentController extends BaseDataTreeViewController {
             baseTitle = nodeTable.getTreeName() + " - " + message("SelectParentNode");
             setTitle(baseTitle);
 
-            loadTree();
+            loadTree(sourceNode);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
