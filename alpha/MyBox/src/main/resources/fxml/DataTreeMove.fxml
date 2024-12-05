@@ -17,38 +17,6 @@ License:    Apache License Version 2.0
 
 <VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="600.0" prefWidth="800.0" spacing="2.0" VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.DataTreeMoveController">
     <children>
-      <HBox alignment="CENTER_RIGHT" spacing="5.0">
-         <children>
-            <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="%MoveNodes" textAlignment="CENTER" HBox.hgrow="ALWAYS" />
-                                                                <Button fx:id="manageButton" mnemonicParsing="false" onAction="#manageAction">
-                                                                    <graphic>
-                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                            <image>
-                                                                                <Image url="@../buttons/Red/iconManage.png" />
-                                                                            </image>
-                                                                        </ImageView>
-                                                                    </graphic>
-                                                                </Button>
-            <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">
-               <graphic>
-                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/Red/iconCancel.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
-            <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction">
-               <graphic>
-                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/Red/iconOK.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
-         </children>
-      </HBox>
       <SplitPane fx:id="splitPane" dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
          <items>
             <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
@@ -63,7 +31,38 @@ License:    Apache License Version 2.0
             </VBox>
          </items>
       </SplitPane>
-      <Label maxWidth="1.7976931348623157E308" text="%TreeTargetComments" textAlignment="CENTER" />
+      <HBox alignment="CENTER_RIGHT" spacing="5.0">
+         <children>
+            <Label minHeight="-Infinity" text="%TreeTargetComments" textAlignment="CENTER" wrapText="true" />
+            <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconCancel.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+                                                                <Button fx:id="manageButton" mnemonicParsing="false" onAction="#manageAction">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/Red/iconManage.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </Button>
+            <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconOK.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+         </children>
+      </HBox>
     </children>
     <padding>
         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

@@ -98,8 +98,6 @@ public abstract class BaseData2DTaskController extends BaseBranchController {
 
             initSource();
 
-            filterController.setParameters(this);
-
             if (groupController != null) {
                 groupController.setParameters(this);
             }
@@ -893,7 +891,7 @@ public abstract class BaseData2DTaskController extends BaseBranchController {
         }
         filterController.load(controller.filterController.scriptInput.getText(),
                 controller.filterController.trueRadio.isSelected());
-        filterController.maxInput.setText(controller.filterController.maxFilteredNumber + "");
+        filterController.maxInput.setText(controller.filterController.maxInput.getText());
         scaleSelector.getSelectionModel().select(controller.scale + "");
     }
 

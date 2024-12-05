@@ -410,7 +410,7 @@ public class ImageScopeTools {
     /*
        convert scope to
      */
-    public static DataNode toDataNode(ImageScope scope) {
+    public static DataNode toDataNode(DataNode inNode, ImageScope scope) {
         try {
             if (scope == null) {
                 return null;
@@ -419,9 +419,10 @@ public class ImageScopeTools {
             if (type == null) {
                 return null;
             }
-            DataNode node = new DataNode();
-            node.setTitle(scope.getName());
-            node.setUpdateTime(scope.getModifyTime());
+            DataNode node = inNode;
+            if (node == null) {
+                node = DataNode.create();
+            }
             node.setValue("scope_type", type.name());
             node.setValue("color_type", scope.getColorScopeType().name());
             node.setValue("area_data", ImageScopeTools.encodeAreaData(scope));

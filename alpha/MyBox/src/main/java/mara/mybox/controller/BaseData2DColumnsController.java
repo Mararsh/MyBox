@@ -26,9 +26,9 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.paint.Color;
 import javafx.util.Callback;
 import mara.mybox.data2d.Data2D;
-import mara.mybox.data2d.tools.Data2DDefinitionTools;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataFileExcel;
+import mara.mybox.data2d.tools.Data2DDefinitionTools;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.VisitHistory;
 import static mara.mybox.db.table.BaseTable.StringMaxLength;
@@ -552,6 +552,12 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
             return;
         }
         Data2DColumnEditController.open(this, index);
+    }
+
+    @FXML
+    @Override
+    public void selectAction() {
+        DataSelectData2DDefinitionController.open(this);
     }
 
     /*

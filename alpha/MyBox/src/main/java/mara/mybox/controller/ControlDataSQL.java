@@ -44,8 +44,6 @@ import mara.mybox.value.UserConfig;
  */
 public class ControlDataSQL extends BaseDataValuesController {
 
-    protected boolean internal;
-
     @FXML
     protected TabPane sqlPane;
     @FXML
@@ -57,7 +55,7 @@ public class ControlDataSQL extends BaseDataValuesController {
     @FXML
     protected ControlData2DView dataController;
     @FXML
-    protected CheckBox wrapCheck, wrapOutputsCheck;
+    protected CheckBox internalCheck, wrapCheck, wrapOutputsCheck;
 
     @Override
     public void setControlsStyle() {
@@ -72,7 +70,6 @@ public class ControlDataSQL extends BaseDataValuesController {
             valueInput = sqlArea;
             valueWrapCheck = wrapCheck;
             valueName = "statement";
-            baseName = baseName + (internal ? "Internal" : "");
             super.initEditor();
 
             wrapOutputsCheck.setSelected(UserConfig.getBoolean(baseName + "OutputsWrap", false));
@@ -117,6 +114,7 @@ public class ControlDataSQL extends BaseDataValuesController {
             popError(message("InvalidParameters") + ": " + message("SQL"));
             return;
         }
+        showRightPane();
         if (task != null) {
             task.cancel();
         }
@@ -131,7 +129,8 @@ public class ControlDataSQL extends BaseDataValuesController {
                         Statement statement = conn.createStatement()) {
                     for (String sql : sqls) {
                         try {
-                            TableStringValues.add(conn, "SQL" + (internal ? "Internal" : ""), sql);
+                            TableStringValues.add(conn, "SQL"
+                                    + (internalCheck.isSelected() ? "Internal" : ""), sql);
                             outputArea.appendText(DateTools.nowString() + "  " + sql + "\n");
                             if (statement.execute(sql)) {
                                 int count = statement.getUpdateCount();
@@ -189,8 +188,7 @@ public class ControlDataSQL extends BaseDataValuesController {
 
     @FXML
     protected void popTableNames(MouseEvent event) {
-        if (UserConfig.getBoolean("TableNamesPopWhenMouseHovering"
-                + (internal ? "Internal" : ""), false)) {
+        if (UserConfig.getBoolean("TableNamesPopWhenMouseHovering", false)) {
             tableNames(event);
         }
     }
@@ -210,12 +208,11 @@ public class ControlDataSQL extends BaseDataValuesController {
             CheckBox popCheck = new CheckBox();
             popCheck.setGraphic(StyleTools.getIconImageView("iconPop.png"));
             NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWindowWhenMouseHovering")));
-            String pname = "TableNamesPopWhenMouseHovering" + (internal ? "Internal" : "");
-            popCheck.setSelected(UserConfig.getBoolean(pname, false));
+            popCheck.setSelected(UserConfig.getBoolean("TableNamesPopWhenMouseHovering", false));
             popCheck.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    UserConfig.setBoolean(pname, popCheck.isSelected());
+                    UserConfig.setBoolean("TableNamesPopWhenMouseHovering", popCheck.isSelected());
                 }
             });
             topButtons.add(popCheck);
@@ -224,7 +221,7 @@ public class ControlDataSQL extends BaseDataValuesController {
             controller.addNode(new Separator());
 
             List<String> names;
-            if (internal) {
+            if (internalCheck.isSelected()) {
                 names = DataInternalTable.InternalTables;
             } else {
                 names = Data2DTableTools.userTables();
@@ -281,7 +278,7 @@ public class ControlDataSQL extends BaseDataValuesController {
             controller.addNode(new Separator());
 
             List<String> names;
-            if (internal) {
+            if (internalCheck.isSelected()) {
                 names = DataInternalTable.InternalTables;
             } else {
                 names = Data2DTableTools.userTables();
@@ -306,10 +303,6 @@ public class ControlDataSQL extends BaseDataValuesController {
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
-    }
-
-    public void setInternal(boolean internal) {
-        this.internal = internal;
     }
 
 }

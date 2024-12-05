@@ -22,7 +22,7 @@ public class TableNodeWebFavorite extends BaseNodeTable {
         tableName = "Node_Web_Addresses";
         treeName = message("WebFavorite");
         dataName = message("WebPageAddress");
-        dataFxml = Fxmls.ControlDataWebPageAddressFxml;
+        dataFxml = Fxmls.ControlDataWebFavoriteFxml;
         examplesFileName = "WebPageAddress";
         defineColumns();
     }
@@ -57,6 +57,20 @@ public class TableNodeWebFavorite extends BaseNodeTable {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    @Override
+    public String label(String name) {
+        if (name == null || name.isBlank()) {
+            return name;
+        }
+        switch (name) {
+            case "address":
+                return message("Address");
+            case "icon":
+                return message("Icon");
+        }
+        return name;
     }
 
 }

@@ -26,7 +26,6 @@ public class Data2DRowFilterEdit extends BaseInputController {
             super.setParameters(handleController, null);
             this.taskController = handleController;
 
-            filterController.setParameters(handleController);
             filterController.load(handleController.data2D, filter);
             thisPane.requestFocus();
 
@@ -37,7 +36,7 @@ public class Data2DRowFilterEdit extends BaseInputController {
 
     @Override
     public boolean checkInput() {
-        if (!filterController.checkExpression(taskController.isAllPages())) {
+        if (!filterController.checkFilter(taskController.isAllPages())) {
             popError(filterController.error);
             return false;
         }
@@ -45,7 +44,7 @@ public class Data2DRowFilterEdit extends BaseInputController {
     }
 
     public DataFilter getFilter() {
-        return filterController.pickValues();
+        return filterController.pickValues(taskController.isAllPages());
     }
 
     /*

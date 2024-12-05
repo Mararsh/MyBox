@@ -1,17 +1,15 @@
 package mara.mybox.controller;
 
-import java.util.Map;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.Event;
 import javafx.fxml.FXML;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TreeItem;
+import mara.mybox.calculation.ExpressionCalculator;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataFilter;
-import mara.mybox.db.data.InfoNode;
+import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.tools.StringTools;
+import static mara.mybox.value.AppValues.InvalidLong;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -20,93 +18,36 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2022-6-1
  * @License Apache License Version 2.0
  */
-public class ControlData2DRowFilter extends ControlData2DRowExpression {
+public class ControlData2DRowFilter extends ControlDataRowFilter {
 
-    protected long maxFilteredNumber = -1;
     protected DataFilter filter;
-
-    @FXML
-    protected RadioButton trueRadio, falseRadio;
-    @FXML
-    protected TextField maxInput;
-
-    public ControlData2DRowFilter() {
-        category = InfoNode.RowFilter;
-    }
+    public ExpressionCalculator calculator;
+    protected Data2D data2D;
 
     @Override
-    public void initCalculator() {
-        filter = new DataFilter();
-        calculator = filter.calculator;
-    }
-
-    public void setParameters(BaseController parent) {
+    public void initControls() {
         try {
-            baseName = parent.baseName;
+            super.initControls();
 
-            maxFilteredNumber = -1;
-            if (maxInput != null) {
-                maxInput.setStyle(null);
-                maxInput.textProperty().addListener(new ChangeListener<String>() {
-                    @Override
-                    public void changed(ObservableValue ov, String oldValue, String newValue) {
-                        if (isSettingValues) {
-                            return;
-                        }
-                        String maxs = maxInput.getText();
-                        if (maxs == null || maxs.isBlank()) {
-                            maxFilteredNumber = -1;
-                            maxInput.setStyle(null);
-                        } else {
-                            try {
-                                maxFilteredNumber = Long.parseLong(maxs);
-                                maxInput.setStyle(null);
-                            } catch (Exception e) {
-                                maxInput.setStyle(UserConfig.badStyle());
-                            }
-                        }
-                    }
-                });
-            }
+            filter = new DataFilter();
+            calculator = filter.calculator;
 
+            wrapCheck.setSelected(UserConfig.getBoolean(baseName + "Wrap", false));
+            wrapCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(baseName + "Wrap", newValue);
+                    scriptInput.setWrapText(newValue);
+                }
+            });
+            scriptInput.setWrapText(wrapCheck.isSelected());
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
-    @Override
-    protected void editNode(TreeItem<InfoNode> item) {
-        try {
-            if (item == null) {
-                return;
-            }
-            InfoNode node = item.getValue();
-            if (node == null) {
-                return;
-            }
-            Map<String, String> values = InfoNode.parseInfo(node);
-            scriptInput.setText(values.get("Script"));
-            if (maxInput != null) {
-                maxInput.setText(values.get("Maximum"));
-            }
-            trueRadio.setSelected(!StringTools.isFalse(values.get("Condition")));
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-
-    }
-
-    @Override
-    public void clear() {
-        isSettingValues = true;
-        scriptInput.clear();
-        if (maxInput != null) {
-            maxInput.clear();
-        }
-        placeholdersList.getItems().clear();
-        trueRadio.setSelected(true);
-        isSettingValues = false;
-        filter.clear();
+    public void setData2D(Data2D data2D) {
+        this.data2D = data2D;
     }
 
     public void load(String script, boolean isTrue) {
@@ -114,70 +55,165 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
     }
 
     public void load(String script, boolean isTrue, long max) {
-        clear();
         isSettingValues = true;
-        if (script == null || script.isBlank()) {
-            scriptInput.clear();
+        scriptInput.setText(script);
+        if (isTrue) {
             trueRadio.setSelected(true);
         } else {
-            scriptInput.setText(script);
-            if (isTrue) {
-                trueRadio.setSelected(true);
-            } else {
-                falseRadio.setSelected(true);
-            }
+            othersRadio.setSelected(true);
         }
-        if (maxInput != null) {
-            maxInput.setText(max > 0 ? max + "" : "");
-        }
+        maxInput.setText(max > 0 && max != InvalidLong ? max + "" : "");
         isSettingValues = false;
         filter.setSourceScript(script);
         filter.setReversed(!isTrue);
-        filter.setMaxPassed(max);
+        filter.setMaxPassed(max > 0 && max != InvalidLong ? max : -1);
     }
 
     public void load(Data2D data2D, DataFilter filter) {
-        setData2D(data2D);
+        this.data2D = data2D;
         if (filter == null) {
-            clear();
+            scriptInput.setText(null);
+            trueRadio.setSelected(true);
+            maxInput.setText(null);
             return;
         }
         load(filter.getSourceScript(), !filter.isReversed(), filter.getMaxPassed());
     }
 
-    public DataFilter pickValues() {
-        filter.setReversed(falseRadio.isSelected())
-                .setMaxPassed(maxFilteredNumber).setPassedNumber(0)
-                .setSourceScript(scriptInput.getText());
+    public DataFilter pickValues(boolean allPages) {
+        long max = checkMax();
+        if (error != null) {
+            popError(error);
+            return null;
+        }
+        String script = checkScript(allPages);
+        if (error != null) {
+            popError(error);
+            return null;
+        }
+        filter.setReversed(othersRadio.isSelected())
+                .setMaxPassed(max > 0 && max != InvalidLong ? max : -1)
+                .setPassedNumber(0)
+                .setSourceScript(script);
         if (data2D != null) {
             data2D.setFilter(filter);
         }
         return filter;
     }
 
-    @Override
-    public boolean checkExpression(boolean allPages) {
-        if (!super.checkExpression(allPages)) {
+    public boolean checkFilter(boolean allPages) {
+        checkMax();
+        if (error != null) {
             return false;
         }
-        if (maxInput != null && UserConfig.badStyle().equals(maxInput.getStyle())) {
-            error = message("InvalidParameter") + ": " + message("MaxFilteredDataTake");
-            return false;
+        checkScript(allPages);
+        return error == null;
+    }
+
+    public long checkMax() {
+        error = null;
+        String maxs = maxInput.getText();
+        long maxFilteredNumber = -1;
+        if (maxs != null && !maxs.isBlank()) {
+            try {
+                maxFilteredNumber = Long.parseLong(maxs);
+            } catch (Exception e) {
+                error = message("InvalidParameter") + ": " + message("MaxFilteredDataTake");
+                return InvalidLong;
+            }
         }
-        pickValues();
-        return true;
+        return maxFilteredNumber;
+    }
+
+    public String checkScript(boolean allPages) {
+        error = null;
+        if (data2D == null || !data2D.isValidDefinition()) {
+            error = message("InvalidData");
+            return null;
+        }
+        String script = scriptInput.getText();
+        if (script == null || script.isBlank()) {
+            return script;
+        }
+        script = script.trim();
+        if (calculator.validateExpression(data2D, script, allPages)) {
+            TableStringValues.add(interfaceName + "Histories", script);
+            return script;
+        } else {
+            error = calculator.getError();
+            return null;
+        }
     }
 
     @FXML
     @Override
-    public void editAction() {
-        ControlDataRowFilter.open(scriptInput.getText(), trueRadio.isSelected(), maxFilteredNumber);
+    public void clearAction() {
+        scriptInput.clear();
     }
 
     @FXML
     @Override
-    public void manageAction() {
-        DataTreeController.rowFilter(this, false);
+    public void saveAction() {
+        long maxFilteredNumber = checkMax();
+        if (error != null) {
+            popError(error);
+            return;
+        }
+        ControlDataRowFilter.open(this,
+                scriptInput.getText(), trueRadio.isSelected(), maxFilteredNumber);
+    }
+
+    @FXML
+    @Override
+    public void selectAction() {
+        DataSelectRowFilterController.open(this);
+    }
+
+    @FXML
+    public void popPlaceholds(Event event) {
+        if (UserConfig.getBoolean(baseName + "PlaceholdsPopWhenMouseHovering", false)) {
+            showPlaceholds(event);
+        }
+    }
+
+    @FXML
+    public void showPlaceholds(Event event) {
+//        try {
+//            Platform.runLater(() -> {
+//                placeholdersList.getItems().clear();
+//                if (data2D == null || !data2D.isValidDefinition()) {
+//                    return;
+//                }
+//                List<Data2DColumn> columns = data2D.getColumns();
+//                List<String> list = new ArrayList<>();
+//                for (Data2DColumn column : columns) {
+//                    String name = column.getColumnName();
+//                    list.add("#{" + name + "}");
+//                    if ((onlyStatisticCheck != null && !onlyStatisticCheck.isSelected())
+//                            || column.isNumberType()) {
+//                        list.add("#{" + name + "-" + message("Mean") + "}");
+//                        list.add("#{" + name + "-" + message("Median") + "}");
+//                        list.add("#{" + name + "-" + message("Mode") + "}");
+//                        list.add("#{" + name + "-" + message("MinimumQ0") + "}");
+//                        list.add("#{" + name + "-" + message("LowerQuartile") + "}");
+//                        list.add("#{" + name + "-" + message("UpperQuartile") + "}");
+//                        list.add("#{" + name + "-" + message("MaximumQ4") + "}");
+//                        list.add("#{" + name + "-" + message("LowerExtremeOutlierLine") + "}");
+//                        list.add("#{" + name + "-" + message("LowerMildOutlierLine") + "}");
+//                        list.add("#{" + name + "-" + message("UpperMildOutlierLine") + "}");
+//                        list.add("#{" + name + "-" + message("UpperExtremeOutlierLine") + "}");
+//                    }
+//                }
+//                list.add("#{" + message("TableRowNumber") + "}");
+//                list.add("#{" + message("DataRowNumber") + "}");
+//
+//                placeholdersList.getItems().setAll(list);
+//                placeholdersList.applyCss();
+//                placeholdersList.layout();
+//            });
+//        } catch (Exception e) {
+//            MyBoxLog.error(e);
+//        }
     }
 
 }

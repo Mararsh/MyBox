@@ -82,7 +82,7 @@ public class ControllerTools {
         } else if ("svg".equals(suffix)) {
             return SvgEditorController.open(file);
         } else if ("js".equals(suffix)) {
-            return ControlDataJavascript.openFile(file);
+            return ControlDataJavascript.openFile(null, file);
         } else if (Arrays.asList(FileExtensions.TextFileSuffix).contains(suffix)) {
             return TextEditorController.open(file);
         } else if (CompressTools.compressFormats().contains(suffix) || CompressTools.archiveFormats().contains(suffix)) {

@@ -866,7 +866,7 @@ public class ControlWebView extends BaseController {
 
         menu = new MenuItem(message("AddAsFavorite"), StyleTools.getIconImageView("iconStar.png"));
         menu.setOnAction((ActionEvent event) -> {
-            WebFavoriteAddController.open(name, finalAddress);
+            ControlDataWebFavorite.open(myController, name, finalAddress);
         });
         items.add(menu);
 
@@ -1275,7 +1275,7 @@ public class ControlWebView extends BaseController {
             if (address != null && !address.isBlank()) {
                 menu = new MenuItem(message("AddAsFavorite"), StyleTools.getIconImageView("iconStar.png"));
                 menu.setOnAction((ActionEvent event) -> {
-                    WebFavoriteAddController.open(title(), address);
+                    ControlDataWebFavorite.open(myController, title(), address);
                 });
                 viewMenu.getItems().add(menu);
             }

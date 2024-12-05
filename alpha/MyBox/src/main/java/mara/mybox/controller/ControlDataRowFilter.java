@@ -17,8 +17,6 @@ import mara.mybox.db.table.TableNodeRowFilter;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.WindowTools;
-import mara.mybox.value.Fxmls;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -49,6 +47,8 @@ public class ControlDataRowFilter extends BaseDataValuesController {
         try {
             valueInput = scriptInput;
             valueWrapCheck = wrapCheck;
+            baseName = "DataRowFilter";
+
             super.initEditor();
 
             takeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
@@ -131,27 +131,32 @@ public class ControlDataRowFilter extends BaseDataValuesController {
     }
 
     @FXML
+    public void scriptAction() {
+        DataSelectJavaScriptController.open(this, scriptInput);
+    }
+
+    @FXML
     protected void popScriptExamples(MouseEvent mouseEvent) {
-        if (UserConfig.getBoolean(interfaceName + "ExamplesPopWhenMouseHovering", false)) {
+        if (UserConfig.getBoolean(baseName + "ExamplesPopWhenMouseHovering", false)) {
             showScriptExamples(mouseEvent);
         }
     }
 
     @FXML
     protected void showScriptExamples(Event event) {
-        PopTools.popJavaScriptExamples(this, event, scriptInput, interfaceName + "Examples", null);
+        PopTools.popJavaScriptExamples(this, event, scriptInput, baseName + "Examples", null);
     }
 
     @FXML
     protected void popScriptHistories(Event event) {
-        if (UserConfig.getBoolean(interfaceName + "HistoriesPopWhenMouseHovering", false)) {
+        if (UserConfig.getBoolean(baseName + "HistoriesPopWhenMouseHovering", false)) {
             showScriptHistories(event);
         }
     }
 
     @FXML
     protected void showScriptHistories(Event event) {
-        PopTools.popStringValues(this, scriptInput, event, interfaceName + "Histories", false);
+        PopTools.popStringValues(this, scriptInput, event, baseName + "Histories", false);
     }
 
     @FXML
@@ -169,10 +174,10 @@ public class ControlDataRowFilter extends BaseDataValuesController {
     /*
         static
      */
-    public static DataTreeNodeEditorController open(String script, boolean matchTrue, long max) {
+    public static DataTreeNodeEditorController open(BaseController parent,
+            String script, boolean matchTrue, long max) {
         try {
-            DataTreeNodeEditorController controller
-                    = (DataTreeNodeEditorController) WindowTools.openStage(Fxmls.DataTreeNodeEditorFxml);
+            DataTreeNodeEditorController controller = DataTreeNodeEditorController.open(parent);
             controller.setTable(new TableNodeRowFilter());
             ((ControlDataRowFilter) controller.dataController).edit(script, matchTrue, max);
             controller.requestMouse();

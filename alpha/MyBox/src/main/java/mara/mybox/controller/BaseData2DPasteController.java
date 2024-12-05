@@ -45,7 +45,6 @@ public class BaseData2DPasteController extends ControlData2DSource {
             dataTarget = targetController.data2D;
 
             initParameters();
-            filterController.setParameters(this);
 
             targetStatusListener = new ChangeListener<Boolean>() {
                 @Override

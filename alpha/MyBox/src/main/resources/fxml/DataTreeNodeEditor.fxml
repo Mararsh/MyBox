@@ -21,48 +21,6 @@ License:    Apache License Version 2.0
 
 <VBox fx:id="thisPane" prefHeight="500.0" prefWidth="700.0" spacing="2.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.DataTreeNodeEditorController">
    <children>
-      <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0">
-         <children>
-            <Label fx:id="idLabel" minHeight="-Infinity" text="%ID" wrapText="true" />
-            <TextField fx:id="idInput" disable="true" editable="false" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                                <Button fx:id="manageButton" mnemonicParsing="false" onAction="#manageAction">
-                                                                    <graphic>
-                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                            <image>
-                                                                                <Image url="@../buttons/Red/iconManage.png" />
-                                                                            </image>
-                                                                        </ImageView>
-                                                                    </graphic>
-                                                                </Button>
-            <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">
-               <graphic>
-                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/Red/iconCancel.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
-            <Button fx:id="recoverButton" mnemonicParsing="false" onAction="#recoverAction">
-               <graphic>
-                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/Red/iconRecover.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
-            <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction">
-               <graphic>
-                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/Red/iconSave.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
-         </children>
-      </HBox>
       <HBox alignment="CENTER_LEFT" layoutX="15.0" layoutY="15.0" maxWidth="1.7976931348623157E308" spacing="2.0">
          <children>
             <Label fx:id="nameLabel" minHeight="-Infinity" text="%Title" wrapText="true" />
@@ -90,13 +48,24 @@ License:    Apache License Version 2.0
                         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                      </padding>
                      <children>
+                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0">
+                           <children>
+                              <Label fx:id="idLabel" minHeight="-Infinity" text="%ID" wrapText="true" />
+                              <TextField fx:id="idInput" disable="true" editable="false" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                           </children>
+                        </HBox>
                         <HBox alignment="CENTER_LEFT" layoutX="12.0" layoutY="42.0" maxWidth="1.7976931348623157E308" spacing="5.0">
                            <children>
                               <Label fx:id="idLabel1" minHeight="-Infinity" text="%OrderNumber" wrapText="true" />
                               <TextField fx:id="orderInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                            </children>
                         </HBox>
-                        <Label minHeight="-Infinity" text="%NodeOrderComments" wrapText="true" />
+                        <HBox alignment="CENTER_LEFT" layoutX="12.0" layoutY="38.0" maxWidth="1.7976931348623157E308" spacing="5.0">
+                           <children>
+                              <Label fx:id="idLabel11" minHeight="-Infinity" text="%OrderNumber" visible="false" wrapText="true" />
+                              <Label minHeight="-Infinity" text="%NodeOrderComments" wrapText="true" />
+                           </children>
+                        </HBox>
                         <HBox alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" spacing="5.0">
                            <children>
                               <Label fx:id="timeLabel" minHeight="-Infinity" text="%UpdateTime" wrapText="true" />
@@ -137,6 +106,46 @@ License:    Apache License Version 2.0
             </Tab>
          </tabs>
       </TabPane>
+      <HBox alignment="CENTER_LEFT" layoutX="15.0" layoutY="15.0" maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" spacing="2.0">
+         <children>
+            <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconSave.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="recoverButton" mnemonicParsing="false" onAction="#recoverAction">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconRecover.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+                                                                <Button fx:id="manageButton" mnemonicParsing="false" onAction="#manageAction">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/Red/iconManage.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </Button>
+            <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconCancel.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+         </children>
+      </HBox>
    </children>
    <padding>
       <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

@@ -66,6 +66,7 @@ public class DataTreeNodeEditorController extends BaseDataTreeHandleController {
     public void setTree(BaseDataTreeViewController controller) {
         try {
             treeController = controller;
+            parentController = controller;
             nodeTable = treeController.nodeTable;
             tagTable = treeController.tagTable;
             nodeTagsTable = treeController.nodeTagsTable;
@@ -128,8 +129,7 @@ public class DataTreeNodeEditorController extends BaseDataTreeHandleController {
 
     public void editNode(DataNode node) {
         if (node == null) {
-            currentNode = DataNode.createChild(parentNode, message("NewData"));
-            addNode(parentNode);
+            editNull();
             return;
         }
         if (task != null) {
@@ -259,8 +259,13 @@ public class DataTreeNodeEditorController extends BaseDataTreeHandleController {
         isSettingValues = false;
     }
 
-    public boolean isNewNode() {
-        return currentNode.getNodeid() < 0;
+    public void editNull() {
+        if (parentNode != null) {
+            currentNode = DataNode.createChild(parentNode, message("NewData"));
+        } else {
+            currentNode = DataNode.create().setTitle(message("NewData"));
+        }
+        loadData();
     }
 
     /*
@@ -323,7 +328,7 @@ public class DataTreeNodeEditorController extends BaseDataTreeHandleController {
 
     @FXML
     public void selectParent() {
-        DataTreeParentController.open(this, currentNode);
+        DataSelectParentController.open(this, currentNode);
     }
 
     protected void setParentNode(DataNode node) {
@@ -379,6 +384,7 @@ public class DataTreeNodeEditorController extends BaseDataTreeHandleController {
             popError(message("Invalid") + ": " + message("Data"));
             return;
         }
+        MyBoxLog.console(node.getTitle());
         boolean isNewNode = node.getNodeid() < 0;
         boolean isParentChanged = currentNode == null
                 || currentNode.getParentid() != parentNode.getNodeid();
@@ -436,12 +442,16 @@ public class DataTreeNodeEditorController extends BaseDataTreeHandleController {
                     } else {
                         treeController.updateNode(savedNode);
                     }
-                    treeController.popSaved();
+                }
+                if (parentRunning()) {
+                    parentController.popSaved();
                     resetStatus();
                     close();
                 } else {
+                    popSaved();
                     resetStatus();
                 }
+
             }
 
             @Override
@@ -518,9 +528,16 @@ public class DataTreeNodeEditorController extends BaseDataTreeHandleController {
     /*
         static methods
      */
-    public static DataTreeNodeEditorController editNode(BaseDataTreeViewController parent, DataNode node) {
+    public static DataTreeNodeEditorController open(BaseController parent) {
         DataTreeNodeEditorController controller
                 = (DataTreeNodeEditorController) WindowTools.openStage(Fxmls.DataTreeNodeEditorFxml);
+        controller.setParentController(parent);
+        controller.requestMouse();
+        return controller;
+    }
+
+    public static DataTreeNodeEditorController editNode(BaseDataTreeViewController parent, DataNode node) {
+        DataTreeNodeEditorController controller = open(parent);
         controller.setTree(parent);
         controller.editNode(node);
         controller.requestMouse();
@@ -528,8 +545,7 @@ public class DataTreeNodeEditorController extends BaseDataTreeHandleController {
     }
 
     public static DataTreeNodeEditorController addNode(BaseDataTreeViewController parent, DataNode parentNode) {
-        DataTreeNodeEditorController controller
-                = (DataTreeNodeEditorController) WindowTools.openStage(Fxmls.DataTreeNodeEditorFxml);
+        DataTreeNodeEditorController controller = open(parent);
         controller.setTree(parent);
         controller.addNode(parentNode);
         controller.requestMouse();

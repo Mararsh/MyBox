@@ -6,6 +6,8 @@ import java.util.Map;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import static mara.mybox.db.table.BaseNodeTable.RootID;
+import static mara.mybox.value.AppValues.InvalidInteger;
+import static mara.mybox.value.AppValues.InvalidLong;
 
 /**
  * @Author Mara
@@ -92,6 +94,10 @@ public class DataNode extends BaseData {
 
     public String getStringValue(String column) {
         try {
+            Object o = getValue(column);
+            if (o == null) {
+                return null;
+            }
             return (String) getValue(column);
         } catch (Exception e) {
             return null;
@@ -100,14 +106,34 @@ public class DataNode extends BaseData {
 
     public int getIntValue(String column) {
         try {
+            Object o = getValue(column);
+            if (o == null) {
+                return InvalidInteger;
+            }
             return (int) getValue(column);
         } catch (Exception e) {
-            return 0;
+            return InvalidInteger;
+        }
+    }
+
+    public long getLongValue(String column) {
+        try {
+            Object o = getValue(column);
+            if (o == null) {
+                return InvalidLong;
+            }
+            return (long) getValue(column);
+        } catch (Exception e) {
+            return InvalidLong;
         }
     }
 
     public boolean getBooleanValue(String column) {
         try {
+            Object o = getValue(column);
+            if (o == null) {
+                return false;
+            }
             return (boolean) getValue(column);
         } catch (Exception e) {
             return false;

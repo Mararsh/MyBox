@@ -2,8 +2,6 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -17,10 +15,8 @@ import javafx.util.Callback;
 import mara.mybox.data.StringTable;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.tools.Data2DColumnTools;
-import mara.mybox.data2d.tools.Data2DDefinitionTools;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DColumn;
-import mara.mybox.db.data.InfoNode;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.cell.TableBooleanCell;
@@ -254,23 +250,6 @@ public class ControlData2DColumns extends BaseData2DColumnsController {
     }
 
     @FXML
-    @Override
-    public void selectAction() {
-        InfoTreeNodeSelectController controller = InfoTreeNodeSelectController.open(this, InfoNode.Data2DDefinition);
-        controller.notify.addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                InfoNode node = controller.selected();
-                if (node == null) {
-                    return;
-                }
-                addColumns(Data2DDefinitionTools.fromXML(node.getInfo()));
-                controller.close();
-            }
-        });
-    }
-
-    @FXML
     public void headerAction() {
         try {
             if (dataController.data2D == null || dataController.tableData.isEmpty()) {
@@ -324,7 +303,7 @@ public class ControlData2DColumns extends BaseData2DColumnsController {
             popError(message("NoData"));
             return;
         }
-        ControlDataData2DDefinition.loadData(currentData);
+        ControlDataData2DDefinition.loadData(dataController, currentData);
     }
 
 }

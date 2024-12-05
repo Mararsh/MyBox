@@ -13,11 +13,9 @@ import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.HtmlWriteTools;
-import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -97,9 +95,7 @@ public class ControlDataJavascript extends BaseDataValuesController {
                 popError(message("InvalidParameters") + ": JavaScript");
                 return;
             }
-            if (rightPaneCheck != null) {
-                rightPaneCheck.setSelected(true);
-            }
+            showRightPane();
             String ret;
             try {
                 Object o = htmlWebView.webEngine.executeScript(script);
@@ -189,13 +185,21 @@ public class ControlDataJavascript extends BaseDataValuesController {
     /*
         static
      */
+    public static DataTreeNodeEditorController openScriptEditor(BaseController parent) {
+        try {
+            DataTreeNodeEditorController controller = DataTreeNodeEditorController.open(parent);
+            controller.setTable(new TableNodeJavaScript());
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
     public static DataTreeNodeEditorController open(ControlWebView controlWebView) {
         try {
-            DataTreeNodeEditorController controller
-                    = (DataTreeNodeEditorController) WindowTools.openStage(Fxmls.DataTreeNodeEditorFxml);
-            controller.setTable(new TableNodeJavaScript());
+            DataTreeNodeEditorController controller = openScriptEditor(controlWebView);
             ((ControlDataJavascript) controller.dataController).setParameters(controlWebView);
-            controller.requestMouse();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -203,13 +207,10 @@ public class ControlDataJavascript extends BaseDataValuesController {
         }
     }
 
-    public static DataTreeNodeEditorController loadScript(String script) {
+    public static DataTreeNodeEditorController loadScript(BaseController parent, String script) {
         try {
-            DataTreeNodeEditorController controller
-                    = (DataTreeNodeEditorController) WindowTools.openStage(Fxmls.DataTreeNodeEditorFxml);
-            controller.setTable(new TableNodeJavaScript());
+            DataTreeNodeEditorController controller = openScriptEditor(parent);
             ((ControlDataJavascript) controller.dataController).edit(script);
-            controller.requestMouse();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -217,13 +218,10 @@ public class ControlDataJavascript extends BaseDataValuesController {
         }
     }
 
-    public static DataTreeNodeEditorController openFile(File file) {
+    public static DataTreeNodeEditorController openFile(BaseController parent, File file) {
         try {
-            DataTreeNodeEditorController controller
-                    = (DataTreeNodeEditorController) WindowTools.openStage(Fxmls.DataTreeNodeEditorFxml);
-            controller.setTable(new TableNodeJavaScript());
+            DataTreeNodeEditorController controller = openScriptEditor(parent);
             ((ControlDataJavascript) controller.dataController).selectSourceFile(file);
-            controller.requestMouse();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e);

@@ -262,11 +262,6 @@ public abstract class MainMenuController_Image extends MainMenuController_Docume
     }
 
     @FXML
-    protected void ImageMaterial(ActionEvent event) {
-        openScene(Fxmls.ImageMaterialFxml);
-    }
-
-    @FXML
     protected void openManageColors(ActionEvent event) {
         ColorsManageController.oneOpen();
     }

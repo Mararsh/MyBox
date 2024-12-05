@@ -161,14 +161,6 @@ public class DataTreeController extends BaseDataTreeViewController {
             items.add(menu);
         }
 
-        if (nodeTable.isNodeExecutable()) {
-            menu = new MenuItem(message("Execute"), StyleTools.getIconImageView("iconGo.png"));
-            menu.setOnAction((ActionEvent menuItemEvent) -> {
-                executeNode(treeItem);
-            });
-            items.add(menu);
-        }
-
         menu = new MenuItem(message("CopyNodes"), StyleTools.getIconImageView("iconCopy.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             copyNodes(treeItem);
@@ -248,7 +240,7 @@ public class DataTreeController extends BaseDataTreeViewController {
 
     public Menu doubleClickMenu(TreeItem<DataNode> treeItem) {
         Menu clickMenu = new Menu(message("WhenDoubleClickNode"), StyleTools.getIconImageView("iconSelectAll.png"));
-        clickMenu(treeItem, clickMenu, "WhenDoubleClickNode", "PopNode");
+        clickMenu(treeItem, clickMenu, "WhenDoubleClickNode", "EditNode");
         return clickMenu;
     }
 
@@ -660,7 +652,7 @@ public class DataTreeController extends BaseDataTreeViewController {
                 controller = (DataTreeController) WindowTools.openStage(Fxmls.DataTreeFxml);
             }
             controller.requestMouse();
-            controller.initTree(table);
+            controller.initDataTree(table);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e);

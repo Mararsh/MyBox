@@ -141,7 +141,7 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
     /*
         tree
      */
-    public void initTree(BaseNodeTable table) {
+    public void initDataTree(BaseNodeTable table) {
         try {
             if (table == null) {
                 return;
@@ -362,26 +362,6 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
 
         items.add(new SeparatorMenuItem());
 
-//        if (nodesListCheck != null) {
-//            menu = new MenuItem(message("LoadChildren"), StyleTools.getIconImageView("iconList.png"));
-//            menu.setOnAction(new EventHandler<ActionEvent>() {
-//                @Override
-//                public void handle(ActionEvent event) {
-//                    listChildren(item);
-//                }
-//            });
-//            items.add(menu);
-//
-//            menu = new MenuItem(message("LoadDescendants"), StyleTools.getIconImageView("iconList.png"));
-//            menu.setOnAction(new EventHandler<ActionEvent>() {
-//                @Override
-//                public void handle(ActionEvent event) {
-//                    listDescentants(item);
-//                }
-//            });
-//            items.add(menu);
-//
-//        }
         menu = new MenuItem(message("Refresh"), StyleTools.getIconImageView("iconRefresh.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             refreshAction();
@@ -818,6 +798,11 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
     @Override
     public void cancelAction() {
         closeStage();
+    }
+
+    @FXML
+    public void manageAction() {
+        DataTreeController.open(null, false, nodeTable);
     }
 
     @FXML

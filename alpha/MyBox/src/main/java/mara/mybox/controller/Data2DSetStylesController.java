@@ -114,8 +114,6 @@ public class Data2DSetStylesController extends BaseController {
             };
             tableController.statusNotify.addListener(tableStatusListener);
 
-            filterController.setParameters(this);
-
             sourceChanged();
 
         } catch (Exception e) {
@@ -322,7 +320,7 @@ public class Data2DSetStylesController extends BaseController {
                 tabPane.getSelectionModel().select(dataTab);
                 return false;
             }
-            if (!filterController.checkExpression(false)) {
+            if (!filterController.checkFilter(false)) {
                 tabPane.getSelectionModel().select(filterTab);
                 alertError(filterController.error);
                 return false;

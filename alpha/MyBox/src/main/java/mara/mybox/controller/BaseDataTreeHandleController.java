@@ -23,6 +23,7 @@ public abstract class BaseDataTreeHandleController extends BaseTaskController {
                 return;
             }
             treeController = parent;
+            parentController = parent;
             nodeTable = treeController.nodeTable;
             dataName = nodeTable.getDataName();
             baseName = baseName + "_" + dataName;
@@ -34,6 +35,10 @@ public abstract class BaseDataTreeHandleController extends BaseTaskController {
 
     public boolean treeRunning() {
         return WindowTools.isRunning(treeController);
+    }
+
+    public boolean parentRunning() {
+        return WindowTools.isRunning(parentController);
     }
 
     @FXML

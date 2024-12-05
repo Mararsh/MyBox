@@ -8,7 +8,7 @@ import java.util.List;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
-import mara.mybox.db.data.Tag;
+import mara.mybox.db.migration.Tag;
 import mara.mybox.dev.MyBoxLog;
 
 /**

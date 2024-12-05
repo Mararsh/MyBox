@@ -6,11 +6,11 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.image.Image;
-import javafx.scene.input.KeyEvent;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.bufferedimage.ImageScopeTools;
 import mara.mybox.data.ImageItem;
 import mara.mybox.db.data.DataNode;
+import mara.mybox.db.table.TableNodeImageScope;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
 
@@ -65,7 +65,7 @@ public class ControlDataImageScope extends BaseDataValuesController {
     protected DataNode pickValues(DataNode node) {
         try {
             ImageScope scope = scopeController.pickScopeValues();
-            return ImageScopeTools.toDataNode(scope);
+            return ImageScopeTools.toDataNode(node, scope);
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;
@@ -92,12 +92,11 @@ public class ControlDataImageScope extends BaseDataValuesController {
                 || scope == null || scope.getScopeType() == null) {
             return;
         }
-        if (nodeEditor.isNewNode()) {
-            nodeEditor.isSettingValues = true;
-            nodeEditor.titleInput.setText(
-                    scope.getScopeType() + "_" + DateTools.datetimeToString(new Date()));
-            nodeEditor.isSettingValues = false;
-        }
+        nodeEditor.editNull();
+        nodeEditor.isSettingValues = true;
+        nodeEditor.titleInput.setText(
+                scope.getScopeType() + "_" + DateTools.datetimeToString(new Date()));
+        nodeEditor.isSettingValues = false;
         setScopeControls(scope);
     }
 
@@ -106,33 +105,19 @@ public class ControlDataImageScope extends BaseDataValuesController {
         scopeController.resetScope();
     }
 
-//    @Override
-//    public void pasteNode(InfoNode node) {
-//        if (node == null) {
-//            return;
-//        }
-//        if (scopeController.scope == null) {
-//            return;
-//        }
-////        ImageScope srcScope = ImageScopeTools.fromXML(null, myController, node.getInfo());
-////        if (srcScope != null) {
-////            scopeController.loadScope();
-////            nodeChanged(true);
-////        }
-////        tabPane.getSelectionModel().select(valueTab);
-//    }
-//
-//    @Override
-//    public void newNodeCreated() {
-//        super.newNodeCreated();
-//        scopeController.indicateScope();
-//    }
-    @Override
-    public boolean keyEventsFilter(KeyEvent event) {
-        if (super.keyEventsFilter(event)) {
-            return true;
+    /*
+        static
+     */
+    public static DataTreeNodeEditorController open(BaseController parent, ImageScope scope) {
+        try {
+            DataTreeNodeEditorController controller = DataTreeNodeEditorController.open(parent);
+            controller.setTable(new TableNodeImageScope());
+            ((ControlDataImageScope) controller.dataController).loadScope(scope);
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
         }
-        return scopeController.keyEventsFilter(event); // pass event to editor
     }
 
 }

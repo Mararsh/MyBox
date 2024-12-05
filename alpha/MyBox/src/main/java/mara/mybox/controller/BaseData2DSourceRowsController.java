@@ -103,9 +103,6 @@ public class BaseData2DSourceRowsController extends BaseData2DLoadController {
                     }
                 }
             });
-            if (filterController != null) {
-                filterController.setParameters(this);
-            }
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -261,7 +258,7 @@ public class BaseData2DSourceRowsController extends BaseData2DLoadController {
      */
     public boolean checkRowsFilter() {
         if (filterController != null
-                && !filterController.checkExpression(isAllPages())) {
+                && !filterController.checkFilter(isAllPages())) {
             String ferror = filterController.error;
             if (ferror != null && !ferror.isBlank()) {
                 if (filterTab != null && tabPane != null) {

@@ -36,7 +36,7 @@ public class TableNodeRowFilter extends BaseNodeTable {
         }
         switch (name) {
             case "max_match":
-                return message("MaximumNumber");
+                return message("MaxFilteredDataTake");
             case "match_true":
                 return message("MatchTrue");
             case "script":

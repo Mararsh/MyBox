@@ -17,7 +17,7 @@ public class ControlDataTreeSource extends BaseDataTreeViewController {
 
     public void setParameters(DataTreeController parent, DataNode node) {
         try {
-            initTree(parent.nodeTable);
+            initDataTree(parent.nodeTable);
 
             loadTree(node);
 
