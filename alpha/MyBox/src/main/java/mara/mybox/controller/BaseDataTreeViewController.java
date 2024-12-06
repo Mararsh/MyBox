@@ -191,6 +191,7 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
                     size = nodeTable.size(conn);
                     if (size > 1) {
                         rootItem.getChildren().add(new TreeItem(new DataNode()));
+                        conn.setAutoCommit(true);
                         unfold(this, conn, rootItem, size < AutoExpandThreshold);
                     }
                 } catch (Exception e) {
@@ -555,6 +556,7 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
                 try (Connection conn = DerbyBase.getConnection()) {
                     tempItem = new TreeItem(item.getValue());
                     tempItem.getChildren().add(new TreeItem(new DataNode()));
+                    conn.setAutoCommit(true);
                     unfold(this, conn, tempItem, descendants);
                 } catch (Exception e) {
                     error = e.toString();
@@ -664,6 +666,7 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
             @Override
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
+                    conn.setAutoCommit(true);
                     List<DataNode> ancestors = nodeTable.ancestors(conn, node.getNodeid());
                     if (ancestors == null || ancestors.isEmpty()) {
                         return false;

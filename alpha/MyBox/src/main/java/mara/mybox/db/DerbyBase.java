@@ -542,7 +542,7 @@ public class DerbyBase {
                 t.createTable(conn);
                 loadingController.info(t.getTreeName());
             }
-            if (!tables.contains("Node_Web_Addresses".toLowerCase())) {
+            if (!tables.contains("Node_Web_Favorite".toLowerCase())) {
                 TableNodeWebFavorite t = new TableNodeWebFavorite();
                 t.createTable(conn);
                 loadingController.info(t.getTreeName());

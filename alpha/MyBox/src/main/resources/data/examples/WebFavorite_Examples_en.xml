@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Node_Web_Addresses>
+<Node_Web_Favorite>
 <TreeNode>
     <NodeAttributes>
         <title>
@@ -1291,4 +1291,4 @@
         </TreeNode>
     </TreeNode>
 </TreeNode>
-</Node_Web_Addresses>
+</Node_Web_Favorite>

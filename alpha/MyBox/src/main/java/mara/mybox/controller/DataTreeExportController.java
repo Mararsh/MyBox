@@ -318,6 +318,7 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
                 closeWriters();
                 return false;
             }
+            conn.setAutoCommit(true);
             exportNode(currentTask, conn, sourceid, chainName, "");
         } catch (Exception e) {
             updateLogs(e.toString());

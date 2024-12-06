@@ -286,7 +286,6 @@ public class BaseNodeTable extends BaseTable<DataNode> {
                 + " WHERE parentid=? AND parentid<>nodeid FETCH FIRST ROW ONLY";
         try (PreparedStatement statement = conn.prepareStatement(sql)) {
             statement.setLong(1, nodeid);
-            conn.setAutoCommit(true);
             try (ResultSet results = statement.executeQuery()) {
                 hasChildren = results != null && results.next();
             }
@@ -519,8 +518,6 @@ public class BaseNodeTable extends BaseTable<DataNode> {
                 MyBoxLog.console(e.toString());
                 return -count;
             }
-
-            MyBoxLog.console(num);
             if (num > 0) {
                 conn.commit();
             }

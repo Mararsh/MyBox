@@ -187,7 +187,7 @@ public class DataMigrationTools {
                 case "Node_Html":
                     node.setValue("html", info);
                     break;
-                case "Node_Web_Addresses":
+                case "Node_Web_Favorite":
                     node.setValue("address", null);
                     node.setValue("icon", null);
                     if (info != null) {

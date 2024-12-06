@@ -19,11 +19,11 @@ import static mara.mybox.value.Languages.message;
 public class TableNodeWebFavorite extends BaseNodeTable {
 
     public TableNodeWebFavorite() {
-        tableName = "Node_Web_Addresses";
+        tableName = "Node_Web_Favorite";
         treeName = message("WebFavorite");
         dataName = message("WebPageAddress");
         dataFxml = Fxmls.ControlDataWebFavoriteFxml;
-        examplesFileName = "WebPageAddress";
+        examplesFileName = "WebFavorite";
         nodeExecutable = true;
         defineColumns();
     }
