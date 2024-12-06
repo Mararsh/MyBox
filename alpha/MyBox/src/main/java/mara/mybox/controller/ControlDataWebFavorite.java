@@ -159,6 +159,12 @@ public class ControlDataWebFavorite extends BaseDataValuesController {
         addressInput.setText(address);
     }
 
+    @FXML
+    @Override
+    public void startAction() {
+        goAction();
+    }
+
     /*
         static
      */

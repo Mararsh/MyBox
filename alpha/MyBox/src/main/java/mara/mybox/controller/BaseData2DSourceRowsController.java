@@ -258,7 +258,7 @@ public class BaseData2DSourceRowsController extends BaseData2DLoadController {
      */
     public boolean checkRowsFilter() {
         if (filterController != null
-                && !filterController.checkFilter(isAllPages())) {
+                && filterController.pickFilter(isAllPages()) == null) {
             String ferror = filterController.error;
             if (ferror != null && !ferror.isBlank()) {
                 if (filterTab != null && tabPane != null) {

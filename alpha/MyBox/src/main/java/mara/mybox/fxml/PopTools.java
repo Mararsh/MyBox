@@ -23,6 +23,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Hyperlink;
@@ -57,14 +58,18 @@ import mara.mybox.data2d.Data2D;
 import static mara.mybox.db.data.ColumnDefinition.ColumnType.Color;
 import static mara.mybox.db.data.ColumnDefinition.ColumnType.Date;
 import static mara.mybox.db.data.ColumnDefinition.ColumnType.Datetime;
+import static mara.mybox.db.data.ColumnDefinition.ColumnType.Double;
 import static mara.mybox.db.data.ColumnDefinition.ColumnType.Enumeration;
 import static mara.mybox.db.data.ColumnDefinition.ColumnType.EnumerationEditable;
 import static mara.mybox.db.data.ColumnDefinition.ColumnType.Era;
 import static mara.mybox.db.data.ColumnDefinition.ColumnType.File;
+import static mara.mybox.db.data.ColumnDefinition.ColumnType.Float;
 import static mara.mybox.db.data.ColumnDefinition.ColumnType.Image;
 import static mara.mybox.db.data.ColumnDefinition.ColumnType.Latitude;
+import static mara.mybox.db.data.ColumnDefinition.ColumnType.Long;
 import static mara.mybox.db.data.ColumnDefinition.ColumnType.Longitude;
 import static mara.mybox.db.data.ColumnDefinition.ColumnType.Short;
+import static mara.mybox.db.data.ColumnDefinition.ColumnType.String;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
@@ -1311,6 +1316,72 @@ public class PopTools {
             preValues.addAll(javaScriptExamples(numColumn, stringColumn, dateColumn));
 
             return popJavaScriptExamples(parent, event, scriptInput, valueName, preValues);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static MenuController popDataPlaceHolders(BaseController parent, Event event,
+            TextInputControl valueInput, String valueName, Data2D data2D) {
+        try {
+            if (data2D == null) {
+                return null;
+            }
+            MenuController controller = MenuController.open(parent, valueInput, event, valueName, false);
+
+            controller.setTitleLabel(message("Placeholders"));
+
+            List<Node> topButtons = new ArrayList<>();
+            Button newLineButton = new Button();
+            newLineButton.setGraphic(StyleTools.getIconImageView("iconTurnOver.png"));
+            NodeStyleTools.setTooltip(newLineButton, new Tooltip(message("Newline")));
+            newLineButton.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    valueInput.replaceText(valueInput.getSelection(), "\n");
+                    valueInput.requestFocus();
+                }
+            });
+            topButtons.add(newLineButton);
+
+            Button clearInputButton = new Button();
+            clearInputButton.setGraphic(StyleTools.getIconImageView("iconClear.png"));
+            NodeStyleTools.setTooltip(clearInputButton, new Tooltip(message("ClearInputArea")));
+            clearInputButton.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    valueInput.clear();
+                }
+            });
+            topButtons.add(clearInputButton);
+
+            CheckBox onlyNumbersButton = new CheckBox();
+            onlyNumbersButton.setGraphic(StyleTools.getIconImageView("iconStatistic.png"));
+            NodeStyleTools.setTooltip(onlyNumbersButton, new Tooltip(message("StatisticOnlyNumbers")));
+            onlyNumbersButton.setSelected(UserConfig.getBoolean(valueName + "StatisticOnlyNumbers", false));
+            onlyNumbersButton.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean(valueName + "StatisticOnlyNumbers",
+                            onlyNumbersButton.isSelected());
+                    controller.close();
+                    popDataPlaceHolders(parent, event, valueInput, valueName, data2D);
+//                    controller.removeNode(2);
+//                    List<String> values = data2D.placeholders(!onlyNumbersButton.isSelected());
+//                    PopTools.addButtonsPane(controller, valueInput, values);
+                }
+            });
+            topButtons.add(onlyNumbersButton);
+
+            controller.addFlowPane(topButtons);
+            controller.addNode(new Separator());
+
+            List<String> values = data2D.placeholders(!onlyNumbersButton.isSelected());
+            PopTools.addButtonsPane(controller, valueInput, values);
+
+            return controller;
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;

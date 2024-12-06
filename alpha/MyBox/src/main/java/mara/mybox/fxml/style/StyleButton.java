@@ -783,6 +783,9 @@ public class StyleButton {
         if (id.startsWith("disableOnTop")) {
             return new StyleData(id, message("DisableAlwayOnTop"), "", "iconTopDisable.png");
         }
+        if (id.startsWith("placeholders")) {
+            return new StyleData(id, message("Placeholders"), "", "iconList.png");
+        }
 
         return null;
     }

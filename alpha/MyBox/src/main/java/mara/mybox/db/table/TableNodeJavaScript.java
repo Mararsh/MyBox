@@ -22,6 +22,7 @@ public class TableNodeJavaScript extends BaseNodeTable {
         dataName = message("JavaScript");
         dataFxml = Fxmls.ControlDataJavaScriptFxml;
         examplesFileName = "JavaScript";
+        nodeExecutable = true;
         defineColumns();
     }
 
@@ -29,6 +30,27 @@ public class TableNodeJavaScript extends BaseNodeTable {
         defineNodeColumns();
         addColumn(new ColumnDefinition("script", ColumnType.Clob));
         return this;
+    }
+
+    @Override
+    public boolean isNodeExecutable(DataNode node) {
+        if (node == null) {
+            return false;
+        }
+        String script = node.getStringValue("script");
+        return script != null && !script.isBlank();
+    }
+
+    @Override
+    public String label(String name) {
+        if (name == null || name.isBlank()) {
+            return name;
+        }
+        switch (name) {
+            case "script":
+                return message("JavaScript");
+        }
+        return super.label(name);
     }
 
     @Override

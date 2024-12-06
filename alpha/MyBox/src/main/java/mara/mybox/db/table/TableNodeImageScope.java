@@ -42,6 +42,34 @@ public class TableNodeImageScope extends BaseNodeTable {
     }
 
     @Override
+    public String label(String name) {
+        if (name == null || name.isBlank()) {
+            return name;
+        }
+        switch (name) {
+            case "scope_type":
+                return message("ScopeType");
+            case "color_type":
+                return message("ScopeColorType");
+            case "area_excluded":
+                return message("AreaExcluded");
+            case "color_excluded":
+                return message("ColorExcluded");
+            case "color_distance":
+                return message("ColorDistance");
+            case "background_file":
+                return message("Background");
+            case "outline_file":
+                return message("Outline");
+            case "area_data":
+                return message("Area");
+            case "color_data":
+                return message("Colors");
+        }
+        return super.label(name);
+    }
+
+    @Override
     public String valuesHtml(FxTask task, Connection conn, BaseController controller, DataNode node) {
         try {
             ImageScope scope = ImageScopeTools.fromDataNode(task, controller, node);

@@ -2,6 +2,7 @@ package mara.mybox.db.table;
 
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
+import mara.mybox.db.data.DataNode;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -18,6 +19,7 @@ public class TableNodeJEXL extends BaseNodeTable {
         dataName = message("JexlScript");
         dataFxml = Fxmls.ControlDataJEXLFxml;
         examplesFileName = "JEXL";
+        nodeExecutable = true;
         defineColumns();
     }
 
@@ -27,6 +29,15 @@ public class TableNodeJEXL extends BaseNodeTable {
         addColumn(new ColumnDefinition("context", ColumnType.Clob));
         addColumn(new ColumnDefinition("parameters", ColumnType.String).setLength(FilenameMaxLength));
         return this;
+    }
+
+    @Override
+    public boolean isNodeExecutable(DataNode node) {
+        if (node == null) {
+            return false;
+        }
+        String script = node.getStringValue("script");
+        return script != null && !script.isBlank();
     }
 
     @Override
@@ -42,7 +53,7 @@ public class TableNodeJEXL extends BaseNodeTable {
             case "parameters":
                 return message("JexlParamters");
         }
-        return name;
+        return super.label(name);
     }
 
 }

@@ -119,7 +119,7 @@ License:    Apache License Version 2.0
                         </ImageView>
                      </graphic>
                   </Button>
-                  <Button fx:id="listButton" mnemonicParsing="false" onAction="#showPlaceholds" onMouseEntered="#popPlaceholds">
+                  <Button fx:id="placeholdersButton" mnemonicParsing="false" onAction="#showPlaceholders" onMouseEntered="#popPlaceholders">
                      <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                            <image>

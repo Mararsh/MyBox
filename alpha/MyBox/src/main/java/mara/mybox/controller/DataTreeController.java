@@ -88,7 +88,7 @@ public class DataTreeController extends BaseDataTreeViewController {
                 popNode(item.getValue());
                 break;
             case "ExecuteNode":
-                executeNode(item);
+                executeNode(item.getValue());
                 break;
             default:
                 break;
@@ -126,6 +126,14 @@ public class DataTreeController extends BaseDataTreeViewController {
             editNode(treeItem.getValue());
         });
         items.add(menu);
+
+        if (nodeTable.isNodeExecutable()) {
+            menu = new MenuItem(message("ExecuteNode"), StyleTools.getIconImageView("iconGo.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                executeNode(treeItem.getValue());
+            });
+            items.add(menu);
+        }
 
         menu = new MenuItem(message("AddChildNode"), StyleTools.getIconImageView("iconAdd.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
@@ -277,7 +285,7 @@ public class DataTreeController extends BaseDataTreeViewController {
         menu.getItems().addAll(editNodeMenu, popNodeMenu);
 
         if (nodeTable.isNodeExecutable()) {
-            RadioMenuItem executeNodeMenu = new RadioMenuItem(message("Execute"), StyleTools.getIconImageView("iconGo.png"));
+            RadioMenuItem executeNodeMenu = new RadioMenuItem(message("ExecuteNode"), StyleTools.getIconImageView("iconGo.png"));
             executeNodeMenu.setSelected("ExecuteNode".equals(currentClick));
             executeNodeMenu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -580,13 +588,6 @@ public class DataTreeController extends BaseDataTreeViewController {
         DataTreeMoveController.open(this, item != null ? item.getValue() : null);
     }
 
-    protected void executeNode(TreeItem<DataNode> item) {
-        if (item == null) {
-            return;
-        }
-//        manager.executeNode(item.getValue());
-    }
-
     protected void exportNode(TreeItem<DataNode> item) {
         DataTreeExportController exportController
                 = (DataTreeExportController) openStage(Fxmls.DataTreeExportFxml);
@@ -628,14 +629,6 @@ public class DataTreeController extends BaseDataTreeViewController {
     protected void moveAction() {
 //        InfoTreeNodesMoveController.oneOpen(this);
     }
-
-    public void executeNode(DataNode node) {
-        if (node == null) {
-            return;
-        }
-
-    }
-
 
     /*
         static methods

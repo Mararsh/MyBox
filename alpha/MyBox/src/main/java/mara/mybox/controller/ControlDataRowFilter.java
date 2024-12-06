@@ -180,7 +180,6 @@ public class ControlDataRowFilter extends BaseDataValuesController {
             DataTreeNodeEditorController controller = DataTreeNodeEditorController.open(parent);
             controller.setTable(new TableNodeRowFilter());
             ((ControlDataRowFilter) controller.dataController).edit(script, matchTrue, max);
-            controller.requestMouse();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e);

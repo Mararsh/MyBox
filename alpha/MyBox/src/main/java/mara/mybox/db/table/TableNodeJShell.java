@@ -22,6 +22,7 @@ public class TableNodeJShell extends BaseNodeTable {
         dataName = message("Codes");
         dataFxml = Fxmls.ControlDataJShellFxml;
         examplesFileName = "JShell";
+        nodeExecutable = true;
         defineColumns();
     }
 
@@ -29,6 +30,27 @@ public class TableNodeJShell extends BaseNodeTable {
         defineNodeColumns();
         addColumn(new ColumnDefinition("codes", ColumnType.Clob));
         return this;
+    }
+
+    @Override
+    public boolean isNodeExecutable(DataNode node) {
+        if (node == null) {
+            return false;
+        }
+        String codes = node.getStringValue("codes");
+        return codes != null && !codes.isBlank();
+    }
+
+    @Override
+    public String label(String name) {
+        if (name == null || name.isBlank()) {
+            return name;
+        }
+        switch (name) {
+            case "codes":
+                return message("Codes");
+        }
+        return super.label(name);
     }
 
     @Override

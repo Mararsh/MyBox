@@ -32,6 +32,18 @@ public class TableNodeHtml extends BaseNodeTable {
     }
 
     @Override
+    public String label(String name) {
+        if (name == null || name.isBlank()) {
+            return name;
+        }
+        switch (name) {
+            case "html":
+                return message("Html");
+        }
+        return super.label(name);
+    }
+
+    @Override
     public String valuesHtml(FxTask task, Connection conn, BaseController controller, DataNode node) {
         try {
             return node.getStringValue("html");

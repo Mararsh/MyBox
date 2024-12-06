@@ -24,6 +24,7 @@ import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.JsonTools;
 import static mara.mybox.value.AppValues.Indent;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -57,28 +58,47 @@ public class BaseNodeTable extends BaseTable<DataNode> {
         return this;
     }
 
-    @Override
-    public boolean setValue(DataNode data, String column, Object value) {
-        if (data == null || column == null) {
-            return false;
+    public String label(String name) {
+        if (name == null || name.isBlank()) {
+            return name;
         }
-        return data.setValue(column, value);
+        switch (name) {
+            case "nodeid":
+                return message("NodeID");
+            case "title":
+                return message("Title");
+            case "order_number":
+                return message("OrderNumber");
+            case "parentid":
+                return message("ParentID");
+            case "update_time":
+                return message("Update_Time");
+        }
+        return name;
     }
 
     @Override
-    public Object getValue(DataNode data, String column) {
-        if (data == null || column == null) {
+    public boolean setValue(DataNode node, String column, Object value) {
+        if (node == null || column == null) {
+            return false;
+        }
+        return node.setValue(column, value);
+    }
+
+    @Override
+    public Object getValue(DataNode node, String column) {
+        if (node == null || column == null) {
             return null;
         }
-        return data.getValue(column);
+        return node.getValue(column);
     }
 
     @Override
-    public boolean valid(DataNode data) {
-        if (data == null) {
+    public boolean valid(DataNode node) {
+        if (node == null) {
             return false;
         }
-        return data.valid();
+        return node.valid();
     }
 
     @Override
@@ -129,6 +149,13 @@ public class BaseNodeTable extends BaseTable<DataNode> {
 //            return false;
         }
         return true;
+    }
+
+    public boolean isNodeExecutable(DataNode node) {
+        if (node == null) {
+            return false;
+        }
+        return nodeExecutable;
     }
 
     /*
@@ -520,10 +547,6 @@ public class BaseNodeTable extends BaseTable<DataNode> {
                 "data", name + "_Examples_" + lang + ".xml", true);
     }
 
-    public String label(String columnName) {
-        return columnName;
-    }
-
     public List<String> dataColumnNames() {
         List<String> names = new ArrayList<>();
         for (int i = 5; i < columns.size(); ++i) {
@@ -622,8 +645,9 @@ public class BaseNodeTable extends BaseTable<DataNode> {
         return valuesJson(null, null, null, "", node);
     }
 
-    public String nodeHtml(FxTask task, Connection conn,
-            BaseController controller, DataNode node, int indent) {
+    // Node should be queried with all fields
+    public String nodeHtml(FxTask task, Connection conn, BaseController controller,
+            DataNode node, String hierarchyNumber, int indent) {
         try {
             if (conn == null || node == null) {
                 return null;
@@ -632,7 +656,6 @@ public class BaseNodeTable extends BaseTable<DataNode> {
             String indentNode = " ".repeat(indent);
             String spaceNode = "&nbsp;".repeat(indent);
             String nodeName = node.getTitle();
-            String hierarchyNumber = node.getHierarchyNumber();
             String displayName = "<SPAN class=\"SerialNumber\">"
                     + (hierarchyNumber != null ? hierarchyNumber : "")
                     + "&nbsp;&nbsp;</SPAN>" + nodeName;
@@ -661,7 +684,7 @@ public class BaseNodeTable extends BaseTable<DataNode> {
             }
             html += indentNode + "</DIV>\n";
 
-            String dataHtml = valuesHtml(task, conn, controller, query(conn, nodeid));
+            String dataHtml = valuesHtml(task, conn, controller, node);
             if (dataHtml != null && !dataHtml.isBlank()) {
                 html += indentNode + "<DIV class=\"nodeValue\">"
                         + "<DIV style=\"padding: 0 0 0 " + (indent + 4) * 6 + "px;\">"

@@ -22,6 +22,7 @@ public class TableNodeSQL extends BaseNodeTable {
         dataName = message("SQL");
         dataFxml = Fxmls.ControlDataSQLFxml;
         examplesFileName = "SQL";
+        nodeExecutable = true;
         defineColumns();
     }
 
@@ -29,6 +30,27 @@ public class TableNodeSQL extends BaseNodeTable {
         defineNodeColumns();
         addColumn(new ColumnDefinition("statement", ColumnType.String).setLength(FilenameMaxLength));
         return this;
+    }
+
+    @Override
+    public boolean isNodeExecutable(DataNode node) {
+        if (node == null) {
+            return false;
+        }
+        String sql = node.getStringValue("statement");
+        return sql != null && !sql.isBlank();
+    }
+
+    @Override
+    public String label(String name) {
+        if (name == null || name.isBlank()) {
+            return name;
+        }
+        switch (name) {
+            case "statement":
+                return message("SQL");
+        }
+        return super.label(name);
     }
 
     @Override

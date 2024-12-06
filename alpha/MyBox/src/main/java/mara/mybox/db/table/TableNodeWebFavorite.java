@@ -24,6 +24,7 @@ public class TableNodeWebFavorite extends BaseNodeTable {
         dataName = message("WebPageAddress");
         dataFxml = Fxmls.ControlDataWebFavoriteFxml;
         examplesFileName = "WebPageAddress";
+        nodeExecutable = true;
         defineColumns();
     }
 
@@ -32,6 +33,29 @@ public class TableNodeWebFavorite extends BaseNodeTable {
         addColumn(new ColumnDefinition("address", ColumnType.File).setLength(FilenameMaxLength));
         addColumn(new ColumnDefinition("icon", ColumnType.Image).setLength(FilenameMaxLength));
         return this;
+    }
+
+    @Override
+    public boolean isNodeExecutable(DataNode node) {
+        if (node == null) {
+            return false;
+        }
+        String address = node.getStringValue("address");
+        return address != null && !address.isBlank();
+    }
+
+    @Override
+    public String label(String name) {
+        if (name == null || name.isBlank()) {
+            return name;
+        }
+        switch (name) {
+            case "address":
+                return message("Address");
+            case "icon":
+                return message("Icon");
+        }
+        return super.label(name);
     }
 
     @Override
@@ -57,20 +81,6 @@ public class TableNodeWebFavorite extends BaseNodeTable {
         } catch (Exception e) {
             return null;
         }
-    }
-
-    @Override
-    public String label(String name) {
-        if (name == null || name.isBlank()) {
-            return name;
-        }
-        switch (name) {
-            case "address":
-                return message("Address");
-            case "icon":
-                return message("Icon");
-        }
-        return name;
     }
 
 }

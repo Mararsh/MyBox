@@ -9,6 +9,7 @@ import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataFilter;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.PopTools;
 import static mara.mybox.value.AppValues.InvalidLong;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -27,6 +28,7 @@ public class ControlData2DRowFilter extends ControlDataRowFilter {
     @Override
     public void initControls() {
         try {
+            baseName = "DataRowFilter";
             super.initControls();
 
             filter = new DataFilter();
@@ -80,7 +82,7 @@ public class ControlData2DRowFilter extends ControlDataRowFilter {
         load(filter.getSourceScript(), !filter.isReversed(), filter.getMaxPassed());
     }
 
-    public DataFilter pickValues(boolean allPages) {
+    public DataFilter pickFilter(boolean allPages) {
         long max = checkMax();
         if (error != null) {
             popError(error);
@@ -99,15 +101,6 @@ public class ControlData2DRowFilter extends ControlDataRowFilter {
             data2D.setFilter(filter);
         }
         return filter;
-    }
-
-    public boolean checkFilter(boolean allPages) {
-        checkMax();
-        if (error != null) {
-            return false;
-        }
-        checkScript(allPages);
-        return error == null;
     }
 
     public long checkMax() {
@@ -137,7 +130,7 @@ public class ControlData2DRowFilter extends ControlDataRowFilter {
         }
         script = script.trim();
         if (calculator.validateExpression(data2D, script, allPages)) {
-            TableStringValues.add(interfaceName + "Histories", script);
+            TableStringValues.add(baseName + "Histories", script);
             return script;
         } else {
             error = calculator.getError();
@@ -170,50 +163,15 @@ public class ControlData2DRowFilter extends ControlDataRowFilter {
     }
 
     @FXML
-    public void popPlaceholds(Event event) {
-        if (UserConfig.getBoolean(baseName + "PlaceholdsPopWhenMouseHovering", false)) {
-            showPlaceholds(event);
+    public void popPlaceholders(Event event) {
+        if (UserConfig.getBoolean(baseName + "PlaceholdersPopWhenMouseHovering", false)) {
+            showPlaceholders(event);
         }
     }
 
     @FXML
-    public void showPlaceholds(Event event) {
-//        try {
-//            Platform.runLater(() -> {
-//                placeholdersList.getItems().clear();
-//                if (data2D == null || !data2D.isValidDefinition()) {
-//                    return;
-//                }
-//                List<Data2DColumn> columns = data2D.getColumns();
-//                List<String> list = new ArrayList<>();
-//                for (Data2DColumn column : columns) {
-//                    String name = column.getColumnName();
-//                    list.add("#{" + name + "}");
-//                    if ((onlyStatisticCheck != null && !onlyStatisticCheck.isSelected())
-//                            || column.isNumberType()) {
-//                        list.add("#{" + name + "-" + message("Mean") + "}");
-//                        list.add("#{" + name + "-" + message("Median") + "}");
-//                        list.add("#{" + name + "-" + message("Mode") + "}");
-//                        list.add("#{" + name + "-" + message("MinimumQ0") + "}");
-//                        list.add("#{" + name + "-" + message("LowerQuartile") + "}");
-//                        list.add("#{" + name + "-" + message("UpperQuartile") + "}");
-//                        list.add("#{" + name + "-" + message("MaximumQ4") + "}");
-//                        list.add("#{" + name + "-" + message("LowerExtremeOutlierLine") + "}");
-//                        list.add("#{" + name + "-" + message("LowerMildOutlierLine") + "}");
-//                        list.add("#{" + name + "-" + message("UpperMildOutlierLine") + "}");
-//                        list.add("#{" + name + "-" + message("UpperExtremeOutlierLine") + "}");
-//                    }
-//                }
-//                list.add("#{" + message("TableRowNumber") + "}");
-//                list.add("#{" + message("DataRowNumber") + "}");
-//
-//                placeholdersList.getItems().setAll(list);
-//                placeholdersList.applyCss();
-//                placeholdersList.layout();
-//            });
-//        } catch (Exception e) {
-//            MyBoxLog.error(e);
-//        }
+    public void showPlaceholders(Event event) {
+        PopTools.popDataPlaceHolders(this, event, scriptInput, baseName + "Placeholders", data2D);
     }
 
 }

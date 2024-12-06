@@ -35,8 +35,8 @@ public class DataInternalTable extends DataTable {
                     "NODE_TEXT", "NODE_TEXT_NODE_TAG", "NODE_TEXT_TAG",
                     "NODE_WEB_ADDRESSES", "NODE_WEB_ADDRESSES_NODE_TAG", "NODE_WEB_ADDRESSES_TAG",
                     "PATH_CONNECTION", "QUERY_CONDITION", "STRING_VALUE", "STRING_VALUES",
-                    "SYSTEM_CONF", "TAG", "TEXT_CLIPBOARD",
-                    "TREE_NODE", "TREE_NODE_TAG", "USER_CONF", "VISIT_HISTORY", "WEB_HISTORY"
+                    "SYSTEM_CONF", "TEXT_CLIPBOARD",
+                    "USER_CONF", "VISIT_HISTORY", "WEB_HISTORY"
             ));
         }
     };

@@ -9,7 +9,6 @@ import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.table.BaseTable;
-import mara.mybox.db.table.TableTag;
 import mara.mybox.dev.MyBoxLog;
 
 /**

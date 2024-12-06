@@ -27,8 +27,6 @@ import mara.mybox.db.table.TableFloatMatrix;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.db.table.TableImageClipboard;
 import mara.mybox.db.table.TableImageEditHistory;
-import mara.mybox.db.migration.TableInfoNode;
-import mara.mybox.db.migration.TableInfoNodeTag;
 import mara.mybox.db.table.TableMedia;
 import mara.mybox.db.table.TableMediaList;
 import mara.mybox.db.table.TableMyBoxLog;
@@ -49,7 +47,6 @@ import mara.mybox.db.table.TableQueryCondition;
 import mara.mybox.db.table.TableStringValue;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.db.table.TableSystemConf;
-import mara.mybox.db.table.TableTag;
 import mara.mybox.db.table.TableTextClipboard;
 import mara.mybox.db.table.TableUserConf;
 import mara.mybox.db.table.TableVisitHistory;
@@ -499,10 +496,6 @@ public class DerbyBase {
                 new TableFileBackup().createTable(conn);
                 loadingController.info("File_Backup");
             }
-            if (!tables.contains("Tag".toLowerCase())) {
-                new TableTag().createTable(conn);
-                loadingController.info("Tag");
-            }
             if (!tables.contains("Color".toLowerCase())) {
                 new TableColor().createTable(conn);
                 loadingController.info("Color");
@@ -641,13 +634,6 @@ public class DerbyBase {
                     MyBoxLog.error(e);
                 }
             }
-            if (!indexes.contains("Tag_unique_index".toLowerCase())) {
-                try (Statement statement = conn.createStatement()) {
-                    statement.executeUpdate(TableTag.Create_Unique_Index);
-                } catch (Exception e) {
-                    MyBoxLog.error(e);
-                }
-            }
             if (!indexes.contains("Color_rgba_unique_index".toLowerCase())) {
                 try (Statement statement = conn.createStatement()) {
                     statement.executeUpdate(TableColor.Create_RGBA_Unique_Index);
@@ -665,27 +651,6 @@ public class DerbyBase {
             if (!indexes.contains("Web_History_time_index".toLowerCase())) {
                 try (Statement statement = conn.createStatement()) {
                     statement.executeUpdate(TableWebHistory.Create_Time_Index);
-                } catch (Exception e) {
-                    MyBoxLog.error(e);
-                }
-            }
-            if (!indexes.contains("Tree_Node_parent_index".toLowerCase())) {
-                try (Statement statement = conn.createStatement()) {
-                    statement.executeUpdate(TableInfoNode.Create_Parent_Index);
-                } catch (Exception e) {
-                    MyBoxLog.error(e);
-                }
-            }
-            if (!indexes.contains("Tree_Node_title_index".toLowerCase())) {
-                try (Statement statement = conn.createStatement()) {
-                    statement.executeUpdate(TableInfoNode.Create_Title_Index);
-                } catch (Exception e) {
-                    MyBoxLog.error(e);
-                }
-            }
-            if (!indexes.contains("Tree_Node_Tag_unique_index".toLowerCase())) {
-                try (Statement statement = conn.createStatement()) {
-                    statement.executeUpdate(TableInfoNodeTag.Create_Unique_Index);
                 } catch (Exception e) {
                     MyBoxLog.error(e);
                 }

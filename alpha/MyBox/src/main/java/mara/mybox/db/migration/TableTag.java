@@ -1,4 +1,4 @@
-package mara.mybox.db.table;
+package mara.mybox.db.migration;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -8,7 +8,7 @@ import java.util.List;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
-import mara.mybox.db.migration.Tag;
+import mara.mybox.db.table.BaseTable;
 import mara.mybox.dev.MyBoxLog;
 
 /**

@@ -320,7 +320,7 @@ public class Data2DSetStylesController extends BaseController {
                 tabPane.getSelectionModel().select(dataTab);
                 return false;
             }
-            if (!filterController.checkFilter(false)) {
+            if (filterController.pickFilter(false) == null) {
                 tabPane.getSelectionModel().select(filterTab);
                 alertError(filterController.error);
                 return false;

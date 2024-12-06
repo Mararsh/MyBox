@@ -31,6 +31,7 @@ import mara.mybox.db.table.BaseNodeTable;
 import static mara.mybox.db.table.BaseNodeTable.RootID;
 import mara.mybox.db.table.TableDataNodeTag;
 import mara.mybox.db.table.TableDataTag;
+import mara.mybox.db.table.TableNodeWebFavorite;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
@@ -69,7 +70,7 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
     @FXML
     protected Label titleLabel;
     @FXML
-    protected Button helpButton;
+    protected Button helpButton, goButton;
     @FXML
     protected ControlWebView viewController;
 
@@ -96,9 +97,7 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
         try {
             super.initControls();
 
-            if (okButton != null) {
-                okButton.disableProperty().bind(treeView.getSelectionModel().selectedItemProperty().isNull());
-            }
+            loadNode(null);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -396,7 +395,13 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
     }
 
     protected void loadNode(DataNode node) {
-        if (node == null || viewController == null) {
+        if (editButton != null) {
+            editButton.setVisible(false);
+        }
+        if (goButton != null) {
+            goButton.setVisible(false);
+        }
+        if (viewController == null || node == null) {
             return;
         }
         if (task != null) {
@@ -404,11 +409,17 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
         }
         task = new FxSingletonTask<Void>(this) {
             private String html;
+            private DataNode savedNode;
 
             @Override
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
-                    html = nodeTable.nodeHtml(this, conn, controller, node, 4);
+                    savedNode = nodeTable.query(conn, node.getNodeid());
+                    if (savedNode == null) {
+                        return false;
+                    }
+                    html = nodeTable.nodeHtml(this, conn, controller, savedNode,
+                            node.getHierarchyNumber(), 4);
                     return html != null && !html.isBlank();
                 } catch (Exception e) {
                     error = e.toString();
@@ -420,6 +431,12 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
             protected void whenSucceeded() {
                 viewController.loadContents(html);
                 currentNode = node;
+                if (editButton != null) {
+                    editButton.setVisible(true);
+                }
+                if (goButton != null) {
+                    goButton.setVisible(nodeTable.isNodeExecutable(savedNode));
+                }
             }
 
         };
@@ -431,6 +448,40 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
             return;
         }
         DataTreeNodeEditorController.editNode(this, node);
+    }
+
+    protected void executeNode(DataNode node) {
+        if (node == null) {
+            return;
+        }
+        if (nodeTable instanceof TableNodeWebFavorite) {
+            FxTask exTask = new FxTask<Void>(this) {
+                private String address;
+
+                @Override
+                protected boolean handle() {
+                    try (Connection conn = DerbyBase.getConnection()) {
+                        DataNode savedNode = nodeTable.query(conn, node.getNodeid());
+                        if (savedNode == null) {
+                            return false;
+                        }
+                        address = savedNode.getStringValue("address");
+                        return address != null;
+                    } catch (Exception e) {
+                        error = e.toString();
+                        return false;
+                    }
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    WebBrowserController.openAddress(address, true);
+                }
+            };
+            start(exTask, false);
+        } else {
+            DataTreeNodeEditorController.executeNode(this, node);
+        }
     }
 
     protected void addChild(DataNode node) {
@@ -449,11 +500,17 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
         }
         task = new FxSingletonTask<Void>(this) {
             private String html;
+            private DataNode savedNode;
 
             @Override
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
-                    html = nodeTable.nodeHtml(this, conn, controller, node, 4);
+                    savedNode = nodeTable.query(conn, node.getNodeid());
+                    if (savedNode == null) {
+                        return false;
+                    }
+                    html = nodeTable.nodeHtml(this, conn, controller, savedNode,
+                            node.getHierarchyNumber(), 4);
                     return html != null && !html.isBlank();
                 } catch (Exception e) {
                     error = e.toString();
@@ -787,6 +844,19 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
             currentNode = item.getValue();
         }
         DataTreeNodeEditorController.editNode(this, currentNode);
+    }
+
+    @FXML
+    @Override
+    public void goAction() {
+        if (currentNode == null) {
+            TreeItem<DataNode> item = selectedItem();
+            if (item == null) {
+                return;
+            }
+            currentNode = item.getValue();
+        }
+        executeNode(currentNode);
     }
 
     @FXML

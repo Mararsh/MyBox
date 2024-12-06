@@ -238,6 +238,10 @@ public class MenuController extends BaseChildController {
         }
     }
 
+    public void removeNode(int index) {
+        nodesBox.getChildren().add(index, node);
+    }
+
     @FXML
     @Override
     public void openSourcePath() {

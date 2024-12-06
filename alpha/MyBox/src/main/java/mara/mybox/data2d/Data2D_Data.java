@@ -645,4 +645,39 @@ public abstract class Data2D_Data extends Data2D_Attributes {
         return hasLongitude && haslatitude;
     }
 
+    public List<String> placeholders(boolean allStatistic) {
+        try {
+            if (!isValidDefinition()) {
+                return null;
+            }
+            List<String> list = new ArrayList<>();
+            for (Data2DColumn column : columns) {
+                String name = column.getColumnName();
+                list.add("#{" + name + "}");
+            }
+            list.add("#{" + message("TableRowNumber") + "}");
+            list.add("#{" + message("DataRowNumber") + "}");
+            for (Data2DColumn column : columns) {
+                String name = column.getColumnName();
+                if (allStatistic || column.isNumberType()) {
+                    list.add("#{" + name + "-" + message("Mean") + "}");
+                    list.add("#{" + name + "-" + message("Median") + "}");
+                    list.add("#{" + name + "-" + message("Mode") + "}");
+                    list.add("#{" + name + "-" + message("MinimumQ0") + "}");
+                    list.add("#{" + name + "-" + message("LowerQuartile") + "}");
+                    list.add("#{" + name + "-" + message("UpperQuartile") + "}");
+                    list.add("#{" + name + "-" + message("MaximumQ4") + "}");
+                    list.add("#{" + name + "-" + message("LowerExtremeOutlierLine") + "}");
+                    list.add("#{" + name + "-" + message("LowerMildOutlierLine") + "}");
+                    list.add("#{" + name + "-" + message("UpperMildOutlierLine") + "}");
+                    list.add("#{" + name + "-" + message("UpperExtremeOutlierLine") + "}");
+                }
+            }
+            return list;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
 }

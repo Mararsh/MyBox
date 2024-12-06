@@ -294,7 +294,7 @@ public class WindowTools {
     public static BaseController branchStage(BaseController parent, String newFxml) {
         try {
             if (parent == null) {
-                return null;
+                return openStage(newFxml);
             }
             BaseController c = openStage(parent.getMyWindow(), newFxml);
             if (c == null) {

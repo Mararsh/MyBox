@@ -34,6 +34,18 @@ public class TableNodeData2DDefinition extends BaseNodeTable {
     }
 
     @Override
+    public String label(String name) {
+        if (name == null || name.isBlank()) {
+            return name;
+        }
+        switch (name) {
+            case "data2d_definition":
+                return message("Data2DDdefinition");
+        }
+        return super.label(name);
+    }
+
+    @Override
     public String escapeXML(String column, String value) {
         if (value == null || value.isBlank()) {
             return value;

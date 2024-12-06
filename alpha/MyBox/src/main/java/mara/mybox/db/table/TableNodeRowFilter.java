@@ -42,7 +42,7 @@ public class TableNodeRowFilter extends BaseNodeTable {
             case "script":
                 return message("JavaScript");
         }
-        return name;
+        return super.label(name);
     }
 
 }
