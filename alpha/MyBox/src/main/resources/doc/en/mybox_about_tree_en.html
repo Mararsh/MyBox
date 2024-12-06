@@ -92,7 +92,8 @@
         </ul>
         <p>So chain names can be used to locate nodes for dynamic or static tree when it is "unique chain names".</p>
         <h2>3 Implement Tree Structure</h2>
-        <p>In MyBox, attributes of tree node include: ID, Title(Node Name), Value, Modify_Time, ID of parent node.</p>
+        <p>In MyBox, attributes of tree node include: ID, Title(Node Name), Order_number, Modify_Time, ID of parent node.<br>
+           And each type of trees has its special data fields.</p>
         <h3>3.1 ID of Node</h3>
         <p>ID of node is generated and increased automactically, and used to identify and locate each node uniquely. It is absolutely steady attribute:</p>
         <ul>
@@ -110,7 +111,6 @@
         <p>Title of node is string to describe node:</p>
         <ul>
             <li>Should not be null.</li>
-            <li>Should not include " > "(Blank before and after greater-than sign), which is separator of chain name and reserved internally.</li>
             <li>Titles of children can be duplicated.</li>
             <li>Does not change when tree structure is changed.</li>
             <li>Does not change when other attributes of node are changed.</li>
@@ -126,7 +126,7 @@
         <p>In MyBox, objects handled by following functions are stored and managed in tree:</p>
         <table>
             <thead>
-                <tr><th>    MyBox Function </th><th>                    Format of node value                     </th></tr>
+                <tr><th>    MyBox Function </th><th>                    Fields of data                    </th></tr>
             </thead>
             <tbody>
                 <tr><td> Notes         </td><td> Html codes  </td></tr>
@@ -142,25 +142,15 @@
                 <tr><td> JEXL       </td><td> Three fields: Script, Context, Parameters                                </td></tr>
             </tbody>
         </table>
-        <h3>3.4 Tags of Node</h3>
+        <h3>3.4 Order Number of Node</h3>
+        <p>Order number of node is for sorting nodes in same branch, which are all children of its parent. It can be negative or with decimal point.</p>
+        <p>MyBox provides function to trim order numbers.</p>
+        <h3>3.5 Tags of Node</h3>
         <ul>
             <li>Tags are extra attributes assigned to node, and customized by user.</li>
             <li>Purpose of tags is to categorize, query, and locate nodes with keywords.</li>
             <li>One node can have multiple tags.</li>
             <li>One tag can belong to multiple nodes.</li>
-        </ul>
-        <h3>3.5 Reserved Strings</h3>
-        <ul>
-            <li>Node's title should not include " > "(Blank before and after greater-than sign), which is separator of chain name.</li>
-            <li>Node's tag value should not include ";;;", which is separator between tags.</li>
-            <li>All attributes of node should not include following strings:
-                <ul>
-                    <li>"MyBoxTreeRoot;;;": This is identify of root node.</li>
-                    <li>"##MyBox#": This is separator among nodes. </li>
-                    <li>"_:;MyBoxNodeValue;:_": This is separator of node's internal values.</li>
-                    <li>"MyBoxTreeNodeMore:": This is prefix of node's internal values.</li>
-                </ul>
-            </li>
         </ul>
         <h2>4 Manage Tree Structure</h2>
         <h3>4.1 Tree View</h3>
@@ -177,15 +167,16 @@
         <h3>4.3 Export</h3>
         <p>Select one node, and export its tree with this node as root:</p>
         <ul>
-            <li>Format can be chosen: text, single html, html frameset, xml, or json.</li>
-            <li>Options to export node's modified time, and its tags.</li>
+            <li>Format can be chosen: Tree XML, Tree JSON, Tree Html, List JSON, List XML, List CSV, List Html, Html frameset.</li>
+            <li>Options to export node's id, hierarchy number, modified time, order number, parent id, tags, and data.</li>
             <li>Style of exported html can be set.</li>
         </ul>
         <h3>4.4 Import</h3>
         <p>Tree information can be imported in batch:</p>
         <ul>
             <li>Select multiple files which hold tree information as source.</li>
-            <li>File format is text encoded with special delimiters. Exported text can be referred.</li>
+            <li>Exported files should be XML in special formats, which are same as Tree XML exported by MyBox.</li>
+            <li>When import nodes, "id", "parentid", "update_time" are generated automatically, rather than picked from files.</li>
             <li>Rulers of text format are displayed in interface, and example is provided.</li>
         </ul>
         <p>Notice:</p>
@@ -197,32 +188,23 @@
                     <li>The hierarchy of imported nodes can not be defined by their IDs because the IDs may be incompatible with the imported environment.</li>
                 </ul>
             </li>
-            <li>Although MyBox permits duplicated names of children nodes, it locates nodes by chain name when import nodes:
+            <li>MyBox depends Tree XML to locate nodes when import:
                 <ul>
-                    <li>Chain name is a stable attribute, which can identify and locate node uniquely in environment of "No duplicated names of children".</li>
-                    <li>To existed chain name, options: "Change attributes", "Not change attributes", and "Create child of duplicated name". </li>
-                    <li>Algorithm locates parent node in nearest way, that always queries recently written node at first. So the exported tree can be restored when imported.</li>
+                    <li>Tree XML can store tree structure accurately.</li>
+                    <li>When node of same title under same parent existed, options: 
+                        "Change attributes", "Create child of duplicated name", and "Skip". </li>
                 </ul>
             </li>
         </ul>
-        <h3>4.5 Query and Select Nodes</h3>
-        <p>To select nodes, following ways can be taken:</p>
-        <ul>
-            <li>Click node in the tree.</li>
-            <li>To node in the tree, click menu item "Load Children" or  "Load Descendant", and select one or multiple nodes in the nodes list.</li>
-            <li>Select multiple tags, and select one or multiple nodes in result list of the query.</li>
-            <li>Select multiple time values, and select one or multiple nodes in result list of the query.</li>
-            <li>Input multiple keywords, query against node title or node value, and select one or multiple nodes in result list of the query.</li>
-        </ul>
-        <h3>4.6 Add/Delete/Modify Nodes</h3>
+        <h3>4.5 Add/Delete/Modify Nodes</h3>
         <p>Select one or multiple nodes, and:</p>
         <ul>
             <li>Add child node.</li>
-            <li>Delete the nodes and their descendant.</li>
-            <li>Rename node.</li>
+            <li>"Delete the node and its descendant", "Delete the node's descendant".</li>
             <li>Copy nodes:
                 <ul>
-                    <li>Choices: Only copy node, Copy node's descendant, or Copy node and its descendant</li>
+                    <li>Choices: "Only copy node", "Copy node's descendant", "Copy node and its descendant",
+                     "Copy node and its children", and "Copy node's children"</li>
                     <li>Select the target node to copy into.</li>
                     <li>Target node should not be source node nor its descendant.</li>
                 </ul>
@@ -233,22 +215,27 @@
                     <li>Target node should not be source node nor its descendant.</li>
                 </ul>
             </li>
-            <li>Edit Node.</li>
+            <li>Edit Node:
+                <ul>
+                    <li>Change title and order_number.</li>
+                    <li>Select node's parent。</li>
+                    <li>Modify values of data fields.</li>
+                </ul>
+            </li>
         </ul>
-        <h3>4.7 View Nodes</h3>
+        <h3>4.6 View Nodes</h3>
         <p>Select one node:</p>
         <ul>
             <li>View node's information in popped window.</li>
-            <li>Copy node's title or value into system clipboard.</li>
+            <li>Copy node's title into system clipboard.</li>
             <li>Fold node, or node and its descendant.</li>
             <li>Unfold node, or node and its descendant.</li>
-            <li>Load children or decendant.</li>
         </ul>
-        <h3>4.8 Menu</h3>
+        <h3>4.7 Menu</h3>
         <ul>
             <li>Click buttons in interface to view menus.</li>
             <li>Right click the tree to pop the menu.</li>
-            <li>Actions can be chosen for left click, right click, or double click against the tree.</li>
+            <li>Actions can be chosen for double clicking and right clicking against the tree.</li>
         </ul>
         <br />
     </body>

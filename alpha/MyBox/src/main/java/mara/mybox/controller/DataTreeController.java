@@ -18,7 +18,6 @@ import mara.mybox.data2d.DataInternalTable;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.DataNode;
-import static mara.mybox.db.data.DataNode.TitleSeparater;
 import mara.mybox.db.table.BaseNodeTable;
 import mara.mybox.db.table.TableNodeData2DDefinition;
 import mara.mybox.db.table.TableNodeHtml;
@@ -504,10 +503,6 @@ public class DataTreeController extends BaseDataTreeViewController {
         if (name == null || name.isBlank()) {
             return;
         }
-        if (name.contains(TitleSeparater)) {
-            popError(message("NameShouldNotInclude") + " \"" + TitleSeparater + "\"");
-            return;
-        }
         if (task != null) {
             task.cancel();
         }
@@ -646,6 +641,18 @@ public class DataTreeController extends BaseDataTreeViewController {
             }
             controller.requestMouse();
             controller.initDataTree(table);
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public static DataTreeController open(BaseNodeTable table, DataNode node) {
+        try {
+            DataTreeController controller = open(null, false, table);
+            controller.focusNode(node);
+            controller.setAlwaysOnTop();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e);

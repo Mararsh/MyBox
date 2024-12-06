@@ -387,9 +387,6 @@ public class DataTreeNodeEditorController extends BaseDataTreeHandleController {
             popError(message("Invalid") + ": " + message("Data"));
             return;
         }
-        boolean isNewNode = node.getNodeid() < 0;
-        boolean isParentChanged = currentNode == null
-                || currentNode.getParentid() != parentNode.getNodeid();
         if (task != null) {
             task.cancel();
         }
@@ -437,23 +434,14 @@ public class DataTreeNodeEditorController extends BaseDataTreeHandleController {
             @Override
             protected void whenSucceeded() {
                 if (treeRunning()) {
-                    if (isNewNode) {
-                        treeController.addNewNode(parentNode, savedNode);
-                    } else if (isParentChanged) {
-                        treeController.updateNode(parentNode, savedNode);
-                    } else {
-                        treeController.updateNode(savedNode);
-                    }
-                }
-                if (parentRunning()) {
-                    parentController.popSaved();
-                    resetStatus();
-                    close();
+                    treeController.updateNode(parentNode, savedNode);
+                    treeController.popSaved();
                 } else {
-                    popSaved();
-                    resetStatus();
+                    DataTreeController c = DataTreeController.open(nodeTable, savedNode);
+                    c.popSaved();
                 }
-
+                resetStatus();
+                close();
             }
 
             @Override

@@ -222,24 +222,6 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
         showItemMenu(item);
     }
 
-    public void addNewNode(NodeP parent, NodeP node) {
-        addNewNode(find(parent), node, false);
-    }
-
-    public void addNewNode(TreeItem<NodeP> parent, NodeP node, boolean select) {
-        if (parent == null || node == null) {
-            return;
-        }
-        TreeItem<NodeP> child = new TreeItem(node);
-        parent.getChildren().add(child);
-        makeHierarchyNumber(child);
-        child.setExpanded(false);
-        if (select) {
-            focusItem(child);
-            itemClicked(null, child);
-        }
-    }
-
     public void focusItem(TreeItem<NodeP> nodeitem) {
         if (treeView == null || nodeitem == null) {
             return;
@@ -266,10 +248,6 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
         focusNode = null;
         return found;
     }
-
-    public void nodeAdded(NodeP parent, NodeP newNode) {
-    }
-
 
     /*
         values

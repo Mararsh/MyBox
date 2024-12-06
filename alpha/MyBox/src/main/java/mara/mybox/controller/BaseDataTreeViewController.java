@@ -721,42 +721,21 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
                 loadNode(node);
             }
             TreeItem<DataNode> nodeItem = find(node);
-            if (nodeItem == null) {
-                addNewNode(parent, node);
-                return;
+            if (nodeItem != null) {
+                try {
+                    nodeItem.getParent().getChildren().remove(nodeItem);
+                } catch (Exception e) {
+                }
             }
-            try {
-                nodeItem.getParent().getChildren().remove(nodeItem);
-            } catch (Exception e) {
+            TreeItem<DataNode> parentItem = find(parent);
+            if (parentItem != null) {
+                nodeItem = new TreeItem(node);
+                parentItem.getChildren().add(nodeItem);
+                reorderChildlren(parentItem);
             }
-            TreeItem<DataNode> parentNode = find(parent);
-            if (parentNode == null) {
-                return;
-            }
-            try {
-                parentNode.getChildren().add(nodeItem);
-                makeHierarchyNumber(nodeItem);
-            } catch (Exception e) {
-                return;
-            }
-            nodeItem.setExpanded(false);
-            focusItem(nodeItem);
+            unfoldAncestors(node);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
-        }
-    }
-
-    public void updateNode(DataNode node) {
-        if (node == null) {
-            return;
-        }
-        TreeItem<DataNode> treeItem = find(node);
-        if (treeItem != null) {
-            treeItem.setValue(node);
-            makeHierarchyNumber(treeItem);
-        }
-        if (currentNode != null && currentNode.equals(node)) {
-            loadNode(node);
         }
     }
 
