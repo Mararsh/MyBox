@@ -22,6 +22,54 @@ public class LocateTools {
 
     public static final int PopOffsetY = 30;
 
+    public static Point2D coordinate(Event event) {
+        double x, y;
+        try {
+            Point2D everntCoord = getScreenCoordinate(event);
+            x = everntCoord.getX();
+            y = everntCoord.getY() + PopOffsetY;
+        } catch (Exception e) {
+            javafx.scene.robot.Robot r = new javafx.scene.robot.Robot();
+            x = r.getMouseX();
+            y = r.getMouseY() + PopOffsetY;
+        }
+        return new Point2D(x, y);
+    }
+
+    public static Point2D getScreenCoordinate(Event event) {
+        try {
+            Node node = (Node) (event.getTarget());
+            return node.localToScreen(0, 0);
+        } catch (Exception e) {
+//            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public static Point2D center(Node node) {
+        double x, y;
+        try {
+            Point2D p = node.localToScreen(0, 0);
+            x = p.getX();
+            y = p.getY() + LocateTools.PopOffsetY;
+        } catch (Exception e) {
+            javafx.scene.robot.Robot r = new javafx.scene.robot.Robot();
+            x = r.getMouseX();
+            y = r.getMouseY() + PopOffsetY;
+        }
+        return new Point2D(x, y);
+    }
+
+    public static double getScreenX(Node node) {
+        Point2D localToScreen = node.localToScreen(0, 0);
+        return localToScreen.getX();
+    }
+
+    public static double getScreenY(Node node) {
+        Point2D localToScreen = node.localToScreen(0, 0);
+        return localToScreen.getY();
+    }
+
     public static void locateRight(Stage stage) {
         Rectangle2D screen = NodeTools.getScreen();
         stage.setX(screen.getWidth() - stage.getWidth());
@@ -97,20 +145,6 @@ public class LocateTools {
 
     public static void locateMouse(MouseEvent event, PopupWindow window) {
         window.show((Node) event.getSource(), event.getScreenX(), event.getScreenY());
-    }
-
-    public static Point2D coordinate(Event event) {
-        double x, y;
-        try {
-            Point2D everntCoord = LocateTools.getScreenCoordinate(event);
-            x = everntCoord.getX();
-            y = everntCoord.getY() + LocateTools.PopOffsetY;
-        } catch (Exception e) {
-            javafx.scene.robot.Robot r = new javafx.scene.robot.Robot();
-            x = r.getMouseX();
-            y = r.getMouseY() + PopOffsetY;
-        }
-        return new Point2D(x, y);
     }
 
     public static void locateEvent(Event event, PopupWindow window) {
@@ -211,26 +245,6 @@ public class LocateTools {
             LocateTools.moveCenter(pNnode, region);
         } catch (Exception e) {
             //            MyBoxLog.error(e.toString());
-        }
-    }
-
-    public static double getScreenX(Node node) {
-        Point2D localToScreen = node.localToScreen(0, 0);
-        return localToScreen.getX();
-    }
-
-    public static double getScreenY(Node node) {
-        Point2D localToScreen = node.localToScreen(0, 0);
-        return localToScreen.getY();
-    }
-
-    public static Point2D getScreenCoordinate(Event event) {
-        try {
-            Node node = (Node) (event.getTarget());
-            return node.localToScreen(0, 0);
-        } catch (Exception e) {
-//            MyBoxLog.error(e);
-            return null;
         }
     }
 

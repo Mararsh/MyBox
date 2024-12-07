@@ -230,6 +230,8 @@ public class DataMigration {
                 conn.setAutoCommit(true);
                 statement.executeUpdate("DROP TABLE MYBOX_TMP_TREE_Migration682");
                 statement.executeUpdate("DROP TABLE MYBOX_TMP_TAG_Migration682");
+                statement.executeUpdate("DROP TABLE tree_node_tag");
+                statement.executeUpdate("DROP TABLE tree_node");
             } catch (Exception e) {
                 MyBoxLog.console(e);
             }

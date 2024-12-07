@@ -297,7 +297,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
             return;
         }
         Point2D everntCoord = LocateTools.coordinate(event);
-        popContextMenu(everntCoord.getX(), everntCoord.getY() + LocateTools.PopOffsetY);
+        popContextMenu(everntCoord.getX(), everntCoord.getY());
     }
 
     @FXML
