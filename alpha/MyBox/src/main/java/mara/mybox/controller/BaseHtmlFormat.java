@@ -263,7 +263,7 @@ public abstract class BaseHtmlFormat extends BaseWebViewController {
             if (isSettingValues) {
                 return;
             }
-
+            closePopup();
             formatBox.getChildren().clear();
             opPane.getChildren().clear();
 

@@ -134,6 +134,9 @@ public class DevTmpController extends BaseTaskController {
                             + "pannable=\"true\" xmlns=\"http://javafx.com/javafx/23.0.1\" "
                             + "xmlns:fx=\"http://javafx.com/fxml/1\" ";
                     Charset utf8 = Charset.forName("UTF-8");
+                    int startPane, endPane, startHeight;
+                    boolean isBorderPane;
+                    String newFxml;
                     for (File fxml : fxmls) {
                         name = fxml.getName();
                         String texts = TextFileTools.readTexts(this, fxml, utf8);
@@ -143,27 +146,28 @@ public class DevTmpController extends BaseTaskController {
                             continue;
                         }
                         int scrollEnd = texts.indexOf(">", scrollStart);
-                        String newFxml = texts.substring(0, scrollEnd)
-                                .replaceFirst("ScrollPane fitToHeight",
-                                        "ScrollPane  fx:id=\"thisPane\"  prefHeight=\"700.0\" prefWidth=\"1000.0\" fitToHeight");
-                        int startPane = texts.indexOf("<BorderPane fx:id=\"thisPane\"", scrollEnd);
+                        startPane = texts.indexOf("<BorderPane fx:id=\"thisPane\"", scrollEnd);
                         if (startPane > 0) {
-                            newFxml += ">\n   <content>\n<BorderPane maxHeight=\"1.7976931348623157E308\" maxWidth=\"1.7976931348623157E308\"";
+                            isBorderPane = true;
                         } else {
                             startPane = texts.indexOf("<StackPane fx:id=\"thisPane\"", scrollEnd);
                             if (startPane > 0) {
-                                newFxml += ">\n   <content>\n<StackPane maxHeight=\"1.7976931348623157E308\" maxWidth=\"1.7976931348623157E308\"";
+                                isBorderPane = false;
                             } else {
                                 MyBoxLog.console(fxml);
                                 continue;
                             }
                         }
-                        int endPane = texts.indexOf(">", startPane);
-                        if (endPane < 0) {
-                            MyBoxLog.console(fxml);
-                            continue;
+                        endPane = texts.indexOf(">", startPane);
+                        startHeight = texts.indexOf("prefHeight=", startPane, endPane);
+                        newFxml = texts.substring(0, startPane);
+                        if (startHeight > 0) {
+                            newFxml = newFxml.replaceFirst("ScrollPane fitToHeight",
+                                    "ScrollPane  " + texts.substring(startHeight, endPane) + " fitToHeight");
                         }
-                        newFxml += texts.substring(endPane);
+                        newFxml += isBorderPane ? "<BorderPane" : "<StackPane";
+                        newFxml += " fx:id=\"thisPane\" maxHeight=\"1.7976931348623157E308\" maxWidth=\"1.7976931348623157E308\""
+                                + texts.substring(endPane);
                         File file = new File(targetPath + File.separator + name);
                         TextFileTools.writeFile(file, newFxml, utf8);
                         updateLogs(++count + ": " + file);

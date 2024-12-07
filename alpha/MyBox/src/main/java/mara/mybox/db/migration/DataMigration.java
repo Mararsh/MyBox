@@ -91,7 +91,6 @@ public class DataMigration {
         SystemConfig.setString("CurrentVersion", AppValues.AppVersion);
         controller.info("CurrentVersion: " + AppValues.AppVersion);
         try (Connection conn = DerbyBase.getConnection()) {
-//            updateIn682(controller, conn);
             int lastVersion = DevTools.lastVersion(conn);
             int currentVersion = DevTools.myboxVersion(AppValues.AppVersion);
             if (lastVersion != currentVersion
