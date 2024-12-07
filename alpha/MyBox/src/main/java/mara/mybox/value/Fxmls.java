@@ -42,14 +42,6 @@ public class Fxmls {
     public static final String DataSelectData2DDefinitionFxml = "/fxml/DataSelectData2DDefinition.fxml";
     public static final String DataSelectImageScopeFxml = "/fxml/DataSelectImageScope.fxml";
 
-    public static final String InfoTreeNodeMoveFxml = "/fxml/InfoTreeNodeMove.fxml";
-    public static final String InfoTreeNodeCopyFxml = "/fxml/InfoTreeNodeCopy.fxml";
-    public static final String InfoTreeNodeImportFxml = "/fxml/InfoTreeNodeImport.fxml";
-    public static final String InfoTreeNodesCopyFxml = "/fxml/InfoTreeNodesCopy.fxml";
-    public static final String InfoTreeNodesMoveFxml = "/fxml/InfoTreeNodesMove.fxml";
-    public static final String InfoTreeNodeParentFxml = "/fxml/InfoTreeNodeParent.fxml";
-    public static final String InfoTreeNodeSelectFxml = "/fxml/InfoTreeNodeSelect.fxml";
-
     public static final String PdfViewFxml = "/fxml/PdfView.fxml";
     public static final String PdfAttributesFxml = "/fxml/PdfAttributes.fxml";
     public static final String PdfAttributesBatchFxml = "/fxml/PdfAttributesBatch.fxml";
@@ -197,7 +189,6 @@ public class Fxmls {
     public static final String ImageCanvasInputFxml = "/fxml/ImageCanvasInput.fxml";
     public static final String ImageHistoriesFxml = "/fxml/ImageHistories.fxml";
     public static final String ImageScopeViewsFxml = "/fxml/ImageScopeViews.fxml";
-    public static final String ImageScopeSavedFxml = "/fxml/ImageScopeSaved.fxml";
     public static final String ImageClipSelectFxml = "/fxml/ImageClipSelect.fxml";
 
     public static final String ImageCropBatchFxml = "/fxml/ImageCropBatch.fxml";
@@ -462,10 +453,7 @@ public class Fxmls {
     public static final String WeiboSnapingInfoFxml = "/fxml/WeiboSnapingInfo.fxml";
 
     public static final String WebBrowserFxml = "/fxml/WebBrowser.fxml";
-
     public static final String WebHistoriesFxml = "/fxml/WebHistories.fxml";
-
-    public static final String WebFavoriteAddFxml = "/fxml/WebFavoriteAdd.fxml";
 
     public static final String NetworkConvertUrlFxml = "/fxml/NetworkConvertUrl.fxml";
     public static final String NetworkQueryAddressFxml = "/fxml/NetworkQueryAddress.fxml";

@@ -54,7 +54,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
     @FXML
     protected FlowPane opsPane;
     @FXML
-    protected Button dataDefinitionButton, operationButton, dataMenuButton,
+    protected Button dataDefinitionButton, dataMenuButton,
             verifyButton, chartsButton, calculateButton, trimDataButton;
 
     public Data2DManufactureController() {

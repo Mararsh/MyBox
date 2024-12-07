@@ -6,17 +6,15 @@ import java.util.Optional;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextInputDialog;
-import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import mara.mybox.data.MediaInformation;
 import mara.mybox.data.MediaList;
 import mara.mybox.db.table.TableMediaList;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -31,11 +29,10 @@ public class MediaListController extends BaseTablePagesController<MediaList> {
     protected TableColumn<MediaList, String> nameColumn;
     @FXML
     protected ControlMediaTable tableController;
-    @FXML
-    protected ImageView supportTipsView;
 
     public MediaListController() {
-        baseTitle = Languages.message("ManageMediaLists");
+        baseTitle = message("ManageMediaLists");
+        TipsLabelKey = message("MediaPlayerSupports");
     }
 
     @Override
@@ -49,16 +46,6 @@ public class MediaListController extends BaseTablePagesController<MediaList> {
 
         } catch (Exception e) {
             MyBoxLog.error(e);
-        }
-    }
-
-    @Override
-    public void setControlsStyle() {
-        try {
-            super.setControlsStyle();
-            NodeStyleTools.setTooltip(supportTipsView, new Tooltip(Languages.message("MediaPlayerSupports")));
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
         }
     }
 

@@ -22,6 +22,8 @@ public class DevTmpController extends BaseTaskController {
         try {
             super.initControls();
 
+//            refineFxmls();
+//            refineFxmls2();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -94,6 +96,74 @@ public class DevTmpController extends BaseTaskController {
                                 + texts.substring(startPos, nsPos) + ">"
                                 + texts.substring(endPos + 1)
                                 + newSuffix;
+                        File file = new File(targetPath + File.separator + name);
+                        TextFileTools.writeFile(file, newFxml, utf8);
+                        updateLogs(++count + ": " + file);
+                    }
+                    return true;
+                } catch (Exception e) {
+                    error = name + "  -  " + e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                browse(targetPath);
+            }
+
+        };
+        start(task);
+    }
+
+    public void refineFxmls2() {
+        task = new FxTask<Void>(this) {
+            private File targetPath;
+            private String name;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    int count = 0;
+                    File srcPath = new File("D:\\MyBox\\src\\main\\resources\\fxml\\");
+                    targetPath = new File("D:\\tmp\\1\\");
+                    updateLogs(srcPath.getAbsolutePath());
+                    List<File> fxmls = Arrays.asList(srcPath.listFiles());
+                    String scrollPrefix = "<ScrollPane fitToHeight=\"true\" fitToWidth=\"true\" "
+                            + "maxHeight=\"1.7976931348623157E308\" maxWidth=\"1.7976931348623157E308\" "
+                            + "pannable=\"true\" xmlns=\"http://javafx.com/javafx/23.0.1\" "
+                            + "xmlns:fx=\"http://javafx.com/fxml/1\" ";
+                    Charset utf8 = Charset.forName("UTF-8");
+                    for (File fxml : fxmls) {
+                        name = fxml.getName();
+                        String texts = TextFileTools.readTexts(this, fxml, utf8);
+                        int scrollStart = texts.indexOf(scrollPrefix);
+                        if (scrollStart < 0) {
+//                            MyBoxLog.console("No menu: " + fxml);
+                            continue;
+                        }
+                        int scrollEnd = texts.indexOf(">", scrollStart);
+                        String newFxml = texts.substring(0, scrollEnd)
+                                .replaceFirst("ScrollPane fitToHeight",
+                                        "ScrollPane  fx:id=\"thisPane\"  prefHeight=\"700.0\" prefWidth=\"1000.0\" fitToHeight");
+                        int startPane = texts.indexOf("<BorderPane fx:id=\"thisPane\"", scrollEnd);
+                        if (startPane > 0) {
+                            newFxml += ">\n   <content>\n<BorderPane maxHeight=\"1.7976931348623157E308\" maxWidth=\"1.7976931348623157E308\"";
+                        } else {
+                            startPane = texts.indexOf("<StackPane fx:id=\"thisPane\"", scrollEnd);
+                            if (startPane > 0) {
+                                newFxml += ">\n   <content>\n<StackPane maxHeight=\"1.7976931348623157E308\" maxWidth=\"1.7976931348623157E308\"";
+                            } else {
+                                MyBoxLog.console(fxml);
+                                continue;
+                            }
+                        }
+                        int endPane = texts.indexOf(">", startPane);
+                        if (endPane < 0) {
+                            MyBoxLog.console(fxml);
+                            continue;
+                        }
+                        newFxml += texts.substring(endPane);
                         File file = new File(targetPath + File.separator + name);
                         TextFileTools.writeFile(file, newFxml, utf8);
                         updateLogs(++count + ": " + file);

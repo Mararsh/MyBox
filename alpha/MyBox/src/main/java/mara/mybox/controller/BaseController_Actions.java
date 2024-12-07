@@ -719,7 +719,11 @@ public abstract class BaseController_Actions extends BaseController_Interface {
     }
 
     public void popEventMenu(Event event, List<MenuItem> menuItems) {
-        if (event == null || menuItems == null || menuItems.isEmpty()) {
+        if (event == null) {
+            popCenterMenu(thisPane, menuItems);
+            return;
+        }
+        if (menuItems == null || menuItems.isEmpty()) {
             return;
         }
         popNodeMenu((Node) event.getSource(), menuItems);

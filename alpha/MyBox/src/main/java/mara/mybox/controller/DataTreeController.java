@@ -650,8 +650,8 @@ public class DataTreeController extends BaseDataTreeViewController {
 
     public static DataTreeController open(BaseNodeTable table, DataNode node) {
         try {
-            DataTreeController controller = open(null, false, table);
-            controller.focusNode(node);
+            DataTreeController controller = (DataTreeController) WindowTools.openStage(Fxmls.DataTreeFxml);
+            controller.initDataTree(table, node);
             controller.setAlwaysOnTop();
             return controller;
         } catch (Exception e) {

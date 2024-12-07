@@ -55,9 +55,6 @@ public class DataTreeNodeEditorController extends BaseDataTreeHandleController {
     @FXML
     protected ControlDataNodeTags tagsController;
 
-    public DataTreeNodeEditorController() {
-    }
-
     @Override
     public void setFileType() {
         setFileType(VisitHistory.FileType.Text);
@@ -122,6 +119,8 @@ public class DataTreeNodeEditorController extends BaseDataTreeHandleController {
 
             setAlwaysTop(true, false);
 
+            editNull();
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -178,6 +177,10 @@ public class DataTreeNodeEditorController extends BaseDataTreeHandleController {
     }
 
     public void addNode(DataNode parent) {
+        if (parent == null) {
+            editNull();
+            return;
+        }
         if (task != null) {
             task.cancel();
         }
@@ -215,6 +218,11 @@ public class DataTreeNodeEditorController extends BaseDataTreeHandleController {
 
         };
         start(task);
+    }
+
+    public void editNull() {
+        currentNode = null;
+        loadData();
     }
 
     protected void loadData() {
@@ -262,21 +270,16 @@ public class DataTreeNodeEditorController extends BaseDataTreeHandleController {
         isSettingValues = false;
     }
 
-    public void editNull() {
-        if (parentNode != null) {
-            currentNode = DataNode.createChild(parentNode, message("NewData"));
-        } else {
-            currentNode = DataNode.create().setTitle(message("NewData"));
-        }
-        loadData();
-    }
-
     /*
         attributes
      */
     protected void loadAttributes() {
         if (currentNode == null) {
-            return;
+            if (parentNode != null) {
+                currentNode = DataNode.createChild(parentNode, message("NewData"));
+            } else {
+                currentNode = DataNode.create().setTitle(message("NewData"));
+            }
         }
         isSettingValues = true;
         titleInput.setText(currentNode.getTitle());

@@ -26,7 +26,7 @@ public class DataSelectParentController extends BaseDataSelectController {
 
     public void setParameters(DataTreeNodeEditorController parent, DataNode node) {
         try {
-            if (parent == null || node == null) {
+            if (parent == null) {
                 close();
                 return;
             }
@@ -36,7 +36,9 @@ public class DataSelectParentController extends BaseDataSelectController {
             baseName = baseName + "_" + dataName;
 
             sourceNode = node;
-            nodeLabel.setText(message("SourceNode") + ": " + sourceNode.shortDescription());
+            if (sourceNode != null) {
+                nodeLabel.setText(message("SourceNode") + ": " + sourceNode.shortDescription());
+            }
 
             baseTitle = nodeTable.getTreeName() + " - " + message("SelectParentNode");
             setTitle(baseTitle);
@@ -61,6 +63,12 @@ public class DataSelectParentController extends BaseDataSelectController {
             popError(message("SelectToHandle"));
             return;
         }
+        if (sourceNode == null) {
+            editor.setParentNode(targetNode);
+            close();
+            return;
+        }
+
         if (task != null) {
             task.cancel();
         }

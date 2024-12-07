@@ -59,6 +59,7 @@
             <li>One node can have only one "Parent".</li>
             <li>"Descendant Nodes": All lower nodes extended recursively from children.</li>
             <li>"Ancestral Nodes": All higher nodes extended recursively from parent.</li>
+            <li>"Sibling Nodes": Nodes which have same parent node.</li>
             <li>"Root Node": In top level and be ancestry of all other nodes.</li>
             <li>"Leaf Nodes":  Have not children.</li>
             <li>"Hierarchy Number": The chain of sequence numbers from root to the node.</li>
@@ -129,8 +130,8 @@
                 <tr><th>    MyBox Function </th><th>                    Fields of data                    </th></tr>
             </thead>
             <tbody>
-                <tr><td> Notes         </td><td> Html codes  </td></tr>
-                <tr><td> Tree Information   </td><td> Text                                           </td></tr>
+                <tr><td> Html Tree         </td><td> Html codes  </td></tr>
+                <tr><td> Texts Tree   </td><td> Text                                           </td></tr>
                 <tr><td> Favorite Address   </td><td> Two fields: Address, Icon                                    </td></tr>
                 <tr><td> Image Scope   </td><td> Definition of image scope in XML                                      </td></tr>
                 <tr><td> Row Filter        </td><td> Three fields: JavaScript expression, Whether invert, Maximum rows                </td></tr>
@@ -143,8 +144,8 @@
             </tbody>
         </table>
         <h3>3.4 Order Number of Node</h3>
-        <p>Order number of node is for sorting nodes in same branch, which are all children of its parent. It can be negative or with decimal point.</p>
-        <p>MyBox provides function to trim order numbers.</p>
+        <p>Order number of node is for sorting sibling nodes, which have same parent node. It can be negative or with decimal point.</p>
+        <p>MyBox provides function to trim order numbers: reassign order numbers of sibling nodes as values increased in step value 1.</p>
         <h3>3.5 Tags of Node</h3>
         <ul>
             <li>Tags are extra attributes assigned to node, and customized by user.</li>
@@ -153,13 +154,8 @@
             <li>One tag can belong to multiple nodes.</li>
         </ul>
         <h2>4 Manage Tree Structure</h2>
-        <h3>4.1 Tree View</h3>
-        <p>Select one node, and display its "Tree View" with this node as root:</p>
-        <ul>
-            <li>Tree information is shown in html page.</li>
-            <li>Click node name to unfold/fold its childrent.</li>
-            <li>Options to display hierarchy number, tags, and node values.</li>
-        </ul>
+        <h3>4.1 Define Tags</h3>
+        <p>User can define different sets of tags for each type of trees.</p>
         <h3>4.2 Examples</h3>
         <p>MyBox provides examples for functions in tree.<br />
             Click menu item "Examples" to import example data of the function.</p>
@@ -170,6 +166,7 @@
             <li>Format can be chosen: Tree XML, Tree JSON, Tree Html, List JSON, List XML, List CSV, List Html, Html frameset.</li>
             <li>Options to export node's id, hierarchy number, modified time, order number, parent id, tags, and data.</li>
             <li>Style of exported html can be set.</li>
+            <li>MyBox uses iterators and stacks write records while reading rows, so the amount of exported data is not limited by memory usage</li>
         </ul>
         <h3>4.4 Import</h3>
         <p>Tree information can be imported in batch:</p>
@@ -177,25 +174,21 @@
             <li>Select multiple files which hold tree information as source.</li>
             <li>Exported files should be XML in special formats, which are same as Tree XML exported by MyBox.</li>
             <li>When import nodes, "id", "parentid", "update_time" are generated automatically, rather than picked from files.</li>
+            <li>When node of same title under same parent exists, options: 
+                        "Change attributes", "Create child of duplicated name", and "Skip". </li>
             <li>Rulers of text format are displayed in interface, and example is provided.</li>
         </ul>
-        <p>Notice:</p>
-        <ul>
-            <li>Can not locate node by ID when import nodes, because ID is an attribute which couples application environment tightly:
-                <ul>
+        <p>Tree XML can be used to locate tree nodes in a file:</p>
+            <ul>
+                    <li>Tree XML can store tree structure accurately.</li>
+                    <li>MyBox uses SAX and stacks to parse Tree XML, so the amount of imported data is not limited by memory usage</li>
+            </ul>
+        <p>Can not locate node by ID when import nodes, because ID is an attribute which couples application environment tightly:</p>
+            <ul>
                     <li>After node is exported, it can not keep pace with the application environment.</li>
                     <li>When node is imported, its ID may be missed or conflicted in the imported environment.</li>
                     <li>The hierarchy of imported nodes can not be defined by their IDs because the IDs may be incompatible with the imported environment.</li>
-                </ul>
-            </li>
-            <li>MyBox depends Tree XML to locate nodes when import:
-                <ul>
-                    <li>Tree XML can store tree structure accurately.</li>
-                    <li>When node of same title under same parent existed, options: 
-                        "Change attributes", "Create child of duplicated name", and "Skip". </li>
-                </ul>
-            </li>
-        </ul>
+            </ul>
         <h3>4.5 Add/Delete/Modify Nodes</h3>
         <p>Select one or multiple nodes, and:</p>
         <ul>
@@ -222,6 +215,7 @@
                     <li>Modify values of data fields.</li>
                 </ul>
             </li>
+            <li>Selected node can be executed directly if the data is executable.</li>
         </ul>
         <h3>4.6 View Nodes</h3>
         <p>Select one node:</p>

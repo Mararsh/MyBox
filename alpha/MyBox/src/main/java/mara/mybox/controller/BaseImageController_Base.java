@@ -183,7 +183,7 @@ public abstract class BaseImageController_Base extends BaseFileController {
 
     public void updateStageTitle() {
         try {
-            if (getMyStage() == null || thisPane.getParent() != null) {
+            if (getMyStage() == null) {
                 return;
             }
             myStage.setTitle(getBaseTitle() + fileTitle());

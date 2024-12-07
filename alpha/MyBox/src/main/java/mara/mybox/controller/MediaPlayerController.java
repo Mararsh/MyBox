@@ -28,7 +28,6 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.TableView;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
@@ -94,11 +93,10 @@ public class MediaPlayerController extends BaseController {
     protected ControlMediaTable tableController;
     @FXML
     protected Button dataButton, catButton, paneSizeButton;
-    @FXML
-    protected ImageView supportTipsView;
 
     public MediaPlayerController() {
         baseTitle = message("MediaPlayer");
+        TipsLabelKey = message("MediaPlayerSupports");
     }
 
     @Override
@@ -235,7 +233,6 @@ public class MediaPlayerController extends BaseController {
             NodeStyleTools.setTooltip(fullScreenButton, new Tooltip(message("FullScreen") + "\nf / F"));
             NodeStyleTools.setTooltip(soundButton, new Tooltip(message("Mute") + "\nm / M"));
             NodeStyleTools.setTooltip(dataButton, new Tooltip(message("ManageMediaLists")));
-            NodeStyleTools.setTooltip(supportTipsView, new Tooltip(message("MediaPlayerSupports")));
             NodeStyleTools.setTooltip(catButton, new Tooltip(message("MiaoSounds")));
             NodeStyleTools.setTooltip(speedSelector, new Tooltip("0~8"));
         } catch (Exception e) {

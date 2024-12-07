@@ -751,8 +751,11 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
     }
 
     public boolean keyF7() {
-        operationsAction();
-        return true;
+        if (operationsButton != null && !operationsButton.isDisabled() && operationsButton.isVisible()) {
+            operationsAction();
+            return true;
+        }
+        return false;
     }
 
     public boolean keyF8() {

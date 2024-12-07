@@ -140,7 +140,7 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
     /*
         tree
      */
-    public void initDataTree(BaseNodeTable table) {
+    public void initDataTree(BaseNodeTable table, DataNode node) {
         try {
             if (table == null) {
                 return;
@@ -154,11 +154,15 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
             baseTitle = nodeTable.getTreeName();
             setTitle(baseTitle);
 
-            loadTree();
+            loadTree(node);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+    }
+
+    public void initDataTree(BaseNodeTable table) {
+        initDataTree(table, null);
     }
 
     public void loadTree() {

@@ -215,6 +215,7 @@ public class BaseData2DViewController extends BaseData2DLoadController {
             if (isSettingValues || pageBox == null) {
                 return;
             }
+            closePopup();
             isSettingValues = true;
             buttonsPane.getChildren().clear();
             pageBox.getChildren().clear();
