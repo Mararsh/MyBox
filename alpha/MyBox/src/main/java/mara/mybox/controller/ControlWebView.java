@@ -26,7 +26,6 @@ import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.geometry.Point2D;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
@@ -35,7 +34,6 @@ import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
-import javafx.scene.robot.Robot;
 import javafx.scene.web.PromptData;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebErrorEvent;
@@ -998,12 +996,7 @@ public class ControlWebView extends BaseController {
     }
 
     public void popElementMenu(Element element) {
-        try {
-            Robot robot = new Robot();
-            MenuWebviewController.webviewMenu(this, element, robot.getMouseX() + 10, robot.getMouseY() + 10);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
+        MenuWebviewController.webviewMenu(this, element);
     }
 
     public void handleImage(String address, String name, String target) {
@@ -1958,14 +1951,8 @@ public class ControlWebView extends BaseController {
     @FXML
     @Override
     public boolean menuAction() {
-        try {
-            Point2D localToScreen = webView.localToScreen(webView.getWidth() - 80, 80);
-            MenuWebviewController.webviewMenu(this, null, localToScreen.getX(), localToScreen.getY());
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
-        return false;
+        MenuWebviewController.webviewMenu(this, webView);
+        return true;
     }
 
     @FXML

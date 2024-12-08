@@ -7,32 +7,23 @@ import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
 import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.Separator;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.Tooltip;
-import javafx.scene.input.MouseEvent;
 import mara.mybox.data2d.DataFileCSV;
-import mara.mybox.data2d.DataInternalTable;
 import mara.mybox.data2d.tools.Data2DConvertTools;
-import mara.mybox.data2d.tools.Data2DTableTools;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.table.TableData2D;
+import mara.mybox.db.table.TableNodeSQL;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.style.NodeStyleTools;
-import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.DateTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -44,6 +35,8 @@ import mara.mybox.value.UserConfig;
  */
 public class ControlDataSQL extends BaseDataValuesController {
 
+    protected boolean isInternalTable;
+
     @FXML
     protected TabPane sqlPane;
     @FXML
@@ -53,9 +46,9 @@ public class ControlDataSQL extends BaseDataValuesController {
     @FXML
     protected Button listButton, tableDefinitionButton;
     @FXML
-    protected ControlData2DView dataController;
+    protected ControlData2DView viewController;
     @FXML
-    protected CheckBox internalCheck, wrapCheck, wrapOutputsCheck;
+    protected CheckBox wrapCheck, wrapOutputsCheck;
 
     @Override
     public void setControlsStyle() {
@@ -130,7 +123,7 @@ public class ControlDataSQL extends BaseDataValuesController {
                     for (String sql : sqls) {
                         try {
                             TableStringValues.add(conn, "SQL"
-                                    + (internalCheck.isSelected() ? "Internal" : ""), sql);
+                                    + (isInternalTable ? "Internal" : ""), sql);
                             outputArea.appendText(DateTools.nowString() + "  " + sql + "\n");
                             if (statement.execute(sql)) {
                                 int count = statement.getUpdateCount();
@@ -159,7 +152,7 @@ public class ControlDataSQL extends BaseDataValuesController {
             protected void whenSucceeded() {
                 if (data != null) {
                     sqlPane.getSelectionModel().select(dataTab);
-                    dataController.loadDef(data);
+                    viewController.loadDef(data);
                 } else {
                     sqlPane.getSelectionModel().select(resultsTab);
                 }
@@ -172,6 +165,10 @@ public class ControlDataSQL extends BaseDataValuesController {
     @FXML
     public void clearOutput() {
         outputArea.clear();
+    }
+
+    public void load(String sql) {
+        sqlArea.setText(sql);
     }
 
     @FXML
@@ -187,62 +184,15 @@ public class ControlDataSQL extends BaseDataValuesController {
     }
 
     @FXML
-    protected void popTableNames(MouseEvent event) {
+    protected void popTableNames(Event event) {
         if (UserConfig.getBoolean("TableNamesPopWhenMouseHovering", false)) {
-            tableNames(event);
+            showTableNames(event);
         }
     }
 
     @FXML
-    protected void showTableNames(ActionEvent event) {
-        tableNames(event);
-    }
-
-    protected void tableNames(Event event) {
-        try {
-            MenuController controller = MenuController.open(this, sqlArea, event, "TableNames", false);
-
-            List<Node> topButtons = new ArrayList<>();
-            topButtons.add(new Label(message("TableName")));
-
-            CheckBox popCheck = new CheckBox();
-            popCheck.setGraphic(StyleTools.getIconImageView("iconPop.png"));
-            NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWindowWhenMouseHovering")));
-            popCheck.setSelected(UserConfig.getBoolean("TableNamesPopWhenMouseHovering", false));
-            popCheck.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    UserConfig.setBoolean("TableNamesPopWhenMouseHovering", popCheck.isSelected());
-                }
-            });
-            topButtons.add(popCheck);
-
-            controller.addFlowPane(topButtons);
-            controller.addNode(new Separator());
-
-            List<String> names;
-            if (internalCheck.isSelected()) {
-                names = DataInternalTable.InternalTables;
-            } else {
-                names = Data2DTableTools.userTables();
-            }
-            List<Node> valueButtons = new ArrayList<>();
-            for (String name : names) {
-                Button button = new Button(name);
-                button.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent event) {
-                        sqlArea.replaceText(sqlArea.getSelection(), name);
-                        controller.getThisPane().requestFocus();
-                        sqlArea.requestFocus();
-                    }
-                });
-                valueButtons.add(button);
-            }
-            controller.addFlowPane(valueButtons);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
+    protected void showTableNames(Event event) {
+        PopTools.popTableNames(this, event, sqlArea, "TableNames", isInternalTable);
     }
 
     @FXML
@@ -250,58 +200,18 @@ public class ControlDataSQL extends BaseDataValuesController {
         DatabaseTableDefinitionController.open(false);
     }
 
-    @FXML
-    protected void showTableDefinition(ActionEvent event) {
-        tableDefinition(event);
-    }
-
-    protected void tableDefinition(Event event) {
+    /*
+        static
+     */
+    public static DataTreeNodeEditorController open(BaseController parent, String sql) {
         try {
-            MenuController controller = MenuController.open(this, sqlArea, event, "TableDefinition", false);
-
-            List<Node> topButtons = new ArrayList<>();
-            topButtons.add(new Label(message("TableDefinition")));
-
-            CheckBox popCheck = new CheckBox();
-            popCheck.setGraphic(StyleTools.getIconImageView("iconPop.png"));
-            NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWindowWhenMouseHovering")));
-            popCheck.setSelected(UserConfig.getBoolean("TableDefinitionPopWhenMouseHovering", false));
-            popCheck.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    UserConfig.setBoolean("TableDefinitionPopWhenMouseHovering", popCheck.isSelected());
-                }
-            });
-            topButtons.add(popCheck);
-
-            controller.addFlowPane(topButtons);
-            controller.addNode(new Separator());
-
-            List<String> names;
-            if (internalCheck.isSelected()) {
-                names = DataInternalTable.InternalTables;
-            } else {
-                names = Data2DTableTools.userTables();
-            }
-            List<Node> valueButtons = new ArrayList<>();
-            for (String name : names) {
-                Button button = new Button(name);
-                button.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent event) {
-                        String html = TableData2D.tableDefinition(name);
-                        if (html != null) {
-                            HtmlPopController.openHtml(myController, html);
-                        } else {
-                            popError(message("NotFound"));
-                        }
-                    }
-                });
-                valueButtons.add(button);
-            }
-            controller.addFlowPane(valueButtons);
+            DataTreeNodeEditorController controller = DataTreeNodeEditorController.open(parent);
+            controller.setTable(new TableNodeSQL());
+            ((ControlDataSQL) controller.dataController).load(sql);
+            return controller;
         } catch (Exception e) {
             MyBoxLog.error(e);
+            return null;
         }
     }
 

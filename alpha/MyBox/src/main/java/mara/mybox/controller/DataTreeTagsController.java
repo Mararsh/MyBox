@@ -324,19 +324,6 @@ public class DataTreeTagsController extends BaseTableViewController<DataTag> {
     }
 
     @FXML
-    public void queryTags() {
-        List<DataTag> selected = selectedItems();
-        if (selected == null || selected.isEmpty()) {
-            selected = tableData;
-        }
-        if (selected == null || selected.isEmpty()) {
-            popError(message("SelectToHandle"));
-            return;
-        }
-//        dataController.tableController.queryTags(selected);
-    }
-
-    @FXML
     public void manageAction() {
         DataTreeController.open(null, false, nodeTable);
     }

@@ -421,8 +421,10 @@ public class FilesArchiveCompressController extends BaseBatchFileController {
             }
             if (!message("None").equals(compressor)) {
                 File tmpFile = FileTmpTools.getTempFile();
-                try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(archiveFile)); BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(tmpFile)); CompressorOutputStream compressOut = new CompressorStreamFactory().
-                        createCompressorOutputStream(compressor, out)) {
+                try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(archiveFile));
+                        BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(tmpFile));
+                        CompressorOutputStream compressOut = new CompressorStreamFactory().
+                                createCompressorOutputStream(compressor, out)) {
                     if (inputStream != null) {
                         IOUtils.copy(inputStream, compressOut);
                     }

@@ -41,6 +41,7 @@ public class Fxmls {
     public static final String DataSelectJavaScriptFxml = "/fxml/DataSelectJavaScript.fxml";
     public static final String DataSelectData2DDefinitionFxml = "/fxml/DataSelectData2DDefinition.fxml";
     public static final String DataSelectImageScopeFxml = "/fxml/DataSelectImageScope.fxml";
+    public static final String DataSelectSQLFxml = "/fxml/DataSelectSQL.fxml";
 
     public static final String PdfViewFxml = "/fxml/PdfView.fxml";
     public static final String PdfAttributesFxml = "/fxml/PdfAttributes.fxml";
@@ -375,6 +376,7 @@ public class Fxmls {
 
     public static final String DatabaseTableDefinitionFxml = "/fxml/DatabaseTableDefinition.fxml";
     public static final String DataTablesFxml = "/fxml/DataTables.fxml";
+    public static final String Data2DTableQueryFxml = "/fxml/Data2DTableQuery.fxml";
 
     public static final String BarcodeCreatorFxml = "/fxml/BarcodeCreator.fxml";
     public static final String BarcodeDecoderFxml = "/fxml/BarcodeDecoder.fxml";

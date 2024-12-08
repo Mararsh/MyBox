@@ -97,7 +97,7 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
         try {
             super.initControls();
 
-            loadNode(null);
+            viewNode(null);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -388,7 +388,7 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
         if (item == null) {
             return;
         }
-        loadNode(item.getValue());
+        loadView(item.getValue());
     }
 
     @Override
@@ -399,20 +399,12 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
         popNode(item.getValue());
     }
 
-    protected void loadNode(DataNode node) {
-        if (editButton != null) {
-            editButton.setVisible(false);
-        }
-        if (goButton != null) {
-            goButton.setVisible(false);
-        }
+    protected void loadView(DataNode node) {
+        nullView();
         if (viewController == null || node == null) {
             return;
         }
-        if (task != null) {
-            task.cancel();
-        }
-        task = new FxSingletonTask<Void>(this) {
+        FxTask loadTask = new FxSingletonTask<Void>(this) {
             private String html;
             private DataNode savedNode;
 
@@ -444,8 +436,12 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
                 }
             }
 
+            @Override
+            protected void whenFailed() {
+            }
+
         };
-        start(task, rightPane);
+        start(loadTask, rightPane);
     }
 
     protected void editNode(DataNode node) {
@@ -721,9 +717,7 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
 
     public void updateNode(DataNode parent, DataNode node) {
         try {
-            if (currentNode != null && currentNode.equals(node)) {
-                loadNode(node);
-            }
+            checkView(node);
             TreeItem<DataNode> nodeItem = find(node);
             if (nodeItem != null) {
                 try {
@@ -792,6 +786,29 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
         });
         for (TreeItem<DataNode> child : items) {
             item.getChildren().add(child);
+        }
+    }
+
+    protected void nullView() {
+        currentNode = null;
+        if (editButton != null) {
+            editButton.setVisible(false);
+        }
+        if (goButton != null) {
+            goButton.setVisible(false);
+        }
+        if (viewController != null) {
+            viewController.loadContents("");
+        }
+    }
+
+    protected void reloadView() {
+        loadView(currentNode);
+    }
+
+    protected void checkView(DataNode node) {
+        if (currentNode != null && currentNode.equals(node)) {
+            loadView(node);
         }
     }
 

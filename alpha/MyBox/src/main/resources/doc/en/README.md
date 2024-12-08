@@ -8,11 +8,11 @@ This is compute application to provide simple and easy functions. It's free and 
        
 * Improve:                                      
      - Redesign and implement "Information Tree":                                                                                                             
-          - Define different database tables for each type of trees.                                                                                                            
-          - Refine interfaces.                                                                                                            
-          - New export formats: Tree XML, Tree JSON, List CSV.                                                                                                            
-          - Import format is changed as Tree XML.                                                                                                            
-          - Order numbers of nodes can be set.                                                                                                            
+         - Define different database tables for each type of trees.                                                                                                            
+         - Refine interfaces.                                                                                                            
+         - New export formats: Tree XML, Tree JSON, List CSV.                                                                                                            
+         - Import format is changed as Tree XML.                                                                                                            
+         - Order numbers of nodes can be set.                                                                                                            
      - Data edit cell: Pop text area when value length is large.                                                                                                            
      - Major interfaces of functions are changed as scroll panes.                                                                                                            
 * Upgrade to: JDK 22 + javaFX 23.                                                                                                     

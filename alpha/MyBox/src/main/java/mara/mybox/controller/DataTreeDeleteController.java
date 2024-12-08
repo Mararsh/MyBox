@@ -73,6 +73,7 @@ public class DataTreeDeleteController extends BaseDataTreeViewController {
                     loadTree();
                     if (WindowTools.isRunning(treeController)) {
                         treeController.loadTree();
+                        treeController.reloadView();
                     }
                 }
             }
@@ -80,11 +81,6 @@ public class DataTreeDeleteController extends BaseDataTreeViewController {
         };
         start(task);
 
-    }
-
-    @FXML
-    public void manageAction() {
-        DataTreeController.open(null, false, nodeTable);
     }
 
     /*

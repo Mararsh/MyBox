@@ -356,8 +356,6 @@ public class HelpTools {
             s.append("<BODY>\n");
 
             s.append("<H1>").append(message(lang, "DocumentTools")).append("</H1>\n");
-            s.append("    <H3>").append(message(lang, "Notes")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "NotesTips")).append("</PRE>\n");
 
             s.append("    <H3>").append(message(lang, "PdfView")).append("</H3>\n");
             s.append("    <PRE>").append(message(lang, "PdfViewTips")).append("</PRE>\n");

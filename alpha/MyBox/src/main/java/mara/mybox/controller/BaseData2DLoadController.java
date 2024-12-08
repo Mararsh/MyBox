@@ -856,7 +856,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
             popError(message("InvalidData"));
             return;
         }
-        DataTreeController.sql(null, false);
+        Data2DTableQueryController.open(this);
     }
 
     @FXML

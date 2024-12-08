@@ -56,6 +56,10 @@ public class Data2DDefinition extends BaseData {
         return getValue(this, column);
     }
 
+    public boolean equals(Data2DDefinition def) {
+        return def != null && d2did == def.getD2did();
+    }
+
     public Data2DDefinition cloneAll() {
         try {
             Data2DDefinition newData = new Data2DDefinition();

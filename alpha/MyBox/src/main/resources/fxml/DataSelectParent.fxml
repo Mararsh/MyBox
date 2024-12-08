@@ -63,7 +63,7 @@ License:    Apache License Version 2.0
                               <TreeTableColumn fx:id="titleColumn" prefWidth="200.0" text="%Title" />
                               <TreeTableColumn fx:id="hierarchyColumn" prefWidth="120.0" text="%HierarchyNumber" />
                               <TreeTableColumn fx:id="idColumn" text="%ID" />
-                              <TreeTableColumn fx:id="orderColumn" text="%OrderFloat" />
+                              <TreeTableColumn fx:id="orderColumn" text="%OrderNumber" />
                               <TreeTableColumn fx:id="timeColumn" prefWidth="180.0" text="%ModifiedTime" />
                            </columns>
                         </TreeTableView>

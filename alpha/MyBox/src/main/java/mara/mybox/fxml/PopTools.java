@@ -55,6 +55,8 @@ import mara.mybox.controller.ControlWebView;
 import mara.mybox.controller.HtmlStyleInputController;
 import mara.mybox.controller.MenuController;
 import mara.mybox.data2d.Data2D;
+import mara.mybox.data2d.DataInternalTable;
+import mara.mybox.data2d.tools.Data2DTableTools;
 import static mara.mybox.db.data.ColumnDefinition.ColumnType.Color;
 import static mara.mybox.db.data.ColumnDefinition.ColumnType.Date;
 import static mara.mybox.db.data.ColumnDefinition.ColumnType.Datetime;
@@ -598,32 +600,7 @@ public class PopTools {
     public static void popValues(BaseController parent, TextInputControl input,
             String valueName, LinkedHashMap<String, String> values, Event event) {
         try {
-            MenuController controller = MenuController.open(parent, input, event, valueName, false);
-
-            List<Node> topButtons = new ArrayList<>();
-            Button newLineButton = new Button();
-            newLineButton.setGraphic(StyleTools.getIconImageView("iconTurnOver.png"));
-            NodeStyleTools.setTooltip(newLineButton, new Tooltip(message("Newline")));
-            newLineButton.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    input.replaceText(input.getSelection(), "\n");
-                    input.requestFocus();
-                }
-            });
-            topButtons.add(newLineButton);
-
-            Button clearButton = new Button(message("ClearInputArea"));
-            clearButton.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    input.clear();
-                }
-            });
-            topButtons.add(clearButton);
-
-            controller.addFlowPane(topButtons);
-            controller.addNode(new Separator());
+            MenuController controller = valuesMenu(parent, input, valueName, valueName, event);
 
             List<Node> nodes = new ArrayList<>();
             for (String value : values.keySet()) {
@@ -650,6 +627,77 @@ public class PopTools {
             controller.addFlowPane(nodes);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
+        }
+    }
+
+    public static void popListValues(BaseController parent, TextInputControl input,
+            String valueName, String title, List<String> values, Event event) {
+        try {
+            MenuController controller = valuesMenu(parent, input, title, valueName, event);
+
+            List<Node> nodes = new ArrayList<>();
+            for (String value : values) {
+                Button button = new Button(value);
+                button.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        if (UserConfig.getBoolean(valueName + "ValuesClearAndSet", true)) {
+                            input.setText(value);
+                        } else {
+                            input.replaceText(input.getSelection(), value);
+                        }
+                        if (UserConfig.getBoolean(valueName + "ValuesCloseAfterPaste", true)) {
+                            controller.close();
+                        } else {
+                            controller.getThisPane().requestFocus();
+                        }
+                        input.requestFocus();
+                    }
+                });
+                nodes.add(button);
+            }
+            controller.addFlowPane(nodes);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public static MenuController valuesMenu(BaseController parent, TextInputControl input,
+            String valueName, String title, Event event) {
+        try {
+            MenuController controller = MenuController.open(parent, input, event, valueName, false);
+
+            controller.setTitleLabel(title);
+
+            List<Node> topButtons = new ArrayList<>();
+            Button newLineButton = new Button();
+            newLineButton.setGraphic(StyleTools.getIconImageView("iconTurnOver.png"));
+            NodeStyleTools.setTooltip(newLineButton, new Tooltip(message("Newline")));
+            newLineButton.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    input.replaceText(input.getSelection(), "\n");
+                    controller.getThisPane().requestFocus();
+                    input.requestFocus();
+                }
+            });
+            topButtons.add(newLineButton);
+
+            Button clearButton = new Button(message("ClearInputArea"));
+            clearButton.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    input.clear();
+                }
+            });
+            topButtons.add(clearButton);
+
+            controller.addFlowPane(topButtons);
+            controller.addNode(new Separator());
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
         }
     }
 
@@ -1098,37 +1146,7 @@ public class PopTools {
     public static MenuController popJavaScriptExamples(BaseController parent, Event event,
             TextInputControl scriptInput, String valueName, List<List<String>> preValues) {
         try {
-
-            MenuController controller = MenuController.open(parent, scriptInput, event, valueName, false);
-
-            controller.setTitleLabel(message("Examples"));
-
-            List<Node> topButtons = new ArrayList<>();
-            Button newLineButton = new Button();
-            newLineButton.setGraphic(StyleTools.getIconImageView("iconTurnOver.png"));
-            NodeStyleTools.setTooltip(newLineButton, new Tooltip(message("Newline")));
-            newLineButton.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    scriptInput.replaceText(scriptInput.getSelection(), "\n");
-                    scriptInput.requestFocus();
-                }
-            });
-            topButtons.add(newLineButton);
-
-            Button clearInputButton = new Button();
-            clearInputButton.setGraphic(StyleTools.getIconImageView("iconClear.png"));
-            NodeStyleTools.setTooltip(clearInputButton, new Tooltip(message("ClearInputArea")));
-            clearInputButton.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    scriptInput.clear();
-                }
-            });
-            topButtons.add(clearInputButton);
-
-            controller.addFlowPane(topButtons);
-            controller.addNode(new Separator());
+            MenuController controller = valuesMenu(parent, scriptInput, message("Examples"), valueName, event);
 
             List<List<String>> pvalues;
             if (preValues == null || preValues.isEmpty()) {
@@ -1328,33 +1346,7 @@ public class PopTools {
             if (data2D == null) {
                 return null;
             }
-            MenuController controller = MenuController.open(parent, valueInput, event, valueName, false);
-
-            controller.setTitleLabel(message("Placeholders"));
-
-            List<Node> topButtons = new ArrayList<>();
-            Button newLineButton = new Button();
-            newLineButton.setGraphic(StyleTools.getIconImageView("iconTurnOver.png"));
-            NodeStyleTools.setTooltip(newLineButton, new Tooltip(message("Newline")));
-            newLineButton.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    valueInput.replaceText(valueInput.getSelection(), "\n");
-                    valueInput.requestFocus();
-                }
-            });
-            topButtons.add(newLineButton);
-
-            Button clearInputButton = new Button();
-            clearInputButton.setGraphic(StyleTools.getIconImageView("iconClear.png"));
-            NodeStyleTools.setTooltip(clearInputButton, new Tooltip(message("ClearInputArea")));
-            clearInputButton.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    valueInput.clear();
-                }
-            });
-            topButtons.add(clearInputButton);
+            MenuController controller = valuesMenu(parent, valueInput, message("Placeholders"), valueName, event);
 
             CheckBox onlyNumbersButton = new CheckBox();
             onlyNumbersButton.setGraphic(StyleTools.getIconImageView("iconStatistic.png"));
@@ -1367,18 +1359,78 @@ public class PopTools {
                             onlyNumbersButton.isSelected());
                     controller.close();
                     popDataPlaceHolders(parent, event, valueInput, valueName, data2D);
-//                    controller.removeNode(2);
-//                    List<String> values = data2D.placeholders(!onlyNumbersButton.isSelected());
-//                    PopTools.addButtonsPane(controller, valueInput, values);
                 }
             });
-            topButtons.add(onlyNumbersButton);
-
-            controller.addFlowPane(topButtons);
-            controller.addNode(new Separator());
+            controller.addNode(onlyNumbersButton);
 
             List<String> values = data2D.placeholders(!onlyNumbersButton.isSelected());
             PopTools.addButtonsPane(controller, valueInput, values);
+
+            return controller;
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static MenuController popTableNames(BaseController parent, Event event,
+            TextInputControl valueInput, String valueName, boolean isInternal) {
+        try {
+            MenuController controller = valuesMenu(parent, valueInput, message("TableNames"), valueName, event);
+
+            List<String> names;
+            if (isInternal) {
+                names = DataInternalTable.InternalTables;
+            } else {
+                names = Data2DTableTools.userTables();
+            }
+            List<Node> valueButtons = new ArrayList<>();
+            for (String name : names) {
+                Button button = new Button(name);
+                button.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        valueInput.replaceText(valueInput.getSelection(), name);
+                        controller.getThisPane().requestFocus();
+                        valueInput.requestFocus();
+                    }
+                });
+                valueButtons.add(button);
+            }
+            controller.addFlowPane(valueButtons);
+
+            return controller;
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static MenuController popColumnNames(BaseController parent, Event event,
+            TextInputControl valueInput, String valueName, Data2D data2d) {
+        try {
+            if (data2d == null) {
+                return null;
+            }
+            MenuController controller = valuesMenu(parent, valueInput, message("ColumnNames"), valueName, event);
+
+            List<String> names = data2d.columnNames();
+            List<Node> valueButtons = new ArrayList<>();
+            for (String name : names) {
+                Button button = new Button(name);
+                button.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        valueInput.replaceText(valueInput.getSelection(), name);
+                        controller.getThisPane().requestFocus();
+                        valueInput.requestFocus();
+                    }
+                });
+                valueButtons.add(button);
+            }
+            controller.addFlowPane(valueButtons);
 
             return controller;
 

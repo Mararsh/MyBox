@@ -518,9 +518,7 @@ public class BaseNodeTable extends BaseTable<DataNode> {
                 MyBoxLog.console(e.toString());
                 return -count;
             }
-            if (num > 0) {
-                conn.commit();
-            }
+            conn.commit();
         } catch (Exception e) {
             MyBoxLog.console(e.toString());
             return -count;

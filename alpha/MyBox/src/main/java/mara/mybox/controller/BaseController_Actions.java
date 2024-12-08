@@ -718,27 +718,30 @@ public abstract class BaseController_Actions extends BaseController_Interface {
         popEventMenu(event, HelpTools.htmlHelps(true));
     }
 
-    public void popEventMenu(Event event, List<MenuItem> menuItems) {
-        if (event == null) {
-            popCenterMenu(thisPane, menuItems);
+    public void popMenu(List<MenuItem> menuItems) {
+        if (menuItems == null || menuItems.isEmpty()) {
             return;
         }
-        if (menuItems == null || menuItems.isEmpty()) {
+        Robot robot = new Robot();
+        popMenu(thisPane, menuItems, robot.getMouseX() - 40, robot.getMouseY() + 10);
+    }
+
+    public void popEventMenu(Event event, List<MenuItem> menuItems) {
+        if (event == null) {
+            popMenu(menuItems);
             return;
         }
         popNodeMenu((Node) event.getSource(), menuItems);
     }
 
     public void popNodeMenu(Node node, List<MenuItem> menuItems) {
-        if (node == null || menuItems == null || menuItems.isEmpty()) {
-            return;
-        }
         Robot robot = new Robot();
         popMenu(node, menuItems, robot.getMouseX() - 40, robot.getMouseY() + 10);
     }
 
     public void popCenterMenu(Node node, List<MenuItem> menuItems) {
-        if (node == null || menuItems == null || menuItems.isEmpty()) {
+        if (node == null) {
+            popMenu(menuItems);
             return;
         }
         Bounds bounds = node.localToScreen(node.getBoundsInLocal());
@@ -748,7 +751,7 @@ public abstract class BaseController_Actions extends BaseController_Interface {
     }
 
     public void popMenu(Node node, List<MenuItem> menuItems, double x, double y) {
-        if (node == null || menuItems == null || menuItems.isEmpty()) {
+        if (menuItems == null || menuItems.isEmpty()) {
             return;
         }
         List<MenuItem> items = new ArrayList<>();
@@ -771,7 +774,7 @@ public abstract class BaseController_Actions extends BaseController_Interface {
         popMenu.setAutoHide(true);
         popMenu.getItems().addAll(items);
 
-        popMenu.show(node, x, y);
+        popMenu.show(node != null ? node : thisPane, x, y);
     }
 
 }

@@ -147,11 +147,15 @@ public class DataTreeController extends BaseDataTreeViewController {
             });
             items.add(menu);
 
+        }
+
+        Menu orderMenu = new Menu(message("OrderNumber"));
+        if (!isRoot) {
             menu = new MenuItem(message("ChangeNodeOrder"), StyleTools.getIconImageView("iconInput.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 reorderNode(treeItem);
             });
-            items.add(menu);
+            orderMenu.getItems().add(menu);
         }
 
         if (!isLeaf) {
@@ -159,13 +163,17 @@ public class DataTreeController extends BaseDataTreeViewController {
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 trimDescendantsOrders(treeItem, true);
             });
-            items.add(menu);
+            orderMenu.getItems().add(menu);
 
             menu = new MenuItem(message("TrimChildrenOrders"), StyleTools.getIconImageView("iconClean.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 trimDescendantsOrders(treeItem, false);
             });
-            items.add(menu);
+            orderMenu.getItems().add(menu);
+        }
+
+        if (!orderMenu.getItems().isEmpty()) {
+            items.add(orderMenu);
         }
 
         menu = new MenuItem(message("CopyNodes"), StyleTools.getIconImageView("iconCopy.png"));
@@ -180,12 +188,14 @@ public class DataTreeController extends BaseDataTreeViewController {
         });
         items.add(menu);
 
+        Menu deleteMenu = new Menu(message("Delete"));
+
         if (!isRoot) {
             menu = new MenuItem(message("DeleteNodeAndDescendants"), StyleTools.getIconImageView("iconDelete.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 deleteNodeAndDescendants(treeItem);
             });
-            items.add(menu);
+            deleteMenu.getItems().add(menu);
         }
 
         if (!isLeaf) {
@@ -193,14 +203,16 @@ public class DataTreeController extends BaseDataTreeViewController {
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 deleteDescendants(treeItem);
             });
-            items.add(menu);
+            deleteMenu.getItems().add(menu);
         }
 
         menu = new MenuItem(message("DeleteNodes"), StyleTools.getIconImageView("iconDelete.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             deleteNodes(treeItem);
         });
-        items.add(menu);
+        deleteMenu.getItems().add(menu);
+
+        items.add(deleteMenu);
 
         return items;
     }
@@ -390,6 +402,7 @@ public class DataTreeController extends BaseDataTreeViewController {
                     loadTree(null);
                 } else {
                     item.getParent().getChildren().remove(item);
+                    reloadView();
                 }
                 popSuccessful();
             }
@@ -437,6 +450,7 @@ public class DataTreeController extends BaseDataTreeViewController {
             @Override
             protected void whenSucceeded() {
                 item.getChildren().clear();
+                reloadView();
                 popSuccessful();
             }
 
@@ -475,6 +489,7 @@ public class DataTreeController extends BaseDataTreeViewController {
             protected void whenSucceeded() {
                 if (count > 0) {
                     refreshItem(item);
+                    reloadView();
                 }
                 popSuccessful();
             }
@@ -520,9 +535,7 @@ public class DataTreeController extends BaseDataTreeViewController {
             protected void whenSucceeded() {
                 item.setValue(updatedNode);
                 treeView.refresh();
-                if (currentNode != null && currentNode.equals(updatedNode)) {
-                    loadNode(updatedNode);
-                }
+                checkView(updatedNode);
                 popSuccessful();
             }
         };
@@ -566,9 +579,7 @@ public class DataTreeController extends BaseDataTreeViewController {
             @Override
             protected void whenSucceeded() {
                 reorderChildlren(item.getParent());
-                if (currentNode != null && currentNode.equals(updatedNode)) {
-                    loadNode(updatedNode);
-                }
+                checkView(updatedNode);
                 popSuccessful();
             }
         };
