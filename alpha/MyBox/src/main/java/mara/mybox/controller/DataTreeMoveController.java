@@ -92,7 +92,7 @@ public class DataTreeMoveController extends BaseDataTreeHandleController {
                 targetController.loadTree(targetNode);
                 if (treeRunning()) {
                     treeController.loadTree(targetNode);
-                    treeController.reloadView();
+                    treeController.reloadCurrent();
                 }
             }
         };

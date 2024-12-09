@@ -457,7 +457,7 @@ public class ControlDataMathFunction extends BaseDataValuesController {
 
     @FXML
     protected void showDomainHistories(Event event) {
-        PopTools.popStringValues(this, domainInput, event, "FunctionDomainHistories", false);
+        PopTools.popSavedValues(this, domainInput, event, "FunctionDomainHistories", false);
     }
 
     @FXML

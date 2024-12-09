@@ -218,7 +218,7 @@ public class ControlTextFilter extends BaseController {
 
     @FXML
     protected void showHistories(Event event) {
-        PopTools.popStringValues(this, filterInput, event, baseName + "FilterString", false);
+        PopTools.popSavedValues(this, filterInput, event, baseName + "FilterString", false);
     }
 
     @FXML

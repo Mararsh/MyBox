@@ -111,7 +111,7 @@ public class ControlData2DRowExpression extends BaseController {
 
     @FXML
     protected void showScriptHistories(Event event) {
-        PopTools.popStringValues(this, scriptInput, event, baseName + "Histories", false);
+        PopTools.popSavedValues(this, scriptInput, event, baseName + "Histories", false);
     }
 
     @FXML

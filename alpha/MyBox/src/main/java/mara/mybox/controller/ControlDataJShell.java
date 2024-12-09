@@ -1,18 +1,12 @@
 package mara.mybox.controller;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import jdk.jshell.JShell;
 import jdk.jshell.SourceCodeAnalysis;
@@ -24,7 +18,6 @@ import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.style.HtmlStyles;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.HtmlWriteTools;
@@ -241,37 +234,10 @@ public class ControlDataJShell extends BaseDataValuesController {
     @FXML
     protected void showSyntaxMenu(Event event) {
         try {
-            String menuName = interfaceName + "Syntax";
-            MenuController controller = MenuController.open(nodeEditor, codesInput, event, menuName, false);
-            controller.setTitleLabel(message("Syntax"));
+            MenuController controller = PopTools.valuesMenu(nodeEditor, codesInput,
+                    interfaceName + "Syntax", message("Syntax"), event);
 
-            List<Node> topButtons = new ArrayList<>();
-            Button newLineButton = new Button();
-            newLineButton.setGraphic(StyleTools.getIconImageView("iconTurnOver.png"));
-            NodeStyleTools.setTooltip(newLineButton, new Tooltip(message("Newline")));
-            newLineButton.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    codesInput.replaceText(codesInput.getSelection(), "\n");
-                    codesInput.requestFocus();
-                }
-            });
-            topButtons.add(newLineButton);
-
-            Button clearInputButton = new Button();
-            clearInputButton.setGraphic(StyleTools.getIconImageView("iconClear.png"));
-            NodeStyleTools.setTooltip(clearInputButton, new Tooltip(message("ClearInputArea")));
-            clearInputButton.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    codesInput.clear();
-                }
-            });
-            topButtons.add(clearInputButton);
-
-            controller.addFlowPane(topButtons);
-
-            PopTools.addButtonsPane(controller, codesInput, Arrays.asList(
+            PopTools.addButtonsPane(controller, Arrays.asList(
                     "int maxInt = Integer.MAX_VALUE, minInt = Integer.MIN_VALUE;",
                     "double maxDouble = Double.MAX_VALUE, minDouble = -Double.MAX_VALUE;",
                     "float maxFloat = Float.MAX_VALUE, minFloat = Float.MIN_VALUE;",
@@ -280,13 +246,13 @@ public class ControlDataJShell extends BaseDataValuesController {
                     "String s1 =\"Hello\";",
                     "String[] sArray = new String[3]; "
             ));
-            PopTools.addButtonsPane(controller, codesInput, Arrays.asList(
+            PopTools.addButtonsPane(controller, Arrays.asList(
                     ";", " , ", "( )", " = ", " { } ", "[ ]", "\"", " + ", " - ", " * ", " / "
             ));
-            PopTools.addButtonsPane(controller, codesInput, Arrays.asList(
+            PopTools.addButtonsPane(controller, Arrays.asList(
                     " == ", " != ", " >= ", " > ", " <= ", " < ", " && ", " || ", " ! "
             ));
-            PopTools.addButtonsPane(controller, codesInput, Arrays.asList(
+            PopTools.addButtonsPane(controller, Arrays.asList(
                     "if (3 > 2) {\n"
                     + "   int a = 1;\n"
                     + "}",

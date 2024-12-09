@@ -26,7 +26,7 @@ public class Data2DTableQueryController extends ControlDataSQL {
     @Override
     public void setControlsStyle() {
         super.setControlsStyle();
-        NodeStyleTools.setTooltip(listButton, new Tooltip(message("ColumnName")));
+        NodeStyleTools.setTooltip(listButton, new Tooltip(message("Names")));
     }
 
     public void setParameters(BaseData2DLoadController controller) {

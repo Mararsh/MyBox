@@ -388,7 +388,7 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
         if (item == null) {
             return;
         }
-        loadView(item.getValue());
+        loadCurrent(item.getValue());
     }
 
     @Override
@@ -399,8 +399,8 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
         popNode(item.getValue());
     }
 
-    protected void loadView(DataNode node) {
-        nullView();
+    protected void loadCurrent(DataNode node) {
+        nullCurrent();
         if (viewController == null || node == null) {
             return;
         }
@@ -717,7 +717,7 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
 
     public void updateNode(DataNode parent, DataNode node) {
         try {
-            checkView(node);
+            checkCurrent(node);
             TreeItem<DataNode> nodeItem = find(node);
             if (nodeItem != null) {
                 try {
@@ -789,7 +789,7 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
         }
     }
 
-    protected void nullView() {
+    protected void nullCurrent() {
         currentNode = null;
         if (editButton != null) {
             editButton.setVisible(false);
@@ -802,13 +802,13 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
         }
     }
 
-    protected void reloadView() {
-        loadView(currentNode);
+    protected void reloadCurrent() {
+        loadCurrent(currentNode);
     }
 
-    protected void checkView(DataNode node) {
+    protected void checkCurrent(DataNode node) {
         if (currentNode != null && currentNode.equals(node)) {
-            loadView(node);
+            loadCurrent(node);
         }
     }
 

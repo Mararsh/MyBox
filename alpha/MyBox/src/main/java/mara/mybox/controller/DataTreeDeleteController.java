@@ -73,7 +73,7 @@ public class DataTreeDeleteController extends BaseDataTreeViewController {
                     loadTree();
                     if (WindowTools.isRunning(treeController)) {
                         treeController.loadTree();
-                        treeController.reloadView();
+                        treeController.reloadCurrent();
                     }
                 }
             }

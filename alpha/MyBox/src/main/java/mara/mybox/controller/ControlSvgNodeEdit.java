@@ -154,7 +154,7 @@ public class ControlSvgNodeEdit extends ControlXmlNodeEdit {
 
     @FXML
     public void showExamplesStyleMenu(Event event) {
-        PopTools.popValues(this, styleArea, "SvgStyleExamples", HelpTools.svgStyleExamples(), event);
+        PopTools.popMappedValues(this, styleArea, "SvgStyleExamples", HelpTools.svgStyleExamples(), event);
     }
 
     @FXML
@@ -166,7 +166,7 @@ public class ControlSvgNodeEdit extends ControlXmlNodeEdit {
 
     @FXML
     protected void showStyleHistories(Event event) {
-        PopTools.popStringValues(this, styleArea, event, "SvgStyleHistories", false);
+        PopTools.popSavedValues(this, styleArea, event, "SvgStyleHistories", false);
     }
 
     @FXML

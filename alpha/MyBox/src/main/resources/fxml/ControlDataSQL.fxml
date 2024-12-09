@@ -76,15 +76,6 @@ License:    Apache License Version 2.0
                                         </CheckBox>
                               <FlowPane alignment="CENTER_RIGHT" hgap="2.0" maxWidth="1.7976931348623157E308" vgap="2.0" HBox.hgrow="ALWAYS">
                                  <children>
-                                              <Button fx:id="listButton" mnemonicParsing="false" onAction="#showTableNames" onMouseEntered="#popTableNames">
-                                                  <graphic>
-                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                          <image>
-                                                              <Image url="@../buttons/Red/iconList.png" />
-                                                          </image>
-                                                      </ImageView>
-                                                  </graphic>
-                                              </Button>
                                               <Button fx:id="examplesButton" mnemonicParsing="false" onAction="#showExamplesMenu" onMouseEntered="#popExamplesMenu">
                                                   <graphic>
                                                       <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -108,6 +99,15 @@ License:    Apache License Version 2.0
                                                       <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                           <image>
                                                               <Image url="@../buttons/Red/iconHistory.png" />
+                                                          </image>
+                                                      </ImageView>
+                                                  </graphic>
+                                              </Button>
+                                              <Button fx:id="listButton" mnemonicParsing="false" onAction="#showTableNames" onMouseEntered="#popTableNames">
+                                                  <graphic>
+                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                          <image>
+                                                              <Image url="@../buttons/Red/iconList.png" />
                                                           </image>
                                                       </ImageView>
                                                   </graphic>

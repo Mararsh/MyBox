@@ -246,7 +246,7 @@ public class HtmlElementsController extends WebAddressController {
 
     @FXML
     protected void showElementHistories(Event event) {
-        PopTools.popStringValues(this, elementInput, event, key, true);
+        PopTools.popSavedValues(this, elementInput, event, key, true);
     }
 
     @FXML

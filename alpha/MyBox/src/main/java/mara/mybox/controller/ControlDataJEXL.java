@@ -9,10 +9,8 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.Separator;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.db.data.DataNode;
 import mara.mybox.db.table.TableStringValues;
@@ -20,8 +18,6 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.style.NodeStyleTools;
-import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.JShellTools;
 import mara.mybox.tools.StringTools;
 import static mara.mybox.value.Languages.message;
@@ -170,58 +166,30 @@ public class ControlDataJEXL extends ControlDataJShell {
 
     protected void jexlScriptExamples(Event event) {
         try {
-            String menuName = interfaceName + "ScriptExamples";
-            MenuController controller = MenuController.open(this, codesInput, event, menuName, false);
-            controller.setTitleLabel(message("Syntax"));
+            MenuController controller = PopTools.valuesMenu(nodeEditor, codesInput,
+                    interfaceName + "ScriptExamples", message("Syntax"), event);
 
-            List<Node> topButtons = new ArrayList<>();
-            Button newLineButton = new Button();
-            newLineButton.setGraphic(StyleTools.getIconImageView("iconTurnOver.png"));
-            NodeStyleTools.setTooltip(newLineButton, new Tooltip(message("Newline")));
-            newLineButton.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    codesInput.replaceText(codesInput.getSelection(), "\n");
-                    codesInput.requestFocus();
-                }
-            });
-            topButtons.add(newLineButton);
-
-            Button clearInputButton = new Button();
-            clearInputButton.setGraphic(StyleTools.getIconImageView("iconClear.png"));
-            NodeStyleTools.setTooltip(clearInputButton, new Tooltip(message("ClearInputArea")));
-            clearInputButton.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    codesInput.clear();
-                }
-            });
-            topButtons.add(clearInputButton);
-
-            controller.addFlowPane(topButtons);
-            controller.addNode(new Separator());
-
-            PopTools.addButtonsPane(controller, codesInput, Arrays.asList(
+            PopTools.addButtonsPane(controller, Arrays.asList(
                     " new('java.math.BigDecimal', 9) ", " new('java.lang.Double', 10d) ",
                     " new('java.lang.Long', 10) ", " new('java.lang.Integer', 10) ",
                     " new('java.lang.String', 'Hello') ", "  new('java.util.Date') "
             ));
-            PopTools.addButtonsPane(controller, codesInput, Arrays.asList(
+            PopTools.addButtonsPane(controller, Arrays.asList(
                     " true ", " false ", " null ", " empty(x) ", " size(x) ",
                     " 3 =~ [1,'2',3, 'hello'] ", " 2 !~ {1,'2',3, 'hello'} ",
                     " 'hello'.startsWith('hell') ", " 'hello'.endsWith('ll') ",
                     " not 'hello'.startsWith('hell') "
             ));
-            PopTools.addButtonsPane(controller, codesInput, Arrays.asList(
+            PopTools.addButtonsPane(controller, Arrays.asList(
                     " = ", " + ", " - ", " * ", " / ", ";", " , ",
                     "( )", " { } ", "[ ]", "\"\"", "''", " : ", " .. "
             ));
-            PopTools.addButtonsPane(controller, codesInput, Arrays.asList(
+            PopTools.addButtonsPane(controller, Arrays.asList(
                     " == ", " != ", " >= ", " > ", " <= ", " < ",
                     " && ", " and ", " || ", " or ", " !", " not ",
                     " =~ ", " !~ "
             ));
-            PopTools.addButtonsPane(controller, codesInput, Arrays.asList(
+            PopTools.addButtonsPane(controller, Arrays.asList(
                     "var list = [ 'A', 'B', 'C', 'D' ];\n"
                     + "return list.size();",
                     "var set = { 'A', 'B', 'C', 'D' };\n"
@@ -411,38 +379,10 @@ public class ControlDataJEXL extends ControlDataJShell {
 
     protected void jexlContextExamples(Event event) {
         try {
-            String menuName = interfaceName + "ContextExamples";
-            MenuController controller = MenuController.open(this, contextInput, event, menuName, false);
-            controller.setTitleLabel(message("Syntax"));
+            MenuController controller = PopTools.valuesMenu(nodeEditor, contextInput,
+                    interfaceName + "ContextExamples", message("Syntax"), event);
 
-            List<Node> topButtons = new ArrayList<>();
-            Button newLineButton = new Button();
-            newLineButton.setGraphic(StyleTools.getIconImageView("iconTurnOver.png"));
-            NodeStyleTools.setTooltip(newLineButton, new Tooltip(message("Newline")));
-            newLineButton.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    contextInput.replaceText(contextInput.getSelection(), "\n");
-                    contextInput.requestFocus();
-                }
-            });
-            topButtons.add(newLineButton);
-
-            Button clearInputButton = new Button();
-            clearInputButton.setGraphic(StyleTools.getIconImageView("iconClear.png"));
-            NodeStyleTools.setTooltip(clearInputButton, new Tooltip(message("ClearInputArea")));
-            clearInputButton.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    contextInput.clear();
-                }
-            });
-            topButtons.add(clearInputButton);
-
-            controller.addFlowPane(topButtons);
-            controller.addNode(new Separator());
-
-            PopTools.addButtonsPane(controller, contextInput, Arrays.asList(
+            PopTools.addButtonsPane(controller, Arrays.asList(
                     "jexlContext.set(\"Math\", Math.class);\n",
                     "jexlContext.set(\"BigDecimal\", new java.math.BigDecimal(10));\n",
                     "jexlContext.set(\"df\", \"#,###\");\n"
@@ -463,13 +403,13 @@ public class ControlDataJEXL extends ControlDataJShell {
     @FXML
     protected void popContextHistories(MouseEvent mouseEvent) {
         if (UserConfig.getBoolean("JexlContextHistoriesPopWhenMouseHovering", false)) {
-            PopTools.popStringValues(this, contextInput, mouseEvent, "JexlContextHistories", false);
+            PopTools.popSavedValues(this, contextInput, mouseEvent, "JexlContextHistories", false);
         }
     }
 
     @FXML
     protected void showContextHistories(ActionEvent event) {
-        PopTools.popStringValues(this, contextInput, event, "JexlContextHistories", false);
+        PopTools.popSavedValues(this, contextInput, event, "JexlContextHistories", false);
     }
 
     @FXML
@@ -480,13 +420,13 @@ public class ControlDataJEXL extends ControlDataJShell {
     @FXML
     protected void popParametersHistories(MouseEvent mouseEvent) {
         if (UserConfig.getBoolean("JexlParamtersHistoriesPopWhenMouseHovering", false)) {
-            PopTools.popStringValues(this, parametersInput, mouseEvent, "JexlParamtersHistories", false);
+            PopTools.popSavedValues(this, parametersInput, mouseEvent, "JexlParamtersHistories", false);
         }
     }
 
     @FXML
     protected void showParametersHistories(ActionEvent event) {
-        PopTools.popStringValues(this, parametersInput, event, "JexlParamtersHistories", false);
+        PopTools.popSavedValues(this, parametersInput, event, "JexlParamtersHistories", false);
     }
 
     @FXML

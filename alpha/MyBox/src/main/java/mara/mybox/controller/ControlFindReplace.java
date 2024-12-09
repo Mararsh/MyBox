@@ -732,7 +732,7 @@ public class ControlFindReplace extends BaseController {
 
     @FXML
     protected void showFindHistories(Event event) {
-        PopTools.popStringValues(this, findArea, event, baseName + "FindString", false);
+        PopTools.popSavedValues(this, findArea, event, baseName + "FindString", false);
     }
 
     @FXML
@@ -744,7 +744,7 @@ public class ControlFindReplace extends BaseController {
 
     @FXML
     protected void showReplaceHistories(Event event) {
-        PopTools.popStringValues(this, replaceArea, event, baseName + "ReplaceString", false);
+        PopTools.popSavedValues(this, replaceArea, event, baseName + "ReplaceString", false);
     }
 
     @FXML

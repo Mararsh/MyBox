@@ -75,7 +75,7 @@ public class NetworkQueryAddressController extends BaseController {
 
     @FXML
     protected void showAddressHistories(Event event) {
-        PopTools.popStringValues(this, addressInput, event, "NetworkQueryURLHistories");
+        PopTools.popSavedValues(this, addressInput, event, "NetworkQueryURLHistories");
     }
 
     @FXML

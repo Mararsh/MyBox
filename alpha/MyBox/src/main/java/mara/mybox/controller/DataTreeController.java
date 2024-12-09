@@ -402,7 +402,7 @@ public class DataTreeController extends BaseDataTreeViewController {
                     loadTree(null);
                 } else {
                     item.getParent().getChildren().remove(item);
-                    reloadView();
+                    reloadCurrent();
                 }
                 popSuccessful();
             }
@@ -450,7 +450,7 @@ public class DataTreeController extends BaseDataTreeViewController {
             @Override
             protected void whenSucceeded() {
                 item.getChildren().clear();
-                reloadView();
+                reloadCurrent();
                 popSuccessful();
             }
 
@@ -489,7 +489,7 @@ public class DataTreeController extends BaseDataTreeViewController {
             protected void whenSucceeded() {
                 if (count > 0) {
                     refreshItem(item);
-                    reloadView();
+                    reloadCurrent();
                 }
                 popSuccessful();
             }
@@ -535,7 +535,7 @@ public class DataTreeController extends BaseDataTreeViewController {
             protected void whenSucceeded() {
                 item.setValue(updatedNode);
                 treeView.refresh();
-                checkView(updatedNode);
+                checkCurrent(updatedNode);
                 popSuccessful();
             }
         };
@@ -579,7 +579,7 @@ public class DataTreeController extends BaseDataTreeViewController {
             @Override
             protected void whenSucceeded() {
                 reorderChildlren(item.getParent());
-                checkView(updatedNode);
+                checkCurrent(updatedNode);
                 popSuccessful();
             }
         };

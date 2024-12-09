@@ -33,7 +33,7 @@ License:    Apache License Version 2.0
                </graphic>
             </Button>
             <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-            <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction">
+            <Button fx:id="saveFilterButton" mnemonicParsing="false" onAction="#saveAction">
                <graphic>
                   <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -83,11 +83,11 @@ License:    Apache License Version 2.0
             </CheckBox>
             <FlowPane alignment="CENTER_RIGHT" hgap="2.0" maxWidth="1.7976931348623157E308" vgap="2.0" HBox.hgrow="ALWAYS">
                <children>
-                  <Button fx:id="historyScriptButton" mnemonicParsing="false" onAction="#showScriptHistories" onMouseEntered="#popScriptHistories">
+                  <Button fx:id="exampleScriptButton" mnemonicParsing="false" onAction="#showScriptExamples" onMouseEntered="#popScriptExamples">
                      <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../buttons/Red/iconHistory.png" />
+                              <Image url="@../buttons/Red/iconExamples.png" />
                            </image>
                         </ImageView>
                      </graphic>
@@ -101,11 +101,11 @@ License:    Apache License Version 2.0
                         </ImageView>
                      </graphic>
                   </Button>
-                  <Button fx:id="exampleScriptButton" mnemonicParsing="false" onAction="#showScriptExamples" onMouseEntered="#popScriptExamples">
+                  <Button fx:id="historyScriptButton" mnemonicParsing="false" onAction="#showScriptHistories" onMouseEntered="#popScriptHistories">
                      <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../buttons/Red/iconExamples.png" />
+                              <Image url="@../buttons/Red/iconHistory.png" />
                            </image>
                         </ImageView>
                      </graphic>

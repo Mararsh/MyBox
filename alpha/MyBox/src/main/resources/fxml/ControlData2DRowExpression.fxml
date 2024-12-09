@@ -38,11 +38,11 @@ License:    Apache License Version 2.0
                </graphic>
             </CheckBox>
                       <Label maxWidth="1.7976931348623157E308" text="%RowExpression" HBox.hgrow="ALWAYS" />
-                      <Button fx:id="historyScriptButton" mnemonicParsing="false" onAction="#showScriptHistories" onMouseEntered="#popScriptHistories">
+                      <Button fx:id="exampleScriptButton" mnemonicParsing="false" onAction="#showScriptExamples" onMouseEntered="#popScriptExamples">
                           <graphic>
                               <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                   <image>
-                                      <Image url="@../buttons/Red/iconHistory.png" />
+                                      <Image url="@../buttons/Red/iconExamples.png" />
                                   </image>
                               </ImageView>
                           </graphic>
@@ -56,11 +56,11 @@ License:    Apache License Version 2.0
                               </ImageView>
                           </graphic>
                       </Button>
-                      <Button fx:id="exampleScriptButton" mnemonicParsing="false" onAction="#showScriptExamples" onMouseEntered="#popScriptExamples">
+                      <Button fx:id="historyScriptButton" mnemonicParsing="false" onAction="#showScriptHistories" onMouseEntered="#popScriptHistories">
                           <graphic>
                               <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                   <image>
-                                      <Image url="@../buttons/Red/iconExamples.png" />
+                                      <Image url="@../buttons/Red/iconHistory.png" />
                                   </image>
                               </ImageView>
                           </graphic>

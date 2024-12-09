@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
@@ -21,6 +22,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Popup;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.PopTools;
@@ -38,6 +40,7 @@ public class MenuController extends BaseChildController {
 
     protected Node node;
     protected String baseStyle;
+    protected boolean alwaysClear, clearAndSet, closeAfterPaste;
 
     @FXML
     protected CheckBox childWindowCheck, popMenuCheck, closeNemuCheck, clearInputCheck;
@@ -114,8 +117,8 @@ public class MenuController extends BaseChildController {
         }
     }
 
-    public void setParameters(BaseController parent, Node node, Event mevent,
-            String name, boolean alwaysClear) {
+    public void setParameters(Connection conn, BaseController parent, Node node,
+            Event mevent, String name, boolean isAlwaysClear) {
         try {
             Point2D p = LocateTools.coordinate(mevent);
             setParameters(parent, node, p.getX(), p.getY());
@@ -124,8 +127,12 @@ public class MenuController extends BaseChildController {
             if (baseName == null) {
                 baseName = name(parent, node);
             }
+            alwaysClear = isAlwaysClear;
+            clearAndSet = alwaysClear || UserConfig.getBoolean(conn, name + "ValuesClearAndSet", true);
+            closeAfterPaste = UserConfig.getBoolean(conn, name + "ValuesCloseAfterPaste", true);
+
             if (childWindowCheck != null) {
-                childWindowCheck.setSelected(UserConfig.getBoolean(baseName + "AsChildWindow", false));
+                childWindowCheck.setSelected(UserConfig.getBoolean(conn, baseName + "AsChildWindow", false));
                 childWindowCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
@@ -138,7 +145,7 @@ public class MenuController extends BaseChildController {
             }
 
             if (popMenuCheck != null) {
-                popMenuCheck.setSelected(UserConfig.getBoolean(this.baseName + "PopWhenMouseHovering", false));
+                popMenuCheck.setSelected(UserConfig.getBoolean(conn, this.baseName + "PopWhenMouseHovering", false));
                 popMenuCheck.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent aevent) {
@@ -151,32 +158,35 @@ public class MenuController extends BaseChildController {
             }
 
             if (closeNemuCheck != null) {
-                closeNemuCheck.setSelected(UserConfig.getBoolean(this.baseName + "ValuesCloseAfterPaste", true));
+                closeNemuCheck.setSelected(UserConfig.getBoolean(conn, this.baseName + "ValuesCloseAfterPaste", true));
                 closeNemuCheck.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent aevent) {
                         if (isSettingValues) {
                             return;
                         }
-                        UserConfig.setBoolean(baseName + "ValuesCloseAfterPaste", closeNemuCheck.isSelected());
+                        closeAfterPaste = closeNemuCheck.isSelected();
+                        UserConfig.setBoolean(baseName + "ValuesCloseAfterPaste", closeAfterPaste);
                     }
                 });
             }
 
             if (clearInputCheck != null) {
                 if (alwaysClear) {
+                    clearAndSet = true;
                     clearInputCheck.setVisible(false);
-                    UserConfig.setBoolean(baseName + "ValuesClearAndSet", true);
+                    UserConfig.setBoolean(conn, baseName + "ValuesClearAndSet", true);
                 } else {
                     clearInputCheck.setVisible(true);
-                    clearInputCheck.setSelected(UserConfig.getBoolean(baseName + "ValuesClearAndSet", false));
+                    clearInputCheck.setSelected(UserConfig.getBoolean(conn, baseName + "ValuesClearAndSet", false));
                     clearInputCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                         @Override
                         public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                             if (isSettingValues) {
                                 return;
                             }
-                            UserConfig.setBoolean(baseName + "ValuesClearAndSet", clearInputCheck.isSelected());
+                            clearAndSet = clearInputCheck.isSelected();
+                            UserConfig.setBoolean(baseName + "ValuesClearAndSet", clearAndSet);
                         }
                     });
                 }
@@ -271,8 +281,44 @@ public class MenuController extends BaseChildController {
         return parentController.keyEventsFilter(event);
     }
 
+    /*
+        get/set
+     */
     public String getMenuName() {
         return baseName;
+    }
+
+    public Node getNode() {
+        return node;
+    }
+
+    public void setNode(Node node) {
+        this.node = node;
+    }
+
+    public boolean isAlwaysClear() {
+        return alwaysClear;
+    }
+
+    public MenuController setAlwaysClear(boolean alwaysClear) {
+        this.alwaysClear = alwaysClear;
+        return this;
+    }
+
+    public boolean isClearAndSet() {
+        return clearAndSet;
+    }
+
+    public void setClearAndSet(boolean clearAndSet) {
+        this.clearAndSet = clearAndSet;
+    }
+
+    public boolean isCloseAfterPaste() {
+        return closeAfterPaste;
+    }
+
+    public void setCloseAfterPaste(boolean closeAfterPaste) {
+        this.closeAfterPaste = closeAfterPaste;
     }
 
     /*
@@ -297,15 +343,14 @@ public class MenuController extends BaseChildController {
 
     public static MenuController open(BaseController parent, Node node, Event mevent,
             String baseName, boolean alwaysClear) {
-        try {
+        try (Connection conn = DerbyBase.getConnection()) {
             if (parent == null || node == null) {
                 return null;
             }
 
             MenuController controller;
-            if (UserConfig.getBoolean(baseName + "AsChildWindow", false)) {
-                controller = (MenuController) WindowTools.branchStage(
-                        parent, Fxmls.MenuFxml);
+            if (UserConfig.getBoolean(conn, baseName + "AsChildWindow", false)) {
+                controller = (MenuController) WindowTools.branchStage(parent, Fxmls.MenuFxml);
                 if (controller == null) {
                     return null;
                 }
@@ -329,7 +374,7 @@ public class MenuController extends BaseChildController {
                 controller = (MenuController) bcontroller;
             }
 
-            controller.setParameters(parent, node, mevent, baseName, alwaysClear);
+            controller.setParameters(conn, parent, node, mevent, baseName, alwaysClear);
             controller.requestMouse();
             return controller;
 

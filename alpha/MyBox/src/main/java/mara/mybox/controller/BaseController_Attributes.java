@@ -184,23 +184,19 @@ public abstract class BaseController_Attributes {
     }
 
     public Scene getMyScene() {
-        if (myScene == null) {
-            if (myStage != null) {
-                myScene = myStage.getScene();
-            } else if (thisPane != null) {
-                myScene = thisPane.getScene();
-            }
+        if (myStage != null) {
+            myScene = myStage.getScene();
+        } else if (thisPane != null) {
+            myScene = thisPane.getScene();
         }
         return myScene;
     }
 
     public Window getMyWindow() {
-        if (myWindow == null) {
-            if (myStage != null) {
-                myWindow = myStage;
-            } else if (getMyScene() != null) {
-                myWindow = myScene.getWindow();
-            }
+        if (myStage != null) {
+            myWindow = myStage;
+        } else if (getMyScene() != null) {
+            myWindow = myScene.getWindow();
         }
         return myWindow;
     }

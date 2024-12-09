@@ -200,7 +200,7 @@ public abstract class BaseDataValuesController extends BaseController {
     @FXML
     protected void showHistories(Event event) {
         if (valueInput != null) {
-            PopTools.popStringValues(this, valueInput, event, baseName + "Histories", false);
+            PopTools.popSavedValues(this, valueInput, event, baseName + "Histories", false);
         }
     }
 
