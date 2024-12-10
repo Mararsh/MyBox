@@ -194,7 +194,7 @@ public class WebHistoriesController extends BaseSysTableController<WebHistory> {
 
     @FXML
     protected void showFindHistories(Event event) {
-        PopTools.popSavedValues(this, findInput, event, "WebHistoriesFindHistories", false);
+        PopTools.popSavedValues(this, findInput, event, "WebHistoriesFindHistories");
     }
 
     @FXML

@@ -122,8 +122,7 @@ public class ControlDataSQL extends BaseDataValuesController {
                         Statement statement = conn.createStatement()) {
                     for (String sql : sqls) {
                         try {
-                            TableStringValues.add(conn, "SQL"
-                                    + (isInternalTable ? "Internal" : ""), sql);
+                            TableStringValues.add(conn, baseName + "Histories", sql);
                             outputArea.appendText(DateTools.nowString() + "  " + sql + "\n");
                             if (statement.execute(sql)) {
                                 int count = statement.getUpdateCount();
@@ -197,7 +196,7 @@ public class ControlDataSQL extends BaseDataValuesController {
 
     @FXML
     protected void tableDefinition() {
-        DatabaseTableDefinitionController.open(false);
+        DatabaseTableDefinitionController.open(isInternalTable);
     }
 
     /*

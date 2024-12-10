@@ -61,7 +61,7 @@ public class ColorPaletteInputController extends BaseChildController {
 
     @FXML
     protected void showHistories(Event event) {
-        PopTools.popSavedValues(this, colorInput, event, "ColorQueryColorHistories", false);
+        PopTools.popSavedValues(this, colorInput, event, "ColorQueryColorHistories");
     }
 
     @FXML

@@ -232,7 +232,7 @@ public class ControlPath2D extends BaseTableViewController<DoublePathSegment> {
 
     @FXML
     protected void showPathHistories(Event event) {
-        PopTools.popSavedValues(this, textArea, event, "SvgPathHistories", false);
+        PopTools.popSavedValues(this, textArea, event, "SvgPathHistories");
     }
 
     @FXML

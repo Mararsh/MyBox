@@ -19,7 +19,6 @@ License:    Apache License Version 2.0
     <children>
         <HBox alignment="CENTER_LEFT" layoutX="30.0" layoutY="537.0" spacing="2.0">
             <children>
-                <Label fx:id="topLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%SelectSourceNodes" wrapText="true" HBox.hgrow="ALWAYS" />
             <Button fx:id="viewButton" mnemonicParsing="false" onAction="#showViewMenu" onMouseEntered="#popViewMenu">
                <graphic>
                   <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -29,6 +28,7 @@ License:    Apache License Version 2.0
                   </ImageView>
                </graphic>
             </Button>
+                <Label fx:id="topLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%SelectSourceNodes" wrapText="true" HBox.hgrow="ALWAYS" />
             </children>
         </HBox>
         <TreeTableView fx:id="treeView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">

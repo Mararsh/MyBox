@@ -119,7 +119,7 @@ public class ControlXmlNodeBase extends BaseTableViewController<Node> {
 
     @FXML
     protected void showValueHistories(Event event) {
-        PopTools.popSavedValues(this, valueArea, event, "XmlNodeValueHistories", false);
+        PopTools.popSavedValues(this, valueArea, event, "XmlNodeValueHistories");
     }
 
     @FXML

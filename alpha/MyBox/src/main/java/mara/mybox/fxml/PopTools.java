@@ -674,7 +674,8 @@ public class PopTools {
         }
     }
 
-    public static void popSavedValues(BaseController parent, TextInputControl input, Event event, String valueName) {
+    public static void popSavedValues(BaseController parent, TextInputControl input, Event event,
+            String valueName) {
         popSavedValues(parent, input, event, valueName, false);
     }
 
@@ -1276,7 +1277,8 @@ public class PopTools {
 
             List<Node> tableNodes = new ArrayList<>();
             Label tableLabel = new Label(message("TableName"));
-            Button tableButton = new Button(data2d.getSheet());
+            String tableName = data2d.getSheet();
+            Button tableButton = makeMenuButton(controller, tableName, tableName);
             tableNodes.add(tableLabel);
             tableNodes.add(tableButton);
             controller.addFlowPane(tableNodes);

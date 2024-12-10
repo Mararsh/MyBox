@@ -3,12 +3,15 @@ package mara.mybox.controller;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
@@ -33,10 +36,32 @@ public class ControlDataJEXL extends ControlDataJShell {
     @FXML
     protected TextArea contextInput;
     @FXML
+    protected CheckBox wrapContentCheck;
+    @FXML
     protected TextField parametersInput;
 
     public ControlDataJEXL() {
         TipsLabelKey = "JEXLTips";
+    }
+
+    @Override
+    public void initEditor() {
+        try {
+            super.initEditor();
+            valueName = "script";
+
+            wrapContentCheck.setSelected(UserConfig.getBoolean(baseName + "ContentWrap", false));
+            wrapContentCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(baseName + "ContentWrap", newValue);
+                    contextInput.setWrapText(newValue);
+                }
+            });
+            contextInput.setWrapText(wrapContentCheck.isSelected());
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
     @Override
@@ -63,11 +88,31 @@ public class ControlDataJEXL extends ControlDataJShell {
     protected DataNode pickValues(DataNode node) {
         try {
             String script = codesInput.getText();
-            node.setValue("script", script == null ? null : script.trim());
+            if (script != null && !script.isBlank()) {
+                script = script.trim();
+                TableStringValues.add(baseName + "Histories", script);
+                node.setValue("script", script);
+            } else {
+                node.setValue("script", null);
+            }
+
             String context = contextInput.getText();
-            node.setValue("context", context == null ? null : context.trim());
+            if (context != null && !context.isBlank()) {
+                context = context.trim();
+                TableStringValues.add("JexlContextHistories", context);
+                node.setValue("context", context);
+            } else {
+                node.setValue("context", null);
+            }
+
             String parameters = parametersInput.getText();
-            node.setValue("parameters", parameters == null ? null : parameters.trim());
+            if (parameters != null && !parameters.isBlank()) {
+                parameters = parameters.trim();
+                TableStringValues.add("JexlParamtersHistories", parameters);
+                node.setValue("parameters", parameters);
+            } else {
+                node.setValue("parameters", null);
+            }
             return node;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -111,7 +156,7 @@ public class ControlDataJEXL extends ControlDataJShell {
             if (script == null || script.isBlank()) {
                 return false;
             }
-            TableStringValues.add("JexlScriptHistories", script.trim());
+            TableStringValues.add(baseName + "Histories", script.trim());
             String jexlContext = "jexlContext.clear();";
             runSnippet(jexlContext, jexlContext);
             String contexts = contextInput.getText();
@@ -401,15 +446,15 @@ public class ControlDataJEXL extends ControlDataJShell {
     }
 
     @FXML
-    protected void popContextHistories(MouseEvent mouseEvent) {
+    protected void popContextHistories(Event event) {
         if (UserConfig.getBoolean("JexlContextHistoriesPopWhenMouseHovering", false)) {
-            PopTools.popSavedValues(this, contextInput, mouseEvent, "JexlContextHistories", false);
+            showContextHistories(event);
         }
     }
 
     @FXML
-    protected void showContextHistories(ActionEvent event) {
-        PopTools.popSavedValues(this, contextInput, event, "JexlContextHistories", false);
+    protected void showContextHistories(Event event) {
+        PopTools.popSavedValues(this, contextInput, event, "JexlContextHistories");
     }
 
     @FXML
@@ -418,15 +463,15 @@ public class ControlDataJEXL extends ControlDataJShell {
     }
 
     @FXML
-    protected void popParametersHistories(MouseEvent mouseEvent) {
+    protected void popParametersHistories(Event event) {
         if (UserConfig.getBoolean("JexlParamtersHistoriesPopWhenMouseHovering", false)) {
-            PopTools.popSavedValues(this, parametersInput, mouseEvent, "JexlParamtersHistories", false);
+            showParametersHistories(event);
         }
     }
 
     @FXML
-    protected void showParametersHistories(ActionEvent event) {
-        PopTools.popSavedValues(this, parametersInput, event, "JexlParamtersHistories", false);
+    protected void showParametersHistories(Event event) {
+        PopTools.popSavedValues(this, parametersInput, event, "JexlParamtersHistories");
     }
 
     @FXML

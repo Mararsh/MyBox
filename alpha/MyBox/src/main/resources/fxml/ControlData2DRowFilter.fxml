@@ -15,7 +15,6 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
@@ -23,16 +22,15 @@ License:    Apache License Version 2.0
     <children>
       <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="54.0" maxWidth="1.7976931348623157E308" spacing="2.0">
          <children>
-            <Button fx:id="helpButton" mnemonicParsing="false" onAction="#showRowExpressionHelps" onMouseEntered="#popRowExpressionHelps">
+            <Button fx:id="selectButton" mnemonicParsing="false" onAction="#selectAction">
                <graphic>
-                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../buttons/iconClaw.png" />
+                        <Image url="@../buttons/Red/iconSelect.png" />
                      </image>
                   </ImageView>
                </graphic>
             </Button>
-            <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
             <Button fx:id="saveFilterButton" mnemonicParsing="false" onAction="#saveAction">
                <graphic>
                   <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
@@ -42,11 +40,12 @@ License:    Apache License Version 2.0
                   </ImageView>
                </graphic>
             </Button>
-            <Button fx:id="selectButton" mnemonicParsing="false" onAction="#selectAction">
+            <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+            <Button fx:id="helpButton" mnemonicParsing="false" onAction="#showRowExpressionHelps" onMouseEntered="#popRowExpressionHelps">
                <graphic>
-                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../buttons/Red/iconSelect.png" />
+                        <Image url="@../buttons/iconClaw.png" />
                      </image>
                   </ImageView>
                </graphic>
@@ -62,12 +61,12 @@ License:    Apache License Version 2.0
       <HBox spacing="2.0">
          <children>
             <Label minHeight="-Infinity" text="%TakeSourceDataWhenExpressionEmptyOr" wrapText="true" />
-            <RadioButton fx:id="trueRadio" mnemonicParsing="false" selected="true" text="true">
+            <RadioButton fx:id="trueRadio" mnemonicParsing="false" selected="true" text="true" wrapText="true">
                <toggleGroup>
                   <ToggleGroup fx:id="takeGroup" />
                </toggleGroup>
             </RadioButton>
-            <RadioButton fx:id="othersRadio" mnemonicParsing="false" text="%Others" toggleGroup="$takeGroup" />
+            <RadioButton fx:id="othersRadio" mnemonicParsing="false" text="%Others" toggleGroup="$takeGroup" wrapText="true" />
          </children>
       </HBox>
       <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0">
@@ -81,55 +80,52 @@ License:    Apache License Version 2.0
                   </ImageView>
                </graphic>
             </CheckBox>
-            <FlowPane alignment="CENTER_RIGHT" hgap="2.0" maxWidth="1.7976931348623157E308" vgap="2.0" HBox.hgrow="ALWAYS">
-               <children>
-                  <Button fx:id="exampleScriptButton" mnemonicParsing="false" onAction="#showScriptExamples" onMouseEntered="#popScriptExamples">
-                     <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../buttons/Red/iconExamples.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Button>
-                  <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction">
-                     <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../buttons/Red/iconClear.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Button>
-                  <Button fx:id="historyScriptButton" mnemonicParsing="false" onAction="#showScriptHistories" onMouseEntered="#popScriptHistories">
-                     <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../buttons/Red/iconHistory.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Button>
-                  <Button fx:id="scriptButton" mnemonicParsing="false" onAction="#scriptAction">
-                     <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../buttons/Red/iconScript.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Button>
-                  <Button fx:id="placeholdersButton" mnemonicParsing="false" onAction="#showPlaceholders" onMouseEntered="#popPlaceholders">
-                     <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../buttons/Red/iconList.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Button>
-               </children>
-            </FlowPane>
+            <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+            <Button fx:id="exampleScriptButton" mnemonicParsing="false" onAction="#showScriptExamples" onMouseEntered="#popScriptExamples">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconExamples.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconClear.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="scriptButton" mnemonicParsing="false" onAction="#scriptAction">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconScript.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="historyScriptButton" mnemonicParsing="false" onAction="#showScriptHistories" onMouseEntered="#popScriptHistories">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconHistory.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="placeholdersButton" mnemonicParsing="false" onAction="#showPlaceholders" onMouseEntered="#popPlaceholders">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconList.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
          </children>
       </HBox>
       <TextArea fx:id="scriptInput" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" wrapText="true" VBox.vgrow="ALWAYS" />

@@ -149,16 +149,30 @@ public class DataTreeController extends BaseDataTreeViewController {
 
         }
 
-        Menu orderMenu = new Menu(message("OrderNumber"));
         if (!isRoot) {
             menu = new MenuItem(message("ChangeNodeOrder"), StyleTools.getIconImageView("iconInput.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 reorderNode(treeItem);
             });
-            orderMenu.getItems().add(menu);
+
         }
 
-        if (!isLeaf) {
+        MenuItem orderMenuItem = new MenuItem(message("ChangeNodeOrder"), StyleTools.getIconImageView("iconInput.png"));
+        orderMenuItem.setOnAction((ActionEvent menuItemEvent) -> {
+            reorderNode(treeItem);
+        });
+
+        if (isLeaf) {
+            if (!isRoot) {
+                items.add(orderMenuItem);
+            }
+        } else {
+            Menu orderMenu = new Menu(message("OrderNumber"));
+
+            if (!isRoot) {
+                orderMenu.getItems().add(orderMenuItem);
+            }
+
             menu = new MenuItem(message("TrimDescendantsOrders"), StyleTools.getIconImageView("iconClean.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 trimDescendantsOrders(treeItem, true);
@@ -170,10 +184,6 @@ public class DataTreeController extends BaseDataTreeViewController {
                 trimDescendantsOrders(treeItem, false);
             });
             orderMenu.getItems().add(menu);
-        }
-
-        if (!orderMenu.getItems().isEmpty()) {
-            items.add(orderMenu);
         }
 
         menu = new MenuItem(message("CopyNodes"), StyleTools.getIconImageView("iconCopy.png"));

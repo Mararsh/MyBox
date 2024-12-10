@@ -95,6 +95,7 @@ public class ControlDataJavascript extends BaseDataValuesController {
                 popError(message("InvalidParameters") + ": JavaScript");
                 return;
             }
+            TableStringValues.add(baseName + "Histories", script.trim());
             showRightPane();
             String ret;
             try {
@@ -113,7 +114,6 @@ public class ControlDataJavascript extends BaseDataValuesController {
             outputs += "<div class=\"valueBox\">" + HtmlWriteTools.stringToHtml(ret) + "</div><br><br>";
             String html = HtmlWriteTools.html(null, HtmlStyles.DefaultStyle, "<body>" + outputs + "</body>");
             outputController.loadContents(html);
-            TableStringValues.add("JavaScriptHistories", script.trim());
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

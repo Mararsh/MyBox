@@ -14,6 +14,7 @@ import javafx.scene.input.MouseEvent;
 import mara.mybox.db.data.DataNode;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableNodeRowFilter;
+import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
@@ -108,9 +109,15 @@ public class ControlDataRowFilter extends BaseDataValuesController {
                 }
             }
             node.setValue("max_match", maxData);
-            String script = scriptInput.getText();
-            node.setValue("script", script == null ? null : script.trim());
             node.setValue("match_true", trueRadio.isSelected());
+            String script = scriptInput.getText();
+            if (script != null && !script.isBlank()) {
+                script = script.trim();
+                TableStringValues.add(baseName + "Histories", script);
+                node.setValue("script", script);
+            } else {
+                node.setValue("script", null);
+            }
             return node;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -156,7 +163,7 @@ public class ControlDataRowFilter extends BaseDataValuesController {
 
     @FXML
     protected void showScriptHistories(Event event) {
-        PopTools.popSavedValues(this, scriptInput, event, baseName + "Histories", false);
+        PopTools.popSavedValues(this, scriptInput, event, baseName + "Histories");
     }
 
     @FXML

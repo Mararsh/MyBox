@@ -48,14 +48,6 @@ public class ControlData2DRowExpression extends BaseController {
             });
             scriptInput.setWrapText(wrapCheck.isSelected());
 
-//            onlyStatisticCheck.setSelected(UserConfig.getBoolean(baseName + "OnlyStatisticNumbers", false));
-//            onlyStatisticCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-//                @Override
-//                public void changed(ObservableValue v, Boolean ov, Boolean nv) {
-//                    UserConfig.setBoolean(baseName + "OnlyStatisticNumbers", nv);
-//                    setPlaceholders();
-//                }
-//            });
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -111,7 +103,7 @@ public class ControlData2DRowExpression extends BaseController {
 
     @FXML
     protected void showScriptHistories(Event event) {
-        PopTools.popSavedValues(this, scriptInput, event, baseName + "Histories", false);
+        PopTools.popSavedValues(this, scriptInput, event, baseName + "Histories");
     }
 
     @FXML

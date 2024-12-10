@@ -37,7 +37,7 @@ License:    Apache License Version 2.0
                   </ImageView>
                </graphic>
             </CheckBox>
-                      <Label maxWidth="1.7976931348623157E308" text="%RowExpression" HBox.hgrow="ALWAYS" />
+                      <Label maxWidth="1.7976931348623157E308" text="%RowExpression" textAlignment="RIGHT" HBox.hgrow="ALWAYS" />
                       <Button fx:id="exampleScriptButton" mnemonicParsing="false" onAction="#showScriptExamples" onMouseEntered="#popScriptExamples">
                           <graphic>
                               <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

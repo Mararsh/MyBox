@@ -166,7 +166,7 @@ public class ControlSvgNodeEdit extends ControlXmlNodeEdit {
 
     @FXML
     protected void showStyleHistories(Event event) {
-        PopTools.popSavedValues(this, styleArea, event, "SvgStyleHistories", false);
+        PopTools.popSavedValues(this, styleArea, event, "SvgStyleHistories");
     }
 
     @FXML

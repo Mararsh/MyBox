@@ -106,13 +106,13 @@ public class ControlDataJShell extends BaseDataValuesController {
     @FXML
     @Override
     public void startAction() {
+        if (startButton.getUserData() != null) {
+            cancelAction();
+            return;
+        }
         String codes = codesInput.getText();
         if (codes == null || codes.isBlank()) {
             popError(message("NoInput"));
-            return;
-        }
-        if (startButton.getUserData() != null) {
-            cancelAction();
             return;
         }
         StyleTools.setNameIcon(startButton, message("Stop"), "iconStop.png");
@@ -139,7 +139,7 @@ public class ControlDataJShell extends BaseDataValuesController {
     }
 
     protected boolean handleCodes(String codes) {
-        TableStringValues.add("JShellHistories", codes.trim());
+        TableStringValues.add(baseName + "Histories", codes.trim());
         return runCodes(codes);
     }
 

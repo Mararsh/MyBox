@@ -32,7 +32,7 @@ public class Data2DTableQueryController extends ControlDataSQL {
     public void setParameters(BaseData2DLoadController controller) {
         try {
             data2DController = controller;
-            data2D = viewController.data2D;
+            data2D = data2DController.data2D;
 
             parentController = data2DController;
             baseName = data2DController.baseName;
@@ -55,6 +55,16 @@ public class Data2DTableQueryController extends ControlDataSQL {
     @Override
     public void saveAction() {
         ControlDataSQL.open(this, sqlArea.getText());
+    }
+
+    @FXML
+    @Override
+    protected void tableDefinition() {
+        if (data2D != null) {
+            DatabaseTableDefinitionController.load(data2D.getSheet());
+        } else {
+            DatabaseTableDefinitionController.open();
+        }
     }
 
     @FXML

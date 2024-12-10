@@ -84,7 +84,7 @@ public class ColorInputController extends BaseController {
 
     @FXML
     protected void showHistories(Event event) {
-        PopTools.popSavedValues(this, valuesArea, event, "ColorInputHistories", false);
+        PopTools.popSavedValues(this, valuesArea, event, "ColorInputHistories");
     }
 
     @FXML

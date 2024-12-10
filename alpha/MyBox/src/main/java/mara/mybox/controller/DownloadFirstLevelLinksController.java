@@ -1556,7 +1556,7 @@ public class DownloadFirstLevelLinksController extends BaseTablePagesController<
 
     @FXML
     protected void showAddressHistories(Event event) {
-        PopTools.popSavedValues(this, addressInput, event, "DownloadHtmlsHistories", false);
+        PopTools.popSavedValues(this, addressInput, event, "DownloadHtmlsHistories");
     }
 
     @FXML

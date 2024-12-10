@@ -177,38 +177,7 @@ public class ControlDataData2DDefinition extends BaseDataValuesController {
         }
     }
 
-//    public void pasteNode(InfoNode node) {
-//        if (node == null) {
-//            return;
-//        }
-//        if (task != null) {
-//            task.cancel();
-//        }
-//        task = new FxSingletonTask<Void>(this) {
-//            Data2D data;
-//
-//            @Override
-//            protected boolean handle() {
-//                try {
-//                    data = Data2DDefinitionTools.definitionFromXML(this, myController, node.getInfo());
-//                    return true;
-//                } catch (Exception e) {
-//                    error = e.toString();
-//                    return false;
-//                }
-//            }
-//
-//            @Override
-//            protected void whenSucceeded() {
-//                if (data != null && data.getColumns() != null) {
-//                    columnsController.tableData.addAll(data.getColumns());
-//                }
-//                tabPane.getSelectionModel().select(valueTab);
-//            }
-//
-//        };
-//        start(task);
-//    }
+
     /*
         static
      */

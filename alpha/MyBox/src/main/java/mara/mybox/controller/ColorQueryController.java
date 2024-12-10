@@ -123,6 +123,7 @@ public class ColorQueryController extends BaseController {
             if (value == null || value.isBlank()) {
                 return null;
             }
+            TableStringValues.add("ColorQueryColorHistories", value);
             String separator = separatorInput.getText();
             if (separator == null || separator.isEmpty()) {
                 separator = ", ";
@@ -141,9 +142,7 @@ public class ColorQueryController extends BaseController {
         try {
             if (!showValue()) {
                 popError(message("InvalidParameters") + ": " + message("Color"));
-                return;
             }
-            TableStringValues.add("ColorQueryColorHistories", colorInput.getText());
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -200,7 +199,7 @@ public class ColorQueryController extends BaseController {
 
     @FXML
     protected void showHistories(Event event) {
-        PopTools.popSavedValues(this, colorInput, event, "ColorQueryColorHistories", false);
+        PopTools.popSavedValues(this, colorInput, event, "ColorQueryColorHistories");
     }
 
     @FXML

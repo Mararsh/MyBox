@@ -10,7 +10,6 @@ import javafx.scene.control.SelectionMode;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import mara.mybox.data2d.DataInternalTable;
-import mara.mybox.data2d.DataTable;
 import mara.mybox.data2d.tools.Data2DTableTools;
 import mara.mybox.db.table.TableData2D;
 import mara.mybox.dev.MyBoxLog;
@@ -102,13 +101,24 @@ public class DatabaseTableDefinitionController extends BaseController {
     /*
         static
      */
-    public static DatabaseTableDefinitionController open(boolean internalTables) {
+    public static DatabaseTableDefinitionController open() {
         DatabaseTableDefinitionController controller
                 = (DatabaseTableDefinitionController) WindowTools.openStage(Fxmls.DatabaseTableDefinitionFxml);
         controller.requestMouse();
+        return controller;
+    }
+
+    public static DatabaseTableDefinitionController open(boolean internalTables) {
+        DatabaseTableDefinitionController controller = open();
         if (internalTables) {
             controller.internalRadio.setSelected(true);
         }
+        return controller;
+    }
+
+    public static DatabaseTableDefinitionController load(String tableName) {
+        DatabaseTableDefinitionController controller = open();
+        controller.loadDefinition(tableName);
         return controller;
     }
 

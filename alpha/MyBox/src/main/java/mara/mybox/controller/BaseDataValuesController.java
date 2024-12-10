@@ -12,6 +12,7 @@ import javafx.scene.control.TextInputControl;
 import mara.mybox.db.data.DataNode;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.BaseNodeTable;
+import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
@@ -102,7 +103,13 @@ public abstract class BaseDataValuesController extends BaseController {
     protected DataNode pickValues(DataNode node) {
         try {
             String value = valueInput.getText();
-            node.setValue(valueName, value == null ? null : value.trim());
+            if (value != null && !value.isBlank()) {
+                value = value.trim();
+                TableStringValues.add(baseName + "Histories", value);
+                node.setValue(valueName, value);
+            } else {
+                node.setValue(valueName, null);
+            }
             return node;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -200,7 +207,7 @@ public abstract class BaseDataValuesController extends BaseController {
     @FXML
     protected void showHistories(Event event) {
         if (valueInput != null) {
-            PopTools.popSavedValues(this, valueInput, event, baseName + "Histories", false);
+            PopTools.popSavedValues(this, valueInput, event, baseName + "Histories");
         }
     }
 

@@ -55,7 +55,7 @@ public class ControlDataMathFunction extends BaseDataValuesController {
     @FXML
     protected TextArea expressionInput, domainInput;
     @FXML
-    protected CheckBox wrapCheck;
+    protected CheckBox wrapCheck, wrapDomainCheck;
     @FXML
     protected VBox inputsBox;
     @FXML
@@ -81,6 +81,7 @@ public class ControlDataMathFunction extends BaseDataValuesController {
 
             valueInput = expressionInput;
             valueWrapCheck = wrapCheck;
+            valueName = "expression";
             super.initEditor();
 
             variablesInput.focusedProperty().addListener(new ChangeListener<Boolean>() {
@@ -103,6 +104,16 @@ public class ControlDataMathFunction extends BaseDataValuesController {
                     valueChanged(true);
                 }
             });
+
+            wrapDomainCheck.setSelected(UserConfig.getBoolean(baseName + "DomainWrap", false));
+            wrapDomainCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(baseName + "DomainWrap", newValue);
+                    domainInput.setWrapText(newValue);
+                }
+            });
+            domainInput.setWrapText(wrapDomainCheck.isSelected());
 
             outputController.setParent(this, ControlWebView.ScrollType.Bottom);
 
@@ -148,13 +159,25 @@ public class ControlDataMathFunction extends BaseDataValuesController {
     protected DataNode pickValues(DataNode node) {
         try {
             expression = expressionInput.getText();
-            node.setValue("expression", expression == null ? null : expression.trim());
+            if (expression != null && !expression.isBlank()) {
+                expression = expression.trim();
+                TableStringValues.add(baseName + "Histories", expression);
+                node.setValue("expression", expression);
+            } else {
+                node.setValue("expression", null);
+            }
 
             String variables = variablesInput.getText();
             node.setValue("variables", variables == null ? null : variables.trim());
 
             domain = domainInput.getText();
-            node.setValue("domain", domain == null ? null : domain.trim());
+            if (domain != null && !domain.isBlank()) {
+                domain = domain.trim();
+                TableStringValues.add("FunctionDomainHistories", domain);
+                node.setValue("domain", domain);
+            } else {
+                node.setValue("domain", null);
+            }
             return node;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -371,6 +394,10 @@ public class ControlDataMathFunction extends BaseDataValuesController {
                 popError(message("Failed"));
                 return;
             }
+            TableStringValues.add(baseName + "Histories", expression.trim());
+            if (domain != null && !domain.isBlank()) {
+                TableStringValues.add("FunctionDomainHistories", domain);
+            }
             double d = DoubleTools.scale(ret, ColumnDefinition.InvalidAs.Empty, calculateScale);
             ret = DoubleTools.invalidDouble(d) ? ret : (d + "");
             outputs += DateTools.nowString() + "<div class=\"valueText\" >"
@@ -388,10 +415,6 @@ public class ControlDataMathFunction extends BaseDataValuesController {
                     + "</div><br><br>";
             String html = HtmlWriteTools.html(null, HtmlStyles.DefaultStyle, "<body>" + outputs + "</body>");
             outputController.loadContents(html);
-            TableStringValues.add("FunctionScriptHistories", expression);
-            if (domain != null && !domain.isBlank()) {
-                TableStringValues.add("FunctionDomainHistories", domain);
-            }
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -457,7 +480,7 @@ public class ControlDataMathFunction extends BaseDataValuesController {
 
     @FXML
     protected void showDomainHistories(Event event) {
-        PopTools.popSavedValues(this, domainInput, event, "FunctionDomainHistories", false);
+        PopTools.popSavedValues(this, domainInput, event, "FunctionDomainHistories");
     }
 
     @FXML
