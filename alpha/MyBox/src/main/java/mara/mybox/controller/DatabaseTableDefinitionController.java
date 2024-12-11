@@ -13,6 +13,8 @@ import mara.mybox.data2d.DataInternalTable;
 import mara.mybox.data2d.tools.Data2DTableTools;
 import mara.mybox.db.table.TableData2D;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxSingletonTask;
+import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -67,35 +69,68 @@ public class DatabaseTableDefinitionController extends BaseController {
     }
 
     public void loadList() {
-        try {
-            List<String> names;
-            if (internalRadio.isSelected()) {
-                names = DataInternalTable.InternalTables;
-            } else {
-                names = Data2DTableTools.userTables();
-            }
-            listView.getItems().setAll(names);
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
+        if (task != null) {
+            task.cancel();
         }
+        listView.getItems().clear();
+        task = new FxSingletonTask<Void>(this) {
+
+            List<String> names;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    if (internalRadio.isSelected()) {
+                        names = DataInternalTable.InternalTables;
+                    } else {
+                        names = Data2DTableTools.userTables();
+                    }
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                if (names != null) {
+                    listView.getItems().setAll(names);
+                }
+            }
+        };
+        start(task, listView);
     }
 
     public void loadDefinition(String name) {
-        try {
-            if (name == null || name.isBlank()) {
-                return;
-            }
-            String html = TableData2D.tableDefinition(name);
-            if (html != null && !html.isBlank()) {
-                viewController.loadContents(html);
-            } else {
-                popError(message("NotFound"));
+        if (name == null || name.isBlank()) {
+            return;
+        }
+        viewController.loadContents("");
+        FxTask loadTask = new FxSingletonTask<Void>(this) {
+
+            String html;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    html = TableData2D.tableDefinition(name);
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
             }
 
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
+            @Override
+            protected void whenSucceeded() {
+                if (html != null && !html.isBlank()) {
+                    viewController.loadContents(html);
+                }
+            }
+
+        };
+        start(loadTask, false);
     }
 
     /*
@@ -113,12 +148,6 @@ public class DatabaseTableDefinitionController extends BaseController {
         if (internalTables) {
             controller.internalRadio.setSelected(true);
         }
-        return controller;
-    }
-
-    public static DatabaseTableDefinitionController load(String tableName) {
-        DatabaseTableDefinitionController controller = open();
-        controller.loadDefinition(tableName);
         return controller;
     }
 

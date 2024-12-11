@@ -694,7 +694,11 @@ public class Data2DManufactureController extends BaseData2DViewController {
             popError(message("InvalidData"));
             return;
         }
-        Data2DAttributesController.open(this);
+        if (data2D.isInternalTable()) {
+            infoAction();
+        } else {
+            Data2DAttributesController.open(this);
+        }
     }
 
     @FXML

@@ -9,6 +9,7 @@ import mara.mybox.controller.Data2DManufactureController;
 import mara.mybox.controller.DataInMyBoxClipboardController;
 import mara.mybox.controller.MatricesManageController;
 import mara.mybox.controller.MyBoxTablesController;
+import mara.mybox.data2d.DataInternalTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
@@ -209,7 +210,9 @@ public class Data2DDefinition extends BaseData {
     }
 
     public boolean isInternalTable() {
-        return dataType == DataType.InternalTable;
+        return dataType == DataType.InternalTable
+                || (dataType == DataType.DatabaseTable
+                && DataInternalTable.isInternalTable(sheet));
     }
 
     public boolean isDataFile() {

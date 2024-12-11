@@ -9,6 +9,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
+import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -61,7 +62,10 @@ public class Data2DTableQueryController extends ControlDataSQL {
     @Override
     protected void tableDefinition() {
         if (data2D != null) {
-            DatabaseTableDefinitionController.load(data2D.getSheet());
+            String info = data2D.dataInfo();
+            if (info != null && !info.isBlank()) {
+                HtmlPopController.showHtml(this, HtmlWriteTools.table(info));
+            }
         } else {
             DatabaseTableDefinitionController.open();
         }

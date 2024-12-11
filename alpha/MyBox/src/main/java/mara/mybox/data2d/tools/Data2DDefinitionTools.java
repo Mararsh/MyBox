@@ -673,7 +673,7 @@ public class Data2DDefinitionTools {
         if (value == null || value.isBlank()) {
             return value;
         }
-        return value.replaceAll("<" + DataQuote + ">", "<![CDATA]")
+        return value.replaceAll("<" + DataQuote + ">", "<![CDATA[")
                 .replaceAll("</" + DataQuote + ">", "]]>");
     }
 
