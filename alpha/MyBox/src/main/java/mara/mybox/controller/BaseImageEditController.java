@@ -61,9 +61,9 @@ public class BaseImageEditController extends BaseShapeController {
             initMore();
 
             baseTitle = parent.baseTitle + "." + operation;
-            if (imageController.sourceFile != null) {
-                baseTitle += " - " + imageController.sourceFile.getName();
-            }
+//            if (imageController.sourceFile != null) {
+//                baseTitle += " - " + imageController.sourceFile.getName();
+//            }
             setTitle(baseTitle);
 
             loadImage();

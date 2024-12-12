@@ -108,15 +108,16 @@ public class NodeTools {
         }
     }
 
-    public static Node getRoot(Node node) {
+    public static Node parent(int level, Node node) {
         if (node == null) {
             return node;
         }
+        MyBoxLog.debug("  ".repeat(level) + node.getClass() + " " + node.getId() + " " + node.getStyle());
         Node parent = node.getParent();
         if (parent == null) {
             return node;
         }
-        return getRoot(parent);
+        return parent(level + 1, parent);
     }
 
     public static boolean setRadioFirstSelected(ToggleGroup group) {

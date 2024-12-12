@@ -651,12 +651,12 @@ public abstract class Data2D_Data extends Data2D_Attributes {
                 return null;
             }
             List<String> list = new ArrayList<>();
+            list.add("#{" + message("TableRowNumber") + "}");
+            list.add("#{" + message("DataRowNumber") + "}");
             for (Data2DColumn column : columns) {
                 String name = column.getColumnName();
                 list.add("#{" + name + "}");
             }
-            list.add("#{" + message("TableRowNumber") + "}");
-            list.add("#{" + message("DataRowNumber") + "}");
             for (Data2DColumn column : columns) {
                 String name = column.getColumnName();
                 if (allStatistic || column.isNumberType()) {

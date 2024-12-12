@@ -82,20 +82,17 @@ public class FunctionsListController extends ControlWebView {
         }
     }
 
-    public void makeDocuments(String lang) {
+    public void makeDocuments(MyBoxDocumentsController maker, File path, String lang) {
         task = new FxTask<Void>(this) {
-            private File path;
 
             @Override
             protected boolean handle() {
                 try {
-                    path = new File(AppVariables.MyboxDataPath + "/doc/");
-
                     FunctionsList list = new FunctionsList(getMainMenu(), true, lang);
                     StringTable table = list.make();
                     File file = new File(path, "mybox_functions_" + lang + ".html");
                     TextFileTools.writeFile(file, table.html());
-                    task.setInfo(file.getAbsolutePath());
+                    maker.showLogs(file.getAbsolutePath());
 
                     return true;
                 } catch (Exception e) {
@@ -116,13 +113,15 @@ public class FunctionsListController extends ControlWebView {
     /*
         static
      */
-    public static void documents() {
+    public static void documents(MyBoxDocumentsController maker, File path) {
         try {
-            FunctionsListController zh = (FunctionsListController) WindowTools.openStage(Fxmls.FunctionsListFxml, Languages.BundleZhCN);
-            zh.makeDocuments("zh");
+            FunctionsListController zh = (FunctionsListController) WindowTools
+                    .openStage(Fxmls.FunctionsListFxml, Languages.BundleZhCN);
+            zh.makeDocuments(maker, path, "zh");
 
-            FunctionsListController en = (FunctionsListController) WindowTools.openStage(Fxmls.FunctionsListFxml, Languages.BundleEn);
-            en.makeDocuments("en");
+            FunctionsListController en = (FunctionsListController) WindowTools
+                    .openStage(Fxmls.FunctionsListFxml, Languages.BundleEn);
+            en.makeDocuments(maker, path, "en");
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

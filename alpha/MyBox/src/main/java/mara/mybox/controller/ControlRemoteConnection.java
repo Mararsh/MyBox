@@ -648,7 +648,7 @@ public class ControlRemoteConnection extends BaseSysTableController<PathConnecti
                 if (attrs == null) {
                     showLogs("mkdirs " + path);
                     sftp.mkdir(path);
-//                    setStat(path, -1, permission);   // seems can not change mtime of directory 
+//                    setStat(path, -1, permission);   // seems can not change mtime of directory
                 }
                 parent = path;
             }
@@ -660,6 +660,7 @@ public class ControlRemoteConnection extends BaseSysTableController<PathConnecti
         }
     }
 
+    @Override
     public void showLogs(String log) {
         taskController.showLogs(log);
         if (task != null) {
@@ -667,6 +668,7 @@ public class ControlRemoteConnection extends BaseSysTableController<PathConnecti
         }
     }
 
+    @Override
     public void updateLogs(String log, boolean immediate) {
         taskController.updateLogs(log, true, immediate);
         if (task != null) {

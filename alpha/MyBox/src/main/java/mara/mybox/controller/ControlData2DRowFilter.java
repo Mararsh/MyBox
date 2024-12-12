@@ -163,6 +163,12 @@ public class ControlData2DRowFilter extends ControlDataRowFilter {
     }
 
     @FXML
+    @Override
+    protected void showScriptExamples(Event event) {
+        PopTools.popRowFilterExamples(this, event, scriptInput, baseName + "Examples", data2D);
+    }
+
+    @FXML
     public void popPlaceholders(Event event) {
         if (UserConfig.getBoolean(baseName + "PlaceholdersPopWhenMouseHovering", false)) {
             showPlaceholders(event);

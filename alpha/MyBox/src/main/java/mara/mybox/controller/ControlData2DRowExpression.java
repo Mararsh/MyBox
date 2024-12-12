@@ -91,7 +91,7 @@ public class ControlData2DRowExpression extends BaseController {
 
     @FXML
     protected void showScriptExamples(Event event) {
-        PopTools.popRowExpressionExamples(this, event, scriptInput, baseName + "Examples", data2D);
+        PopTools.popRowFilterExamples(this, event, scriptInput, baseName + "Examples", data2D);
     }
 
     @FXML

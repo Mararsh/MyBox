@@ -37,7 +37,7 @@ public abstract class Data2DOperate {
     protected int colsLen, scale = -1;
     protected boolean includeRowNumber, writeHeader, passFilter, reachMax;
     protected boolean stopped, needCheckTask, failed, closeConn;
-    protected long sourceRowIndex; // 1-based 
+    protected long sourceRowIndex; // 1-based
     protected long handledCount;
     protected InvalidAs invalidAs;
     protected Connection conn;
@@ -262,7 +262,7 @@ public abstract class Data2DOperate {
             } else if (task != null) {
                 task.setInfo(info);
             } else {
-                controller.setInfo(info);
+                controller.popInformation(info);
             }
         } else if (task != null) {
             task.setInfo(info);
@@ -279,7 +279,7 @@ public abstract class Data2DOperate {
             } else if (task != null) {
                 task.setError(error);
             } else {
-                controller.setError(error);
+                controller.displayError(error);
             }
         } else if (task != null) {
             task.setError(error);

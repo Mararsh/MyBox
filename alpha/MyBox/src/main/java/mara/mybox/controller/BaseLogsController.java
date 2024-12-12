@@ -157,11 +157,7 @@ public class BaseLogsController extends BaseController {
             return;
         }
         if (logsTextArea == null) {
-            if (task != null && task.isWorking()) {
-                task.setInfo(line);
-            } else {
-                popInformation(line);
-            }
+            popInformation(line);
         } else {
             writeLogs(line, showTime, immediate);
         }

@@ -113,6 +113,7 @@ public class LoadingController extends BaseLogsController {
         return logsTextArea.getText();
     }
 
+    @Override
     public boolean isRunning() {
         return timer != null;
     }

@@ -62,7 +62,7 @@ public abstract class BaseController_Attributes {
     protected Popup popup;
     protected ContextMenu popMenu;
     protected String error, targetFileSuffix;
-    protected boolean isSettingValues;
+    protected boolean isSettingValues, isTopPane = false;
     protected File sourceFile, sourcePath, targetPath, targetFile;
     protected StageType stageType;
     protected SaveAsType saveAsType;
@@ -183,6 +183,7 @@ public abstract class BaseController_Attributes {
         }
     }
 
+    // always refetch the value
     public Scene getMyScene() {
         if (myStage != null) {
             myScene = myStage.getScene();
@@ -569,44 +570,20 @@ public abstract class BaseController_Attributes {
         popWarn(text, UserConfig.textDuration(), UserConfig.textSize());
     }
 
-    public void handleInfo(String text, boolean pop) {
+    public void displayInfo(String text) {
         if (this instanceof BaseLogsController) {
             ((BaseLogsController) this).updateLogs(text);
-        } else if (task != null && task.isWorking()) {
-            task.setInfo(text);
-        } else if (pop) {
+        } else {
             popInformation(text);
-        } else {
-            MyBoxLog.console(text);
         }
-    }
-
-    public void handleError(String text, boolean pop) {
-        if (this instanceof BaseLogsController) {
-            ((BaseLogsController) this).updateLogs(text, true, true);
-        } else if (task != null && task.isWorking()) {
-            task.setError(text);
-        } else if (pop) {
-            popError(text);
-        } else {
-            MyBoxLog.error(text);
-        }
-    }
-
-    public void setInfo(String text) {
-        handleInfo(text, false);
-    }
-
-    public void displayInfo(String text) {
-        handleInfo(text, true);
-    }
-
-    public void setError(String text) {
-        handleError(text, false);
     }
 
     public void displayError(String text) {
-        handleError(text, true);
+        if (this instanceof BaseLogsController) {
+            ((BaseLogsController) this).showLogs(text);
+        } else {
+            MyBoxLog.error(text);
+        }
     }
 
     @FXML

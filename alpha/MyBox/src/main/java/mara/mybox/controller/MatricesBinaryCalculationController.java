@@ -99,11 +99,6 @@ public class MatricesBinaryCalculationController extends BaseController {
         }
     }
 
-    @Override
-    public void afterSceneLoaded() {
-        super.afterSceneLoaded();
-    }
-
     @FXML
     @Override
     public void createAction() {
