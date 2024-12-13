@@ -7,7 +7,6 @@ import mara.mybox.controller.HtmlTableController;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.tools.HtmlWriteTools;
-import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -89,7 +88,7 @@ public class StringTable {
 
     public void newNameValueRow(String name, String value) {
         List<String> row = new ArrayList<>();
-        row.addAll(Arrays.asList(name != null && !name.isBlank() ? message(name) : "", value));
+        row.addAll(Arrays.asList(name, value));
         add(row);
     }
 

@@ -59,7 +59,7 @@
                     <![CDATA[https://www.thefreedictionary.com]]>
                 </address>
                 <icon>
-                    <![CDATA[D:\tmp\mybox_data_v6.8.1\icons\www.thefreedictionary.com.png]]>
+                    <![CDATA[D:\MyBox-web\icons\www.thefreedictionary.com.png]]>
                 </icon>
             </NodeAttributes>
         </TreeNode>
@@ -72,7 +72,7 @@
                     <![CDATA[https://www.ipaddress.com]]>
                 </address>
                 <icon>
-                    <![CDATA[D:\tmp\mybox_data_v6.8.1\icons\www.ipaddress.com.png]]>
+                    <![CDATA[D:\MyBox-web\icons\www.ipaddress.com.png]]>
                 </icon>
             </NodeAttributes>
         </TreeNode>
@@ -85,7 +85,7 @@
                     <![CDATA[https://www.bing.com]]>
                 </address>
                 <icon>
-                    <![CDATA[D:\tmp\mybox_data_v6.8.1\icons\www.bing.com.png]]>
+                    <![CDATA[D:\MyBox-web\icons\www.bing.com.png]]>
                 </icon>
             </NodeAttributes>
         </TreeNode>
@@ -124,7 +124,7 @@
                     <![CDATA[https://www.baidu.com]]>
                 </address>
                 <icon>
-                    <![CDATA[D:\tmp\mybox_data_v6.8.1\icons\www.baidu.com.png]]>
+                    <![CDATA[D:\MyBox-web\icons\www.baidu.com.png]]>
                 </icon>
             </NodeAttributes>
         </TreeNode>
@@ -150,7 +150,7 @@
                     <![CDATA[http://gjzwfw.www.gov.cn/index.html]]>
                 </address>
                 <icon>
-                    <![CDATA[D:\tmp\mybox_data_v6.8.1\icons\gjzwfw.www.gov.cn.png]]>
+                    <![CDATA[D:\MyBox-web\icons\gjzwfw.www.gov.cn.png]]>
                 </icon>
             </NodeAttributes>
         </TreeNode>
@@ -163,7 +163,7 @@
                     <![CDATA[https://www.boc.cn]]>
                 </address>
                 <icon>
-                    <![CDATA[D:\tmp\mybox_data_v6.8.1\icons\www.boc.cn.png]]>
+                    <![CDATA[D:\MyBox-web\icons\www.boc.cn.png]]>
                 </icon>
             </NodeAttributes>
         </TreeNode>
@@ -189,7 +189,7 @@
                     <![CDATA[http://www.cmbchina.com]]>
                 </address>
                 <icon>
-                    <![CDATA[D:\tmp\mybox_data_v6.8.1\icons\www.cmbchina.com.png]]>
+                    <![CDATA[D:\MyBox-web\icons\www.cmbchina.com.png]]>
                 </icon>
             </NodeAttributes>
         </TreeNode>
@@ -202,7 +202,7 @@
                     <![CDATA[http://www.bankcomm.com]]>
                 </address>
                 <icon>
-                    <![CDATA[D:\tmp\mybox_data_v6.8.1\icons\www.bankcomm.com.png]]>
+                    <![CDATA[D:\MyBox-web\icons\www.bankcomm.com.png]]>
                 </icon>
             </NodeAttributes>
         </TreeNode>
@@ -240,7 +240,7 @@
                         <![CDATA[https://www.cn-ki.net]]>
                     </address>
                     <icon>
-                        <![CDATA[D:\tmp\mybox_data_v6.8.1\icons\www.cn-ki.net.png]]>
+                        <![CDATA[D:\MyBox-web\icons\www.cn-ki.net.png]]>
                     </icon>
                 </NodeAttributes>
             </TreeNode>
@@ -253,7 +253,7 @@
                         <![CDATA[https://sci-hub.se]]>
                     </address>
                     <icon>
-                        <![CDATA[D:\tmp\mybox_data_v6.8.1\icons\sci-hub.se.png]]>
+                        <![CDATA[D:\MyBox-web\icons\sci-hub.se.png]]>
                     </icon>
                 </NodeAttributes>
             </TreeNode>
@@ -279,7 +279,7 @@
                         <![CDATA[http://www.city-data.com]]>
                     </address>
                     <icon>
-                        <![CDATA[D:\tmp\mybox_data_v6.8.1\icons\www.city-data.com.png]]>
+                        <![CDATA[D:\MyBox-web\icons\www.city-data.com.png]]>
                     </icon>
                 </NodeAttributes>
             </TreeNode>
@@ -292,7 +292,7 @@
                         <![CDATA[https://www.oalib.com]]>
                     </address>
                     <icon>
-                        <![CDATA[D:\tmp\mybox_data_v6.8.1\icons\www.oalib.com.png]]>
+                        <![CDATA[D:\MyBox-web\icons\www.oalib.com.png]]>
                     </icon>
                 </NodeAttributes>
             </TreeNode>
@@ -318,7 +318,7 @@
                         <![CDATA[http://findarticles.com]]>
                     </address>
                     <icon>
-                        <![CDATA[D:\tmp\mybox_data_v6.8.1\icons\findarticles.com.png]]>
+                        <![CDATA[D:\MyBox-web\icons\findarticles.com.png]]>
                     </icon>
                 </NodeAttributes>
             </TreeNode>
@@ -331,7 +331,7 @@
                         <![CDATA[https://www.intechopen.com]]>
                     </address>
                     <icon>
-                        <![CDATA[D:\tmp\mybox_data_v6.8.1\icons\www.intechopen.com.png]]>
+                        <![CDATA[D:\MyBox-web\icons\www.intechopen.com.png]]>
                     </icon>
                 </NodeAttributes>
             </TreeNode>
@@ -344,7 +344,7 @@
                         <![CDATA[https://openstax.org]]>
                     </address>
                     <icon>
-                        <![CDATA[D:\tmp\mybox_data_v6.8.1\icons\openstax.org.png]]>
+                        <![CDATA[D:\MyBox-web\icons\openstax.org.png]]>
                     </icon>
                 </NodeAttributes>
             </TreeNode>
@@ -357,7 +357,7 @@
                         <![CDATA[http://libgen.rs]]>
                     </address>
                     <icon>
-                        <![CDATA[D:\tmp\mybox_data_v6.8.1\icons\libgen.rs.png]]>
+                        <![CDATA[D:\MyBox-web\icons\libgen.rs.png]]>
                     </icon>
                 </NodeAttributes>
             </TreeNode>
@@ -383,7 +383,7 @@
                         <![CDATA[https://ec.europa.eu/eurostat/data/database]]>
                     </address>
                     <icon>
-                        <![CDATA[D:\tmp\mybox_data_v6.8.1\icons\ec.europa.eu.png]]>
+                        <![CDATA[D:\MyBox-web\icons\ec.europa.eu.png]]>
                     </icon>
                 </NodeAttributes>
             </TreeNode>
@@ -409,7 +409,7 @@
                         <![CDATA[https://www.ieee.org]]>
                     </address>
                     <icon>
-                        <![CDATA[D:\tmp\mybox_data_v6.8.1\icons\www.ieee.org.png]]>
+                        <![CDATA[D:\MyBox-web\icons\www.ieee.org.png]]>
                     </icon>
                 </NodeAttributes>
             </TreeNode>
@@ -435,7 +435,7 @@
                         <![CDATA[http://www.stats.gov.cn]]>
                     </address>
                     <icon>
-                        <![CDATA[D:\tmp\mybox_data_v6.8.1\icons\www.stats.gov.cn.png]]>
+                        <![CDATA[D:\MyBox-web\icons\www.stats.gov.cn.png]]>
                     </icon>
                 </NodeAttributes>
             </TreeNode>
@@ -461,7 +461,7 @@
                         <![CDATA[http://www.geodata.cn/index.html]]>
                     </address>
                     <icon>
-                        <![CDATA[D:\tmp\mybox_data_v6.8.1\icons\www.geodata.cn.png]]>
+                        <![CDATA[D:\MyBox-web\icons\www.geodata.cn.png]]>
                     </icon>
                 </NodeAttributes>
             </TreeNode>
@@ -474,7 +474,7 @@
                         <![CDATA[http://data.cma.cn]]>
                     </address>
                     <icon>
-                        <![CDATA[D:\tmp\mybox_data_v6.8.1\icons\data.cma.cn.png]]>
+                        <![CDATA[D:\MyBox-web\icons\data.cma.cn.png]]>
                     </icon>
                 </NodeAttributes>
             </TreeNode>
@@ -487,7 +487,7 @@
                         <![CDATA[https://moon.bao.ac.cn]]>
                     </address>
                     <icon>
-                        <![CDATA[D:\tmp\mybox_data_v6.8.1\icons\moon.bao.ac.cn.png]]>
+                        <![CDATA[D:\MyBox-web\icons\moon.bao.ac.cn.png]]>
                     </icon>
                 </NodeAttributes>
             </TreeNode>
@@ -500,7 +500,7 @@
                         <![CDATA[http://www.nlc.cn]]>
                     </address>
                     <icon>
-                        <![CDATA[D:\tmp\mybox_data_v6.8.1\icons\www.nlc.cn.png]]>
+                        <![CDATA[D:\MyBox-web\icons\www.nlc.cn.png]]>
                     </icon>
                 </NodeAttributes>
             </TreeNode>
@@ -513,7 +513,7 @@
                         <![CDATA[http://43.248.49.97]]>
                     </address>
                     <icon>
-                        <![CDATA[D:\tmp\mybox_data_v6.8.1\icons\43.248.49.97.png]]>
+                        <![CDATA[D:\MyBox-web\icons\43.248.49.97.png]]>
                     </icon>
                 </NodeAttributes>
             </TreeNode>
@@ -539,7 +539,7 @@
                         <![CDATA[http://www.sgst.cn]]>
                     </address>
                     <icon>
-                        <![CDATA[D:\tmp\mybox_data_v6.8.1\icons\www.sgst.cn.png]]>
+                        <![CDATA[D:\MyBox-web\icons\www.sgst.cn.png]]>
                     </icon>
                 </NodeAttributes>
             </TreeNode>
@@ -552,7 +552,7 @@
                         <![CDATA[https://ctext.org]]>
                     </address>
                     <icon>
-                        <![CDATA[D:\tmp\mybox_data_v6.8.1\icons\ctext.org.png]]>
+                        <![CDATA[D:\MyBox-web\icons\ctext.org.png]]>
                     </icon>
                 </NodeAttributes>
             </TreeNode>
@@ -565,7 +565,7 @@
                         <![CDATA[http://www.ucdrs.superlib.net]]>
                     </address>
                     <icon>
-                        <![CDATA[D:\tmp\mybox_data_v6.8.1\icons\www.ucdrs.superlib.net.png]]>
+                        <![CDATA[D:\MyBox-web\icons\www.ucdrs.superlib.net.png]]>
                     </icon>
                 </NodeAttributes>
             </TreeNode>
@@ -604,7 +604,7 @@
                         <![CDATA[http://www.gzlib.org]]>
                     </address>
                     <icon>
-                        <![CDATA[D:\tmp\mybox_data_v6.8.1\icons\www.gzlib.org.png]]>
+                        <![CDATA[D:\MyBox-web\icons\www.gzlib.org.png]]>
                     </icon>
                 </NodeAttributes>
             </TreeNode>
@@ -630,7 +630,7 @@
                         <![CDATA[http://www.gxlib.org.cn]]>
                     </address>
                     <icon>
-                        <![CDATA[D:\tmp\mybox_data_v6.8.1\icons\www.gxlib.org.cn.png]]>
+                        <![CDATA[D:\MyBox-web\icons\www.gxlib.org.cn.png]]>
                     </icon>
                 </NodeAttributes>
             </TreeNode>
@@ -643,7 +643,7 @@
                         <![CDATA[https://www.cnki.net]]>
                     </address>
                     <icon>
-                        <![CDATA[D:\tmp\mybox_data_v6.8.1\icons\www.cnki.net.png]]>
+                        <![CDATA[D:\MyBox-web\icons\www.cnki.net.png]]>
                     </icon>
                 </NodeAttributes>
             </TreeNode>
@@ -656,7 +656,7 @@
                         <![CDATA[http://www.wanfangdata.com.cn/index.html]]>
                     </address>
                     <icon>
-                        <![CDATA[D:\tmp\mybox_data_v6.8.1\icons\www.wanfangdata.com.cn.png]]>
+                        <![CDATA[D:\MyBox-web\icons\www.wanfangdata.com.cn.png]]>
                     </icon>
                 </NodeAttributes>
             </TreeNode>
@@ -669,7 +669,7 @@
                         <![CDATA[https://zm-digicol.dpm.org.cn]]>
                     </address>
                     <icon>
-                        <![CDATA[D:\tmp\mybox_data_v6.8.1\icons\zm-digicol.dpm.org.cn.png]]>
+                        <![CDATA[D:\MyBox-web\icons\zm-digicol.dpm.org.cn.png]]>
                     </icon>
                 </NodeAttributes>
             </TreeNode>
@@ -682,7 +682,7 @@
                         <![CDATA[http://www.biftmuseum.com]]>
                     </address>
                     <icon>
-                        <![CDATA[D:\tmp\mybox_data_v6.8.1\icons\www.biftmuseum.com.png]]>
+                        <![CDATA[D:\MyBox-web\icons\www.biftmuseum.com.png]]>
                     </icon>
                 </NodeAttributes>
             </TreeNode>
@@ -721,7 +721,7 @@
                         <![CDATA[https://www.bilibili.com/video/BV1zx411g7gq]]>
                     </address>
                     <icon>
-                        <![CDATA[D:\tmp\mybox_data_v6.8.1\icons\www.bilibili.com.png]]>
+                        <![CDATA[D:\MyBox-web\icons\www.bilibili.com.png]]>
                     </icon>
                 </NodeAttributes>
             </TreeNode>
@@ -734,7 +734,7 @@
                         <![CDATA[https://www.bilibili.com/video/BV1Js411n7z]]>
                     </address>
                     <icon>
-                        <![CDATA[D:\tmp\mybox_data_v6.8.1\icons\www.bilibili.com.png]]>
+                        <![CDATA[D:\MyBox-web\icons\www.bilibili.com.png]]>
                     </icon>
                 </NodeAttributes>
             </TreeNode>
@@ -747,7 +747,7 @@
                         <![CDATA[https://www.bilibili.com/video/BV1es411H7YH]]>
                     </address>
                     <icon>
-                        <![CDATA[D:\tmp\mybox_data_v6.8.1\icons\www.bilibili.com.png]]>
+                        <![CDATA[D:\MyBox-web\icons\www.bilibili.com.png]]>
                     </icon>
                 </NodeAttributes>
             </TreeNode>
@@ -760,7 +760,7 @@
                         <![CDATA[https://open.163.com/newview/movie/courseintro?newurl=M8FH262HJ]]>
                     </address>
                     <icon>
-                        <![CDATA[D:\tmp\mybox_data_v6.8.1\icons\open.163.com.png]]>
+                        <![CDATA[D:\MyBox-web\icons\open.163.com.png]]>
                     </icon>
                 </NodeAttributes>
             </TreeNode>
@@ -786,7 +786,7 @@
                         <![CDATA[https://github.com/QSCTech/zju-icicles]]>
                     </address>
                     <icon>
-                        <![CDATA[D:\tmp\mybox_data_v6.8.1\icons\github.com.png]]>
+                        <![CDATA[D:\MyBox-web\icons\github.com.png]]>
                     </icon>
                 </NodeAttributes>
             </TreeNode>
@@ -799,7 +799,7 @@
                         <![CDATA[https://github.com/PKUanonym/REKCARC-TSC-UHT]]>
                     </address>
                     <icon>
-                        <![CDATA[D:\tmp\mybox_data_v6.8.1\icons\github.com.png]]>
+                        <![CDATA[D:\MyBox-web\icons\github.com.png]]>
                     </icon>
                 </NodeAttributes>
             </TreeNode>
@@ -812,7 +812,7 @@
                         <![CDATA[https://github.com/BUCTBASE/BUCTBASE]]>
                     </address>
                     <icon>
-                        <![CDATA[D:\tmp\mybox_data_v6.8.1\icons\github.com.png]]>
+                        <![CDATA[D:\MyBox-web\icons\github.com.png]]>
                     </icon>
                 </NodeAttributes>
             </TreeNode>
@@ -825,7 +825,7 @@
                         <![CDATA[https://github.com/bljx/BFU-leaf]]>
                     </address>
                     <icon>
-                        <![CDATA[D:\tmp\mybox_data_v6.8.1\icons\github.com.png]]>
+                        <![CDATA[D:\MyBox-web\icons\github.com.png]]>
                     </icon>
                 </NodeAttributes>
             </TreeNode>
@@ -838,7 +838,7 @@
                         <![CDATA[https://github.com/TheBloodthirster/BUAA_Course_Sharing]]>
                     </address>
                     <icon>
-                        <![CDATA[D:\tmp\mybox_data_v6.8.1\icons\github.com.png]]>
+                        <![CDATA[D:\MyBox-web\icons\github.com.png]]>
                     </icon>
                 </NodeAttributes>
             </TreeNode>
@@ -851,7 +851,7 @@
                         <![CDATA[https://github.com/ningzimu/See_you_in_BUPT]]>
                     </address>
                     <icon>
-                        <![CDATA[D:\tmp\mybox_data_v6.8.1\icons\github.com.png]]>
+                        <![CDATA[D:\MyBox-web\icons\github.com.png]]>
                     </icon>
                 </NodeAttributes>
             </TreeNode>
@@ -877,7 +877,7 @@
                         <![CDATA[https://www.bilibili.com/video/BV1pW411J7s8]]>
                     </address>
                     <icon>
-                        <![CDATA[D:\tmp\mybox_data_v6.8.1\icons\www.bilibili.com.png]]>
+                        <![CDATA[D:\MyBox-web\icons\www.bilibili.com.png]]>
                     </icon>
                 </NodeAttributes>
             </TreeNode>
@@ -890,7 +890,7 @@
                         <![CDATA[https://www.bilibili.com/video/BV1BW411n7gw]]>
                     </address>
                     <icon>
-                        <![CDATA[D:\tmp\mybox_data_v6.8.1\icons\www.bilibili.com.png]]>
+                        <![CDATA[D:\MyBox-web\icons\www.bilibili.com.png]]>
                     </icon>
                 </NodeAttributes>
             </TreeNode>
@@ -903,7 +903,7 @@
                         <![CDATA[https://www.bilibili.com/video/BV1ux411G7zm]]>
                     </address>
                     <icon>
-                        <![CDATA[D:\tmp\mybox_data_v6.8.1\icons\www.bilibili.com.png]]>
+                        <![CDATA[D:\MyBox-web\icons\www.bilibili.com.png]]>
                     </icon>
                 </NodeAttributes>
             </TreeNode>
@@ -916,7 +916,7 @@
                         <![CDATA[https://www.bilibili.com/video/BV1Dt411p7ce]]>
                     </address>
                     <icon>
-                        <![CDATA[D:\tmp\mybox_data_v6.8.1\icons\www.bilibili.com.png]]>
+                        <![CDATA[D:\MyBox-web\icons\www.bilibili.com.png]]>
                     </icon>
                 </NodeAttributes>
             </TreeNode>
@@ -955,7 +955,7 @@
                         <![CDATA[https://www.kunnu.com]]>
                     </address>
                     <icon>
-                        <![CDATA[D:\tmp\mybox_data_v6.8.1\icons\www.kunnu.com.png]]>
+                        <![CDATA[D:\MyBox-web\icons\www.kunnu.com.png]]>
                     </icon>
                 </NodeAttributes>
             </TreeNode>
@@ -968,7 +968,7 @@
                         <![CDATA[https://www.jjwxc.net]]>
                     </address>
                     <icon>
-                        <![CDATA[D:\tmp\mybox_data_v6.8.1\icons\www.jjwxc.net.png]]>
+                        <![CDATA[D:\MyBox-web\icons\www.jjwxc.net.png]]>
                     </icon>
                 </NodeAttributes>
             </TreeNode>
@@ -981,7 +981,7 @@
                         <![CDATA[http://yunqi.qq.com]]>
                     </address>
                     <icon>
-                        <![CDATA[D:\tmp\mybox_data_v6.8.1\icons\yunqi.qq.com.png]]>
+                        <![CDATA[D:\MyBox-web\icons\yunqi.qq.com.png]]>
                     </icon>
                 </NodeAttributes>
             </TreeNode>
@@ -994,7 +994,7 @@
                         <![CDATA[https://www.qidian.com]]>
                     </address>
                     <icon>
-                        <![CDATA[D:\tmp\mybox_data_v6.8.1\icons\www.qidian.com.png]]>
+                        <![CDATA[D:\MyBox-web\icons\www.qidian.com.png]]>
                     </icon>
                 </NodeAttributes>
             </TreeNode>
@@ -1007,7 +1007,7 @@
                         <![CDATA[http://chuangshi.qq.com]]>
                     </address>
                     <icon>
-                        <![CDATA[D:\tmp\mybox_data_v6.8.1\icons\chuangshi.qq.com.png]]>
+                        <![CDATA[D:\MyBox-web\icons\chuangshi.qq.com.png]]>
                     </icon>
                 </NodeAttributes>
             </TreeNode>
@@ -1020,7 +1020,7 @@
                         <![CDATA[http://www.zhulang.com]]>
                     </address>
                     <icon>
-                        <![CDATA[D:\tmp\mybox_data_v6.8.1\icons\www.zhulang.com.png]]>
+                        <![CDATA[D:\MyBox-web\icons\www.zhulang.com.png]]>
                     </icon>
                 </NodeAttributes>
             </TreeNode>
@@ -1033,7 +1033,7 @@
                         <![CDATA[http://yc.ireader.com.cn]]>
                     </address>
                     <icon>
-                        <![CDATA[D:\tmp\mybox_data_v6.8.1\icons\yc.ireader.com.cn.png]]>
+                        <![CDATA[D:\MyBox-web\icons\yc.ireader.com.cn.png]]>
                     </icon>
                 </NodeAttributes>
             </TreeNode>
@@ -1046,7 +1046,7 @@
                         <![CDATA[https://www.17k.com]]>
                     </address>
                     <icon>
-                        <![CDATA[D:\tmp\mybox_data_v6.8.1\icons\www.17k.com.png]]>
+                        <![CDATA[D:\MyBox-web\icons\www.17k.com.png]]>
                     </icon>
                 </NodeAttributes>
             </TreeNode>
@@ -1059,7 +1059,7 @@
                         <![CDATA[https://www.xxsy.net]]>
                     </address>
                     <icon>
-                        <![CDATA[D:\tmp\mybox_data_v6.8.1\icons\www.xxsy.net.png]]>
+                        <![CDATA[D:\MyBox-web\icons\www.xxsy.net.png]]>
                     </icon>
                 </NodeAttributes>
             </TreeNode>
@@ -1163,7 +1163,7 @@
                         <![CDATA[https://www.bilibili.com]]>
                     </address>
                     <icon>
-                        <![CDATA[D:\tmp\mybox_data_v6.8.1\icons\www.bilibili.com.png]]>
+                        <![CDATA[D:\MyBox-web\icons\www.bilibili.com.png]]>
                     </icon>
                 </NodeAttributes>
             </TreeNode>
@@ -1176,7 +1176,7 @@
                         <![CDATA[https://www.youku.com]]>
                     </address>
                     <icon>
-                        <![CDATA[D:\tmp\mybox_data_v6.8.1\icons\www.youku.com.png]]>
+                        <![CDATA[D:\MyBox-web\icons\www.youku.com.png]]>
                     </icon>
                 </NodeAttributes>
             </TreeNode>
@@ -1189,7 +1189,7 @@
                         <![CDATA[https://www.missevan.com]]>
                     </address>
                     <icon>
-                        <![CDATA[D:\tmp\mybox_data_v6.8.1\icons\www.missevan.com.png]]>
+                        <![CDATA[D:\MyBox-web\icons\www.missevan.com.png]]>
                     </icon>
                 </NodeAttributes>
             </TreeNode>
@@ -1202,7 +1202,7 @@
                         <![CDATA[http://nga.178.com]]>
                     </address>
                     <icon>
-                        <![CDATA[D:\tmp\mybox_data_v6.8.1\icons\nga.178.com.png]]>
+                        <![CDATA[D:\MyBox-web\icons\nga.178.com.png]]>
                     </icon>
                 </NodeAttributes>
             </TreeNode>
@@ -1215,7 +1215,7 @@
                         <![CDATA[https://weibo.com]]>
                     </address>
                     <icon>
-                        <![CDATA[D:\tmp\mybox_data_v6.8.1\icons\weibo.com.png]]>
+                        <![CDATA[D:\MyBox-web\icons\weibo.com.png]]>
                     </icon>
                 </NodeAttributes>
             </TreeNode>
@@ -1228,7 +1228,7 @@
                         <![CDATA[https://bbs.tianya.cn]]>
                     </address>
                     <icon>
-                        <![CDATA[D:\tmp\mybox_data_v6.8.1\icons\bbs.tianya.cn.png]]>
+                        <![CDATA[D:\MyBox-web\icons\bbs.tianya.cn.png]]>
                     </icon>
                 </NodeAttributes>
             </TreeNode>
@@ -1241,7 +1241,7 @@
                         <![CDATA[https://www.lofter.com]]>
                     </address>
                     <icon>
-                        <![CDATA[D:\tmp\mybox_data_v6.8.1\icons\www.lofter.com.png]]>
+                        <![CDATA[D:\MyBox-web\icons\www.lofter.com.png]]>
                     </icon>
                 </NodeAttributes>
             </TreeNode>
@@ -1254,7 +1254,7 @@
                         <![CDATA[https://www.bilibili.com/video/BV1Px411P761]]>
                     </address>
                     <icon>
-                        <![CDATA[D:\tmp\mybox_data_v6.8.1\icons\www.bilibili.com.png]]>
+                        <![CDATA[D:\MyBox-web\icons\www.bilibili.com.png]]>
                     </icon>
                 </NodeAttributes>
             </TreeNode>
@@ -1267,7 +1267,7 @@
                         <![CDATA[https://www.bilibili.com/video/BV1rs411n7Dd]]>
                     </address>
                     <icon>
-                        <![CDATA[D:\tmp\mybox_data_v6.8.1\icons\www.bilibili.com.png]]>
+                        <![CDATA[D:\MyBox-web\icons\www.bilibili.com.png]]>
                     </icon>
                 </NodeAttributes>
             </TreeNode>
@@ -1280,7 +1280,7 @@
                         <![CDATA[https://www.bilibili.com/video/BV11x411j7As]]>
                     </address>
                     <icon>
-                        <![CDATA[D:\tmp\mybox_data_v6.8.1\icons\www.bilibili.com.png]]>
+                        <![CDATA[D:\MyBox-web\icons\www.bilibili.com.png]]>
                     </icon>
                 </NodeAttributes>
             </TreeNode>
@@ -1320,7 +1320,7 @@
                     <![CDATA[https://stackoverflow.com]]>
                 </address>
                 <icon>
-                    <![CDATA[D:\tmp\mybox_data_v6.8.1\icons\stackoverflow.com.png]]>
+                    <![CDATA[D:\MyBox-web\icons\stackoverflow.com.png]]>
                 </icon>
             </NodeAttributes>
         </TreeNode>
@@ -1333,7 +1333,7 @@
                     <![CDATA[https://github.com]]>
                 </address>
                 <icon>
-                    <![CDATA[D:\tmp\mybox_data_v6.8.1\icons\github.com.png]]>
+                    <![CDATA[D:\MyBox-web\icons\github.com.png]]>
                 </icon>
             </NodeAttributes>
         </TreeNode>
@@ -1346,7 +1346,7 @@
                     <![CDATA[https://docs.oracle.com/en/java/javase/15/docs/api/index.html]]>
                 </address>
                 <icon>
-                    <![CDATA[D:\tmp\mybox_data_v6.8.1\icons\docs.oracle.com.png]]>
+                    <![CDATA[D:\MyBox-web\icons\docs.oracle.com.png]]>
                 </icon>
             </NodeAttributes>
         </TreeNode>
@@ -1372,7 +1372,7 @@
                     <![CDATA[https://docs.oracle.com/javafx/2/api/javafx/scene/doc-files/cssref.html]]>
                 </address>
                 <icon>
-                    <![CDATA[D:\tmp\mybox_data_v6.8.1\icons\docs.oracle.com.png]]>
+                    <![CDATA[D:\MyBox-web\icons\docs.oracle.com.png]]>
                 </icon>
             </NodeAttributes>
         </TreeNode>
@@ -1385,7 +1385,7 @@
                     <![CDATA[https://docs.oracle.com/javafx/2/get_started/css.htm]]>
                 </address>
                 <icon>
-                    <![CDATA[D:\tmp\mybox_data_v6.8.1\icons\docs.oracle.com.png]]>
+                    <![CDATA[D:\MyBox-web\icons\docs.oracle.com.png]]>
                 </icon>
             </NodeAttributes>
         </TreeNode>

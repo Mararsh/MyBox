@@ -1,6 +1,7 @@
 package mara.mybox.controller;
 
 import java.io.File;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -9,6 +10,11 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import mara.mybox.data.StringTable;
+import mara.mybox.data2d.DataFileCSV;
+import mara.mybox.data2d.tools.Data2DConvertTools;
+import static mara.mybox.data2d.tools.Data2DExampleTools.CompatibilityTesting;
+import static mara.mybox.data2d.tools.Data2DExampleTools.DetailedTesting;
+import static mara.mybox.data2d.tools.Data2DExampleTools.TestEnvironment;
 import mara.mybox.db.data.ColorData;
 import mara.mybox.db.data.ColorDataTools;
 import mara.mybox.dev.MyBoxLog;
@@ -52,6 +58,7 @@ public class MyBoxDocumentsController extends BaseTaskController {
     public void initControls() {
         try {
             super.initControls();
+            path = new File(AppVariables.MyboxDataPath + "/doc/");
 
             readmeCheck.setSelected(UserConfig.getBoolean(baseName + "Readme", true));
             readmeCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -124,8 +131,6 @@ public class MyBoxDocumentsController extends BaseTaskController {
 
     @Override
     public void startTask() {
-        path = new File(AppVariables.MyboxDataPath + "/doc/");
-
         defaultStartTask();
 
         if (shortcutsCheck.isSelected()) {
@@ -235,9 +240,27 @@ public class MyBoxDocumentsController extends BaseTaskController {
 
     protected boolean testing(String lang) {
         try {
-            File file = HelpTools.usefulLinks(lang);
-            FileCopyTools.copyFile(file, new File(path, file.getName()), true, true);
-            task.setInfo(file.getAbsolutePath());
+            DataFileCSV data = TestEnvironment("zh".equals(lang));
+            data.setFile(FxFileTools.getInternalFile("/data/examples/ST_TestEnvironment_" + lang + ".csv"))
+                    .setCharset(Charset.forName("UTF-8")).setDelimiter(",").setHasHeader(true);
+            File htmlFile = new File(path, "mybox_TestEnvironment_" + lang + ".html");
+            Data2DConvertTools.toHtmlFile(task, data, htmlFile);
+            task.setInfo(htmlFile.getAbsolutePath());
+
+            data = CompatibilityTesting("zh".equals(lang));
+            data.setFile(FxFileTools.getInternalFile("/data/examples/ST_CompatibilityTesting_" + lang + ".csv"))
+                    .setCharset(Charset.forName("UTF-8")).setDelimiter(",").setHasHeader(true);
+            htmlFile = new File(path, "mybox_CompatibilityTesting_" + lang + ".html");
+            Data2DConvertTools.toHtmlFile(task, data, htmlFile);
+            task.setInfo(htmlFile.getAbsolutePath());
+
+            data = DetailedTesting("zh".equals(lang));
+            data.setFile(FxFileTools.getInternalFile("/data/examples/ST_DetailedTesting_" + lang + ".csv"))
+                    .setCharset(Charset.forName("UTF-8")).setDelimiter(",").setHasHeader(true);
+            htmlFile = new File(path, "mybox_DetailedTesting_" + lang + ".html");
+            Data2DConvertTools.toHtmlFile(task, data, htmlFile);
+            task.setInfo(htmlFile.getAbsolutePath());
+
             return true;
         } catch (Exception e) {
             error = e.toString();
@@ -440,6 +463,12 @@ public class MyBoxDocumentsController extends BaseTaskController {
         if (miaoCheck.isSelected()) {
             SoundTools.miao3();
         }
+        openTarget();
+    }
+
+    @FXML
+    @Override
+    public void openTarget() {
         browse(path);
     }
 

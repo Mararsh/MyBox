@@ -59,6 +59,20 @@ public class ControlDataJShell extends BaseDataValuesController {
     }
 
     @Override
+    public void initControls() {
+        try {
+            super.initControls();
+
+            snippetsController.setParameters(this);
+
+            resetJShell();
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    @Override
     public void initEditor() {
         try {
             valueInput = codesInput;
@@ -67,9 +81,6 @@ public class ControlDataJShell extends BaseDataValuesController {
             super.initEditor();
 
             webViewController.setParent(nodeEditor, ControlWebView.ScrollType.Bottom);
-            snippetsController.setParameters(this);
-
-            resetJShell();
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -147,6 +158,9 @@ public class ControlDataJShell extends BaseDataValuesController {
         try {
             if (codes == null || codes.isBlank()) {
                 return false;
+            }
+            if (jShell == null) {
+                jShell = JShell.create();
             }
             String leftCodes = codes;
             while (leftCodes != null && !leftCodes.isBlank()) {

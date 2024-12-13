@@ -27,30 +27,30 @@ public class DataMigrationTools {
         String tname = dataTable.getTableName();
         controller.info("Moving data: " + dataTable.getTreeName());
         // for debug.Remove this block later
-        try (Statement statement = conn.createStatement()) {
-            conn.setAutoCommit(true);
-            statement.executeUpdate("DROP TABLE " + tname + "_Node_Tag");
-            statement.executeUpdate("DROP TABLE " + tname + "_Tag");
-        } catch (Exception e) {
-            MyBoxLog.console(e);
-        }
-        try (Statement statement = conn.createStatement()) {
-            statement.executeUpdate("DROP TABLE " + tname);
-        } catch (Exception e) {
-            MyBoxLog.console(e);
-        }
-        try {
-            dataTable.createTable(conn);
-        } catch (Exception e) {
-            MyBoxLog.console(e);
-        }
+//        try (Statement statement = conn.createStatement()) {
+//            conn.setAutoCommit(true);
+//            statement.executeUpdate("DROP TABLE " + tname + "_Node_Tag");
+//            statement.executeUpdate("DROP TABLE " + tname + "_Tag");
+//        } catch (Exception e) {
+//            MyBoxLog.console(e);
+//        }
+//        try (Statement statement = conn.createStatement()) {
+//            statement.executeUpdate("DROP TABLE " + tname);
+//        } catch (Exception e) {
+//            MyBoxLog.console(e);
+//        }
+//        try {
+//            dataTable.createTable(conn);
+//        } catch (Exception e) {
+//            MyBoxLog.console(e);
+//        }
 
         try (Statement statement = conn.createStatement()) {
             conn.setAutoCommit(true);
             statement.executeUpdate("DROP TABLE MYBOX_TMP_TREE_Migration682");
             statement.executeUpdate("DROP TABLE MYBOX_TMP_TAG_Migration682");
         } catch (Exception e) {
-            MyBoxLog.console(e);
+//            MyBoxLog.console(e);
         }
 
         try (Statement statement = conn.createStatement()) {

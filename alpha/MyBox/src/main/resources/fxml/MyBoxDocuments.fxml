@@ -99,7 +99,16 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button fx:id="startButton" defaultButton="true" mnemonicParsing="false" onAction="#startAction" HBox.hgrow="NEVER">
+            <Button fx:id="openTargetButton" mnemonicParsing="false" onAction="#openTarget">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconOpenPath.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+                <Button fx:id="startButton" mnemonicParsing="false" onAction="#startAction" HBox.hgrow="NEVER">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>

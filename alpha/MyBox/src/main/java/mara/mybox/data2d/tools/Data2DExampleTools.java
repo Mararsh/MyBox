@@ -1628,7 +1628,6 @@ public class Data2DExampleTools {
             String dataName = message(lang, "MyBoxBaseVerificationList") + " - " + DateTools.nowString();
             targetData.setColumns(columns).setDataName(dataName);
 
-            File srcFile = FxFileTools.getInternalFile("/data/examples/" + dataName + ".csv");
             File targetFile = FileTmpTools.generateFile(dataName, "csv");
             if (targetFile.exists()) {
                 targetFile.delete();
@@ -1666,7 +1665,6 @@ public class Data2DExampleTools {
             }
             targetData.setFile(targetFile).setHasHeader(true).setCharset(charset).setDelimiter(",");
             targetData.saveAttributes();
-            FileDeleteTools.delete(srcFile);
             return targetData;
         } catch (Exception e) {
             MyBoxLog.error(e);
