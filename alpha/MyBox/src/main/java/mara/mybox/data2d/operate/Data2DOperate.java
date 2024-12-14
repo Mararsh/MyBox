@@ -256,6 +256,7 @@ public abstract class Data2DOperate {
         if (info == null || info.isBlank()) {
             return;
         }
+//        MyBoxLog.console(info);
         if (controller != null) {
             if (controller instanceof BaseLogsController) {
                 ((BaseLogsController) controller).updateLogs(info);
@@ -273,6 +274,7 @@ public abstract class Data2DOperate {
         if (error == null || error.isBlank()) {
             return;
         }
+//        MyBoxLog.console(error);
         if (controller != null) {
             if (controller instanceof BaseLogsController) {
                 ((BaseLogsController) controller).showLogs(error);

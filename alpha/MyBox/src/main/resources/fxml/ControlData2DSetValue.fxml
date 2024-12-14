@@ -21,7 +21,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" spacing="2.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlData2DSetValue">
+<VBox fx:id="thisPane" spacing="2.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlData2DSetValue">
     <children>
       <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
         <tabs>
@@ -31,19 +31,12 @@ License:    Apache License Version 2.0
                      <content>
                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                            <children>
-                                <HBox alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="ALWAYS">
-                                    <children> 
-                                        <RadioButton fx:id="valueRadio" minWidth="-Infinity" mnemonicParsing="false" selected="true" text="%Value">
-                                       <toggleGroup>
-                                                <ToggleGroup fx:id="valueGroup" />
-                                       </toggleGroup>
-                                    </RadioButton>
-                                    <TextArea fx:id="valueInput" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="40.0" HBox.hgrow="ALWAYS" />
-                                    </children>
-                                </HBox>
                                 <FlowPane hgap="2.0" prefWrapLength="300.0" vgap="2.0">
                                     <children>
-                                        <RadioButton fx:id="zeroRadio" mnemonicParsing="false" text="0" toggleGroup="$valueGroup" />
+                                        <RadioButton fx:id="zeroRadio" mnemonicParsing="false" selected="true" text="0">
+                                       <toggleGroup>
+                                                <ToggleGroup fx:id="valueGroup" />
+                                       </toggleGroup></RadioButton>
                                         <RadioButton fx:id="oneRadio" mnemonicParsing="false" text="1" toggleGroup="$valueGroup" />
                                         <RadioButton fx:id="emptyRadio" mnemonicParsing="false" text="%Empty" toggleGroup="$valueGroup" />
                                     <RadioButton fx:id="nullRadio" layoutX="71.0" layoutY="10.0" mnemonicParsing="false" text="null" toggleGroup="$valueGroup" />
@@ -51,6 +44,12 @@ License:    Apache License Version 2.0
                                         <RadioButton fx:id="randomNnRadio" layoutX="134.0" layoutY="10.0" mnemonicParsing="false" text="%RandomNonnegative" toggleGroup="$valueGroup" />
                                     </children>
                                 </FlowPane>
+                                <HBox alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="ALWAYS">
+                                    <children> 
+                                        <RadioButton fx:id="valueRadio" minWidth="-Infinity" mnemonicParsing="false" text="%Value" toggleGroup="$valueGroup" />
+                                    <TextArea fx:id="valueInput" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="40.0" HBox.hgrow="ALWAYS" />
+                                    </children>
+                                </HBox>
                               <VBox fx:id="matrixBox" spacing="5.0">
                                  <children> 
                                       <FlowPane hgap="5.0" prefWrapLength="300.0" vgap="5.0">

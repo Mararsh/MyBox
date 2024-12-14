@@ -114,16 +114,16 @@ public abstract class Data2DModify extends Data2DOperate {
                         case Scale ->
                             v = setValue.scale(currentValue);
                         case Prefix ->
-                            v = currentValue == null ? dataValue : dataValue + currentValue;
+                            v = currentValue == null ? dataValue : (dataValue + currentValue);
                         case Suffix ->
-                            v = currentValue == null ? dataValue : currentValue + dataValue;
+                            v = currentValue == null ? dataValue : (currentValue + dataValue);
                         case NumberSuffix -> {
                             String suffix = StringTools.fillLeftZero(dataIndex++, digit);
-                            v = currentValue == null ? suffix : currentValue + suffix;
+                            v = currentValue == null ? suffix : (currentValue + suffix);
                         }
                         case NumberPrefix -> {
                             String prefix = StringTools.fillLeftZero(dataIndex++, digit);
-                            v = currentValue == null ? prefix : prefix + currentValue;
+                            v = currentValue == null ? prefix : (prefix + currentValue);
                         }
                         case NumberReplace -> {
                             v = StringTools.fillLeftZero(dataIndex++, digit);
@@ -131,12 +131,12 @@ public abstract class Data2DModify extends Data2DOperate {
                         case NumberSuffixString -> {
                             String suffix = StringTools.fillLeftZero(dataIndex++, digit);
                             v = dataValue;
-                            v = v == null ? suffix : v + suffix;
+                            v = v == null ? suffix : (v + suffix);
                         }
                         case NumberPrefixString -> {
                             String prefix = StringTools.fillLeftZero(dataIndex++, digit);
                             v = dataValue;
-                            v = v == null ? prefix : prefix + v;
+                            v = v == null ? prefix : (prefix + v);
                         }
                         case Expression ->
                             v = expResult;

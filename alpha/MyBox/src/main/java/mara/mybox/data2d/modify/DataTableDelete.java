@@ -32,7 +32,7 @@ public class DataTableDelete extends DataTableModify {
         try (Connection dconn = DerbyBase.getConnection();
                 PreparedStatement statement = dconn.prepareStatement(sql);
                 ResultSet results = statement.executeQuery();
-                PreparedStatement dDelete = conn.prepareStatement(tableData2D.deleteStatement())) {
+                PreparedStatement dDelete = dconn.prepareStatement(tableData2D.deleteStatement())) {
             conn = dconn;
             conn.setAutoCommit(false);
             delete = dDelete;

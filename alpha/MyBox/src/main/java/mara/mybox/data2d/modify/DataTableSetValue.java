@@ -19,7 +19,7 @@ import static mara.mybox.value.Languages.message;
 public class DataTableSetValue extends DataTableModify {
 
     public DataTableSetValue(DataTable data, SetValue value) {
-        if (!setSourceData(data)) {
+        if (!setSourceTable(data)) {
             return;
         }
         initSetValue(value);
@@ -34,7 +34,7 @@ public class DataTableSetValue extends DataTableModify {
         try (Connection dconn = DerbyBase.getConnection();
                 PreparedStatement statement = dconn.prepareStatement(sql);
                 ResultSet results = statement.executeQuery();
-                PreparedStatement dUpdate = conn.prepareStatement(tableData2D.updateStatement())) {
+                PreparedStatement dUpdate = dconn.prepareStatement(tableData2D.updateStatement())) {
             conn = dconn;
             conn.setAutoCommit(false);
             update = dUpdate;

@@ -341,7 +341,7 @@ public abstract class MainMenuController_Development extends MainMenuController_
     @FXML
     public void myBoxBaseVerificationList() {
         DataFileCSV data = Data2DExampleTools.MyBoxBaseVerificationList(
-                parentController, Languages.isChinese());
+                parentController, Languages.isChinese(), false);
         Data2DManufactureController.openDef(data);
     }
 

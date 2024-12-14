@@ -14,6 +14,7 @@ import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.tools.Data2DConvertTools;
 import static mara.mybox.data2d.tools.Data2DExampleTools.CompatibilityTesting;
 import static mara.mybox.data2d.tools.Data2DExampleTools.DetailedTesting;
+import static mara.mybox.data2d.tools.Data2DExampleTools.MyBoxBaseVerificationList;
 import static mara.mybox.data2d.tools.Data2DExampleTools.TestEnvironment;
 import mara.mybox.db.data.ColorData;
 import mara.mybox.db.data.ColorDataTools;
@@ -261,6 +262,11 @@ public class MyBoxDocumentsController extends BaseTaskController {
             Data2DConvertTools.toHtmlFile(task, data, htmlFile);
             task.setInfo(htmlFile.getAbsolutePath());
 
+            data = MyBoxBaseVerificationList(this, "zh".equals(lang), false);
+            htmlFile = new File(path, "mybox_BaseVerificationList_" + lang + ".html");
+            Data2DConvertTools.toHtmlFile(task, data, htmlFile);
+            task.setInfo(htmlFile.getAbsolutePath());
+
             return true;
         } catch (Exception e) {
             error = e.toString();
@@ -470,6 +476,29 @@ public class MyBoxDocumentsController extends BaseTaskController {
     @Override
     public void openTarget() {
         browse(path);
+    }
+
+    @FXML
+    @Override
+    public void selectAllAction() {
+        selectAll(true);
+    }
+
+    @FXML
+    @Override
+    public void selectNoneAction() {
+        selectAll(false);
+    }
+
+    public void selectAll(boolean select) {
+        readmeCheck.setSelected(select);
+        functionsCheck.setSelected(select);
+        tipsCheck.setSelected(select);
+        shortcutsCheck.setSelected(select);
+        testingCheck.setSelected(select);
+        paletteCheck.setSelected(select);
+        linksCheck.setSelected(select);
+        imagesCheck.setSelected(select);
     }
 
     /*

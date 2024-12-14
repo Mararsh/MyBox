@@ -32,9 +32,31 @@ License:    Apache License Version 2.0
                                     <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                 </padding>
                      <children>
+                        <HBox alignment="CENTER_LEFT" spacing="2.0">
+                           <children>
+                                            <Label text="%Format" />
+                              <Button fx:id="selectAllFormatButton" mnemonicParsing="false" onAction="#selectAllFormatAction">
+                                 <graphic>
+                                    <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconSelectAll.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                              <Button fx:id="selectNoneFormatButton" mnemonicParsing="false" onAction="#selectNoneFormatAction">
+                                 <graphic>
+                                    <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconSelectNone.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                           </children>
+                        </HBox>
                                       <FlowPane hgap="5.0" vgap="5.0">
                                           <children>
-                                            <Label text="%Format" />
                                               <CheckBox fx:id="treeXmlCheck" mnemonicParsing="false" selected="true" text="%TreeXML" />
                               <CheckBox fx:id="treeJsonCheck" layoutX="175.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%TreeJSON" />
                               <CheckBox fx:id="treeHtmlCheck" layoutX="39.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%TreeHtml" />
@@ -45,9 +67,34 @@ License:    Apache License Version 2.0
                                               <CheckBox fx:id="framesetCheck" mnemonicParsing="false" selected="true" text="%HtmlsFrameset" />
                                           </children>
                                       </FlowPane>
+                        <HBox alignment="CENTER_LEFT" spacing="2.0">
+                           <children>
+                                              <Label text="%Export" />
+                              <Button fx:id="selectAllValueButton" mnemonicParsing="false" onAction="#selectAllValueAction">
+                                 <graphic>
+                                    <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconSelectAll.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                              <Button fx:id="selectNoneValueButton" mnemonicParsing="false" onAction="#selectNoneValueAction">
+                                 <graphic>
+                                    <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconSelectNone.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                           </children>
+                           <VBox.margin>
+                              <Insets top="10.0" />
+                           </VBox.margin>
+                        </HBox>
                                       <FlowPane alignment="CENTER_LEFT" hgap="2.0" vgap="2.0">
                                           <children>
-                                              <Label text="%Export" />
                               <CheckBox fx:id="idCheck" layoutX="60.0" layoutY="10.0" mnemonicParsing="false" text="%ID" />
                               <CheckBox fx:id="hierarchyCheck" layoutX="36.0" layoutY="10.0" mnemonicParsing="false" text="%HierarchyNumber" />
                                               <CheckBox fx:id="timeCheck" mnemonicParsing="false" text="%Time" />
@@ -57,6 +104,17 @@ License:    Apache License Version 2.0
                               <CheckBox fx:id="dataCheck" layoutX="252.0" layoutY="10.0" mnemonicParsing="false" text="%Data" />
                                           </children>
                                       </FlowPane>
+                     </children>
+                            </VBox>
+                      </content>
+                  </Tab>
+            <Tab fx:id="optionsTab1" text="%TargetFile">
+               <content>
+                  <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                     <children>
                                       <fx:include fx:id="targetPath" source="ControlTargetPath.fxml" />
                                       <FlowPane hgap="5.0" vgap="5.0">
                                           <children>
@@ -98,9 +156,9 @@ License:    Apache License Version 2.0
                                       </HBox>
                                       <TextArea fx:id="styleInput" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="200.0" VBox.vgrow="ALWAYS" />
                      </children>
-                            </VBox>
-                      </content>
-                  </Tab>
+                  </VBox>
+               </content>
+            </Tab>
                   <Tab fx:id="logsTab" text="%Logs">
                       <content>
                           <VBox fx:id="logsBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">

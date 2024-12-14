@@ -158,6 +158,26 @@ public class ClearExpiredDataController extends BaseTaskController {
         }
     }
 
+    @FXML
+    @Override
+    public void selectAllAction() {
+        selectAll(true);
+    }
+
+    @FXML
+    @Override
+    public void selectNoneAction() {
+        selectAll(false);
+    }
+
+    public void selectAll(boolean select) {
+        tmpFilesCheck.setSelected(select);
+        imageClipboardCheck.setSelected(select);
+        imageEditHistoriesCheck.setSelected(select);
+        filesBackupsCheck.setSelected(select);
+        data2dCheck.setSelected(select);
+    }
+
     /*
         static methods
      */

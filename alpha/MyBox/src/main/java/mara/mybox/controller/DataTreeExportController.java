@@ -963,19 +963,12 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
                 if (listCsvFile != null && listCsvFile.exists()) {
                     Data2DManufactureController.openCSVFile(listCsvFile);
                 }
-                timer = new Timer();
-                timer.schedule(new TimerTask() {
+                new Timer().schedule(new TimerTask() {
                     @Override
                     public void run() {
                         Platform.runLater(() -> {
                             if (listJsonFile != null && listJsonFile.exists()) {
                                 JsonEditorController.open(listJsonFile);
-                            }
-                            if (treeJsonFile != null && treeJsonFile.exists()) {
-                                JsonEditorController.open(treeJsonFile);
-                            }
-                            if (treeXmlFile != null && treeXmlFile.exists()) {
-                                XmlEditorController.open(treeXmlFile);
                             }
                             if (listXmlFile != null && listXmlFile.exists()) {
                                 XmlEditorController.open(listXmlFile);
@@ -983,6 +976,20 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
                         });
                     }
                 }, 1000);
+
+                new Timer().schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        Platform.runLater(() -> {
+                            if (treeJsonFile != null && treeJsonFile.exists()) {
+                                JsonEditorController.open(treeJsonFile);
+                            }
+                            if (treeXmlFile != null && treeXmlFile.exists()) {
+                                XmlEditorController.open(treeXmlFile);
+                            }
+                        });
+                    }
+                }, 2000);
 
             }
             showLogs(message("Count") + ": " + count);
@@ -994,6 +1001,47 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
     @Override
     public void openTarget() {
         browseURI(targetPath.toURI());
+    }
+
+    @FXML
+    public void selectAllFormatAction() {
+        selectAllFormat(true);
+    }
+
+    @FXML
+    public void selectNoneFormatAction() {
+        selectAllFormat(false);
+    }
+
+    public void selectAllFormat(boolean select) {
+        treeXmlCheck.setSelected(select);
+        treeHtmlCheck.setSelected(select);
+        treeJsonCheck.setSelected(select);
+        listJsonCheck.setSelected(select);
+        listCsvCheck.setSelected(select);
+        listXmlCheck.setSelected(select);
+        listHtmlCheck.setSelected(select);
+        framesetCheck.setSelected(select);
+    }
+
+    @FXML
+    public void selectAllValueAction() {
+        selectAllValue(true);
+    }
+
+    @FXML
+    public void selectNoneValueAction() {
+        selectAllValue(false);
+    }
+
+    public void selectAllValue(boolean select) {
+        idCheck.setSelected(select);
+        hierarchyCheck.setSelected(select);
+        timeCheck.setSelected(select);
+        tagsCheck.setSelected(select);
+        orderCheck.setSelected(select);
+        parentCheck.setSelected(select);
+        dataCheck.setSelected(select);
     }
 
 }

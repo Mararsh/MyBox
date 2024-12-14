@@ -602,7 +602,8 @@ public class Data2DExampleTools {
 
             menu = new MenuItem(message("MyBoxBaseVerificationList"));
             menu.setOnAction((ActionEvent event) -> {
-                DataFileCSV data = MyBoxBaseVerificationList(controller, isChinese);
+                DataFileCSV data = MyBoxBaseVerificationList(controller, isChinese,
+                        UserConfig.getBoolean("Data2DExampleImportDefinitionOnly", false));
                 controller.loadDef(data);
             });
             stMenu.getItems().add(menu);
@@ -1571,14 +1572,11 @@ public class Data2DExampleTools {
         return data;
     }
 
-    public static DataFileCSV MyBoxBaseVerificationList(BaseController controller, boolean isChinese) {
+    public static DataFileCSV MyBoxBaseVerificationList(BaseController controller,
+            boolean isChinese, boolean onlyDef) {
         try {
             String lang = isChinese ? "zh" : "en";
-            FunctionsList list = new FunctionsList(controller.getMainMenu(), false, lang);
-            StringTable table = list.make();
-            if (table == null) {
-                return null;
-            }
+
             DataFileCSV targetData = new DataFileCSV();
             List<Data2DColumn> columns = new ArrayList<>();
             columns.add(new Data2DColumn(message("Index"), ColumnType.Integer));
@@ -1644,7 +1642,12 @@ public class Data2DExampleTools {
                     }
                 }
                 writer.write(header + System.lineSeparator());
-                if (!UserConfig.getBoolean("Data2DExampleImportDefinitionOnly", false)) {
+                if (!onlyDef) {
+                    FunctionsList list = new FunctionsList(controller.getMainMenu(), false, lang);
+                    StringTable table = list.make();
+                    if (table == null) {
+                        return null;
+                    }
                     String values = "";
                     for (int i = 0; i < columns.size() - preSize; i++) {
                         values += "," + defauleValue;

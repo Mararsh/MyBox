@@ -66,7 +66,10 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
             if (!super.checkOptions() || !valueController.pickValues()) {
                 return false;
             }
-            return PopTools.askSure(getTitle(), message("SureOverwriteColumns") + "\n" + checkedColsNames);
+            return PopTools.askSure(getTitle(),
+                    message("SureOverwriteColumns") + "\n" + checkedColsNames
+                    + "\n" + message("ChangeAs") + ": " + message(valueController.setValue.type.name())
+                    + (valueController.setValue.value != null ? " - " + valueController.setValue.value : ""));
         } catch (Exception e) {
             MyBoxLog.error(e);
             return false;
@@ -327,7 +330,7 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
                 List<String> values = sourceController.tableData.get(row);
                 for (int col : checkedColsIndices) {
                     currentValue = values.get(col + 1);
-                    values.set(col + 1, currentValue == null ? prefix : prefix + currentValue);
+                    values.set(col + 1, currentValue == null ? prefix : (prefix + currentValue));
                 }
                 outputData.set(row, values);
             }
@@ -357,7 +360,7 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
                 List<String> values = sourceController.tableData.get(row);
                 for (int col : checkedColsIndices) {
                     currentValue = values.get(col + 1);
-                    values.set(col + 1, currentValue == null ? suffix : currentValue + suffix);
+                    values.set(col + 1, currentValue == null ? suffix : (currentValue + suffix));
                 }
                 outputData.set(row, values);
             }
@@ -385,15 +388,15 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
                 for (int col : checkedColsIndices) {
                     currentValue = values.get(col + 1);
                     if (valueController.numberPrefixRadio.isSelected()) {
-                        newValue = currentValue == null ? numValue : numValue + currentValue;
+                        newValue = currentValue == null ? numValue : (numValue + currentValue);
                     } else if (valueController.numberSuffixRadio.isSelected()) {
-                        newValue = currentValue == null ? numValue : currentValue + numValue;
+                        newValue = currentValue == null ? numValue : (currentValue + numValue);
                     } else if (valueController.numberReplaceRadio.isSelected()) {
                         newValue = numValue;
                     } else if (valueController.numberSuffixStringRadio.isSelected()) {
-                        newValue = v == null ? numValue : v + numValue;
+                        newValue = v == null ? numValue : (v + numValue);
                     } else if (valueController.numberPrefixStringRadio.isSelected()) {
-                        newValue = v == null ? numValue : numValue + v;
+                        newValue = v == null ? numValue : (numValue + v);
                     } else {
                         if (task != null) {
                             task.setError(message("Invalid") + ": " + message("SequenceNumber"));
