@@ -12,6 +12,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextArea?>
@@ -26,9 +27,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-
-<?import javafx.scene.control.ScrollPane?>
-<ScrollPane  prefHeight="700.0" prefWidth="1000.0"  fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.FileDecompressUnarchiveController">
+<ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.FileDecompressUnarchiveController">
    <content>
 <BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
     <top>
@@ -166,7 +165,7 @@ License:    Apache License Version 2.0
                                         </HBox>
                                         <TreeTableView fx:id="filesTreeView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                                             <columns>
-                                                <TreeTableColumn fx:id="nodeColumn" editable="false" prefWidth="300.0" text="%File" />
+                                                <TreeTableColumn fx:id="fileColumn" editable="false" prefWidth="300.0" text="%File" />
                                                 <TreeTableColumn fx:id="selectedColumn" minWidth="-1.0" prefWidth="100.0" text="%Select" />
                                                 <TreeTableColumn fx:id="sizeColumn" editable="false" prefWidth="160.0" text="%Size" />
                                                 <TreeTableColumn fx:id="typeColumn" editable="false" minWidth="0.0" prefWidth="100.0" text="%Type" />

@@ -53,12 +53,12 @@ public class DataTreeController extends BaseDataTreeViewController {
      */
     @Override
     public void whenTreeEmpty() {
+        if (AppVariables.isTesting) {
+            return;
+        }
         File file = nodeTable.exampleFile();
-        if (file != null) {
-            if (AppVariables.isTesting
-                    || PopTools.askSure(getTitle(), message("ImportExamples") + ": " + baseTitle)) {
-                importExamples(null);
-            }
+        if (file != null && PopTools.askSure(getTitle(), message("ImportExamples") + ": " + baseTitle)) {
+            importExamples(null);
         }
     }
 
@@ -604,10 +604,11 @@ public class DataTreeController extends BaseDataTreeViewController {
         DataTreeMoveController.open(this, item != null ? item.getValue() : null);
     }
 
-    protected void exportNode(TreeItem<DataNode> item) {
+    protected DataTreeExportController exportNode(TreeItem<DataNode> item) {
         DataTreeExportController exportController
                 = (DataTreeExportController) openStage(Fxmls.DataTreeExportFxml);
         exportController.setParamters(this, item);
+        return exportController;
     }
 
     /*
@@ -621,10 +622,11 @@ public class DataTreeController extends BaseDataTreeViewController {
     }
 
     @FXML
-    protected void importExamples(TreeItem<DataNode> item) {
+    protected DataTreeImportController importExamples(TreeItem<DataNode> item) {
         DataTreeImportController importController
                 = (DataTreeImportController) openStage(Fxmls.DataTreeImportFxml);
         importController.importExamples(this, item);
+        return importController;
     }
 
     protected void manufactureData() {
@@ -662,6 +664,7 @@ public class DataTreeController extends BaseDataTreeViewController {
             }
             controller.requestMouse();
             controller.initDataTree(table);
+            controller.loadTree();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e);

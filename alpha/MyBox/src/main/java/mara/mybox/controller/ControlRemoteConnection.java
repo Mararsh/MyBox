@@ -379,6 +379,7 @@ public class ControlRemoteConnection extends BaseSysTableController<PathConnecti
                 .setNodename(nodename)
                 .setParentFile(parent)
                 .setIsRemote(true)
+                .setSeparator("/")
                 .attrs(stat(nodename));
     }
 
@@ -402,6 +403,7 @@ public class ControlRemoteConnection extends BaseSysTableController<PathConnecti
                         .setNodename(name)
                         .setParentFile(targetNode)
                         .setIsRemote(true)
+                        .setSeparator("/")
                         .attrs(entry.getAttrs());
                 children.add(fileInfo);
             }

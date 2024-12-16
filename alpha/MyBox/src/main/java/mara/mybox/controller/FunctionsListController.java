@@ -83,7 +83,7 @@ public class FunctionsListController extends ControlWebView {
     }
 
     public void makeDocuments(MyBoxDocumentsController maker, File path, String lang) {
-        task = new FxTask<Void>(this) {
+        FxTask docTask = new FxTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -107,7 +107,7 @@ public class FunctionsListController extends ControlWebView {
             }
 
         };
-        start(task);
+        start(docTask);
     }
 
     /*

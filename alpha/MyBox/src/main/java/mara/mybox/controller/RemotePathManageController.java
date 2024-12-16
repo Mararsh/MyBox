@@ -119,6 +119,7 @@ public class RemotePathManageController extends FilesTreeController {
                     FileNode rootInfo = new FileNode()
                             .setNodename(rootPath)
                             .setIsRemote(true)
+                            .setSeparator("/")
                             .attrs(remoteController.stat(rootPath));
                     rootItem = new TreeItem(rootInfo);
                     rootItem.setExpanded(true);

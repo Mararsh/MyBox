@@ -6,6 +6,7 @@ import java.util.Random;
 import javafx.fxml.FXML;
 import javafx.scene.control.Tab;
 import mara.mybox.db.data.ConvolutionKernel;
+import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.PopTools;
@@ -66,10 +67,19 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
             if (!super.checkOptions() || !valueController.pickValues()) {
                 return false;
             }
-            return PopTools.askSure(getTitle(),
-                    message("SureOverwriteColumns") + "\n" + checkedColsNames
-                    + "\n" + message("ChangeAs") + ": " + message(valueController.setValue.type.name())
-                    + (valueController.setValue.value != null ? " - " + valueController.setValue.value : ""));
+            String info = message("SureOverwriteColumns") + "\n";
+            for (String name : checkedColsNames) {
+                Data2DColumn column = data2D.columnByName(name);
+                info += message("Column") + ": " + name + "    "
+                        + message(column.getType().name()) + "\n";
+            }
+            info += "--------------\n"
+                    + message("Set") + ": " + message(valueController.setValue.type.name()) + "\n"
+                    + message("Value") + ": " + (valueController.setValue.value != null
+                    ? " - " + valueController.setValue.value : "") + "\n"
+                    + "------------------------\n"
+                    + message("DataSetValuesComments");
+            return PopTools.askSure(getTitle(), info);
         } catch (Exception e) {
             MyBoxLog.error(e);
             return false;

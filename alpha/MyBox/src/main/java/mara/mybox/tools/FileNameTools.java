@@ -23,11 +23,15 @@ public class FileNameTools {
     }
 
     public static String name(String filename) {
+        return name(filename, File.separator);
+    }
+
+    public static String name(String filename, String separator) {
         if (filename == null) {
             return null;
         }
         String fname = filename;
-        int pos = fname.lastIndexOf(File.separator);
+        int pos = fname.lastIndexOf(separator);
         if (pos >= 0) {
             fname = (pos < fname.length() - 1) ? fname.substring(pos + 1) : "";
         }
@@ -72,12 +76,16 @@ public class FileNameTools {
         return name;
     }
 
-    // not include "."
     public static String ext(String filename) {
-        if (filename == null || filename.endsWith(File.separator)) {
+        return ext(filename, File.separator);
+    }
+
+    // not include "."
+    public static String ext(String filename, String separator) {
+        if (filename == null || filename.endsWith(separator)) {
             return null;
         }
-        String name = name(filename);
+        String name = name(filename, separator);
         int pos = name.lastIndexOf('.');
         return (pos >= 0 && pos < name.length() - 1) ? name.substring(pos + 1) : "";
     }

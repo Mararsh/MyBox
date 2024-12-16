@@ -5,10 +5,14 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.ResourceBundle;
+import javafx.application.Platform;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.TreeItem;
 import mara.mybox.data.StringTable;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.tools.Data2DConvertTools;
@@ -18,6 +22,8 @@ import static mara.mybox.data2d.tools.Data2DExampleTools.MyBoxBaseVerificationLi
 import static mara.mybox.data2d.tools.Data2DExampleTools.TestEnvironment;
 import mara.mybox.db.data.ColorData;
 import mara.mybox.db.data.ColorDataTools;
+import mara.mybox.db.data.DataNode;
+import mara.mybox.db.table.BaseNodeTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fximage.PaletteTools;
@@ -28,13 +34,17 @@ import static mara.mybox.fxml.HelpTools.imageStories;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.HtmlStyles;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleData;
-import mara.mybox.tools.FileCopyTools;
+import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.CurrentBundle;
+import static mara.mybox.value.AppVariables.CurrentLangName;
 import static mara.mybox.value.Colors.color;
 import mara.mybox.value.Fxmls;
+import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -46,13 +56,18 @@ import mara.mybox.value.UserConfig;
 public class MyBoxDocumentsController extends BaseTaskController {
 
     protected File path;
+    protected final SimpleBooleanProperty finishNotify;
+    protected int index;
+    protected String realLang;
+    protected ResourceBundle realBoundle;
 
     @FXML
     protected CheckBox readmeCheck, functionsCheck, tipsCheck, shortcutsCheck,
-            testingCheck, paletteCheck, linksCheck, imagesCheck;
+            testingCheck, treeCheck, paletteCheck, linksCheck, imagesCheck;
 
     public MyBoxDocumentsController() {
         baseTitle = message("MakeDocuments");
+        finishNotify = new SimpleBooleanProperty(false);
     }
 
     @Override
@@ -84,6 +99,19 @@ public class MyBoxDocumentsController extends BaseTaskController {
                     UserConfig.setBoolean(baseName + "Tips", nv);
                 }
             });
+
+            treeCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                    if (treeCheck.isSelected()) {
+                        treeCheck.setStyle(NodeStyleTools.darkRedTextStyle());
+                    } else {
+                        treeCheck.setStyle(null);
+                    }
+                    UserConfig.setBoolean(baseName + "Tree", nv);
+                }
+            });
+            treeCheck.setSelected(UserConfig.getBoolean(baseName + "Tree", true));
 
             shortcutsCheck.setSelected(UserConfig.getBoolean(baseName + "Shortcuts", true));
             shortcutsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -147,6 +175,8 @@ public class MyBoxDocumentsController extends BaseTaskController {
 
     @Override
     public boolean doTask(FxTask currentTask) {
+        realLang = CurrentLangName;
+        realBoundle = CurrentBundle;
         if (readmeCheck.isSelected()) {
             readme("zh");
             readme("en");
@@ -175,6 +205,12 @@ public class MyBoxDocumentsController extends BaseTaskController {
         if (task == null || !task.isWorking()) {
             return false;
         }
+        if (treeCheck.isSelected()) {
+            trees();
+        }
+        if (task == null || !task.isWorking()) {
+            return false;
+        }
         if (imagesCheck.isSelected()) {
             images("zh");
             images("en");
@@ -193,7 +229,7 @@ public class MyBoxDocumentsController extends BaseTaskController {
         try {
             File file = HelpTools.makeReadMe(lang);
             if ("zh".equals(lang)) {
-                FileCopyTools.copyFile(file, new File(path, "index.html"), true, true);
+                FileTools.override(file, new File(path, "index.html"), true);
             }
             showLogs(file.getAbsolutePath());
             return true;
@@ -206,8 +242,8 @@ public class MyBoxDocumentsController extends BaseTaskController {
     protected boolean tips(String lang) {
         try {
             File file = HelpTools.makeInterfaceTips(lang);
-            FileCopyTools.copyFile(file, new File(path, file.getName()), true, true);
-            task.setInfo(file.getAbsolutePath());
+            FileTools.override(file, new File(path, file.getName()), true);
+            showLogs(file.getAbsolutePath());
             return true;
         } catch (Exception e) {
             error = e.toString();
@@ -218,8 +254,8 @@ public class MyBoxDocumentsController extends BaseTaskController {
     protected boolean links(String lang) {
         try {
             File file = HelpTools.usefulLinks(lang);
-            FileCopyTools.copyFile(file, new File(path, file.getName()), true, true);
-            task.setInfo(file.getAbsolutePath());
+            FileTools.override(file, new File(path, file.getName()), true);
+            showLogs(file.getAbsolutePath());
             return true;
         } catch (Exception e) {
             error = e.toString();
@@ -230,8 +266,8 @@ public class MyBoxDocumentsController extends BaseTaskController {
     protected boolean images(String lang) {
         try {
             File file = imageStories(task, true, lang);
-            FileCopyTools.copyFile(file, new File(path, file.getName()), true, true);
-            task.setInfo(file.getAbsolutePath());
+            FileTools.override(file, new File(path, file.getName()), true);
+            showLogs(file.getAbsolutePath());
             return true;
         } catch (Exception e) {
             error = e.toString();
@@ -246,27 +282,152 @@ public class MyBoxDocumentsController extends BaseTaskController {
                     .setCharset(Charset.forName("UTF-8")).setDelimiter(",").setHasHeader(true);
             File htmlFile = new File(path, "mybox_TestEnvironment_" + lang + ".html");
             Data2DConvertTools.toHtmlFile(task, data, htmlFile);
-            task.setInfo(htmlFile.getAbsolutePath());
+            showLogs(htmlFile.getAbsolutePath());
 
             data = CompatibilityTesting("zh".equals(lang));
             data.setFile(FxFileTools.getInternalFile("/data/examples/ST_CompatibilityTesting_" + lang + ".csv"))
                     .setCharset(Charset.forName("UTF-8")).setDelimiter(",").setHasHeader(true);
             htmlFile = new File(path, "mybox_CompatibilityTesting_" + lang + ".html");
             Data2DConvertTools.toHtmlFile(task, data, htmlFile);
-            task.setInfo(htmlFile.getAbsolutePath());
+            showLogs(htmlFile.getAbsolutePath());
 
             data = DetailedTesting("zh".equals(lang));
             data.setFile(FxFileTools.getInternalFile("/data/examples/ST_DetailedTesting_" + lang + ".csv"))
                     .setCharset(Charset.forName("UTF-8")).setDelimiter(",").setHasHeader(true);
             htmlFile = new File(path, "mybox_DetailedTesting_" + lang + ".html");
             Data2DConvertTools.toHtmlFile(task, data, htmlFile);
-            task.setInfo(htmlFile.getAbsolutePath());
+            showLogs(htmlFile.getAbsolutePath());
 
             data = MyBoxBaseVerificationList(this, "zh".equals(lang), false);
             htmlFile = new File(path, "mybox_BaseVerificationList_" + lang + ".html");
             Data2DConvertTools.toHtmlFile(task, data, htmlFile);
-            task.setInfo(htmlFile.getAbsolutePath());
+            showLogs(htmlFile.getAbsolutePath());
 
+            return true;
+        } catch (Exception e) {
+            error = e.toString();
+            return false;
+        }
+    }
+
+    public class TreeCase {
+
+        public String tableName, lang;
+
+        public TreeCase(String tableName, String lang) {
+            this.tableName = tableName;
+            this.lang = lang;
+        }
+    }
+
+    protected boolean trees() {
+        try {
+            List<TreeCase> cases = new ArrayList<>();
+            cases.add(new TreeCase("Text", "zh"));
+            cases.add(new TreeCase("Text", "en"));
+            cases.add(new TreeCase("Html", "zh"));
+            cases.add(new TreeCase("Html", "en"));
+            cases.add(new TreeCase("MathFunction", "zh"));
+            cases.add(new TreeCase("MathFunction", "en"));
+            cases.add(new TreeCase("WebFavorite", "zh"));
+            cases.add(new TreeCase("WebFavorite", "en"));
+            cases.add(new TreeCase("SQL", "zh"));
+            cases.add(new TreeCase("SQL", "en"));
+            cases.add(new TreeCase("ImageScope", "zh"));
+            cases.add(new TreeCase("ImageScope", "en"));
+            cases.add(new TreeCase("JShell", "zh"));
+            cases.add(new TreeCase("JShell", "en"));
+            cases.add(new TreeCase("JEXL", "zh"));
+            cases.add(new TreeCase("JEXL", "en"));
+            cases.add(new TreeCase("JavaScript", "zh"));
+            cases.add(new TreeCase("JavaScript", "en"));
+            cases.add(new TreeCase("RowFilter", "zh"));
+            cases.add(new TreeCase("RowFilter", "en"));
+            cases.add(new TreeCase("Data2DDefinition", "zh"));
+            cases.add(new TreeCase("Data2DDefinition", "en"));
+
+            index = 0;
+            finishNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    if (index < cases.size()) {
+                        Platform.runLater(() -> {
+                            TreeCase theCase = cases.get(index);
+                            treeHtml(theCase.tableName, theCase.lang);
+                            index++;
+                        });
+                        Platform.requestNextPulse();
+                    }
+                }
+            });
+            finishNotify();
+            return true;
+        } catch (Exception e) {
+            error = e.toString();
+            return false;
+        }
+    }
+
+    protected void finishNotify() {
+        finishNotify.set(!finishNotify.get());
+    }
+
+    protected boolean treeHtml(String tableName, String lang) {
+        try {
+            CurrentLangName = lang;
+            CurrentBundle = "zh".equals(lang) ? Languages.BundleZhCN : Languages.BundleEn;
+            BaseNodeTable nodeTable = BaseNodeTable.create(tableName);
+            nodeTable.truncate();
+            DataTreeController treeController = (DataTreeController) WindowTools.openStage(Fxmls.DataTreeFxml);
+            treeController.initDataTree(nodeTable);
+            DataNode rootNode = nodeTable.getRoot();
+            if (rootNode == null) {
+                return false;
+            }
+            TreeItem rootItem = new TreeItem(rootNode);
+            treeController.treeView.setRoot(rootItem);
+            DataTreeImportController importController = (DataTreeImportController) WindowTools
+                    .openStage(Fxmls.DataTreeImportFxml);
+            importController.miaoCheck.setSelected(false);
+            importController.importExamples(treeController, rootItem, nodeTable.exampleFileLang(lang));
+            importController.taskClosedNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    Platform.runLater(() -> {
+                        importController.close();
+                        DataTreeExportController exportController = (DataTreeExportController) WindowTools
+                                .openStage(Fxmls.DataTreeExportFxml);
+                        exportController.setParamters(treeController, rootItem);
+                        exportController.selectAllFormat(false);
+                        exportController.treeHtmlCheck.setSelected(true);
+                        exportController.openCheck.setSelected(false);
+                        exportController.startAction();
+                        exportController.taskClosedNotify.addListener(new ChangeListener<Boolean>() {
+                            @Override
+                            public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                                Platform.runLater(() -> {
+                                    File file = exportController.treeHtmlFile;
+                                    if (file != null && file.exists()) {
+                                        File htmlFile = new File(path,
+                                                "mybox_examples_" + nodeTable.getTableName() + "_" + lang + ".html");
+                                        FileTools.override(file, htmlFile, true);
+                                        showLogs(htmlFile.getAbsolutePath());
+                                    } else {
+                                        showLogs(message("Failed"));
+                                    }
+                                    exportController.close();
+                                    treeController.close();
+                                    CurrentLangName = realLang;
+                                    CurrentBundle = realBoundle;
+                                    finishNotify();
+                                });
+                                Platform.requestNextPulse();
+                            }
+                        });
+                    });
+                    Platform.requestNextPulse();
+                }
+            });
             return true;
         } catch (Exception e) {
             error = e.toString();
@@ -458,7 +619,7 @@ public class MyBoxDocumentsController extends BaseTaskController {
             File file = new File(path, "mybox_palette_" + name + ".html");
             file.delete();
             TextFileTools.writeFile(file, html);
-            task.setInfo(file.getAbsolutePath());
+            showLogs(file.getAbsolutePath());
         } catch (Exception e) {
             error = e.toString();
         }
@@ -499,6 +660,7 @@ public class MyBoxDocumentsController extends BaseTaskController {
         paletteCheck.setSelected(select);
         linksCheck.setSelected(select);
         imagesCheck.setSelected(select);
+        treeCheck.setSelected(select);
     }
 
     /*

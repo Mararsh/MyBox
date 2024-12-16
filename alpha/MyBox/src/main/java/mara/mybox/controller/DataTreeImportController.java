@@ -126,11 +126,14 @@ public class DataTreeImportController extends BaseBatchFileController {
     }
 
     public void importExamples(DataTreeController controller, TreeItem<DataNode> item) {
-        setParamters(controller, item);
+        importExamples(controller, item, null);
+    }
 
-        File file = nodeTable.exampleFile();
+    public void importExamples(DataTreeController controller, TreeItem<DataNode> item, File inFile) {
+        setParamters(controller, item);
+        File file = inFile;
         if (file == null) {
-            return;
+            file = nodeTable.exampleFile();
         }
         isSettingValues = true;
         updateRadio.setSelected(true);

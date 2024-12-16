@@ -404,7 +404,7 @@ public class CompressTools {
                     continue;
                 }
                 try {
-                    FileNode file = new FileNode();
+                    FileNode file = new FileNode().setSeparator("/");
                     file.setData(entry.getName());
                     file.setModifyTime(entry.getLastModifiedDate().getTime());
                     file.setFileSize(entry.getSize());
@@ -427,7 +427,7 @@ public class CompressTools {
             Enumeration<ZipArchiveEntry> entries = zipFile.getEntries();
             while (entries.hasMoreElements()) {
                 ZipArchiveEntry entry = entries.nextElement();
-                FileNode file = new FileNode();
+                FileNode file = new FileNode().setSeparator("/");
                 file.setData(entry.getName());
                 file.setModifyTime(entry.getLastModifiedDate().getTime());
                 file.setFileSize(entry.getSize());
@@ -448,7 +448,7 @@ public class CompressTools {
             SevenZArchiveEntry entry;
             List<FileNode> entries = new ArrayList();
             while ((entry = sevenZFile.getNextEntry()) != null) {
-                FileNode file = new FileNode();
+                FileNode file = new FileNode().setSeparator("/");
                 file.setData(entry.getName());
                 file.setModifyTime(entry.getLastModifiedDate().getTime());
                 file.setFileSize(entry.getSize());

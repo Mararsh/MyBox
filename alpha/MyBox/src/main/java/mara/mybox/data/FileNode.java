@@ -2,6 +2,7 @@ package mara.mybox.data;
 
 import com.jcraft.jsch.SftpATTRS;
 import java.io.File;
+import mara.mybox.tools.FileNameTools;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -13,7 +14,7 @@ public class FileNode extends FileInformation {
 
     public boolean isRemote, isExisted;
     public FileNode parentNode;
-    public String nodename, permission;
+    public String nodename, permission, separator;
     public long accessTime;
     public int uid, gid;
 
@@ -21,6 +22,7 @@ public class FileNode extends FileInformation {
         init();
         parentNode = null;
         isRemote = false;
+        separator = File.separator;
     }
 
     public FileNode(File file) {
@@ -62,10 +64,6 @@ public class FileNode extends FileInformation {
         return this;
     }
 
-    public String separator() {
-        return isRemote ? "/" : File.separator;
-    }
-
     public String parentName() {
         return parentNode != null ? parentNode.nodeFullName() : "";
     }
@@ -79,11 +77,11 @@ public class FileNode extends FileInformation {
         } else {
             pathname = parentNode.nodeFullName();
         }
-        return endSeparator ? pathname + separator() : pathname;
+        return endSeparator ? pathname + separator : pathname;
     }
 
     public String nodeFullName() {
-        return (parentNode != null ? parentNode.nodeFullName() + separator() : "") + nodename;
+        return (parentNode != null ? parentNode.nodeFullName() + separator : "") + nodename;
     }
 
     public boolean isExisted() {
@@ -108,11 +106,38 @@ public class FileNode extends FileInformation {
     }
 
     @Override
+    public String getFileName() {
+        if (file != null) {
+            return file.getName();
+        } else if (nodename != null) {
+            return FileNameTools.name(nodename, separator);
+        } else if (data != null) {
+            return FileNameTools.name(data, separator);
+        } else {
+            return null;
+        }
+    }
+
+    @Override
     public String getSuffix() {
         if (isRemote) {
             return fileType != null ? message(fileType.name()) : null;
+        }
+        if (fileType != null && fileType != FileType.File) {
+            return message(fileType.name());
+        }
+        if (file != null) {
+            if (file.isDirectory()) {
+                return null;
+            } else {
+                return FileNameTools.ext(file.getName(), separator);
+            }
+        } else if (nodename != null) {
+            return FileNameTools.ext(nodename, separator);
+        } else if (data != null) {
+            return FileNameTools.ext(data, separator);
         } else {
-            return super.getSuffix();
+            return null;
         }
     }
 
@@ -151,6 +176,15 @@ public class FileNode extends FileInformation {
 
     public FileNode setIsRemote(boolean isRemote) {
         this.isRemote = isRemote;
+        return this;
+    }
+
+    public String getSeparator() {
+        return separator;
+    }
+
+    public FileNode setSeparator(String separator) {
+        this.separator = separator;
         return this;
     }
 

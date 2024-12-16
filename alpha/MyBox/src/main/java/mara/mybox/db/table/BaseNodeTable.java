@@ -159,6 +159,40 @@ public class BaseNodeTable extends BaseTable<DataNode> {
     }
 
     /*
+        static
+     */
+    public static BaseNodeTable create(String name) {
+        if (name == null) {
+            return null;
+        }
+        switch (name) {
+            case "Text":
+                return new TableNodeText();
+            case "Html":
+                return new TableNodeHtml();
+            case "MathFunction":
+                return new TableNodeMathFunction();
+            case "WebFavorite":
+                return new TableNodeWebFavorite();
+            case "SQL":
+                return new TableNodeSQL();
+            case "ImageScope":
+                return new TableNodeImageScope();
+            case "JShell":
+                return new TableNodeJShell();
+            case "JEXL":
+                return new TableNodeJEXL();
+            case "JavaScript":
+                return new TableNodeJavaScript();
+            case "RowFilter":
+                return new TableNodeRowFilter();
+            case "Data2DDefinition":
+                return new TableNodeData2DDefinition();
+        }
+        return null;
+    }
+
+    /*
         rows
      */
     @Override
@@ -276,6 +310,29 @@ public class BaseNodeTable extends BaseTable<DataNode> {
             return statement.executeUpdate();
         } catch (Exception e) {
             MyBoxLog.debug(e);
+            return -2;
+        }
+    }
+
+    // this will clear all data and start from 1
+    public long truncate() {
+        try (Connection conn = DerbyBase.getConnection()) {
+            return truncate(conn);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return -3;
+        }
+    }
+
+    public long truncate(Connection conn) {
+        if (conn == null) {
+            return -1;
+        }
+        String sql = "DELETE FROM " + tableName + " WHERE nodeid=" + RootID;
+        try (PreparedStatement statement = conn.prepareStatement(sql)) {
+            return statement.executeUpdate();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
             return -2;
         }
     }
@@ -530,14 +587,24 @@ public class BaseNodeTable extends BaseTable<DataNode> {
         values
      */
     public File exampleFile() {
-        return exampleFile(examplesFileName);
+        return exampleFile(null);
     }
 
     public File exampleFile(String name) {
+        return exampleFile(name, null);
+    }
+
+    public File exampleFileLang(String lang) {
+        return exampleFile(null, lang);
+    }
+
+    public File exampleFile(String name, String lang) {
         if (name == null) {
-            return null;
+            name = examplesFileName;
         }
-        String lang = Languages.embedFileLang();
+        if (lang == null) {
+            lang = Languages.embedFileLang();
+        }
         return getInternalFile("/data/examples/" + name + "_Examples_" + lang + ".xml",
                 "data", name + "_Examples_" + lang + ".xml", true);
     }

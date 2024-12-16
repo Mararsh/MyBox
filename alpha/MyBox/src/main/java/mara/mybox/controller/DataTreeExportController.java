@@ -58,7 +58,7 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
     protected FileWriter treeHtmlWriter, treeXmlWriter, treeJsonWriter,
             listJsonWriter, listHtmlWriter, listXmlWriter, framesetNavWriter;
     protected CSVPrinter csvPrinter;
-    protected String hierarchyNumber;
+    protected String hierarchyNumber, language;
     protected int count, level, childrenNumber;
     protected Charset charset;
     protected Stack<Integer> childrenNumberStack;
@@ -243,6 +243,7 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
         }
         treeXmlFile = null;
         treeHtmlFile = null;
+        treeJsonFile = null;
         listJsonFile = null;
         listHtmlFile = null;
         listXmlFile = null;
@@ -251,6 +252,7 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
         framesetNavFile = null;
         treeXmlWriter = null;
         treeHtmlWriter = null;
+        treeJsonWriter = null;
         listHtmlWriter = null;
         listXmlWriter = null;
         listJsonWriter = null;
@@ -765,10 +767,9 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
                 return;
             }
 
-            if (treeJsonWriter != null) {
-                childrenNumberStack.push(childrenNumber);
-                childrenNumber = 0;
-            }
+            childrenNumberStack.push(childrenNumber);
+            childrenNumber = 0;
+
             if (treeHtmlWriter != null) {
                 treeHtmlWriter.write(Indent + "<DIV class=\"TreeNode\" id='" + nodePageid + "'>\n");
             }
@@ -802,8 +803,9 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
                 } else {
                     treeJsonWriter.write("\n" + nodePrefix + Indent + "}\n");
                 }
-                childrenNumber = childrenNumberStack.pop();
             }
+
+            childrenNumber = childrenNumberStack.pop();
 
             if (nodeid != RootID && treeXmlWriter != null) {
                 treeXmlWriter.write(nodePrefix + "</TreeNode>\n");

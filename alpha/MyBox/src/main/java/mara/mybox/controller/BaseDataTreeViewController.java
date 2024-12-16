@@ -70,7 +70,7 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
     @FXML
     protected Label titleLabel;
     @FXML
-    protected Button helpButton, goButton;
+    protected Button helpButton;
     @FXML
     protected ControlWebView viewController;
 
@@ -145,14 +145,7 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
             if (table == null) {
                 return;
             }
-            nodeTable = table;
-            tagTable = new TableDataTag(nodeTable);
-            nodeTagsTable = new TableDataNodeTag(nodeTable);
-
-            dataName = nodeTable.getTableName();
-            baseName = baseName + "_" + dataName;
-            baseTitle = nodeTable.getTreeName();
-            setTitle(baseTitle);
+            initDataTree(table);
 
             loadTree(node);
 
@@ -162,7 +155,22 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
     }
 
     public void initDataTree(BaseNodeTable table) {
-        initDataTree(table, null);
+        try {
+            if (table == null) {
+                return;
+            }
+            nodeTable = table;
+            tagTable = new TableDataTag(nodeTable);
+            nodeTagsTable = new TableDataNodeTag(nodeTable);
+
+            dataName = nodeTable.getTableName();
+            baseName = baseName + "_" + dataName;
+            baseTitle = nodeTable.getTreeName();
+            setTitle(baseTitle);
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
     public void loadTree() {

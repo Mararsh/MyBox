@@ -19,7 +19,7 @@
         <name>Mara</name>
     </organization>
 
-    <repositories>
+    <!--    <repositories>
         <repository>
             <id>aliyun-repos</id>
             <url>https://maven.aliyun.com/repository/public</url>
@@ -30,7 +30,7 @@
                 <enabled>false</enabled>
             </snapshots>
         </repository>
-    </repositories>
+    </repositories>-->
 
     <dependencies>
         <dependency>
