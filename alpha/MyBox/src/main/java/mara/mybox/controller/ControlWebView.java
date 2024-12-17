@@ -153,7 +153,10 @@ public class ControlWebView extends BaseController {
             webEngine.getLoadWorker().stateProperty().addListener(new ChangeListener<Worker.State>() {
                 @Override
                 public void changed(ObservableValue ov, Worker.State oldState, Worker.State newState) {
-                    worker(newState);
+                    Platform.runLater(() -> {
+                        worker(newState);
+                    });
+                    Platform.requestNextPulse();
                 }
             });
 
@@ -161,7 +164,10 @@ public class ControlWebView extends BaseController {
             docListener = new EventListener() {
                 @Override
                 public void handleEvent(org.w3c.dom.events.Event ev) {
-                    docEvent(ev);
+                    Platform.runLater(() -> {
+                        docEvent(ev);
+                    });
+                    Platform.requestNextPulse();
                 }
             };
 
@@ -171,8 +177,8 @@ public class ControlWebView extends BaseController {
                     if (nt == null) {
                         return;
                     }
-                    setWebViewLabel(nt.getMessage());
                     Platform.runLater(() -> {
+                        setWebViewLabel(nt.getMessage());
                         alertError(nt.getMessage());
                     });
                 }
@@ -181,14 +187,18 @@ public class ControlWebView extends BaseController {
             webEngine.setOnStatusChanged(new EventHandler<WebEvent<String>>() {
                 @Override
                 public void handle(WebEvent<String> ev) {
-                    statusChanged(ev);
+                    Platform.runLater(() -> {
+                        statusChanged(ev);
+                    });
                 }
             });
 
             webEngine.locationProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldv, String newv) {
-                    locationChanged(oldv, newv);
+                    Platform.runLater(() -> {
+                        locationChanged(oldv, newv);
+                    });
                 }
             });
 
@@ -226,38 +236,35 @@ public class ControlWebView extends BaseController {
     }
 
     public void worker(Worker.State state) {
-        Platform.runLater(() -> {
-            try {
-                switch (state) {
-                    case READY:
-                        ready();
-                        break;
-                    case RUNNING:
-                        running();
-                        break;
-                    case SUCCEEDED:
-                        succeeded();
-                        break;
-                    case CANCELLED:
-                        if (timer != null) {
-                            timer.cancel();
-                        }
-                        setWebViewLabel(message("Canceled"));
-                        break;
-                    case FAILED:
-                        if (timer != null) {
-                            timer.cancel();
-                        }
-                        setWebViewLabel(message("Failed"));
-                        break;
-                    default:
-                        setWebViewLabel(state.name());
-                }
-            } catch (Exception e) {
-                MyBoxLog.error(e);
+        try {
+            switch (state) {
+                case READY:
+                    ready();
+                    break;
+                case RUNNING:
+                    running();
+                    break;
+                case SUCCEEDED:
+                    succeeded();
+                    break;
+                case CANCELLED:
+                    if (timer != null) {
+                        timer.cancel();
+                    }
+                    setWebViewLabel(message("Canceled"));
+                    break;
+                case FAILED:
+                    if (timer != null) {
+                        timer.cancel();
+                    }
+                    setWebViewLabel(message("Failed"));
+                    break;
+                default:
+                    setWebViewLabel(state.name());
             }
-        });
-        Platform.requestNextPulse();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
     public void docEvent(org.w3c.dom.events.Event ev) {

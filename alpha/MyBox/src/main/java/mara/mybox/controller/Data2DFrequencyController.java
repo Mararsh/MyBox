@@ -54,7 +54,7 @@ public class Data2DFrequencyController extends BaseData2DTaskTargetsController {
             }
             handledNames = new ArrayList<>();
             outputColumns = new ArrayList<>();
-            outputColumns.add(freColumn.cloneAll());
+            outputColumns.add(freColumn.copy());
             handledNames.add(freName);
 
             String cName = DerbyBase.checkIdentifier(handledNames, freName + "_" + message("Count"), true);

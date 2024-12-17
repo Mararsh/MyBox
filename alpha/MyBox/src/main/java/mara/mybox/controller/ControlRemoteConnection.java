@@ -22,6 +22,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import mara.mybox.data.FileNode;
+import mara.mybox.data.RemoteFile;
 import mara.mybox.db.data.PathConnection;
 import mara.mybox.db.table.TablePathConnection;
 import mara.mybox.dev.MyBoxLog;
@@ -375,12 +376,9 @@ public class ControlRemoteConnection extends BaseSysTableController<PathConnecti
     }
 
     public FileNode FileNode(FileNode parent, String nodename) {
-        return new FileNode()
+        return new RemoteFile(stat(nodename))
                 .setNodename(nodename)
-                .setParentFile(parent)
-                .setIsRemote(true)
-                .setSeparator("/")
-                .attrs(stat(nodename));
+                .setParentFile(parent);
     }
 
     public List<FileNode> children(FxTask currentTask, FileNode targetNode) {
@@ -399,12 +397,9 @@ public class ControlRemoteConnection extends BaseSysTableController<PathConnecti
                 if (name == null || name.isBlank() || ".".equals(name) || "..".equals(name)) {
                     continue;
                 }
-                FileNode fileInfo = new FileNode()
+                FileNode fileInfo = new RemoteFile(entry.getAttrs())
                         .setNodename(name)
-                        .setParentFile(targetNode)
-                        .setIsRemote(true)
-                        .setSeparator("/")
-                        .attrs(entry.getAttrs());
+                        .setParentFile(targetNode);
                 children.add(fileInfo);
             }
         } catch (Exception e) {

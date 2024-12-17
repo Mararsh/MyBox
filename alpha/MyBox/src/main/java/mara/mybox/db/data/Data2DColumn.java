@@ -80,36 +80,25 @@ public class Data2DColumn extends ColumnDefinition {
     @Override
     public Data2DColumn cloneAll() {
         try {
-            Data2DColumn newData = (Data2DColumn) super.clone();
-            newData.cloneFrom(this);
-            return newData;
+            Data2DColumn newColumn = (Data2DColumn) super.clone();
+            newColumn.data2DDefinition = data2DDefinition;
+            newColumn.d2cid = d2cid;
+            newColumn.d2id = d2id;
+            return newColumn;
         } catch (Exception e) {
             MyBoxLog.debug(e);
             return null;
         }
     }
 
-    public void cloneFrom(Data2DColumn c) {
-        try {
-            if (c == null) {
-                return;
-            }
-            super.cloneFrom(c);
-            data2DDefinition = c.data2DDefinition;
-            d2cid = c.d2cid;
-            d2id = c.d2id;
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
-    }
-
     public Data2DColumn copy() {
         try {
-            Data2DColumn column = cloneAll();
-            column.setD2cid(-1);
-            column.setIndex(-1);
-            return column;
+            Data2DColumn newColumn = cloneAll();
+            newColumn.setD2cid(-1).setD2id(-1).setIndex(-1)
+                    .setReferTable(null).setReferColumn(null).setReferName(null);
+            return newColumn;
         } catch (Exception e) {
+            MyBoxLog.debug(e);
             return null;
         }
     }

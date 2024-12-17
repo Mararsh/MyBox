@@ -143,6 +143,8 @@ public abstract class Data2DModify extends Data2DOperate {
                         default ->
                             v = dataValue;
                     }
+                    v = Data2DSetValue.validValue(sourceData.columns.get(i),
+                            currentValue, v, invalidAs);
                     handledCount++;
                 } else {
                     v = currentValue;

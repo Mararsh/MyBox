@@ -256,14 +256,15 @@ public class BaseData2DLoadController extends BaseData2DTableController {
 //                data2D.setHasHeader(false);
                 if (data != null && !data.isEmpty()) {
                     for (int i = 0; i < data.get(0).size(); i++) {
-                        Data2DColumn column = new Data2DColumn(data2D.colPrefix() + (i + 1), data2D.defaultColumnType());
+                        Data2DColumn column = new Data2DColumn(
+                                data2D.colPrefix() + (i + 1), data2D.defaultColumnType());
                         columns.add(column);
                     }
                 }
             } else {
 //                data2D.setHasHeader(true);
                 for (Data2DColumn col : cols) {
-                    columns.add(col.cloneAll());
+                    columns.add(col.copy());
                 }
             }
             for (Data2DColumn column : columns) {

@@ -74,9 +74,8 @@ public class Data2DTableTools {
                 validNames.add(idName);
             }
             for (Data2DColumn sourceColumn : sourceColumns) {
-                Data2DColumn dataColumn = new Data2DColumn();
-                dataColumn.cloneFrom(sourceColumn);
-                dataColumn.setD2id(-1).setD2cid(-1).setAuto(false).setIsPrimaryKey(false);
+                Data2DColumn dataColumn = sourceColumn.copy();
+                dataColumn.setAuto(false).setIsPrimaryKey(false);
                 String sourceColumnName = sourceColumn.getColumnName();
                 String columeName = DerbyBase.fixedIdentifier(sourceColumnName);
                 columeName = DerbyBase.checkIdentifier(validNames, columeName, true);
@@ -170,11 +169,13 @@ public class Data2DTableTools {
                 if (dataTable != null) {
                     dc = dataTable.columnByName(name);
                     if (dc != null) {
-                        dc = dc.cloneAll().setD2cid(-1).setD2id(-1);
+                        dc = dc.copy();
                     }
                 }
                 if (dc == null) {
-                    dc = new Data2DColumn(name, ColumnDefinition.sqlColumnType(meta.getColumnType(col)), meta.isNullable(col) == ResultSetMetaData.columnNoNulls);
+                    dc = new Data2DColumn(name,
+                            ColumnDefinition.sqlColumnType(meta.getColumnType(col)),
+                            meta.isNullable(col) == ResultSetMetaData.columnNoNulls);
                 }
                 db2Columns.add(dc);
                 targetColumns.add(dc);

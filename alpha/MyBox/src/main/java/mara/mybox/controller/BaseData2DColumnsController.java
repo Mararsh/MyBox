@@ -428,12 +428,12 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
     }
 
     @Override
-    public Data2DColumn dataCopy(Data2DColumn data) {
-        if (data == null) {
+    public Data2DColumn dataCopy(Data2DColumn col) {
+        if (col == null) {
             return null;
         }
-        Data2DColumn column = data.copy();
-        column.setColumnName(data.getColumnName() + "_" + message("Copy"));
+        Data2DColumn column = col.copy().setD2id(col.getD2id());
+        column.setColumnName(col.getColumnName() + "_" + message("Copy"));
         column.setIndex(newColumnIndex());
         return column;
     }

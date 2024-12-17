@@ -25,6 +25,7 @@ import mara.mybox.data2d.operate.Data2DReadTotal;
 import mara.mybox.data2d.writer.Data2DWriter;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
+import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.Data2DStyle;
@@ -306,7 +307,8 @@ public abstract class Data2D_Edit extends Data2D_Filter {
         }
     }
 
-    public long setValue(FxTask task, List<Integer> cols, SetValue setValue) {
+    public long setValue(FxTask task, List<Integer> cols,
+            SetValue setValue, InvalidAs invalidAs) {
         try {
             if (!isValidData() || cols == null || cols.isEmpty()) {
                 return -1;
@@ -317,7 +319,8 @@ public abstract class Data2D_Edit extends Data2D_Filter {
             if (operate == null) {
                 return -2;
             }
-            operate.setCols(cols).setTask(task).start();
+            operate.setCols(cols).setInvalidAs(invalidAs)
+                    .setTask(task).start();
             if (operate.isFailed()) {
                 return -3;
             }

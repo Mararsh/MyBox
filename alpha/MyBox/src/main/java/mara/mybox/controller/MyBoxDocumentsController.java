@@ -417,6 +417,7 @@ public class MyBoxDocumentsController extends BaseTaskController {
                                     }
                                     exportController.close();
                                     treeController.close();
+                                    nodeTable.truncate();
                                     CurrentLangName = realLang;
                                     CurrentBundle = realBoundle;
                                     finishNotify();

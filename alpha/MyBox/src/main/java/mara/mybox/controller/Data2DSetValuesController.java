@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Random;
 import javafx.fxml.FXML;
 import javafx.scene.control.Tab;
+import mara.mybox.data2d.modify.Data2DSetValue;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
@@ -190,7 +191,8 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
                         addBackup(this, data2D.getFile());
                     }
                     data2D.startTask(this, filterController.filter);
-                    count = data2D.setValue(this, checkedColsIndices, valueController.setValue);
+                    count = data2D.setValue(this, checkedColsIndices,
+                            valueController.setValue, invalidAs);
                     data2D.stopFilter();
                     taskSuccessed = count >= 0;
                     return taskSuccessed;
@@ -256,6 +258,11 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
         }
     }
 
+    public String validValue(int col, String currentValue, String newValue) {
+        return Data2DSetValue.validValue(data2D.column(col),
+                currentValue, newValue, invalidAs);
+    }
+
     public boolean setValue() {
         try {
             String value = valueController.value();
@@ -264,7 +271,7 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
             for (int row : sourceController.filteredRowsIndices) {
                 List<String> values = sourceController.tableData.get(row);
                 for (int col : checkedColsIndices) {
-                    values.set(col + 1, value);
+                    values.set(col + 1, validValue(col, values.get(col + 1), value));
                 }
                 outputData.set(row, values);
             }

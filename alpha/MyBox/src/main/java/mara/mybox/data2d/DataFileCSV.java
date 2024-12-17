@@ -129,7 +129,7 @@ public class DataFileCSV extends DataFileText {
                 names = new ArrayList<>();
                 for (Data2DColumn c : cols) {
                     names.add(c.getColumnName());
-                    targetColumns.add(c.cloneAll().setD2cid(-1).setD2id(-1));
+                    targetColumns.add(c.copy());
                 }
             }
             DataFileCSV dataFileCSV = new DataFileCSV();

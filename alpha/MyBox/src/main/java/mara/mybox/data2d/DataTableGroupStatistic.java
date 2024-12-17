@@ -177,8 +177,8 @@ public class DataTableGroupStatistic {
 
             groupColumns = new ArrayList<>();
             for (String name : calNames) {
-                Data2DColumn c = groupColumn(name).cloneAll();
-                c.setD2cid(-1).setD2id(-1).setColumnName(name);
+                Data2DColumn c = groupColumn(name).copy();
+                c.setColumnName(name);
                 groupColumns.add(c);
             }
             String gname = DerbyBase.appendIdentifier(groupResults.dataName(), "_" + message("Group"));

@@ -464,9 +464,9 @@ public abstract class Data2D_Data extends Data2D_Attributes {
                 targetCcolumns.add(new Data2DColumn(message("SourceRowNumber"), ColumnDefinition.ColumnType.Long));
             }
             for (Integer i : indices) {
-                Data2DColumn column = sourceColumns.get(i).cloneAll();
+                Data2DColumn column = sourceColumns.get(i).copy();
                 String name = column.getColumnName();
-                column.setD2cid(-1).setD2id(-1).setColumnName(name);
+                column.setColumnName(name);
                 targetCcolumns.add(column);
             }
             return targetCcolumns;
@@ -613,7 +613,7 @@ public abstract class Data2D_Data extends Data2D_Attributes {
         List<String> validNames = new ArrayList<>();
         List<Data2DColumn> targetColumns = new ArrayList<>();
         for (Data2DColumn column : inColumns) {
-            Data2DColumn tcolumn = column.cloneAll();
+            Data2DColumn tcolumn = column.copy();
             String name = DerbyBase.checkIdentifier(validNames, tcolumn.getColumnName(), true);
             tcolumn.setColumnName(name);
             targetColumns.add(tcolumn);

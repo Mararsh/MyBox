@@ -218,8 +218,7 @@ public class DataTableGroup {
                 targetValueOffset++;
             }
             for (int c : sourcePickIndice) {
-                Data2DColumn column = originalData.column(c).cloneAll();
-                column.setD2cid(-1).setD2id(-1);
+                Data2DColumn column = originalData.column(c).copy();
                 targetColumns.add(column);
                 targetColNames.add(column.getColumnName());
             }
