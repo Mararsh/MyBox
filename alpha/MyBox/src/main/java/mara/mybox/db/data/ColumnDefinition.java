@@ -76,7 +76,7 @@ public class ColumnDefinition extends BaseData {
     }
 
     public enum InvalidAs {
-        Zero, Empty, Null, Skip, Keep
+        Zero, Empty, Null, Skip, Keep, Fail
     }
 
     public final void initColumnDefinition() {

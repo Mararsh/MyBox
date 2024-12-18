@@ -22,7 +22,13 @@ import static mara.mybox.data.SetValue.ValueType.Zero;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.data2d.operate.Data2DOperate;
 import mara.mybox.data2d.writer.Data2DWriter;
+import static mara.mybox.db.data.ColumnDefinition.InvalidAs.Empty;
+import static mara.mybox.db.data.ColumnDefinition.InvalidAs.Null;
+import static mara.mybox.db.data.ColumnDefinition.InvalidAs.Skip;
+import static mara.mybox.db.data.ColumnDefinition.InvalidAs.Zero;
+import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.tools.StringTools;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -143,8 +149,28 @@ public abstract class Data2DModify extends Data2DOperate {
                         default ->
                             v = dataValue;
                     }
-                    v = Data2DSetValue.validValue(sourceData.columns.get(i),
-                            currentValue, v, invalidAs);
+                    Data2DColumn column = sourceData.columns.get(i);
+                    if (!column.validValue(v) && invalidAs != null) {
+                        switch (invalidAs) {
+                            case Zero:
+                                v = "0";
+                                break;
+                            case Null:
+                                v = null;
+                                break;
+                            case Empty:
+                                v = "";
+                                break;
+                            case Skip:
+                                v = currentValue;
+                                break;
+                            case Fail:
+                                failStop(message("InvalidData") + ". "
+                                        + message("Column") + ":" + column.getColumnName() + "  "
+                                        + message("Value") + ": " + v);
+                                return;
+                        }
+                    }
                     handledCount++;
                 } else {
                     v = currentValue;

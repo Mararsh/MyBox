@@ -1,50 +1,50 @@
 # [ReadMe in English](https://github.com/Mararsh/MyBox/tree/master/en)  ![ReadMe](https://mara-mybox.sourceforge.io/iconGo.png)
 
 # MyBox：简易工具集
-这是图形化计算机应用，目标是提供简单易用的功能。免费开源。
+这是图形化计算机应用，目标是提供简单易用的功能。免费开源。           
 
 ## 新内容
-2024-12-18 版本6.8.2
+2024-12-18 版本6.8.2                
+                             
+* 改进：                                     
+     - 重新设计和实现"树形信息"：                                                                                                            
+         - 对每种树形单独定义数据库表。                                                                                                            
+         - 优化界面。                                                                                                            
+         - 新增导出格式：树形XML、树形JSON、列表CSV。                                                                                                            
+         - 导入格式改为树形XML。                                                                                                            
+         - 可以设置结点的排序值。                                                                                                            
+     - 数据编辑单元：当值的长度较大时弹出文本编辑窗口。                                                                                                            
+     - 功能主界面改为滚动面板。                                                                                                            
+     - 强化“生成文档”。                                    
+* 升级至：JDK 23 + javaFX 24。                  
+* 移除：读取PDF文件所用的内存参数。                                                                                                     
+* 解决问题：                                     
+     - 对数据库表的所有数据执行“赋值”和“按条件删除”会失败。                                 
+     - 关闭矩阵和数据库界面时不应弹出临时文件的提示。                                                                                                                       
+     - 快捷键省略CTRL/ALT失效。                                                                                                           
+     - 一些快捷键在一些界面上失效。                                                                                                           
+     - 任务失败时可能触发内存溢出。                                                                                                           
+                                                                                                                      
+[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.8.2)                         
+          
+## 注意       
+MyBox未经足够测试，可靠性低、稳定性差。使用MyBox，可能出现以下情况：      
+ 
+* 毁坏文件/数据。       
+* 输出错误的结果。       
+* 功能失效。       
+* 其它非预期的行为。         
 
-* 改进：
-     - 重新设计和实现"树形信息"：
-         - 对每种树形单独定义数据库表。
-         - 优化界面。
-         - 新增导出格式：树形XML、树形JSON、列表CSV。
-         - 导入格式改为树形XML。
-         - 可以设置结点的排序值。
-     - 数据编辑单元：当值的长度较大时弹出文本编辑窗口。
-     - 功能主界面改为滚动面板。
-     - 强化“生成文档”。
-* 升级至：JDK 22 + javaFX 23。
-* 移除：读取PDF文件所用的内存参数。
-* 解决问题：
-     - 对于数据库表的所有数据执行“赋值”和“按条件删除”会失败。。
-     - 关闭矩阵和数据库界面时不应弹出临时文件的提示。
-     - 快捷键省略CTRL/ALT失效。
-     - 一些快捷键在一些界面上失效。
-     - 任务失败时可能触发内存溢出。
-
-[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.8.2)
-
-## 注意
-MyBox未经足够测试，可靠性低、稳定性差。使用MyBox，可能出现以下情况：
-
-* 毁坏文件/数据。
-* 输出错误的结果。
-* 功能失效。
-* 其它非预期的行为。
-
-
+           
 # 下载与运行
 
 ## 源码
-| 下载 | 大小 | 开发指南 | 打包步骤 |
-| --- | --- | --- | --- |
+| 下载 | 大小 | 开发指南 | 打包步骤 |           
+| --- | --- | --- | --- | 
 | [MyBox-src.zip](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-src.zip)   |  80M-  | [pdf](https://mara-mybox.sourceforge.io/guide/MyBox-DevGuide-zh.pdf) | [html](https://mara-mybox.sourceforge.io/pack_steps_zh.html) |
-
+           
 ## 自包含程序包
-自包含的程序包无需java环境、无需安装、解包可用。
+自包含的程序包无需java环境、无需安装、解包可用。     
 
 | 平台 | 链接 | 大小 | 启动文件 |
 | --- | --- | --- |  --- |
@@ -52,59 +52,59 @@ MyBox未经足够测试，可靠性低、稳定性差。使用MyBox，可能出�
 | CentOS 7 x64 | [MyBox-CentOS7-x64.tar.gz](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-CentOS7-x64.tar.gz)  | 320MB-  | MyBox  |
 | mac x64| [MyBox-mac.dmg](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-mac.dmg)  | 300MB-  |  MyBox.app   |
 
-双击或者用命令行执行包内的启动文件即可运行程序。可以把图片/文本/PDF文件的打开方式关联到MyBox，这样双击文件名就直接是用MyBox打开了。
-
+双击或者用命令行执行包内的启动文件即可运行程序。可以把图片/文本/PDF文件的打开方式关联到MyBox，这样双击文件名就直接是用MyBox打开了。        
+  
 
 ## Jar包
-在已安装JRE或者JDK [Oracle jdk](https://www.oracle.com/technetwork/java/javase/downloads/index.html)或[open jdk](http://jdk.java.net/)均可）的环境下，可以下载jar包。
+在已安装JRE或者JDK [Oracle jdk](https://www.oracle.com/technetwork/java/javase/downloads/index.html)或[open jdk](http://jdk.java.net/)均可）的环境下，可以下载jar包。       
 
 | 平台 | 链接 | 大小 | 运行需要 |
 | --- | --- | --- |  --- |
-| win | [MyBox-win-jar.zip](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-win-jar.zip)  | 240MB- | Java 21或更高版本 |
-| linux | [MyBox-linux.jar.gz](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-linux.jar.gz)  | 240MB-  | Java 21或更高版本 |
-| mac | [MyBox-mac.jar.gz](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-mac.jar.gz)  |  240MB-  | Java 21或更高版本 |
+| win | [MyBox-win-jar.zip](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-win-jar.zip)  | 240MB- | Java 23或更高版本 |
+| linux | [MyBox-linux.jar.gz](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-linux.jar.gz)  | 240MB-  | Java 23或更高版本 |
+| mac | [MyBox-mac.jar.gz](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-mac.jar.gz)  |  240MB-  | Java 23或更高版本 |
 
-执行以下命令来启动程序：
-`    java   -jar   MyBox.jar `
+执行以下命令来启动程序：       
+`    java   -jar   MyBox.jar `     
 
-程序可以跟一个文件名作为参数、以用MyBox直接打开此文件。例如以下命令是打开此图片：
-`     java   -jar   MyBox.jar   /tmp/a1.jpg`
+程序可以跟一个文件名作为参数、以用MyBox直接打开此文件。例如以下命令是打开此图片：       
+`     java   -jar   MyBox.jar   /tmp/a1.jpg`      
 
+     
+## 版本       
+本文档的内容可能已过期，但是其中的链接均指向最新版本。     
 
-## 版本
-本文档的内容可能已过期，但是其中的链接均指向最新版本。
+以下网址可以下载到最新版本和已归档的版本：    
 
-以下网址可以下载到最新版本和已归档的版本：
-
-| 地址 | 下载 | 自述 |
-| --- | --- | --- |
+| 地址 | 下载 | 自述 | 
+| --- | --- | --- | 
 | github | [https://github.com/Mararsh/MyBox/releases](https://github.com/Mararsh/MyBox/releases)  | [英文](https://mararsh.github.io/MyBox/readme_en.html)   [中文](https://mararsh.github.io/MyBox/readme_zh.html) |
 | sourceforge | [https://sourceforge.net/projects/mara-mybox/files/](https://sourceforge.net/projects/mara-mybox/files/)  | [英文](https://mara-mybox.sourceforge.io/readme_en.html)  [中文](https://mara-mybox.sourceforge.io/readme_zh.html) |
-| 云盘 | [https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F](https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F)   |  |
+| 云盘 | [https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F](https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F)   |  |     
 
 ## 配置
-配置文件在"用户目录"下:
+配置文件在"用户目录"下:       
 
 | 平台 | MyBox配置文件的目录 |
 | --- | --- |
 | win | `C:\用户\用户名\mybox\MyBox_v版本号.ini`  |
 | linux | `/home/用户名/mybox/MyBox_v版本号.ini` |
-| mac | `/Users/用户名/mybox/MyBox_v版本号.ini` |
+| mac | `/Users/用户名/mybox/MyBox_v版本号.ini` |       
 
-可以临时改变配置文件：在命令行启动jar包时设置参数"config=\"配置文件名\""。
-利用“设置”功能也可以修改配置参数。
+可以临时改变配置文件：在命令行启动jar包时设置参数"config=\"配置文件名\""。       
+利用“设置”功能也可以修改配置参数。       
 
 ## 迁移
-1. 每个版本有自己的配置文件，新版本可以复制已安装版本的参数。
+1. 每个版本有自己的配置文件，新版本可以复制已安装版本的参数。       
 2. 每个版本处理的所有数据都在它指向的“数据目录”下。多个版本可以指向同一数据目录。
-3. MyBox向后兼容：新版本可以处理旧版本的数据目录。而不保证向前兼容：旧版本处理新版本的数据目录时可能出错。
+3. MyBox向后兼容：新版本可以处理旧版本的数据目录。而不保证向前兼容：旧版本处理新版本的数据目录时可能出错。    
 
-## 备份与恢复
-在MyBox中：
-1. 将目录复制到别处，即为备份。
-2. 将备份的目录覆盖当前目录，即为恢复。
-3. 不必备份数据目录的每个子目录。
-   以下列出数据目录中预定义的子目录：
+## 备份与恢复        
+在MyBox中：       
+1. 将目录复制到别处，即为备份。       
+2. 将备份的目录覆盖当前目录，即为恢复。        
+3. 不必备份数据目录的每个子目录。    
+   以下列出数据目录中预定义的子目录：      
 
 |       子目录       |     作用     | 内部引用 | 自动读写 | 需要备份 | 说明 |
 |-----------------|------------|------|------|--------|------|
@@ -128,10 +128,10 @@ MyBox未经足够测试，可靠性低、稳定性差。使用MyBox，可能出�
 | mybox_derby     | 数据库        | 是    | 是    | 是      |      |
 | mybox_languages | 用户定制的语言    | 是    | 是    |  是      |      |
 | security        | 安全证书       | 是    | 是    |        |      |
-| sound           | 声音文件       | 是    | 是    |        |      |
+| sound           | 声音文件       | 是    | 是    |        |      |            
 
-# 资源地址
-| 内容 | 链接 |
+# 资源地址       
+| 内容 | 链接 |       
 | --- | --- |
 | 项目主页 | [https://github.com/Mararsh/MyBox](https://github.com/Mararsh/MyBox)   |
 | 源代码和编译好的包 |  [https://github.com/Mararsh/MyBox/releases](https://github.com/Mararsh/MyBox/releases)  |
@@ -139,9 +139,9 @@ MyBox未经足够测试，可靠性低、稳定性差。使用MyBox，可能出�
 | 数据 | [https://github.com/Mararsh/MyBox_data](https://github.com/Mararsh/MyBox_data) |
 | 文档 | [https://github.com/Mararsh/MyBoxDoc](https://github.com/Mararsh/MyBoxDoc) |
 | 镜像 | [https://sourceforge.net/projects/mara-mybox/files/](https://sourceforge.net/projects/mara-mybox/files/) |
-| 云盘 | [https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F](https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F) |
+| 云盘 | [https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F](https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F) |       
 
-# 文档
+# 文档       
 |      文档名       | 版本    | 修改时间   |                                                                                                                                            英文                                                                                                                                               |                                                                                                                                            中文                                                                                                                                               |
 |-------------------|---------|------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | 开发日志          | 6.8.2   | 2024-12-18 | [html](https://mara-mybox.sourceforge.io/mybox_devLogs_en.html)                                                                                                                                                                                                                                 | [html](https://mara-mybox.sourceforge.io/mybox_devLogs_zh.html)                                                                                                                                                                                                                                    |
@@ -197,24 +197,24 @@ MyBox未经足够测试，可靠性低、稳定性差。使用MyBox，可能出�
 | 调色盘-美术颜料               | 6.7.8   | 2024-1-15 | [rgba](https://mara-mybox.sourceforge.io/mybox_palette_art_paints_rgba_en.html)  [all](https://mara-mybox.sourceforge.io/mybox_palette_art_paints_all_en.html)                                                                                                                                  | [rgba](https://mara-mybox.sourceforge.io/mybox_palette_art_paints_rgba_zh.html)  [all](https://mara-mybox.sourceforge.io/mybox_palette_art_paints_all_zh.html)                                                                                                                                                                                                                                   |
 | 调色盘-MyBox的颜色            | 6.7.8   | 2024-1-15 | [rgba](https://mara-mybox.sourceforge.io/mybox_palette_mybox_rgba_en.html)  [all](https://mara-mybox.sourceforge.io/mybox_palette_mybox_all_en.html)                                                                                                                              | [rgba](https://mara-mybox.sourceforge.io/mybox_palette_mybox_rgba_zh.html)  [all](https://mara-mybox.sourceforge.io/mybox_palette_mybox_all_zh.html)                                                                                                                                                                                                                                   |
 | 调色盘-灰阶                   | 6.7.8   | 2024-1-15 | [rgba](https://mara-mybox.sourceforge.io/mybox_palette_gray_rgba_en.html)  [all](https://mara-mybox.sourceforge.io/mybox_palette_gray_all_en.html)                                                                                                                                  | [rgba](https://mara-mybox.sourceforge.io/mybox_palette_gray_rgba_zh.html)  [all](https://mara-mybox.sourceforge.io/mybox_palette_gray_all_zh.html)                                                                                                                                                                                                                                   |
-| 图片的故事                    | 6.8.2   | 2024-12-18 | [html](https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-en.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/latests/MyBox-StoriesOfImages-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/latests/MyBox-StoriesOfImages-en.odt)                     | [html](https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-zh.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/latests/MyBox-StoriesOfImages-zh.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/latests/MyBox-StoriesOfImages-zh.odt)                     |
+| 图片的故事                    | 6.8.2   | 2024-12-18 | [html](https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-en.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/latests/MyBox-StoriesOfImages-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/latests/MyBox-StoriesOfImages-en.odt)                     | [html](https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-zh.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/latests/MyBox-StoriesOfImages-zh.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/latests/MyBox-StoriesOfImages-zh.odt)                     |   
 | 有用的链接         | 6.7.8   | 2024-1-15 | [html](https://mara-mybox.sourceforge.io/mybox_useful_link_en.html)                                                                                                                                                                                                                             | [html](https://mara-mybox.sourceforge.io/mybox_useful_link_zh.html)                                                                                                                                                                                                                                    |
 
-# 实现基础
-MyBox基于以下开放资源：
+# 实现基础       
+MyBox基于以下开放资源：       
 
 | 名字 | 角色 | 链接 |
 | --- | --- | --- |
 | JDK | Java语言 | <http://jdk.java.net/>    |
 | | | <https://www.oracle.com/technetwork/java/javase/downloads/index.html>   |
-| | | <https://docs.oracle.com/en/java/javase/22/docs/api/index.html>   |
+| | | <https://docs.oracle.com/en/java/javase/23/docs/api/index.html>   |
 | JavaFx | 图形化界面 | <https://gluonhq.com/products/javafx/>    |
 | | | <https://docs.oracle.com/javafx/2/>    |
 | | | <https://gluonhq.com/products/scene-builder/>   |
 | | | <https://openjfx.io/javadoc/23/>    |
 | Derby | 数据库 | <http://db.apache.org/derby/>    |
 | NetBeans | 集成开发环境 | <https://netbeans.org/>    |
-| jpackage | 自包含包 | <https://docs.oracle.com/en/java/javase/22/docs/specs/man/jpackage.html>   |
+| jpackage | 自包含包 | <https://docs.oracle.com/en/java/javase/23/docs/specs/man/jpackage.html>   |
 | maven | 代码构建 | <https://maven.apache.org/>    |
 | jai-imageio | 图像处理 | <https://github.com/jai-imageio/jai-imageio-core>   |
 | PDFBox | PDF处理 | <https://pdfbox.apache.org/>    |
@@ -272,86 +272,87 @@ MyBox基于以下开放资源：
 
 
 # 特点
-## 跨平台
+## 跨平台       
 
-MyBox用纯Java实现且只基于开放资源，MyBox可运行于支持Java 22的平台。
-MyBox v5.3以前的版本均基于Java 8。
+MyBox用纯Java实现且只基于开放资源，MyBox可运行于支持Java 23的平台。             
+MyBox v5.3以前的版本均基于Java 8。       
 
-## 国际化
+## 国际化        
 
 1. 所有代码均国际化。可实时切换语言。
 2. 每种语言对应一个资源文件："Messages_语言名.properties"。
-3. 支持在线添加语言。提供表格，对照英语翻译。新语言可实时生效。
-   例如，新语言名字为“aa”，则它的资源文件是“Messages_aa.properties”。
-4. 新语言可共享给别人：把资源文件复制到数据目录的子目录"mybox_languages"下，则MyBox可即时感知到新语言。
-5. 内置中文和英文， 在目录`MyBox/src/main/resources/bundles/`中：
+3. 支持在线添加语言。提供表格，对照英语翻译。新语言可实时生效。       
+   例如，新语言名字为“aa”，则它的资源文件是“Messages_aa.properties”。       
+4. 新语言可共享给别人：把资源文件复制到数据目录的子目录"mybox_languages"下，则MyBox可即时感知到新语言。       
+5. 内置中文和英文， 在目录`MyBox/src/main/resources/bundles/`中：       
 
-| 语言 | 界面的资源文件 |
-| --- | --- |
-| 中文 | Messages_zh_CN.properties |
-| 英文 | Messages_en.properties |
+| 语言 | 界面的资源文件 |      
+| --- | --- | 
+| 中文 | Messages_zh_CN.properties | 
+| 英文 | Messages_en.properties |  
 
-## 个人的
+## 个人的            
 
-1. 所有功能在本机执行。
+1. 所有功能在本机执行。 
 2. 所有数据在本机存储。
 3. 无注册/登录/数据中心/云存储。
 3. 只在用户要求时才访问网络。
-4. 只读写用户需要的数据。
+4. 只读写用户需要的数据。       
 
-## 友善的
+## 友善的          
 
-1. 提供当前功能/界面的提示。
+1. 提供当前功能/界面的提示。       
 2. 记住用户的输入或选择，提供历史记录。
 3. 界面可调整，一些面板可隐藏。
 4. 一些控件的行为可选择。
 5. 提供文本/图片/网页/表格/树形的右键菜单和功能菜单。
 6. 可弹出当前文本/图片/网页/数据。
 7. 可管理的文本/图片/数据粘贴板。
-8. 提供示例和有用的信息。
-9. 界面和控件的外观可选择和修改。
+8. 提供示例和有用的信息。  
+9. 界面和控件的外观可选择和修改。      
 
-## 数据兼容
+## 数据兼容            
 
 1. 导出的数据是通用的文本格式，如txt/csv/xml/json/html。
-2. 导入的数据是通用的文本格式，如xml/csv。
+2. 导入的数据是通用的文本格式，如xml/csv。       
 3. 至少有一种导出格式可以被导入。
-4. 导入的数据是自包含的，即重建原数据无需辅助数据。
+4. 导入的数据是自包含的，即重建原数据无需辅助数据。       
 
-## 内置数据库系统
+## 内置数据库系统            
 
 1. 数据库系统derby免费开源：
-    - 首次启动MyBox时，需要消耗一些时间以创建内部数据库并写入初始数据。
-    - 所有数据库文件均在数据目录下，因此可以通过切换数据目录来处理不同的数据目标集。
-    - 通过访问同一数据目录，多个MyBox实例可以共享数据。
-    - 当数据目录下未发现数据库文件（如文件损毁或意外删除），MyBox会自动创建数据库。
-2. Derby缺省以内置模式运行：
-    - 外部进程无法访问数据库。
-    - 同时只能有一个MyBox实例访问数据库。
-3. Derby还可以网络运行：
-    - 首个访问数据库的MyBox实例成为服务器。
-    - 本机进程可通过端口1527来访问数据库、即为客户端。
-    - 非本机进程不能直接访问数据库。
-4. MyBox内部数据表存放各个功能所需的数据。 用户可以在线访问和修改内部数据。
-5. 用户可以自定义数据库表。
-6. 用户可以通过分页表格的来查看和编辑数据库表的定义和数据，也可以执行SQL语句。
-7. 为了实现数据的排序、转置、统计、和分组，MyBox会生成临时数据库表、并负责及时清除它们。
+    - 首次启动MyBox时，需要消耗一些时间以创建内部数据库并写入初始数据。        
+    - 所有数据库文件均在数据目录下，因此可以通过切换数据目录来处理不同的数据目标集。         
+    - 通过访问同一数据目录，多个MyBox实例可以共享数据。         
+    - 当数据目录下未发现数据库文件（如文件损毁或意外删除），MyBox会自动创建数据库。         
+2. Derby缺省以内置模式运行：         
+    - 外部进程无法访问数据库。         
+    - 同时只能有一个MyBox实例访问数据库。         
+3. Derby还可以网络运行：         
+    - 首个访问数据库的MyBox实例成为服务器。         
+    - 本机进程可通过端口1527来访问数据库、即为客户端。                
+    - 非本机进程不能直接访问数据库。                
+4. MyBox内部数据表存放各个功能所需的数据。 用户可以在线访问和修改内部数据。               
+5. 用户可以自定义数据库表。         
+6. 用户可以通过分页表格的来查看和编辑数据库表的定义和数据，也可以执行SQL语句。                
+7. 为了实现数据的排序、转置、统计、和分组，MyBox会生成临时数据库表、并负责及时清除它们。                
+    
 
-
-## 辅助自身编码
+## 辅助自身编码            
 
 1. 实时监测内存和CPU占用量。
-2. 在线调整和查询日志。
+2. 在线调整和查询日志。       
 3. 自动生成图标。
 4. 在线编辑和应用语言。
 5. 自动测试。
-6. 各种文档。
+6. 各种文档。       
 
 
 # 截图
+      
+![截屏-封面](https://mara-mybox.sourceforge.io/snap-cover.jpg)       
 
-![截屏-封面](https://mara-mybox.sourceforge.io/snap-cover.jpg)
+![截屏-界面](https://mara-mybox.sourceforge.io/snap-interface.jpg)       
 
-![截屏-界面](https://mara-mybox.sourceforge.io/snap-interface.jpg)
-
-![截屏-表格](https://mara-mybox.sourceforge.io/snap-table.jpg)
+![截屏-表格](https://mara-mybox.sourceforge.io/snap-table.jpg)       
+       

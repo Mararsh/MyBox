@@ -15,9 +15,11 @@ This is compute application to provide simple and easy functions. It's free and 
          - Order numbers of nodes can be set.                                                                                                            
      - Data edit cell: Pop text area when value length is large.                                                                                                            
      - Major interfaces of functions are changed as scroll panes.                                                                                                            
-* Upgrade to: JDK 22 + javaFX 23.                                                                                                     
+     - Enhance "Make Documents".                                                                                                            
+* Upgrade to: JDK 23 + javaFX 24.                                                                                                     
 * Remove: Memory parameters for reading PDF file.                                                                                                     
 * Solved problems:                                
+     - "Set Values" and "Delete as Conditions" fail for all pages of database table.                                                                                                                       
      - Prompt of temporary file should not be popped when close matix or database table.                                                                                                                       
      - "Shortcuts omit Control/Alt" does not work.                                                                                                           
      - Some shortcuts do not work in some interfaces.                                                                                                           
@@ -57,9 +59,9 @@ When JRE or JDK([Oracle jdk](https://www.oracle.com/technetwork/java/javase/down
    
 | Platform | Link | Size  | Requirements |        
 | --- | --- | ---  | ---  |
-| win | [MyBox-win-jar.zip](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-win-jar.zip)  | 240MB- | Java 21 or higher |
-| linux | [MyBox-linux.jar.gz](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-linux.jar.gz)  | 240MB-  | Java 21 or higher |
-| mac | [MyBox-mac.jar.gz](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-mac.jar.gz)  |  240MB-  | Java 21 or higher |        
+| win | [MyBox-win-jar.zip](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-win-jar.zip)  | 240MB- | Java 23 or higher |
+| linux | [MyBox-linux.jar.gz](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-linux.jar.gz)  | 240MB-  | Java 23 or higher |
+| mac | [MyBox-mac.jar.gz](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-mac.jar.gz)  |  240MB-  | Java 23 or higher |        
 
 
 Run following command to launch this program with Jar package:        
@@ -206,14 +208,14 @@ MyBox is based on following open sources:
 | --- | --- | --- |
 | JDK                                 | Java                            | <http://jdk.java.net/>                                                                                                                                                                                                              |
 |                                     |                                 | <https://www.oracle.com/technetwork/java/javase/downloads/index.html>                                                                                                                                                               |
-|                                     |                                 | <https://docs.oracle.com/en/java/javase/22/docs/api/index.html>                                                                                                                                                                     |
+|                                     |                                 | <https://docs.oracle.com/en/java/javase/23/docs/api/index.html>                                                                                                                                                                     |
 | JavaFx                              | GUI                             | <https://gluonhq.com/products/javafx/>                                                                                                                                                                                              |
 |                                     |                                 | <https://docs.oracle.com/javafx/2/>                                                                                                                                                                                                 |
 |                                     |                                 | <https://gluonhq.com/products/scene-builder/>                                                                                                                                                                                       |
 |                                     |                                 | <https://openjfx.io/javadoc/23/>                                                                                                                                                                                                    |
 | Derby                               | Database                        | <http://db.apache.org/derby/>                                                                                                                                                                                                       |
 | NetBeans                            | IDE                             | <https://netbeans.org/>                                                                                                                                                                                                             |
-| jpackage                            | pack                            | <https://docs.oracle.com/en/java/javase/22/docs/specs/man/jpackage.html>                                                                                                                                                            |
+| jpackage                            | pack                            | <https://docs.oracle.com/en/java/javase/23/docs/specs/man/jpackage.html>                                                                                                                                                            |
 | maven                               | build                           | <https://maven.apache.org/>                                                                                                                                                                                                         |
 | jai-imageio                         | Image manufacture               | <https://github.com/jai-imageio/jai-imageio-core>                                                                                                                                                                                   |
 | PDFBox                              | PDF manufacture                 | <https://pdfbox.apache.org/>                                                                                                                                                                                                        |
@@ -273,7 +275,7 @@ MyBox is based on following open sources:
 # Features        
 ## Cross Platforms        
 
-MyBox is implemented in pure Java and only based on open sources, and it can run on platforms which support Java 22.        
+MyBox is implemented in pure Java and only based on open sources, and it can run on platforms which support Java 23.        
 Versions before v5.3 are based on Java 8.        
 
 ## Internationalized       

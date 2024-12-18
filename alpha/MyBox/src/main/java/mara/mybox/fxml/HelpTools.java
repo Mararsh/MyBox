@@ -668,19 +668,19 @@ public class HelpTools {
     }
 
     public static String charsetLink() {
-        return "https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/nio/charset/Charset.html";
+        return "https://docs.oracle.com/en/java/javase/23/docs/api/java.base/java/nio/charset/Charset.html";
     }
 
     public static String uriLink() {
-        return "https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/net/URI.html";
+        return "https://docs.oracle.com/en/java/javase/23/docs/api/java.base/java/net/URI.html";
     }
 
     public static String urlLink() {
-        return "https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/net/URL.html";
+        return "https://docs.oracle.com/en/java/javase/23/docs/api/java.base/java/net/URL.html";
     }
 
     public static String javaFxCssLink() {
-        return "https://openjfx.io/javadoc/22/javafx.graphics/javafx/scene/doc-files/cssref.html";
+        return "https://openjfx.io/javadoc/23/javafx.graphics/javafx/scene/doc-files/cssref.html";
     }
 
     public static String derbyLink() {
@@ -696,23 +696,23 @@ public class HelpTools {
     }
 
     public static String javaAPILink() {
-        return "https://docs.oracle.com/en/java/javase/22/docs/api/index.html";
+        return "https://docs.oracle.com/en/java/javase/23/docs/api/index.html";
     }
 
     public static String javaMathLink() {
-        return "https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/Math.html";
+        return "https://docs.oracle.com/en/java/javase/23/docs/api/java.base/java/lang/Math.html";
     }
 
     public static String decimalFormatLink() {
-        return "https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/text/DecimalFormat.html";
+        return "https://docs.oracle.com/en/java/javase/23/docs/api/java.base/java/text/DecimalFormat.html";
     }
 
     public static String simpleDateFormatLink() {
-        return "https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/text/SimpleDateFormat.html";
+        return "https://docs.oracle.com/en/java/javase/23/docs/api/java.base/java/text/SimpleDateFormat.html";
     }
 
     public static String renderingHintsLink() {
-        return "https://docs.oracle.com/en/java/javase/22/docs/api/java.desktop/java/awt/RenderingHints.html";
+        return "https://docs.oracle.com/en/java/javase/23/docs/api/java.desktop/java/awt/RenderingHints.html";
     }
 
     public static String cssSpecificationLink() {
@@ -788,7 +788,7 @@ public class HelpTools {
     }
 
     public static String javaShape2DLink() {
-        return "https://docs.oracle.com/en/java/javase/22/docs/api/java.desktop/java/awt/Shape.html";
+        return "https://docs.oracle.com/en/java/javase/23/docs/api/java.desktop/java/awt/Shape.html";
     }
 
     public static String javafxShape2DLink() {
@@ -1353,7 +1353,7 @@ public class HelpTools {
             menuItem.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    WebBrowserController.openAddress("https://docs.oracle.com/en/java/javase/22/docs/api/java.desktop/java/awt/color/ColorSpace.html", true);
+                    WebBrowserController.openAddress("https://docs.oracle.com/en/java/javase/23/docs/api/java.desktop/java/awt/color/ColorSpace.html", true);
                 }
             });
             items.add(menuItem);
@@ -1362,7 +1362,7 @@ public class HelpTools {
             menuItem.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    WebBrowserController.openAddress("https://docs.oracle.com/en/java/javase/22/docs/api/java.desktop/java/awt/image/ColorModel.html", true);
+                    WebBrowserController.openAddress("https://docs.oracle.com/en/java/javase/23/docs/api/java.desktop/java/awt/image/ColorModel.html", true);
                 }
             });
             items.add(menuItem);

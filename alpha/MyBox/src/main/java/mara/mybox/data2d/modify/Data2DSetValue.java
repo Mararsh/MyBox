@@ -4,6 +4,7 @@ import java.util.List;
 import mara.mybox.data.SetValue;
 import mara.mybox.data2d.Data2D_Edit;
 import mara.mybox.db.data.ColumnDefinition;
+import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import static mara.mybox.db.data.ColumnDefinition.InvalidAs.Empty;
 import static mara.mybox.db.data.ColumnDefinition.InvalidAs.Null;
 import static mara.mybox.db.data.ColumnDefinition.InvalidAs.Skip;
@@ -39,7 +40,9 @@ public class Data2DSetValue extends Data2DModify {
             String currentValue, String newValue,
             ColumnDefinition.InvalidAs invalidAs) {
         try {
-            if (invalidAs == null || column.validValue(newValue)) {
+            if (invalidAs == null
+                    || invalidAs == InvalidAs.Keep
+                    || column.validValue(newValue)) {
                 return newValue;
             }
             switch (invalidAs) {
