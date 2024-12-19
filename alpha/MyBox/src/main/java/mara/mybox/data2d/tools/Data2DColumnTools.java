@@ -82,7 +82,7 @@ public class Data2DColumnTools {
         }
     }
 
-    public static String info(Data2DColumn column) {
+    public static String columnInfo(Data2DColumn column) {
         try {
             if (column == null) {
                 return null;
@@ -98,14 +98,14 @@ public class Data2DColumnTools {
         }
     }
 
-    public static String info(Data2D data2D) {
+    public static String dataInfo(Data2D data2D) {
         try {
             if (data2D == null) {
                 return null;
             }
             StringBuilder s = new StringBuilder();
             for (Data2DColumn column : data2D.getColumns()) {
-                s.append(Data2DColumnTools.info(column));
+                s.append(Data2DColumnTools.columnInfo(column));
                 s.append("----------------------------------");
             }
             return s.toString();

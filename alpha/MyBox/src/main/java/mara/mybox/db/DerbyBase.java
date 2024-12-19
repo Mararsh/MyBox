@@ -31,14 +31,14 @@ import mara.mybox.db.table.TableMedia;
 import mara.mybox.db.table.TableMediaList;
 import mara.mybox.db.table.TableMyBoxLog;
 import mara.mybox.db.table.TableNamedValues;
-import mara.mybox.db.table.TableNodeData2DDefinition;
+import mara.mybox.db.table.TableNodeDataColumn;
 import mara.mybox.db.table.TableNodeHtml;
 import mara.mybox.db.table.TableNodeImageScope;
 import mara.mybox.db.table.TableNodeJEXL;
 import mara.mybox.db.table.TableNodeJShell;
 import mara.mybox.db.table.TableNodeJavaScript;
 import mara.mybox.db.table.TableNodeMathFunction;
-import mara.mybox.db.table.TableNodeRowFilter;
+import mara.mybox.db.table.TableNodeRowExpression;
 import mara.mybox.db.table.TableNodeSQL;
 import mara.mybox.db.table.TableNodeText;
 import mara.mybox.db.table.TableNodeWebFavorite;
@@ -577,13 +577,13 @@ public class DerbyBase {
                 t.createTable(conn);
                 loadingController.info(t.getTreeName());
             }
-            if (!tables.contains("Node_Row_Filter".toLowerCase())) {
-                TableNodeRowFilter t = new TableNodeRowFilter();
+            if (!tables.contains("Node_Row_Expression".toLowerCase())) {
+                TableNodeRowExpression t = new TableNodeRowExpression();
                 t.createTable(conn);
                 loadingController.info(t.getTreeName());
             }
-            if (!tables.contains("Node_Data2D_Definition".toLowerCase())) {
-                TableNodeData2DDefinition t = new TableNodeData2DDefinition();
+            if (!tables.contains("Node_Data_Column".toLowerCase())) {
+                TableNodeDataColumn t = new TableNodeDataColumn();
                 t.createTable(conn);
                 loadingController.info(t.getTreeName());
             }

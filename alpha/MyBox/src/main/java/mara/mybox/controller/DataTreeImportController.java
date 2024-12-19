@@ -14,7 +14,6 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.TreeItem;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import mara.mybox.data2d.tools.Data2DDefinitionTools;
 import mara.mybox.db.Database;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.DataNode;
@@ -24,7 +23,6 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.BaseNodeTable;
 import mara.mybox.db.table.TableDataNodeTag;
 import mara.mybox.db.table.TableDataTag;
-import mara.mybox.db.table.TableNodeData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.HelpTools;
@@ -189,7 +187,6 @@ public class DataTreeImportController extends BaseBatchFileController {
         protected Stack<Long> parentStack;
         protected float orderNumber;
         protected Stack<Float> orderStack;
-        protected boolean isData2DDefinition;
 
         @Override
         public void startDocument() {
@@ -203,7 +200,6 @@ public class DataTreeImportController extends BaseBatchFileController {
                 orderStack = new Stack<>();
                 orderNumber = 0f;
                 value = new StringBuilder();
-                isData2DDefinition = nodeTable instanceof TableNodeData2DDefinition;
                 showLogs(message("ParentNode") + ": " + chainName);
             } catch (Exception e) {
                 showLogs(e.toString());
@@ -292,9 +288,6 @@ public class DataTreeImportController extends BaseBatchFileController {
                         break;
                     default:
                         if (columnNames.contains(qName)) {
-                            if (isData2DDefinition) {
-                                s = Data2DDefinitionTools.asXML(s);
-                            }
                             dataNode.setValue(qName, s);
 //                            if (isLogsVerbose()) {
 //                                showLogs(qName + "=" + s);

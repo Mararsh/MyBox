@@ -4,7 +4,10 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.Event;
 import javafx.fxml.FXML;
-import mara.mybox.calculation.ExpressionCalculator;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.TextField;
+import javafx.scene.control.Toggle;
+import javafx.scene.control.ToggleGroup;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataFilter;
 import mara.mybox.db.table.TableStringValues;
@@ -12,44 +15,51 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import static mara.mybox.value.AppValues.InvalidLong;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
  * @CreateDate 2022-6-1
  * @License Apache License Version 2.0
  */
-public class ControlData2DRowFilter extends ControlDataRowFilter {
+public class ControlData2DRowFilter extends ControlData2DRowExpression {
 
     protected DataFilter filter;
-    public ExpressionCalculator calculator;
-    protected Data2D data2D;
+
+    @FXML
+    protected ToggleGroup takeGroup;
+    @FXML
+    protected RadioButton trueRadio, falseRadio;
+    @FXML
+    protected TextField maxInput;
 
     @Override
     public void initControls() {
         try {
-            baseName = "DataRowFilter";
             super.initControls();
 
             filter = new DataFilter();
             calculator = filter.calculator;
 
-            wrapCheck.setSelected(UserConfig.getBoolean(baseName + "Wrap", false));
-            wrapCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            takeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
-                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "Wrap", newValue);
-                    scriptInput.setWrapText(newValue);
+                public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
+                    if (isSettingValues) {
+                        return;
+                    }
+                    valueChanged(true);
                 }
             });
-            scriptInput.setWrapText(wrapCheck.isSelected());
+
+            maxInput.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    valueChanged(true);
+                }
+            });
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
-    }
-
-    public void setData2D(Data2D data2D) {
-        this.data2D = data2D;
     }
 
     public void load(String script, boolean isTrue) {
@@ -62,7 +72,7 @@ public class ControlData2DRowFilter extends ControlDataRowFilter {
         if (isTrue) {
             trueRadio.setSelected(true);
         } else {
-            othersRadio.setSelected(true);
+            falseRadio.setSelected(true);
         }
         maxInput.setText(max > 0 && max != InvalidLong ? max + "" : "");
         isSettingValues = false;
@@ -93,7 +103,7 @@ public class ControlData2DRowFilter extends ControlDataRowFilter {
             popError(error);
             return null;
         }
-        filter.setReversed(othersRadio.isSelected())
+        filter.setReversed(falseRadio.isSelected())
                 .setMaxPassed(max > 0 && max != InvalidLong ? max : -1)
                 .setPassedNumber(0)
                 .setSourceScript(script);
@@ -140,44 +150,8 @@ public class ControlData2DRowFilter extends ControlDataRowFilter {
 
     @FXML
     @Override
-    public void clearAction() {
-        scriptInput.clear();
-    }
-
-    @FXML
-    @Override
-    public void saveAction() {
-        long maxFilteredNumber = checkMax();
-        if (error != null) {
-            popError(error);
-            return;
-        }
-        ControlDataRowFilter.open(this,
-                scriptInput.getText(), trueRadio.isSelected(), maxFilteredNumber);
-    }
-
-    @FXML
-    @Override
-    public void selectAction() {
-        DataSelectRowFilterController.open(this);
-    }
-
-    @FXML
-    @Override
-    protected void showScriptExamples(Event event) {
-        PopTools.popRowFilterExamples(this, event, scriptInput, baseName + "Examples", data2D);
-    }
-
-    @FXML
-    public void popPlaceholders(Event event) {
-        if (UserConfig.getBoolean(baseName + "PlaceholdersPopWhenMouseHovering", false)) {
-            showPlaceholders(event);
-        }
-    }
-
-    @FXML
-    public void showPlaceholders(Event event) {
-        PopTools.popDataPlaceHolders(this, event, scriptInput, baseName + "Placeholders", data2D);
+    protected void showExamples(Event event) {
+        PopTools.popRowExpressionExamples(this, event, scriptInput, baseName + "Examples", data2D);
     }
 
 }

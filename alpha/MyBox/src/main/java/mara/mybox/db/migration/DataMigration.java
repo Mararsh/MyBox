@@ -51,14 +51,14 @@ import mara.mybox.db.table.TableData2DStyle;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.db.table.TableImageClipboard;
 import mara.mybox.db.table.TableImageEditHistory;
-import mara.mybox.db.table.TableNodeData2DDefinition;
+import mara.mybox.db.table.TableNodeDataColumn;
 import mara.mybox.db.table.TableNodeHtml;
 import mara.mybox.db.table.TableNodeImageScope;
 import mara.mybox.db.table.TableNodeJEXL;
 import mara.mybox.db.table.TableNodeJShell;
 import mara.mybox.db.table.TableNodeJavaScript;
 import mara.mybox.db.table.TableNodeMathFunction;
-import mara.mybox.db.table.TableNodeRowFilter;
+import mara.mybox.db.table.TableNodeRowExpression;
 import mara.mybox.db.table.TableNodeSQL;
 import mara.mybox.db.table.TableNodeText;
 import mara.mybox.db.table.TableNodeWebFavorite;
@@ -222,19 +222,19 @@ public class DataMigration {
             updateIn682_move(controller, conn, new TableNodeJShell(), "JShellCode");
             updateIn682_move(controller, conn, new TableNodeJEXL(), "JEXLCode");
             updateIn682_move(controller, conn, new TableNodeJavaScript(), "JavaScript");
-            updateIn682_move(controller, conn, new TableNodeRowFilter(), "RowFilter");
-            updateIn682_move(controller, conn, new TableNodeData2DDefinition(), "Data2DDefinition");
+            updateIn682_move(controller, conn, new TableNodeRowExpression(), "RowFilter");
+            updateIn682_move(controller, conn, new TableNodeDataColumn(), "Data2DDefinition");
 
-            try (Statement statement = conn.createStatement()) {
-                conn.setAutoCommit(true);
-                statement.executeUpdate("DROP TABLE MYBOX_TMP_TREE_Migration682");
-                statement.executeUpdate("DROP TABLE MYBOX_TMP_TAG_Migration682");
-                statement.executeUpdate("DROP TABLE tree_node_tag");
-                statement.executeUpdate("DROP TABLE tree_node");
-            } catch (Exception e) {
-                MyBoxLog.console(e);
-            }
-
+//            try (Statement statement = conn.createStatement()) {
+//                conn.setAutoCommit(true);
+//                statement.executeUpdate("DROP TABLE MYBOX_TMP_TREE_Migration682");
+//                statement.executeUpdate("DROP TABLE MYBOX_TMP_TAG_Migration682");
+//                statement.executeUpdate("DROP TABLE tree_node_tag");
+//                statement.executeUpdate("DROP TABLE tree_node");
+//                statement.executeUpdate("DROP TABLE tag");
+//            } catch (Exception e) {
+//                MyBoxLog.console(e);
+//            }
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -1048,7 +1048,7 @@ public class DataMigration {
                     ResultSet cquery = conn.createStatement().executeQuery("SELECT * FROM Data_Column WHERE dataid=" + dfid);
                     while (cquery.next()) {
                         Data2DColumn column = Data2DColumn.create().setD2id(d2did);
-                        column.setType(ColumnDefinition.columnType(cquery.getShort("column_type")));
+                        column.setType(ColumnDefinition.columnTypeFromValue(cquery.getShort("column_type")));
                         column.setColumnName(cquery.getString("column_name"));
                         column.setIndex(cquery.getInt("index"));
                         column.setLength(cquery.getInt("length"));

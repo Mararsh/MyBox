@@ -1152,7 +1152,7 @@ public class PopTools {
         return preValues;
     }
 
-    public static MenuController popRowFilterExamples(BaseController parent, Event event,
+    public static MenuController popRowExpressionExamples(BaseController parent, Event event,
             TextInputControl scriptInput, String valueName, Data2D data2D) {
         try {
             if (data2D == null) {

@@ -50,7 +50,7 @@ public class ColumnDefinition extends BaseData {
     protected Map<Object, String> displayMap;
     protected DoubleStatistic statistic;
 
-    final public static InvalidAs DefaultInvalidAs = InvalidAs.Keep;
+    final public static InvalidAs DefaultInvalidAs = InvalidAs.Skip;
 
     public static enum ColumnType {
         String, Boolean, Enumeration, EnumerationEditable,
@@ -782,7 +782,7 @@ public class ColumnDefinition extends BaseData {
         }
         switch (column) {
             case "column_type":
-                return columnType(data.getType());
+                return columnTypeValue(data.getType());
             case "column_name":
                 return data.getColumnName();
             case "index":
@@ -794,7 +794,7 @@ public class ColumnDefinition extends BaseData {
             case "scale":
                 return data.getScale();
             case "color":
-                return data.getColor() == null ? null : data.getColor().toString();
+                return colorValue(data.getColor());
             case "is_primary":
                 return data.isIsPrimaryKey();
             case "not_null":
@@ -802,7 +802,7 @@ public class ColumnDefinition extends BaseData {
             case "is_auto":
                 return data.isAuto();
             case "invalid_as":
-                return data.getInvalidAs().ordinal();
+                return invalidAsValue(data.getInvalidAs());
             case "editable":
                 return data.isEditable();
             case "fix_year":
@@ -840,7 +840,7 @@ public class ColumnDefinition extends BaseData {
         try {
             switch (column) {
                 case "column_type":
-                    data.setType(columnType((short) value));
+                    data.setType(columnTypeFromValue((short) value));
                     return true;
                 case "column_name":
                     data.setColumnName(value == null ? null : (String) value);
@@ -858,7 +858,7 @@ public class ColumnDefinition extends BaseData {
                     data.setScale(value == null ? 8 : (int) value);
                     return true;
                 case "color":
-                    data.setColor(value == null ? null : Color.web((String) value));
+                    data.setColor(color(value));
                     return true;
                 case "is_primary":
                     data.setIsPrimaryKey(value == null ? false : (boolean) value);
@@ -867,7 +867,7 @@ public class ColumnDefinition extends BaseData {
                     data.setAuto(value == null ? false : (boolean) value);
                     return true;
                 case "invalid_as":
-                    data.setInvalidAs(value == null ? InvalidAs.Skip : InvalidAs.values()[(short) value]);
+                    data.setInvalidAs(invalidAs(value));
                     return true;
                 case "not_null":
                     data.setNotNull(value == null ? false : (boolean) value);
@@ -918,19 +918,39 @@ public class ColumnDefinition extends BaseData {
         return false;
     }
 
-    public static short columnType(ColumnType type) {
+    public static short columnTypeValue(ColumnType type) {
         if (type == null) {
             return 0;
         }
         return (short) (type.ordinal());
     }
 
-    public static ColumnType columnType(short type) {
+    public static ColumnType columnTypeFromValue(short type) {
         ColumnType[] types = ColumnType.values();
         if (type < 0 || type > types.length) {
             return ColumnType.String;
         }
         return types[type];
+    }
+
+    public static ColumnType columnTypeFromName(String name) {
+        if (name == null || name.isBlank()) {
+            return ColumnType.String;
+        }
+        for (ColumnType t : ColumnType.values()) {
+            if (t.name().equalsIgnoreCase(name)) {
+                return t;
+            }
+        }
+        return ColumnType.String;
+    }
+
+    public static String columnTypeName(ColumnType type) {
+        try {
+            return type.name();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public static ColumnType sqlColumnType(int type) {
@@ -962,18 +982,6 @@ public class ColumnDefinition extends BaseData {
             default:
                 return ColumnType.String;
         }
-    }
-
-    public static ColumnType columnType(String name) {
-        if (name == null || name.isBlank()) {
-            return ColumnType.String;
-        }
-        for (ColumnType t : ColumnType.values()) {
-            if (t.name().equalsIgnoreCase(name)) {
-                return t;
-            }
-        }
-        return ColumnType.String;
     }
 
     public static List<ColumnType> editTypes() {
@@ -1037,7 +1045,23 @@ public class ColumnDefinition extends BaseData {
         }
     }
 
-    public static InvalidAs invalidAs(String name) {
+    public static InvalidAs invalidAs(Object v) {
+        try {
+            return InvalidAs.values()[(short) v];
+        } catch (Exception e) {
+            return InvalidAs.Skip;
+        }
+    }
+
+    public static short invalidAsValue(InvalidAs v) {
+        try {
+            return (short) v.ordinal();
+        } catch (Exception e) {
+            return 3;
+        }
+    }
+
+    public static InvalidAs invalidAsFromName(String name) {
         if (name == null || name.isBlank()) {
             return InvalidAs.Keep;
         }
@@ -1047,6 +1071,30 @@ public class ColumnDefinition extends BaseData {
             }
         }
         return InvalidAs.Keep;
+    }
+
+    public static String invalidAsName(InvalidAs v) {
+        try {
+            return v.name();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static Color color(Object v) {
+        try {
+            return Color.web((String) v);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static String colorValue(Color v) {
+        try {
+            return v.toString();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public static boolean isNumberType(ColumnType type) {

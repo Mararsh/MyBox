@@ -236,10 +236,10 @@ public class AutoTestingExecutionController extends BaseTablePagesController<Tes
                     currentController = DataTreeController.jexl(null, false);
                 } else if (message("JavaScript").equals(fname)) {
                     currentController = DataTreeController.javascript(null, false);
-                } else if (message("RowFilter").equals(fname)) {
-                    currentController = DataTreeController.rowFilter(null, false);
-                } else if (message("Data2DDefinition").equals(fname)) {
-                    currentController = DataTreeController.data2DDefinition(null, false);
+                } else if (message("RowExpression").equals(fname)) {
+                    currentController = DataTreeController.rowExpression(null, false);
+                } else if (message("DataColumn").equals(fname)) {
+                    currentController = DataTreeController.dataColumn(null, false);
                 }
             } else {
                 currentController = openStage(currentCase.getFxml());

@@ -4,14 +4,10 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.Event;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.TextArea;
-import javafx.scene.input.MouseEvent;
 import mara.mybox.calculation.ExpressionCalculator;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -21,15 +17,10 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2022-6-4
  * @License Apache License Version 2.0
  */
-public class ControlData2DRowExpression extends BaseController {
+public class ControlData2DRowExpression extends ControlDataRowExpression {
 
     public ExpressionCalculator calculator;
     protected Data2D data2D;
-
-    @FXML
-    protected TextArea scriptInput;
-    @FXML
-    protected CheckBox wrapCheck;
 
     @Override
     public void initControls() {
@@ -57,12 +48,6 @@ public class ControlData2DRowExpression extends BaseController {
         this.data2D = data2D;
     }
 
-    @FXML
-    @Override
-    public void clearAction() {
-        scriptInput.clear();
-    }
-
     public boolean checkExpression(boolean allPages) {
         error = null;
         if (data2D == null || !data2D.isValidDefinition()) {
@@ -83,39 +68,21 @@ public class ControlData2DRowExpression extends BaseController {
     }
 
     @FXML
-    protected void popScriptExamples(MouseEvent mouseEvent) {
-        if (UserConfig.getBoolean(baseName + "ExamplesPopWhenMouseHovering", false)) {
-            showScriptExamples(mouseEvent);
-        }
+    @Override
+    public void saveAction() {
+        ControlDataRowExpression.open(this, scriptInput.getText());
     }
 
     @FXML
-    protected void showScriptExamples(Event event) {
-        PopTools.popRowFilterExamples(this, event, scriptInput, baseName + "Examples", data2D);
+    @Override
+    public void selectAction() {
+        DataSelectRowExpressionController.open(this);
     }
 
     @FXML
-    protected void popScriptHistories(Event event) {
-        if (UserConfig.getBoolean(baseName + "HistoriesPopWhenMouseHovering", false)) {
-            showScriptHistories(event);
-        }
-    }
-
-    @FXML
-    protected void showScriptHistories(Event event) {
-        PopTools.popSavedValues(this, scriptInput, event, baseName + "Histories");
-    }
-
-    @FXML
-    public void popRowExpressionHelps(Event event) {
-        if (UserConfig.getBoolean("RowExpressionsHelpsPopWhenMouseHovering", false)) {
-            showRowExpressionHelps(event);
-        }
-    }
-
-    @FXML
-    public void showRowExpressionHelps(Event event) {
-        popEventMenu(event, HelpTools.rowExpressionHelps());
+    @Override
+    protected void showExamples(Event event) {
+        PopTools.popRowExpressionExamples(this, event, scriptInput, baseName + "Examples", data2D);
     }
 
     @FXML
@@ -128,11 +95,6 @@ public class ControlData2DRowExpression extends BaseController {
     @FXML
     public void showPlaceholders(Event event) {
         PopTools.popDataPlaceHolders(this, event, scriptInput, baseName + "Placeholders", data2D);
-    }
-
-    @FXML
-    public void scriptAction() {
-        DataSelectJavaScriptController.open(this, scriptInput);
     }
 
 }

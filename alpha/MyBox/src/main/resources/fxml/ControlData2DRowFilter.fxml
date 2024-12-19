@@ -41,7 +41,7 @@ License:    Apache License Version 2.0
                </graphic>
             </Button>
             <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-            <Button fx:id="helpButton" mnemonicParsing="false" onAction="#showRowExpressionHelps" onMouseEntered="#popRowExpressionHelps">
+            <Button fx:id="helpButton" mnemonicParsing="false" onAction="#showHelps" onMouseEntered="#popHelps">
                <graphic>
                   <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -66,7 +66,7 @@ License:    Apache License Version 2.0
                   <ToggleGroup fx:id="takeGroup" />
                </toggleGroup>
             </RadioButton>
-            <RadioButton fx:id="othersRadio" mnemonicParsing="false" text="%Others" toggleGroup="$takeGroup" wrapText="true" />
+            <RadioButton fx:id="falseRadio" mnemonicParsing="false" text="false" toggleGroup="$takeGroup" wrapText="true" />
          </children>
       </HBox>
       <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0">
@@ -81,7 +81,7 @@ License:    Apache License Version 2.0
                </graphic>
             </CheckBox>
             <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-            <Button fx:id="exampleScriptButton" mnemonicParsing="false" onAction="#showScriptExamples" onMouseEntered="#popScriptExamples">
+            <Button fx:id="examplesButton" mnemonicParsing="false" onAction="#showExamples" onMouseEntered="#popExamples">
                <graphic>
                   <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -108,7 +108,7 @@ License:    Apache License Version 2.0
                   </ImageView>
                </graphic>
             </Button>
-            <Button fx:id="historyScriptButton" mnemonicParsing="false" onAction="#showScriptHistories" onMouseEntered="#popScriptHistories">
+            <Button fx:id="historyButton" mnemonicParsing="false" onAction="#showHistories" onMouseEntered="#popHistories">
                <graphic>
                   <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                      <image>

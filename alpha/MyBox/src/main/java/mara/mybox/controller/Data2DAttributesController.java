@@ -8,6 +8,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.web.WebView;
@@ -37,6 +38,7 @@ public class Data2DAttributesController extends BaseChildController {
     protected String dataName;
     protected short scale;
     protected int maxRandom;
+    protected boolean attributesChanged, columnsChanged;
 
     @FXML
     protected ControlData2DColumns columnsController;
@@ -48,6 +50,8 @@ public class Data2DAttributesController extends BaseChildController {
     protected ComboBox<String> scaleSelector, randomSelector;
     @FXML
     protected WebView webView;
+    @FXML
+    protected Tab attributesTab, columnsTab;
 
     public Data2DAttributesController() {
         baseTitle = message("DataDefinition");
@@ -73,6 +77,34 @@ public class Data2DAttributesController extends BaseChildController {
             }
             randomSelector.getItems().addAll(Arrays.asList("1", "100", "10", "1000", "10000", "1000000", "10000000"));
             randomSelector.setValue(maxRandom + "");
+
+            dataNameInput.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> v, String ov, String nv) {
+                    attributesChanged(true);
+                }
+            });
+
+            descInput.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> v, String ov, String nv) {
+                    attributesChanged(true);
+                }
+            });
+
+            scaleSelector.valueProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> v, String ov, String nv) {
+                    attributesChanged(true);
+                }
+            });
+
+            randomSelector.valueProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> v, String ov, String nv) {
+                    attributesChanged(true);
+                }
+            });
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -115,22 +147,55 @@ public class Data2DAttributesController extends BaseChildController {
                 return;
             }
             Data2D data2D = dataController.data2D;
-            columnsController.setParameters(dataController);
+            columnsController.setParameters(this);
 
+            isSettingValues = true;
             idInput.setText(data2D.getD2did() >= 0 ? data2D.getD2did() + "" : message("NewData"));
             timeInput.setText(DateTools.datetimeToString(data2D.getModifyTime()));
             dataTypeInput.setText(message(data2D.getType().name()));
-            isSettingValues = true;
             dataNameInput.setText(data2D.getDataName());
             scaleSelector.setValue(data2D.getScale() + "");
             randomSelector.setValue(data2D.getMaxRandom() + "");
             descInput.setText(data2D.getComments());
             webView.getEngine().loadContent(HtmlWriteTools.table(data2D.pageInfo()));
+            attributesChanged(false);
+            columnsChanged(false);
             isSettingValues = false;
-            setTitle(baseTitle + " - " + data2D.displayName());
+            checkStatus();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+    }
+
+    public void attributesChanged(boolean changed) {
+        attributesChanged = changed;
+        checkStatus();
+    }
+
+    public void columnsChanged(boolean changed) {
+        columnsChanged = changed;
+        checkStatus();
+    }
+
+    public void checkStatus() {
+        if (isSettingValues) {
+            return;
+        }
+        if (attributesChanged) {
+            attributesTab.setText(message("Attributes") + "*");
+        } else {
+            attributesTab.setText(message("Attributes"));
+        }
+        if (columnsChanged) {
+            columnsTab.setText(message("Columns") + "*");
+        } else {
+            columnsTab.setText(message("Columns"));
+        }
+        String title = baseTitle + " - " + dataController.data2D.displayName();
+        if (columnsChanged || attributesChanged) {
+            title += " *";
+        }
+        setTitle(title);
     }
 
     public Data2D pickValues() {

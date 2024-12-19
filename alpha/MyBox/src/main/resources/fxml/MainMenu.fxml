@@ -42,7 +42,7 @@ License:    Apache License Version 2.0
                         </Menu>
                         <Menu fx:id="documentMenu" mnemonicParsing="false" text="%Document">
                             <items>
-                                 <Menu mnemonicParsing="false" text="%InformationInTree">
+                                <Menu mnemonicParsing="false" text="%InformationInTree">
                                     <items>
                                         <MenuItem mnemonicParsing="false" onAction="#TextTree" text="%TextTree" />
                                         <MenuItem mnemonicParsing="false" onAction="#HtmlTree" text="%HtmlTree" />
@@ -295,9 +295,9 @@ License:    Apache License Version 2.0
                                     </items>
                                 </Menu>
                                 <SeparatorMenuItem mnemonicParsing="false" />
-                                <MenuItem mnemonicParsing="false" onAction="#Data2DDefinition" text="%Data2DDefinition" />
+                                <MenuItem mnemonicParsing="false" onAction="#DataColumn" text="%DataColumn" />
                                 <MenuItem mnemonicParsing="false" onAction="#SpliceData" text="%SpliceData" />
-                                <MenuItem mnemonicParsing="false" onAction="#RowFilter" text="%RowFilter" />
+                                <MenuItem mnemonicParsing="false" onAction="#RowExpression" text="%RowExpression" />
                                 <MenuItem mnemonicParsing="false" onAction="#dataInSystemClipboard" text="%DataInSystemClipboard" />
                                 <MenuItem mnemonicParsing="false" onAction="#dataInMyBoxClipboard" text="%DataInMyBoxClipboard" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
@@ -396,7 +396,7 @@ License:    Apache License Version 2.0
                         <Menu mnemonicParsing="false" text="%Network">
                             <items>
                                 <MenuItem mnemonicParsing="false" onAction="#openWebBrowser" text="%WebBrowser" />
-                               <MenuItem mnemonicParsing="false" onAction="#webFavorites" text="%WebFavorites" />
+                                <MenuItem mnemonicParsing="false" onAction="#webFavorites" text="%WebFavorites" />
                                 <MenuItem mnemonicParsing="false" onAction="#webHistories" text="%WebHistories" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#RemotePathManage" text="%RemotePathManage" />

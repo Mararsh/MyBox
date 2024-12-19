@@ -341,10 +341,10 @@ public class MyBoxDocumentsController extends BaseTaskController {
             cases.add(new TreeCase("JEXL", "en"));
             cases.add(new TreeCase("JavaScript", "zh"));
             cases.add(new TreeCase("JavaScript", "en"));
-            cases.add(new TreeCase("RowFilter", "zh"));
-            cases.add(new TreeCase("RowFilter", "en"));
-            cases.add(new TreeCase("Data2DDefinition", "zh"));
-            cases.add(new TreeCase("Data2DDefinition", "en"));
+            cases.add(new TreeCase("RowExpression", "zh"));
+            cases.add(new TreeCase("RowExpression", "en"));
+            cases.add(new TreeCase("DataColumn", "zh"));
+            cases.add(new TreeCase("DataColumn", "en"));
 
             index = 0;
             finishNotify.addListener(new ChangeListener<Boolean>() {

@@ -601,7 +601,7 @@ public class Data2DDefinitionTools {
                                     continue;
                                 }
                                 if (XmlTools.matchXmlTag("Type", attrName)) {
-                                    column.setType(Data2DColumn.columnType(attrValue));
+                                    column.setType(Data2DColumn.columnTypeFromName(attrValue));
                                 } else if (XmlTools.matchXmlTag("Length", attrName)) {
                                     try {
                                         column.setLength(Integer.parseInt(attrValue));
@@ -626,7 +626,7 @@ public class Data2DDefinitionTools {
                                     } catch (Exception ex) {
                                     }
                                 } else if (XmlTools.matchXmlTag("ToInvalidValue", attrName)) {
-                                    column.setInvalidAs(ColumnDefinition.invalidAs(attrValue));
+                                    column.setInvalidAs(ColumnDefinition.invalidAsFromName(attrValue));
                                 } else if (XmlTools.matchXmlTag("DecimalScale", attrName)) {
                                     try {
                                         column.setScale(Integer.parseInt(attrValue));
@@ -659,22 +659,6 @@ public class Data2DDefinitionTools {
             return null;
         }
         return fromXML(node.getStringValue("data2d_definition"));
-    }
-
-    public static String escapeXML(String value) {
-        if (value == null || value.isBlank()) {
-            return value;
-        }
-        return value.replaceAll("<!\\[CDATA\\[", "<" + DataQuote + ">")
-                .replaceAll("\\]\\]>", "</" + DataQuote + ">");
-    }
-
-    public static String asXML(String value) {
-        if (value == null || value.isBlank()) {
-            return value;
-        }
-        return value.replaceAll("<" + DataQuote + ">", "<![CDATA[")
-                .replaceAll("</" + DataQuote + ">", "]]>");
     }
 
 }

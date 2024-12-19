@@ -27,13 +27,13 @@ public abstract class MainMenuController_Data extends MainMenuController_Network
     }
 
     @FXML
-    protected void RowFilter(ActionEvent event) {
-        DataTreeController.rowFilter(parentController, false);
+    protected void RowExpression(ActionEvent event) {
+        DataTreeController.rowExpression(parentController, false);
     }
 
     @FXML
-    protected void Data2DDefinition(ActionEvent event) {
-        DataTreeController.data2DDefinition(parentController, false);
+    protected void DataColumn(ActionEvent event) {
+        DataTreeController.dataColumn(parentController, false);
     }
 
     @FXML

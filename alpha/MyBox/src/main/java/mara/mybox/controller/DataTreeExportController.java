@@ -172,6 +172,14 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
                 }
             });
 
+            treeJsonCheck.setSelected(UserConfig.getBoolean(baseName + "TreeJson", true));
+            treeJsonCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
+                    UserConfig.setBoolean(baseName + "TreeJson", treeJsonCheck.isSelected());
+                }
+            });
+
             listHtmlCheck.setSelected(UserConfig.getBoolean(baseName + "ListHtml", false));
             listHtmlCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override

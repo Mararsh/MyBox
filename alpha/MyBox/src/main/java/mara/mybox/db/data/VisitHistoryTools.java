@@ -269,10 +269,10 @@ public class VisitHistoryTools {
                                 DataTreeController.jexl(controller, replaceScene);
                             } else if (message("JavaScript").equals(fname)) {
                                 DataTreeController.javascript(controller, replaceScene);
-                            } else if (message("RowFilter").equals(fname)) {
-                                DataTreeController.rowFilter(controller, replaceScene);
-                            } else if (message("Data2DDefinition").equals(fname)) {
-                                DataTreeController.data2DDefinition(controller, replaceScene);
+                            } else if (message("RowExpression").equals(fname)) {
+                                DataTreeController.rowExpression(controller, replaceScene);
+                            } else if (message("DataColumn").equals(fname)) {
+                                DataTreeController.dataColumn(controller, replaceScene);
                             }
                         }
                     });

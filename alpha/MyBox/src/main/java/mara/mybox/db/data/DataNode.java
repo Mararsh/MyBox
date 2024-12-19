@@ -8,6 +8,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import static mara.mybox.db.table.BaseNodeTable.RootID;
 import static mara.mybox.value.AppValues.InvalidInteger;
 import static mara.mybox.value.AppValues.InvalidLong;
+import static mara.mybox.value.AppValues.InvalidShort;
 
 /**
  * @Author Mara
@@ -125,6 +126,18 @@ public class DataNode extends BaseData {
             return (long) getValue(column);
         } catch (Exception e) {
             return InvalidLong;
+        }
+    }
+
+    public short getShortValue(String column) {
+        try {
+            Object o = getValue(column);
+            if (o == null) {
+                return InvalidShort;
+            }
+            return (short) getValue(column);
+        } catch (Exception e) {
+            return InvalidShort;
         }
     }
 

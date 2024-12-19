@@ -19,15 +19,15 @@ License:    Apache License Version 2.0
     <children>
               <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0">
                   <children>
-                      <Button fx:id="helpButton" mnemonicParsing="false" onAction="#showRowExpressionHelps" onMouseEntered="#popRowExpressionHelps">
-                          <graphic>
-                              <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                  <image>
-                                      <Image url="@../buttons/iconClaw.png" />
-                                  </image>
-                              </ImageView>
-                          </graphic>
-                      </Button>
+            <Button fx:id="helpButton" mnemonicParsing="false" onAction="#showHelps" onMouseEntered="#popHelps">
+               <graphic>
+                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/iconClaw.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
             <CheckBox fx:id="wrapCheck" mnemonicParsing="false">
                <graphic>
                   <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
@@ -38,15 +38,15 @@ License:    Apache License Version 2.0
                </graphic>
             </CheckBox>
                       <Label maxWidth="1.7976931348623157E308" text="%RowExpression" textAlignment="RIGHT" HBox.hgrow="ALWAYS" />
-                      <Button fx:id="exampleScriptButton" mnemonicParsing="false" onAction="#showScriptExamples" onMouseEntered="#popScriptExamples">
-                          <graphic>
-                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                  <image>
-                                      <Image url="@../buttons/Red/iconExamples.png" />
-                                  </image>
-                              </ImageView>
-                          </graphic>
-                      </Button>
+            <Button fx:id="examplesButton" mnemonicParsing="false" onAction="#showExamples" onMouseEntered="#popExamples">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconExamples.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
                       <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction">
                           <graphic>
                               <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -56,20 +56,20 @@ License:    Apache License Version 2.0
                               </ImageView>
                           </graphic>
                       </Button>
-                      <Button fx:id="historyScriptButton" mnemonicParsing="false" onAction="#showScriptHistories" onMouseEntered="#popScriptHistories">
-                          <graphic>
-                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                  <image>
-                                      <Image url="@../buttons/Red/iconHistory.png" />
-                                  </image>
-                              </ImageView>
-                          </graphic>
-                      </Button>
             <Button fx:id="scriptButton" mnemonicParsing="false" onAction="#scriptAction">
                <graphic>
                   <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../buttons/Red/iconScript.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="historyButton" mnemonicParsing="false" onAction="#showHistories" onMouseEntered="#popHistories">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconHistory.png" />
                      </image>
                   </ImageView>
                </graphic>

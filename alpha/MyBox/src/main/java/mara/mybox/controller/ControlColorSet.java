@@ -81,7 +81,7 @@ public class ControlColorSet extends BaseController {
             rect.fillProperty().addListener(new ChangeListener<Paint>() {
                 @Override
                 public void changed(ObservableValue<? extends Paint> v, Paint ov, Paint nv) {
-                    if (isSettingValues) {
+                    if (isSettingValues || nv == null) {
                         return;
                     }
                     UserConfig.setString(thisName, ((Color) nv).toString());

@@ -2,7 +2,7 @@ package mara.mybox.controller;
 
 import javafx.fxml.FXML;
 import mara.mybox.db.data.DataNode;
-import mara.mybox.db.table.TableNodeRowFilter;
+import mara.mybox.db.table.TableNodeRowExpression;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
@@ -14,20 +14,19 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2024-12-5
  * @License Apache License Version 2.0
  */
-public class DataSelectRowFilterController extends BaseDataSelectController {
+public class DataSelectRowExpressionController extends BaseDataSelectController {
 
-    protected ControlData2DRowFilter filterController;
+    protected ControlDataRowExpression expController;
 
-    public void setParameters(ControlData2DRowFilter parent) {
+    public void setParameters(ControlDataRowExpression parent) {
         try {
             if (parent == null) {
                 close();
                 return;
             }
-            filterController = parent;
-            nodeTable = new TableNodeRowFilter();
+            expController = parent;
+            nodeTable = new TableNodeRowExpression();
             dataName = nodeTable.getDataName();
-            baseName = baseName + "_" + dataName;
 
             baseTitle = nodeTable.getTreeName() + " - " + message("SelectNode");
             setTitle(baseTitle);
@@ -62,9 +61,7 @@ public class DataSelectRowFilterController extends BaseDataSelectController {
 
             @Override
             protected void whenSucceeded() {
-                filterController.load(savedNode.getStringValue("script"),
-                        savedNode.getBooleanValue("match_true"),
-                        savedNode.getLongValue("max_match"));
+                expController.edit(savedNode.getStringValue("script"));
                 close();
             }
         };
@@ -74,8 +71,9 @@ public class DataSelectRowFilterController extends BaseDataSelectController {
     /*
         static methods
      */
-    public static DataSelectRowFilterController open(ControlData2DRowFilter parent) {
-        DataSelectRowFilterController controller = (DataSelectRowFilterController) WindowTools.childStage(parent, Fxmls.DataSelectRowFilterFxml);
+    public static DataSelectRowExpressionController open(ControlDataRowExpression parent) {
+        DataSelectRowExpressionController controller = (DataSelectRowExpressionController) WindowTools.
+                childStage(parent, Fxmls.DataSelectRowExpressionFxml);
         controller.setParameters(parent);
         controller.requestMouse();
         return controller;

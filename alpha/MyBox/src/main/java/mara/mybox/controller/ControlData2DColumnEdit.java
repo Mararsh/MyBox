@@ -101,6 +101,8 @@ public class ControlData2DColumnEdit extends BaseChildController {
             });
 
             centuryPane.disableProperty().bind(fixYearCheck.selectedProperty().not());
+
+            columnIndex = -1;
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
@@ -184,8 +186,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
                 columnIndex = index;
                 loadColumn(column);
             } else {
-                columnIndex = -1;
-                loadColumn(new Data2DColumn());
+                loadNull();
             }
             if (columnsController.data2D != null && columnsController.data2D.isMatrix()) {
                 typesPane.setDisable(true);
@@ -196,10 +197,15 @@ public class ControlData2DColumnEdit extends BaseChildController {
         }
     }
 
+    public void loadNull() {
+        loadColumn(null);
+    }
+
     public void loadColumn(Data2DColumn column) {
         try {
             if (column == null) {
-                return;
+                columnIndex = -1;
+                column = new Data2DColumn();
             }
             isSettingValues = true;
             switch (column.getType()) {
@@ -311,7 +317,8 @@ public class ControlData2DColumnEdit extends BaseChildController {
                 }
             }
 
-            boolean canNotChange = columnsController.data2D != null
+            boolean canNotChange = columnsController != null
+                    && columnsController.data2D != null
                     && columnsController.data2D.isTable()
                     && columnsController.data2D.getSheet() != null
                     && columnIndex >= 0;
@@ -331,20 +338,25 @@ public class ControlData2DColumnEdit extends BaseChildController {
     public Data2DColumn pickValues() {
         try {
             String name = nameInput.getText();
-            if (columnsController.data2D != null && columnsController.data2D.isTable()) {
+            if (columnsController != null
+                    && columnsController.data2D != null
+                    && columnsController.data2D.isTable()) {
                 name = DerbyBase.fixedIdentifier(name);
             }
             if (name == null || name.isBlank()) {
                 popError(message("InvalidParameter") + ": " + message("Name"));
                 return null;
             }
-            for (int i = 0; i < columnsController.tableData.size(); i++) {
-                Data2DColumn col = columnsController.tableData.get(i);
-                if (i != columnIndex && name.equalsIgnoreCase(col.getColumnName())) {
-                    popError(message("AlreadyExisted"));
-                    return null;
+            if (columnsController != null) {
+                for (int i = 0; i < columnsController.tableData.size(); i++) {
+                    Data2DColumn col = columnsController.tableData.get(i);
+                    if (i != columnIndex && name.equalsIgnoreCase(col.getColumnName())) {
+                        popError(message("AlreadyExisted"));
+                        return null;
+                    }
                 }
             }
+
             int length;
             if (clobRadio.isSelected()) {
                 length = Integer.MAX_VALUE;
@@ -404,7 +416,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
                 invalidAs = DefaultInvalidAs;
             }
             Data2DColumn column;
-            if (columnIndex >= 0) {
+            if (columnsController != null && columnIndex >= 0) {
                 column = columnsController.tableData.get(columnIndex);
             } else {
                 column = new Data2DColumn();
@@ -423,7 +435,8 @@ public class ControlData2DColumnEdit extends BaseChildController {
             if (message("None").equals(format)) {
                 format = null;
             }
-            if (columnsController.data2D != null && columnsController.data2D.isMatrix()) {
+            if (columnsController != null
+                    && columnsController.data2D != null && columnsController.data2D.isMatrix()) {
                 column.setType(ColumnType.Double).setFormat(format);
             } else if (stringRadio.isSelected()) {
                 column.setType(ColumnType.String).setFormat(null);

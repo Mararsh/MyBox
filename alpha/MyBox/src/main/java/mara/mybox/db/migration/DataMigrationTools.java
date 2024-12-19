@@ -6,14 +6,16 @@ import java.sql.Statement;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.bufferedimage.ImageScopeTools;
 import mara.mybox.controller.MyBoxLoadingController;
+import mara.mybox.data2d.DataFileCSV;
+import mara.mybox.data2d.tools.Data2DDefinitionTools;
 import mara.mybox.db.Database;
 import mara.mybox.db.data.*;
 import mara.mybox.db.table.BaseNodeTable;
 import static mara.mybox.db.table.BaseNodeTable.RootID;
 import mara.mybox.db.table.TableDataNodeTag;
 import mara.mybox.db.table.TableDataTag;
+import mara.mybox.db.table.TableNodeDataColumn;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.tools.StringTools;
 
 /**
  * @Author Mara
@@ -63,11 +65,24 @@ public class DataMigrationTools {
             conn.setAutoCommit(false);
             long count = 0;
             float orderNum = 0;
+            DataNode node;
+            DataFileCSV data2D;
             while (query.next()) {
                 try {
-                    DataNode node = fromText(tname, query.getString("info"));
-                    if (node == null) {
-                        continue;
+                    String info = query.getString("info");
+                    if ("Node_Data_Column".equals(tname)) {
+                        data2D = Data2DDefinitionTools.fromXML(info);
+                        if (data2D == null) {
+                            continue;
+                        }
+                        node = new DataNode();
+
+                    } else {
+                        node = fromText(tname, info);
+                        if (node == null) {
+                            continue;
+                        }
+                        data2D = null;
                     }
                     long nodeid = query.getLong("nodeid");
                     long parentid = query.getLong("parentid");
@@ -82,8 +97,15 @@ public class DataMigrationTools {
                         }
                         statement.executeUpdate("INSERT INTO MYBOX_TMP_TREE_Migration682 VALUES ("
                                 + nodeid + ", " + parentid + ", " + newNodeid + ")");
+                        if (data2D != null) {
+                            int corder = 0;
+                            for (Data2DColumn column : data2D.getColumns()) {
+                                DataNode columnNode = TableNodeDataColumn.fromColumn(column);
+                                columnNode.setParentid(newNodeid).setOrderNumber(++corder);
+                                dataTable.insertData(conn, columnNode);
+                            }
+                        }
                     }
-
                 } catch (Exception e) {
                     MyBoxLog.console(e);
                 }
@@ -250,40 +272,17 @@ public class DataMigrationTools {
                         }
                     }
                     break;
-                case "Node_Row_Filter":
+                case "Node_Row_Expression":
                     node.setValue("script", null);
-                    node.setValue("match_true", true);
-                    node.setValue("max_match", -1);
                     if (info != null) {
                         if (info.contains(ValueSeparater)) {
                             String[] ss = info.split(ValueSeparater);
                             if (ss.length > 0) {
                                 node.setValue("script", ss[0].trim());
                             }
-                            if (ss.length > 1) {
-                                node.setValue("match_true", !StringTools.isFalse(ss[1].trim()));
-                            }
-                            if (ss.length > 2) {
-                                try {
-                                    node.setValue("max_match", Long.valueOf(ss[2].trim()));
-                                } catch (Exception e) {
-                                }
-                            }
                         } else if (info.contains(MoreSeparater)) {
                             String[] ss = info.split(MoreSeparater);
                             node.setValue("script", ss[0].trim());
-                            if (ss.length > 1) {
-                                ss = ss[1].split(";;;");
-                                if (ss.length > 0) {
-                                    node.setValue("match_true", !StringTools.isFalse(ss[0].trim()));
-                                }
-                                if (ss.length > 1) {
-                                    try {
-                                        node.setValue("max_match", Long.valueOf(ss[1].trim()));
-                                    } catch (Exception e) {
-                                    }
-                                }
-                            }
                         } else {
                             node.setValue("script", info);
                         }
@@ -343,9 +342,6 @@ public class DataMigrationTools {
                             }
                         }
                     }
-                    break;
-                case "Node_Data2D_Definition":
-                    node.setValue("data2d_definition", info);
                     break;
             }
             return node;

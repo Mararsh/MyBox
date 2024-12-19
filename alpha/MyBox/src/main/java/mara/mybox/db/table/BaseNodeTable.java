@@ -184,10 +184,10 @@ public class BaseNodeTable extends BaseTable<DataNode> {
                 return new TableNodeJEXL();
             case "JavaScript":
                 return new TableNodeJavaScript();
-            case "RowFilter":
-                return new TableNodeRowFilter();
-            case "Data2DDefinition":
-                return new TableNodeData2DDefinition();
+            case "RowExpression":
+                return new TableNodeRowExpression();
+            case "DataColumn":
+                return new TableNodeDataColumn();
         }
         return null;
     }
