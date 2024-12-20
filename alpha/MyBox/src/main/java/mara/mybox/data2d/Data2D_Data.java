@@ -136,6 +136,16 @@ public abstract class Data2D_Data extends Data2D_Attributes {
 //        return (char) ('a' + random.nextInt(25)) + "";
     }
 
+    public List<String> dummyRow() {
+        if (columns == null) {
+            return null;
+        }
+        List<String> row = new ArrayList<>();
+        for (Data2DColumn column : columns) {
+            row.add(column.dummyValue());
+        }
+        return row;
+    }
 
     /*
         table data
@@ -311,8 +321,12 @@ public abstract class Data2D_Data extends Data2D_Attributes {
     }
 
     public String random(Random random, int col, boolean nonNegative) {
+        return random(random, column(col), nonNegative);
+    }
+
+    public String random(Random random, Data2DColumn column, boolean nonNegative) {
         try {
-            return column(col).random(random, maxRandom, scale, nonNegative);
+            return column.random(random, maxRandom, scale, nonNegative);
         } catch (Exception e) {
             return null;
         }

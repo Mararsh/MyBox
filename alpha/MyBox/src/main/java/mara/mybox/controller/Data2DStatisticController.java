@@ -135,7 +135,7 @@ public class Data2DStatisticController extends BaseData2DTaskTargetsController {
                     calculation.setStatisticObject(StatisticObject.Columns);
                     break;
             }
-            UserConfig.setBoolean(baseName + "SkipNonnumeric", skipNonnumericRadio.isSelected());
+            UserConfig.setBoolean(baseName + "SkipNonnumeric", skipInvalidRadio.isSelected());
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);

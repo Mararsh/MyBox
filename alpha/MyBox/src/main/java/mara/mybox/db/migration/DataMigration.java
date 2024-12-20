@@ -225,16 +225,16 @@ public class DataMigration {
             updateIn682_move(controller, conn, new TableNodeRowExpression(), "RowFilter");
             updateIn682_move(controller, conn, new TableNodeDataColumn(), "Data2DDefinition");
 
-//            try (Statement statement = conn.createStatement()) {
-//                conn.setAutoCommit(true);
-//                statement.executeUpdate("DROP TABLE MYBOX_TMP_TREE_Migration682");
-//                statement.executeUpdate("DROP TABLE MYBOX_TMP_TAG_Migration682");
-//                statement.executeUpdate("DROP TABLE tree_node_tag");
-//                statement.executeUpdate("DROP TABLE tree_node");
-//                statement.executeUpdate("DROP TABLE tag");
-//            } catch (Exception e) {
-//                MyBoxLog.console(e);
-//            }
+            try (Statement statement = conn.createStatement()) {
+                conn.setAutoCommit(true);
+                statement.executeUpdate("DROP TABLE MYBOX_TMP_TREE_Migration682");
+                statement.executeUpdate("DROP TABLE MYBOX_TMP_TAG_Migration682");
+                statement.executeUpdate("DROP TABLE tree_node_tag");
+                statement.executeUpdate("DROP TABLE tree_node");
+                statement.executeUpdate("DROP TABLE tag");
+            } catch (Exception e) {
+                MyBoxLog.console(e);
+            }
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -675,10 +675,10 @@ public class DataMigration {
                 if (rowFilter != null && !rowFilter.isBlank()) {
                     if (rowFilter.startsWith("Reversed::")) {
                         style.setFilter(rowFilter.substring("Reversed::".length()));
-                        style.setFilterReversed(true);
+                        style.setMatchFalse(true);
                     } else {
                         style.setFilter(rowFilter);
-                        style.setFilterReversed(false);
+                        style.setMatchFalse(false);
                     }
                 }
                 // discard data about column filter. Sorry!

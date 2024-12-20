@@ -295,8 +295,8 @@ License:    Apache License Version 2.0
                                     </items>
                                 </Menu>
                                 <SeparatorMenuItem mnemonicParsing="false" />
-                                <MenuItem mnemonicParsing="false" onAction="#DataColumn" text="%DataColumn" />
                                 <MenuItem mnemonicParsing="false" onAction="#SpliceData" text="%SpliceData" />
+                                <MenuItem mnemonicParsing="false" onAction="#DataColumn" text="%DataColumn" />
                                 <MenuItem mnemonicParsing="false" onAction="#RowExpression" text="%RowExpression" />
                                 <MenuItem mnemonicParsing="false" onAction="#dataInSystemClipboard" text="%DataInSystemClipboard" />
                                 <MenuItem mnemonicParsing="false" onAction="#dataInMyBoxClipboard" text="%DataInMyBoxClipboard" />

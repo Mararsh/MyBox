@@ -37,6 +37,7 @@ import mara.mybox.data2d.TmpTable;
 import mara.mybox.data2d.tools.Data2DConvertTools;
 import mara.mybox.data2d.writer.Data2DWriter;
 import mara.mybox.data2d.writer.SystemClipboardWriter;
+import static mara.mybox.db.data.ColumnDefinition.DefaultInvalidAs;
 import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.VisitHistory.FileType;
@@ -78,8 +79,8 @@ public class ControlData2DTarget extends BaseDataConvertController {
     @FXML
     protected Tab csvTab, excelTab, textTab, htmlTab, pdfTab, dbTab;
     @FXML
-    protected RadioButton keepNonnumericRadio, zeroNonnumericRadio,
-            emptyNonnumericRadio, skipNonnumericRadio, nullNonnumericRadio;
+    protected RadioButton useInvalidRadio, zeroInvalidRadio,
+            emptyInvalidRadio, skipInvalidRadio, nullInvalidRadio;
     @FXML
     protected VBox optionsBox, csvBox, excelBox, textBox, htmlBox, pdfBox, dbBox;
     @FXML
@@ -526,16 +527,18 @@ public class ControlData2DTarget extends BaseDataConvertController {
     }
 
     public InvalidAs invalidAs() {
-        if (zeroNonnumericRadio != null && zeroNonnumericRadio.isSelected()) {
+        if (zeroInvalidRadio != null && zeroInvalidRadio.isSelected()) {
             return InvalidAs.Zero;
-        } else if (emptyNonnumericRadio != null && emptyNonnumericRadio.isSelected()) {
+        } else if (emptyInvalidRadio != null && emptyInvalidRadio.isSelected()) {
             return InvalidAs.Empty;
-        } else if (skipNonnumericRadio != null && skipNonnumericRadio.isSelected()) {
+        } else if (skipInvalidRadio != null && skipInvalidRadio.isSelected()) {
             return InvalidAs.Skip;
-        } else if (nullNonnumericRadio != null && nullNonnumericRadio.isSelected()) {
+        } else if (nullInvalidRadio != null && nullInvalidRadio.isSelected()) {
             return InvalidAs.Null;
+        } else if (useInvalidRadio != null && useInvalidRadio.isSelected()) {
+            return InvalidAs.Use;
         } else {
-            return InvalidAs.Keep;
+            return DefaultInvalidAs;
         }
     }
 

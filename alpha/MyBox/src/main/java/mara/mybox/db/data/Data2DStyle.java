@@ -17,7 +17,7 @@ public class Data2DStyle extends BaseData {
     protected long d2sid, d2id;
     protected long rowStart, rowEnd; // 0-based, exlcuded
     protected String title, columns, filter, fontColor, bgColor, fontSize, moreStyle;
-    protected boolean filterReversed, abnoramlValues, bold;
+    protected boolean matchFalse, abnoramlValues, bold;
     protected float sequence;
 
     private void init() {
@@ -32,7 +32,7 @@ public class Data2DStyle extends BaseData {
         bgColor = null;
         fontSize = null;
         moreStyle = null;
-        filterReversed = false;
+        matchFalse = false;
         abnoramlValues = false;
         bold = false;
         sequence = 0;
@@ -153,7 +153,7 @@ public class Data2DStyle extends BaseData {
                     data.setFilter(value == null ? null : (String) value);
                     return true;
                 case "filterReversed":
-                    data.setFilterReversed(value == null ? false : (boolean) value);
+                    data.setMatchFalse(value == null ? false : (boolean) value);
                     return true;
                 case "fontColor":
                     data.setFontColor(value == null ? null : (String) value);
@@ -204,7 +204,7 @@ public class Data2DStyle extends BaseData {
                 case "filter":
                     return data.getFilter();
                 case "filterReversed":
-                    return data.isFilterReversed();
+                    return data.isMatchFalse();
                 case "fontColor":
                     return data.getFontColor();
                 case "bgColor":
@@ -376,12 +376,12 @@ public class Data2DStyle extends BaseData {
         return this;
     }
 
-    public boolean isFilterReversed() {
-        return filterReversed;
+    public boolean isMatchFalse() {
+        return matchFalse;
     }
 
-    public Data2DStyle setFilterReversed(boolean filterReversed) {
-        this.filterReversed = filterReversed;
+    public Data2DStyle setMatchFalse(boolean matchFalse) {
+        this.matchFalse = matchFalse;
         return this;
     }
 

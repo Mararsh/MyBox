@@ -15,7 +15,7 @@ public class DataFilter {
 
     private String sourceScript, filledScript;
     public long passedNumber, maxPassed;
-    public boolean reversed, passed;
+    public boolean matchFalse, passed;
     public FxTask task;
     public ExpressionCalculator calculator;
 
@@ -23,16 +23,16 @@ public class DataFilter {
         init();
     }
 
-    public DataFilter(String script, boolean reversed) {
+    public DataFilter(String script, boolean matchFalse) {
         init();
         sourceScript = script;
         filledScript = script;
-        this.reversed = reversed;
+        this.matchFalse = matchFalse;
     }
 
     private void init() {
         maxPassed = -1;
-        reversed = false;
+        matchFalse = false;
         resetNumber();
         calculator = new ExpressionCalculator();
     }
@@ -73,7 +73,7 @@ public class DataFilter {
     public boolean readResult(boolean calculateSuccess) {
         passed = false;
         if (calculateSuccess) {
-            if (reversed) {
+            if (matchFalse) {
                 passed = "false".equals(calculator.getResult());
             } else {
                 passed = "true".equals(calculator.getResult());
@@ -140,7 +140,7 @@ public class DataFilter {
         sourceScript = null;
         filledScript = null;
         maxPassed = -1;
-        reversed = false;
+        matchFalse = false;
         passedNumber = 0;
         passed = false;
         task = null;
@@ -150,8 +150,8 @@ public class DataFilter {
     @Override
     public String toString() {
         String string = sourceScript == null ? "" : sourceScript;
-        if (reversed) {
-            string += "\n" + message("Reverse");
+        if (matchFalse) {
+            string += "\n" + message("MatchFalse");
         }
         if (maxPassed > 0) {
             string += "\n" + message("MaximumNumber") + ": " + maxPassed;
@@ -208,12 +208,12 @@ public class DataFilter {
         return this;
     }
 
-    public boolean isReversed() {
-        return reversed;
+    public boolean isMatchFalse() {
+        return matchFalse;
     }
 
-    public DataFilter setReversed(boolean reversed) {
-        this.reversed = reversed;
+    public DataFilter setMatchFalse(boolean matchFalse) {
+        this.matchFalse = matchFalse;
         return this;
     }
 

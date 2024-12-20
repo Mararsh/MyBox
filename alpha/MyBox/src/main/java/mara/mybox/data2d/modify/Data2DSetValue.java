@@ -36,12 +36,12 @@ public class Data2DSetValue extends Data2DModify {
         setValue(row, index);
     }
 
-    public static String validValue(Data2DColumn column,
+    public static String validValue2(Data2DColumn column,
             String currentValue, String newValue,
             ColumnDefinition.InvalidAs invalidAs) {
         try {
             if (invalidAs == null
-                    || invalidAs == InvalidAs.Keep
+                    || invalidAs == InvalidAs.Use
                     || column.validValue(newValue)) {
                 return newValue;
             }

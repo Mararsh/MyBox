@@ -1,9 +1,18 @@
 package mara.mybox.data;
 
+import java.util.List;
+import java.util.Random;
+import mara.mybox.data2d.Data2D;
 import static mara.mybox.db.data.ColumnDefinition.DefaultInvalidAs;
 import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import static mara.mybox.db.data.ColumnDefinition.InvalidAs.Empty;
+import static mara.mybox.db.data.ColumnDefinition.InvalidAs.Null;
+import static mara.mybox.db.data.ColumnDefinition.InvalidAs.Skip;
+import static mara.mybox.db.data.ColumnDefinition.InvalidAs.Use;
+import static mara.mybox.db.data.ColumnDefinition.InvalidAs.Zero;
+import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.tools.DoubleTools;
+import mara.mybox.tools.StringTools;
 
 /**
  * @Author Mara
@@ -13,10 +22,12 @@ import mara.mybox.tools.DoubleTools;
 public class SetValue {
 
     public ValueType type;
-    public String value;
+    public String value, error;
     public int start, digit, scale;
     public boolean fillZero, aotoDigit;
     public InvalidAs invalidAs;
+
+    final public static ValueType DefaultValueType = ValueType.Zero;
 
     public static enum ValueType {
         Value, Zero, One, Empty, Null, Random, RandomNonNegative,
@@ -30,7 +41,7 @@ public class SetValue {
     }
 
     public final void init() {
-        type = ValueType.Value;
+        type = DefaultValueType;
         value = null;
         start = 0;
         digit = 0;
@@ -67,12 +78,91 @@ public class SetValue {
                         return null;
                     case Skip:
                         return null;
+                    case Use:
+                        return value;
                     default:
                         return value;
                 }
             }
         } else {
             return DoubleTools.scaleString(d, scale);
+        }
+    }
+
+    public String dummyValue(Data2D data2D, Data2DColumn column) {
+        return makeValue(data2D, column, column.dummyValue(), data2D.dummyRow(),
+                1, start, countFinalDigit(data2D.getRowsNumber()), new Random());
+    }
+
+    public String makeValue(Data2D data2D, Data2DColumn column,
+            String currentValue, List<String> row, long rowIndex,
+            int dataIndex, int ddigit, Random random) {
+        try {
+            error = null;
+            switch (type) {
+                case Zero:
+                    return "0";
+
+                case One:
+                    return "1";
+
+                case Empty:
+                    return "";
+
+                case Null:
+                    return null;
+
+                case Random:
+                    return data2D.random(random, column, false);
+
+                case RandomNonNegative:
+                    return data2D.random(random, column, true);
+
+                case Scale:
+                    return scale(currentValue);
+
+                case Prefix:
+                    return currentValue == null ? value : (value + currentValue);
+
+                case Suffix:
+                    return currentValue == null ? value : (currentValue + value);
+
+                case NumberSuffix:
+                    String suffix = StringTools.fillLeftZero(dataIndex, ddigit);
+                    return currentValue == null ? suffix : (currentValue + suffix);
+
+                case NumberPrefix:
+                    String prefix = StringTools.fillLeftZero(dataIndex, ddigit);
+                    return currentValue == null ? prefix : (prefix + currentValue);
+
+                case NumberReplace:
+                    return StringTools.fillLeftZero(dataIndex, ddigit);
+
+                case NumberSuffixString:
+                    String ssuffix = StringTools.fillLeftZero(dataIndex, ddigit);
+                    return value == null ? ssuffix : (value + ssuffix);
+
+                case NumberPrefixString:
+                    String sprefix = StringTools.fillLeftZero(dataIndex, ddigit);
+                    return value == null ? sprefix : (sprefix + value);
+
+                case Expression:
+                    if (data2D.calculateDataRowExpression(value, row, rowIndex)) {
+                        return data2D.expressionResult();
+                    } else {
+                        error = data2D.expressionError();
+                        return null;
+                    }
+
+                case Value:
+                    return value;
+
+            }
+            error = "InvalidData";
+            return null;
+        } catch (Exception e) {
+            error = e.toString();
+            return null;
         }
     }
 
@@ -119,6 +209,11 @@ public class SetValue {
         return this;
     }
 
+    public SetValue setError(String error) {
+        this.error = error;
+        return this;
+    }
+
     /*
         get
      */
@@ -152,6 +247,10 @@ public class SetValue {
 
     public InvalidAs getInvalidAs() {
         return invalidAs;
+    }
+
+    public String getError() {
+        return error;
     }
 
 }

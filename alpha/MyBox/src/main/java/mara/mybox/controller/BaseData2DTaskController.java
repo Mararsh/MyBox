@@ -76,8 +76,8 @@ public abstract class BaseData2DTaskController extends BaseBranchController {
     protected TextField maxInput;
     @FXML
     protected RadioButton columnsRadio, rowsRadio, allRadio,
-            skipNonnumericRadio, zeroNonnumericRadio, emptyNonnumericRadio,
-            keepNonnumericRadio, nullNonnumericRadio;
+            skipInvalidRadio, zeroInvalidRadio, emptyInvalidRadio,
+            useInvalidRadio, nullInvalidRadio, failInvalidRadio;
     @FXML
     protected CheckBox rowNumberCheck, colNameCheck;
     @FXML
@@ -454,16 +454,18 @@ public abstract class BaseData2DTaskController extends BaseBranchController {
     }
 
     public InvalidAs checkInvalidAs() {
-        if (keepNonnumericRadio != null && keepNonnumericRadio.isSelected()) {
-            invalidAs = InvalidAs.Keep;
-        } else if (zeroNonnumericRadio != null && zeroNonnumericRadio.isSelected()) {
+        if (useInvalidRadio != null && useInvalidRadio.isSelected()) {
+            invalidAs = InvalidAs.Use;
+        } else if (zeroInvalidRadio != null && zeroInvalidRadio.isSelected()) {
             invalidAs = InvalidAs.Zero;
-        } else if (emptyNonnumericRadio != null && emptyNonnumericRadio.isSelected()) {
+        } else if (emptyInvalidRadio != null && emptyInvalidRadio.isSelected()) {
             invalidAs = InvalidAs.Empty;
-        } else if (skipNonnumericRadio != null && skipNonnumericRadio.isSelected()) {
+        } else if (skipInvalidRadio != null && skipInvalidRadio.isSelected()) {
             invalidAs = InvalidAs.Skip;
-        } else if (nullNonnumericRadio != null && nullNonnumericRadio.isSelected()) {
+        } else if (nullInvalidRadio != null && nullInvalidRadio.isSelected()) {
             invalidAs = InvalidAs.Null;
+        } else if (failInvalidRadio != null && failInvalidRadio.isSelected()) {
+            invalidAs = InvalidAs.Fail;
         } else {
             invalidAs = DefaultInvalidAs;
         }

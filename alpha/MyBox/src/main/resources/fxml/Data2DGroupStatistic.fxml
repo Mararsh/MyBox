@@ -135,15 +135,15 @@ License:    Apache License Version 2.0
                                                                                 <FlowPane hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">
                                                                                     <children>
                                                                                         <Label text="%ToInvalidValue" />
-                                                                                        <RadioButton fx:id="keepNonnumericRadio" mnemonicParsing="false" selected="true" text="%Keep">
+                                                                                        <RadioButton fx:id="useInvalidRadio" mnemonicParsing="false" selected="true" text="%Use">
                                                                                             <toggleGroup>
-                                                                                                <ToggleGroup fx:id="nonnumericGroup" />
+                                                                                                <ToggleGroup fx:id="invalidAsGroup" />
                                                                                             </toggleGroup>
                                                                                         </RadioButton> 
-                                                                                        <RadioButton fx:id="skipNonnumericRadio" mnemonicParsing="false" text="%Skip" toggleGroup="$nonnumericGroup" />
-                                                                                        <RadioButton fx:id="zeroNonnumericRadio" mnemonicParsing="false" text="%CountAsZero" toggleGroup="$nonnumericGroup" />
-                                                                                        <RadioButton fx:id="nullNonnumericRadio" mnemonicParsing="false" text="%CountAsNull" toggleGroup="$nonnumericGroup" />
-                                                                                        <RadioButton fx:id="emptyNonnumericRadio" mnemonicParsing="false" text="%CountAsEmpty" toggleGroup="$nonnumericGroup" />
+                                                                                        <RadioButton fx:id="skipInvalidRadio" mnemonicParsing="false" text="%Skip" toggleGroup="$invalidAsGroup" />
+                                                                                        <RadioButton fx:id="zeroInvalidRadio" mnemonicParsing="false" text="%CountAsZero" toggleGroup="$invalidAsGroup" />
+                                                                                        <RadioButton fx:id="nullInvalidRadio" mnemonicParsing="false" text="%CountAsNull" toggleGroup="$invalidAsGroup" />
+                                                                                        <RadioButton fx:id="emptyInvalidRadio" mnemonicParsing="false" text="%CountAsEmpty" toggleGroup="$invalidAsGroup" />
                                                                                     </children>                                                                               
                                                                                 </FlowPane>
                                                                             </children>

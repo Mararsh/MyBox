@@ -38,7 +38,7 @@ License:    Apache License Version 2.0
                 <RadioButton fx:id="valueRadio" minWidth="-Infinity" mnemonicParsing="false" text="%Value" toggleGroup="$valueGroup" />
                 <RadioButton fx:id="suffixRadio" minWidth="-Infinity" mnemonicParsing="false" text="%AppendSuffix" toggleGroup="$valueGroup" wrapText="true" />
                 <RadioButton fx:id="prefixRadio" minWidth="-Infinity" mnemonicParsing="false" text="%AddPrefix" toggleGroup="$valueGroup" wrapText="true" />
-                <RadioButton fx:id="scaleRadio" minWidth="-Infinity" mnemonicParsing="false" text="%Truncate" toggleGroup="$valueGroup" wrapText="true" />
+                <RadioButton fx:id="scaleRadio" minWidth="-Infinity" mnemonicParsing="false" text="%DecimalScale" toggleGroup="$valueGroup" wrapText="true" />
                 <RadioButton fx:id="numberRadio" minWidth="-Infinity" mnemonicParsing="false" text="%SequenceNumber" toggleGroup="$valueGroup" wrapText="true" />
                 <RadioButton fx:id="expressionRadio" mnemonicParsing="false" text="%RowExpression" toggleGroup="$valueGroup" />
                 <RadioButton fx:id="gaussianDistributionRadio" mnemonicParsing="false" text="%GaussianDistribution" toggleGroup="$valueGroup" />
@@ -48,7 +48,7 @@ License:    Apache License Version 2.0
             </children>
         </FlowPane>
       <VBox fx:id="setBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
-      <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE">
+      <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
         <tabs>
           <Tab text="%Set">
                <content>
@@ -56,7 +56,7 @@ License:    Apache License Version 2.0
                      <content>
                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                            <children>
-                              <TextArea fx:id="valueInput" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="40.0" />
+                              <TextArea fx:id="valueInput" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="40.0" VBox.vgrow="ALWAYS" />
                               <Label fx:id="matrixLabel" text="%OnlyHanldeSquareMatrix">
                                  <VBox.margin>
                                     <Insets />
@@ -80,8 +80,8 @@ License:    Apache License Version 2.0
                               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                            </padding>
                            <children>
-                              <TextArea fx:id="prefixInput" maxWidth="1.7976931348623157E308" prefHeight="60.0" />
-                              <TextArea fx:id="suffixInput" maxWidth="1.7976931348623157E308" prefHeight="60.0" />
+                              <TextArea fx:id="prefixInput" maxWidth="1.7976931348623157E308" prefHeight="60.0" VBox.vgrow="ALWAYS" />
+                              <TextArea fx:id="suffixInput" maxWidth="1.7976931348623157E308" prefHeight="60.0" VBox.vgrow="ALWAYS" />
                               <FlowPane fx:id="scalePane" hgap="5.0" maxWidth="1.7976931348623157E308" vgap="5.0">
                                  <children>
                                     <Label text="%DecimalScale" />

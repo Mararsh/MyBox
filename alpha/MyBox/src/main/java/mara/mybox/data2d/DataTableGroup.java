@@ -936,7 +936,7 @@ public class DataTableGroup {
                 groupChanged();
                 long fmax = filter.getMaxPassed();
                 parameterValue = filter.getSourceScript()
-                        + (filter.isReversed() ? "\n" + message("Reverse") : "")
+                        + (filter.isMatchFalse() ? "\n" + message("MatchFalse") : "")
                         + (fmax > 0 ? "\n" + message("MaximumNumber") + ": " + fmax : "");
                 parameterValueForFilename = message("Condition") + groupid;
                 recordGroup(groupid, parameterValue);

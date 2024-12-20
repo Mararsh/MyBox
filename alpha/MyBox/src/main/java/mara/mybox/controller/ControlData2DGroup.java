@@ -59,7 +59,7 @@ public class ControlData2DGroup extends BaseTablePagesController<DataFilter> {
     @FXML
     protected TableColumn<DataFilter, String> conditionColumn;
     @FXML
-    protected TableColumn<DataFilter, Boolean> reverseColumn;
+    protected TableColumn<DataFilter, Boolean> falseColumn;
     @FXML
     protected TableColumn<DataFilter, Long> maxColumn;
     @FXML
@@ -93,7 +93,7 @@ public class ControlData2DGroup extends BaseTablePagesController<DataFilter> {
             checkGroupType();
 
             conditionColumn.setCellValueFactory(new PropertyValueFactory<>("sourceScript"));
-            reverseColumn.setCellValueFactory(new PropertyValueFactory<>("reversed"));
+            falseColumn.setCellValueFactory(new PropertyValueFactory<>("matchFalse"));
             maxColumn.setCellValueFactory(new PropertyValueFactory<>("maxPassed"));
 
         } catch (Exception e) {

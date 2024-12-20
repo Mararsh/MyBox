@@ -61,12 +61,12 @@ License:    Apache License Version 2.0
       <HBox spacing="2.0">
          <children>
             <Label minHeight="-Infinity" text="%TakeSourceDataWhenExpressionEmptyOr" wrapText="true" />
-            <RadioButton fx:id="trueRadio" mnemonicParsing="false" selected="true" text="true" wrapText="true">
+            <RadioButton fx:id="trueRadio" mnemonicParsing="false" selected="true" text="%true" wrapText="true">
                <toggleGroup>
                   <ToggleGroup fx:id="takeGroup" />
                </toggleGroup>
             </RadioButton>
-            <RadioButton fx:id="falseRadio" mnemonicParsing="false" text="false" toggleGroup="$takeGroup" wrapText="true" />
+            <RadioButton fx:id="falseRadio" mnemonicParsing="false" text="%False" toggleGroup="$takeGroup" wrapText="true" />
          </children>
       </HBox>
       <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0">

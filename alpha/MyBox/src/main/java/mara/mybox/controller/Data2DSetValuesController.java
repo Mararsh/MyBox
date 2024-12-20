@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Random;
 import javafx.fxml.FXML;
 import javafx.scene.control.Tab;
-import mara.mybox.data2d.modify.Data2DSetValue;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
@@ -13,7 +12,6 @@ import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.NumberTools;
-import mara.mybox.tools.StringTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -68,6 +66,22 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
             if (!super.checkOptions() || !valueController.pickValues()) {
                 return false;
             }
+            for (String name : checkedColsNames) {
+                Data2DColumn column = data2D.columnByName(name);
+                String dummyValue = valueController.setValue.dummyValue(data2D, column);
+                if (valueController.setValue.error != null
+                        || !column.validValue(dummyValue)) {
+                    String info = message("InvalidData") + "\n"
+                            + message("Column") + ": " + name + "\n"
+                            + message("TestingValue") + ": " + dummyValue + "\n"
+                            + "------------------------\n"
+                            + message("SureContinue");
+                    if (!PopTools.askSure(getTitle(), info)) {
+                        return false;
+                    }
+                }
+            }
+
             String info = message("SureOverwriteColumns") + "\n";
             for (String name : checkedColsNames) {
                 Data2DColumn column = data2D.columnByName(name);
@@ -76,8 +90,8 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
             }
             info += "--------------\n"
                     + message("Set") + ": " + message(valueController.setValue.type.name()) + "\n"
-                    + message("Value") + ": " + (valueController.setValue.value != null
-                    ? " - " + valueController.setValue.value : "") + "\n"
+                    + message("Value") + ": " + valueController.setValue.value + "\n"
+                    + message("ToInvalidValue") + ": " + message(valueController.setValue.invalidAs.name()) + "\n"
                     + "------------------------\n"
                     + message("DataSetValuesComments");
             return PopTools.askSure(getTitle(), info);
@@ -225,20 +239,19 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
     @Override
     public boolean handleRows() {
         try {
-            if (valueController.randomRadio.isSelected()) {
-                return random(false);
-            } else if (valueController.randomNnRadio.isSelected()) {
-                return random(true);
-            } else if (valueController.scaleRadio.isSelected()) {
-                return scale();
-            } else if (valueController.prefixRadio.isSelected()) {
-                return prefix();
-            } else if (valueController.suffixRadio.isSelected()) {
-                return suffix();
-            } else if (valueController.numberRadio.isSelected()) {
-                return number();
-            } else if (valueController.expressionRadio.isSelected()) {
-                return expression();
+            if (valueController.valueRadio.isSelected()
+                    || valueController.zeroRadio.isSelected()
+                    || valueController.oneRadio.isSelected()
+                    || valueController.emptyRadio.isSelected()
+                    || valueController.nullRadio.isSelected()
+                    || valueController.randomRadio.isSelected()
+                    || valueController.randomNnRadio.isSelected()
+                    || valueController.scaleRadio.isSelected()
+                    || valueController.prefixRadio.isSelected()
+                    || valueController.suffixRadio.isSelected()
+                    || valueController.numberRadio.isSelected()
+                    || valueController.expressionRadio.isSelected()) {
+                return setValue();
             } else if (valueController.gaussianDistributionRadio.isSelected()) {
                 return gaussianDistribution();
             } else if (valueController.identifyRadio.isSelected()) {
@@ -248,7 +261,7 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
             } else if (valueController.lowerTriangleRadio.isSelected()) {
                 return lowerTriangleMatrix();
             } else {
-                return setValue();
+                return false;
             }
         } catch (Exception e) {
             if (task != null) {
@@ -256,200 +269,38 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
             }
             return false;
         }
-    }
-
-    public String validValue(int col, String currentValue, String newValue) {
-        return Data2DSetValue.validValue(data2D.column(col),
-                currentValue, newValue, invalidAs);
     }
 
     public boolean setValue() {
         try {
-            String value = valueController.value();
             outputData = new ArrayList<>();
             outputData.addAll(sourceController.tableData);
-            for (int row : sourceController.filteredRowsIndices) {
-                List<String> values = sourceController.tableData.get(row);
-                for (int col : checkedColsIndices) {
-                    values.set(col + 1, validValue(col, values.get(col + 1), value));
-                }
-                outputData.set(row, values);
-            }
-            return true;
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            outputData = null;
-            return false;
-        }
-    }
-
-    public boolean random(boolean nonNegative) {
-        try {
-            outputData = new ArrayList<>();
-            outputData.addAll(sourceController.tableData);
+            int dataIndex = valueController.setValue.getStart();
+            int digit = valueController.setValue.countFinalDigit(data2D.getRowsNumber());
             Random random = new Random();
             for (int row : sourceController.filteredRowsIndices) {
                 List<String> values = sourceController.tableData.get(row);
                 for (int col : checkedColsIndices) {
-                    String v = data2D.random(random, col, nonNegative);
-                    values.set(col + 1, v);
-                }
-                outputData.set(row, values);
-            }
-            return true;
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            outputData = null;
-            return false;
-        }
-    }
-
-    public boolean scale() {
-        try {
-            outputData = new ArrayList<>();
-            outputData.addAll(sourceController.tableData);
-            String currentValue;
-            for (int row : sourceController.filteredRowsIndices) {
-                List<String> values = sourceController.tableData.get(row);
-                for (int col : checkedColsIndices) {
-                    currentValue = values.get(col + 1);
-                    values.set(col + 1, valueController.scale(currentValue));
-                }
-                outputData.set(row, values);
-            }
-            return true;
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            outputData = null;
-            return false;
-        }
-    }
-
-    public boolean prefix() {
-        try {
-            String prefix = valueController.value();
-            if (prefix == null) {
-                if (task != null) {
-                    task.setError(message("Invalid") + ": " + message("AddPrefix"));
-                }
-                return false;
-            }
-            outputData = new ArrayList<>();
-            outputData.addAll(sourceController.tableData);
-            String currentValue;
-            for (int row : sourceController.filteredRowsIndices) {
-                List<String> values = sourceController.tableData.get(row);
-                for (int col : checkedColsIndices) {
-                    currentValue = values.get(col + 1);
-                    values.set(col + 1, currentValue == null ? prefix : (prefix + currentValue));
-                }
-                outputData.set(row, values);
-            }
-            return true;
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            outputData = null;
-            return false;
-        }
-    }
-
-    public boolean suffix() {
-        try {
-            String suffix = valueController.value();
-            if (suffix == null) {
-                if (task != null) {
-                    task.setError(message("Invalid") + ": " + message("AppendSuffix"));
-                }
-                return false;
-            }
-            outputData = new ArrayList<>();
-            outputData.addAll(sourceController.tableData);
-            String currentValue;
-            for (int row : sourceController.filteredRowsIndices) {
-                List<String> values = sourceController.tableData.get(row);
-                for (int col : checkedColsIndices) {
-                    currentValue = values.get(col + 1);
-                    values.set(col + 1, currentValue == null ? suffix : (currentValue + suffix));
-                }
-                outputData.set(row, values);
-            }
-            return true;
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            outputData = null;
-            return false;
-        }
-    }
-
-    public boolean number() {
-        try {
-            outputData = new ArrayList<>();
-            outputData.addAll(sourceController.tableData);
-            int num = valueController.setValue.getStart();
-            int digit = valueController.setValue.countFinalDigit(sourceController.filteredRowsIndices.size());
-            String currentValue, numValue, newValue;
-            String v = valueController.value();
-            for (int row : sourceController.filteredRowsIndices) {
-                List<String> values = sourceController.tableData.get(row);
-                numValue = StringTools.fillLeftZero(num++, digit);
-                for (int col : checkedColsIndices) {
-                    currentValue = values.get(col + 1);
-                    if (valueController.numberPrefixRadio.isSelected()) {
-                        newValue = currentValue == null ? numValue : (numValue + currentValue);
-                    } else if (valueController.numberSuffixRadio.isSelected()) {
-                        newValue = currentValue == null ? numValue : (currentValue + numValue);
-                    } else if (valueController.numberReplaceRadio.isSelected()) {
-                        newValue = numValue;
-                    } else if (valueController.numberSuffixStringRadio.isSelected()) {
-                        newValue = v == null ? numValue : (v + numValue);
-                    } else if (valueController.numberPrefixStringRadio.isSelected()) {
-                        newValue = v == null ? numValue : (numValue + v);
-                    } else {
-                        if (task != null) {
-                            task.setError(message("Invalid") + ": " + message("SequenceNumber"));
+                    Data2DColumn column = data2D.columns.get(col);
+                    String value = valueController.setValue.makeValue(data2D,
+                            column, values.get(col + 1), values, row,
+                            dataIndex, digit, random);
+                    if (valueController.setValue.error != null || !column.validValue(value)) {
+                        if (useInvalidRadio.isSelected()) {
+                            values.set(col + 1, value);
+                        } else if (failInvalidRadio.isSelected()) {
+                            if (task != null) {
+                                task.setError(message("InvalidData") + ". "
+                                        + message("Column") + ":" + column.getColumnName() + "  "
+                                        + message("Value") + ": " + value);
+                                task.cancel();
+                            }
+                            return false;
                         }
-                        return false;
+                    } else {
+                        values.set(col + 1, value);
                     }
-                    values.set(col + 1, newValue);
-                }
-                outputData.set(row, values);
-            }
-            return true;
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(message(e.toString()));
-            }
-            outputData = null;
-            return false;
-        }
-    }
-
-    public boolean expression() {
-        try {
-            outputData = new ArrayList<>();
-            outputData.addAll(sourceController.tableData);
-            String script = valueController.value();
-            for (int row : sourceController.filteredRowsIndices) {
-                List<String> values = sourceController.tableData.get(row);
-                if (!data2D.calculateTableRowExpression(script, values, row)) {
-                    if (task != null) {
-                        task.setError(data2D.expressionError());
-                    }
-                    return false;
-                }
-                String v = data2D.expressionResult();
-                for (int col : checkedColsIndices) {
-                    values.set(col + 1, v);
+                    dataIndex++;
                 }
                 outputData.set(row, values);
             }

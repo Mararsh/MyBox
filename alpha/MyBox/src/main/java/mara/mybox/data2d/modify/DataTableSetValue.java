@@ -8,6 +8,7 @@ import mara.mybox.data2d.DataTable;
 import mara.mybox.data2d.tools.Data2DRowTools;
 import mara.mybox.db.Database;
 import mara.mybox.db.DerbyBase;
+import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import static mara.mybox.value.Languages.message;
 
@@ -65,12 +66,29 @@ public class DataTableSetValue extends DataTableModify {
             if (stopped || targetRow == null || targetRow.isEmpty()) {
                 return;
             }
+            boolean changed = false;
             for (int i = 0; i < columnsNumber; ++i) {
                 Data2DColumn column = columns.get(i);
                 String name = column.getColumnName();
-                sourceTableRow.setValue(name, column.fromString(targetRow.get(i)));
+                String currentValue = targetRow.get(i);
+                String v = setValue.makeValue(sourceData, column,
+                        currentValue, sourceRow, sourceRowIndex,
+                        dataIndex, digit, random);
+                if (setValue.error != null || !column.validValue(v)) {
+                    if (invalidAs == ColumnDefinition.InvalidAs.Skip) {
+                        continue;
+                    } else if (invalidAs == ColumnDefinition.InvalidAs.Fail) {
+                        failStop(message("InvalidData") + ". "
+                                + message("Column") + ":" + column.getColumnName() + "  "
+                                + message("Value") + ": " + v);
+                        return;
+                    }
+                }
+                dataIndex++;
+                sourceTableRow.setValue(name, column.fromString(v));
+                changed = true;
             }
-            if (tableData2D.setUpdateStatement(conn, update, sourceTableRow)) {
+            if (changed && tableData2D.setUpdateStatement(conn, update, sourceTableRow)) {
                 update.addBatch();
                 if (++handledCount % Database.BatchSize == 0) {
                     update.executeBatch();

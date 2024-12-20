@@ -243,7 +243,7 @@ public class Data2DSetStylesController extends BaseController {
                 }
             }
         }
-        filterController.load(updatedStyle.getFilter(), !updatedStyle.isFilterReversed());
+        filterController.load(updatedStyle.getFilter(), !updatedStyle.isMatchFalse());
 
         sequenceInput.setText(updatedStyle.getSequence() + "");
         abnormalCheck.setSelected(updatedStyle.isAbnoramlValues());
@@ -347,7 +347,7 @@ public class Data2DSetStylesController extends BaseController {
             updatedStyle.setColumns(columns);
 
             updatedStyle.setFilter(filterController.filter.getSourceScript());
-            updatedStyle.setFilterReversed(filterController.filter.isReversed());
+            updatedStyle.setMatchFalse(filterController.filter.isMatchFalse());
             updatedStyle.setAbnoramlValues(abnormalCheck.isSelected());
             return true;
         } catch (Exception e) {

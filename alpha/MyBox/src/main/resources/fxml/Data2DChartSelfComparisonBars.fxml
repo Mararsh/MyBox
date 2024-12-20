@@ -153,12 +153,12 @@ License:    Apache License Version 2.0
                                                                                     </FlowPane.margin>
                                                                                 </Label>
                                                                                 <Label text="%ToInvalidValue" />
-                                                                                <RadioButton fx:id="skipNonnumericRadio" mnemonicParsing="false" selected="true" text="%Skip">
+                                                                                <RadioButton fx:id="skipInvalidRadio" mnemonicParsing="false" selected="true" text="%Skip">
                                                                                     <toggleGroup>
-                                                                                        <ToggleGroup fx:id="nonnumericGroup" />
+                                                                                        <ToggleGroup fx:id="invalidAsGroup" />
                                                                                     </toggleGroup>
                                                                                 </RadioButton> 
-                                                                                <RadioButton fx:id="zeroNonnumericRadio" mnemonicParsing="false" text="%CountAsZero" toggleGroup="$nonnumericGroup" />
+                                                                                <RadioButton fx:id="zeroInvalidRadio" mnemonicParsing="false" text="%CountAsZero" toggleGroup="$invalidAsGroup" />
                                                                             </children>
                                                                         </FlowPane>
                                                                         <Label fx:id="noticeLabel" minHeight="-Infinity" text="%AllRowsLoadComments" wrapText="true">

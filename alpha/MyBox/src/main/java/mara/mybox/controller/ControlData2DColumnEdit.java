@@ -56,8 +56,8 @@ public class ControlData2DColumnEdit extends BaseChildController {
     @FXML
     protected RadioButton stringRadio, doubleRadio, floatRadio, longRadio, intRadio, shortRadio, booleanRadio,
             datetimeRadio, dateRadio, eraRadio, longitudeRadio, latitudeRadio, enumRadio, enumEditableRadio,
-            colorRadio, clobRadio, skipNonnumericRadio, zeroNonnumericRadio, emptyNonnumericRadio,
-            nullNonnumericRadio, keepNonnumericRadio;
+            colorRadio, clobRadio, skipInvalidRadio, zeroInvalidRadio, emptyInvalidRadio,
+            nullInvalidRadio, useInvalidRadio;
     @FXML
     protected CheckBox notNullCheck, editableCheck, fixYearCheck;
     @FXML
@@ -139,7 +139,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
             defaultInput.clear();
             formatInput.clear();
             fixYearCheck.setSelected(false);
-            keepNonnumericRadio.setSelected(true);
+            useInvalidRadio.setSelected(true);
 
             if (enumRadio.isSelected() || enumEditableRadio.isSelected()) {
                 optionsBox.getChildren().add(enumBox);
@@ -160,7 +160,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
                     || longRadio.isSelected() || intRadio.isSelected() || shortRadio.isSelected()) {
                 optionsBox.getChildren().add(formatBox);
                 formatInput.setText(message("GroupInThousands"));
-                zeroNonnumericRadio.setSelected(true);
+                zeroInvalidRadio.setSelected(true);
 
             }
 
@@ -296,23 +296,23 @@ public class ControlData2DColumnEdit extends BaseChildController {
             InvalidAs invalidAs = column.getInvalidAs();
 
             if (null == invalidAs) {
-                keepNonnumericRadio.setSelected(true);
+                useInvalidRadio.setSelected(true);
             } else {
                 switch (invalidAs) {
                     case Skip:
-                        skipNonnumericRadio.setSelected(true);
+                        skipInvalidRadio.setSelected(true);
                         break;
                     case Empty:
-                        emptyNonnumericRadio.setSelected(true);
+                        emptyInvalidRadio.setSelected(true);
                         break;
                     case Zero:
-                        zeroNonnumericRadio.setSelected(true);
+                        zeroInvalidRadio.setSelected(true);
                         break;
                     case Null:
-                        nullNonnumericRadio.setSelected(true);
+                        nullInvalidRadio.setSelected(true);
                         break;
                     default:
-                        keepNonnumericRadio.setSelected(true);
+                        useInvalidRadio.setSelected(true);
                         break;
                 }
             }
@@ -402,16 +402,16 @@ public class ControlData2DColumnEdit extends BaseChildController {
                 return null;
             }
             InvalidAs invalidAs;
-            if (skipNonnumericRadio.isSelected()) {
+            if (skipInvalidRadio.isSelected()) {
                 invalidAs = InvalidAs.Skip;
-            } else if (emptyNonnumericRadio.isSelected()) {
+            } else if (emptyInvalidRadio.isSelected()) {
                 invalidAs = InvalidAs.Empty;
-            } else if (zeroNonnumericRadio.isSelected()) {
+            } else if (zeroInvalidRadio.isSelected()) {
                 invalidAs = InvalidAs.Zero;
-            } else if (nullNonnumericRadio.isSelected()) {
+            } else if (nullInvalidRadio.isSelected()) {
                 invalidAs = InvalidAs.Null;
-            } else if (keepNonnumericRadio.isSelected()) {
-                invalidAs = InvalidAs.Keep;
+            } else if (useInvalidRadio.isSelected()) {
+                invalidAs = InvalidAs.Use;
             } else {
                 invalidAs = DefaultInvalidAs;
             }

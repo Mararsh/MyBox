@@ -76,7 +76,7 @@ public class ColumnDefinition extends BaseData {
     }
 
     public enum InvalidAs {
-        Zero, Empty, Null, Skip, Keep, Fail
+        Zero, Empty, Null, Skip, Use, Fail
     }
 
     public final void initColumnDefinition() {
@@ -1049,7 +1049,7 @@ public class ColumnDefinition extends BaseData {
         try {
             return InvalidAs.values()[(short) v];
         } catch (Exception e) {
-            return InvalidAs.Skip;
+            return DefaultInvalidAs;
         }
     }
 
@@ -1063,14 +1063,14 @@ public class ColumnDefinition extends BaseData {
 
     public static InvalidAs invalidAsFromName(String name) {
         if (name == null || name.isBlank()) {
-            return InvalidAs.Keep;
+            return DefaultInvalidAs;
         }
         for (InvalidAs v : InvalidAs.values()) {
             if (v.name().equalsIgnoreCase(name)) {
                 return v;
             }
         }
-        return InvalidAs.Keep;
+        return DefaultInvalidAs;
     }
 
     public static String invalidAsName(InvalidAs v) {
@@ -1217,7 +1217,7 @@ public class ColumnDefinition extends BaseData {
                 return "";
             case Skip:
                 return null;
-            case Keep:
+            case Use:
                 return string;
             default:
                 return string;

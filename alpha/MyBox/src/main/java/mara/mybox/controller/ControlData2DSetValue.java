@@ -123,6 +123,8 @@ public class ControlData2DSetValue extends BaseController {
                 setBox.getChildren().add(expBox);
 
             }
+
+            refreshStyle();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

@@ -111,26 +111,23 @@ License:    Apache License Version 2.0
                                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                     </padding>
                                     <children>
+                                        <Label styleClass="darkRed-label" stylesheets="@../styles/MyBox.css" text="%DataSetValuesComments" />
                               <FlowPane hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">
                                  <children>
                                     <Label text="%ToInvalidValue" />
-                                    <RadioButton fx:id="keepNonnumericRadio1" layoutX="84.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%Fail">
+                                    <RadioButton fx:id="failInvalidRadio" layoutX="84.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%Fail">
                                        <toggleGroup>
-                                          <ToggleGroup fx:id="nonnumericGroup" />
+                                          <ToggleGroup fx:id="invalidAsGroup" />
                                        </toggleGroup>
                                     </RadioButton>
-                                    <RadioButton fx:id="keepNonnumericRadio" mnemonicParsing="false" text="%Keep" toggleGroup="$nonnumericGroup" />
-                                    <RadioButton fx:id="skipNonnumericRadio" mnemonicParsing="false" text="%Skip" toggleGroup="$nonnumericGroup" />
-                                    <RadioButton fx:id="zeroNonnumericRadio" mnemonicParsing="false" text="%CountAsZero" toggleGroup="$nonnumericGroup" />
-                                    <RadioButton fx:id="nullNonnumericRadio" mnemonicParsing="false" text="%CountAsNull" toggleGroup="$nonnumericGroup" />
-                                    <RadioButton fx:id="emptyNonnumericRadio" mnemonicParsing="false" text="%CountAsEmpty" toggleGroup="$nonnumericGroup" />
+                                    <RadioButton fx:id="useInvalidRadio" mnemonicParsing="false" text="%Use" toggleGroup="$invalidAsGroup" />
+                                    <RadioButton fx:id="skipInvalidRadio" mnemonicParsing="false" text="%Skip" toggleGroup="$invalidAsGroup" />
                                  </children>
                                  <VBox.margin>
                                     <Insets bottom="20.0" />
                                  </VBox.margin>
                               </FlowPane>
-                              <Label text="%ChangeAs" visible="false" />
-                                        <Label styleClass="darkRed-label" stylesheets="@../styles/MyBox.css" text="%DataSetValuesComments" />
+                              <Label text="%ChangeAs" />
                                         <fx:include fx:id="value" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DSetValue.fxml" VBox.vgrow="ALWAYS" />
                                     </children>
                                 </VBox>

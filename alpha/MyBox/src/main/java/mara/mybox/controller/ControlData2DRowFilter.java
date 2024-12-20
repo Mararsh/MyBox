@@ -62,14 +62,14 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
         }
     }
 
-    public void load(String script, boolean isTrue) {
-        load(script, isTrue, -1);
+    public void load(String script, boolean matchTrue) {
+        load(script, matchTrue, -1);
     }
 
-    public void load(String script, boolean isTrue, long max) {
+    public void load(String script, boolean matchTrue, long max) {
         isSettingValues = true;
         scriptInput.setText(script);
-        if (isTrue) {
+        if (matchTrue) {
             trueRadio.setSelected(true);
         } else {
             falseRadio.setSelected(true);
@@ -77,7 +77,7 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
         maxInput.setText(max > 0 && max != InvalidLong ? max + "" : "");
         isSettingValues = false;
         filter.setSourceScript(script);
-        filter.setReversed(!isTrue);
+        filter.setMatchFalse(!matchTrue);
         filter.setMaxPassed(max > 0 && max != InvalidLong ? max : -1);
     }
 
@@ -89,7 +89,7 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
             maxInput.setText(null);
             return;
         }
-        load(filter.getSourceScript(), !filter.isReversed(), filter.getMaxPassed());
+        load(filter.getSourceScript(), !filter.isMatchFalse(), filter.getMaxPassed());
     }
 
     public DataFilter pickFilter(boolean allPages) {
@@ -103,7 +103,7 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
             popError(error);
             return null;
         }
-        filter.setReversed(falseRadio.isSelected())
+        filter.setMatchFalse(falseRadio.isSelected())
                 .setMaxPassed(max > 0 && max != InvalidLong ? max : -1)
                 .setPassedNumber(0)
                 .setSourceScript(script);
