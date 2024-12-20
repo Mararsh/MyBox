@@ -229,6 +229,10 @@ public class TmpTable extends DataTable {
 
     // sourceRow should include values of all source columns
     @Override
+    public Data2DRow makeRow(List<String> sourceRow, DataTableWriter writer) {
+        return makeRow(sourceRow, writer.invalidAs);
+    }
+
     public Data2DRow makeRow(List<String> sourceRow, InvalidAs invalidAs) {
         try {
             if (columns == null || sourceRow == null || sourceRow.isEmpty()) {

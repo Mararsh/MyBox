@@ -166,6 +166,30 @@ public class SetValue {
         }
     }
 
+    public String majorParameter() {
+        try {
+            switch (type) {
+                case Scale:
+                    return scale + "";
+
+                case Suffix:
+                case Prefix:
+                case NumberSuffixString:
+                case NumberPrefixString:
+                case Expression:
+                case Value:
+                    return value;
+
+                case NumberSuffix:
+                case NumberPrefix:
+                    return start + "";
+            }
+
+        } catch (Exception e) {
+        }
+        return null;
+    }
+
     /*
         set
      */

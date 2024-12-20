@@ -45,8 +45,6 @@ import org.w3c.dom.NodeList;
  */
 public class Data2DDefinitionTools {
 
-    public static final String DataQuote = "MyBox_DATAQUOTE";
-
     public static List<Data2DColumn> columns() {
         List<Data2DColumn> columns = new ArrayList<>();
         columns.add(new Data2DColumn(message("ColumnName"), ColumnType.String));

@@ -87,13 +87,13 @@ public abstract class Data2DModify extends Data2DOperate {
                             return;
                         }
                     }
-                    dataIndex++;
                     handledCount++;
                 } else {
                     v = currentValue;
                 }
                 targetRow.add(v);
             }
+            dataIndex++;
             writeRow();
         } catch (Exception e) {
             showError(e.toString());

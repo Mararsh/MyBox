@@ -113,7 +113,7 @@ public class AppVariables {
             ShortcutsCanNotOmitCtrlAlt = UserConfig.getBoolean(conn, "ShortcutsCanNotOmitCtrlAlt", false);
 
             commitModificationWhenDataCellLoseFocus = UserConfig.getBoolean(conn, "CommitModificationWhenDataCellLoseFocus", true);
-            data2DValidateEdit = UserConfig.getBoolean(conn, "Data2DValidateEdit", true);
+            data2DValidateEdit = UserConfig.getBoolean(conn, "Data2DValidateEdit", false);
             data2DValidateSave = UserConfig.getBoolean(conn, "Data2DValidateSave", true);
 
             saveDebugLogs = UserConfig.getBoolean(conn, "SaveDebugLogs", false);

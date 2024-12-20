@@ -26,6 +26,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.DoubleTools;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -396,7 +397,7 @@ public class DataTable extends Data2D {
         return writer;
     }
 
-    public Data2DRow makeRow(List<String> values, InvalidAs invalidAs) {
+    public Data2DRow makeRow(List<String> values, DataTableWriter writer) {
         try {
             if (columns == null || values == null || values.isEmpty()) {
                 return null;
@@ -413,7 +414,16 @@ public class DataTable extends Data2D {
                 Data2DColumn column = vColumns.get(i);
                 String name = column.getColumnName();
                 String value = i < rowSize ? values.get(i) : null;
-                data2DRow.setValue(name, column.fromString(value, invalidAs));
+
+                if ((writer.validateValue || writer.invalidAs == InvalidAs.Fail)
+                        && !column.validValue(value)) {
+                    writer.failStop(message("InvalidData") + ". "
+                            + message("Column") + ":" + column.getColumnName() + "  "
+                            + message("Value") + ": " + value);
+                    return null;
+                }
+
+                data2DRow.setValue(name, column.fromString(value, writer.invalidAs));
             }
             return data2DRow;
         } catch (Exception e) {

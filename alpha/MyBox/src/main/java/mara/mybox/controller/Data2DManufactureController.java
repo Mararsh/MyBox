@@ -920,21 +920,22 @@ public class Data2DManufactureController extends BaseData2DViewController {
             return true;
         }
         results.htmlTable();
+        return false;
 
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle(getMyStage().getTitle());
-        alert.setHeaderText(getMyStage().getTitle());
-        alert.setContentText(message("IgnoreInvalidAndSave"));
-        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-        ButtonType buttonSave = new ButtonType(message("Save"));
-        ButtonType buttonCancel = new ButtonType(message("Cancel"));
-        alert.getButtonTypes().setAll(buttonSave, buttonCancel);
-        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-        stage.setAlwaysOnTop(true);
-        stage.toFront();
-
-        Optional<ButtonType> result = alert.showAndWait();
-        return result != null && result.isPresent() && result.get() == buttonSave;
+//        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+//        alert.setTitle(getMyStage().getTitle());
+//        alert.setHeaderText(getMyStage().getTitle());
+//        alert.setContentText(message("IgnoreInvalidAndSave"));
+//        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+//        ButtonType buttonSave = new ButtonType(message("Save"));
+//        ButtonType buttonCancel = new ButtonType(message("Cancel"));
+//        alert.getButtonTypes().setAll(buttonSave, buttonCancel);
+//        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+//        stage.setAlwaysOnTop(true);
+//        stage.toFront();
+//
+//        Optional<ButtonType> result = alert.showAndWait();
+//        return result != null && result.isPresent() && result.get() == buttonSave;
     }
 
     @FXML

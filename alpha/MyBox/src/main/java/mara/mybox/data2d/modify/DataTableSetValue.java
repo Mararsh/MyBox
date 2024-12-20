@@ -84,16 +84,18 @@ public class DataTableSetValue extends DataTableModify {
                         return;
                     }
                 }
-                dataIndex++;
                 sourceTableRow.setValue(name, column.fromString(v));
                 changed = true;
             }
-            if (changed && tableData2D.setUpdateStatement(conn, update, sourceTableRow)) {
-                update.addBatch();
-                if (++handledCount % Database.BatchSize == 0) {
-                    update.executeBatch();
-                    conn.commit();
-                    showInfo(message("Updated") + ": " + handledCount);
+            if (changed) {
+                dataIndex++;
+                if (tableData2D.setUpdateStatement(conn, update, sourceTableRow)) {
+                    update.addBatch();
+                    if (++handledCount % Database.BatchSize == 0) {
+                        update.executeBatch();
+                        conn.commit();
+                        showInfo(message("Updated") + ": " + handledCount);
+                    }
                 }
             }
         } catch (Exception e) {

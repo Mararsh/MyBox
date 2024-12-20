@@ -89,9 +89,13 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
                         + message(column.getType().name()) + "\n";
             }
             info += "--------------\n"
-                    + message("Set") + ": " + message(valueController.setValue.type.name()) + "\n"
-                    + message("Value") + ": " + valueController.setValue.value + "\n"
-                    + message("ToInvalidValue") + ": " + message(valueController.setValue.invalidAs.name()) + "\n"
+                    + message("Set") + ": " + message(valueController.setValue.type.name()) + "\n";
+            String para = valueController.setValue.majorParameter();
+            if (para != null) {
+                info += message("Parameter") + ": " + valueController.setValue.value + "\n";
+            }
+            info += message("ToInvalidValue") + ": "
+                    + message(valueController.setValue.invalidAs.name()) + "\n"
                     + "------------------------\n"
                     + message("DataSetValuesComments");
             return PopTools.askSure(getTitle(), info);
@@ -300,8 +304,8 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
                     } else {
                         values.set(col + 1, value);
                     }
-                    dataIndex++;
                 }
+                dataIndex++;
                 outputData.set(row, values);
             }
             return true;

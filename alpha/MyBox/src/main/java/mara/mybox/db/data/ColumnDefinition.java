@@ -589,22 +589,30 @@ public class ColumnDefinition extends BaseData {
         }
     }
 
-    public String format(String string, boolean validate) {
-        return format(string, -1, invalidAs, validate);
-    }
-
-    public String format(String string, InvalidAs inAs, boolean validate) {
-        return format(string, -1, inAs, validate);
-    }
-
-    public String format(String string, int maxLen, InvalidAs inAs, boolean validate) {
+    public String trimValue(String string, InvalidAs inAs) {
         Object o = null;
         try {
-            if (validate) {
-                o = fromString(string, inAs);
-            } else {
-                o = string;
-            }
+            o = fromString(string, inAs);
+        } catch (Exception e) {
+        }
+        if (o == null) {
+            return null;
+        }
+        return toString(o);
+    }
+
+    public String format(String string) {
+        return format(string, -1, invalidAs);
+    }
+
+    public String format(String string, InvalidAs inAs) {
+        return format(string, -1, inAs);
+    }
+
+    public String format(String string, int maxLen, InvalidAs inAs) {
+        Object o = null;
+        try {
+            o = fromString(string, inAs);
         } catch (Exception e) {
         }
         if (o == null) {
@@ -639,9 +647,6 @@ public class ColumnDefinition extends BaseData {
                 }
             }
         } catch (Exception e) {
-            if (validate) {
-                return null;
-            }
         }
         if (s != null && maxLen > 0) {
             return s.length() > maxLen ? s.substring(0, maxLen) : s;
@@ -660,7 +665,7 @@ public class ColumnDefinition extends BaseData {
                 return string;
             default:
                 if (validate) {
-                    return toString(fromString(string, invalidAs));
+                    return trimValue(string, invalidAs);
                 }
         }
         return string;
@@ -1216,7 +1221,7 @@ public class ColumnDefinition extends BaseData {
             case Empty:
                 return "";
             case Skip:
-                return null;
+                return string;
             case Use:
                 return string;
             default:

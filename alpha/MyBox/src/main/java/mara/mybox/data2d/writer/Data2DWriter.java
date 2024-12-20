@@ -51,7 +51,7 @@ public abstract class Data2DWriter {
     protected long targetRowIndex;
     protected Connection conn;
     protected int rowSize;
-    protected InvalidAs invalidAs;
+    public InvalidAs invalidAs;
 
     public Data2DWriter() {
         operate = null;
@@ -96,9 +96,19 @@ public abstract class Data2DWriter {
             printRow = new ArrayList<>();
             rowSize = inRow.size();
             for (int i = 0; i < columns.size(); i++) {
+                Data2DColumn column = columns.get(i);
                 value = i < rowSize ? inRow.get(i) : null;
+                if ((validateValue || invalidAs == InvalidAs.Fail)
+                        && !column.validValue(value)) {
+                    failStop(message("InvalidData") + ". "
+                            + message("Column") + ":" + column.getColumnName() + "  "
+                            + message("Value") + ": " + value);
+                    return;
+                }
                 if (formatValues) {
-                    value = columns.get(i).format(value, invalidAs, validateValue);
+                    value = column.format(value, -1, invalidAs);
+                } else {
+                    value = column.trimValue(value, invalidAs);
                 }
                 printRow.add(value);
             }
@@ -198,6 +208,12 @@ public abstract class Data2DWriter {
     public void stop() {
         if (operate != null) {
             operate.stop();
+        }
+    }
+
+    public void failStop(String error) {
+        if (operate != null) {
+            operate.failStop(error);
         }
     }
 

@@ -530,7 +530,7 @@ public abstract class Data2D_Data extends Data2D_Attributes {
 
     public String formatValue(int col, String value) {
         try {
-            return column(col).format(value, validateEdit());
+            return column(col).format(value);
         } catch (Exception e) {
             return null;
         }

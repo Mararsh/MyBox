@@ -68,7 +68,7 @@ public class DataTableWriter extends Data2DWriter {
                 return;
             }
             printRow = new ArrayList<>();
-            Data2DRow data2DRow = targetTable.makeRow(inRow, invalidAs);
+            Data2DRow data2DRow = targetTable.makeRow(inRow, this);
             if (data2DRow == null || data2DRow.isEmpty()) {
                 return;
             }
