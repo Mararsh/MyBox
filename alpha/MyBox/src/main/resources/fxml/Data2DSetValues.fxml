@@ -106,13 +106,13 @@ License:    Apache License Version 2.0
                     <content>
                         <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
                             <content>
-                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                     <padding>
                                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                     </padding>
                                     <children>
-                                        <Label styleClass="darkRed-label" stylesheets="@../styles/MyBox.css" text="%DataSetValuesComments" />
-                              <FlowPane hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">
+                              <CheckBox fx:id="rejectCheck" minHeight="-Infinity" mnemonicParsing="false" text="%RejectInvalidValueWhenSave" wrapText="true" />
+                              <FlowPane fx:id="invalidAsPane" hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">
                                  <children>
                                     <Label text="%ToInvalidValue" />
                                     <RadioButton fx:id="failInvalidRadio" layoutX="84.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%Fail">
@@ -128,7 +128,11 @@ License:    Apache License Version 2.0
                                  </VBox.margin>
                               </FlowPane>
                               <Label text="%ChangeAs" />
-                                        <fx:include fx:id="value" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DSetValue.fxml" VBox.vgrow="ALWAYS" />
+                              <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                                 <children>
+                                              <fx:include fx:id="value" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DSetValue.fxml" VBox.vgrow="ALWAYS" />
+                                 </children>
+                              </VBox>
                                     </children>
                                 </VBox>
                             </content>

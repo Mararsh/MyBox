@@ -36,7 +36,7 @@ public class DataTableDelete extends DataTableModify {
             conn = dconn;
             conn.setAutoCommit(false);
             delete = dDelete;
-            while (results.next() && !stopped && !reachMax) {
+            while (results.next() && !stopped && !reachMaxFiltered) {
                 sourceTableRow = tableData2D.readData(results);
                 sourceRow = Data2DRowTools.toStrings(sourceTableRow, columns);
                 sourceRowIndex++;
@@ -63,9 +63,9 @@ public class DataTableDelete extends DataTableModify {
             sourceRow = row;
             sourceRowIndex = index;
             targetRow = null;
-            passFilter = sourceData.filterDataRow(sourceRow, sourceRowIndex);
-            reachMax = sourceData.filterReachMaxPassed();
-            if (passFilter && !reachMax) {
+            rowPassFilter = sourceData.filterDataRow(sourceRow, sourceRowIndex);
+            reachMaxFiltered = sourceData.filterReachMaxPassed();
+            if (rowPassFilter && !reachMaxFiltered) {
                 if (tableData2D.setDeleteStatement(conn, delete, sourceTableRow)) {
                     delete.addBatch();
                     if (++handledCount % Database.BatchSize == 0) {

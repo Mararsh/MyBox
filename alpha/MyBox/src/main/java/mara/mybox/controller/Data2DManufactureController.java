@@ -909,7 +909,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
     }
 
     public boolean verifyData() {
-        if (!data2D.validateSave()) {
+        if (!data2D.rejectInvalidWhenSave()) {
             return true;
         }
         StringTable results = verifyTableData();

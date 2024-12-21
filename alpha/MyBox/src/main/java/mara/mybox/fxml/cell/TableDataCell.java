@@ -51,7 +51,7 @@ public class TableDataCell extends TableAutoCommitCell<List<String>, String> {
             if (!dataTable.getData2D().validValue(value)) {
                 return false;
             }
-            if (!dataTable.getData2D().validateEdit()) {
+            if (!dataTable.getData2D().rejectInvalidWhenEdit()) {
                 return true;
             }
             return dataColumn.validValue(value);

@@ -3,8 +3,12 @@ package mara.mybox.controller;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Tab;
+import javafx.scene.layout.FlowPane;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
@@ -12,8 +16,10 @@ import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.NumberTools;
+import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -23,11 +29,16 @@ import static mara.mybox.value.Languages.message;
 public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
 
     protected Data2DManufactureController editor;
+    protected boolean rejectInvalid;
 
     @FXML
     protected ControlData2DSetValue valueController;
     @FXML
     protected Tab valuesTab;
+    @FXML
+    protected CheckBox rejectCheck;
+    @FXML
+    protected FlowPane invalidAsPane;
 
     public Data2DSetValuesController() {
         baseTitle = message("SetValues");
@@ -43,8 +54,29 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
 
             valueController.setParameter(this);
 
+            rejectCheck.setDisable(data2D.alwayRejectInvalid());
+            rejectCheck.setSelected(data2D.rejectInvalidWhenSave());
+            rejectCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    AppVariables.rejectInvalidValueWhenSave = rejectCheck.isSelected();
+                    UserConfig.setBoolean("Data2DValidateSave", AppVariables.rejectInvalidValueWhenSave);
+                    updateControls();
+                }
+            });
+
+            updateControls();
+
         } catch (Exception e) {
             MyBoxLog.error(e);
+        }
+    }
+
+    public void updateControls() {
+        useInvalidRadio.setDisable(rejectCheck.isSelected());
+        skipInvalidRadio.setDisable(rejectCheck.isSelected());
+        if (rejectCheck.isSelected()) {
+            failInvalidRadio.setSelected(true);
         }
     }
 
@@ -66,15 +98,23 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
             if (!super.checkOptions() || !valueController.pickValues()) {
                 return false;
             }
+            rejectInvalid = data2D.rejectInvalidWhenSave()
+                    || rejectCheck.isSelected()
+                    || failInvalidRadio.isSelected();
+
             for (String name : checkedColsNames) {
                 Data2DColumn column = data2D.columnByName(name);
                 String dummyValue = valueController.setValue.dummyValue(data2D, column);
-                if (valueController.setValue.error != null
+                if (valueController.setValue.valueInvalid
                         || !column.validValue(dummyValue)) {
                     String info = message("InvalidData") + "\n"
                             + message("Column") + ": " + name + "\n"
-                            + message("TestingValue") + ": " + dummyValue + "\n"
-                            + "------------------------\n"
+                            + message("TestingValue") + ": " + dummyValue;
+                    if (rejectInvalid) {
+                        PopTools.alertError(this, info);
+                        return false;
+                    }
+                    info += "\n------------------------\n"
                             + message("SureContinue");
                     if (!PopTools.askSure(getTitle(), info)) {
                         return false;
@@ -92,7 +132,7 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
                     + message("Set") + ": " + message(valueController.setValue.type.name()) + "\n";
             String para = valueController.setValue.majorParameter();
             if (para != null) {
-                info += message("Parameter") + ": " + valueController.setValue.value + "\n";
+                info += message("Parameter") + ": " + valueController.setValue.parameter + "\n";
             }
             info += message("ToInvalidValue") + ": "
                     + message(valueController.setValue.invalidAs.name()) + "\n"
@@ -279,34 +319,53 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
         try {
             outputData = new ArrayList<>();
             outputData.addAll(sourceController.tableData);
-            int dataIndex = valueController.setValue.getStart();
+            int numberIndex = valueController.setValue.getStart();
             int digit = valueController.setValue.countFinalDigit(data2D.getRowsNumber());
+            String currentValue, newValue;
+            boolean rowChanged;
             Random random = new Random();
+            boolean valueInvalid;
+            boolean validateColumn = rejectInvalid || !useInvalidRadio.isSelected();
+            boolean skipInvalid = skipInvalidRadio.isSelected();
             for (int row : sourceController.filteredRowsIndices) {
                 List<String> values = sourceController.tableData.get(row);
+                rowChanged = false;
                 for (int col : checkedColsIndices) {
+                    currentValue = values.get(col + 1);
                     Data2DColumn column = data2D.columns.get(col);
-                    String value = valueController.setValue.makeValue(data2D,
-                            column, values.get(col + 1), values, row,
-                            dataIndex, digit, random);
-                    if (valueController.setValue.error != null || !column.validValue(value)) {
-                        if (useInvalidRadio.isSelected()) {
-                            values.set(col + 1, value);
-                        } else if (failInvalidRadio.isSelected()) {
+                    newValue = valueController.setValue.makeValue(data2D,
+                            column, currentValue, values, row,
+                            numberIndex, digit, random);
+                    valueInvalid = valueController.setValue.valueInvalid;
+                    if (!valueInvalid && validateColumn) {
+                        if (!column.validValue(newValue)) {
+                            valueInvalid = true;
+                        }
+                    }
+                    if (valueInvalid) {
+                        if (skipInvalid) {
+                            newValue = currentValue;
+                        } else if (rejectInvalid) {
                             if (task != null) {
                                 task.setError(message("InvalidData") + ". "
                                         + message("Column") + ":" + column.getColumnName() + "  "
-                                        + message("Value") + ": " + value);
+                                        + message("Value") + ": " + newValue);
                                 task.cancel();
                             }
+                            outputData = null;
                             return false;
                         }
-                    } else {
-                        values.set(col + 1, value);
+                    }
+                    if ((currentValue == null && newValue != null)
+                            || (currentValue != null && !currentValue.equals(newValue))) {
+                        rowChanged = true;
+                        values.set(col + 1, newValue);
                     }
                 }
-                dataIndex++;
-                outputData.set(row, values);
+                if (rowChanged) {
+                    numberIndex++;
+                    outputData.set(row, values);
+                }
             }
             return true;
         } catch (Exception e) {

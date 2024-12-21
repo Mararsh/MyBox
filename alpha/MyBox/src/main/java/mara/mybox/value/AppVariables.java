@@ -49,7 +49,7 @@ public class AppVariables {
             closeCurrentWhenOpenTool, recordWindowsSizeLocation, controlDisplayText,
             commitModificationWhenDataCellLoseFocus,
             ignoreDbUnavailable, popErrorLogs, saveDebugLogs, detailedDebugLogs,
-            data2DValidateEdit, data2DValidateSave;
+            rejectInvalidValueWhenEdit, rejectInvalidValueWhenSave;
     public static TextClipboardMonitor TextClipMonitor;
     public static ImageClipboardMonitor ImageClipMonitor;
     public static Timer ExitTimer;
@@ -113,8 +113,8 @@ public class AppVariables {
             ShortcutsCanNotOmitCtrlAlt = UserConfig.getBoolean(conn, "ShortcutsCanNotOmitCtrlAlt", false);
 
             commitModificationWhenDataCellLoseFocus = UserConfig.getBoolean(conn, "CommitModificationWhenDataCellLoseFocus", true);
-            data2DValidateEdit = UserConfig.getBoolean(conn, "Data2DValidateEdit", false);
-            data2DValidateSave = UserConfig.getBoolean(conn, "Data2DValidateSave", true);
+            rejectInvalidValueWhenEdit = UserConfig.getBoolean(conn, "Data2DValidateEdit", false);
+            rejectInvalidValueWhenSave = UserConfig.getBoolean(conn, "Data2DValidateSave", true);
 
             saveDebugLogs = UserConfig.getBoolean(conn, "SaveDebugLogs", false);
             detailedDebugLogs = UserConfig.getBoolean(conn, "DetailedDebugLogs", false);

@@ -15,12 +15,12 @@ This is compute application to provide simple and easy functions. It's free and 
          - Order numbers of nodes can be set.         
          - Manage tree "Data Column" instead of "Data Definition".                                                                                                            
          - Manage tree "Row Expression" instead of "Row Filter".                                                                                                    
-     - Data edit cell:                                                                                                         
-         - Pop text area when value length is large.                                                                                                             
-         - Display invalid values in abnormal color.                                                                                                    
-     - "Set Value" of Data Manufacture:                                                                                                                
-         - Validate data before write and prompt useful information.                                                                                                                   
-         - Options to handle invalid values.                 
+     - Data Manufacture:                                                                                                         
+         - Option "Reject invalid value when edit" replaces "Validate data when edit".                                                                                                             
+         - Option "Reject invalid value when save" replaces "Validate data when save".                                                                                                             
+         - When edit data cell, pop text area when value length is large.                                                                                                             
+         - When edit data cell, display invalid values in abnormal color.                                                                                                    
+         - "Set Value": Validate data before write and prompt useful information. And provide options to handle invalid values.                 
      - Major interfaces of functions are changed as scroll panes.                                                                                                            
      - Enhance "Make Documents".                                                                                                            
 * Upgrade to: JDK 23 + javaFX 24. (JavaFX 21 is for Linux due to compile failure with javaFX 23/24)                                                                                                                

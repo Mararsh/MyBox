@@ -35,7 +35,7 @@ public abstract class Data2DOperate {
     protected FxTask task;
     protected List<Integer> cols, otherCols;
     protected int colsLen, scale = -1;
-    protected boolean includeRowNumber, writeHeader, passFilter, reachMax;
+    protected boolean includeRowNumber, writeHeader, rowPassFilter, reachMaxFiltered;
     protected boolean stopped, needCheckTask, failed, closeConn;
     protected long sourceRowIndex; // 1-based
     protected long handledCount;
@@ -138,8 +138,8 @@ public abstract class Data2DOperate {
         targetRow = null;
         stopped = false;
         failed = false;
-        passFilter = false;
-        reachMax = false;
+        rowPassFilter = false;
+        reachMaxFiltered = false;
         if (sourceData == null) {
             return false;
         }
@@ -167,11 +167,11 @@ public abstract class Data2DOperate {
         sourceRow = row;
         sourceRowIndex = index;
         targetRow = null;
-        passFilter = sourceData.filterDataRow(sourceRow, sourceRowIndex);
-        reachMax = sourceData.filterReachMaxPassed();
-        if (reachMax) {
+        rowPassFilter = sourceData.filterDataRow(sourceRow, sourceRowIndex);
+        reachMaxFiltered = sourceData.filterReachMaxPassed();
+        if (reachMaxFiltered) {
             stopped = true;
-        } else if (passFilter) {
+        } else if (rowPassFilter) {
             if (handleRow()) {
                 writeRow();
                 handledCount++;

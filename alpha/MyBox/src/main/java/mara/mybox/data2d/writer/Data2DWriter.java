@@ -68,7 +68,7 @@ public abstract class Data2DWriter {
                 invalidAs = operate.getInvalidAs();
             }
         }
-        validateValue = AppVariables.data2DValidateSave;
+        validateValue = AppVariables.rejectInvalidValueWhenSave;
         return true;
     }
 

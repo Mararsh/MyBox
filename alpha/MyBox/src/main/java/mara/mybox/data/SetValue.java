@@ -22,9 +22,9 @@ import mara.mybox.tools.StringTools;
 public class SetValue {
 
     public ValueType type;
-    public String value, error;
+    public String parameter, error;
     public int start, digit, scale;
-    public boolean fillZero, aotoDigit;
+    public boolean fillZero, aotoDigit, valueInvalid;
     public InvalidAs invalidAs;
 
     final public static ValueType DefaultValueType = ValueType.Zero;
@@ -42,7 +42,7 @@ public class SetValue {
 
     public final void init() {
         type = DefaultValueType;
-        value = null;
+        parameter = null;
         start = 0;
         digit = 0;
         scale = 5;
@@ -99,6 +99,7 @@ public class SetValue {
             int dataIndex, int ddigit, Random random) {
         try {
             error = null;
+            valueInvalid = false;
             switch (type) {
                 case Zero:
                     return "0";
@@ -122,10 +123,10 @@ public class SetValue {
                     return scale(currentValue);
 
                 case Prefix:
-                    return currentValue == null ? value : (value + currentValue);
+                    return currentValue == null ? parameter : (parameter + currentValue);
 
                 case Suffix:
-                    return currentValue == null ? value : (currentValue + value);
+                    return currentValue == null ? parameter : (currentValue + parameter);
 
                 case NumberSuffix:
                     String suffix = StringTools.fillLeftZero(dataIndex, ddigit);
@@ -140,29 +141,31 @@ public class SetValue {
 
                 case NumberSuffixString:
                     String ssuffix = StringTools.fillLeftZero(dataIndex, ddigit);
-                    return value == null ? ssuffix : (value + ssuffix);
+                    return parameter == null ? ssuffix : (parameter + ssuffix);
 
                 case NumberPrefixString:
                     String sprefix = StringTools.fillLeftZero(dataIndex, ddigit);
-                    return value == null ? sprefix : (sprefix + value);
+                    return parameter == null ? sprefix : (sprefix + parameter);
 
                 case Expression:
-                    if (data2D.calculateDataRowExpression(value, row, rowIndex)) {
+                    if (data2D.calculateDataRowExpression(parameter, row, rowIndex)) {
                         return data2D.expressionResult();
                     } else {
+                        valueInvalid = true;
                         error = data2D.expressionError();
-                        return null;
+                        return currentValue;
                     }
 
                 case Value:
-                    return value;
+                    return parameter;
 
             }
+            valueInvalid = true;
             error = "InvalidData";
-            return null;
+            return currentValue;
         } catch (Exception e) {
             error = e.toString();
-            return null;
+            return currentValue;
         }
     }
 
@@ -178,7 +181,7 @@ public class SetValue {
                 case NumberPrefixString:
                 case Expression:
                 case Value:
-                    return value;
+                    return parameter;
 
                 case NumberSuffix:
                 case NumberPrefix:
@@ -198,8 +201,8 @@ public class SetValue {
         return this;
     }
 
-    public SetValue setValue(String value) {
-        this.value = value;
+    public SetValue setParameter(String value) {
+        this.parameter = value;
         return this;
     }
 
@@ -245,8 +248,8 @@ public class SetValue {
         return type;
     }
 
-    public String getValue() {
-        return value;
+    public String getParameter() {
+        return parameter;
     }
 
     public int getStart() {

@@ -53,7 +53,7 @@ public class ControlData2DSetValue extends BaseController {
     @FXML
     protected CheckBox fillZeroCheck;
     @FXML
-    protected VBox setBox, expBox, numberBox;
+    protected VBox setBox, expBox, numberBox, numberStringBox;
     @FXML
     protected Label matrixLabel;
     @FXML
@@ -67,6 +67,13 @@ public class ControlData2DSetValue extends BaseController {
             setBox.getChildren().clear();
 
             valueGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+                @Override
+                public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
+                    setPane();
+                }
+            });
+
+            numberGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
                     setPane();
@@ -100,17 +107,11 @@ public class ControlData2DSetValue extends BaseController {
 
             } else if (numberRadio.isSelected()) {
                 setBox.getChildren().add(numberBox);
-                if (numberBox.getChildren().contains(numberSuffixInput)) {
-                    numberBox.getChildren().remove(numberSuffixInput);
-                }
-                if (numberBox.getChildren().contains(numberPrefixInput)) {
-                    numberBox.getChildren().remove(numberPrefixInput);
-                }
+                numberStringBox.getChildren().clear();
                 if (numberSuffixStringRadio.isSelected()) {
-                    numberBox.getChildren().add(numberSuffixInput);
-                }
-                if (numberPrefixStringRadio.isSelected()) {
-                    numberBox.getChildren().add(numberPrefixInput);
+                    numberStringBox.getChildren().add(numberSuffixInput);
+                } else if (numberPrefixStringRadio.isSelected()) {
+                    numberStringBox.getChildren().add(numberPrefixInput);
                 }
 
             } else if (gaussianDistributionRadio.isSelected()
@@ -261,16 +262,16 @@ public class ControlData2DSetValue extends BaseController {
             setValue.init();
             if (valueRadio.isSelected()) {
                 String v = valueInput.getText();
-                setValue.setType(ValueType.Value).setValue(v);
+                setValue.setType(ValueType.Value).setParameter(v);
                 UserConfig.setString(conn, baseName + "ValueString", v);
             } else if (zeroRadio.isSelected()) {
-                setValue.setType(ValueType.Zero).setValue("0");
+                setValue.setType(ValueType.Zero).setParameter("0");
             } else if (oneRadio.isSelected()) {
-                setValue.setType(ValueType.One).setValue("1");
+                setValue.setType(ValueType.One).setParameter("1");
             } else if (emptyRadio.isSelected()) {
-                setValue.setType(ValueType.Empty).setValue("");
+                setValue.setType(ValueType.Empty).setParameter("");
             } else if (nullRadio.isSelected()) {
-                setValue.setType(ValueType.Null).setValue(null);
+                setValue.setType(ValueType.Null).setParameter(null);
             } else if (randomRadio.isSelected()) {
                 setValue.setType(ValueType.Random);
             } else if (randomNnRadio.isSelected()) {
@@ -292,7 +293,7 @@ public class ControlData2DSetValue extends BaseController {
 
             } else if (prefixRadio.isSelected()) {
                 String v = prefixInput.getText();
-                setValue.setType(ValueType.Prefix).setValue(v);
+                setValue.setType(ValueType.Prefix).setParameter(v);
                 if (v == null || v.isEmpty()) {
                     outError(message("Invalid") + ": " + message("AddPrefix"));
                     return false;
@@ -301,7 +302,7 @@ public class ControlData2DSetValue extends BaseController {
                 }
             } else if (suffixRadio.isSelected()) {
                 String v = suffixInput.getText();
-                setValue.setType(ValueType.Suffix).setValue(v);
+                setValue.setType(ValueType.Suffix).setParameter(v);
                 if (v == null || v.isEmpty()) {
                     outError(message("Invalid") + ": " + message("AppendSuffix"));
                     return false;
@@ -325,11 +326,11 @@ public class ControlData2DSetValue extends BaseController {
                     setValue.setType(ValueType.NumberSuffix);
                 } else if (numberSuffixStringRadio.isSelected()) {
                     String s = numberSuffixInput.getText();
-                    setValue.setType(ValueType.NumberSuffixString).setValue(s);
+                    setValue.setType(ValueType.NumberSuffixString).setParameter(s);
                     UserConfig.setString(conn, baseName + "NumberSuffix", s);
                 } else if (numberPrefixStringRadio.isSelected()) {
                     String s = numberPrefixInput.getText();
-                    setValue.setType(ValueType.NumberPrefixString).setValue(s);
+                    setValue.setType(ValueType.NumberPrefixString).setParameter(s);
                     UserConfig.setString(conn, baseName + "NumberPrefix", s);
                 } else {
                     outError(message("Invalid") + ": " + message("SequenceNumber"));
@@ -395,7 +396,7 @@ public class ControlData2DSetValue extends BaseController {
                     return false;
                 }
                 String v = expressionController.scriptInput.getText();
-                setValue.setType(ValueType.Expression).setValue(v);
+                setValue.setType(ValueType.Expression).setParameter(v);
                 UserConfig.setString(conn, baseName + "Expression", v);
             }
             UserConfig.setString(conn, baseName + "ValueType", setValue.getType().name());
@@ -417,11 +418,11 @@ public class ControlData2DSetValue extends BaseController {
     }
 
     public String value() {
-        return setValue.getValue();
+        return setValue.getParameter();
     }
 
     public void setValue(String value) {
-        setValue.setValue(value);
+        setValue.setParameter(value);
     }
 
     public String scale(String value) {

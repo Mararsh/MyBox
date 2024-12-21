@@ -8,8 +8,6 @@ import mara.mybox.data2d.DataTable;
 import mara.mybox.data2d.tools.Data2DRowTools;
 import mara.mybox.db.Database;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.data.ColumnDefinition;
-import mara.mybox.db.data.Data2DColumn;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -39,7 +37,7 @@ public class DataTableSetValue extends DataTableModify {
             conn = dconn;
             conn.setAutoCommit(false);
             update = dUpdate;
-            while (results.next() && !stopped && !reachMax) {
+            while (results.next() && !stopped && !reachMaxFiltered) {
                 sourceTableRow = tableData2D.readData(results);
                 sourceRow = Data2DRowTools.toStrings(sourceTableRow, columns);
                 sourceRowIndex++;
@@ -66,29 +64,39 @@ public class DataTableSetValue extends DataTableModify {
             if (stopped || targetRow == null || targetRow.isEmpty()) {
                 return;
             }
-            boolean changed = false;
+            rowChanged = false;
             for (int i = 0; i < columnsNumber; ++i) {
-                Data2DColumn column = columns.get(i);
-                String name = column.getColumnName();
-                String currentValue = targetRow.get(i);
-                String v = setValue.makeValue(sourceData, column,
+                column = columns.get(i);
+                columnName = column.getColumnName();
+                currentValue = targetRow.get(i);
+                newValue = setValue.makeValue(sourceData, column,
                         currentValue, sourceRow, sourceRowIndex,
-                        dataIndex, digit, random);
-                if (setValue.error != null || !column.validValue(v)) {
-                    if (invalidAs == ColumnDefinition.InvalidAs.Skip) {
+                        setValueIndex, setValueDigit, random);
+                valueInvalid = setValue.valueInvalid;
+                if (!valueInvalid && validateColumn) {
+                    if (!column.validValue(newValue)) {
+                        valueInvalid = true;
+                    }
+                }
+                if (valueInvalid) {
+                    if (skipInvalid) {
                         continue;
-                    } else if (invalidAs == ColumnDefinition.InvalidAs.Fail) {
+                    } else if (rejectInvalid) {
                         failStop(message("InvalidData") + ". "
-                                + message("Column") + ":" + column.getColumnName() + "  "
-                                + message("Value") + ": " + v);
+                                + message("Column") + ":" + columnName + "  "
+                                + message("Value") + ": " + newValue);
                         return;
                     }
                 }
-                sourceTableRow.setValue(name, column.fromString(v));
-                changed = true;
+                if ((currentValue == null && newValue == null)
+                        || (currentValue != null && currentValue.equals(newValue))) {
+                    continue;
+                }
+                sourceTableRow.setValue(columnName, column.fromString(newValue));
+                rowChanged = true;
             }
-            if (changed) {
-                dataIndex++;
+            if (rowChanged) {
+                setValueIndex++;
                 if (tableData2D.setUpdateStatement(conn, update, sourceTableRow)) {
                     update.addBatch();
                     if (++handledCount % Database.BatchSize == 0) {

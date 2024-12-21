@@ -538,7 +538,7 @@ public abstract class Data2D_Data extends Data2D_Attributes {
 
     public String savedValue(int col, String value) {
         try {
-            return column(col).savedValue(value, validateEdit());
+            return column(col).savedValue(value, rejectInvalidWhenEdit());
         } catch (Exception e) {
             return null;
         }

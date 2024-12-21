@@ -382,28 +382,28 @@ public class Data2DMenuTools {
             });
             items.add(menu);
 
-            if (dataController.getData2D().alwayValidate()) {
+            if (dataController.getData2D().alwayRejectInvalid()) {
                 return items;
             }
 
-            CheckMenuItem validateEditItem = new CheckMenuItem(message("ValidateDataWhenEdit"));
-            validateEditItem.setSelected(AppVariables.data2DValidateEdit);
+            CheckMenuItem validateEditItem = new CheckMenuItem(message("RejectInvalidValueWhenEdit"));
+            validateEditItem.setSelected(AppVariables.rejectInvalidValueWhenEdit);
             validateEditItem.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    AppVariables.data2DValidateEdit = validateEditItem.isSelected();
-                    UserConfig.setBoolean("Data2DValidateEdit", AppVariables.data2DValidateEdit);
+                    AppVariables.rejectInvalidValueWhenEdit = validateEditItem.isSelected();
+                    UserConfig.setBoolean("Data2DValidateEdit", AppVariables.rejectInvalidValueWhenEdit);
                 }
             });
             items.add(validateEditItem);
 
-            CheckMenuItem validateSaveItem = new CheckMenuItem(message("ValidateDataWhenSave"));
-            validateSaveItem.setSelected(AppVariables.data2DValidateSave);
+            CheckMenuItem validateSaveItem = new CheckMenuItem(message("RejectInvalidValueWhenSave"));
+            validateSaveItem.setSelected(AppVariables.rejectInvalidValueWhenSave);
             validateSaveItem.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    AppVariables.data2DValidateSave = validateSaveItem.isSelected();
-                    UserConfig.setBoolean("Data2DValidateSave", AppVariables.data2DValidateSave);
+                    AppVariables.rejectInvalidValueWhenSave = validateSaveItem.isSelected();
+                    UserConfig.setBoolean("Data2DValidateSave", AppVariables.rejectInvalidValueWhenSave);
                 }
             });
             items.add(validateSaveItem);

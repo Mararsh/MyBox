@@ -85,6 +85,6 @@ License:    Apache License Version 2.0
             </Button>
                   </children>
               </HBox>
-              <TextArea fx:id="scriptInput" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" wrapText="true" VBox.vgrow="ALWAYS" />
+              <TextArea fx:id="scriptInput" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="80.0" wrapText="true" VBox.vgrow="ALWAYS" />
     </children>
 </VBox>

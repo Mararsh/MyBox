@@ -281,18 +281,18 @@ public class Data2DDefinition extends BaseData {
         return !value.contains("\n") && !value.contains(delimiter);
     }
 
-    public boolean alwayValidate() {
+    public boolean alwayRejectInvalid() {
         return dataType == DataType.Matrix
                 || dataType == DataType.DatabaseTable
                 || dataType == DataType.InternalTable;
     }
 
-    public boolean validateEdit() {
-        return alwayValidate() || AppVariables.data2DValidateEdit;
+    public boolean rejectInvalidWhenEdit() {
+        return alwayRejectInvalid() || AppVariables.rejectInvalidValueWhenEdit;
     }
 
-    public boolean validateSave() {
-        return alwayValidate() || AppVariables.data2DValidateSave;
+    public boolean rejectInvalidWhenSave() {
+        return alwayRejectInvalid() || AppVariables.rejectInvalidValueWhenSave;
     }
 
     /*
