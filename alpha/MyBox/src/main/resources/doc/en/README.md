@@ -13,8 +13,8 @@ This is compute application to provide simple and easy functions. It's free and 
          - New export formats: Tree XML, Tree JSON, List CSV.                                                                                                            
          - Import format is changed as Tree XML.                                                                                                            
          - Order numbers of nodes can be set.         
-         - Manage tree "Data Column" instead of "Data Definition".                                                                                                            
-         - Manage tree "Row Expression" instead of "Row Filter".                                                                                                    
+         - Tree "Data Column" replaces tree "Data Definition".                                                                                                            
+         - Tree "Row Expression" replaces tree "Row Filter".                                                                                                    
      - Data Manufacture:                                                                                                         
          - Option "Reject invalid value when edit" replaces "Validate data when edit".                                                                                                             
          - Option "Reject invalid value when save" replaces "Validate data when save".                                                                                                             

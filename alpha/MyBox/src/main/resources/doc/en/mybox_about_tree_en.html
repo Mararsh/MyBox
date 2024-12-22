@@ -94,7 +94,7 @@
         <p>So chain names can be used to locate nodes for dynamic or static tree when it is "unique chain names".</p>
         <h2>3 Implement Tree Structure</h2>
         <p>In MyBox, attributes of tree node include: ID, Title(Node Name), Order_number, Modify_Time, ID of parent node.<br>
-           And each type of trees has its special data fields.</p>
+            And each type of trees has its special data fields.</p>
         <h3>3.1 ID of Node</h3>
         <p>ID of node is generated and increased automactically, and used to identify and locate each node uniquely. It is absolutely steady attribute:</p>
         <ul>
@@ -133,13 +133,13 @@
                 <tr><td> Html Tree         </td><td> Html codes  </td></tr>
                 <tr><td> Texts Tree   </td><td> Text                                           </td></tr>
                 <tr><td> Favorite Address   </td><td> Two fields: Address, Icon                                    </td></tr>
-                <tr><td> Image Scope   </td><td> Definition of image scope in XML                                      </td></tr>
-                <tr><td> Row Filter        </td><td> Three fields: JavaScript expression, Whether invert, Maximum rows                </td></tr>
-                <tr><td> Define Data  </td><td> Data attributes and columns in XML                                </td></tr>
-                <tr><td> SQL        </td><td> Text: SQL statements                                      </td></tr>
+                <tr><td> Image Scope   </td><td> Fields of image scope                                      </td></tr>
+                <tr><td> Row Expression        </td><td> JavaScript codes               </td></tr>
+                <tr><td> Data Column  </td><td> Fields of column definition                                </td></tr>
+                <tr><td> SQL        </td><td> SQL statement                                      </td></tr>
                 <tr><td> Math Function       </td><td> Four fields: Function Name, Variables, Expression, Domain                        </td></tr>
-                <tr><td> JavaScript </td><td> Text: JavaScript codes                              </td></tr>
-                <tr><td> JShell     </td><td> Text: Java codes                                     </td></tr>
+                <tr><td> JavaScript </td><td> JavaScript codes                              </td></tr>
+                <tr><td> JShell     </td><td> Java codes                                     </td></tr>
                 <tr><td> JEXL       </td><td> Three fields: Script, Context, Parameters                                </td></tr>
             </tbody>
         </table>
@@ -166,7 +166,7 @@
             <li>Format can be chosen: Tree XML, Tree JSON, Tree Html, List JSON, List XML, List CSV, List Html, Html frameset.</li>
             <li>Options to export node's id, hierarchy number, modified time, order number, parent id, tags, and data.</li>
             <li>Style of exported html can be set.</li>
-            <li>MyBox uses iterators and stacks write records while reading rows, so the amount of exported data is not limited by memory usage</li>
+            <li>MyBox uses iterators and stacks to write records while reading rows, so the amount of exported data is not limited by memory usage</li>
         </ul>
         <h3>4.4 Import</h3>
         <p>Tree information can be imported in batch:</p>
@@ -175,20 +175,20 @@
             <li>Exported files should be XML in special formats, which are same as Tree XML exported by MyBox.</li>
             <li>When import nodes, "id", "parentid", "update_time" are generated automatically, rather than picked from files.</li>
             <li>When node of same title under same parent exists, options: 
-                        "Change attributes", "Create child of duplicated name", and "Skip". </li>
+                "Change attributes", "Create child of duplicated name", and "Skip". </li>
             <li>Example is provided.</li>
         </ul>
         <p>Tree XML can be used to locate tree nodes in a file:</p>
-            <ul>
-                    <li>Tree XML can store tree structure accurately.</li>
-                    <li>MyBox uses SAX and stacks to parse Tree XML, so the amount of imported data is not limited by memory usage</li>
-            </ul>
+        <ul>
+            <li>Tree XML can store tree structure accurately.</li>
+            <li>MyBox uses SAX and stacks to parse Tree XML, so the amount of imported data is not limited by memory usage</li>
+        </ul>
         <p>Can not locate node by ID when import nodes, because ID is an attribute which couples application environment tightly:</p>
-            <ul>
-                    <li>After node is exported, it can not keep pace with the application environment.</li>
-                    <li>When node is imported, its ID may be missed or conflicted in the imported environment.</li>
-                    <li>The hierarchy of imported nodes can not be defined by their IDs because the IDs may be incompatible with the imported environment.</li>
-            </ul>
+        <ul>
+            <li>After node is exported, it can not keep pace with the application environment.</li>
+            <li>When node is imported, its ID may be missed or conflicted in the imported environment.</li>
+            <li>The hierarchy of imported nodes can not be defined by their IDs because the IDs may be incompatible with the imported environment.</li>
+        </ul>
         <h3>4.5 Add/Delete/Modify Nodes</h3>
         <p>Select one or multiple nodes, and:</p>
         <ul>
@@ -197,7 +197,7 @@
             <li>Copy nodes:
                 <ul>
                     <li>Choices: "Only copy node", "Copy node's descendant", "Copy node and its descendant",
-                     "Copy node and its children", and "Copy node's children"</li>
+                        "Copy node and its children", and "Copy node's children"</li>
                     <li>Select the target node to copy into.</li>
                     <li>Target node should not be source node nor its descendant.</li>
                 </ul>

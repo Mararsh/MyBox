@@ -46,7 +46,8 @@
     <body style="width: 900px; margin:0 auto;" contenteditable="true">
         <h1 align="center">Row Expression</h1>
         <h2>1 Usages of Row Expression</h2> 
-        <p>JavaScript expression can be data values when manufacture/trim/calculate data or generate chart.</p>
+        <p>When manufacture/trim/calculate data or generate chart, data values can be made by expression, in which  
+            calculation logic is implemented in JavaScript codes and data columns' names can be its parameters.</p>
         <h2>2 Edit Row Expression</h2>
         <ol>
             <li><p>If the script is blank, then return empty string.</p></li>
@@ -55,10 +56,12 @@
             <li><p>It can include following placeholders which are regarded as variables in the script:</p>
                 <p>#{TableRowNumber}<br>#{DataRowNumber}<br>#{&lt;column_name&gt;}<br>#{&lt;column_name&gt;- &lt;statistic-name&gt;}</p>
             </li>
-            <li><p>All valid placeholders are listed in left.</p></li>
-            <li><p>To save the script, click "Edit" button.</p></li>
+            <li><p>Interface provides button to list all valid placeholders for pasting.</p></li>
             <li><p>Hover or click button "Examples" to paste example codes.</p></li>
             <li><p>Hover or click button "Histories" to paste codes in histories.</p></li>
+            <li><p>Click button "Script" to copy codes from tree "JavaScript".</p></li>
+            <li><p>Click button "Select" to copy codes from tree "Row Expression".</p></li>
+            <li><p>Click button "Save" to write current expression into tree "Row Expression".</p></li>
         </ol>
         <h2>3 Calculate Row Expression</h2>
         <p>When MyBox evaluates the expression:</p>
@@ -159,11 +162,10 @@ else
                     User can choose to pass the rows by true or by false.</p></li>
             <li><p>If the script's value is not true nor false, like errors of script, the row is not passed.</p></li>
         </ol>
+
         <h2>2 Edit Row Filter</h2>
-        <ol>
-            <li><p>Can set maximum rows to take.</p></li>
-            <li><p>Can be saved in tree.</p></li>
-        </ol>
+        <p>Can set maximum rows to take.</p>
+
         <h2>3 Exmaples</h2>
         <table>
             <thead>

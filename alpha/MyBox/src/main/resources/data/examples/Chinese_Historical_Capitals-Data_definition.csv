@@ -1,0 +1,10 @@
+Column name,Type,Length,Width,Display format,Not null,Editable,Primary key,Auto generated,Default value,Color,To invalid value,Decimal scale,Century,Fix two digit years,Description
+# The first row defines attributes of the data. And other rows define columns.
+Chinese Historical Capitals,TableAttributes,1000,,,,,,,,,,2,,,
+Country,String,32672,140,,1,1,0,0,,0x588a05ff,Skip,8,2000,0,
+Capital,String,32672,200,,1,1,0,0,,0x41b80dff,Skip,8,2000,0,
+Longitude,Longitude,,100,,0,1,0,0,,0x7ef3a6ff,Skip,8,2000,0,
+Latitude,Latitude,,100,,0,1,0,0,,0xe6f4e6ff,Skip,8,2000,0,
+Start time,Era,,100,y G,0,1,0,0,,0xfcee67ff,Skip,8,2000,0,
+End time,Era,,100,y G,0,1,0,0,,0xdf56e7ff,Skip,8,2000,0,
+Comments,String,32672,100,,0,1,0,0,,0x9cacbfff,Skip,8,2000,0,

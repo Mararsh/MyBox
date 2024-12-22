@@ -3,13 +3,6 @@ package mara.mybox.data2d.modify;
 import java.util.List;
 import mara.mybox.data.SetValue;
 import mara.mybox.data2d.Data2D_Edit;
-import mara.mybox.db.data.ColumnDefinition;
-import mara.mybox.db.data.ColumnDefinition.InvalidAs;
-import static mara.mybox.db.data.ColumnDefinition.InvalidAs.Empty;
-import static mara.mybox.db.data.ColumnDefinition.InvalidAs.Null;
-import static mara.mybox.db.data.ColumnDefinition.InvalidAs.Skip;
-import static mara.mybox.db.data.ColumnDefinition.InvalidAs.Zero;
-import mara.mybox.db.data.Data2DColumn;
 
 /**
  * @Author Mara
@@ -34,30 +27,6 @@ public class Data2DSetValue extends Data2DModify {
     @Override
     public void handleRow(List<String> row, long index) {
         setValue(row, index);
-    }
-
-    public static String validValue2(Data2DColumn column,
-            String currentValue, String newValue,
-            ColumnDefinition.InvalidAs invalidAs) {
-        try {
-            if (invalidAs == null
-                    || invalidAs == InvalidAs.Use
-                    || column.validValue(newValue)) {
-                return newValue;
-            }
-            switch (invalidAs) {
-                case Zero:
-                    return "0";
-                case Null:
-                    return null;
-                case Empty:
-                    return "";
-                case Skip:
-                    return currentValue;
-            }
-        } catch (Exception e) {
-        }
-        return currentValue;
     }
 
 }

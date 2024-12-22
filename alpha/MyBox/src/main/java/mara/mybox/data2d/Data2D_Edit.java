@@ -307,6 +307,23 @@ public abstract class Data2D_Edit extends Data2D_Filter {
         }
     }
 
+    public long setValue(FxTask task, String colName, String value) {
+        try {
+            List<Integer> cols = new ArrayList<>();
+            cols.add(colOrder(colName));
+            SetValue setValue = new SetValue()
+                    .setType(SetValue.ValueType.Value)
+                    .setParameter(value);
+            return setValue(task, cols, setValue, InvalidAs.Fail);
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            }
+            MyBoxLog.error(e);
+            return -4;
+        }
+    }
+
     public long setValue(FxTask task, List<Integer> cols,
             SetValue setValue, InvalidAs invalidAs) {
         try {

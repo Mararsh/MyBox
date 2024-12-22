@@ -132,16 +132,16 @@
                 <tr><th>     MyBox功能     </th><th>                    数据的属性                     </th></tr>
             </thead>
             <tbody>
-                <tr><td> 网页树         </td><td> 网页代码。 </td></tr>
+                <tr><td> 网页树         </td><td> 网页代码 </td></tr>
                 <tr><td> 文本树       </td><td> 文本                                            </td></tr>
                 <tr><td> 收藏的网址      </td><td> 两个字段：网址、图标                                    </td></tr>
-                <tr><td> 图像的范围      </td><td> 保存图像范围的定义的XML                                    </td></tr>
-                <tr><td> 行过滤        </td><td> 三个字段：JavaScript表达式、是否反值、最多取值数                 </td></tr>
-                <tr><td> 定义数据       </td><td> 保存数据属性和列定义的XML                                </td></tr>
-                <tr><td> SQL        </td><td> 文本：SQL语句                                      </td></tr>
+                <tr><td> 图像的范围      </td><td> 保存图像范围的多个字段                                    </td></tr>
+                <tr><td> 行表达式        </td><td> JavaScript代码                 </td></tr>
+                <tr><td> 数据列       </td><td> 列定义的多个字段                                </td></tr>
+                <tr><td> SQL        </td><td> SQL语句                                      </td></tr>
                 <tr><td> 数学函数       </td><td> 四个字段：函数名、变量名列表、表达式、定义域                        </td></tr>
-                <tr><td> JavaScript </td><td> 文本 ：JavaScript代码                              </td></tr>
-                <tr><td> JShell     </td><td> 文本：Java代码                                     </td></tr>
+                <tr><td> JavaScript </td><td> JavaScript代码                              </td></tr>
+                <tr><td> JShell     </td><td> Java代码                                     </td></tr>
                 <tr><td> JEXL       </td><td> 三个字段：脚本、环境、参数                                 </td></tr>
             </tbody>
         </table>
@@ -180,16 +180,16 @@
             <li>提供示例。</li>
         </ul>
         <p>树形XML可以用来在文件中定位树结点：</p>
-            <ul>
-                    <li>树形XML可以准确保存树形结构。</li>
-                    <li>MyBox利用SAX和堆栈解析树形XML，因此导入的数据量不受内存限制。</li>
-            </ul>
+        <ul>
+            <li>树形XML可以准确保存树形结构。</li>
+            <li>MyBox利用SAX和堆栈解析树形XML，因此导入的数据量不受内存限制。</li>
+        </ul>
         <p>在导入结点时，不能依靠编号来定位结点，因为编号是与应用环境紧密耦合的属性：</p>
-            <ul>
-                    <li>当结点被导出后，它就是“外部数据”，而无法继续与应用环境保持一致。 </li>
-                    <li>在结点被导入时，它的编号可能在导入的环境中缺失或冲突。 </li>
-                    <li>导入的结点内部的层次关系也无法用编号来约束，因为不能保证编号与导入的环境兼容。</li>
-            </ul>
+        <ul>
+            <li>当结点被导出后，它就是“外部数据”，而无法继续与应用环境保持一致。 </li>
+            <li>在结点被导入时，它的编号可能在导入的环境中缺失或冲突。 </li>
+            <li>导入的结点内部的层次关系也无法用编号来约束，因为不能保证编号与导入的环境兼容。</li>
+        </ul>
         <h3>4.5 增删改结点</h3>
         <p>选择一个或多个结点：</p>
         <ul>

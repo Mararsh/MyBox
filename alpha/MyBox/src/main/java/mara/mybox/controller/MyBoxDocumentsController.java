@@ -18,7 +18,6 @@ import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.tools.Data2DConvertTools;
 import static mara.mybox.data2d.tools.Data2DExampleTools.CompatibilityTesting;
 import static mara.mybox.data2d.tools.Data2DExampleTools.DetailedTesting;
-import static mara.mybox.data2d.tools.Data2DExampleTools.MyBoxBaseVerificationList;
 import static mara.mybox.data2d.tools.Data2DExampleTools.TestEnvironment;
 import mara.mybox.db.data.ColorData;
 import mara.mybox.db.data.ColorDataTools;
@@ -169,7 +168,7 @@ public class MyBoxDocumentsController extends BaseTaskController {
 
         if (functionsCheck.isSelected()) {
             showLogs(message("FunctionsList") + "...");
-            FunctionsListController.documents(this, path);
+            FunctionsListController.makeFunctionsList(this, path);
         }
     }
 
@@ -277,31 +276,31 @@ public class MyBoxDocumentsController extends BaseTaskController {
 
     protected boolean testing(String lang) {
         try {
-            DataFileCSV data = TestEnvironment("zh".equals(lang));
+            DataFileCSV data = TestEnvironment(lang);
             data.setFile(FxFileTools.getInternalFile("/data/examples/ST_TestEnvironment_" + lang + ".csv"))
                     .setCharset(Charset.forName("UTF-8")).setDelimiter(",").setHasHeader(true);
             File htmlFile = new File(path, "mybox_TestEnvironment_" + lang + ".html");
             Data2DConvertTools.toHtmlFile(task, data, htmlFile);
             showLogs(htmlFile.getAbsolutePath());
 
-            data = CompatibilityTesting("zh".equals(lang));
+            data = CompatibilityTesting(lang);
             data.setFile(FxFileTools.getInternalFile("/data/examples/ST_CompatibilityTesting_" + lang + ".csv"))
                     .setCharset(Charset.forName("UTF-8")).setDelimiter(",").setHasHeader(true);
             htmlFile = new File(path, "mybox_CompatibilityTesting_" + lang + ".html");
             Data2DConvertTools.toHtmlFile(task, data, htmlFile);
             showLogs(htmlFile.getAbsolutePath());
 
-            data = DetailedTesting("zh".equals(lang));
+            data = DetailedTesting(lang);
             data.setFile(FxFileTools.getInternalFile("/data/examples/ST_DetailedTesting_" + lang + ".csv"))
                     .setCharset(Charset.forName("UTF-8")).setDelimiter(",").setHasHeader(true);
             htmlFile = new File(path, "mybox_DetailedTesting_" + lang + ".html");
             Data2DConvertTools.toHtmlFile(task, data, htmlFile);
             showLogs(htmlFile.getAbsolutePath());
 
-            data = MyBoxBaseVerificationList(this, "zh".equals(lang), false);
-            htmlFile = new File(path, "mybox_BaseVerificationList_" + lang + ".html");
-            Data2DConvertTools.toHtmlFile(task, data, htmlFile);
-            showLogs(htmlFile.getAbsolutePath());
+            Platform.runLater(() -> {
+                FunctionsListController.makeVerificationList(this, path, lang);
+            });
+            Platform.requestNextPulse();
 
             return true;
         } catch (Exception e) {
