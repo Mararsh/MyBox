@@ -21,7 +21,7 @@ import mara.mybox.dev.MyBoxLog;
  */
 public class JShellSnippets extends BaseTablePagesController<JShellSnippet> {
 
-    protected JShellController jShellController;
+    protected ControlDataJShell jShellController;
 
     @FXML
     protected Button deleteSnippetsButton;
@@ -117,17 +117,17 @@ public class JShellSnippets extends BaseTablePagesController<JShellSnippet> {
         deleteSnippetsButton.setDisable(none);
     }
 
-    protected void setParameters(JShellController jShellController) {
+    protected void setParameters(ControlDataJShell jShellController) {
         this.jShellController = jShellController;
     }
 
     @FXML
     public void resetAction() {
-        jShellController.editorController.resetJShell();
+        jShellController.resetJShell();
     }
 
     public JShell jShell() {
-        return jShellController.editorController.jShell;
+        return jShellController.jShell;
     }
 
     @FXML

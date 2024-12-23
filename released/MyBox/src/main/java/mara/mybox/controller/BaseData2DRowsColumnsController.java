@@ -30,8 +30,6 @@ public class BaseData2DRowsColumnsController extends BaseData2DSourceRowsControl
             }
             this.parentController = parent;
 
-            filterController.setParameters(this);
-
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

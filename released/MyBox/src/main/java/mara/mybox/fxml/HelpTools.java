@@ -68,23 +68,23 @@ public class HelpTools {
     public static File aboutColor() {
         try {
             StringTable table = new StringTable(null, message("ResourcesAboutColor"));
-            table.newLinkRow("ICCWebsite", "http://www.color.org");
-            table.newLinkRow("ICCProfileTags", "https://sno.phy.queensu.ca/~phil/exiftool/TagNames/ICC_Profile.html");
-            table.newLinkRow("IccProfilesECI", "http://www.eci.org/en/downloads");
-            table.newLinkRow("IccProfilesAdobe", "https://supportdownloads.adobe.com/detail.jsp?ftpID=3680");
-            table.newLinkRow("ColorSpace", "http://brucelindbloom.com/index.html?WorkingSpaceInfo.html#Specifications");
-            table.newLinkRow("StandardsRGB", "https://www.w3.org/Graphics/Color/sRGB.html");
-            table.newLinkRow("RGBXYZMatrices", "http://brucelindbloom.com/index.html?Eqn_RGB_XYZ_Matrix.html");
-            table.newLinkRow("ColorCalculator", "http://www.easyrgb.com/en/math.php");
+            table.newLinkRow(message("ICCWebsite"), "http://www.color.org");
+            table.newLinkRow(message("ICCProfileTags"), "https://sno.phy.queensu.ca/~phil/exiftool/TagNames/ICC_Profile.html");
+            table.newLinkRow(message("IccProfilesECI"), "http://www.eci.org/en/downloads");
+            table.newLinkRow(message("IccProfilesAdobe"), "https://supportdownloads.adobe.com/detail.jsp?ftpID=3680");
+            table.newLinkRow(message("ColorSpace"), "http://brucelindbloom.com/index.html?WorkingSpaceInfo.html#Specifications");
+            table.newLinkRow(message("StandardsRGB"), "https://www.w3.org/Graphics/Color/sRGB.html");
+            table.newLinkRow(message("RGBXYZMatrices"), "http://brucelindbloom.com/index.html?Eqn_RGB_XYZ_Matrix.html");
+            table.newLinkRow(message("ColorCalculator"), "http://www.easyrgb.com/en/math.php");
             table.newLinkRow("", "http://brucelindbloom.com/index.html?ColorCalculator.html");
             table.newLinkRow("", "http://davengrace.com/cgi-bin/cspace.pl");
-            table.newLinkRow("ColorData", "https://www.rit.edu/science/pocs/useful-data");
+            table.newLinkRow(message("ColorData"), "https://www.rit.edu/science/pocs/useful-data");
             table.newLinkRow("", "http://www.thefullwiki.org/Standard_illuminant");
-            table.newLinkRow("ColorTopics", "https://www.codeproject.com/Articles/1202772/Color-Topics-for-Programmers");
+            table.newLinkRow(message("ColorTopics"), "https://www.codeproject.com/Articles/1202772/Color-Topics-for-Programmers");
             table.newLinkRow("", "https://www.w3.org/TR/css-color-4/#lab-to-rgb");
-            table.newLinkRow("ChromaticAdaptation", "http://brucelindbloom.com/index.html?Eqn_RGB_XYZ_Matrix.html");
-            table.newLinkRow("ChromaticityDiagram", "http://demonstrations.wolfram.com/CIEChromaticityDiagram/");
-            table.newLinkRow("ArtHuesWheel", "https://blog.csdn.net/weixin_44938037/article/details/90599711");
+            table.newLinkRow(message("ChromaticAdaptation"), "http://brucelindbloom.com/index.html?Eqn_RGB_XYZ_Matrix.html");
+            table.newLinkRow(message("ChromaticityDiagram"), "http://demonstrations.wolfram.com/CIEChromaticityDiagram/");
+            table.newLinkRow(message("ArtHuesWheel"), "https://blog.csdn.net/weixin_44938037/article/details/90599711");
             table.newLinkRow("", "https://stackoverflow.com/questions/4945457/conversion-between-rgb-and-ryb-color-spaces");
             table.newLinkRow("", "https://math.stackexchange.com/questions/305395/ryb-and-rgb-color-space-conversion");
             table.newLinkRow("", "http://bahamas10.github.io/ryb/about.html");
@@ -143,26 +143,26 @@ public class HelpTools {
     public static File aboutCoordinateSystem() {
         try {
             StringTable table = new StringTable(null, message("AboutCoordinateSystem"));
-            table.newLinkRow("ChinaCommonGeospatialInformationServices", "https://www.tianditu.gov.cn/");
+            table.newLinkRow(message("ChinaCommonGeospatialInformationServices"), "https://www.tianditu.gov.cn/");
             table.newLinkRow("", "https://www.tianditu.gov.cn/world_coronavirusmap/");
-            table.newLinkRow("ChineseCoordinateSystems", "https://politics.stackexchange.com/questions/40991/why-must-chinese-maps-be-obfuscated");
+            table.newLinkRow(message("ChineseCoordinateSystems"), "https://politics.stackexchange.com/questions/40991/why-must-chinese-maps-be-obfuscated");
             table.newLinkRow("", "https://zhuanlan.zhihu.com/p/62243160");
             table.newLinkRow("", "https://blog.csdn.net/qq_36377037/article/details/86479796");
             table.newLinkRow("", "https://www.zhihu.com/question/31204062?sort=created");
             table.newLinkRow("", "https://blog.csdn.net/ssxueyi/article/details/102622156");
-            table.newLinkRow("EPSGCodes", "http://epsg.io/4490");
+            table.newLinkRow(message("EPSGCodes"), "http://epsg.io/4490");
             table.newLinkRow("", "http://epsg.io/4479");
             table.newLinkRow("", "http://epsg.io/4326");
             table.newLinkRow("", "http://epsg.io/3857");
-            table.newLinkRow("TrackingData", "https://www.microsoft.com/en-us/download/details.aspx?id=52367");
+            table.newLinkRow(message("TrackingData"), "https://www.microsoft.com/en-us/download/details.aspx?id=52367");
             table.newLinkRow("", "https://www.datarepository.movebank.org/discover");
             table.newLinkRow("", "https://sumo.dlr.de/docs/Data/Scenarios/TAPASCologne.html");
             table.newLinkRow("", "https://blog.csdn.net/souvenir001/article/details/52180335");
             table.newLinkRow("", "https://www.cnblogs.com/genghenggao/p/9625511.html");
-            table.newLinkRow("TianDiTuAPI", "http://lbs.tianditu.gov.cn/api/js4.0/guide.html");
-            table.newLinkRow("TianDiTuKey", "https://console.tianditu.gov.cn/api/key");
-            table.newLinkRow("GaoDeAPI", "https://lbs.amap.com/api/javascript-api/summary");
-            table.newLinkRow("GaoDeKey", "https://console.amap.com/dev/index");
+            table.newLinkRow(message("TianDiTuAPI"), "http://lbs.tianditu.gov.cn/api/js4.0/guide.html");
+            table.newLinkRow(message("TianDiTuKey"), "https://console.tianditu.gov.cn/api/key");
+            table.newLinkRow(message("GaoDeAPI"), "https://lbs.amap.com/api/javascript-api/summary");
+            table.newLinkRow(message("GaoDeKey"), "https://console.amap.com/dev/index");
             File htmFile = HtmlWriteTools.writeHtml(table.html());
             return htmFile;
         } catch (Exception e) {
@@ -174,13 +174,13 @@ public class HelpTools {
     public static File aboutMedia() {
         try {
             StringTable table = new StringTable(null, message("AboutMedia"));
-            table.newLinkRow("FFmpegDocuments", "http://ffmpeg.org/documentation.html");
-            table.newLinkRow("FFmpeg wiki", "https://trac.ffmpeg.org");
-            table.newLinkRow("H264VideoEncodingGuide", "http://trac.ffmpeg.org/wiki/Encode/H.264");
-            table.newLinkRow("AACEncodingGuide", "https://trac.ffmpeg.org/wiki/Encode/AAC");
-            table.newLinkRow("UnderstandingRateControlModes", "https://slhck.info/video/2017/03/01/rate-control.html");
-            table.newLinkRow("CRFGuide", "https://slhck.info/video/2017/02/24/crf-guide.html");
-            table.newLinkRow("CapturingDesktopScreenRecording", "http://trac.ffmpeg.org/wiki/Capture/Desktop");
+            table.newLinkRow(message("FFmpegDocuments"), "http://ffmpeg.org/documentation.html");
+            table.newLinkRow(message("FFmpeg wiki"), "https://trac.ffmpeg.org");
+            table.newLinkRow(message("H264VideoEncodingGuide"), "http://trac.ffmpeg.org/wiki/Encode/H.264");
+            table.newLinkRow(message("AACEncodingGuide"), "https://trac.ffmpeg.org/wiki/Encode/AAC");
+            table.newLinkRow(message("UnderstandingRateControlModes"), "https://slhck.info/video/2017/03/01/rate-control.html");
+            table.newLinkRow(message("CRFGuide"), "https://slhck.info/video/2017/02/24/crf-guide.html");
+            table.newLinkRow(message("CapturingDesktopScreenRecording"), "http://trac.ffmpeg.org/wiki/Capture/Desktop");
 
             File htmFile = HtmlWriteTools.writeHtml(table.html());
             return htmFile;
@@ -356,8 +356,6 @@ public class HelpTools {
             s.append("<BODY>\n");
 
             s.append("<H1>").append(message(lang, "DocumentTools")).append("</H1>\n");
-            s.append("    <H3>").append(message(lang, "Notes")).append("</H3>\n");
-            s.append("    <PRE>").append(message(lang, "NotesTips")).append("</PRE>\n");
 
             s.append("    <H3>").append(message(lang, "PdfView")).append("</H3>\n");
             s.append("    <PRE>").append(message(lang, "PdfViewTips")).append("</PRE>\n");
@@ -670,19 +668,19 @@ public class HelpTools {
     }
 
     public static String charsetLink() {
-        return "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/charset/Charset.html";
+        return "https://docs.oracle.com/en/java/javase/23/docs/api/java.base/java/nio/charset/Charset.html";
     }
 
     public static String uriLink() {
-        return "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/net/URI.html";
+        return "https://docs.oracle.com/en/java/javase/23/docs/api/java.base/java/net/URI.html";
     }
 
     public static String urlLink() {
-        return "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/net/URL.html";
+        return "https://docs.oracle.com/en/java/javase/23/docs/api/java.base/java/net/URL.html";
     }
 
     public static String javaFxCssLink() {
-        return "https://openjfx.io/javadoc/21/javafx.graphics/javafx/scene/doc-files/cssref.html";
+        return "https://openjfx.io/javadoc/23/javafx.graphics/javafx/scene/doc-files/cssref.html";
     }
 
     public static String derbyLink() {
@@ -698,23 +696,23 @@ public class HelpTools {
     }
 
     public static String javaAPILink() {
-        return "https://docs.oracle.com/en/java/javase/21/docs/api/index.html";
+        return "https://docs.oracle.com/en/java/javase/23/docs/api/index.html";
     }
 
     public static String javaMathLink() {
-        return "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Math.html";
+        return "https://docs.oracle.com/en/java/javase/23/docs/api/java.base/java/lang/Math.html";
     }
 
     public static String decimalFormatLink() {
-        return "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/text/DecimalFormat.html";
+        return "https://docs.oracle.com/en/java/javase/23/docs/api/java.base/java/text/DecimalFormat.html";
     }
 
     public static String simpleDateFormatLink() {
-        return "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/text/SimpleDateFormat.html";
+        return "https://docs.oracle.com/en/java/javase/23/docs/api/java.base/java/text/SimpleDateFormat.html";
     }
 
     public static String renderingHintsLink() {
-        return "https://docs.oracle.com/en/java/javase/21/docs/api/java.desktop/java/awt/RenderingHints.html";
+        return "https://docs.oracle.com/en/java/javase/23/docs/api/java.desktop/java/awt/RenderingHints.html";
     }
 
     public static String cssSpecificationLink() {
@@ -790,15 +788,15 @@ public class HelpTools {
     }
 
     public static String javaShape2DLink() {
-        return "https://docs.oracle.com/en/java/javase/21/docs/api/java.desktop/java/awt/Shape.html";
+        return "https://docs.oracle.com/en/java/javase/23/docs/api/java.desktop/java/awt/Shape.html";
     }
 
     public static String javafxShape2DLink() {
-        return "https://openjfx.io/javadoc/21/javafx.graphics/javafx/scene/shape/Shape.html";
+        return "https://openjfx.io/javadoc/23/javafx.graphics/javafx/scene/shape/Shape.html";
     }
 
     public static String javafxSVGPathLink() {
-        return "https://openjfx.io/javadoc/21/javafx.graphics/javafx/scene/shape/SVGPath.html";
+        return "https://openjfx.io/javadoc/23/javafx.graphics/javafx/scene/shape/SVGPath.html";
     }
 
     public static String expEnLink() {
@@ -818,7 +816,7 @@ public class HelpTools {
     }
 
     public static String strokeLink() {
-        return "https://openjfx.io/javadoc/21/javafx.graphics/javafx/scene/shape/Shape.html";
+        return "https://openjfx.io/javadoc/23/javafx.graphics/javafx/scene/shape/Shape.html";
     }
 
     public static List<MenuItem> javaHelps() {
@@ -1346,7 +1344,7 @@ public class HelpTools {
             menuItem.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    WebBrowserController.openAddress("https://openjfx.io/javadoc/21/javafx.graphics/javafx/scene/paint/Color.html", true);
+                    WebBrowserController.openAddress("https://openjfx.io/javadoc/23/javafx.graphics/javafx/scene/paint/Color.html", true);
                 }
             });
             items.add(menuItem);
@@ -1355,7 +1353,7 @@ public class HelpTools {
             menuItem.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    WebBrowserController.openAddress("https://docs.oracle.com/en/java/javase/21/docs/api/java.desktop/java/awt/color/ColorSpace.html", true);
+                    WebBrowserController.openAddress("https://docs.oracle.com/en/java/javase/23/docs/api/java.desktop/java/awt/color/ColorSpace.html", true);
                 }
             });
             items.add(menuItem);
@@ -1364,7 +1362,7 @@ public class HelpTools {
             menuItem.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    WebBrowserController.openAddress("https://docs.oracle.com/en/java/javase/21/docs/api/java.desktop/java/awt/image/ColorModel.html", true);
+                    WebBrowserController.openAddress("https://docs.oracle.com/en/java/javase/23/docs/api/java.desktop/java/awt/image/ColorModel.html", true);
                 }
             });
             items.add(menuItem);

@@ -72,6 +72,30 @@ public class TableColor extends BaseTable<ColorData> {
     public static final String Delete
             = "DELETE FROM Color WHERE color_value=?";
 
+    @Override
+    public boolean setValue(ColorData data, String column, Object value) {
+        if (data == null || column == null) {
+            return false;
+        }
+        return data.setValue(column, value);
+    }
+
+    @Override
+    public Object getValue(ColorData data, String column) {
+        if (data == null || column == null) {
+            return null;
+        }
+        return data.getValue(column);
+    }
+
+    @Override
+    public boolean valid(ColorData data) {
+        if (data == null) {
+            return false;
+        }
+        return data.valid();
+    }
+
     public ColorData read(int value) {
         ColorData data = null;
         try (Connection conn = DerbyBase.getConnection()) {
@@ -344,8 +368,7 @@ public class TableColor extends BaseTable<ColorData> {
         if (name == null) {
             return false;
         }
-        try (Connection conn = DerbyBase.getConnection();
-                Statement statement = conn.createStatement()) {
+        try (Connection conn = DerbyBase.getConnection(); Statement statement = conn.createStatement()) {
             ColorData exist = read(conn, value);
             if (exist != null) {
                 String sql = "UPDATE Color SET "
@@ -402,8 +425,7 @@ public class TableColor extends BaseTable<ColorData> {
         if (webList == null || webList.isEmpty()) {
             return count;
         }
-        try (Connection conn = DerbyBase.getConnection();
-                PreparedStatement delete = conn.prepareStatement(Delete)) {
+        try (Connection conn = DerbyBase.getConnection(); PreparedStatement delete = conn.prepareStatement(Delete)) {
             boolean ac = conn.getAutoCommit();
             conn.setAutoCommit(false);
             for (String web : webList) {

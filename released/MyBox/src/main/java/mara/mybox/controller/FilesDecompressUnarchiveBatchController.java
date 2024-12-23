@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import mara.mybox.data.FileUnarchive;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.text.MessageFormat;

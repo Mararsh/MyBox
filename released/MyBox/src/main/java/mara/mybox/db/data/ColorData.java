@@ -53,6 +53,21 @@ public class ColorData extends BaseData {
         vSeparator = " ";
     }
 
+    @Override
+    public boolean valid() {
+        return valid(this);
+    }
+
+    @Override
+    public boolean setValue(String column, Object value) {
+        return setValue(this, column, value);
+    }
+
+    @Override
+    public Object getValue(String column) {
+        return getValue(this, column);
+    }
+
     public ColorData() {
         init();
     }
@@ -319,7 +334,7 @@ public class ColorData extends BaseData {
                     + "CIE-L*uv: " + cieLuv + "\n"
                     + "LCH(uv): " + lchuv
                     + (orderNumner == Float.MAX_VALUE ? ""
-                            : ("\n" + message("OrderSequence") + ": " + orderNumner));
+                            : ("\n" + message("OrderNumber") + ": " + orderNumner));
         }
         return colorDisplay;
     }

@@ -271,7 +271,9 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
         try {
             isSettingValues = true;
             tableData.clear();
-            tableView.getColumns().remove(rowsSelectionColumn != null ? 2 : 1, tableView.getColumns().size());
+            tableView.getColumns().remove(
+                    rowsSelectionColumn != null && tableView.getColumns().contains(rowsSelectionColumn) ? 2 : 1,
+                    tableView.getColumns().size());
             tableView.setItems(tableData);
             isSettingValues = false;
             widthChanged = false;
@@ -512,6 +514,7 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
 
     public void correctDataSize() {
         if (data2D == null || data2D.isTmpData()
+                || data2D.getColumns() == null
                 || data2D.getColsNumber() == data2D.getColumns().size()) {
             return;
         }
@@ -601,7 +604,7 @@ public class BaseData2DTableController extends BaseTablePagesController<List<Str
             if (this instanceof Data2DManufactureController) {
                 menu = new MenuItem(message("DefineData"), StyleTools.getIconImageView("iconMeta.png"));
                 menu.setOnAction((ActionEvent event) -> {
-                    Data2DAttributesController.open((Data2DManufactureController) this);
+                    ((Data2DManufactureController) this).definitonAction();
                 });
                 items.add(menu);
 

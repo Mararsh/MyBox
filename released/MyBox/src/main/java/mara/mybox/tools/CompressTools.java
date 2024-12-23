@@ -31,7 +31,7 @@ import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.apache.commons.compress.compressors.CompressorInputStream;
 import org.apache.commons.compress.compressors.CompressorStreamFactory;
 import org.apache.commons.compress.compressors.lz4.BlockLZ4CompressorInputStream;
-import org.apache.commons.compress.utils.IOUtils;
+import org.apache.commons.io.IOUtils;
 
 /**
  *
@@ -404,7 +404,7 @@ public class CompressTools {
                     continue;
                 }
                 try {
-                    FileNode file = new FileNode();
+                    FileNode file = new FileNode().setSeparator("/");
                     file.setData(entry.getName());
                     file.setModifyTime(entry.getLastModifiedDate().getTime());
                     file.setFileSize(entry.getSize());
@@ -422,12 +422,12 @@ public class CompressTools {
 
     public static Map<String, Object> readEntriesZip(BaseTaskController taskController, File srcFile, String encoding) {
         Map<String, Object> unarchive = new HashMap<>();
-        try (ZipFile zipFile = new ZipFile(srcFile, encoding)) {
+        try (ZipFile zipFile = ZipFile.builder().setFile(srcFile).setCharset(encoding).get()) {
             List<FileNode> fileEntries = new ArrayList();
             Enumeration<ZipArchiveEntry> entries = zipFile.getEntries();
             while (entries.hasMoreElements()) {
                 ZipArchiveEntry entry = entries.nextElement();
-                FileNode file = new FileNode();
+                FileNode file = new FileNode().setSeparator("/");
                 file.setData(entry.getName());
                 file.setModifyTime(entry.getLastModifiedDate().getTime());
                 file.setFileSize(entry.getSize());
@@ -444,11 +444,11 @@ public class CompressTools {
 
     public static Map<String, Object> readEntries7z(BaseTaskController taskController, File srcFile, String encoding) {
         Map<String, Object> unarchive = new HashMap<>();
-        try (SevenZFile sevenZFile = new SevenZFile(srcFile)) {
+        try (SevenZFile sevenZFile = SevenZFile.builder().setFile(srcFile).get()) {
             SevenZArchiveEntry entry;
             List<FileNode> entries = new ArrayList();
             while ((entry = sevenZFile.getNextEntry()) != null) {
-                FileNode file = new FileNode();
+                FileNode file = new FileNode().setSeparator("/");
                 file.setData(entry.getName());
                 file.setModifyTime(entry.getLastModifiedDate().getTime());
                 file.setFileSize(entry.getSize());

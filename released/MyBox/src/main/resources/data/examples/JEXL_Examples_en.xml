@@ -1,0 +1,536 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Node_JEXL>
+<TreeNode>
+    <NodeAttributes>
+        <title>
+            <![CDATA[Examples]]>
+        </title>
+    </NodeAttributes>
+    <TreeNode>
+        <NodeAttributes>
+            <title>
+                <![CDATA[Object]]>
+            </title>
+        </NodeAttributes>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[double]]>
+                </title>
+                <script>
+                    <![CDATA[var d = new('java.lang.Double', 0d);
+return 'minmum of positive=' + d.MIN_VALUE + ' maximum=' + d.MAX_VALUE;]]>
+                </script>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[string]]>
+                </title>
+                <script>
+                    <![CDATA[var s = new('java.lang.String', 'Hello');
+return 'include e:'+ s.contains('e') + '  length:' + s.length();]]>
+                </script>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[time]]>
+                </title>
+                <script>
+                    <![CDATA[var date = new('java.util.Date');
+return 'current time:' + date.toString() + '  value:' + date.getTime();]]>
+                </script>
+            </NodeAttributes>
+        </TreeNode>
+    </TreeNode>
+    <TreeNode>
+        <NodeAttributes>
+            <title>
+                <![CDATA[Math]]>
+            </title>
+        </NodeAttributes>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[e]]>
+                </title>
+                <script>
+                    <![CDATA[Math.E]]>
+                </script>
+                <context>
+                    <![CDATA[jexlContext.set("Math", Math.class);]]>
+                </context>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[pi]]>
+                </title>
+                <script>
+                    <![CDATA[Math.PI]]>
+                </script>
+                <context>
+                    <![CDATA[jexlContext.set("Math", Math.class);]]>
+                </context>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[absoluate]]>
+                </title>
+                <script>
+                    <![CDATA[Math.abs(-5.611)]]>
+                </script>
+                <context>
+                    <![CDATA[jexlContext.set("Math", Math.class);]]>
+                </context>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[square root]]>
+                </title>
+                <script>
+                    <![CDATA[Math.sqrt(9)]]>
+                </script>
+                <context>
+                    <![CDATA[jexlContext.set("Math", Math.class);]]>
+                </context>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[cubic root]]>
+                </title>
+                <script>
+                    <![CDATA[Math.cbrt(27)]]>
+                </script>
+                <context>
+                    <![CDATA[jexlContext.set("Math", Math.class);]]>
+                </context>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[power]]>
+                </title>
+                <script>
+                    <![CDATA[Math.pow(2,5)]]>
+                </script>
+                <context>
+                    <![CDATA[jexlContext.set("Math", Math.class);]]>
+                </context>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[power of e]]>
+                </title>
+                <script>
+                    <![CDATA[Math.exp(2)]]>
+                </script>
+                <context>
+                    <![CDATA[jexlContext.set("Math", Math.class);]]>
+                </context>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[natural logarithm(base e)]]>
+                </title>
+                <script>
+                    <![CDATA[Math.log(6)]]>
+                </script>
+                <context>
+                    <![CDATA[jexlContext.set("Math", Math.class);]]>
+                </context>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[common logarithm(base 10)]]>
+                </title>
+                <script>
+                    <![CDATA[Math.log10(6)]]>
+                </script>
+                <context>
+                    <![CDATA[jexlContext.set("Math", Math.class);]]>
+                </context>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[cosine]]>
+                </title>
+                <script>
+                    <![CDATA[Math.cos(0)]]>
+                </script>
+                <context>
+                    <![CDATA[jexlContext.set("Math", Math.class);]]>
+                </context>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[sine]]>
+                </title>
+                <script>
+                    <![CDATA[Math.sin(9)]]>
+                </script>
+                <context>
+                    <![CDATA[jexlContext.set("Math", Math.class);]]>
+                </context>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[tangent]]>
+                </title>
+                <script>
+                    <![CDATA[Math.tan(5)]]>
+                </script>
+                <context>
+                    <![CDATA[jexlContext.set("Math", Math.class);]]>
+                </context>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[arc tangent]]>
+                </title>
+                <script>
+                    <![CDATA[Math.atan(-7.3)]]>
+                </script>
+                <context>
+                    <![CDATA[jexlContext.set("Math", Math.class);]]>
+                </context>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[arc cosine]]>
+                </title>
+                <script>
+                    <![CDATA[Math.acos(0.5)]]>
+                </script>
+                <context>
+                    <![CDATA[jexlContext.set("Math", Math.class);]]>
+                </context>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[arc sine]]>
+                </title>
+                <script>
+                    <![CDATA[Math.asin(0.3)]]>
+                </script>
+                <context>
+                    <![CDATA[jexlContext.set("Math", Math.class);]]>
+                </context>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[round up]]>
+                </title>
+                <script>
+                    <![CDATA[Math.ceil(4.13)]]>
+                </script>
+                <context>
+                    <![CDATA[jexlContext.set("Math", Math.class);]]>
+                </context>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[round down]]>
+                </title>
+                <script>
+                    <![CDATA[Math.floor(4.67)]]>
+                </script>
+                <context>
+                    <![CDATA[jexlContext.set("Math", Math.class);]]>
+                </context>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[round]]>
+                </title>
+                <script>
+                    <![CDATA[Math.round(4.83)]]>
+                </script>
+                <context>
+                    <![CDATA[jexlContext.set("Math", Math.class);]]>
+                </context>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[random()]]>
+                </title>
+                <script>
+                    <![CDATA[Math.random( )]]>
+                </script>
+                <context>
+                    <![CDATA[jexlContext.set("Math", Math.class);]]>
+                </context>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[maximum]]>
+                </title>
+                <script>
+                    <![CDATA[Math.max(1,-3)]]>
+                </script>
+                <context>
+                    <![CDATA[jexlContext.set("Math", Math.class);]]>
+                </context>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[minimum]]>
+                </title>
+                <script>
+                    <![CDATA[Math.min(1,-3)]]>
+                </script>
+                <context>
+                    <![CDATA[jexlContext.set("Math", Math.class);]]>
+                </context>
+            </NodeAttributes>
+        </TreeNode>
+    </TreeNode>
+    <TreeNode>
+        <NodeAttributes>
+            <title>
+                <![CDATA[Boolean expression]]>
+            </title>
+        </NodeAttributes>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[in array]]>
+                </title>
+                <script>
+                    <![CDATA[var value = 3;
+var array = [1,'2',3, 'hello'];
+value =~ array;]]>
+                </script>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[not in set]]>
+                </title>
+                <script>
+                    <![CDATA[var value = 2;
+var set = {1,'2',3, 'hello'};
+value !~ set;]]>
+                </script>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[match string]]>
+                </title>
+                <script>
+                    <![CDATA[var s = 'abc1233hello';
+var regex = '\\S*3{2,}\\S*';
+var caseInsensitive = true;
+StringTools.match(s,regex,caseInsensitive);]]>
+                </script>
+                <context>
+                    <![CDATA[jexlContext.set("StringTools", mara.mybox.tools.StringTools.class);]]>
+                </context>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[include string]]>
+                </title>
+                <script>
+                    <![CDATA[var s = 'abc1233hello';
+var regex = '3{2}';
+var caseInsensitive = true;
+StringTools.include(s,regex,caseInsensitive);]]>
+                </script>
+                <context>
+                    <![CDATA[jexlContext.set("StringTools", mara.mybox.tools.StringTools.class);]]>
+                </context>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[and/or/not]]>
+                </title>
+                <script>
+                    <![CDATA[var a = 5;
+var b = 2;
+'hello'.startsWith('hell') and ( a < 9 or b >= 6  ) and not ( a == b );]]>
+                </script>
+            </NodeAttributes>
+        </TreeNode>
+    </TreeNode>
+    <TreeNode>
+        <NodeAttributes>
+            <title>
+                <![CDATA[Numeric operations]]>
+            </title>
+        </NodeAttributes>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[decimal scale]]>
+                </title>
+                <script>
+                    <![CDATA[var d = 52362.18903;
+var scale = 2;
+DoubleTools.scale(d, scale);]]>
+                </script>
+                <context>
+                    <![CDATA[jexlContext.set("DoubleTools", mara.mybox.tools.DoubleTools.class);]]>
+                </context>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[format]]>
+                </title>
+                <script>
+                    <![CDATA[var d = 52362.18903;
+var scale = 2;
+DoubleTools.format(d, scale);]]>
+                </script>
+                <context>
+                    <![CDATA[jexlContext.set("DoubleTools", mara.mybox.tools.DoubleTools.class);]]>
+                </context>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[percentage]]>
+                </title>
+                <script>
+                    <![CDATA[var number = 37;
+var total = 518;
+var scale = 2;
+DoubleTools.percentage(number, total, scale);]]>
+                </script>
+                <context>
+                    <![CDATA[jexlContext.set("DoubleTools", mara.mybox.tools.DoubleTools.class);]]>
+                </context>
+            </NodeAttributes>
+        </TreeNode>
+    </TreeNode>
+    <TreeNode>
+        <NodeAttributes>
+            <title>
+                <![CDATA[Date]]>
+            </title>
+        </NodeAttributes>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[now]]>
+                </title>
+                <script>
+                    <![CDATA[DateTools.nowString();]]>
+                </script>
+                <context>
+                    <![CDATA[jexlContext.set("DateTools", mara.mybox.tools.DateTools.class);]]>
+                </context>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[format]]>
+                </title>
+                <script>
+                    <![CDATA[var date = new('java.util.Date');
+var format = 'yyyy-MM-dd HH:mm:ss.SSS';
+DateTools.datetimeToString(date, format);]]>
+                </script>
+                <context>
+                    <![CDATA[jexlContext.set("DateTools", mara.mybox.tools.DateTools.class);]]>
+                </context>
+            </NodeAttributes>
+        </TreeNode>
+    </TreeNode>
+    <TreeNode>
+        <NodeAttributes>
+            <title>
+                <![CDATA[Statement]]>
+            </title>
+        </NodeAttributes>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[loop]]>
+                </title>
+                <script>
+                    <![CDATA[var array = [ 'A', 'B', 'C', 'D' ];
+var arrayString = '';
+for (var i : 1 .. size (array)) {
+    if (empty (arrayString)) {
+         arrayString = array[i-1];
+    } else {
+         arrayString += ' , ' + array[i-1];
+    }
+}
+return arrayString;]]>
+                </script>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[function]]>
+                </title>
+                <script>
+                    <![CDATA[var circleArea = function(r) {
+    Math.PI * r * r 
+}
+var r = 9.42;
+return circleArea(r);]]>
+                </script>
+                <context>
+                    <![CDATA[jexlContext.set("Math", Math.class);]]>
+                </context>
+            </NodeAttributes>
+        </TreeNode>
+    </TreeNode>
+</TreeNode>
+</Node_JEXL>

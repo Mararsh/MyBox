@@ -1,0 +1,1459 @@
+<HTML>
+    <HEAD>
+        <title>Math Function</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <style type="text/css">
+                          table { max-width:95%; margin : 10px;  border-style: solid; border-width:2px; border-collapse: collapse;} 
+              th, td { border-style: solid; border-width:1px; padding: 8px; border-collapse: collapse;} 
+              th { font-weight:bold;  text-align:center;} 
+              tr { height: 1.2em;  } 
+              .center { text-align:center;  max-width:95%; } 
+              .valueBox { border-style: solid; border-width:1px; border-color:black; padding: 5px; border-radius:5px;} 
+              .boldText { font-weight:bold;  } 
+ body { margin:0 auto; width: 900px; } 
+              img { max-width: 900px; } 
+              .valueText { color:#2e598a;  } 
+
+        </style>
+    </HEAD>
+    <BODY>
+        <H2>Math Function</H2>
+ <script>
+    function nodeClicked(id) {
+      var obj = document.getElementById(id);
+      var objv = obj.style.display;
+      if (objv == 'none') {
+        obj.style.display = 'block';
+      } else {
+        obj.style.display = 'none';
+      }
+    }
+    function showClass(className, show) {
+      var nodes = document.getElementsByClassName(className);  　
+      if ( show) {
+           for (var i = 0 ; i < nodes.length; i++) {
+              nodes[i].style.display = '';
+           }
+       } else {
+           for (var i = 0 ; i < nodes.length; i++) {
+              nodes[i].style.display = 'none';
+           }
+       }
+    }
+  </script>
+
+<DIV>
+<DIV>
+    <INPUT type="checkbox" checked onclick="showClass('TreeNode', this.checked);">Unfold</INPUT>
+    <INPUT type="checkbox" checked onclick="showClass('SerialNumber', this.checked);">Hierarchy number</INPUT>
+    <INPUT type="checkbox" checked onclick="showClass('NodeTag', this.checked);">Tags</INPUT>
+    <INPUT type="checkbox" checked onclick="showClass('nodeValue', this.checked);">Values</INPUT>
+</DIV>
+<HR>
+    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item1')"><SPAN class="SerialNumber">&nbsp;&nbsp;</SPAN>Math Function</a>
+    </DIV>
+    <DIV class="TreeNode" id='item1'>
+        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item2')"><SPAN class="SerialNumber">1&nbsp;&nbsp;</SPAN>Examples</a>
+        </DIV>
+    <DIV class="TreeNode" id='item2'>
+            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item3')"><SPAN class="SerialNumber">1.1&nbsp;&nbsp;</SPAN>Constants</a>
+            </DIV>
+    <DIV class="TreeNode" id='item3'>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.1&nbsp;&nbsp;</SPAN>pi
+                </DIV>
+                <DIV class="nodeValue"><DIV style="padding: 0 0 0 120px;"><DIV class="valueBox">
+                        <DIV align="center">
+            <TABLE>
+                <TR><TD>Expression</TD><TD><CODE>Math.PI</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item4'>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.2&nbsp;&nbsp;</SPAN>Euler number
+                </DIV>
+                <DIV class="nodeValue"><DIV style="padding: 0 0 0 120px;"><DIV class="valueBox">
+                        <DIV align="center">
+            <TABLE>
+                <TR><TD>Expression</TD><TD><CODE>Math.E</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item5'>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.3&nbsp;&nbsp;</SPAN>natural logarithm of 2
+                </DIV>
+                <DIV class="nodeValue"><DIV style="padding: 0 0 0 120px;"><DIV class="valueBox">
+                        <DIV align="center">
+            <TABLE>
+                <TR><TD>Expression</TD><TD><CODE>Math.LN2</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item6'>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.4&nbsp;&nbsp;</SPAN>natural logarithm of 10
+                </DIV>
+                <DIV class="nodeValue"><DIV style="padding: 0 0 0 120px;"><DIV class="valueBox">
+                        <DIV align="center">
+            <TABLE>
+                <TR><TD>Expression</TD><TD><CODE>Math.LN10</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item7'>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.5&nbsp;&nbsp;</SPAN>base-2 logarithm of e
+                </DIV>
+                <DIV class="nodeValue"><DIV style="padding: 0 0 0 120px;"><DIV class="valueBox">
+                        <DIV align="center">
+            <TABLE>
+                <TR><TD>Expression</TD><TD><CODE>Math.LOG2E</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item8'>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.6&nbsp;&nbsp;</SPAN>base-10 logarithm of e
+                </DIV>
+                <DIV class="nodeValue"><DIV style="padding: 0 0 0 120px;"><DIV class="valueBox">
+                        <DIV align="center">
+            <TABLE>
+                <TR><TD>Expression</TD><TD><CODE>Math.LOG10E</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item9'>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.7&nbsp;&nbsp;</SPAN>square root of 2
+                </DIV>
+                <DIV class="nodeValue"><DIV style="padding: 0 0 0 120px;"><DIV class="valueBox">
+                        <DIV align="center">
+            <TABLE>
+                <TR><TD>Expression</TD><TD><CODE>Math.SQRT2</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item10'>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.8&nbsp;&nbsp;</SPAN>square root of 0.5
+                </DIV>
+                <DIV class="nodeValue"><DIV style="padding: 0 0 0 120px;"><DIV class="valueBox">
+                        <DIV align="center">
+            <TABLE>
+                <TR><TD>Expression</TD><TD><CODE>Math.SQRT1_2</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item11'>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.9&nbsp;&nbsp;</SPAN>Random
+                </DIV>
+                <DIV class="nodeValue"><DIV style="padding: 0 0 0 120px;"><DIV class="valueBox">
+                        <DIV align="center">
+            <TABLE>
+                <TR><TD>Expression</TD><TD><CODE>Math.random()</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item12'>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.10&nbsp;&nbsp;</SPAN>largest positive finite value of the number type
+                </DIV>
+                <DIV class="nodeValue"><DIV style="padding: 0 0 0 120px;"><DIV class="valueBox">
+                        <DIV align="center">
+            <TABLE>
+                <TR><TD>Expression</TD><TD><CODE>Number.MAX_VALUE</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item13'>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.11&nbsp;&nbsp;</SPAN>smallest positive nonzero value of the number type
+                </DIV>
+                <DIV class="nodeValue"><DIV style="padding: 0 0 0 120px;"><DIV class="valueBox">
+                        <DIV align="center">
+            <TABLE>
+                <TR><TD>Expression</TD><TD><CODE>Number.MIN_VALUE</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item14'>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.12&nbsp;&nbsp;</SPAN>positive infinite value
+                </DIV>
+                <DIV class="nodeValue"><DIV style="padding: 0 0 0 120px;"><DIV class="valueBox">
+                        <DIV align="center">
+            <TABLE>
+                <TR><TD>Expression</TD><TD><CODE>Number.POSITIVE_INFINITY</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item15'>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.13&nbsp;&nbsp;</SPAN>negative infinite value
+                </DIV>
+                <DIV class="nodeValue"><DIV style="padding: 0 0 0 120px;"><DIV class="valueBox">
+                        <DIV align="center">
+            <TABLE>
+                <TR><TD>Expression</TD><TD><CODE>Number.NEGATIVE_INFINITY</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item16'>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.14&nbsp;&nbsp;</SPAN>non-numeric
+                </DIV>
+                <DIV class="nodeValue"><DIV style="padding: 0 0 0 120px;"><DIV class="valueBox">
+                        <DIV align="center">
+            <TABLE>
+                <TR><TD>Expression</TD><TD><CODE>Number.NaN</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item17'>
+    </DIV>
+    </DIV>
+            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item18')"><SPAN class="SerialNumber">1.2&nbsp;&nbsp;</SPAN>Unary Function</a>
+            </DIV>
+    <DIV class="TreeNode" id='item18'>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.1&nbsp;&nbsp;</SPAN>absoluate
+                </DIV>
+                <DIV class="nodeValue"><DIV style="padding: 0 0 0 120px;"><DIV class="valueBox">
+                        <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>Math.abs(x)</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item19'>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item20')"><SPAN class="SerialNumber">1.2.2&nbsp;&nbsp;</SPAN>Trigonometry</a>
+                </DIV>
+    <DIV class="TreeNode" id='item20'>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.2.1&nbsp;&nbsp;</SPAN>convert angle to radian
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>angle</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>angle  * Math.PI / 180</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item21'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.2.2&nbsp;&nbsp;</SPAN>convert radian to angle
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>radian</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>radian  * 180 / Math.PI</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item22'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.2.3&nbsp;&nbsp;</SPAN>cosine_radian
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>radian</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>Math.cos(radian)</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item23'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.2.4&nbsp;&nbsp;</SPAN>sine_radian
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>radian</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>Math.sin(radian)</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item24'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.2.5&nbsp;&nbsp;</SPAN>tangent_radian
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>radian</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>Math.tan(radian)</CODE></TD></TR>
+                <TR><TD>Function domain</TD><TD><CODE>(  radian  - Math.PI / 2 ) % Math.PI != 0</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item25'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.2.6&nbsp;&nbsp;</SPAN>arcCosine_radian
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>Math.acos(x)</CODE></TD></TR>
+                <TR><TD>Function domain</TD><TD><CODE>x >= -1 && x <= 1</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item26'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.2.7&nbsp;&nbsp;</SPAN>arcSine_radian
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>Math.asin(x)</CODE></TD></TR>
+                <TR><TD>Function domain</TD><TD><CODE>x >= -1 && x <= 1</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item27'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.2.8&nbsp;&nbsp;</SPAN>arcTangent_radian
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>Math.atan(x)</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item28'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.2.9&nbsp;&nbsp;</SPAN>cosine_angle
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>angle</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>Math.cos( angle  * Math.PI / 180)</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item29'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.2.10&nbsp;&nbsp;</SPAN>sine_angle
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>angle</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>Math.sin( angle  * Math.PI / 180)</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item30'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.2.11&nbsp;&nbsp;</SPAN>tangent_angle
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>angle</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>Math.tan( angle  * Math.PI / 180)</CODE></TD></TR>
+                <TR><TD>Function domain</TD><TD><CODE>(  angle  - 90 ) % 180 != 0</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item31'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.2.12&nbsp;&nbsp;</SPAN>arcCosine_  angle
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>Math.acos(x) * 180 / Math.PI</CODE></TD></TR>
+                <TR><TD>Function domain</TD><TD><CODE>x >= -1 && x <= 1</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item32'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.2.13&nbsp;&nbsp;</SPAN>arcSine_angle
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>Math.asin(x) * 180 / Math.PI</CODE></TD></TR>
+                <TR><TD>Function domain</TD><TD><CODE>x >= -1 && x <= 1</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item33'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.2.14&nbsp;&nbsp;</SPAN>arcTangent_angle
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>Math.atan(x) * 180 / Math.PI</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item34'>
+    </DIV>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item35')"><SPAN class="SerialNumber">1.2.3&nbsp;&nbsp;</SPAN>Geometry</a>
+                </DIV>
+    <DIV class="TreeNode" id='item35'>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.3.1&nbsp;&nbsp;</SPAN>area of circle - radius
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>radius</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>Math.PI * radius * radius</CODE></TD></TR>
+                <TR><TD>Function domain</TD><TD><CODE>radius > 0</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item36'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.3.2&nbsp;&nbsp;</SPAN>area of circle - diameter
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>diameter</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>var r = diameter / 2.0;
+Math.PI * r * r</CODE></TD></TR>
+                <TR><TD>Function domain</TD><TD><CODE>diameter > 0</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item37'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.3.3&nbsp;&nbsp;</SPAN>area of sphere - radius
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>radius</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>4 * Math.PI * radius * radius</CODE></TD></TR>
+                <TR><TD>Function domain</TD><TD><CODE>radius > 0</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item38'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.3.4&nbsp;&nbsp;</SPAN>area of sphere - diameter
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>diameter</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>Math.PI * diameter * diameter</CODE></TD></TR>
+                <TR><TD>Function domain</TD><TD><CODE>diameter > 0</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item39'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.3.5&nbsp;&nbsp;</SPAN>volume of sphere - radius
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>radius</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>4 * Math.PI * Math.pow(radius,3) / 3</CODE></TD></TR>
+                <TR><TD>Function domain</TD><TD><CODE>radius > 0</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item40'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.3.6&nbsp;&nbsp;</SPAN>volume of sphere - diameter
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>diameter</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>Math.PI * Math.pow(diameter,3) / 6</CODE></TD></TR>
+                <TR><TD>Function domain</TD><TD><CODE>diameter > 0</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item41'>
+    </DIV>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item42')"><SPAN class="SerialNumber">1.2.4&nbsp;&nbsp;</SPAN>Power Function</a>
+                </DIV>
+    <DIV class="TreeNode" id='item42'>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.4.1&nbsp;&nbsp;</SPAN>square
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>Math.pow(x,2)</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item43'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.4.2&nbsp;&nbsp;</SPAN>cubic
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>Math.pow(x,3)</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item44'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.4.3&nbsp;&nbsp;</SPAN>quartic
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>Math.pow(x,4)</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item45'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.4.4&nbsp;&nbsp;</SPAN>quintic
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>Math.pow(x,5)</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item46'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.4.5&nbsp;&nbsp;</SPAN>square_root
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>Math.sqrt(x)</CODE></TD></TR>
+                <TR><TD>Function domain</TD><TD><CODE>x >= 0</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item47'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.4.6&nbsp;&nbsp;</SPAN>cubic_root
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>Math.pow(x,1/3)</CODE></TD></TR>
+                <TR><TD>Function domain</TD><TD><CODE>x >= 0</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item48'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.4.7&nbsp;&nbsp;</SPAN>quartic_root
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>Math.pow(x,1/4)</CODE></TD></TR>
+                <TR><TD>Function domain</TD><TD><CODE>x >= 0</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item49'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.4.8&nbsp;&nbsp;</SPAN>quintic_root
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>Math.pow(x,1/5)</CODE></TD></TR>
+                <TR><TD>Function domain</TD><TD><CODE>x >= 0</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item50'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.4.9&nbsp;&nbsp;</SPAN>reciprocal
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>Math.pow(x,-1)</CODE></TD></TR>
+                <TR><TD>Function domain</TD><TD><CODE>x != 0</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item51'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.4.10&nbsp;&nbsp;</SPAN>quadratic_reciprocal
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>Math.pow(x,-2)</CODE></TD></TR>
+                <TR><TD>Function domain</TD><TD><CODE>x != 0</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item52'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.4.11&nbsp;&nbsp;</SPAN>cubic_reciprocal
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>Math.pow(x,-3)</CODE></TD></TR>
+                <TR><TD>Function domain</TD><TD><CODE>x != 0</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item53'>
+    </DIV>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item54')"><SPAN class="SerialNumber">1.2.5&nbsp;&nbsp;</SPAN>Exponential Function</a>
+                </DIV>
+    <DIV class="TreeNode" id='item54'>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.5.1&nbsp;&nbsp;</SPAN>exponential_of_e
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>Math.exp(x + 5)</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item55'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.5.2&nbsp;&nbsp;</SPAN>exponential_base_greater_than_1
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>Math.pow(5.9,x)</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item56'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.5.3&nbsp;&nbsp;</SPAN>exponential_base_less_than_1
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>Math.pow(0.7,x)</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item57'>
+    </DIV>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item58')"><SPAN class="SerialNumber">1.2.6&nbsp;&nbsp;</SPAN>Logarithmic Function</a>
+                </DIV>
+    <DIV class="TreeNode" id='item58'>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.6.1&nbsp;&nbsp;</SPAN>natural_logarithm
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>Math.log(x)</CODE></TD></TR>
+                <TR><TD>Function domain</TD><TD><CODE>x > 0</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item59'>
+    </DIV>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item60')"><SPAN class="SerialNumber">1.2.7&nbsp;&nbsp;</SPAN>Intercept Function</a>
+                </DIV>
+    <DIV class="TreeNode" id='item60'>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.7.1&nbsp;&nbsp;</SPAN>round_up
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>Math.ceil(x)</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item61'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.7.2&nbsp;&nbsp;</SPAN>round_down
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>Math.floor(x)</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item62'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.7.3&nbsp;&nbsp;</SPAN>round
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>Math.round(x)</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item63'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.7.4&nbsp;&nbsp;</SPAN>trunc
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>Math.trunc(x)</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item64'>
+    </DIV>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item65')"><SPAN class="SerialNumber">1.2.8&nbsp;&nbsp;</SPAN>Unitary Polynomial</a>
+                </DIV>
+    <DIV class="TreeNode" id='item65'>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.8.1&nbsp;&nbsp;</SPAN>unitary_linear_function
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>5 * x + 9</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item66'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.8.2&nbsp;&nbsp;</SPAN>unitary_quadratic_function
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>5 * Math.pow(x,2)  + 3 * x + 9</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item67'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.8.3&nbsp;&nbsp;</SPAN>unitary_cubic_function
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>6 * Math.pow(x,3)  + 5 * Math.pow(x,2)  + 3 * x + 9</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item68'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.8.4&nbsp;&nbsp;</SPAN>unitary_quartic_function
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>7 * Math.pow(x,4)  + 6 * Math.pow(x,3)  + 5 * Math.pow(x,2)  + 3 * x + 9</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item69'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.8.5&nbsp;&nbsp;</SPAN>unitary_quintic_function
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>8 * Math.pow(x,5)  +7 * Math.pow(x,4)  + 6 * Math.pow(x,3)  + 5 * Math.pow(x,2)  + 3 * x + 9</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item70'>
+    </DIV>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item71')"><SPAN class="SerialNumber">1.2.9&nbsp;&nbsp;</SPAN>piecewise values</a>
+                </DIV>
+    <DIV class="TreeNode" id='item71'>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.9.1&nbsp;&nbsp;</SPAN>direct values
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>if ( x > 1 ) 
+    6 * x - 5.9;
+else if ( x == 1)
+    38; 
+else 
+    Math.pow(x, 2) + 2.7;</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item72'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.9.2&nbsp;&nbsp;</SPAN>define functions
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>function f1(x) {
+    var multiply = 1;
+    for (var i = 1; i <= Math.abs(x); i++) {
+        multiply = multiply * i;
+    }
+    return multiply ;
+}
+function f2(x) {
+    var sum = 0;
+    for (var i = 1; i > x; i--) {
+        sum += f1(i);
+    }
+    return sum;
+}
+if ( x > 1 ) 
+    f1(x);
+else if ( x == 1)
+    38; 
+else 
+    f2(x);</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item73'>
+    </DIV>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item74')"><SPAN class="SerialNumber">1.2.10&nbsp;&nbsp;</SPAN>Numerical Analysis</a>
+                </DIV>
+    <DIV class="TreeNode" id='item74'>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.10.1&nbsp;&nbsp;</SPAN>Unary Normal probability density function
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>var mean = 1; 
+var stdDeviation = 2; 
+var dx = x - mean;
+var expP = - dx * dx / ( 2 * stdDeviation * stdDeviation );
+var div = Math.sqrt(2 * Math.PI) * stdDeviation;
+Math.exp(expP) / div</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item75'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.10.2&nbsp;&nbsp;</SPAN>Unary Standard normal probability density function
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>Math.exp(- x * x / 2) / Math.sqrt(2 * Math.PI)</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item76'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.10.3&nbsp;&nbsp;</SPAN>sigmoid
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>1 / (1 + Math.exp(-x))</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item77'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.10.4&nbsp;&nbsp;</SPAN>derivative of sigmoid
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>var s = 1 / (1 + Math.exp(-x));
+s * (1 - s);</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item78'>
+    </DIV>
+    </DIV>
+    </DIV>
+            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item79')"><SPAN class="SerialNumber">1.3&nbsp;&nbsp;</SPAN>Binary Function</a>
+            </DIV>
+    <DIV class="TreeNode" id='item79'>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item80')"><SPAN class="SerialNumber">1.3.1&nbsp;&nbsp;</SPAN>Univariate Polynomial</a>
+                </DIV>
+    <DIV class="TreeNode" id='item80'>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.3.1.1&nbsp;&nbsp;</SPAN>univariate linear polynomial
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>x,y</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>5 * x + 9 * y - 4</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item81'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.3.1.2&nbsp;&nbsp;</SPAN>univariate quadratic polynomial
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>x,y</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>5 * x * x  + 3 * y * y + y + 9</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item82'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.3.1.3&nbsp;&nbsp;</SPAN>univariate cubic polynomial
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>x,y</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>6 * Math.pow(x,3)  + 5 * Math.pow(y,2)  + 3 * y + 9</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item83'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.3.1.4&nbsp;&nbsp;</SPAN>univariate quartic polynomial
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>x,y</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>7 * Math.pow(x,4)  + 6 * Math.pow(y,3)  + 5 * Math.pow(x,2)  + 3 * y + 9</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item84'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.3.1.5&nbsp;&nbsp;</SPAN>univariate quintic polynomial
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>x,y</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>8 * Math.pow(x,5)  +7 * Math.pow(y,5)  + 6 * Math.pow(x,3)  + 5 * Math.pow(y,2)  + 3 * x + 9</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item85'>
+    </DIV>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item86')"><SPAN class="SerialNumber">1.3.2&nbsp;&nbsp;</SPAN>Geometry</a>
+                </DIV>
+    <DIV class="TreeNode" id='item86'>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.3.2.1&nbsp;&nbsp;</SPAN>volume of cylinder
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>radius,height</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>Math.PI * radius * radius * height</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item87'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.3.2.2&nbsp;&nbsp;</SPAN>area of ellipse - half_axle
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>long_half_axle,short_half_axle</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>Math.PI * long_half_axle * short_half_axle</CODE></TD></TR>
+                <TR><TD>Function domain</TD><TD><CODE>long_half_axle > 0 && short_half_axle > 0</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item88'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.3.2.3&nbsp;&nbsp;</SPAN>area of ellipse - axle
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>long_axle,short_axle</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>Math.PI * long_axle * short_axle / 4</CODE></TD></TR>
+                <TR><TD>Function domain</TD><TD><CODE>long_axle > 0 && short_axle > 0</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item89'>
+    </DIV>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.3.3&nbsp;&nbsp;</SPAN>Quadric Surface
+                </DIV>
+    <DIV class="TreeNode" id='item90'>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item91')"><SPAN class="SerialNumber">1.3.4&nbsp;&nbsp;</SPAN>Trigonometry</a>
+                </DIV>
+    <DIV class="TreeNode" id='item91'>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.3.4.1&nbsp;&nbsp;</SPAN>univariate linear trigonometry
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>x,y</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>5 * Math.sin(x) + 3 * y + 9</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item92'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.3.4.2&nbsp;&nbsp;</SPAN>univariate quadratic trigonometry
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>x,y</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>5 * Math.cos(x * x) + 3 * Math.sin(y) * Math.sin(y) + 9</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item93'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.3.4.3&nbsp;&nbsp;</SPAN>univariate cubic trigonometry
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>x,y</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>5 * Math.tan(x * x * x) + 3 * Math.cos(x) * Math.sin(y) + 9</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item94'>
+    </DIV>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item95')"><SPAN class="SerialNumber">1.3.5&nbsp;&nbsp;</SPAN>Exponential Function</a>
+                </DIV>
+    <DIV class="TreeNode" id='item95'>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.3.5.1&nbsp;&nbsp;</SPAN>univariate exponential
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>x,y</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>5 * Math.exp(x - 2 * y) + 3 * x - y + 9</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item96'>
+    </DIV>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item97')"><SPAN class="SerialNumber">1.3.6&nbsp;&nbsp;</SPAN>Logarithmic Function</a>
+                </DIV>
+    <DIV class="TreeNode" id='item97'>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.3.6.1&nbsp;&nbsp;</SPAN>univariate logarithmic
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>x,y</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>5 * Math.log(x  * y) - 9</CODE></TD></TR>
+                <TR><TD>Function domain</TD><TD><CODE>x * y > 0</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item98'>
+    </DIV>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item99')"><SPAN class="SerialNumber">1.3.7&nbsp;&nbsp;</SPAN>Numerical Analysis</a>
+                </DIV>
+    <DIV class="TreeNode" id='item99'>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.3.7.1&nbsp;&nbsp;</SPAN>Univariate Normal probability density function
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>x,y</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>var xMean = 1;
+var xStd = 2; 
+var yMean = 2;
+var yStd = 1; 
+var coefficient = 0.2; 
+var dx = x - xMean;
+var dy = y - yMean;
+var xyStd = xStd * yStd;
+var dco = 1 - coefficient * coefficient;
+var px = dx * dx / ( xStd * xStd );
+var py = dy * dy / ( yStd * yStd );
+var pxy = 2 * coefficient * dx * dy / xyStd;
+var expP = - (px + py - pxy) / ( 2 * dco)
+var div = 2 * Math.PI * xyStd * Math.sqrt(dco);
+Math.exp(expP) / div</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item100'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.3.7.2&nbsp;&nbsp;</SPAN>Univariate Standard normal probability density function
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>x,y</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>var xMean = 1;
+var xStd = 2; 
+var yMean = 2;
+var yStd = 1; 
+var dx = x - xMean;
+var dy = y - yMean;
+var xyStd = xStd * yStd;
+var px = dx * dx / ( xStd * xStd );
+var py = dy * dy / ( yStd * yStd );
+var expP = - (px + py) / 2
+var div = 2 * Math.PI * xyStd;
+Math.exp(expP) / div</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item101'>
+    </DIV>
+    </DIV>
+    </DIV>
+            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item102')"><SPAN class="SerialNumber">1.4&nbsp;&nbsp;</SPAN>Ternary Function</a>
+            </DIV>
+    <DIV class="TreeNode" id='item102'>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item103')"><SPAN class="SerialNumber">1.4.1&nbsp;&nbsp;</SPAN>Trigonometry</a>
+                </DIV>
+    <DIV class="TreeNode" id='item103'>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.4.1.1&nbsp;&nbsp;</SPAN>law of sines - for angle(radian)
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>angleA_radian ,edge_a,edge_b</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>var sinB = Math.sin(angleA_radian ) * edge_b / edge_a;
+Math.asin(sinB)</CODE></TD></TR>
+                <TR><TD>Function domain</TD><TD><CODE>angleA_radian  > 0 && edge_a > 0 && edge_b > 0</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item104'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.4.1.2&nbsp;&nbsp;</SPAN>law of sines - for angle(angle)
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>angleA_angle ,edge_a,edge_b</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>var sinA = Math.sin(angleA_angle  * Math.PI / 180);
+var sinB = sinA * edge_b / edge_a;
+Math.asin(sinB) * 180 / Math.PI</CODE></TD></TR>
+                <TR><TD>Function domain</TD><TD><CODE>angleA_angle  > 0 && edge_a > 0 && edge_b > 0</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item105'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.4.1.3&nbsp;&nbsp;</SPAN>law of sines - for edge(radian)
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>angleA_radian ,edge_a,angleB_radian</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>edge_a * Math.sin(angleB_radian ) / Math.sin(angleA_radian )</CODE></TD></TR>
+                <TR><TD>Function domain</TD><TD><CODE>angleA_radian  > 0 && angleB_radian  > 0 && edge_a > 0</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item106'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.4.1.4&nbsp;&nbsp;</SPAN>law of sines - for edge(angle)
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>angleA_angle ,edge_a,angleB_angle</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>var sinA = Math.sin(angleA_angle  * Math.PI / 180);
+var sinB = Math.sin(angleB_angle  * Math.PI / 180);
+edge_a * sinB / sinA</CODE></TD></TR>
+                <TR><TD>Function domain</TD><TD><CODE>angleA_angle  > 0 && angleB_angle  > 0 && edge_a > 0</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item107'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.4.1.5&nbsp;&nbsp;</SPAN>law of cosines - for edge(radian)
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>angleA_radian ,edge_b,edge_c</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>Math.sqrt(edge_b * edge_b + edge_c * edge_c - 2 * edge_b * edge_c * Math.cos(angleA_radian ))</CODE></TD></TR>
+                <TR><TD>Function domain</TD><TD><CODE>angleA_radian  > 0 && edge_b > 0 && edge_c > 0</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item108'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.4.1.6&nbsp;&nbsp;</SPAN>law of cosines - for edge(angle)
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>angleA_angle ,edge_b,edge_c</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>var cosA = Math.cos(angleA_angle  * Math.PI / 180);
+Math.sqrt(edge_b * edge_b + edge_c * edge_c - 2 * edge_b * edge_c * cosA)</CODE></TD></TR>
+                <TR><TD>Function domain</TD><TD><CODE>angleA_angle  > 0 && edge_b > 0 && edge_c > 0</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item109'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.4.1.7&nbsp;&nbsp;</SPAN>law of cosines - for angle(radian)
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>edge_a,edge_b,edge_c</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>var cosA = (edge_b * edge_b + edge_c * edge_c - edge_a * edge_a) / (2 * edge_b * edge_c);
+Math.acos( cosA )</CODE></TD></TR>
+                <TR><TD>Function domain</TD><TD><CODE>edge_a > 0 && edge_b > 0 && edge_c > 0</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item110'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.4.1.8&nbsp;&nbsp;</SPAN>law of cosines - for angle(angle)
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>edge_a,edge_b,edge_c</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>var cosA = (edge_b * edge_b + edge_c * edge_c - edge_a * edge_a) / (2 * edge_b * edge_c);
+Math.acos( cosA ) * 180 / Math.PI</CODE></TD></TR>
+                <TR><TD>Function domain</TD><TD><CODE>edge_a > 0 && edge_b > 0 && edge_c > 0</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item111'>
+    </DIV>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item112')"><SPAN class="SerialNumber">1.4.2&nbsp;&nbsp;</SPAN>Geometry</a>
+                </DIV>
+    <DIV class="TreeNode" id='item112'>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.4.2.1&nbsp;&nbsp;</SPAN>area of ellipsoid - half_axie
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>half_axie_a,half_axie_b,half_axie_c</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>4 * Math.PI * ( half_axie_a * half_axie_b + half_axie_a * half_axie_c + half_axie_b * half_axie_c )/ 3</CODE></TD></TR>
+                <TR><TD>Function domain</TD><TD><CODE>half_axie_a > 0 && half_axie_b > 0 && half_axie_c > 0</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item113'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.4.2.2&nbsp;&nbsp;</SPAN>area of ellipsoid - axie
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>axie_a,axie_b,axie_c</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>Math.PI * ( axie_a * axie_b + axie_a * axie_c + axie_b * axie_c )/ 3</CODE></TD></TR>
+                <TR><TD>Function domain</TD><TD><CODE>axie_a > 0 && axie_b > 0 && _axie_c > 0</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item114'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.4.2.3&nbsp;&nbsp;</SPAN>volumn of ellipsoid - half_axie
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>half_axie_a,half_axie_b,half_axie_c</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>4 * Math.PI * half_axie_a * half_axie_b * half_axie_c / 3</CODE></TD></TR>
+                <TR><TD>Function domain</TD><TD><CODE>half_axie_a > 0 && half_axie_b > 0 && half_axie_c > 0</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item115'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.4.2.4&nbsp;&nbsp;</SPAN>volumn of ellipsoid - axie
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>axie_a,axie_b,axie_c</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>Math.PI * axie_a * axie_b * axie_c / 6</CODE></TD></TR>
+                <TR><TD>Function domain</TD><TD><CODE>axie_a > 0 && axie_b > 0 && axie_c > 0</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item116'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.4.2.5&nbsp;&nbsp;</SPAN>area of cube
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>length,width,height</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>2 * ( length * width + length * height + width * height )</CODE></TD></TR>
+                <TR><TD>Function domain</TD><TD><CODE>length > 0 && width > 0 && height > 0</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item117'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.4.2.6&nbsp;&nbsp;</SPAN>volumn of cube
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>Variables</TD><TD><CODE>length,width,height</CODE></TD></TR>
+                <TR><TD>Expression</TD><TD><CODE>length * width * height</CODE></TD></TR>
+                <TR><TD>Function domain</TD><TD><CODE>length > 0 && width > 0 && height > 0</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item118'>
+    </DIV>
+    </DIV>
+    </DIV>
+    </DIV>
+    </DIV>
+    </BODY>
+</HTML>

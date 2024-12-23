@@ -31,10 +31,10 @@ import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.StyleTools;
-import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.interactive.action.PDActionGoTo;
 import org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination.PDPageDestination;
@@ -322,7 +322,7 @@ public class PdfViewController extends PdfViewController_Html {
 
     @Override
     protected Image readPageImage() {
-        try (PDDocument doc = PDDocument.load(sourceFile, password, AppVariables.PdfMemUsage)) {
+        try (PDDocument doc = Loader.loadPDF(sourceFile, password)) {
             PDFRenderer renderer = new PDFRenderer(doc);
             BufferedImage bufferedImage = renderer.renderImageWithDPI(frameIndex, dpi,
                     transparentBackgroundCheck.isSelected() ? ImageType.ARGB : ImageType.RGB);
@@ -366,7 +366,7 @@ public class PdfViewController extends PdfViewController_Html {
 
             @Override
             protected boolean handle() {
-                try (PDDocument doc = PDDocument.load(sourceFile, password, AppVariables.PdfMemUsage)) {
+                try (PDDocument doc = Loader.loadPDF(sourceFile, password)) {
                     PDDocumentOutline outline = doc.getDocumentCatalog().getDocumentOutline();
                     if (outline != null) {
                         outlineRoot = new TreeItem<>(message("Bookmarks"));
@@ -441,7 +441,7 @@ public class PdfViewController extends PdfViewController_Html {
 
     @Override
     protected boolean loadThumbs(List<Integer> missed) {
-        try (PDDocument doc = PDDocument.load(sourceFile, password, AppVariables.PdfMemUsage)) {
+        try (PDDocument doc = Loader.loadPDF(sourceFile, password)) {
             PDFRenderer renderer = new PDFRenderer(doc);
             for (Integer index : missed) {
                 if (thumbTask == null || thumbTask.isCancelled()) {

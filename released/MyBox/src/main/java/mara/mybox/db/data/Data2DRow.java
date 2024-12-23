@@ -1,9 +1,8 @@
 package mara.mybox.db.data;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import mara.mybox.dev.MyBoxLog;
 
 /**
  * @Author Mara
@@ -12,22 +11,55 @@ import java.util.Map;
  */
 public class Data2DRow extends BaseData {
 
-    public List<String> toStrings(List<Data2DColumn> columns) {
-        List<String> row = new ArrayList<>();
-        for (Data2DColumn column : columns) {
-            Object value = getColumnValue(column.getColumnName());
-            row.add(column.toString(value));
-        }
-        return row;
+    protected Map<String, Object> values;
+
+    @Override
+    public boolean valid() {
+        return true;
     }
 
-    public Map<String, String> toNameValues(List<Data2DColumn> columns) {
-        Map<String, String> values = new HashMap<>();
-        for (Data2DColumn column : columns) {
-            Object value = getColumnValue(column.getColumnName());
-            values.put(column.getColumnName(), column.toString(value));
+    @Override
+    public boolean setValue(String column, Object value) {
+        try {
+            if (values == null) {
+                values = new HashMap<>();
+            }
+            values.put(column, value);
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+            return false;
         }
+    }
+
+    @Override
+    public Object getValue(String column) {
+        try {
+            return values.get(column);
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+            return null;
+        }
+    }
+
+    public boolean isEmpty() {
+        try {
+            return values == null || values.keySet().isEmpty();
+        } catch (Exception e) {
+//            MyBoxLog.debug(e);
+            return true;
+        }
+    }
+
+    /*
+        get/set
+     */
+    public Map<String, Object> getValues() {
         return values;
+    }
+
+    public void setValues(Map<String, Object> values) {
+        this.values = values;
     }
 
 }

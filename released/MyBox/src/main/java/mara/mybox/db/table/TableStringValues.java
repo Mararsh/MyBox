@@ -42,6 +42,30 @@ public class TableStringValues extends BaseTable<StringValues> {
         return this;
     }
 
+    @Override
+    public boolean setValue(StringValues data, String column, Object value) {
+        if (data == null || column == null) {
+            return false;
+        }
+        return data.setValue(column, value);
+    }
+
+    @Override
+    public Object getValue(StringValues data, String column) {
+        if (data == null || column == null) {
+            return null;
+        }
+        return data.getValue(column);
+    }
+
+    @Override
+    public boolean valid(StringValues data) {
+        if (data == null) {
+            return false;
+        }
+        return data.valid();
+    }
+
     public static List<String> read(String name) {
         List<String> records = new ArrayList<>();
         if (name == null || name.trim().isEmpty()) {
@@ -186,7 +210,12 @@ public class TableStringValues extends BaseTable<StringValues> {
             return false;
         }
         try (Connection conn = DerbyBase.getConnection()) {
-            return add(conn, name, value);
+            conn.setAutoCommit(false);
+            if (!add(conn, name, value)) {
+                return false;
+            }
+            conn.commit();
+            return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
             return false;
@@ -198,6 +227,7 @@ public class TableStringValues extends BaseTable<StringValues> {
                 || value == null || value.isBlank()) {
             return false;
         }
+
         try (Statement statement = conn.createStatement()) {
             boolean existed = false;
             String sql = " SELECT * FROM String_Values WHERE "

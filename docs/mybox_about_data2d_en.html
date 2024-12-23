@@ -42,13 +42,15 @@
         <h3>4.1 Page data in html - read only</h3>
         <ul>
             <li>Display data of current page in html.</li>
-            <li>Can read data while can not modify data.</li>
-            <li>Can view data definition.</li>
+            <li>Can not edit data.</li>
+            <li>Can modify or delete data in batch with menu function.</li>
+            <li>Can modify data definition.</li>
         </ul>
         <h3>4.2 Table - edit</h3>
         <ul>
             <li>Display data of current page in table.</li>
-            <li>Can modify data.</li>
+            <li>Can edit data.</li>
+            <li>Can modify or delete data in batch with menu function.</li>
             <li>Can modify data definition.</li>
         </ul>
         <p>Except for texts file, multiple lines can be edited and saved to string values:</p>
@@ -64,6 +66,7 @@
         <ul>
             <li>Display data of current page in CSV format.</li>
             <li>Can modify data.</li>
+            <li>Can modify or delete data in batch with menu function.</li>
             <li>Can modify data definition.</li>
             <li>Click button "Delimiter" to reload data and apply different delimiter. This delimiter does not affect source file.</li>
             <li>If a value contains delimiter or line break, the value should be surrounded by quotes.</li>
@@ -71,25 +74,36 @@
         <h3>4.4 Page data in texts - read only</h3>
         <ul>
             <li>Display data of current page in texts format.</li>
-            <li>Can read data while can not modify data.</li>
-            <li>Can view data definition.</li>
+            <li>Can not edit data.</li>
+            <li>Can modify or delete data in batch with menu function.</li>
+            <li>Can modify data definition.</li>
             <li>Click button "Delimiter" to reload data and apply different delimiter. This delimiter does not affect source file.</li>
         </ul>
 
         <h2>5 Define Data</h2>
-        <p>In mode "Table - edit" or mode "CSV - edit", click button "Define Data".</p>
+        <p>Click button or menu "Define Data".</p>
 
         <h3>5.1 Interface of Columns Management</h3>
         <p>Under tab "Columns", add/delete/change columns in table view:</p>
         <ol>
             <li><p>Column names should not be null nor duplicated.</p></li>
             <li><p>Click table cell to edit value directly.</p></li>
-            <li><p>Select one row and click button "Edit" to open edit window.</p></li>
+            <li><p>Double click column, or select column and click button "Edit", to open eidt-column window:</p>
+                <ul>
+                    <li>Click button "OK" to save modification of current column.</li>
+                    <li>Click button "Recover" to load original definition of the column.</li>
+                    <li>Click button "Select" to copy column definition from tree "Data Column".</li>
+                    <li>Click button "Save" to write current column definition in tree "Data Column".</li>
+                </ul>
+            </li>
             <li><p>Can rename all columns with sequence numbers.</p></li>
             <li><p>Can set random colors.</p></li>
             <li><p>Can adjust orders of columns.</p></li>
             <li><p>Click button "OK" to apply modifications of columns to "Table" of current data.</p></li>
             <li><p>Click button "Recover" to discard modifications of columns and pick data from "Table" of current data.</p></li>
+            <li><p>Click button "Select" copy column definitions from tree "Data Column".</p></li>
+            <li><p>Click button "Import" to load column definitions from XML file.</p></li>
+            <li><p>Click button "Export" to write column definitions as file. Supported formats include: XML/JSON/CSV/Excel.</p></li>
         </ol>
 
         <h3>5.2 Types of Columns</h3>
@@ -116,9 +130,8 @@
 
         <h3>5.4 Handle Invalid Values</h3>
         <ol>
-            <li><p>How columns handle invalid values, including: skip, count as empty, and count as zero.</p></li>
-            <li><p>In some context, "count as empty" equals to "skip".</p></li>
-            <li><p>This attribute is only used for display or calculation. When data are inputted/edited, invalid values are not handled automatically.</p></li>
+            <li><p>How columns handle invalid values, including: Use, Skip, Count as empty, and Count as zero.</p></li>
+            <li><p>Some data manufacture may set how to handle invalid values, which overrides column definition.</p></li>
         </ol>
 
         <h3>5.5 Color of Column</h3>
@@ -133,32 +146,73 @@
             <li value="1"><p>The verified objects can be either rows in current page or all rows.</p></li>
         </ol>
         <ol start="2">
-            <li><p>Following are checked:</p></li>
-        </ol>
-        <ul>
-            <ul>
-                <li><p>If a column is defined as "not null", then null values are invalid for this column.</p></li>
-                <li><p>If a value is not satisfied with the column type, then the value is invalid.</p></li>
-            </ul>
-        </ul>
-        <ul>
-            <ul>
-                <li><p>Click button "Verify data in current page".</p></li>
-                <li><p>Option: Verify values automatically when save data.</p></li>
-            </ul>
-        </ul>
-        <ol start="3">
-            <li>
-                <p>Options:</p>
+            <li><p>Following are checked:</p>
                 <ul>
-                    <li>
-                        <p>Validate data when edit.</p></li>
-                    <li>
-                        <p>Validate data when save.</p></li>
+                    <li><p>If a column is defined as "not null", then null values are invalid for this column.</p></li>
+                    <li><p>If a value is not satisfied with the column type, then the value is invalid.</p></li>
                 </ul>
             </li>
         </ol>
-
+        <ol start="3">
+            <li>
+                <p>Handle invalid value when edit:</p>
+                <ul>
+                    <li>
+                        <p>Reject invalid value, and recover original value.</p>
+                    </li>
+                    <li>
+                        <p>To data file, there is option to not reject invalid value and it is accepted while shown in abnormal color.</p>
+                    </li>
+                    <li>
+                        <p>To matrix or database table, invalid value is always rejected.</p>
+                    </li>
+                </ul>
+            </li>
+        </ol>
+        <ol start="4">
+            <li>
+                <p>Handle invalid value when save:</p>
+                <ul>
+                    <li>
+                        <p>Reject invalid value, and fail to save.</p>
+                    </li>
+                    <li>
+                        <p>To data file, there is option to not reject invalid value and it is written in file.</p>
+                    </li>
+                    <li>
+                        <p>To matrix or database table, invalid value is always rejected.</p>
+                    </li>
+                </ul>
+            </li>
+        </ol>
+        <ol start="5">
+            <li>
+                <p>Handle invalid value in other operations:</p>
+                <ul>
+                    <li>
+                        <p>Options to choice: Fail, Use, Skip, Count as null, Count as zero.</p>
+                    </li>
+                    <li>
+                        <p>If select "Fail", operation fails when invalid value is found.</p>
+                    </li>
+                    <li>
+                        <p>If select "Use", invalid value is taken and applied in operation.</p>
+                    </li>
+                    <li>
+                        <p>If select "Skip", involved column or row is ignored and does not take part in operation.</p>
+                    </li>
+                    <li>
+                        <p>If select "Count as null", invalid value is replaced with null and take part in operation.</p>
+                    </li>
+                    <li>
+                        <p>If select "Count as zero", invalid value is replaced with zero and take part in operation.</p>
+                    </li>
+                    <li>
+                        <p>In some context, "Count as null" equals to "Skip".</p>
+                    </li>
+                </ul>
+            </li>
+        </ol>
 
         <h2>7 Edit Data</h2>
         <p>Principle of column usages is "Most tolerability and least manufacture".</p>
@@ -169,17 +223,9 @@
         <h3>7.2 Display Data</h3>
         <ol>
             <li><p>Parse values as columns' types.</p></li>
-            <li><p>Handle invalid values as columns' definitions.</p></li>
             <li><p>Rewrite values as columns' formats.</p></li>
-            <li><p>Displayed values may be different from current actual values.</p></li>
-            <li><p>Example, Column type is Double and value "abc" is read:</p></li>
+            <li><p>Displayed invalid values in abnormal color.</p></li>
         </ol>
-        <ul>
-            <ul>
-                <li><p>If count invalid as zero, then display it as zero(actual value is still "abc").</p></li>
-                <li><p>If skip or count invalid as empty, then display it as "abc".</p></li>
-            </ul>
-        </ul>
 
         <h3>7.3 Controls for editing</h3>
         <ul>
@@ -193,53 +239,48 @@
         <ol>
             <li><p>Click editable cell to start editing.</p></li>
             <li><p>When editing is started, its original value is displayed, while both type and format of column are ignored.</p></li>
-            <li><p>While user inputs and modifies the value, value in the edit control is checked by column type:</p></li>
+            <li><p>While user inputs and modifies the value, value in the edit control is checked by column type:</p>
+                <ul>
+                    <li><p>If value is invalid, then edit contorl is displayed in abnormal color.</p></li>
+                    <li><p>If value is valid, then edit control is displayed in normal color.</p></li>
+                    <li><p>The value is always kept as what user has inputted.</p></li>
+                </ul>
+            </li>
         </ol>
-        <ul>
-            <ul>
-                <li><p>If value is invalid, then edit contorl is displayed in abnormal color.</p></li>
-                <li><p>If value is valid, then edit control is displayed in normal color.</p></li>
-                <li><p>The value is always kept as what user has inputted.</p></li>
-            </ul>
-        </ul>
         <ol start="4">
             <li><p>Press key ENTER to commit modification, and press key ESC to cancel editing.</p></li>
             <li><p>Option: Auto-commit modification when cell loses focus(click other control).</p></li>
-            <li><p>When modification is committed, value in the edit control is checked:</p></li>
+            <li><p>When modification is committed, value in the edit control is checked:</p>
+                <ul>
+                    <li><p>If value is not changed, then no checking of column type nor saving.</p></li>
+                    <li><p>If value is changed, then check the changed value as column type:</p>
+                        <ul>
+                            <li><p>To invalid value, if select "Reject invalid value when edit", then restore and display original value; 
+                                    if not select rejection, then commit modification and display it in abnormal color.</p></li>
+                            <li><p>To valid value, submit and save as new value, and then dsiplay saved value as type and format of the column.</p></li>
+                        </ul></li>
+                </ul>
+            </li>
         </ol>
-        <ul>
-            <ul>
-                <li><p>If value is not changed, then no checking of column type nor saving.</p></li>
-                <li><p>If value is changed, then check the changed value as column type:</p>
-                    <ul>
-                        <li><p>To invalid value, discard it, and then restore and display original value.</p></li>
-                        <li><p>To valid value, submit and save as new value, and then dsiplay saved value as type and format of the column.</p></li>
-                    </ul></li>
-            </ul>
-        </ul>
         <ol start="7">
-            <li><p>Example, column type is Double, count invalid as empty, and decimal scale is 2. When read "abc":</p></li>
+            <li><p>Example, column type is Double, select "Reject invalid value when edit", and decimal scale is 2. When read "abc":</p>
+                <ul>
+                    <li><p>The data cell is displayed as "abc" in abnormal color.</p></li>
+                    <li><p>User modifies it as "abc123":</p>
+                        <ul>
+                            <li><p>While user inputs the change, the text field is always in abnormal color.</p></li>
+                            <li><p>After user clicks Enter or other control, this data cell comes back as "abc" in abnormal color.</p></li>
+                        </ul></li>
+                    <li><p>User modifies it as "123.4567":</p>
+                        <ul>
+                            <li><p>While user inputs the change, the text field is always in normal color.</p></li>
+                            <li><p>After user clicks Enter or other control, this data cell is saved as "123.4567" and displayed as "123.46".</p></li>
+                        </ul></li>
+                </ul>
+            </li>
         </ol>
-        <ul>
-            <ul>
-                <li><p>The data cell is displayed as "abc".</p></li>
-                <li><p>User modifies it as "abc123":</p>
-                    <ul>
-                        <li><p>While user inputs the change, the text field is always in abnormal color.</p></li>
-                        <li><p>After user clicks Enter or other control, this data cell comes back as "abc" in normal color.</p></li>
-                    </ul></li>
-                <li><p>User modifies it as "123.4567":</p>
-                    <ul>
-                        <li><p>While user inputs the change, the text field is always in normal color.</p></li>
-                        <li><p>After user clicks Enter or other control, this data cell is saved as "123.4567" and displayed as "123.46".</p></li>
-                    </ul></li>
-            </ul>
-        </ul>
         <ol start="8">
             <li><p>Other data cells are not affected. That is, data cells are always in originial values if they are not changed.</p></li>
-        </ol>
-        <ol start="9">
-            <li><p>Option: Validate data when edit. That is, data are not validated when edit if this option is not selected.</p></li>
         </ol>
 
         <h2>8 Save Data</h2>
@@ -256,10 +297,10 @@
 
         <h3>8.2 Save Data File</h3>
         <p>Values are written into file of CSV/Texts/Excel as strings.</p>
-        <p>Option: Validate data when save. That is, data are not validated when save if this option is not selected.</p>
+        <p>Option "Reject invalid value when edit".</p>
 
         <h3>8.3 Save Database Table</h3>
-        <p>Values in database table are always validated.</p>
+        <p>Invalid values are always rejected for database table.</p>
         <p>Values are written into database table as nearest types:</p>
         <table width="322" border="1"  cellpadding="4" cellspacing="0">
             <colgroup>
@@ -332,7 +373,7 @@
         <p>Notice: derby does not support negative date, so Ear is saved as long.</p>
 
         <h3>8.4 Save Matrix</h3>
-        <p>Values in matrix are always validated.</p>
+        <p>Invalid values are always rejected for matrix.</p>
         <p>All values in Matrix are saved as Double.</p>
 
 
@@ -343,17 +384,15 @@
             <li><p>If value conversion fails, then invalid value is handled as definition of column.</p></li>
             <li><p>Calculation itself can define how to handle invalid values. Definition of calculation priors to definition of column.</p></li>
             <li><p>Both column and calcultion can define decimal scale. Definition of calculation priors to definition of column.</p></li>
-            <li><p>Example, Column type is String, and descriptive statistic is running against it:</p></li>
+            <li><p>Example, Column type is String, and descriptive statistic is running against it:</p>
+                <ul>
+                    <li><p>Try to convert each value as double.</p></li>
+                    <li><p>If "count invalid value as zero", then invalid values are calculated into "Count", and participate in calculations of "Mean" and "Sum".</p></li>
+                    <li><p>If "skip invalid value", then invalid values are not involved in any calculation.</p></li>
+                    <li><p>If "count invalid value as empty", then invalid values cause results of all calculations as invalid(Double.NaN).</p></li>
+                </ul>
+            </li>
         </ol>
-        <ul>
-            <ul>
-                <li><p>Try to convert each value as double.</p></li>
-                <li><p>If "count invalid value as zero", then invalid values are calculated into "Count", and participate in calculations of "Mean" and "Sum".</p></li>
-                <li><p>If "skip invalid value", then invalid values are not involved in any calculation.</p></li>
-                <li><p>If "count invalid value as empty", then invalid values cause results of all calculations as invalid(Double.NaN).</p></li>
-            </ul>
-        </ul>
-
 
         <h2>10 Sort Data</h2>
         <ol>

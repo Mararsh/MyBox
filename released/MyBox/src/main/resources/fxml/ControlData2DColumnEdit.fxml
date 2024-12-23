@@ -58,7 +58,7 @@ License:    Apache License Version 2.0
                 <RadioButton fx:id="longitudeRadio" minWidth="-Infinity" mnemonicParsing="false" text="%Longitude" toggleGroup="$typeGroup" />
                 <RadioButton fx:id="latitudeRadio" minWidth="-Infinity" mnemonicParsing="false" text="%Latitude" toggleGroup="$typeGroup" />
                 <RadioButton fx:id="enumRadio" layoutX="58.0" layoutY="28.0" minWidth="-Infinity" mnemonicParsing="false" text="%Enumeration" toggleGroup="$typeGroup" />
-            <RadioButton fx:id="enumEditableRadio" layoutX="10.0" layoutY="32.0" minWidth="-Infinity" mnemonicParsing="false" text="%EnumerationEditable" toggleGroup="$typeGroup" />
+                <RadioButton fx:id="enumEditableRadio" layoutX="10.0" layoutY="32.0" minWidth="-Infinity" mnemonicParsing="false" text="%EnumerationEditable" toggleGroup="$typeGroup" />
                 <RadioButton fx:id="colorRadio" layoutX="205.0" layoutY="28.0" minWidth="-Infinity" mnemonicParsing="false" text="%Color" toggleGroup="$typeGroup" />
                 <RadioButton fx:id="clobRadio" layoutX="260.0" layoutY="32.0" minWidth="-Infinity" mnemonicParsing="false" text="%Clob" toggleGroup="$typeGroup" />
             </children>
@@ -115,7 +115,7 @@ License:    Apache License Version 2.0
                             </padding>
                         </Label>
                         <TextField fx:id="lengthInput" prefWidth="100.0" text="32672" />
-                        <Label fx:id="lengthLabel" text="(&lt;= 32672)" />
+                        <Label  text="(&lt;= 32672)" />
                     </children>
                 </FlowPane>
             </children>
@@ -123,15 +123,15 @@ License:    Apache License Version 2.0
         <FlowPane fx:id="invalidPane" hgap="2.0" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWrapLength="300.0" vgap="2.0">
             <children>
                 <Label text="%ToInvalidValue" />
-                <RadioButton fx:id="keepNonnumericRadio" mnemonicParsing="false" selected="true" text="%Keep">
+                <RadioButton fx:id="useInvalidRadio" mnemonicParsing="false" selected="true" text="%Use">
                     <toggleGroup>
-                        <ToggleGroup fx:id="nonnumericGroup" />
+                        <ToggleGroup fx:id="invalidAsGroup" />
                     </toggleGroup>
                 </RadioButton> 
-                <RadioButton fx:id="skipNonnumericRadio" mnemonicParsing="false" text="%Skip" toggleGroup="$nonnumericGroup" />
-                <RadioButton fx:id="zeroNonnumericRadio" mnemonicParsing="false" text="%CountAsZero" toggleGroup="$nonnumericGroup" />
-                <RadioButton fx:id="nullNonnumericRadio" mnemonicParsing="false" text="%CountAsNull" toggleGroup="$nonnumericGroup" />
-                <RadioButton fx:id="emptyNonnumericRadio" mnemonicParsing="false" text="%CountAsEmpty" toggleGroup="$nonnumericGroup" />
+                <RadioButton fx:id="skipInvalidRadio" mnemonicParsing="false" text="%Skip" toggleGroup="$invalidAsGroup" />
+                <RadioButton fx:id="zeroInvalidRadio" mnemonicParsing="false" text="%CountAsZero" toggleGroup="$invalidAsGroup" />
+                <RadioButton fx:id="nullInvalidRadio" mnemonicParsing="false" text="%CountAsNull" toggleGroup="$invalidAsGroup" />
+                <RadioButton fx:id="emptyInvalidRadio" mnemonicParsing="false" text="%CountAsEmpty" toggleGroup="$invalidAsGroup" />
             </children>
         </FlowPane>
         <FlowPane hgap="2.0" vgap="2.0">

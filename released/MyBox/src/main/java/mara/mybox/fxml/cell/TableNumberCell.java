@@ -5,6 +5,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.text.Text;
 import javafx.util.Callback;
 import mara.mybox.tools.StringTools;
+import mara.mybox.value.AppValues;
 
 /**
  * @Author Mara
@@ -14,6 +15,12 @@ import mara.mybox.tools.StringTools;
 public class TableNumberCell<T> extends TableCell<T, Long>
         implements Callback<TableColumn<T, Long>, TableCell<T, Long>> {
 
+    private boolean notPermitNegative = false;
+
+    public TableNumberCell(boolean notPermitNegative) {
+        this.notPermitNegative = notPermitNegative;
+    }
+
     @Override
     public TableCell<T, Long> call(TableColumn<T, Long> param) {
         TableCell<T, Long> cell = new TableCell<T, Long>() {
@@ -22,7 +29,9 @@ public class TableNumberCell<T> extends TableCell<T, Long>
             @Override
             protected void updateItem(final Long item, boolean empty) {
                 super.updateItem(item, empty);
-                if (empty || item == null || item <= 0) {
+                if (empty || item == null
+                        || item == AppValues.InvalidLong
+                        || (notPermitNegative && item < 0)) {
                     setText(null);
                     setGraphic(null);
                     return;

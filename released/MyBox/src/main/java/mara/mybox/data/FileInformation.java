@@ -170,7 +170,11 @@ public class FileInformation {
 
     public String getSuffix() {
         if (file != null) {
-            return FileNameTools.ext(file.getName());
+            if (file.isDirectory()) {
+                return null;
+            } else {
+                return FileNameTools.ext(file.getName());
+            }
         } else if (data != null) {
             return FileNameTools.ext(data);
         } else {

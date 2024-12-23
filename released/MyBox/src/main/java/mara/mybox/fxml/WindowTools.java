@@ -12,7 +12,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Popup;
@@ -29,6 +28,7 @@ import mara.mybox.db.DerbyBase;
 import mara.mybox.db.DerbyBase.DerbyStatus;
 import mara.mybox.db.table.TableUserConf;
 import mara.mybox.dev.MyBoxLog;
+import static mara.mybox.value.AppValues.AppIcon;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.UserConfig;
 
@@ -39,7 +39,6 @@ import mara.mybox.value.UserConfig;
  */
 public class WindowTools {
 
-    public static final Image AppIcon = new Image("img/MyBox.png");
 
     /*
      * make stage
@@ -75,9 +74,10 @@ public class WindowTools {
         }
     }
 
+    // this works for top level pane which is not part of other node
     public static BaseController initController(BaseController controller, Scene scene, Stage stage, StageStyle stageStyle) {
         try {
-            if (controller == null) {
+            if (controller == null || scene == null || stage == null) {
                 return null;
             }
             controller.setMyScene(scene);
@@ -144,10 +144,6 @@ public class WindowTools {
         return initController(fxmlLoader, newStage(), null);
     }
 
-    public static BaseController initController(BaseController controller, Scene scene) {
-        return initController(controller, scene, newStage(), null);
-    }
-
     public static BaseController loadFxml(String fxml) {
         try {
             if (fxml == null) {
@@ -172,6 +168,7 @@ public class WindowTools {
         }
     }
 
+    // the pane may be part of other node
     public static BaseController loadURL(URL url) {
         try {
             if (url == null) {
@@ -186,7 +183,7 @@ public class WindowTools {
             Scene scene = new Scene(pane);
 
             BaseController controller = (BaseController) fxmlLoader.getController();
-            controller.setMyScene(scene);
+            controller.setMyScene(scene); // the final scene may be changed
             controller.refreshStyle();
             return controller;
         } catch (Exception e) {
@@ -295,7 +292,7 @@ public class WindowTools {
     public static BaseController branchStage(BaseController parent, String newFxml) {
         try {
             if (parent == null) {
-                return null;
+                return openStage(newFxml);
             }
             BaseController c = openStage(parent.getMyWindow(), newFxml);
             if (c == null) {
@@ -628,6 +625,12 @@ public class WindowTools {
         } catch (Exception e) {
         }
         return null;
+    }
+
+    public static boolean isRunning(BaseController controller) {
+        return controller != null
+                && controller.getMyStage() != null
+                && controller.getMyStage().isShowing();
     }
 
 }

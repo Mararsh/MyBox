@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Node_SQL>
+<TreeNode>
+    <NodeAttributes>
+        <title>
+            <![CDATA[Examples]]>
+        </title>
+    </NodeAttributes>
+    <TreeNode>
+        <NodeAttributes>
+            <title>
+                <![CDATA[Query meta of database]]>
+            </title>
+        </NodeAttributes>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[Names of user tables]]>
+                </title>
+                <statement>
+                    <![CDATA[SELECT TABLENAME FROM SYS.SYSTABLES WHERE TABLETYPE='T']]>
+                </statement>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[Information of user tables]]>
+                </title>
+                <statement>
+                    <![CDATA[SELECT * FROM SYS.SYSTABLES WHERE TABLETYPE='T']]>
+                </statement>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[Names of system tables]]>
+                </title>
+                <statement>
+                    <![CDATA[SELECT TABLENAME FROM SYS.SYSTABLES WHERE TABLETYPE='S']]>
+                </statement>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[Information of system tables]]>
+                </title>
+                <statement>
+                    <![CDATA[SELECT * FROM SYS.SYSTABLES WHERE TABLETYPE='S']]>
+                </statement>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[Names of views]]>
+                </title>
+                <statement>
+                    <![CDATA[SELECT TABLENAME FROM SYS.SYSTABLES WHERE TABLETYPE='V']]>
+                </statement>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[Information of views]]>
+                </title>
+                <statement>
+                    <![CDATA[SELECT * FROM SYS.SYSTABLES WHERE TABLETYPE='V']]>
+                </statement>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[Names and types of table columns]]>
+                </title>
+                <statement>
+                    <![CDATA[SELECT columnname, columndatatype FROM SYS.SYSTABLES t, SYS.SYSCOLUMNS c where t.TABLEID=c.REFERENCEID AND tablename='TREE' order by columnnumber]]>
+                </statement>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[Information of table columns]]>
+                </title>
+                <statement>
+                    <![CDATA[SELECT c.* FROM SYS.SYSTABLES t, SYS.SYSCOLUMNS c where t.TABLEID=c.REFERENCEID AND tablename='TREE' order by columnnumber]]>
+                </statement>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[Names of table indices]]>
+                </title>
+                <statement>
+                    <![CDATA[SELECT CONGLOMERATENAME FROM SYS.SYSTABLES t, SYS.SYSCONGLOMERATES c where t.TABLEID=c.TABLEID AND tablename='TREE']]>
+                </statement>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[Information of table indices]]>
+                </title>
+                <statement>
+                    <![CDATA[SELECT c.* FROM SYS.SYSTABLES t, SYS.SYSCONGLOMERATES c where t.TABLEID=c.TABLEID AND tablename='TREE']]>
+                </statement>
+            </NodeAttributes>
+        </TreeNode>
+    </TreeNode>
+    <TreeNode>
+        <NodeAttributes>
+            <title>
+                <![CDATA[Query tables of database]]>
+            </title>
+        </NodeAttributes>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[Range of rows]]>
+                </title>
+                <statement>
+                    <![CDATA[SELECT * FROM visit_history OFFSET 2 ROWS FETCH NEXT 50 ROWS ONLY]]>
+                </statement>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[Maximum rows]]>
+                </title>
+                <statement>
+                    <![CDATA[SELECT * FROM visit_history FETCH FIRST 300 ROWS ONLY]]>
+                </statement>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[First row]]>
+                </title>
+                <statement>
+                    <![CDATA[SELECT * FROM visit_history FETCH FIRST ROW ONLY]]>
+                </statement>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[Conditions of query]]>
+                </title>
+                <statement>
+                    <![CDATA[SELECT * FROM visit_history WHERE file_type > 1 OR data_more like '%fxml%']]>
+                </statement>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[Count]]>
+                </title>
+                <statement>
+                    <![CDATA[SELECT count(file_type) as count FROM visit_history WHERE file_type > 0 AND last_visit_time BETWEEN '2022-03-11 00:00:00.000' AND '2022-03-18 13:09:41.000']]>
+                </statement>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[Mode]]>
+                </title>
+                <statement>
+                    <![CDATA[SELECT file_type, count(file_type) AS mode FROM visit_history GROUP BY file_type ORDER BY mode DESC FETCH FIRST ROW ONLY]]>
+                </statement>
+            </NodeAttributes>
+        </TreeNode>
+    </TreeNode>
+</TreeNode>
+</Node_SQL>

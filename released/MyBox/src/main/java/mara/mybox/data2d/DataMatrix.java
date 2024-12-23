@@ -9,6 +9,7 @@ import mara.mybox.data.SetValue;
 import mara.mybox.data2d.writer.Data2DWriter;
 import mara.mybox.data2d.writer.MatrixWriter;
 import mara.mybox.db.DerbyBase;
+import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DCell;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
@@ -173,7 +174,8 @@ public class DataMatrix extends Data2D {
     }
 
     @Override
-    public long setValue(FxTask task, List<Integer> cols, SetValue value) {
+    public long setValue(FxTask task, List<Integer> cols,
+            SetValue value, ColumnDefinition.InvalidAs invalidAs) {
         return -1;
     }
 

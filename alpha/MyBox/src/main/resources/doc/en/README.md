@@ -23,7 +23,7 @@ This is compute application to provide simple and easy functions. It's free and 
          - "Set Value": Validate data before write and prompt useful information. And provide options to handle invalid values.                 
      - Major interfaces of functions are changed as scroll panes.                                                                                                            
      - Enhance "Make Documents".                                                                                                            
-* Upgrade to: JDK 23 + javaFX 24. (JavaFX 21 is for Linux due to compile failure with javaFX 23/24)                                                                                                                
+* Upgrade to: JDK 23 + javaFX 24.                                                                                                                            
 * Remove: Memory parameters for reading PDF file.                                                                                                     
 * Solved problems:                                
      - "Set Values" and "Delete as Conditions" fail for all pages of database table.                                                                                                                       
@@ -62,8 +62,10 @@ Self-contain packages include all files and need not java env nor installation.
 User can double click the launcher to start MyBox or run it by command line. The default "Open Method" of image/text/PDF files can be associated to MyBox and a file can be opened directly by MyBox by double clicking the file's name.        
 
 ## Jar
-When JRE or JDK([Oracle jdk](https://www.oracle.com/technetwork/java/javase/downloads/index.html) or [open jdk](http://jdk.java.net/)) is installed, jar can run:        
+When JRE or JDK([Oracle jdk](https://www.oracle.com/technetwork/java/javase/downloads/index.html) or [open jdk](http://jdk.java.net/)) is installed, jar can run.        
    
+Notice: Due to compile failure, env on Linux is still Java 21 + JavaFX 21.       
+
 | Platform | Link | Size  | Requirements |        
 | --- | --- | ---  | ---  |
 | win | [MyBox-win-jar.zip](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-win-jar.zip)  | 240MB- | Java 23 or higher |

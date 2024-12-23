@@ -9,8 +9,8 @@ import javafx.stage.Stage;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.PdfTools;
-import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -51,7 +51,7 @@ public class PdfInformation extends FileInformation {
         try {
             this.userPassword = password;
             if (doc == null) {
-                doc = PDDocument.load(file, password, AppVariables.PdfMemUsage);
+                doc = Loader.loadPDF(file, password);
             }
             infoLoaded = false;
         } catch (Exception e) {
@@ -176,7 +176,7 @@ public class PdfInformation extends FileInformation {
         if (task != null) {
             task.setInfo(message("LoadingFileInfo"));
         }
-        try (PDDocument doc = PDDocument.load(info.getFile(), info.getUserPassword(), AppVariables.PdfMemUsage)) {
+        try (PDDocument doc = Loader.loadPDF(info.getFile(), info.getUserPassword())) {
             info.readInfo(task, doc);
             doc.close();
             return true;
@@ -200,7 +200,7 @@ public class PdfInformation extends FileInformation {
                     info.wait();
                 }
                 Platform.requestNextPulse();
-                try (PDDocument doc = PDDocument.load(info.getFile(), info.getUserPassword(), AppVariables.PdfMemUsage)) {
+                try (PDDocument doc = Loader.loadPDF(info.getFile(), info.getUserPassword())) {
                     info.readInfo(task, doc);
                     doc.close();
                     return true;

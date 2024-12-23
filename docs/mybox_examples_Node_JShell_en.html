@@ -1,0 +1,590 @@
+<HTML>
+    <HEAD>
+        <title>JShell(Java interactive coding tool)</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <style type="text/css">
+                          table { max-width:95%; margin : 10px;  border-style: solid; border-width:2px; border-collapse: collapse;} 
+              th, td { border-style: solid; border-width:1px; padding: 8px; border-collapse: collapse;} 
+              th { font-weight:bold;  text-align:center;} 
+              tr { height: 1.2em;  } 
+              .center { text-align:center;  max-width:95%; } 
+              .valueBox { border-style: solid; border-width:1px; border-color:black; padding: 5px; border-radius:5px;} 
+              .boldText { font-weight:bold;  } 
+ body { margin:0 auto; width: 900px; } 
+              img { max-width: 900px; } 
+              .valueText { color:#2e598a;  } 
+
+        </style>
+    </HEAD>
+    <BODY>
+        <H2>JShell(Java interactive coding tool)</H2>
+ <script>
+    function nodeClicked(id) {
+      var obj = document.getElementById(id);
+      var objv = obj.style.display;
+      if (objv == 'none') {
+        obj.style.display = 'block';
+      } else {
+        obj.style.display = 'none';
+      }
+    }
+    function showClass(className, show) {
+      var nodes = document.getElementsByClassName(className);  　
+      if ( show) {
+           for (var i = 0 ; i < nodes.length; i++) {
+              nodes[i].style.display = '';
+           }
+       } else {
+           for (var i = 0 ; i < nodes.length; i++) {
+              nodes[i].style.display = 'none';
+           }
+       }
+    }
+  </script>
+
+<DIV>
+<DIV>
+    <INPUT type="checkbox" checked onclick="showClass('TreeNode', this.checked);">Unfold</INPUT>
+    <INPUT type="checkbox" checked onclick="showClass('SerialNumber', this.checked);">Hierarchy number</INPUT>
+    <INPUT type="checkbox" checked onclick="showClass('NodeTag', this.checked);">Tags</INPUT>
+    <INPUT type="checkbox" checked onclick="showClass('nodeValue', this.checked);">Values</INPUT>
+</DIV>
+<HR>
+    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item1')"><SPAN class="SerialNumber">&nbsp;&nbsp;</SPAN>JShell(Java interactive coding tool)</a>
+    </DIV>
+    <DIV class="TreeNode" id='item1'>
+        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item2')"><SPAN class="SerialNumber">1&nbsp;&nbsp;</SPAN>Examples</a>
+        </DIV>
+    <DIV class="TreeNode" id='item2'>
+            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item3')"><SPAN class="SerialNumber">1.1&nbsp;&nbsp;</SPAN>Object</a>
+            </DIV>
+    <DIV class="TreeNode" id='item3'>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.1&nbsp;&nbsp;</SPAN>string
+                </DIV>
+                <DIV class="nodeValue"><DIV style="padding: 0 0 0 120px;"><DIV class="valueBox">
+                String exampleString = "hello";
+exampleString += " world";
+"Contains e:"+ exampleString.contains("e") + "   length:" + exampleString.length();
+                </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item4'>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.2&nbsp;&nbsp;</SPAN>time
+                </DIV>
+                <DIV class="nodeValue"><DIV style="padding: 0 0 0 120px;"><DIV class="valueBox">
+                import java.util.Date;
+Date exampleDate = new Date();
+"current time:" + exampleDate.toString() + "     value:" + exampleDate.getTime();
+                </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item5'>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.3&nbsp;&nbsp;</SPAN>array
+                </DIV>
+                <DIV class="nodeValue"><DIV style="padding: 0 0 0 120px;"><DIV class="valueBox">
+                import java.util.Arrays;
+double[] exampleArray =  new double[5];
+for (int i=0; i<exampleArray.length; i++ ) {
+    exampleArray[i] = i * 2;
+}
+exampleArray[2];
+                </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item6'>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.4&nbsp;&nbsp;</SPAN>list
+                </DIV>
+                <DIV class="nodeValue"><DIV style="padding: 0 0 0 120px;"><DIV class="valueBox">
+                import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+List<String> exampleList = new ArrayList<>();
+exampleList.addAll(Arrays.asList("a", "b", "c", "d", "e"));
+exampleList.toString();
+                </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item7'>
+    </DIV>
+    </DIV>
+            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item8')"><SPAN class="SerialNumber">1.2&nbsp;&nbsp;</SPAN>Expressions</a>
+            </DIV>
+    <DIV class="TreeNode" id='item8'>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item9')"><SPAN class="SerialNumber">1.2.1&nbsp;&nbsp;</SPAN>Numeric operations</a>
+                </DIV>
+    <DIV class="TreeNode" id='item9'>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.1.1&nbsp;&nbsp;</SPAN>e
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                    Math.E
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item10'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.1.2&nbsp;&nbsp;</SPAN>pi
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                    Math.PI
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item11'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.1.3&nbsp;&nbsp;</SPAN>absoluate
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                    Math.abs(-5.611)
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item12'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.1.4&nbsp;&nbsp;</SPAN>square root
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                    Math.sqrt(9)
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item13'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.1.5&nbsp;&nbsp;</SPAN>cubic root
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                    Math.cbrt(27)
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item14'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.1.6&nbsp;&nbsp;</SPAN>power
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                    Math.pow(2,5)
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item15'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.1.7&nbsp;&nbsp;</SPAN>power of e
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                    Math.exp(2)
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item16'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.1.8&nbsp;&nbsp;</SPAN>natural logarithm(base e)
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                    Math.log(6)
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item17'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.1.9&nbsp;&nbsp;</SPAN>common logarithm(base 10)
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                    Math.log10(6)
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item18'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.1.10&nbsp;&nbsp;</SPAN>cosine
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                    Math.cos(0)
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item19'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.1.11&nbsp;&nbsp;</SPAN>sine
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                    Math.sin(9)
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item20'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.1.12&nbsp;&nbsp;</SPAN>tangent
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                    Math.tan(5)
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item21'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.1.13&nbsp;&nbsp;</SPAN>arc tangent
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                    Math.atan(-7.3)
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item22'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.1.14&nbsp;&nbsp;</SPAN>arc cosine
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                    Math.acos(0.5)
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item23'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.1.15&nbsp;&nbsp;</SPAN>arc sine
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                    Math.asin(0.3)
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item24'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.1.16&nbsp;&nbsp;</SPAN>round up
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                    Math.ceil(4.13)
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item25'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.1.17&nbsp;&nbsp;</SPAN>round down
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                    Math.floor(4.67)
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item26'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.1.18&nbsp;&nbsp;</SPAN>round
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                    Math.round(4.83)
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item27'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.1.19&nbsp;&nbsp;</SPAN>random
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                    Math.random()
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item28'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.1.20&nbsp;&nbsp;</SPAN>maximum
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                    Math.max(1,-3)
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item29'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.1.21&nbsp;&nbsp;</SPAN>minimum
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                    Math.min(1,-3)
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item30'>
+    </DIV>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item31')"><SPAN class="SerialNumber">1.2.2&nbsp;&nbsp;</SPAN>Strings operations</a>
+                </DIV>
+    <DIV class="TreeNode" id='item31'>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.2.1&nbsp;&nbsp;</SPAN>equals while ignore case
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                    "Hello".equalsIgnoreCase("hello")
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item32'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.2.2&nbsp;&nbsp;</SPAN>equals
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                    "Hello".equals("hello")
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item33'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.2.3&nbsp;&nbsp;</SPAN>replace first
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                    "Hello World! World is yourself.".replace("World", "Feeling");
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item34'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.2.4&nbsp;&nbsp;</SPAN>replace all
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                    "Hello World! World is yourself.".replace(/World/g, "Feeling");
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item35'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.2.5&nbsp;&nbsp;</SPAN>starts with
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                    "Hello".startsWith("h")
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item36'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.2.6&nbsp;&nbsp;</SPAN>end with
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                    "Hello".endsWith("o")
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item37'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.2.7&nbsp;&nbsp;</SPAN>subString
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                    "Hello".substring(2, 5)
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item38'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.2.8&nbsp;&nbsp;</SPAN>char at
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                    "hello".charAt(2)
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item39'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.2.9&nbsp;&nbsp;</SPAN>concat
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                    "hello".concat(" world")
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item40'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.2.10&nbsp;&nbsp;</SPAN>split
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                    "1,2,3,4".split(",")
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item41'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.2.11&nbsp;&nbsp;</SPAN>indexOf
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                    "hello".indexOf("e")
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item42'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.2.12&nbsp;&nbsp;</SPAN>lastIndexOf
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                    "hello".lastIndexOf("l")
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item43'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.2.13&nbsp;&nbsp;</SPAN>length
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                    "hello".length()
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item44'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.2.14&nbsp;&nbsp;</SPAN>toLowerCase
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                    "Hello".toLowerCase()
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item45'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.2.15&nbsp;&nbsp;</SPAN>toUpperCase
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                    "Hello".toUpperCase()
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item46'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.2.16&nbsp;&nbsp;</SPAN>contains
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                    "Hello".contains("el")
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item47'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.2.17&nbsp;&nbsp;</SPAN>trim
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                    " Hello  ".trim()
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item48'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.2.18&nbsp;&nbsp;</SPAN>isBlank
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                    "  ".isBlank()
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item49'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.2.19&nbsp;&nbsp;</SPAN>isEmpty
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                    "".isEmpty()
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item50'>
+    </DIV>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item51')"><SPAN class="SerialNumber">1.2.3&nbsp;&nbsp;</SPAN>Boolean operations</a>
+                </DIV>
+    <DIV class="TreeNode" id='item51'>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.3.1&nbsp;&nbsp;</SPAN>list include
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                    import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+List<String> exampleListC = new ArrayList<>();
+exampleListC.addAll(Arrays.asList("a", "b", "c", "d", "e"));
+String exampleStringC = "c";
+exampleListC.contains(exampleStringC);
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item52'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.3.2&nbsp;&nbsp;</SPAN>string match
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                    // MyBox library paths should have been added in JShell environment
+import mara.mybox.tools.StringTools;
+String exampleStringM = "abc1233hello";
+String exampleRegexM = "\\S*3{2,}\\S*";  
+boolean exampleCaseInsensitiveM = true;
+StringTools.match(exampleStringM,exampleRegexM,exampleCaseInsensitiveM);
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item53'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.3.3&nbsp;&nbsp;</SPAN>string include
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                    // MyBox library paths should have been added in JShell environment
+import mara.mybox.tools.StringTools;
+String exampleStringI = "abc1233hello";
+String exampleRegexI = "3{2}";
+boolean exampleCaseInsensitiveI = true;
+StringTools.include(exampleStringI,exampleRegexI,exampleCaseInsensitiveI);
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item54'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.3.4&nbsp;&nbsp;</SPAN>and/or/not
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                    import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+List<String> exampleListB = new ArrayList<>();
+exampleListB.addAll(Arrays.asList("a", "b", "c", "d", "e"));
+String exampleStringB = "c";
+exampleListB.contains(exampleStringB) && 
+(exampleListB.size() >= 8 || exampleStringB.length() != 1 || !exampleStringB.startsWith("h"));
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item55'>
+    </DIV>
+    </DIV>
+    </DIV>
+            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item56')"><SPAN class="SerialNumber">1.3&nbsp;&nbsp;</SPAN>Methods</a>
+            </DIV>
+    <DIV class="TreeNode" id='item56'>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.3.1&nbsp;&nbsp;</SPAN>Area of circle
+                </DIV>
+                <DIV class="nodeValue"><DIV style="padding: 0 0 0 120px;"><DIV class="valueBox">
+                double circleAreaByDiameter(double diameter) {        
+    double radius = diameter / 2;        
+    return   Math.PI *  radius * radius ;        
+}
+circleAreaByDiameter(120) + circleAreaByDiameter(30)
+                </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item57'>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.3.2&nbsp;&nbsp;</SPAN>Round value
+                </DIV>
+                <DIV class="nodeValue"><DIV style="padding: 0 0 0 120px;"><DIV class="valueBox">
+                import java.math.BigDecimal;        
+import java.math.RoundingMode;        
+double scale(double v, int scale) {        
+    BigDecimal b = new BigDecimal(v);        
+    return b.setScale(scale, RoundingMode.HALF_UP).doubleValue();        
+}    
+scale(Math.PI, 3)
+                </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item58'>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.3.3&nbsp;&nbsp;</SPAN>Format number
+                </DIV>
+                <DIV class="nodeValue"><DIV style="padding: 0 0 0 120px;"><DIV class="valueBox">
+                import java.math.BigDecimal;        
+import java.math.RoundingMode;        
+double scale(double v, int scale) {        
+    BigDecimal b = new BigDecimal(v);        
+    return b.setScale(scale, RoundingMode.HALF_UP).doubleValue();        
+}        
+                                     
+import java.text.DecimalFormat;        
+String formatDouble(double data, int scale) {        
+    try {        
+        String format = "#,###";        
+        if (scale > 0) {        
+            format += "." + "#".repeat(scale);        
+        }        
+        DecimalFormat df = new DecimalFormat(format);        
+        return df.format(scale(data, scale));        
+    } catch (Exception e) {        
+        return e.toString();        
+    }        
+}        
+                                     
+double circleAreaByRadius(double radius) {        
+    return   Math.PI *  radius * radius ;        
+}        
+                                     
+formatDouble(circleAreaByRadius(273.4), 4)
+                </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item59'>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.3.4&nbsp;&nbsp;</SPAN>Format date
+                </DIV>
+                <DIV class="nodeValue"><DIV style="padding: 0 0 0 120px;"><DIV class="valueBox">
+                import java.util.Date;
+import java.util.TimeZone;
+import java.text.SimpleDateFormat;
+
+String DatetimeFormat = "yyyy-MM-dd HH:mm:ss.SSS";
+
+String datetimeToString(Date theDate, String format, TimeZone theZone) {
+    if (theDate == null || theZone == null) {
+            return null;
+    }
+    SimpleDateFormat formatter = new SimpleDateFormat(format);
+    formatter.setTimeZone(theZone);
+    String dateString = formatter.format(theDate);
+    return dateString;
+}
+
+datetimeToString(new Date(), DatetimeFormat, TimeZone.getDefault());
+                </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item60'>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.3.5&nbsp;&nbsp;</SPAN>string match
+                </DIV>
+                <DIV class="nodeValue"><DIV style="padding: 0 0 0 120px;"><DIV class="valueBox">
+                import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+boolean match(String string, String find, boolean isRegex,
+            boolean dotAll, boolean multiline, boolean caseInsensitive) {
+        if (string == null || find == null || find.isEmpty()) {
+            return false;
+        }
+        try {
+            int mode = (isRegex ? 0x00 : Pattern.LITERAL)
+                    | (caseInsensitive ? Pattern.CASE_INSENSITIVE : 0x00)
+                    | (dotAll ? Pattern.DOTALL : 0x00)
+                    | (multiline ? Pattern.MULTILINE : 0x00);
+            Pattern pattern = Pattern.compile(find, mode);
+            Matcher matcher = pattern.matcher(string);
+            return matcher.matches();
+        } catch (Exception e) {
+            return false;
+        }
+}
+
+match("Hello1233World", "\\S*3{2,}\\S*", true, true, true, true);
+                </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item61'>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.3.6&nbsp;&nbsp;</SPAN>string include
+                </DIV>
+                <DIV class="nodeValue"><DIV style="padding: 0 0 0 120px;"><DIV class="valueBox">
+                import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+boolean include(String string, String find, boolean caseInsensitive) {
+        if (string == null || find == null || find.isEmpty()) {
+            return false;
+        }
+        try {
+            int mode = (caseInsensitive ? Pattern.CASE_INSENSITIVE : 0x00) | Pattern.MULTILINE;
+            Pattern pattern = Pattern.compile(find, mode);
+            Matcher matcher = pattern.matcher(string);
+            return matcher.find();
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+include("Hello1233World", "3{2}", true);
+                </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item62'>
+    </DIV>
+    </DIV>
+    </DIV>
+    </DIV>
+    </BODY>
+</HTML>

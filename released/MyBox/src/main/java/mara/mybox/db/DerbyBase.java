@@ -31,15 +31,23 @@ import mara.mybox.db.table.TableMedia;
 import mara.mybox.db.table.TableMediaList;
 import mara.mybox.db.table.TableMyBoxLog;
 import mara.mybox.db.table.TableNamedValues;
+import mara.mybox.db.table.TableNodeDataColumn;
+import mara.mybox.db.table.TableNodeHtml;
+import mara.mybox.db.table.TableNodeImageScope;
+import mara.mybox.db.table.TableNodeJEXL;
+import mara.mybox.db.table.TableNodeJShell;
+import mara.mybox.db.table.TableNodeJavaScript;
+import mara.mybox.db.table.TableNodeMathFunction;
+import mara.mybox.db.table.TableNodeRowExpression;
+import mara.mybox.db.table.TableNodeSQL;
+import mara.mybox.db.table.TableNodeText;
+import mara.mybox.db.table.TableNodeWebFavorite;
 import mara.mybox.db.table.TablePathConnection;
 import mara.mybox.db.table.TableQueryCondition;
 import mara.mybox.db.table.TableStringValue;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.db.table.TableSystemConf;
-import mara.mybox.db.table.TableTag;
 import mara.mybox.db.table.TableTextClipboard;
-import mara.mybox.db.table.TableTreeNode;
-import mara.mybox.db.table.TableTreeNodeTag;
 import mara.mybox.db.table.TableUserConf;
 import mara.mybox.db.table.TableVisitHistory;
 import mara.mybox.db.table.TableWebHistory;
@@ -285,7 +293,7 @@ public class DerbyBase {
     public static List<String> allTables(Connection conn) {
         try {
             List<String> tables = new ArrayList<>();
-            String sql = "SELECT TABLENAME FROM SYS.SYSTABLES WHERE TABLETYPE='T'";
+            String sql = "SELECT TABLENAME FROM SYS.SYSTABLES WHERE TABLETYPE='T' ORDER BY TABLENAME";
             conn.setAutoCommit(true);
             try (Statement statement = conn.createStatement();
                     ResultSet resultSet = statement.executeQuery(sql)) {
@@ -488,10 +496,6 @@ public class DerbyBase {
                 new TableFileBackup().createTable(conn);
                 loadingController.info("File_Backup");
             }
-            if (!tables.contains("Tag".toLowerCase())) {
-                new TableTag().createTable(conn);
-                loadingController.info("Tag");
-            }
             if (!tables.contains("Color".toLowerCase())) {
                 new TableColor().createTable(conn);
                 loadingController.info("Color");
@@ -520,14 +524,6 @@ public class DerbyBase {
                 new TableNamedValues().createTable(conn);
                 loadingController.info("Named_Values");
             }
-            if (!tables.contains("Tree_Node".toLowerCase())) {
-                new TableTreeNode().createTable(conn);
-                loadingController.info("Tree_Node");
-            }
-            if (!tables.contains("Tree_Node_Tag".toLowerCase())) {
-                new TableTreeNodeTag().createTable(conn);
-                loadingController.info("Tree_Node_Tag");
-            }
             if (!tables.contains("Data2D_Style".toLowerCase())) {
                 new TableData2DStyle().createTable(conn);
                 loadingController.info("Data2D_Style");
@@ -536,6 +532,62 @@ public class DerbyBase {
                 new TablePathConnection().createTable(conn);
                 loadingController.info("Path_Connection");
             }
+            if (!tables.contains("Node_Html".toLowerCase())) {
+                TableNodeHtml t = new TableNodeHtml();
+                t.createTable(conn);
+                loadingController.info(t.getTreeName());
+            }
+            if (!tables.contains("Node_Text".toLowerCase())) {
+                TableNodeText t = new TableNodeText();
+                t.createTable(conn);
+                loadingController.info(t.getTreeName());
+            }
+            if (!tables.contains("Node_Web_Favorite".toLowerCase())) {
+                TableNodeWebFavorite t = new TableNodeWebFavorite();
+                t.createTable(conn);
+                loadingController.info(t.getTreeName());
+            }
+            if (!tables.contains("Node_Math_Function".toLowerCase())) {
+                TableNodeMathFunction t = new TableNodeMathFunction();
+                t.createTable(conn);
+                loadingController.info(t.getTreeName());
+            }
+            if (!tables.contains("Node_SQL".toLowerCase())) {
+                TableNodeSQL t = new TableNodeSQL();
+                t.createTable(conn);
+                loadingController.info(t.getTreeName());
+            }
+            if (!tables.contains("Node_Image_Scope".toLowerCase())) {
+                TableNodeImageScope t = new TableNodeImageScope();
+                t.createTable(conn);
+                loadingController.info(t.getTreeName());
+            }
+            if (!tables.contains("Node_JShell".toLowerCase())) {
+                TableNodeJShell t = new TableNodeJShell();
+                t.createTable(conn);
+                loadingController.info(t.getTreeName());
+            }
+            if (!tables.contains("Node_JEXL".toLowerCase())) {
+                TableNodeJEXL t = new TableNodeJEXL();
+                t.createTable(conn);
+                loadingController.info(t.getTreeName());
+            }
+            if (!tables.contains("Node_JavaScript".toLowerCase())) {
+                TableNodeJavaScript t = new TableNodeJavaScript();
+                t.createTable(conn);
+                loadingController.info(t.getTreeName());
+            }
+            if (!tables.contains("Node_Row_Expression".toLowerCase())) {
+                TableNodeRowExpression t = new TableNodeRowExpression();
+                t.createTable(conn);
+                loadingController.info(t.getTreeName());
+            }
+            if (!tables.contains("Node_Data_Column".toLowerCase())) {
+                TableNodeDataColumn t = new TableNodeDataColumn();
+                t.createTable(conn);
+                loadingController.info(t.getTreeName());
+            }
+
             return true;
         } catch (Exception e) {
             MyBoxLog.console(e);
@@ -582,13 +634,6 @@ public class DerbyBase {
                     MyBoxLog.error(e);
                 }
             }
-            if (!indexes.contains("Tag_unique_index".toLowerCase())) {
-                try (Statement statement = conn.createStatement()) {
-                    statement.executeUpdate(TableTag.Create_Unique_Index);
-                } catch (Exception e) {
-                    MyBoxLog.error(e);
-                }
-            }
             if (!indexes.contains("Color_rgba_unique_index".toLowerCase())) {
                 try (Statement statement = conn.createStatement()) {
                     statement.executeUpdate(TableColor.Create_RGBA_Unique_Index);
@@ -606,27 +651,6 @@ public class DerbyBase {
             if (!indexes.contains("Web_History_time_index".toLowerCase())) {
                 try (Statement statement = conn.createStatement()) {
                     statement.executeUpdate(TableWebHistory.Create_Time_Index);
-                } catch (Exception e) {
-                    MyBoxLog.error(e);
-                }
-            }
-            if (!indexes.contains("Tree_Node_parent_index".toLowerCase())) {
-                try (Statement statement = conn.createStatement()) {
-                    statement.executeUpdate(TableTreeNode.Create_Parent_Index);
-                } catch (Exception e) {
-                    MyBoxLog.error(e);
-                }
-            }
-            if (!indexes.contains("Tree_Node_title_index".toLowerCase())) {
-                try (Statement statement = conn.createStatement()) {
-                    statement.executeUpdate(TableTreeNode.Create_Title_Index);
-                } catch (Exception e) {
-                    MyBoxLog.error(e);
-                }
-            }
-            if (!indexes.contains("Tree_Node_Tag_unique_index".toLowerCase())) {
-                try (Statement statement = conn.createStatement()) {
-                    statement.executeUpdate(TableTreeNodeTag.Create_Unique_Index);
                 } catch (Exception e) {
                     MyBoxLog.error(e);
                 }

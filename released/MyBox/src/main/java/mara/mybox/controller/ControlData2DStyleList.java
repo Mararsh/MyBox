@@ -26,7 +26,7 @@ public class ControlData2DStyleList extends BaseSysTableController<Data2DStyle> 
     @FXML
     protected TableColumn<Data2DStyle, Integer> sequenceColumn;
     @FXML
-    protected TableColumn<Data2DStyle, Boolean> filterReversedColumn, abnormalColumn;
+    protected TableColumn<Data2DStyle, Boolean> filterMatchFalseColumn, abnormalColumn;
     @FXML
     protected TableColumn<Data2DStyle, String> fontColorColumn, bgColorColumn,
             fontSizeColumn, boldColumn, moreColumn;
@@ -42,7 +42,7 @@ public class ControlData2DStyleList extends BaseSysTableController<Data2DStyle> 
             toColumn.setCellValueFactory(new PropertyValueFactory<>("to"));
             columnsColumn.setCellValueFactory(new PropertyValueFactory<>("columns"));
             filterColumn.setCellValueFactory(new PropertyValueFactory<>("filter"));
-            filterReversedColumn.setCellValueFactory(new PropertyValueFactory<>("filterReversed"));
+            filterMatchFalseColumn.setCellValueFactory(new PropertyValueFactory<>("matchFalse"));
 
             sequenceColumn.setCellValueFactory(new PropertyValueFactory<>("sequence"));
             abnormalColumn.setCellValueFactory(new PropertyValueFactory<>("abnoramlValues"));

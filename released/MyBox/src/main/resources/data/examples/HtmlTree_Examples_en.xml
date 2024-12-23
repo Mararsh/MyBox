@@ -1,0 +1,645 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Node_Html>
+    <TreeNode>
+        <NodeAttributes>
+            <title>
+            <![CDATA[Notebooks]]>
+            </title>
+        </NodeAttributes>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                <![CDATA[Notebook Cover]]>
+                </title>
+            </NodeAttributes>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                    <![CDATA[Notes are information pieces in html format.<br>]]>
+                    </title>
+                    <html>
+                    <![CDATA[Notebook is collection of notes and notebooks.<br>
+Notebooks are organized as a tree.]]>
+                    </html>
+                </NodeAttributes>
+            </TreeNode>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                <![CDATA[Examples]]>
+                </title>
+            </NodeAttributes>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                    <![CDATA[Web Address]]>
+                    </title>
+                </NodeAttributes>
+                <NodeTag>
+                <![CDATA[Need supplementary]]>
+                </NodeTag>
+                <TreeNode>
+                    <NodeAttributes>
+                        <title>
+                        <![CDATA[Search]]>
+                        </title>
+                        <html>
+                        <![CDATA[<a target=_blank href="https://www.wikipedia.org/">wikipedia</a><br>
+<a target=_blank href="https://www.answers.com/">answers</a><br>
+<a target=_blank href="https://www.thefreedictionary.com/">thefreedictionary</a><br>
+<a target=_blank href="https://www.ipaddress.com/">ipaddress</a><br>
+<a target=_blank href="https://www.bing.com/">bing</a><br>
+<a target=_blank href="https://www.google.com/">google</a><br>
+<a target=_blank href="https://www.yahoo.com/">yahoo</a><br>
+<a target=_blank href="https://www.baidu.com/">baidu</a><br>]]>
+                        </html>
+                    </NodeAttributes>
+                    <NodeTag>
+                    <![CDATA[To be determined ]]>
+                    </NodeTag>
+                    <NodeTag>
+                    <![CDATA[Like]]>
+                    </NodeTag>
+                    <NodeTag>
+                    <![CDATA[Important]]>
+                    </NodeTag>
+                </TreeNode>
+                <TreeNode>
+                    <NodeAttributes>
+                        <title>
+                        <![CDATA[Life in Chinese]]>
+                        </title>
+                        <html>
+                        <![CDATA[<a target=_blank href="http://gjzwfw.www.gov.cn/index.html">国家政务服务平台</a><br>
+<a target=_blank href="https://www.boc.cn/">Bank of China</a><br>
+<a target=_blank href="http://www.icbc.com.cn">Industrial and Commercial Bank of China</a><br>
+<a target=_blank href="http://www.cmbchina.com">China Merchants Bank Ltd</a><br>
+<a target=_blank href="http://www.bankcomm.com">Bank of Communications</a><br>]]>
+                        </html>
+                    </NodeAttributes>
+                    <NodeTag>
+                    <![CDATA[To be determined ]]>
+                    </NodeTag>
+                    <NodeTag>
+                    <![CDATA[Urgent]]>
+                    </NodeTag>
+                </TreeNode>
+                <TreeNode>
+                    <NodeAttributes>
+                        <title>
+                        <![CDATA[Articles/Data in English]]>
+                        </title>
+                        <html>
+                        <![CDATA[<a target=_blank href="https://www.cn-ki.net/">iData</a><br>
+<a target=_blank href="https://sci-hub.se/">sci-hub</a><br>
+<a target=_blank href="http://dspace.mit.edu/">dspace</a><br>
+<a target=_blank href="http://www.city-data.com/">city-Data</a><br>
+<a target=_blank href="https://www.oalib.com/">oalib</a><br>
+<a target=_blank href="https://www.jisc.ac.uk/">jisc</a><br>
+<a target=_blank href="http://findarticles.com/">findarticles</a><br>
+<a target=_blank href="https://www.intechopen.com/">intechopen</a><br>
+<a target=_blank href="https://openstax.org/">openstax</a><br>
+<a target=_blank href="http://libgen.rs/">Library Genesis</a><br>
+<a target=_blank href="http://www.oecd.org/">OECD</a><br>
+<a target=_blank href="https://ec.europa.eu/eurostat/data/database">Eurostat</a><br>
+<a target=_blank href="https://www.worldvaluessurvey.org/wvs.jsp">worldvaluessurvey</a><br>
+<a target=_blank href="https://www.ieee.org/">IEEE</a><br>]]>
+                        </html>
+                    </NodeAttributes>
+                    <NodeTag>
+                    <![CDATA[To be determined ]]>
+                    </NodeTag>
+                    <NodeTag>
+                    <![CDATA[Important]]>
+                    </NodeTag>
+                </TreeNode>
+                <TreeNode>
+                    <NodeAttributes>
+                        <title>
+                        <![CDATA[Articles/Data in Chinese]]>
+                        </title>
+                        <html>
+                        <![CDATA[<a target=_blank href="http://www.stats.gov.cn">国家数据</a><br>
+<a target=_blank href="http://www.pbc.gov.cn/diaochatongjisi/116219/index.html">中国人民银行数据库</a><br>
+<a target=_blank href="http://www.geodata.cn/index.html">国家地球系统科学数据中心</a><br>
+<a target=_blank href="http://data.cma.cn">中国气象数据网</a><br>
+<a target=_blank href="https://moon.bao.ac.cn">中国探月工程数据发布与信息服务系统</a><br>
+<a target=_blank href="http://www.nlc.cn">中国国家数字图书馆</a><br>
+<a target=_blank href="http://43.248.49.97/">海关统计数据在线查询平台</a><br>
+<a target=_blank href="http://www.cnsda.org">中国学术调查数据资料库</a><br>
+<a target=_blank href="http://www.sgst.cn">上海研发公共服务平台</a><br>
+<a target=_blank href="https://ctext.org">中国哲学书电子化计划</a><br>
+<a target=_blank href="http://www.ucdrs.superlib.net/">全国图书馆论文搜索网</a><br>
+<a target=_blank href="http://libweb.zju.edu.cn">浙江大学图书馆</a><br>
+<a target=_blank href="https://www.hzlib.net">杭州图书馆</a><br>
+<a target=_blank href="http://www.gzlib.org">贵州数字图书馆</a><br>
+<a target=_blank href="https://www.sxlib.com">绍兴图书馆</a><br>
+<a target=_blank href="http://www.gxlib.org.cn">广西图书馆</a><br>
+<a target=_blank href="https://www.cnki.net">中国知网</a><br>
+<a target=_blank href="http://www.wanfangdata.com.cn/index.html">万方数据</a><br>
+<a target=_blank href="https://zm-digicol.dpm.org.cn">故宫博物院藏品</a><br>
+<a target=_blank href="http://www.biftmuseum.com">北京服装学院民族服饰博物馆</a><br>]]>
+                        </html>
+                    </NodeAttributes>
+                    <NodeTag>
+                    <![CDATA[To be determined ]]>
+                    </NodeTag>
+                    <NodeTag>
+                    <![CDATA[Important]]>
+                    </NodeTag>
+                </TreeNode>
+                <TreeNode>
+                    <NodeAttributes>
+                        <title>
+                        <![CDATA[Study in English]]>
+                        </title>
+                        <html>
+                        <![CDATA[<a target=_blank href="https://www.bilibili.com/video/BV1zx411g7gq">MIT 18.06 Linear Algebra</a><br>
+<a target=_blank href="https://www.bilibili.com/video/BV1Js411n7zv">MIT 18.01 Calculus</a><br>
+<a target=_blank href="https://www.bilibili.com/video/BV1es411H7YH">MIT 6.042J Discrete Mathematics</a><br>
+<a target=_blank href="https://open.163.com/newview/movie/courseintro?newurl=M8FH262HJ">Learning From Data</a><br>]]>
+                        </html>
+                    </NodeAttributes>
+                    <NodeTag>
+                    <![CDATA[Need supplementary]]>
+                    </NodeTag>
+                </TreeNode>
+                <TreeNode>
+                    <NodeAttributes>
+                        <title>
+                        <![CDATA[Study in Chinese]]>
+                        </title>
+                        <html>
+                        <![CDATA[<a target=_blank href="https://github.com/QSCTech/zju-icicles">浙江大学课程</a><br>
+<a target=_blank href="https://github.com/PKUanonym/REKCARC-TSC-UHT">清华大学计算机系课程</a><br>
+<a target=_blank href="https://github.com/BUCTBASE/BUCTBASE">北京化工大学课程资料整理开源项目</a><br>
+<a target=_blank href="https://github.com/bljx/BFU-leaf">北京林业大学信息学院课程攻略</a><br>
+<a target=_blank href="https://github.com/TheBloodthirster/BUAA_Course_Sharing">北京航空航天大学(北航)课程作业资料共享计划</a><br>
+<a target=_blank href="https://github.com/ningzimu/See_you_in_BUPT">北京邮电大学计算机考研信息汇总</a><br>
+<a target=_blank href="http://math.ecnu.edu.cn/~jypan/Teaching/NA/index.html">数值分析</a><br>
+<a target=_blank href="https://www.bilibili.com/video/BV1pW411J7s8">形象展示傅里叶变换</a><br>
+<a target=_blank href="https://www.bilibili.com/video/BV1BW411n7gw">北京大学 离散数学</a><br>
+<a target=_blank href="https://www.bilibili.com/video/BV1ux411G7zm">中国古代史（史前魏晋南北朝）（阎步克教授/北京大学）</a><br>
+<a target=_blank href="https://www.bilibili.com/video/BV1Dt411p7ce">高中语文-文言文全套精讲</a><br>]]>
+                        </html>
+                    </NodeAttributes>
+                    <NodeTag>
+                    <![CDATA[Need supplementary]]>
+                    </NodeTag>
+                    <NodeTag>
+                    <![CDATA[Important]]>
+                    </NodeTag>
+                </TreeNode>
+                <TreeNode>
+                    <NodeAttributes>
+                        <title>
+                        <![CDATA[Novels in Chinese]]>
+                        </title>
+                        <html>
+                        <![CDATA[<a target=_blank href="https://www.kunnu.com">鲲弩小说</a><br>
+<a target=_blank href="https://www.jjwxc.net">晋江文学城</a><br>
+<a target=_blank href="http://yunqi.qq.com">云起书院</a><br>
+<a target=_blank href="https://www.qidian.com">起点中文网</a><br>
+<a target=_blank href="http://chuangshi.qq.com">创世中文网</a><br>
+<a target=_blank href="http://www.zhulang.com">逐浪网</a><br>
+<a target=_blank href="http://yc.ireader.com.cn">掌阅小说网</a><br>
+<a target=_blank href="https://www.17k.com">17k小说网</a><br>
+<a target=_blank href="https://www.xxsy.net">潇湘书院</a><br>]]>
+                        </html>
+                    </NodeAttributes>
+                    <NodeTag>
+                    <![CDATA[Need supplementary]]>
+                    </NodeTag>
+                    <NodeTag>
+                    <![CDATA[Like]]>
+                    </NodeTag>
+                </TreeNode>
+                <TreeNode>
+                    <NodeAttributes>
+                        <title>
+                        <![CDATA[Entertainment in Chinese]]>
+                        </title>
+                        <html>
+                        <![CDATA[<a target=_blank href="https://tv.cctv.com/2022/08/27/VIDARmuWi2Ebs0b0NSsA1Ao7220827.shtml">诗画中国</a><br>
+<a target=_blank href="http://www.radio.cn/pc-portal/sanji/zhibo_2.html?channelname=0&name=1395534&title=radio">小喇叭</a><br>
+<a target=_blank href="http://www.radio.cn/pc-portal/sanji/zhibo_2.html?channelname=0&name=1395673&title=radio">中国相声榜</a><br>
+<a target=_blank href="http://www.radio.cn/pc-portal/sanji/zhibo_2.html?channelname=0&name=1437094&title=radio">老外看点</a><br>
+<a target=_blank href="https://www.qingting.fm">蜻蜓FM</a><br>
+<a target=_blank href="https://www.bilibili.com">哔哩哔哩</a><br>
+<a target=_blank href="https://www.youku.com">优酷</a><br>
+<a target=_blank href="https://www.missevan.com">猫耳</a><br>
+<a target=_blank href="http://nga.178.com">NGA</a><br>
+<a target=_blank href="https://weibo.com">微博</a><br>
+<a target=_blank href="https://bbs.tianya.cn/">天涯</a><br>
+<a target=_blank href="https://www.lofter.com/">lofter</a><br>
+<a target=_blank href="https://www.bilibili.com/video/BV1Px411P761">牡丹亭（1986年）张继青</a><br>
+<a target=_blank href="https://www.bilibili.com/video/BV1rs411n7Dd">白蛇传-杜近芳 叶盛兰（杜近芳 叶少兰）</a><br>
+<a target=_blank href="https://www.bilibili.com/video/BV11x411j7As">梁祝-范瑞娟 傅全香</a><br>]]>
+                        </html>
+                    </NodeAttributes>
+                    <NodeTag>
+                    <![CDATA[Need supplementary]]>
+                    </NodeTag>
+                    <NodeTag>
+                    <![CDATA[Like]]>
+                    </NodeTag>
+                </TreeNode>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                    <![CDATA[My Data]]>
+                    </title>
+                </NodeAttributes>
+                <NodeTag>
+                <![CDATA[Need supplementary]]>
+                </NodeTag>
+                <NodeTag>
+                <![CDATA[Important]]>
+                </NodeTag>
+                <TreeNode>
+                    <NodeAttributes>
+                        <title>
+                        <![CDATA[My eyes]]>
+                        </title>
+                        <html>
+                        <![CDATA[<p>Radian: 84</p>
+<table>
+    <tr><th> Time </th><th> Left eye </th><th> RIght eye </th></tr>
+    <tr><td> 2020.8 </td><td> 300 </td><td> 350 </td></tr>
+    <tr><td> 2019.7 </td><td> 300 </td><td> 350 </td></tr>
+    <tr><td> 2018.5 </td><td> 300 </td><td> 350 </td></tr>
+</table>]]>
+                        </html>
+                    </NodeAttributes>
+                </TreeNode>
+                <TreeNode>
+                    <NodeAttributes>
+                        <title>
+                        <![CDATA[My weight]]>
+                        </title>
+                        <html>
+                        <![CDATA[<table>
+    <tr><th> Time </th><th> Weight(kg) </th></tr>
+    <tr><td> 2020.7 </td><td> 53.7 </td></tr>
+    <tr><td> 2019.3 </td><td> 55.2 </td></tr>
+    <tr><td> 2018.6 </td><td> 54.5 </td></tr>
+</table>]]>
+                        </html>
+                    </NodeAttributes>
+                </TreeNode>
+                <TreeNode>
+                    <NodeAttributes>
+                        <title>
+                        <![CDATA[My height]]>
+                        </title>
+                        <html>
+                        <![CDATA[<table>
+    <tr><th> Time </th><th> Height(cm) </th></tr>
+    <tr><td> 2020.7 </td><td> 164 </td></tr>
+    <tr><td> 2019.3 </td><td> 165 </td></tr>
+    <tr><td> 2018.6 </td><td> 164 </td></tr>
+</table>]]>
+                        </html>
+                    </NodeAttributes>
+                </TreeNode>
+                <TreeNode>
+                    <NodeAttributes>
+                        <title>
+                        <![CDATA[My menstruation]]>
+                        </title>
+                        <html>
+                        <![CDATA[<table>
+                <tbody><tr><td>Year/Month</td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td><td>9</td><td>10</td><td>11</td><td>12</td></tr>
+                <tr><td>2021</td><td>2,30</td><td> </td><td>2</td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td></tr>
+                <tr><td>2020</td><td>28</td><td>27</td><td>23</td><td>21</td><td>19</td><td> </td><td>7,26</td><td>19</td><td>15</td><td>12</td><td>8</td><td>9</td></tr>
+                <tr><td>2019</td><td>10</td><td>7</td><td>7</td><td>2,30</td><td>26</td><td>25</td><td>23</td><td>17</td><td>14</td><td>12</td><td>19</td><td>26</td></tr>
+            </tbody>
+</table>]]>
+                        </html>
+                    </NodeAttributes>
+                </TreeNode>
+                <TreeNode>
+                    <NodeAttributes>
+                        <title>
+                        <![CDATA[My money]]>
+                        </title>
+                        <html>
+                        <![CDATA[<table>
+    <tr><th> Time </th><th> Total </th><th> Bank A </th><th> Bank B </th><th> Bank C </th></tr>
+    <tr><td> 2020.1 </td><td> 300 </td><td> 100 </td><td> 100 </td><td> 100 </td></tr>
+    <tr><td> 2019.1 </td><td> 300 </td><td> 100 </td><td> 100 </td><td> 100 </td></tr>
+    <tr><td> 2018.1 </td><td> 300 </td><td> 100 </td><td> 100 </td><td> 100 </td></tr>
+</table>]]>
+                        </html>
+                    </NodeAttributes>
+                </TreeNode>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                    <![CDATA[Common knowledge]]>
+                    </title>
+                </NodeAttributes>
+                <TreeNode>
+                    <NodeAttributes>
+                        <title>
+                        <![CDATA[Size of coat]]>
+                        </title>
+                        <html>
+                        <![CDATA[<table>
+                <tr><td>Size</td><td>Coat Length</td><td>Shoulder</td><td>Sleeve</td><td>Chest</td><td>Waist</td></tr>
+                <tr><td>160/76A(0)</td><td>69</td><td>37</td><td>80</td><td>88</td><td>86</td></tr>
+                <tr><td>160/84A(2)</td><td>69</td><td>38</td><td>81</td><td>90</td><td>88</td></tr>
+                <tr><td>160/88A(4)</td><td>70</td><td>39</td><td>82</td><td>93</td><td>91</td></tr>
+                <tr><td>165/88A(6)</td><td>70</td><td>39</td><td>83</td><td>95</td><td>93</td></tr>
+                <tr><td>165/92A(8)</td><td>71</td><td>40</td><td>83</td><td>98</td><td>96</td></tr>
+                <tr><td>165/96A(10)</td><td>72</td><td>41</td><td>84</td><td>100</td><td>98</td></tr>
+                <tr><td>165/100A(12)</td><td>73</td><td>42</td><td>84</td><td>104</td><td>102</td></tr>
+                <tr><td>170/100A(14)</td><td>74</td><td>43</td><td>85</td><td>108</td><td>106</td></tr>
+                <tr><td>170/104A(16)</td><td>75</td><td>43</td><td>86</td><td>112</td><td>110</td></tr>
+            </table>]]>
+                        </html>
+                    </NodeAttributes>
+                </TreeNode>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                    <![CDATA[Contacts]]>
+                    </title>
+                </NodeAttributes>
+                <NodeTag>
+                <![CDATA[Need supplementary]]>
+                </NodeTag>
+                <TreeNode>
+                    <NodeAttributes>
+                        <title>
+                        <![CDATA[Relative]]>
+                        </title>
+                        <html>
+                        <![CDATA[<table>
+    <tbody><tr><th> Relationship </th><th> Phone </th><th> Email </th><th> Address </th><th> Birthday </th><th> Comments </th></tr>
+    <tr><td> papa </td><td> 123456789 </td><td> 123@aa.com </td><td> Beautiful Island </td><td> 1960.1.1 </td><td> </td></tr>
+    <tr><td> mama </td><td> 123456789 </td><td> 123@aa.com </td><td> Beautiful Island </td><td> 1961.3.1 </td><td> </td></tr>
+    <tr><td> sister </td><td> 123456789 </td><td> 123@aa.com </td><td> Beautiful Island </td><td> 1984.3.8 </td><td> </td></tr>
+</tbody></table>]]>
+                        </html>
+                    </NodeAttributes>
+                    <NodeTag>
+                    <![CDATA[Important]]>
+                    </NodeTag>
+                </TreeNode>
+                <TreeNode>
+                    <NodeAttributes>
+                        <title>
+                        <![CDATA[Work]]>
+                        </title>
+                        <html>
+                        <![CDATA[<table>
+    <tr><th> Relationship </th><th> Name </th><th> Phone </th><th> Email </th><th> Address </th><th> Comments </th></tr>
+    <tr><td> manager </td><td> A </td><td> 123456789 </td><td> 123@aa.com </td><td> Hidden Peak </td><td> </td></tr>
+    <tr><td> colleague </td><td> B </td><td> 123456789 </td><td> 123@aa.com </td><td> Hidden Peak </td><td> </td></tr>
+    <tr><td> colleague </td><td> C </td><td> 123456789 </td><td> 123@aa.com </td><td> Hidden Peak </td><td> </td></tr>
+</table>]]>
+                        </html>
+                    </NodeAttributes>
+                </TreeNode>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                    <![CDATA[Coding]]>
+                    </title>
+                </NodeAttributes>
+                <NodeTag>
+                <![CDATA[Need supplementary]]>
+                </NodeTag>
+                <TreeNode>
+                    <NodeAttributes>
+                        <title>
+                        <![CDATA[Coding Address]]>
+                        </title>
+                        <html>
+                        <![CDATA[<a target=_blank href="https://sourceforge.net">sourceforge</a><br>
+<a target=_blank href="https://stackoverflow.com">stackoverflow</a><br>
+<a target=_blank href="https://github.com">github</a><br><br>
+<a target=_blank href="https://docs.oracle.com/en/java/javase/15/docs/api/index.html">Java API</a><br>
+<a target=_blank href="https://openjfx.io/javadoc/15/">JavaFx API</a><br>
+<a target=_blank href="https://docs.oracle.com/javafx/2/api/javafx/scene/doc-files/cssref.html">JavaFX CSS Reference Guide</a><br>
+<a target=_blank href="https://docs.oracle.com/javafx/2/get_started/css.htm">Getting Started with JavaFX</a><br><br>
+<a target=_blank href="https://openjfx.io/">OpenJFX Community Site</a><br><br>
+<a target=_blank href="https://fxdocs.github.io/docs/html5/">JavaFX Documentation Project</a><br><br>
+<a target=_blank href="http://tutorials.jenkov.com/javafx/index.html">JavaFX Tutorial</a><br><br>
+<a target=_blank href="https://icons8.com/">icons8</a><br>
+<a target=_blank href="https://mvnrepository.com/">mvnrepository</a><br>]]>
+                        </html>
+                    </NodeAttributes>
+                    <NodeTag>
+                    <![CDATA[To be determined ]]>
+                    </NodeTag>
+                </TreeNode>
+                <TreeNode>
+                    <NodeAttributes>
+                        <title>
+                        <![CDATA[sftp to sourceforge (to upload large files)]]>
+                        </title>
+                        <html>
+                        <![CDATA[<PRE><CODE>
+C:\Users\mara>sftp mararsh@frs.sourceforge.net
+Password:
+Connected to mararsh@frs.sourceforge.net.
+sftp> cd /home/frs/project/mara-mybox
+sftp> ls
+sftp> cd v6.4.2
+sftp> lcd  D:\releases\Mybox\2021-03-21-v6.4.2
+sftp> put D:\releases\Mybox\2021-03-21-v6.4.2\MyBox-6.4.2-linux.tar.gz
+</CODE></PRE>
+Access the files:  https://sourceforge.net/projects/mara-mybox/files/]]>
+                        </html>
+                    </NodeAttributes>
+                </TreeNode>
+                <TreeNode>
+                    <NodeAttributes>
+                        <title>
+                        <![CDATA[sftp to sourceforge (to upload website files)]]>
+                        </title>
+                        <html>
+                        <![CDATA[<PRE><CODE>
+C:\Users\mara>sftp mararsh@frs.sourceforge.net
+Password:
+Connected to mararsh@frs.sourceforge.net.
+sftp> cd /home/project-web/mara-mybox/htdocs
+sftp> ls
+sftp> lcd  D:\GitHub\MyBox\docs
+sftp> put *.*
+</CODE></PRE>
+Access the website:  https://mara-mybox.sourceforge.io/index.html]]>
+                        </html>
+                    </NodeAttributes>
+                </TreeNode>
+                <TreeNode>
+                    <NodeAttributes>
+                        <title>
+                        <![CDATA[javafx]]>
+                        </title>
+                    </NodeAttributes>
+                    <TreeNode>
+                        <NodeAttributes>
+                            <title>
+                            <![CDATA[Items in one sentence about javafx]]>
+                            </title>
+                            <html>
+                            <![CDATA[<ol>
+    <li>Always assume user knows nothing about programming.</li>
+    <li>Do not expect user will open user guide. Someone, including me, even will not look at nor think about prompts on the screen.</li>
+    <li>Necessary prompts can help user understand intention of the program.</li>
+    <li>Ambiguous prompt is worse than no prompt.</li>
+    <li>Always response for user, like pop information, make sound, or update interface.</li>
+    <li>Provide most options and set default choice.</li>
+    <li>Remember user’s inputs or seletions and fill in or set values automatically in next time.</li>
+    <li>Less inputs or selections meanwhile keep interfaces clean.</li>
+    <li>Use radio or check buttons instead of drop-down list if there is enough place in interface.</li>
+    <li>No more than 3 levels to select.</li>
+    <li>When too many controls in interface, consider popular layout:  Left-right areas like curtain, vertical accordion menus, tabs to switch targets</li>
+    <li>User’ screen resolution may be from 1k to 4k, so the design size of most MyBox interfaces is smaller than 1100 * 720.</li>
+    <li>Make use of auto-wrap container like FlowPane, to work for both small screen and large screen.</li>
+    <li>Controls can be updated only in JavaFx thread. Use Platform.runLater to change control when handle event in its listener.</li>
+    <li>Progress should be shown when operation costs much time.</li>
+    <li>Time-consume operation should not be run in JavaFx thread to avoid blocking interface.</li>
+    <li>Backgournd task should always check whether task is canceled, especially in loop or before/after long-run statements.</li>
+    <li>When listen mouse events, event.getX() and event.getY() return the coordinate of event.getSource() which is the control owns the events. Example, when listen on ImageView, the coordinate is related to the image.</li>
+    <li>Iterative calls may happen when listen both onMouseEntered and  onMouseExited and change focus in handling of the events(like pop menu) or change control’s size.</li>
+    <li>When double click mouse, single-click event is tiggerred at first and then double-click event is triggerred. So need avoid duplicated or conflicted handlings against same event.</li>
+    <li>For table's multiple selections, use getSelectedIndices() to listen changes, Some changes may be missed if use selectedItemProperty().</li>
+</ol>]]>
+                            </html>
+                        </NodeAttributes>
+                        <NodeTag>
+                        <![CDATA[Need supplementary]]>
+                        </NodeTag>
+                        <NodeTag>
+                        <![CDATA[Like]]>
+                        </NodeTag>
+                    </TreeNode>
+                    <TreeNode>
+                        <NodeAttributes>
+                            <title>
+                            <![CDATA[Examples]]>
+                            </title>
+                        </NodeAttributes>
+                        <TreeNode>
+                            <NodeAttributes>
+                                <title>
+                                <![CDATA[ChangeListener<String>]]>
+                                </title>
+                                <html>
+                                <![CDATA[<PRE><CODE>
+input.textProperty().addListener(new ChangeListener<String>() {
+     @Override
+     public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+               checkInput();
+     }
+});
+</CODE></PRE>]]>
+                                </html>
+                            </NodeAttributes>
+                        </TreeNode>
+                        <TreeNode>
+                            <NodeAttributes>
+                                <title>
+                                <![CDATA[setOnMouseClicked]]>
+                                </title>
+                                <html>
+                                <![CDATA[<PRE><CODE>
+control.setOnMouseClicked(new EventHandler<MouseEvent>() {
+     @Override
+     public void handle(MouseEvent event) {
+            controlPane();
+     }
+});
+</CODE></PRE>]]>
+                                </html>
+                            </NodeAttributes>
+                        </TreeNode>
+                        <TreeNode>
+                            <NodeAttributes>
+                                <title>
+                                <![CDATA[disableProperty().bind]]>
+                                </title>
+                                <html>
+                                <![CDATA[<PRE><CODE>
+startButton.disableProperty().bind(
+       Bindings.isEmpty(targetPathInput.textProperty())
+       .or(targetPathInput.styleProperty().isEqualTo(badStyle))
+       .or(optionsValid.not())
+);
+</CODE></PRE>]]>
+                                </html>
+                            </NodeAttributes>
+                        </TreeNode>
+                    </TreeNode>
+                </TreeNode>
+                <TreeNode>
+                    <NodeAttributes>
+                        <title>
+                        <![CDATA[java]]>
+                        </title>
+                    </NodeAttributes>
+                    <TreeNode>
+                        <NodeAttributes>
+                            <title>
+                            <![CDATA[Items in one sentence about java]]>
+                            </title>
+                            <html>
+                            <![CDATA[<ol>
+    <li>Always assume most extreme inputs and most weird operations.</li>
+    <li>Assume user’ hardware configuration(CPU/memory/disk) is lower than average level.</li>
+    <li>Use BufferedInputStream and BufferedOutputStream for file I/O.</li>
+    <li>Use try-with-resource for file I/O.</li>
+    <li>Always consider out of memory when read/write file or data.</li>
+    <li>Notice charset when read/write text file.</li>
+    <li>Notice charset when convert between bytes and string.</li>
+    <li>Condition to determine whether reach end of file should be "len &gt; 0". If use "len != -1", endless loop may happen if zero byte is read.</li>
+    <li>Call "System.gc()" before delete/move/rename file, to avoid failure due to cache.</li>
+    <li>When handle information in tree, like files system, endless loop should be avoided. 
+If the operation will change source node, the target node should not be the source node nor its descendants.</li>
+    <li>If delete list by indices, delete items from the end index to the start index.</li>
+    <li>When class has many parameters, do not write many constructors to initialized different sets of parameters. Better coding is static creator and chain assignment by return “this” in all “set” methods.</li>
+    <li>Anonymous class is very useful for scenario like lots of duplicated codes with only difference that  several methods have difference implements.</li>
+    <li>Generic is very useful for scenario like lots of duplicated codes with only differernce of data type.</li>
+    <li>Define as less instance variables/methods as possible in class if it generates lots of instance. </li>
+    <li>As less float-point calculations as possible in loop. If can, change float-point calculations as integer calculations.</li>
+    <li>When listen data changing, need judge whether change trully happens, and avoid too frequently manufactures by setting minimum threshold of changing.</li>
+    <li>Reboot application when change JVM parameters or need clean env in simple way.</li>
+    <li>Notice whether the index is 0-based or 1-based, especially for thrid-party codes. 0-based is default. If 1-based, should write comment for it.</li>
+    <li>Generally, index in user interface starts from 1, while index in codes data starts from 0.</li>
+    <li>Generally, range(start-end) in user interface includes end, while range(start-end) in codes data excludes end.</li>
+    <li>Double.MIN_VALUE is the minimum positive double(almost zero). -Double.MAX_VALUE is the minimum double.</li>
+    <li>When handle money, store integer numbers for each unit.</li>
+    <li>BigDecimal is much slower than double. Double is enough for most situations.</li>
+    <li>To determine value's broken, write if (abs(x - 7.3) &lt; TOLERANCE) instead of if (x == 7.3).</li>
+    <li>Value of final static constant should be determined at compling time.</li>
+    <li>When JDBC read numbers, if SQL value is null, ResultSet.getDouble/getFloat/getInt/getShort returns 0. Use ResultSet.getObject instead if need distinct zero and null.
+       <a target=_blank href="https://docs.oracle.com/en/java/javase/18/docs/api/java.sql/java/sql/ResultSet.html#getDouble(java.lang.String)">ResultSet.html#getDouble</a>
+    </li>
+    <li>From Java18, Charset.defaultCharset() is always UTF-8. This will affect commands and results of ProcessBuilder. 
+        <a target=_blank href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Process.html#inputReader()">Process</a> 
+        <a target=_blank href="https://bugs.openjdk.org/browse/JDK-8266075">JDK-8266075</a>
+     </li>
+</ol>]]>
+                            </html>
+                        </NodeAttributes>
+                        <NodeTag>
+                        <![CDATA[Need supplementary]]>
+                        </NodeTag>
+                        <NodeTag>
+                        <![CDATA[Like]]>
+                        </NodeTag>
+                    </TreeNode>
+                </TreeNode>
+            </TreeNode>
+        </TreeNode>
+    </TreeNode>
+</Node_Html>

@@ -43,7 +43,7 @@ public class MarkdownToTextController extends BaseBatchFileController {
         try {
             DataHolder textHolder = PegdownOptionsAdapter.flexmarkOptions(Extensions.ALL);
             textOptions = new MutableDataSet();
-            textOptions.set(Parser.EXTENSIONS, textHolder.get(Parser.EXTENSIONS));
+            textOptions.set(Parser.EXTENSIONS, Parser.EXTENSIONS.get(textHolder));
             textParser = Parser.builder(textOptions).build();
             textCollectingVisitor = new TextCollectingVisitor();
 

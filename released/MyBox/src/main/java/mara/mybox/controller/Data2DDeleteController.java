@@ -69,7 +69,9 @@ public class Data2DDeleteController extends BaseData2DTaskTargetsController {
             }
             return true;
         } catch (Exception e) {
-            setError(e.toString());
+            if (task != null) {
+                task.setError(e.toString());
+            }
             outputData = null;
             return false;
         }

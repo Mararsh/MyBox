@@ -3,10 +3,8 @@ package mara.mybox.value;
 import java.io.File;
 import java.sql.Connection;
 import javafx.scene.paint.Color;
-import mara.mybox.db.DerbyBase;
 import mara.mybox.db.table.TableUserConf;
 import static mara.mybox.value.AppVariables.UserConfigValues;
-import org.apache.pdfbox.io.MemoryUsageSetting;
 
 /**
  * @Author Mara
@@ -498,10 +496,6 @@ public class UserConfig {
         return size;
     }
 
-    public static MemoryUsageSetting getPdfMem(Connection conn) {
-        return setPdfMem(conn, UserConfig.getString(conn, "PdfMemDefault", "1GB"));
-    }
-
     public static boolean setSceneFontSize(int size) {
         AppVariables.sceneFontSize = size;
         if (UserConfig.setInt("SceneFontSize", size)) {
@@ -509,37 +503,6 @@ public class UserConfig {
         } else {
             return false;
         }
-    }
-
-    public static MemoryUsageSetting setPdfMem(String value) {
-        try (Connection conn = DerbyBase.getConnection()) {
-            return setPdfMem(conn, value);
-        } catch (Exception e) {
-//            MyBoxLog.error(e);
-            return null;
-        }
-    }
-
-    public static MemoryUsageSetting setPdfMem(Connection conn, String value) {
-        switch (value) {
-            case "1GB":
-                UserConfig.setString("PdfMemDefault", "1GB");
-                AppVariables.PdfMemUsage = MemoryUsageSetting.setupMixed(1024 * 1024 * 1024L, -1);
-                break;
-            case "2GB":
-                UserConfig.setString("PdfMemDefault", "2GB");
-                AppVariables.PdfMemUsage = MemoryUsageSetting.setupMixed(2048 * 1024 * 1024L, -1);
-                break;
-            case "Unlimit":
-                UserConfig.setString("PdfMemDefault", "Unlimit");
-                AppVariables.PdfMemUsage = MemoryUsageSetting.setupMixed(-1, -1);
-                break;
-            case "500MB":
-            default:
-                UserConfig.setString("PdfMemDefault", "500MB");
-                AppVariables.PdfMemUsage = MemoryUsageSetting.setupMixed(500 * 1024 * 1024L, -1);
-        }
-        return AppVariables.PdfMemUsage;
     }
 
     public static boolean setIconSize(int size) {

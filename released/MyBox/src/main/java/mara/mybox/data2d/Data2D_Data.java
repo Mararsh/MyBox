@@ -136,6 +136,16 @@ public abstract class Data2D_Data extends Data2D_Attributes {
 //        return (char) ('a' + random.nextInt(25)) + "";
     }
 
+    public List<String> dummyRow() {
+        if (columns == null) {
+            return null;
+        }
+        List<String> row = new ArrayList<>();
+        for (Data2DColumn column : columns) {
+            row.add(column.dummyValue());
+        }
+        return row;
+    }
 
     /*
         table data
@@ -285,7 +295,7 @@ public abstract class Data2D_Data extends Data2D_Attributes {
     }
 
     public boolean isTmpFile() {
-        return file == null || FileTmpTools.isTmpFile(file);
+        return FileTmpTools.isTmpFile(file);
     }
 
     public boolean needBackup() {
@@ -311,8 +321,12 @@ public abstract class Data2D_Data extends Data2D_Attributes {
     }
 
     public String random(Random random, int col, boolean nonNegative) {
+        return random(random, column(col), nonNegative);
+    }
+
+    public String random(Random random, Data2DColumn column, boolean nonNegative) {
         try {
-            return column(col).random(random, maxRandom, scale, nonNegative);
+            return column.random(random, maxRandom, scale, nonNegative);
         } catch (Exception e) {
             return null;
         }
@@ -464,9 +478,9 @@ public abstract class Data2D_Data extends Data2D_Attributes {
                 targetCcolumns.add(new Data2DColumn(message("SourceRowNumber"), ColumnDefinition.ColumnType.Long));
             }
             for (Integer i : indices) {
-                Data2DColumn column = sourceColumns.get(i).cloneAll();
+                Data2DColumn column = sourceColumns.get(i).copy();
                 String name = column.getColumnName();
-                column.setD2cid(-1).setD2id(-1).setColumnName(name);
+                column.setColumnName(name);
                 targetCcolumns.add(column);
             }
             return targetCcolumns;
@@ -516,7 +530,7 @@ public abstract class Data2D_Data extends Data2D_Attributes {
 
     public String formatValue(int col, String value) {
         try {
-            return column(col).format(value, validateEdit());
+            return column(col).format(value);
         } catch (Exception e) {
             return null;
         }
@@ -524,7 +538,7 @@ public abstract class Data2D_Data extends Data2D_Attributes {
 
     public String savedValue(int col, String value) {
         try {
-            return column(col).savedValue(value, validateEdit());
+            return column(col).savedValue(value, rejectInvalidWhenEdit());
         } catch (Exception e) {
             return null;
         }
@@ -613,7 +627,7 @@ public abstract class Data2D_Data extends Data2D_Attributes {
         List<String> validNames = new ArrayList<>();
         List<Data2DColumn> targetColumns = new ArrayList<>();
         for (Data2DColumn column : inColumns) {
-            Data2DColumn tcolumn = column.cloneAll();
+            Data2DColumn tcolumn = column.copy();
             String name = DerbyBase.checkIdentifier(validNames, tcolumn.getColumnName(), true);
             tcolumn.setColumnName(name);
             targetColumns.add(tcolumn);
@@ -643,6 +657,41 @@ public abstract class Data2D_Data extends Data2D_Attributes {
             }
         }
         return hasLongitude && haslatitude;
+    }
+
+    public List<String> placeholders(boolean allStatistic) {
+        try {
+            if (!isValidDefinition()) {
+                return null;
+            }
+            List<String> list = new ArrayList<>();
+            list.add("#{" + message("TableRowNumber") + "}");
+            list.add("#{" + message("DataRowNumber") + "}");
+            for (Data2DColumn column : columns) {
+                String name = column.getColumnName();
+                list.add("#{" + name + "}");
+            }
+            for (Data2DColumn column : columns) {
+                String name = column.getColumnName();
+                if (allStatistic || column.isNumberType()) {
+                    list.add("#{" + name + "-" + message("Mean") + "}");
+                    list.add("#{" + name + "-" + message("Median") + "}");
+                    list.add("#{" + name + "-" + message("Mode") + "}");
+                    list.add("#{" + name + "-" + message("MinimumQ0") + "}");
+                    list.add("#{" + name + "-" + message("LowerQuartile") + "}");
+                    list.add("#{" + name + "-" + message("UpperQuartile") + "}");
+                    list.add("#{" + name + "-" + message("MaximumQ4") + "}");
+                    list.add("#{" + name + "-" + message("LowerExtremeOutlierLine") + "}");
+                    list.add("#{" + name + "-" + message("LowerMildOutlierLine") + "}");
+                    list.add("#{" + name + "-" + message("UpperMildOutlierLine") + "}");
+                    list.add("#{" + name + "-" + message("UpperExtremeOutlierLine") + "}");
+                }
+            }
+            return list;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
     }
 
 }

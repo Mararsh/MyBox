@@ -18,7 +18,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlData2DStyleList">
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlData2DStyleList">
     <children>
         <HBox alignment="CENTER_RIGHT" spacing="2.0">
             <children>
@@ -66,7 +66,7 @@ License:    Apache License Version 2.0
                 <TableColumn fx:id="toColumn" prefWidth="70.0" text="%To" />
                 <TableColumn fx:id="columnsColumn" prefWidth="120.0" text="%Columns" />
                 <TableColumn fx:id="filterColumn" prefWidth="160.0" text="%Filter" />
-            <TableColumn fx:id="filterReversedColumn" text="%Reverse" />
+            <TableColumn fx:id="filterMatchFalseColumn" text="%MatchFalse" />
                 <TableColumn fx:id="fontColorColumn" text="%FontColor" />
                 <TableColumn fx:id="bgColorColumn" text="%BackgroundColor" />
                 <TableColumn fx:id="fontSizeColumn" text="%FontSize" />

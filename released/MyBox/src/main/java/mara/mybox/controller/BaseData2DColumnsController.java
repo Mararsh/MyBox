@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
@@ -26,10 +25,10 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.paint.Color;
 import javafx.util.Callback;
 import mara.mybox.data2d.Data2D;
-import mara.mybox.data2d.tools.Data2DDefinitionTools;
-import mara.mybox.data2d.tools.Data2DPageTools;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataFileExcel;
+import mara.mybox.data2d.tools.Data2DColumnTools;
+import mara.mybox.data2d.tools.Data2DDefinitionTools;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.VisitHistory;
 import static mara.mybox.db.table.BaseTable.StringMaxLength;
@@ -60,7 +59,6 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
 
     protected TableData2DColumn tableData2DColumn;
     protected Data2D data2D;
-    protected ChangeListener<Boolean> getListener;
     protected boolean changed;
 
     @FXML
@@ -429,12 +427,12 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
     }
 
     @Override
-    public Data2DColumn dataCopy(Data2DColumn data) {
-        if (data == null) {
+    public Data2DColumn dataCopy(Data2DColumn col) {
+        if (col == null) {
             return null;
         }
-        Data2DColumn column = data.copy();
-        column.setColumnName(data.getColumnName() + "_" + message("Copy"));
+        Data2DColumn column = col.copy().setD2id(col.getD2id());
+        column.setColumnName(col.getColumnName() + "_" + message("Copy"));
         column.setIndex(newColumnIndex());
         return column;
     }
@@ -555,6 +553,12 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
         Data2DColumnEditController.open(this, index);
     }
 
+    @FXML
+    @Override
+    public void selectAction() {
+        DataSelectDataColumnController.open(this);
+    }
+
     /*
         import
      */
@@ -573,8 +577,7 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
             @Override
             protected boolean handle() {
                 try {
-                    csv = Data2DDefinitionTools.definitionFromXML(this, myController,
-                            TextFileTools.readTexts(this, file));
+                    csv = Data2DDefinitionTools.fromXML(TextFileTools.readTexts(this, file));
                     return csv != null;
                 } catch (Exception e) {
                     error = e.toString();
@@ -599,6 +602,14 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
             return;
         }
         tableData.addAll(cols);
+    }
+
+    public void addColumn(Data2DColumn column) {
+        if (column == null) {
+            return;
+        }
+        Data2DColumnTools.columnInfo(column);
+        tableData.add(column);
     }
 
     /*
@@ -693,7 +704,8 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
             popError(message("NoData"));
             return;
         }
-        File file = chooseSaveFile(VisitHistory.FileType.CSV, currentData.dataName());
+        File file = chooseSaveFile(VisitHistory.FileType.CSV,
+                currentData.dataName() + "-" + message("DataDefinition"));
         if (file == null) {
             return;
         }
@@ -707,7 +719,7 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
             @Override
             protected boolean handle() {
                 try {
-                    csv = Data2DDefinitionTools.definitionToCSVFile(currentData, file);
+                    csv = Data2DDefinitionTools.toCSVFile(currentData, file);
                     if (file != null && file.exists()) {
                         recordFileWritten(file, VisitHistory.FileType.CSV);
                         return true;
@@ -733,7 +745,8 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
             popError(message("NoData"));
             return;
         }
-        File file = chooseSaveFile(VisitHistory.FileType.XML, currentData.dataName());
+        File file = chooseSaveFile(VisitHistory.FileType.XML,
+                currentData.dataName() + "-" + message("DataDefinition"));
         if (file == null) {
             return;
         }
@@ -744,7 +757,7 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
             @Override
             protected boolean handle() {
                 try {
-                    String xml = Data2DDefinitionTools.definitionToXML(currentData,
+                    String xml = Data2DDefinitionTools.toXML(currentData,
                             UserConfig.getBoolean("Data2DDefinitionExportAtributes", true),
                             "");
                     if (xml == null || xml.isBlank()) {
@@ -785,7 +798,8 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
             popError(message("NoData"));
             return;
         }
-        File file = chooseSaveFile(VisitHistory.FileType.JSON, currentData.dataName());
+        File file = chooseSaveFile(VisitHistory.FileType.JSON,
+                currentData.dataName() + "-" + message("DataDefinition"));
         if (file == null) {
             return;
         }
@@ -796,7 +810,7 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
             @Override
             protected boolean handle() {
                 try {
-                    String json = Data2DDefinitionTools.definitionToJSON(currentData,
+                    String json = Data2DDefinitionTools.toJSON(currentData,
                             UserConfig.getBoolean("Data2DDefinitionExportAtributes", true),
                             "");
                     if (json == null || json.isBlank()) {
@@ -833,7 +847,8 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
             popError(message("NoData"));
             return;
         }
-        File file = chooseSaveFile(VisitHistory.FileType.Excel, currentData.dataName());
+        File file = chooseSaveFile(VisitHistory.FileType.Excel,
+                currentData.dataName() + "-" + message("DataDefinition"));
         if (file == null) {
             return;
         }
@@ -847,7 +862,7 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
             @Override
             protected boolean handle() {
                 try {
-                    excel = Data2DDefinitionTools.definitionToExcelFile(currentData, file);
+                    excel = Data2DDefinitionTools.toExcelFile(currentData, file);
                     if (file != null && file.exists()) {
                         recordFileWritten(file, VisitHistory.FileType.CSV);
                         return true;

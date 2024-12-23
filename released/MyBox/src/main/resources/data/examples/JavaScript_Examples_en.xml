@@ -1,0 +1,897 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Node_JavaScript>
+<TreeNode>
+    <NodeAttributes>
+        <title>
+            <![CDATA[Examples]]>
+        </title>
+    </NodeAttributes>
+    <TreeNode>
+        <NodeAttributes>
+            <title>
+                <![CDATA[Variable]]>
+            </title>
+        </NodeAttributes>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[string]]>
+                </title>
+                <script>
+                    <![CDATA[var stringA = "hello";
+stringA += " world";
+"Contains e:" + (stringA.indexOf("e") >= 0) + "   length:" + stringA.length]]>
+                </script>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[date]]>
+                </title>
+                <script>
+                    <![CDATA["current time: " + new Date() + "\n" + 
+"format yyyy/mm/dd: " + new Date('2022/11/30 10:35:32') + "\n" + 
+"format mm/dd/yyyy: " + new Date('11/30/2022 10:35:32') + "\n" + 
+"format yyyy-mm-dd: " + new Date('2022-11-30 10:35:32'.replace(/-/g,'/'));]]>
+                </script>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[array]]>
+                </title>
+                <script>
+                    <![CDATA[var arrayA =  [-1.2, 3.2, 15, 4.912];
+arrayA[2];]]>
+                </script>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[object]]>
+                </title>
+                <script>
+                    <![CDATA[var cat1 = {color:"white", age:"15", name:"GuaiGuai"};
+cat1.name]]>
+                </script>
+            </NodeAttributes>
+        </TreeNode>
+    </TreeNode>
+    <TreeNode>
+        <NodeAttributes>
+            <title>
+                <![CDATA[Expressions]]>
+            </title>
+        </NodeAttributes>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[Numeric operations]]>
+                </title>
+            </NodeAttributes>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[Euler number]]>
+                    </title>
+                    <script>
+                        <![CDATA[Math.E]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[pi]]>
+                    </title>
+                    <script>
+                        <![CDATA[Math.PI]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[absoluate]]>
+                    </title>
+                    <script>
+                        <![CDATA[Math.abs(-5.611)]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[power of e]]>
+                    </title>
+                    <script>
+                        <![CDATA[Math.exp(2)]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[square root]]>
+                    </title>
+                    <script>
+                        <![CDATA[Math.sqrt(9)]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[cubic root]]>
+                    </title>
+                    <script>
+                        <![CDATA[Math.pow(27,-3)]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[power]]>
+                    </title>
+                    <script>
+                        <![CDATA[Math.pow(2,5)]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[cosine]]>
+                    </title>
+                    <script>
+                        <![CDATA[Math.cos(0)]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[sine]]>
+                    </title>
+                    <script>
+                        <![CDATA[Math.sin(9)]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[tangent]]>
+                    </title>
+                    <script>
+                        <![CDATA[Math.tan(5)]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[arc tangent]]>
+                    </title>
+                    <script>
+                        <![CDATA[Math.atan(-7.3)]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[arc cosine]]>
+                    </title>
+                    <script>
+                        <![CDATA[Math.acos(0.5)]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[arc sine]]>
+                    </title>
+                    <script>
+                        <![CDATA[Math.asin(0.3)]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[natural logarithm(base-e)]]>
+                    </title>
+                    <script>
+                        <![CDATA[Math.log(6)]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[common logarithm(base-10)]]>
+                    </title>
+                    <script>
+                        <![CDATA[// ECMAScript 6 supports while ECMAScript 5.1 not support
+Math.log10(6)]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[base-2 logarithm]]>
+                    </title>
+                    <script>
+                        <![CDATA[// ECMAScript 6 supports while ECMAScript 5.1 not support
+Math.log2(6)]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[round up]]>
+                    </title>
+                    <script>
+                        <![CDATA[Math.ceil(4.13)]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[round down]]>
+                    </title>
+                    <script>
+                        <![CDATA[Math.floor(4.67)]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[round]]>
+                    </title>
+                    <script>
+                        <![CDATA[Math.round(4.83)]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[trunc]]>
+                    </title>
+                    <script>
+                        <![CDATA[Math.trunc(4.83)]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[random]]>
+                    </title>
+                    <script>
+                        <![CDATA[Math.random()]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[maximum]]>
+                    </title>
+                    <script>
+                        <![CDATA[Math.max(1,2,-3)]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[minimum]]>
+                    </title>
+                    <script>
+                        <![CDATA[Math.min(1,2,-3)]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[Strings operations]]>
+                </title>
+            </NodeAttributes>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[compare]]>
+                    </title>
+                    <script>
+                        <![CDATA['Hello' == 'hello' || 'a' < 'A' || 'a' != 'A']]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[replace first]]>
+                    </title>
+                    <script>
+                        <![CDATA["Hello World! World is yourself.".replace("World", "Feeling");]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[replace all]]>
+                    </title>
+                    <script>
+                        <![CDATA["Hello World! World is yourself.".replace(/World/g, "Feeling");]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[starts with]]>
+                    </title>
+                    <script>
+                        <![CDATA['Hello'.startsWith('h')]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[end with]]>
+                    </title>
+                    <script>
+                        <![CDATA['Hello'.endsWith('o')]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[subString]]>
+                    </title>
+                    <script>
+                        <![CDATA['Hello'.substring(2, 5)]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[char at]]>
+                    </title>
+                    <script>
+                        <![CDATA['hello'.charAt(2)]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[concat]]>
+                    </title>
+                    <script>
+                        <![CDATA['hello'.concat(' world')]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[split]]>
+                    </title>
+                    <script>
+                        <![CDATA['1,2,3,4'.split(',')]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[indexOf]]>
+                    </title>
+                    <script>
+                        <![CDATA['hello'.indexOf('e')]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[lastIndexOf]]>
+                    </title>
+                    <script>
+                        <![CDATA['hello'.lastIndexOf('l')]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[length]]>
+                    </title>
+                    <script>
+                        <![CDATA['hello'.length]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[search]]>
+                    </title>
+                    <script>
+                        <![CDATA[var stringA = "abc1233hello";
+var regexA = /3{2,}/ig;
+stringA.search(regexA)]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[toLowerCase]]>
+                    </title>
+                    <script>
+                        <![CDATA['Hello'.toLowerCase()]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[toUpperCase]]>
+                    </title>
+                    <script>
+                        <![CDATA['Hello'.toUpperCase()]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[Array operations]]>
+                </title>
+            </NodeAttributes>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[length]]>
+                    </title>
+                    <script>
+                        <![CDATA[var arrayA =  [-1.2, 3.2, 15, 4.912];
+arrayA.length]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[append]]>
+                    </title>
+                    <script>
+                        <![CDATA[var arrayA =  [-1.2, 3.2, 15, 4.912];
+arrayA.push(-47);]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[remove]]>
+                    </title>
+                    <script>
+                        <![CDATA[var arrayA =  [-1.2, 3.2, 15, 4.912];
+arrayA.pop()]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[Boolean operations]]>
+                </title>
+            </NodeAttributes>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[string include]]>
+                    </title>
+                    <script>
+                        <![CDATA[var stringA = "abc1233hello";
+var regexA = /3{2,}/ig;
+stringA.search(regexA) >= 0]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[string match]]>
+                    </title>
+                    <script>
+                        <![CDATA[var stringA = "abc1233hello";
+var regexA = /\S*3{2,}\S*/ig;
+stringA.search(regexA) >= 0]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[array include]]>
+                    </title>
+                    <script>
+                        <![CDATA[var arrayA =  ['A', 'B', 'C', 'D'];
+arrayA.includes('C');]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[is not number]]>
+                    </title>
+                    <script>
+                        <![CDATA[var v1='hello'
+isNaN(v1 - 1)]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[and/or/not]]>
+                    </title>
+                    <script>
+                        <![CDATA[var arrayA =  ['A', 'B', 'C', 'D'];
+var stringA = "abc1233hello";
+arrayA.includes('C') && (arrayA.length >= 8 || stringA.length < 5 || !stringA.endsWith("h"));]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[Date operations]]>
+                </title>
+            </NodeAttributes>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[date formats]]>
+                    </title>
+                    <script>
+                        <![CDATA["current time: " + "\n" + 
+"new Date() = " + new Date()+ "\n" + 
+"new Date().getTime() = " + new Date().getTime() + "\n" + 
+"new Date().toLocaleString() = " + new Date().toLocaleString()+ "\n" + 
+"new Date().toGMTString() = " + new Date().toGMTString()+ "\n" + 
+"new Date().toISOString() = " + new Date().toISOString()+ "\n" + 
+"new Date().toUTCString() = " + new Date().toUTCString()+ "\n" + 
+"new Date().toString() = " + new Date().toString()+ "\n" + 
+"new Date().toJSON() = " + new Date().toJSON()+ "\n" + 
+"new Date().toDateString() = " + new Date().toDateString()+ "\n" + 
+"new Date().toTimeString() = " + new Date().toTimeString()+ "\n" + 
+"new Date().toLocaleDateString() = " + new Date().toLocaleDateString()+ "\n" + 
+"new Date().toLocaleTimeString() = " + new Date().toLocaleTimeString()]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[parse date]]>
+                    </title>
+                    <script>
+                        <![CDATA[new Date('2022/11/30 10:35:32').toLocaleString() + "\n" + 
+new Date('11/30/2022 10:35:32').toLocaleString() + "\n" + 
+new Date('2022-11-30 10:35:32'.replace(/-/g,'/')).toLocaleString() + "\n" + 
+new Date('2022/11/30') + "\n" + 
+new Date('2022-11-30'.replace(/-/g,'/'))]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[format date]]>
+                    </title>
+                    <script>
+                        <![CDATA[function formatDate(date) {
+     var y = date.getFullYear();
+     var m = date.getMonth() + 1;
+     m = m < 10 ? ('0' + m) : m;
+     var d = date.getDate();
+     d = d < 10 ? ('0' + d) : d;
+     var h =date.getHours();
+     h = h < 10 ? ('0' + h) : h;
+     var M =date.getMinutes();
+     M = M < 10 ? ('0' + M) : M;
+     var s =date.getSeconds();
+     s = s < 10 ? ('0' + s) : s;
+     return y + '-' + m + '-' + d + ' ' + h + ':' + M + ':' + s;
+}
+formatDate(new Date());]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[components of date]]>
+                    </title>
+                    <script>
+                        <![CDATA[var timeb = new Date('2022/11/30 10:35:32');
+"year: " + timeb.getFullYear() + "\nmonth: " + (timeb.getMonth() + 1) + "\nday: " + timeb.getDate()
+ + "\nweek day: " + timeb.getDay() + "\nhours: " + timeb.getHours()+ "\nminutes: " + timeb.getMinutes()
++ "\nseconds: " + timeb.getSeconds();]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[whether Sunday]]>
+                    </title>
+                    <script>
+                        <![CDATA[new Date().getDay() == 0]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[compare dates]]>
+                    </title>
+                    <script>
+                        <![CDATA[new Date('2012/05/19').getTime()  > new Date('2016/05/19 09:23:12').getTime()]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+        </TreeNode>
+    </TreeNode>
+    <TreeNode>
+        <NodeAttributes>
+            <title>
+                <![CDATA[Function]]>
+            </title>
+        </NodeAttributes>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[Add style]]>
+                </title>
+                <script>
+                    <![CDATA[function addStyle(style) {
+    var node = document.createElement("style");        
+    node.id = "mystyleid";        
+    node.type = "text/css";        
+    node.innerHTML = style.replace(/\n/g,"  ");        
+    document.getElementsByTagName("HEAD").item(0).appendChild(node);
+};
+addStyle("body { background-color:black; color:#CCFF99; }");]]>
+                </script>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[Remove node]]>
+                </title>
+                <script>
+                    <![CDATA[function removeNode(id) {
+    var node = document.getElementById(id);
+    if ( node != null ) 
+        node.parentNode.removeChild(node);
+};
+removeNode("mystyleid");]]>
+                </script>
+            </NodeAttributes>
+        </TreeNode>
+    </TreeNode>
+    <TreeNode>
+        <NodeAttributes>
+            <title>
+                <![CDATA[html]]>
+            </title>
+        </NodeAttributes>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[Selection]]>
+                </title>
+            </NodeAttributes>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[Select all]]>
+                    </title>
+                    <script>
+                        <![CDATA[window.getSelection().removeAllRanges();     
+var selection = window.getSelection();        
+var range = document.createRange();        
+range.selectNode(document.documentElement);        
+selection.addRange(range);]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[Select none]]>
+                    </title>
+                    <script>
+                        <![CDATA[window.getSelection().removeAllRanges();]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[Select node]]>
+                    </title>
+                    <script>
+                        <![CDATA[function selectNode(id) {
+    window.getSelection().removeAllRanges();     
+    var selection = window.getSelection();        
+    var range = document.createRange();        
+    range.selectNode(document.getElementById(id));        
+    selection.addRange(range);
+};
+selectNode("someid");]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[Current selected string]]>
+                    </title>
+                    <script>
+                        <![CDATA[window.getSelection().toString();]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[Current selected html codes]]>
+                    </title>
+                    <script>
+                        <![CDATA[var selectionObj = window.getSelection();        
+var rangeObj = selectionObj.getRangeAt(0);        
+var docFragment = rangeObj.cloneContents();        
+var div = document.createElement("div");        
+div.appendChild(docFragment);        
+div.innerHTML;]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[Value]]>
+                </title>
+            </NodeAttributes>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[Read Cookie]]>
+                    </title>
+                    <script>
+                        <![CDATA[document.cookie;]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[Page height]]>
+                    </title>
+                    <script>
+                        <![CDATA[document.documentElement.scrollHeight || document.body.scrollHeight;]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[Page width]]>
+                    </title>
+                    <script>
+                        <![CDATA[document.documentElement.scrollWidth || document.body.scrollWidth;]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[Operation]]>
+                </title>
+            </NodeAttributes>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[Scroll page]]>
+                    </title>
+                    <script>
+                        <![CDATA[window.scrollTo(50,70 );]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[Set page as editable]]>
+                    </title>
+                    <script>
+                        <![CDATA[document.body.contentEditable=true;]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[Pop information]]>
+                    </title>
+                    <script>
+                        <![CDATA[alert("Hello");]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[confirm]]>
+                    </title>
+                    <script>
+                        <![CDATA[confirm("Are you fine?");]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[input]]>
+                    </title>
+                    <script>
+                        <![CDATA[prompt("Your cat");]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[open address]]>
+                    </title>
+                    <script>
+                        <![CDATA[window.open("http://www.nlc.cn");]]>
+                    </script>
+                </NodeAttributes>
+            </TreeNode>
+        </TreeNode>
+    </TreeNode>
+</TreeNode>
+</Node_JavaScript>

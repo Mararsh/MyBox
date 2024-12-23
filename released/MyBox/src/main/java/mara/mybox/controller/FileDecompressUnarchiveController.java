@@ -22,6 +22,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import mara.mybox.data.FileInformation.FileType;
 import mara.mybox.data.FileNode;
+import mara.mybox.data.FileUnarchive;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
@@ -433,7 +434,7 @@ public class FileDecompressUnarchiveController extends FilesTreeController {
                 if (nodeItem == null) {
                     continue;
                 }
-                FileNode nodeInfo = nodeItem.getValue();
+                FileNode nodeInfo = nodeItem.getValue().setSeparator("/");
                 nodeInfo.setFileType(entry.getFileType());
                 if (entry.getFileType() == FileType.File) {
                     totalFiles++;

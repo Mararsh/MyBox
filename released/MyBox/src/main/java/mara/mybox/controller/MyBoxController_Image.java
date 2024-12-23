@@ -39,7 +39,7 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
 
         MenuItem imageScope = new MenuItem(message("ImageScope"));
         imageScope.setOnAction((ActionEvent event1) -> {
-            loadScene(Fxmls.ImageScopeFxml);
+            DataTreeController.imageScope(this, true);
         });
 
         MenuItem imageOptions = new MenuItem(message("ImageOptions"));

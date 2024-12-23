@@ -144,9 +144,6 @@ public class StyleCheckBox {
             return new StyleData(id, "XML", "", "iconXML.png");
         }
         if (id.startsWith("pdf")) {
-            if (id.equals("pdfMemBox")) {
-                return new StyleData("pdfMemBox", "", message("PdfMemComments"), "", "");
-            }
             return new StyleData(id, "PDF", "", "iconPDF.png");
         }
         if (id.startsWith("json")) {

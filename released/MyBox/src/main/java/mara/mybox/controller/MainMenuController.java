@@ -23,7 +23,7 @@ public class MainMenuController extends MainMenuController_Help {
 
             recentMenu.setOnShowing((Event e) -> {
                 recentMenu.getItems().clear();
-                recentMenu.getItems().addAll(VisitHistoryTools.getRecentMenu(this));
+                recentMenu.getItems().addAll(VisitHistoryTools.getRecentMenu(this, false));
             });
 
         } catch (Exception e) {

@@ -107,7 +107,6 @@ public class ImageEditorController extends BaseImageController {
     @Override
     public boolean afterImageLoaded() {
         try {
-
             if (!super.afterImageLoaded() || image == null) {
                 return false;
             }

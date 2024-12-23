@@ -9,45 +9,43 @@
   <h1>MyBox: Set of Easy Tools</h1>
   <p>This is compute application to provide simple and easy functions. It’s free and open sources.</p>
   <h2>What’s New</h2>
-  <p>2024-5-18 v6.8.1</p>
+  <p>2024-12-24 v6.8.2</p>
   <ul>
-   <li>Add: 
-    <ul>
-     <li>Write watermarks in PDF files in batch.</li>
-     <li>New data column type: Editable enumeration.</li>
-     <li>Documents: Test Environment, Base Functions’ Verification List, Compatibility Testing, Detailed Testing.</li>
-    </ul></li>
    <li>Improve: 
     <ul>
-     <li>Redesign and implement “Data manufacture”. The base framework is: reader + operate + writers.</li>
-     <li>Options: Verify types when edit data; Verify types when save data.</li>
-     <li>Row expression: Set variable values by bindings. Placeholders are handled as variable names instead of variable values.</li>
-     <li>Row filter: When expression is not empty and its value is not true nor false, the row is not taken.</li>
-     <li>Data manufacture: Fix and enhance “Set Values”.</li>
-     <li>Simplify interface of “Data manufacture”.</li>
-     <li>Transparent can be set when customized colors.</li>
-     <li>“rtbufsize” and rotation can be set for ffmpeg.</li>
-     <li>Notes: Node can be any html which can include head.</li>
+     <li>Redesign and implement “Information Tree”: 
+      <ul>
+       <li>Define different database tables for each type of trees.</li>
+       <li>Refine interfaces.</li>
+       <li>New export formats: Tree XML, Tree JSON, List CSV.</li>
+       <li>Import format is changed as Tree XML.</li>
+       <li>Order numbers of nodes can be set.</li>
+       <li>Tree “Data Column” replaces tree “Data Definition”.</li>
+       <li>Tree “Row Expression” replaces tree “Row Filter”.</li>
+      </ul></li>
+     <li>Data Manufacture: 
+      <ul>
+       <li>Option “Reject invalid value when edit” replaces “Validate data when edit”.</li>
+       <li>Option “Reject invalid value when save” replaces “Validate data when save”.</li>
+       <li>When edit data cell, pop text area when value length is large.</li>
+       <li>When edit data cell, display invalid values in abnormal color.</li>
+       <li>“Set Value”: Validate data before write and prompt useful information. And provide options to handle invalid values.</li>
+      </ul></li>
+     <li>Major interfaces of functions are changed as scroll panes.</li>
+     <li>Enhance “Make Documents”.</li>
     </ul></li>
+   <li>Upgrade to: JDK 23 + javaFX 24.</li>
+   <li>Remove: Memory parameters for reading PDF file.</li>
    <li>Solved problems: 
     <ul>
-     <li>Fail to switch language when default locale is not Chinese.</li>
-     <li>Row expression is messed when value is string of multiple lines.</li>
-     <li>In data manufacture, “Set Values” should not clear data rows when expression is invalid.</li>
-     <li>Errors popped when edit data row.</li>
-     <li>Icon is displayed as blank.</li>
-     <li>“Era” is converted wrongly when import data in database table.</li>
-     <li>Options of “Target file” in some interfaces do not work.</li>
-     <li>Transparent background is set wrongly when draw shape in SVG.</li>
-     <li>Options of “View” do not work for SVG.</li>
-     <li>Transparent does not work for colors in html.</li>
-     <li>Rename Files: Option “Fill zero” does not work when files number in table is not counted.</li>
-     <li>Directory Synchronize: Fail when select option “Delete files/directories existed In target path but not existed in source path”.</li>
-     <li>File Decompress Unarchive: Empty file names in selection list.</li>
-     <li>File Redundancy: Empty file names in result list.</li>
+     <li>“Set Values” and “Delete as Conditions” fail for all pages of database table.</li>
+     <li>Prompt of temporary file should not be popped when close matix or database table.</li>
+     <li>“Shortcuts omit Control/Alt” does not work.</li>
+     <li>Some shortcuts do not work in some interfaces.</li>
+     <li>Stack overflow may happen when task fails.</li>
     </ul></li>
   </ul>
-  <p><a target=_blank href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.8.1">Closed requirements/bugs in this version</a></p>
+  <p><a target=_blank href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.8.2">Closed requirements/bugs in this version</a></p>
   <h2>Notice</h2>
   <p>Without enough testings, MyBox has low reliability and bad stability. When use MyBox, following may happen:</p>
   <ul>
@@ -110,7 +108,8 @@
   </table>
   <p>User can double click the launcher to start MyBox or run it by command line. The default “Open Method” of image/text/PDF files can be associated to MyBox and a file can be opened directly by MyBox by double clicking the file’s name.</p>
   <h2>Jar</h2>
-  <p>When JRE or JDK(<a target=_blank href="https://www.oracle.com/technetwork/java/javase/downloads/index.html">Oracle jdk</a> or <a target=_blank href="http://jdk.java.net/">open jdk</a>) is installed, jar can run:</p>
+  <p>When JRE or JDK(<a target=_blank href="https://www.oracle.com/technetwork/java/javase/downloads/index.html">Oracle jdk</a> or <a target=_blank href="http://jdk.java.net/">open jdk</a>) is installed, jar can run.</p>
+  <p>Notice: Due to compile failure, env on Linux is still Java 21 + JavaFX 21.</p>
   <table>
    <thead>
     <tr>
@@ -125,19 +124,19 @@
      <td>win</td>
      <td><a target=_blank href="https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-win-jar.zip">MyBox-win-jar.zip</a></td>
      <td>240MB-</td>
-     <td>Java 21 or higher</td>
+     <td>Java 23 or higher</td>
     </tr>
     <tr>
      <td>linux</td>
      <td><a target=_blank href="https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-linux.jar.gz">MyBox-linux.jar.gz</a></td>
      <td>240MB-</td>
-     <td>Java 21 or higher</td>
+     <td>Java 23 or higher</td>
     </tr>
     <tr>
      <td>mac</td>
      <td><a target=_blank href="https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-mac.jar.gz">MyBox-mac.jar.gz</a></td>
      <td>240MB-</td>
-     <td>Java 21 or higher</td>
+     <td>Java 23 or higher</td>
     </tr>
    </tbody>
   </table>
@@ -403,7 +402,7 @@
    <tbody>
     <tr>
      <td>Project Main Page</td>
-     <td><a target=_blank href="https://github.com/Mararsh/MyBox">https://github.com/Mararsh/MyBoxl</a></td>
+     <td><a target=_blank href="https://github.com/Mararsh/MyBox">https://github.com/Mararsh/MyBox</a></td>
     </tr>
     <tr>
      <td>Source Codes and Compiled Packages</td>
@@ -445,22 +444,22 @@
    <tbody>
     <tr>
      <td>Development Logs</td>
-     <td>6.8.1</td>
-     <td>2024-5-18</td>
+     <td>6.8.2</td>
+     <td>2024-12-24</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_devLogs_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_devLogs_zh.html">html</a></td>
     </tr>
     <tr>
      <td>Shortcuts and icon</td>
-     <td>6.8</td>
-     <td>2024-2-9</td>
+     <td>6.8.2</td>
+     <td>2024-12-24</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_shortcuts_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_shortcuts_zh.html">html</a></td>
     </tr>
     <tr>
      <td>Functions list</td>
-     <td>6.8.1</td>
-     <td>2024-5-18</td>
+     <td>6.8.2</td>
+     <td>2024-12-24</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_functions_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_functions_zh.html">html</a></td>
     </tr>
@@ -480,8 +479,8 @@
     </tr>
     <tr>
      <td>User Guide - Overview</td>
-     <td>6.8.1</td>
-     <td>2024-5-18</td>
+     <td>6.8.2</td>
+     <td>2024-12-24</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/guide/en/MyBox-Overview-en/MyBox-Overview-en.html">html</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-en.pdf">PDF</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-en.odt">odt</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/guide/zh/MyBox-Overview-zh/MyBox-Overview-zh.html">html</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-zh.pdf">PDF</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-zh.odt">odt</a></td>
     </tr>
@@ -536,57 +535,57 @@
     </tr>
     <tr>
      <td>Software Testing - Test Environment</td>
-     <td>6.8.1</td>
-     <td>2024-5-18</td>
+     <td>6.8.2</td>
+     <td>2024-12-24</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_TestEnvironment_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_TestEnvironment_zh.html">html</a></td>
     </tr>
     <tr>
      <td>Software Testing - Base Functions’ Verification List</td>
-     <td>6.8.1</td>
-     <td>2024-5-18</td>
+     <td>6.8.2</td>
+     <td>2024-12-24</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_BaseVerificationList_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_BaseVerificationList_zh.html">html</a></td>
     </tr>
     <tr>
      <td>Software Testing - Compatibility Testing</td>
-     <td>6.8.1</td>
-     <td>2024-5-18</td>
+     <td>6.8.2</td>
+     <td>2024-12-24</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_CompatibilityTesting_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_CompatibilityTesting_zh.html">html</a></td>
     </tr>
     <tr>
      <td>Software Testing - Detailed Testing</td>
-     <td>6.8.1</td>
-     <td>2024-5-18</td>
+     <td>6.8.2</td>
+     <td>2024-12-24</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_DetailedTesting_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_DetailedTesting_zh.html">html</a></td>
     </tr>
     <tr>
      <td>Tips in Interfaces</td>
-     <td>6.8.1</td>
-     <td>2024-5-18</td>
+     <td>6.8.2</td>
+     <td>2024-12-24</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_interface_tips_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_interface_tips_zh.html">html</a></td>
     </tr>
     <tr>
      <td>About - Tree Information</td>
-     <td>6.8.1</td>
-     <td>2024-5-18</td>
+     <td>6.8.2</td>
+     <td>2024-12-24</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_about_tree_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_about_tree_zh.html">html</a></td>
     </tr>
     <tr>
      <td>About - Data in Two-dimensional Storage Structure</td>
-     <td>6.8.1</td>
-     <td>2024-5-18</td>
+     <td>6.8.2</td>
+     <td>2024-12-24</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_about_data2d_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_about_data2d_zh.html">html</a></td>
     </tr>
     <tr>
      <td>About - row expression and row filter</td>
-     <td>6.8.1</td>
-     <td>2024-5-18</td>
+     <td>6.8.2</td>
+     <td>2024-12-24</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_about_row_expression_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_about_row_expression_zh.html">html</a></td>
     </tr>
@@ -647,74 +646,74 @@
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_about_javafx.html">html</a></td>
     </tr>
     <tr>
-     <td>Examples - Information in Tree</td>
-     <td>6.7.7</td>
-     <td>2023-9-30</td>
-     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_tree_en.html">html</a></td>
-     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_tree_zh.html">html</a></td>
+     <td>Examples - Html Tree</td>
+     <td>6.8.2</td>
+     <td>2024-12-24</td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_Node_Html_en.html">html</a></td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_Node_Html_zh.html">html</a></td>
+    </tr>
+    <tr>
+     <td>Examples - Text Tree</td>
+     <td>6.8.2</td>
+     <td>2024-12-24</td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_Node_Text_en.html">html</a></td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_Node_Text_zh.html">html</a></td>
     </tr>
     <tr>
      <td>Examples - Favorite Address</td>
-     <td>6.7.7</td>
-     <td>2023-9-30</td>
-     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_web_favorite_en.html">html</a></td>
-     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_web_favorite_zh.html">html</a></td>
-    </tr>
-    <tr>
-     <td>Examples - Notes</td>
-     <td>6.7.7</td>
-     <td>2023-9-30</td>
-     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_notes_en.html">html</a></td>
-     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_notes_zh.html">html</a></td>
+     <td>6.8.2</td>
+     <td>2024-12-24</td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_Node_Web_Favorite_en.html">html</a></td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_Node_Web_Favorite_zh.html">html</a></td>
     </tr>
     <tr>
      <td>Examples - SQL</td>
-     <td>6.7.7</td>
-     <td>2023-9-30</td>
-     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_sql_en.html">html</a></td>
-     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_jshell_zh.html">html</a></td>
+     <td>6.8.2</td>
+     <td>2024-12-24</td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_Node_SQL_en.html">html</a></td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_Node_SQL_zh.html">html</a></td>
     </tr>
     <tr>
      <td>Examples - JShell</td>
-     <td>6.7.7</td>
-     <td>2023-9-30</td>
-     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_jshell_en.html">html</a></td>
-     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_jexl_zh.html">html</a></td>
+     <td>6.8.2</td>
+     <td>2024-12-24</td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_Node_JShell_en.html">html</a></td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_Node_JShell_zh.html">html</a></td>
     </tr>
     <tr>
      <td>Examples - JEXL</td>
-     <td>6.7.7</td>
-     <td>2023-9-30</td>
-     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_jexl_en.html">html</a></td>
-     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_javascript_zh.html">html</a></td>
+     <td>6.8.2</td>
+     <td>2024-12-24</td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_Node_JEXL_en.html">html</a></td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_Node_JEXL_zh.html">html</a></td>
     </tr>
     <tr>
      <td>Examples - JavaScript</td>
-     <td>6.7.7</td>
-     <td>2023-9-30</td>
-     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_javascript_en.html">html</a></td>
-     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_javascript_zh.html">html</a></td>
+     <td>6.8.2</td>
+     <td>2024-12-24</td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_Node_JavaScript_en.html">html</a></td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_Node_JavaScript_zh.html">html</a></td>
     </tr>
     <tr>
      <td>Examples - Math Function</td>
-     <td>6.7.7</td>
-     <td>2023-9-30</td>
-     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_math_funtion_en.html">html</a></td>
-     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_math_funtion_zh.html">html</a></td>
+     <td>6.8.2</td>
+     <td>2024-12-24</td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_Node_Math_Function_en.html">html</a></td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_Node_Math_Function_zh.html">html</a></td>
     </tr>
     <tr>
-     <td>Examples - Row Filter</td>
-     <td>6.7.7</td>
-     <td>2023-9-30</td>
-     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_row_filter_en.html">html</a></td>
-     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_row_filter_zh.html">html</a></td>
+     <td>Examples - Row Expression</td>
+     <td>6.8.2</td>
+     <td>2024-12-24</td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_Node_Row_Expression_en.html">html</a></td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_Node_Row_Expression_zh.html">html</a></td>
     </tr>
     <tr>
-     <td>Examples - Define Data</td>
-     <td>6.7.7</td>
-     <td>2023-9-30</td>
-     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_define_data_en.html">html</a></td>
-     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_define_data_zh.html">html</a></td>
+     <td>Examples - Data Column</td>
+     <td>6.8.2</td>
+     <td>2024-12-24</td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_Node_Data_Column_en.html">html</a></td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_Node_Data_Column_zh.html">html</a></td>
     </tr>
     <tr>
      <td>Palette - Default Colors</td>
@@ -816,8 +815,8 @@
     </tr>
     <tr>
      <td>Stories of Images</td>
-     <td>6.8</td>
-     <td>2024-2-9</td>
+     <td>6.8.2</td>
+     <td>2024-12-24</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-en.html">html</a> <a target=_blank href="https://sourceforge.net/projects/mara-mybox/files/documents/latests/MyBox-StoriesOfImages-en.pdf">PDF</a> <a target=_blank href="https://sourceforge.net/projects/mara-mybox/files/documents/latests/MyBox-StoriesOfImages-en.odt">odt</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-zh.html">html</a> <a target=_blank href="https://sourceforge.net/projects/mara-mybox/files/documents/latests/MyBox-StoriesOfImages-zh.pdf">PDF</a> <a target=_blank href="https://sourceforge.net/projects/mara-mybox/files/documents/latests/MyBox-StoriesOfImages-zh.odt">odt</a></td>
     </tr>
@@ -854,7 +853,7 @@
     <tr>
      <td></td>
      <td></td>
-     <td><a target=_blank href="https://docs.oracle.com/en/java/javase/21/docs/api/index.html">https://docs.oracle.com/en/java/javase/21/docs/api/index.html</a></td>
+     <td><a target=_blank href="https://docs.oracle.com/en/java/javase/23/docs/api/index.html">https://docs.oracle.com/en/java/javase/23/docs/api/index.html</a></td>
     </tr>
     <tr>
      <td>JavaFx</td>
@@ -874,7 +873,7 @@
     <tr>
      <td></td>
      <td></td>
-     <td><a target=_blank href="https://openjfx.io/javadoc/21/">https://openjfx.io/javadoc/21/</a></td>
+     <td><a target=_blank href="https://openjfx.io/javadoc/23/">https://openjfx.io/javadoc/23/</a></td>
     </tr>
     <tr>
      <td>Derby</td>
@@ -889,7 +888,7 @@
     <tr>
      <td>jpackage</td>
      <td>pack</td>
-     <td><a target=_blank href="https://docs.oracle.com/en/java/javase/21/docs/specs/man/jpackage.html">https://docs.oracle.com/en/java/javase/21/docs/specs/man/jpackage.html</a></td>
+     <td><a target=_blank href="https://docs.oracle.com/en/java/javase/23/docs/specs/man/jpackage.html">https://docs.oracle.com/en/java/javase/23/docs/specs/man/jpackage.html</a></td>
     </tr>
     <tr>
      <td>maven</td>
@@ -1165,7 +1164,7 @@
   </table>
   <h1>Features</h1>
   <h2>Cross Platforms</h2>
-  <p>MyBox is implemented in pure Java and only based on open sources, and it can run on platforms which support Java 21.<br>
+  <p>MyBox is implemented in pure Java and only based on open sources, and it can run on platforms which support Java 23.<br>
     Versions before v5.3 are based on Java 8.</p>
   <h2>Internationalized</h2>
   <ol>
@@ -1217,7 +1216,7 @@
   <h2>Data Compatible</h2>
   <ol>
    <li>Exported data are in common text formats, like txt/csv/xml/json/html.</li>
-   <li>Imported data are in common text format, like txt/csv.</li>
+   <li>Imported data are in common text format, like xml/csv.</li>
    <li>At least one exported format can be imported.</li>
    <li>Imported data are self-contain, that original data can be rebuilt without extra data.</li>
   </ol>

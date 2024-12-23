@@ -1,65 +1,78 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>mara</groupId>
     <artifactId>MyBox</artifactId>
-    <version>6.8.1</version>
+    <version>6.8.2</version>
     <packaging>jar</packaging>
     <name>MyBox</name>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <mainClass>mara.mybox.MyBox</mainClass>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
+        <maven.compiler.source>23</maven.compiler.source>
+        <maven.compiler.target>23</maven.compiler.target>
     </properties>
 
     <organization>
         <name>Mara</name>
-    </organization>  
-   
+    </organization>
+
+    <repositories>
+        <repository>
+            <id>aliyun-repos</id>
+            <url>https://maven.aliyun.com/repository/public</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-base</artifactId>
-            <version>21-ea+5</version>
+            <version>24-ea+15</version>
             <classifier>${platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
-            <version>21-ea+5</version>
+            <version>24-ea+15</version>
             <classifier>${platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
-            <version>21-ea+5</version>
+            <version>24-ea+15</version>
             <classifier>${platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-web</artifactId>
-            <version>21-ea+5</version>
+            <version>24-ea+15</version>
             <classifier>${platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-media</artifactId>
-            <version>21-ea+5</version>
+            <version>24-ea+15</version>
             <classifier>${platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-graphics</artifactId>
-            <version>21-ea+5</version>
+            <version>24-ea+15</version>
             <classifier>${platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-swing</artifactId>
-            <version>21-ea+5</version>
+            <version>24-ea+15</version>
             <classifier>${platform}</classifier>
         </dependency>
         <dependency>
@@ -115,12 +128,17 @@
         <dependency>
             <groupId>org.apache.pdfbox</groupId>
             <artifactId>pdfbox</artifactId>
-            <version>2.0.27</version>
+            <version>3.0.3</version>
         </dependency>
         <dependency>
             <groupId>org.apache.pdfbox</groupId>
             <artifactId>pdfbox-tools</artifactId>
-            <version>2.0.27</version>
+            <version>3.0.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>pdfbox-io</artifactId>
+            <version>3.0.3</version>
         </dependency>
         <dependency>
             <groupId>net.sf.cssbox</groupId>
@@ -160,12 +178,12 @@
         <dependency>
             <groupId>com.vladsch.flexmark</groupId>
             <artifactId>flexmark-all</artifactId>
-            <version>0.64.0</version>
+            <version>0.64.8</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-compress</artifactId>
-            <version>1.25.0</version>
+            <version>1.27.1</version>
         </dependency>
         <dependency>
             <groupId>org.tukaani</groupId>
@@ -175,22 +193,22 @@
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
-            <version>5.2.3</version>
+            <version>5.3.0</version>
         </dependency>
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
-            <version>5.2.3</version>
+            <version>5.3.0</version>
         </dependency>
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-scratchpad</artifactId>
-            <version>5.2.3</version>
+            <version>5.3.0</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-csv</artifactId>
-            <version>1.10.0</version>
+            <version>1.12.0</version>
         </dependency>
         <dependency>
             <groupId>com.sun.mail</groupId>
@@ -200,17 +218,17 @@
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>2.11.0</version>
+            <version>2.17.0</version>
         </dependency>
         <dependency>
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
-            <version>1.16.1</version>
+            <version>1.18.1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-jexl3</artifactId>
-            <version>3.2.1</version>
+            <version>3.4.0</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -225,7 +243,7 @@
         <dependency>
             <groupId>org.apache.xmlgraphics</groupId>
             <artifactId>batik-all</artifactId>
-            <version>1.16</version>
+            <version>1.18</version>
         </dependency>
         <dependency>
             <groupId>org.apache.xmlgraphics</groupId>
@@ -258,7 +276,7 @@
             <version>2.15.0</version>
         </dependency>
     </dependencies>
-    
+
 
     <build>
         <plugins>
@@ -270,21 +288,19 @@
                     <mainClass>mara.mybox.MyBox</mainClass>
                 </configuration>
             </plugin>
-            
-            
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
                 <configuration>
                     <showDeprecation>true</showDeprecation>
-                    <debug>false</debug>
+                    <!--<debug>true</debug>-->
                     <compilerArgs>
                         <!--<arg>-Xlint:unchecked</arg>-->
                     </compilerArgs>
                 </configuration>
             </plugin>
-
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -314,7 +330,7 @@
             </plugin>
 
         </plugins>
-        
+
 
     </build>
 
@@ -323,7 +339,7 @@
             <id>win</id>
             <properties>
                 <platform>win</platform>
-                <javaVersion>21</javaVersion>
+                <javaVersion>23</javaVersion>
             </properties>
             <activation>
                 <activeByDefault>true</activeByDefault>
@@ -333,7 +349,7 @@
             <id>linux</id>
             <properties>
                 <platform>linux</platform>
-                <javaVersion>21</javaVersion>
+                <javaVersion>23</javaVersion>
             </properties>
             <activation>
                 <activeByDefault>false</activeByDefault>
@@ -343,7 +359,7 @@
             <id>mac</id>
             <properties>
                 <platform>mac</platform>
-                <javaVersion>21</javaVersion>
+                <javaVersion>23</javaVersion>
             </properties>
             <activation>
                 <activeByDefault>false</activeByDefault>

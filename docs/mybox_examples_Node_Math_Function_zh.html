@@ -1,0 +1,1459 @@
+<HTML>
+    <HEAD>
+        <title>数学函数</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <style type="text/css">
+                          table { max-width:95%; margin : 10px;  border-style: solid; border-width:2px; border-collapse: collapse;} 
+              th, td { border-style: solid; border-width:1px; padding: 8px; border-collapse: collapse;} 
+              th { font-weight:bold;  text-align:center;} 
+              tr { height: 1.2em;  } 
+              .center { text-align:center;  max-width:95%; } 
+              .valueBox { border-style: solid; border-width:1px; border-color:black; padding: 5px; border-radius:5px;} 
+              .boldText { font-weight:bold;  } 
+ body { margin:0 auto; width: 900px; } 
+              img { max-width: 900px; } 
+              .valueText { color:#2e598a;  } 
+
+        </style>
+    </HEAD>
+    <BODY>
+        <H2>数学函数</H2>
+ <script>
+    function nodeClicked(id) {
+      var obj = document.getElementById(id);
+      var objv = obj.style.display;
+      if (objv == 'none') {
+        obj.style.display = 'block';
+      } else {
+        obj.style.display = 'none';
+      }
+    }
+    function showClass(className, show) {
+      var nodes = document.getElementsByClassName(className);  　
+      if ( show) {
+           for (var i = 0 ; i < nodes.length; i++) {
+              nodes[i].style.display = '';
+           }
+       } else {
+           for (var i = 0 ; i < nodes.length; i++) {
+              nodes[i].style.display = 'none';
+           }
+       }
+    }
+  </script>
+
+<DIV>
+<DIV>
+    <INPUT type="checkbox" checked onclick="showClass('TreeNode', this.checked);">展开</INPUT>
+    <INPUT type="checkbox" checked onclick="showClass('SerialNumber', this.checked);">层次号</INPUT>
+    <INPUT type="checkbox" checked onclick="showClass('NodeTag', this.checked);">标签</INPUT>
+    <INPUT type="checkbox" checked onclick="showClass('nodeValue', this.checked);">值</INPUT>
+</DIV>
+<HR>
+    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item1')"><SPAN class="SerialNumber">&nbsp;&nbsp;</SPAN>数学函数</a>
+    </DIV>
+    <DIV class="TreeNode" id='item1'>
+        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item2')"><SPAN class="SerialNumber">1&nbsp;&nbsp;</SPAN>示例</a>
+        </DIV>
+    <DIV class="TreeNode" id='item2'>
+            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item3')"><SPAN class="SerialNumber">1.1&nbsp;&nbsp;</SPAN>常数</a>
+            </DIV>
+    <DIV class="TreeNode" id='item3'>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.1&nbsp;&nbsp;</SPAN>圆周率
+                </DIV>
+                <DIV class="nodeValue"><DIV style="padding: 0 0 0 120px;"><DIV class="valueBox">
+                        <DIV align="center">
+            <TABLE>
+                <TR><TD>表达式</TD><TD><CODE>Math.PI</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item4'>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.2&nbsp;&nbsp;</SPAN>欧拉数
+                </DIV>
+                <DIV class="nodeValue"><DIV style="padding: 0 0 0 120px;"><DIV class="valueBox">
+                        <DIV align="center">
+            <TABLE>
+                <TR><TD>表达式</TD><TD><CODE>Math.E</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item5'>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.3&nbsp;&nbsp;</SPAN>2的自然对数
+                </DIV>
+                <DIV class="nodeValue"><DIV style="padding: 0 0 0 120px;"><DIV class="valueBox">
+                        <DIV align="center">
+            <TABLE>
+                <TR><TD>表达式</TD><TD><CODE>Math.LN2</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item6'>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.4&nbsp;&nbsp;</SPAN>10 的自然对数
+                </DIV>
+                <DIV class="nodeValue"><DIV style="padding: 0 0 0 120px;"><DIV class="valueBox">
+                        <DIV align="center">
+            <TABLE>
+                <TR><TD>表达式</TD><TD><CODE>Math.LN10</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item7'>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.5&nbsp;&nbsp;</SPAN>e的以2为底的对数
+                </DIV>
+                <DIV class="nodeValue"><DIV style="padding: 0 0 0 120px;"><DIV class="valueBox">
+                        <DIV align="center">
+            <TABLE>
+                <TR><TD>表达式</TD><TD><CODE>Math.LOG2E</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item8'>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.6&nbsp;&nbsp;</SPAN>e的以10为底的对数
+                </DIV>
+                <DIV class="nodeValue"><DIV style="padding: 0 0 0 120px;"><DIV class="valueBox">
+                        <DIV align="center">
+            <TABLE>
+                <TR><TD>表达式</TD><TD><CODE>Math.LOG10E</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item9'>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.7&nbsp;&nbsp;</SPAN>2的平方根
+                </DIV>
+                <DIV class="nodeValue"><DIV style="padding: 0 0 0 120px;"><DIV class="valueBox">
+                        <DIV align="center">
+            <TABLE>
+                <TR><TD>表达式</TD><TD><CODE>Math.SQRT2</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item10'>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.8&nbsp;&nbsp;</SPAN>0.5的平方根
+                </DIV>
+                <DIV class="nodeValue"><DIV style="padding: 0 0 0 120px;"><DIV class="valueBox">
+                        <DIV align="center">
+            <TABLE>
+                <TR><TD>表达式</TD><TD><CODE>Math.SQRT1_2</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item11'>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.9&nbsp;&nbsp;</SPAN>随机数
+                </DIV>
+                <DIV class="nodeValue"><DIV style="padding: 0 0 0 120px;"><DIV class="valueBox">
+                        <DIV align="center">
+            <TABLE>
+                <TR><TD>表达式</TD><TD><CODE>Math.random()</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item12'>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.10&nbsp;&nbsp;</SPAN>数值类型的最大正有限值
+                </DIV>
+                <DIV class="nodeValue"><DIV style="padding: 0 0 0 120px;"><DIV class="valueBox">
+                        <DIV align="center">
+            <TABLE>
+                <TR><TD>表达式</TD><TD><CODE>Number.MAX_VALUE</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item13'>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.11&nbsp;&nbsp;</SPAN>数值类型的最小正有限值
+                </DIV>
+                <DIV class="nodeValue"><DIV style="padding: 0 0 0 120px;"><DIV class="valueBox">
+                        <DIV align="center">
+            <TABLE>
+                <TR><TD>表达式</TD><TD><CODE>Number.MIN_VALUE</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item14'>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.12&nbsp;&nbsp;</SPAN>正无穷大
+                </DIV>
+                <DIV class="nodeValue"><DIV style="padding: 0 0 0 120px;"><DIV class="valueBox">
+                        <DIV align="center">
+            <TABLE>
+                <TR><TD>表达式</TD><TD><CODE>Number.POSITIVE_INFINITY</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item15'>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.13&nbsp;&nbsp;</SPAN>负无穷大
+                </DIV>
+                <DIV class="nodeValue"><DIV style="padding: 0 0 0 120px;"><DIV class="valueBox">
+                        <DIV align="center">
+            <TABLE>
+                <TR><TD>表达式</TD><TD><CODE>Number.NEGATIVE_INFINITY</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item16'>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.14&nbsp;&nbsp;</SPAN>非数字
+                </DIV>
+                <DIV class="nodeValue"><DIV style="padding: 0 0 0 120px;"><DIV class="valueBox">
+                        <DIV align="center">
+            <TABLE>
+                <TR><TD>表达式</TD><TD><CODE>Number.NaN</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item17'>
+    </DIV>
+    </DIV>
+            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item18')"><SPAN class="SerialNumber">1.2&nbsp;&nbsp;</SPAN>一元函数</a>
+            </DIV>
+    <DIV class="TreeNode" id='item18'>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.1&nbsp;&nbsp;</SPAN>绝对值
+                </DIV>
+                <DIV class="nodeValue"><DIV style="padding: 0 0 0 120px;"><DIV class="valueBox">
+                        <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>Math.abs(x)</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item19'>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item20')"><SPAN class="SerialNumber">1.2.2&nbsp;&nbsp;</SPAN>三角函数</a>
+                </DIV>
+    <DIV class="TreeNode" id='item20'>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.2.1&nbsp;&nbsp;</SPAN>角度转换为弧度
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>角度</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>角度 * Math.PI / 180</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item21'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.2.2&nbsp;&nbsp;</SPAN>弧度转换为角度
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>弧度</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>弧度 * 180 / Math.PI</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item22'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.2.3&nbsp;&nbsp;</SPAN>余弦_弧度
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>弧度</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>Math.cos(弧度)</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item23'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.2.4&nbsp;&nbsp;</SPAN>正弦_弧度
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>弧度</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>Math.sin(弧度)</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item24'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.2.5&nbsp;&nbsp;</SPAN>正切_弧度
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>弧度</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>Math.tan(弧度)</CODE></TD></TR>
+                <TR><TD>函数定义域</TD><TD><CODE>( 弧度 - Math.PI / 2 ) % Math.PI != 0</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item25'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.2.6&nbsp;&nbsp;</SPAN>反余弦_弧度
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>Math.acos(x)</CODE></TD></TR>
+                <TR><TD>函数定义域</TD><TD><CODE>x >= -1 && x <= 1</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item26'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.2.7&nbsp;&nbsp;</SPAN>反正弦_弧度
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>Math.asin(x)</CODE></TD></TR>
+                <TR><TD>函数定义域</TD><TD><CODE>x >= -1 && x <= 1</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item27'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.2.8&nbsp;&nbsp;</SPAN>反正切_弧度
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>Math.atan(x)</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item28'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.2.9&nbsp;&nbsp;</SPAN>余弦_角度
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>角度</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>Math.cos(角度 * Math.PI / 180)</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item29'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.2.10&nbsp;&nbsp;</SPAN>正弦_角度
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>角度</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>Math.sin(角度 * Math.PI / 180)</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item30'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.2.11&nbsp;&nbsp;</SPAN>正切_角度
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>角度</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>Math.tan(角度 * Math.PI / 180)</CODE></TD></TR>
+                <TR><TD>函数定义域</TD><TD><CODE>( 角度 - 90 ) % 180 != 0</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item31'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.2.12&nbsp;&nbsp;</SPAN>反余弦_角度
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>Math.acos(x) * 180 / Math.PI</CODE></TD></TR>
+                <TR><TD>函数定义域</TD><TD><CODE>x >= -1 && x <= 1</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item32'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.2.13&nbsp;&nbsp;</SPAN>反正弦_角度
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>Math.asin(x) * 180 / Math.PI</CODE></TD></TR>
+                <TR><TD>函数定义域</TD><TD><CODE>x >= -1 && x <= 1</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item33'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.2.14&nbsp;&nbsp;</SPAN>反正切_角度
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>Math.atan(x) * 180 / Math.PI</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item34'>
+    </DIV>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item35')"><SPAN class="SerialNumber">1.2.3&nbsp;&nbsp;</SPAN>几何</a>
+                </DIV>
+    <DIV class="TreeNode" id='item35'>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.3.1&nbsp;&nbsp;</SPAN>圆的面积-半径
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>半径</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>Math.PI * 半径 * 半径</CODE></TD></TR>
+                <TR><TD>函数定义域</TD><TD><CODE>半径 > 0</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item36'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.3.2&nbsp;&nbsp;</SPAN>圆的面积-直径
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>直径</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>var r = 直径 / 2.0;
+Math.PI * r * r</CODE></TD></TR>
+                <TR><TD>函数定义域</TD><TD><CODE>直径 > 0</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item37'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.3.3&nbsp;&nbsp;</SPAN>球的面积-半径
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>半径</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>4 * Math.PI * 半径 * 半径</CODE></TD></TR>
+                <TR><TD>函数定义域</TD><TD><CODE>半径 > 0</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item38'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.3.4&nbsp;&nbsp;</SPAN>球的面积-直径
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>直径</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>Math.PI * 直径 * 直径</CODE></TD></TR>
+                <TR><TD>函数定义域</TD><TD><CODE>直径 > 0</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item39'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.3.5&nbsp;&nbsp;</SPAN>球的体积-半径
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>半径</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>4 * Math.PI * Math.pow(半径,3) / 3</CODE></TD></TR>
+                <TR><TD>函数定义域</TD><TD><CODE>半径 > 0</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item40'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.3.6&nbsp;&nbsp;</SPAN>球的体积-直径
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>直径</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>Math.PI * Math.pow(直径,3) / 6</CODE></TD></TR>
+                <TR><TD>函数定义域</TD><TD><CODE>直径 > 0</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item41'>
+    </DIV>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item42')"><SPAN class="SerialNumber">1.2.4&nbsp;&nbsp;</SPAN>幂函数</a>
+                </DIV>
+    <DIV class="TreeNode" id='item42'>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.4.1&nbsp;&nbsp;</SPAN>平方
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>Math.pow(x,2)</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item43'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.4.2&nbsp;&nbsp;</SPAN>三次方
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>Math.pow(x,3)</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item44'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.4.3&nbsp;&nbsp;</SPAN>四次方
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>Math.pow(x,4)</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item45'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.4.4&nbsp;&nbsp;</SPAN>五次方
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>Math.pow(x,5)</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item46'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.4.5&nbsp;&nbsp;</SPAN>平方根
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>Math.sqrt(x)</CODE></TD></TR>
+                <TR><TD>函数定义域</TD><TD><CODE>x >= 0</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item47'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.4.6&nbsp;&nbsp;</SPAN>三次方根
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>Math.pow(x,1/3)</CODE></TD></TR>
+                <TR><TD>函数定义域</TD><TD><CODE>x >= 0</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item48'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.4.7&nbsp;&nbsp;</SPAN>四次方根
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>Math.pow(x,1/4)</CODE></TD></TR>
+                <TR><TD>函数定义域</TD><TD><CODE>x >= 0</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item49'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.4.8&nbsp;&nbsp;</SPAN>五次方根
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>Math.pow(x,1/5)</CODE></TD></TR>
+                <TR><TD>函数定义域</TD><TD><CODE>x >= 0</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item50'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.4.9&nbsp;&nbsp;</SPAN>一次倒数
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>Math.pow(x,-1)</CODE></TD></TR>
+                <TR><TD>函数定义域</TD><TD><CODE>x != 0</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item51'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.4.10&nbsp;&nbsp;</SPAN>二次倒数
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>Math.pow(x,-2)</CODE></TD></TR>
+                <TR><TD>函数定义域</TD><TD><CODE>x != 0</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item52'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.4.11&nbsp;&nbsp;</SPAN>三次倒数
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>Math.pow(x,-3)</CODE></TD></TR>
+                <TR><TD>函数定义域</TD><TD><CODE>x != 0</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item53'>
+    </DIV>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item54')"><SPAN class="SerialNumber">1.2.5&nbsp;&nbsp;</SPAN>指数函数</a>
+                </DIV>
+    <DIV class="TreeNode" id='item54'>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.5.1&nbsp;&nbsp;</SPAN>欧拉指数
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>Math.exp(x + 5)</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item55'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.5.2&nbsp;&nbsp;</SPAN>底数大于1的指数
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>Math.pow(5.9,x)</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item56'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.5.3&nbsp;&nbsp;</SPAN>底数小于1的指数
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>Math.pow(0.7,x)</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item57'>
+    </DIV>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item58')"><SPAN class="SerialNumber">1.2.6&nbsp;&nbsp;</SPAN>对数函数</a>
+                </DIV>
+    <DIV class="TreeNode" id='item58'>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.6.1&nbsp;&nbsp;</SPAN>自然对数（底为e）
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>Math.log(x)</CODE></TD></TR>
+                <TR><TD>函数定义域</TD><TD><CODE>x > 0</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item59'>
+    </DIV>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item60')"><SPAN class="SerialNumber">1.2.7&nbsp;&nbsp;</SPAN>截取函数</a>
+                </DIV>
+    <DIV class="TreeNode" id='item60'>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.7.1&nbsp;&nbsp;</SPAN>上舍入
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>Math.ceil(x)</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item61'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.7.2&nbsp;&nbsp;</SPAN>下舍入
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>Math.floor(x)</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item62'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.7.3&nbsp;&nbsp;</SPAN>四舍五入
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>Math.round(x)</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item63'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.7.4&nbsp;&nbsp;</SPAN>整数部分
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>Math.trunc(x)</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item64'>
+    </DIV>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item65')"><SPAN class="SerialNumber">1.2.8&nbsp;&nbsp;</SPAN>一元多项式</a>
+                </DIV>
+    <DIV class="TreeNode" id='item65'>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.8.1&nbsp;&nbsp;</SPAN>一元线性函数
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>5 * x + 9</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item66'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.8.2&nbsp;&nbsp;</SPAN>一元二次函数
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>5 * Math.pow(x,2)  + 3 * x + 9</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item67'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.8.3&nbsp;&nbsp;</SPAN>一元三次函数
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>6 * Math.pow(x,3)  + 5 * Math.pow(x,2)  + 3 * x + 9</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item68'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.8.4&nbsp;&nbsp;</SPAN>一元四次函数
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>7 * Math.pow(x,4)  + 6 * Math.pow(x,3)  + 5 * Math.pow(x,2)  + 3 * x + 9</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item69'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.8.5&nbsp;&nbsp;</SPAN>一元五次函数
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>8 * Math.pow(x,5)  +7 * Math.pow(x,4)  + 6 * Math.pow(x,3)  + 5 * Math.pow(x,2)  + 3 * x + 9</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item70'>
+    </DIV>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item71')"><SPAN class="SerialNumber">1.2.9&nbsp;&nbsp;</SPAN>分段取值</a>
+                </DIV>
+    <DIV class="TreeNode" id='item71'>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.9.1&nbsp;&nbsp;</SPAN>直接取值
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>if ( x > 1 ) 
+    6 * x - 5.9;
+else if ( x == 1)
+    38; 
+else 
+    Math.pow(x, 2) + 2.7;</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item72'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.9.2&nbsp;&nbsp;</SPAN>定义函数
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>function f1(x) {
+    var multiply = 1;
+    for (var i = 1; i <= Math.abs(x); i++) {
+        multiply = multiply * i;
+    }
+    return multiply ;
+}
+function f2(x) {
+    var sum = 0;
+    for (var i = 1; i > x; i--) {
+        sum += f1(i);
+    }
+    return sum;
+}
+if ( x > 1 ) 
+    f1(x);
+else if ( x == 1)
+    38; 
+else 
+    f2(x);</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item73'>
+    </DIV>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item74')"><SPAN class="SerialNumber">1.2.10&nbsp;&nbsp;</SPAN>数值分析</a>
+                </DIV>
+    <DIV class="TreeNode" id='item74'>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.10.1&nbsp;&nbsp;</SPAN>一元正态分布概率密度函数
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>var mean = 1; 
+var stdDeviation = 2; 
+var dx = x - mean;
+var expP = - dx * dx / ( 2 * stdDeviation * stdDeviation );
+var div = Math.sqrt(2 * Math.PI) * stdDeviation;
+Math.exp(expP) / div</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item75'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.10.2&nbsp;&nbsp;</SPAN>一元标准正态分布概率密度函数
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>Math.exp(- x * x / 2) / Math.sqrt(2 * Math.PI)</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item76'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.10.3&nbsp;&nbsp;</SPAN>sigmoid
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>1 / (1 + Math.exp(-x))</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item77'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.10.4&nbsp;&nbsp;</SPAN>sigmoid的导数
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>x</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>var s = 1 / (1 + Math.exp(-x));
+s * (1 - s);</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item78'>
+    </DIV>
+    </DIV>
+    </DIV>
+            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item79')"><SPAN class="SerialNumber">1.3&nbsp;&nbsp;</SPAN>二元函数</a>
+            </DIV>
+    <DIV class="TreeNode" id='item79'>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item80')"><SPAN class="SerialNumber">1.3.1&nbsp;&nbsp;</SPAN>二元多项式</a>
+                </DIV>
+    <DIV class="TreeNode" id='item80'>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.3.1.1&nbsp;&nbsp;</SPAN>二元线性函数
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>x,y</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>5 * x + 9 * y - 4</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item81'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.3.1.2&nbsp;&nbsp;</SPAN>二元二次函数
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>x,y</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>5 * x * x  + 3 * y * y + y + 9</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item82'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.3.1.3&nbsp;&nbsp;</SPAN>二元三次函数
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>x,y</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>6 * Math.pow(x,3)  + 5 * Math.pow(y,2)  + 3 * y + 9</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item83'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.3.1.4&nbsp;&nbsp;</SPAN>二元四次函数
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>x,y</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>7 * Math.pow(x,4)  + 6 * Math.pow(y,3)  + 5 * Math.pow(x,2)  + 3 * y + 9</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item84'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.3.1.5&nbsp;&nbsp;</SPAN>二元五次函数
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>x,y</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>8 * Math.pow(x,5)  +7 * Math.pow(y,5)  + 6 * Math.pow(x,3)  + 5 * Math.pow(y,2)  + 3 * x + 9</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item85'>
+    </DIV>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item86')"><SPAN class="SerialNumber">1.3.2&nbsp;&nbsp;</SPAN>几何</a>
+                </DIV>
+    <DIV class="TreeNode" id='item86'>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.3.2.1&nbsp;&nbsp;</SPAN>圆柱的体积
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>半径,高度</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>Math.PI * 半径 * 半径 * 高度</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item87'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.3.2.2&nbsp;&nbsp;</SPAN>椭圆的面积-半轴
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>长半轴,短半轴</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>Math.PI * 长半轴 * 短半轴</CODE></TD></TR>
+                <TR><TD>函数定义域</TD><TD><CODE>长半轴 > 0 && 短半轴 > 0</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item88'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.3.2.3&nbsp;&nbsp;</SPAN>椭圆的面积-轴
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>长轴,短轴</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>Math.PI * 长轴 * 短轴 / 4</CODE></TD></TR>
+                <TR><TD>函数定义域</TD><TD><CODE>长轴 > 0 && 短轴 > 0</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item89'>
+    </DIV>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.3.3&nbsp;&nbsp;</SPAN>二次曲面
+                </DIV>
+    <DIV class="TreeNode" id='item90'>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item91')"><SPAN class="SerialNumber">1.3.4&nbsp;&nbsp;</SPAN>三角函数</a>
+                </DIV>
+    <DIV class="TreeNode" id='item91'>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.3.4.1&nbsp;&nbsp;</SPAN>二元一次三角函数
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>x,y</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>5 * Math.sin(x) + 3 * y + 9</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item92'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.3.4.2&nbsp;&nbsp;</SPAN>二元二次三角函数
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>x,y</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>5 * Math.cos(x * x) + 3 * Math.sin(y) * Math.sin(y) + 9</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item93'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.3.4.3&nbsp;&nbsp;</SPAN>二元三次三角函数
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>x,y</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>5 * Math.tan(x * x * x) + 3 * Math.cos(x) * Math.sin(y) + 9</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item94'>
+    </DIV>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item95')"><SPAN class="SerialNumber">1.3.5&nbsp;&nbsp;</SPAN>指数函数</a>
+                </DIV>
+    <DIV class="TreeNode" id='item95'>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.3.5.1&nbsp;&nbsp;</SPAN>二元指数函数
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>x,y</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>5 * Math.exp(x - 2 * y) + 3 * x - y + 9</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item96'>
+    </DIV>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item97')"><SPAN class="SerialNumber">1.3.6&nbsp;&nbsp;</SPAN>对数函数</a>
+                </DIV>
+    <DIV class="TreeNode" id='item97'>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.3.6.1&nbsp;&nbsp;</SPAN>二元对数函数
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>x,y</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>5 * Math.log(x  * y) - 9</CODE></TD></TR>
+                <TR><TD>函数定义域</TD><TD><CODE>x * y > 0</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item98'>
+    </DIV>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item99')"><SPAN class="SerialNumber">1.3.7&nbsp;&nbsp;</SPAN>数值分析</a>
+                </DIV>
+    <DIV class="TreeNode" id='item99'>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.3.7.1&nbsp;&nbsp;</SPAN>二元正态分布概率密度函数
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>x,y</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>var xMean = 1;
+var xStd = 2; 
+var yMean = 2;
+var yStd = 1; 
+var coefficient = 0.2; 
+var dx = x - xMean;
+var dy = y - yMean;
+var xyStd = xStd * yStd;
+var dco = 1 - coefficient * coefficient;
+var px = dx * dx / ( xStd * xStd );
+var py = dy * dy / ( yStd * yStd );
+var pxy = 2 * coefficient * dx * dy / xyStd;
+var expP = - (px + py - pxy) / ( 2 * dco)
+var div = 2 * Math.PI * xyStd * Math.sqrt(dco);
+Math.exp(expP) / div</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item100'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.3.7.2&nbsp;&nbsp;</SPAN>二元标准正态分布概率密度函数
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>x,y</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>var xMean = 1;
+var xStd = 2; 
+var yMean = 2;
+var yStd = 1; 
+var dx = x - xMean;
+var dy = y - yMean;
+var xyStd = xStd * yStd;
+var px = dx * dx / ( xStd * xStd );
+var py = dy * dy / ( yStd * yStd );
+var expP = - (px + py) / 2
+var div = 2 * Math.PI * xyStd;
+Math.exp(expP) / div</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item101'>
+    </DIV>
+    </DIV>
+    </DIV>
+            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item102')"><SPAN class="SerialNumber">1.4&nbsp;&nbsp;</SPAN>三元函数</a>
+            </DIV>
+    <DIV class="TreeNode" id='item102'>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item103')"><SPAN class="SerialNumber">1.4.1&nbsp;&nbsp;</SPAN>三角函数</a>
+                </DIV>
+    <DIV class="TreeNode" id='item103'>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.4.1.1&nbsp;&nbsp;</SPAN>正弦定理-求角（弧度）
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>角A_弧度,边a,边b</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>var 正弦B = Math.sin(角A_弧度) * 边b / 边a;
+Math.asin(正弦B)</CODE></TD></TR>
+                <TR><TD>函数定义域</TD><TD><CODE>角A_弧度 > 0 && 边a > 0 && 边b > 0</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item104'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.4.1.2&nbsp;&nbsp;</SPAN>正弦定理-求角（角度）
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>角A_角度,边a,边b</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>var 正弦A = Math.sin(角A_角度 * Math.PI / 180);
+var 正弦B = 正弦A * 边b / 边a;
+Math.asin(正弦B) * 180 / Math.PI</CODE></TD></TR>
+                <TR><TD>函数定义域</TD><TD><CODE>角A_角度 > 0 && 边a > 0 && 边b > 0</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item105'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.4.1.3&nbsp;&nbsp;</SPAN>正弦定理-求边（弧度）
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>角A_弧度,边a,角B_弧度</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>边a * Math.sin(角B_弧度) / Math.sin(角A_弧度)</CODE></TD></TR>
+                <TR><TD>函数定义域</TD><TD><CODE>角A_弧度 > 0 && 角B_弧度 > 0 && 边a > 0</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item106'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.4.1.4&nbsp;&nbsp;</SPAN>正弦定理-求边（角度）
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>角A_角度,边a,角B_角度</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>var 正弦A = Math.sin(角A_角度 * Math.PI / 180);
+var 正弦B = Math.sin(角B_角度 * Math.PI / 180);
+边a * 正弦B / 正弦A</CODE></TD></TR>
+                <TR><TD>函数定义域</TD><TD><CODE>角A_角度 > 0 && 角B_角度 > 0 && 边a > 0</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item107'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.4.1.5&nbsp;&nbsp;</SPAN>余弦定理-求边（弧度）
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>角A_弧度,边b,边c</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>Math.sqrt(边b * 边b + 边c * 边c - 2 * 边b * 边c * Math.cos(角A_弧度))</CODE></TD></TR>
+                <TR><TD>函数定义域</TD><TD><CODE>角A_弧度 > 0 && 边b > 0 && 边c > 0</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item108'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.4.1.6&nbsp;&nbsp;</SPAN>余弦定理-求边（角度）
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>角A_角度,边b,边c</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>var 余弦A = Math.cos(角A_角度 * Math.PI / 180);
+Math.sqrt(边b * 边b + 边c * 边c - 2 * 边b * 边c * 余弦A)</CODE></TD></TR>
+                <TR><TD>函数定义域</TD><TD><CODE>角A_角度 > 0 && 边b > 0 && 边c > 0</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item109'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.4.1.7&nbsp;&nbsp;</SPAN>余弦定理-求角（弧度）
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>边a,边b,边c</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>var 余弦A = (边b * 边b + 边c * 边c - 边a * 边a) / (2 * 边b * 边c);
+Math.acos( 余弦A )</CODE></TD></TR>
+                <TR><TD>函数定义域</TD><TD><CODE>边a > 0 && 边b > 0 && 边c > 0</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item110'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.4.1.8&nbsp;&nbsp;</SPAN>余弦定理-求角（角度）
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>边a,边b,边c</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>var 余弦A = (边b * 边b + 边c * 边c - 边a * 边a) / (2 * 边b * 边c);
+Math.acos( 余弦A ) * 180 / Math.PI</CODE></TD></TR>
+                <TR><TD>函数定义域</TD><TD><CODE>边a > 0 && 边b > 0 && 边c > 0</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item111'>
+    </DIV>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item112')"><SPAN class="SerialNumber">1.4.2&nbsp;&nbsp;</SPAN>几何</a>
+                </DIV>
+    <DIV class="TreeNode" id='item112'>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.4.2.1&nbsp;&nbsp;</SPAN>椭球的面积-半轴
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>半轴a,半轴b,半轴c</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>4 * Math.PI * ( 半轴a * 半轴b + 半轴a * 半轴c + 半轴b * 半轴c )/ 3</CODE></TD></TR>
+                <TR><TD>函数定义域</TD><TD><CODE>半轴a > 0 && 半轴b > 0 && 半轴c > 0</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item113'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.4.2.2&nbsp;&nbsp;</SPAN>椭球的面积-轴
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>轴a,轴b,轴c</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>Math.PI * ( 轴a * 轴b + 轴a * 轴c + 轴b * 轴c )/ 3</CODE></TD></TR>
+                <TR><TD>函数定义域</TD><TD><CODE>轴a > 0 && 轴b > 0 && 轴c > 0</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item114'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.4.2.3&nbsp;&nbsp;</SPAN>椭球的体积-半轴
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>半轴a,半轴b,半轴c</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>4 * Math.PI * 半轴a * 半轴b * 半轴c / 3</CODE></TD></TR>
+                <TR><TD>函数定义域</TD><TD><CODE>半轴a > 0 && 半轴b > 0 && 半轴c > 0</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item115'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.4.2.4&nbsp;&nbsp;</SPAN>椭球的体积-轴
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>轴a,轴b,轴c</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>Math.PI * 轴a * 轴b * 轴c / 6</CODE></TD></TR>
+                <TR><TD>函数定义域</TD><TD><CODE>轴a > 0 && 轴b > 0 && 轴c > 0</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item116'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.4.2.5&nbsp;&nbsp;</SPAN>立方体的面积
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>长,宽,高</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>2 * ( 长 * 宽 + 长 * 高 + 宽 * 高 )</CODE></TD></TR>
+                <TR><TD>函数定义域</TD><TD><CODE>长 > 0 && 宽 > 0 && 高 > 0</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item117'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.4.2.6&nbsp;&nbsp;</SPAN>立方体的体积
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                            <DIV align="center">
+            <TABLE>
+                <TR><TD>变量</TD><TD><CODE>长,宽,高</CODE></TD></TR>
+                <TR><TD>表达式</TD><TD><CODE>长 * 宽 * 高</CODE></TD></TR>
+                <TR><TD>函数定义域</TD><TD><CODE>长 > 0 && 宽 > 0 && 高 > 0</CODE></TD></TR>
+            </TABLE>
+        </DIV>
+
+                    </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item118'>
+    </DIV>
+    </DIV>
+    </DIV>
+    </DIV>
+    </DIV>
+    </BODY>
+</HTML>

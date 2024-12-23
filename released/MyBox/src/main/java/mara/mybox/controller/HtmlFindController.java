@@ -429,7 +429,7 @@ public class HtmlFindController extends WebAddressController {
 
     @FXML
     protected void showFindHistories(Event event) {
-        PopTools.popStringValues(this, findInput, event, "HtmlFindHistories", false);
+        PopTools.popSavedValues(this, findInput, event, "HtmlFindHistories");
     }
 
     @FXML

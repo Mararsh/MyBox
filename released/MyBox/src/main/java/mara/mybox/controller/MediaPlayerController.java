@@ -28,9 +28,6 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.TableView;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
@@ -96,11 +93,10 @@ public class MediaPlayerController extends BaseController {
     protected ControlMediaTable tableController;
     @FXML
     protected Button dataButton, catButton, paneSizeButton;
-    @FXML
-    protected ImageView supportTipsView;
 
     public MediaPlayerController() {
         baseTitle = message("MediaPlayer");
+        TipsLabelKey = message("MediaPlayerSupports");
     }
 
     @Override
@@ -237,7 +233,6 @@ public class MediaPlayerController extends BaseController {
             NodeStyleTools.setTooltip(fullScreenButton, new Tooltip(message("FullScreen") + "\nf / F"));
             NodeStyleTools.setTooltip(soundButton, new Tooltip(message("Mute") + "\nm / M"));
             NodeStyleTools.setTooltip(dataButton, new Tooltip(message("ManageMediaLists")));
-            NodeStyleTools.setTooltip(supportTipsView, new Tooltip(message("MediaPlayerSupports")));
             NodeStyleTools.setTooltip(catButton, new Tooltip(message("MiaoSounds")));
             NodeStyleTools.setTooltip(speedSelector, new Tooltip("0~8"));
         } catch (Exception e) {
@@ -265,25 +260,24 @@ public class MediaPlayerController extends BaseController {
     }
 
     @Override
-    public boolean keyFilter(KeyEvent event) {
-        KeyCode code = event.getCode();
-        if (code != null) {
-            switch (code) {
-                case S:
+    public boolean inputFilter(String input, boolean omit) {
+        if (input != null) {
+            switch (input.toUpperCase()) {
+                case "S":
                     playButton.fire();
                     return true;
-                case Q:
+                case "Q":
                     stopButton.fire();
                     return true;
-                case M:
+                case "M":
                     soundButton.fire();
                     return true;
-                case F:
+                case "F":
                     fullScreenButton.fire();
                     return true;
             }
         }
-        return super.keyFilter(event);
+        return super.inputFilter(input, omit);
     }
 
     @Override

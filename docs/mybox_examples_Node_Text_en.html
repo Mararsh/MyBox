@@ -1,0 +1,182 @@
+<HTML>
+    <HEAD>
+        <title>Tree of Texts</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <style type="text/css">
+                          table { max-width:95%; margin : 10px;  border-style: solid; border-width:2px; border-collapse: collapse;} 
+              th, td { border-style: solid; border-width:1px; padding: 8px; border-collapse: collapse;} 
+              th { font-weight:bold;  text-align:center;} 
+              tr { height: 1.2em;  } 
+              .center { text-align:center;  max-width:95%; } 
+              .valueBox { border-style: solid; border-width:1px; border-color:black; padding: 5px; border-radius:5px;} 
+              .boldText { font-weight:bold;  } 
+ body { margin:0 auto; width: 900px; } 
+              img { max-width: 900px; } 
+              .valueText { color:#2e598a;  } 
+
+        </style>
+    </HEAD>
+    <BODY>
+        <H2>Tree of Texts</H2>
+ <script>
+    function nodeClicked(id) {
+      var obj = document.getElementById(id);
+      var objv = obj.style.display;
+      if (objv == 'none') {
+        obj.style.display = 'block';
+      } else {
+        obj.style.display = 'none';
+      }
+    }
+    function showClass(className, show) {
+      var nodes = document.getElementsByClassName(className);  　
+      if ( show) {
+           for (var i = 0 ; i < nodes.length; i++) {
+              nodes[i].style.display = '';
+           }
+       } else {
+           for (var i = 0 ; i < nodes.length; i++) {
+              nodes[i].style.display = 'none';
+           }
+       }
+    }
+  </script>
+
+<DIV>
+<DIV>
+    <INPUT type="checkbox" checked onclick="showClass('TreeNode', this.checked);">Unfold</INPUT>
+    <INPUT type="checkbox" checked onclick="showClass('SerialNumber', this.checked);">Hierarchy number</INPUT>
+    <INPUT type="checkbox" checked onclick="showClass('NodeTag', this.checked);">Tags</INPUT>
+    <INPUT type="checkbox" checked onclick="showClass('nodeValue', this.checked);">Values</INPUT>
+</DIV>
+<HR>
+    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item1')"><SPAN class="SerialNumber">&nbsp;&nbsp;</SPAN>Tree of Texts</a>
+    </DIV>
+    <DIV class="TreeNode" id='item1'>
+        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item2')"><SPAN class="SerialNumber">1&nbsp;&nbsp;</SPAN>Examples</a>
+        </DIV>
+    <DIV class="TreeNode" id='item2'>
+            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item3')"><SPAN class="SerialNumber">1.1&nbsp;&nbsp;</SPAN>Taxonomy</a>
+            </DIV>
+            <DIV class="nodeValue"><DIV style="padding: 0 0 0 96px;"><DIV class="valueBox">
+            <PRE><CODE>https://www.zhihu.com/question/41580677/answer/1300242801</CODE></PRE>
+            </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item3'>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item4')"><SPAN class="SerialNumber">1.1.1&nbsp;&nbsp;</SPAN>Non-cellular life</a>
+                </DIV>
+    <DIV class="TreeNode" id='item4'>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item5')"><SPAN class="SerialNumber">1.1.1.1&nbsp;&nbsp;</SPAN>Virus</a>
+                    </DIV>
+    <DIV class="TreeNode" id='item5'>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.1.1.1&nbsp;&nbsp;</SPAN>DNA Virus
+                                <SPAN class="NodeTag">
+                                &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #24C300; color: #000000;">Exam focus</SPAN>
+                                &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #56C503; color: #000000;">Master</SPAN>
+                                </SPAN>
+                        </DIV>
+    <DIV class="TreeNode" id='item6'>
+    </DIV>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.1.1.2&nbsp;&nbsp;</SPAN>RNA Virus
+                                <SPAN class="NodeTag">
+                                &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #24C300; color: #000000;">Exam focus</SPAN>
+                                &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #4E4B00; color: #FFFFFF;">Further reading</SPAN>
+                                &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #0DDB21; color: #000000;">May make mistake</SPAN>
+                                &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #99886B; color: #000000;">Confused</SPAN>
+                                </SPAN>
+                        </DIV>
+    <DIV class="TreeNode" id='item7'>
+    </DIV>
+    </DIV>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item8')"><SPAN class="SerialNumber">1.1.2&nbsp;&nbsp;</SPAN>Cellular life</a>
+                </DIV>
+    <DIV class="TreeNode" id='item8'>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item9')"><SPAN class="SerialNumber">1.1.2.1&nbsp;&nbsp;</SPAN>Prokaryota</a>
+                    </DIV>
+    <DIV class="TreeNode" id='item9'>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.2.1.1&nbsp;&nbsp;</SPAN>Archaea
+                                <SPAN class="NodeTag">
+                                &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #0DDB21; color: #000000;">May make mistake</SPAN>
+                                </SPAN>
+                        </DIV>
+    <DIV class="TreeNode" id='item10'>
+    </DIV>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item11')"><SPAN class="SerialNumber">1.1.2.2&nbsp;&nbsp;</SPAN>Eukaryote</a>
+                    </DIV>
+    <DIV class="TreeNode" id='item11'>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.2.2.1&nbsp;&nbsp;</SPAN>Kingdom Protista
+                                <SPAN class="NodeTag">
+                                &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #0DDB21; color: #000000;">May make mistake</SPAN>
+                                &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #99886B; color: #000000;">Confused</SPAN>
+                                </SPAN>
+                        </DIV>
+    <DIV class="TreeNode" id='item12'>
+    </DIV>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item13')"><SPAN class="SerialNumber">1.1.2.2.2&nbsp;&nbsp;</SPAN>Kingdom Plantae</a>
+                        </DIV>
+    <DIV class="TreeNode" id='item13'>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.2.2.2.1&nbsp;&nbsp;</SPAN>Spore Plant
+                                    <SPAN class="NodeTag">
+                                    &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #24C300; color: #000000;">Exam focus</SPAN>
+                                    &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #56C503; color: #000000;">Master</SPAN>
+                                    </SPAN>
+                            </DIV>
+    <DIV class="TreeNode" id='item14'>
+    </DIV>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item15')"><SPAN class="SerialNumber">1.1.2.2.2.2&nbsp;&nbsp;</SPAN>Seed Plant</a>
+                            </DIV>
+    <DIV class="TreeNode" id='item15'>
+                                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.2.2.2.2.1&nbsp;&nbsp;</SPAN>Gymnospermae
+                                </DIV>
+    <DIV class="TreeNode" id='item16'>
+    </DIV>
+                                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.2.2.2.2.2&nbsp;&nbsp;</SPAN>Angiosperms
+                                </DIV>
+    <DIV class="TreeNode" id='item17'>
+    </DIV>
+    </DIV>
+    </DIV>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item18')"><SPAN class="SerialNumber">1.1.2.2.3&nbsp;&nbsp;</SPAN>Kingdom Animalia</a>
+                        </DIV>
+    <DIV class="TreeNode" id='item18'>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item19')"><SPAN class="SerialNumber">1.1.2.2.3.1&nbsp;&nbsp;</SPAN>Subkingdom Protozoa</a>
+                            </DIV>
+    <DIV class="TreeNode" id='item19'>
+                                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.2.2.3.1.1&nbsp;&nbsp;</SPAN>Phylum Protozoa
+                                </DIV>
+    <DIV class="TreeNode" id='item20'>
+    </DIV>
+    </DIV>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item21')"><SPAN class="SerialNumber">1.1.2.2.3.2&nbsp;&nbsp;</SPAN>Subkingdom Mesozoa</a>
+                            </DIV>
+    <DIV class="TreeNode" id='item21'>
+                                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.2.2.3.2.1&nbsp;&nbsp;</SPAN>Phylum Mesozoa
+                                </DIV>
+    <DIV class="TreeNode" id='item22'>
+    </DIV>
+    </DIV>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item23')"><SPAN class="SerialNumber">1.1.2.2.3.3&nbsp;&nbsp;</SPAN>Subkingdom Metazoa</a>
+                            </DIV>
+    <DIV class="TreeNode" id='item23'>
+                                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.2.2.3.3.1&nbsp;&nbsp;</SPAN>Protostomia
+                                </DIV>
+    <DIV class="TreeNode" id='item24'>
+    </DIV>
+                                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.2.2.3.3.2&nbsp;&nbsp;</SPAN>Deuterostomia
+                                </DIV>
+    <DIV class="TreeNode" id='item25'>
+    </DIV>
+    </DIV>
+    </DIV>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.2.2.4&nbsp;&nbsp;</SPAN>Kingdom Fungi
+                        </DIV>
+    <DIV class="TreeNode" id='item26'>
+    </DIV>
+    </DIV>
+    </DIV>
+    </DIV>
+    </DIV>
+    </DIV>
+    </BODY>
+</HTML>

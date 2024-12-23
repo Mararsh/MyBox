@@ -214,18 +214,48 @@ public class AutoTestingExecutionController extends BaseTablePagesController<Tes
                 stopCases();
                 return;
             }
-            BaseController currentController = openStage(currentCase.getFxml());
+            BaseController currentController = null;
+            String fxml = currentCase.getFxml();
+            if (fxml.endsWith("/DataTree.fxml")) {
+                String fname = currentCase.getObject();
+                if (message("TextTree").equals(fname)) {
+                    currentController = DataTreeController.textTree(null, false);
+                } else if (message("HtmlTree").equals(fname)) {
+                    currentController = DataTreeController.htmlTree(null, false);
+                } else if (message("WebFavorite").equals(fname)) {
+                    currentController = DataTreeController.webFavorite(null, false);
+                } else if (message("DatabaseSQL").equals(fname)) {
+                    currentController = DataTreeController.sql(null, false);
+                } else if (message("MathFunction").equals(fname)) {
+                    currentController = DataTreeController.mathFunction(null, false);
+                } else if (message("ImageScope").equals(fname)) {
+                    currentController = DataTreeController.imageScope(null, false);
+                } else if (message("JShell").equals(fname)) {
+                    currentController = DataTreeController.jShell(null, false);
+                } else if (message("JEXL").equals(fname)) {
+                    currentController = DataTreeController.jexl(null, false);
+                } else if (message("JavaScript").equals(fname)) {
+                    currentController = DataTreeController.javascript(null, false);
+                } else if (message("RowExpression").equals(fname)) {
+                    currentController = DataTreeController.rowExpression(null, false);
+                } else if (message("DataColumn").equals(fname)) {
+                    currentController = DataTreeController.dataColumn(null, false);
+                }
+            } else {
+                currentController = openStage(currentCase.getFxml());
+            }
             if (currentController == null) {
                 currentCase.setStatus(Status.Fail);
                 tableData.set(currentIndex, currentCase);
                 tableView.scrollTo(currentCase);
             } else {
+                BaseController runingController = currentController;
                 new Timer().schedule(new TimerTask() {
                     @Override
                     public void run() {
                         Platform.runLater(() -> {
-                            if (currentController != null) {
-                                currentController.close();
+                            if (runingController != null) {
+                                runingController.close();
                             }
                             if (currentCase != null && currentCase.getStatus() != Status.Fail) {
                                 currentCase.setStatus(Status.Success);

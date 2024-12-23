@@ -13,11 +13,11 @@ import mara.mybox.fxml.FxSingletonTask;
  */
 public class ControlImageScope extends BaseImageScope {
 
-    protected ImageScopeEditor editor;
+    protected ControlDataImageScope editor;
 
-    public void setEditor(ImageScopeEditor parent) {
+    public void setEditor(ControlDataImageScope parent) {
         try {
-            this.parentController = parent;
+            parentController = parent;
             editor = parent;
 
         } catch (Exception e) {
@@ -66,7 +66,7 @@ public class ControlImageScope extends BaseImageScope {
             }
 
         };
-        start(task, editor.thisPane);
+        start(task);
     }
 
 }

@@ -36,7 +36,7 @@ public class Data2DTableCreateController extends BaseChildController {
     @FXML
     protected ControlNewDataTable attributesController;
     @FXML
-    protected RadioButton skipNonnumericRadio, zeroNonnumericRadio;
+    protected RadioButton skipInvalidRadio, zeroInvalidRadio;
 
     public Data2DTableCreateController() {
         baseTitle = message("DataTableCreate");
@@ -82,7 +82,7 @@ public class Data2DTableCreateController extends BaseChildController {
             popError(message("NoData"));
             return false;
         }
-        if (zeroNonnumericRadio.isSelected()) {
+        if (zeroInvalidRadio.isSelected()) {
             invalidAs = InvalidAs.Zero;
         } else {
             invalidAs = InvalidAs.Skip;

@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.List;
 import mara.mybox.data2d.DataTable;
+import mara.mybox.data2d.tools.Data2DRowTools;
 import mara.mybox.db.Database;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
@@ -31,13 +32,13 @@ public class DataTableDelete extends DataTableModify {
         try (Connection dconn = DerbyBase.getConnection();
                 PreparedStatement statement = dconn.prepareStatement(sql);
                 ResultSet results = statement.executeQuery();
-                PreparedStatement dDelete = conn.prepareStatement(tableData2D.deleteStatement())) {
+                PreparedStatement dDelete = dconn.prepareStatement(tableData2D.deleteStatement())) {
             conn = dconn;
             conn.setAutoCommit(false);
             delete = dDelete;
-            while (results.next() && !stopped && !reachMax) {
+            while (results.next() && !stopped && !reachMaxFiltered) {
                 sourceTableRow = tableData2D.readData(results);
-                sourceRow = sourceTableRow.toStrings(columns);
+                sourceRow = Data2DRowTools.toStrings(sourceTableRow, columns);
                 sourceRowIndex++;
                 handleRow(sourceRow, sourceRowIndex);
             }
@@ -62,9 +63,9 @@ public class DataTableDelete extends DataTableModify {
             sourceRow = row;
             sourceRowIndex = index;
             targetRow = null;
-            passFilter = sourceData.filterDataRow(sourceRow, sourceRowIndex);
-            reachMax = sourceData.filterReachMaxPassed();
-            if (passFilter && !reachMax) {
+            rowPassFilter = sourceData.filterDataRow(sourceRow, sourceRowIndex);
+            reachMaxFiltered = sourceData.filterReachMaxPassed();
+            if (rowPassFilter && !reachMaxFiltered) {
                 if (tableData2D.setDeleteStatement(conn, delete, sourceTableRow)) {
                     delete.addBatch();
                     if (++handledCount % Database.BatchSize == 0) {

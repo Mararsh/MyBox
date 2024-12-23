@@ -67,8 +67,7 @@ public class PptToPdfController extends BaseBatchFileController {
             return message("Skip");
         }
         File tmpFile = FileTmpTools.getTempFile();
-        try (PDDocument document = new PDDocument(AppVariables.PdfMemUsage);
-                SlideShow ppt = SlideShowFactory.create(srcFile)) {
+        try (PDDocument document = new PDDocument(); SlideShow ppt = SlideShowFactory.create(srcFile)) {
             List<Slide> slides = ppt.getSlides();
             int width = ppt.getPageSize().width;
             int height = ppt.getPageSize().height;

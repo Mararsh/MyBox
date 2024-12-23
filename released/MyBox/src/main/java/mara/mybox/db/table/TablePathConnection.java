@@ -53,6 +53,30 @@ public class TablePathConnection extends BaseTable<PathConnection> {
     public static final String Clear_Type
             = "DELETE * FROM Path_Connection WHERE type=?";
 
+    @Override
+    public boolean setValue(PathConnection data, String column, Object value) {
+        if (data == null || column == null) {
+            return false;
+        }
+        return data.setValue(column, value);
+    }
+
+    @Override
+    public Object getValue(PathConnection data, String column) {
+        if (data == null || column == null) {
+            return null;
+        }
+        return data.getValue(column);
+    }
+
+    @Override
+    public boolean valid(PathConnection data) {
+        if (data == null) {
+            return false;
+        }
+        return data.valid();
+    }
+
     /*
         local methods
      */
@@ -88,8 +112,7 @@ public class TablePathConnection extends BaseTable<PathConnection> {
         if (type == null) {
             return -1;
         }
-        try (Connection conn = DerbyBase.getConnection();
-                PreparedStatement statement = conn.prepareStatement(Clear_Type)) {
+        try (Connection conn = DerbyBase.getConnection(); PreparedStatement statement = conn.prepareStatement(Clear_Type)) {
             statement.setString(1, type.name());
             return statement.executeUpdate();
         } catch (Exception e) {

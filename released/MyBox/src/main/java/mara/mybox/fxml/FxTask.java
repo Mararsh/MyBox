@@ -42,10 +42,11 @@ public class FxTask<Void> extends BaseTask<Void> {
         if (loading != null) {
             loading.setInfo(info);
         } else if (controller != null) {
-            controller.setInfo(info);
+            controller.displayInfo(info);
         } else {
-//            MyBoxLog.console(info);
+            MyBoxLog.console(info);
         }
+
     }
 
     @Override
@@ -57,7 +58,7 @@ public class FxTask<Void> extends BaseTask<Void> {
         if (loading != null) {
             loading.setInfo(error);
         } else if (controller != null) {
-            controller.setError(error);
+            controller.displayError(error);
         } else {
             MyBoxLog.error(error);
         }

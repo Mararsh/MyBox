@@ -46,16 +46,30 @@ public class TableMedia extends BaseTable<MediaInformation> {
         return this;
     }
 
+    @Override
+    public boolean setValue(MediaInformation data, String column, Object value) {
+        return false;
+    }
+
+    @Override
+    public Object getValue(MediaInformation data, String column) {
+        return null;
+    }
+
+    @Override
+    public boolean valid(MediaInformation data) {
+        return false;
+    }
+
     public static MediaInformation read(String address) {
         if (address == null || address.trim().isEmpty()) {
             return null;
         }
-        try ( Connection conn = DerbyBase.getConnection();
-                 Statement statement = conn.createStatement()) {
+        try (Connection conn = DerbyBase.getConnection(); Statement statement = conn.createStatement()) {
             conn.setReadOnly(true);
             statement.setMaxRows(1);
             String sql = " SELECT * FROM media WHERE address='" + DerbyBase.stringValue(address) + "'";
-            try ( ResultSet results = statement.executeQuery(sql)) {
+            try (ResultSet results = statement.executeQuery(sql)) {
                 if (results.next()) {
                     MediaInformation media = new MediaInformation(address);
                     media.setVideoEncoding(results.getString("video_encoding"));
@@ -81,7 +95,7 @@ public class TableMedia extends BaseTable<MediaInformation> {
         if (addresses == null || addresses.isEmpty()) {
             return medias;
         }
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             conn.setReadOnly(true);
             medias = read(conn, addresses);
         } catch (Exception e) {
@@ -96,14 +110,14 @@ public class TableMedia extends BaseTable<MediaInformation> {
         if (conn == null || addresses == null || addresses.isEmpty()) {
             return medias;
         }
-        try ( Statement statement = conn.createStatement()) {
+        try (Statement statement = conn.createStatement()) {
             String inStr = "( '" + addresses.get(0) + "'";
             for (int i = 1; i < addresses.size(); ++i) {
                 inStr += ", '" + addresses.get(i) + "'";
             }
             inStr += " )";
             String sql = " SELECT * FROM media WHERE address IN " + inStr;
-            try ( ResultSet results = statement.executeQuery(sql)) {
+            try (ResultSet results = statement.executeQuery(sql)) {
                 while (results.next()) {
                     MediaInformation media = new MediaInformation(results.getString("address"));
                     media.setVideoEncoding(results.getString("video_encoding"));
@@ -128,8 +142,7 @@ public class TableMedia extends BaseTable<MediaInformation> {
         if (media == null || media.getAddress() == null) {
             return false;
         }
-        try ( Connection conn = DerbyBase.getConnection();
-                 Statement statement = conn.createStatement()) {
+        try (Connection conn = DerbyBase.getConnection(); Statement statement = conn.createStatement()) {
             String sql = "DELETE FROM media WHERE address='" + DerbyBase.stringValue(media.getAddress()) + "'";
             statement.executeUpdate(sql);
             sql = "INSERT INTO media(address,video_encoding,audio_encoding,duration,size,width,height,info,html,modify_time) VALUES('"
@@ -150,7 +163,7 @@ public class TableMedia extends BaseTable<MediaInformation> {
         if (medias == null || medias.isEmpty()) {
             return false;
         }
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             return write(conn, medias);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -163,7 +176,7 @@ public class TableMedia extends BaseTable<MediaInformation> {
         if (conn == null || medias == null || medias.isEmpty()) {
             return false;
         }
-        try ( Statement statement = conn.createStatement()) {
+        try (Statement statement = conn.createStatement()) {
             String sql;
             conn.setAutoCommit(false);
             for (MediaInformation media : medias) {
@@ -188,7 +201,7 @@ public class TableMedia extends BaseTable<MediaInformation> {
         if (addresses == null || addresses.isEmpty()) {
             return true;
         }
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             return delete(conn, addresses);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -201,7 +214,7 @@ public class TableMedia extends BaseTable<MediaInformation> {
         if (conn == null || addresses == null || addresses.isEmpty()) {
             return true;
         }
-        try ( Statement statement = conn.createStatement()) {
+        try (Statement statement = conn.createStatement()) {
             String inStr = "( '" + DerbyBase.stringValue(addresses.get(0)) + "'";
             for (int i = 1; i < addresses.size(); ++i) {
                 inStr += ", '" + DerbyBase.stringValue(addresses.get(i)) + "'";
@@ -218,8 +231,7 @@ public class TableMedia extends BaseTable<MediaInformation> {
     }
 
     public static boolean delete(String address) {
-        try ( Connection conn = DerbyBase.getConnection();
-                 Statement statement = conn.createStatement()) {
+        try (Connection conn = DerbyBase.getConnection(); Statement statement = conn.createStatement()) {
             String sql = "DELETE FROM media WHERE address='" + DerbyBase.stringValue(address) + "'";
             statement.executeUpdate(sql);
             return true;

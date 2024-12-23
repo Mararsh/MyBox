@@ -388,6 +388,8 @@ public class ControlImageText extends BaseController {
         blend = null;
         borderStyle = null;
         try (Connection conn = DerbyBase.getConnection()) {
+            conn.setAutoCommit(false);
+
             UserConfig.setString(conn, baseName + "TextValue", text);
             TableStringValues.add(conn, "ImageTextHistories", text);
 
@@ -418,6 +420,8 @@ public class ControlImageText extends BaseController {
                         .setFillColor(bordersFillColorController.color())
                         .setStrokeDashed(bordersStrokeDottedCheck.isSelected());
             }
+
+            conn.commit();
 
         } catch (Exception e) {
             MyBoxLog.error(e);

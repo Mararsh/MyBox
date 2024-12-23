@@ -2,31 +2,21 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.Tooltip;
 import javafx.util.Callback;
 import mara.mybox.data.StringTable;
-import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.tools.Data2DColumnTools;
-import mara.mybox.data2d.tools.Data2DDefinitionTools;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DColumn;
-import mara.mybox.db.data.InfoNode;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.cell.TableBooleanCell;
 import mara.mybox.fxml.cell.TableCheckboxCell;
 import mara.mybox.fxml.style.NodeStyleTools;
-import mara.mybox.fxml.style.StyleTools;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -36,7 +26,7 @@ import static mara.mybox.value.Languages.message;
  */
 public class ControlData2DColumns extends BaseData2DColumnsController {
 
-    protected BaseData2DLoadController dataController;
+    protected Data2DAttributesController attributesController;
     protected TableData2DDefinition tableData2DDefinition;
 
     @FXML
@@ -66,9 +56,9 @@ public class ControlData2DColumns extends BaseData2DColumnsController {
         }
     }
 
-    protected void setParameters(BaseData2DLoadController controller) {
+    protected void setParameters(Data2DAttributesController controller) {
         try {
-            this.dataController = controller;
+            this.attributesController = controller;
 
             loadValues();
         } catch (Exception e) {
@@ -78,9 +68,9 @@ public class ControlData2DColumns extends BaseData2DColumnsController {
 
     protected void loadValues() {
         try {
-            data2D = dataController.data2D;
-            tableData2DDefinition = dataController.tableData2DDefinition;
-            tableData2DColumn = dataController.tableData2DColumn;
+            data2D = attributesController.dataController.data2D;
+            tableData2DDefinition = attributesController.tableData2DDefinition;
+            tableData2DColumn = attributesController.dataController.tableData2DColumn;
             setData2DColumns();
             loadColumns();
         } catch (Exception e) {
@@ -221,6 +211,17 @@ public class ControlData2DColumns extends BaseData2DColumnsController {
     }
 
     @Override
+    public void changed(boolean changed) {
+        if (isSettingValues) {
+            return;
+        }
+        this.changed = changed;
+        if (attributesController != null) {
+            attributesController.columnsChanged(changed);
+        }
+    }
+
+    @Override
     public void checkButtons() {
         super.checkButtons();
         numberColumnsButton.setDisable(data2D == null || data2D.isTable() || tableData.isEmpty());
@@ -254,30 +255,14 @@ public class ControlData2DColumns extends BaseData2DColumnsController {
     }
 
     @FXML
-    @Override
-    public void selectAction() {
-        InfoTreeNodeSelectController controller = InfoTreeNodeSelectController.open(this, InfoNode.Data2DDefinition);
-        controller.notify.addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                InfoNode node = controller.selected();
-                if (node == null) {
-                    return;
-                }
-                addColumns(Data2DDefinitionTools.definitionFromXML(null, myController, node.getInfo()));
-                controller.close();
-            }
-        });
-    }
-
-    @FXML
     public void headerAction() {
         try {
-            if (dataController.data2D == null || dataController.tableData.isEmpty()) {
+            if (attributesController.dataController.data2D == null
+                    || attributesController.dataController.tableData.isEmpty()) {
                 popError(message("NoData"));
                 return;
             }
-            List<String> row = dataController.tableData.get(0);
+            List<String> row = attributesController.dataController.tableData.get(0);
             if (row == null || row.size() < 2) {
                 popError(message("InvalidData"));
                 return;
@@ -294,37 +279,6 @@ public class ControlData2DColumns extends BaseData2DColumnsController {
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
-    }
-
-    @Override
-    protected List<MenuItem> exportMenu(Event mevent, Data2D currentData) {
-        try {
-            List<MenuItem> items = new ArrayList<>();
-
-            MenuItem menu = new MenuItem(message("Save"), StyleTools.getIconImageView("iconSave.png"));
-            menu.setOnAction((ActionEvent event) -> {
-                saveCSV(currentData);
-            });
-            items.add(menu);
-
-            items.add(new SeparatorMenuItem());
-
-            items.addAll(super.exportMenu(mevent, currentData));
-
-            return items;
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
-    }
-
-    public void saveCSV(Data2D currentData) {
-        if (currentData == null) {
-            popError(message("NoData"));
-            return;
-        }
-        Data2DDefinitionController.load(currentData);
     }
 
 }

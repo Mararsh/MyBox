@@ -9,6 +9,7 @@ import mara.mybox.controller.Data2DManufactureController;
 import mara.mybox.controller.DataInMyBoxClipboardController;
 import mara.mybox.controller.MatricesManageController;
 import mara.mybox.controller.MyBoxTablesController;
+import mara.mybox.data2d.DataInternalTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
@@ -39,6 +40,25 @@ public class Data2DDefinition extends BaseData {
 
     public Data2DDefinition() {
         resetDefinition();
+    }
+
+    @Override
+    public boolean valid() {
+        return valid(this);
+    }
+
+    @Override
+    public boolean setValue(String column, Object value) {
+        return setValue(this, column, value);
+    }
+
+    @Override
+    public Object getValue(String column) {
+        return getValue(this, column);
+    }
+
+    public boolean equals(Data2DDefinition def) {
+        return def != null && d2did == def.getD2did();
     }
 
     public Data2DDefinition cloneAll() {
@@ -190,7 +210,9 @@ public class Data2DDefinition extends BaseData {
     }
 
     public boolean isInternalTable() {
-        return dataType == DataType.InternalTable;
+        return dataType == DataType.InternalTable
+                || (dataType == DataType.DatabaseTable
+                && DataInternalTable.isInternalTable(sheet));
     }
 
     public boolean isDataFile() {
@@ -259,18 +281,18 @@ public class Data2DDefinition extends BaseData {
         return !value.contains("\n") && !value.contains(delimiter);
     }
 
-    public boolean alwayValidate() {
+    public boolean alwayRejectInvalid() {
         return dataType == DataType.Matrix
                 || dataType == DataType.DatabaseTable
                 || dataType == DataType.InternalTable;
     }
 
-    public boolean validateEdit() {
-        return alwayValidate() || AppVariables.data2DValidateEdit;
+    public boolean rejectInvalidWhenEdit() {
+        return alwayRejectInvalid() || AppVariables.rejectInvalidValueWhenEdit;
     }
 
-    public boolean validateSave() {
-        return alwayValidate() || AppVariables.data2DValidateSave;
+    public boolean rejectInvalidWhenSave() {
+        return alwayRejectInvalid() || AppVariables.rejectInvalidValueWhenSave;
     }
 
     /*

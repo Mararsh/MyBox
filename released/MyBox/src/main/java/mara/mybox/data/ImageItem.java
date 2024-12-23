@@ -173,7 +173,7 @@ public class ImageItem {
                     "Panes", "Play", "Permission", "Polylines", "Pop", "Preview", "Query",
                     "Random", "Recover", "Refresh", "Repeat",
                     "Sample", "Save", "SelectAll", "SelectFile", "SelectPath", "Shape", "Style",
-                    "SVG", "Tips", "Tree", "Undo", "Verify", "View", "Window", "Withdraw"));
+                    "SVG", "Tag", "Tips", "Tree", "Undo", "Verify", "View", "Window", "Withdraw"));
             for (String name : icons) {
                 item = new ImageItem()
                         .setName("icon" + name + ".png")

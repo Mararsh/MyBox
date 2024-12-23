@@ -72,6 +72,30 @@ public class TableFileBackup extends BaseTable<FileBackup> {
     public static final String DeleteBackup
             = "DELETE FROM File_Backup  WHERE file=? AND backup=?";
 
+    @Override
+    public boolean setValue(FileBackup data, String column, Object value) {
+        if (data == null || column == null) {
+            return false;
+        }
+        return data.setValue(column, value);
+    }
+
+    @Override
+    public Object getValue(FileBackup data, String column) {
+        if (data == null || column == null) {
+            return null;
+        }
+        return data.getValue(column);
+    }
+
+    @Override
+    public boolean valid(FileBackup data) {
+        if (data == null) {
+            return false;
+        }
+        return data.valid();
+    }
+
     public File path(File file) {
         if (file == null || !file.exists()) {
             return null;
@@ -288,8 +312,7 @@ public class TableFileBackup extends BaseTable<FileBackup> {
         int rowCount = 0, invalidCount = 0;
         try {
             recordInfo(taskController, message("Check") + ": " + tableName);
-            try (PreparedStatement query = conn.prepareStatement(queryAllStatement());
-                    PreparedStatement delete = conn.prepareStatement(deleteStatement())) {
+            try (PreparedStatement query = conn.prepareStatement(queryAllStatement()); PreparedStatement delete = conn.prepareStatement(deleteStatement())) {
                 conn.setAutoCommit(true);
                 try (ResultSet results = query.executeQuery()) {
                     conn.setAutoCommit(false);

@@ -23,7 +23,6 @@ import mara.mybox.fxml.TextClipboardMonitor;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.StyleData;
 import mara.mybox.fxml.style.StyleTools;
-import org.apache.pdfbox.io.MemoryUsageSetting;
 
 /**
  * @Author Mara
@@ -43,14 +42,14 @@ public class AppVariables {
     public static ScheduledExecutorService ExecutorService;
     public static Map<String, ScheduledFuture<?>> ScheduledTasks;
     public static AlarmClockController AlarmClockController;
-    public static MemoryUsageSetting PdfMemUsage;
-    public static int sceneFontSize, fileRecentNumber, iconSize, thumbnailWidth;
+    public static int sceneFontSize, fileRecentNumber, iconSize, thumbnailWidth,
+            titleTrimSize, menuMaxLen;
     public static long maxDemoImage;
     public static boolean isTesting, handlingExit, ShortcutsCanNotOmitCtrlAlt, icons40px,
             closeCurrentWhenOpenTool, recordWindowsSizeLocation, controlDisplayText,
             commitModificationWhenDataCellLoseFocus,
             ignoreDbUnavailable, popErrorLogs, saveDebugLogs, detailedDebugLogs,
-            data2DValidateEdit, data2DValidateSave;
+            rejectInvalidValueWhenEdit, rejectInvalidValueWhenSave;
     public static TextClipboardMonitor TextClipMonitor;
     public static ImageClipboardMonitor ImageClipMonitor;
     public static Timer ExitTimer;
@@ -99,7 +98,6 @@ public class AppVariables {
             } catch (Exception e) {
                 MyBoxLog.console(e.toString());
             }
-            UserConfig.getPdfMem(conn);
             closeCurrentWhenOpenTool = UserConfig.getBoolean(conn, "CloseCurrentWhenOpenTool", false);
             recordWindowsSizeLocation = UserConfig.getBoolean(conn, "RecordWindowsSizeLocation", true);
             sceneFontSize = UserConfig.getInt(conn, "SceneFontSize", 15);
@@ -110,11 +108,13 @@ public class AppVariables {
             icons40px = UserConfig.getBoolean(conn, "Icons40px", Toolkit.getDefaultToolkit().getScreenResolution() <= 120);
             thumbnailWidth = UserConfig.getInt(conn, "ThumbnailWidth", 100);
             maxDemoImage = UserConfig.getLong(conn, "MaxDemoImage", 1000000);
+            titleTrimSize = UserConfig.getInt(conn, "TitleTrimSize", 60);
+            menuMaxLen = UserConfig.getInt(conn, "MenuMaxLen", 80);
             ShortcutsCanNotOmitCtrlAlt = UserConfig.getBoolean(conn, "ShortcutsCanNotOmitCtrlAlt", false);
 
             commitModificationWhenDataCellLoseFocus = UserConfig.getBoolean(conn, "CommitModificationWhenDataCellLoseFocus", true);
-            data2DValidateEdit = UserConfig.getBoolean(conn, "Data2DValidateEdit", true);
-            data2DValidateSave = UserConfig.getBoolean(conn, "Data2DValidateSave", true);
+            rejectInvalidValueWhenEdit = UserConfig.getBoolean(conn, "Data2DValidateEdit", false);
+            rejectInvalidValueWhenSave = UserConfig.getBoolean(conn, "Data2DValidateSave", true);
 
             saveDebugLogs = UserConfig.getBoolean(conn, "SaveDebugLogs", false);
             detailedDebugLogs = UserConfig.getBoolean(conn, "DetailedDebugLogs", false);

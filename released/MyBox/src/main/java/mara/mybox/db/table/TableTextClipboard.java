@@ -41,6 +41,30 @@ public class TableTextClipboard extends BaseTable<TextClipboard> {
     public static final String QueryText
             = "SELECT * FROM Text_Clipboard WHERE text=?";
 
+    @Override
+    public boolean setValue(TextClipboard data, String column, Object value) {
+        if (data == null || column == null) {
+            return false;
+        }
+        return data.setValue(column, value);
+    }
+
+    @Override
+    public Object getValue(TextClipboard data, String column) {
+        if (data == null || column == null) {
+            return null;
+        }
+        return data.getValue(column);
+    }
+
+    @Override
+    public boolean valid(TextClipboard data) {
+        if (data == null) {
+            return false;
+        }
+        return data.valid();
+    }
+
     public TextClipboard save(Connection conn, String text) {
         if (text == null || text.isEmpty()) {
             return null;
@@ -52,11 +76,11 @@ public class TableTextClipboard extends BaseTable<TextClipboard> {
             }
             if (UserConfig.getBoolean("TextClipboardNoDuplication", true)) {
                 TextClipboard exist = null;
-                try ( PreparedStatement statement = conn1.prepareStatement(QueryText)) {
+                try (PreparedStatement statement = conn1.prepareStatement(QueryText)) {
                     statement.setString(1, text);
                     statement.setMaxRows(1);
                     conn1.setAutoCommit(true);
-                    try ( ResultSet results = statement.executeQuery()) {
+                    try (ResultSet results = statement.executeQuery()) {
                         if (results.next()) {
                             exist = readData(results);
                             exist.setCreateTime(new Date());

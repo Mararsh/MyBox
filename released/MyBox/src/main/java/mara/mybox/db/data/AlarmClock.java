@@ -7,9 +7,9 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.AlarmClockTask;
-import static mara.mybox.value.Languages.message;
 import static mara.mybox.value.AppVariables.ExecutorService;
 import static mara.mybox.value.AppVariables.ScheduledTasks;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -42,6 +42,21 @@ public class AlarmClock extends BaseData {
 
     public AlarmClock() {
         init();
+    }
+
+    @Override
+    public boolean valid() {
+        return valid(this);
+    }
+
+    @Override
+    public boolean setValue(String column, Object value) {
+        return setValue(this, column, value);
+    }
+
+    @Override
+    public Object getValue(String column) {
+        return getValue(this, column);
     }
 
     public void calculateNextTime() {

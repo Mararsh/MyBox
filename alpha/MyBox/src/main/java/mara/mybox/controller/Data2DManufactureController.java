@@ -749,7 +749,6 @@ public class Data2DManufactureController extends BaseData2DViewController {
 
             @Override
             protected void whenSucceeded() {
-                MyBoxLog.console(data2D.isTableChanged());
                 popInformation(message("Saved"));
                 notifySaved();
                 loadPage(false);

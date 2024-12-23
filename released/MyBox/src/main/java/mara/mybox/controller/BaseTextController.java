@@ -316,6 +316,7 @@ public abstract class BaseTextController extends BaseTextController_Actions {
     @Override
     public List<MenuItem> operationsMenuItems(Event fevent) {
         try {
+            MyBoxLog.console(buttonsPane.isDisable());
             if (buttonsPane.isDisable()) {
                 return null;
             }

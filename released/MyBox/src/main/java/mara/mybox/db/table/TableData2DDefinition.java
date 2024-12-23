@@ -93,6 +93,29 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
     public static final String Delete_UserTable
             = "DELETE FROM Data2D_Definition WHERE data_type=5 AND sheet=?";
 
+    @Override
+    public boolean setValue(Data2DDefinition data, String column, Object value) {
+        if (data == null || column == null) {
+            return false;
+        }
+        return data.setValue(column, value);
+    }
+
+    @Override
+    public Object getValue(Data2DDefinition data, String column) {
+        if (data == null || column == null) {
+            return null;
+        }
+        return data.getValue(column);
+    }
+
+    @Override
+    public boolean valid(Data2DDefinition data) {
+        if (data == null) {
+            return false;
+        }
+        return data.valid();
+    }
 
     /*
         local methods

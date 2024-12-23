@@ -62,7 +62,7 @@ public abstract class BaseController_Attributes {
     protected Popup popup;
     protected ContextMenu popMenu;
     protected String error, targetFileSuffix;
-    protected boolean isSettingValues;
+    protected boolean isSettingValues, isTopPane = false;
     protected File sourceFile, sourcePath, targetPath, targetFile;
     protected StageType stageType;
     protected SaveAsType saveAsType;
@@ -95,7 +95,7 @@ public abstract class BaseController_Attributes {
             copyButton, copyToSystemClipboardButton, copyToMyBoxClipboardButton,
             addRowsButton, deleteRowsButton, selectButton, selectAllButton, selectNoneButton,
             pasteButton, pasteContentInSystemClipboardButton, loadContentInSystemClipboardButton,
-            myBoxClipboardButton, systemClipboardButton,
+            myBoxClipboardButton, systemClipboardButton, operationsButton,
             renameButton, tipsButton, setButton, allButton, menuButton, synchronizeButton,
             firstButton, lastButton, previousButton, nextButton,
             pageFirstButton, pageLastButton, pagePreviousButton, pageNextButton,
@@ -183,24 +183,21 @@ public abstract class BaseController_Attributes {
         }
     }
 
+    // always refetch the value
     public Scene getMyScene() {
-        if (myScene == null) {
-            if (myStage != null) {
-                myScene = myStage.getScene();
-            } else if (thisPane != null) {
-                myScene = thisPane.getScene();
-            }
+        if (myStage != null) {
+            myScene = myStage.getScene();
+        } else if (thisPane != null) {
+            myScene = thisPane.getScene();
         }
         return myScene;
     }
 
     public Window getMyWindow() {
-        if (myWindow == null) {
-            if (myStage != null) {
-                myWindow = myStage;
-            } else if (getMyScene() != null) {
-                myWindow = myScene.getWindow();
-            }
+        if (myStage != null) {
+            myWindow = myStage;
+        } else if (getMyScene() != null) {
+            myWindow = myScene.getWindow();
         }
         return myWindow;
     }
@@ -573,44 +570,20 @@ public abstract class BaseController_Attributes {
         popWarn(text, UserConfig.textDuration(), UserConfig.textSize());
     }
 
-    public void handleInfo(String text, boolean pop) {
-        if (this instanceof BaseLogs) {
-            ((BaseLogs) this).updateLogs(text);
-        } else if (task != null && task.isWorking()) {
-            task.setInfo(text);
-        } else if (pop) {
-            popInformation(text);
-        } else {
-            MyBoxLog.console(text);
-        }
-    }
-
-    public void handleError(String text, boolean pop) {
-        if (this instanceof BaseLogs) {
-            ((BaseLogs) this).updateLogs(text, true, true);
-        } else if (task != null && task.isWorking()) {
-            task.setError(text);
-        } else if (pop) {
-            popError(text);
-        } else {
-            MyBoxLog.error(text);
-        }
-    }
-
-    public void setInfo(String text) {
-        handleInfo(text, false);
-    }
-
     public void displayInfo(String text) {
-        handleInfo(text, true);
-    }
-
-    public void setError(String text) {
-        handleError(text, false);
+        if (this instanceof BaseLogsController) {
+            ((BaseLogsController) this).updateLogs(text);
+        } else {
+            popInformation(text);
+        }
     }
 
     public void displayError(String text) {
-        handleError(text, true);
+        if (this instanceof BaseLogsController) {
+            ((BaseLogsController) this).showLogs(text);
+        } else {
+            MyBoxLog.error(text);
+        }
     }
 
     @FXML

@@ -8,7 +8,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import javafx.application.Platform;
 import mara.mybox.controller.BaseController;
-import mara.mybox.controller.BaseLogs;
+import mara.mybox.controller.BaseLogsController;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.Data2D_Edit;
 import mara.mybox.data2d.reader.Data2DReader;
@@ -35,9 +35,9 @@ public abstract class Data2DOperate {
     protected FxTask task;
     protected List<Integer> cols, otherCols;
     protected int colsLen, scale = -1;
-    protected boolean includeRowNumber, writeHeader, passFilter, reachMax;
+    protected boolean includeRowNumber, writeHeader, rowPassFilter, reachMaxFiltered;
     protected boolean stopped, needCheckTask, failed, closeConn;
-    protected long sourceRowIndex; // 1-based 
+    protected long sourceRowIndex; // 1-based
     protected long handledCount;
     protected InvalidAs invalidAs;
     protected Connection conn;
@@ -138,8 +138,8 @@ public abstract class Data2DOperate {
         targetRow = null;
         stopped = false;
         failed = false;
-        passFilter = false;
-        reachMax = false;
+        rowPassFilter = false;
+        reachMaxFiltered = false;
         if (sourceData == null) {
             return false;
         }
@@ -167,11 +167,11 @@ public abstract class Data2DOperate {
         sourceRow = row;
         sourceRowIndex = index;
         targetRow = null;
-        passFilter = sourceData.filterDataRow(sourceRow, sourceRowIndex);
-        reachMax = sourceData.filterReachMaxPassed();
-        if (reachMax) {
+        rowPassFilter = sourceData.filterDataRow(sourceRow, sourceRowIndex);
+        reachMaxFiltered = sourceData.filterReachMaxPassed();
+        if (reachMaxFiltered) {
             stopped = true;
-        } else if (passFilter) {
+        } else if (rowPassFilter) {
             if (handleRow()) {
                 writeRow();
                 handledCount++;
@@ -256,13 +256,14 @@ public abstract class Data2DOperate {
         if (info == null || info.isBlank()) {
             return;
         }
+//        MyBoxLog.console(info);
         if (controller != null) {
-            if (controller instanceof BaseLogs) {
-                ((BaseLogs) controller).updateLogs(info);
+            if (controller instanceof BaseLogsController) {
+                ((BaseLogsController) controller).updateLogs(info);
             } else if (task != null) {
                 task.setInfo(info);
             } else {
-                controller.setInfo(info);
+                controller.popInformation(info);
             }
         } else if (task != null) {
             task.setInfo(info);
@@ -273,13 +274,14 @@ public abstract class Data2DOperate {
         if (error == null || error.isBlank()) {
             return;
         }
+//        MyBoxLog.console(error);
         if (controller != null) {
-            if (controller instanceof BaseLogs) {
-                ((BaseLogs) controller).showLogs(error);
+            if (controller instanceof BaseLogsController) {
+                ((BaseLogsController) controller).showLogs(error);
             } else if (task != null) {
                 task.setError(error);
             } else {
-                controller.setError(error);
+                controller.displayError(error);
             }
         } else if (task != null) {
             task.setError(error);

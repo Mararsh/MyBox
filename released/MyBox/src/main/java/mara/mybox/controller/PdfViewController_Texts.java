@@ -8,8 +8,8 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TextArea;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
-import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 
@@ -46,7 +46,7 @@ public abstract class PdfViewController_Texts extends PdfViewController_OCR {
 
             @Override
             protected boolean handle() {
-                try (PDDocument doc = PDDocument.load(sourceFile, password, AppVariables.PdfMemUsage)) {
+                try (PDDocument doc = Loader.loadPDF(sourceFile, password)) {
                     if (stripper == null) {
                         stripper = new PDFTextStripper();
                     }

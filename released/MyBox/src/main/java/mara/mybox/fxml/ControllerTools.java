@@ -4,12 +4,12 @@ import java.io.File;
 import java.util.Arrays;
 import javafx.stage.Stage;
 import mara.mybox.controller.BaseController;
+import mara.mybox.controller.ControlDataJavascript;
 import mara.mybox.controller.Data2DManufactureController;
 import mara.mybox.controller.FileDecompressUnarchiveController;
 import mara.mybox.controller.HtmlPopController;
 import mara.mybox.controller.ImageEditorController;
 import mara.mybox.controller.ImagePopController;
-import mara.mybox.controller.JavaScriptController;
 import mara.mybox.controller.JsonEditorController;
 import mara.mybox.controller.MarkdownEditorController;
 import mara.mybox.controller.MarkdownPopController;
@@ -82,7 +82,7 @@ public class ControllerTools {
         } else if ("svg".equals(suffix)) {
             return SvgEditorController.open(file);
         } else if ("js".equals(suffix)) {
-            return JavaScriptController.openFile(file);
+            return ControlDataJavascript.openFile(null, file);
         } else if (Arrays.asList(FileExtensions.TextFileSuffix).contains(suffix)) {
             return TextEditorController.open(file);
         } else if (CompressTools.compressFormats().contains(suffix) || CompressTools.archiveFormats().contains(suffix)) {

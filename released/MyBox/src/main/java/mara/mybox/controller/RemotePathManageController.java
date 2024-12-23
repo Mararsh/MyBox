@@ -20,6 +20,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import mara.mybox.data.FileNode;
+import mara.mybox.data.RemoteFile;
 import mara.mybox.db.data.PathConnection;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
@@ -116,10 +117,8 @@ public class RemotePathManageController extends FilesTreeController {
                         return false;
                     }
                     String rootPath = remoteController.currentConnection.getPath();
-                    FileNode rootInfo = new FileNode()
-                            .setNodename(rootPath)
-                            .setIsRemote(true)
-                            .attrs(remoteController.stat(rootPath));
+                    FileNode rootInfo = new RemoteFile(remoteController.stat(rootPath))
+                            .setNodename(rootPath);
                     rootItem = new TreeItem(rootInfo);
                     rootItem.setExpanded(true);
 
@@ -201,8 +200,7 @@ public class RemotePathManageController extends FilesTreeController {
                 if (fileInfo.isDirectory()) {
                     FileNode dummyInfo = new FileNode()
                             .setNodename("Loading")
-                            .setParentFile(remoteFile)
-                            .setIsRemote(false);
+                            .setParentFile(remoteFile);
                     TreeItem<FileNode> dummyItem = new TreeItem(dummyInfo);
                     fileItem.getChildren().add(dummyItem);
                     fileItem.setExpanded(false);

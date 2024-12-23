@@ -49,9 +49,9 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 public class Data2DTableTools {
 
     public static DataTable makeTable(FxTask task, String tname,
-            List<Data2DColumn> referColumns, List<String> keys, String idName) {
+            List<Data2DColumn> sourceColumns, List<String> keys, String idName) {
         try {
-            if (referColumns == null || referColumns.isEmpty()) {
+            if (sourceColumns == null || sourceColumns.isEmpty()) {
                 return null;
             }
             if (tname == null || tname.isBlank()) {
@@ -73,16 +73,15 @@ public class Data2DTableTools {
                 tableData2D.addColumn(idcolumn);
                 validNames.add(idName);
             }
-            for (Data2DColumn referColumn : referColumns) {
-                Data2DColumn dataColumn = new Data2DColumn();
-                dataColumn.cloneFrom(referColumn);
-                dataColumn.setD2id(-1).setD2cid(-1).setAuto(false).setIsPrimaryKey(false);
-                String referColumnName = referColumn.getColumnName();
-                String columeName = DerbyBase.fixedIdentifier(referColumnName);
+            for (Data2DColumn sourceColumn : sourceColumns) {
+                Data2DColumn dataColumn = sourceColumn.copy();
+                dataColumn.setAuto(false).setIsPrimaryKey(false);
+                String sourceColumnName = sourceColumn.getColumnName();
+                String columeName = DerbyBase.fixedIdentifier(sourceColumnName);
                 columeName = DerbyBase.checkIdentifier(validNames, columeName, true);
                 dataColumn.setColumnName(columeName);
                 if (keys != null && !keys.isEmpty()) {
-                    dataColumn.setIsPrimaryKey(keys.contains(referColumnName));
+                    dataColumn.setIsPrimaryKey(keys.contains(sourceColumnName));
                 }
                 tableColumns.add(dataColumn);
                 tableData2D.addColumn(dataColumn);
@@ -100,10 +99,10 @@ public class Data2DTableTools {
     }
 
     public static DataTable createTable(FxTask task, Connection conn, String targetName,
-            List<Data2DColumn> referColumns, List<String> keys, String comments,
+            List<Data2DColumn> sourceColumns, List<String> keys, String comments,
             String idName, boolean dropExisted) {
         try {
-            if (conn == null || referColumns == null || referColumns.isEmpty()) {
+            if (conn == null || sourceColumns == null || sourceColumns.isEmpty()) {
                 return null;
             }
             if (targetName == null || targetName.isBlank()) {
@@ -118,7 +117,7 @@ public class Data2DTableTools {
                 dataTable.drop(conn, tableName);
                 conn.commit();
             }
-            dataTable = makeTable(task, tableName, referColumns, keys, idName);
+            dataTable = makeTable(task, tableName, sourceColumns, keys, idName);
             if (dataTable == null) {
                 return null;
             }
@@ -128,7 +127,6 @@ public class Data2DTableTools {
             if (task != null) {
                 task.setInfo(sql);
             }
-//            MyBoxLog.console(sql);
             if (conn.createStatement().executeUpdate(sql) < 0) {
                 return null;
             }
@@ -171,11 +169,13 @@ public class Data2DTableTools {
                 if (dataTable != null) {
                     dc = dataTable.columnByName(name);
                     if (dc != null) {
-                        dc = dc.cloneAll().setD2cid(-1).setD2id(-1);
+                        dc = dc.copy();
                     }
                 }
                 if (dc == null) {
-                    dc = new Data2DColumn(name, ColumnDefinition.sqlColumnType(meta.getColumnType(col)), meta.isNullable(col) == ResultSetMetaData.columnNoNulls);
+                    dc = new Data2DColumn(name,
+                            ColumnDefinition.sqlColumnType(meta.getColumnType(col)),
+                            meta.isNullable(col) == ResultSetMetaData.columnNoNulls);
                 }
                 db2Columns.add(dc);
                 targetColumns.add(dc);
@@ -232,7 +232,7 @@ public class Data2DTableTools {
             for (List<String> row : pageRows) {
                 for (int i = 0; i < columns.size(); i++) {
                     Data2DColumn column = columns.get(i);
-                    data2DRow.setColumnValue(column.getColumnName(), column.fromString(row.get(i + 1), invalidAs));
+                    data2DRow.setValue(column.getColumnName(), column.fromString(row.get(i + 1), invalidAs));
                 }
                 tableData2D.insertData(conn, data2DRow);
                 if (++count % Database.BatchSize == 0) {
@@ -446,7 +446,9 @@ public class Data2DTableTools {
         }
         if (excelFile != null && excelFile.exists()) {
             DataFileExcel targetData = new DataFileExcel();
-            targetData.setColumns(dataTable.getColumns()).setFile(excelFile).setSheet(targetSheetName).setDataName(dataTable.dataName()).setHasHeader(true).setColsNumber(tcolsNumber).setRowsNumber(trowsNumber);
+            targetData.setColumns(dataTable.getColumns()).setFile(excelFile)
+                    .setSheet(targetSheetName).setDataName(dataTable.dataName())
+                    .setHasHeader(true).setColsNumber(tcolsNumber).setRowsNumber(trowsNumber);
             targetData.saveAttributes();
             return targetData;
         } else {

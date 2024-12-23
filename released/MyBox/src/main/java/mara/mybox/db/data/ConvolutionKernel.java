@@ -17,7 +17,7 @@ import static mara.mybox.value.Languages.message;
  * @Description
  * @License Apache License Version 2.0
  */
-public class ConvolutionKernel {
+public class ConvolutionKernel extends BaseData {
 
     private String name, description, modifyTime, createTime;
     private int width, height, type, edge;
@@ -54,6 +54,24 @@ public class ConvolutionKernel {
         invert = gray = false;
     }
 
+    @Override
+    public boolean valid() {
+        return true;
+    }
+
+    @Override
+    public boolean setValue(String column, Object value) {
+        return true;
+    }
+
+    @Override
+    public Object getValue(String column) {
+        return null;
+    }
+
+    /*
+        Static methods
+     */
     public static List<ConvolutionKernel> makeExample() {
         List<ConvolutionKernel> ExampleKernels = new ArrayList<>();
         ExampleKernels.add(makeAverageBlur(3));

@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import mara.mybox.data.StringTable;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.Data2D_Attributes;
 import mara.mybox.data2d.DataClipboard;
@@ -24,9 +25,11 @@ import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
+import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.FileCopyTools;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.FileTools;
+import mara.mybox.tools.TextFileTools;
 import static mara.mybox.value.Languages.message;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -334,6 +337,49 @@ public class Data2DConvertTools {
             }
             return null;
         }
+    }
+
+    public static String toHtml(FxTask task, DataFileCSV data) {
+        StringTable table = new StringTable(data.getDataName());
+        File file = FileTools.removeBOM(task, data.getFile());
+        if (file == null) {
+            return null;
+        }
+        try (CSVParser parser = CSVParser.parse(file, data.getCharset(),
+                CsvTools.csvFormat(data.getDelimiter(), data.isHasHeader()))) {
+            if (data.isHasHeader()) {
+                List<String> names = parser.getHeaderNames();
+                table.setNames(names);
+            }
+            Iterator<CSVRecord> iterator = parser.iterator();
+            while (iterator.hasNext() && (task == null || task.isWorking())) {
+                CSVRecord csvRecord = iterator.next();
+                if (csvRecord == null) {
+                    continue;
+                }
+                List<String> htmlRow = new ArrayList<>();
+                for (String v : csvRecord) {
+                    htmlRow.add(v);
+                }
+                table.add(htmlRow);
+            }
+            return table.html();
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
+            }
+            return null;
+        }
+    }
+
+    public static File toHtmlFile(FxTask task, DataFileCSV data, File htmlFile) {
+        String html = toHtml(task, data);
+        if (html == null) {
+            return null;
+        }
+        return TextFileTools.writeFile(htmlFile, html);
     }
 
 }

@@ -36,7 +36,7 @@ import mara.mybox.value.UserConfig;
  *
  * BaseImageController < BaseImageController_Actions < BaseImageController_Image
  * < BaseImageController_MouseEvents < BaseImageController_Mask <
- * BaseImageController_ImageView
+ * BaseImageController_Base
  */
 public class BaseImageController extends BaseImageController_Actions {
 
@@ -727,9 +727,6 @@ public class BaseImageController extends BaseImageController_Actions {
 
     @Override
     public boolean controlAltN() {
-        if (imageView == null || imageView.getImage() == null) {
-            return false;
-        }
         createAction();
         return true;
     }

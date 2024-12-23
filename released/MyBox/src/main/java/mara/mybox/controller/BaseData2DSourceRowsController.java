@@ -9,6 +9,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.Tab;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.Tooltip;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataFilter;
 import mara.mybox.data2d.tools.Data2DColumnTools;
@@ -17,6 +18,8 @@ import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
+import mara.mybox.fxml.style.NodeStyleTools;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -38,6 +41,17 @@ public class BaseData2DSourceRowsController extends BaseData2DLoadController {
     protected RadioButton selectedRadio, allPagesRadio, currentPageRadio;
     @FXML
     protected ControlData2DRowFilter filterController;
+
+    @Override
+    public void setControlsStyle() {
+        try {
+            super.setControlsStyle();
+
+            NodeStyleTools.setTooltip(selectedRadio, new Tooltip(message("SelectRowsComments")));
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
+    }
 
     public void setParameters(BaseData2DTaskController taskController) {
         try {
@@ -89,9 +103,6 @@ public class BaseData2DSourceRowsController extends BaseData2DLoadController {
                     }
                 }
             });
-            if (filterController != null) {
-                filterController.setParameters(this);
-            }
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -247,7 +258,7 @@ public class BaseData2DSourceRowsController extends BaseData2DLoadController {
      */
     public boolean checkRowsFilter() {
         if (filterController != null
-                && !filterController.checkExpression(isAllPages())) {
+                && filterController.pickFilter(isAllPages()) == null) {
             String ferror = filterController.error;
             if (ferror != null && !ferror.isBlank()) {
                 if (filterTab != null && tabPane != null) {

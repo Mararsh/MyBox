@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="thisPane" prefHeight="500.0" prefWidth="700.0" spacing="2.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.DataTreeExportController">
+      <children>
+      <Label fx:id="nodeLabel" minHeight="-Infinity" text="%Node" wrapText="true" />
+          <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+              <tabs>
+                  <Tab fx:id="optionsTab" text="%Options">
+                      <content>
+                            <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                <padding>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                </padding>
+                     <children>
+                        <HBox alignment="CENTER_LEFT" spacing="2.0">
+                           <children>
+                                            <Label text="%Format" />
+                              <Button fx:id="selectAllFormatButton" mnemonicParsing="false" onAction="#selectAllFormatAction">
+                                 <graphic>
+                                    <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconSelectAll.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                              <Button fx:id="selectNoneFormatButton" mnemonicParsing="false" onAction="#selectNoneFormatAction">
+                                 <graphic>
+                                    <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconSelectNone.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                           </children>
+                        </HBox>
+                                      <FlowPane hgap="5.0" vgap="5.0">
+                                          <children>
+                                              <CheckBox fx:id="treeXmlCheck" mnemonicParsing="false" selected="true" text="%TreeXML" />
+                              <CheckBox fx:id="treeJsonCheck" layoutX="175.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%TreeJSON" />
+                              <CheckBox fx:id="treeHtmlCheck" layoutX="39.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%TreeHtml" />
+                                              <CheckBox fx:id="listJsonCheck" layoutX="767.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%ListJson" />
+                              <CheckBox fx:id="listXmlCheck" layoutX="506.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%ListXML" />
+                              <CheckBox fx:id="listCsvCheck" layoutX="344.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%ListCSV" />
+                                              <CheckBox fx:id="listHtmlCheck" mnemonicParsing="false" selected="true" text="%ListHtml" />
+                                              <CheckBox fx:id="framesetCheck" mnemonicParsing="false" selected="true" text="%HtmlsFrameset" />
+                                          </children>
+                                      </FlowPane>
+                        <HBox alignment="CENTER_LEFT" spacing="2.0">
+                           <children>
+                                              <Label text="%Export" />
+                              <Button fx:id="selectAllValueButton" mnemonicParsing="false" onAction="#selectAllValueAction">
+                                 <graphic>
+                                    <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconSelectAll.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                              <Button fx:id="selectNoneValueButton" mnemonicParsing="false" onAction="#selectNoneValueAction">
+                                 <graphic>
+                                    <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconSelectNone.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                           </children>
+                           <VBox.margin>
+                              <Insets top="10.0" />
+                           </VBox.margin>
+                        </HBox>
+                                      <FlowPane alignment="CENTER_LEFT" hgap="2.0" vgap="2.0">
+                                          <children>
+                              <CheckBox fx:id="idCheck" layoutX="60.0" layoutY="10.0" mnemonicParsing="false" text="%ID" />
+                              <CheckBox fx:id="hierarchyCheck" layoutX="36.0" layoutY="10.0" mnemonicParsing="false" text="%HierarchyNumber" />
+                                              <CheckBox fx:id="timeCheck" mnemonicParsing="false" text="%Time" />
+                              <CheckBox fx:id="orderCheck" layoutX="132.0" layoutY="10.0" mnemonicParsing="false" text="%OrderNumber" />
+                              <CheckBox fx:id="parentCheck" layoutX="180.0" layoutY="10.0" mnemonicParsing="false" text="%ParentNode" />
+                                              <CheckBox fx:id="tagsCheck" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%Tags" />
+                              <CheckBox fx:id="dataCheck" layoutX="252.0" layoutY="10.0" mnemonicParsing="false" text="%Data" />
+                                          </children>
+                                      </FlowPane>
+                     </children>
+                            </VBox>
+                      </content>
+                  </Tab>
+            <Tab fx:id="optionsTab1" text="%TargetFile">
+               <content>
+                  <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                     <children>
+                                      <fx:include fx:id="targetPath" source="ControlTargetPath.fxml" />
+                                      <FlowPane hgap="5.0" vgap="5.0">
+                                          <children>
+                                              <Label text="%Charset" />
+                                              <ComboBox fx:id="charsetSelector" prefWidth="150.0" />
+                                          </children>
+                                      </FlowPane>
+                                      <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                          <children>
+                                              <Label text="%HtmlStyle" HBox.hgrow="ALWAYS" />
+                                              <Button fx:id="helpButton" mnemonicParsing="false" onAction="#showHtmlHelps" onMouseEntered="#popHtmlHelps">
+                                                  <graphic>
+                                                      <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                          <image>
+                                                              <Image url="@../buttons/iconClaw.png" />
+                                                          </image>
+                                                      </ImageView>
+                                                  </graphic>
+                                              </Button>
+                                              <Button fx:id="styleButton" mnemonicParsing="false" onMouseEntered="#popDefaultStyle">
+                                                  <graphic>
+                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                          <image>
+                                                              <Image url="@../buttons/Red/iconStyle.png" />
+                                                          </image>
+                                                      </ImageView>
+                                                  </graphic>
+                                              </Button>
+                                              <Button fx:id="clearStyleButton" mnemonicParsing="false" onAction="#clearStyle">
+                                                  <graphic>
+                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                          <image>
+                                                              <Image url="@../buttons/Red/iconClear.png" />
+                                                          </image>
+                                                      </ImageView>
+                                                  </graphic>
+                                              </Button>
+                                          </children>
+                                      </HBox>
+                                      <TextArea fx:id="styleInput" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="200.0" VBox.vgrow="ALWAYS" />
+                     </children>
+                  </VBox>
+               </content>
+            </Tab>
+                  <Tab fx:id="logsTab" text="%Logs">
+                      <content>
+                          <VBox fx:id="logsBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                              <padding>
+                                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                              </padding>
+                     <children>
+                        <fx:include fx:id="logs" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlLogs.fxml" VBox.vgrow="ALWAYS" />
+                     </children>
+                          </VBox>
+                      </content>
+                  </Tab>
+              </tabs>
+          </TabPane>
+      <HBox alignment="CENTER_RIGHT" spacing="5.0">
+         <children>
+            <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+            <CheckBox fx:id="onTopCheck" mnemonicParsing="false" selected="true">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconTop.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </CheckBox>
+            <CheckBox fx:id="openCheck" mnemonicParsing="false" selected="true">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconOpenPath.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </CheckBox>
+            <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconCancel.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="manageButton" mnemonicParsing="false" onAction="#manageAction">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconManage.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="startButton" defaultButton="true" mnemonicParsing="false" onAction="#startAction" styleClass="big" stylesheets="@../styles/MyBox.css" HBox.hgrow="NEVER">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconStart.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+         </children>
+      </HBox>
+      </children>
+   <padding>
+      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+   </padding>
+  </VBox>

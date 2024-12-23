@@ -47,14 +47,14 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
             loadScene(Fxmls.Data2DSpliceFxml);
         });
 
-        MenuItem RowFilter = new MenuItem(message("RowFilter"));
-        RowFilter.setOnAction((ActionEvent event1) -> {
-            loadScene(Fxmls.RowFilterFxml);
+        MenuItem RowExpression = new MenuItem(message("RowExpression"));
+        RowExpression.setOnAction((ActionEvent event1) -> {
+            DataTreeController.rowExpression(this, true);
         });
 
-        MenuItem Data2DDefinition = new MenuItem(message("Data2DDefinition"));
-        Data2DDefinition.setOnAction((ActionEvent event1) -> {
-            loadScene(Fxmls.Data2DDefinitionFxml);
+        MenuItem DataColumn = new MenuItem(message("DataColumn"));
+        DataColumn.setOnAction((ActionEvent event1) -> {
+            DataTreeController.dataColumn(this, true);
         });
 
         MenuItem DataInSystemClipboard = new MenuItem(message("DataInSystemClipboard"));
@@ -144,7 +144,7 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
 
         MenuItem DatabaseSQL = new MenuItem(message("DatabaseSQL"));
         DatabaseSQL.setOnAction((ActionEvent event1) -> {
-            loadScene(Fxmls.DatabaseSqlFxml);
+            DataTreeController.sql(this, true);
         });
 
         MenuItem DatabaseTable = new MenuItem(message("DatabaseTable"));
@@ -164,17 +164,17 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
 
         MenuItem jshell = new MenuItem(message("JShell"));
         jshell.setOnAction((ActionEvent event1) -> {
-            loadScene(Fxmls.JShellFxml);
+            DataTreeController.jShell(this, true);
         });
 
         MenuItem jexl = new MenuItem(message("JEXL"));
         jexl.setOnAction((ActionEvent event1) -> {
-            loadScene(Fxmls.JexlFxml);
+            DataTreeController.jexl(this, true);
         });
 
         MenuItem JavaScript = new MenuItem("JavaScript");
         JavaScript.setOnAction((ActionEvent event1) -> {
-            loadScene(Fxmls.JavaScriptFxml);
+            DataTreeController.javascript(this, true);
         });
 
         Menu calculation = new Menu(message("ScriptAndExperssion"));
@@ -184,7 +184,7 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
 
         MenuItem MathFunction = new MenuItem(message("MathFunction"));
         MathFunction.setOnAction((ActionEvent event1) -> {
-            loadScene(Fxmls.MathFunctionFxml);
+            DataTreeController.mathFunction(this, true);
         });
 
         MenuItem barcodeCreator = new MenuItem(message("BarcodeCreator"));
@@ -223,7 +223,7 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
         items.addAll(Arrays.asList(
                 DataManufacture, ManageData, new SeparatorMenuItem(),
                 dataFile, matrix, database, new SeparatorMenuItem(),
-                SpliceData, Data2DDefinition, RowFilter,
+                SpliceData, DataColumn, RowExpression,
                 DataInSystemClipboard, DataInMyBoxClipboard, new SeparatorMenuItem(),
                 calculation, MathFunction, new SeparatorMenuItem(),
                 Location, miscellaneousMenu));

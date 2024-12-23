@@ -215,6 +215,7 @@ public class BaseData2DViewController extends BaseData2DLoadController {
             if (isSettingValues || pageBox == null) {
                 return;
             }
+            closePopup();
             isSettingValues = true;
             buttonsPane.getChildren().clear();
             pageBox.getChildren().clear();
@@ -245,7 +246,6 @@ public class BaseData2DViewController extends BaseData2DLoadController {
                 showCsv();
 
             }
-
             refreshStyle(mainAreaBox);
 
         } catch (Exception e) {
@@ -523,7 +523,8 @@ public class BaseData2DViewController extends BaseData2DLoadController {
             }
 
             if (htmlRadio.isSelected()) {
-                return false;
+                MenuWebviewController.webviewMenu(this, webView);
+                return true;
 
             } else if (tableRadio.isSelected()) {
                 popTableMenu();

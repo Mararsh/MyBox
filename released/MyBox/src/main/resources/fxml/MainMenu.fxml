@@ -42,8 +42,12 @@ License:    Apache License Version 2.0
                         </Menu>
                         <Menu fx:id="documentMenu" mnemonicParsing="false" text="%Document">
                             <items>
-                                <MenuItem mnemonicParsing="false" onAction="#openNotes" text="%Notes" />
-                                <MenuItem mnemonicParsing="false" onAction="#InformationInTree" text="%InformationInTree" />
+                                <Menu mnemonicParsing="false" text="%InformationInTree">
+                                    <items>
+                                        <MenuItem mnemonicParsing="false" onAction="#TextTree" text="%TextTree" />
+                                        <MenuItem mnemonicParsing="false" onAction="#HtmlTree" text="%HtmlTree" />
+                                    </items>
+                                </Menu>
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <Menu mnemonicParsing="false" text="PDF">
                                     <items>
@@ -233,8 +237,6 @@ License:    Apache License Version 2.0
                                 </Menu>
                                 <MenuItem mnemonicParsing="false" onAction="#imageScope" text="%ImageScope" />
                                 <MenuItem mnemonicParsing="false" onAction="#imageOptions" text="%ImageOptions" />
-                                <!--<SeparatorMenuItem mnemonicParsing="false" />-->
-                                <!--<MenuItem mnemonicParsing="false" onAction="#ImageMaterial" text="%ImageMaterial" />-->
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#openManageColors" text="%ManageColors" />
                                 <MenuItem mnemonicParsing="false" onAction="#queryColor" text="%ColorQuery" />
@@ -293,9 +295,9 @@ License:    Apache License Version 2.0
                                     </items>
                                 </Menu>
                                 <SeparatorMenuItem mnemonicParsing="false" />
-                                <MenuItem mnemonicParsing="false" onAction="#Data2DDefinition" text="%Data2DDefinition" />
                                 <MenuItem mnemonicParsing="false" onAction="#SpliceData" text="%SpliceData" />
-                                <MenuItem mnemonicParsing="false" onAction="#RowFilter" text="%RowFilter" />
+                                <MenuItem mnemonicParsing="false" onAction="#DataColumn" text="%DataColumn" />
+                                <MenuItem mnemonicParsing="false" onAction="#RowExpression" text="%RowExpression" />
                                 <MenuItem mnemonicParsing="false" onAction="#dataInSystemClipboard" text="%DataInSystemClipboard" />
                                 <MenuItem mnemonicParsing="false" onAction="#dataInMyBoxClipboard" text="%DataInMyBoxClipboard" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
@@ -547,6 +549,7 @@ License:    Apache License Version 2.0
                         </Menu>
                         <Menu fx:id="devMenu" mnemonicParsing="false" text="%Development">
                             <items>
+                                <!--<MenuItem mnemonicParsing="false" onAction="#DevTmp" text="DevTmp" />-->
                                 <CheckMenuItem fx:id="monitorMemroyCheck" mnemonicParsing="false" onAction="#checkMemroyMonitor" text="%MonitorMemory" />
                                 <CheckMenuItem fx:id="monitorCpuCheck" mnemonicParsing="false" onAction="#checkCpuMonitor" text="%MonitorCpu" />
                                 <CheckMenuItem fx:id="detailedDebugCheck" mnemonicParsing="false" onAction="#detailedDebug" text="%DetailedDebugLogs" />
@@ -568,6 +571,7 @@ License:    Apache License Version 2.0
                                 <MenuItem mnemonicParsing="false" onAction="#makeIcons" text="%MakeIcons" />
                                 <MenuItem mnemonicParsing="false" onAction="#makeDocuments" text="%MakeDocuments" />
                                 <MenuItem mnemonicParsing="false" onAction="#autoTesting" text="%AutoTesting" />
+                                <MenuItem mnemonicParsing="false" onAction="#allTableNames" text="%AllTableNames" />
                                 <MenuItem mnemonicParsing="false" onAction="#myBoxBaseVerificationList" text="%MyBoxBaseVerificationList" />
                                 <!--                                <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#messageAuthor" text="%MessageAuthor" />-->

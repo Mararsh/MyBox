@@ -3,8 +3,10 @@ package mara.mybox.fxml.cell;
 import java.util.List;
 import javafx.util.converter.DefaultStringConverter;
 import mara.mybox.controller.BaseData2DTableController;
+import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -49,7 +51,7 @@ public class TableDataCell extends TableAutoCommitCell<List<String>, String> {
             if (!dataTable.getData2D().validValue(value)) {
                 return false;
             }
-            if (!dataTable.getData2D().validateEdit()) {
+            if (!dataTable.getData2D().rejectInvalidWhenEdit()) {
                 return true;
             }
             return dataColumn.validValue(value);
@@ -67,25 +69,30 @@ public class TableDataCell extends TableAutoCommitCell<List<String>, String> {
             setGraphic(null);
             return;
         }
-        setDataStyle();
+        setDataStyle(item);
         displayData(item);
-    }
-
-    public void setDataStyle() {
-        try {
-            setStyle(dataTable.getData2D().cellStyle(dataTable.getStyleFilter(),
-                    rowIndex(), dataColumn.getColumnName()));
-        } catch (Exception e) {
-        }
     }
 
     public void displayData(String item) {
         try {
-            setText(dataColumn.format(item, trucSize,
-                    dataColumn.getInvalidAs(),
-                    dataTable.getData2D().validateEdit()));
+            setText(dataColumn.format(item, trucSize, InvalidAs.Use));
         } catch (Exception e) {
             setText(item);
+        }
+    }
+
+    public void setDataStyle(String item) {
+        try {
+            String style = dataTable.getData2D().cellStyle(dataTable.getStyleFilter(),
+                    rowIndex(), dataColumn.getColumnName());
+            if (style != null) {
+                setStyle(style);
+            } else if (dataColumn.validValue(item)) {
+                setStyle(null);
+            } else {
+                setStyle(UserConfig.badStyle());
+            }
+        } catch (Exception e) {
         }
     }
 

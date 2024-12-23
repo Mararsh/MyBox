@@ -50,7 +50,7 @@ public class Data2DSplit extends Data2DOperate {
             for (int c : cols) {
                 Data2DColumn column = sourceData.column(c);
                 names.add(column.getColumnName());
-                targetColumns.add(column.cloneAll().setD2cid(-1).setD2id(-1));
+                targetColumns.add(column.copy());
             }
             if (includeRowNumber) {
                 targetColumns.add(0, new Data2DColumn(message("SourceRowNumber"), ColumnDefinition.ColumnType.Long));

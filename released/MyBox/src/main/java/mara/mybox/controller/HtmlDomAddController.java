@@ -26,7 +26,7 @@ public class HtmlDomAddController extends BaseChildController {
     protected Label hierarchyLabel;
 
     public HtmlDomAddController() {
-        baseTitle = message("AddNode");
+        baseTitle = message("AddChildNode");
     }
 
     public void setParamters(BaseHtmlFormat editor, TreeItem<HtmlNode> targetItem) {

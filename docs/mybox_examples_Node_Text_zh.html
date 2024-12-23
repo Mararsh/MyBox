@@ -1,0 +1,1433 @@
+<HTML>
+    <HEAD>
+        <title>文本树</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <style type="text/css">
+                          table { max-width:95%; margin : 10px;  border-style: solid; border-width:2px; border-collapse: collapse;} 
+              th, td { border-style: solid; border-width:1px; padding: 8px; border-collapse: collapse;} 
+              th { font-weight:bold;  text-align:center;} 
+              tr { height: 1.2em;  } 
+              .center { text-align:center;  max-width:95%; } 
+              .valueBox { border-style: solid; border-width:1px; border-color:black; padding: 5px; border-radius:5px;} 
+              .boldText { font-weight:bold;  } 
+ body { margin:0 auto; width: 900px; } 
+              img { max-width: 900px; } 
+              .valueText { color:#2e598a;  } 
+
+        </style>
+    </HEAD>
+    <BODY>
+        <H2>文本树</H2>
+ <script>
+    function nodeClicked(id) {
+      var obj = document.getElementById(id);
+      var objv = obj.style.display;
+      if (objv == 'none') {
+        obj.style.display = 'block';
+      } else {
+        obj.style.display = 'none';
+      }
+    }
+    function showClass(className, show) {
+      var nodes = document.getElementsByClassName(className);  　
+      if ( show) {
+           for (var i = 0 ; i < nodes.length; i++) {
+              nodes[i].style.display = '';
+           }
+       } else {
+           for (var i = 0 ; i < nodes.length; i++) {
+              nodes[i].style.display = 'none';
+           }
+       }
+    }
+  </script>
+
+<DIV>
+<DIV>
+    <INPUT type="checkbox" checked onclick="showClass('TreeNode', this.checked);">展开</INPUT>
+    <INPUT type="checkbox" checked onclick="showClass('SerialNumber', this.checked);">层次号</INPUT>
+    <INPUT type="checkbox" checked onclick="showClass('NodeTag', this.checked);">标签</INPUT>
+    <INPUT type="checkbox" checked onclick="showClass('nodeValue', this.checked);">值</INPUT>
+</DIV>
+<HR>
+    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item1')"><SPAN class="SerialNumber">&nbsp;&nbsp;</SPAN>文本树</a>
+    </DIV>
+    <DIV class="TreeNode" id='item1'>
+        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item2')"><SPAN class="SerialNumber">1&nbsp;&nbsp;</SPAN>示例</a>
+        </DIV>
+    <DIV class="TreeNode" id='item2'>
+            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item3')"><SPAN class="SerialNumber">1.1&nbsp;&nbsp;</SPAN>中国古代史</a>
+            </DIV>
+    <DIV class="TreeNode" id='item3'>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item4')"><SPAN class="SerialNumber">1.1.1&nbsp;&nbsp;</SPAN>夏朝</a>
+                        <SPAN class="NodeTag">
+                        &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #5C6222; color: #FFFFFF;">已掌握</SPAN>
+                        &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #EF3926; color: #FFFFFF;">扩展阅读</SPAN>
+                        </SPAN>
+                </DIV>
+    <DIV class="TreeNode" id='item4'>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.1.1&nbsp;&nbsp;</SPAN>建立者：禹
+                    </DIV>
+    <DIV class="TreeNode" id='item5'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.1.2&nbsp;&nbsp;</SPAN>世袭制代替禅让制：禹死启继
+                    </DIV>
+    <DIV class="TreeNode" id='item6'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.1.3&nbsp;&nbsp;</SPAN>我国第一个奴隶制王朝
+                    </DIV>
+    <DIV class="TreeNode" id='item7'>
+    </DIV>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item8')"><SPAN class="SerialNumber">1.1.2&nbsp;&nbsp;</SPAN>商朝</a>
+                </DIV>
+    <DIV class="TreeNode" id='item8'>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.2.1&nbsp;&nbsp;</SPAN>建立者：汤 (鸣条之战)
+                    </DIV>
+    <DIV class="TreeNode" id='item9'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.2.2&nbsp;&nbsp;</SPAN>都城：盘庚迁股 (河南安阳)
+                            <SPAN class="NodeTag">
+                            &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #5C6222; color: #FFFFFF;">已掌握</SPAN>
+                            &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #EF3926; color: #FFFFFF;">扩展阅读</SPAN>
+                            &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #629855; color: #000000;">考点</SPAN>
+                            </SPAN>
+                    </DIV>
+    <DIV class="TreeNode" id='item10'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item11')"><SPAN class="SerialNumber">1.1.2.3&nbsp;&nbsp;</SPAN>文化</a>
+                            <SPAN class="NodeTag">
+                            &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #EF3926; color: #FFFFFF;">扩展阅读</SPAN>
+                            </SPAN>
+                    </DIV>
+    <DIV class="TreeNode" id='item11'>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.2.3.1&nbsp;&nbsp;</SPAN>甲骨文
+                                <SPAN class="NodeTag">
+                                &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #8CD0A6; color: #000000;">容易错</SPAN>
+                                &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #5A5CDB; color: #FFFFFF;">糊涂着</SPAN>
+                                </SPAN>
+                        </DIV>
+    <DIV class="TreeNode" id='item12'>
+    </DIV>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.2.3.2&nbsp;&nbsp;</SPAN>青铜器
+                        </DIV>
+    <DIV class="TreeNode" id='item13'>
+    </DIV>
+    </DIV>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item14')"><SPAN class="SerialNumber">1.1.3&nbsp;&nbsp;</SPAN>西周</a>
+                </DIV>
+    <DIV class="TreeNode" id='item14'>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.3.1&nbsp;&nbsp;</SPAN>建立者：周武王(牧野之战)
+                            <SPAN class="NodeTag">
+                            &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #EF3926; color: #FFFFFF;">扩展阅读</SPAN>
+                            &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #629855; color: #000000;">考点</SPAN>
+                            </SPAN>
+                    </DIV>
+    <DIV class="TreeNode" id='item15'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.3.2&nbsp;&nbsp;</SPAN>都城：镐京（陕西西安)
+                    </DIV>
+    <DIV class="TreeNode" id='item16'>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item17')"><SPAN class="SerialNumber">1.1.3.3&nbsp;&nbsp;</SPAN>制度</a>
+                    </DIV>
+    <DIV class="TreeNode" id='item17'>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.3.3.1&nbsp;&nbsp;</SPAN>分封制
+                                <SPAN class="NodeTag">
+                                &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #EF3926; color: #FFFFFF;">扩展阅读</SPAN>
+                                &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #629855; color: #000000;">考点</SPAN>
+                                &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #8CD0A6; color: #000000;">容易错</SPAN>
+                                </SPAN>
+                        </DIV>
+    <DIV class="TreeNode" id='item18'>
+    </DIV>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.3.3.2&nbsp;&nbsp;</SPAN>井田制
+                        </DIV>
+    <DIV class="TreeNode" id='item19'>
+    </DIV>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.3.4&nbsp;&nbsp;</SPAN>西周灭亡 周幽王烽火戏诸修
+                    </DIV>
+    <DIV class="TreeNode" id='item20'>
+    </DIV>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item21')"><SPAN class="SerialNumber">1.1.4&nbsp;&nbsp;</SPAN>春秋与战国</a>
+                </DIV>
+    <DIV class="TreeNode" id='item21'>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item22')"><SPAN class="SerialNumber">1.1.4.1&nbsp;&nbsp;</SPAN>东周</a>
+                    </DIV>
+    <DIV class="TreeNode" id='item22'>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.4.1.1&nbsp;&nbsp;</SPAN>平王东迁
+                        </DIV>
+    <DIV class="TreeNode" id='item23'>
+    </DIV>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item24')"><SPAN class="SerialNumber">1.1.4.2&nbsp;&nbsp;</SPAN>春秋五霸</a>
+                    </DIV>
+    <DIV class="TreeNode" id='item24'>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item25')"><SPAN class="SerialNumber">1.1.4.2.1&nbsp;&nbsp;</SPAN>齐桓公</a>
+                        </DIV>
+    <DIV class="TreeNode" id='item25'>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.4.2.1.1&nbsp;&nbsp;</SPAN>春秋首霸
+                            </DIV>
+    <DIV class="TreeNode" id='item26'>
+    </DIV>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.4.2.1.2&nbsp;&nbsp;</SPAN>管仲改革
+                            </DIV>
+    <DIV class="TreeNode" id='item27'>
+    </DIV>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.4.2.1.3&nbsp;&nbsp;</SPAN>葵丘会盟
+                            </DIV>
+    <DIV class="TreeNode" id='item28'>
+    </DIV>
+    </DIV>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item29')"><SPAN class="SerialNumber">1.1.4.2.2&nbsp;&nbsp;</SPAN>晋文公</a>
+                        </DIV>
+    <DIV class="TreeNode" id='item29'>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.4.2.2.1&nbsp;&nbsp;</SPAN>退避三舍（城濮之战）
+                                    <SPAN class="NodeTag">
+                                    &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #629855; color: #000000;">考点</SPAN>
+                                    &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #8CD0A6; color: #000000;">容易错</SPAN>
+                                    &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #5A5CDB; color: #FFFFFF;">糊涂着</SPAN>
+                                    </SPAN>
+                            </DIV>
+    <DIV class="TreeNode" id='item30'>
+    </DIV>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.4.2.2.2&nbsp;&nbsp;</SPAN>寒食节（介子推）
+                            </DIV>
+    <DIV class="TreeNode" id='item31'>
+    </DIV>
+    </DIV>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item32')"><SPAN class="SerialNumber">1.1.4.2.3&nbsp;&nbsp;</SPAN>楚庄王</a>
+                        </DIV>
+    <DIV class="TreeNode" id='item32'>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.4.2.3.1&nbsp;&nbsp;</SPAN>一鸣惊人
+                            </DIV>
+    <DIV class="TreeNode" id='item33'>
+    </DIV>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.4.2.3.2&nbsp;&nbsp;</SPAN>问鼎中原
+                            </DIV>
+    <DIV class="TreeNode" id='item34'>
+    </DIV>
+    </DIV>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item35')"><SPAN class="SerialNumber">1.1.4.2.4&nbsp;&nbsp;</SPAN>吴王阖闾</a>
+                        </DIV>
+    <DIV class="TreeNode" id='item35'>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.4.2.4.1&nbsp;&nbsp;</SPAN>三令五申（孙武）
+                            </DIV>
+    <DIV class="TreeNode" id='item36'>
+    </DIV>
+    </DIV>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item37')"><SPAN class="SerialNumber">1.1.4.2.5&nbsp;&nbsp;</SPAN>越王勾践</a>
+                        </DIV>
+    <DIV class="TreeNode" id='item37'>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.4.2.5.1&nbsp;&nbsp;</SPAN>卧薪尝胆
+                                    <SPAN class="NodeTag">
+                                    &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #5C6222; color: #FFFFFF;">已掌握</SPAN>
+                                    &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #629855; color: #000000;">考点</SPAN>
+                                    </SPAN>
+                            </DIV>
+    <DIV class="TreeNode" id='item38'>
+    </DIV>
+    </DIV>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item39')"><SPAN class="SerialNumber">1.1.4.3&nbsp;&nbsp;</SPAN>战国七雄</a>
+                    </DIV>
+    <DIV class="TreeNode" id='item39'>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.4.3.1&nbsp;&nbsp;</SPAN>齐、楚、秦、燕、赵、魏、韩
+                        </DIV>
+    <DIV class="TreeNode" id='item40'>
+    </DIV>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item41')"><SPAN class="SerialNumber">1.1.4.3.2&nbsp;&nbsp;</SPAN>著名战役</a>
+                        </DIV>
+    <DIV class="TreeNode" id='item41'>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.4.3.2.1&nbsp;&nbsp;</SPAN>桂陵之成：围魏救赵（孙膑）
+                                    <SPAN class="NodeTag">
+                                    &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #629855; color: #000000;">考点</SPAN>
+                                    &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #5A5CDB; color: #FFFFFF;">糊涂着</SPAN>
+                                    </SPAN>
+                            </DIV>
+    <DIV class="TreeNode" id='item42'>
+    </DIV>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.4.3.2.2&nbsp;&nbsp;</SPAN>马陵之成：减灶诱敌 (孙膑)
+                            </DIV>
+    <DIV class="TreeNode" id='item43'>
+    </DIV>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.4.3.2.3&nbsp;&nbsp;</SPAN>长平之战：纸上谈兵〈赵括)
+                                    <SPAN class="NodeTag">
+                                    &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #629855; color: #000000;">考点</SPAN>
+                                    </SPAN>
+                            </DIV>
+    <DIV class="TreeNode" id='item44'>
+    </DIV>
+    </DIV>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item45')"><SPAN class="SerialNumber">1.1.4.4&nbsp;&nbsp;</SPAN>诸子百家</a>
+                    </DIV>
+    <DIV class="TreeNode" id='item45'>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item46')"><SPAN class="SerialNumber">1.1.4.4.1&nbsp;&nbsp;</SPAN>儒家</a>
+                        </DIV>
+    <DIV class="TreeNode" id='item46'>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item47')"><SPAN class="SerialNumber">1.1.4.4.1.1&nbsp;&nbsp;</SPAN>孔子</a>
+                            </DIV>
+    <DIV class="TreeNode" id='item47'>
+                                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.4.4.1.1.1&nbsp;&nbsp;</SPAN>著作：《论语》(弟子)
+                                </DIV>
+    <DIV class="TreeNode" id='item48'>
+    </DIV>
+                                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.4.4.1.1.2&nbsp;&nbsp;</SPAN>思想：仁、礼
+                                </DIV>
+    <DIV class="TreeNode" id='item49'>
+    </DIV>
+                                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.4.4.1.1.3&nbsp;&nbsp;</SPAN>教育：兴办私学、有教无类
+                                </DIV>
+    <DIV class="TreeNode" id='item50'>
+    </DIV>
+    </DIV>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item51')"><SPAN class="SerialNumber">1.1.4.4.1.2&nbsp;&nbsp;</SPAN>孟子</a>
+                            </DIV>
+    <DIV class="TreeNode" id='item51'>
+                                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.4.4.1.2.1&nbsp;&nbsp;</SPAN>著作：《孟子》
+                                </DIV>
+    <DIV class="TreeNode" id='item52'>
+    </DIV>
+                                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.4.4.1.2.2&nbsp;&nbsp;</SPAN>思想：仁政、民贵君轻、义、性善论
+                                </DIV>
+    <DIV class="TreeNode" id='item53'>
+    </DIV>
+    </DIV>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item54')"><SPAN class="SerialNumber">1.1.4.4.1.3&nbsp;&nbsp;</SPAN>荀子</a>
+                            </DIV>
+    <DIV class="TreeNode" id='item54'>
+                                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.4.4.1.3.1&nbsp;&nbsp;</SPAN>著作：《荀子》-《劝学》
+                                </DIV>
+    <DIV class="TreeNode" id='item55'>
+    </DIV>
+                                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.4.4.1.3.2&nbsp;&nbsp;</SPAN>思想：天行有常、制天命而用之、性恶论
+                                </DIV>
+    <DIV class="TreeNode" id='item56'>
+    </DIV>
+    </DIV>
+    </DIV>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item57')"><SPAN class="SerialNumber">1.1.4.4.2&nbsp;&nbsp;</SPAN>道家</a>
+                        </DIV>
+    <DIV class="TreeNode" id='item57'>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item58')"><SPAN class="SerialNumber">1.1.4.4.2.1&nbsp;&nbsp;</SPAN>老子</a>
+                            </DIV>
+    <DIV class="TreeNode" id='item58'>
+                                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.4.4.2.1.1&nbsp;&nbsp;</SPAN>著作：《道德经》（《老子》）
+                                </DIV>
+    <DIV class="TreeNode" id='item59'>
+    </DIV>
+                                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.4.4.2.1.2&nbsp;&nbsp;</SPAN>思想：道、无为而治、辩证法
+                                </DIV>
+    <DIV class="TreeNode" id='item60'>
+    </DIV>
+    </DIV>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item61')"><SPAN class="SerialNumber">1.1.4.4.2.2&nbsp;&nbsp;</SPAN>庄子</a>
+                            </DIV>
+    <DIV class="TreeNode" id='item61'>
+                                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.4.4.2.2.1&nbsp;&nbsp;</SPAN>著作：《庄子》-《逍遥游》
+                                </DIV>
+    <DIV class="TreeNode" id='item62'>
+    </DIV>
+                                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.4.4.2.2.2&nbsp;&nbsp;</SPAN>思想：齐物论、精神自由、寓言
+                                </DIV>
+    <DIV class="TreeNode" id='item63'>
+    </DIV>
+    </DIV>
+    </DIV>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item64')"><SPAN class="SerialNumber">1.1.4.4.3&nbsp;&nbsp;</SPAN>墨家</a>
+                        </DIV>
+    <DIV class="TreeNode" id='item64'>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item65')"><SPAN class="SerialNumber">1.1.4.4.3.1&nbsp;&nbsp;</SPAN>墨子</a>
+                            </DIV>
+    <DIV class="TreeNode" id='item65'>
+                                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.4.4.3.1.1&nbsp;&nbsp;</SPAN>著作：《墨子》-《墨经》
+                                </DIV>
+    <DIV class="TreeNode" id='item66'>
+    </DIV>
+                                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.4.4.3.1.2&nbsp;&nbsp;</SPAN>思想：兼爱、非攻、尚贤
+                                </DIV>
+    <DIV class="TreeNode" id='item67'>
+    </DIV>
+    </DIV>
+    </DIV>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item68')"><SPAN class="SerialNumber">1.1.4.4.4&nbsp;&nbsp;</SPAN>法家</a>
+                        </DIV>
+    <DIV class="TreeNode" id='item68'>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item69')"><SPAN class="SerialNumber">1.1.4.4.4.1&nbsp;&nbsp;</SPAN>韩非子</a>
+                            </DIV>
+    <DIV class="TreeNode" id='item69'>
+                                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.4.4.4.1.1&nbsp;&nbsp;</SPAN>著作：《韩非子》
+                                </DIV>
+    <DIV class="TreeNode" id='item70'>
+    </DIV>
+                                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.4.4.4.1.2&nbsp;&nbsp;</SPAN>思想：法治、中央集权、改革
+                                </DIV>
+    <DIV class="TreeNode" id='item71'>
+    </DIV>
+    </DIV>
+    </DIV>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item72')"><SPAN class="SerialNumber">1.1.4.4.5&nbsp;&nbsp;</SPAN>兵家</a>
+                        </DIV>
+    <DIV class="TreeNode" id='item72'>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item73')"><SPAN class="SerialNumber">1.1.4.4.5.1&nbsp;&nbsp;</SPAN>孙子</a>
+                            </DIV>
+    <DIV class="TreeNode" id='item73'>
+                                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.4.4.5.1.1&nbsp;&nbsp;</SPAN>著作：《孙子兵法》
+                                </DIV>
+    <DIV class="TreeNode" id='item74'>
+    </DIV>
+    </DIV>
+    </DIV>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item75')"><SPAN class="SerialNumber">1.1.4.5&nbsp;&nbsp;</SPAN>医学和天文成就</a>
+                    </DIV>
+    <DIV class="TreeNode" id='item75'>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.4.5.1&nbsp;&nbsp;</SPAN>战国名医扁鹊：“望闻问切”四诊法
+                                <SPAN class="NodeTag">
+                                &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #629855; color: #000000;">考点</SPAN>
+                                </SPAN>
+                        </DIV>
+    <DIV class="TreeNode" id='item76'>
+    </DIV>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.4.5.2&nbsp;&nbsp;</SPAN>《墨经》：杠杆原理、光学八条（小孔成像）
+                        </DIV>
+    <DIV class="TreeNode" id='item77'>
+    </DIV>
+    </DIV>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item78')"><SPAN class="SerialNumber">1.1.5&nbsp;&nbsp;</SPAN>秦朝</a>
+                </DIV>
+    <DIV class="TreeNode" id='item78'>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item79')"><SPAN class="SerialNumber">1.1.5.1&nbsp;&nbsp;</SPAN>建立</a>
+                    </DIV>
+    <DIV class="TreeNode" id='item79'>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.5.1.1&nbsp;&nbsp;</SPAN>秦灭六国顺序：韩赵魏楚燕齐
+                        </DIV>
+    <DIV class="TreeNode" id='item80'>
+    </DIV>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.5.1.2&nbsp;&nbsp;</SPAN>都城：咸阳
+                        </DIV>
+    <DIV class="TreeNode" id='item81'>
+    </DIV>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.5.1.3&nbsp;&nbsp;</SPAN>疆域：东临大海、西到陇西、南濒南海、北抵长城一带
+                        </DIV>
+    <DIV class="TreeNode" id='item82'>
+    </DIV>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item83')"><SPAN class="SerialNumber">1.1.5.2&nbsp;&nbsp;</SPAN>中央集权制</a>
+                    </DIV>
+    <DIV class="TreeNode" id='item83'>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item84')"><SPAN class="SerialNumber">1.1.5.2.1&nbsp;&nbsp;</SPAN>政治</a>
+                        </DIV>
+    <DIV class="TreeNode" id='item84'>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.5.2.1.1&nbsp;&nbsp;</SPAN>中央：设置丞相、太尉、御史大夫
+                            </DIV>
+    <DIV class="TreeNode" id='item85'>
+    </DIV>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.5.2.1.2&nbsp;&nbsp;</SPAN>地方：实行郡县制
+                                    <SPAN class="NodeTag">
+                                    &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #5C6222; color: #FFFFFF;">已掌握</SPAN>
+                                    &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #629855; color: #000000;">考点</SPAN>
+                                    &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #8CD0A6; color: #000000;">容易错</SPAN>
+                                    </SPAN>
+                            </DIV>
+    <DIV class="TreeNode" id='item86'>
+    </DIV>
+    </DIV>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item87')"><SPAN class="SerialNumber">1.1.5.2.2&nbsp;&nbsp;</SPAN>经济</a>
+                        </DIV>
+    <DIV class="TreeNode" id='item87'>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.5.2.2.1&nbsp;&nbsp;</SPAN>统一货币
+                            </DIV>
+    <DIV class="TreeNode" id='item88'>
+    </DIV>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.5.2.2.2&nbsp;&nbsp;</SPAN>统一度量衡
+                            </DIV>
+    <DIV class="TreeNode" id='item89'>
+    </DIV>
+    </DIV>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item90')"><SPAN class="SerialNumber">1.1.5.2.3&nbsp;&nbsp;</SPAN>文化</a>
+                        </DIV>
+    <DIV class="TreeNode" id='item90'>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.5.2.3.1&nbsp;&nbsp;</SPAN>统一文字（小篆）
+                                    <SPAN class="NodeTag">
+                                    &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #629855; color: #000000;">考点</SPAN>
+                                    </SPAN>
+                            </DIV>
+    <DIV class="TreeNode" id='item91'>
+    </DIV>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.5.2.3.2&nbsp;&nbsp;</SPAN>焚书坑儒
+                            </DIV>
+    <DIV class="TreeNode" id='item92'>
+    </DIV>
+    </DIV>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item93')"><SPAN class="SerialNumber">1.1.5.3&nbsp;&nbsp;</SPAN>灭亡</a>
+                    </DIV>
+    <DIV class="TreeNode" id='item93'>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.5.3.1&nbsp;&nbsp;</SPAN>大泽乡揭重起义（陈胜和吴广)
+                        </DIV>
+    <DIV class="TreeNode" id='item94'>
+    </DIV>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.5.3.2&nbsp;&nbsp;</SPAN>巨鹿之战 (项羽破釜沉舟)
+                                <SPAN class="NodeTag">
+                                &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #5C6222; color: #FFFFFF;">已掌握</SPAN>
+                                &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #629855; color: #000000;">考点</SPAN>
+                                </SPAN>
+                        </DIV>
+    <DIV class="TreeNode" id='item95'>
+    </DIV>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.5.3.3&nbsp;&nbsp;</SPAN>楚汉相争（项羽和刘邦）
+                        </DIV>
+    <DIV class="TreeNode" id='item96'>
+    </DIV>
+    </DIV>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item97')"><SPAN class="SerialNumber">1.1.6&nbsp;&nbsp;</SPAN>两汉</a>
+                </DIV>
+    <DIV class="TreeNode" id='item97'>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item98')"><SPAN class="SerialNumber">1.1.6.1&nbsp;&nbsp;</SPAN>政治</a>
+                    </DIV>
+    <DIV class="TreeNode" id='item98'>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item99')"><SPAN class="SerialNumber">1.1.6.1.1&nbsp;&nbsp;</SPAN>西汉</a>
+                        </DIV>
+    <DIV class="TreeNode" id='item99'>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item100')"><SPAN class="SerialNumber">1.1.6.1.1.1&nbsp;&nbsp;</SPAN>建立</a>
+                            </DIV>
+    <DIV class="TreeNode" id='item100'>
+                                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.6.1.1.1.1&nbsp;&nbsp;</SPAN>刘邦
+                                </DIV>
+    <DIV class="TreeNode" id='item101'>
+    </DIV>
+                                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.6.1.1.1.2&nbsp;&nbsp;</SPAN>定都长安
+                                </DIV>
+    <DIV class="TreeNode" id='item102'>
+    </DIV>
+    </DIV>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item103')"><SPAN class="SerialNumber">1.1.6.1.1.2&nbsp;&nbsp;</SPAN>治世</a>
+                            </DIV>
+    <DIV class="TreeNode" id='item103'>
+                                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.6.1.1.2.1&nbsp;&nbsp;</SPAN>文景之治
+                                        <SPAN class="NodeTag">
+                                        &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #629855; color: #000000;">考点</SPAN>
+                                        </SPAN>
+                                </DIV>
+    <DIV class="TreeNode" id='item104'>
+    </DIV>
+    </DIV>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item105')"><SPAN class="SerialNumber">1.1.6.1.1.3&nbsp;&nbsp;</SPAN>汉武帝大一统</a>
+                            </DIV>
+    <DIV class="TreeNode" id='item105'>
+                                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.6.1.1.3.1&nbsp;&nbsp;</SPAN>政治：颁布推恩令
+                                </DIV>
+    <DIV class="TreeNode" id='item106'>
+    </DIV>
+                                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.6.1.1.3.2&nbsp;&nbsp;</SPAN>思想：采纳董仲舒的“罢黜百家、独尊儒术”
+                                        <SPAN class="NodeTag">
+                                        &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #629855; color: #000000;">考点</SPAN>
+                                        </SPAN>
+                                </DIV>
+    <DIV class="TreeNode" id='item107'>
+    </DIV>
+    </DIV>
+    </DIV>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item108')"><SPAN class="SerialNumber">1.1.6.1.2&nbsp;&nbsp;</SPAN>新莽</a>
+                        </DIV>
+    <DIV class="TreeNode" id='item108'>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.6.1.2.1&nbsp;&nbsp;</SPAN>公元9年，外戚王莽自立为帝，改国号为新，西汉灭亡
+                            </DIV>
+    <DIV class="TreeNode" id='item109'>
+    </DIV>
+    </DIV>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item110')"><SPAN class="SerialNumber">1.1.6.1.3&nbsp;&nbsp;</SPAN>东汉</a>
+                        </DIV>
+    <DIV class="TreeNode" id='item110'>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.6.1.3.1&nbsp;&nbsp;</SPAN>治世：光武中兴
+                                    <SPAN class="NodeTag">
+                                    &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #629855; color: #000000;">考点</SPAN>
+                                    </SPAN>
+                            </DIV>
+    <DIV class="TreeNode" id='item111'>
+    </DIV>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.6.1.3.2&nbsp;&nbsp;</SPAN>农民起义：巨鹿人张角发动黄巾起义
+                            </DIV>
+    <DIV class="TreeNode" id='item112'>
+    </DIV>
+    </DIV>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item113')"><SPAN class="SerialNumber">1.1.6.2&nbsp;&nbsp;</SPAN>文化</a>
+                    </DIV>
+    <DIV class="TreeNode" id='item113'>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item114')"><SPAN class="SerialNumber">1.1.6.2.1&nbsp;&nbsp;</SPAN>史学：前四史</a>
+                        </DIV>
+    <DIV class="TreeNode" id='item114'>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item115')"><SPAN class="SerialNumber">1.1.6.2.1.1&nbsp;&nbsp;</SPAN>《史记》</a>
+                                    <SPAN class="NodeTag">
+                                    &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #629855; color: #000000;">考点</SPAN>
+                                    </SPAN>
+                            </DIV>
+    <DIV class="TreeNode" id='item115'>
+                                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.6.2.1.1.1&nbsp;&nbsp;</SPAN>西汉 司马迁
+                                </DIV>
+    <DIV class="TreeNode" id='item116'>
+    </DIV>
+                                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.6.2.1.1.2&nbsp;&nbsp;</SPAN>第一部纪传体通史
+                                </DIV>
+    <DIV class="TreeNode" id='item117'>
+    </DIV>
+    </DIV>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item118')"><SPAN class="SerialNumber">1.1.6.2.1.2&nbsp;&nbsp;</SPAN>《汉书》</a>
+                                    <SPAN class="NodeTag">
+                                    &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #629855; color: #000000;">考点</SPAN>
+                                    </SPAN>
+                            </DIV>
+    <DIV class="TreeNode" id='item118'>
+                                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.6.2.1.2.1&nbsp;&nbsp;</SPAN>东汉 班固
+                                </DIV>
+    <DIV class="TreeNode" id='item119'>
+    </DIV>
+                                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.6.2.1.2.2&nbsp;&nbsp;</SPAN>第一部纪传断代史
+                                </DIV>
+    <DIV class="TreeNode" id='item120'>
+    </DIV>
+    </DIV>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item121')"><SPAN class="SerialNumber">1.1.6.2.1.3&nbsp;&nbsp;</SPAN>《后汉书》</a>
+                            </DIV>
+    <DIV class="TreeNode" id='item121'>
+                                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.6.2.1.3.1&nbsp;&nbsp;</SPAN>南朝 范晔
+                                </DIV>
+    <DIV class="TreeNode" id='item122'>
+    </DIV>
+    </DIV>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item123')"><SPAN class="SerialNumber">1.1.6.2.1.4&nbsp;&nbsp;</SPAN>《三国志》</a>
+                            </DIV>
+    <DIV class="TreeNode" id='item123'>
+                                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.6.2.1.4.1&nbsp;&nbsp;</SPAN>西晋 陈寿
+                                </DIV>
+    <DIV class="TreeNode" id='item124'>
+    </DIV>
+    </DIV>
+    </DIV>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item125')"><SPAN class="SerialNumber">1.1.6.2.2&nbsp;&nbsp;</SPAN>科技</a>
+                        </DIV>
+    <DIV class="TreeNode" id='item125'>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.6.2.2.1&nbsp;&nbsp;</SPAN>东汉 蔡伦 改进造纸术
+                                    <SPAN class="NodeTag">
+                                    &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #629855; color: #000000;">考点</SPAN>
+                                    </SPAN>
+                            </DIV>
+    <DIV class="TreeNode" id='item126'>
+    </DIV>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.6.2.2.2&nbsp;&nbsp;</SPAN>东汉 张衡 发明地动仪
+                            </DIV>
+    <DIV class="TreeNode" id='item127'>
+    </DIV>
+    </DIV>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item128')"><SPAN class="SerialNumber">1.1.6.2.3&nbsp;&nbsp;</SPAN>医学</a>
+                                <SPAN class="NodeTag">
+                                &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #629855; color: #000000;">考点</SPAN>
+                                </SPAN>
+                        </DIV>
+    <DIV class="TreeNode" id='item128'>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item129')"><SPAN class="SerialNumber">1.1.6.2.3.1&nbsp;&nbsp;</SPAN>东汉 张仲景</a>
+                            </DIV>
+    <DIV class="TreeNode" id='item129'>
+                                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.6.2.3.1.1&nbsp;&nbsp;</SPAN>《伤寒杂病论》
+                                </DIV>
+    <DIV class="TreeNode" id='item130'>
+    </DIV>
+                                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.6.2.3.1.2&nbsp;&nbsp;</SPAN>“医圣”
+                                </DIV>
+    <DIV class="TreeNode" id='item131'>
+    </DIV>
+    </DIV>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item132')"><SPAN class="SerialNumber">1.1.6.2.3.2&nbsp;&nbsp;</SPAN>东汉 华佗</a>
+                            </DIV>
+    <DIV class="TreeNode" id='item132'>
+                                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.6.2.3.2.1&nbsp;&nbsp;</SPAN>麻沸散
+                                </DIV>
+    <DIV class="TreeNode" id='item133'>
+    </DIV>
+                                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.6.2.3.2.2&nbsp;&nbsp;</SPAN>五禽戏
+                                </DIV>
+    <DIV class="TreeNode" id='item134'>
+    </DIV>
+    </DIV>
+    </DIV>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item135')"><SPAN class="SerialNumber">1.1.6.2.4&nbsp;&nbsp;</SPAN>宗教</a>
+                        </DIV>
+    <DIV class="TreeNode" id='item135'>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.6.2.4.1&nbsp;&nbsp;</SPAN>佛教：西汉末年，经中亚转入中国
+                            </DIV>
+    <DIV class="TreeNode" id='item136'>
+    </DIV>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.6.2.4.2&nbsp;&nbsp;</SPAN>道教：东汉时期，创立于中国
+                            </DIV>
+    <DIV class="TreeNode" id='item137'>
+    </DIV>
+    </DIV>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item138')"><SPAN class="SerialNumber">1.1.6.2.5&nbsp;&nbsp;</SPAN>民族关系</a>
+                        </DIV>
+    <DIV class="TreeNode" id='item138'>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.6.2.5.1&nbsp;&nbsp;</SPAN>汉武帝时期张骞通西域
+                            </DIV>
+    <DIV class="TreeNode" id='item139'>
+    </DIV>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.6.2.5.2&nbsp;&nbsp;</SPAN>丝绸之路
+                            </DIV>
+    <DIV class="TreeNode" id='item140'>
+    </DIV>
+    </DIV>
+    </DIV>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item141')"><SPAN class="SerialNumber">1.1.7&nbsp;&nbsp;</SPAN>三国两晋南北朝</a>
+                </DIV>
+    <DIV class="TreeNode" id='item141'>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item142')"><SPAN class="SerialNumber">1.1.7.1&nbsp;&nbsp;</SPAN>三场以少胜多的战役</a>
+                    </DIV>
+    <DIV class="TreeNode" id='item142'>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.7.1.1&nbsp;&nbsp;</SPAN>官渡之战：曹操大败袁绍
+                        </DIV>
+    <DIV class="TreeNode" id='item143'>
+    </DIV>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item144')"><SPAN class="SerialNumber">1.1.7.1.2&nbsp;&nbsp;</SPAN>赤壁之战</a>
+                        </DIV>
+    <DIV class="TreeNode" id='item144'>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.7.1.2.1&nbsp;&nbsp;</SPAN>孙刘联军大败曹操
+                            </DIV>
+    <DIV class="TreeNode" id='item145'>
+    </DIV>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.7.1.2.2&nbsp;&nbsp;</SPAN>三国鼎立格局初步形成
+                            </DIV>
+    <DIV class="TreeNode" id='item146'>
+    </DIV>
+    </DIV>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item147')"><SPAN class="SerialNumber">1.1.7.1.3&nbsp;&nbsp;</SPAN>淝水之战</a>
+                                <SPAN class="NodeTag">
+                                &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #629855; color: #000000;">考点</SPAN>
+                                </SPAN>
+                        </DIV>
+    <DIV class="TreeNode" id='item147'>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.7.1.3.1&nbsp;&nbsp;</SPAN>东晋大败前秦
+                            </DIV>
+    <DIV class="TreeNode" id='item148'>
+    </DIV>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.7.1.3.2&nbsp;&nbsp;</SPAN>投鞭断流、风声鹤唳、草木皆兵
+                            </DIV>
+    <DIV class="TreeNode" id='item149'>
+    </DIV>
+    </DIV>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item150')"><SPAN class="SerialNumber">1.1.7.2&nbsp;&nbsp;</SPAN>北魏孝文帝改革</a>
+                    </DIV>
+    <DIV class="TreeNode" id='item150'>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.7.2.1&nbsp;&nbsp;</SPAN>促进民族大融合
+                        </DIV>
+    <DIV class="TreeNode" id='item151'>
+    </DIV>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item152')"><SPAN class="SerialNumber">1.1.7.3&nbsp;&nbsp;</SPAN>文化</a>
+                            <SPAN class="NodeTag">
+                            &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #629855; color: #000000;">考点</SPAN>
+                            </SPAN>
+                    </DIV>
+    <DIV class="TreeNode" id='item152'>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item153')"><SPAN class="SerialNumber">1.1.7.3.1&nbsp;&nbsp;</SPAN>农学</a>
+                        </DIV>
+    <DIV class="TreeNode" id='item153'>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.7.3.1.1&nbsp;&nbsp;</SPAN>北魏 贾思勰《齐民要术》 中国现存最早最完整的农书
+                            </DIV>
+    <DIV class="TreeNode" id='item154'>
+    </DIV>
+    </DIV>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item155')"><SPAN class="SerialNumber">1.1.7.3.2&nbsp;&nbsp;</SPAN>地理</a>
+                        </DIV>
+    <DIV class="TreeNode" id='item155'>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.7.3.2.1&nbsp;&nbsp;</SPAN>北魏 郦道元《水经注》综合性地理著作
+                            </DIV>
+    <DIV class="TreeNode" id='item156'>
+    </DIV>
+    </DIV>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item157')"><SPAN class="SerialNumber">1.1.7.3.3&nbsp;&nbsp;</SPAN>书法</a>
+                                <SPAN class="NodeTag">
+                                &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #629855; color: #000000;">考点</SPAN>
+                                </SPAN>
+                        </DIV>
+    <DIV class="TreeNode" id='item157'>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.7.3.3.1&nbsp;&nbsp;</SPAN>东晋 王羲之 “书圣” 《兰亭序》（天下第一行书）
+                            </DIV>
+    <DIV class="TreeNode" id='item158'>
+    </DIV>
+    </DIV>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item159')"><SPAN class="SerialNumber">1.1.7.3.4&nbsp;&nbsp;</SPAN>文学</a>
+                        </DIV>
+    <DIV class="TreeNode" id='item159'>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.7.3.4.1&nbsp;&nbsp;</SPAN>东晋 陶渊明  五柳先生 田园诗派创始人 《饮酒》《桃花源记》《归园田居》
+                            </DIV>
+    <DIV class="TreeNode" id='item160'>
+    </DIV>
+    </DIV>
+    </DIV>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item161')"><SPAN class="SerialNumber">1.1.8&nbsp;&nbsp;</SPAN>隋唐</a>
+                </DIV>
+    <DIV class="TreeNode" id='item161'>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item162')"><SPAN class="SerialNumber">1.1.8.1&nbsp;&nbsp;</SPAN>政权更迭</a>
+                    </DIV>
+    <DIV class="TreeNode" id='item162'>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item163')"><SPAN class="SerialNumber">1.1.8.1.1&nbsp;&nbsp;</SPAN>隋朝</a>
+                        </DIV>
+    <DIV class="TreeNode" id='item163'>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.8.1.1.1&nbsp;&nbsp;</SPAN>建立：杨坚 开皇之治
+                            </DIV>
+    <DIV class="TreeNode" id='item164'>
+    </DIV>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.8.1.1.2&nbsp;&nbsp;</SPAN>制度：创立科举制
+                            </DIV>
+    <DIV class="TreeNode" id='item165'>
+    </DIV>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.8.1.1.3&nbsp;&nbsp;</SPAN>建设：开凿大运河
+                            </DIV>
+    <DIV class="TreeNode" id='item166'>
+    </DIV>
+    </DIV>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item167')"><SPAN class="SerialNumber">1.1.8.1.2&nbsp;&nbsp;</SPAN>唐朝</a>
+                        </DIV>
+    <DIV class="TreeNode" id='item167'>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.8.1.2.1&nbsp;&nbsp;</SPAN>建立：李渊
+                            </DIV>
+    <DIV class="TreeNode" id='item168'>
+    </DIV>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item169')"><SPAN class="SerialNumber">1.1.8.1.2.2&nbsp;&nbsp;</SPAN>治世</a>
+                                    <SPAN class="NodeTag">
+                                    &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #629855; color: #000000;">考点</SPAN>
+                                    </SPAN>
+                            </DIV>
+    <DIV class="TreeNode" id='item169'>
+                                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item170')"><SPAN class="SerialNumber">1.1.8.1.2.2.1&nbsp;&nbsp;</SPAN>贞观之治</a>
+                                </DIV>
+    <DIV class="TreeNode" id='item170'>
+                                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.8.1.2.2.1.1&nbsp;&nbsp;</SPAN>唐太宗 玄武门之变
+                                    </DIV>
+    <DIV class="TreeNode" id='item171'>
+    </DIV>
+                                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.8.1.2.2.1.2&nbsp;&nbsp;</SPAN>房谋杜断
+                                    </DIV>
+    <DIV class="TreeNode" id='item172'>
+    </DIV>
+                                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.8.1.2.2.1.3&nbsp;&nbsp;</SPAN>谏议大臣魏征
+                                    </DIV>
+    <DIV class="TreeNode" id='item173'>
+    </DIV>
+    </DIV>
+                                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item174')"><SPAN class="SerialNumber">1.1.8.1.2.2.2&nbsp;&nbsp;</SPAN>开元盛世</a>
+                                </DIV>
+    <DIV class="TreeNode" id='item174'>
+                                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.8.1.2.2.2.1&nbsp;&nbsp;</SPAN>唐玄宗
+                                    </DIV>
+    <DIV class="TreeNode" id='item175'>
+    </DIV>
+    </DIV>
+    </DIV>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item176')"><SPAN class="SerialNumber">1.1.8.1.2.3&nbsp;&nbsp;</SPAN>安史之乱</a>
+                                    <SPAN class="NodeTag">
+                                    &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #629855; color: #000000;">考点</SPAN>
+                                    </SPAN>
+                            </DIV>
+    <DIV class="TreeNode" id='item176'>
+                                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.8.1.2.3.1&nbsp;&nbsp;</SPAN>由盛转衰
+                                </DIV>
+    <DIV class="TreeNode" id='item177'>
+    </DIV>
+    </DIV>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item178')"><SPAN class="SerialNumber">1.1.8.1.2.4&nbsp;&nbsp;</SPAN>农名起义</a>
+                            </DIV>
+    <DIV class="TreeNode" id='item178'>
+                                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.8.1.2.4.1&nbsp;&nbsp;</SPAN>唐朝灭亡
+                                </DIV>
+    <DIV class="TreeNode" id='item179'>
+    </DIV>
+    </DIV>
+    </DIV>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item180')"><SPAN class="SerialNumber">1.1.8.2&nbsp;&nbsp;</SPAN>中外交流</a>
+                    </DIV>
+    <DIV class="TreeNode" id='item180'>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.8.2.1&nbsp;&nbsp;</SPAN>玄奘西行、天竺取经
+                        </DIV>
+    <DIV class="TreeNode" id='item181'>
+    </DIV>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.8.2.2&nbsp;&nbsp;</SPAN>高僧鉴真、东渡日本
+                        </DIV>
+    <DIV class="TreeNode" id='item182'>
+    </DIV>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item183')"><SPAN class="SerialNumber">1.1.8.3&nbsp;&nbsp;</SPAN>经济</a>
+                    </DIV>
+    <DIV class="TreeNode" id='item183'>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.8.3.1&nbsp;&nbsp;</SPAN>租庸调制（前期）
+                        </DIV>
+    <DIV class="TreeNode" id='item184'>
+    </DIV>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.8.3.2&nbsp;&nbsp;</SPAN>两税法（后期）
+                        </DIV>
+    <DIV class="TreeNode" id='item185'>
+    </DIV>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item186')"><SPAN class="SerialNumber">1.1.8.4&nbsp;&nbsp;</SPAN>科技</a>
+                    </DIV>
+    <DIV class="TreeNode" id='item186'>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item187')"><SPAN class="SerialNumber">1.1.8.4.1&nbsp;&nbsp;</SPAN>建筑</a>
+                        </DIV>
+    <DIV class="TreeNode" id='item187'>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item188')"><SPAN class="SerialNumber">1.1.8.4.1.1&nbsp;&nbsp;</SPAN>赵州桥</a>
+                            </DIV>
+    <DIV class="TreeNode" id='item188'>
+                                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.8.4.1.1.1&nbsp;&nbsp;</SPAN>隋 李春设计
+                                </DIV>
+    <DIV class="TreeNode" id='item189'>
+    </DIV>
+                                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.8.4.1.1.2&nbsp;&nbsp;</SPAN>现存世上最古老的石拱桥
+                                </DIV>
+    <DIV class="TreeNode" id='item190'>
+    </DIV>
+    </DIV>
+    </DIV>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item191')"><SPAN class="SerialNumber">1.1.8.4.2&nbsp;&nbsp;</SPAN>雕版印刷术</a>
+                        </DIV>
+    <DIV class="TreeNode" id='item191'>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.8.4.2.1&nbsp;&nbsp;</SPAN>《金刚经》现存最早标有确切日期的雕版印刷品
+                            </DIV>
+    <DIV class="TreeNode" id='item192'>
+    </DIV>
+    </DIV>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item193')"><SPAN class="SerialNumber">1.1.8.4.3&nbsp;&nbsp;</SPAN>火药</a>
+                        </DIV>
+    <DIV class="TreeNode" id='item193'>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.8.4.3.1&nbsp;&nbsp;</SPAN>唐末，开始运用于军事
+                            </DIV>
+    <DIV class="TreeNode" id='item194'>
+    </DIV>
+    </DIV>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item195')"><SPAN class="SerialNumber">1.1.8.4.4&nbsp;&nbsp;</SPAN>医学</a>
+                                <SPAN class="NodeTag">
+                                &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #629855; color: #000000;">考点</SPAN>
+                                </SPAN>
+                        </DIV>
+    <DIV class="TreeNode" id='item195'>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.8.4.4.1&nbsp;&nbsp;</SPAN>孙思邈 “药王”《千金方》
+                            </DIV>
+    <DIV class="TreeNode" id='item196'>
+    </DIV>
+    </DIV>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item197')"><SPAN class="SerialNumber">1.1.8.5&nbsp;&nbsp;</SPAN>唐诗</a>
+                    </DIV>
+    <DIV class="TreeNode" id='item197'>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item198')"><SPAN class="SerialNumber">1.1.8.5.1&nbsp;&nbsp;</SPAN>初唐</a>
+                        </DIV>
+    <DIV class="TreeNode" id='item198'>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.8.5.1.1&nbsp;&nbsp;</SPAN>初唐四杰：王勃、杨炯、卢照邻、骆宾王
+                            </DIV>
+    <DIV class="TreeNode" id='item199'>
+    </DIV>
+    </DIV>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item200')"><SPAN class="SerialNumber">1.1.8.5.2&nbsp;&nbsp;</SPAN>盛唐</a>
+                        </DIV>
+    <DIV class="TreeNode" id='item200'>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item201')"><SPAN class="SerialNumber">1.1.8.5.2.1&nbsp;&nbsp;</SPAN>边塞诗人</a>
+                            </DIV>
+    <DIV class="TreeNode" id='item201'>
+                                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.8.5.2.1.1&nbsp;&nbsp;</SPAN>高适、岑参
+                                </DIV>
+    <DIV class="TreeNode" id='item202'>
+    </DIV>
+    </DIV>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item203')"><SPAN class="SerialNumber">1.1.8.5.2.2&nbsp;&nbsp;</SPAN>山水田园诗人</a>
+                            </DIV>
+    <DIV class="TreeNode" id='item203'>
+                                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.8.5.2.2.1&nbsp;&nbsp;</SPAN>王维、孟浩然
+                                </DIV>
+    <DIV class="TreeNode" id='item204'>
+    </DIV>
+    </DIV>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item205')"><SPAN class="SerialNumber">1.1.8.5.2.3&nbsp;&nbsp;</SPAN>诗仙李白</a>
+                                    <SPAN class="NodeTag">
+                                    &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #629855; color: #000000;">考点</SPAN>
+                                    </SPAN>
+                            </DIV>
+    <DIV class="TreeNode" id='item205'>
+                                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.8.5.2.3.1&nbsp;&nbsp;</SPAN>字太白、号青莲居士，浪漫主义诗人
+                                </DIV>
+    <DIV class="TreeNode" id='item206'>
+    </DIV>
+                                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.8.5.2.3.2&nbsp;&nbsp;</SPAN>《蜀道难》《望庐山瀑布》《将进酒》
+                                </DIV>
+    <DIV class="TreeNode" id='item207'>
+    </DIV>
+    </DIV>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item208')"><SPAN class="SerialNumber">1.1.8.5.2.4&nbsp;&nbsp;</SPAN>诗圣杜甫</a>
+                                    <SPAN class="NodeTag">
+                                    &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #629855; color: #000000;">考点</SPAN>
+                                    </SPAN>
+                            </DIV>
+    <DIV class="TreeNode" id='item208'>
+                                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.8.5.2.4.1&nbsp;&nbsp;</SPAN>字子美、自号少陵野老，现实主义诗人
+                                </DIV>
+    <DIV class="TreeNode" id='item209'>
+    </DIV>
+                                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.8.5.2.4.2&nbsp;&nbsp;</SPAN>《蜀相》《三吏》《三别》
+                                </DIV>
+    <DIV class="TreeNode" id='item210'>
+    </DIV>
+    </DIV>
+    </DIV>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item211')"><SPAN class="SerialNumber">1.1.8.5.3&nbsp;&nbsp;</SPAN>中唐</a>
+                        </DIV>
+    <DIV class="TreeNode" id='item211'>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item212')"><SPAN class="SerialNumber">1.1.8.5.3.1&nbsp;&nbsp;</SPAN>白居易</a>
+                                    <SPAN class="NodeTag">
+                                    &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #629855; color: #000000;">考点</SPAN>
+                                    </SPAN>
+                            </DIV>
+    <DIV class="TreeNode" id='item212'>
+                                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.8.5.3.1.1&nbsp;&nbsp;</SPAN>字乐天、号香山居士
+                                </DIV>
+    <DIV class="TreeNode" id='item213'>
+    </DIV>
+                                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.8.5.3.1.2&nbsp;&nbsp;</SPAN>《长恨歌》《琵琶行》《卖炭翁》
+                                </DIV>
+    <DIV class="TreeNode" id='item214'>
+    </DIV>
+    </DIV>
+    </DIV>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item215')"><SPAN class="SerialNumber">1.1.8.5.4&nbsp;&nbsp;</SPAN>晚唐</a>
+                        </DIV>
+    <DIV class="TreeNode" id='item215'>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.8.5.4.1&nbsp;&nbsp;</SPAN>杜牧和李商隐（小李杜）
+                            </DIV>
+    <DIV class="TreeNode" id='item216'>
+    </DIV>
+    </DIV>
+    </DIV>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item217')"><SPAN class="SerialNumber">1.1.9&nbsp;&nbsp;</SPAN>两宋</a>
+                </DIV>
+    <DIV class="TreeNode" id='item217'>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item218')"><SPAN class="SerialNumber">1.1.9.1&nbsp;&nbsp;</SPAN>北宋的建立</a>
+                    </DIV>
+    <DIV class="TreeNode" id='item218'>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.9.1.1&nbsp;&nbsp;</SPAN>赵匡胤 陈桥兵变
+                        </DIV>
+    <DIV class="TreeNode" id='item219'>
+    </DIV>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.9.1.2&nbsp;&nbsp;</SPAN>定都东京（开封）
+                        </DIV>
+    <DIV class="TreeNode" id='item220'>
+    </DIV>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.9.1.3&nbsp;&nbsp;</SPAN>杯酒释兵权
+                        </DIV>
+    <DIV class="TreeNode" id='item221'>
+    </DIV>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item222')"><SPAN class="SerialNumber">1.1.9.2&nbsp;&nbsp;</SPAN>王安石变法</a>
+                            <SPAN class="NodeTag">
+                            &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #629855; color: #000000;">考点</SPAN>
+                            </SPAN>
+                    </DIV>
+    <DIV class="TreeNode" id='item222'>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.9.2.1&nbsp;&nbsp;</SPAN>富国强兵
+                        </DIV>
+    <DIV class="TreeNode" id='item223'>
+    </DIV>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.9.2.2&nbsp;&nbsp;</SPAN>市易法、青苗法、募役法、方田均税法、农田水利法
+                        </DIV>
+    <DIV class="TreeNode" id='item224'>
+    </DIV>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item225')"><SPAN class="SerialNumber">1.1.9.3&nbsp;&nbsp;</SPAN>北宋的灭亡</a>
+                    </DIV>
+    <DIV class="TreeNode" id='item225'>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.9.3.1&nbsp;&nbsp;</SPAN>1127 靖康之耻
+                        </DIV>
+    <DIV class="TreeNode" id='item226'>
+    </DIV>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item227')"><SPAN class="SerialNumber">1.1.9.4&nbsp;&nbsp;</SPAN>南宋的建立</a>
+                    </DIV>
+    <DIV class="TreeNode" id='item227'>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.9.4.1&nbsp;&nbsp;</SPAN>1127 赵构定都临安（杭州）
+                        </DIV>
+    <DIV class="TreeNode" id='item228'>
+    </DIV>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item229')"><SPAN class="SerialNumber">1.1.9.5&nbsp;&nbsp;</SPAN>抗金斗争</a>
+                    </DIV>
+    <DIV class="TreeNode" id='item229'>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.9.5.1&nbsp;&nbsp;</SPAN>抗金名将岳飞
+                        </DIV>
+    <DIV class="TreeNode" id='item230'>
+    </DIV>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item231')"><SPAN class="SerialNumber">1.1.9.6&nbsp;&nbsp;</SPAN>科技</a>
+                    </DIV>
+    <DIV class="TreeNode" id='item231'>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.9.6.1&nbsp;&nbsp;</SPAN>北宋 毕昇发明活字印刷术
+                        </DIV>
+    <DIV class="TreeNode" id='item232'>
+    </DIV>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.9.6.2&nbsp;&nbsp;</SPAN>指南针普遍运用于航海
+                        </DIV>
+    <DIV class="TreeNode" id='item233'>
+    </DIV>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.9.6.3&nbsp;&nbsp;</SPAN>火药普遍运用于军事
+                        </DIV>
+    <DIV class="TreeNode" id='item234'>
+    </DIV>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.9.6.4&nbsp;&nbsp;</SPAN>北宋沈括《梦溪笔谈》中国科学史的里程碑
+                                <SPAN class="NodeTag">
+                                &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #629855; color: #000000;">考点</SPAN>
+                                </SPAN>
+                        </DIV>
+    <DIV class="TreeNode" id='item235'>
+    </DIV>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item236')"><SPAN class="SerialNumber">1.1.9.7&nbsp;&nbsp;</SPAN>宋词</a>
+                            <SPAN class="NodeTag">
+                            &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #629855; color: #000000;">考点</SPAN>
+                            </SPAN>
+                    </DIV>
+    <DIV class="TreeNode" id='item236'>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item237')"><SPAN class="SerialNumber">1.1.9.7.1&nbsp;&nbsp;</SPAN>豪放派</a>
+                        </DIV>
+    <DIV class="TreeNode" id='item237'>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.9.7.1.1&nbsp;&nbsp;</SPAN>苏轼、辛弃疾
+                            </DIV>
+    <DIV class="TreeNode" id='item238'>
+    </DIV>
+    </DIV>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item239')"><SPAN class="SerialNumber">1.1.9.7.2&nbsp;&nbsp;</SPAN>婉约派</a>
+                        </DIV>
+    <DIV class="TreeNode" id='item239'>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.9.7.2.1&nbsp;&nbsp;</SPAN>柳永、李清照
+                            </DIV>
+    <DIV class="TreeNode" id='item240'>
+    </DIV>
+    </DIV>
+    </DIV>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item241')"><SPAN class="SerialNumber">1.1.10&nbsp;&nbsp;</SPAN>元朝</a>
+                </DIV>
+    <DIV class="TreeNode" id='item241'>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item242')"><SPAN class="SerialNumber">1.1.10.1&nbsp;&nbsp;</SPAN>蒙古的兴起</a>
+                    </DIV>
+    <DIV class="TreeNode" id='item242'>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.10.1.1&nbsp;&nbsp;</SPAN>12世纪中后期，铁木真（成吉思汗）建立蒙古汗国
+                        </DIV>
+    <DIV class="TreeNode" id='item243'>
+    </DIV>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item244')"><SPAN class="SerialNumber">1.1.10.2&nbsp;&nbsp;</SPAN>元朝的建立</a>
+                    </DIV>
+    <DIV class="TreeNode" id='item244'>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.10.2.1&nbsp;&nbsp;</SPAN>1271 忽必烈改国号为元，次年定都燕京，称为大都（今北京）
+                        </DIV>
+    <DIV class="TreeNode" id='item245'>
+    </DIV>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item246')"><SPAN class="SerialNumber">1.1.10.3&nbsp;&nbsp;</SPAN>制度与机构</a>
+                    </DIV>
+    <DIV class="TreeNode" id='item246'>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.10.3.1&nbsp;&nbsp;</SPAN>行省制度：地方政治制度进入划省而治的阶段
+                                <SPAN class="NodeTag">
+                                &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #629855; color: #000000;">考点</SPAN>
+                                </SPAN>
+                        </DIV>
+    <DIV class="TreeNode" id='item247'>
+    </DIV>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.10.3.2&nbsp;&nbsp;</SPAN>宣政院：统领宗教事务和管辖西藏地区
+                        </DIV>
+    <DIV class="TreeNode" id='item248'>
+    </DIV>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.10.3.3&nbsp;&nbsp;</SPAN>澎湖巡检司：管辖澎湖、台湾地区
+                        </DIV>
+    <DIV class="TreeNode" id='item249'>
+    </DIV>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item250')"><SPAN class="SerialNumber">1.1.10.4&nbsp;&nbsp;</SPAN>科技</a>
+                    </DIV>
+    <DIV class="TreeNode" id='item250'>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.10.4.1&nbsp;&nbsp;</SPAN>郭守敬《授时历》
+                        </DIV>
+    <DIV class="TreeNode" id='item251'>
+    </DIV>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item252')"><SPAN class="SerialNumber">1.1.10.5&nbsp;&nbsp;</SPAN>元曲四大家</a>
+                            <SPAN class="NodeTag">
+                            &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #629855; color: #000000;">考点</SPAN>
+                            </SPAN>
+                    </DIV>
+    <DIV class="TreeNode" id='item252'>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.10.5.1&nbsp;&nbsp;</SPAN>关汉卿《窦娥冤》
+                        </DIV>
+    <DIV class="TreeNode" id='item253'>
+    </DIV>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.10.5.2&nbsp;&nbsp;</SPAN>马致远《汉宫秋》
+                        </DIV>
+    <DIV class="TreeNode" id='item254'>
+    </DIV>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.10.5.3&nbsp;&nbsp;</SPAN>郑光祖《倩女离魂》
+                        </DIV>
+    <DIV class="TreeNode" id='item255'>
+    </DIV>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.10.5.4&nbsp;&nbsp;</SPAN>白朴《梧桐雨》
+                        </DIV>
+    <DIV class="TreeNode" id='item256'>
+    </DIV>
+    </DIV>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item257')"><SPAN class="SerialNumber">1.1.11&nbsp;&nbsp;</SPAN>明清</a>
+                </DIV>
+    <DIV class="TreeNode" id='item257'>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item258')"><SPAN class="SerialNumber">1.1.11.1&nbsp;&nbsp;</SPAN>政权的更迭</a>
+                    </DIV>
+    <DIV class="TreeNode" id='item258'>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item259')"><SPAN class="SerialNumber">1.1.11.1.1&nbsp;&nbsp;</SPAN>明朝</a>
+                        </DIV>
+    <DIV class="TreeNode" id='item259'>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item260')"><SPAN class="SerialNumber">1.1.11.1.1.1&nbsp;&nbsp;</SPAN>建立</a>
+                            </DIV>
+    <DIV class="TreeNode" id='item260'>
+                                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.11.1.1.1.1&nbsp;&nbsp;</SPAN>朱元璋 定都南京
+                                </DIV>
+    <DIV class="TreeNode" id='item261'>
+    </DIV>
+    </DIV>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item262')"><SPAN class="SerialNumber">1.1.11.1.1.2&nbsp;&nbsp;</SPAN>封建君主制的加强</a>
+                                    <SPAN class="NodeTag">
+                                    &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #629855; color: #000000;">考点</SPAN>
+                                    </SPAN>
+                            </DIV>
+    <DIV class="TreeNode" id='item262'>
+                                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.11.1.1.2.1&nbsp;&nbsp;</SPAN>中央：废丞相设内阁
+                                </DIV>
+    <DIV class="TreeNode" id='item263'>
+    </DIV>
+                                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.11.1.1.2.2&nbsp;&nbsp;</SPAN>科举：八股取士
+                                </DIV>
+    <DIV class="TreeNode" id='item264'>
+    </DIV>
+    </DIV>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item265')"><SPAN class="SerialNumber">1.1.11.1.1.3&nbsp;&nbsp;</SPAN>明末农民起义</a>
+                            </DIV>
+    <DIV class="TreeNode" id='item265'>
+                                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.11.1.1.3.1&nbsp;&nbsp;</SPAN>1644年李自成攻陷北京，明朝灭亡
+                                </DIV>
+    <DIV class="TreeNode" id='item266'>
+    </DIV>
+    </DIV>
+    </DIV>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item267')"><SPAN class="SerialNumber">1.1.11.1.2&nbsp;&nbsp;</SPAN>清朝</a>
+                        </DIV>
+    <DIV class="TreeNode" id='item267'>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item268')"><SPAN class="SerialNumber">1.1.11.1.2.1&nbsp;&nbsp;</SPAN>建立</a>
+                            </DIV>
+    <DIV class="TreeNode" id='item268'>
+                                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.11.1.2.1.1&nbsp;&nbsp;</SPAN>1616年努尔哈赤建后金，1636年皇太极改国号为清，1644年清朝定都北京
+                                </DIV>
+    <DIV class="TreeNode" id='item269'>
+    </DIV>
+    </DIV>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item270')"><SPAN class="SerialNumber">1.1.11.1.2.2&nbsp;&nbsp;</SPAN>加强皇权</a>
+                            </DIV>
+    <DIV class="TreeNode" id='item270'>
+                                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.11.1.2.2.1&nbsp;&nbsp;</SPAN>政治：雍正时期设立军机处
+                                        <SPAN class="NodeTag">
+                                        &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #629855; color: #000000;">考点</SPAN>
+                                        </SPAN>
+                                </DIV>
+    <DIV class="TreeNode" id='item271'>
+    </DIV>
+                                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.11.1.2.2.2&nbsp;&nbsp;</SPAN>外交：闭关锁国
+                                </DIV>
+    <DIV class="TreeNode" id='item272'>
+    </DIV>
+    </DIV>
+    </DIV>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item273')"><SPAN class="SerialNumber">1.1.11.2&nbsp;&nbsp;</SPAN>对外关系</a>
+                    </DIV>
+    <DIV class="TreeNode" id='item273'>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.11.2.1&nbsp;&nbsp;</SPAN>郑和下西洋：明成祖时期，七次下西洋，最远到达红海沿岸和非洲东海岸
+                        </DIV>
+    <DIV class="TreeNode" id='item274'>
+    </DIV>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.11.2.2&nbsp;&nbsp;</SPAN>郑成功收复台湾：荷兰殖民者
+                        </DIV>
+    <DIV class="TreeNode" id='item275'>
+    </DIV>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.11.2.3&nbsp;&nbsp;</SPAN>雅克萨战争：清军大败俄军，签订《尼布楚条约》
+                                <SPAN class="NodeTag">
+                                &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #629855; color: #000000;">考点</SPAN>
+                                </SPAN>
+                        </DIV>
+    <DIV class="TreeNode" id='item276'>
+    </DIV>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item277')"><SPAN class="SerialNumber">1.1.11.3&nbsp;&nbsp;</SPAN>科技</a>
+                            <SPAN class="NodeTag">
+                            &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #629855; color: #000000;">考点</SPAN>
+                            </SPAN>
+                    </DIV>
+    <DIV class="TreeNode" id='item277'>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.11.3.1&nbsp;&nbsp;</SPAN>明 李时珍 《本草纲目》东方医药巨典
+                        </DIV>
+    <DIV class="TreeNode" id='item278'>
+    </DIV>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.11.3.2&nbsp;&nbsp;</SPAN>明 徐光启 《农政全书》
+                        </DIV>
+    <DIV class="TreeNode" id='item279'>
+    </DIV>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.11.3.3&nbsp;&nbsp;</SPAN>明 宋应星 《天工开物》中国17世纪的工艺百科全书
+                        </DIV>
+    <DIV class="TreeNode" id='item280'>
+    </DIV>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item281')"><SPAN class="SerialNumber">1.1.11.4&nbsp;&nbsp;</SPAN>小说</a>
+                            <SPAN class="NodeTag">
+                            &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #629855; color: #000000;">考点</SPAN>
+                            </SPAN>
+                    </DIV>
+    <DIV class="TreeNode" id='item281'>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.11.4.1&nbsp;&nbsp;</SPAN>四大名著：《三国演义》《水浒传》《西游记》《红楼梦》
+                        </DIV>
+    <DIV class="TreeNode" id='item282'>
+    </DIV>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.11.4.2&nbsp;&nbsp;</SPAN>清 吴敬梓《儒林外史》
+                        </DIV>
+    <DIV class="TreeNode" id='item283'>
+    </DIV>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.1.11.4.3&nbsp;&nbsp;</SPAN>清 蒲松龄《聊斋志异》
+                        </DIV>
+    <DIV class="TreeNode" id='item284'>
+    </DIV>
+    </DIV>
+    </DIV>
+    </DIV>
+            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item285')"><SPAN class="SerialNumber">1.2&nbsp;&nbsp;</SPAN>生物分类</a>
+            </DIV>
+            <DIV class="nodeValue"><DIV style="padding: 0 0 0 96px;"><DIV class="valueBox">
+            <PRE><CODE>https://www.zhihu.com/question/41580677/answer/1300242801</CODE></PRE>
+            </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item285'>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item286')"><SPAN class="SerialNumber">1.2.1&nbsp;&nbsp;</SPAN>非细胞生物</a>
+                </DIV>
+    <DIV class="TreeNode" id='item286'>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item287')"><SPAN class="SerialNumber">1.2.1.1&nbsp;&nbsp;</SPAN>病毒</a>
+                    </DIV>
+    <DIV class="TreeNode" id='item287'>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.1.1.1&nbsp;&nbsp;</SPAN>DNA病毒
+                        </DIV>
+    <DIV class="TreeNode" id='item288'>
+    </DIV>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.1.1.2&nbsp;&nbsp;</SPAN>RNA病毒
+                                <SPAN class="NodeTag">
+                                &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #5C6222; color: #FFFFFF;">已掌握</SPAN>
+                                </SPAN>
+                        </DIV>
+    <DIV class="TreeNode" id='item289'>
+    </DIV>
+    </DIV>
+    </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item290')"><SPAN class="SerialNumber">1.2.2&nbsp;&nbsp;</SPAN>细胞生物</a>
+                </DIV>
+    <DIV class="TreeNode" id='item290'>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item291')"><SPAN class="SerialNumber">1.2.2.1&nbsp;&nbsp;</SPAN>原核生物域</a>
+                            <SPAN class="NodeTag">
+                            &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #8CD0A6; color: #000000;">容易错</SPAN>
+                            &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #5A5CDB; color: #FFFFFF;">糊涂着</SPAN>
+                            </SPAN>
+                    </DIV>
+    <DIV class="TreeNode" id='item291'>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.2.1.1&nbsp;&nbsp;</SPAN>古菌域
+                        </DIV>
+    <DIV class="TreeNode" id='item292'>
+    </DIV>
+    </DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item293')"><SPAN class="SerialNumber">1.2.2.2&nbsp;&nbsp;</SPAN>真核生物域</a>
+                    </DIV>
+    <DIV class="TreeNode" id='item293'>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.2.2.1&nbsp;&nbsp;</SPAN>原生生物界
+                                <SPAN class="NodeTag">
+                                &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #8CD0A6; color: #000000;">容易错</SPAN>
+                                </SPAN>
+                        </DIV>
+    <DIV class="TreeNode" id='item294'>
+    </DIV>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item295')"><SPAN class="SerialNumber">1.2.2.2.2&nbsp;&nbsp;</SPAN>植物界</a>
+                        </DIV>
+    <DIV class="TreeNode" id='item295'>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.2.2.2.1&nbsp;&nbsp;</SPAN>孢子植物
+                            </DIV>
+    <DIV class="TreeNode" id='item296'>
+    </DIV>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item297')"><SPAN class="SerialNumber">1.2.2.2.2.2&nbsp;&nbsp;</SPAN>种子植物</a>
+                            </DIV>
+    <DIV class="TreeNode" id='item297'>
+                                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.2.2.2.2.1&nbsp;&nbsp;</SPAN>裸子植物
+                                </DIV>
+    <DIV class="TreeNode" id='item298'>
+    </DIV>
+                                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.2.2.2.2.2&nbsp;&nbsp;</SPAN>被子植物
+                                </DIV>
+    <DIV class="TreeNode" id='item299'>
+    </DIV>
+    </DIV>
+    </DIV>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item300')"><SPAN class="SerialNumber">1.2.2.2.3&nbsp;&nbsp;</SPAN>动物界</a>
+                        </DIV>
+    <DIV class="TreeNode" id='item300'>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item301')"><SPAN class="SerialNumber">1.2.2.2.3.1&nbsp;&nbsp;</SPAN>原生动物亚界</a>
+                            </DIV>
+    <DIV class="TreeNode" id='item301'>
+                                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.2.2.3.1.1&nbsp;&nbsp;</SPAN>原生动物门
+                                </DIV>
+    <DIV class="TreeNode" id='item302'>
+    </DIV>
+    </DIV>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item303')"><SPAN class="SerialNumber">1.2.2.2.3.2&nbsp;&nbsp;</SPAN>中生动物亚界</a>
+                            </DIV>
+    <DIV class="TreeNode" id='item303'>
+                                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.2.2.3.2.1&nbsp;&nbsp;</SPAN>中生动物门
+                                </DIV>
+    <DIV class="TreeNode" id='item304'>
+    </DIV>
+    </DIV>
+                            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item305')"><SPAN class="SerialNumber">1.2.2.2.3.3&nbsp;&nbsp;</SPAN>后生动物亚界</a>
+                            </DIV>
+    <DIV class="TreeNode" id='item305'>
+                                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.2.2.3.3.1&nbsp;&nbsp;</SPAN>原口动物总门
+                                </DIV>
+    <DIV class="TreeNode" id='item306'>
+    </DIV>
+                                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.2.2.3.3.2&nbsp;&nbsp;</SPAN>后口动物总门
+                                </DIV>
+    <DIV class="TreeNode" id='item307'>
+    </DIV>
+    </DIV>
+    </DIV>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1.2.2.2.4&nbsp;&nbsp;</SPAN>真菌界
+                        </DIV>
+    <DIV class="TreeNode" id='item308'>
+    </DIV>
+    </DIV>
+    </DIV>
+    </DIV>
+    </DIV>
+    </DIV>
+    </BODY>
+</HTML>

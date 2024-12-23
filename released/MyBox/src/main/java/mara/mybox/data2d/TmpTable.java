@@ -109,8 +109,8 @@ public class TmpTable extends DataTable {
                 Data2DColumn sourceColumn = sourceColumns.get(col);
                 sourceReferColumns.add(sourceColumn);
                 sourceReferIndice.add(col);
-                Data2DColumn tableColumn = sourceColumn.cloneAll();
-                tableColumn.setD2cid(-1).setD2id(-1).setLength(StringMaxLength);
+                Data2DColumn tableColumn = sourceColumn.copy();
+                tableColumn.setLength(StringMaxLength);
                 tableColumn.setType(forStatistic ? ColumnType.Double : ColumnType.String);
                 tmpColumns.add(tableColumn);
             }
@@ -119,8 +119,7 @@ public class TmpTable extends DataTable {
                 for (String name : groupEqualColumnNames) {
                     Data2DColumn sourceColumn = sourceData.columnByName(name);
                     sourceReferColumns.add(sourceColumn);
-                    Data2DColumn tableColumn = sourceColumn.cloneAll();
-                    tableColumn.setD2cid(-1).setD2id(-1);
+                    Data2DColumn tableColumn = sourceColumn.copy();
                     tmpColumns.add(tableColumn);
                     sourceReferIndice.add(sourceData.colOrder(name));
                 }
@@ -128,16 +127,16 @@ public class TmpTable extends DataTable {
             } else if (groupRangeColumnName != null && !groupRangeColumnName.isBlank()) {
                 Data2DColumn sourceColumn = sourceData.columnByName(groupRangeColumnName);
                 sourceReferColumns.add(sourceColumn);
-                Data2DColumn tableColumn = sourceColumn.cloneAll();
-                tableColumn.setD2cid(-1).setD2id(-1).setType(ColumnType.Double);
+                Data2DColumn tableColumn = sourceColumn.copy();
+                tableColumn.setType(ColumnType.Double);
                 tmpColumns.add(tableColumn);
                 sourceReferIndice.add(sourceData.colOrder(groupRangeColumnName));
 
             } else if (groupTimeColumnName != null && !groupTimeColumnName.isBlank()) {
                 Data2DColumn sourceColumn = sourceData.columnByName(groupTimeColumnName);
                 sourceReferColumns.add(sourceColumn);
-                Data2DColumn tableColumn = sourceColumn.cloneAll();
-                tableColumn.setD2cid(-1).setD2id(-1).setType(ColumnType.Long);
+                Data2DColumn tableColumn = sourceColumn.copy();
+                tableColumn.setType(ColumnType.Long);
                 tmpColumns.add(tableColumn);
                 timeIndex = sourceReferIndice.size();
                 sourceReferIndice.add(sourceData.colOrder(groupTimeColumnName));
@@ -158,8 +157,7 @@ public class TmpTable extends DataTable {
                 for (String name : sortNames) {
                     Data2DColumn sourceColumn = sourceData.columnByName(name);
                     sourceReferColumns.add(sourceColumn);
-                    Data2DColumn tableColumn = sourceColumn.cloneAll();
-                    tableColumn.setD2cid(-1).setD2id(-1);
+                    Data2DColumn tableColumn = sourceColumn.copy();
                     tmpColumns.add(tableColumn);
                     sourceReferIndice.add(sourceData.colOrder(name));
                 }
@@ -231,6 +229,10 @@ public class TmpTable extends DataTable {
 
     // sourceRow should include values of all source columns
     @Override
+    public Data2DRow makeRow(List<String> sourceRow, DataTableWriter writer) {
+        return makeRow(sourceRow, writer.invalidAs);
+    }
+
     public Data2DRow makeRow(List<String> sourceRow, InvalidAs invalidAs) {
         try {
             if (columns == null || sourceRow == null || sourceRow.isEmpty()) {
@@ -242,7 +244,7 @@ public class TmpTable extends DataTable {
             if (includeRowNumber) {
                 String rowNum = sourceRow.get(0);
                 index = Long.parseLong(rowNum);
-                data2DRow.setColumnValue(column(1).getColumnName(), index);
+                data2DRow.setValue(column(1).getColumnName(), index);
                 values = sourceRow.subList(1, sourceRow.size());
             } else {
                 index = -1;
@@ -272,7 +274,6 @@ public class TmpTable extends DataTable {
                         case Long:
                             if (timeIndex != i) {
                                 tmpValue = targetColumn.fromString(sourceValue, invalidAs);
-                                MyBoxLog.console(sourceValue + " " + tmpValue);
                             } else {
                                 Date d = DateTools.encodeDate(sourceValue);
                                 if (d == null) {
@@ -335,7 +336,7 @@ public class TmpTable extends DataTable {
                             tmpValue = targetColumn.fromString(sourceValue, invalidAs);
                     }
                 }
-                data2DRow.setColumnValue(targetColumn.getColumnName(), tmpValue);
+                data2DRow.setValue(targetColumn.getColumnName(), tmpValue);
             }
             return data2DRow;
         } catch (Exception e) {
@@ -399,9 +400,9 @@ public class TmpTable extends DataTable {
                 names.add(message("SourceRowNumber"));
             }
             for (int i : sourcePickIndice) {
-                Data2DColumn column = sourceData.column(i).cloneAll();
+                Data2DColumn column = sourceData.column(i).copy();
                 String name = DerbyBase.checkIdentifier(names, column.getColumnName(), true);
-                column.setD2cid(-1).setD2id(-1).setColumnName(name);
+                column.setColumnName(name);
                 targetColumns.add(column);
             }
             writer.setColumns(targetColumns)
@@ -442,12 +443,12 @@ public class TmpTable extends DataTable {
                 Data2DRow dataRow = tableData2D.readData(query);
                 List<String> rowValues = new ArrayList<>();
                 if (includeRowNumber) {
-                    Object v = dataRow.getColumnValue(numberName);
+                    Object v = dataRow.getValue(numberName);
                     rowValues.add(v == null ? null : v + "");
                 }
                 for (int i = 0; i < sourcePickIndice.size(); i++) {
                     Data2DColumn tmpColumn = columns.get(i + valueIndexOffset);
-                    Object v = dataRow.getColumnValue(tmpColumn.getColumnName());
+                    Object v = dataRow.getValue(tmpColumn.getColumnName());
                     rowValues.add(v == null ? null : v + "");
                 }
                 writer.writeRow(rowValues);
@@ -591,7 +592,7 @@ public class TmpTable extends DataTable {
         return tmpScript;
     }
 
-    /* 
+    /*
         static
      */
     public static String tmpTableName() {

@@ -112,7 +112,8 @@ public class ControlPdfPageAttributes extends BaseController {
 
                 @Override
                 public String toString(BlendMode object) {
-                    return BlendMode.getCOSName(object).getName();
+                    return object.getCOSName().getName();
+//                    return BlendMode.getCOSName(object).getName();
                 }
 
                 @Override
@@ -163,7 +164,8 @@ public class ControlPdfPageAttributes extends BaseController {
 
                 @Override
                 public String toString(BlendMode object) {
-                    return BlendMode.getCOSName(object).getName();
+                    return object.getCOSName().getName();
+//                   return BlendMode.getCOSName(object).getName();
                 }
 
                 @Override

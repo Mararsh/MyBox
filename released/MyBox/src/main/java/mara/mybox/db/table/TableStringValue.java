@@ -53,11 +53,35 @@ public class TableStringValue extends BaseTable<StringValue> {
     public static final String Delete
             = "DELETE FROM String_Value WHERE key_name=?";
 
+    @Override
+    public boolean setValue(StringValue data, String column, Object value) {
+        if (data == null || column == null) {
+            return false;
+        }
+        return data.setValue(column, value);
+    }
+
+    @Override
+    public Object getValue(StringValue data, String column) {
+        if (data == null || column == null) {
+            return null;
+        }
+        return data.getValue(column);
+    }
+
+    @Override
+    public boolean valid(StringValue data) {
+        if (data == null) {
+            return false;
+        }
+        return data.valid();
+    }
+
     public static String read(String name) {
         if (name == null || name.trim().isEmpty()) {
             return null;
         }
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             conn.setReadOnly(true);
             return read(conn, name);
         } catch (Exception e) {
@@ -71,11 +95,11 @@ public class TableStringValue extends BaseTable<StringValue> {
         if (conn == null || name == null || name.trim().isEmpty()) {
             return null;
         }
-        try ( PreparedStatement statement = conn.prepareStatement(Query)) {
+        try (PreparedStatement statement = conn.prepareStatement(Query)) {
             statement.setMaxRows(1);
             statement.setString(1, stringValue(name));
             conn.setAutoCommit(true);
-            try ( ResultSet results = statement.executeQuery()) {
+            try (ResultSet results = statement.executeQuery()) {
                 if (results.next()) {
                     return results.getString("string_value");
                 }
@@ -92,7 +116,7 @@ public class TableStringValue extends BaseTable<StringValue> {
                 || value == null || value.trim().isEmpty()) {
             return false;
         }
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             return write(conn, name, value);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -103,25 +127,25 @@ public class TableStringValue extends BaseTable<StringValue> {
     public static boolean write(Connection conn, String name, String value) {
         try {
             boolean existed = false;
-            try ( PreparedStatement statement = conn.prepareStatement(Query)) {
+            try (PreparedStatement statement = conn.prepareStatement(Query)) {
                 statement.setMaxRows(1);
                 statement.setString(1, name);
                 conn.setAutoCommit(true);
-                try ( ResultSet results = statement.executeQuery()) {
+                try (ResultSet results = statement.executeQuery()) {
                     if (results.next()) {
                         existed = true;
                     }
                 }
             }
             if (existed) {
-                try ( PreparedStatement statement = conn.prepareStatement(Update)) {
+                try (PreparedStatement statement = conn.prepareStatement(Update)) {
                     statement.setString(1, DateTools.datetimeToString(new Date()));
                     statement.setString(2, value);
                     statement.setString(3, name);
                     return statement.executeUpdate() > 0;
                 }
             } else {
-                try ( PreparedStatement statement = conn.prepareStatement(Insert)) {
+                try (PreparedStatement statement = conn.prepareStatement(Insert)) {
                     statement.setString(1, name);
                     statement.setString(2, value);
                     statement.setString(3, DateTools.datetimeToString(new Date()));
@@ -142,7 +166,7 @@ public class TableStringValue extends BaseTable<StringValue> {
         if (nameValues == null || nameValues.isEmpty()) {
             return false;
         }
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             conn.setAutoCommit(false);
             for (String name : nameValues.keySet()) {
                 String value = nameValues.get(name);
@@ -165,8 +189,7 @@ public class TableStringValue extends BaseTable<StringValue> {
         if (name == null || name.trim().isEmpty()) {
             return false;
         }
-        try ( Connection conn = DerbyBase.getConnection();
-                 PreparedStatement statement = conn.prepareStatement(Delete)) {
+        try (Connection conn = DerbyBase.getConnection(); PreparedStatement statement = conn.prepareStatement(Delete)) {
             statement.setString(1, name);
             return statement.executeUpdate() > 0;
         } catch (Exception e) {
@@ -177,7 +200,7 @@ public class TableStringValue extends BaseTable<StringValue> {
     }
 
     public static Map<String, String> readWithPrefix(String prefix) {
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             conn.setReadOnly(true);
             return readWithPrefix(conn, prefix);
         } catch (Exception e) {
@@ -194,8 +217,7 @@ public class TableStringValue extends BaseTable<StringValue> {
         }
         String sql = " SELECT key_name, string_value  FROM String_Value WHERE key_name like '"
                 + stringValue(prefix) + "%' ";
-        try ( Statement statement = conn.createStatement();
-                 ResultSet results = statement.executeQuery(sql)) {
+        try (Statement statement = conn.createStatement(); ResultSet results = statement.executeQuery(sql)) {
             while (results.next()) {
                 keyValues.put(results.getString("key_name"), results.getString("string_value"));
             }
@@ -210,8 +232,7 @@ public class TableStringValue extends BaseTable<StringValue> {
         if (prefix == null || prefix.trim().isEmpty()) {
             return false;
         }
-        try ( Connection conn = DerbyBase.getConnection();
-                 Statement statement = conn.createStatement()) {
+        try (Connection conn = DerbyBase.getConnection(); Statement statement = conn.createStatement()) {
             String sql = "DELETE FROM String_Value WHERE  key_name like '"
                     + stringValue(prefix) + "%' ";
             statement.executeUpdate(sql);

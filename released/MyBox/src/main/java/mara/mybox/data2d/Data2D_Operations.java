@@ -244,7 +244,7 @@ public abstract class Data2D_Operations extends Data2D_Edit {
             targetColumns.add(0, new Data2DColumn(message("SourceRowNumber"), ColumnDefinition.ColumnType.Long));
         }
         for (int c : cols) {
-            Data2DColumn column = columns.get(c).cloneAll().setD2cid(-1).setD2id(-1);
+            Data2DColumn column = columns.get(c).copy();
             if (suffix != null) {
                 column.setColumnName(column.getColumnName() + "_" + suffix).setWidth(200);
             }
@@ -252,7 +252,7 @@ public abstract class Data2D_Operations extends Data2D_Edit {
         }
         if (otherCols != null && !otherCols.isEmpty()) {
             for (int c : otherCols) {
-                Data2DColumn column = columns.get(c).cloneAll().setD2cid(-1).setD2id(-1);
+                Data2DColumn column = columns.get(c).copy();
                 targetColumns.add(column);
             }
         }
@@ -335,7 +335,7 @@ public abstract class Data2D_Operations extends Data2D_Edit {
             for (int c : cols) {
                 Data2DColumn column = column(c);
                 names.add(column.getColumnName());
-                targetColumns.add(column.cloneAll().setD2cid(-1).setD2id(-1));
+                targetColumns.add(column.copy());
             }
             List<DataFileCSV> files = new ArrayList<>();
             for (int i = 0; i < list.size();) {

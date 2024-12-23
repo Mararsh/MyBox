@@ -225,7 +225,7 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
 
     @FXML
     protected void openManageLanguages(ActionEvent event) {
-        loadScene(Fxmls.MyBoxLanguagesFxml);
+        openScene(Fxmls.MyBoxLanguagesFxml);
     }
 
     @FXML

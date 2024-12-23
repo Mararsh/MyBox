@@ -38,17 +38,41 @@ public class TableFloatMatrix extends BaseTable<BaseData> {
         return this;
     }
 
+    @Override
+    public boolean setValue(BaseData data, String column, Object value) {
+        if (data == null || column == null) {
+            return false;
+        }
+        return data.setValue(column, value);
+    }
+
+    @Override
+    public Object getValue(BaseData data, String column) {
+        if (data == null || column == null) {
+            return null;
+        }
+        return data.getValue(column);
+    }
+
+    @Override
+    public boolean valid(BaseData data) {
+        if (data == null) {
+            return false;
+        }
+        return data.valid();
+    }
+
     public static float[][] read(String name, int width, int height) {
         float[][] matrix = new float[height][width];
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             conn.setReadOnly(true);
-            try ( PreparedStatement statement = conn.prepareStatement(" SELECT * FROM Float_Matrix WHERE name=? AND row=? AND col=?")) {
+            try (PreparedStatement statement = conn.prepareStatement(" SELECT * FROM Float_Matrix WHERE name=? AND row=? AND col=?")) {
                 for (int j = 0; j < height; ++j) {
                     for (int i = 0; i < width; ++i) {
                         statement.setString(1, name);
                         statement.setInt(2, j);
                         statement.setInt(3, i);
-                        try ( ResultSet result = statement.executeQuery()) {
+                        try (ResultSet result = statement.executeQuery()) {
                             if (result.next()) {
                                 matrix[j][i] = result.getFloat("value");
                             }
@@ -66,14 +90,14 @@ public class TableFloatMatrix extends BaseTable<BaseData> {
         if (name == null || values == null) {
             return false;
         }
-        try ( Connection conn = DerbyBase.getConnection()) {
-            try ( PreparedStatement statement = conn.prepareStatement(
+        try (Connection conn = DerbyBase.getConnection()) {
+            try (PreparedStatement statement = conn.prepareStatement(
                     "DELETE FROM Float_Matrix WHERE name=?")) {
                 statement.setString(1, name);
                 statement.executeUpdate();
             }
             conn.setAutoCommit(false);
-            try ( PreparedStatement insert = conn.prepareStatement(
+            try (PreparedStatement insert = conn.prepareStatement(
                     "INSERT INTO Float_Matrix(name, row , col, value) VALUES(?,?,?,?)")) {
                 for (int j = 0; j < values.length; ++j) {
                     for (int i = 0; i < values[j].length; ++i) {
@@ -98,14 +122,13 @@ public class TableFloatMatrix extends BaseTable<BaseData> {
         if (name == null || row < 0 || col < 0) {
             return false;
         }
-        try ( Connection conn = DerbyBase.getConnection();
-                 PreparedStatement statement = conn.prepareStatement(" SELECT * FROM Float_Matrix WHERE name=? AND row=? AND col=?")) {
+        try (Connection conn = DerbyBase.getConnection(); PreparedStatement statement = conn.prepareStatement(" SELECT * FROM Float_Matrix WHERE name=? AND row=? AND col=?")) {
             statement.setString(1, name);
             statement.setInt(2, row);
             statement.setInt(3, col);
-            try ( ResultSet result = statement.executeQuery()) {
+            try (ResultSet result = statement.executeQuery()) {
                 if (result.next()) {
-                    try ( PreparedStatement update = conn.prepareStatement("UPDATE Float_Matrix SET value=? WHERE name=? AND row=? AND col=?")) {
+                    try (PreparedStatement update = conn.prepareStatement("UPDATE Float_Matrix SET value=? WHERE name=? AND row=? AND col=?")) {
                         update.setFloat(1, value);
                         update.setString(2, name);
                         update.setInt(3, row);
@@ -113,7 +136,7 @@ public class TableFloatMatrix extends BaseTable<BaseData> {
                         update.executeUpdate();
                     }
                 } else {
-                    try ( PreparedStatement insert = conn.prepareStatement("INSERT INTO Float_Matrix(name, row , col, value) VALUES(?,?,?,?)")) {
+                    try (PreparedStatement insert = conn.prepareStatement("INSERT INTO Float_Matrix(name, row , col, value) VALUES(?,?,?,?)")) {
                         insert.setString(1, name);
                         insert.setInt(2, row);
                         insert.setInt(3, col);
@@ -133,8 +156,8 @@ public class TableFloatMatrix extends BaseTable<BaseData> {
         if (name == null || row < 0 || col < 0) {
             return false;
         }
-        try ( Connection conn = DerbyBase.getConnection()) {
-            try ( PreparedStatement statement = conn.prepareStatement(
+        try (Connection conn = DerbyBase.getConnection()) {
+            try (PreparedStatement statement = conn.prepareStatement(
                     "DELETE FROM Float_Matrix WHERE name=? AND row=? AND col=?")) {
                 statement.setString(1, name);
                 statement.setInt(2, row);
@@ -152,8 +175,8 @@ public class TableFloatMatrix extends BaseTable<BaseData> {
         if (name == null) {
             return false;
         }
-        try ( Connection conn = DerbyBase.getConnection()) {
-            try ( PreparedStatement statement = conn.prepareStatement(
+        try (Connection conn = DerbyBase.getConnection()) {
+            try (PreparedStatement statement = conn.prepareStatement(
                     "DELETE FROM Float_Matrix WHERE name=?")) {
                 statement.setString(1, name);
                 statement.executeUpdate();
@@ -169,9 +192,9 @@ public class TableFloatMatrix extends BaseTable<BaseData> {
         if (names == null || names.isEmpty()) {
             return false;
         }
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             conn.setAutoCommit(false);
-            try ( PreparedStatement statement = conn.prepareStatement(
+            try (PreparedStatement statement = conn.prepareStatement(
                     "DELETE FROM Float_Matrix WHERE name=?")) {
                 for (int i = 0; i < names.size(); ++i) {
                     statement.setString(1, names.get(i));
@@ -187,13 +210,11 @@ public class TableFloatMatrix extends BaseTable<BaseData> {
     }
 
     public static boolean writeExamples() {
-        try ( Connection conn = DerbyBase.getConnection();
-                 PreparedStatement query = conn.prepareStatement(" SELECT row FROM Float_Matrix WHERE name=?");
-                 PreparedStatement insert = conn.prepareStatement("INSERT INTO Float_Matrix(name, row , col, value) VALUES(?,?,?,?)")) {
+        try (Connection conn = DerbyBase.getConnection(); PreparedStatement query = conn.prepareStatement(" SELECT row FROM Float_Matrix WHERE name=?"); PreparedStatement insert = conn.prepareStatement("INSERT INTO Float_Matrix(name, row , col, value) VALUES(?,?,?,?)")) {
             for (ConvolutionKernel k : ConvolutionKernel.makeExample()) {
                 String name = k.getName();
                 query.setString(1, name);
-                try ( ResultSet result = query.executeQuery()) {
+                try (ResultSet result = query.executeQuery()) {
                     if (!result.next()) {
                         float[][] m = k.getMatrix();
                         for (int j = 0; j < m.length; ++j) {

@@ -72,6 +72,30 @@ public class TableImageEditHistory extends BaseTable<ImageEditHistory> {
     public static final String QueryFile
             = "SELECT * FROM Image_Edit_History  WHERE history_location=? OR thumbnail_file=?";
 
+    @Override
+    public boolean setValue(ImageEditHistory data, String column, Object value) {
+        if (data == null || column == null) {
+            return false;
+        }
+        return data.setValue(column, value);
+    }
+
+    @Override
+    public Object getValue(ImageEditHistory data, String column) {
+        if (data == null || column == null) {
+            return null;
+        }
+        return data.getValue(column);
+    }
+
+    @Override
+    public boolean valid(ImageEditHistory data) {
+        if (data == null) {
+            return false;
+        }
+        return data.valid();
+    }
+
     public File path(File file) {
         if (file == null || !file.exists()) {
             return null;
@@ -269,8 +293,7 @@ public class TableImageEditHistory extends BaseTable<ImageEditHistory> {
     }
 
     public int clearAll() {
-        try (Connection conn = DerbyBase.getConnection();
-                Statement statement = conn.createStatement()) {
+        try (Connection conn = DerbyBase.getConnection(); Statement statement = conn.createStatement()) {
             String sql = " SELECT history_location FROM Image_Edit_History";
             try (ResultSet results = statement.executeQuery(sql)) {
                 while (results.next()) {
@@ -304,8 +327,7 @@ public class TableImageEditHistory extends BaseTable<ImageEditHistory> {
         int rowCount = 0, invalidCount = 0;
         try {
             recordInfo(taskController, message("Check") + ": " + tableName);
-            try (PreparedStatement query = conn.prepareStatement(queryAllStatement());
-                    PreparedStatement delete = conn.prepareStatement(deleteStatement())) {
+            try (PreparedStatement query = conn.prepareStatement(queryAllStatement()); PreparedStatement delete = conn.prepareStatement(deleteStatement())) {
                 conn.setAutoCommit(true);
                 try (ResultSet results = query.executeQuery()) {
                     conn.setAutoCommit(false);

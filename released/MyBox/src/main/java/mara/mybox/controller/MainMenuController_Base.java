@@ -4,8 +4,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.MenuBar;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import mara.mybox.dev.MyBoxLog;
-import mara.mybox.value.AppVariables;
 
 /**
  * @Author Mara
@@ -27,20 +25,6 @@ public abstract class MainMenuController_Base extends BaseController {
             }
         }
         return myStage;
-    }
-
-    @Override
-    public BaseController loadScene(String newFxml) {
-        try {
-            if (AppVariables.closeCurrentWhenOpenTool) {
-                return parentController.loadScene(newFxml);
-            } else {
-                return parentController.openStage(newFxml);
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
     }
 
     @Override

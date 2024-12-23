@@ -220,7 +220,7 @@ public class ControlPath2D extends BaseTableViewController<DoublePathSegment> {
 
     @FXML
     public void showExamplesPathMenu(Event event) {
-        PopTools.popValues(this, textArea, "SvgPathExamples", HelpTools.svgPathExamples(), event);
+        PopTools.popMappedValues(this, textArea, "SvgPathExamples", HelpTools.svgPathExamples(), event);
     }
 
     @FXML
@@ -232,7 +232,7 @@ public class ControlPath2D extends BaseTableViewController<DoublePathSegment> {
 
     @FXML
     protected void showPathHistories(Event event) {
-        PopTools.popStringValues(this, textArea, event, "SvgPathHistories", false);
+        PopTools.popSavedValues(this, textArea, event, "SvgPathHistories");
     }
 
     @FXML

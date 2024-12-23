@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -32,13 +33,14 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2020-5-7
  * @License Apache License Version 2.0
  */
-public class BaseTaskController extends BaseLogs {
+public class BaseTaskController extends BaseLogsController {
 
     protected boolean taskCancelled, taskSuccessed;
     protected Date startTime, endTime;
     protected LinkedHashMap<Integer, List<File>> targetFiles;
     protected String lastTargetName;
     protected int targetFilesCount;
+    protected final SimpleBooleanProperty taskClosedNotify;
 
     @FXML
     protected Tab logsTab;
@@ -46,6 +48,7 @@ public class BaseTaskController extends BaseLogs {
     protected CheckBox miaoCheck, openCheck;
 
     public BaseTaskController() {
+        taskClosedNotify = new SimpleBooleanProperty(false);
     }
 
     @Override
@@ -178,6 +181,7 @@ public class BaseTaskController extends BaseLogs {
             updateLogs(message("Completed") + " " + message("Cost")
                     + " " + DateTools.datetimeMsDuration(endTime, startTime), true);
         }
+        taskClosedNotify.set(!taskClosedNotify.get());
         afterTask(ok);
     }
 

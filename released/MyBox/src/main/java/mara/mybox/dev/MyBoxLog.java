@@ -4,13 +4,13 @@ import java.util.Date;
 import javafx.application.Platform;
 import mara.mybox.controller.MyBoxLogViewerController;
 import mara.mybox.db.data.BaseData;
-import mara.mybox.db.data.BaseDataAdaptor;
+import mara.mybox.db.data.BaseDataTools;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.table.TableMyBoxLog;
 import mara.mybox.tools.DateTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.value.Languages;
 import static mara.mybox.value.AppVariables.ErrorNotify;
+import mara.mybox.value.Languages;
 
 /**
  * @Author Mara
@@ -36,6 +36,21 @@ public class MyBoxLog extends BaseData {
         mblid = -1;
         time = new Date();
         logType = LogType.Console;
+    }
+
+    @Override
+    public boolean valid() {
+        return valid(this);
+    }
+
+    @Override
+    public boolean setValue(String column, Object value) {
+        return setValue(this, column, value);
+    }
+
+    @Override
+    public Object getValue(String column) {
+        return getValue(this, column);
     }
 
     public boolean equalTo(MyBoxLog myMyboxLog) {
@@ -139,7 +154,7 @@ public class MyBoxLog extends BaseData {
         if ("log_type".equals(column.getColumnName())) {
             return Languages.message(data.getLogType().name());
         }
-        return BaseDataAdaptor.displayColumnBase(data, column, value);
+        return BaseDataTools.displayColumnBase(data, column, value);
     }
 
     public static short logType(LogType logType) {

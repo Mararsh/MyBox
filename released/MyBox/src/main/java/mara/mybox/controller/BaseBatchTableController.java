@@ -356,7 +356,7 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
             }
             if (numberColumn != null) {
                 numberColumn.setCellValueFactory(new PropertyValueFactory<>("filesNumber"));
-                numberColumn.setCellFactory(new TableNumberCell());
+                numberColumn.setCellFactory(new TableNumberCell(true));
             }
             if (sizeColumn != null) {
                 sizeColumn.setCellValueFactory(new PropertyValueFactory<>("fileSize"));

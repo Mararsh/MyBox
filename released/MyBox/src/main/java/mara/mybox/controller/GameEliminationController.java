@@ -41,8 +41,6 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.effect.DropShadow;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
@@ -1667,22 +1665,21 @@ public class GameEliminationController extends BaseController {
     }
 
     @Override
-    public boolean keyFilter(KeyEvent event) {
-        KeyCode code = event.getCode();
-        if (code != null) {
-            switch (code) {
-                case H:
+    public boolean inputFilter(String input, boolean omit) {
+        if (input != null) {
+            switch (input.toUpperCase()) {
+                case "H":
                     helpMeAction();
                     return true;
-                case N:
+                case "N":
                     createAction();
                     return true;
-                case P:
+                case "P":
                     setAutoplay();
                     return true;
             }
         }
-        return super.keyFilter(event);
+        return super.inputFilter(input, omit);
     }
 
     @Override

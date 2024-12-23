@@ -13,7 +13,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 
 /**
- * @Author Mara
+ * @Author Marai
  * @CreateDate 2021-10-18
  * @License Apache License Version 2.0
  */

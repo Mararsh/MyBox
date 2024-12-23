@@ -17,7 +17,7 @@ import javafx.scene.layout.FlowPane;
 import mara.mybox.data2d.operate.Data2DExport;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.BaseData;
-import mara.mybox.db.data.BaseDataAdaptor;
+import mara.mybox.db.data.BaseDataTools;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.GeographyCode;
 import mara.mybox.db.data.QueryCondition;
@@ -312,8 +312,8 @@ public class DataExportController extends BaseTaskController {
                     }
                     List<String> row = new ArrayList<>();
                     for (ColumnDefinition column : columns) {
-                        Object value = BaseDataAdaptor.getColumnValue(data, column.getColumnName());
-                        String display = BaseDataAdaptor.displayColumn(data, column, value);
+                        Object value = data.getValue(column.getColumnName());
+                        String display = BaseDataTools.displayColumn(data, column, value);
                         if (display == null || display.isBlank()) {
                             display = "";
                         }

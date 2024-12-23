@@ -108,6 +108,30 @@ public class TableData2DColumn extends BaseTable<Data2DColumn> {
         return true;
     }
 
+    @Override
+    public boolean setValue(Data2DColumn data, String column, Object value) {
+        if (data == null || column == null) {
+            return false;
+        }
+        return data.setValue(column, value);
+    }
+
+    @Override
+    public Object getValue(Data2DColumn data, String column) {
+        if (data == null || column == null) {
+            return null;
+        }
+        return data.getValue(column);
+    }
+
+    @Override
+    public boolean valid(Data2DColumn data) {
+        if (data == null) {
+            return false;
+        }
+        return data.valid();
+    }
+
     public List<Data2DColumn> read(long d2id) {
         if (d2id < 0) {
             return null;

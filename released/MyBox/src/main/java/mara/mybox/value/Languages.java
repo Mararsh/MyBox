@@ -76,7 +76,7 @@ public class Languages {
     public static String embedFileLang() {
         try {
             String lang = CurrentLangName;
-            if (lang.equals("zh") || lang.startsWith("zh_")) {
+            if (isChinese(lang)) {
                 return "zh";
             }
         } catch (Exception e) {

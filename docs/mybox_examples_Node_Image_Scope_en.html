@@ -1,0 +1,100 @@
+<HTML>
+    <HEAD>
+        <title>Image Scope</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <style type="text/css">
+                          table { max-width:95%; margin : 10px;  border-style: solid; border-width:2px; border-collapse: collapse;} 
+              th, td { border-style: solid; border-width:1px; padding: 8px; border-collapse: collapse;} 
+              th { font-weight:bold;  text-align:center;} 
+              tr { height: 1.2em;  } 
+              .center { text-align:center;  max-width:95%; } 
+              .valueBox { border-style: solid; border-width:1px; border-color:black; padding: 5px; border-radius:5px;} 
+              .boldText { font-weight:bold;  } 
+ body { margin:0 auto; width: 900px; } 
+              img { max-width: 900px; } 
+              .valueText { color:#2e598a;  } 
+
+        </style>
+    </HEAD>
+    <BODY>
+        <H2>Image Scope</H2>
+ <script>
+    function nodeClicked(id) {
+      var obj = document.getElementById(id);
+      var objv = obj.style.display;
+      if (objv == 'none') {
+        obj.style.display = 'block';
+      } else {
+        obj.style.display = 'none';
+      }
+    }
+    function showClass(className, show) {
+      var nodes = document.getElementsByClassName(className);  　
+      if ( show) {
+           for (var i = 0 ; i < nodes.length; i++) {
+              nodes[i].style.display = '';
+           }
+       } else {
+           for (var i = 0 ; i < nodes.length; i++) {
+              nodes[i].style.display = 'none';
+           }
+       }
+    }
+  </script>
+
+<DIV>
+<DIV>
+    <INPUT type="checkbox" checked onclick="showClass('TreeNode', this.checked);">Unfold</INPUT>
+    <INPUT type="checkbox" checked onclick="showClass('SerialNumber', this.checked);">Hierarchy number</INPUT>
+    <INPUT type="checkbox" checked onclick="showClass('NodeTag', this.checked);">Tags</INPUT>
+    <INPUT type="checkbox" checked onclick="showClass('nodeValue', this.checked);">Values</INPUT>
+</DIV>
+<HR>
+    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item1')"><SPAN class="SerialNumber">&nbsp;&nbsp;</SPAN>Image Scope</a>
+    </DIV>
+    <DIV class="TreeNode" id='item1'>
+        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1&nbsp;&nbsp;</SPAN>aa
+        </DIV>
+        <DIV class="nodeValue"><DIV style="padding: 0 0 0 72px;"><DIV class="valueBox">
+        <P align="center"><Img src='file:/D:/tmp/mybox_data_v6.8.1/AppTemp/2024-12-22_16-00-41-060_6.png' width=500></P><BR>        <DIV align="center">
+            <TABLE>
+                <TR><TD>Scope type</TD><TD>Circle</TD></TR>
+                <TR><TD>Background</TD><TD><PRE><CODE>D:\tmp\mybox_data_v6.8.1\image\Example.png</CODE></PRE></TD></TR>
+                <TR><TD>Name</TD><TD><PRE><CODE>aa</CODE></PRE></TD></TR>
+                <TR><TD>ScopeColorType</TD><TD>AllColor</TD></TR>
+                <TR><TD>Area</TD><TD>450,450,225</TD></TR>
+                <TR><TD>Color distance</TD><TD>2147483647</TD></TR>
+                <TR><TD>AreaExcluded</TD><TD></TD></TR>
+                <TR><TD>ColorExcluded</TD><TD></TD></TR>
+                <TR><TD>Create time</TD><TD></TD></TR>
+                <TR><TD>Modify time</TD><TD></TD></TR>
+            </TABLE>
+        </DIV>
+
+        </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item2'>
+    </DIV>
+        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">2&nbsp;&nbsp;</SPAN>asa
+        </DIV>
+        <DIV class="nodeValue"><DIV style="padding: 0 0 0 72px;"><DIV class="valueBox">
+        <P align="center"><Img src='file:/D:/tmp/mybox_data_v6.8.1/AppTemp/2024-12-22_16-00-41-414_73.png' width=500></P><BR>        <DIV align="center">
+            <TABLE>
+                <TR><TD>Scope type</TD><TD>Ellipse</TD></TR>
+                <TR><TD>Background</TD><TD><PRE><CODE>D:\tmp\mybox_data_v6.8.1\image\Example.png</CODE></PRE></TD></TR>
+                <TR><TD>Name</TD><TD><PRE><CODE>asa</CODE></PRE></TD></TR>
+                <TR><TD>ScopeColorType</TD><TD>AllColor</TD></TR>
+                <TR><TD>Area</TD><TD>225,225,675,675</TD></TR>
+                <TR><TD>Color distance</TD><TD>2147483647</TD></TR>
+                <TR><TD>AreaExcluded</TD><TD></TD></TR>
+                <TR><TD>ColorExcluded</TD><TD></TD></TR>
+                <TR><TD>Create time</TD><TD></TD></TR>
+                <TR><TD>Modify time</TD><TD></TD></TR>
+            </TABLE>
+        </DIV>
+
+        </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item3'>
+    </DIV>
+    </DIV>
+    </BODY>
+</HTML>

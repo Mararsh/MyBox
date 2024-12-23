@@ -32,8 +32,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.web.WebView;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import javafx.stage.Window;
-import mara.mybox.controller.BaseController;
 import mara.mybox.dev.MyBoxLog;
 
 /**
@@ -110,21 +108,16 @@ public class NodeTools {
         }
     }
 
-    public static Window getWindow(Node node) {
-        try {
-            return node.getScene().getWindow();
-        } catch (Exception e) {
-            return null;
+    public static Node parent(int level, Node node) {
+        if (node == null) {
+            return node;
         }
-    }
-
-    public static BaseController getController(Node node) {
-        try {
-            Window window = getWindow(node);
-            return (BaseController) (window.getUserData());
-        } catch (Exception e) {
-            return null;
+        MyBoxLog.debug("  ".repeat(level) + node.getClass() + " " + node.getId() + " " + node.getStyle());
+        Node parent = node.getParent();
+        if (parent == null) {
+            return node;
         }
+        return parent(level + 1, parent);
     }
 
     public static boolean setRadioFirstSelected(ToggleGroup group) {

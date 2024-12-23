@@ -12,68 +12,68 @@ import mara.mybox.value.Fxmls;
 public abstract class MainMenuController_Document extends MainMenuController_Window {
 
     @FXML
-    protected void openNotes(ActionEvent event) {
-        loadScene(Fxmls.NotesFxml);
+    protected void HtmlTree(ActionEvent event) {
+        DataTreeController.htmlTree(parentController, false);
     }
 
     @FXML
-    protected void InformationInTree(ActionEvent event) {
-        loadScene(Fxmls.InfoTreeManageFxml);
+    protected void TextTree(ActionEvent event) {
+        DataTreeController.textTree(parentController, false);
     }
 
     @FXML
     protected void openPdfView(ActionEvent event) {
-        loadScene(Fxmls.PdfViewFxml);
+        openScene(Fxmls.PdfViewFxml);
     }
 
     @FXML
     protected void openPDFAttributes(ActionEvent event) {
-        loadScene(Fxmls.PdfAttributesFxml);
+        openScene(Fxmls.PdfAttributesFxml);
     }
 
     @FXML
     protected void openPDFAttributesBatch(ActionEvent event) {
-        loadScene(Fxmls.PdfAttributesBatchFxml);
+        openScene(Fxmls.PdfAttributesBatchFxml);
     }
 
     @FXML
     protected void openPdfConvertImagesBatch(ActionEvent event) {
-        loadScene(Fxmls.PdfConvertImagesBatchFxml);
+        openScene(Fxmls.PdfConvertImagesBatchFxml);
     }
 
     @FXML
     protected void openPdfConvertHtmlsBatch(ActionEvent event) {
-        loadScene(Fxmls.PdfConvertHtmlsBatchFxml);
+        openScene(Fxmls.PdfConvertHtmlsBatchFxml);
     }
 
     @FXML
     protected void openPdfExtractTextsBatch(ActionEvent event) {
-        loadScene(Fxmls.PdfExtractTextsBatchFxml);
+        openScene(Fxmls.PdfExtractTextsBatchFxml);
     }
 
     @FXML
     protected void openPdfExtractImagesBatch(ActionEvent event) {
-        loadScene(Fxmls.PdfExtractImagesBatchFxml);
+        openScene(Fxmls.PdfExtractImagesBatchFxml);
     }
 
     @FXML
     protected void openPdfImagesConvertBatch(ActionEvent event) {
-        loadScene(Fxmls.PdfImagesConvertBatchFxml);
+        openScene(Fxmls.PdfImagesConvertBatchFxml);
     }
 
     @FXML
     protected void openMergePdf(ActionEvent event) {
-        loadScene(Fxmls.PdfMergeFxml);
+        openScene(Fxmls.PdfMergeFxml);
     }
 
     @FXML
     protected void openPdfSplitBatch(ActionEvent event) {
-        loadScene(Fxmls.PdfSplitBatchFxml);
+        openScene(Fxmls.PdfSplitBatchFxml);
     }
 
     @FXML
     protected void openPdfOCRBatch(ActionEvent event) {
-        loadScene(Fxmls.PdfOCRBatchFxml);
+        openScene(Fxmls.PdfOCRBatchFxml);
     }
 
     @FXML
@@ -84,247 +84,247 @@ public abstract class MainMenuController_Document extends MainMenuController_Win
 
     @FXML
     protected void openPdfAddWatermark(ActionEvent event) {
-        loadScene(Fxmls.PdfAddWatermarkBatchFxml);
+        openScene(Fxmls.PdfAddWatermarkBatchFxml);
     }
 
     @FXML
     protected void openCompressPdfImagesBatch(ActionEvent event) {
-        loadScene(Fxmls.PdfCompressImagesBatchFxml);
+        openScene(Fxmls.PdfCompressImagesBatchFxml);
     }
 
     @FXML
     protected void openMarkdownEditer(ActionEvent event) {
-        loadScene(Fxmls.MarkdownEditorFxml);
+        openScene(Fxmls.MarkdownEditorFxml);
     }
 
     @FXML
     protected void markdownOptions(ActionEvent event) {
-        loadScene(Fxmls.MarkdownOptionsFxml);
+        openScene(Fxmls.MarkdownOptionsFxml);
     }
 
     @FXML
     protected void MarkdownTypesetting(ActionEvent event) {
-        loadScene(Fxmls.MarkdownTypesettingFxml);
+        openScene(Fxmls.MarkdownTypesettingFxml);
     }
 
     @FXML
     protected void openMarkdownToHtml(ActionEvent event) {
-        loadScene(Fxmls.MarkdownToHtmlFxml);
+        openScene(Fxmls.MarkdownToHtmlFxml);
     }
 
     @FXML
     protected void openMarkdownToText(ActionEvent event) {
-        loadScene(Fxmls.MarkdownToTextFxml);
+        openScene(Fxmls.MarkdownToTextFxml);
     }
 
     @FXML
     protected void openMarkdownToPdf(ActionEvent event) {
-        loadScene(Fxmls.MarkdownToPdfFxml);
+        openScene(Fxmls.MarkdownToPdfFxml);
     }
 
     @FXML
     protected void openHtmlEditor(ActionEvent event) {
-        loadScene(Fxmls.HtmlEditorFxml);
+        openScene(Fxmls.HtmlEditorFxml);
     }
 
     @FXML
     protected void htmlFind(ActionEvent event) {
-        loadScene(Fxmls.HtmlFindFxml);
+        openScene(Fxmls.HtmlFindFxml);
     }
 
     @FXML
     protected void htmlElements(ActionEvent event) {
-        loadScene(Fxmls.HtmlElementsFxml);
+        openScene(Fxmls.HtmlElementsFxml);
     }
 
     @FXML
     protected void openHtmlToMarkdown(ActionEvent event) {
-        loadScene(Fxmls.HtmlToMarkdownFxml);
+        openScene(Fxmls.HtmlToMarkdownFxml);
     }
 
     @FXML
     protected void openHtmlToText(ActionEvent event) {
-        loadScene(Fxmls.HtmlToTextFxml);
+        openScene(Fxmls.HtmlToTextFxml);
     }
 
     @FXML
     protected void openHtmlToPdf(ActionEvent event) {
-        loadScene(Fxmls.HtmlToPdfFxml);
+        openScene(Fxmls.HtmlToPdfFxml);
     }
 
     @FXML
     protected void openHtmlSetCharset(ActionEvent event) {
-        loadScene(Fxmls.HtmlSetCharsetFxml);
+        openScene(Fxmls.HtmlSetCharsetFxml);
     }
 
     @FXML
     protected void openHtmlSetStyle(ActionEvent event) {
-        loadScene(Fxmls.HtmlSetStyleFxml);
+        openScene(Fxmls.HtmlSetStyleFxml);
     }
 
     @FXML
     protected void openHtmlSetEquiv(ActionEvent event) {
-        loadScene(Fxmls.HtmlSetEquivFxml);
+        openScene(Fxmls.HtmlSetEquivFxml);
     }
 
     @FXML
     protected void openHtmlSnap(ActionEvent event) {
-        loadScene(Fxmls.HtmlSnapFxml);
+        openScene(Fxmls.HtmlSnapFxml);
     }
 
     @FXML
     protected void HtmlTypesetting(ActionEvent event) {
-        loadScene(Fxmls.HtmlTypesettingFxml);
+        openScene(Fxmls.HtmlTypesettingFxml);
     }
 
     @FXML
     protected void htmlExtractTables(ActionEvent event) {
-        loadScene(Fxmls.HtmlExtractTablesFxml);
+        openScene(Fxmls.HtmlExtractTablesFxml);
     }
 
     @FXML
     protected void openHtmlMergeAsHtml(ActionEvent event) {
-        loadScene(Fxmls.HtmlMergeAsHtmlFxml);
+        openScene(Fxmls.HtmlMergeAsHtmlFxml);
     }
 
     @FXML
     protected void openHtmlMergeAsMarkdown(ActionEvent event) {
-        loadScene(Fxmls.HtmlMergeAsMarkdownFxml);
+        openScene(Fxmls.HtmlMergeAsMarkdownFxml);
     }
 
     @FXML
     protected void openHtmlMergeAsPDF(ActionEvent event) {
-        loadScene(Fxmls.HtmlMergeAsPDFFxml);
+        openScene(Fxmls.HtmlMergeAsPDFFxml);
     }
 
     @FXML
     protected void openHtmlMergeAsText(ActionEvent event) {
-        loadScene(Fxmls.HtmlMergeAsTextFxml);
+        openScene(Fxmls.HtmlMergeAsTextFxml);
     }
 
     @FXML
     protected void openHtmlFrameset(ActionEvent event) {
-        loadScene(Fxmls.HtmlFramesetFxml);
+        openScene(Fxmls.HtmlFramesetFxml);
     }
 
     @FXML
     protected void JsonEditor(ActionEvent event) {
-        loadScene(Fxmls.JsonEditorFxml);
+        openScene(Fxmls.JsonEditorFxml);
     }
 
     @FXML
     protected void JsonTypesetting(ActionEvent event) {
-        loadScene(Fxmls.JsonTypesettingFxml);
+        openScene(Fxmls.JsonTypesettingFxml);
     }
 
     @FXML
     protected void XmlEditor(ActionEvent event) {
-        loadScene(Fxmls.XmlEditorFxml);
+        openScene(Fxmls.XmlEditorFxml);
     }
 
     @FXML
     protected void XmlTypesetting(ActionEvent event) {
-        loadScene(Fxmls.XmlTypesettingFxml);
+        openScene(Fxmls.XmlTypesettingFxml);
     }
 
     @FXML
     protected void openTextEditer(ActionEvent event) {
-        loadScene(Fxmls.TextEditorFxml);
+        openScene(Fxmls.TextEditorFxml);
     }
 
     @FXML
     protected void openTextConvert(ActionEvent event) {
-        loadScene(Fxmls.TextFilesConvertFxml);
+        openScene(Fxmls.TextFilesConvertFxml);
     }
 
     @FXML
     protected void openTextMerge(ActionEvent event) {
-        loadScene(Fxmls.TextFilesMergeFxml);
+        openScene(Fxmls.TextFilesMergeFxml);
     }
 
     @FXML
     protected void openTextFindBatch(ActionEvent event) {
-        loadScene(Fxmls.TextFindBatchFxml);
+        openScene(Fxmls.TextFindBatchFxml);
     }
 
     @FXML
     protected void openTextReplaceBatch(ActionEvent event) {
-        loadScene(Fxmls.TextReplaceBatchFxml);
+        openScene(Fxmls.TextReplaceBatchFxml);
     }
 
     @FXML
     protected void TextFilterBatch(ActionEvent event) {
-        loadScene(Fxmls.TextFilterBatchFxml);
+        openScene(Fxmls.TextFilterBatchFxml);
     }
 
     @FXML
     protected void textToHtml(ActionEvent event) {
-        loadScene(Fxmls.TextToHtmlFxml);
+        openScene(Fxmls.TextToHtmlFxml);
     }
 
     @FXML
     protected void textToPdf(ActionEvent event) {
-        loadScene(Fxmls.TextToPdfFxml);
+        openScene(Fxmls.TextToPdfFxml);
     }
 
     @FXML
     protected void openBytesEditer(ActionEvent event) {
-        loadScene(Fxmls.BytesEditorFxml);
+        openScene(Fxmls.BytesEditorFxml);
     }
 
     @FXML
     protected void BytesFindBatch(ActionEvent event) {
-        loadScene(Fxmls.BytesFindBatchFxml);
+        openScene(Fxmls.BytesFindBatchFxml);
     }
 
     @FXML
     protected void extractTextsFromMS(ActionEvent event) {
-        loadScene(Fxmls.ExtractTextsFromMSFxml);
+        openScene(Fxmls.ExtractTextsFromMSFxml);
     }
 
     @FXML
     protected void WordView(ActionEvent event) {
-        loadScene(Fxmls.WordViewFxml);
+        openScene(Fxmls.WordViewFxml);
     }
 
     @FXML
     protected void WordToHtml(ActionEvent event) {
-        loadScene(Fxmls.WordToHtmlFxml);
+        openScene(Fxmls.WordToHtmlFxml);
     }
 
     @FXML
     protected void WordToPdf(ActionEvent event) {
-        loadScene(Fxmls.WordToPdfFxml);
+        openScene(Fxmls.WordToPdfFxml);
     }
 
     @FXML
     protected void PptView(ActionEvent event) {
-        loadScene(Fxmls.PptViewFxml);
+        openScene(Fxmls.PptViewFxml);
     }
 
     @FXML
     protected void PptToImages(ActionEvent event) {
-        loadScene(Fxmls.PptToImagesFxml);
+        openScene(Fxmls.PptToImagesFxml);
     }
 
     @FXML
     protected void PptToPdf(ActionEvent event) {
-        loadScene(Fxmls.PptToPdfFxml);
+        openScene(Fxmls.PptToPdfFxml);
     }
 
     @FXML
     protected void PptExtract(ActionEvent event) {
-        loadScene(Fxmls.PptExtractFxml);
+        openScene(Fxmls.PptExtractFxml);
     }
 
     @FXML
     protected void PptxMerge(ActionEvent event) {
-        loadScene(Fxmls.PptxMergeFxml);
+        openScene(Fxmls.PptxMergeFxml);
     }
 
     @FXML
     protected void PptSplit(ActionEvent event) {
-        loadScene(Fxmls.PptSplitFxml);
+        openScene(Fxmls.PptSplitFxml);
     }
 
     @FXML

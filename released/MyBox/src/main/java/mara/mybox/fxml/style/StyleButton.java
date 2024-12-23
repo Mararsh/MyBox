@@ -113,7 +113,6 @@ public class StyleButton {
         if (id.startsWith("clear")) {
             switch (id) {
                 case "clearButton":
-                case "clearCodesButton":
                     return new StyleData(id, message("Clear"), "CTRL+L / ALT+L", "iconClear.png");
                 default:
                     return new StyleData(id, message("Clear"), "", "iconClear.png");
@@ -521,10 +520,13 @@ public class StyleButton {
             return new StyleData(id, message("Fold"), "", "iconMinus.png");
         }
         if (id.startsWith("unfold")) {
-            return new StyleData(id, message("Unfold"), "", "iconTree.png");
+            return new StyleData(id, message("Unfold"), "", "iconPlus.png");
         }
         if (id.startsWith("moveData")) {
             return new StyleData(id, message("Move"), "", "iconMove.png");
+        }
+        if (id.startsWith("tree")) {
+            return new StyleData(id, message("DataTree"), "", "iconTree.png");
         }
         if (id.startsWith("csv")) {
             return new StyleData(id, "CSV", "", "iconCSV.png");
@@ -780,6 +782,9 @@ public class StyleButton {
         }
         if (id.startsWith("disableOnTop")) {
             return new StyleData(id, message("DisableAlwayOnTop"), "", "iconTopDisable.png");
+        }
+        if (id.startsWith("placeholders")) {
+            return new StyleData(id, message("Placeholders"), "", "iconList.png");
         }
 
         return null;

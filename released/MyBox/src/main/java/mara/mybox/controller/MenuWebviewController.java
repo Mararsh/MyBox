@@ -14,6 +14,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.robot.Robot;
 import javafx.scene.web.WebView;
 import javafx.stage.Window;
 import mara.mybox.db.data.VisitHistory;
@@ -69,7 +70,7 @@ public class MenuWebviewController extends MenuController {
         }
     }
 
-    public void setParameters(ControlWebView webViewController, Element element, double x, double y) {
+    public void setElement(ControlWebView webViewController, Element element, double x, double y) {
         try {
             if (webViewController == null) {
                 return;
@@ -321,7 +322,7 @@ public class MenuWebviewController extends MenuController {
         if (webViewController == null) {
             return;
         }
-        JavaScriptController.open(webViewController);
+        ControlDataJavascript.open(webViewController);
     }
 
     @Override
@@ -341,7 +342,7 @@ public class MenuWebviewController extends MenuController {
     /*
         static methods
      */
-    public static MenuWebviewController webviewMenu(ControlWebView parent, Element element, double x, double y) {
+    public static MenuWebviewController webviewMenu(ControlWebView parent, Element element) {
         try {
             if (parent == null) {
                 return null;
@@ -362,7 +363,21 @@ public class MenuWebviewController extends MenuController {
             }
             MenuWebviewController controller = (MenuWebviewController) WindowTools.branchStage(
                     parent, Fxmls.MenuWebviewFxml);
-            controller.setParameters(parent, element, x, y);
+            Robot robot = new Robot();
+            controller.setElement(parent, element, robot.getMouseX() + 10, robot.getMouseY() + 10);
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public static MenuWebviewController webviewMenu(BaseController parent, WebView webView) {
+        try {
+            MenuWebviewController controller = (MenuWebviewController) WindowTools.branchStage(
+                    parent, Fxmls.MenuWebviewFxml);
+            Robot robot = new Robot();
+            controller.setParameters(parent, null, robot.getMouseX() + 10, robot.getMouseY() + 10);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e);

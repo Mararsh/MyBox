@@ -32,7 +32,6 @@ public class Data2DLoadContentInSystemClipboardController extends ControlData2DS
             targetController = target;
 
             initParameters();
-            filterController.setParameters(this);
 
             boardController.loadNotify.addListener(new ChangeListener<Boolean>() {
                 @Override

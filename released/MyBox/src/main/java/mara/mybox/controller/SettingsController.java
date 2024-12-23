@@ -67,9 +67,9 @@ public class SettingsController extends BaseController {
     protected int recentFileNumber, newJVM;
 
     @FXML
-    protected Tab interfaceTab, baseTab, pdfTab, dataTab, mapTab;
+    protected Tab interfaceTab, baseTab, dataTab, mapTab;
     @FXML
-    protected ToggleGroup langGroup, pdfMemGroup, controlColorGroup, derbyGroup, splitPanesGroup;
+    protected ToggleGroup langGroup, controlColorGroup, derbyGroup, splitPanesGroup;
     @FXML
     protected CheckBox closeCurrentCheck, recordWindowsSizeLocationCheck, clearExpiredCheck,
             controlsTextCheck, shortcutsCanNotOmitCheck, icons40pxCheck,
@@ -85,13 +85,12 @@ public class SettingsController extends BaseController {
     protected ComboBox<String> fontSizeBox, iconSizeBox, scrollSizeSelector,
             popSizeSelector, popDurationSelector;
     @FXML
-    protected HBox pdfMemBox, imageHisBox, derbyBox;
+    protected HBox imageHisBox, derbyBox;
     @FXML
     protected Button settingsRecentOKButton, settingsChangeRootButton,
             settingsDataPathButton, settingsJVMButton;
     @FXML
     protected RadioButton chineseRadio, englishRadio, embeddedRadio, networkRadio,
-            pdfMem500MRadio, pdfMem1GRadio, pdfMem2GRadio, pdfMemUnlimitRadio,
             redRadio, orangeRadio, pinkRadio, lightBlueRadio, blueRadio, greenRadio, colorCustomizeRadio;
     @FXML
     protected Rectangle colorCustomizeRect;
@@ -115,7 +114,6 @@ public class SettingsController extends BaseController {
             initInterfaceTab();
             initBaseTab();
             initDataTab();
-            initPdfTab();
             initMapTab();
 
         } catch (Exception e) {
@@ -186,7 +184,6 @@ public class SettingsController extends BaseController {
             lostFocusCommitCheck.setSelected(AppVariables.commitModificationWhenDataCellLoseFocus);
 
             checkLanguage();
-            checkPdfMem();
 
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -815,55 +812,6 @@ public class SettingsController extends BaseController {
 
         };
         start(task, thisPane);
-    }
-
-    /*
-        PDF settings
-     */
-    public void initPdfTab() {
-        try {
-
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
-    }
-
-    protected void checkPdfMem() {
-        String pm = UserConfig.getString("PdfMemDefault", "1GB");
-        switch (pm) {
-            case "1GB":
-                pdfMem1GRadio.setSelected(true);
-                break;
-            case "2GB":
-                pdfMem2GRadio.setSelected(true);
-                break;
-            case "Unlimit":
-                pdfMemUnlimitRadio.setSelected(true);
-                break;
-            case "500MB":
-            default:
-                pdfMem500MRadio.setSelected(true);
-        }
-    }
-
-    @FXML
-    protected void PdfMem500MB(ActionEvent event) {
-        UserConfig.setPdfMem("500MB");
-    }
-
-    @FXML
-    protected void PdfMem1GB(ActionEvent event) {
-        UserConfig.setPdfMem("1GB");
-    }
-
-    @FXML
-    protected void PdfMem2GB(ActionEvent event) {
-        UserConfig.setPdfMem("2GB");
-    }
-
-    @FXML
-    protected void pdfMemUnlimit(ActionEvent event) {
-        UserConfig.setPdfMem("Unlimit");
     }
 
     /*

@@ -31,7 +31,7 @@ public abstract class MyBoxController_Recent extends MyBoxController_Media {
     @FXML
     protected void showRecentMenu(Event event) {
         List<MenuItem> items = new ArrayList<>();
-        items.addAll(VisitHistoryTools.getRecentMenu(this));
+        items.addAll(VisitHistoryTools.getRecentMenu(this, true));
 
         items.add(new SeparatorMenuItem());
 

@@ -1,0 +1,1519 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Node_Math_Function>
+<TreeNode>
+    <NodeAttributes>
+        <title>
+            <![CDATA[Examples]]>
+        </title>
+    </NodeAttributes>
+    <TreeNode>
+        <NodeAttributes>
+            <title>
+                <![CDATA[Constants]]>
+            </title>
+        </NodeAttributes>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[pi]]>
+                </title>
+                <expression>
+                    <![CDATA[Math.PI]]>
+                </expression>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[Euler number]]>
+                </title>
+                <expression>
+                    <![CDATA[Math.E]]>
+                </expression>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[natural logarithm of 2]]>
+                </title>
+                <expression>
+                    <![CDATA[Math.LN2]]>
+                </expression>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[natural logarithm of 10]]>
+                </title>
+                <expression>
+                    <![CDATA[Math.LN10]]>
+                </expression>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[base-2 logarithm of e]]>
+                </title>
+                <expression>
+                    <![CDATA[Math.LOG2E]]>
+                </expression>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[base-10 logarithm of e]]>
+                </title>
+                <expression>
+                    <![CDATA[Math.LOG10E]]>
+                </expression>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[square root of 2]]>
+                </title>
+                <expression>
+                    <![CDATA[Math.SQRT2]]>
+                </expression>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[square root of 0.5]]>
+                </title>
+                <expression>
+                    <![CDATA[Math.SQRT1_2]]>
+                </expression>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[Random]]>
+                </title>
+                <expression>
+                    <![CDATA[Math.random()]]>
+                </expression>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[largest positive finite value of the number type]]>
+                </title>
+                <expression>
+                    <![CDATA[Number.MAX_VALUE]]>
+                </expression>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[smallest positive nonzero value of the number type]]>
+                </title>
+                <expression>
+                    <![CDATA[Number.MIN_VALUE]]>
+                </expression>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[positive infinite value]]>
+                </title>
+                <expression>
+                    <![CDATA[Number.POSITIVE_INFINITY]]>
+                </expression>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[negative infinite value]]>
+                </title>
+                <expression>
+                    <![CDATA[Number.NEGATIVE_INFINITY]]>
+                </expression>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[non-numeric]]>
+                </title>
+                <expression>
+                    <![CDATA[Number.NaN]]>
+                </expression>
+            </NodeAttributes>
+        </TreeNode>
+    </TreeNode>
+    <TreeNode>
+        <NodeAttributes>
+            <title>
+                <![CDATA[Unary Function]]>
+            </title>
+        </NodeAttributes>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[absoluate]]>
+                </title>
+                <variables>
+                    <![CDATA[x]]>
+                </variables>
+                <expression>
+                    <![CDATA[Math.abs(x)]]>
+                </expression>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[Trigonometry]]>
+                </title>
+            </NodeAttributes>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[convert angle to radian]]>
+                    </title>
+                    <variables>
+                        <![CDATA[angle]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[angle  * Math.PI / 180]]>
+                    </expression>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[convert radian to angle]]>
+                    </title>
+                    <variables>
+                        <![CDATA[radian]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[radian  * 180 / Math.PI]]>
+                    </expression>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[cosine_radian ]]>
+                    </title>
+                    <variables>
+                        <![CDATA[radian]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[Math.cos(radian)]]>
+                    </expression>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[sine_radian ]]>
+                    </title>
+                    <variables>
+                        <![CDATA[radian]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[Math.sin(radian)]]>
+                    </expression>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[tangent_radian ]]>
+                    </title>
+                    <variables>
+                        <![CDATA[radian]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[Math.tan(radian)]]>
+                    </expression>
+                    <domain>
+                        <![CDATA[(  radian  - Math.PI / 2 ) % Math.PI != 0]]>
+                    </domain>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[arcCosine_radian ]]>
+                    </title>
+                    <variables>
+                        <![CDATA[x]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[Math.acos(x)]]>
+                    </expression>
+                    <domain>
+                        <![CDATA[x >= -1 && x <= 1]]>
+                    </domain>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[arcSine_radian ]]>
+                    </title>
+                    <variables>
+                        <![CDATA[x]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[Math.asin(x)]]>
+                    </expression>
+                    <domain>
+                        <![CDATA[x >= -1 && x <= 1]]>
+                    </domain>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[arcTangent_radian ]]>
+                    </title>
+                    <variables>
+                        <![CDATA[x]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[Math.atan(x)]]>
+                    </expression>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[cosine_angle ]]>
+                    </title>
+                    <variables>
+                        <![CDATA[angle]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[Math.cos( angle  * Math.PI / 180)]]>
+                    </expression>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[sine_angle ]]>
+                    </title>
+                    <variables>
+                        <![CDATA[angle]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[Math.sin( angle  * Math.PI / 180)]]>
+                    </expression>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[tangent_angle ]]>
+                    </title>
+                    <variables>
+                        <![CDATA[angle]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[Math.tan( angle  * Math.PI / 180)]]>
+                    </expression>
+                    <domain>
+                        <![CDATA[(  angle  - 90 ) % 180 != 0]]>
+                    </domain>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[arcCosine_  angle ]]>
+                    </title>
+                    <variables>
+                        <![CDATA[x]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[Math.acos(x) * 180 / Math.PI]]>
+                    </expression>
+                    <domain>
+                        <![CDATA[x >= -1 && x <= 1]]>
+                    </domain>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[arcSine_angle ]]>
+                    </title>
+                    <variables>
+                        <![CDATA[x]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[Math.asin(x) * 180 / Math.PI]]>
+                    </expression>
+                    <domain>
+                        <![CDATA[x >= -1 && x <= 1]]>
+                    </domain>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[arcTangent_angle ]]>
+                    </title>
+                    <variables>
+                        <![CDATA[x]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[Math.atan(x) * 180 / Math.PI]]>
+                    </expression>
+                </NodeAttributes>
+            </TreeNode>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[Geometry]]>
+                </title>
+            </NodeAttributes>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[area of circle - radius]]>
+                    </title>
+                    <variables>
+                        <![CDATA[radius]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[Math.PI * radius * radius]]>
+                    </expression>
+                    <domain>
+                        <![CDATA[radius > 0]]>
+                    </domain>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[area of circle - diameter]]>
+                    </title>
+                    <variables>
+                        <![CDATA[diameter]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[var r = diameter / 2.0;
+Math.PI * r * r]]>
+                    </expression>
+                    <domain>
+                        <![CDATA[diameter > 0]]>
+                    </domain>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[area of sphere - radius]]>
+                    </title>
+                    <variables>
+                        <![CDATA[radius]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[4 * Math.PI * radius * radius]]>
+                    </expression>
+                    <domain>
+                        <![CDATA[radius > 0]]>
+                    </domain>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[area of sphere - diameter]]>
+                    </title>
+                    <variables>
+                        <![CDATA[diameter]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[Math.PI * diameter * diameter]]>
+                    </expression>
+                    <domain>
+                        <![CDATA[diameter > 0]]>
+                    </domain>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[volume of sphere - radius]]>
+                    </title>
+                    <variables>
+                        <![CDATA[radius]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[4 * Math.PI * Math.pow(radius,3) / 3]]>
+                    </expression>
+                    <domain>
+                        <![CDATA[radius > 0]]>
+                    </domain>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[volume of sphere - diameter]]>
+                    </title>
+                    <variables>
+                        <![CDATA[diameter]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[Math.PI * Math.pow(diameter,3) / 6]]>
+                    </expression>
+                    <domain>
+                        <![CDATA[diameter > 0]]>
+                    </domain>
+                </NodeAttributes>
+            </TreeNode>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[Power Function]]>
+                </title>
+            </NodeAttributes>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[square]]>
+                    </title>
+                    <variables>
+                        <![CDATA[x]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[Math.pow(x,2)]]>
+                    </expression>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[cubic]]>
+                    </title>
+                    <variables>
+                        <![CDATA[x]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[Math.pow(x,3)]]>
+                    </expression>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[quartic]]>
+                    </title>
+                    <variables>
+                        <![CDATA[x]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[Math.pow(x,4)]]>
+                    </expression>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[quintic]]>
+                    </title>
+                    <variables>
+                        <![CDATA[x]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[Math.pow(x,5)]]>
+                    </expression>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[square_root]]>
+                    </title>
+                    <variables>
+                        <![CDATA[x]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[Math.sqrt(x)]]>
+                    </expression>
+                    <domain>
+                        <![CDATA[x >= 0]]>
+                    </domain>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[cubic_root]]>
+                    </title>
+                    <variables>
+                        <![CDATA[x]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[Math.pow(x,1/3)]]>
+                    </expression>
+                    <domain>
+                        <![CDATA[x >= 0]]>
+                    </domain>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[quartic_root]]>
+                    </title>
+                    <variables>
+                        <![CDATA[x]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[Math.pow(x,1/4)]]>
+                    </expression>
+                    <domain>
+                        <![CDATA[x >= 0]]>
+                    </domain>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[quintic_root]]>
+                    </title>
+                    <variables>
+                        <![CDATA[x]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[Math.pow(x,1/5)]]>
+                    </expression>
+                    <domain>
+                        <![CDATA[x >= 0]]>
+                    </domain>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[reciprocal]]>
+                    </title>
+                    <variables>
+                        <![CDATA[x]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[Math.pow(x,-1)]]>
+                    </expression>
+                    <domain>
+                        <![CDATA[x != 0]]>
+                    </domain>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[quadratic_reciprocal]]>
+                    </title>
+                    <variables>
+                        <![CDATA[x]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[Math.pow(x,-2)]]>
+                    </expression>
+                    <domain>
+                        <![CDATA[x != 0]]>
+                    </domain>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[cubic_reciprocal]]>
+                    </title>
+                    <variables>
+                        <![CDATA[x]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[Math.pow(x,-3)]]>
+                    </expression>
+                    <domain>
+                        <![CDATA[x != 0]]>
+                    </domain>
+                </NodeAttributes>
+            </TreeNode>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[Exponential Function]]>
+                </title>
+            </NodeAttributes>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[exponential_of_e]]>
+                    </title>
+                    <variables>
+                        <![CDATA[x]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[Math.exp(x + 5)]]>
+                    </expression>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[exponential_base_greater_than_1]]>
+                    </title>
+                    <variables>
+                        <![CDATA[x]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[Math.pow(5.9,x)]]>
+                    </expression>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[exponential_base_less_than_1]]>
+                    </title>
+                    <variables>
+                        <![CDATA[x]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[Math.pow(0.7,x)]]>
+                    </expression>
+                </NodeAttributes>
+            </TreeNode>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[Logarithmic Function]]>
+                </title>
+            </NodeAttributes>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[natural_logarithm]]>
+                    </title>
+                    <variables>
+                        <![CDATA[x]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[Math.log(x)]]>
+                    </expression>
+                    <domain>
+                        <![CDATA[x > 0]]>
+                    </domain>
+                </NodeAttributes>
+            </TreeNode>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[Intercept Function]]>
+                </title>
+            </NodeAttributes>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[round_up]]>
+                    </title>
+                    <variables>
+                        <![CDATA[x]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[Math.ceil(x)]]>
+                    </expression>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[round_down]]>
+                    </title>
+                    <variables>
+                        <![CDATA[x]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[Math.floor(x)]]>
+                    </expression>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[round]]>
+                    </title>
+                    <variables>
+                        <![CDATA[x]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[Math.round(x)]]>
+                    </expression>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[trunc]]>
+                    </title>
+                    <variables>
+                        <![CDATA[x]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[Math.trunc(x)]]>
+                    </expression>
+                </NodeAttributes>
+            </TreeNode>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[Unitary Polynomial]]>
+                </title>
+            </NodeAttributes>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[unitary_linear_function]]>
+                    </title>
+                    <variables>
+                        <![CDATA[x]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[5 * x + 9]]>
+                    </expression>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[unitary_quadratic_function]]>
+                    </title>
+                    <variables>
+                        <![CDATA[x]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[5 * Math.pow(x,2)  + 3 * x + 9]]>
+                    </expression>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[unitary_cubic_function]]>
+                    </title>
+                    <variables>
+                        <![CDATA[x]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[6 * Math.pow(x,3)  + 5 * Math.pow(x,2)  + 3 * x + 9]]>
+                    </expression>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[unitary_quartic_function]]>
+                    </title>
+                    <variables>
+                        <![CDATA[x]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[7 * Math.pow(x,4)  + 6 * Math.pow(x,3)  + 5 * Math.pow(x,2)  + 3 * x + 9]]>
+                    </expression>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[unitary_quintic_function]]>
+                    </title>
+                    <variables>
+                        <![CDATA[x]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[8 * Math.pow(x,5)  +7 * Math.pow(x,4)  + 6 * Math.pow(x,3)  + 5 * Math.pow(x,2)  + 3 * x + 9]]>
+                    </expression>
+                </NodeAttributes>
+            </TreeNode>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[piecewise values]]>
+                </title>
+            </NodeAttributes>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[direct values]]>
+                    </title>
+                    <variables>
+                        <![CDATA[x]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[if ( x > 1 ) 
+    6 * x - 5.9;
+else if ( x == 1)
+    38; 
+else 
+    Math.pow(x, 2) + 2.7;]]>
+                    </expression>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[define functions]]>
+                    </title>
+                    <variables>
+                        <![CDATA[x]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[function f1(x) {
+    var multiply = 1;
+    for (var i = 1; i <= Math.abs(x); i++) {
+        multiply = multiply * i;
+    }
+    return multiply ;
+}
+function f2(x) {
+    var sum = 0;
+    for (var i = 1; i > x; i--) {
+        sum += f1(i);
+    }
+    return sum;
+}
+if ( x > 1 ) 
+    f1(x);
+else if ( x == 1)
+    38; 
+else 
+    f2(x);]]>
+                    </expression>
+                </NodeAttributes>
+            </TreeNode>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[Numerical Analysis ]]>
+                </title>
+            </NodeAttributes>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[Unary Normal probability density function]]>
+                    </title>
+                    <variables>
+                        <![CDATA[x]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[var mean = 1; 
+var stdDeviation = 2; 
+var dx = x - mean;
+var expP = - dx * dx / ( 2 * stdDeviation * stdDeviation );
+var div = Math.sqrt(2 * Math.PI) * stdDeviation;
+Math.exp(expP) / div]]>
+                    </expression>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[Unary Standard normal probability density function]]>
+                    </title>
+                    <variables>
+                        <![CDATA[x]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[Math.exp(- x * x / 2) / Math.sqrt(2 * Math.PI)]]>
+                    </expression>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[sigmoid]]>
+                    </title>
+                    <variables>
+                        <![CDATA[x]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[1 / (1 + Math.exp(-x))]]>
+                    </expression>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[derivative of sigmoid]]>
+                    </title>
+                    <variables>
+                        <![CDATA[x]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[var s = 1 / (1 + Math.exp(-x));
+s * (1 - s);]]>
+                    </expression>
+                </NodeAttributes>
+            </TreeNode>
+        </TreeNode>
+    </TreeNode>
+    <TreeNode>
+        <NodeAttributes>
+            <title>
+                <![CDATA[Binary Function]]>
+            </title>
+        </NodeAttributes>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[Univariate Polynomial]]>
+                </title>
+            </NodeAttributes>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[univariate linear polynomial]]>
+                    </title>
+                    <variables>
+                        <![CDATA[x,y]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[5 * x + 9 * y - 4]]>
+                    </expression>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[univariate quadratic polynomial]]>
+                    </title>
+                    <variables>
+                        <![CDATA[x,y]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[5 * x * x  + 3 * y * y + y + 9]]>
+                    </expression>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[univariate cubic polynomial]]>
+                    </title>
+                    <variables>
+                        <![CDATA[x,y]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[6 * Math.pow(x,3)  + 5 * Math.pow(y,2)  + 3 * y + 9]]>
+                    </expression>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[univariate quartic polynomial]]>
+                    </title>
+                    <variables>
+                        <![CDATA[x,y]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[7 * Math.pow(x,4)  + 6 * Math.pow(y,3)  + 5 * Math.pow(x,2)  + 3 * y + 9]]>
+                    </expression>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[univariate quintic polynomial]]>
+                    </title>
+                    <variables>
+                        <![CDATA[x,y]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[8 * Math.pow(x,5)  +7 * Math.pow(y,5)  + 6 * Math.pow(x,3)  + 5 * Math.pow(y,2)  + 3 * x + 9]]>
+                    </expression>
+                </NodeAttributes>
+            </TreeNode>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[Geometry]]>
+                </title>
+            </NodeAttributes>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[volume of cylinder]]>
+                    </title>
+                    <variables>
+                        <![CDATA[radius,height]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[Math.PI * radius * radius * height]]>
+                    </expression>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[area of ellipse - half_axle]]>
+                    </title>
+                    <variables>
+                        <![CDATA[long_half_axle,short_half_axle]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[Math.PI * long_half_axle * short_half_axle]]>
+                    </expression>
+                    <domain>
+                        <![CDATA[long_half_axle > 0 && short_half_axle > 0]]>
+                    </domain>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[area of ellipse - axle]]>
+                    </title>
+                    <variables>
+                        <![CDATA[long_axle,short_axle]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[Math.PI * long_axle * short_axle / 4]]>
+                    </expression>
+                    <domain>
+                        <![CDATA[long_axle > 0 && short_axle > 0]]>
+                    </domain>
+                </NodeAttributes>
+            </TreeNode>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[Quadric Surface]]>
+                </title>
+            </NodeAttributes>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[Trigonometry]]>
+                </title>
+            </NodeAttributes>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[univariate linear trigonometry]]>
+                    </title>
+                    <variables>
+                        <![CDATA[x,y]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[5 * Math.sin(x) + 3 * y + 9]]>
+                    </expression>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[univariate quadratic trigonometry]]>
+                    </title>
+                    <variables>
+                        <![CDATA[x,y]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[5 * Math.cos(x * x) + 3 * Math.sin(y) * Math.sin(y) + 9]]>
+                    </expression>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[univariate cubic trigonometry]]>
+                    </title>
+                    <variables>
+                        <![CDATA[x,y]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[5 * Math.tan(x * x * x) + 3 * Math.cos(x) * Math.sin(y) + 9]]>
+                    </expression>
+                </NodeAttributes>
+            </TreeNode>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[Exponential Function]]>
+                </title>
+            </NodeAttributes>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[univariate exponential]]>
+                    </title>
+                    <variables>
+                        <![CDATA[x,y]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[5 * Math.exp(x - 2 * y) + 3 * x - y + 9]]>
+                    </expression>
+                </NodeAttributes>
+            </TreeNode>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[Logarithmic Function]]>
+                </title>
+            </NodeAttributes>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[univariate logarithmic]]>
+                    </title>
+                    <variables>
+                        <![CDATA[x,y]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[5 * Math.log(x  * y) - 9]]>
+                    </expression>
+                    <domain>
+                        <![CDATA[x * y > 0]]>
+                    </domain>
+                </NodeAttributes>
+            </TreeNode>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[Numerical Analysis ]]>
+                </title>
+            </NodeAttributes>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[Univariate Normal probability density function]]>
+                    </title>
+                    <variables>
+                        <![CDATA[x,y]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[var xMean = 1;
+var xStd = 2; 
+var yMean = 2;
+var yStd = 1; 
+var coefficient = 0.2; 
+var dx = x - xMean;
+var dy = y - yMean;
+var xyStd = xStd * yStd;
+var dco = 1 - coefficient * coefficient;
+var px = dx * dx / ( xStd * xStd );
+var py = dy * dy / ( yStd * yStd );
+var pxy = 2 * coefficient * dx * dy / xyStd;
+var expP = - (px + py - pxy) / ( 2 * dco)
+var div = 2 * Math.PI * xyStd * Math.sqrt(dco);
+Math.exp(expP) / div]]>
+                    </expression>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[Univariate Standard normal probability density function]]>
+                    </title>
+                    <variables>
+                        <![CDATA[x,y]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[var xMean = 1;
+var xStd = 2; 
+var yMean = 2;
+var yStd = 1; 
+var dx = x - xMean;
+var dy = y - yMean;
+var xyStd = xStd * yStd;
+var px = dx * dx / ( xStd * xStd );
+var py = dy * dy / ( yStd * yStd );
+var expP = - (px + py) / 2
+var div = 2 * Math.PI * xyStd;
+Math.exp(expP) / div]]>
+                    </expression>
+                </NodeAttributes>
+            </TreeNode>
+        </TreeNode>
+    </TreeNode>
+    <TreeNode>
+        <NodeAttributes>
+            <title>
+                <![CDATA[Ternary Function]]>
+            </title>
+        </NodeAttributes>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[Trigonometry]]>
+                </title>
+            </NodeAttributes>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[law of sines - for angle(radian)]]>
+                    </title>
+                    <variables>
+                        <![CDATA[angleA_radian ,edge_a,edge_b]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[var sinB = Math.sin(angleA_radian ) * edge_b / edge_a;
+Math.asin(sinB)]]>
+                    </expression>
+                    <domain>
+                        <![CDATA[angleA_radian  > 0 && edge_a > 0 && edge_b > 0]]>
+                    </domain>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[law of sines - for angle(angle)]]>
+                    </title>
+                    <variables>
+                        <![CDATA[angleA_angle ,edge_a,edge_b]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[var sinA = Math.sin(angleA_angle  * Math.PI / 180);
+var sinB = sinA * edge_b / edge_a;
+Math.asin(sinB) * 180 / Math.PI]]>
+                    </expression>
+                    <domain>
+                        <![CDATA[angleA_angle  > 0 && edge_a > 0 && edge_b > 0]]>
+                    </domain>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[law of sines - for edge(radian)]]>
+                    </title>
+                    <variables>
+                        <![CDATA[angleA_radian ,edge_a,angleB_radian]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[edge_a * Math.sin(angleB_radian ) / Math.sin(angleA_radian )]]>
+                    </expression>
+                    <domain>
+                        <![CDATA[angleA_radian  > 0 && angleB_radian  > 0 && edge_a > 0]]>
+                    </domain>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[law of sines - for edge(angle)]]>
+                    </title>
+                    <variables>
+                        <![CDATA[angleA_angle ,edge_a,angleB_angle]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[var sinA = Math.sin(angleA_angle  * Math.PI / 180);
+var sinB = Math.sin(angleB_angle  * Math.PI / 180);
+edge_a * sinB / sinA]]>
+                    </expression>
+                    <domain>
+                        <![CDATA[angleA_angle  > 0 && angleB_angle  > 0 && edge_a > 0]]>
+                    </domain>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[law of cosines - for edge(radian)]]>
+                    </title>
+                    <variables>
+                        <![CDATA[angleA_radian ,edge_b,edge_c]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[Math.sqrt(edge_b * edge_b + edge_c * edge_c - 2 * edge_b * edge_c * Math.cos(angleA_radian ))]]>
+                    </expression>
+                    <domain>
+                        <![CDATA[angleA_radian  > 0 && edge_b > 0 && edge_c > 0]]>
+                    </domain>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[law of cosines - for edge(angle)]]>
+                    </title>
+                    <variables>
+                        <![CDATA[angleA_angle ,edge_b,edge_c]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[var cosA = Math.cos(angleA_angle  * Math.PI / 180);
+Math.sqrt(edge_b * edge_b + edge_c * edge_c - 2 * edge_b * edge_c * cosA)]]>
+                    </expression>
+                    <domain>
+                        <![CDATA[angleA_angle  > 0 && edge_b > 0 && edge_c > 0]]>
+                    </domain>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[law of cosines - for angle(radian)]]>
+                    </title>
+                    <variables>
+                        <![CDATA[edge_a,edge_b,edge_c]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[var cosA = (edge_b * edge_b + edge_c * edge_c - edge_a * edge_a) / (2 * edge_b * edge_c);
+Math.acos( cosA )]]>
+                    </expression>
+                    <domain>
+                        <![CDATA[edge_a > 0 && edge_b > 0 && edge_c > 0]]>
+                    </domain>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[law of cosines - for angle(angle)]]>
+                    </title>
+                    <variables>
+                        <![CDATA[edge_a,edge_b,edge_c]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[var cosA = (edge_b * edge_b + edge_c * edge_c - edge_a * edge_a) / (2 * edge_b * edge_c);
+Math.acos( cosA ) * 180 / Math.PI]]>
+                    </expression>
+                    <domain>
+                        <![CDATA[edge_a > 0 && edge_b > 0 && edge_c > 0]]>
+                    </domain>
+                </NodeAttributes>
+            </TreeNode>
+        </TreeNode>
+        <TreeNode>
+            <NodeAttributes>
+                <title>
+                    <![CDATA[Geometry]]>
+                </title>
+            </NodeAttributes>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[area of ellipsoid - half_axie]]>
+                    </title>
+                    <variables>
+                        <![CDATA[half_axie_a,half_axie_b,half_axie_c]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[4 * Math.PI * ( half_axie_a * half_axie_b + half_axie_a * half_axie_c + half_axie_b * half_axie_c )/ 3]]>
+                    </expression>
+                    <domain>
+                        <![CDATA[half_axie_a > 0 && half_axie_b > 0 && half_axie_c > 0]]>
+                    </domain>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[area of ellipsoid - axie]]>
+                    </title>
+                    <variables>
+                        <![CDATA[axie_a,axie_b,axie_c]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[Math.PI * ( axie_a * axie_b + axie_a * axie_c + axie_b * axie_c )/ 3]]>
+                    </expression>
+                    <domain>
+                        <![CDATA[axie_a > 0 && axie_b > 0 && _axie_c > 0]]>
+                    </domain>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[volumn of ellipsoid - half_axie]]>
+                    </title>
+                    <variables>
+                        <![CDATA[half_axie_a,half_axie_b,half_axie_c]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[4 * Math.PI * half_axie_a * half_axie_b * half_axie_c / 3]]>
+                    </expression>
+                    <domain>
+                        <![CDATA[half_axie_a > 0 && half_axie_b > 0 && half_axie_c > 0]]>
+                    </domain>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[volumn of ellipsoid - axie]]>
+                    </title>
+                    <variables>
+                        <![CDATA[axie_a,axie_b,axie_c]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[Math.PI * axie_a * axie_b * axie_c / 6]]>
+                    </expression>
+                    <domain>
+                        <![CDATA[axie_a > 0 && axie_b > 0 && axie_c > 0]]>
+                    </domain>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[area of cube]]>
+                    </title>
+                    <variables>
+                        <![CDATA[length,width,height]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[2 * ( length * width + length * height + width * height )]]>
+                    </expression>
+                    <domain>
+                        <![CDATA[length > 0 && width > 0 && height > 0]]>
+                    </domain>
+                </NodeAttributes>
+            </TreeNode>
+            <TreeNode>
+                <NodeAttributes>
+                    <title>
+                        <![CDATA[volumn of cube]]>
+                    </title>
+                    <variables>
+                        <![CDATA[length,width,height]]>
+                    </variables>
+                    <expression>
+                        <![CDATA[length * width * height]]>
+                    </expression>
+                    <domain>
+                        <![CDATA[length > 0 && width > 0 && height > 0]]>
+                    </domain>
+                </NodeAttributes>
+            </TreeNode>
+        </TreeNode>
+    </TreeNode>
+</TreeNode>
+</Node_Math_Function>

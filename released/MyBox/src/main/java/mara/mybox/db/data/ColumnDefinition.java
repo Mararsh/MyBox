@@ -13,6 +13,8 @@ import java.util.Random;
 import javafx.scene.paint.Color;
 import mara.mybox.calculation.DoubleStatistic;
 import mara.mybox.db.DerbyBase;
+import static mara.mybox.db.data.ColumnDefinition.getValue;
+import static mara.mybox.db.data.ColumnDefinition.setValue;
 import static mara.mybox.db.table.BaseTable.StringMaxLength;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
@@ -48,7 +50,7 @@ public class ColumnDefinition extends BaseData {
     protected Map<Object, String> displayMap;
     protected DoubleStatistic statistic;
 
-    final public static InvalidAs DefaultInvalidAs = InvalidAs.Keep;
+    final public static InvalidAs DefaultInvalidAs = InvalidAs.Skip;
 
     public static enum ColumnType {
         String, Boolean, Enumeration, EnumerationEditable,
@@ -74,7 +76,7 @@ public class ColumnDefinition extends BaseData {
     }
 
     public enum InvalidAs {
-        Zero, Empty, Null, Skip, Keep
+        Zero, Empty, Null, Skip, Use, Fail
     }
 
     public final void initColumnDefinition() {
@@ -167,7 +169,6 @@ public class ColumnDefinition extends BaseData {
             value = c.value;
             maxValue = c.maxValue;
             minValue = c.minValue;
-            columnValues = c.columnValues;
             statistic = c.statistic;
             description = c.description;
             fixTwoDigitYear = c.fixTwoDigitYear;
@@ -180,6 +181,9 @@ public class ColumnDefinition extends BaseData {
 
     public boolean isForeignKey() {
         return referTable != null && referColumn != null;
+//        return referTable != null && !referTable.isBlank()
+//                && referColumn != null && !referColumn.isBlank()
+//                && referName != null && !referName.isBlank();
     }
 
     public String foreignText() {
@@ -214,8 +218,19 @@ public class ColumnDefinition extends BaseData {
         return sql;
     }
 
+    @Override
     public boolean valid() {
         return valid(this);
+    }
+
+    @Override
+    public boolean setValue(String column, Object value) {
+        return setValue(this, column, value);
+    }
+
+    @Override
+    public Object getValue(String column) {
+        return getValue(this, column);
     }
 
     public boolean validValue(String value) {
@@ -430,18 +445,21 @@ public class ColumnDefinition extends BaseData {
     // But we need distinct zero and null.
     // https://docs.oracle.com/en/java/javase/18/docs/api/java.sql/java/sql/ResultSet.html#getDouble(java.lang.String)
     public Object value(ResultSet results) {
+        Object o;
+        String savedName;
         try {
             if (results == null || type == null || columnName == null) {
                 return null;
             }
-            String savedName = DerbyBase.savedName(columnName);
-            if (savedName == null || results.findColumn(savedName) < 0) {
-                return null;
-            }
-            Object o = results.getObject(savedName);
+            savedName = DerbyBase.savedName(columnName);
+            o = results.getObject(savedName);
             if (o == null) {
                 return null;
             }
+        } catch (Exception e) {
+            return null;
+        }
+        try {
             String s = o + "";
 //            MyBoxLog.console(columnName + " " + type + " " + savedName + "  " + o + " " + o.getClass());
             switch (type) {
@@ -517,6 +535,7 @@ public class ColumnDefinition extends BaseData {
                 case Date:
                     return toDate(o + "");
                 case Clob:
+//                    MyBoxLog.console(columnName + " " + type + " " + savedName + "  " + o + " " + o.getClass());
                     Clob clob = (Clob) o;
                     return clob.getSubString(1, (int) clob.length());
                 case Blob:
@@ -570,22 +589,30 @@ public class ColumnDefinition extends BaseData {
         }
     }
 
-    public String format(String string, boolean validate) {
-        return format(string, -1, invalidAs, validate);
-    }
-
-    public String format(String string, InvalidAs inAs, boolean validate) {
-        return format(string, -1, inAs, validate);
-    }
-
-    public String format(String string, int maxLen, InvalidAs inAs, boolean validate) {
+    public String trimValue(String string, InvalidAs inAs) {
         Object o = null;
         try {
-            if (validate) {
-                o = fromString(string, inAs);
-            } else {
-                o = string;
-            }
+            o = fromString(string, inAs);
+        } catch (Exception e) {
+        }
+        if (o == null) {
+            return null;
+        }
+        return toString(o);
+    }
+
+    public String format(String string) {
+        return format(string, -1, invalidAs);
+    }
+
+    public String format(String string, InvalidAs inAs) {
+        return format(string, -1, inAs);
+    }
+
+    public String format(String string, int maxLen, InvalidAs inAs) {
+        Object o = null;
+        try {
+            o = fromString(string, inAs);
         } catch (Exception e) {
         }
         if (o == null) {
@@ -620,9 +647,6 @@ public class ColumnDefinition extends BaseData {
                 }
             }
         } catch (Exception e) {
-            if (validate) {
-                return null;
-            }
         }
         if (s != null && maxLen > 0) {
             return s.length() > maxLen ? s.substring(0, maxLen) : s;
@@ -641,7 +665,7 @@ public class ColumnDefinition extends BaseData {
                 return string;
             default:
                 if (validate) {
-                    return toString(fromString(string, invalidAs));
+                    return trimValue(string, invalidAs);
                 }
         }
         return string;
@@ -740,6 +764,9 @@ public class ColumnDefinition extends BaseData {
         }
     }
 
+    public String label() {
+        return columnName;
+    }
 
     /*
         static methods
@@ -754,19 +781,181 @@ public class ColumnDefinition extends BaseData {
                 && data.getColumnName() != null && !data.getColumnName().isBlank();
     }
 
-    public static short columnType(ColumnType type) {
+    public static Object getValue(ColumnDefinition data, String column) {
+        if (data == null || column == null) {
+            return null;
+        }
+        switch (column) {
+            case "column_type":
+                return columnTypeValue(data.getType());
+            case "column_name":
+                return data.getColumnName();
+            case "index":
+                return data.getIndex();
+            case "length":
+                return data.getLength();
+            case "width":
+                return data.getWidth();
+            case "scale":
+                return data.getScale();
+            case "color":
+                return colorValue(data.getColor());
+            case "is_primary":
+                return data.isIsPrimaryKey();
+            case "not_null":
+                return data.isNotNull();
+            case "is_auto":
+                return data.isAuto();
+            case "invalid_as":
+                return invalidAsValue(data.getInvalidAs());
+            case "editable":
+                return data.isEditable();
+            case "fix_year":
+                return data.isFixTwoDigitYear();
+            case "format":
+                return data.getFormat();
+            case "century":
+                return data.getCentury();
+            case "on_delete":
+                return onDelete(data.getOnDelete());
+            case "on_update":
+                return onUpdate(data.getOnUpdate());
+            case "default_value":
+                return data.getDefaultValue();
+            case "max_value":
+                return number2String(data.getMaxValue());
+            case "min_value":
+                return number2String(data.getMinValue());
+            case "foreign_name":
+                return data.getReferName();
+            case "foreign_table":
+                return data.getReferTable();
+            case "foreign_column":
+                return data.getReferColumn();
+            case "description":
+                return data.getDescription();
+        }
+        return null;
+    }
+
+    public static boolean setValue(ColumnDefinition data, String column, Object value) {
+        if (data == null || column == null) {
+            return false;
+        }
+        try {
+            switch (column) {
+                case "column_type":
+                    data.setType(columnTypeFromValue((short) value));
+                    return true;
+                case "column_name":
+                    data.setColumnName(value == null ? null : (String) value);
+                    return true;
+                case "index":
+                    data.setIndex(value == null ? -1 : (int) value);
+                    return true;
+                case "length":
+                    data.setLength(value == null ? StringMaxLength : (int) value);
+                    return true;
+                case "width":
+                    data.setWidth(value == null ? 100 : (int) value);
+                    return true;
+                case "scale":
+                    data.setScale(value == null ? 8 : (int) value);
+                    return true;
+                case "color":
+                    data.setColor(color(value));
+                    return true;
+                case "is_primary":
+                    data.setIsPrimaryKey(value == null ? false : (boolean) value);
+                    return true;
+                case "is_auto":
+                    data.setAuto(value == null ? false : (boolean) value);
+                    return true;
+                case "invalid_as":
+                    data.setInvalidAs(invalidAs(value));
+                    return true;
+                case "not_null":
+                    data.setNotNull(value == null ? false : (boolean) value);
+                    return true;
+                case "editable":
+                    data.setEditable(value == null ? false : (boolean) value);
+                    return true;
+                case "format":
+                    data.setFormat(value == null ? null : (String) value);
+                    return true;
+                case "fix_year":
+                    data.setFixTwoDigitYear(value == null ? false : (boolean) value);
+                    return true;
+                case "century":
+                    data.setCentury(value == null ? 2000 : (int) value);
+                    return true;
+                case "on_delete":
+                    data.setOnDelete(onDelete((short) value));
+                    return true;
+                case "on_update":
+                    data.setOnUpdate(onUpdate((short) value));
+                    return true;
+                case "default_value":
+                    data.setDefaultValue(value == null ? null : (String) value);
+                    return true;
+                case "max_value":
+                    data.setMaxValue(string2Number(data.getType(), (String) value));
+                    return true;
+                case "min_value":
+                    data.setMinValue(string2Number(data.getType(), (String) value));
+                    return true;
+                case "foreign_name":
+                    data.setReferName(value == null ? null : (String) value);
+                    return true;
+                case "foreign_table":
+                    data.setReferTable(value == null ? null : (String) value);
+                    return true;
+                case "foreign_column":
+                    data.setReferColumn(value == null ? null : (String) value);
+                    return true;
+                case "description":
+                    data.setDescription(value == null ? null : (String) value);
+                    return true;
+            }
+        } catch (Exception e) {
+            MyBoxLog.debug(e + " column:" + column + " value:" + value);
+        }
+        return false;
+    }
+
+    public static short columnTypeValue(ColumnType type) {
         if (type == null) {
             return 0;
         }
         return (short) (type.ordinal());
     }
 
-    public static ColumnType columnType(short type) {
+    public static ColumnType columnTypeFromValue(short type) {
         ColumnType[] types = ColumnType.values();
         if (type < 0 || type > types.length) {
             return ColumnType.String;
         }
         return types[type];
+    }
+
+    public static ColumnType columnTypeFromName(String name) {
+        if (name == null || name.isBlank()) {
+            return ColumnType.String;
+        }
+        for (ColumnType t : ColumnType.values()) {
+            if (t.name().equalsIgnoreCase(name)) {
+                return t;
+            }
+        }
+        return ColumnType.String;
+    }
+
+    public static String columnTypeName(ColumnType type) {
+        try {
+            return type.name();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public static ColumnType sqlColumnType(int type) {
@@ -798,18 +987,6 @@ public class ColumnDefinition extends BaseData {
             default:
                 return ColumnType.String;
         }
-    }
-
-    public static ColumnType columnType(String name) {
-        if (name == null || name.isBlank()) {
-            return ColumnType.String;
-        }
-        for (ColumnType t : ColumnType.values()) {
-            if (t.name().equalsIgnoreCase(name)) {
-                return t;
-            }
-        }
-        return ColumnType.String;
     }
 
     public static List<ColumnType> editTypes() {
@@ -873,16 +1050,56 @@ public class ColumnDefinition extends BaseData {
         }
     }
 
-    public static InvalidAs invalidAs(String name) {
+    public static InvalidAs invalidAs(Object v) {
+        try {
+            return InvalidAs.values()[(short) v];
+        } catch (Exception e) {
+            return DefaultInvalidAs;
+        }
+    }
+
+    public static short invalidAsValue(InvalidAs v) {
+        try {
+            return (short) v.ordinal();
+        } catch (Exception e) {
+            return 3;
+        }
+    }
+
+    public static InvalidAs invalidAsFromName(String name) {
         if (name == null || name.isBlank()) {
-            return InvalidAs.Keep;
+            return DefaultInvalidAs;
         }
         for (InvalidAs v : InvalidAs.values()) {
             if (v.name().equalsIgnoreCase(name)) {
                 return v;
             }
         }
-        return InvalidAs.Keep;
+        return DefaultInvalidAs;
+    }
+
+    public static String invalidAsName(InvalidAs v) {
+        try {
+            return v.name();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static Color color(Object v) {
+        try {
+            return Color.web((String) v);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static String colorValue(Color v) {
+        try {
+            return v.toString();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public static boolean isNumberType(ColumnType type) {
@@ -1004,8 +1221,8 @@ public class ColumnDefinition extends BaseData {
             case Empty:
                 return "";
             case Skip:
-                return null;
-            case Keep:
+                return string;
+            case Use:
                 return string;
             default:
                 return string;
@@ -1035,6 +1252,38 @@ public class ColumnDefinition extends BaseData {
                     return value + "";
             }
         } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static String info(ColumnDefinition column) {
+        try {
+            if (column == null) {
+                return null;
+            }
+            StringBuilder s = new StringBuilder();
+            s.append(message("Name")).append(": ").append(column.getColumnName()).append("\n");
+            s.append(message("Type")).append(": ").append(column.getType()).append("\n");
+            s.append(message("Length")).append(": ").append(column.getLength()).append("\n");
+            s.append(message("Width")).append(": ").append(column.getWidth()).append("\n");
+            s.append(message("DisplayFormat")).append(": ").append(column.getFormat()).append("\n");
+            s.append(message("NotNull")).append(": ").append(column.isNotNull()).append("\n");
+            s.append(message("Editable")).append(": ").append(column.isEditable()).append("\n");
+            s.append(message("PrimaryKey")).append(": ").append(column.isIsPrimaryKey()).append("\n");
+            s.append(message("AutoGenerated")).append(": ").append(column.isAuto()).append("\n");
+            s.append(message("DefaultValue")).append(": ").append(column.getDefaultValue()).append("\n");
+            s.append(message("Color")).append(": ").append(column.getColor()).append("\n");
+            s.append(message("ToInvalidValue")).append(": ").append(column.getInvalidAs()).append("\n");
+            s.append(message("DecimalScale")).append(": ").append(column.getScale()).append("\n");
+            s.append(message("Century")).append(": ").append(column.getCentury()).append("\n");
+            s.append(message("FixTwoDigitYears")).append(": ").append(column.isFixTwoDigitYear()).append("\n");
+            s.append(message("Description")).append(": ").append(column.getDescription()).append("\n");
+            s.append(message("ReferTable")).append(": ").append(column.getReferTable()).append("\n");
+            s.append(message("ReferColumn")).append(": ").append(column.getReferColumn()).append("\n");
+            s.append(message("ReferName")).append(": ").append(column.getReferName()).append("\n");
+            return s.toString();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
             return null;
         }
     }

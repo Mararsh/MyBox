@@ -66,7 +66,7 @@ public class TextInMyBoxClipboardController extends BaseSysTableController<TextC
             textColumn.setCellFactory(new TableTextTruncCell());
 
             lengthColumn.setCellValueFactory(new PropertyValueFactory<>("length"));
-            lengthColumn.setCellFactory(new TableNumberCell());
+            lengthColumn.setCellFactory(new TableNumberCell(true));
 
             timeColumn.setCellValueFactory(new PropertyValueFactory<>("createTime"));
             timeColumn.setCellFactory(new TableDateCell());

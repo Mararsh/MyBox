@@ -466,12 +466,12 @@ public class ControlOCROptions extends BaseController {
     public void aboutTesseract() {
         try {
             StringTable table = new StringTable(null, message("AboutTesseract"));
-            table.newLinkRow("Home", "https://github.com/tesseract-ocr/tesseract");
-            table.newLinkRow("Installation", "https://tesseract-ocr.github.io/tessdoc/Home.html");
-            table.newLinkRow("InstallationOnWindows", "https://github.com/UB-Mannheim/tesseract/wiki");
-            table.newLinkRow("DataFiles", "https://tesseract-ocr.github.io/tessdoc/Data-Files.html");
-            table.newLinkRow("Documents", "https://github.com/tesseract-ocr/tessdoc");
-            table.newLinkRow("ImproveQuality", "https://tesseract-ocr.github.io/tessdoc/ImproveQuality.html");
+            table.newLinkRow(message("Home"), "https://github.com/tesseract-ocr/tesseract");
+            table.newLinkRow(message("Installation"), "https://tesseract-ocr.github.io/tessdoc/Home.html");
+            table.newLinkRow(message("InstallationOnWindows"), "https://github.com/UB-Mannheim/tesseract/wiki");
+            table.newLinkRow(message("DataFiles"), "https://tesseract-ocr.github.io/tessdoc/Data-Files.html");
+            table.newLinkRow(message("Documents"), "https://github.com/tesseract-ocr/tessdoc");
+            table.newLinkRow(message("ImproveQuality"), "https://tesseract-ocr.github.io/tessdoc/ImproveQuality.html");
 
             File htmFile = HtmlWriteTools.writeHtml(table.html());
             openHtml(htmFile);

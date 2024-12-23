@@ -4,10 +4,6 @@ import javafx.event.EventTarget;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextInputControl;
 import javafx.scene.input.KeyCode;
-import static javafx.scene.input.KeyCode.DIGIT1;
-import static javafx.scene.input.KeyCode.DIGIT3;
-import static javafx.scene.input.KeyCode.DIGIT4;
-import static javafx.scene.input.KeyCode.DIGIT5;
 import javafx.scene.input.KeyEvent;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
@@ -28,7 +24,13 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
         try {
             if (thisPane != null) {
                 thisPane.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-                    keyEvent = event;
+//                    MyBoxLog.debug("KeyEvent.KEY_PRESSED");
+                    if (keyEventsFilter(event)) {
+                        event.consume();
+                    }
+                });
+                thisPane.addEventFilter(KeyEvent.KEY_TYPED, event -> {
+//                    MyBoxLog.debug("KeyEvent.KEY_TYPED");
                     if (keyEventsFilter(event)) {
                         event.consume();
                     }
@@ -45,21 +47,242 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
 //            if (getMyWindow() != null) {
 //                MyBoxLog.debug("window:" + getMyWindow().getClass() + "   isFocused:" + getMyWindow().isFocused());
 //            }
-//            MyBoxLog.debug("filter:" + this.getClass() + " text:" + event.getText() + " code:" + event.getCode()
-//                    + " source:" + event.getSource().getClass() + " target:" + (event.getTarget() == null ? "null" : event.getTarget()));
             keyEvent = event;
-            if (event.isControlDown()) {
-                return controlAltFilter(event);
+//            MyBoxLog.debug("filter:" + this.getClass()
+//                    + " text:" + event.getText() + " code:" + event.getCode() + " char:" + event.getCharacter()
+//                    + " source:" + event.getSource().getClass() + " target:" + (event.getTarget() == null ? "null" : event.getTarget()));
 
-            } else if (event.isAltDown()) {
+            if (event.isAltDown()) {
                 return altFilter(event);
 
-            } else if (event.getCode() != null) {
+            } else {
                 return keyFilter(event);
 
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
+        }
+        return false;
+    }
+
+    private boolean altFilter(KeyEvent event) {
+        if (!event.isAltDown() || event.getCode() == null) {
+            return false;
+        }
+        switch (event.getCode()) {
+            case HOME:
+                return altHome();
+            case END:
+                return altEnd();
+            case PAGE_UP:
+                return altPageUp();
+            case PAGE_DOWN:
+                return altPageDown();
+        }
+        return keyFilter(event);
+    }
+
+    private boolean keyFilter(KeyEvent event) {
+        KeyCode code = event.getCode();
+        if (code == null || code == KeyCode.UNDEFINED) {
+            return inputFilter(event);
+        }
+        switch (code) {
+            case ENTER:
+                return keyEnter();
+
+            case DELETE:
+                return keyDelete();
+
+            case HOME:
+                return keyHome();
+
+            case END:
+                return keyEnd();
+
+            case PAGE_UP:
+                return keyPageUp();
+
+            case PAGE_DOWN:
+                return keyPageDown();
+
+            case F1:
+                return keyF1();
+
+            case F2:
+                return keyF2();
+
+            case F3:
+                return keyF3();
+
+            case F4:
+                return keyF4();
+
+            case F5:
+                return keyF5();
+
+            case F6:
+                return keyF6();
+
+            case F7:
+                return keyF7();
+
+            case F8:
+                return keyF8();
+
+            case F9:
+                return keyF9();
+
+            case F10:
+                return keyF10();
+
+            case F11:
+                return keyF11();
+
+            case F12:
+                return keyF12();
+
+            case ESCAPE:
+                return keyESC();
+
+        }
+
+        return inputFilter(event);
+    }
+
+    public boolean inputFilter(KeyEvent event) {
+        if (event == null) {
+            return false;
+        }
+        boolean omit = !event.isControlDown() && !event.isAltDown();
+        if (omit && targetIsTextInput()) {
+            return false;
+        }
+        return inputFilter(omit ? event.getCharacter() : event.getText(), omit);
+    }
+
+    public boolean inputFilter(String input, boolean omit) {
+        if (input == null || (omit && AppVariables.ShortcutsCanNotOmitCtrlAlt)) {
+            return false;
+        }
+//        MyBoxLog.debug("input:" + input.toUpperCase());
+        switch (input.toUpperCase()) {
+            case "E":
+                return controlAltE();
+
+            case "N":
+                return controlAltN();
+
+            case "C":
+                return controlAltC();
+
+            case "V":
+                return controlAltV();
+
+            case "A":
+                return controlAltA();
+
+            case "D":
+                return omit ? false : controlAltD();
+
+            case "Z":
+                return controlAltZ();
+
+            case "Y":
+                return controlAltY();
+
+            case "O":
+                return controlAltO();
+
+            case "X":
+                return controlAltX();
+
+            case "R":
+                return controlAltR();
+
+            case "S":
+                return omit ? false : controlAltS();
+
+            case "F":
+                return controlAltF();
+
+            case "H":
+                return controlAltH();
+
+            case "T":
+                return controlAltT();
+
+            case "G":
+                return controlAltG();
+
+            case "B":
+                return controlAltB();
+
+            case "I":
+                return controlAltI();
+
+            case "P":
+                return controlAltP();
+
+            case "W":
+                return controlAltW();
+
+            case "M":
+                return controlAltM();
+
+            case "J":
+                return controlAltJ();
+
+            case "Q":
+                return controlAltQ();
+
+            case "K":
+                return controlAltK();
+
+            case "U":
+                return controlAltU();
+
+            case "L":
+                return omit ? false : controlAltL();
+
+            case "-":
+                setSceneFontSize(AppVariables.sceneFontSize - 1);
+                return true;
+
+            case "=":
+                setSceneFontSize(AppVariables.sceneFontSize + 1);
+                return true;
+
+            case "0":
+                return controlAlt0();
+
+            case "1":
+                return controlAlt1();
+
+            case "2":
+                return controlAlt2();
+
+            case "3":
+                return controlAlt3();
+
+            case "4":
+                return controlAlt4();
+
+            case "5":
+                return controlAlt5();
+
+            case "6":
+                return controlAlt6();
+
+            case "7":
+                return controlAlt7();
+
+            case "8":
+                return controlAlt8();
+
+            case "9":
+                return controlAlt9();
+
         }
         return false;
     }
@@ -77,24 +300,6 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
         }
         // When popup is shown, event target is always popup pane even when focus is actually in text input
         return NodeTools.textInputFocus(getMyScene()) != null;
-    }
-
-    public boolean altFilter(KeyEvent event) {
-        keyEvent = event;
-        if (!event.isAltDown() || event.getCode() == null) {
-            return false;
-        }
-        switch (event.getCode()) {
-            case HOME:
-                return altHome();
-            case END:
-                return altEnd();
-            case PAGE_UP:
-                return altPageUp();
-            case PAGE_DOWN:
-                return altPageDown();
-        }
-        return controlAltFilter(event);
     }
 
     public boolean altPageUp() {
@@ -135,132 +340,6 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
         } else if (pageLastButton != null && !pageLastButton.isDisabled() && pageLastButton.isVisible()) {
             pageLastAction();
             return true;
-        }
-        return false;
-    }
-
-    public boolean controlAltFilter(KeyEvent event) {
-        keyEvent = event;
-        if (event.getCode() == null) {
-            return false;
-        }
-        switch (event.getCode()) {
-            case E:
-                return controlAltE();
-
-            case N:
-                return controlAltN();
-
-            case C:
-                return controlAltC();
-
-            case V:
-                return controlAltV();
-
-            case A:
-                return controlAltA();
-
-            case D:
-                return controlAltD();
-
-            case Z:
-                return controlAltZ();
-
-            case Y:
-                return controlAltY();
-
-            case O:
-                return controlAltO();
-
-            case X:
-                return controlAltX();
-
-            case R:
-                return controlAltR();
-
-            case S:
-                return controlAltS();
-
-            case F:
-                return controlAltF();
-
-            case H:
-                return controlAltH();
-
-            case T:
-                return controlAltT();
-
-            case G:
-                return controlAltG();
-
-            case B:
-                return controlAltB();
-
-            case I:
-                return controlAltI();
-
-            case P:
-                return controlAltP();
-
-            case W:
-                return controlAltW();
-
-            case M:
-                return controlAltM();
-
-            case J:
-                return controlAltJ();
-
-            case Q:
-                return controlAltQ();
-
-            case K:
-                return controlAltK();
-
-            case U:
-                return controlAltU();
-
-            case L:
-                return controlAltL();
-
-            case MINUS:
-                setSceneFontSize(AppVariables.sceneFontSize - 1);
-                return true;
-
-            case EQUALS:
-                setSceneFontSize(AppVariables.sceneFontSize + 1);
-                return true;
-
-            case DIGIT0:
-                return controlAlt0();
-
-            case DIGIT1:
-                return controlAlt1();
-
-            case DIGIT2:
-                return controlAlt2();
-
-            case DIGIT3:
-                return controlAlt3();
-
-            case DIGIT4:
-                return controlAlt4();
-
-            case DIGIT5:
-                return controlAlt5();
-
-            case DIGIT6:
-                return controlAlt6();
-
-            case DIGIT7:
-                return controlAlt7();
-
-            case DIGIT8:
-                return controlAlt8();
-
-            case DIGIT9:
-                return controlAlt9();
-
         }
         return false;
     }
@@ -611,80 +690,6 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
         return false;
     }
 
-    public boolean keyFilter(KeyEvent event) {
-        keyEvent = event;
-        KeyCode code = event.getCode();
-        if (code == null) {
-            return false;
-        }
-        switch (code) {
-            case ENTER:
-                return keyEnter();
-
-            case DELETE:
-                return keyDelete();
-
-            case HOME:
-                return keyHome();
-
-            case END:
-                return keyEnd();
-
-            case PAGE_UP:
-                return keyPageUp();
-
-            case PAGE_DOWN:
-                return keyPageDown();
-
-            case F1:
-                return keyF1();
-
-            case F2:
-                return keyF2();
-
-            case F3:
-                return keyF3();
-
-            case F4:
-                return keyF4();
-
-            case F5:
-                return keyF5();
-
-            case F6:
-                return keyF6();
-
-            case F7:
-                return keyF7();
-
-            case F8:
-                return keyF8();
-
-            case F9:
-                return keyF9();
-
-            case F10:
-                return keyF10();
-
-            case F11:
-                return keyF11();
-
-            case F12:
-                return keyF12();
-
-            case ESCAPE:
-                return keyESC();
-
-        }
-        if (AppVariables.ShortcutsCanNotOmitCtrlAlt || isPopup() || targetIsTextInput()) {
-            return false;
-        }
-        if (code == KeyCode.S || code == KeyCode.D || code == KeyCode.L) {  // to avoid accidents
-            return false;
-        }
-        return controlAltFilter(event);
-    }
-
     public boolean keyEnter() {
         return false;
     }
@@ -746,8 +751,11 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
     }
 
     public boolean keyF7() {
-        operationsAction();
-        return true;
+        if (operationsButton != null && !operationsButton.isDisabled() && operationsButton.isVisible()) {
+            operationsAction();
+            return true;
+        }
+        return false;
     }
 
     public boolean keyF8() {

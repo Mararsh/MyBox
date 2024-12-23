@@ -56,8 +56,8 @@ public class ControlData2DColumnEdit extends BaseChildController {
     @FXML
     protected RadioButton stringRadio, doubleRadio, floatRadio, longRadio, intRadio, shortRadio, booleanRadio,
             datetimeRadio, dateRadio, eraRadio, longitudeRadio, latitudeRadio, enumRadio, enumEditableRadio,
-            colorRadio, clobRadio, skipNonnumericRadio, zeroNonnumericRadio, emptyNonnumericRadio,
-            nullNonnumericRadio, keepNonnumericRadio;
+            colorRadio, clobRadio, skipInvalidRadio, zeroInvalidRadio, emptyInvalidRadio,
+            nullInvalidRadio, useInvalidRadio;
     @FXML
     protected CheckBox notNullCheck, editableCheck, fixYearCheck;
     @FXML
@@ -101,6 +101,8 @@ public class ControlData2DColumnEdit extends BaseChildController {
             });
 
             centuryPane.disableProperty().bind(fixYearCheck.selectedProperty().not());
+
+            columnIndex = -1;
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
@@ -137,7 +139,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
             defaultInput.clear();
             formatInput.clear();
             fixYearCheck.setSelected(false);
-            keepNonnumericRadio.setSelected(true);
+            useInvalidRadio.setSelected(true);
 
             if (enumRadio.isSelected() || enumEditableRadio.isSelected()) {
                 optionsBox.getChildren().add(enumBox);
@@ -158,7 +160,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
                     || longRadio.isSelected() || intRadio.isSelected() || shortRadio.isSelected()) {
                 optionsBox.getChildren().add(formatBox);
                 formatInput.setText(message("GroupInThousands"));
-                zeroNonnumericRadio.setSelected(true);
+                zeroInvalidRadio.setSelected(true);
 
             }
 
@@ -184,8 +186,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
                 columnIndex = index;
                 loadColumn(column);
             } else {
-                columnIndex = -1;
-                loadColumn(new Data2DColumn());
+                loadNull();
             }
             if (columnsController.data2D != null && columnsController.data2D.isMatrix()) {
                 typesPane.setDisable(true);
@@ -196,10 +197,15 @@ public class ControlData2DColumnEdit extends BaseChildController {
         }
     }
 
+    public void loadNull() {
+        loadColumn(null);
+    }
+
     public void loadColumn(Data2DColumn column) {
         try {
             if (column == null) {
-                return;
+                columnIndex = -1;
+                column = new Data2DColumn();
             }
             isSettingValues = true;
             switch (column.getType()) {
@@ -290,28 +296,29 @@ public class ControlData2DColumnEdit extends BaseChildController {
             InvalidAs invalidAs = column.getInvalidAs();
 
             if (null == invalidAs) {
-                keepNonnumericRadio.setSelected(true);
+                useInvalidRadio.setSelected(true);
             } else {
                 switch (invalidAs) {
                     case Skip:
-                        skipNonnumericRadio.setSelected(true);
+                        skipInvalidRadio.setSelected(true);
                         break;
                     case Empty:
-                        emptyNonnumericRadio.setSelected(true);
+                        emptyInvalidRadio.setSelected(true);
                         break;
                     case Zero:
-                        zeroNonnumericRadio.setSelected(true);
+                        zeroInvalidRadio.setSelected(true);
                         break;
                     case Null:
-                        nullNonnumericRadio.setSelected(true);
+                        nullInvalidRadio.setSelected(true);
                         break;
                     default:
-                        keepNonnumericRadio.setSelected(true);
+                        useInvalidRadio.setSelected(true);
                         break;
                 }
             }
 
-            boolean canNotChange = columnsController.data2D != null
+            boolean canNotChange = columnsController != null
+                    && columnsController.data2D != null
                     && columnsController.data2D.isTable()
                     && columnsController.data2D.getSheet() != null
                     && columnIndex >= 0;
@@ -331,20 +338,25 @@ public class ControlData2DColumnEdit extends BaseChildController {
     public Data2DColumn pickValues() {
         try {
             String name = nameInput.getText();
-            if (columnsController.data2D != null && columnsController.data2D.isTable()) {
+            if (columnsController != null
+                    && columnsController.data2D != null
+                    && columnsController.data2D.isTable()) {
                 name = DerbyBase.fixedIdentifier(name);
             }
             if (name == null || name.isBlank()) {
                 popError(message("InvalidParameter") + ": " + message("Name"));
                 return null;
             }
-            for (int i = 0; i < columnsController.tableData.size(); i++) {
-                Data2DColumn col = columnsController.tableData.get(i);
-                if (i != columnIndex && name.equalsIgnoreCase(col.getColumnName())) {
-                    popError(message("AlreadyExisted"));
-                    return null;
+            if (columnsController != null) {
+                for (int i = 0; i < columnsController.tableData.size(); i++) {
+                    Data2DColumn col = columnsController.tableData.get(i);
+                    if (i != columnIndex && name.equalsIgnoreCase(col.getColumnName())) {
+                        popError(message("AlreadyExisted"));
+                        return null;
+                    }
                 }
             }
+
             int length;
             if (clobRadio.isSelected()) {
                 length = Integer.MAX_VALUE;
@@ -390,21 +402,21 @@ public class ControlData2DColumnEdit extends BaseChildController {
                 return null;
             }
             InvalidAs invalidAs;
-            if (skipNonnumericRadio.isSelected()) {
+            if (skipInvalidRadio.isSelected()) {
                 invalidAs = InvalidAs.Skip;
-            } else if (emptyNonnumericRadio.isSelected()) {
+            } else if (emptyInvalidRadio.isSelected()) {
                 invalidAs = InvalidAs.Empty;
-            } else if (zeroNonnumericRadio.isSelected()) {
+            } else if (zeroInvalidRadio.isSelected()) {
                 invalidAs = InvalidAs.Zero;
-            } else if (nullNonnumericRadio.isSelected()) {
+            } else if (nullInvalidRadio.isSelected()) {
                 invalidAs = InvalidAs.Null;
-            } else if (keepNonnumericRadio.isSelected()) {
-                invalidAs = InvalidAs.Keep;
+            } else if (useInvalidRadio.isSelected()) {
+                invalidAs = InvalidAs.Use;
             } else {
                 invalidAs = DefaultInvalidAs;
             }
             Data2DColumn column;
-            if (columnIndex >= 0) {
+            if (columnsController != null && columnIndex >= 0) {
                 column = columnsController.tableData.get(columnIndex);
             } else {
                 column = new Data2DColumn();
@@ -423,7 +435,8 @@ public class ControlData2DColumnEdit extends BaseChildController {
             if (message("None").equals(format)) {
                 format = null;
             }
-            if (columnsController.data2D != null && columnsController.data2D.isMatrix()) {
+            if (columnsController != null
+                    && columnsController.data2D != null && columnsController.data2D.isMatrix()) {
                 column.setType(ColumnType.Double).setFormat(format);
             } else if (stringRadio.isSelected()) {
                 column.setType(ColumnType.String).setFormat(null);

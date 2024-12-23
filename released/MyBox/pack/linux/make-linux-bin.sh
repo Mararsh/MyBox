@@ -2,6 +2,8 @@
 # In terminal window, enter path "MyBox/pack/linux", and run this script.
 export JAVA_HOME="/usr/java/jdk-21"
 
+cp pom.xml ../../
+
 rm -rf app/*
 rm -rf jar/*
 mkdir  app
@@ -11,9 +13,9 @@ mvn clean
 mvn -P linux package
 cd pack/linux
 mv ../../target/MyBox.jar  jar/   &&  \
-$JAVA_HOME/bin/jpackage  --type  app-image --vendor Mara  --verbose  --runtime-image $JAVA_HOME  --dest app --name  MyBox  --input jar --main-jar  MyBox.jar  --icon res/MyBox.png 
+$JAVA_HOME/bin/jpackage  --type  app-image --vendor Mara  --verbose  --runtime-image $JAVA_HOME  --dest app --name  MyBox  --input jar --main-jar  MyBox.jar  --icon res/MyBox.png
 mv jar/MyBox.jar  .
-gzip MyBox.jar 
+gzip MyBox.jar
 mv MyBox.jar.gz  MyBox-linux.jar.gz
 cd  app
 tar cfz  MyBox-CentOS7-x64.tar.gz  MyBox

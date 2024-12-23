@@ -18,6 +18,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import mara.mybox.data2d.DataFileCSV;
+import mara.mybox.data2d.DataInternalTable;
 import mara.mybox.data2d.tools.Data2DExampleTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FloatTools;
@@ -290,12 +291,12 @@ public abstract class MainMenuController_Development extends MainMenuController_
 
     @FXML
     protected void MyBoxTables(ActionEvent event) {
-        loadScene(Fxmls.MyBoxTablesFxml);
+        openScene(Fxmls.MyBoxTablesFxml);
     }
 
     @FXML
     protected void runSystemCommand(ActionEvent event) {
-        loadScene(Fxmls.RunSystemCommandFxml);
+        openScene(Fxmls.RunSystemCommandFxml);
     }
 
     @FXML
@@ -313,36 +314,45 @@ public abstract class MainMenuController_Development extends MainMenuController_
 
     @FXML
     protected void openTTC2TTF(ActionEvent event) {
-        loadScene(Fxmls.FileTTC2TTFFxml);
+        openScene(Fxmls.FileTTC2TTFFxml);
     }
 
     // This is for developement to generate Icons automatically in different color style
     @FXML
     public void makeIcons() {
-        loadScene(Fxmls.MyBoxIconsFxml);
+        openScene(Fxmls.MyBoxIconsFxml);
     }
 
     @FXML
     public void makeDocuments() {
-        ShortcutsController.documents();
-        FunctionsListController.documents();
+        MyBoxDocumentsController.open();
     }
 
     @FXML
     public void autoTesting() {
-        loadScene(Fxmls.AutoTestingCasesFxml);
+        openScene(Fxmls.AutoTestingCasesFxml);
+    }
+
+    @FXML
+    public void allTableNames() {
+        TextPopController.loadText(DataInternalTable.allTableNames());
     }
 
     @FXML
     public void myBoxBaseVerificationList() {
         DataFileCSV data = Data2DExampleTools.MyBoxBaseVerificationList(
-                parentController, Languages.isChinese());
+                parentController, Languages.getLangName(), false);
         Data2DManufactureController.openDef(data);
     }
 
     @FXML
     protected void messageAuthor(ActionEvent event) {
         openStage(Fxmls.MessageAuthorFxml);
+    }
+
+    @FXML
+    protected void DevTmp(ActionEvent event) {
+        DevTmpController.open();
     }
 
 }

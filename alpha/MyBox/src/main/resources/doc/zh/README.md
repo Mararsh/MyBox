@@ -23,7 +23,7 @@
          - “赋值”：在写数据前检查新值的合法性，并提示有用的信息；对非法值提供处理选项。                   
      - 功能主界面改为滚动面板。                                                                                                            
      - 强化“生成文档”。                                    
-* 升级至：JDK 23 + javaFX 24。（Linux平台javaFX 23/24编译错误，仍为JavaFX 21）                  
+* 升级至：JDK 23 + javaFX 24。                  
 * 移除：读取PDF文件所用的内存参数。                                                                                                     
 * 解决问题：                                     
      - 对数据库表的所有数据执行“赋值”和“按条件删除”会失败。                                 
@@ -65,10 +65,12 @@ MyBox未经足够测试，可靠性低、稳定性差。使用MyBox，可能出�
 ## Jar包
 在已安装JRE或者JDK [Oracle jdk](https://www.oracle.com/technetwork/java/javase/downloads/index.html)或[open jdk](http://jdk.java.net/)均可）的环境下，可以下载jar包。       
 
+注意：由于编译错误，Linux平台仍为Java21 + JavaFX 21。                
+
 | 平台 | 链接 | 大小 | 运行需要 |
 | --- | --- | --- |  --- |
 | win | [MyBox-win-jar.zip](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-win-jar.zip)  | 240MB- | Java 23或更高版本 |
-| linux | [MyBox-linux.jar.gz](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-linux.jar.gz)  | 240MB-  | Java 23或更高版本 |
+| linux | [MyBox-linux.jar.gz](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-linux.jar.gz)  | 240MB-  | Java 21 |
 | mac | [MyBox-mac.jar.gz](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-mac.jar.gz)  |  240MB-  | Java 23或更高版本 |
 
 执行以下命令来启动程序：       

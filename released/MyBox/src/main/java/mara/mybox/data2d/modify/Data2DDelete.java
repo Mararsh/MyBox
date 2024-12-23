@@ -29,9 +29,9 @@ public class Data2DDelete extends Data2DModify {
             sourceRow = row;
             sourceRowIndex = index;
             targetRow = null;
-            passFilter = sourceData.filterDataRow(sourceRow, sourceRowIndex);
-            reachMax = sourceData.filterReachMaxPassed();
-            deleteRow(passFilter && !reachMax);
+            rowPassFilter = sourceData.filterDataRow(sourceRow, sourceRowIndex);
+            reachMaxFiltered = sourceData.filterReachMaxPassed();
+            deleteRow(rowPassFilter && !reachMaxFiltered);
         } catch (Exception e) {
             MyBoxLog.console(e);
         }

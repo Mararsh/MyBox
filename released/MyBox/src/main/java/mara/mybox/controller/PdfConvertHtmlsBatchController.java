@@ -16,8 +16,8 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.FileNameTools;
-import mara.mybox.value.AppVariables;
 import mara.mybox.value.Languages;
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.fit.pdfdom.PDFDomTree;
 import org.fit.pdfdom.PDFDomTreeConfig;
@@ -121,8 +121,8 @@ public class PdfConvertHtmlsBatchController extends BaseBatchPdfController {
                 actualParameters.currentPage = actualParameters.fromPage;
             }
 
-            try (PDDocument pd = PDDocument.load(currentParameters.currentSourceFile,
-                    currentParameters.password, AppVariables.PdfMemUsage)) {
+            try (PDDocument pd = Loader.loadPDF(currentParameters.currentSourceFile,
+                    currentParameters.password)) {
                 doc = pd;
 
                 if (currentParameters.toPage <= 0 || currentParameters.toPage > doc.getNumberOfPages()) {

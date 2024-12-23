@@ -20,6 +20,7 @@ import mara.mybox.data.DoubleShape;
 import mara.mybox.data.ImageItem;
 import mara.mybox.data.IntPoint;
 import mara.mybox.data.StringTable;
+import mara.mybox.db.data.DataNode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fximage.ScopeTools;
@@ -289,6 +290,35 @@ public class ImageScopeTools {
     /*
        make scope from
      */
+    public static ImageScope fromDataNode(FxTask task, BaseController controller, DataNode node) {
+        try {
+            if (node == null) {
+                return null;
+            }
+            ImageScope scope = new ImageScope();
+            scope.setName(node.getTitle());
+            scope.setScopeType(ImageScopeTools.scopeType(node.getStringValue("scope_type")));
+            scope.setColorScopeType(ImageScope.ColorScopeType.valueOf(node.getStringValue("color_type")));
+            scope.setAreaData(node.getStringValue("area_data"));
+            scope.setColorData(node.getStringValue("color_data"));
+            scope.setColorDistance(node.getIntValue("color_data"));
+            scope.setAreaExcluded(node.getBooleanValue("area_excluded"));
+            scope.setColorExcluded(node.getBooleanValue("color_excluded"));
+            scope.setFile(node.getStringValue("background_file"));
+            scope.setOutlineName(node.getStringValue("outline_file"));
+            if (task != null && !task.isWorking()) {
+                return null;
+            }
+            decodeColorData(scope);
+            decodeAreaData(scope);
+            decodeOutline(task, scope);
+            return scope;
+        } catch (Exception e) {
+//            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
     public static ImageScope fromXML(FxTask task, BaseController controller, String s) {
         try {
             if (s == null || s.isBlank()) {
@@ -380,6 +410,35 @@ public class ImageScopeTools {
     /*
        convert scope to
      */
+    public static DataNode toDataNode(DataNode inNode, ImageScope scope) {
+        try {
+            if (scope == null) {
+                return null;
+            }
+            ScopeType type = scope.getScopeType();
+            if (type == null) {
+                return null;
+            }
+            DataNode node = inNode;
+            if (node == null) {
+                node = DataNode.create();
+            }
+            node.setValue("scope_type", type.name());
+            node.setValue("color_type", scope.getColorScopeType().name());
+            node.setValue("area_data", ImageScopeTools.encodeAreaData(scope));
+            node.setValue("area_excluded", scope.isAreaExcluded());
+            node.setValue("color_data", ImageScopeTools.encodeColorData(scope));
+            node.setValue("color_excluded", scope.isColorExcluded());
+            node.setValue("color_distance", scope.getColorDistance());
+            node.setValue("background_file", scope.getFile());
+            node.setValue("outline_file", ImageScopeTools.encodeOutline(null, scope));
+            return node;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
     public static String toXML(ImageScope scope, String inPrefix) {
         try {
             if (scope == null || scope.getScopeType() == null) {

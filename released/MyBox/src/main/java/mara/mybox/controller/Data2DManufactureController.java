@@ -54,7 +54,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
     @FXML
     protected FlowPane opsPane;
     @FXML
-    protected Button dataDefinitionButton, operationButton, dataMenuButton,
+    protected Button dataDefinitionButton, dataMenuButton,
             verifyButton, chartsButton, calculateButton, trimDataButton;
 
     public Data2DManufactureController() {
@@ -368,7 +368,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
         if (!isDataChanged()) {
             goOn = true;
         } else {
-            if (data2D != null && data2D.isTmpFile()) {
+            if (data2D != null && data2D.isDataFile() && data2D.isTmpFile()) {
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                 alert.setTitle(getTitle());
                 alert.setHeaderText(getTitle());
@@ -433,7 +433,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
 
     @Override
     public boolean leavingScene() {
-        if (data2D != null && data2D.isTmpFile()
+        if (data2D != null && data2D.isDataFile() && data2D.isTmpFile()
                 && !isDataChanged()
                 && !askedTmp
                 && UserConfig.getBoolean("Data2DPromptTemporaryWhenClose", true)) {
@@ -694,7 +694,11 @@ public class Data2DManufactureController extends BaseData2DViewController {
             popError(message("InvalidData"));
             return;
         }
-        Data2DAttributesController.open(this);
+        if (data2D.isInternalTable()) {
+            infoAction();
+        } else {
+            Data2DAttributesController.open(this);
+        }
     }
 
     @FXML
@@ -904,7 +908,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
     }
 
     public boolean verifyData() {
-        if (!data2D.validateSave()) {
+        if (!data2D.rejectInvalidWhenSave()) {
             return true;
         }
         StringTable results = verifyTableData();
@@ -915,21 +919,22 @@ public class Data2DManufactureController extends BaseData2DViewController {
             return true;
         }
         results.htmlTable();
+        return false;
 
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle(getMyStage().getTitle());
-        alert.setHeaderText(getMyStage().getTitle());
-        alert.setContentText(message("IgnoreInvalidAndSave"));
-        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-        ButtonType buttonSave = new ButtonType(message("Save"));
-        ButtonType buttonCancel = new ButtonType(message("Cancel"));
-        alert.getButtonTypes().setAll(buttonSave, buttonCancel);
-        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-        stage.setAlwaysOnTop(true);
-        stage.toFront();
-
-        Optional<ButtonType> result = alert.showAndWait();
-        return result != null && result.isPresent() && result.get() == buttonSave;
+//        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+//        alert.setTitle(getMyStage().getTitle());
+//        alert.setHeaderText(getMyStage().getTitle());
+//        alert.setContentText(message("IgnoreInvalidAndSave"));
+//        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+//        ButtonType buttonSave = new ButtonType(message("Save"));
+//        ButtonType buttonCancel = new ButtonType(message("Cancel"));
+//        alert.getButtonTypes().setAll(buttonSave, buttonCancel);
+//        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+//        stage.setAlwaysOnTop(true);
+//        stage.toFront();
+//
+//        Optional<ButtonType> result = alert.showAndWait();
+//        return result != null && result.isPresent() && result.get() == buttonSave;
     }
 
     @FXML
@@ -1039,6 +1044,10 @@ public class Data2DManufactureController extends BaseData2DViewController {
             MyBoxLog.error(e);
             return null;
         }
+    }
+
+    public static Data2DManufactureController openCSVFile(File file) {
+        return openCSVFile(file, Charset.forName("UTF-8"), true, ",");
     }
 
     public static Data2DManufactureController openExcelFile(File file, String sheet, boolean withNames) {

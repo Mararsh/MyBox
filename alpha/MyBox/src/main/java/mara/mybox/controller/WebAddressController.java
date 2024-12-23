@@ -105,6 +105,8 @@ public class WebAddressController extends BaseWebViewController {
             @Override
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
+                    conn.setAutoCommit(false);
+
                     TableStringValues.add(conn, "WebAddressHistories", address);
 
                     WebHistory his = new WebHistory();
@@ -136,6 +138,7 @@ public class WebAddressController extends BaseWebViewController {
                         failedAddress.add(address);
                     }
                     tableWebHistory.insertData(conn, his);
+                    conn.commit();
                     return true;
                 } catch (Exception e) {
                     error = e.toString();

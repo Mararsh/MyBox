@@ -1,0 +1,100 @@
+<HTML>
+    <HEAD>
+        <title>图像的范围</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <style type="text/css">
+                          table { max-width:95%; margin : 10px;  border-style: solid; border-width:2px; border-collapse: collapse;} 
+              th, td { border-style: solid; border-width:1px; padding: 8px; border-collapse: collapse;} 
+              th { font-weight:bold;  text-align:center;} 
+              tr { height: 1.2em;  } 
+              .center { text-align:center;  max-width:95%; } 
+              .valueBox { border-style: solid; border-width:1px; border-color:black; padding: 5px; border-radius:5px;} 
+              .boldText { font-weight:bold;  } 
+ body { margin:0 auto; width: 900px; } 
+              img { max-width: 900px; } 
+              .valueText { color:#2e598a;  } 
+
+        </style>
+    </HEAD>
+    <BODY>
+        <H2>图像的范围</H2>
+ <script>
+    function nodeClicked(id) {
+      var obj = document.getElementById(id);
+      var objv = obj.style.display;
+      if (objv == 'none') {
+        obj.style.display = 'block';
+      } else {
+        obj.style.display = 'none';
+      }
+    }
+    function showClass(className, show) {
+      var nodes = document.getElementsByClassName(className);  　
+      if ( show) {
+           for (var i = 0 ; i < nodes.length; i++) {
+              nodes[i].style.display = '';
+           }
+       } else {
+           for (var i = 0 ; i < nodes.length; i++) {
+              nodes[i].style.display = 'none';
+           }
+       }
+    }
+  </script>
+
+<DIV>
+<DIV>
+    <INPUT type="checkbox" checked onclick="showClass('TreeNode', this.checked);">展开</INPUT>
+    <INPUT type="checkbox" checked onclick="showClass('SerialNumber', this.checked);">层次号</INPUT>
+    <INPUT type="checkbox" checked onclick="showClass('NodeTag', this.checked);">标签</INPUT>
+    <INPUT type="checkbox" checked onclick="showClass('nodeValue', this.checked);">值</INPUT>
+</DIV>
+<HR>
+    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item1')"><SPAN class="SerialNumber">&nbsp;&nbsp;</SPAN>图像的范围</a>
+    </DIV>
+    <DIV class="TreeNode" id='item1'>
+        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1&nbsp;&nbsp;</SPAN>aa
+        </DIV>
+        <DIV class="nodeValue"><DIV style="padding: 0 0 0 72px;"><DIV class="valueBox">
+        <P align="center"><Img src='file:/D:/tmp/mybox_data_v6.8.1/AppTemp/2024-12-22_16-00-38-638_21.png' width=500></P><BR>        <DIV align="center">
+            <TABLE>
+                <TR><TD>范围类型</TD><TD>Circle</TD></TR>
+                <TR><TD>背景</TD><TD><PRE><CODE>D:\tmp\mybox_data_v6.8.1\image\Example.png</CODE></PRE></TD></TR>
+                <TR><TD>名字</TD><TD><PRE><CODE>aa</CODE></PRE></TD></TR>
+                <TR><TD>ScopeColorType</TD><TD>AllColor</TD></TR>
+                <TR><TD>区域</TD><TD>450,450,225</TD></TR>
+                <TR><TD>色彩距离</TD><TD>2147483647</TD></TR>
+                <TR><TD>AreaExcluded</TD><TD></TD></TR>
+                <TR><TD>ColorExcluded</TD><TD></TD></TR>
+                <TR><TD>创建时间</TD><TD></TD></TR>
+                <TR><TD>修改时间</TD><TD></TD></TR>
+            </TABLE>
+        </DIV>
+
+        </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item2'>
+    </DIV>
+        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">2&nbsp;&nbsp;</SPAN>asa
+        </DIV>
+        <DIV class="nodeValue"><DIV style="padding: 0 0 0 72px;"><DIV class="valueBox">
+        <P align="center"><Img src='file:/D:/tmp/mybox_data_v6.8.1/AppTemp/2024-12-22_16-00-39-113_95.png' width=500></P><BR>        <DIV align="center">
+            <TABLE>
+                <TR><TD>范围类型</TD><TD>Ellipse</TD></TR>
+                <TR><TD>背景</TD><TD><PRE><CODE>D:\tmp\mybox_data_v6.8.1\image\Example.png</CODE></PRE></TD></TR>
+                <TR><TD>名字</TD><TD><PRE><CODE>asa</CODE></PRE></TD></TR>
+                <TR><TD>ScopeColorType</TD><TD>AllColor</TD></TR>
+                <TR><TD>区域</TD><TD>225,225,675,675</TD></TR>
+                <TR><TD>色彩距离</TD><TD>2147483647</TD></TR>
+                <TR><TD>AreaExcluded</TD><TD></TD></TR>
+                <TR><TD>ColorExcluded</TD><TD></TD></TR>
+                <TR><TD>创建时间</TD><TD></TD></TR>
+                <TR><TD>修改时间</TD><TD></TD></TR>
+            </TABLE>
+        </DIV>
+
+        </DIV></DIV></DIV>
+    <DIV class="TreeNode" id='item3'>
+    </DIV>
+    </DIV>
+    </BODY>
+</HTML>

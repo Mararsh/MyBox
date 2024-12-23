@@ -54,7 +54,7 @@ public class Data2DFrequencyController extends BaseData2DTaskTargetsController {
             }
             handledNames = new ArrayList<>();
             outputColumns = new ArrayList<>();
-            outputColumns.add(freColumn.cloneAll());
+            outputColumns.add(freColumn.copy());
             handledNames.add(freName);
 
             String cName = DerbyBase.checkIdentifier(handledNames, freName + "_" + message("Count"), true);
@@ -79,7 +79,9 @@ public class Data2DFrequencyController extends BaseData2DTaskTargetsController {
             outputData = new ArrayList<>();
             List<Integer> filteredRowsIndices = sourceController.filteredRowsIndices;
             if (filteredRowsIndices == null || filteredRowsIndices.isEmpty()) {
-                setError(message("NoData"));
+                if (task != null) {
+                    task.setError(message("NoData"));
+                }
                 return false;
             }
             for (int r : filteredRowsIndices) {
@@ -101,7 +103,9 @@ public class Data2DFrequencyController extends BaseData2DTaskTargetsController {
             frequency.clear();
             return true;
         } catch (Exception e) {
-            setError(e.toString());
+            if (task != null) {
+                task.setError(e.toString());
+            }
             return false;
         }
     }

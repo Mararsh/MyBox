@@ -4,25 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import mara.mybox.data.SetValue;
-import static mara.mybox.data.SetValue.ValueType.Empty;
-import static mara.mybox.data.SetValue.ValueType.Expression;
-import static mara.mybox.data.SetValue.ValueType.Null;
-import static mara.mybox.data.SetValue.ValueType.NumberPrefix;
-import static mara.mybox.data.SetValue.ValueType.NumberPrefixString;
-import static mara.mybox.data.SetValue.ValueType.NumberReplace;
-import static mara.mybox.data.SetValue.ValueType.NumberSuffix;
-import static mara.mybox.data.SetValue.ValueType.NumberSuffixString;
-import static mara.mybox.data.SetValue.ValueType.One;
-import static mara.mybox.data.SetValue.ValueType.Prefix;
-import static mara.mybox.data.SetValue.ValueType.Random;
-import static mara.mybox.data.SetValue.ValueType.RandomNonNegative;
-import static mara.mybox.data.SetValue.ValueType.Scale;
-import static mara.mybox.data.SetValue.ValueType.Suffix;
-import static mara.mybox.data.SetValue.ValueType.Zero;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.data2d.operate.Data2DOperate;
 import mara.mybox.data2d.writer.Data2DWriter;
-import mara.mybox.tools.StringTools;
+import mara.mybox.db.data.ColumnDefinition.InvalidAs;
+import mara.mybox.db.data.Data2DColumn;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -34,10 +21,16 @@ public abstract class Data2DModify extends Data2DOperate {
     protected Data2DWriter writer;
     protected long rowsNumber;
 
-    protected int dataIndex, digit;
+    protected int setValueIndex, setValueDigit;
     protected SetValue setValue;
-    protected String dataValue;
+    protected String setValueParameter;
     protected Random random = new Random();
+    protected boolean valueInvalid, validateColumn, rejectInvalid, skipInvalid;
+
+    protected Data2DColumn column;
+    protected String columnName, currentValue, newValue;
+    protected boolean rowChanged, handleRow;
+    protected int rowSize;
 
     public void initWriter() {
         writer = sourceData.selfWriter();
@@ -49,9 +42,9 @@ public abstract class Data2DModify extends Data2DOperate {
             return false;
         }
         setValue = v;
-        digit = setValue.countFinalDigit(sourceData.getRowsNumber());
-        dataIndex = setValue.getStart();
-        dataValue = setValue.getValue();
+        setValueDigit = setValue.countFinalDigit(sourceData.getRowsNumber());
+        setValueIndex = setValue.getStart();
+        setValueParameter = setValue.getParameter();
         random = new Random();
         return true;
     }
@@ -59,6 +52,12 @@ public abstract class Data2DModify extends Data2DOperate {
     @Override
     public boolean checkParameters() {
         rowsNumber = 0;
+
+        valueInvalid = false;
+        rejectInvalid = sourceData.rejectInvalidWhenSave() || invalidAs == InvalidAs.Fail;
+        skipInvalid = invalidAs == InvalidAs.Skip;
+        validateColumn = rejectInvalid || skipInvalid;
+
         return super.checkParameters();
     }
 
@@ -70,84 +69,54 @@ public abstract class Data2DModify extends Data2DOperate {
             if (sourceRow == null) {
                 return;
             }
-            passFilter = sourceData.filterDataRow(sourceRow, sourceRowIndex);
-            reachMax = sourceData.filterReachMaxPassed();
-            boolean handle = passFilter && !reachMax;
-            SetValue.ValueType valueType = setValue.getType();
-            String expResult = null, currentValue;
-            if (handle) {
-                if (valueType == SetValue.ValueType.Expression && dataValue != null) {
-                    if (sourceData.calculateDataRowExpression(dataValue, sourceRow, sourceRowIndex)) {
-                        expResult = sourceData.expressionResult();
-                    } else {
-                        failStop(sourceData.expressionError());
-                        return;
-                    }
-                }
-            }
-            if (!handle && (sourceData instanceof DataTable)) {
+            rowPassFilter = sourceData.filterDataRow(sourceRow, sourceRowIndex);
+            reachMaxFiltered = sourceData.filterReachMaxPassed();
+            handleRow = rowPassFilter && !reachMaxFiltered;
+            if (!handleRow && (sourceData instanceof DataTable)) {
                 return;
             }
             targetRow = new ArrayList<>();
-            int rowSize = sourceRow.size();
+            rowSize = sourceRow.size();
+            rowChanged = false;
             for (int i = 0; i < sourceData.columns.size(); i++) {
                 if (i < rowSize) {
                     currentValue = sourceRow.get(i);
                 } else {
                     currentValue = null;
                 }
-                String v;
-                if (handle && cols.contains(i)) {
-                    switch (valueType) {
-                        case Zero ->
-                            v = "0";
-                        case One ->
-                            v = "1";
-                        case Empty ->
-                            v = "";
-                        case Null ->
-                            v = null;
-                        case Random ->
-                            v = sourceData.random(random, i, false);
-                        case RandomNonNegative ->
-                            v = sourceData.random(random, i, true);
-                        case Scale ->
-                            v = setValue.scale(currentValue);
-                        case Prefix ->
-                            v = currentValue == null ? dataValue : dataValue + currentValue;
-                        case Suffix ->
-                            v = currentValue == null ? dataValue : currentValue + dataValue;
-                        case NumberSuffix -> {
-                            String suffix = StringTools.fillLeftZero(dataIndex++, digit);
-                            v = currentValue == null ? suffix : currentValue + suffix;
+                if (handleRow && cols.contains(i)) {
+                    column = sourceData.columns.get(i);
+                    newValue = setValue.makeValue(sourceData, column,
+                            currentValue, sourceRow, sourceRowIndex,
+                            setValueIndex, setValueDigit, random);
+                    valueInvalid = setValue.valueInvalid;
+                    if (!valueInvalid && validateColumn) {
+                        if (!column.validValue(newValue)) {
+                            valueInvalid = true;
                         }
-                        case NumberPrefix -> {
-                            String prefix = StringTools.fillLeftZero(dataIndex++, digit);
-                            v = currentValue == null ? prefix : prefix + currentValue;
-                        }
-                        case NumberReplace -> {
-                            v = StringTools.fillLeftZero(dataIndex++, digit);
-                        }
-                        case NumberSuffixString -> {
-                            String suffix = StringTools.fillLeftZero(dataIndex++, digit);
-                            v = dataValue;
-                            v = v == null ? suffix : v + suffix;
-                        }
-                        case NumberPrefixString -> {
-                            String prefix = StringTools.fillLeftZero(dataIndex++, digit);
-                            v = dataValue;
-                            v = v == null ? prefix : prefix + v;
-                        }
-                        case Expression ->
-                            v = expResult;
-                        default ->
-                            v = dataValue;
                     }
-                    handledCount++;
+                    if (valueInvalid) {
+                        if (skipInvalid) {
+                            newValue = currentValue;
+                        } else if (rejectInvalid) {
+                            failStop(message("InvalidData") + ". "
+                                    + message("Column") + ":" + column.getColumnName() + "  "
+                                    + message("Value") + ": " + newValue);
+                            return;
+                        }
+                    }
+                    if ((currentValue == null && newValue != null)
+                            || (currentValue != null && !currentValue.equals(newValue))) {
+                        rowChanged = true;
+                    }
                 } else {
-                    v = currentValue;
+                    newValue = currentValue;
                 }
-                targetRow.add(v);
+                targetRow.add(newValue);
+            }
+            if (rowChanged) {
+                handledCount++;
+                setValueIndex++;
             }
             writeRow();
         } catch (Exception e) {

@@ -22,6 +22,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import mara.mybox.data.FileNode;
+import mara.mybox.data.RemoteFile;
 import mara.mybox.db.data.PathConnection;
 import mara.mybox.db.table.TablePathConnection;
 import mara.mybox.dev.MyBoxLog;
@@ -375,11 +376,9 @@ public class ControlRemoteConnection extends BaseSysTableController<PathConnecti
     }
 
     public FileNode FileNode(FileNode parent, String nodename) {
-        return new FileNode()
+        return new RemoteFile(stat(nodename))
                 .setNodename(nodename)
-                .setParentFile(parent)
-                .setIsRemote(true)
-                .attrs(stat(nodename));
+                .setParentFile(parent);
     }
 
     public List<FileNode> children(FxTask currentTask, FileNode targetNode) {
@@ -398,11 +397,9 @@ public class ControlRemoteConnection extends BaseSysTableController<PathConnecti
                 if (name == null || name.isBlank() || ".".equals(name) || "..".equals(name)) {
                     continue;
                 }
-                FileNode fileInfo = new FileNode()
+                FileNode fileInfo = new RemoteFile(entry.getAttrs())
                         .setNodename(name)
-                        .setParentFile(targetNode)
-                        .setIsRemote(true)
-                        .attrs(entry.getAttrs());
+                        .setParentFile(targetNode);
                 children.add(fileInfo);
             }
         } catch (Exception e) {
@@ -648,7 +645,7 @@ public class ControlRemoteConnection extends BaseSysTableController<PathConnecti
                 if (attrs == null) {
                     showLogs("mkdirs " + path);
                     sftp.mkdir(path);
-//                    setStat(path, -1, permission);   // seems can not change mtime of directory 
+//                    setStat(path, -1, permission);   // seems can not change mtime of directory
                 }
                 parent = path;
             }
@@ -660,6 +657,7 @@ public class ControlRemoteConnection extends BaseSysTableController<PathConnecti
         }
     }
 
+    @Override
     public void showLogs(String log) {
         taskController.showLogs(log);
         if (task != null) {
@@ -667,6 +665,7 @@ public class ControlRemoteConnection extends BaseSysTableController<PathConnecti
         }
     }
 
+    @Override
     public void updateLogs(String log, boolean immediate) {
         taskController.updateLogs(log, true, immediate);
         if (task != null) {

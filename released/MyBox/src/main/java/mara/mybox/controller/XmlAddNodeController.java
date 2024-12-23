@@ -45,7 +45,7 @@ public class XmlAddNodeController extends ControlXmlNodeBase {
     protected Tab nameTab;
 
     public XmlAddNodeController() {
-        baseTitle = message("AddNode");
+        baseTitle = message("AddChildNode");
     }
 
     @Override
@@ -130,7 +130,7 @@ public class XmlAddNodeController extends ControlXmlNodeBase {
             }
 
             parentLabel.setText(message("AddInto") + ": "
-                    + treeController.hierarchyNumber(treeItem));
+                    + treeController.makeHierarchyNumber(treeItem));
             indexInput.setText((treeItem.getChildren().size() + 1) + "");
 
             setTitle(treeController.getMyStage().getTitle());

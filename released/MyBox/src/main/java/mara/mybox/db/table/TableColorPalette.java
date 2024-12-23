@@ -98,13 +98,36 @@ public class TableColorPalette extends BaseTable<ColorPalette> {
         return true;
     }
 
+    @Override
+    public boolean setValue(ColorPalette data, String column, Object value) {
+        if (data == null || column == null) {
+            return false;
+        }
+        return data.setValue(column, value);
+    }
+
+    @Override
+    public Object getValue(ColorPalette data, String column) {
+        if (data == null || column == null) {
+            return null;
+        }
+        return data.getValue(column);
+    }
+
+    @Override
+    public boolean valid(ColorPalette data) {
+        if (data == null) {
+            return false;
+        }
+        return data.valid();
+    }
+
     public ColorPalette find(Connection conn, ColorData color, boolean asValue) {
         if (conn == null || color == null) {
             return null;
         }
         ColorPalette data = null;
-        try (PreparedStatement qid = conn.prepareStatement(QueryID);
-                PreparedStatement qvalue = conn.prepareStatement(QueryValue)) {
+        try (PreparedStatement qid = conn.prepareStatement(QueryID); PreparedStatement qvalue = conn.prepareStatement(QueryValue)) {
             data = find(qid, qvalue, color, asValue);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -352,8 +375,7 @@ public class TableColorPalette extends BaseTable<ColorPalette> {
             return null;
         }
         List<ColorPalette> cpList = new ArrayList<>();
-        try (PreparedStatement qid = conn.prepareStatement(QueryID);
-                PreparedStatement qvalue = conn.prepareStatement(QueryValue)) {
+        try (PreparedStatement qid = conn.prepareStatement(QueryID); PreparedStatement qvalue = conn.prepareStatement(QueryValue)) {
             conn.setAutoCommit(false);
             for (ColorData color : colors) {
                 float order = keepOrder ? color.getOrderNumner() : Float.MAX_VALUE;

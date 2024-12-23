@@ -8,7 +8,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
-
 import javax.imageio.ImageIO;
 
 public class ImageTracer {
@@ -25,7 +24,7 @@ public class ImageTracer {
                 System.out.println("ERROR: there's no input filename. Basic usage: \r\n\r\njava -jar ImageTracer.jar <filename>"
                         + "\r\n\r\nor\r\n\r\njava -jar ImageTracer.jar help");
 
-                //System.out.println("Starting anyway with default value for testing purposes.");	
+                //System.out.println("Starting anyway with default value for testing purposes.");
                 //saveString("output.svg",imageToSVG("input.jpg",new HashMap<String,Float>()));
             } else if (arraycontains(args, "help") > -1) {
                 System.out.println("Example usage:\r\n\r\njava -jar ImageTracer.jar <filename> outfilename test.svg "

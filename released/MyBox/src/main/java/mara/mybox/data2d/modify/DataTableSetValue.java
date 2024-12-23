@@ -5,9 +5,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import mara.mybox.data.SetValue;
 import mara.mybox.data2d.DataTable;
+import mara.mybox.data2d.tools.Data2DRowTools;
 import mara.mybox.db.Database;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.data.Data2DColumn;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -18,7 +18,7 @@ import static mara.mybox.value.Languages.message;
 public class DataTableSetValue extends DataTableModify {
 
     public DataTableSetValue(DataTable data, SetValue value) {
-        if (!setSourceData(data)) {
+        if (!setSourceTable(data)) {
             return;
         }
         initSetValue(value);
@@ -33,13 +33,13 @@ public class DataTableSetValue extends DataTableModify {
         try (Connection dconn = DerbyBase.getConnection();
                 PreparedStatement statement = dconn.prepareStatement(sql);
                 ResultSet results = statement.executeQuery();
-                PreparedStatement dUpdate = conn.prepareStatement(tableData2D.updateStatement())) {
+                PreparedStatement dUpdate = dconn.prepareStatement(tableData2D.updateStatement())) {
             conn = dconn;
             conn.setAutoCommit(false);
             update = dUpdate;
-            while (results.next() && !stopped && !reachMax) {
+            while (results.next() && !stopped && !reachMaxFiltered) {
                 sourceTableRow = tableData2D.readData(results);
-                sourceRow = sourceTableRow.toStrings(columns);
+                sourceRow = Data2DRowTools.toStrings(sourceTableRow, columns);
                 sourceRowIndex++;
                 setValue(sourceRow, sourceRowIndex);
             }
@@ -64,17 +64,46 @@ public class DataTableSetValue extends DataTableModify {
             if (stopped || targetRow == null || targetRow.isEmpty()) {
                 return;
             }
+            rowChanged = false;
             for (int i = 0; i < columnsNumber; ++i) {
-                Data2DColumn column = columns.get(i);
-                String name = column.getColumnName();
-                sourceTableRow.setColumnValue(name, column.fromString(targetRow.get(i)));
+                column = columns.get(i);
+                columnName = column.getColumnName();
+                currentValue = targetRow.get(i);
+                newValue = setValue.makeValue(sourceData, column,
+                        currentValue, sourceRow, sourceRowIndex,
+                        setValueIndex, setValueDigit, random);
+                valueInvalid = setValue.valueInvalid;
+                if (!valueInvalid && validateColumn) {
+                    if (!column.validValue(newValue)) {
+                        valueInvalid = true;
+                    }
+                }
+                if (valueInvalid) {
+                    if (skipInvalid) {
+                        continue;
+                    } else if (rejectInvalid) {
+                        failStop(message("InvalidData") + ". "
+                                + message("Column") + ":" + columnName + "  "
+                                + message("Value") + ": " + newValue);
+                        return;
+                    }
+                }
+                if ((currentValue == null && newValue == null)
+                        || (currentValue != null && currentValue.equals(newValue))) {
+                    continue;
+                }
+                sourceTableRow.setValue(columnName, column.fromString(newValue));
+                rowChanged = true;
             }
-            if (tableData2D.setUpdateStatement(conn, update, sourceTableRow)) {
-                update.addBatch();
-                if (++handledCount % Database.BatchSize == 0) {
-                    update.executeBatch();
-                    conn.commit();
-                    showInfo(message("Updated") + ": " + handledCount);
+            if (rowChanged) {
+                setValueIndex++;
+                if (tableData2D.setUpdateStatement(conn, update, sourceTableRow)) {
+                    update.addBatch();
+                    if (++handledCount % Database.BatchSize == 0) {
+                        update.executeBatch();
+                        conn.commit();
+                        showInfo(message("Updated") + ": " + handledCount);
+                    }
                 }
             }
         } catch (Exception e) {

@@ -11,6 +11,7 @@ import java.util.Random;
 import mara.mybox.calculation.DescriptiveStatistic;
 import mara.mybox.calculation.DescriptiveStatistic.StatisticType;
 import mara.mybox.calculation.DoubleStatistic;
+import static mara.mybox.data2d.DataInternalTable.InternalTables;
 import mara.mybox.data2d.tools.Data2DTableTools;
 import mara.mybox.data2d.writer.Data2DWriter;
 import mara.mybox.data2d.writer.DataTableWriter;
@@ -25,6 +26,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.DoubleTools;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -101,6 +103,9 @@ public class DataTable extends Data2D {
             dataName = sheet;
             colsNumber = dataColumns.size();
             this.comments = comments;
+            if (InternalTables.contains(dataName.toUpperCase())) {
+                dataType = DataType.InternalTable;
+            }
             tableData2DDefinition.writeTable(conn, this);
             conn.commit();
 
@@ -252,7 +257,7 @@ public class DataTable extends Data2D {
             for (int i = 0; i < Math.min(columns.size(), values.size() - 1); i++) {
                 Data2DColumn column = columns.get(i);
                 String name = column.getColumnName();
-                data2DRow.setColumnValue(name, column.fromString(values.get(i + 1), invalidAs));
+                data2DRow.setValue(name, column.fromString(values.get(i + 1), invalidAs));
             }
             return data2DRow;
         } catch (Exception e) {
@@ -392,7 +397,7 @@ public class DataTable extends Data2D {
         return writer;
     }
 
-    public Data2DRow makeRow(List<String> values, InvalidAs invalidAs) {
+    public Data2DRow makeRow(List<String> values, DataTableWriter writer) {
         try {
             if (columns == null || values == null || values.isEmpty()) {
                 return null;
@@ -409,7 +414,16 @@ public class DataTable extends Data2D {
                 Data2DColumn column = vColumns.get(i);
                 String name = column.getColumnName();
                 String value = i < rowSize ? values.get(i) : null;
-                data2DRow.setColumnValue(name, column.fromString(value, invalidAs));
+
+                if ((writer.validateValue || writer.invalidAs == InvalidAs.Fail)
+                        && !column.validValue(value)) {
+                    writer.failStop(message("InvalidData") + ". "
+                            + message("Column") + ":" + column.getColumnName() + "  "
+                            + message("Value") + ": " + value);
+                    return null;
+                }
+
+                data2DRow.setValue(name, column.fromString(value, writer.invalidAs));
             }
             return data2DRow;
         } catch (Exception e) {

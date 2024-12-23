@@ -42,6 +42,10 @@ public class Data2DColumnEditController extends BaseChildController {
         }
     }
 
+    protected void load(Data2DColumn column) {
+        columnEditController.loadColumn(column);
+    }
+
     @FXML
     @Override
     public void okAction() {
@@ -66,6 +70,22 @@ public class Data2DColumnEditController extends BaseChildController {
     @Override
     public void recoverAction() {
         columnEditController.loadColumn(index);
+    }
+
+    @FXML
+    @Override
+    public void selectAction() {
+        DataSelectDataColumnController.edit(this);
+    }
+
+    @FXML
+    @Override
+    public void saveAction() {
+        Data2DColumn column = columnEditController.pickValues();
+        if (column == null) {
+            return;
+        }
+        ControlDataDataColumn.loadColumn(this, column);
     }
 
 

@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -63,10 +65,10 @@ public class BaseData2DListController extends BaseSysTableController<Data2DDefin
             }
             nameColumn.setCellValueFactory(new PropertyValueFactory<>("dataName"));
             colsColumn.setCellValueFactory(new PropertyValueFactory<>("colsNumber"));
-            colsColumn.setCellFactory(new TableNumberCell());
+            colsColumn.setCellFactory(new TableNumberCell(true));
             if (rowsColumn != null) {
                 rowsColumn.setCellValueFactory(new PropertyValueFactory<>("rowsNumber"));
-                rowsColumn.setCellFactory(new TableNumberCell());
+                rowsColumn.setCellFactory(new TableNumberCell(true));
             }
             if (fileColumn != null) {
                 fileColumn.setCellValueFactory(new PropertyValueFactory<>("fileName"));
@@ -94,6 +96,13 @@ public class BaseData2DListController extends BaseSysTableController<Data2DDefin
             tableDefinition = tableData2DDefinition;
             tableName = tableDefinition.getTableName();
             idColumnName = tableDefinition.getIdColumnName();
+
+            viewController.loadedNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    updateData();
+                }
+            });
 
             setConditions();
 
@@ -179,12 +188,15 @@ public class BaseData2DListController extends BaseSysTableController<Data2DDefin
     @FXML
     @Override
     public void editAction() {
-        Data2DDefinition selected = selectedItem();
-        if (selected == null) {
+        Data2DDefinition data2d = viewController.data2D;
+        if (data2d == null) {
+            data2d = selectedItem();
+        }
+        if (data2d == null) {
             popError(message("SelectToHandle"));
             return;
         }
-        Data2DManufactureController.openDef(selected);
+        Data2DManufactureController.openDef(data2d);
     }
 
     @Override
@@ -348,6 +360,20 @@ public class BaseData2DListController extends BaseSysTableController<Data2DDefin
     @FXML
     public void queryAction() {
         Data2DManageQueryController.open(this);
+    }
+
+    public void updateData() {
+        Data2DDefinition data2d = viewController.data2D;
+        if (data2d == null) {
+            return;
+        }
+        for (int i = 0; i < tableData.size(); i++) {
+            Data2DDefinition def = tableData.get(i);
+            if (def.equals(data2d)) {
+                tableData.set(i, data2d);
+                break;
+            }
+        }
     }
 
 }

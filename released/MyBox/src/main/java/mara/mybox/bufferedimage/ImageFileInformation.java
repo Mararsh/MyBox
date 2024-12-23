@@ -9,7 +9,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.tools.FileNameTools;
-import mara.mybox.value.AppVariables;
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
@@ -133,7 +133,7 @@ public class ImageFileInformation extends FileInformation {
         String format = "png";
         fileInfo.setImageFormat(format);
         fileInfo.setPassword(password);
-        try (PDDocument doc = PDDocument.load(file, password, AppVariables.PdfMemUsage)) {
+        try (PDDocument doc = Loader.loadPDF(file, password)) {
             int num = doc.getNumberOfPages();
             fileInfo.setNumberOfImages(num);
             List<ImageInformation> imagesInfo = new ArrayList<>();

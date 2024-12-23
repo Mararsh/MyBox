@@ -4,6 +4,7 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.util.Callback;
 import mara.mybox.tools.StringTools;
+import mara.mybox.value.AppVariables;
 
 /**
  * @Author Mara
@@ -25,7 +26,7 @@ public class TableTextTrimCell<T> extends TableCell<T, String>
                     setGraphic(null);
                     return;
                 }
-                setText(StringTools.abbreviate(item, 60));
+                setText(StringTools.abbreviate(item, AppVariables.titleTrimSize));
                 setGraphic(null);
             }
         };

@@ -13,57 +13,57 @@ public abstract class MainMenuController_Network extends MainMenuController_File
 
     @FXML
     protected void openWeiboSnap(ActionEvent event) {
-        loadScene(Fxmls.WeiboSnapFxml);
+        openScene(Fxmls.WeiboSnapFxml);
     }
 
     @FXML
     protected void openWebBrowser(ActionEvent event) {
-        loadScene(Fxmls.WebBrowserFxml);
+        openScene(Fxmls.WebBrowserFxml);
     }
 
     @FXML
     protected void webFavorites(ActionEvent event) {
-        loadScene(Fxmls.WebFavoritesFxml);
+        DataTreeController.webFavorite(parentController, false);
     }
 
     @FXML
     protected void webHistories(ActionEvent event) {
-        loadScene(Fxmls.WebHistoriesFxml);
+        openScene(Fxmls.WebHistoriesFxml);
     }
 
     @FXML
     protected void openConvertUrl(ActionEvent event) {
-        loadScene(Fxmls.NetworkConvertUrlFxml);
+        openScene(Fxmls.NetworkConvertUrlFxml);
     }
 
     @FXML
     protected void queryNetworkAddress(ActionEvent event) {
-        loadScene(Fxmls.NetworkQueryAddressFxml);
+        openScene(Fxmls.NetworkQueryAddressFxml);
     }
 
     @FXML
     protected void queryDNSBatch(ActionEvent event) {
-        loadScene(Fxmls.NetworkQueryDNSBatchFxml);
+        openScene(Fxmls.NetworkQueryDNSBatchFxml);
     }
 
     @FXML
     protected void openSecurityCertificates(ActionEvent event) {
-        loadScene(Fxmls.SecurityCertificatesFxml);
+        openScene(Fxmls.SecurityCertificatesFxml);
     }
 
     @FXML
     protected void downloadFirstLevelLinks(ActionEvent event) {
-        loadScene(Fxmls.DownloadFirstLevelLinksFxml);
+        openScene(Fxmls.DownloadFirstLevelLinksFxml);
     }
 
     @FXML
     protected void RemotePathManage(ActionEvent event) {
-        loadScene(Fxmls.RemotePathManageFxml);
+        openScene(Fxmls.RemotePathManageFxml);
     }
 
     @FXML
     protected void RemotePathSynchronizeFromLocal(ActionEvent event) {
-        loadScene(Fxmls.RemotePathSynchronizeFromLocalFxml);
+        openScene(Fxmls.RemotePathSynchronizeFromLocalFxml);
     }
 
 }

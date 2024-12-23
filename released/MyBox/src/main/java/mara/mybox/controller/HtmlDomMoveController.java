@@ -66,21 +66,21 @@ public class HtmlDomMoveController extends HtmlDomCopyController {
         try {
             count = 0;
 
-            String targetNumber = targetController.hierarchyNumber(targetItem);
+            String targetNumber = targetController.makeHierarchyNumber(targetItem);
             if (targetNumber == null) {
-                error = message("SelectNodeCopyInto");
+                error = message("SelectNodeMoveInto");
                 return false;
             }
             editorItem = manageController.findSequenceNumber(targetNumber);
             if (editorItem == null) {
-                error = message("SelectNodeCopyInto");
+                error = message("SelectNodeMoveInto");
                 return false;
             }
             List<TreeItem<HtmlNode>> sourcesItems = sourceController.selectedItems();
             Element editElement = editorItem.getValue().getElement();
             List<TreeItem<HtmlNode>> manageItems = new ArrayList<>();
             for (TreeItem<HtmlNode> sourceItem : sourcesItems) {
-                String sourceNumber = sourceController.hierarchyNumber(sourceItem);
+                String sourceNumber = sourceController.makeHierarchyNumber(sourceItem);
                 if (isEqualOrSubNode(targetNumber, sourceNumber)) {
                     continue;
                 }

@@ -15,7 +15,6 @@ import javafx.fxml.FXML;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
@@ -58,9 +57,6 @@ public abstract class BaseController_Interface extends BaseController_Files {
         try {
             setInterfaceStyle(UserConfig.getStyle());
             setSceneFontSize(AppVariables.sceneFontSize);
-            if (thisPane != null) {
-                thisPane.setStyle("-fx-font-size: " + AppVariables.sceneFontSize + "px;");
-            }
 
             if (mainMenuController != null) {
                 mainMenuController.SourceFileType = getSourceFileType();
@@ -399,6 +395,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
         try {
             getMyScene();
             getMyStage();
+            isTopPane = true;
 
             myStage.setMinWidth(minSize);
             myStage.setMinHeight(20);
@@ -523,26 +520,16 @@ public abstract class BaseController_Interface extends BaseController_Files {
         }
     }
 
-    public void setInterfaceStyle(Scene scene, String style) {
-        try {
-            if (scene != null && style != null) {
-                scene.getStylesheets().clear();
-                scene.getStylesheets().add(BaseController.class.getResource(style).toExternalForm());
-            }
-        } catch (Exception e) {
-//            MyBoxLog.error(e);
-        }
-    }
-
     public void setInterfaceStyle(String style) {
         try {
-            if (thisPane != null && style != null) {
-                thisPane.getStylesheets().clear();
-                if (!AppValues.MyBoxStyle.equals(style)) {
-                    thisPane.getStylesheets().add(BaseController.class.getResource(style).toExternalForm());
-                }
-                thisPane.getStylesheets().add(BaseController.class.getResource(AppValues.MyBoxStyle).toExternalForm());
+            if (thisPane == null || style == null) {
+                return;
             }
+            thisPane.getStylesheets().clear();
+            if (!AppValues.MyBoxStyle.equals(style)) {
+                thisPane.getStylesheets().add(BaseController.class.getResource(style).toExternalForm());
+            }
+            thisPane.getStylesheets().add(BaseController.class.getResource(AppValues.MyBoxStyle).toExternalForm());
         } catch (Exception e) {
 //            MyBoxLog.error(e);
         }
@@ -700,15 +687,20 @@ public abstract class BaseController_Interface extends BaseController_Files {
     }
 
     public boolean setSceneFontSize(int size) {
-        if (thisPane == null) {
+        try {
+            if (thisPane == null) {
+                return false;
+            }
+            UserConfig.setSceneFontSize(size);
+            thisPane.setStyle("-fx-font-size: " + size + "px;");
+            if (parentController != null && parentController != this) {
+                parentController.setSceneFontSize(size);
+            }
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
             return false;
         }
-        UserConfig.setSceneFontSize(size);
-        thisPane.setStyle("-fx-font-size: " + size + "px;");
-        if (parentController != null && parentController != this) {
-            parentController.setSceneFontSize(size);
-        }
-        return true;
     }
 
     public boolean setIconSize(int size) {
@@ -741,6 +733,19 @@ public abstract class BaseController_Interface extends BaseController_Files {
                 parentController.refreshInterface();
             }
             return myController;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public BaseController openScene(String newFxml) {
+        try {
+            if (AppVariables.closeCurrentWhenOpenTool) {
+                return loadScene(newFxml);
+            } else {
+                return openStage(newFxml);
+            }
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;
@@ -954,6 +959,10 @@ public abstract class BaseController_Interface extends BaseController_Files {
 
     public boolean closeStage() {
         return close();
+    }
+
+    public boolean isRunning() {
+        return getMyStage() != null && getMyStage().isShowing();
     }
 
     /*

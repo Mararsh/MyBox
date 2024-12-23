@@ -88,7 +88,8 @@ public class TableStringValues extends BaseTable<StringValues> {
         }
         String sql = " SELECT * FROM String_Values WHERE key_name='"
                 + stringValue(name) + "' ORDER BY create_time DESC";
-        try (Statement statement = conn.createStatement(); ResultSet results = statement.executeQuery(sql)) {
+        try (Statement statement = conn.createStatement();
+                ResultSet results = statement.executeQuery(sql)) {
             while (results.next()) {
                 records.add(results.getString("string_value"));
             }
@@ -121,7 +122,8 @@ public class TableStringValues extends BaseTable<StringValues> {
         }
         String sql = " SELECT * FROM String_Values WHERE key_name='"
                 + stringValue(name) + "' ORDER BY create_time DESC";
-        try (Statement statement = conn.createStatement(); ResultSet results = statement.executeQuery(sql)) {
+        try (Statement statement = conn.createStatement();
+                ResultSet results = statement.executeQuery(sql)) {
             while (results.next()) {
                 StringValues record = new StringValues(name,
                         results.getString("string_value"),
@@ -140,7 +142,8 @@ public class TableStringValues extends BaseTable<StringValues> {
             return null;
         }
         String value = null;
-        try (Connection conn = DerbyBase.getConnection(); Statement statement = conn.createStatement()) {
+        try (Connection conn = DerbyBase.getConnection();
+                Statement statement = conn.createStatement()) {
             conn.setReadOnly(true);
             statement.setMaxRows(1);
             String sql = " SELECT * FROM String_Values WHERE key_name='"
@@ -207,7 +210,12 @@ public class TableStringValues extends BaseTable<StringValues> {
             return false;
         }
         try (Connection conn = DerbyBase.getConnection()) {
-            return add(conn, name, value);
+            conn.setAutoCommit(false);
+            if (!add(conn, name, value)) {
+                return false;
+            }
+            conn.commit();
+            return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
             return false;
@@ -219,6 +227,7 @@ public class TableStringValues extends BaseTable<StringValues> {
                 || value == null || value.isBlank()) {
             return false;
         }
+
         try (Statement statement = conn.createStatement()) {
             boolean existed = false;
             String sql = " SELECT * FROM String_Values WHERE "
@@ -298,7 +307,8 @@ public class TableStringValues extends BaseTable<StringValues> {
                 || value == null || value.trim().isEmpty()) {
             return false;
         }
-        try (Connection conn = DerbyBase.getConnection(); Statement statement = conn.createStatement()) {
+        try (Connection conn = DerbyBase.getConnection();
+                Statement statement = conn.createStatement()) {
             String sql = "DELETE FROM String_Values WHERE key_name='" + stringValue(name)
                     + "' AND string_value='" + stringValue(value) + "'";
             statement.executeUpdate(sql);
@@ -311,7 +321,8 @@ public class TableStringValues extends BaseTable<StringValues> {
     }
 
     public static boolean clear(String name) {
-        try (Connection conn = DerbyBase.getConnection(); Statement statement = conn.createStatement()) {
+        try (Connection conn = DerbyBase.getConnection();
+                Statement statement = conn.createStatement()) {
             String sql = "DELETE FROM String_Values WHERE key_name='" + stringValue(name) + "'";
             statement.executeUpdate(sql);
             return true;

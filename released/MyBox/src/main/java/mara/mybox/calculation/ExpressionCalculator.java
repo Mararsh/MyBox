@@ -1,6 +1,5 @@
 package mara.mybox.calculation;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -155,7 +154,7 @@ public class ExpressionCalculator {
     }
 
     /*
-        first value of "tableRow" should be "dataRowNumber" 
+        first value of "tableRow" should be "dataRowNumber"
         "tableRowNumber" is 0-based
      */
     public boolean calculateTableRowExpression(Data2D data2D,
@@ -205,17 +204,13 @@ public class ExpressionCalculator {
             if (script == null || script.isBlank()) {
                 return true;
             }
-            List<String> row = new ArrayList<>();
-            for (int i = 0; i < data2D.columnsNumber(); i++) {
-                Data2DColumn column = data2D.columns.get(i);
-                row.add(column.dummyValue());
-            }
+            List<String> dummyRow = data2D.dummyRow();
             String filledScript = replaceDummyStatistic(data2D, script);
             if (allPages) {
-                return calculateDataRowExpression(data2D, filledScript, row, 1);
+                return calculateDataRowExpression(data2D, filledScript, dummyRow, 1);
             } else {
-                row.add(0, "1");
-                return calculateTableRowExpression(data2D, filledScript, row, 0);
+                dummyRow.add(0, "1");
+                return calculateTableRowExpression(data2D, filledScript, dummyRow, 0);
             }
         } catch (Exception e) {
             handleError(e.toString());

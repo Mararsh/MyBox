@@ -9,8 +9,8 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.FileNameTools;
-import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException;
 
@@ -91,8 +91,8 @@ public abstract class BaseBatchPdfController extends BaseBatchController<PdfInfo
                 currentParameters.startPage = currentParameters.fromPage;
                 currentParameters.currentPage = currentParameters.fromPage;
             }
-            try (PDDocument pd = PDDocument.load(currentParameters.currentSourceFile,
-                    currentParameters.password, AppVariables.PdfMemUsage)) {
+            try (PDDocument pd = Loader.loadPDF(currentParameters.currentSourceFile,
+                    currentParameters.password)) {
                 doc = pd;
                 if (currentParameters.toPage <= 0 || currentParameters.toPage > doc.getNumberOfPages()) {
                     currentParameters.toPage = doc.getNumberOfPages();

@@ -26,7 +26,6 @@ import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.geometry.Point2D;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
@@ -35,7 +34,6 @@ import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
-import javafx.scene.robot.Robot;
 import javafx.scene.web.PromptData;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebErrorEvent;
@@ -155,7 +153,10 @@ public class ControlWebView extends BaseController {
             webEngine.getLoadWorker().stateProperty().addListener(new ChangeListener<Worker.State>() {
                 @Override
                 public void changed(ObservableValue ov, Worker.State oldState, Worker.State newState) {
-                    worker(newState);
+                    Platform.runLater(() -> {
+                        worker(newState);
+                    });
+                    Platform.requestNextPulse();
                 }
             });
 
@@ -163,7 +164,10 @@ public class ControlWebView extends BaseController {
             docListener = new EventListener() {
                 @Override
                 public void handleEvent(org.w3c.dom.events.Event ev) {
-                    docEvent(ev);
+                    Platform.runLater(() -> {
+                        docEvent(ev);
+                    });
+                    Platform.requestNextPulse();
                 }
             };
 
@@ -173,8 +177,8 @@ public class ControlWebView extends BaseController {
                     if (nt == null) {
                         return;
                     }
-                    setWebViewLabel(nt.getMessage());
                     Platform.runLater(() -> {
+                        setWebViewLabel(nt.getMessage());
                         alertError(nt.getMessage());
                     });
                 }
@@ -183,14 +187,18 @@ public class ControlWebView extends BaseController {
             webEngine.setOnStatusChanged(new EventHandler<WebEvent<String>>() {
                 @Override
                 public void handle(WebEvent<String> ev) {
-                    statusChanged(ev);
+                    Platform.runLater(() -> {
+                        statusChanged(ev);
+                    });
                 }
             });
 
             webEngine.locationProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldv, String newv) {
-                    locationChanged(oldv, newv);
+                    Platform.runLater(() -> {
+                        locationChanged(oldv, newv);
+                    });
                 }
             });
 
@@ -228,38 +236,35 @@ public class ControlWebView extends BaseController {
     }
 
     public void worker(Worker.State state) {
-        Platform.runLater(() -> {
-            try {
-                switch (state) {
-                    case READY:
-                        ready();
-                        break;
-                    case RUNNING:
-                        running();
-                        break;
-                    case SUCCEEDED:
-                        succeeded();
-                        break;
-                    case CANCELLED:
-                        if (timer != null) {
-                            timer.cancel();
-                        }
-                        setWebViewLabel(message("Canceled"));
-                        break;
-                    case FAILED:
-                        if (timer != null) {
-                            timer.cancel();
-                        }
-                        setWebViewLabel(message("Failed"));
-                        break;
-                    default:
-                        setWebViewLabel(state.name());
-                }
-            } catch (Exception e) {
-                MyBoxLog.error(e);
+        try {
+            switch (state) {
+                case READY:
+                    ready();
+                    break;
+                case RUNNING:
+                    running();
+                    break;
+                case SUCCEEDED:
+                    succeeded();
+                    break;
+                case CANCELLED:
+                    if (timer != null) {
+                        timer.cancel();
+                    }
+                    setWebViewLabel(message("Canceled"));
+                    break;
+                case FAILED:
+                    if (timer != null) {
+                        timer.cancel();
+                    }
+                    setWebViewLabel(message("Failed"));
+                    break;
+                default:
+                    setWebViewLabel(state.name());
             }
-        });
-        Platform.requestNextPulse();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
     public void docEvent(org.w3c.dom.events.Event ev) {
@@ -866,7 +871,7 @@ public class ControlWebView extends BaseController {
 
         menu = new MenuItem(message("AddAsFavorite"), StyleTools.getIconImageView("iconStar.png"));
         menu.setOnAction((ActionEvent event) -> {
-            WebFavoriteAddController.open(name, finalAddress);
+            ControlDataWebFavorite.open(myController, name, finalAddress);
         });
         items.add(menu);
 
@@ -998,12 +1003,7 @@ public class ControlWebView extends BaseController {
     }
 
     public void popElementMenu(Element element) {
-        try {
-            Robot robot = new Robot();
-            MenuWebviewController.webviewMenu(this, element, robot.getMouseX() + 10, robot.getMouseY() + 10);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
+        MenuWebviewController.webviewMenu(this, element);
     }
 
     public void handleImage(String address, String name, String target) {
@@ -1275,14 +1275,14 @@ public class ControlWebView extends BaseController {
             if (address != null && !address.isBlank()) {
                 menu = new MenuItem(message("AddAsFavorite"), StyleTools.getIconImageView("iconStar.png"));
                 menu.setOnAction((ActionEvent event) -> {
-                    WebFavoriteAddController.open(title(), address);
+                    ControlDataWebFavorite.open(myController, title(), address);
                 });
                 viewMenu.getItems().add(menu);
             }
 
-            menu = new MenuItem(message("WebFavorites"), StyleTools.getIconImageView("iconStarFilled.png"));
+            menu = new MenuItem(message("WebFavorites"), StyleTools.getIconImageView("iconStar.png"));
             menu.setOnAction((ActionEvent event) -> {
-                WebFavoritesController.oneOpen();
+                DataTreeController.webFavorite(myController, false);
             });
             viewMenu.getItems().add(menu);
 
@@ -1419,7 +1419,7 @@ public class ControlWebView extends BaseController {
 
                 menu = new MenuItem(message("Script"), StyleTools.getIconImageView("iconScript.png"));
                 menu.setOnAction((ActionEvent event) -> {
-                    JavaScriptController.open(this);
+                    ControlDataJavascript.open(this);
                 });
                 codesMenu.getItems().add(menu);
 
@@ -1958,14 +1958,8 @@ public class ControlWebView extends BaseController {
     @FXML
     @Override
     public boolean menuAction() {
-        try {
-            Point2D localToScreen = webView.localToScreen(webView.getWidth() - 80, 80);
-            MenuWebviewController.webviewMenu(this, null, localToScreen.getX(), localToScreen.getY());
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
-        return false;
+        MenuWebviewController.webviewMenu(this, webView);
+        return true;
     }
 
     @FXML

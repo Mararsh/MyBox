@@ -15,17 +15,33 @@ public class Fxmls {
     /*
         document
      */
-    public static final String NotesFxml = "/fxml/Notes.fxml";
+    public static final String DataTreeFxml = "/fxml/DataTree.fxml";
+    public static final String ControlDataTextFxml = "/fxml/ControlDataText.fxml";
+    public static final String ControlDataHtmlFxml = "/fxml/ControlDataHtml.fxml";
+    public static final String ControlDataMathFunctionFxml = "/fxml/ControlDataMathFunction.fxml";
+    public static final String ControlDataWebFavoriteFxml = "/fxml/ControlDataWebFavorite.fxml";
+    public static final String ControlDataSQLFxml = "/fxml/ControlDataSQL.fxml";
+    public static final String ControlDataJShellFxml = "/fxml/ControlDataJShell.fxml";
+    public static final String ControlDataJEXLFxml = "/fxml/ControlDataJEXL.fxml";
+    public static final String ControlDataJavaScriptFxml = "/fxml/ControlDataJavaScript.fxml";
+    public static final String ControlDataImageScopeFxml = "/fxml/ControlDataImageScope.fxml";
+    public static final String ControlDataDataColumnFxml = "/fxml/ControlDataDataColumn.fxml";
+    public static final String ControlDataRowExpressionFxml = "/fxml/ControlDataRowExpression.fxml";
 
-    public static final String InfoTreeManageFxml = "/fxml/InfoTreeManage.fxml";
-    public static final String InfoTreeNodeMoveFxml = "/fxml/InfoTreeNodeMove.fxml";
-    public static final String InfoTreeNodeCopyFxml = "/fxml/InfoTreeNodeCopy.fxml";
-    public static final String InfoTreeNodeExportFxml = "/fxml/InfoTreeNodeExport.fxml";
-    public static final String InfoTreeNodeImportFxml = "/fxml/InfoTreeNodeImport.fxml";
-    public static final String InfoTreeNodesCopyFxml = "/fxml/InfoTreeNodesCopy.fxml";
-    public static final String InfoTreeNodesMoveFxml = "/fxml/InfoTreeNodesMove.fxml";
-    public static final String InfoTreeNodeParentFxml = "/fxml/InfoTreeNodeParent.fxml";
-    public static final String InfoTreeNodeSelectFxml = "/fxml/InfoTreeNodeSelect.fxml";
+    public static final String DataTreeNodeEditorFxml = "/fxml/DataTreeNodeEditor.fxml";
+    public static final String DataTreeTagsFxml = "/fxml/DataTreeTags.fxml";
+    public static final String DataTreeExportFxml = "/fxml/DataTreeExport.fxml";
+    public static final String DataTreeImportFxml = "/fxml/DataTreeImport.fxml";
+    public static final String DataTreeCopyFxml = "/fxml/DataTreeCopy.fxml";
+    public static final String DataTreeMoveFxml = "/fxml/DataTreeMove.fxml";
+    public static final String DataTreeDeleteFxml = "/fxml/DataTreeDelete.fxml";
+
+    public static final String DataSelectParentFxml = "/fxml/DataSelectParent.fxml";
+    public static final String DataSelectRowExpressionFxml = "/fxml/DataSelectRowExpression.fxml";
+    public static final String DataSelectJavaScriptFxml = "/fxml/DataSelectJavaScript.fxml";
+    public static final String DataSelectDataColumnFxml = "/fxml/DataSelectDataColumn.fxml";
+    public static final String DataSelectImageScopeFxml = "/fxml/DataSelectImageScope.fxml";
+    public static final String DataSelectSQLFxml = "/fxml/DataSelectSQL.fxml";
 
     public static final String PdfViewFxml = "/fxml/PdfView.fxml";
     public static final String PdfAttributesFxml = "/fxml/PdfAttributes.fxml";
@@ -171,11 +187,9 @@ public class Fxmls {
     public static final String ImageSVGPathFxml = "/fxml/ImageSVGPath.fxml";
     public static final String ImageTextFxml = "/fxml/ImageText.fxml";
 
-    public static final String ImageScopeFxml = "/fxml/ImageScope.fxml";
     public static final String ImageCanvasInputFxml = "/fxml/ImageCanvasInput.fxml";
     public static final String ImageHistoriesFxml = "/fxml/ImageHistories.fxml";
     public static final String ImageScopeViewsFxml = "/fxml/ImageScopeViews.fxml";
-    public static final String ImageScopeSavedFxml = "/fxml/ImageScopeSaved.fxml";
     public static final String ImageClipSelectFxml = "/fxml/ImageClipSelect.fxml";
 
     public static final String ImageCropBatchFxml = "/fxml/ImageCropBatch.fxml";
@@ -244,8 +258,6 @@ public class Fxmls {
     public static final String ImageOCRBatchFxml = "/fxml/ImageOCRBatch.fxml";
     public static final String ImageRepeatFxml = "/fxml/ImageRepeat.fxml";
 
-    public static final String ImageMaterialFxml = "/fxml/ImageMaterial.fxml";
-
     public static final String ColorsManageFxml = "/fxml/ColorsManage.fxml";
     public static final String ColorPalettePopupFxml = "/fxml/ColorPalettePopup.fxml";
     public static final String ColorInputFxml = "/fxml/ColorInput.fxml";
@@ -285,7 +297,6 @@ public class Fxmls {
      */
     public static final String Data2DManufactureFxml = "/fxml/Data2DManufacture.fxml";
     public static final String Data2DManageFxml = "/fxml/Data2DManage.fxml";
-    public static final String Data2DDefinitionFxml = "/fxml/Data2DDefinition.fxml";
     public static final String Data2DManageQueryFxml = "/fxml/Data2DManageQuery.fxml";
     public static final String DataInSystemClipboardFxml = "/fxml/DataInSystemClipboard.fxml";
     public static final String DataInMyBoxClipboardFxml = "/fxml/DataInMyBoxClipboard.fxml";
@@ -334,7 +345,6 @@ public class Fxmls {
     public static final String Data2DGroupFxml = "/fxml/Data2DGroup.fxml";
     public static final String Data2DLocationDistributionFxml = "/fxml/Data2DLocationDistribution.fxml";
     public static final String Data2DRowFilterEditFxml = "/fxml/Data2DRowFilterEdit.fxml";
-    public static final String RowFilterFxml = "/fxml/RowFilter.fxml";
     public static final String Data2DChartGroupXYFxml = "/fxml/Data2DChartGroupXY.fxml";
     public static final String Data2DChartGroupPieFxml = "/fxml/Data2DChartGroupPie.fxml";
     public static final String Data2DChartGroupComparisonBarsFxml = "/fxml/Data2DChartGroupComparisonBars.fxml";
@@ -342,15 +352,10 @@ public class Fxmls {
     public static final String Data2DChartGroupBoxWhiskerFxml = "/fxml/Data2DChartGroupBoxWhisker.fxml";
     public static final String ValueRangeInputFxml = "/fxml/ValueRangeInput.fxml";
 
-    public static final String JShellFxml = "/fxml/JShell.fxml";
-    public static final String JexlFxml = "/fxml/Jexl.fxml";
-    public static final String JavaScriptFxml = "/fxml/JavaScript.fxml";
-
-    public static final String MathFunctionFxml = "/fxml/MathFunction.fxml";
     public static final String MathFunctionDataFxml = "/fxml/MathFunctionData.fxml";
     public static final String MathFunctionChartFxml = "/fxml/MathFunctionChart.fxml";
-    public static final String ControlDataSplitFxml = "/fxml/ControlDataSplit.fxml";
     public static final String MathFunctionXYChartFxml = "/fxml/MathFunctionXYChart.fxml";
+    public static final String ControlDataSplitFxml = "/fxml/ControlDataSplit.fxml";
 
     public static final String DataFileCSVFormatFxml = "/fxml/DataFileCSVFormat.fxml";
     public static final String DataFileCSVConvertFxml = "/fxml/DataFileCSVConvert.fxml";
@@ -369,9 +374,9 @@ public class Fxmls {
     public static final String MatrixUnaryCalculationFxml = "/fxml/MatrixUnaryCalculation.fxml";
     public static final String MatricesBinaryCalculationFxml = "/fxml/MatricesBinaryCalculation.fxml";
 
-    public static final String DatabaseSqlFxml = "/fxml/DatabaseSql.fxml";
     public static final String DatabaseTableDefinitionFxml = "/fxml/DatabaseTableDefinition.fxml";
     public static final String DataTablesFxml = "/fxml/DataTables.fxml";
+    public static final String Data2DTableQueryFxml = "/fxml/Data2DTableQuery.fxml";
 
     public static final String BarcodeCreatorFxml = "/fxml/BarcodeCreator.fxml";
     public static final String BarcodeDecoderFxml = "/fxml/BarcodeDecoder.fxml";
@@ -450,11 +455,7 @@ public class Fxmls {
     public static final String WeiboSnapingInfoFxml = "/fxml/WeiboSnapingInfo.fxml";
 
     public static final String WebBrowserFxml = "/fxml/WebBrowser.fxml";
-
     public static final String WebHistoriesFxml = "/fxml/WebHistories.fxml";
-
-    public static final String WebFavoritesFxml = "/fxml/WebFavorites.fxml";
-    public static final String WebFavoriteAddFxml = "/fxml/WebFavoriteAdd.fxml";
 
     public static final String NetworkConvertUrlFxml = "/fxml/NetworkConvertUrl.fxml";
     public static final String NetworkQueryAddressFxml = "/fxml/NetworkQueryAddress.fxml";
@@ -497,6 +498,8 @@ public class Fxmls {
     public static final String AutoTestingExecutionFxml = "/fxml/AutoTestingExecution.fxml";
     public static final String RunCommandFxml = "/fxml/RunCommand.fxml";
     public static final String RunSystemCommandFxml = "/fxml/RunSystemCommand.fxml";
+    public static final String DevTmpFxml = "/fxml/DevTmp.fxml";
+
 
     /*
         common
@@ -533,6 +536,7 @@ public class Fxmls {
 
     public static final String SettingsFxml = "/fxml/Settings.fxml";
     public static final String ClearExpiredDataFxml = "/fxml/ClearExpiredData.fxml";
+    public static final String MyBoxDocumentsFxml = "/fxml/MyBoxDocuments.fxml";
 
     public static final String WindowsListFxml = "/fxml/WindowsList.fxml";
 
