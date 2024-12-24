@@ -3,26 +3,222 @@ package mara.mybox.db.migration;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.HashMap;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.bufferedimage.ImageScopeTools;
 import mara.mybox.controller.MyBoxLoadingController;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.tools.Data2DDefinitionTools;
 import mara.mybox.db.Database;
-import mara.mybox.db.data.*;
+import mara.mybox.db.data.Data2DColumn;
+import mara.mybox.db.data.DataNode;
+import mara.mybox.db.data.DataNodeTag;
+import mara.mybox.db.data.DataTag;
 import mara.mybox.db.table.BaseNodeTable;
 import static mara.mybox.db.table.BaseNodeTable.RootID;
 import mara.mybox.db.table.TableDataNodeTag;
 import mara.mybox.db.table.TableDataTag;
 import mara.mybox.db.table.TableNodeDataColumn;
+import mara.mybox.db.table.TableNodeGeographyCode;
+import mara.mybox.db.table.TableNodeHtml;
+import mara.mybox.db.table.TableNodeImageScope;
+import mara.mybox.db.table.TableNodeJEXL;
+import mara.mybox.db.table.TableNodeJShell;
+import mara.mybox.db.table.TableNodeJavaScript;
+import mara.mybox.db.table.TableNodeMathFunction;
+import mara.mybox.db.table.TableNodeRowExpression;
+import mara.mybox.db.table.TableNodeSQL;
+import mara.mybox.db.table.TableNodeText;
+import mara.mybox.db.table.TableNodeWebFavorite;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.value.Languages;
 
 /**
  * @Author Mara
- * @CreateDate 2024-11-1
+ * @CreateDate 2020-06-09
  * @License Apache License Version 2.0
  */
-public class DataMigrationTools {
+public class DataMigrationFrom68 {
+
+    public static void handleVersions(MyBoxLoadingController controller,
+            int lastVersion, Connection conn, String lang) {
+        try {
+            if (lastVersion < 6008000) {
+                updateIn68(conn);
+            }
+            if (lastVersion < 6008002) {
+                updateIn682(controller, conn);
+            }
+            if (lastVersion < 6008003) {
+                updateIn683(controller, conn, lang);
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    public static void updateIn683(MyBoxLoadingController controller,
+            Connection conn, String lang) {
+        try {
+            MyBoxLog.info("Updating tables in 6.8.3...");
+            controller.info("Updating tables in 6.8.3...");
+
+            TableNodeGeographyCode gcTable = new TableNodeGeographyCode();
+
+            String tname = gcTable.getTableName();
+            controller.info("Moving data: " + gcTable.getTreeName());
+            // for debug.Remove this block later
+            try (Statement statement = conn.createStatement()) {
+                statement.executeUpdate("DROP TABLE " + tname);
+            } catch (Exception e) {
+                MyBoxLog.console(e);
+            }
+            try {
+                gcTable.createTable(conn);
+            } catch (Exception e) {
+                MyBoxLog.console(e);
+            }
+
+            try (Statement statement = conn.createStatement()) {
+                conn.setAutoCommit(true);
+                statement.executeUpdate("DROP TABLE MYBOX_TMP_TREE_Migration683");
+            } catch (Exception e) {
+//            MyBoxLog.console(e);
+            }
+
+            try (Statement statement = conn.createStatement()) {
+                conn.setAutoCommit(true);
+
+                statement.executeUpdate("CREATE TABLE MYBOX_TMP_TREE_Migration683"
+                        + " ( old_nodeid BIGINT, old_parentid BIGINT, new_nodeid BIGINT)");
+                ResultSet query = conn.createStatement().executeQuery(
+                        "SELECT * FROM Geography_Code ORDER BY gcid");
+                conn.setAutoCommit(false);
+                long count = 0;
+                float orderNum = 0;
+                DataNode node;
+                boolean isChinese = Languages.isChinese(lang);
+                while (query.next()) {
+                    try {
+                        long nodeid = query.getLong("gcid");
+                        long parentid = query.getLong("owner");
+                        String chinese_name = query.getString("chinese_name");
+                        String english_name = query.getString("english_name");
+                        String name = isChinese && chinese_name != null ? chinese_name
+                                : (english_name != null ? english_name : chinese_name);
+                        node = DataNode.create()
+                                .setNodeid(-1).setParentid(RootID)
+                                .setOrderNumber(++orderNum)
+                                .setTitle(name);
+                        node.setValue("level", query.getShort("level"));
+                        node.setValue("coordinate_system", query.getShort("coordinate_system"));
+                        node.setValue("longitude", query.getDouble("longitude"));
+                        node.setValue("latitude", query.getDouble("latitude"));
+                        node.setValue("altitude", query.getDouble("altitude"));
+                        node.setValue("precision", query.getDouble("precision"));
+                        node.setValue("chinese_name", chinese_name);
+                        node.setValue("english_name", english_name);
+                        node.setValue("code1", query.getString("code1"));
+                        node.setValue("code2", query.getString("code2"));
+                        node.setValue("code3", query.getString("code3"));
+                        node.setValue("code4", query.getString("code4"));
+                        node.setValue("code5", query.getString("code5"));
+                        node.setValue("alias1", query.getString("alias1"));
+                        node.setValue("alias2", query.getString("alias2"));
+                        node.setValue("alias3", query.getString("alias3"));
+                        node.setValue("alias4", query.getString("alias4"));
+                        node.setValue("alias5", query.getString("alias5"));
+                        node.setValue("area", query.getLong("area") + 0d);
+                        node.setValue("population", query.getLong("population"));
+                        node.setValue("description", query.getString("comments"));
+                        node = gcTable.insertData(conn, node);
+                        long newNodeid = node.getNodeid();
+                        if (newNodeid >= 0) {
+                            if (++count % Database.BatchSize == 0) {
+                                conn.commit();
+                            }
+                            statement.executeUpdate("INSERT INTO MYBOX_TMP_TREE_Migration683 VALUES ("
+                                    + nodeid + ", " + parentid + ", " + newNodeid + ")");
+                        }
+                    } catch (Exception e) {
+                        MyBoxLog.console(e);
+                    }
+                }
+                conn.commit();
+                controller.info("Saved: " + gcTable.getTreeName() + " count:" + count);
+
+                query = conn.createStatement().executeQuery("select A.new_nodeid AS nodeid,"
+                        + " B.new_nodeid AS parentid "
+                        + " from MYBOX_TMP_TREE_Migration683 A, MYBOX_TMP_TREE_Migration683 AS B "
+                        + " WHERE A.old_parentid=B.old_nodeid");
+                conn.setAutoCommit(false);
+                count = 0;
+                while (query.next()) {
+                    try {
+                        long nodeid = query.getLong("nodeid");
+                        long parentid = query.getLong("parentid");
+                        if (nodeid == parentid) {
+                            parentid = RootID;
+                        }
+                        String sql = "UPDATE " + tname + " SET parentid=" + parentid + " WHERE nodeid=" + nodeid;
+                        statement.executeUpdate(sql);
+                        if (++count % Database.BatchSize == 0) {
+                            conn.commit();
+                        }
+                    } catch (Exception e) {
+                        MyBoxLog.console(e);
+                    }
+                }
+                conn.commit();
+                controller.info("Moved: " + gcTable.getTreeName() + " count:" + count);
+
+            } catch (Exception e) {
+                MyBoxLog.error(e);
+            }
+
+//            try (Statement statement = conn.createStatement()) {
+//                conn.setAutoCommit(true);
+//                statement.executeUpdate("DROP TABLE MYBOX_TMP_TREE_Migration683");
+//                statement.executeUpdate("DROP TABLE Geography_Code");
+//            } catch (Exception e) {
+//                MyBoxLog.console(e);
+//            }
+        } catch (Exception e) {
+//            MyBoxLog.console(e);
+        }
+    }
+
+    public static void updateIn682(MyBoxLoadingController controller, Connection conn) {
+        try {
+            MyBoxLog.info("Updating tables in 6.8.2...");
+            controller.info("Updating tables in 6.8.2...");
+
+            updateIn682_move(controller, conn, new TableNodeHtml(), "Notebook");
+            updateIn682_move(controller, conn, new TableNodeText(), "InformationInTree");
+            updateIn682_move(controller, conn, new TableNodeWebFavorite(), "WebFavorite");
+            updateIn682_move(controller, conn, new TableNodeSQL(), "SQL");
+            updateIn682_move(controller, conn, new TableNodeMathFunction(), "MathFunction");
+            updateIn682_move(controller, conn, new TableNodeImageScope(), "ImageScope");
+            updateIn682_move(controller, conn, new TableNodeJShell(), "JShellCode");
+            updateIn682_move(controller, conn, new TableNodeJEXL(), "JEXLCode");
+            updateIn682_move(controller, conn, new TableNodeJavaScript(), "JavaScript");
+            updateIn682_move(controller, conn, new TableNodeRowExpression(), "RowFilter");
+            updateIn682_move(controller, conn, new TableNodeDataColumn(), "Data2DDefinition");
+
+            try (Statement statement = conn.createStatement()) {
+                conn.setAutoCommit(true);
+                statement.executeUpdate("DROP TABLE MYBOX_TMP_TREE_Migration682");
+                statement.executeUpdate("DROP TABLE MYBOX_TMP_TAG_Migration682");
+                statement.executeUpdate("DROP TABLE tree_node_tag");
+                statement.executeUpdate("DROP TABLE tree_node");
+                statement.executeUpdate("DROP TABLE tag");
+            } catch (Exception e) {
+                MyBoxLog.console(e);
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
 
     public static void updateIn682_move(MyBoxLoadingController controller, Connection conn,
             BaseNodeTable dataTable, String category) {
@@ -348,6 +544,78 @@ public class DataMigrationTools {
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;
+        }
+    }
+
+    public static void updateIn68(Connection conn) {
+        try (Statement statement = conn.createStatement()) {
+            MyBoxLog.info("Updating tables in 6.8...");
+
+            conn.setAutoCommit(true);
+            TableInfoNode tableTreeNode = new TableInfoNode();
+            InfoNode rootNode = tableTreeNode.findAndCreateRoot(conn, InfoNode.ImageScope);
+            if (rootNode == null) {
+                return;
+            }
+            long rootid = rootNode.getNodeid(), parentid;
+            ResultSet query = statement.executeQuery("SELECT * FROM image_scope");
+            HashMap<String, Long> parents = new HashMap<>();
+            conn.setAutoCommit(false);
+            while (query.next()) {
+                ImageScope scope = new ImageScope();
+                try {
+                    ImageScope.ScopeType type = ImageScopeTools.scopeType(query.getString("scope_type"));
+                    if (ImageScopeTools.decodeAreaData(type, query.getString("area_data"), scope)
+                            && ImageScopeTools.decodeColorData(type, query.getString("color_data"), scope)
+                            && ImageScopeTools.decodeOutline(null, type, query.getString("outline"), scope)) {
+                        scope.setFile(query.getString("image_location"));
+                        scope.setName(query.getString("name"));
+                        scope.setScopeType(type);
+                        scope.setColorScopeType(ImageScope.ColorScopeType.valueOf(query.getString("color_scope_type")));
+                        scope.setColorDistance(query.getInt("color_distance"));
+                        scope.setHsbDistance((float) query.getDouble("hsb_distance"));
+                        scope.setAreaExcluded(query.getBoolean("area_excluded"));
+                        scope.setColorExcluded(query.getBoolean("color_excluded"));
+                        scope.setCreateTime(query.getTimestamp("create_time"));
+                        scope.setModifyTime(query.getTimestamp("modify_time"));
+                    } else {
+                        continue;
+                    }
+                } catch (Exception e) {
+                    MyBoxLog.console(e);
+                    continue;
+                }
+                String file = scope.getFile();
+                InfoNode scopeNode = new InfoNode()
+                        .setCategory(InfoNode.ImageScope)
+                        .setTitle(scope.getName())
+                        .setInfo(ImageScopeTools.toXML(scope, ""))
+                        .setUpdateTime(scope.getModifyTime());
+                parentid = rootid;
+                if (file != null && !file.isBlank()) {
+                    if (parents.containsKey(file)) {
+                        parentid = parents.get(file);
+                    } else {
+                        InfoNode parentNode = new InfoNode()
+                                .setCategory(InfoNode.ImageScope)
+                                .setParentid(rootid)
+                                .setTitle(file)
+                                .setUpdateTime(scope.getModifyTime());
+                        parentNode = tableTreeNode.insertData(parentNode);
+                        parentid = parentNode.getNodeid();
+                        parents.put(file, parentid);
+                    }
+                }
+                scopeNode.setParentid(parentid);
+                tableTreeNode.insertData(scopeNode);
+            }
+            conn.commit();
+            conn.setAutoCommit(true);
+
+            statement.executeUpdate("DROP TABLE image_scope");
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
         }
     }
 

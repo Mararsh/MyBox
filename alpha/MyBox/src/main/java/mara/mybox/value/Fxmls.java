@@ -27,6 +27,7 @@ public class Fxmls {
     public static final String ControlDataImageScopeFxml = "/fxml/ControlDataImageScope.fxml";
     public static final String ControlDataDataColumnFxml = "/fxml/ControlDataDataColumn.fxml";
     public static final String ControlDataRowExpressionFxml = "/fxml/ControlDataRowExpression.fxml";
+    public static final String ControlDataGeographyCodeFxml = "/fxml/ControlDataGeographyCode.fxml";
 
     public static final String DataTreeNodeEditorFxml = "/fxml/DataTreeNodeEditor.fxml";
     public static final String DataTreeTagsFxml = "/fxml/DataTreeTags.fxml";

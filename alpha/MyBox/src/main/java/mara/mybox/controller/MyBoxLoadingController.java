@@ -18,8 +18,8 @@ import javafx.stage.Stage;
 import javax.imageio.ImageIO;
 import mara.mybox.MyBox;
 import mara.mybox.bufferedimage.ImageColorSpace;
-import mara.mybox.db.migration.DataMigration;
 import mara.mybox.db.DerbyBase;
+import mara.mybox.db.migration.DataMigration;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.PopTools;
@@ -105,12 +105,11 @@ public class MyBoxLoadingController implements Initializable {
 
                             info(message(lang, "CheckingMigration"));
                             MyBoxLog.console(message(lang, "CheckingMigration"));
-                            if (!DataMigration.checkUpdates(loadingController)) {
+                            if (!DataMigration.checkUpdates(loadingController, lang)) {
                                 cancel();
                                 return null;
                             }
                             info(message(lang, "InitializingTableValues"));
-                            DerbyBase.initTableValues();
                         }
 
                         initEnv();

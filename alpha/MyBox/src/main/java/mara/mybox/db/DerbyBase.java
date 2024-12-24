@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import mara.mybox.controller.MyBoxLoadingController;
-import mara.mybox.db.data.GeographyCodeTools;
 import mara.mybox.db.table.TableAlarmClock;
 import mara.mybox.db.table.TableColor;
 import mara.mybox.db.table.TableColorPalette;
@@ -24,7 +23,6 @@ import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.db.table.TableData2DStyle;
 import mara.mybox.db.table.TableFileBackup;
 import mara.mybox.db.table.TableFloatMatrix;
-import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.db.table.TableImageClipboard;
 import mara.mybox.db.table.TableImageEditHistory;
 import mara.mybox.db.table.TableMedia;
@@ -32,6 +30,7 @@ import mara.mybox.db.table.TableMediaList;
 import mara.mybox.db.table.TableMyBoxLog;
 import mara.mybox.db.table.TableNamedValues;
 import mara.mybox.db.table.TableNodeDataColumn;
+import mara.mybox.db.table.TableNodeGeographyCode;
 import mara.mybox.db.table.TableNodeHtml;
 import mara.mybox.db.table.TableNodeImageScope;
 import mara.mybox.db.table.TableNodeJEXL;
@@ -475,10 +474,6 @@ public class DerbyBase {
                 new TableWebHistory().createTable(conn);
                 loadingController.info("Web_History");
             }
-            if (!tables.contains("Geography_Code".toLowerCase())) {
-                new TableGeographyCode().createTable(conn);
-                loadingController.info("Geography_Code");
-            }
             if (!tables.contains("Query_Condition".toLowerCase())) {
                 new TableQueryCondition().createTable(conn);
                 loadingController.info("Query_Condition");
@@ -587,6 +582,11 @@ public class DerbyBase {
                 t.createTable(conn);
                 loadingController.info(t.getTreeName());
             }
+            if (!tables.contains("Node_Geography_Code".toLowerCase())) {
+                TableNodeGeographyCode t = new TableNodeGeographyCode();
+                t.createTable(conn);
+                loadingController.info(t.getTreeName());
+            }
 
             return true;
         } catch (Exception e) {
@@ -599,27 +599,6 @@ public class DerbyBase {
         try {
             List<String> indexes = indexes(conn);
             MyBoxLog.debug("Indexes: " + indexes.size());
-            if (!indexes.contains("Geography_Code_level_index".toLowerCase())) {
-                try (Statement statement = conn.createStatement()) {
-                    statement.executeUpdate(TableGeographyCode.Create_Index_levelIndex);
-                } catch (Exception e) {
-//                    MyBoxLog.error(e);
-                }
-            }
-            if (!indexes.contains("Geography_Code_code_index".toLowerCase())) {
-                try (Statement statement = conn.createStatement()) {
-                    statement.executeUpdate(TableGeographyCode.Create_Index_codeIndex);
-                } catch (Exception e) {
-//                    MyBoxLog.error(e);
-                }
-            }
-            if (!indexes.contains("Geography_Code_gcid_index".toLowerCase())) {
-                try (Statement statement = conn.createStatement()) {
-                    statement.executeUpdate(TableGeographyCode.Create_Index_gcidIndex);
-                } catch (Exception e) {
-//                    MyBoxLog.error(e);
-                }
-            }
             if (!indexes.contains("MyBox_Log_index".toLowerCase())) {
                 try (Statement statement = conn.createStatement()) {
                     statement.executeUpdate(TableMyBoxLog.Create_Index);
@@ -679,18 +658,6 @@ public class DerbyBase {
                 } catch (Exception e) {
 //                    MyBoxLog.error(e);
                 }
-            }
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.console(e);
-            return false;
-        }
-    }
-
-    public static boolean initTableValues() {
-        try (Connection conn = DriverManager.getConnection(protocol + dbHome() + create)) {
-            if (TableGeographyCode.China(conn) == null) {
-                GeographyCodeTools.importPredefined(null, conn);
             }
             return true;
         } catch (Exception e) {
