@@ -41,7 +41,6 @@ import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.LocationTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppValues;
-import mara.mybox.value.FileFilters;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -49,7 +48,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2020-7-27
  * @License Apache License Version 2.0
  */
-public class ControlMap extends MapController {
+public class MapController extends BaseController {
 
     protected String mapTitle;
     protected WebEngine webEngine;
@@ -68,17 +67,11 @@ public class ControlMap extends MapController {
     @FXML
     protected VBox snapBox;
 
-    public ControlMap() {
-        baseTitle = message("Map");
-
-        TargetPathType = VisitHistory.FileType.Html;
-        TargetFileType = VisitHistory.FileType.Html;
-        targetExtensionFilter = FileFilters.HtmlExtensionFilter;
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.Html);
     }
 
-    /*
-        init map
-     */
     public void initMap() {
         try {
             loadNotify = new SimpleBooleanProperty();
@@ -157,6 +150,8 @@ public class ControlMap extends MapController {
                 int v = Integer.parseInt(data.substring("zoomSize:".length()));
                 if (mapOptionsController != null) {
                     mapOptionsController.setMapSize(v);
+                } else {
+                    mapOptions.setMapSize(v);
                 }
                 return;
             }
@@ -500,6 +495,7 @@ public class ControlMap extends MapController {
     }
 
     public void drawPoints(List<MapPoint> points) {
+        MyBoxLog.console(mapLoaded);
         if (!mapLoaded || webEngine == null || points == null || points.isEmpty()) {
             return;
         }

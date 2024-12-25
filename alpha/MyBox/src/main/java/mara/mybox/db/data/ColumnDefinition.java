@@ -601,6 +601,10 @@ public class ColumnDefinition extends BaseData {
         return toString(o);
     }
 
+    public String displayValue(Object v) {
+        return format(toString(v), -1, InvalidAs.Use);
+    }
+
     public String format(String string) {
         return format(string, -1, invalidAs);
     }

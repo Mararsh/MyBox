@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.web.WebView?>
+
+
+<VBox fx:id="contentBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.LocationInMapController">
+<children>
+        <HBox alignment="CENTER_LEFT" nodeOrientation="RIGHT_TO_LEFT" spacing="2.0">
+            <children>
+            <FlowPane alignment="CENTER_LEFT" hgap="2.0" maxWidth="1.7976931348623157E308" prefWrapLength="0.0" vgap="2.0" HBox.hgrow="ALWAYS">
+               <children>
+            <Button fx:id="popButton" mnemonicParsing="false" onAction="#popAction">
+               <graphic>
+                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconPop.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="htmlButton" mnemonicParsing="false" onAction="#htmlAction">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconHtml.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="dataButton" mnemonicParsing="false" onAction="#dataAction">
+               <graphic>
+                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconData.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+                            <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction" prefHeight="24.0" prefWidth="36.0">
+                                <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                        <image>
+                                            <Image url="@../buttons/Red/iconSave.png" />
+                                        </image>
+                                    </ImageView>
+                                </graphic>
+                            </Button>
+                            <Button fx:id="queryButton" mnemonicParsing="false" onAction="#queryAction">
+                                <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                        <image>
+                                            <Image url="@../buttons/Red/iconQuery.png" />
+                                        </image>
+                                    </ImageView>
+                                </graphic>
+                            </Button>
+               </children>
+            </FlowPane>
+            </children>
+        </HBox>
+        <VBox fx:id="snapBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="ALWAYS">
+            <children>
+                  <Label fx:id="titleLabel" maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" wrapText="true" />
+                <WebView fx:id="mapView" minHeight="200.0" minWidth="200.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS" />
+            </children>
+        </VBox>
+</children>
+</VBox>

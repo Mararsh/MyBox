@@ -14,7 +14,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.web.WebView?>
 
-<VBox fx:id="thisPane" spacing="5.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlMap">
+<VBox fx:id="thisPane" spacing="5.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.BaseMapController">
       <children>
       <HBox alignment="CENTER_LEFT" spacing="2.0">
          <children>

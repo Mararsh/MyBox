@@ -1805,6 +1805,35 @@ public class GeographyCodeTools {
     /*
         Convert
      */
+    public static GeographyCode fromNode(DataNode node) {
+        if (node == null) {
+            return null;
+        }
+        GeographyCode code = new GeographyCode();
+        code.setLevel(node.getShortValue("level"));
+        code.setCoordinateSystem(new GeoCoordinateSystem(node.getShortValue("coordinate_system")));
+        code.setLongitude(node.getDoubleValue("longitude"));
+        code.setLatitude(node.getDoubleValue("latitude"));
+        code.setAltitude(node.getDoubleValue("altitude"));
+        code.setPrecision(node.getDoubleValue("precision"));
+        code.setChineseName(node.getStringValue("chinese_name"));
+        code.setEnglishName(node.getStringValue("english_name"));
+        code.setAlias1(node.getStringValue("alias1"));
+        code.setAlias2(node.getStringValue("alias2"));
+        code.setAlias3(node.getStringValue("alias3"));
+        code.setAlias4(node.getStringValue("alias4"));
+        code.setAlias5(node.getStringValue("alias5"));
+        code.setCode1(node.getStringValue("code1"));
+        code.setCode2(node.getStringValue("code2"));
+        code.setCode3(node.getStringValue("code3"));
+        code.setCode4(node.getStringValue("code4"));
+        code.setCode5(node.getStringValue("code5"));
+        code.setArea(Math.round(node.getDoubleValue("area")));
+        code.setPopulation(node.getLongValue("population"));
+        code.setComments(node.getStringValue("description"));
+        return code;
+    }
+
     public static GeographyCode toCGCS2000(GeographyCode code, boolean setCS) {
         GeographyCode converted = toWGS84(code);
         if (converted != null && setCS) {

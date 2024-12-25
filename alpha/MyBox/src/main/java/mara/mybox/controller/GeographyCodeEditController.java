@@ -245,7 +245,7 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
         }
     }
 
-    public void load(GeographyCodeController parent, GeographyCode code) {
+    public void load(GeographyCodeController1 parent, GeographyCode code) {
         parentController = parent;
         try {
             loadedCode = (GeographyCode) (code.clone());
@@ -534,10 +534,10 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
             }
 
             if (parentController != null) {
-                ((GeographyCodeController) parentController).refreshAction();
+                ((GeographyCodeController1) parentController).refreshAction();
                 parentController.getMyStage().requestFocus();
             } else {
-                GeographyCodeController controller = (GeographyCodeController) openStage(Fxmls.GeographyCodeFxml);
+                GeographyCodeController1 controller = (GeographyCodeController1) openStage(Fxmls.GeographyCodeFxml);
                 controller.getMyStage().requestFocus();
             }
             closeStage();

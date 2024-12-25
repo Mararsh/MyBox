@@ -1,8 +1,10 @@
 package mara.mybox.data;
 
 import java.io.File;
+import java.sql.Connection;
 import javafx.scene.paint.Color;
-import mara.mybox.controller.ControlMap;
+import mara.mybox.controller.MapController;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
@@ -19,7 +21,7 @@ import mara.mybox.value.UserConfig;
  */
 public class MapOptions {
 
-    protected ControlMap mapController;
+    protected MapController mapController;
     protected String baseName, mapType, mapStyle, language;
     protected int markerSize, textSize, mapSize;
     protected boolean isSettingValues, isGeodetic, fitView, popInfo,
@@ -30,7 +32,7 @@ public class MapOptions {
     protected Color textColor;
     protected GeoCoordinateSystem coordinateSystem;
 
-    public MapOptions(ControlMap mapController) {
+    public MapOptions(MapController mapController) {
         try {
             this.mapController = mapController;
             baseName = mapController.getBaseName();
@@ -41,32 +43,32 @@ public class MapOptions {
     }
 
     public final void initValues() {
-        try {
-            mapType = UserConfig.getString(baseName + "MapType", "Gaode");
-            mapStyle = UserConfig.getString(baseName + "MapStyle", "default");
-            language = UserConfig.getString(baseName + "Language", Languages.isChinese() ? "zh_cn" : "en");
-            markerSize = UserConfig.getInt(baseName + "MarkerSize", 24);
-            textSize = UserConfig.getInt(baseName + "TextSize", 12);
-            mapSize = UserConfig.getInt(baseName + "MapSize", 9);
-            isGeodetic = UserConfig.getBoolean(baseName + "Geodetic", true);
-            fitView = UserConfig.getBoolean(baseName + "FitView", true);
-            popInfo = UserConfig.getBoolean(baseName + "PopInfo", true);
-            standardLayer = UserConfig.getBoolean(baseName + "StandardLayer", true);
-            satelliteLayer = UserConfig.getBoolean(baseName + "SatelliteLayer", false);
-            roadLayer = UserConfig.getBoolean(baseName + "RoadLayer", false);
-            trafficLayer = UserConfig.getBoolean(baseName + "TrafficLayer", false);
-            zoom = UserConfig.getBoolean(baseName + "Zoom", true);
-            scale = UserConfig.getBoolean(baseName + "Scale", true);
-            type = UserConfig.getBoolean(baseName + "Type", true);
-            symbols = UserConfig.getBoolean(baseName + "Symbols", false);
-            bold = UserConfig.getBoolean(baseName + "Bold", false);
-            markerLabel = UserConfig.getBoolean(baseName + "MarkerLabel", true);
-            markerCoordinate = UserConfig.getBoolean(baseName + "MarkerCoordinate", false);
-            standardOpacity = (float) UserConfig.getDouble(baseName + "StandardOpacity", 1f);
-            satelliteOpacity = (float) UserConfig.getDouble(baseName + "SatelliteOpacity", 1f);
-            roadOpacity = (float) UserConfig.getDouble(baseName + "RoadOpacity", 1f);
-            trafficOpacity = (float) UserConfig.getDouble(baseName + "TrafficOpacity", 1f);
-            String v = UserConfig.getString(baseName + "MarkerImageFile", null);
+        try (Connection conn = DerbyBase.getConnection()) {
+            mapType = UserConfig.getString(conn, baseName + "MapType", "Gaode");
+            mapStyle = UserConfig.getString(conn, baseName + "MapStyle", "default");
+            language = UserConfig.getString(conn, baseName + "Language", Languages.isChinese() ? "zh_cn" : "en");
+            markerSize = UserConfig.getInt(conn, baseName + "MarkerSize", 24);
+            textSize = UserConfig.getInt(conn, baseName + "TextSize", 12);
+            mapSize = UserConfig.getInt(conn, baseName + "MapSize", 9);
+            isGeodetic = UserConfig.getBoolean(conn, baseName + "Geodetic", true);
+            fitView = UserConfig.getBoolean(conn, baseName + "FitView", true);
+            popInfo = UserConfig.getBoolean(conn, baseName + "PopInfo", true);
+            standardLayer = UserConfig.getBoolean(conn, baseName + "StandardLayer", true);
+            satelliteLayer = UserConfig.getBoolean(conn, baseName + "SatelliteLayer", false);
+            roadLayer = UserConfig.getBoolean(conn, baseName + "RoadLayer", false);
+            trafficLayer = UserConfig.getBoolean(conn, baseName + "TrafficLayer", false);
+            zoom = UserConfig.getBoolean(conn, baseName + "Zoom", true);
+            scale = UserConfig.getBoolean(conn, baseName + "Scale", true);
+            type = UserConfig.getBoolean(conn, baseName + "Type", true);
+            symbols = UserConfig.getBoolean(conn, baseName + "Symbols", false);
+            bold = UserConfig.getBoolean(conn, baseName + "Bold", false);
+            markerLabel = UserConfig.getBoolean(conn, baseName + "MarkerLabel", true);
+            markerCoordinate = UserConfig.getBoolean(conn, baseName + "MarkerCoordinate", false);
+            standardOpacity = (float) UserConfig.getDouble(conn, baseName + "StandardOpacity", 1f);
+            satelliteOpacity = (float) UserConfig.getDouble(conn, baseName + "SatelliteOpacity", 1f);
+            roadOpacity = (float) UserConfig.getDouble(conn, baseName + "RoadOpacity", 1f);
+            trafficOpacity = (float) UserConfig.getDouble(conn, baseName + "TrafficOpacity", 1f);
+            String v = UserConfig.getString(conn, baseName + "MarkerImageFile", null);
             if (v == null) {
                 markerImageFile = this.pointImage();
             } else {
@@ -75,13 +77,13 @@ public class MapOptions {
                     markerImageFile = this.pointImage();
                 }
             }
-            v = UserConfig.getString(baseName + "TextColor", null);
+            v = UserConfig.getString(conn, baseName + "TextColor", null);
             try {
                 textColor = Color.web(v);
             } catch (Exception e) {
                 textColor = Color.BLACK;
             }
-            v = UserConfig.getString(baseName + "CoordinateSystem", null);
+            v = UserConfig.getString(conn, baseName + "CoordinateSystem", null);
             coordinateSystem = new GeoCoordinateSystem(v);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -178,11 +180,11 @@ public class MapOptions {
     /*
         get/set
      */
-    public ControlMap getMapController() {
+    public MapController getMapController() {
         return mapController;
     }
 
-    public MapOptions setMapController(ControlMap mapController) {
+    public MapOptions setMapController(MapController mapController) {
         this.mapController = mapController;
         return this;
     }

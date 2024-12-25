@@ -111,7 +111,7 @@ public class GeographyCodeMapController extends ControlMap {
                     }
                     MapPoint mapPoint = new MapPoint(tcode);
                     mapPoint.setLabel(code.getName())
-                            .setInfo(BaseDataTools.displayData(geoTable, code, null, true))
+                            .setInfo(geoTable.html(code))
                             .setMarkSize(markSize)
                             .setMarkerImage(image)
                             .setTextSize(textSize)

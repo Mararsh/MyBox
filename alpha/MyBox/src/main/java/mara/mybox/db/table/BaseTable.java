@@ -18,6 +18,8 @@ import java.util.List;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.Database;
 import mara.mybox.db.DerbyBase;
+import mara.mybox.db.data.BaseData;
+import mara.mybox.db.data.BaseDataTools;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import static mara.mybox.db.data.ColumnDefinition.ColumnType.Clob;
@@ -1029,6 +1031,17 @@ public abstract class BaseTable<D> {
         return null;
     }
 
+    public String columnLabel(ColumnDefinition column) {
+        if (column == null) {
+            return null;
+        }
+        return column.label();
+    }
+
+    public String label(String columnName) {
+        return columnLabel(column(columnName));
+    }
+
     public String columnsList() {
         if (tableName == null || columns.isEmpty()) {
             return null;
@@ -1103,6 +1116,14 @@ public abstract class BaseTable<D> {
         }
         html += "</BR><HR>" + StringTools.replaceHtmlLineBreak(createTableStatement());
         return HtmlWriteTools.html(tableName, HtmlStyles.styleValue("Default"), html);
+    }
+
+    public String html(BaseData data) {
+        return BaseDataTools.displayData(this, data, true);
+    }
+
+    public String text(BaseData data) {
+        return BaseDataTools.displayData(this, data, false);
     }
 
     /*

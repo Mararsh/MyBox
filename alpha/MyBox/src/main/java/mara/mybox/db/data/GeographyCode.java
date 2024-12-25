@@ -342,7 +342,7 @@ public class GeographyCode extends BaseData {
             case "building":
                 return data.getBuildingName();
         }
-        return BaseDataTools.displayColumnBase(data, column, value);
+        return column.displayValue(value);
     }
 
     public static String displayDataMore(GeographyCode data, String lineBreak) {

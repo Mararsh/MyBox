@@ -58,11 +58,12 @@ public class BaseNodeTable extends BaseTable<DataNode> {
         return this;
     }
 
+    @Override
     public String label(String name) {
         if (name == null || name.isBlank()) {
             return name;
         }
-        switch (name) {
+        switch (name.toLowerCase()) {
             case "nodeid":
                 return message("NodeID");
             case "title":
@@ -72,7 +73,7 @@ public class BaseNodeTable extends BaseTable<DataNode> {
             case "parentid":
                 return message("ParentID");
             case "update_time":
-                return message("Update_Time");
+                return message("UpdateTime");
         }
         return name;
     }

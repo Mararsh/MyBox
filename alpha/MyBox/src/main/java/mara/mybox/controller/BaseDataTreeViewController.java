@@ -97,7 +97,7 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
         try {
             super.initControls();
 
-            viewNode(null);
+            loadCurrent(null);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
