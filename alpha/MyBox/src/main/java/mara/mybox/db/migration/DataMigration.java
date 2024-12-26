@@ -112,6 +112,18 @@ public class DataMigration {
                             }
                         }
                     }
+
+                    dir = new File(AppVariables.MyboxDataPath + File.separator + "js");
+                    list = dir.listFiles();
+                    if (list != null) {
+                        for (File file : list) {
+                            if (file.isDirectory()) {
+                                continue;
+                            }
+                            file.delete();
+                        }
+                    }
+
                     MyBoxLog.info("Internal resources refreshed.");
 
                 } catch (Exception e) {

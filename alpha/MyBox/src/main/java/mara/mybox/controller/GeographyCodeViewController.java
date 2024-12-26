@@ -2,7 +2,6 @@ package mara.mybox.controller;
 
 import java.sql.Connection;
 import java.util.ArrayList;
-import javafx.scene.paint.Color;
 import mara.mybox.data.MapPoint;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.DataNode;
@@ -34,7 +33,7 @@ public class GeographyCodeViewController extends MapController {
         }
     }
 
-    protected void loadGeographyCode(DataNode node) {
+    protected void loadNode(DataNode node) {
         if (webEngine == null || !mapLoaded || node == null) {
             return;
         }
@@ -46,40 +45,35 @@ public class GeographyCodeViewController extends MapController {
             task.cancel();
         }
         task = new FxSingletonTask<Void>(this) {
-            private DataNode savedNode;
             private MapPoint mapPoint;
 
             @Override
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
-                    savedNode = treeController.nodeTable.query(conn, node.getNodeid());
+                    DataNode savedNode = treeController.nodeTable.query(conn, node.getNodeid());
                     if (savedNode == null) {
                         return false;
                     }
                     GeographyCode tcode;
-                    String image = mapOptions.image();
-                    int textSize = mapOptions.textSize();
-                    int markSize = mapOptions.markSize();
-                    Color textColor = mapOptions.textColor();
-                    boolean isBold = mapOptions.isBold();
                     geographyCode = GeographyCodeTools.fromNode(savedNode);
                     if (!validCoordinate(geographyCode)) {
                         error = message("Invalid");
                         return false;
                     }
-                    if (mapOptions.isGaoDeMap()) {
+                    if (isGaoDeMap()) {
                         tcode = GeographyCodeTools.toGCJ02(geographyCode);
                     } else {
                         tcode = GeographyCodeTools.toCGCS2000(geographyCode, false);
                     }
                     mapPoint = new MapPoint(tcode);
                     mapPoint.setLabel(geographyCode.getName())
-                            .setInfo(treeController.nodeTable.html(savedNode))
-                            .setMarkSize(markSize)
-                            .setMarkerImage(image)
+                            .setInfo(treeController.nodeTable.htmlList(savedNode))
+                            .setMarkSize(markerSize)
+                            .setMarkerImage(image())
                             .setTextSize(textSize)
                             .setTextColor(textColor)
-                            .setIsBold(isBold);
+                            .setIsBold(isBold)
+                            .setIsPopInfo(true);
                     mapPoints = new ArrayList<>();
                     mapPoints.add(mapPoint);
                     return true;
@@ -92,8 +86,6 @@ public class GeographyCodeViewController extends MapController {
             @Override
             protected void whenSucceeded() {
                 drawPoint(mapPoint);
-                webEngine.executeScript("setCenter("
-                        + mapPoint.getLongitude() + ", " + mapPoint.getLatitude() + ");");
                 treeController.currentNode = node;
                 treeController.opPane.setVisible(true);
             }

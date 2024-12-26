@@ -194,7 +194,7 @@ public class DataNodeTools {
                         .append("</update_time>\n");
             }
             if (withData) {
-                String valuesXml = dataTable.valuesXml(fxTask, conn, controller, prefix2, node);
+                String valuesXml = dataTable.valuesXml(prefix2, node);
                 if (valuesXml != null && !valuesXml.isBlank()) {
                     s.append(valuesXml);
                 }
@@ -291,7 +291,7 @@ public class DataNodeTools {
                         .append("[").append(t).append("]");
             }
             if (withData) {
-                String valuesJson = dataTable.valuesJson(fxTask, conn, controller, prefix, node);
+                String valuesJson = dataTable.valuesJson(prefix, node);
                 if (valuesJson != null && !valuesJson.isBlank()) {
                     s.append(",\n").append(valuesJson);
                 }

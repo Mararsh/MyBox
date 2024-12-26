@@ -619,6 +619,10 @@ public class BaseNodeTable extends BaseTable<DataNode> {
         return names;
     }
 
+    public String valuesHtml(DataNode node) {
+        return valuesHtml(null, null, null, node);
+    }
+
     public String valuesHtml(FxTask task, Connection conn,
             BaseController controller, DataNode node) {
         if (node == null) {
@@ -631,7 +635,7 @@ public class BaseNodeTable extends BaseTable<DataNode> {
         StringTable table = new StringTable();
         for (ColumnDefinition column : columns) {
             String name = column.getColumnName();
-            String value = column.toString(values.get(name));
+            String value = column.displayValue(values.get(name));
             if (value == null || value.isBlank()) {
                 continue;
             }
@@ -647,12 +651,7 @@ public class BaseNodeTable extends BaseTable<DataNode> {
         }
     }
 
-    public String escapeXML(String column, String value) {
-        return value;
-    }
-
-    public String valuesXml(FxTask task, Connection conn,
-            BaseController controller, String prefix, DataNode node) {
+    public String valuesXml(String prefix, DataNode node) {
         if (node == null) {
             return null;
         }
@@ -668,19 +667,18 @@ public class BaseNodeTable extends BaseTable<DataNode> {
             if (value == null) {
                 continue;
             }
-            String escapeXML = escapeXML(name, column.toString(value));
-            if (escapeXML == null || escapeXML.isBlank()) {
+            String sValue = column.toString(value);
+            if (sValue == null || sValue.isBlank()) {
                 continue;
             }
             xml += prefix + "<" + name + ">\n";
-            xml += prefix2 + "<![CDATA[" + escapeXML + "]]>\n";
+            xml += prefix2 + "<![CDATA[" + sValue + "]]>\n";
             xml += prefix + "</" + name + ">\n";
         }
         return xml;
     }
 
-    public String valuesJson(FxTask task, Connection conn,
-            BaseController controller, String prefix, DataNode node) {
+    public String valuesJson(String prefix, DataNode node) {
         if (node == null) {
             return null;
         }
@@ -705,7 +703,7 @@ public class BaseNodeTable extends BaseTable<DataNode> {
     }
 
     public String valuesString(DataNode node) {
-        return valuesJson(null, null, null, "", node);
+        return valuesJson("", node);
     }
 
     // Node should be queried with all fields

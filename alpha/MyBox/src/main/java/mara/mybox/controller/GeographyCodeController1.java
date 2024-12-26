@@ -280,7 +280,7 @@ public class GeographyCodeController1 extends BaseDataManageController<Geography
             return;
         }
         HtmlTableController.open(message("GeographyCode"),
-                tableDefinition.html(selected));
+                tableDefinition.htmlList(selected));
     }
 
     @FXML

@@ -19,7 +19,6 @@ import mara.mybox.data.StringTable;
 import mara.mybox.db.Database;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.BaseData;
-import mara.mybox.db.data.BaseDataTools;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import static mara.mybox.db.data.ColumnDefinition.ColumnType.Clob;
@@ -1042,7 +1041,7 @@ public abstract class BaseTable<D> {
         return columnLabel(column(columnName));
     }
 
-    public String columnsList() {
+    public String columnsText() {
         if (tableName == null || columns.isEmpty()) {
             return null;
         }
@@ -1105,7 +1104,7 @@ public abstract class BaseTable<D> {
         return StringTable.tableDiv(table);
     }
 
-    public String html() {
+    public String definitionHtml() {
         if (tableName == null || columns.isEmpty()) {
             return null;
         }
@@ -1118,12 +1117,101 @@ public abstract class BaseTable<D> {
         return HtmlWriteTools.html(tableName, HtmlStyles.styleValue("Default"), html);
     }
 
-    public String html(BaseData data) {
-        return BaseDataTools.displayData(this, data, true);
+    public String displayValue(ColumnDefinition column, Object v) {
+        if (column == null) {
+            return null;
+        }
+        return column.displayValue(v);
+    }
+
+    public String htmlList(BaseData data) {
+        try {
+            if (data == null || columns == null) {
+                return null;
+            }
+            String lineBreak = "<BR>";
+            String info = null;
+            for (ColumnDefinition column : columns) {
+                Object value = data.getValue(column.getColumnName());
+                String display = displayValue(column, value);
+                if (display == null || display.isBlank()) {
+                    continue;
+                }
+                if (column.getType() == ColumnDefinition.ColumnType.Image) {
+                    display = "<img src=\"file:///" + display.replaceAll("\\\\", "/") + "\" width=200px>";
+                } else {
+                    display = StringTools.replaceLineBreak(display, lineBreak);
+                }
+                if (info != null) {
+                    info += lineBreak;
+                } else {
+                    info = "";
+                }
+                info += label(column.getColumnName()) + ": " + display;
+            }
+            return info;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public String htmlTable(BaseData data) {
+        try {
+            if (data == null) {
+                return null;
+            }
+            String lineBreak = "<BR>";
+            List<String> names = new ArrayList<>();
+            StringTable htmlTable = new StringTable(names);
+            names.addAll(Arrays.asList(message("Name"), message("Value")));
+            for (ColumnDefinition column : columns) {
+                Object value = data.getValue(column.getColumnName());
+                String display = displayValue(column, value);
+                if (display == null || display.isBlank()) {
+                    continue;
+                }
+                if (column.getType() == ColumnDefinition.ColumnType.Image) {
+                    display = "<img src=\"file:///" + display.replaceAll("\\\\", "/") + "\" width=200px>";
+                } else {
+                    display = StringTools.replaceLineBreak(display, lineBreak);
+                }
+                List<String> row = new ArrayList<>();
+                row.addAll(Arrays.asList(column.getColumnName(), display));
+                htmlTable.add(row);
+            }
+            return StringTable.tableDiv(htmlTable);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
     }
 
     public String text(BaseData data) {
-        return BaseDataTools.displayData(this, data, false);
+        try {
+            if (data == null || columns == null) {
+                return null;
+            }
+            String lineBreak = "\n";
+            String info = null;
+            for (ColumnDefinition column : columns) {
+                Object value = data.getValue(column.getColumnName());
+                String display = displayValue(column, value);
+                if (display == null || display.isBlank()) {
+                    continue;
+                }
+                if (info != null) {
+                    info += lineBreak;
+                } else {
+                    info = "";
+                }
+                info += label(column.getColumnName()) + ": " + display;
+            }
+            return info;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
     }
 
     /*
@@ -1945,15 +2033,6 @@ public abstract class BaseTable<D> {
 
     public String string(String value) {
         return DerbyBase.stringValue(value);
-    }
-
-    public void print(D data) {
-        if (data == null) {
-            return;
-        }
-        for (ColumnDefinition column : columns) {
-            MyBoxLog.console(column.getColumnName() + ": " + getValue(data, column.getColumnName()));
-        }
     }
 
     /*

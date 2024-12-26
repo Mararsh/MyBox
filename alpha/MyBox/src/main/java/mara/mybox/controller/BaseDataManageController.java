@@ -79,7 +79,7 @@ public abstract class BaseDataManageController<P> extends BaseSysTableController
         sizePrefix = "SELECT count(*) FROM " + tableName;
         clearPrefix = "DELETE FROM " + tableName;
         if (tableDefinition != null) {
-            tableDefinitionString = tableDefinition.html();
+            tableDefinitionString = tableDefinition.definitionHtml();
             viewDefinition = tableDefinition;
         }
     }

@@ -76,7 +76,7 @@ public class ControlMapOptions extends BaseController {
     public void setParameters(MapController mapController) {
         try {
             this.mapController = mapController;
-            this.mapOptions = mapController.mapOptions;
+//            this.mapOptions = mapController.mapOptions;
             this.baseName = mapController.baseName;
             this.baseTitle = mapController.baseTitle + " " + baseTitle;
 
@@ -560,7 +560,7 @@ public class ControlMapOptions extends BaseController {
         if (isSettingValues || mapController == null) {
             return;
         }
-        mapController.drawPoints();
+//        mapController.drawPoints();
     }
 
     public void setMapSize(int size) {

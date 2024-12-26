@@ -17,7 +17,7 @@ public class MapPoint {
     protected double longitude, latitude;
     protected String label, info, markerImage;
     protected int markSize, textSize;
-    protected boolean isBold;
+    protected boolean isBold, isPopInfo;
     protected Color textColor;
     protected GeoCoordinateSystem cs;
 
@@ -164,6 +164,15 @@ public class MapPoint {
 
     public MapPoint setCs(GeoCoordinateSystem cs) {
         this.cs = cs;
+        return this;
+    }
+
+    public boolean isIsPopInfo() {
+        return isPopInfo;
+    }
+
+    public MapPoint setIsPopInfo(boolean isPopInfo) {
+        this.isPopInfo = isPopInfo;
         return this;
     }
 

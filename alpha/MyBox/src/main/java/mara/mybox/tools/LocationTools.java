@@ -15,7 +15,7 @@ public class LocationTools {
 
     public static File tiandituFile(boolean geodetic) {
         try {
-            File map = FxFileTools.getInternalFile("/js/tianditu.html", "js", "tianditu.html");
+            File map = FxFileTools.getInternalFile("/js/tianditu.html", "js", "tianditu.html", true);
             String html = TextFileTools.readTexts(null, map);
             html = html.replace(AppValues.TianDiTuWebKey,
                     UserConfig.getString("TianDiTuWebKey", AppValues.TianDiTuWebKey));
@@ -32,7 +32,7 @@ public class LocationTools {
 
     public static String gaodeMap() {
         try {
-            File map = FxFileTools.getInternalFile("/js/GaoDeMap.html", "js", "GaoDeMap.html");
+            File map = FxFileTools.getInternalFile("/js/GaoDeMap.html", "js", "GaoDeMap.html", true);
             String html = TextFileTools.readTexts(null, map);
             html = html.replace(AppValues.GaoDeMapJavascriptKey,
                     UserConfig.getString("GaoDeMapWebKey", AppValues.GaoDeMapJavascriptKey));

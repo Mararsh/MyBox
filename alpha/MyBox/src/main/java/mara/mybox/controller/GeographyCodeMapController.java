@@ -8,8 +8,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 import mara.mybox.data.MapPoint;
-import mara.mybox.db.data.BaseData;
-import mara.mybox.db.data.BaseDataTools;
 import mara.mybox.db.data.GeographyCode;
 import mara.mybox.db.data.GeographyCodeTools;
 import static mara.mybox.db.data.GeographyCodeTools.validCoordinate;
@@ -111,7 +109,7 @@ public class GeographyCodeMapController extends ControlMap {
                     }
                     MapPoint mapPoint = new MapPoint(tcode);
                     mapPoint.setLabel(code.getName())
-                            .setInfo(geoTable.html(code))
+                            .setInfo(geoTable.htmlList(code))
                             .setMarkSize(markSize)
                             .setMarkerImage(image)
                             .setTextSize(textSize)
@@ -141,17 +139,18 @@ public class GeographyCodeMapController extends ControlMap {
 
     @Override
     protected String writePointsTable() {
-        if (geographyCodes == null || geographyCodes.isEmpty()) {
-            return "";
-        }
-        List<BaseData> list = new ArrayList<>();
-        for (GeographyCode geographyCode : geographyCodes) {
-            if (task == null || task.isCancelled()) {
-                return "";
-            }
-            list.add(geographyCode);
-        }
-        return BaseDataTools.htmlDataList(geoTable, list, displayNames());
+//        if (geographyCodes == null || geographyCodes.isEmpty()) {
+//            return "";
+//        }
+//        List<BaseData> list = new ArrayList<>();
+//        for (GeographyCode geographyCode : geographyCodes) {
+//            if (task == null || task.isCancelled()) {
+//                return "";
+//            }
+//            list.add(geographyCode);
+//        }
+//        return BaseDataTools.htmlDataList(geoTable, list, displayNames());
+        return null;
     }
 
     protected void drawGeographyCodes(List<GeographyCode> codes, String title) {

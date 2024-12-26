@@ -47,7 +47,7 @@ public class GeographyCodeController extends DataTreeController {
         if (node == null) {
             return;
         }
-        mapController.loadGeographyCode(node);
+        mapController.loadNode(node);
     }
 
     @Override
@@ -73,7 +73,7 @@ public class GeographyCodeController extends DataTreeController {
                     if (savedNode == null) {
                         return false;
                     }
-                    html = nodeTable.html(savedNode);
+                    html = nodeTable.htmlTable(savedNode);
                     return html != null && !html.isBlank();
                 } catch (Exception e) {
                     error = e.toString();

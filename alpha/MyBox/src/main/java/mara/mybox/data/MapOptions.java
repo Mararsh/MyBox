@@ -113,7 +113,7 @@ public class MapOptions {
         if (mapController == null || mapController.isIsSettingValues()) {
             return;
         }
-        mapController.drawPoints();
+        mapController.refreshAction();
     }
 
     public int textSize() {
@@ -237,7 +237,7 @@ public class MapOptions {
         this.mapSize = mapSize;
         UserConfig.setInt(baseName + "MapSize", mapSize);
         if (mapController != null) {
-            mapController.setMapSize();
+//            mapController.setMapSize();
         }
         return this;
     }
@@ -250,7 +250,7 @@ public class MapOptions {
         this.fitView = fitView;
         UserConfig.setBoolean(baseName + "FitView", fitView);
         if (mapController != null && !mapController.isIsSettingValues()) {
-            mapController.setFitView();
+//            mapController.setFitView();
         }
         return this;
     }
@@ -274,7 +274,7 @@ public class MapOptions {
         this.standardLayer = standardLayer;
         UserConfig.setBoolean(baseName + "StandardLayer", standardLayer);
         if (mapController != null && !mapController.isIsSettingValues()) {
-            mapController.setStandardLayer();
+//            mapController.setStandardLayer();
         }
         return this;
     }
@@ -287,7 +287,7 @@ public class MapOptions {
         this.satelliteLayer = satelliteLayer;
         UserConfig.setBoolean(baseName + "SatelliteLayer", satelliteLayer);
         if (mapController != null && !mapController.isIsSettingValues()) {
-            mapController.setSatelliteLayer();
+//            mapController.setSatelliteLayer();
         }
         return this;
     }
@@ -300,7 +300,7 @@ public class MapOptions {
         this.roadLayer = roadLayer;
         UserConfig.setBoolean(baseName + "RoadLayer", roadLayer);
         if (mapController != null && !mapController.isIsSettingValues()) {
-            mapController.setRoadLayer();
+//            mapController.setRoadLayer();
         }
         return this;
     }
@@ -313,7 +313,7 @@ public class MapOptions {
         this.trafficLayer = trafficLayer;
         UserConfig.setBoolean(baseName + "TrafficLayer", trafficLayer);
         if (mapController != null && !mapController.isIsSettingValues()) {
-            mapController.setTrafficLayer();
+//            mapController.setTrafficLayer();
         }
         return this;
     }
@@ -326,7 +326,7 @@ public class MapOptions {
         this.zoom = zoom;
         UserConfig.setBoolean(baseName + "Zoom", zoom);
         if (mapController != null && !mapController.isIsSettingValues()) {
-            mapController.setShowZoom();
+//            mapController.setShowZoom();
         }
         return this;
     }
@@ -339,7 +339,7 @@ public class MapOptions {
         this.scale = scale;
         UserConfig.setBoolean(baseName + "Scale", scale);
         if (mapController != null && !mapController.isIsSettingValues()) {
-            mapController.setShowScale();
+//            mapController.setShowScale();
         }
         return this;
     }
@@ -352,7 +352,7 @@ public class MapOptions {
         this.type = type;
         UserConfig.setBoolean(baseName + "Type", type);
         if (mapController != null && !mapController.isIsSettingValues()) {
-            mapController.setShowType();
+//            mapController.setShowType();
         }
         return this;
     }
@@ -365,7 +365,7 @@ public class MapOptions {
         this.symbols = symbols;
         UserConfig.setBoolean(baseName + "Symbols", symbols);
         if (mapController != null && !mapController.isIsSettingValues()) {
-            mapController.setShowSymbols();
+//            mapController.setShowSymbols();
         }
         return this;
     }
@@ -415,7 +415,7 @@ public class MapOptions {
         this.standardOpacity = standardOpacity;
         UserConfig.setDouble(baseName + "StandardOpacity", standardOpacity);
         if (mapController != null && !mapController.isIsSettingValues()) {
-            mapController.setStandardLayer();
+//            mapController.setStandardLayer();
         }
         return this;
     }
@@ -432,7 +432,7 @@ public class MapOptions {
         this.satelliteOpacity = satelliteOpacity;
         UserConfig.setDouble(baseName + "SatelliteOpacity", satelliteOpacity);
         if (mapController != null && !mapController.isIsSettingValues()) {
-            mapController.setSatelliteLayer();
+//            mapController.setSatelliteLayer();
         }
         return this;
     }
@@ -449,7 +449,7 @@ public class MapOptions {
         this.roadOpacity = roadOpacity;
         UserConfig.setDouble(baseName + "RoadOpacity", roadOpacity);
         if (mapController != null && !mapController.isIsSettingValues()) {
-            mapController.setRoadLayer();
+//            mapController.setRoadLayer();
         }
         return this;
     }
@@ -466,7 +466,7 @@ public class MapOptions {
         this.trafficOpacity = trafficOpacity;
         UserConfig.setDouble(baseName + "TrafficOpacity", trafficOpacity);
         if (mapController != null && !mapController.isIsSettingValues()) {
-            mapController.setTrafficLayer();
+//            mapController.setTrafficLayer();
         }
         return this;
     }
@@ -515,7 +515,7 @@ public class MapOptions {
         this.coordinateSystem = coordinateSystem;
         UserConfig.setString(baseName + "CoordinateSystem", coordinateSystem.name());
         if (mapController != null && !mapController.isIsSettingValues()) {
-            mapController.loadMap();
+//            mapController.loadMap();
         }
         return this;
     }
@@ -528,7 +528,7 @@ public class MapOptions {
         this.mapStyle = mapStyle;
         UserConfig.setString(baseName + "MapStyle", mapStyle);
         if (mapController != null && !mapController.isIsSettingValues()) {
-            mapController.setMapStyle();
+//            mapController.setMapStyle();
         }
         return this;
     }
@@ -541,7 +541,7 @@ public class MapOptions {
         this.language = language;
         UserConfig.setString(baseName + "Language", language);
         if (mapController != null && !mapController.isIsSettingValues()) {
-            mapController.setLanguage();
+//            mapController.setLanguage();
         }
         return this;
     }
@@ -554,7 +554,7 @@ public class MapOptions {
         this.isGeodetic = isGeodetic;
         UserConfig.setBoolean(baseName + "Geodetic", isGeodetic);
         if (mapController != null && !mapController.isIsSettingValues()) {
-            mapController.loadMap();
+//            mapController.loadMap();
         }
         return this;
     }

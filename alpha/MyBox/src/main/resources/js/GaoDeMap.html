@@ -3,8 +3,8 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <script type="text/javascript" src="https://webapi.amap.com/maps?v=1.4.15&key=9a05f3a33dbf64b70f6e1ac3988d9cdd"></script>
-        <script type="text/javascript" src="https://cache.amap.com/lbs/static/addToolbar.js"></script>
+        <script src="https://webapi.amap.com/maps?v=1.4.15&key=9a05f3a33dbf64b70f6e1ac3988d9cdd"></script>
+        <script src="https://cache.amap.com/lbs/static/addToolbar.js"></script>
         <title>Map</title>
         <style>
             html,
@@ -27,7 +27,7 @@
     </head>
     <body >
         <div id="container"></div>
-        <script  type="text/javascript">
+        <script>
             var standardLayer, satelliteLayer, roadLayer, trafficLayer;
             var infoWindow;
             var map, mapTitle;
@@ -66,8 +66,8 @@
             }
 
 
-            function setCenter(longtitude, latitude) {
-                map.setCenter(new AMap.LngLat(longtitude, latitude));
+            function setCenter(longitude, latitude) {
+                map.setCenter(new AMap.LngLat(longitude, latitude));
             }
 
             function setZoom(size) {
@@ -130,11 +130,23 @@
                 map.setFitView([polyline]);
             }
 
-            function addMarker(longtitude, latitude, label, info, image, markerSize, textSize, textColor, bold) {
+            function popInfo(textSize, info, longitude, latitude) {
+                infoWindow = new AMap.InfoWindow({
+                    content: "<div style=\"font-size:" + textSize + "px\">" +
+                            info.replace(new RegExp("##MyBox#", "gm"), "'") + "</div>"
+                });
+                infoWindow.open(map, [longitude, latitude]);
+            }
+
+            function addMarker(longitude, latitude, label, info, image, markerSize, textSize, textColor, bold) {
+                addMarker(longitude, latitude, label, info, image, markerSize, textSize, textColor, bold, false);
+            }
+
+            function addMarker(longitude, latitude, label, info, image, markerSize, textSize, textColor, bold, isPopInfo) {
                 var marker;
                 if (image === null) {
                     marker = new AMap.CircleMarker({
-                        center: [longtitude, latitude],
+                        center: [longitude, latitude],
                         radius: markerSize, //3D视图下，CircleMarker半径不要超过64px
                         strokeColor: 'white',
                         strokeWeight: 2,
@@ -149,7 +161,7 @@
                 } else {
                     marker = new AMap.Marker({
                         content: '<img src="file:///' + image + '" width=' + markerSize + '>',
-                        position: [longtitude, latitude],
+                        position: [longitude, latitude],
                         offset: new AMap.Pixel(-markerSize / 2, -markerSize / 2)
                     });
                 }
@@ -170,19 +182,17 @@
                 }
                 map.add(marker);
                 if (info !== null && info.length > 0) {
-                    marker.on('mousemove', function () {
-                        infoWindow = new AMap.InfoWindow({
-                            content: "<div style=\"font-size:" + textSize + "px\">" + info.replace(new RegExp("##MyBox#", "gm"), "'") + "</div>"
+                    marker.on('mouseover', popInfo(textSize, info, longitude, latitude));
+                    if (isPopInfo) {
+                        setCenter(longitude, latitude);
+                        popInfo(textSize, info, longitude, latitude);
+                    } else {
+                        marker.on('mouseout', function () {
+                            infoWindow.close();
                         });
-                        infoWindow.open(map, [longtitude, latitude]);
-                    });
-                    marker.on('mouseout', function () {
-                        infoWindow.close();
-                    });
+                    }
                 }
             }
-
-
 
             function hideStandardLayer() {
                 if (standardLayer !== undefined)
