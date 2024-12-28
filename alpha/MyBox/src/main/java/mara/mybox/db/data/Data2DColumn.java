@@ -1,7 +1,6 @@
 package mara.mybox.db.data;
 
 import mara.mybox.data2d.tools.Data2DColumnTools;
-import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.dev.MyBoxLog;
 
 /**
@@ -209,9 +208,4 @@ public class Data2DColumn extends ColumnDefinition {
         return this;
     }
 
-    @Override
-    public Data2DColumn setInvalidAs(InvalidAs invalidAs) {
-        this.invalidAs = invalidAs;
-        return this;
-    }
 }

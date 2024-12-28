@@ -36,6 +36,7 @@ public class Data2DColumnEditController extends BaseChildController {
             nameLabel.setText((columnsController.data2D == null ? ""
                     : (message("Data") + ": " + columnsController.data2D.displayName() + " "))
                     + message("Column") + ": " + (index + 1));
+            selectButton.setDisable(columnEditController.isTableExistedColumn);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -44,6 +45,7 @@ public class Data2DColumnEditController extends BaseChildController {
 
     protected void load(Data2DColumn column) {
         columnEditController.loadColumn(column);
+        selectButton.setDisable(columnEditController.isTableExistedColumn);
     }
 
     @FXML

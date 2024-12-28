@@ -182,14 +182,15 @@
                 }
                 map.add(marker);
                 if (info !== null && info.length > 0) {
-                    marker.on('mouseover', popInfo(textSize, info, longitude, latitude));
+                    marker.on("mousemove", function () {
+                        popInfo(textSize, info, longitude, latitude);
+                    });
+                    marker.on('mouseout', function () {
+                        infoWindow.close();
+                    });
                     if (isPopInfo) {
                         setCenter(longitude, latitude);
                         popInfo(textSize, info, longitude, latitude);
-                    } else {
-                        marker.on('mouseout', function () {
-                            infoWindow.close();
-                        });
                     }
                 }
             }

@@ -178,6 +178,11 @@ public class ClearExpiredDataController extends BaseTaskController {
         data2dCheck.setSelected(select);
     }
 
+    @Override
+    public boolean needStageVisitHistory() {
+        return !autoCheck.isSelected();
+    }
+
     /*
         static methods
      */

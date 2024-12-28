@@ -21,7 +21,6 @@ import mara.mybox.data.StringTable;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataFileText;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
-import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
@@ -1387,9 +1386,9 @@ public class Data2DExampleTools {
                 .setFixTwoDigitYear(false).setFormat("yyyy-MM-dd"));
         columns.add(new Data2DColumn(message(lang, "Country"), ColumnType.String));
         columns.add(new Data2DColumn(message(lang, "Province"), ColumnType.String));
-        columns.add(new Data2DColumn(message(lang, "Confirmed"), ColumnType.Integer).setInvalidAs(InvalidAs.Zero));
-        columns.add(new Data2DColumn(message(lang, "Healed"), ColumnType.Integer).setInvalidAs(InvalidAs.Zero));
-        columns.add(new Data2DColumn(message(lang, "Dead"), ColumnType.Integer).setInvalidAs(InvalidAs.Zero));
+        columns.add(new Data2DColumn(message(lang, "Confirmed"), ColumnType.Integer));
+        columns.add(new Data2DColumn(message(lang, "Healed"), ColumnType.Integer));
+        columns.add(new Data2DColumn(message(lang, "Dead"), ColumnType.Integer));
         columns.add(new Data2DColumn(message(lang, "Longitude"), ColumnType.Longitude));
         columns.add(new Data2DColumn(message(lang, "Latitude"), ColumnType.Latitude));
         data.setColumns(columns).setDataName(message(lang, "EpidemicReportsCOVID19"))

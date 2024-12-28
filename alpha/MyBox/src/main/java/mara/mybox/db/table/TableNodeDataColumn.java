@@ -35,7 +35,6 @@ public class TableNodeDataColumn extends BaseNodeTable {
         addColumn(new ColumnDefinition("is_auto", ColumnType.Boolean));
         addColumn(new ColumnDefinition("not_null", ColumnType.Boolean));
         addColumn(new ColumnDefinition("editable", ColumnType.Boolean));
-        addColumn(new ColumnDefinition("invalid_as", ColumnType.String));
         addColumn(new ColumnDefinition("fix_year", ColumnType.Boolean));
         addColumn(new ColumnDefinition("century", ColumnType.Integer));
         addColumn(new ColumnDefinition("format", ColumnType.String).setLength(StringMaxLength));
@@ -68,8 +67,6 @@ public class TableNodeDataColumn extends BaseNodeTable {
                 return message("NotNull");
             case "editable":
                 return message("Editable");
-            case "invalid_as":
-                return message("ToInvalidValue");
             case "fix_year":
                 return message("FixTwoDigitYears");
             case "century":
@@ -100,7 +97,6 @@ public class TableNodeDataColumn extends BaseNodeTable {
         node.setValue("is_auto", column.isAuto());
         node.setValue("not_null", column.isNotNull());
         node.setValue("editable", column.isEditable());
-        node.setValue("invalid_as", ColumnDefinition.invalidAsName(column.getInvalidAs()));
         node.setValue("fix_year", column.isFixTwoDigitYear());
         node.setValue("century", column.getCentury());
         node.setValue("format", column.getFormat());
@@ -126,7 +122,6 @@ public class TableNodeDataColumn extends BaseNodeTable {
         column.setColor(ColumnDefinition.color(node.getStringValue("color")));
         column.setAuto(node.getBooleanValue("is_auto"));
         column.setNotNull(node.getBooleanValue("not_null"));
-        column.setInvalidAs(ColumnDefinition.invalidAsFromName(node.getStringValue("invalid_as")));
         column.setFixTwoDigitYear(node.getBooleanValue("fix_year"));
         column.setCentury(node.getIntValue("century"));
         column.setFormat(node.getStringValue("format"));

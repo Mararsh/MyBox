@@ -3,7 +3,7 @@ package mara.mybox.data;
 import java.io.File;
 import java.sql.Connection;
 import javafx.scene.paint.Color;
-import mara.mybox.controller.MapController;
+import mara.mybox.controller.BaseMapController;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
@@ -21,7 +21,7 @@ import mara.mybox.value.UserConfig;
  */
 public class MapOptions {
 
-    protected MapController mapController;
+    protected BaseMapController mapController;
     protected String baseName, mapType, mapStyle, language;
     protected int markerSize, textSize, mapSize;
     protected boolean isSettingValues, isGeodetic, fitView, popInfo,
@@ -32,7 +32,7 @@ public class MapOptions {
     protected Color textColor;
     protected GeoCoordinateSystem coordinateSystem;
 
-    public MapOptions(MapController mapController) {
+    public MapOptions(BaseMapController mapController) {
         try {
             this.mapController = mapController;
             baseName = mapController.getBaseName();
@@ -180,11 +180,11 @@ public class MapOptions {
     /*
         get/set
      */
-    public MapController getMapController() {
+    public BaseMapController getMapController() {
         return mapController;
     }
 
-    public MapOptions setMapController(MapController mapController) {
+    public MapOptions setMapController(BaseMapController mapController) {
         this.mapController = mapController;
         return this;
     }

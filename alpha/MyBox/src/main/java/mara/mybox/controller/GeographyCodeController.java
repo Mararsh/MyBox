@@ -1,14 +1,9 @@
 package mara.mybox.controller;
 
-import java.sql.Connection;
 import javafx.fxml.FXML;
-import javafx.scene.layout.FlowPane;
-import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.DataNode;
 import mara.mybox.db.table.TableNodeGeographyCode;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.FxSingletonTask;
-import mara.mybox.fxml.FxTask;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -20,8 +15,6 @@ public class GeographyCodeController extends DataTreeController {
 
     @FXML
     protected GeographyCodeViewController mapController;
-    @FXML
-    protected FlowPane opPane;
 
     public GeographyCodeController() {
         baseTitle = message("GeographyCode");
@@ -53,7 +46,12 @@ public class GeographyCodeController extends DataTreeController {
     @Override
     protected void nullCurrent() {
         currentNode = null;
-        opPane.setVisible(false);
+        setButtonsDisable(true);
+    }
+
+    protected void setButtonsDisable(boolean disable) {
+        infoButton.setDisable(disable);
+        editButton.setDisable(disable);
     }
 
     @FXML
@@ -62,36 +60,7 @@ public class GeographyCodeController extends DataTreeController {
         if (currentNode == null) {
             return false;
         }
-        FxTask loadTask = new FxSingletonTask<Void>(this) {
-            private String html;
-            private DataNode savedNode;
-
-            @Override
-            protected boolean handle() {
-                try (Connection conn = DerbyBase.getConnection()) {
-                    savedNode = nodeTable.query(conn, currentNode.getNodeid());
-                    if (savedNode == null) {
-                        return false;
-                    }
-                    html = nodeTable.htmlTable(savedNode);
-                    return html != null && !html.isBlank();
-                } catch (Exception e) {
-                    error = e.toString();
-                    return false;
-                }
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                HtmlPopController.showHtml(myController, html);
-            }
-
-            @Override
-            protected void whenFailed() {
-            }
-
-        };
-        start(loadTask, false);
+        popNode(currentNode);
         return true;
     }
 
@@ -105,6 +74,11 @@ public class GeographyCodeController extends DataTreeController {
     public boolean snapAction() {
         mapController.popAction();
         return true;
+    }
+
+    @FXML
+    public void optionsAction() {
+        mapController.optionsAction();
     }
 
     @Override

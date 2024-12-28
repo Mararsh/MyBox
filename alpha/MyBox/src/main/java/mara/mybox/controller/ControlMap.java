@@ -49,7 +49,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2020-7-27
  * @License Apache License Version 2.0
  */
-public class ControlMap extends MapController {
+public class ControlMap extends BaseMapController {
 
     protected String mapTitle;
     protected WebEngine webEngine;
@@ -421,7 +421,7 @@ public class ControlMap extends MapController {
 
     }
 
-    protected void drawPoint(MapPoint point) {
+    public void drawPoint(MapPoint point) {
         if (webEngine == null || !mapLoaded || point == null) {
             return;
         }

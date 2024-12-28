@@ -168,9 +168,6 @@
                 pmarker.openInfoWindow(infoWindow);
             }
 
-            function addMarker(longitude, latitude, label, info, image, markerSize, textSize, textColor, bold) {
-                addMarker(longitude, latitude, label, info, image, markerSize, textSize, textColor, bold, false);
-            }
 
             function addMarker(longitude, latitude, label, info, image, markerSize, textSize, textColor, bold, isPopInfo) {
                 var marker, markerLabel;
@@ -204,15 +201,17 @@
                     map.addOverLay(markerLabel);
                 }
                 if (info !== null && info.length > 0) {
-                    marker.on('mouseover', popInfo(marker, textSize, info));
+                    marker.addEventListener("mousemove", function () {
+                        popInfo(marker, textSize, info);
+                    });
+                    marker.addEventListener("mouseout", function () {
+                        marker.closeInfoWindow(infoWindow);
+                    });
                     if (isPopInfo) {
                         setCenter(longitude, latitude);
                         popInfo(marker, textSize, info);
-                    } else {
-                        marker.addEventListener("mouseout", function () {
-                            marker.closeInfoWindow(infoWindow);
-                        });
                     }
+
                 }
             }
 

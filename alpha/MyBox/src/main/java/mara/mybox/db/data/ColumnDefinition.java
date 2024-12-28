@@ -46,7 +46,6 @@ public class ColumnDefinition extends BaseData {
     protected OnUpdate onUpdate;
     protected Object value;
     protected Number maxValue, minValue;
-    protected InvalidAs invalidAs;
     protected Map<Object, String> displayMap;
     protected DoubleStatistic statistic;
 
@@ -69,10 +68,6 @@ public class ColumnDefinition extends BaseData {
 
     public static enum OnUpdate {
         NoAction, Restrict
-    }
-
-    public static enum DataFormat {
-        ScientificNotation, CommaSeparated, None
     }
 
     public enum InvalidAs {
@@ -103,7 +98,6 @@ public class ColumnDefinition extends BaseData {
         displayMap = null;
         description = null;
         century = 2000;
-        invalidAs = DefaultInvalidAs;
     }
 
     public ColumnDefinition() {
@@ -173,7 +167,6 @@ public class ColumnDefinition extends BaseData {
             description = c.description;
             fixTwoDigitYear = c.fixTwoDigitYear;
             century = c.century;
-            invalidAs = c.invalidAs;
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
@@ -356,6 +349,10 @@ public class ColumnDefinition extends BaseData {
     }
 
     public boolean isNumberType() {
+        return isNumberType(type);
+    }
+
+    public boolean isDBNumberType() {
         return isNumberType(type);
     }
 
@@ -555,14 +552,8 @@ public class ColumnDefinition extends BaseData {
         return stringToDate(string, fixTwoDigitYear, century);
     }
 
-    public Object fromString(String string) {
-        return fromString(string, invalidAs);
-    }
-
     public Object fromString(String string, InvalidAs invalidAs) {
-        return fromString(type, string,
-                invalidAs != null ? invalidAs : this.invalidAs,
-                fixTwoDigitYear, century);
+        return fromString(type, string, invalidAs, fixTwoDigitYear, century);
     }
 
     public String toString(Object value) {
@@ -603,10 +594,6 @@ public class ColumnDefinition extends BaseData {
 
     public String displayValue(Object v) {
         return format(toString(v), -1, InvalidAs.Use);
-    }
-
-    public String format(String string) {
-        return format(string, -1, invalidAs);
     }
 
     public String format(String string, InvalidAs inAs) {
@@ -659,7 +646,10 @@ public class ColumnDefinition extends BaseData {
         }
     }
 
-    public String savedValue(String string, boolean validate) {
+    public String savedValue(String string, InvalidAs invalidAs) {
+        if (invalidAs == null) {
+            return string;
+        }
         switch (type) {
             case Datetime:
             case Date:
@@ -668,15 +658,12 @@ public class ColumnDefinition extends BaseData {
             case EnumerationEditable:
                 return string;
             default:
-                if (validate) {
-                    return trimValue(string, invalidAs);
-                }
+                return trimValue(string, invalidAs);
         }
-        return string;
     }
 
     public boolean valueQuoted() {
-        return !isNumberType() && type != ColumnType.Boolean;
+        return !isDBNumberType() && type != ColumnType.Boolean;
     }
 
     public String dbDefaultValue() {
@@ -810,8 +797,6 @@ public class ColumnDefinition extends BaseData {
                 return data.isNotNull();
             case "is_auto":
                 return data.isAuto();
-            case "invalid_as":
-                return invalidAsValue(data.getInvalidAs());
             case "editable":
                 return data.isEditable();
             case "fix_year":
@@ -874,9 +859,6 @@ public class ColumnDefinition extends BaseData {
                     return true;
                 case "is_auto":
                     data.setAuto(value == null ? false : (boolean) value);
-                    return true;
-                case "invalid_as":
-                    data.setInvalidAs(invalidAs(value));
                     return true;
                 case "not_null":
                     data.setNotNull(value == null ? false : (boolean) value);
@@ -1107,8 +1089,17 @@ public class ColumnDefinition extends BaseData {
     }
 
     public static boolean isNumberType(ColumnType type) {
-        return type == ColumnType.Double || type == ColumnType.Float
-                || type == ColumnType.Integer || type == ColumnType.Long || type == ColumnType.Short;
+        return type == ColumnType.Double
+                || type == ColumnType.Float
+                || type == ColumnType.Integer
+                || type == ColumnType.Long
+                || type == ColumnType.Short;
+    }
+
+    public static boolean isDBNumberType(ColumnType type) {
+        return isNumberType(type)
+                || type == ColumnType.Longitude
+                || type == ColumnType.Latitude;
     }
 
     public static boolean isDBStringType(ColumnType type) {
@@ -1121,7 +1112,9 @@ public class ColumnDefinition extends BaseData {
     }
 
     public static boolean isTimeType(ColumnType type) {
-        return type == ColumnType.Datetime || type == ColumnType.Date || type == ColumnType.Era;
+        return type == ColumnType.Datetime
+                || type == ColumnType.Date
+                || type == ColumnType.Era;
     }
 
     public static String number2String(Number n) {
@@ -1200,7 +1193,7 @@ public class ColumnDefinition extends BaseData {
         }
         switch (invalidAs) {
             case Zero:
-                if (isNumberType(targetType)) {
+                if (isDBNumberType(targetType)) {
                     switch (targetType) {
                         case Double:
                             return 0d;
@@ -1277,7 +1270,6 @@ public class ColumnDefinition extends BaseData {
             s.append(message("AutoGenerated")).append(": ").append(column.isAuto()).append("\n");
             s.append(message("DefaultValue")).append(": ").append(column.getDefaultValue()).append("\n");
             s.append(message("Color")).append(": ").append(column.getColor()).append("\n");
-            s.append(message("ToInvalidValue")).append(": ").append(column.getInvalidAs()).append("\n");
             s.append(message("DecimalScale")).append(": ").append(column.getScale()).append("\n");
             s.append(message("Century")).append(": ").append(column.getCentury()).append("\n");
             s.append(message("FixTwoDigitYears")).append(": ").append(column.isFixTwoDigitYear()).append("\n");
@@ -1488,15 +1480,6 @@ public class ColumnDefinition extends BaseData {
 
     public ColumnDefinition setAuto(boolean auto) {
         this.auto = auto;
-        return this;
-    }
-
-    public InvalidAs getInvalidAs() {
-        return invalidAs;
-    }
-
-    public ColumnDefinition setInvalidAs(InvalidAs invalidAs) {
-        this.invalidAs = invalidAs;
         return this;
     }
 

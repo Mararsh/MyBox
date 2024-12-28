@@ -217,7 +217,7 @@ public class GeographyCodeLevel implements Cloneable {
         return geolevel.level;
     }
 
-    public static String level(short level) {
+    public static String name(short level) {
         GeographyCodeLevel geolevel = new GeographyCodeLevel(level);
         return geolevel.getName();
     }

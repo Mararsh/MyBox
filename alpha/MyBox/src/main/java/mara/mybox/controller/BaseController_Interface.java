@@ -803,7 +803,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
             if (!checkBeforeNextAction(thisPane)) {
                 return false;
             }
-            if (!AppVariables.isTesting && isIndependantStage()) {
+            if (needStageVisitHistory()) {
                 VisitHistoryTools.visitMenu(baseTitle, myFxml);
             }
             leaveScene();
@@ -812,6 +812,10 @@ public abstract class BaseController_Interface extends BaseController_Files {
             MyBoxLog.debug(e);
             return false;
         }
+    }
+
+    public boolean needStageVisitHistory() {
+        return !AppVariables.isTesting && isIndependantStage();
     }
 
     public static boolean checkBeforeNextAction(Node node) {

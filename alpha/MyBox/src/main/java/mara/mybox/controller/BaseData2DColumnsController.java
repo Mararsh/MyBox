@@ -416,6 +416,14 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
         }
     }
 
+    public boolean isTable() {
+        return data2D != null && data2D.isTable();
+    }
+
+    public boolean isMatrix() {
+        return data2D != null && data2D.isMatrix();
+    }
+
     @Override
     public Data2DColumn newData() {
         Data2DColumn column = new Data2DColumn();

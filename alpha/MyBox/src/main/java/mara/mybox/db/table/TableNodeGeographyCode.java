@@ -1,7 +1,9 @@
 package mara.mybox.db.table;
 
+import mara.mybox.data.GeoCoordinateSystem;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
+import mara.mybox.db.data.GeographyCodeLevel;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -30,7 +32,6 @@ public class TableNodeGeographyCode extends BaseNodeTable {
         addColumn(new ColumnDefinition("latitude", ColumnType.Latitude));
         addColumn(new ColumnDefinition("altitude", ColumnType.Double));
         addColumn(new ColumnDefinition("precision", ColumnType.Double));
-        addColumn(new ColumnDefinition("name", ColumnType.String));
         addColumn(new ColumnDefinition("chinese_name", ColumnType.String));
         addColumn(new ColumnDefinition("english_name", ColumnType.String));
         addColumn(new ColumnDefinition("code1", ColumnType.String));
@@ -43,9 +44,10 @@ public class TableNodeGeographyCode extends BaseNodeTable {
         addColumn(new ColumnDefinition("alias3", ColumnType.String));
         addColumn(new ColumnDefinition("alias4", ColumnType.String));
         addColumn(new ColumnDefinition("alias5", ColumnType.String));
-        addColumn(new ColumnDefinition("area", ColumnType.Double));
-        addColumn(new ColumnDefinition("population", ColumnType.Long));
+        addColumn(new ColumnDefinition("area", ColumnType.Double).setFormat("GroupInThousands"));
+        addColumn(new ColumnDefinition("population", ColumnType.Long).setFormat("GroupInThousands"));
         addColumn(new ColumnDefinition("description", ColumnType.String));
+        addColumn(new ColumnDefinition("image", ColumnType.Image));
 
         return this;
     }
@@ -68,8 +70,6 @@ public class TableNodeGeographyCode extends BaseNodeTable {
                 return message("Altitude");
             case "precision":
                 return message("Precision");
-            case "name":
-                return message("Name");
             case "chinese_name":
                 return message("ChineseName");
             case "english_name":
@@ -95,11 +95,13 @@ public class TableNodeGeographyCode extends BaseNodeTable {
             case "alias5":
                 return message("Alias5");
             case "area":
-                return message("Area");
+                return message("SquareMeters");
             case "population":
                 return message("Population");
             case "description":
                 return message("Description");
+            case "image":
+                return message("Image");
         }
         return super.label(name);
     }
@@ -108,6 +110,28 @@ public class TableNodeGeographyCode extends BaseNodeTable {
     public String displayValue(ColumnDefinition column, Object v) {
         if (column == null) {
             return null;
+        }
+        switch (column.getColumnName().toLowerCase()) {
+            case "level":
+                if (v == null) {
+                    return null;
+                }
+                return GeographyCodeLevel.name((short) v);
+            case "coordinate_system":
+                if (v == null) {
+                    return null;
+                }
+                return GeoCoordinateSystem.messageName((short) v);
+            case "area":
+                if (v == null || (double) v <= 0) {
+                    return null;
+                }
+                break;
+            case "population":
+                if (v == null || (long) v <= 0) {
+                    return null;
+                }
+                break;
         }
         return column.displayValue(v);
     }

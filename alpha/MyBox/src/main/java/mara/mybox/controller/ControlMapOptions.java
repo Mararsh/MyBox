@@ -33,7 +33,7 @@ import mara.mybox.value.UserConfig;
  */
 public class ControlMapOptions extends BaseController {
 
-    protected MapController mapController;
+    protected BaseMapController mapController;
     protected MapOptions mapOptions;
 
     @FXML
@@ -73,7 +73,7 @@ public class ControlMapOptions extends BaseController {
         setFileType(VisitHistory.FileType.Image);
     }
 
-    public void setParameters(MapController mapController) {
+    public void setParameters(BaseMapController mapController) {
         try {
             this.mapController = mapController;
 //            this.mapOptions = mapController.mapOptions;

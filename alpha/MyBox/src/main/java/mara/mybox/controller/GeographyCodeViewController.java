@@ -2,6 +2,7 @@ package mara.mybox.controller;
 
 import java.sql.Connection;
 import java.util.ArrayList;
+import javafx.fxml.FXML;
 import mara.mybox.data.MapPoint;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.DataNode;
@@ -17,10 +18,11 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2020-1-20
  * @License Apache License Version 2.0
  */
-public class GeographyCodeViewController extends MapController {
+public class GeographyCodeViewController extends BaseMapController {
 
     protected GeographyCodeController treeController;
     protected GeographyCode geographyCode;
+    protected MapPoint mapPoint;
 
     public void setPatrameters(GeographyCodeController controller) {
         try {
@@ -67,7 +69,7 @@ public class GeographyCodeViewController extends MapController {
                     }
                     mapPoint = new MapPoint(tcode);
                     mapPoint.setLabel(geographyCode.getName())
-                            .setInfo(treeController.nodeTable.htmlList(savedNode))
+                            .setInfo(treeController.nodeTable.dataText(savedNode))
                             .setMarkSize(markerSize)
                             .setMarkerImage(image())
                             .setTextSize(textSize)
@@ -87,7 +89,7 @@ public class GeographyCodeViewController extends MapController {
             protected void whenSucceeded() {
                 drawPoint(mapPoint);
                 treeController.currentNode = node;
-                treeController.opPane.setVisible(true);
+                treeController.setButtonsDisable(false);
             }
 
             @Override
@@ -96,6 +98,19 @@ public class GeographyCodeViewController extends MapController {
 
         };
         start(task, treeController.rightPane);
+    }
+
+    @Override
+    public void drawPoint(MapPoint point) {
+        beforeDrawPoints(null);
+        mapPoint = point;
+        super.drawPoint(point);
+    }
+
+    @FXML
+    @Override
+    public void refreshAction() {
+        drawPoint(mapPoint);
     }
 
 }

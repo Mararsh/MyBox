@@ -1056,7 +1056,7 @@ public class DataTableGroup {
                             value = DoubleTools.scaleString(value + "", invalidAs, scale);
                         }
                         data2DRow.setValue(finalColumn.getColumnName(),
-                                finalColumn.fromString(value == null ? null : value + ""));
+                                finalColumn.fromString(value == null ? null : value + "", invalidAs));
                     }
                     if (tableTarget.setInsertStatement(conn, insert, data2DRow)) {
                         insert.addBatch();

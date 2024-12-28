@@ -1828,9 +1828,9 @@ public class GeographyCodeTools {
         code.setCode3(node.getStringValue("code3"));
         code.setCode4(node.getStringValue("code4"));
         code.setCode5(node.getStringValue("code5"));
+        code.setComments(node.getStringValue("description"));
         code.setArea(Math.round(node.getDoubleValue("area")));
         code.setPopulation(node.getLongValue("population"));
-        code.setComments(node.getStringValue("description"));
         return code;
     }
 

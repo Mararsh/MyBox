@@ -200,15 +200,13 @@ public class DataTreeController extends BaseDataTreeViewController {
 
         Menu deleteMenu = new Menu(message("Delete"));
 
-        if (!isRoot) {
+        if (!isLeaf) {
             menu = new MenuItem(message("DeleteNodeAndDescendants"), StyleTools.getIconImageView("iconDelete.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 deleteNodeAndDescendants(treeItem);
             });
             deleteMenu.getItems().add(menu);
-        }
 
-        if (!isLeaf) {
             menu = new MenuItem(message("DeleteDescendants"), StyleTools.getIconImageView("iconDelete.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 deleteDescendants(treeItem);

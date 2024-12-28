@@ -635,7 +635,7 @@ public class BaseNodeTable extends BaseTable<DataNode> {
         StringTable table = new StringTable();
         for (ColumnDefinition column : columns) {
             String name = column.getColumnName();
-            String value = column.displayValue(values.get(name));
+            String value = displayValue(column, values.get(name));
             if (value == null || value.isBlank()) {
                 continue;
             }
@@ -671,9 +671,14 @@ public class BaseNodeTable extends BaseTable<DataNode> {
             if (sValue == null || sValue.isBlank()) {
                 continue;
             }
-            xml += prefix + "<" + name + ">\n";
-            xml += prefix2 + "<![CDATA[" + sValue + "]]>\n";
-            xml += prefix + "</" + name + ">\n";
+            if (column.isDBStringType()) {
+                xml += prefix + "<" + name + ">\n";
+                xml += prefix2 + "<![CDATA[" + sValue + "]]>\n";
+                xml += prefix + "</" + name + ">\n";
+            } else {
+                xml += prefix + "<" + name + ">"
+                        + sValue + "</" + name + ">\n";
+            }
         }
         return xml;
     }
@@ -758,6 +763,31 @@ public class BaseNodeTable extends BaseTable<DataNode> {
             MyBoxLog.error(e);
             return null;
         }
+    }
+
+    // Node should be queried with all fields
+    public String dataText(DataNode node) {
+        if (node == null) {
+            return null;
+        }
+        Map<String, Object> values = node.getValues();
+        if (values == null || values.isEmpty()) {
+            return null;
+        }
+        String s = "";
+        for (String name : dataColumnNames()) {
+            ColumnDefinition column = column(name);
+            String value = displayValue(column, values.get(name));
+            if (value == null || value.isBlank()) {
+                continue;
+            }
+            if (!s.isBlank()) {
+                s += "\n";
+            }
+            s += label(name) + ": " + value;
+
+        }
+        return s;
     }
 
     /*

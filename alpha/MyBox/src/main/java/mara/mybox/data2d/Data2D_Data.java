@@ -9,6 +9,7 @@ import mara.mybox.data.StringTable;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
+import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.db.data.Data2DColumn;
 import static mara.mybox.db.data.Data2DDefinition.DataType.Texts;
 import mara.mybox.dev.MyBoxLog;
@@ -530,7 +531,7 @@ public abstract class Data2D_Data extends Data2D_Attributes {
 
     public String formatValue(int col, String value) {
         try {
-            return column(col).format(value);
+            return column(col).format(value, InvalidAs.Use);
         } catch (Exception e) {
             return null;
         }
@@ -538,7 +539,10 @@ public abstract class Data2D_Data extends Data2D_Attributes {
 
     public String savedValue(int col, String value) {
         try {
-            return column(col).savedValue(value, rejectInvalidWhenEdit());
+            if (rejectInvalidWhenEdit()) {
+                return value;
+            }
+            return column(col).savedValue(value, InvalidAs.Use);
         } catch (Exception e) {
             return null;
         }
@@ -673,7 +677,7 @@ public abstract class Data2D_Data extends Data2D_Attributes {
             }
             for (Data2DColumn column : columns) {
                 String name = column.getColumnName();
-                if (allStatistic || column.isNumberType()) {
+                if (allStatistic || column.isDBNumberType()) {
                     list.add("#{" + name + "-" + message("Mean") + "}");
                     list.add("#{" + name + "-" + message("Median") + "}");
                     list.add("#{" + name + "-" + message("Mode") + "}");

@@ -158,10 +158,6 @@ public class Data2DDefinitionTools {
                 row.add(column.getColor().toString());
                 columnTable.add(row);
                 row = new ArrayList<>();
-                row.add(message("ToInvalidValue"));
-                row.add(column.getInvalidAs().name());
-                columnTable.add(row);
-                row = new ArrayList<>();
                 row.add(message("DecimalScale"));
                 row.add(column.getScale() + "");
                 columnTable.add(row);
@@ -243,9 +239,6 @@ public class Data2DDefinitionTools {
                     if (col.getColor() != null) {
                         s.append(prefix).append(indent).append(indent).append(indent).append("<").append(XmlTools.xmlTag("Color")).append(">").append(col.getColor()).append("</").append(XmlTools.xmlTag("Color")).append(">\n");
                     }
-                    if (col.getInvalidAs() != null) {
-                        s.append(prefix).append(indent).append(indent).append(indent).append("<").append(XmlTools.xmlTag("ToInvalidValue")).append(">").append(col.getInvalidAs().name()).append("</").append(XmlTools.xmlTag("ToInvalidValue")).append(">\n");
-                    }
                     s.append(prefix).append(indent).append(indent).append(indent).append("<").append(XmlTools.xmlTag("DecimalScale")).append(">").append(col.getScale()).append("</").append(XmlTools.xmlTag("DecimalScale")).append(">\n");
                     s.append(prefix).append(indent).append(indent).append(indent).append("<").append(XmlTools.xmlTag("Century")).append(">").append(col.getCentury()).append("</").append(XmlTools.xmlTag("Century")).append(">\n");
                     s.append(prefix).append(indent).append(indent).append(indent).append("<").append(XmlTools.xmlTag("FixTwoDigitYears")).append(">").append(col.isFixTwoDigitYear() ? "true" : "false").append("</").append(XmlTools.xmlTag("FixTwoDigitYears")).append(">\n");
@@ -323,9 +316,6 @@ public class Data2DDefinitionTools {
                     if (col.getColor() != null) {
                         s.append(",\n").append(prefix).append(indent).append(indent).append(indent).append("\"").append(message("Color")).append("\": \"").append(col.getColor()).append("\"");
                     }
-                    if (col.getInvalidAs() != null) {
-                        s.append(",\n").append(prefix).append(indent).append(indent).append(indent).append("\"").append(message("ToInvalidValue")).append("\": \"").append(col.getInvalidAs().name()).append("\"");
-                    }
                     s.append(",\n").append(prefix).append(indent).append(indent).append(indent).append("\"").append(message("DecimalScale")).append("\": ").append(col.getScale());
                     s.append(",\n").append(prefix).append(indent).append(indent).append(indent).append("\"").append(message("Century")).append("\": ").append(col.getCentury());
                     s.append(",\n").append(prefix).append(indent).append(indent).append(indent).append("\"").append(message("FixTwoDigitYears")).append("\": ").append(col.isFixTwoDigitYear() ? "true" : "false");
@@ -393,7 +383,6 @@ public class Data2DDefinitionTools {
                         row.add(col.isAuto() ? "1" : "0");
                         row.add(col.getDefaultValue());
                         row.add(col.getColor().toString());
-                        row.add(col.getInvalidAs().name());
                         row.add(col.getScale() + "");
                         row.add(col.getCentury() + "");
                         row.add(col.isFixTwoDigitYear() ? "1" : "0");
@@ -474,7 +463,6 @@ public class Data2DDefinitionTools {
                         columnRow.createCell(cellIndex++).setCellValue(col.isAuto() ? "1" : "0");
                         columnRow.createCell(cellIndex++).setCellValue(col.getDefaultValue());
                         columnRow.createCell(cellIndex++).setCellValue(col.getColor().toString());
-                        columnRow.createCell(cellIndex++).setCellValue(col.getInvalidAs().name());
                         columnRow.createCell(cellIndex++).setCellValue(col.getScale() + "");
                         columnRow.createCell(cellIndex++).setCellValue(col.getCentury() + "");
                         columnRow.createCell(cellIndex++).setCellValue(col.isFixTwoDigitYear() ? "1" : "0");
@@ -623,8 +611,6 @@ public class Data2DDefinitionTools {
                                         column.setColor(Color.web(attrValue));
                                     } catch (Exception ex) {
                                     }
-                                } else if (XmlTools.matchXmlTag("ToInvalidValue", attrName)) {
-                                    column.setInvalidAs(ColumnDefinition.invalidAsFromName(attrValue));
                                 } else if (XmlTools.matchXmlTag("DecimalScale", attrName)) {
                                     try {
                                         column.setScale(Integer.parseInt(attrValue));

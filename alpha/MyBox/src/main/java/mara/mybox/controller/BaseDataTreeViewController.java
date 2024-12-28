@@ -504,10 +504,7 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
         if (node == null) {
             return;
         }
-        if (task != null) {
-            task.cancel();
-        }
-        task = new FxSingletonTask<Void>(this) {
+        FxTask popTask = new FxSingletonTask<Void>(this) {
             private String html;
             private DataNode savedNode;
 
@@ -533,7 +530,7 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
             }
 
         };
-        start(task);
+        start(popTask, false);
     }
 
     @Override

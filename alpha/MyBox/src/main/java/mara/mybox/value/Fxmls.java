@@ -388,6 +388,9 @@ public class Fxmls {
 
     public static final String GeographyCodeFxml = "/fxml/GeographyCode.fxml";
     public static final String GeographyCodeEditFxml = "/fxml/GeographyCodeEdit.fxml";
+
+    public static final String MapOptionsFxml = "/fxml/MapOptions.fxml";
+
     public static final String GeographyCodeImportInternalCSVFxml = "/fxml/GeographyCodeImportInternalCSV.fxml";
     public static final String GeographyCodeImportExternalCSVFxml = "/fxml/GeographyCodeImportExternalCSV.fxml";
     public static final String GeographyCodeImportGeonamesFileFxml = "/fxml/GeographyCodeImportGeonamesFile.fxml";

@@ -8,6 +8,7 @@ import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.bufferedimage.ImageScopeTools;
 import mara.mybox.controller.MyBoxLoadingController;
 import mara.mybox.data2d.DataFileCSV;
+import mara.mybox.data2d.TmpTable;
 import mara.mybox.data2d.tools.Data2DDefinitionTools;
 import mara.mybox.db.Database;
 import mara.mybox.db.data.Data2DColumn;
@@ -63,6 +64,13 @@ public class DataMigrationFrom68 {
             MyBoxLog.info("Updating tables in 6.8.3...");
             controller.info("Updating tables in 6.8.3...");
 
+            try (Statement statement = conn.createStatement()) {
+                String sql = "ALTER TABLE Data2D_Column DROP COLUMN invalid_as";
+                statement.executeUpdate(sql);
+            } catch (Exception e) {
+                MyBoxLog.console(e);
+            }
+
             TableNodeGeographyCode gcTable = new TableNodeGeographyCode();
 
             String tname = gcTable.getTableName();
@@ -71,17 +79,18 @@ public class DataMigrationFrom68 {
             try (Statement statement = conn.createStatement()) {
                 statement.executeUpdate("DROP TABLE " + tname);
             } catch (Exception e) {
-                MyBoxLog.console(e);
+//                MyBoxLog.console(e);
             }
             try {
                 gcTable.createTable(conn);
             } catch (Exception e) {
-                MyBoxLog.console(e);
+//                MyBoxLog.console(e);
             }
 
+            String tmpTreeTable = TmpTable.TmpTablePrefix + "TREE_Migration683";
             try (Statement statement = conn.createStatement()) {
                 conn.setAutoCommit(true);
-                statement.executeUpdate("DROP TABLE MYBOX_TMP_TREE_Migration683");
+                statement.executeUpdate("DROP TABLE " + tmpTreeTable);
             } catch (Exception e) {
 //            MyBoxLog.console(e);
             }
@@ -89,7 +98,7 @@ public class DataMigrationFrom68 {
             try (Statement statement = conn.createStatement()) {
                 conn.setAutoCommit(true);
 
-                statement.executeUpdate("CREATE TABLE MYBOX_TMP_TREE_Migration683"
+                statement.executeUpdate("CREATE TABLE " + tmpTreeTable
                         + " ( old_nodeid BIGINT, old_parentid BIGINT, new_nodeid BIGINT)");
                 ResultSet query = conn.createStatement().executeQuery(
                         "SELECT * FROM Geography_Code ORDER BY gcid");
@@ -137,7 +146,7 @@ public class DataMigrationFrom68 {
                             if (++count % Database.BatchSize == 0) {
                                 conn.commit();
                             }
-                            statement.executeUpdate("INSERT INTO MYBOX_TMP_TREE_Migration683 VALUES ("
+                            statement.executeUpdate("INSERT INTO " + tmpTreeTable + " VALUES ("
                                     + nodeid + ", " + parentid + ", " + newNodeid + ")");
                         }
                     } catch (Exception e) {
@@ -149,7 +158,7 @@ public class DataMigrationFrom68 {
 
                 query = conn.createStatement().executeQuery("select A.new_nodeid AS nodeid,"
                         + " B.new_nodeid AS parentid "
-                        + " from MYBOX_TMP_TREE_Migration683 A, MYBOX_TMP_TREE_Migration683 AS B "
+                        + " from " + tmpTreeTable + " A, " + tmpTreeTable + " AS B "
                         + " WHERE A.old_parentid=B.old_nodeid");
                 conn.setAutoCommit(false);
                 count = 0;
@@ -178,7 +187,7 @@ public class DataMigrationFrom68 {
 
 //            try (Statement statement = conn.createStatement()) {
 //                conn.setAutoCommit(true);
-//                statement.executeUpdate("DROP TABLE MYBOX_TMP_TREE_Migration683");
+//                statement.executeUpdate("DROP TABLE "+ tmpTreeTable);
 //                statement.executeUpdate("DROP TABLE Geography_Code");
 //            } catch (Exception e) {
 //                MyBoxLog.console(e);
@@ -207,8 +216,6 @@ public class DataMigrationFrom68 {
 
             try (Statement statement = conn.createStatement()) {
                 conn.setAutoCommit(true);
-                statement.executeUpdate("DROP TABLE MYBOX_TMP_TREE_Migration682");
-                statement.executeUpdate("DROP TABLE MYBOX_TMP_TAG_Migration682");
                 statement.executeUpdate("DROP TABLE tree_node_tag");
                 statement.executeUpdate("DROP TABLE tree_node");
                 statement.executeUpdate("DROP TABLE tag");
@@ -243,10 +250,12 @@ public class DataMigrationFrom68 {
 //            MyBoxLog.console(e);
 //        }
 
+        String tmpTreeTable = TmpTable.TmpTablePrefix + "TREE_Migration682";
+        String tmpTagTable = TmpTable.TmpTablePrefix + "TAG_Migration682";
         try (Statement statement = conn.createStatement()) {
             conn.setAutoCommit(true);
-            statement.executeUpdate("DROP TABLE MYBOX_TMP_TREE_Migration682");
-            statement.executeUpdate("DROP TABLE MYBOX_TMP_TAG_Migration682");
+            statement.executeUpdate("DROP TABLE " + tmpTreeTable);
+            statement.executeUpdate("DROP TABLE " + tmpTagTable);
         } catch (Exception e) {
 //            MyBoxLog.console(e);
         }
@@ -254,7 +263,7 @@ public class DataMigrationFrom68 {
         try (Statement statement = conn.createStatement()) {
             conn.setAutoCommit(true);
 
-            statement.executeUpdate("CREATE TABLE MYBOX_TMP_TREE_Migration682"
+            statement.executeUpdate("CREATE TABLE " + tmpTreeTable
                     + " ( old_nodeid BIGINT, old_parentid BIGINT, new_nodeid BIGINT)");
             ResultSet query = conn.createStatement().executeQuery(
                     "SELECT * FROM tree_node WHERE category='" + category + "' ORDER BY nodeid");
@@ -291,7 +300,7 @@ public class DataMigrationFrom68 {
                         if (++count % Database.BatchSize == 0) {
                             conn.commit();
                         }
-                        statement.executeUpdate("INSERT INTO MYBOX_TMP_TREE_Migration682 VALUES ("
+                        statement.executeUpdate("INSERT INTO " + tmpTreeTable + " VALUES ("
                                 + nodeid + ", " + parentid + ", " + newNodeid + ")");
                         if (data2D != null) {
                             int corder = 0;
@@ -311,7 +320,7 @@ public class DataMigrationFrom68 {
 
             query = conn.createStatement().executeQuery("select A.new_nodeid AS nodeid,"
                     + " B.new_nodeid AS parentid "
-                    + " from MYBOX_TMP_TREE_Migration682 A, MYBOX_TMP_TREE_Migration682 AS B "
+                    + " from " + tmpTreeTable + " A, " + tmpTreeTable + " AS B "
                     + " WHERE A.old_parentid=B.old_nodeid");
             conn.setAutoCommit(false);
             count = 0;
@@ -334,9 +343,10 @@ public class DataMigrationFrom68 {
             conn.commit();
             controller.info("Moved: " + dataTable.getTreeName() + " count:" + count);
 
-            statement.executeUpdate("CREATE TABLE MYBOX_TMP_TAG_Migration682"
+            statement.executeUpdate("CREATE TABLE " + tmpTagTable
                     + " ( old_tagid BIGINT, new_tagid BIGINT)");
-            query = conn.createStatement().executeQuery("select * from tag where category='" + category + "' ORDER BY tgid ");
+            query = conn.createStatement().executeQuery(
+                    "select * from tag where category='" + category + "' ORDER BY tgid ");
             conn.setAutoCommit(false);
             count = 0;
             TableDataTag tableTreeTag = new TableDataTag(dataTable);
@@ -346,7 +356,7 @@ public class DataMigrationFrom68 {
                             .setTag(query.getString("tag"))
                             .setColorString(query.getString("color"));
                     tag = tableTreeTag.insertData(conn, tag);
-                    statement.executeUpdate("INSERT INTO MYBOX_TMP_TAG_Migration682 VALUES ("
+                    statement.executeUpdate("INSERT INTO " + tmpTagTable + " VALUES ("
                             + query.getLong("tgid") + ", " + tag.getTagid() + ")");
                     if (++count % Database.BatchSize == 0) {
                         conn.commit();
@@ -359,7 +369,7 @@ public class DataMigrationFrom68 {
             controller.info("Tags saved: " + dataTable.getTreeName() + " count:" + count);
 
             query = conn.createStatement().executeQuery("select  C.new_nodeid AS mnodeid, B.new_tagid AS mtagid "
-                    + " from tree_node_tag A, MYBOX_TMP_TAG_Migration682 AS B, MYBOX_TMP_TREE_Migration682 AS C"
+                    + " from tree_node_tag A, " + tmpTagTable + " AS B, " + tmpTreeTable + " AS C"
                     + " WHERE A.tnodeid=C.old_nodeid AND A.tagid=B.old_tagid ");
             conn.setAutoCommit(false);
             count = 0;
@@ -383,6 +393,14 @@ public class DataMigrationFrom68 {
 
         } catch (Exception e) {
             MyBoxLog.error(e);
+        }
+
+        try (Statement statement = conn.createStatement()) {
+            conn.setAutoCommit(true);
+            statement.executeUpdate("DROP TABLE " + tmpTreeTable);
+            statement.executeUpdate("DROP TABLE " + tmpTagTable);
+        } catch (Exception e) {
+//            MyBoxLog.console(e);
         }
     }
 

@@ -186,7 +186,7 @@ public class Data2DChartXYController extends BaseData2DChartController {
 
     public boolean initChart() {
         if (categoryColumn != null) {
-            return initChart(categoryColumn.isNumberType());
+            return initChart(categoryColumn.isDBNumberType());
         } else {
             return false;
         }

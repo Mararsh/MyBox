@@ -92,7 +92,7 @@ public class DataTableSetValue extends DataTableModify {
                         || (currentValue != null && currentValue.equals(newValue))) {
                     continue;
                 }
-                sourceTableRow.setValue(columnName, column.fromString(newValue));
+                sourceTableRow.setValue(columnName, column.fromString(newValue, invalidAs));
                 rowChanged = true;
             }
             if (rowChanged) {

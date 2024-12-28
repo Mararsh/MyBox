@@ -1054,4 +1054,9 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
         dataCheck.setSelected(select);
     }
 
+    @Override
+    public boolean needStageVisitHistory() {
+        return false;
+    }
+
 }
