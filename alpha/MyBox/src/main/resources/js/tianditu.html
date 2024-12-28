@@ -51,7 +51,7 @@
                 map.addEventListener("mousemove", mouseMove);
                 map.addEventListener("zoomend", zoomChanged);
 
-                map.centerAndZoom(new T.LngLat(116.40769, 39.89945), 11);
+                map.centerAndZoom(new T.LngLat(116.40769, 39.89945), MyBoxMapZoom);
                 var layers = map.getLayers();
                 if (layers && layers.length > 0) {
                     layers[layers.length - 1].addEventListener("load", mapLoaded);

@@ -138,11 +138,11 @@ public class ControlMap extends BaseMapController {
             mapOptionsController.optionsBox.setDisable(true);
         }
         webEngine.getLoadWorker().cancel();
-        if (mapOptions.isGaoDeMap()) {
-            webEngine.loadContent(LocationTools.gaodeMap());
-        } else {
-            webEngine.load(LocationTools.tiandituFile(mapOptions.isIsGeodetic()).toURI().toString());
-        }
+//        if (mapOptions.isGaoDeMap()) {
+//            webEngine.loadContent(LocationTools.gaodeMap());
+//        } else {
+//            webEngine.load(LocationTools.tiandituFile(mapOptions.isIsGeodetic()).toURI().toString());
+//        }
     }
 
     public void mapEvents(String data) {

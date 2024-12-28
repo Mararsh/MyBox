@@ -33,6 +33,7 @@ import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.NodeTools;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.fxml.style.StyleData;
 import mara.mybox.fxml.style.StyleTools;
@@ -56,6 +57,8 @@ import mara.mybox.value.UserConfig;
  */
 public class BaseMapController extends BaseController {
 
+    protected MapOptionsController optionsController;
+
     protected String mapTitle, mapType, mapStyle, language;
     protected WebEngine webEngine;
     protected boolean mapLoaded, isGeodetic, isFitView,
@@ -66,7 +69,7 @@ public class BaseMapController extends BaseController {
     protected File markerImageFile;
     protected Color textColor;
     protected GeoCoordinateSystem coordinateSystem;
-    protected int markerSize, textSize, mapSize, interval;
+    protected int markerSize, textSize, mapZoom, interval;
     protected SimpleBooleanProperty loadNotify, drawNotify;
     protected List<MapPoint> mapPoints;
 
@@ -103,12 +106,9 @@ public class BaseMapController extends BaseController {
             mapLoaded = false;
             mapPoints = null;
 
-            mapType = UserConfig.getString(conn, baseName + "MapType", "GaoDe");
-            isGeodetic = UserConfig.getBoolean(conn, baseName + "Geodetic", true);
+            readMapType(conn);
 
-            applyMapType(mapType, isGeodetic);
-
-            loadPointOptions(conn);
+            readPointOptions(conn);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -129,7 +129,7 @@ public class BaseMapController extends BaseController {
             } else if (data.startsWith("zoomSize:")) {
                 int v = Integer.parseInt(data.substring("zoomSize:".length()));
                 isSettingValues = true;
-                setMapSize(v);
+                setMapZoom(v);
                 isSettingValues = false;
                 return;
             }
@@ -160,20 +160,17 @@ public class BaseMapController extends BaseController {
         Platform.runLater(() -> {
             try (Connection conn = DerbyBase.getConnection()) {
                 mapLoaded = true;
-                if (isGaoDeMap()) {
-                    applyStandardLayer(conn);
-                    applySatelliteLayer(conn);
-                    applyRoadLayer(conn);
-                    applyTrafficLayer(conn);
-                    applyFitView(conn);
-                    applyLanguage(conn);
-                } else {
-                    applyShowZoom(conn);
-                    applyShowScale(conn);
-                    applyShowType(conn);
-                    applyShowSymbols(conn);
-                }
-                applyMapSize(conn);
+                readStandardLayer(conn);
+                readSatelliteLayer(conn);
+                readRoadLayer(conn);
+                readTrafficLayer(conn);
+                readFitView(conn);
+                readLanguage(conn);
+                readShowZoom(conn);
+                readShowScale(conn);
+                readShowType(conn);
+                readShowSymbols(conn);
+                readMapZoom(conn);
             } catch (Exception e) {
                 MyBoxLog.error(e);
                 return;
@@ -231,7 +228,7 @@ public class BaseMapController extends BaseController {
                 bottomLabel.setText(message("DataNumber") + ":" + points.size());
             }
         }
-        loadPointOptions();
+        readPointOptions();
     }
 
     public void drawPoints(List<MapPoint> points) {
@@ -339,6 +336,18 @@ public class BaseMapController extends BaseController {
     /*
         map options
      */
+    public void readMapType(Connection conn) {
+        try {
+            mapType = UserConfig.getString(conn, baseName + "MapType", "GaoDe");
+            isGeodetic = UserConfig.getBoolean(conn, baseName + "Geodetic", true);
+            mapZoom = UserConfig.getInt(baseName + "MapZoom", 9);
+
+            applyMapType(mapType, isGeodetic);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
     public void applyMapType(String type) {
         applyMapType(type, isGeodetic);
     }
@@ -358,9 +367,9 @@ public class BaseMapController extends BaseController {
             mapType = type;
             isGeodetic = isGeo;
             if (isGaoDeMap()) {
-                webEngine.loadContent(LocationTools.gaodeMap());
+                webEngine.loadContent(LocationTools.gaodeMap(mapZoom));
             } else {
-                webEngine.load(LocationTools.tiandituFile(isGeodetic).toURI().toString());
+                webEngine.load(LocationTools.tiandituFile(isGeodetic, mapZoom).toURI().toString());
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -371,15 +380,15 @@ public class BaseMapController extends BaseController {
         return "GaoDe".equals(mapType);
     }
 
-    public void loadPointOptions() {
+    public void readPointOptions() {
         try (Connection conn = DerbyBase.getConnection()) {
-            loadPointOptions(conn);
+            readPointOptions(conn);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
-    public void loadPointOptions(Connection conn) {
+    public void readPointOptions(Connection conn) {
         try {
             isFitView = UserConfig.getBoolean(conn, baseName + "FitView", true);
             isPopInfo = UserConfig.getBoolean(conn, baseName + "PopInfo", true);
@@ -388,7 +397,7 @@ public class BaseMapController extends BaseController {
             isMarkCoordinate = UserConfig.getBoolean(conn, baseName + "MarkerCoordinate", false);
             markerSize = UserConfig.getInt(conn, baseName + "MarkerSize", 24);
             textSize = UserConfig.getInt(conn, baseName + "TextSize", 12);
-            mapSize = UserConfig.getInt(conn, baseName + "MapSize", 9);
+            mapZoom = UserConfig.getInt(conn, baseName + "MapZoom", 9);
             String v = UserConfig.getString(conn, baseName + "MarkerImageFile", null);
             if (v == null) {
                 markerImageFile = this.pointImage();
@@ -415,68 +424,54 @@ public class BaseMapController extends BaseController {
         mapTitle = title;
     }
 
-    public void applyLanguage(Connection conn) {
+    public void readLanguage(Connection conn) {
         try {
             language = UserConfig.getString(conn, baseName + "Language",
                     Languages.isChinese() ? "zh_cn" : "en");
-            applyLanguage(language);
+            applyLanguage();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
     public void setLanguage(String lang) {
+        language = lang;
         UserConfig.setString(baseName + "Language", lang);
-        applyLanguage(lang);
+        applyLanguage();
     }
 
-    public void applyLanguage(String lang) {
+    public void applyLanguage() {
         if (!mapLoaded || isSettingValues || !isGaoDeMap()) {
             return;
         }
-        language = lang;
-        webEngine.executeScript("setLanguage(\"" + lang + "\");");
+        webEngine.executeScript("setLanguage(\"" + language + "\");");
     }
 
-    public void applyMapStyle(Connection conn) {
-        try {
-            if (!mapLoaded || isSettingValues) {
-                return;
-            }
-            mapStyle = UserConfig.getString(conn, baseName + "MapStyle", "default");
-            if (mapStyle != null) {
-                webEngine.executeScript("setStyle(\"" + mapStyle + "\");");
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
+    public void readMapZoom(Connection conn) {
+        mapZoom = UserConfig.getInt(baseName + "MapZoom", 9);
+        applyMapZoom(mapZoom);
     }
 
-    public void applyMapSize(Connection conn) {
-        if (!mapLoaded || isSettingValues) {
+    public void setMapZoom(int zoom) {
+        if (zoom <= 0) {
             return;
         }
-        mapSize = UserConfig.getInt(baseName + "MapSize", 9);
-        applyMapSize(mapSize);
+        mapZoom = zoom;
+        UserConfig.setInt(baseName + "MapZoom", zoom);
+        applyMapZoom(zoom);
     }
 
-    public void setMapSize(int size) {
-        if (size <= 0) {
+    public void applyMapZoom(int zoom) {
+        if (!mapLoaded || isSettingValues || zoom <= 0) {
             return;
         }
-        mapSize = size;
-        UserConfig.setInt(baseName + "MapSize", size);
-        applyMapSize(size);
-    }
-
-    public void applyMapSize(int size) {
-        if (!mapLoaded || isSettingValues || size <= 0) {
-            return;
+        webEngine.executeScript("setZoom(" + zoom + ");");
+        if (WindowTools.isRunning(optionsController)) {
+            optionsController.takeMapZoom(zoom);
         }
-        webEngine.executeScript("setZoom(" + size + ");");
     }
 
-    public void applyStandardLayer(Connection conn) {
+    public void readStandardLayer(Connection conn) {
         try {
             showStandardLayer = UserConfig.getBoolean(conn, baseName + "StandardLayer", true);
             standardOpacity = UserConfig.getFloat(conn, baseName + "StandardOpacity", 1f);
@@ -520,7 +515,7 @@ public class BaseMapController extends BaseController {
         }
     }
 
-    public void applySatelliteLayer(Connection conn) {
+    public void readSatelliteLayer(Connection conn) {
         try {
             showSatelliteLayer = UserConfig.getBoolean(conn, baseName + "SatelliteLayer", false);
             satelliteOpacity = UserConfig.getFloat(conn, baseName + "SatelliteOpacity", 1f);
@@ -564,7 +559,7 @@ public class BaseMapController extends BaseController {
         }
     }
 
-    public void applyRoadLayer(Connection conn) {
+    public void readRoadLayer(Connection conn) {
         try {
             showRoadLayer = UserConfig.getBoolean(conn, baseName + "RoadLayer", false);
             roadOpacity = UserConfig.getFloat(conn, baseName + "RoadOpacity", 1f);
@@ -608,7 +603,7 @@ public class BaseMapController extends BaseController {
         }
     }
 
-    public void applyTrafficLayer(Connection conn) {
+    public void readTrafficLayer(Connection conn) {
         try {
             showTrafficLayer = UserConfig.getBoolean(conn, baseName + "TrafficLayer", false);
             trafficOpacity = UserConfig.getFloat(conn, baseName + "TrafficOpacity", 1f);
@@ -652,7 +647,7 @@ public class BaseMapController extends BaseController {
         }
     }
 
-    public void applyFitView(Connection conn) {
+    public void readFitView(Connection conn) {
         isFitView = UserConfig.getBoolean(conn, baseName + "FitView", true);
         applyFitView(isFitView);
     }
@@ -672,7 +667,7 @@ public class BaseMapController extends BaseController {
         }
     }
 
-    public void applyShowZoom(Connection conn) {
+    public void readShowZoom(Connection conn) {
         showZoomControl = UserConfig.getBoolean(conn, baseName + "ShowZoomControl", true);
         applyShowZoom();
     }
@@ -690,52 +685,72 @@ public class BaseMapController extends BaseController {
         webEngine.executeScript("setControl('zoom'," + showZoomControl + ");");
     }
 
-    public void applyShowScale(Connection conn) {
-        applyShowScale(UserConfig.getBoolean(conn, baseName + "ShowScaleControl", true));
+    public void readShowScale(Connection conn) {
+        showScaleControl = UserConfig.getBoolean(conn, baseName + "ShowScaleControl", true);
+        applyShowScale();
     }
 
     public void setShowScale(boolean show) {
+        showScaleControl = show;
         UserConfig.setBoolean(baseName + "ShowScaleControl", show);
-        applyShowScale(show);
+        applyShowScale();
     }
 
-    public void applyShowScale(boolean show) {
+    public void applyShowScale() {
         if (!mapLoaded || isSettingValues || isGaoDeMap()) {
             return;
         }
-        webEngine.executeScript("setControl('scale'," + show + ");");
+        webEngine.executeScript("setControl('scale'," + showScaleControl + ");");
     }
 
-    public void applyShowType(Connection conn) {
-        applyShowType(UserConfig.getBoolean(conn, baseName + "ShowTypeControl", true));
+    public void readShowType(Connection conn) {
+        showTypeControl = UserConfig.getBoolean(conn, baseName + "ShowTypeControl", true);
+        applyShowType();
     }
 
     public void setShowType(boolean show) {
+        showTypeControl = show;
         UserConfig.setBoolean(baseName + "ShowTypeControl", show);
-        applyShowType(show);
+        applyShowType();
     }
 
-    public void applyShowType(boolean show) {
+    public void applyShowType() {
         if (!mapLoaded || isSettingValues || isGaoDeMap()) {
             return;
         }
-        webEngine.executeScript("setControl('mapType'," + show + ");");
+        webEngine.executeScript("setControl('mapType'," + showTypeControl + ");");
     }
 
-    public void applyShowSymbols(Connection conn) {
-        applyShowSymbols(UserConfig.getBoolean(conn, baseName + "ShowSymbolsControl", false));
+    public void readShowSymbols(Connection conn) {
+        showSymbolsControl = UserConfig.getBoolean(conn, baseName + "ShowSymbolsControl", false);
+        applyShowSymbols();
     }
 
     public void setShowSymbols(boolean show) {
+        showSymbolsControl = show;
         UserConfig.setBoolean(baseName + "ShowSymbolsControl", show);
-        applyShowSymbols(show);
+        applyShowSymbols();
     }
 
-    public void applyShowSymbols(boolean show) {
+    public void applyShowSymbols() {
         if (!mapLoaded || isSettingValues || isGaoDeMap()) {
             return;
         }
-        webEngine.executeScript("setControl('symbols'," + show + ");");
+        webEngine.executeScript("setControl('symbols'," + showSymbolsControl + ");");
+    }
+
+    public void readMapStyle(Connection conn) {
+        try {
+            if (!mapLoaded || isSettingValues) {
+                return;
+            }
+            mapStyle = UserConfig.getString(conn, baseName + "MapStyle", "default");
+            if (mapStyle != null) {
+                webEngine.executeScript("setStyle(\"" + mapStyle + "\");");
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
     public void setMapStyle(String mapStyle) {
@@ -746,14 +761,13 @@ public class BaseMapController extends BaseController {
         if (isSettingValues) {
             return;
         }
-        applyMapSize(isGaoDeMap() ? 3 : 1);
+        applyMapZoom(isGaoDeMap() ? 3 : 1);
     }
 
     /*
         map points options
      */
     public void setMarkerImageFile(File file) {
-        MyBoxLog.console(file);
         if (file == null || !file.exists() || !file.isFile()) {
             return;
         }
@@ -856,7 +870,10 @@ public class BaseMapController extends BaseController {
      */
     @FXML
     public void optionsAction() {
-        MapOptionsController.open(this);
+        if (WindowTools.isRunning(optionsController)) {
+            return;
+        }
+        optionsController = MapOptionsController.open(this);
     }
 
     @FXML
