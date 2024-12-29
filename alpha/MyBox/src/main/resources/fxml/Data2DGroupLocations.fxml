@@ -26,7 +26,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" prefHeight="700.0" prefWidth="1000.0" spacing="5.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.Data2DGroupLocations">
+<VBox fx:id="thisPane" prefHeight="700.0" prefWidth="1000.0" spacing="5.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.Data2DGroupLocationsController">
     <children>
         <HBox alignment="CENTER" VBox.vgrow="NEVER" />
         <SplitPane fx:id="splitPane" dividerPositions="0.45" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
@@ -305,22 +305,6 @@ License:    Apache License Version 2.0
                                                 </VBox>
                                             </content>
                                         </Tab>
-                                        <Tab fx:id="mapOptionsTab" text="%MapOptions">
-                                            <content>
-                                                <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
-                                                    <content>
-                                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-                                                            <padding>
-                                                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                                                            </padding>
-                                                            <children>
-                                                                <fx:include fx:id="mapOptions" source="ControlMapOptions.fxml" />
-                                                            </children>
-                                                        </VBox>
-                                                    </content>
-                                                </ScrollPane>
-                                            </content>
-                                        </Tab>
                                     </tabs>
                                 </TabPane>
                             </children>
@@ -344,7 +328,7 @@ License:    Apache License Version 2.0
                                         <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                         <CheckBox fx:id="leftPaneCheck" minWidth="-Infinity" mnemonicParsing="false">
                                             <graphic>
-                                                <ImageView  fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
                                                         <Image url="@../buttons/Red/iconDoubleLeft.png" />
                                                     </image>

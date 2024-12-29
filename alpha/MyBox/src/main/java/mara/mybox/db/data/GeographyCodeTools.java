@@ -1834,6 +1834,34 @@ public class GeographyCodeTools {
         return code;
     }
 
+    public static DataNode toNode(GeographyCode code) {
+        if (code == null) {
+            return null;
+        }
+        DataNode node = new DataNode();
+        node.setValue("level", code.getLevel());
+        node.setValue("coordinate_system", code.getCoordinateSystem().shortValue());
+        node.setValue("longitude", code.getLongitude());
+        node.setValue("latitude", code.getLatitude());
+        node.setValue("precision", code.getPrecision());
+        node.setValue("chinese_name", code.getChineseName());
+        node.setValue("english_name", code.getEnglishName());
+        node.setValue("alias1", code.getAlias1());
+        node.setValue("alias1", code.getAlias1());
+        node.setValue("alias1", code.getAlias1());
+        node.setValue("alias1", code.getAlias1());
+        node.setValue("alias1", code.getAlias1());
+        node.setValue("code1", code.getCode1());
+        node.setValue("code1", code.getCode1());
+        node.setValue("code1", code.getCode1());
+        node.setValue("code1", code.getCode1());
+        node.setValue("code1", code.getCode1());
+        node.setValue("description", code.getComments());
+        node.setValue("area", code.getArea() + 0d);
+        node.setValue("population", code.getPopulation());
+        return node;
+    }
+
     public static GeographyCode toCGCS2000(GeographyCode code, boolean setCS) {
         GeographyCode converted = toWGS84(code);
         if (converted != null && setCS) {

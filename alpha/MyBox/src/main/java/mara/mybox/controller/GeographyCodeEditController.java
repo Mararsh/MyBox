@@ -20,7 +20,6 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.value.AppValues;
-import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -245,15 +244,14 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
         }
     }
 
-    public void load(GeographyCodeController1 parent, GeographyCode code) {
-        parentController = parent;
-        try {
-            loadedCode = (GeographyCode) (code.clone());
-            setGeographyCode(code);
-        } catch (Exception e) {
-        }
-    }
-
+//    public void load(GeographyCodeController1 parent, GeographyCode code) {
+//        parentController = parent;
+//        try {
+//            loadedCode = (GeographyCode) (code.clone());
+//            setGeographyCode(code);
+//        } catch (Exception e) {
+//        }
+//    }
     @FXML
     public void locationAction(ActionEvent event) {
         try {
@@ -533,13 +531,13 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
                 return;
             }
 
-            if (parentController != null) {
-                ((GeographyCodeController1) parentController).refreshAction();
-                parentController.getMyStage().requestFocus();
-            } else {
-                GeographyCodeController1 controller = (GeographyCodeController1) openStage(Fxmls.GeographyCodeFxml);
-                controller.getMyStage().requestFocus();
-            }
+//            if (parentController != null) {
+//                ((GeographyCodeController1) parentController).refreshAction();
+//                parentController.getMyStage().requestFocus();
+//            } else {
+//                GeographyCodeController1 controller = (GeographyCodeController1) openStage(Fxmls.GeographyCodeFxml);
+//                controller.getMyStage().requestFocus();
+//            }
             closeStage();
         } catch (Exception e) {
             MyBoxLog.error(e);

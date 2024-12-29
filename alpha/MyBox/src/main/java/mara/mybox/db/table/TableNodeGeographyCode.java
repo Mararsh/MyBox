@@ -3,7 +3,9 @@ package mara.mybox.db.table;
 import mara.mybox.data.GeoCoordinateSystem;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
+import mara.mybox.db.data.GeographyCode;
 import mara.mybox.db.data.GeographyCodeLevel;
+import mara.mybox.db.data.GeographyCodeTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -132,8 +134,19 @@ public class TableNodeGeographyCode extends BaseNodeTable {
                     return null;
                 }
                 break;
+            case "precision":
+            case "image":
+                return null;
         }
         return column.displayValue(v);
+    }
+
+    public String text(GeographyCode code) {
+        return valuesText(GeographyCodeTools.toNode(code));
+    }
+
+    public String html(GeographyCode code) {
+        return valuesHtml(GeographyCodeTools.toNode(code));
     }
 
 }

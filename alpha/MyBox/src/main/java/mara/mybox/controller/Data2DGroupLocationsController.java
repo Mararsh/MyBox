@@ -10,18 +10,18 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-10-14
  * @License Apache License Version 2.0
  */
-public class Data2DGroupLocations extends Data2DLocationDistributionController {
+public class Data2DGroupLocationsController extends Data2DLocationDistributionController {
 
-    public Data2DGroupLocations() {
+    public Data2DGroupLocationsController() {
         baseTitle = message("GroupData") + " - " + message("XYChart");
     }
 
     /*
         static
      */
-    public static Data2DGroupLocations open(BaseData2DLoadController tableController) {
+    public static Data2DGroupLocationsController open(BaseData2DLoadController tableController) {
         try {
-            Data2DGroupLocations controller = (Data2DGroupLocations) WindowTools.branchStage(
+            Data2DGroupLocationsController controller = (Data2DGroupLocationsController) WindowTools.branchStage(
                     tableController, Fxmls.Data2DChartGroupXYFxml);
             controller.setParameters(tableController);
             controller.requestMouse();

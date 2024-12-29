@@ -4,7 +4,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.sql.Connection;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Timer;
@@ -21,12 +20,10 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebEvent;
 import javafx.scene.web.WebView;
 import mara.mybox.data.GeoCoordinateSystem;
-import mara.mybox.data.MapPoint;
-import mara.mybox.data.StringTable;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.data.ColumnDefinition.ColumnType;
-import mara.mybox.db.data.Data2DColumn;
+import mara.mybox.db.data.GeographyCode;
 import mara.mybox.db.data.VisitHistory;
+import mara.mybox.db.table.TableNodeGeographyCode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.FxFileTools;
@@ -59,6 +56,7 @@ public class BaseMapController extends BaseController {
 
     protected MapOptionsController optionsController;
 
+    protected TableNodeGeographyCode nodeTable;
     protected String mapTitle, mapType, mapStyle, language;
     protected WebEngine webEngine;
     protected boolean mapLoaded, isGeodetic, isFitView,
@@ -71,12 +69,12 @@ public class BaseMapController extends BaseController {
     protected GeoCoordinateSystem coordinateSystem;
     protected int markerSize, textSize, mapZoom, interval;
     protected SimpleBooleanProperty loadNotify, drawNotify;
-    protected List<MapPoint> mapPoints;
+    protected List<GeographyCode> geoCodes;
 
     @FXML
     protected WebView mapView;
     @FXML
-    protected Label topLabel, titleLabel;
+    protected Label titleLabel;
     @FXML
     protected VBox snapBox;
 
@@ -87,6 +85,9 @@ public class BaseMapController extends BaseController {
 
     public void initMap() {
         try (Connection conn = DerbyBase.getConnection()) {
+
+            nodeTable = new TableNodeGeographyCode();
+            baseName = "Map";
 
             webEngine = mapView.getEngine();
             webEngine.setJavaScriptEnabled(true);
@@ -102,13 +103,12 @@ public class BaseMapController extends BaseController {
 
             loadNotify = new SimpleBooleanProperty();
             drawNotify = new SimpleBooleanProperty();
-            interval = 1;
             mapLoaded = false;
-            mapPoints = null;
+            geoCodes = null;
 
             readMapType(conn);
 
-            readPointOptions(conn);
+            readMapOptions(conn);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -191,20 +191,12 @@ public class BaseMapController extends BaseController {
     /*
         draw map
      */
-    public void clearMap() {
+    public void clearCodes() {
         if (timer != null) {
             timer.cancel();
             timer = null;
         }
-        if (mapLoaded) {
-            if (webEngine != null) {
-                webEngine.getLoadWorker().cancel();
-                webEngine.executeScript("clearMap();");
-            }
-        }
-        if (topLabel != null) {
-            topLabel.setText("");
-        }
+        clearMap();
         if (titleLabel != null) {
             titleLabel.setText("");
         }
@@ -213,33 +205,41 @@ public class BaseMapController extends BaseController {
         }
     }
 
+    public void clearMap() {
+        if (mapLoaded && webEngine != null) {
+            webEngine.getLoadWorker().cancel();
+            webEngine.executeScript("clearMap();");
+        }
+    }
+
     protected String jsString(String string) {
         return string == null ? "null"
                 : "'" + StringTools.replaceHtmlLineBreak(string.replaceAll("'", AppValues.MyBoxSeparator)) + "'";
     }
 
-    public void beforeDrawPoints(List<MapPoint> points) {
-        clearMap();
-        mapPoints = points;
-        if (mapPoints != null && !mapPoints.isEmpty()) {
-            if (topLabel != null) {
-                topLabel.setText(message("DataNumber") + ":" + points.size());
-            } else {
-                bottomLabel.setText(message("DataNumber") + ":" + points.size());
-            }
+    public void setCodes(List<GeographyCode> codes) {
+        clearCodes();
+        geoCodes = codes;
+        int size = geoCodes == null ? 0 : geoCodes.size();
+        if (bottomLabel != null) {
+            bottomLabel.setText(message("DataNumber") + ":" + size);
         }
-        readPointOptions();
+        readMapOptions();
     }
 
-    public void drawPoints(List<MapPoint> points) {
-        if (!mapLoaded || points == null || points.isEmpty()) {
+    public void drawCodes(List<GeographyCode> codes, int inInterval) {
+        setCodes(codes);
+        if (!mapLoaded || codes == null || codes.isEmpty()) {
             return;
         }
-        beforeDrawPoints(points);
-        int size = points.size();
-        if (interval <= 0) {
-            interval = 1;
+        int size = geoCodes.size();
+        if (size == 1) {
+            GeographyCode code = geoCodes.get(0);
+            showCode(code);
+            moveCenter(code);
+            return;
         }
+        interval = inInterval > 0 ? inInterval : 1;
         timer = new Timer();
         timer.schedule(new TimerTask() {
 
@@ -253,7 +253,7 @@ public class BaseMapController extends BaseController {
                         if (!frameEnd || timer == null) {
                             return;
                         }
-                        if (mapPoints == null || mapPoints.isEmpty()) {
+                        if (geoCodes == null || geoCodes.isEmpty()) {
                             if (timer != null) {
                                 timer.cancel();
                                 timer = null;
@@ -261,16 +261,15 @@ public class BaseMapController extends BaseController {
                             return;
                         }
                         frameEnd = false;
-                        MapPoint point = mapPoints.get(index);
-                        drawPoint(point);
+                        GeographyCode code = geoCodes.get(index);
+                        showCode(code);
                         if (!centered) {
-                            webEngine.executeScript("setCenter("
-                                    + point.getLongitude() + ", " + point.getLatitude() + ");");
+                            moveCenter(code);
                             centered = true;
                         }
                         index++;
                         bottomLabel.setText(index + " / " + size);
-                        if (index >= mapPoints.size()) {
+                        if (index >= geoCodes.size()) {
                             if (timer != null) {
                                 timer.cancel();
                                 timer = null;
@@ -288,17 +287,29 @@ public class BaseMapController extends BaseController {
         }, 0, interval);
     }
 
-    public void drawPoint(MapPoint point) {
+    public void drawCode(GeographyCode code) {
+        if (code == null) {
+            return;
+        }
+        geoCodes = new ArrayList<>();
+        geoCodes.add(code);
+        drawCodes(geoCodes, 1);
+    }
+
+    public void showCode(GeographyCode code) {
         try {
-            if (webEngine == null || !mapLoaded || point == null) {
+            if (webEngine == null || !mapLoaded || code == null) {
                 return;
             }
-            double lo = point.getLongitude();
-            double la = point.getLatitude();
+            double lo = code.getLongitude();
+            double la = code.getLatitude();
             if (!LocationTools.validCoordinate(lo, la)) {
                 return;
             }
-            String label = point.getLabel();
+            String label = code.getLabel();
+            if (label == null) {
+                label = code.getName();
+            }
             String pLabel = "";
             if (isMarkLabel) {
                 pLabel += label;
@@ -309,14 +320,18 @@ public class BaseMapController extends BaseController {
                 }
                 pLabel += lo + "," + la;
             }
+            int markSize = code.getMarkSize();
+            if (markSize <= 0) {
+                markSize = markSize();
+            }
             webEngine.executeScript("addMarker("
                     + lo + "," + la
                     + ", " + jsString(pLabel)
-                    + ", " + jsString(isPopInfo ? point.getInfo() : null)
+                    + ", " + jsString(isPopInfo ? nodeTable.text(code) : null)
                     + ", '" + image().replaceAll("\\\\", "/") + "'"
-                    + ", " + markSize()
+                    + ", " + markSize
                     + ", " + textSize()
-                    + ", '" + FxColorTools.color2rgb(textColor()) + "'"
+                    + ", '" + textRGB() + "'"
                     + ", " + isBold + ", " + isPopInfo + ");");
             titleLabel.setText(label);
         } catch (Exception e) {
@@ -324,12 +339,23 @@ public class BaseMapController extends BaseController {
         }
     }
 
-    public void moveCenter(MapPoint point) {
-        if (!mapLoaded || point == null) {
+    public void moveCenter(GeographyCode code) {
+        if (!mapLoaded || code == null) {
             return;
         }
         webEngine.executeScript("setCenter("
-                + point.getLongitude() + ", " + point.getLatitude() + ");");
+                + code.getLongitude() + ", " + code.getLatitude() + ");");
+    }
+
+    public void drawLine(GeographyCode code1, GeographyCode code2) {
+        if (!mapLoaded || code1 == null || code2 == null) {
+            return;
+        }
+        String pColor = "'" + textRGB() + "'";
+        webEngine.executeScript("drawLine("
+                + code1.getLongitude() + ", " + code1.getLatitude() + ", "
+                + code2.getLongitude() + ", " + code2.getLatitude()
+                + ", " + pColor + ");");
     }
 
 
@@ -380,15 +406,15 @@ public class BaseMapController extends BaseController {
         return "GaoDe".equals(mapType);
     }
 
-    public void readPointOptions() {
+    public void readMapOptions() {
         try (Connection conn = DerbyBase.getConnection()) {
-            readPointOptions(conn);
+            readMapOptions(conn);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
-    public void readPointOptions(Connection conn) {
+    public void readMapOptions(Connection conn) {
         try {
             isFitView = UserConfig.getBoolean(conn, baseName + "FitView", true);
             isPopInfo = UserConfig.getBoolean(conn, baseName + "PopInfo", true);
@@ -828,6 +854,31 @@ public class BaseMapController extends BaseController {
         refreshAction();
     }
 
+    public int markSize() {
+        if (markerSize <= 0) {
+            markerSize = 24;
+        }
+        return markerSize;
+    }
+
+    public int textSize() {
+        if (textSize <= 0) {
+            textSize = 12;
+        }
+        return textSize;
+    }
+
+    public String textRGB() {
+        return FxColorTools.color2rgb(textColor());
+    }
+
+    public Color textColor() {
+        if (textColor == null) {
+            textColor = Color.BLACK;
+        }
+        return textColor;
+    }
+
     public String image() {
         if (markerImageFile == null) {
             markerImageFile = pointImage();
@@ -844,26 +895,21 @@ public class BaseMapController extends BaseController {
         }
     }
 
-    public Color textColor() {
-        if (textColor == null) {
-            textColor = Color.BLACK;
-        }
-        return textColor;
+    public File chineseHistoricalCapitalsImage() {
+        markerImageFile = FxFileTools.getInternalFile("/img/jade.png", "image", "jade.png");
+        return markerImageFile;
     }
 
-    public int markSize() {
-        if (markerSize <= 0) {
-            markerSize = 24;
-        }
-        return markerSize;
+    public File europeanGadwallsImage() {
+        markerImageFile = FxFileTools.getInternalFile("/img/Gadwalls.png", "image", "Gadwalls.png");
+        return markerImageFile;
     }
 
-    public int textSize() {
-        if (textSize <= 0) {
-            textSize = 12;
-        }
-        return textSize;
+    public File spermWhalesImage() {
+        markerImageFile = FxFileTools.getInternalFile("/img/SpermWhale.png", "image", "SpermWhale.png");
+        return markerImageFile;
     }
+
 
     /*
         action
@@ -879,13 +925,13 @@ public class BaseMapController extends BaseController {
     @FXML
     @Override
     public void clearAction() {
-        clearMap();
+        clearCodes();
     }
 
     @FXML
     @Override
     public void refreshAction() {
-        drawPoints(mapPoints);
+        drawCodes(geoCodes, 1);
     }
 
     protected String snapName() {
@@ -899,8 +945,13 @@ public class BaseMapController extends BaseController {
     @FXML
     @Override
     public boolean popAction() {
-        ImagePopController.openImage(this, snapMap());
+        snapAction();
         return true;
+    }
+
+    @FXML
+    public void snapAction() {
+        ImagePopController.openImage(this, snapMap());
     }
 
     public Image snapMap() {
@@ -942,18 +993,13 @@ public class BaseMapController extends BaseController {
                         return false;
                     }
 
-                    if (mapPoints != null && !mapPoints.isEmpty()) {
-                        List<String> names = new ArrayList<>();
-                        names.addAll(Arrays.asList(message("Longitude"), message("Latitude"),
-                                message("Label"), message("Information"), message("CoordinateSystem")));
-                        StringTable table = new StringTable(names);
-                        for (MapPoint code : mapPoints) {
+                    if (geoCodes != null && !geoCodes.isEmpty()) {
+                        for (GeographyCode code : geoCodes) {
                             if (task == null || isCancelled()) {
                                 return false;
                             }
-                            table.add(code.htmlValues());
+                            s.append(nodeTable.html(code)).append("<br>");
                         }
-                        s.append(table.div());
                     }
 
                     html = HtmlWriteTools.html(title, HtmlStyles.styleValue("Default"), s.toString());
@@ -969,55 +1015,6 @@ public class BaseMapController extends BaseController {
             @Override
             protected void whenSucceeded() {
                 WebBrowserController.openHtml(html, true);
-            }
-
-        };
-        start(task);
-    }
-
-    @FXML
-    public void dataAction() {
-        if (mapPoints == null || mapPoints.isEmpty()) {
-            popError(message("NoData"));
-            return;
-        }
-        if (task != null) {
-            task.cancel();
-        }
-        task = new FxSingletonTask<Void>(this) {
-
-            private List<Data2DColumn> columns;
-            private List<List<String>> data;
-
-            @Override
-            protected boolean handle() {
-                try {
-                    columns = new ArrayList<>();
-                    columns.add(new Data2DColumn(message("Longitude"), ColumnType.Longitude));
-                    columns.add(new Data2DColumn(message("Latitude"), ColumnType.Latitude));
-                    columns.add(new Data2DColumn(message("Label"), ColumnType.String, 160));
-                    columns.add(new Data2DColumn(message("Information"), ColumnType.String, 300));
-                    columns.add(new Data2DColumn(message("CoordinateSystem"), ColumnType.String, 80));
-
-                    data = new ArrayList<>();
-                    for (MapPoint code : mapPoints) {
-                        if (task == null || isCancelled()) {
-                            return false;
-                        }
-                        data.add(code.dataValues());
-                    }
-                    return true;
-                } catch (Exception e) {
-                    error = e.toString();
-                    return false;
-                }
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                Data2DManufactureController.openData(
-                        mapTitle == null ? titleLabel.getText() : mapTitle,
-                        columns, data);
             }
 
         };

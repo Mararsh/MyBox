@@ -72,7 +72,7 @@ public class GeographyCodeController extends DataTreeController {
 
     @FXML
     public boolean snapAction() {
-        mapController.popAction();
+        mapController.snapAction();
         return true;
     }
 

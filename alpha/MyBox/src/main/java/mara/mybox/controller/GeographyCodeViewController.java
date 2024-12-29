@@ -1,9 +1,6 @@
 package mara.mybox.controller;
 
 import java.sql.Connection;
-import java.util.ArrayList;
-import javafx.fxml.FXML;
-import mara.mybox.data.MapPoint;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.DataNode;
 import mara.mybox.db.data.GeographyCode;
@@ -21,8 +18,6 @@ import static mara.mybox.value.Languages.message;
 public class GeographyCodeViewController extends BaseMapController {
 
     protected GeographyCodeController treeController;
-    protected GeographyCode geographyCode;
-    protected MapPoint mapPoint;
 
     public void setPatrameters(GeographyCodeController controller) {
         try {
@@ -39,15 +34,11 @@ public class GeographyCodeViewController extends BaseMapController {
         if (webEngine == null || !mapLoaded || node == null) {
             return;
         }
-        mapPoints = null;
-        geographyCode = null;
-        webEngine.executeScript("clearMap();");
-        titleLabel.setText("");
         if (task != null) {
             task.cancel();
         }
         task = new FxSingletonTask<Void>(this) {
-            private MapPoint mapPoint;
+            GeographyCode geoCode;
 
             @Override
             protected boolean handle() {
@@ -56,29 +47,17 @@ public class GeographyCodeViewController extends BaseMapController {
                     if (savedNode == null) {
                         return false;
                     }
-                    GeographyCode tcode;
-                    geographyCode = GeographyCodeTools.fromNode(savedNode);
-                    if (!validCoordinate(geographyCode)) {
+                    geoCode = GeographyCodeTools.fromNode(savedNode);
+                    if (!validCoordinate(geoCode)) {
                         error = message("Invalid");
                         return false;
                     }
                     if (isGaoDeMap()) {
-                        tcode = GeographyCodeTools.toGCJ02(geographyCode);
+                        geoCode = GeographyCodeTools.toGCJ02(geoCode);
                     } else {
-                        tcode = GeographyCodeTools.toCGCS2000(geographyCode, false);
+                        geoCode = GeographyCodeTools.toCGCS2000(geoCode, false);
                     }
-                    mapPoint = new MapPoint(tcode);
-                    mapPoint.setLabel(geographyCode.getName())
-                            .setInfo(treeController.nodeTable.dataText(savedNode))
-                            .setMarkSize(markerSize)
-                            .setMarkerImage(image())
-                            .setTextSize(textSize)
-                            .setTextColor(textColor)
-                            .setIsBold(isBold)
-                            .setIsPopInfo(true);
-                    mapPoints = new ArrayList<>();
-                    mapPoints.add(mapPoint);
-                    return true;
+                    return geoCode != null;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -87,7 +66,7 @@ public class GeographyCodeViewController extends BaseMapController {
 
             @Override
             protected void whenSucceeded() {
-                drawPoint(mapPoint);
+                drawCode(geoCode);
                 treeController.currentNode = node;
                 treeController.setButtonsDisable(false);
             }
@@ -98,19 +77,6 @@ public class GeographyCodeViewController extends BaseMapController {
 
         };
         start(task, treeController.rightPane);
-    }
-
-    @Override
-    public void drawPoint(MapPoint point) {
-        beforeDrawPoints(null);
-        mapPoint = point;
-        super.drawPoint(point);
-    }
-
-    @FXML
-    @Override
-    public void refreshAction() {
-        drawPoint(mapPoint);
     }
 
 }

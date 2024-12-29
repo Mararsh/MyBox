@@ -123,6 +123,7 @@ public class Data2DCoordinatePickerController extends CoordinatePickerController
     @Override
     public void okAction() {
         try {
+            geographyCode = mapController.geographyCode;
             if (geographyCode == null) {
                 popError(message("NoData"));
                 return;

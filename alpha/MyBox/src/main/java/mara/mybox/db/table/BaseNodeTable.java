@@ -633,8 +633,8 @@ public class BaseNodeTable extends BaseTable<DataNode> {
             return null;
         }
         StringTable table = new StringTable();
-        for (ColumnDefinition column : columns) {
-            String name = column.getColumnName();
+        for (String name : dataColumnNames()) {
+            ColumnDefinition column = column(name);
             String value = displayValue(column, values.get(name));
             if (value == null || value.isBlank()) {
                 continue;
@@ -661,8 +661,8 @@ public class BaseNodeTable extends BaseTable<DataNode> {
         }
         String prefix2 = prefix + Indent;
         String xml = "";
-        for (ColumnDefinition column : columns) {
-            String name = column.getColumnName();
+        for (String name : dataColumnNames()) {
+            ColumnDefinition column = column(name);
             Object value = values.get(name);
             if (value == null) {
                 continue;
@@ -692,8 +692,8 @@ public class BaseNodeTable extends BaseTable<DataNode> {
             return null;
         }
         String json = "";
-        for (ColumnDefinition column : columns) {
-            String name = column.getColumnName();
+        for (String name : dataColumnNames()) {
+            ColumnDefinition column = column(name);
             Object value = values.get(name);
             if (value == null) {
                 continue;
@@ -712,7 +712,7 @@ public class BaseNodeTable extends BaseTable<DataNode> {
     }
 
     // Node should be queried with all fields
-    public String nodeHtml(FxTask task, Connection conn, BaseController controller,
+    public String valuesHtml(FxTask task, Connection conn, BaseController controller,
             DataNode node, String hierarchyNumber, int indent) {
         try {
             if (conn == null || node == null) {
@@ -766,7 +766,7 @@ public class BaseNodeTable extends BaseTable<DataNode> {
     }
 
     // Node should be queried with all fields
-    public String dataText(DataNode node) {
+    public String valuesText(DataNode node) {
         if (node == null) {
             return null;
         }
@@ -789,6 +789,7 @@ public class BaseNodeTable extends BaseTable<DataNode> {
         }
         return s;
     }
+
 
     /*
         get/set

@@ -423,7 +423,7 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
                     if (savedNode == null) {
                         return false;
                     }
-                    html = nodeTable.nodeHtml(this, conn, controller, savedNode,
+                    html = nodeTable.valuesHtml(this, conn, controller, savedNode,
                             node.getHierarchyNumber(), 4);
                     return html != null && !html.isBlank();
                 } catch (Exception e) {
@@ -515,7 +515,7 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
                     if (savedNode == null) {
                         return false;
                     }
-                    html = nodeTable.nodeHtml(this, conn, controller, savedNode,
+                    html = nodeTable.valuesHtml(this, conn, controller, savedNode,
                             node.getHierarchyNumber(), 4);
                     return html != null && !html.isBlank();
                 } catch (Exception e) {

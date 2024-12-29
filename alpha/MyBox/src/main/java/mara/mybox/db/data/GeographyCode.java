@@ -26,6 +26,7 @@ public class GeographyCode extends BaseData {
             countyCode, townCode, villageCode, buildingCode;
     protected GeoCoordinateSystem coordinateSystem;
     protected AddressSource source;
+    protected int markSize;
 
     public static enum AddressLevel {
         Global, Continent, Country, Province, City, County, Town, Village, Building, InterestOfLocation
@@ -51,7 +52,7 @@ public class GeographyCode extends BaseData {
         townCode = null;
         villageCode = null;
         buildingCode = null;
-
+        markSize = -1;
     }
 
     @Override
@@ -109,7 +110,6 @@ public class GeographyCode extends BaseData {
             return null;
         }
     }
-
 
     /*
         Static methods
@@ -1216,6 +1216,15 @@ public class GeographyCode extends BaseData {
 
     public GeographyCode setLabel(String label) {
         this.label = label;
+        return this;
+    }
+
+    public int getMarkSize() {
+        return markSize;
+    }
+
+    public GeographyCode setMarkSize(int markSize) {
+        this.markSize = markSize;
         return this;
     }
 

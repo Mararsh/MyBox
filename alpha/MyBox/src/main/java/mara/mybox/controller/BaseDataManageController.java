@@ -54,8 +54,6 @@ public abstract class BaseDataManageController<P> extends BaseSysTableController
     @FXML
     protected ControlWebView infoViewController;
     @FXML
-    protected GeographyCodeConditionTreeController geoController;
-    @FXML
     protected Button locationButton;
     @FXML
     protected ListView orderByList;
@@ -89,27 +87,11 @@ public abstract class BaseDataManageController<P> extends BaseSysTableController
     }
 
     protected String checkWhere() {
-        if (geoController == null) {
-            return null;
-        }
-        String where = geoController.check();
-        if (where == null) {
-            popError(message("SetConditionsComments"));
-            return null;
-        }
-        return where;
+        return null;
     }
 
     protected String checkTitle() {
-        if (geoController == null) {
-            return null;
-        }
-        String title = geoController.getFinalTitle();
-        if (title == null) {
-            popError(message("SetConditionsComments"));
-            return null;
-        }
-        return title;
+        return null;
     }
 
     protected QueryCondition checkCondition(boolean careOrder) {
@@ -340,10 +322,6 @@ public abstract class BaseDataManageController<P> extends BaseSysTableController
                 queryButton.requestFocus();
             }
             loadInfo();
-            if (geoController != null) {
-                geoController.setParent(this);
-                geoController.loadTree();
-            }
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -388,9 +366,6 @@ public abstract class BaseDataManageController<P> extends BaseSysTableController
     @Override
     public void refreshAction() {
         queryData();
-        if (geoController != null) {
-            geoController.loadTree();
-        }
     }
 
     public void loadInfo() {
@@ -883,9 +858,6 @@ public abstract class BaseDataManageController<P> extends BaseSysTableController
             if (timer != null) {
                 timer.cancel();
                 timer = null;
-            }
-            if (geoController != null) {
-                geoController.cleanPane();
             }
         } catch (Exception e) {
         }

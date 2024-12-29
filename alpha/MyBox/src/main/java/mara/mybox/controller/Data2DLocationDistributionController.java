@@ -16,16 +16,13 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.paint.Color;
 import mara.mybox.data.GeoCoordinateSystem;
-import mara.mybox.data.MapPoint;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.GeographyCode;
 import mara.mybox.db.data.GeographyCodeTools;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -42,7 +39,7 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
     protected String labelCol, longCol, laCol, sizeCol;
     protected ToggleGroup csGroup;
     protected double maxValue, minValue;
-    protected List<MapPoint> dataPoints;
+    protected List<GeographyCode> dataPoints;
     protected int frameid, lastFrameid;
 
     @FXML
@@ -54,9 +51,7 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
     @FXML
     protected FlowPane csPane;
     @FXML
-    protected ControlMapOptions mapOptionsController;
-    @FXML
-    protected ControlMap mapController;
+    protected BaseMapController mapController;
     @FXML
     protected CheckBox accumulateCheck, centerCheck, linkCheck;
     @FXML
@@ -71,13 +66,12 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
         try {
             super.initOptions();
 
-            mapController.mapOptionsController = mapOptionsController;
             mapController.initMap();
 
             mapController.drawNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    drawPoints();
+                    drawCodes();
                 }
             });
 
@@ -149,15 +143,15 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
             if (dname != null) {
                 dname = dname.replaceAll("\"", "");
                 if (Languages.matchIgnoreCase("ChineseHistoricalCapitals", dname)) {
-                    file = mapController.mapOptions.chineseHistoricalCapitalsImage();
+                    file = mapController.chineseHistoricalCapitalsImage();
                 } else if (Languages.matchIgnoreCase("AutumnMovementPatternsOfEuropeanGadwalls", dname)) {
-                    file = mapController.mapOptions.europeanGadwallsImage();
+                    file = mapController.europeanGadwallsImage();
                 } else if (Languages.matchIgnoreCase("SpermWhalesGulfOfMexico", dname)) {
-                    file = mapController.mapOptions.spermWhalesImage();
+                    file = mapController.spermWhalesImage();
                 }
             }
             if (file != null) {
-                mapOptionsController.initImageFile(file);
+                mapController.setMarkerImageFile(file);
             }
 
         } catch (Exception e) {
@@ -194,6 +188,7 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
                 return false;
             }
             dataColsIndices.add(col);
+            MyBoxLog.console(labelCol);
 
             longCol = longitudeSelector.getValue();
             col = data2D.colOrder(longCol);
@@ -310,7 +305,7 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
                 super.finalAction();
                 data2D.stopTask();
                 if (taskSuccessed) {
-                    drawPoints();
+                    drawCodes();
                     valuesController.loadDef(csvData);
                     rightPane.setDisable(false);
                 } else {
@@ -347,7 +342,7 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
                         code = GeographyCode.create();
                     }
                     code.setCoordinateSystem(cs).setLongitude(lo).setLatitude(la);
-                    if (mapController.mapOptions.isGaoDeMap()) {
+                    if (mapController.isGaoDeMap()) {
                         code = GeographyCodeTools.toGCJ02(code);
                     } else {
                         code = GeographyCodeTools.toCGCS2000(code, false);
@@ -359,27 +354,17 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
                 if (code == null) {
                     continue;
                 }
-                MapPoint point = new MapPoint(code);
-                String info = "";
-                for (int i = 0; i < row.size(); i++) {
-                    String v = row.get(i);
-                    info += csvData.columnName(i) + ": "
-                            + (v == null ? "" : v) + "\n";
-                }
-                int markSize;
                 if (sizeCol != null) {
                     double v;
                     try {
                         v = Double.parseDouble(row.get(sizeIndex));
                     } catch (Exception e) {
-                        v = 0;
+                        v = -1;
                     }
-                    markSize = markSize(v);
-                } else {
-                    markSize = mapController.mapOptions.getMarkerSize();
+                    code.setMarkSize(markSize(v));
                 }
-                point.setLabel(row.get(labelIndex)).setInfo(info).setMarkSize(markSize);
-                dataPoints.add(point);
+                code.setLabel(row.get(labelIndex));
+                dataPoints.add(code);
             }
             outputData = null;
             return true;
@@ -389,7 +374,7 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
         }
     }
 
-    protected void drawPoints() {
+    protected void drawCodes() {
         if (task != null) {
             task.cancel();
         }
@@ -402,35 +387,16 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
         }
         task = new FxSingletonTask<Void>(this) {
 
-            private List<MapPoint> mapPoints;
+            private List<GeographyCode> codes;
             private int size;
 
             @Override
             protected boolean handle() {
                 try {
-                    String image = mapController.mapOptions.image();
-                    int textSize = mapController.mapOptions.textSize();
-                    int markSize = mapController.mapOptions.markSize();
-                    Color textColor = mapController.mapOptions.textColor();
-                    boolean isBold = mapController.mapOptions.isBold();
-                    mapPoints = new ArrayList<>();
+                    codes = new ArrayList<>();
                     size = 0;
-                    for (MapPoint dataPoint : dataPoints) {
-                        if (sizeCol != null) {
-                            markSize = dataPoint.getMarkSize();
-                        }
-                        MapPoint mapPoint = new MapPoint()
-                                .setLongitude(dataPoint.getLongitude())
-                                .setLatitude(dataPoint.getLatitude())
-                                .setLabel(dataPoint.getLabel())
-                                .setInfo(dataPoint.getInfo())
-                                .setMarkSize(markSize)
-                                .setMarkerImage(image)
-                                .setTextSize(textSize)
-                                .setTextColor(textColor)
-                                .setCs(dataPoint.getCs())
-                                .setIsBold(isBold);
-                        mapPoints.add(mapPoint);
+                    for (GeographyCode code : dataPoints) {
+                        codes.add(code);
                         size++;
                         if (chartMaxData > 0 && size >= chartMaxData) {
                             break;
@@ -448,7 +414,7 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
             protected void whenSucceeded() {
                 framesNumber = dataPoints.size();
                 lastFrameid = -1;
-                mapController.initPoints(mapPoints);
+                mapController.setCodes(codes);
                 playController.play(size);
             }
 
@@ -465,7 +431,7 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
     // maximum marker size of GaoDe Map is 64
     protected int markSize(double value) {
         if (maxValue == minValue) {
-            return mapController.mapOptions.getMarkerSize();
+            return mapController.markSize();
         }
         double size = 60d * (value - minValue) / (maxValue - minValue);
         return Math.min(60, Math.max(10, (int) size));
@@ -476,7 +442,7 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                if (mapController.mapPoints == null
+                if (mapController.geoCodes == null
                         || framesNumber <= 0 || index < 0 || index > framesNumber) {
                     playController.clear();
                     return;
@@ -486,21 +452,16 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
                     return;
                 }
                 if (!accumulateCheck.isSelected() || frameid == 1) {
-                    mapController.webEngine.executeScript("clearMap();");
+                    mapController.clearMap();
                 }
-                MapPoint point = mapController.mapPoints.get(index);
-                mapController.drawPoint(point);
+                GeographyCode code = mapController.geoCodes.get(index);
+                mapController.showCode(code);
                 if (linkCheck.isVisible() && linkCheck.isSelected() && lastFrameid >= 1) {
-                    MapPoint lastPoint = mapController.mapPoints.get(lastFrameid);
-                    String pColor = "'" + FxColorTools.color2rgb(point.getTextColor()) + "'";
-                    mapController.webEngine.executeScript("drawLine("
-                            + lastPoint.getLongitude() + ", " + lastPoint.getLatitude() + ", "
-                            + point.getLongitude() + ", " + point.getLatitude()
-                            + ", " + pColor + ");");
+                    GeographyCode lastCode = mapController.geoCodes.get(lastFrameid);
+                    mapController.drawLine(lastCode, code);
                 }
                 if (centerCheck.isSelected() || frameid == 1) {
-                    mapController.webEngine.executeScript("setCenter("
-                            + point.getLongitude() + ", " + point.getLatitude() + ");");
+                    mapController.moveCenter(code);
                 }
                 lastFrameid = frameid;
 
@@ -509,7 +470,7 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
                     if (range != null) {
                         List<String> labels = new ArrayList<>();
                         for (int i = range.getStart(); i < range.getEnd(); i++) {
-                            labels.add((i + 1) + "  " + mapController.mapPoints.get(i).getLabel());
+                            labels.add((i + 1) + "  " + mapController.geoCodes.get(i).getLabel());
                         }
                         playController.setList(labels);
                     } else {
@@ -523,7 +484,7 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
 
     @Override
     public void drawChart() {
-        drawPoints();
+        drawCodes();
     }
 
     @FXML
