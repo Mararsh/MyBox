@@ -18,7 +18,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.StyleTools;
-import mara.mybox.imagefile.ImageFileWriters;
+import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.AppVariables;

@@ -4,10 +4,10 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.List;
 import javafx.fxml.FXML;
-import mara.mybox.bufferedimage.PixelsOperation;
-import mara.mybox.bufferedimage.PixelsOperationFactory;
+import mara.mybox.image.data.PixelsOperation;
+import mara.mybox.image.data.PixelsOperationFactory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.ColorDemos;
+import mara.mybox.fxml.image.ColorDemos;
 import mara.mybox.fxml.FxTask;
 import static mara.mybox.value.Languages.message;
 

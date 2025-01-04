@@ -11,12 +11,12 @@ import mara.mybox.dev.MyBoxLog;
 public class Data2DColumn extends ColumnDefinition {
 
     protected Data2DDefinition data2DDefinition;
-    protected long d2cid, d2id;
+    protected long columnID, dataID;
 
     public final void initData2DColumn() {
         initColumnDefinition();
-        d2cid = -1;
-        d2id = -1;
+        columnID = -1;
+        dataID = -1;
         data2DDefinition = null;
     }
 
@@ -81,8 +81,8 @@ public class Data2DColumn extends ColumnDefinition {
         try {
             Data2DColumn newColumn = (Data2DColumn) super.clone();
             newColumn.data2DDefinition = data2DDefinition;
-            newColumn.d2cid = d2cid;
-            newColumn.d2id = d2id;
+            newColumn.columnID = columnID;
+            newColumn.dataID = dataID;
             return newColumn;
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -93,7 +93,7 @@ public class Data2DColumn extends ColumnDefinition {
     public Data2DColumn copy() {
         try {
             Data2DColumn newColumn = cloneAll();
-            newColumn.setD2cid(-1).setD2id(-1).setIndex(-1)
+            newColumn.setColumnID(-1).setDataID(-1).setIndex(-1)
                     .setReferTable(null).setReferColumn(null).setReferName(null);
             return newColumn;
         } catch (Exception e) {
@@ -102,6 +102,7 @@ public class Data2DColumn extends ColumnDefinition {
         }
     }
 
+    @Override
     public String info() {
         return Data2DColumnTools.columnInfo(this);
     }
@@ -119,9 +120,9 @@ public class Data2DColumn extends ColumnDefinition {
         }
         switch (column) {
             case "d2cid":
-                return data.getD2cid();
+                return data.getColumnID();
             case "d2id":
-                return data.getD2id();
+                return data.getDataID();
             default:
                 return ColumnDefinition.getValue(data, column);
         }
@@ -134,10 +135,10 @@ public class Data2DColumn extends ColumnDefinition {
         try {
             switch (column) {
                 case "d2cid":
-                    data.setD2cid(value == null ? -1 : (long) value);
+                    data.setColumnID(value == null ? -1 : (long) value);
                     return true;
                 case "d2id":
-                    data.setD2id(value == null ? -1 : (long) value);
+                    data.setDataID(value == null ? -1 : (long) value);
                     return true;
                 default:
                     return ColumnDefinition.setValue(data, column, value);
@@ -160,21 +161,21 @@ public class Data2DColumn extends ColumnDefinition {
         return this;
     }
 
-    public long getD2cid() {
-        return d2cid;
+    public long getColumnID() {
+        return columnID;
     }
 
-    public Data2DColumn setD2cid(long d2cid) {
-        this.d2cid = d2cid;
+    public Data2DColumn setColumnID(long d2cid) {
+        this.columnID = d2cid;
         return this;
     }
 
-    public long getD2id() {
-        return d2id;
+    public long getDataID() {
+        return dataID;
     }
 
-    public Data2DColumn setD2id(long d2id) {
-        this.d2id = d2id;
+    public Data2DColumn setDataID(long d2id) {
+        this.dataID = d2id;
         return this;
     }
 

@@ -540,7 +540,7 @@ public abstract class BaseHtmlFormat extends BaseWebViewController {
             return;
         }
         if (sourceFile == null) {
-            targetFile = chooseSaveFile(title());
+            targetFile = saveCurrentFile(title());
         } else {
             targetFile = sourceFile;
         }

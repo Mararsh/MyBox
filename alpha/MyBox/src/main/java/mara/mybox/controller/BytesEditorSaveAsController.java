@@ -35,8 +35,12 @@ public class BytesEditorSaveAsController extends BaseChildController {
     @Override
     public void saveAsAction() {
         try {
+            targetFile = saveAsFile();
+            if (targetFile == null) {
+                return;
+            }
             fileController.saveAsType = saveAsType;
-            fileController.saveAs();
+            fileController.saveAs(targetFile);
             if (closeAfterCheck.isSelected()) {
                 close();
             }

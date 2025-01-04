@@ -15,7 +15,6 @@ import mara.mybox.data2d.DataClipboard;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataFileExcel;
 import mara.mybox.data2d.DataFileText;
-import mara.mybox.data2d.DataInternalTable;
 import mara.mybox.data2d.DataMatrix;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.data2d.TmpTable;
@@ -304,13 +303,13 @@ public class Data2DTableTools {
         if (task == null || dataTable == null || !dataTable.isValidDefinition()) {
             return null;
         }
-        File txtFile = dataTable.tmpFile(dataTable.dataName(), null, "txt");
+        File txtFile = dataTable.tmpFile(dataTable.getName(), null, "txt");
         DataFileCSV csvData = toCSV(task, dataTable, txtFile, false);
         if (csvData != null && txtFile != null && txtFile.exists()) {
             DataFileText targetData = new DataFileText();
             targetData.setColumns(csvData.getColumns())
                     .setFile(txtFile)
-                    .setDataName(csvData.dataName())
+                    .setDataName(csvData.getName())
                     .setCharset(Charset.forName("UTF-8"))
                     .setDelimiter(",")
                     .setHasHeader(true)
@@ -327,7 +326,7 @@ public class Data2DTableTools {
         if (task == null || dataTable == null || !dataTable.isValidDefinition()) {
             return null;
         }
-        File txtFile = dataTable.tmpFile(dataTable.dataName(), null, "txt");
+        File txtFile = dataTable.tmpFile(dataTable.getName(), null, "txt");
         DataFileCSV csvData = toCSV(task, dataTable, txtFile, false);
         if (csvData != null && txtFile != null && txtFile.exists()) {
             return TextFileTools.readTexts(task, txtFile);
@@ -379,7 +378,7 @@ public class Data2DTableTools {
         }
         if (file != null && file.exists()) {
             DataFileCSV targetData = new DataFileCSV();
-            targetData.setColumns(dataTable.getColumns()).setDataName(dataTable.dataName()).setFile(file).setCharset(Charset.forName("UTF-8")).setDelimiter(",").setHasHeader(true).setColsNumber(tcolsNumber).setRowsNumber(trowsNumber);
+            targetData.setColumns(dataTable.getColumns()).setDataName(dataTable.getName()).setFile(file).setCharset(Charset.forName("UTF-8")).setDelimiter(",").setHasHeader(true).setColsNumber(tcolsNumber).setRowsNumber(trowsNumber);
             if (save) {
                 targetData.saveAttributes();
             }
@@ -390,7 +389,7 @@ public class Data2DTableTools {
     }
 
     public static DataFileCSV toCSV(FxTask task, DataTable dataTable) {
-        File csvFile = dataTable.tmpFile(dataTable.dataName(), null, "csv");
+        File csvFile = dataTable.tmpFile(dataTable.getName(), null, "csv");
         return toCSV(task, dataTable, csvFile, true);
     }
 
@@ -398,7 +397,7 @@ public class Data2DTableTools {
         if (task == null || dataTable == null || !dataTable.isValidDefinition()) {
             return null;
         }
-        File excelFile = dataTable.tmpFile(dataTable.dataName(), null, "xlsx");
+        File excelFile = dataTable.tmpFile(dataTable.getName(), null, "xlsx");
         String targetSheetName = message("Sheet") + "1";
         TableData2D tableData2D = dataTable.getTableData2D();
         List<Data2DColumn> dataColumns = dataTable.getColumns();
@@ -447,7 +446,7 @@ public class Data2DTableTools {
         if (excelFile != null && excelFile.exists()) {
             DataFileExcel targetData = new DataFileExcel();
             targetData.setColumns(dataTable.getColumns()).setFile(excelFile)
-                    .setSheet(targetSheetName).setDataName(dataTable.dataName())
+                    .setSheet(targetSheetName).setDataName(dataTable.getName())
                     .setHasHeader(true).setColsNumber(tcolsNumber).setRowsNumber(trowsNumber);
             targetData.saveAttributes();
             return targetData;
@@ -463,7 +462,7 @@ public class Data2DTableTools {
         File clipFile = DataClipboard.newFile();
         DataFileCSV csvData = toCSV(task, dataTable, clipFile, false);
         if (csvData != null && clipFile != null && clipFile.exists()) {
-            return DataClipboard.create(task, csvData, dataTable.dataName(), clipFile);
+            return DataClipboard.create(task, csvData, dataTable.getName(), clipFile);
         } else {
             return null;
         }
@@ -513,21 +512,6 @@ public class Data2DTableTools {
         } else {
             return null;
         }
-    }
-
-    public static List<String> userTables() {
-        List<String> userTables = new ArrayList<>();
-        try (Connection conn = DerbyBase.getConnection()) {
-            List<String> allTables = DerbyBase.allTables(conn);
-            for (String name : allTables) {
-                if (!DataInternalTable.InternalTables.contains(name.toUpperCase())) {
-                    userTables.add(name);
-                }
-            }
-        } catch (Exception e) {
-            MyBoxLog.console(e);
-        }
-        return userTables;
     }
 
 }

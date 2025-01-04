@@ -14,7 +14,7 @@ import java.io.File;
 import java.util.HashMap;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
-import mara.mybox.imagefile.ImageFileReaders;
+import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.value.AppVariables;
 import org.krysalis.barcode4j.ChecksumMode;
 import org.krysalis.barcode4j.HumanReadablePlacement;

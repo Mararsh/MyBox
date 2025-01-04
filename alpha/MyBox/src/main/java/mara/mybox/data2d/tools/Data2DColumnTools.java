@@ -88,8 +88,8 @@ public class Data2DColumnTools {
                 return null;
             }
             StringBuilder s = new StringBuilder();
-            s.append("D2cid").append(": ").append(column.getD2cid()).append("\n");
-            s.append("D2id").append(": ").append(column.getD2id()).append("\n");
+            s.append("Column ID").append(": ").append(column.getColumnID()).append("\n");
+            s.append("Data ID").append(": ").append(column.getDataID()).append("\n");
             s.append(ColumnDefinition.info(column));
             return s.toString();
         } catch (Exception e) {

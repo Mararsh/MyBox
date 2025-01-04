@@ -36,7 +36,7 @@ public class ControlData2DStyleList extends BaseSysTableController<Data2DStyle> 
         try {
             super.initColumns();
 
-            sidColumn.setCellValueFactory(new PropertyValueFactory<>("d2sid"));
+            sidColumn.setCellValueFactory(new PropertyValueFactory<>("styleID"));
             titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
             fromColumn.setCellValueFactory(new PropertyValueFactory<>("from"));
             toColumn.setCellValueFactory(new PropertyValueFactory<>("to"));
@@ -78,7 +78,7 @@ public class ControlData2DStyleList extends BaseSysTableController<Data2DStyle> 
             if (tableController == null || tableController.data2D == null) {
                 return;
             }
-            queryConditions = "  d2id = " + tableController.data2D.getD2did();
+            queryConditions = "  d2id = " + tableController.data2D.getDataID();
 
             loadTableData();
         } catch (Exception e) {

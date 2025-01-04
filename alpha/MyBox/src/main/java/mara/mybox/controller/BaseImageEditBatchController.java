@@ -10,13 +10,13 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
-import mara.mybox.bufferedimage.ImageAttributes;
-import mara.mybox.bufferedimage.ScaleTools;
+import mara.mybox.image.data.ImageAttributes;
+import mara.mybox.image.tools.ScaleTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
-import mara.mybox.imagefile.ImageFileReaders;
-import mara.mybox.imagefile.ImageFileWriters;
+import mara.mybox.image.file.ImageFileReaders;
+import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 

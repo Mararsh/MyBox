@@ -2,7 +2,7 @@ package mara.mybox.controller;
 
 import java.awt.image.BufferedImage;
 import javafx.fxml.FXML;
-import mara.mybox.bufferedimage.ImageConvolution;
+import mara.mybox.image.data.ImageConvolution;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.fxml.FxTask;
 import static mara.mybox.value.Languages.message;

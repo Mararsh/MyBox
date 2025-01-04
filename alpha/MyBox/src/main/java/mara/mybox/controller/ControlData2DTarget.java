@@ -95,7 +95,7 @@ public class ControlData2DTarget extends BaseDataConvertController {
         return !tableController.isShowing()
                 || tableController.data2D == null
                 || !tableController.data2D.isValidDefinition()
-                || (data2D != null && tableController.data2D.getD2did() != data2D.getD2did());
+                || (data2D != null && tableController.data2D.getDataID() != data2D.getDataID());
     }
 
     public void setParameters(BaseController parent, BaseData2DLoadController controller) {
@@ -233,7 +233,7 @@ public class ControlData2DTarget extends BaseDataConvertController {
             String name = name();
             if (name == null || name.isBlank()) {
                 if (data2D != null) {
-                    name = data2D.dataName();
+                    name = data2D.getName();
                 }
             }
             if (name == null || name.isBlank()) {
@@ -410,7 +410,7 @@ public class ControlData2DTarget extends BaseDataConvertController {
             if (tableController == null || tableController.data2D == null) {
                 return;
             }
-            nameInput.setText(tableController.data2D.dataName());
+            nameInput.setText(tableController.data2D.getName());
             if (rowSelector == null) {
                 return;
             }
@@ -554,7 +554,7 @@ public class ControlData2DTarget extends BaseDataConvertController {
             targetName = name();
             if (targetName == null || targetName.isBlank()) {
                 if (data2D != null) {
-                    targetName = data2D.dataName();
+                    targetName = data2D.getName();
                 }
             }
             if (targetName == null || targetName.isBlank()) {

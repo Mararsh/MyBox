@@ -32,14 +32,14 @@ License:    Apache License Version 2.0
             <HBox alignment="CENTER_LEFT" spacing="5.0">
                <children>
                   <Label minWidth="-Infinity" text="%Longitude" wrapText="true" />
-                  <ComboBox fx:id="longitudeSelector1" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                  <ComboBox fx:id="longitudeSelector" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                   <Label minWidth="-Infinity" text="%Latitude" wrapText="true" />
-                  <ComboBox fx:id="latitudeSelector1" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                  <ComboBox fx:id="latitudeSelector" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                </children>
             </HBox>
             <HBox alignment="CENTER_LEFT" spacing="5.0">
                <children>
-                  <Label fx:id="valuesLabel1" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                  <Label fx:id="valuesLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                   <Button fx:id="cancelButton1" mnemonicParsing="false" onAction="#cancelAction">
                      <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

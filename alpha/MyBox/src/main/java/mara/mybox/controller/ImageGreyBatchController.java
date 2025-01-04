@@ -1,7 +1,7 @@
 package mara.mybox.controller;
 
 import java.awt.image.BufferedImage;
-import mara.mybox.bufferedimage.ImageGray;
+import mara.mybox.image.data.ImageGray;
 import mara.mybox.fxml.FxTask;
 import static mara.mybox.value.Languages.message;
 

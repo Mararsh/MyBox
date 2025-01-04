@@ -7,7 +7,8 @@ package mara.mybox.db.data;
  */
 public abstract class BaseData implements Cloneable {
 
-    protected int rowIndex;
+    protected long baseID = -1;
+    protected int rowIndex = -1;
 
     /*
         abstract
@@ -35,6 +36,14 @@ public abstract class BaseData implements Cloneable {
     /*
         get/set
      */
+    public long getBaseID() {
+        return baseID;
+    }
+
+    public void setBaseID(long baseID) {
+        this.baseID = baseID;
+    }
+
     public int getRowIndex() {
         return rowIndex;
     }

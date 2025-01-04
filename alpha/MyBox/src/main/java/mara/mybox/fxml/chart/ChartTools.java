@@ -9,7 +9,7 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
-import mara.mybox.fximage.FxColorTools;
+import mara.mybox.fxml.image.FxColorTools;
 import mara.mybox.fxml.SquareRootCoordinate;
 
 /**

@@ -50,7 +50,7 @@ public class Data2DPageTools {
             }
             String title = null;
             if (showTitle) {
-                title = data2d.titleName();
+                title = data2d.getTitle();
             }
             StringTable table = new StringTable(names, title);
 
@@ -94,7 +94,7 @@ public class Data2DPageTools {
             }
             StringBuilder s = new StringBuilder();
             if (showTitle) {
-                s.append("<H2>").append(data2d.titleName()).append("</H2>\n");
+                s.append("<H2>").append(data2d.getTitle()).append("</H2>\n");
             }
             for (int r = 0; r < rNumber; r++) {
                 StringTable table = new StringTable();
@@ -135,7 +135,7 @@ public class Data2DPageTools {
                 }
                 s.append(table.div()).append("\n<BR><BR>\n");
             }
-            return HtmlWriteTools.html(data2d.titleName(),
+            return HtmlWriteTools.html(data2d.getTitle(),
                     "utf-8", HtmlStyles.DefaultStyle, s.toString());
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -156,7 +156,7 @@ public class Data2DPageTools {
             boolean showColumns, boolean showRowNumber, boolean showTitle) {
         String texts = data2d.encodeCSV(null, delimiterName,
                 showRowNumber, showColumns);
-        String title = showTitle ? data2d.titleName() : null;
+        String title = showTitle ? data2d.getTitle() : null;
         if (title != null && !title.isBlank()) {
             return title + "\n\n" + texts;
         } else {
@@ -168,7 +168,7 @@ public class Data2DPageTools {
             boolean showColumns, boolean showRowNumber, boolean showTitle) {
         StringBuilder s = new StringBuilder();
         if (showTitle) {
-            s.append(data2d.titleName()).append("\n\n");
+            s.append(data2d.getTitle()).append("\n\n");
         }
         for (int r = 0; r < data2d.tableRowsNumber(); r++) {
             List<String> drow = data2d.tableRowShow(r);

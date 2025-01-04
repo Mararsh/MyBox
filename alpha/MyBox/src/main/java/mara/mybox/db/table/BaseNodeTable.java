@@ -18,9 +18,9 @@ import mara.mybox.db.data.DataNode;
 import static mara.mybox.db.data.DataNode.TitleSeparater;
 import mara.mybox.db.data.DataNodeTag;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.FxColorTools;
 import static mara.mybox.fxml.FxFileTools.getInternalFile;
 import mara.mybox.fxml.FxTask;
+import mara.mybox.fxml.image.FxColorTools;
 import mara.mybox.tools.JsonTools;
 import static mara.mybox.value.AppValues.Indent;
 import mara.mybox.value.Languages;
@@ -189,6 +189,8 @@ public class BaseNodeTable extends BaseTable<DataNode> {
                 return new TableNodeRowExpression();
             case "DataColumn":
                 return new TableNodeDataColumn();
+            case "GeographyCode":
+                return new TableNodeGeographyCode();
         }
         return null;
     }
@@ -288,7 +290,7 @@ public class BaseNodeTable extends BaseTable<DataNode> {
             return -1;
         }
         if (nodeid == RootID) {
-            return deleteDecentants(conn, nodeid);
+            return createRoot(conn) != null ? 1 : -3;
         }
         String sql = "DELETE FROM " + tableName + " WHERE nodeid=?";
         try (PreparedStatement statement = conn.prepareStatement(sql)) {
@@ -620,7 +622,16 @@ public class BaseNodeTable extends BaseTable<DataNode> {
     }
 
     public String valuesHtml(DataNode node) {
-        return valuesHtml(null, null, null, node);
+        if (node == null) {
+            return null;
+        }
+        String title = "<P align=\"center\">" + node.getTitle() + "</p>";
+        String html = valuesHtml(null, null, null, node);
+        if (html == null) {
+            return title;
+        } else {
+            return title + "<BR>" + html;
+        }
     }
 
     public String valuesHtml(FxTask task, Connection conn,
@@ -667,7 +678,7 @@ public class BaseNodeTable extends BaseTable<DataNode> {
             if (value == null) {
                 continue;
             }
-            String sValue = column.toString(value);
+            String sValue = exportValue(column, value);
             if (sValue == null || sValue.isBlank()) {
                 continue;
             }
@@ -770,26 +781,22 @@ public class BaseNodeTable extends BaseTable<DataNode> {
         if (node == null) {
             return null;
         }
+        String s = message("Title") + ": " + node.getTitle();
         Map<String, Object> values = node.getValues();
         if (values == null || values.isEmpty()) {
-            return null;
+            return s;
         }
-        String s = "";
         for (String name : dataColumnNames()) {
             ColumnDefinition column = column(name);
             String value = displayValue(column, values.get(name));
             if (value == null || value.isBlank()) {
                 continue;
             }
-            if (!s.isBlank()) {
-                s += "\n";
-            }
-            s += label(name) + ": " + value;
+            s += "\n" + label(name) + ": " + value;
 
         }
         return s;
     }
-
 
     /*
         get/set

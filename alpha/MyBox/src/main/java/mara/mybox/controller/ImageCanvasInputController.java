@@ -7,7 +7,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.FxImageTools;
+import mara.mybox.fxml.image.FxImageTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.UserConfig;

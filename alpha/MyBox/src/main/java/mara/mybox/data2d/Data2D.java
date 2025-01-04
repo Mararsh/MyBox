@@ -32,6 +32,10 @@ public abstract class Data2D extends Data2D_Operations {
         }
     }
 
+    public String info() {
+        return Data2DDefinitionTools.info(this);
+    }
+
     public String pageInfo() {
         StringTable infoTable = new StringTable();
         List<String> row = new ArrayList<>();

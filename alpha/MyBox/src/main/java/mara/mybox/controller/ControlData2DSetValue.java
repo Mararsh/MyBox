@@ -20,6 +20,7 @@ import mara.mybox.data.SetValue.ValueType;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.PopTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -392,8 +393,12 @@ public class ControlData2DSetValue extends BaseController {
             } else if (expressionRadio.isSelected()) {
                 if (!expressionController.checkExpression(handleController.isAllPages())) {
                     handleController.tabPane.getSelectionModel().select(handleController.valuesTab);
-                    alertError(message("Invalid") + ": " + message("RowExpression") + "\n" + expressionController.error);
-                    return false;
+                    if (!PopTools.askSure(getTitle(),
+                            message("RowExpressionLooksInvalid") + ": \n"
+                            + expressionController.error,
+                            message("SureContinue"))) {
+                        return false;
+                    }
                 }
                 String v = expressionController.scriptInput.getText();
                 setValue.setType(ValueType.Expression).setParameter(v);

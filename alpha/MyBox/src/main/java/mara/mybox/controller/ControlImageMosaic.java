@@ -5,7 +5,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
-import mara.mybox.bufferedimage.ImageMosaic;
+import mara.mybox.image.data.ImageMosaic;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ValidationTools;
 import static mara.mybox.value.Languages.message;

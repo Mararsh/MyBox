@@ -11,9 +11,9 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.FlowPane;
-import mara.mybox.bufferedimage.PixelsOperation;
-import mara.mybox.bufferedimage.PixelsOperation.ColorActionType;
-import mara.mybox.bufferedimage.PixelsOperation.OperationType;
+import mara.mybox.image.data.PixelsOperation;
+import mara.mybox.image.data.PixelsOperation.ColorActionType;
+import mara.mybox.image.data.PixelsOperation.OperationType;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ValidationTools;
 

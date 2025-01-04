@@ -7,17 +7,16 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import mara.mybox.bufferedimage.ImageFileInformation;
-import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.image.data.ImageFileInformation;
+import mara.mybox.image.data.ImageInformation;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -103,8 +102,7 @@ public class ImageMetaDataController extends BaseController {
     @FXML
     @Override
     public void saveAsAction() {
-        final File file = chooseSaveFile(UserConfig.getPath(baseName + "TargetPath"),
-                null, targetExtensionFilter);
+        final File file = saveAsFile();
         if (file == null) {
             return;
         }

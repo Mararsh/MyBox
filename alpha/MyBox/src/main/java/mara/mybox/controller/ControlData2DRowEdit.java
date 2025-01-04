@@ -30,7 +30,7 @@ import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.table.TableColor;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.FxColorTools;
+import mara.mybox.fxml.image.FxColorTools;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.WindowTools;
@@ -291,7 +291,7 @@ public class ControlData2DRowEdit extends BaseController {
             HBox line = makeLineBox(column.getColumnName());
 
             ComboBox<String> selector = new ComboBox<>();
-            selector.getItems().addAll(column.enumValues());
+            selector.getItems().addAll(column.enumNames());
             selector.setEditable(column.getType() == ColumnType.EnumerationEditable);
             line.getChildren().add(selector);
 

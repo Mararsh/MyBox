@@ -71,17 +71,18 @@ public class TableSystemConf extends BaseTable<StringValue> {
         return data.valid();
     }
 
-    public boolean init(Connection conn) {
+    @Override
+    public boolean createTable(Connection conn) {
         try {
-            if (conn == null) {
+            if (!super.createTable(conn)) {
                 return false;
             }
-            conn.createStatement().executeUpdate(createTableStatement());
             Map<String, String> values = ConfigTools.readValues();
             if (values == null || values.isEmpty()) {
                 return false;
             }
-            try (PreparedStatement intStatement = conn.prepareStatement(InsertInt); PreparedStatement stringStatement = conn.prepareStatement(InsertString)) {
+            try (PreparedStatement intStatement = conn.prepareStatement(InsertInt);
+                    PreparedStatement stringStatement = conn.prepareStatement(InsertString)) {
                 for (String key : values.keySet()) {
                     String value = values.get(key);
                     switch (value.toLowerCase()) {

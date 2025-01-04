@@ -387,15 +387,7 @@ public class Fxmls {
     public static final String FileTTC2TTFFxml = "/fxml/FileTTC2TTF.fxml";
 
     public static final String GeographyCodeFxml = "/fxml/GeographyCode.fxml";
-    public static final String GeographyCodeEditFxml = "/fxml/GeographyCodeEdit.fxml";
-
     public static final String MapOptionsFxml = "/fxml/MapOptions.fxml";
-
-    public static final String GeographyCodeImportInternalCSVFxml = "/fxml/GeographyCodeImportInternalCSV.fxml";
-    public static final String GeographyCodeImportExternalCSVFxml = "/fxml/GeographyCodeImportExternalCSV.fxml";
-    public static final String GeographyCodeImportGeonamesFileFxml = "/fxml/GeographyCodeImportGeonamesFile.fxml";
-    public static final String GeographyCodeSelectortFxml = "/fxml/GeographyCodeSelector.fxml";
-
     public static final String LocationInMapFxml = "/fxml/LocationInMap.fxml";
     public static final String CoordinatePickerFxml = "/fxml/CoordinatePicker.fxml";
     public static final String ConvertCoordinateFxml = "/fxml/ConvertCoordinate.fxml";

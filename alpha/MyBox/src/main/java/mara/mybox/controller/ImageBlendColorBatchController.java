@@ -5,10 +5,10 @@ import java.io.File;
 import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.paint.Color;
-import mara.mybox.bufferedimage.PixelsBlend;
-import mara.mybox.bufferedimage.PixelsOperationFactory.BlendColor;
+import mara.mybox.image.data.PixelsBlend;
+import mara.mybox.image.data.PixelsOperationFactory.BlendColor;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.ColorDemos;
+import mara.mybox.fxml.image.ColorDemos;
 import mara.mybox.fxml.FxTask;
 import static mara.mybox.value.Languages.message;
 

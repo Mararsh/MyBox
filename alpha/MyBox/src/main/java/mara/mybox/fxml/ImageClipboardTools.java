@@ -3,7 +3,7 @@ package mara.mybox.fxml;
 import javafx.scene.image.Image;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
-import mara.mybox.bufferedimage.ImageAttributes;
+import mara.mybox.image.data.ImageAttributes;
 import mara.mybox.controller.BaseController;
 import mara.mybox.controller.ImageInMyBoxClipboardController;
 import mara.mybox.db.data.ImageClipboard;

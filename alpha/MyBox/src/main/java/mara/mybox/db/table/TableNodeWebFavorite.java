@@ -6,7 +6,7 @@ import mara.mybox.controller.BaseController;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.DataNode;
-import mara.mybox.fximage.FxImageTools;
+import mara.mybox.fxml.image.FxImageTools;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;

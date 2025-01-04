@@ -11,13 +11,13 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import mara.mybox.bufferedimage.CropTools;
-import mara.mybox.bufferedimage.ImageInformation;
+import mara.mybox.image.data.CropTools;
+import mara.mybox.image.data.ImageInformation;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.ValidationTools;
-import mara.mybox.imagefile.ImageFileReaders;
+import mara.mybox.image.file.ImageFileReaders;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 

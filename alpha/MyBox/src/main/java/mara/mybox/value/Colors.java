@@ -1,7 +1,7 @@
 package mara.mybox.value;
 
 import java.awt.Color;
-import mara.mybox.bufferedimage.ColorConvertTools;
+import mara.mybox.image.tools.ColorConvertTools;
 import mara.mybox.fxml.style.StyleData.StyleColor;
 
 /**

@@ -5,11 +5,11 @@ import java.io.File;
 import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import mara.mybox.bufferedimage.ImageAttributes;
-import mara.mybox.bufferedimage.ImageConvertTools;
+import mara.mybox.image.data.ImageAttributes;
+import mara.mybox.image.tools.ImageConvertTools;
 import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.FxTask;
-import mara.mybox.imagefile.ImageFileReaders;
+import mara.mybox.image.file.ImageFileReaders;
 import static mara.mybox.value.AppVariables.MyboxDataPath;
 
 /**

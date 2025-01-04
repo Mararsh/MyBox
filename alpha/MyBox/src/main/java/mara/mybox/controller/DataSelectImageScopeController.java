@@ -1,8 +1,8 @@
 package mara.mybox.controller;
 
 import javafx.fxml.FXML;
-import mara.mybox.bufferedimage.ImageScope;
-import mara.mybox.bufferedimage.ImageScopeTools;
+import mara.mybox.image.data.ImageScope;
+import mara.mybox.image.tools.ImageScopeTools;
 import mara.mybox.db.data.DataNode;
 import mara.mybox.db.table.TableNodeImageScope;
 import mara.mybox.dev.MyBoxLog;

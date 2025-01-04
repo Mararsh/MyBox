@@ -1,8 +1,8 @@
 package mara.mybox.controller;
 
 import java.io.File;
-import mara.mybox.bufferedimage.ImageFileInformation;
-import mara.mybox.bufferedimage.ImageInformation;
+import mara.mybox.image.data.ImageFileInformation;
+import mara.mybox.image.data.ImageInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.fxml.FxSingletonTask;
 

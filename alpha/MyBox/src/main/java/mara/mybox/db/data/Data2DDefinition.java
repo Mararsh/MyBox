@@ -9,7 +9,8 @@ import mara.mybox.controller.Data2DManufactureController;
 import mara.mybox.controller.DataInMyBoxClipboardController;
 import mara.mybox.controller.MatricesManageController;
 import mara.mybox.controller.MyBoxTablesController;
-import mara.mybox.data2d.DataInternalTable;
+import mara.mybox.data2d.tools.Data2DDefinitionTools;
+import mara.mybox.db.table.BaseTableTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
@@ -23,7 +24,7 @@ import static mara.mybox.value.Languages.message;
  */
 public class Data2DDefinition extends BaseData {
 
-    public long d2did;
+    public long dataID;
     public DataType dataType;
     public String dataName, sheet, delimiter, comments;
     public File file;
@@ -58,7 +59,7 @@ public class Data2DDefinition extends BaseData {
     }
 
     public boolean equals(Data2DDefinition def) {
-        return def != null && d2did == def.getD2did();
+        return def != null && dataID == def.getDataID();
     }
 
     public Data2DDefinition cloneAll() {
@@ -86,7 +87,7 @@ public class Data2DDefinition extends BaseData {
             if (d == null) {
                 return;
             }
-            d2did = d.getD2did();
+            dataID = d.getDataID();
             dataType = d.getType();
             cloneBaseAttributes(d);
         } catch (Exception e) {
@@ -136,8 +137,12 @@ public class Data2DDefinition extends BaseData {
         }
     }
 
+    public String info() {
+        return Data2DDefinitionTools.info(this);
+    }
+
     public final void resetDefinition() {
-        d2did = -1;
+        dataID = -1;
         file = null;
         sheet = null;
         dataName = null;
@@ -212,7 +217,7 @@ public class Data2DDefinition extends BaseData {
     public boolean isInternalTable() {
         return dataType == DataType.InternalTable
                 || (dataType == DataType.DatabaseTable
-                && DataInternalTable.isInternalTable(sheet));
+                && BaseTableTools.isInternalTable(sheet));
     }
 
     public boolean isDataFile() {
@@ -230,7 +235,7 @@ public class Data2DDefinition extends BaseData {
                 || dataType == DataType.Texts);
     }
 
-    public String titleName() {
+    public String getTitle() {
         String name;
         if (isDataFile() && file != null) {
             name = file.getAbsolutePath();
@@ -242,16 +247,18 @@ public class Data2DDefinition extends BaseData {
         } else {
             name = dataName;
         }
-        if (name == null && d2did < 0) {
+        if (name == null && dataID < 0) {
             name = message("NewData");
         }
         return name;
     }
 
-    public String displayName() {
-        String name = titleName();
-        name = message(dataType.name()) + (d2did >= 0 ? " - " + d2did : "") + (name != null ? " - " + name : "");
-        return name;
+    public String getName() {
+        if (dataName != null && !dataName.isBlank()) {
+            return dataName;
+        } else {
+            return shortName();
+        }
     }
 
     public String shortName() {
@@ -266,12 +273,10 @@ public class Data2DDefinition extends BaseData {
         }
     }
 
-    public String dataName() {
-        if (dataName != null && !dataName.isBlank()) {
-            return dataName;
-        } else {
-            return shortName();
-        }
+    public String displayName() {
+        String name = getTitle();
+        name = message(dataType.name()) + (dataID >= 0 ? " - " + dataID : "") + (name != null ? " - " + name : "");
+        return name;
     }
 
     public boolean validValue(String value) {
@@ -312,7 +317,7 @@ public class Data2DDefinition extends BaseData {
         }
         switch (column) {
             case "d2did":
-                return data.getD2did();
+                return data.getDataID();
             case "data_type":
                 return type(data.getType());
             case "data_name":
@@ -350,7 +355,7 @@ public class Data2DDefinition extends BaseData {
         try {
             switch (column) {
                 case "d2did":
-                    data.setD2did(value == null ? -1 : (long) value);
+                    data.setDataID(value == null ? -1 : (long) value);
                     return true;
                 case "data_type":
                     data.setType(value == null ? DataType.Texts : type((short) value));
@@ -468,12 +473,12 @@ public class Data2DDefinition extends BaseData {
     /*
         get/set
      */
-    public long getD2did() {
-        return d2did;
+    public long getDataID() {
+        return dataID;
     }
 
-    public void setD2did(long d2did) {
-        this.d2did = d2did;
+    public void setDataID(long dataID) {
+        this.dataID = dataID;
     }
 
     public DataType getType() {

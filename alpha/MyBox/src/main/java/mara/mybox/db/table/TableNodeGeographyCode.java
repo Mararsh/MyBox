@@ -1,11 +1,16 @@
 package mara.mybox.db.table;
 
+import java.sql.Connection;
 import mara.mybox.data.GeoCoordinateSystem;
+import mara.mybox.data.GeographyCode;
+import mara.mybox.data.GeographyCodeLevel;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
-import mara.mybox.db.data.GeographyCode;
-import mara.mybox.db.data.GeographyCodeLevel;
-import mara.mybox.db.data.GeographyCodeTools;
+import mara.mybox.db.data.DataNode;
+import mara.mybox.dev.MyBoxLog;
+import mara.mybox.tools.DoubleTools;
+import mara.mybox.tools.GeographyCodeTools;
+import mara.mybox.tools.LongTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -28,14 +33,25 @@ public class TableNodeGeographyCode extends BaseNodeTable {
 
     public final TableNodeGeographyCode defineColumns() {
         defineNodeColumns();
-        addColumn(new ColumnDefinition("level", ColumnType.Short));
-        addColumn(new ColumnDefinition("coordinate_system", ColumnType.Short));
+        addColumn(new ColumnDefinition("chinese_name", ColumnType.String));
+        addColumn(new ColumnDefinition("english_name", ColumnType.String));
+        addColumn(new ColumnDefinition("level", ColumnType.EnumeratedShort)
+                .setFormat(GeographyCodeLevel.messageNames()));
+        addColumn(new ColumnDefinition("coordinate_system", ColumnType.EnumeratedShort)
+                .setFormat(GeoCoordinateSystem.messageNames()));
         addColumn(new ColumnDefinition("longitude", ColumnType.Longitude));
         addColumn(new ColumnDefinition("latitude", ColumnType.Latitude));
         addColumn(new ColumnDefinition("altitude", ColumnType.Double));
         addColumn(new ColumnDefinition("precision", ColumnType.Double));
-        addColumn(new ColumnDefinition("chinese_name", ColumnType.String));
-        addColumn(new ColumnDefinition("english_name", ColumnType.String));
+        addColumn(new ColumnDefinition("continent", ColumnType.String));
+        addColumn(new ColumnDefinition("country", ColumnType.String));
+        addColumn(new ColumnDefinition("province", ColumnType.String));
+        addColumn(new ColumnDefinition("city", ColumnType.String));
+        addColumn(new ColumnDefinition("county", ColumnType.String));
+        addColumn(new ColumnDefinition("town", ColumnType.String));
+        addColumn(new ColumnDefinition("village", ColumnType.String));
+        addColumn(new ColumnDefinition("building", ColumnType.String));
+        addColumn(new ColumnDefinition("poi", ColumnType.String));
         addColumn(new ColumnDefinition("code1", ColumnType.String));
         addColumn(new ColumnDefinition("code2", ColumnType.String));
         addColumn(new ColumnDefinition("code3", ColumnType.String));
@@ -52,6 +68,26 @@ public class TableNodeGeographyCode extends BaseNodeTable {
         addColumn(new ColumnDefinition("image", ColumnType.Image));
 
         return this;
+    }
+
+    @Override
+    public DataNode getRoot(Connection conn) {
+        try {
+            if (conn == null || tableName == null) {
+                return null;
+            }
+            DataNode root = super.getRoot(conn);
+            if (root.getStringValue("chinese_name") == null
+                    || root.getStringValue("english_name") == null) {
+                root.setValue("chinese_name", message("zh", "GeographyCode"));
+                root.setValue("english_name", message("en", "GeographyCode"));
+                root = updateData(conn, root);
+            }
+            return root;
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+            return null;
+        }
     }
 
     @Override
@@ -76,6 +112,24 @@ public class TableNodeGeographyCode extends BaseNodeTable {
                 return message("ChineseName");
             case "english_name":
                 return message("EnglishName");
+            case "continent":
+                return message("Continent");
+            case "country":
+                return message("Country");
+            case "province":
+                return message("Province");
+            case "city":
+                return message("City");
+            case "county":
+                return message("County");
+            case "town":
+                return message("Town");
+            case "village":
+                return message("Village");
+            case "building":
+                return message("Building");
+            case "poi":
+                return message("PointOfInterest");
             case "code1":
                 return message("Code1");
             case "code2":
@@ -110,35 +164,93 @@ public class TableNodeGeographyCode extends BaseNodeTable {
 
     @Override
     public String displayValue(ColumnDefinition column, Object v) {
-        if (column == null) {
+        if (column == null || v == null) {
             return null;
         }
         switch (column.getColumnName().toLowerCase()) {
             case "level":
-                if (v == null) {
-                    return null;
-                }
                 return GeographyCodeLevel.name((short) v);
             case "coordinate_system":
-                if (v == null) {
-                    return null;
-                }
                 return GeoCoordinateSystem.messageName((short) v);
             case "area":
-                if (v == null || (double) v <= 0) {
+                double area = (double) v;
+                if (area <= 0 || DoubleTools.invalidDouble(area)) {
                     return null;
                 }
                 break;
             case "population":
-                if (v == null || (long) v <= 0) {
+                long population = (long) v;
+                if (population <= 0 || LongTools.invalidLong(population)) {
                     return null;
                 }
                 break;
             case "precision":
+            case "altitude":
             case "image":
                 return null;
         }
         return column.displayValue(v);
+    }
+
+    @Override
+    public String exportValue(ColumnDefinition column, Object v) {
+        return displayValue(column, v);
+    }
+
+    @Override
+    public Object importValue(ColumnDefinition column, String v) {
+        if (column == null || v == null) {
+            return null;
+        }
+        switch (column.getColumnName().toLowerCase()) {
+            case "level":
+                return GeographyCodeLevel.level(v);
+            case "coordinate_system":
+                return GeoCoordinateSystem.value(v);
+            case "area":
+                return area(v);
+            case "population":
+                return population(v);
+            case "precision":
+            case "altitude":
+            case "image":
+                return null;
+        }
+        return column.fromString(v, ColumnDefinition.InvalidAs.Use);
+    }
+
+    public Object area(String v) {
+        try {
+            double area = Double.parseDouble(v.replaceAll(",", ""));
+            if (area <= 0 || DoubleTools.invalidDouble(area)) {
+                return null;
+            } else {
+                return area;
+            }
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public Object population(String v) {
+        try {
+            long population = Math.round(Double.parseDouble(v.replaceAll(",", "")));
+            if (population <= 0 || LongTools.invalidLong(population)) {
+                return null;
+            } else {
+                return population;
+            }
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public DataNode toNode(GeographyCode code) {
+        return GeographyCodeTools.toNode(code);
+    }
+
+    public GeographyCode fromNode(DataNode node) {
+        return GeographyCodeTools.fromNode(node);
     }
 
     public String text(GeographyCode code) {

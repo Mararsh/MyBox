@@ -200,13 +200,13 @@ public class Base64Controller extends BaseController {
 
     @FXML
     @Override
-    public void saveAction() {
-        saveAsAction();
+    public void saveAsAction() {
+        saveAction();
     }
 
     @FXML
     @Override
-    public void saveAsAction() {
+    public void saveAction() {
         if (task != null && !task.isQuit()) {
             return;
         }
@@ -221,13 +221,13 @@ public class Base64Controller extends BaseController {
         }
         File file;
         if (textRadio.isSelected()) {
-            file = chooseSaveFile(VisitHistory.FileType.Text, "encodeBase64.txt");
+            file = saveCurrentFile(VisitHistory.FileType.Text, "encodeBase64.txt");
         } else if (fileRadio.isSelected()) {
-            file = chooseSaveFile(VisitHistory.FileType.Text, sourceFile.getName() + "-encodeBase64.txt");
+            file = saveCurrentFile(VisitHistory.FileType.Text, sourceFile.getName() + "-encodeBase64.txt");
         } else if (base64FileRadio.isSelected()) {
-            file = chooseSaveFile(VisitHistory.FileType.All, sourceFile.getName() + "-decodeBase64");
+            file = saveCurrentFile(VisitHistory.FileType.All, sourceFile.getName() + "-decodeBase64");
         } else {
-            file = chooseSaveFile(VisitHistory.FileType.All, "decodeBase64");
+            file = saveCurrentFile(VisitHistory.FileType.All, "decodeBase64");
         }
         if (file == null) {
             return;

@@ -18,10 +18,10 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.FlowPane;
 import mara.mybox.data2d.Data2D;
-import mara.mybox.data2d.DataInternalTable;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DDefinition;
+import mara.mybox.db.table.BaseTableTools;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
@@ -41,11 +41,11 @@ public class BaseData2DListController extends BaseSysTableController<Data2DDefin
     protected TableData2DDefinition tableData2DDefinition;
 
     @FXML
-    protected TableColumn<Data2DDefinition, Long> d2didColumn;
+    protected TableColumn<Data2DDefinition, Long> dataIdColumn;
     @FXML
     protected TableColumn<Data2DDefinition, Integer> rowsColumn, colsColumn;
     @FXML
-    protected TableColumn<Data2DDefinition, String> nameColumn, typeColumn, fileColumn, sheetColumn;
+    protected TableColumn<Data2DDefinition, String> titleColumn, typeColumn, fileColumn, sheetColumn;
     @FXML
     protected TableColumn<Data2DDefinition, Date> modifyColumn;
     @FXML
@@ -59,11 +59,11 @@ public class BaseData2DListController extends BaseSysTableController<Data2DDefin
     protected void initColumns() {
         try {
             super.initColumns();
-            d2didColumn.setCellValueFactory(new PropertyValueFactory<>("d2did"));
+            dataIdColumn.setCellValueFactory(new PropertyValueFactory<>("dataID"));
             if (typeColumn != null) {
                 typeColumn.setCellValueFactory(new PropertyValueFactory<>("typeName"));
             }
-            nameColumn.setCellValueFactory(new PropertyValueFactory<>("dataName"));
+            titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
             colsColumn.setCellValueFactory(new PropertyValueFactory<>("colsNumber"));
             colsColumn.setCellFactory(new TableNumberCell(true));
             if (rowsColumn != null) {
@@ -134,7 +134,7 @@ public class BaseData2DListController extends BaseSysTableController<Data2DDefin
                     List<String> tables = DerbyBase.allTables(conn);
                     DataTable dataTable = new DataTable();
                     for (String referredName : tables) {
-                        if (DataInternalTable.InternalTables.contains(referredName.toUpperCase())) {
+                        if (BaseTableTools.isInternalTable(referredName)) {
                             continue;
                         }
                         if (tableData2DDefinition.queryTable(conn, referredName, Data2DDefinition.DataType.DatabaseTable) == null) {
@@ -273,7 +273,7 @@ public class BaseData2DListController extends BaseSysTableController<Data2DDefin
                         MyBoxLog.debug(e, referName);
                     }
                     if (viewController.data2D != null
-                            && item.getD2did() == viewController.data2D.getD2did()) {
+                            && item.getDataID() == viewController.data2D.getDataID()) {
                         Platform.runLater(new Runnable() {
                             @Override
                             public void run() {
@@ -314,7 +314,7 @@ public class BaseData2DListController extends BaseSysTableController<Data2DDefin
                 }
                 names.add(results.getString("sheet"));
                 isCurrent = viewController.data2D != null
-                        && results.getLong("d2did") == viewController.data2D.getD2did();
+                        && results.getLong("d2did") == viewController.data2D.getDataID();
             }
             if (currentTask != null && currentTask.isWorking()) {
                 for (String name : names) {

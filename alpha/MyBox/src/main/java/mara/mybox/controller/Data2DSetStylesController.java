@@ -215,13 +215,13 @@ public class Data2DSetStylesController extends BaseController {
 
     public void loadStyle(Data2DStyle style) {
         if (style == null || tableController == null || tableController.data2D == null
-                || style.getD2id() != tableController.data2D.getD2did()) {
+                || style.getDataID() != tableController.data2D.getDataID()) {
             loadNull();
             return;
         }
         currentStyle = style;
         updatedStyle = style.cloneAll();
-        recoverButton.setDisable(updatedStyle.getD2sid() >= 0);
+        recoverButton.setDisable(updatedStyle.getStyleID() >= 0);
 
         isSettingValues = true;
         titleInput.setText(style.getTitle());
@@ -270,7 +270,7 @@ public class Data2DSetStylesController extends BaseController {
     @FXML
     public void copyDataAction() {
         currentStyle = updatedStyle.cloneAll();
-        currentStyle.setD2sid(-1);
+        currentStyle.setStyleID(-1);
         updatedStyle = currentStyle;
         sequenceInput.setText((listController.dataSize + 1) + "");
         checkStyle();
@@ -326,7 +326,7 @@ public class Data2DSetStylesController extends BaseController {
                 return false;
             }
             checkStyle();
-            updatedStyle.setD2id(tableController.data2D.getD2did());
+            updatedStyle.setDataID(tableController.data2D.getDataID());
             String columns = "";
             boolean allColumns = true;
             for (Node node : columnsPane.getChildren()) {

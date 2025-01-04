@@ -19,7 +19,7 @@ import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoubleShape;
 import static mara.mybox.data.DoubleShape.getBound;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.ImageViewTools;
+import mara.mybox.fxml.image.ImageViewTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.style.StyleTools;
 import static mara.mybox.value.Languages.message;

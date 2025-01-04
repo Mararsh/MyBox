@@ -3,12 +3,10 @@ package mara.mybox.db.table;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.Map;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.StringValue;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.tools.ConfigTools;
 import mara.mybox.value.AppValues;
 
 /**
@@ -68,52 +66,6 @@ public class TableUserConf extends BaseTable<StringValue> {
             return false;
         }
         return data.valid();
-    }
-
-    public boolean init(Connection conn) {
-        try {
-            if (conn == null) {
-                return false;
-            }
-            conn.prepareStatement(createTableStatement()).executeUpdate();
-            Map<String, String> values = ConfigTools.readValues();
-            if (values == null || values.isEmpty()) {
-                return false;
-            }
-            try (PreparedStatement intStatement = conn.prepareStatement(InsertInt); PreparedStatement stringStatement = conn.prepareStatement(InsertString)) {
-                for (String key : values.keySet()) {
-                    String value = values.get(key);
-                    switch (value.toLowerCase()) {
-                        case "true":
-                            intStatement.setString(1, key);
-                            intStatement.setInt(2, 1);
-                            intStatement.executeUpdate();
-                            break;
-                        case "false":
-                            intStatement.setString(1, key);
-                            intStatement.setInt(2, 0);
-                            intStatement.executeUpdate();
-                            break;
-                        default: {
-                            try {
-                                int v = Integer.parseInt(value);
-                                intStatement.setString(1, key);
-                                intStatement.setInt(2, v);
-                                intStatement.executeUpdate();
-                            } catch (Exception e) {
-                                stringStatement.setString(1, key);
-                                stringStatement.setString(2, value);
-                                stringStatement.executeUpdate();
-                            }
-                        }
-                    }
-                }
-            }
-            return true;
-        } catch (Exception e) {
-//            MyBoxLog.debug(e);
-            return false;
-        }
     }
 
     public static String readString(String keyName, String defaultValue) {

@@ -8,7 +8,7 @@ import mara.mybox.controller.BaseController;
 import static mara.mybox.db.data.DataNode.TagsSeparater;
 import mara.mybox.db.table.BaseNodeTable;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.FxColorTools;
+import mara.mybox.fxml.image.FxColorTools;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.JsonTools;

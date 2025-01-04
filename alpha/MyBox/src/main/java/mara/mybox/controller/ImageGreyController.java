@@ -1,8 +1,8 @@
 package mara.mybox.controller;
 
 import javafx.scene.image.Image;
-import mara.mybox.bufferedimage.ImageGray;
-import mara.mybox.bufferedimage.ImageScope;
+import mara.mybox.image.data.ImageGray;
+import mara.mybox.image.data.ImageScope;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;

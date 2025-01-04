@@ -14,7 +14,7 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableNodeWebFavorite;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
-import mara.mybox.imagefile.ImageFileReaders;
+import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.tools.IconTools;
 import static mara.mybox.value.Languages.message;
 

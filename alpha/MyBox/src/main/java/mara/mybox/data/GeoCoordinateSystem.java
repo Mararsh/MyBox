@@ -124,12 +124,27 @@ public class GeoCoordinateSystem implements Cloneable {
         return new GeoCoordinateSystem(GeoCoordinateSystem.Value.GCJ_02);
     }
 
+    public static short value(String name) {
+        return new GeoCoordinateSystem(name).shortValue();
+    }
+
     public static String name(short value) {
         return new GeoCoordinateSystem(value).name();
     }
 
     public static String messageName(short value) {
         return new GeoCoordinateSystem(value).messageName();
+    }
+
+    public static String messageNames() {
+        String s = "";
+        for (Value v : Value.values()) {
+            if (!s.isBlank()) {
+                s += "\n";
+            }
+            s += message(v.name());
+        }
+        return s;
     }
 
     /*

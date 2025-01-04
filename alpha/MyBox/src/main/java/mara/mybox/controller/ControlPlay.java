@@ -28,7 +28,7 @@ import javafx.scene.paint.Color;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.style.StyleTools;
-import mara.mybox.imagefile.ImageFileWriters;
+import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.NumberTools;
 import mara.mybox.tools.ScheduleTools;

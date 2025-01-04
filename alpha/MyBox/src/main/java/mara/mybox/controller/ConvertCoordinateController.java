@@ -16,15 +16,13 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import mara.mybox.data.GeoCoordinateSystem;
+import mara.mybox.data.GeographyCode;
 import mara.mybox.data.StringTable;
-import mara.mybox.db.data.GeographyCode;
-import static mara.mybox.db.data.GeographyCodeTools.toGCJ02ByWebService;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.tools.DoubleTools;
-import mara.mybox.tools.LocationTools;
-import static mara.mybox.tools.LocationTools.latitudeToDmsString;
-import static mara.mybox.tools.LocationTools.longitudeToDmsString;
+import mara.mybox.tools.GeographyCodeTools;
+import static mara.mybox.tools.GeographyCodeTools.toGCJ02ByWebService;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 import thridparty.CoordinateConverter;
@@ -80,8 +78,8 @@ public class ConvertCoordinateController extends BaseController {
                         degrees = 0;
                         degreesInput.setStyle(null);
                         isSettingValues = true;
-                        dmsInput.setText(LocationTools.dmsString(degrees, minutes, seconds));
-                        coordinate = LocationTools.DMS2Coordinate(degrees, minutes, seconds);
+                        dmsInput.setText(GeographyCodeTools.dmsString(degrees, minutes, seconds));
+                        coordinate = GeographyCodeTools.DMS2Coordinate(degrees, minutes, seconds);
                         decimalInput.setText(DoubleTools.scale(coordinate, 8) + "");
                         isSettingValues = false;
                         return;
@@ -92,8 +90,8 @@ public class ConvertCoordinateController extends BaseController {
                             degrees = v;
                             degreesInput.setStyle(null);
                             isSettingValues = true;
-                            dmsInput.setText(LocationTools.dmsString(degrees, minutes, seconds));
-                            coordinate = LocationTools.DMS2Coordinate(degrees, minutes, seconds);
+                            dmsInput.setText(GeographyCodeTools.dmsString(degrees, minutes, seconds));
+                            coordinate = GeographyCodeTools.DMS2Coordinate(degrees, minutes, seconds);
                             decimalInput.setText(DoubleTools.scale(coordinate, 8) + "");
                             isSettingValues = false;
                         } else {
@@ -121,8 +119,8 @@ public class ConvertCoordinateController extends BaseController {
                         minutes = 0;
                         minutesInput.setStyle(null);
                         isSettingValues = true;
-                        dmsInput.setText(LocationTools.dmsString(degrees, minutes, seconds));
-                        coordinate = LocationTools.DMS2Coordinate(degrees, minutes, seconds);
+                        dmsInput.setText(GeographyCodeTools.dmsString(degrees, minutes, seconds));
+                        coordinate = GeographyCodeTools.DMS2Coordinate(degrees, minutes, seconds);
                         decimalInput.setText(DoubleTools.scale(coordinate, 8) + "");
                         isSettingValues = false;
                         return;
@@ -133,8 +131,8 @@ public class ConvertCoordinateController extends BaseController {
                             minutes = v;
                             minutesInput.setStyle(null);
                             isSettingValues = true;
-                            dmsInput.setText(LocationTools.dmsString(degrees, minutes, seconds));
-                            coordinate = LocationTools.DMS2Coordinate(degrees, minutes, seconds);
+                            dmsInput.setText(GeographyCodeTools.dmsString(degrees, minutes, seconds));
+                            coordinate = GeographyCodeTools.DMS2Coordinate(degrees, minutes, seconds);
                             decimalInput.setText(DoubleTools.scale(coordinate, 8) + "");
                             isSettingValues = false;
                         } else {
@@ -162,8 +160,8 @@ public class ConvertCoordinateController extends BaseController {
                         secondsInput.setStyle(null);
                         seconds = 0;
                         isSettingValues = true;
-                        dmsInput.setText(LocationTools.dmsString(degrees, minutes, seconds));
-                        coordinate = LocationTools.DMS2Coordinate(degrees, minutes, seconds);
+                        dmsInput.setText(GeographyCodeTools.dmsString(degrees, minutes, seconds));
+                        coordinate = GeographyCodeTools.DMS2Coordinate(degrees, minutes, seconds);
                         decimalInput.setText(DoubleTools.scale(coordinate, 8) + "");
                         isSettingValues = false;
                         return;
@@ -174,8 +172,8 @@ public class ConvertCoordinateController extends BaseController {
                             seconds = v;
                             secondsInput.setStyle(null);
                             isSettingValues = true;
-                            dmsInput.setText(LocationTools.dmsString(degrees, minutes, seconds));
-                            coordinate = LocationTools.DMS2Coordinate(degrees, minutes, seconds);
+                            dmsInput.setText(GeographyCodeTools.dmsString(degrees, minutes, seconds));
+                            coordinate = GeographyCodeTools.DMS2Coordinate(degrees, minutes, seconds);
                             decimalInput.setText(DoubleTools.scale(coordinate, 8) + "");
                             isSettingValues = false;
                         } else {
@@ -208,7 +206,7 @@ public class ConvertCoordinateController extends BaseController {
                         dmsInput.setStyle(null);
                         return;
                     }
-                    double[] v = LocationTools.parseDMS(newValue);
+                    double[] v = GeographyCodeTools.parseDMS(newValue);
                     if (v[0] < -180) {
                         dmsInput.setStyle(UserConfig.badStyle());
                     } else {
@@ -256,12 +254,12 @@ public class ConvertCoordinateController extends BaseController {
                         if (v >= -180 && v <= 180) {
                             coordinate = v;
                             decimalInput.setStyle(null);
-                            double[] dms = LocationTools.coordinate2DMS(coordinate);
+                            double[] dms = GeographyCodeTools.coordinate2DMS(coordinate);
                             degrees = (int) dms[0];
                             minutes = (int) dms[1];
                             seconds = dms[2];
                             isSettingValues = true;
-                            dmsInput.setText(LocationTools.dmsString(degrees, minutes, seconds));
+                            dmsInput.setText(GeographyCodeTools.dmsString(degrees, minutes, seconds));
                             degreesInput.setText(degrees + "");
                             minutesInput.setText(minutes + "");
                             secondsInput.setText(DoubleTools.scale(seconds, 4) + "");
@@ -398,31 +396,31 @@ public class ConvertCoordinateController extends BaseController {
 
             row = new ArrayList<>();
             row.addAll(Arrays.asList(Languages.message("CGCS2000"), wgs84[0] + "", wgs84[1] + "",
-                    longitudeToDmsString(wgs84[0]), latitudeToDmsString(wgs84[1])
+                    GeographyCodeTools.longitudeToDmsString(wgs84[0]), GeographyCodeTools.latitudeToDmsString(wgs84[1])
             ));
             table.add(row);
 
             row = new ArrayList<>();
             row.addAll(Arrays.asList(Languages.message("GCJ_02"), gcj02[0] + "", gcj02[1] + "",
-                    longitudeToDmsString(gcj02[0]), latitudeToDmsString(gcj02[1])
+                    GeographyCodeTools.longitudeToDmsString(gcj02[0]), GeographyCodeTools.latitudeToDmsString(gcj02[1])
             ));
             table.add(row);
 
             row = new ArrayList<>();
             row.addAll(Arrays.asList(Languages.message("WGS_84"), wgs84[0] + "", wgs84[1] + "",
-                    longitudeToDmsString(wgs84[0]), latitudeToDmsString(wgs84[1])
+                    GeographyCodeTools.longitudeToDmsString(wgs84[0]), GeographyCodeTools.latitudeToDmsString(wgs84[1])
             ));
             table.add(row);
 
             row = new ArrayList<>();
             row.addAll(Arrays.asList(Languages.message("BD_09"), db09[0] + "", db09[1] + "",
-                    longitudeToDmsString(db09[0]), latitudeToDmsString(db09[1])
+                    GeographyCodeTools.longitudeToDmsString(db09[0]), GeographyCodeTools.latitudeToDmsString(db09[1])
             ));
             table.add(row);
             if (mapbar != null) {
                 row = new ArrayList<>();
                 row.addAll(Arrays.asList(Languages.message("Mapbar"), mapbar[0] + "", mapbar[1] + "",
-                        longitudeToDmsString(mapbar[0]), latitudeToDmsString(mapbar[1])
+                        GeographyCodeTools.longitudeToDmsString(mapbar[0]), GeographyCodeTools.latitudeToDmsString(mapbar[1])
                 ));
                 table.add(row);
             }
@@ -559,7 +557,8 @@ public class ConvertCoordinateController extends BaseController {
     @FXML
     public void locationAction(ActionEvent event) {
         try {
-            CoordinatePickerController controller = CoordinatePickerController.open(this, longitude, latitude);
+            CoordinatePickerController controller
+                    = CoordinatePickerController.open(this, longitude, latitude, false);
             controller.notify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {

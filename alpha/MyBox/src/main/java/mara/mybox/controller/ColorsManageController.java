@@ -37,8 +37,8 @@ import mara.mybox.db.table.TableColor;
 import mara.mybox.db.table.TableColorPalette;
 import mara.mybox.db.table.TableColorPaletteName;
 import mara.mybox.dev.MyBoxLog;
-import static mara.mybox.fximage.FxColorTools.color2css;
-import mara.mybox.fximage.PaletteTools;
+import static mara.mybox.fxml.image.FxColorTools.color2css;
+import mara.mybox.fxml.image.PaletteTools;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.HelpTools;
@@ -474,7 +474,7 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
                 filename += "_" + message("All");
             }
         }
-        final File file = chooseSaveFile(FileType.CSV, filename + ".csv");
+        final File file = saveCurrentFile(FileType.CSV, filename + ".csv");
         if (file == null) {
             return;
         }

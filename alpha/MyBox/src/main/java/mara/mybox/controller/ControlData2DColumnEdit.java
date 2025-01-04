@@ -28,8 +28,8 @@ import static mara.mybox.db.data.ColumnDefinition.ColumnType.Color;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.table.BaseTable;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.HelpTools;
+import mara.mybox.fxml.image.FxColorTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
 import static mara.mybox.value.Languages.message;
@@ -53,7 +53,8 @@ public class ControlData2DColumnEdit extends BaseChildController {
     protected ToggleGroup typeGroup;
     @FXML
     protected RadioButton stringRadio, doubleRadio, floatRadio, longRadio, intRadio, shortRadio, booleanRadio,
-            datetimeRadio, dateRadio, eraRadio, longitudeRadio, latitudeRadio, enumRadio, enumEditableRadio,
+            datetimeRadio, dateRadio, eraRadio, longitudeRadio, latitudeRadio,
+            enumRadio, enumEditableRadio, enumShortRadio,
             colorRadio, clobRadio;
     @FXML
     protected CheckBox notNullCheck, editableCheck, fixYearCheck;
@@ -68,7 +69,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
     @FXML
     protected FlowPane typesPane, fixPane, centuryPane;
     @FXML
-    protected Label lengthLabel;
+    protected Label lengthLabel, enumLabel;
 
     @Override
     public void setControlsStyle() {
@@ -135,10 +136,18 @@ public class ControlData2DColumnEdit extends BaseChildController {
             optionsBox.getChildren().clear();
             defaultInput.clear();
             formatInput.clear();
+            enumLabel.setText(null);
             fixYearCheck.setSelected(false);
 
-            if (enumRadio.isSelected() || enumEditableRadio.isSelected()) {
+            if (enumRadio.isSelected()
+                    || enumEditableRadio.isSelected()
+                    || enumShortRadio.isSelected()) {
                 optionsBox.getChildren().add(enumBox);
+                if (enumShortRadio.isSelected()) {
+                    enumLabel.setText(message("EnumInputComments"));
+                } else {
+                    enumLabel.setText(message("EnumShortComments"));
+                }
 
             } else if (datetimeRadio.isSelected()) {
                 optionsBox.getChildren().addAll(formatBox, fixPane);
@@ -202,6 +211,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
                 columnIndex = -1;
                 column = new Data2DColumn();
             }
+            MyBoxLog.console(column.getColumnName() + " " + column.getType());
             isSettingValues = true;
             switch (column.getType()) {
                 case String:
@@ -240,6 +250,9 @@ public class ControlData2DColumnEdit extends BaseChildController {
                 case EnumerationEditable:
                     enumEditableRadio.setSelected(true);
                     break;
+                case EnumeratedShort:
+                    enumShortRadio.setSelected(true);
+                    break;
                 case Longitude:
                     longitudeRadio.setSelected(true);
                     break;
@@ -268,7 +281,9 @@ public class ControlData2DColumnEdit extends BaseChildController {
             enumInput.clear();
             String format = column.getFormat();
             if (format != null) {
-                if (enumRadio.isSelected() || enumEditableRadio.isSelected()) {
+                if (enumRadio.isSelected()
+                        || enumEditableRadio.isSelected()
+                        || enumShortRadio.isSelected()) {
                     enumInput.setText(format);
 
                 } else if (datetimeRadio.isSelected() || dateRadio.isSelected() || eraRadio.isSelected()) {
@@ -367,7 +382,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
             }
 
             String enumString = enumInput.getText();
-            if (enumRadio.isSelected()
+            if ((enumRadio.isSelected() || enumShortRadio.isSelected())
                     && (enumString == null || enumString.isBlank())) {
                 popError(message("InvalidParameter") + ": " + message("EnumerateValues"));
                 return null;
@@ -418,6 +433,8 @@ public class ControlData2DColumnEdit extends BaseChildController {
                 column.setType(ColumnType.Enumeration).setFormat(enumString);
             } else if (enumEditableRadio.isSelected()) {
                 column.setType(ColumnType.EnumerationEditable).setFormat(enumString);
+            } else if (enumShortRadio.isSelected()) {
+                column.setType(ColumnType.EnumeratedShort).setFormat(enumString);
             } else if (longitudeRadio.isSelected()) {
                 column.setType(ColumnType.Longitude).setFormat(null);
             } else if (latitudeRadio.isSelected()) {

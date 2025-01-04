@@ -35,7 +35,7 @@ import static mara.mybox.db.table.BaseTable.StringMaxLength;
 import mara.mybox.db.table.TableColor;
 import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.FxColorTools;
+import mara.mybox.fxml.image.FxColorTools;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
 import mara.mybox.fxml.cell.TableCheckboxCell;
@@ -439,7 +439,7 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
         if (col == null) {
             return null;
         }
-        Data2DColumn column = col.copy().setD2id(col.getD2id());
+        Data2DColumn column = col.copy().setDataID(col.getDataID());
         column.setColumnName(col.getColumnName() + "_" + message("Copy"));
         column.setIndex(newColumnIndex());
         return column;
@@ -712,8 +712,8 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
             popError(message("NoData"));
             return;
         }
-        File file = chooseSaveFile(VisitHistory.FileType.CSV,
-                currentData.dataName() + "-" + message("DataDefinition"));
+        File file = saveCurrentFile(VisitHistory.FileType.CSV,
+                currentData.getName() + "-" + message("DataDefinition"));
         if (file == null) {
             return;
         }
@@ -753,8 +753,8 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
             popError(message("NoData"));
             return;
         }
-        File file = chooseSaveFile(VisitHistory.FileType.XML,
-                currentData.dataName() + "-" + message("DataDefinition"));
+        File file = saveCurrentFile(VisitHistory.FileType.XML,
+                currentData.getName() + "-" + message("DataDefinition"));
         if (file == null) {
             return;
         }
@@ -806,8 +806,8 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
             popError(message("NoData"));
             return;
         }
-        File file = chooseSaveFile(VisitHistory.FileType.JSON,
-                currentData.dataName() + "-" + message("DataDefinition"));
+        File file = saveCurrentFile(VisitHistory.FileType.JSON,
+                currentData.getName() + "-" + message("DataDefinition"));
         if (file == null) {
             return;
         }
@@ -855,8 +855,8 @@ public abstract class BaseData2DColumnsController extends BaseTablePagesControll
             popError(message("NoData"));
             return;
         }
-        File file = chooseSaveFile(VisitHistory.FileType.Excel,
-                currentData.dataName() + "-" + message("DataDefinition"));
+        File file = saveCurrentFile(VisitHistory.FileType.Excel,
+                currentData.getName() + "-" + message("DataDefinition"));
         if (file == null) {
             return;
         }

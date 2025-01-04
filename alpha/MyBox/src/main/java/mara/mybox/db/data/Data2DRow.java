@@ -2,7 +2,6 @@ package mara.mybox.db.data;
 
 import java.util.HashMap;
 import java.util.Map;
-import mara.mybox.dev.MyBoxLog;
 
 /**
  * @Author Mara
@@ -23,11 +22,16 @@ public class Data2DRow extends BaseData {
         try {
             if (values == null) {
                 values = new HashMap<>();
+            } else {
+                if (value == null) {
+                    values.remove(column);
+                    return true;
+                }
             }
             values.put(column, value);
             return true;
         } catch (Exception e) {
-            MyBoxLog.debug(e);
+//            MyBoxLog.debug(e);
             return false;
         }
     }
@@ -35,9 +39,12 @@ public class Data2DRow extends BaseData {
     @Override
     public Object getValue(String column) {
         try {
+            if (values == null) {
+                return null;
+            }
             return values.get(column);
         } catch (Exception e) {
-            MyBoxLog.debug(e);
+//            MyBoxLog.debug(e);
             return null;
         }
     }

@@ -4,8 +4,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.List;
 import javafx.fxml.FXML;
-import mara.mybox.bufferedimage.TransformTools;
-import mara.mybox.fximage.ImageDemos;
+import mara.mybox.image.tools.TransformTools;
+import mara.mybox.fxml.image.ImageDemos;
 import mara.mybox.fxml.FxTask;
 import static mara.mybox.value.Languages.message;
 

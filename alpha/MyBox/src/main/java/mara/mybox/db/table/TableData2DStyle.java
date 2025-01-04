@@ -135,8 +135,8 @@ public class TableData2DStyle extends BaseTable<Data2DStyle> {
             conn.setAutoCommit(false);
             while (results.next()) {
                 Data2DStyle s = readData(results);
-                s.setD2sid(-1);
-                s.setD2id(targetid);
+                s.setStyleID(-1);
+                s.setDataID(targetid);
                 if (insertData(conn, s) != null) {
                     count++;
                     if (count % Database.BatchSize == 0) {

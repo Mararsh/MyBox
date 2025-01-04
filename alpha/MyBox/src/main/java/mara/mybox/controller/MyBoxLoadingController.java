@@ -17,7 +17,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javax.imageio.ImageIO;
 import mara.mybox.MyBox;
-import mara.mybox.bufferedimage.ImageColorSpace;
+import mara.mybox.image.data.ImageColorSpace;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.migration.DataMigration;
 import mara.mybox.dev.MyBoxLog;

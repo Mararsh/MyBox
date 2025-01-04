@@ -18,11 +18,9 @@ import mara.mybox.data2d.operate.Data2DExport;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.BaseData;
 import mara.mybox.db.data.ColumnDefinition;
-import mara.mybox.db.data.GeographyCode;
 import mara.mybox.db.data.QueryCondition;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.BaseTable;
-import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.style.StyleTools;
@@ -282,13 +280,7 @@ public class DataExportController extends BaseTaskController {
                                 return false;
                             }
                             BaseData data;
-                            if (table instanceof TableGeographyCode) {
-                                GeographyCode code = TableGeographyCode.readResults(results);
-                                TableGeographyCode.decodeAncestors(conn, code);
-                                data = code;
-                            } else {
-                                data = (BaseData) (table.readData(results));
-                            }
+                            data = (BaseData) (table.readData(results));
                             writeRow(data);
                             count++;
                             if (verboseCheck.isSelected() && (count % 50 == 0)) {

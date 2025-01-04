@@ -110,10 +110,6 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
                     String info = message("InvalidData") + "\n"
                             + message("Column") + ": " + name + "\n"
                             + message("TestingValue") + ": " + dummyValue;
-                    if (rejectInvalid) {
-                        PopTools.alertError(this, info);
-                        return false;
-                    }
                     info += "\n------------------------\n"
                             + message("SureContinue");
                     if (!PopTools.askSure(getTitle(), info)) {

@@ -139,8 +139,8 @@ public class ControlData2DStyle extends BaseController {
         currentStyle.setBold(boldCheck.isSelected());
         currentStyle.setMoreStyle(moreInput.getText());
         if (showLabel != null) {
-            showLabel.setText(currentStyle.getD2sid() < 0
-                    ? message("NewData") : (message("ID") + ": " + currentStyle.getD2sid()));
+            showLabel.setText(currentStyle.getStyleID() < 0
+                    ? message("NewData") : (message("ID") + ": " + currentStyle.getStyleID()));
             showLabel.setStyle(currentStyle.finalStyle());
         }
     }

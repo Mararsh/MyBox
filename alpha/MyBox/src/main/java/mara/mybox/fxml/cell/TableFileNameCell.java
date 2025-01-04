@@ -1,6 +1,6 @@
 package mara.mybox.fxml.cell;
 
-import mara.mybox.fximage.ImageViewFileTask;
+import mara.mybox.fxml.image.ImageViewFileTask;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.image.ImageView;

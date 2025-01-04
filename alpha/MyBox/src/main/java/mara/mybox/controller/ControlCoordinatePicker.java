@@ -2,13 +2,13 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.Timer;
+import java.util.TimerTask;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextArea;
@@ -16,17 +16,13 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
-import javafx.stage.Stage;
-import mara.mybox.db.data.GeographyCode;
-import mara.mybox.db.data.GeographyCodeTools;
-import mara.mybox.db.table.TableGeographyCode;
+import mara.mybox.data.GeographyCode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.DoubleTools;
-import mara.mybox.tools.LocationTools;
+import mara.mybox.tools.GeographyCodeTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
@@ -121,18 +117,10 @@ public class ControlCoordinatePicker extends BaseMapController {
         }
     }
 
-    public void loadCoordinate(double longitude, double latitude) {
-        isSettingValues = true;
-        clickMapRadio.setSelected(true);
-        isSettingValues = false;
-        showCoordinate(longitude, latitude);
-    }
-
     @Override
     public void mapLoaded() {
         super.mapLoaded();
         if (needQeury) {
-            needQeury = false;
             queryAction();
         }
     }
@@ -144,23 +132,36 @@ public class ControlCoordinatePicker extends BaseMapController {
         }
     }
 
+    public void loadCoordinate(double longitude, double latitude) {
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                Platform.runLater(() -> {
+                    isSettingValues = true;
+                    clickMapRadio.setSelected(true);
+                    isSettingValues = false;
+                    showCoordinate(longitude, latitude);
+                });
+                Platform.requestNextPulse();
+            }
+        }, 1000);
+    }
+
     public void showCoordinate(double longitude, double latitude) {
-        if (!LocationTools.validCoordinate(longitude, latitude)) {
+        if (!GeographyCodeTools.validCoordinate(longitude, latitude)) {
             return;
         }
         locateInput.setText(longitude + "," + latitude);
-        if (mapLoaded) {
-            queryAction();
-        } else {
-            needQeury = true;
-        }
+        queryAction();
     }
 
     @FXML
     public void queryAction() {
         if (!mapLoaded) {
+            needQeury = true;
             return;
         }
+        needQeury = false;
         clearCodeAction();
         String value = locateInput.getText().trim();
         if (value.isBlank()) {
@@ -179,7 +180,7 @@ public class ControlCoordinatePicker extends BaseMapController {
                         String[] values = value.split(",");
                         double longitude = DoubleTools.scale6(Double.parseDouble(values[0].trim()));
                         double latitude = DoubleTools.scale6(Double.parseDouble(values[1].trim()));
-                        code = GeographyCodeTools.geoCode(coordinateSystem, longitude, latitude, true);
+                        code = GeographyCodeTools.geoCode(coordinateSystem, longitude, latitude);
                     } catch (Exception e) {
                         MyBoxLog.error(e);
                         return false;
@@ -196,8 +197,8 @@ public class ControlCoordinatePicker extends BaseMapController {
 
             @Override
             protected void whenSucceeded() {
-                if (geographyCodes == null
-                        || multipleCheck == null || !multipleCheck.isSelected()) {
+                if (geographyCodes == null || multipleCheck == null
+                        || !multipleCheck.isSelected() || !multipleCheck.isVisible()) {
                     geographyCodes = new ArrayList<>();
                 }
                 geographyCodes.add(geographyCode);
@@ -227,38 +228,11 @@ public class ControlCoordinatePicker extends BaseMapController {
 
     @FXML
     @Override
-    public void saveAction() {  // ###############
+    public void saveAction() {
         if (geographyCode == null) {
             return;
         }
-        GeographyCode code = GeographyCodeTools.encode(null, geographyCode);
-        if (code != null) {
-            geographyCode = code;
-        } else {
-            if (!TableGeographyCode.write(geographyCode)) {
-                popFailed();
-            }
-        }
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(getBaseTitle());
-        alert.setContentText(message("Saved"));
-        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-        ButtonType buttonEdit = new ButtonType(message("Edit"));
-        ButtonType buttonClose = new ButtonType(message("Close"));
-        alert.getButtonTypes().setAll(buttonEdit, buttonClose);
-        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-        stage.setAlwaysOnTop(true);
-        stage.toFront();
-
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result == null || result.get() != buttonEdit) {
-            return;
-        }
-        GeographyCodeEditController controller
-                = (GeographyCodeEditController) openStage(Fxmls.GeographyCodeEditFxml);
-        controller.setGeographyCode(geographyCode);
-        controller.getMyStage().requestFocus();
-
+        ControlDataGeographyCode.editCode(this, geographyCode);
     }
 
     @FXML

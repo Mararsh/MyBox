@@ -55,7 +55,7 @@ public class MarkdownPopController extends TextPopController {
     @FXML
     @Override
     public void saveAsAction() {
-        File file = chooseSaveFile();
+        File file = saveAsFile();
         if (file == null) {
             return;
         }

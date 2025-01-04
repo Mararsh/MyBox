@@ -10,7 +10,7 @@ import java.nio.charset.Charset;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterOutputStream;
 import javafx.scene.control.IndexRange;
-import mara.mybox.bufferedimage.BufferedImageTools;
+import mara.mybox.image.tools.BufferedImageTools;
 import mara.mybox.data.FileEditInformation.Line_Break;
 import mara.mybox.data.FindReplaceString;
 import mara.mybox.dev.MyBoxLog;

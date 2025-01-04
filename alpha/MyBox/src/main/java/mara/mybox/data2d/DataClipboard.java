@@ -90,7 +90,7 @@ public class DataClipboard extends DataFileCSV {
                 d.setColsNumber(colsNumber);
                 d.setRowsNumber(rowsNumber);
             }
-            String srcName = sourceData.dataName();
+            String srcName = sourceData.getName();
             if (clipName != null && !clipName.isBlank()) {
                 d.setDataName(clipName);
             } else if (srcName != null && !srcName.isBlank()) {

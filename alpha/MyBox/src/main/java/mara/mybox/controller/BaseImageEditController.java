@@ -7,9 +7,9 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.image.Image;
-import mara.mybox.bufferedimage.ImageScope;
+import mara.mybox.image.data.ImageScope;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.ScaleTools;
+import mara.mybox.fxml.image.ScaleTools;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
 

@@ -11,7 +11,7 @@ import java.util.List;
 public class FileExtensions {
 
     public static List<String> SupportedImages = Arrays.asList(
-            "png", "jpg", "jpeg", "bmp", "tif", "tiff", "gif", "pcx", "pnm", "wbmp", "ico", "icon"
+            "png", "jpg", "jpeg", "bmp", "tif", "tiff", "gif", "pcx", "pnm", "wbmp", "ico", "icon", "webp"
     );
 
     public static List<String> NoAlphaImages = Arrays.asList(
@@ -19,7 +19,7 @@ public class FileExtensions {
     );
 
     public static List<String> AlphaImages = Arrays.asList(
-            "png", "tif", "tiff", "ico", "icon"
+            "png", "tif", "tiff", "ico", "icon", "webp"
     );
 
     // PNG does not support premultiplyAlpha

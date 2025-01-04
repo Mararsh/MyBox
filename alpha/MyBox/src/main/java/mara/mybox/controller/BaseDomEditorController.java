@@ -218,7 +218,7 @@ public abstract class BaseDomEditorController extends BaseFileController {
     @Override
     public void saveAction() {
         if (sourceFile == null) {
-            targetFile = chooseSaveFile();
+            targetFile = saveCurrentFile();
         } else {
             targetFile = sourceFile;
         }
@@ -335,7 +335,7 @@ public abstract class BaseDomEditorController extends BaseFileController {
     @FXML
     @Override
     public void saveAsAction() {
-        File file = chooseSaveFile();
+        File file = saveAsFile();
         if (file == null) {
             return;
         }

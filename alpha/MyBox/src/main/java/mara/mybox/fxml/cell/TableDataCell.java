@@ -3,7 +3,6 @@ package mara.mybox.fxml.cell;
 import java.util.List;
 import javafx.util.converter.DefaultStringConverter;
 import mara.mybox.controller.BaseData2DTableController;
-import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.UserConfig;
@@ -75,7 +74,7 @@ public class TableDataCell extends TableAutoCommitCell<List<String>, String> {
 
     public void displayData(String item) {
         try {
-            setText(dataColumn.format(item, trucSize, InvalidAs.Use));
+            setText(dataColumn.displayValue(item, trucSize));
         } catch (Exception e) {
             setText(item);
         }

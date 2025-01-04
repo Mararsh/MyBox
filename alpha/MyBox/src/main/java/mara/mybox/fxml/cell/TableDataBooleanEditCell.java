@@ -34,7 +34,7 @@ public class TableDataBooleanEditCell extends TableCheckboxCell<List<String>, St
                 return false;
             }
             List<String> row = dataTable.getTableData().get(rowIndex);
-            return StringTools.string2Boolean(row.get(colIndex));
+            return StringTools.isTrue(row.get(colIndex));
         } catch (Exception e) {
             return false;
         }

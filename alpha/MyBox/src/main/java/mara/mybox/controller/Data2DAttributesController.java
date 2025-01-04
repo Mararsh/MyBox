@@ -150,7 +150,7 @@ public class Data2DAttributesController extends BaseChildController {
             columnsController.setParameters(this);
 
             isSettingValues = true;
-            idInput.setText(data2D.getD2did() >= 0 ? data2D.getD2did() + "" : message("NewData"));
+            idInput.setText(data2D.getDataID() >= 0 ? data2D.getDataID() + "" : message("NewData"));
             timeInput.setText(DateTools.datetimeToString(data2D.getModifyTime()));
             dataTypeInput.setText(message(data2D.getType().name()));
             dataNameInput.setText(data2D.getDataName());

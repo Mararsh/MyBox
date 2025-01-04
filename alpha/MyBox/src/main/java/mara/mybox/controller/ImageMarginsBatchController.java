@@ -3,7 +3,7 @@ package mara.mybox.controller;
 import java.awt.image.BufferedImage;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
-import mara.mybox.bufferedimage.MarginTools;
+import mara.mybox.image.tools.MarginTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import static mara.mybox.value.Languages.message;

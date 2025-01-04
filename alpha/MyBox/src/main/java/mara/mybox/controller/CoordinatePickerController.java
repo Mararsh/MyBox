@@ -1,12 +1,15 @@
 package mara.mybox.controller;
 
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import mara.mybox.db.data.GeographyCode;
+import javafx.scene.control.CheckBox;
+import mara.mybox.data.GeographyCode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -20,6 +23,8 @@ public class CoordinatePickerController extends BaseController {
 
     @FXML
     protected ControlCoordinatePicker mapController;
+    @FXML
+    protected CheckBox fillCheck;
 
     public CoordinatePickerController() {
         notify = new SimpleBooleanProperty();
@@ -31,6 +36,15 @@ public class CoordinatePickerController extends BaseController {
             super.initControls();
 
             mapController.setParameter(false);
+
+            if (fillCheck != null) {
+                fillCheck.setSelected(UserConfig.getBoolean(baseName + "Fill", true));
+                fillCheck.selectedProperty().addListener(
+                        (ObservableValue<? extends Boolean> ov, Boolean oldv, Boolean newv) -> {
+                            UserConfig.setBoolean(baseName + "Fill", newv);
+                        });
+            }
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -63,11 +77,13 @@ public class CoordinatePickerController extends BaseController {
     /*
         static
      */
-    public static CoordinatePickerController open(BaseController parent, double longitude, double latitude) {
+    public static CoordinatePickerController open(BaseController parent,
+            double longitude, double latitude, boolean fill) {
         try {
             CoordinatePickerController controller
                     = (CoordinatePickerController) WindowTools.childStage(parent, Fxmls.CoordinatePickerFxml);
             controller.loadCoordinate(longitude, latitude);
+            controller.fillCheck.setVisible(fill);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e);

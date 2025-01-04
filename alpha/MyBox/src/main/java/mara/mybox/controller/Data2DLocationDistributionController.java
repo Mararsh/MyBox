@@ -4,8 +4,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
@@ -17,11 +15,11 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.FlowPane;
 import mara.mybox.data.GeoCoordinateSystem;
+import mara.mybox.data.GeographyCode;
+import mara.mybox.tools.GeographyCodeTools;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Data2DColumn;
-import mara.mybox.db.data.GeographyCode;
-import mara.mybox.db.data.GeographyCodeTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
@@ -67,13 +65,6 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
             super.initOptions();
 
             mapController.initMap();
-
-            mapController.drawNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    drawCodes();
-                }
-            });
 
             csGroup = new ToggleGroup();
             for (GeoCoordinateSystem.Value item : GeoCoordinateSystem.Value.values()) {
@@ -137,7 +128,7 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
 
             isSettingValues = false;
 
-            String dname = data2D.dataName();
+            String dname = data2D.getName();
 
             File file = null;
             if (dname != null) {
@@ -264,7 +255,7 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
             protected boolean handle() {
                 try {
                     data2D.setTask(this);
-                    csvData = sortedFile(data2D.dataName(), dataColsIndices, false);
+                    csvData = sortedFile(data2D.getName(), dataColsIndices, false);
                     if (csvData == null) {
                         return false;
                     }
@@ -325,7 +316,7 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
             dataPoints = new ArrayList<>();
             GeoCoordinateSystem cs
                     = new GeoCoordinateSystem(((RadioButton) csGroup.getSelectedToggle()).getText());
-            GeographyCode code = GeographyCode.create();
+            GeographyCode code;
             int longIndex = csvData.colOrder(longCol);
             int laIndex = csvData.colOrder(laCol);
             int labelIndex = csvData.colOrder(labelCol);
@@ -338,9 +329,7 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
                     if (!GeographyCodeTools.validCoordinate(lo, la)) {
                         continue;
                     }
-                    if (code == null) {
-                        code = GeographyCode.create();
-                    }
+                    code = new GeographyCode();
                     code.setCoordinateSystem(cs).setLongitude(lo).setLatitude(la);
                     if (mapController.isGaoDeMap()) {
                         code = GeographyCodeTools.toGCJ02(code);

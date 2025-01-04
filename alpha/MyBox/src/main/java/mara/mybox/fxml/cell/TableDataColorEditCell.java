@@ -13,7 +13,7 @@ import mara.mybox.controller.ColorPalettePopupController;
 import mara.mybox.controller.BaseData2DTableController;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.table.TableColor;
-import mara.mybox.fximage.FxColorTools;
+import mara.mybox.fxml.image.FxColorTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import static mara.mybox.value.Languages.message;
 

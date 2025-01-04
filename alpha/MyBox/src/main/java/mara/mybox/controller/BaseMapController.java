@@ -20,12 +20,12 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebEvent;
 import javafx.scene.web.WebView;
 import mara.mybox.data.GeoCoordinateSystem;
+import mara.mybox.data.GeographyCode;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.data.GeographyCode;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableNodeGeographyCode;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.FxColorTools;
+import mara.mybox.fxml.image.FxColorTools;
 import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.HelpTools;
@@ -34,12 +34,12 @@ import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.fxml.style.StyleData;
 import mara.mybox.fxml.style.StyleTools;
-import mara.mybox.imagefile.ImageFileWriters;
+import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTmpTools;
+import mara.mybox.tools.GeographyCodeTools;
 import mara.mybox.tools.HtmlWriteTools;
-import mara.mybox.tools.LocationTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
@@ -68,7 +68,7 @@ public class BaseMapController extends BaseController {
     protected Color textColor;
     protected GeoCoordinateSystem coordinateSystem;
     protected int markerSize, textSize, mapZoom, interval;
-    protected SimpleBooleanProperty loadNotify, drawNotify;
+    protected SimpleBooleanProperty loadNotify;
     protected List<GeographyCode> geoCodes;
 
     @FXML
@@ -87,7 +87,6 @@ public class BaseMapController extends BaseController {
         try (Connection conn = DerbyBase.getConnection()) {
 
             nodeTable = new TableNodeGeographyCode();
-            baseName = "Map";
 
             webEngine = mapView.getEngine();
             webEngine.setJavaScriptEnabled(true);
@@ -102,7 +101,6 @@ public class BaseMapController extends BaseController {
             });
 
             loadNotify = new SimpleBooleanProperty();
-            drawNotify = new SimpleBooleanProperty();
             mapLoaded = false;
             geoCodes = null;
 
@@ -157,9 +155,10 @@ public class BaseMapController extends BaseController {
     }
 
     public void mapLoaded() {
+        mapLoaded = true;
+        loadNotify.set(!loadNotify.get());
         Platform.runLater(() -> {
             try (Connection conn = DerbyBase.getConnection()) {
-                mapLoaded = true;
                 readStandardLayer(conn);
                 readSatelliteLayer(conn);
                 readRoadLayer(conn);
@@ -303,13 +302,10 @@ public class BaseMapController extends BaseController {
             }
             double lo = code.getLongitude();
             double la = code.getLatitude();
-            if (!LocationTools.validCoordinate(lo, la)) {
+            if (!GeographyCodeTools.validCoordinate(lo, la)) {
                 return;
             }
             String label = code.getLabel();
-            if (label == null) {
-                label = code.getName();
-            }
             String pLabel = "";
             if (isMarkLabel) {
                 pLabel += label;
@@ -332,7 +328,8 @@ public class BaseMapController extends BaseController {
                     + ", " + markSize
                     + ", " + textSize()
                     + ", '" + textRGB() + "'"
-                    + ", " + isBold + ", " + isPopInfo + ");");
+                    + ", " + isBold + ", " + isPopInfo + ");"
+            );
             titleLabel.setText(label);
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -392,10 +389,11 @@ public class BaseMapController extends BaseController {
         try {
             mapType = type;
             isGeodetic = isGeo;
+            mapLoaded = false;
             if (isGaoDeMap()) {
-                webEngine.loadContent(LocationTools.gaodeMap(mapZoom));
+                webEngine.loadContent(GeographyCodeTools.gaodeMap(mapZoom));
             } else {
-                webEngine.load(LocationTools.tiandituFile(isGeodetic, mapZoom).toURI().toString());
+                webEngine.load(GeographyCodeTools.tiandituFile(isGeodetic, mapZoom).toURI().toString());
             }
         } catch (Exception e) {
             MyBoxLog.error(e);

@@ -36,7 +36,7 @@ import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.cell.TableDateCell;
 import mara.mybox.fxml.cell.TableFileSizeCell;
 import mara.mybox.fxml.style.NodeStyleTools;
-import mara.mybox.imagefile.ImageFileReaders;
+import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.value.AppPaths;
 import mara.mybox.value.AppVariables;

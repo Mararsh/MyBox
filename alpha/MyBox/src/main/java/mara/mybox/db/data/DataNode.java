@@ -63,7 +63,11 @@ public class DataNode extends BaseData {
             if (values == null) {
                 values = new HashMap<>();
             }
-            values.put(column, value);
+            if (value == null) {
+                values.remove(column);
+            } else {
+                values.put(column, value);
+            }
             return true;
         } catch (Exception e) {
             return false;

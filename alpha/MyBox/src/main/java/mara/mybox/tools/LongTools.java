@@ -42,6 +42,13 @@ public class LongTools {
         return sign == 1 ? l : -l;
     }
 
+    public static String format(long v, String format, int scale) {
+        if (invalidLong(v)) {
+            return null;
+        }
+        return NumberTools.format(v, format, scale);
+    }
+
     public static long[] sortArray(long[] numbers) {
         List<Long> list = new ArrayList<>();
         for (long i : numbers) {

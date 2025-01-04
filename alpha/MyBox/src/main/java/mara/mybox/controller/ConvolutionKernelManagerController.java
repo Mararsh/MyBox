@@ -26,7 +26,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import mara.mybox.bufferedimage.ImageConvolution;
+import mara.mybox.image.data.ImageConvolution;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.db.data.ConvolutionKernel.Convolution_Type;
 import mara.mybox.db.table.TableConvolutionKernel;

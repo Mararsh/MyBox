@@ -1,7 +1,7 @@
 package mara.mybox.fxml.cell;
 
 import javafx.scene.control.ListCell;
-import mara.mybox.db.data.GeographyCodeLevel;
+import mara.mybox.data.GeographyCodeLevel;
 
 /**
  * @Author Mara

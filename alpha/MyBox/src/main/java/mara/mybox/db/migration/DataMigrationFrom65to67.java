@@ -9,8 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import javafx.application.Platform;
-import mara.mybox.bufferedimage.ImageAttributes;
-import mara.mybox.bufferedimage.ImageConvertTools;
+import mara.mybox.image.data.ImageAttributes;
+import mara.mybox.image.tools.ImageConvertTools;
 import mara.mybox.data.GeoCoordinateSystem;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.data2d.tools.Data2DTableTools;
@@ -23,7 +23,6 @@ import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.Data2DRow;
 import mara.mybox.db.data.Data2DStyle;
-import mara.mybox.db.data.GeographyCode;
 import mara.mybox.db.data.WebHistory;
 import static mara.mybox.db.migration.DataMigration.alterColumnLength;
 import static mara.mybox.db.table.BaseTable.StringMaxLength;
@@ -34,7 +33,6 @@ import mara.mybox.db.table.TableData2DCell;
 import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.db.table.TableData2DStyle;
-import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.db.table.TableWebHistory;
 import mara.mybox.dev.MyBoxLog;
@@ -375,9 +373,6 @@ public class DataMigrationFrom65to67 {
                                 data2DRow.setValue(message("Longitude"), code.getLongitude());
                                 data2DRow.setValue(message("Latitude"), code.getLatitude());
                                 data2DRow.setValue(message("Level"), code.getLevelName());
-                                data2DRow.setValue(message("Continent"), code.getContinentName());
-                                data2DRow.setValue(message("Country"), code.getCountryName());
-                                data2DRow.setValue(message("Province"), code.getProvinceName());
                                 data2DRow.setValue(message("CoordinateSystem"), code.getCoordinateSystem().name());
                                 data2DRow.setValue(message("Comments"), code.getFullName());
                             } catch (Exception e) {
@@ -543,19 +538,19 @@ public class DataMigrationFrom65to67 {
                         if (lastD2id != d2id) {
                             sequence = 1;
                         }
-                        data2DStyle.setD2sid(-1).setRowEnd(lastRow + 1).setSequence(sequence++);
+                        data2DStyle.setStyleID(-1).setRowEnd(lastRow + 1).setSequence(sequence++);
                         tableData2DStyle.insertData(conn, data2DStyle);
                         conn.commit();
                     }
                     rowStart = row;
-                    data2DStyle.setD2id(d2id).setColumns(colName).setMoreStyle(style)
+                    data2DStyle.setDataID(d2id).setColumns(colName).setMoreStyle(style)
                             .setRowStart(rowStart).setRowEnd(rowStart + 1);
                 } else if (row > lastRow + 1) {
-                    data2DStyle.setD2sid(-1).setRowEnd(lastRow + 1).setSequence(sequence++);
+                    data2DStyle.setStyleID(-1).setRowEnd(lastRow + 1).setSequence(sequence++);
                     tableData2DStyle.insertData(conn, data2DStyle);
                     conn.commit();
                     rowStart = row;
-                    data2DStyle.setD2id(d2id).setColumns(colName).setMoreStyle(style)
+                    data2DStyle.setDataID(d2id).setColumns(colName).setMoreStyle(style)
                             .setRowStart(rowStart).setRowEnd(rowStart + 1);
                 }
                 lastD2id = d2id;
@@ -564,7 +559,7 @@ public class DataMigrationFrom65to67 {
                 lastStyle = style;
             }
             if (data2DStyle.getRowStart() >= 0) {
-                data2DStyle.setD2sid(-1).setRowEnd(lastRow + 1).setSequence(sequence++);
+                data2DStyle.setStyleID(-1).setRowEnd(lastRow + 1).setSequence(sequence++);
                 tableData2DStyle.insertData(conn, data2DStyle);
                 conn.commit();
             }
@@ -843,10 +838,10 @@ public class DataMigrationFrom65to67 {
                     def = tableData2DDefinition.insertData(conn, def);
                     conn.commit();
 
-                    long d2did = def.getD2did();
+                    long d2did = def.getDataID();
                     ResultSet cquery = conn.createStatement().executeQuery("SELECT * FROM Data_Column WHERE dataid=" + dfid);
                     while (cquery.next()) {
-                        Data2DColumn column = Data2DColumn.create().setD2id(d2did);
+                        Data2DColumn column = Data2DColumn.create().setDataID(d2did);
                         column.setType(ColumnDefinition.columnTypeFromValue(cquery.getShort("column_type")));
                         column.setColumnName(cquery.getString("column_name"));
                         column.setIndex(cquery.getInt("index"));
@@ -875,13 +870,13 @@ public class DataMigrationFrom65to67 {
                             .setComments(mquery.getString("comments"));
                     def = tableData2DDefinition.insertData(conn, def);
                     conn.commit();
-                    long d2did = def.getD2did();
+                    long d2did = def.getDataID();
                     try (ResultSet cquery = conn.createStatement()
                             .executeQuery("SELECT * FROM Matrix_Cell WHERE mcxid=" + mxid)) {
                         while (cquery.next()) {
-                            Data2DCell cell = Data2DCell.create().setD2did(d2did)
-                                    .setCol(cquery.getInt("col"))
-                                    .setRow(cquery.getInt("row"))
+                            Data2DCell cell = Data2DCell.create().setDataID(d2did)
+                                    .setColumnID(cquery.getInt("col"))
+                                    .setRowID(cquery.getInt("row"))
                                     .setValue(cquery.getDouble("value") + "");
                             tableData2DCell.insertData(conn, cell);
                         }

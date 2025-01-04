@@ -25,20 +25,20 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Transform;
 import javafx.scene.web.WebView;
-import mara.mybox.bufferedimage.ColorComponentTools;
-import mara.mybox.bufferedimage.ColorComponentTools.ColorComponent;
-import mara.mybox.bufferedimage.ColorConvertTools;
-import mara.mybox.bufferedimage.ImageStatistic;
 import mara.mybox.calculation.IntStatistic;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.WebViewTools;
+import mara.mybox.fxml.image.FxColorTools;
 import mara.mybox.fxml.style.HtmlStyles;
-import mara.mybox.imagefile.ImageFileWriters;
+import mara.mybox.image.data.ImageStatistic;
+import mara.mybox.image.file.ImageFileWriters;
+import mara.mybox.image.tools.ColorComponentTools;
+import mara.mybox.image.tools.ColorComponentTools.ColorComponent;
+import mara.mybox.image.tools.ColorConvertTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FloatTools;
 import mara.mybox.tools.HtmlReadTools;
@@ -631,7 +631,7 @@ public class ImageAnalyseController extends BaseController {
             if (sourceFile != null) {
                 fname += "-" + FileNameTools.prefix(sourceFile.getName());
             }
-            final File file = chooseSaveFile(fname);
+            final File file = saveAsFile(fname);
             if (file == null) {
                 return;
             }

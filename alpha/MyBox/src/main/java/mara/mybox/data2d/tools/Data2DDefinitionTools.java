@@ -15,6 +15,7 @@ import mara.mybox.data2d.DataFileExcel;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Data2DColumn;
+import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.DataNode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.CsvTools;
@@ -66,6 +67,37 @@ public class Data2DDefinitionTools {
         return columns;
     }
 
+    public static String info(Data2DDefinition def) {
+        String info = message("ID") + ": " + def.getDataID() + "\n";
+        info += message("Type") + ": " + def.getTypeName() + "\n";
+        info += message("DataName") + ": " + def.getDataName() + "\n";
+        info += message("Sheet") + ": " + def.getSheet() + "\n";
+        info += message("File") + ": " + def.getFile() + "\n";
+        info += message("ColumnsNumber") + ": " + def.getColsNumber() + "\n";
+        info += message("RowsNumber") + ": " + def.getRowsNumber();
+        String des = def.getComments();
+        if (des != null && !des.isBlank()) {
+            info += message("Description") + ": " + des;
+        }
+        return info;
+    }
+
+    public static String info(Data2D data2d) {
+        String info = message("ID") + ": " + data2d.getDataID() + "\n";
+        info += message("DataName") + ": " + data2d.getDataName() + "\n";
+        info += message("Type") + ": " + data2d.getTypeName() + "\n";
+        info += message("DecimalScale") + ": " + data2d.getScale() + "\n";
+        info += message("MaxRandom") + ": " + data2d.getMaxRandom() + "\n";
+        info += message("RowsNumber") + ": " + data2d.getRowsNumber() + "\n";
+        info += message("ColumnsNumber") + ": " + data2d.getColsNumber() + "\n";
+        info += message("Columns") + ": " + data2d.columnNames();
+        String des = data2d.getComments();
+        if (des != null && !des.isBlank()) {
+            info += message("Description") + ": " + des;
+        }
+        return info;
+    }
+
     public static String toHtml(Data2D data2d) {
         try {
             if (data2d == null) {
@@ -99,7 +131,7 @@ public class Data2DDefinitionTools {
             for (ColumnDefinition column : columns) {
                 row = new ArrayList<>();
                 row.add(column.getColumnName());
-                row.add(column.getType().name());
+                row.add(message(column.getType().name()));
                 row.add(column.getLength() + "");
                 row.add(column.isNotNull() ? message("Yes") : "");
                 row.add(column.isIsPrimaryKey() ? message("Yes") : "");
@@ -117,7 +149,7 @@ public class Data2DDefinitionTools {
                 columnTable.add(row);
                 row = new ArrayList<>();
                 row.add(message("Type"));
-                row.add(column.getType().name());
+                row.add(message(column.getType().name()));
                 columnTable.add(row);
                 row = new ArrayList<>();
                 row.add(message("Length"));
@@ -222,7 +254,7 @@ public class Data2DDefinitionTools {
                     s.append(prefix).append(indent).append(indent).append(indent).append("<").append(XmlTools.xmlTag("Width")).append(">").append(col.getWidth()).append("</").append(XmlTools.xmlTag("Width")).append(">\n");
                     if (col.getFormat() != null) {
                         s.append(prefix).append(indent).append(indent).append(indent).append("<").append(XmlTools.xmlTag("DisplayFormat")).append(">");
-                        if (ColumnType.Enumeration == col.getType() || ColumnType.EnumerationEditable == col.getType()) {
+                        if (col.isEnumType()) {
                             s.append("\n").append(prefix).append(indent).append(indent).append(indent).append("<![CDATA[").append(col.getFormat()).append("]]>\n").append(indent).append(indent);
                         } else {
                             s.append(col.getFormat());

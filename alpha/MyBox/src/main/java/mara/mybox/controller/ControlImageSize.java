@@ -15,9 +15,9 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import mara.mybox.bufferedimage.BufferedImageTools.KeepRatioType;
+import mara.mybox.image.tools.BufferedImageTools.KeepRatioType;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.ScaleTools;
+import mara.mybox.fxml.image.ScaleTools;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.WindowTools;
@@ -261,7 +261,7 @@ public class ControlImageSize extends BaseController {
             }
 
             if (keepRatioType != KeepRatioType.None) {
-                int[] wh = mara.mybox.bufferedimage.ScaleTools.scaleValues(
+                int[] wh = mara.mybox.image.tools.ScaleTools.scaleValues(
                         (int) image.getWidth(),
                         (int) image.getHeight(),
                         (int) width, (int) height, keepRatioType);

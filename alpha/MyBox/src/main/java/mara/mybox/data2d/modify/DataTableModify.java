@@ -2,9 +2,7 @@ package mara.mybox.data2d.modify;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.List;
 import mara.mybox.data2d.DataTable;
-import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DRow;
 import mara.mybox.db.table.TableData2D;
 import static mara.mybox.value.Languages.message;
@@ -19,10 +17,9 @@ public abstract class DataTableModify extends Data2DModify {
     protected DataTable sourceTable;
     protected TableData2D tableData2D;
     protected String tableName;
-    protected int columnsNumber;
+
     protected Data2DRow sourceTableRow;
     protected PreparedStatement update;
-    protected List<Data2DColumn> columns;
 
     public boolean setSourceTable(DataTable data) {
         if (!setSourceData(data)) {
@@ -32,8 +29,6 @@ public abstract class DataTableModify extends Data2DModify {
         tableName = sourceTable.getSheet();
         tableData2D = sourceTable.getTableData2D();
         tableData2D.setTableName(tableName);
-        columns = sourceTable.getColumns();
-        columnsNumber = columns.size();
         return true;
     }
 

@@ -3,7 +3,7 @@ package mara.mybox.db.data;
 import javafx.scene.paint.Color;
 import mara.mybox.db.table.BaseTable;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.FxColorTools;
+import mara.mybox.fxml.image.FxColorTools;
 
 /**
  * @Author Mara

@@ -700,11 +700,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
         }
     }
 
-    public File defaultTargetPath(int type) {
-        File savedPath = VisitHistoryTools.getSavedPath(type);
-        if (savedPath != null) {
-            return savedPath;
-        }
+    public File defaultTargetPath() {
         File defaultPath = UserConfig.getPath(baseName + "TargetPath");
         if (defaultPath != null) {
             return defaultPath;
@@ -712,31 +708,45 @@ public abstract class BaseController_Files extends BaseController_Attributes {
         return AppPaths.defaultPath();
     }
 
+    public File defaultTargetPath(int type) {
+        File savedPath = VisitHistoryTools.getSavedPath(type);
+        if (savedPath != null) {
+            return savedPath;
+        }
+        return defaultTargetPath();
+    }
+
     public List<FileChooser.ExtensionFilter> defaultFilter(int type) {
         return VisitHistoryTools.getExtensionFilter(type);
     }
 
-    public File chooseSaveFile() {
-        return chooseSaveFile(defaultTargetPath(TargetPathType), defaultTargetName(), targetExtensionFilter);
+    public File saveAsFile() {
+        return chooseFile(defaultTargetPath(), defaultTargetName(), targetExtensionFilter);
     }
 
-    public File chooseSaveFile(String defaultName) {
-        return chooseSaveFile(defaultTargetPath(TargetPathType), defaultName, targetExtensionFilter);
+    public File saveAsFile(String defaultName) {
+        return chooseFile(defaultTargetPath(), defaultName, targetExtensionFilter);
     }
 
-    public File chooseSaveFile(int type) {
-        return chooseSaveFile(defaultTargetPath(type), defaultTargetName(), defaultFilter(type));
+    public File saveCurrentFile() {
+        return chooseFile(defaultTargetPath(TargetPathType), defaultTargetName(), targetExtensionFilter);
     }
 
-    public File chooseSaveFile(int type, String defaultName) {
-        return chooseSaveFile(defaultTargetPath(type), defaultName, defaultFilter(type));
+    public File saveCurrentFile(String defaultName) {
+        return chooseFile(defaultTargetPath(TargetPathType), defaultName, targetExtensionFilter);
     }
 
-    public File chooseSaveFile(File defaultPath, String defaultName, List<FileChooser.ExtensionFilter> filters) {
-        return chooseSaveFile(null, defaultPath, defaultName, filters);
+    public File saveCurrentFile(int type, String defaultName) {
+        return chooseFile(defaultTargetPath(type), defaultName, defaultFilter(type));
     }
 
-    public File chooseSaveFile(String title, File defaultPath, String defaultName, List<FileChooser.ExtensionFilter> filters) {
+    public File chooseFile(File defaultPath, String defaultName,
+            List<FileChooser.ExtensionFilter> filters) {
+        return showFileChooser(null, defaultPath, defaultName, filters);
+    }
+
+    private File showFileChooser(String title, File defaultPath, String defaultName,
+            List<FileChooser.ExtensionFilter> filters) {
         try {
             FileChooser fileChooser = new FileChooser();
             if (title != null) {
@@ -799,7 +809,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
                 }
                 if (result.get() != buttonSure) {
                     if (result.get() == buttonNo) {
-                        return chooseSaveFile(title, defaultPath, defaultName, filters);
+                        return showFileChooser(title, defaultPath, defaultName, filters);
                     } else {
                         return null;
                     }

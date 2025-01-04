@@ -20,7 +20,8 @@ public abstract class Data2DModify extends Data2DOperate {
 
     protected Data2DWriter writer;
     protected long rowsNumber;
-
+    protected int columnsNumber;
+    protected List<Data2DColumn> columns;
     protected int setValueIndex, setValueDigit;
     protected SetValue setValue;
     protected String setValueParameter;
@@ -57,7 +58,8 @@ public abstract class Data2DModify extends Data2DOperate {
         rejectInvalid = sourceData.rejectInvalidWhenSave() || invalidAs == InvalidAs.Fail;
         skipInvalid = invalidAs == InvalidAs.Skip;
         validateColumn = rejectInvalid || skipInvalid;
-
+        columns = sourceData.getColumns();
+        columnsNumber = columns.size();
         return super.checkParameters();
     }
 
@@ -78,14 +80,14 @@ public abstract class Data2DModify extends Data2DOperate {
             targetRow = new ArrayList<>();
             rowSize = sourceRow.size();
             rowChanged = false;
-            for (int i = 0; i < sourceData.columns.size(); i++) {
+            for (int i = 0; i < columnsNumber; i++) {
                 if (i < rowSize) {
                     currentValue = sourceRow.get(i);
                 } else {
                     currentValue = null;
                 }
                 if (handleRow && cols.contains(i)) {
-                    column = sourceData.columns.get(i);
+                    column = columns.get(i);
                     newValue = setValue.makeValue(sourceData, column,
                             currentValue, sourceRow, sourceRowIndex,
                             setValueIndex, setValueDigit, random);

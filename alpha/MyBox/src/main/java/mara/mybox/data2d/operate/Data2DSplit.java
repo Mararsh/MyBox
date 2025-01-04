@@ -44,7 +44,7 @@ public class Data2DSplit extends Data2DOperate {
             }
             startIndex = 1;
             currentSize = 0;
-            prefix = sourceData.dataName();
+            prefix = sourceData.getName();
             names = new ArrayList<>();
             targetColumns = new ArrayList<>();
             for (int c : cols) {

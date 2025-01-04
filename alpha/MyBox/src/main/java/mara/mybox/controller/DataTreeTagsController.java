@@ -19,7 +19,7 @@ import mara.mybox.db.table.BaseNodeTable;
 import mara.mybox.db.table.TableColor;
 import mara.mybox.db.table.TableDataTag;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.FxColorTools;
+import mara.mybox.fxml.image.FxColorTools;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.cell.TableAutoCommitCell;

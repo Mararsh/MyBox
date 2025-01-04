@@ -22,7 +22,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
-import mara.mybox.bufferedimage.BufferedImageTools.KeepRatioType;
+import mara.mybox.image.tools.BufferedImageTools.KeepRatioType;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.tools.DoubleTools;

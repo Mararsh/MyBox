@@ -57,29 +57,39 @@ public abstract class BaseDataValuesController extends BaseController {
     public void initEditor() {
         try {
             if (valueInput != null) {
-                valueInput.textProperty().addListener(new ChangeListener<String>() {
-                    @Override
-                    public void changed(ObservableValue v, String ov, String nv) {
-                        valueChanged(true);
-                    }
-                });
+                listenerChanged(valueInput);
 
                 if (valueWrapCheck != null) {
-                    valueWrapCheck.setSelected(UserConfig.getBoolean(baseName + "Wrap", false));
-                    valueWrapCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                        @Override
-                        public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) {
-                            UserConfig.setBoolean(baseName + "Wrap", newValue);
-                            ((TextArea) valueInput).setWrapText(newValue);
-                        }
-                    });
-                    ((TextArea) valueInput).setWrapText(valueWrapCheck.isSelected());
+                    manageWrapped(valueWrapCheck, (TextArea) valueInput);
                 }
             }
 
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+    }
+
+    public void listenerChanged(TextInputControl input) {
+        input.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue v, String ov, String nv) {
+                if (!isSettingValues) {
+                    valueChanged(true);
+                }
+            }
+        });
+    }
+
+    public void manageWrapped(CheckBox check, TextArea input) {
+        check.setSelected(UserConfig.getBoolean(baseName + "Wrap", false));
+        check.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                UserConfig.setBoolean(baseName + "Wrap", check.isSelected());
+                input.setWrapText(check.isSelected());
+            }
+        });
+        input.setWrapText(check.isSelected());
     }
 
     protected void editValues() {
@@ -175,7 +185,7 @@ public abstract class BaseDataValuesController extends BaseController {
             popError(message("NoData"));
             return;
         }
-        File file = chooseSaveFile(baseTitle + "-" + DateTools.nowFileString());
+        File file = saveAsFile(baseTitle + "-" + DateTools.nowFileString());
         if (file == null) {
             return;
         }

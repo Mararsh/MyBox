@@ -12,7 +12,7 @@ import java.io.FileInputStream;
 import java.security.MessageDigest;
 import java.security.Provider;
 import java.security.Security;
-import mara.mybox.bufferedimage.BufferedImageTools;
+import mara.mybox.image.tools.BufferedImageTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.value.AppValues;

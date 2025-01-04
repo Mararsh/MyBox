@@ -77,7 +77,7 @@ public class Data2DExportController extends BaseData2DTaskController {
                 tabPane.getSelectionModel().select(targetTab);
                 return false;
             }
-            filePrefix = data2D.dataName();
+            filePrefix = data2D.getName();
             if (filePrefix == null || filePrefix.isBlank()) {
                 filePrefix = DateTools.nowFileString();
             }

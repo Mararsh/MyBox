@@ -245,7 +245,7 @@ public class Data2DChartXYZController extends BaseData2DTaskController {
                         return false;
                     }
                     chartFile = chartController.makeChart(outputColumns, outputData,
-                            seriesSize, data2D.dataName(), scale,
+                            seriesSize, data2D.getName(), scale,
                             xCategoryCheck.isSelected(), yCategoryCheck.isSelected(), zCategoryCheck.isSelected());
                     taskSuccessed = chartFile != null && chartFile.exists();
                     return taskSuccessed;

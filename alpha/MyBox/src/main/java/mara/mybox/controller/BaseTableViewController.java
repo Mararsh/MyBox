@@ -26,7 +26,7 @@ import javafx.scene.input.MouseEvent;
 import mara.mybox.data.StringTable;
 import mara.mybox.data2d.tools.Data2DColumnTools;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.FxImageTools;
+import mara.mybox.fxml.image.FxImageTools;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.cell.TableRowSelectionCell;

@@ -13,7 +13,7 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
-import mara.mybox.bufferedimage.ImageQuantization.QuantizationAlgorithm;
+import mara.mybox.image.data.ImageQuantization.QuantizationAlgorithm;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.value.UserConfig;

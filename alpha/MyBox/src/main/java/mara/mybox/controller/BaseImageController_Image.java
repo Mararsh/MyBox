@@ -2,13 +2,13 @@ package mara.mybox.controller;
 
 import java.io.File;
 import javafx.scene.image.Image;
-import mara.mybox.bufferedimage.ImageInformation;
-import mara.mybox.bufferedimage.ImageScope;
+import mara.mybox.image.data.ImageInformation;
+import mara.mybox.image.data.ImageScope;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.ScaleTools;
+import mara.mybox.fxml.image.ScaleTools;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.WindowTools;
-import mara.mybox.imagefile.ImageFileReaders;
+import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;

@@ -326,7 +326,7 @@ public abstract class Data2D_Operations extends Data2D_Edit {
             return null;
         }
         try {
-            String prefix = dataName();
+            String prefix = getName();
             List<Data2DColumn> targetColumns = targetColumns(cols, null, includeRowNumber, null);
             List<String> names = new ArrayList<>();
             if (includeRowNumber) {

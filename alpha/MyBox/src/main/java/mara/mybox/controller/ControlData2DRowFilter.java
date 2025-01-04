@@ -100,8 +100,11 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
         }
         String script = checkScript(allPages);
         if (error != null) {
-            popError(error);
-            return null;
+            if (!PopTools.askSure(getTitle(),
+                    message("RowExpressionLooksInvalid") + ": \n" + error,
+                    message("SureContinue"))) {
+                return null;
+            }
         }
         filter.setMatchFalse(falseRadio.isSelected())
                 .setMaxPassed(max > 0 && max != InvalidLong ? max : -1)
@@ -139,13 +142,10 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
             return script;
         }
         script = script.trim();
-        if (calculator.validateExpression(data2D, script, allPages)) {
-            TableStringValues.add(baseName + "Histories", script);
-            return script;
-        } else {
-            error = calculator.getError();
-            return null;
-        }
+        calculator.validateExpression(data2D, script, allPages);
+        TableStringValues.add(baseName + "Histories", script);
+        error = calculator.getError();
+        return script;
     }
 
     @FXML

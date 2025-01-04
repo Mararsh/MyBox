@@ -21,18 +21,17 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
 import mara.mybox.data.ImageItem;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.ValidationTools;
+import mara.mybox.fxml.image.FxImageTools;
 import mara.mybox.fxml.style.NodeStyleTools;
-import mara.mybox.imagefile.ImageFileWriters;
+import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.BarcodeTools;
 import mara.mybox.tools.BarcodeTools.BarcodeType;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.value.AppValues;
-import mara.mybox.value.FileFilters;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -789,8 +788,7 @@ public class BarcodeCreatorController extends BaseImageController {
     @FXML
     @Override
     public void saveAsAction() {
-        File file = chooseSaveFile(UserConfig.getPath(baseName + "TargetPath"),
-                null, FileFilters.ImageExtensionFilter);
+        File file = saveAsFile();
         if (file == null) {
             return;
         }

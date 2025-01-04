@@ -224,4 +224,11 @@ public class DoubleTools {
         return sign == 1 ? i + d : -(i + d);
     }
 
+    public static String format(double v, String format, int scale) {
+        if (invalidDouble(v)) {
+            return null;
+        }
+        return NumberTools.format(v, format, scale);
+    }
+
 }

@@ -3,7 +3,7 @@ package mara.mybox.controller;
 import javafx.fxml.FXML;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
-import mara.mybox.bufferedimage.ImageScope;
+import mara.mybox.image.data.ImageScope;
 import mara.mybox.fxml.FxTask;
 
 /**

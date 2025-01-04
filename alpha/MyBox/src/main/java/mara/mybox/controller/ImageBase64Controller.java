@@ -17,7 +17,7 @@ import javafx.scene.control.TextInputControl;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
-import mara.mybox.bufferedimage.BufferedImageTools;
+import mara.mybox.image.tools.BufferedImageTools;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
@@ -211,7 +211,7 @@ public class ImageBase64Controller extends BaseController {
         }
         String name = controller.sourceFile != null
                 ? FileNameTools.prefix(controller.sourceFile.getName()) : DateTools.nowFileString();
-        File file = controller.chooseSaveFile(VisitHistory.FileType.Text, name + "_" + format + "_Base64");
+        File file = controller.saveCurrentFile(VisitHistory.FileType.Text, name + "_" + format + "_Base64");
         if (file == null) {
             return;
         }

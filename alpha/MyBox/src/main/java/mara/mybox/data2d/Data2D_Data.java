@@ -13,7 +13,7 @@ import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.db.data.Data2DColumn;
 import static mara.mybox.db.data.Data2DDefinition.DataType.Texts;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.FxColorTools;
+import mara.mybox.fxml.image.FxColorTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.NumberTools;
@@ -193,7 +193,7 @@ public abstract class Data2D_Data extends Data2D_Attributes {
             List<String> row = new ArrayList<>();
             for (int i = 0; i < columns.size(); i++) {
                 String v = trow.get(i + 1);
-                v = savedValue(i, v);
+                v = pageValueToSave(i, v);
                 row.add(v);
             }
             return row;
@@ -210,7 +210,7 @@ public abstract class Data2D_Data extends Data2D_Attributes {
             row.add(rindex != null && rindex.startsWith("-1") ? null : rindex);
             for (int i = 0; i < columns.size(); i++) {
                 String v = trow.get(i + 1);
-                v = formatValue(i, v);
+                v = displayValue(i, v);
                 row.add(v);
             }
             return row;
@@ -291,7 +291,7 @@ public abstract class Data2D_Data extends Data2D_Attributes {
             case InternalTable:
                 return sheet == null;
             default:
-                return d2did < 0;
+                return dataID < 0;
         }
     }
 
@@ -537,12 +537,17 @@ public abstract class Data2D_Data extends Data2D_Attributes {
         }
     }
 
-    public String savedValue(int col, String value) {
+    public String displayValue(int col, String value) {
         try {
-            if (rejectInvalidWhenEdit()) {
-                return value;
-            }
-            return column(col).savedValue(value, InvalidAs.Use);
+            return column(col).displayValue(value, -1);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public String pageValueToSave(int col, String value) {
+        try {
+            return column(col).pageValueToSave(value, InvalidAs.Use);
         } catch (Exception e) {
             return null;
         }
@@ -555,32 +560,6 @@ public abstract class Data2D_Data extends Data2D_Attributes {
 
     public int newColumnIndex() {
         return --newColumnIndex;
-    }
-
-    public List<String> editableColumnNames() {
-        if (columns == null) {
-            return null;
-        }
-        List<String> names = new ArrayList<>();
-        for (Data2DColumn col : columns) {
-            if (col.isEditable()) {
-                names.add(col.getColumnName());
-            }
-        }
-        return names;
-    }
-
-    public List<String> numberColumnNames() {
-        if (columns == null) {
-            return null;
-        }
-        List<String> names = new ArrayList<>();
-        for (Data2DColumn col : columns) {
-            if (col.isNumberType()) {
-                names.add(col.getColumnName());
-            }
-        }
-        return names;
     }
 
     public List<String> timeColumnNames() {

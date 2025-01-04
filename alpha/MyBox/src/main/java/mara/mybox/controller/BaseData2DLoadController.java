@@ -523,7 +523,7 @@ public class BaseData2DLoadController extends BaseData2DTableController {
                 if (parent != null) {
                     parent.tableData.set(index, def);
                 }
-                if (def.getD2did() == data2D.getD2did()) {
+                if (def.getDataID() == data2D.getDataID()) {
                     data2D.setDataName(newName);
                     if (parent != null) {
                         parent.updateStatus();

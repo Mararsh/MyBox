@@ -54,7 +54,7 @@ import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.WebViewTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.StyleTools;
-import mara.mybox.imagefile.ImageFileReaders;
+import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlReadTools;
 import mara.mybox.tools.HtmlWriteTools;
@@ -1823,7 +1823,7 @@ public class ControlWebView extends BaseController {
             popError(message("NoData"));
             return;
         }
-        File file = chooseSaveFile(webEngine.getTitle());
+        File file = saveAsFile(webEngine.getTitle());
         if (file == null) {
             return;
         }

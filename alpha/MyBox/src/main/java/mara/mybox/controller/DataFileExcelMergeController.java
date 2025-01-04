@@ -159,7 +159,7 @@ public class DataFileExcelMergeController extends FilesMergeController {
                             .setDelimiter(sheet)
                             .setDataName(targetFile.getName())
                             .setHasHeader(targetWithNamesCheck.isSelected());
-                    if (def.getD2did() < 0) {
+                    if (def.getDataID() < 0) {
                         tableData2DDefinition.insertData(conn, def);
                     } else {
                         tableData2DDefinition.updateData(conn, def);

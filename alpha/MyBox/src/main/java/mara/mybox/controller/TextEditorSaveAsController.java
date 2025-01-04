@@ -90,13 +90,16 @@ public class TextEditorSaveAsController extends BaseChildController {
             } else {
                 lineBreak = Line_Break.LF;
             }
-            MyBoxLog.console(lineBreak.toString());
             UserConfig.setString(baseName + "TargetLineBreak", lineBreak.toString());
             UserConfig.setString(baseName + "TargetCharset", targetCharsetSelector.getValue());
             UserConfig.setBoolean(baseName + "TargetBOM", targetBomCheck.isSelected());
 
+            targetFile = saveAsFile();
+            if (targetFile == null) {
+                return;
+            }
             fileController.saveAsType = saveAsType;
-            fileController.saveAs();
+            fileController.saveAs(targetFile);
 
             if (closeAfterCheck.isSelected()) {
                 close();

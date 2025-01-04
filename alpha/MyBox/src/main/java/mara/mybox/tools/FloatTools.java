@@ -132,6 +132,13 @@ public class FloatTools {
         return sign == 1 ? f : -f;
     }
 
+    public static String format(float v, String format, int scale) {
+        if (invalidFloat(v)) {
+            return null;
+        }
+        return NumberTools.format(v, format, scale);
+    }
+
     public static float[] sortArray(float[] numbers) {
         List<Float> list = new ArrayList<>();
         for (float i : numbers) {

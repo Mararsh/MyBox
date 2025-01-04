@@ -1,8 +1,8 @@
 package mara.mybox.db.table;
 
 import java.sql.Connection;
-import mara.mybox.bufferedimage.ImageScope;
-import mara.mybox.bufferedimage.ImageScopeTools;
+import mara.mybox.image.data.ImageScope;
+import mara.mybox.image.tools.ImageScopeTools;
 import mara.mybox.controller.BaseController;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;

@@ -16,7 +16,6 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import mara.mybox.db.Database;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.db.data.DataNode;
 import mara.mybox.db.data.DataNodeTag;
 import mara.mybox.db.data.DataTag;
@@ -271,7 +270,7 @@ public class DataTreeImportController extends BaseBatchFileController {
                     default:
                         if (columnNames.contains(qName)) {
                             dataNode.setValue(qName,
-                                    nodeTable.column(qName).fromString(s, InvalidAs.Use));
+                                    nodeTable.importValue(nodeTable.column(qName), s));
 //                            if (isLogsVerbose()) {
 //                                showLogs(qName + "=" + s);
 //                            }

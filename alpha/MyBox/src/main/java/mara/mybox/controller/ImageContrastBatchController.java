@@ -4,8 +4,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.List;
 import javafx.fxml.FXML;
-import mara.mybox.bufferedimage.ImageContrast;
-import mara.mybox.fximage.PixelDemos;
+import mara.mybox.image.data.ImageContrast;
+import mara.mybox.fxml.image.PixelDemos;
 import mara.mybox.fxml.FxTask;
 import static mara.mybox.value.Languages.message;
 

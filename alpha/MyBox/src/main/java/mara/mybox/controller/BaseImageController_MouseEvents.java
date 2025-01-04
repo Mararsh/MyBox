@@ -7,7 +7,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import mara.mybox.data.DoublePoint;
-import mara.mybox.fximage.ImageViewTools;
+import mara.mybox.fxml.image.ImageViewTools;
 
 /**
  * @Author Mara

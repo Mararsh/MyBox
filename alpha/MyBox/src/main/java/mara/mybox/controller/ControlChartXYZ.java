@@ -16,7 +16,7 @@ import javafx.scene.layout.FlowPane;
 import mara.mybox.db.data.ColumnDefinition.InvalidAs;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.FxColorTools;
+import mara.mybox.fxml.image.FxColorTools;
 import mara.mybox.fxml.FxFileTools;
 import mara.mybox.tools.DoubleTools;
 import static mara.mybox.tools.FileTmpTools.generateFile;

@@ -8,12 +8,12 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.layout.FlowPane;
-import mara.mybox.bufferedimage.ImageConvertTools;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
-import mara.mybox.imagefile.ImageFileWriters;
+import mara.mybox.image.file.ImageFileWriters;
+import mara.mybox.image.tools.ImageConvertTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.value.FileFilters;
@@ -90,18 +90,15 @@ public class ImageConverterController extends BaseChildController {
     public void saveAllFramesSelected() {
         if (imageController.sourceFile != null && imageController.sourceFile.exists()
                 && imageController.framesNumber > 1) {
-            formatController.formatPane.getChildren().setAll(formatController.tifRadio, formatController.gifRadio);
+            formatController.formatPane.getChildren().setAll(
+                    formatController.tifRadio, formatController.gifRadio);
             if ("gif".equalsIgnoreCase(FileNameTools.ext(imageController.sourceFile.getName()))) {
                 formatController.gifRadio.setSelected(true);
             } else {
                 formatController.tifRadio.setSelected(true);
             }
         } else {
-            formatController.formatPane.getChildren().setAll(
-                    formatController.pngRadio, formatController.jpgRadio,
-                    formatController.tifRadio, formatController.gifRadio,
-                    formatController.pcxRadio, formatController.pnmRadio,
-                    formatController.bmpRadio, formatController.wbmpRadio, formatController.icoRadio);
+            saveCurrentFramesSelected();
         }
     }
 
@@ -110,8 +107,9 @@ public class ImageConverterController extends BaseChildController {
         formatController.formatPane.getChildren().setAll(
                 formatController.pngRadio, formatController.jpgRadio,
                 formatController.tifRadio, formatController.gifRadio,
+                formatController.icoRadio, formatController.webpRadio,
                 formatController.pcxRadio, formatController.pnmRadio,
-                formatController.bmpRadio, formatController.wbmpRadio, formatController.icoRadio);
+                formatController.bmpRadio, formatController.wbmpRadio);
     }
 
     @FXML
@@ -129,8 +127,8 @@ public class ImageConverterController extends BaseChildController {
             fname = DateTools.nowFileString();
         }
         fname += "." + targetFormat;
-        targetFile = chooseSaveFile(UserConfig.getPath(baseName + "TargetPath"),
-                fname, FileFilters.imageFilter(targetFormat));
+        targetFile = chooseFile(defaultTargetPath(), fname,
+                FileFilters.imageFilter(targetFormat));
         if (targetFile == null) {
             return;
         }

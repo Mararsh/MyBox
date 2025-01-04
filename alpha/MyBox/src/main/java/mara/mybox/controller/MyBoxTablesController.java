@@ -3,11 +3,13 @@ package mara.mybox.controller;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import javafx.stage.Window;
 import mara.mybox.data2d.Data2D;
-import mara.mybox.data2d.DataInternalTable;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DDefinition;
+import mara.mybox.db.table.BaseTable;
+import static mara.mybox.db.table.BaseTableTools.internalTables;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
@@ -43,11 +45,9 @@ public class MyBoxTablesController extends BaseData2DListController {
             @Override
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
-                    DataInternalTable dataTable = new DataInternalTable();
-                    for (String name : DataInternalTable.InternalTables) {
-                        if (tableData2DDefinition.queryTable(conn, name, Data2DDefinition.DataType.InternalTable) == null) {
-                            dataTable.readDefinitionFromDB(conn, name);
-                        }
+                    Map<String, BaseTable> internalTables = internalTables();
+                    for (String name : internalTables.keySet()) {
+                        internalTables.get(name).recordTable(conn);
                     }
                 } catch (Exception e) {
                     MyBoxLog.error(e);

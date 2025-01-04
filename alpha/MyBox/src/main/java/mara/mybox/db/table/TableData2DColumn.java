@@ -165,7 +165,7 @@ public class TableData2DColumn extends BaseTable<Data2DColumn> {
             if (dataDefinition == null) {
                 return null;
             }
-            return read(conn, dataDefinition.getD2did());
+            return read(conn, dataDefinition.getDataID());
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;
@@ -177,8 +177,8 @@ public class TableData2DColumn extends BaseTable<Data2DColumn> {
             return false;
         }
         try (Connection conn = DerbyBase.getConnection()) {
-            if (data.getD2did() >= 0) {
-                return clear(conn, data.getD2did());
+            if (data.getDataID() >= 0) {
+                return clear(conn, data.getDataID());
             } else {
                 return clearFile(conn, data.getType(), data.getFile());
             }
@@ -208,7 +208,7 @@ public class TableData2DColumn extends BaseTable<Data2DColumn> {
         if (dataDefinition == null) {
             return false;
         }
-        return clear(conn, dataDefinition.getD2did());
+        return clear(conn, dataDefinition.getDataID());
     }
 
     public boolean clear(Connection conn, long d2id) {
@@ -225,53 +225,46 @@ public class TableData2DColumn extends BaseTable<Data2DColumn> {
         }
     }
 
-    public boolean save(long d2id, List<Data2DColumn> columns) {
-        if (d2id < 0 || columns.isEmpty()) {
-            return false;
-        }
-        try (Connection conn = DerbyBase.getConnection()) {
-            save(conn, d2id, columns);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return false;
-        }
-        return true;
-    }
-
-    public boolean save(Connection conn, long d2id, List<Data2DColumn> columns) {
-        if (d2id < 0 || columns == null) {
+    public boolean save(Connection conn, long dataid, List<Data2DColumn> columns) {
+        if (dataid < 0 || columns == null) {
             return false;
         }
         try {
             boolean ac = conn.getAutoCommit();
             conn.setAutoCommit(false);
-            List<Data2DColumn> existed = read(conn, d2id);
+            List<Data2DColumn> existed = read(conn, dataid);
             conn.setAutoCommit(true);
             if (existed != null && !existed.isEmpty()) {
                 for (Data2DColumn ecolumn : existed) {
                     boolean keep = false;
                     for (Data2DColumn icolumn : columns) {
-                        if (ecolumn.getD2cid() == icolumn.getD2cid()) {
+                        if (ecolumn.getColumnID() == icolumn.getColumnID()) {
                             keep = true;
                             break;
                         }
                     }
                     if (!keep) {
                         deleteData(conn, ecolumn);
+//                        MyBoxLog.console("delete:" + ecolumn.getColumnName() + " " + ecolumn.getType());
                     }
                 }
                 conn.commit();
             }
             for (int i = 0; i < columns.size(); i++) {
                 Data2DColumn column = columns.get(i);
-                column.setD2id(d2id);
+                column.setDataID(dataid);
                 column.setIndex(i);
-                if (column.getD2cid() >= 0) {
+                if (column.getColumnID() >= 0) {
                     column = updateData(conn, column);
                 } else {
                     column = insertData(conn, column);
                 }
+                if (column == null) {
+                    MyBoxLog.error("Failed");
+                    return false;
+                }
                 columns.set(i, column);
+//                MyBoxLog.console(i + "   " + column.getColumnName() + " " + column.getType());
             }
             conn.commit();
             conn.setAutoCommit(ac);

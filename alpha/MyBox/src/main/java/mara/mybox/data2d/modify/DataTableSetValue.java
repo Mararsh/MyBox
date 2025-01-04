@@ -8,6 +8,7 @@ import mara.mybox.data2d.DataTable;
 import mara.mybox.data2d.tools.Data2DRowTools;
 import mara.mybox.db.Database;
 import mara.mybox.db.DerbyBase;
+import mara.mybox.db.data.Data2DRow;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -61,49 +62,22 @@ public class DataTableSetValue extends DataTableModify {
     @Override
     public void writeRow() {
         try {
-            if (stopped || targetRow == null || targetRow.isEmpty()) {
+            if (stopped || !rowChanged
+                    || targetRow == null || targetRow.isEmpty()) {
                 return;
             }
-            rowChanged = false;
+            Data2DRow data2DRow = tableData2D.newRow();
             for (int i = 0; i < columnsNumber; ++i) {
                 column = columns.get(i);
                 columnName = column.getColumnName();
-                currentValue = targetRow.get(i);
-                newValue = setValue.makeValue(sourceData, column,
-                        currentValue, sourceRow, sourceRowIndex,
-                        setValueIndex, setValueDigit, random);
-                valueInvalid = setValue.valueInvalid;
-                if (!valueInvalid && validateColumn) {
-                    if (!column.validValue(newValue)) {
-                        valueInvalid = true;
-                    }
-                }
-                if (valueInvalid) {
-                    if (skipInvalid) {
-                        continue;
-                    } else if (rejectInvalid) {
-                        failStop(message("InvalidData") + ". "
-                                + message("Column") + ":" + columnName + "  "
-                                + message("Value") + ": " + newValue);
-                        return;
-                    }
-                }
-                if ((currentValue == null && newValue == null)
-                        || (currentValue != null && currentValue.equals(newValue))) {
-                    continue;
-                }
-                sourceTableRow.setValue(columnName, column.fromString(newValue, invalidAs));
-                rowChanged = true;
+                data2DRow.setValue(columnName, column.fromString(targetRow.get(i), invalidAs));
             }
-            if (rowChanged) {
-                setValueIndex++;
-                if (tableData2D.setUpdateStatement(conn, update, sourceTableRow)) {
-                    update.addBatch();
-                    if (++handledCount % Database.BatchSize == 0) {
-                        update.executeBatch();
-                        conn.commit();
-                        showInfo(message("Updated") + ": " + handledCount);
-                    }
+            if (tableData2D.setUpdateStatement(conn, update, data2DRow)) {
+                update.addBatch();
+                if (handledCount % Database.BatchSize == 0) {
+                    update.executeBatch();
+                    conn.commit();
+                    showInfo(message("Updated") + ": " + handledCount);
                 }
             }
         } catch (Exception e) {

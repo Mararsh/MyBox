@@ -266,7 +266,8 @@ public class ControlFileSelecter extends BaseController {
                 if (isSource) {
                     selectedfile = FxFileTools.selectFile(this, path, sourceExtensionFilter);
                 } else {
-                    selectedfile = chooseSaveFile(path, defaultFile != null ? defaultFile.getName() : null,
+                    selectedfile = chooseFile(path,
+                            defaultFile != null ? defaultFile.getName() : null,
                             targetExtensionFilter);
                 }
             }

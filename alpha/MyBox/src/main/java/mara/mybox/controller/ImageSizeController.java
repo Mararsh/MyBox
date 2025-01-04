@@ -16,10 +16,10 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import mara.mybox.bufferedimage.BufferedImageTools;
+import mara.mybox.image.tools.BufferedImageTools;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.ScaleTools;
+import mara.mybox.fxml.image.ScaleTools;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.WindowTools;
@@ -295,7 +295,7 @@ public class ImageSizeController extends BaseImageEditController {
             }
 
             if (keepRatioType != BufferedImageTools.KeepRatioType.None) {
-                int[] wh = mara.mybox.bufferedimage.ScaleTools.scaleValues(
+                int[] wh = mara.mybox.image.tools.ScaleTools.scaleValues(
                         (int) image.getWidth(),
                         (int) image.getHeight(),
                         width, height, keepRatioType);

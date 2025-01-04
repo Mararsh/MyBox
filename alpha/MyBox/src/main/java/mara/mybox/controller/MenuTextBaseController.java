@@ -146,7 +146,7 @@ public class MenuTextBaseController extends MenuController {
             popError(Languages.message("DoData"));
             return;
         }
-        final File file = chooseSaveFile(TargetFileType);
+        final File file = saveAsFile();
         if (file == null) {
             return;
         }

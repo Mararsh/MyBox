@@ -34,20 +34,20 @@ public class MatrixWriter extends Data2DWriter {
                 matrix = new DataMatrix();
                 matrix.setTask(task()).setDataName(dataName);
             }
-            did = matrix.getD2did();
+            did = matrix.getDataID();
             if (did < 0) {
                 if (!Data2D.saveAttributes(conn, matrix, columns)) {
                     return false;
                 }
             }
-            did = matrix.getD2did();
+            did = matrix.getDataID();
             if (did < 0) {
                 return false;
             }
             tableData2DCell = matrix.getTableData2DCell();
             conn.setAutoCommit(false);
             dwCount = 0;
-            showInfo(message("Writing") + " " + matrix.dataName());
+            showInfo(message("Writing") + " " + matrix.getName());
             validateValue = true;
             return true;
         } catch (Exception e) {
@@ -67,8 +67,8 @@ public class MatrixWriter extends Data2DWriter {
                 if (d == 0 || DoubleTools.invalidDouble(d)) {
                     continue;
                 }
-                Data2DCell cell = Data2DCell.create().setD2did(did)
-                        .setRow(targetRowIndex).setCol(c).setValue(d + "");
+                Data2DCell cell = Data2DCell.create().setDataID(did)
+                        .setRowID(targetRowIndex).setColumnID(c).setValue(d + "");
                 tableData2DCell.insertData(conn, cell);
                 if (++dwCount % Database.BatchSize == 0) {
                     conn.commit();
@@ -85,14 +85,14 @@ public class MatrixWriter extends Data2DWriter {
         try {
             created = false;
             if (conn == null || matrix == null) {
-                showInfo(message("Failed") + ": " + matrix.dataName());
+                showInfo(message("Failed") + ": " + matrix.getName());
                 return;
             }
             conn.commit();
             matrix.setRowsNumber(targetRowIndex);
             Data2D.saveAttributes(conn, matrix, columns);
             targetData = matrix;
-            showInfo(message("Generated") + ": " + matrix.dataName());
+            showInfo(message("Generated") + ": " + matrix.getName());
             showInfo(message("RowsNumber") + ": " + targetRowIndex);
             created = true;
         } catch (Exception e) {
