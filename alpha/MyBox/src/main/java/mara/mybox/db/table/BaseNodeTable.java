@@ -662,7 +662,7 @@ public class BaseNodeTable extends BaseTable<DataNode> {
         }
     }
 
-    public String valuesXml(String prefix, DataNode node) {
+    public String valuesXml(String prefix, DataNode node, boolean format) {
         if (node == null) {
             return null;
         }
@@ -678,7 +678,7 @@ public class BaseNodeTable extends BaseTable<DataNode> {
             if (value == null) {
                 continue;
             }
-            String sValue = exportValue(column, value);
+            String sValue = exportValue(column, value, format);
             if (sValue == null || sValue.isBlank()) {
                 continue;
             }
@@ -694,7 +694,7 @@ public class BaseNodeTable extends BaseTable<DataNode> {
         return xml;
     }
 
-    public String valuesJson(String prefix, DataNode node) {
+    public String valuesJson(String prefix, DataNode node, boolean format) {
         if (node == null) {
             return null;
         }
@@ -709,17 +709,21 @@ public class BaseNodeTable extends BaseTable<DataNode> {
             if (value == null) {
                 continue;
             }
+            String sValue = exportValue(column, value, format);
+            if (sValue == null || sValue.isBlank()) {
+                continue;
+            }
             if (!json.isBlank()) {
                 json += ",\n";
             }
             json += prefix + "\"" + label(name) + "\": "
-                    + JsonTools.encode(column.toString(value));
+                    + JsonTools.encode(sValue);
         }
         return json;
     }
 
     public String valuesString(DataNode node) {
-        return valuesJson("", node);
+        return valuesJson("", node, true);
     }
 
     // Node should be queried with all fields

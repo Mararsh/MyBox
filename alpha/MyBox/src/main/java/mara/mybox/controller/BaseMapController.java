@@ -19,18 +19,18 @@ import javafx.scene.paint.Color;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebEvent;
 import javafx.scene.web.WebView;
-import mara.mybox.data.GeoCoordinateSystem;
 import mara.mybox.data.GeographyCode;
+import mara.mybox.data.GeographyCode.CoordinateSystem;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableNodeGeographyCode;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.image.FxColorTools;
 import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.image.FxColorTools;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.fxml.style.StyleData;
 import mara.mybox.fxml.style.StyleTools;
@@ -66,7 +66,7 @@ public class BaseMapController extends BaseController {
     protected float standardOpacity, satelliteOpacity, roadOpacity, trafficOpacity;
     protected File markerImageFile;
     protected Color textColor;
-    protected GeoCoordinateSystem coordinateSystem;
+    protected CoordinateSystem coordinateSystem;
     protected int markerSize, textSize, mapZoom, interval;
     protected SimpleBooleanProperty loadNotify;
     protected List<GeographyCode> geoCodes;
@@ -438,7 +438,7 @@ public class BaseMapController extends BaseController {
                 textColor = Color.BLACK;
             }
             v = UserConfig.getString(conn, baseName + "CoordinateSystem", null);
-            coordinateSystem = new GeoCoordinateSystem(v);
+            coordinateSystem = GeographyCodeTools.coordinateSystemByName(v);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

@@ -32,8 +32,8 @@ import mara.mybox.db.data.Data2DStyle;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.db.table.TableData2DStyle;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.image.FxColorTools;
 import mara.mybox.fxml.FxTask;
+import mara.mybox.fxml.image.FxColorTools;
 import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileDeleteTools;
@@ -405,7 +405,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
     }
 
     public String encodeCSV(FxTask task, String delimiterName,
-            boolean displayRowNames, boolean displayColNames) {
+            boolean displayRowNames, boolean displayColNames, boolean formatData) {
         if (!isValidDefinition()) {
             return "";
         }
@@ -424,7 +424,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
                 cols.addAll(columnNames());
             }
             tmpFile = DataFileCSV.csvFile(task, tmpFile, delimiterValue(delimiterName),
-                    cols, tableRows(displayRowNames));
+                    cols, pageRows(displayRowNames, formatData));
             if (tmpFile == null || !tmpFile.exists()) {
                 return "";
             }

@@ -13,7 +13,6 @@ import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColorData;
 import mara.mybox.db.data.ColorPaletteName;
 import mara.mybox.db.data.ConvolutionKernel;
-import mara.mybox.data.GeographyCodeLevel;
 import mara.mybox.db.data.ImageClipboard;
 import mara.mybox.db.data.ImageEditHistory;
 import mara.mybox.db.data.WebHistory;

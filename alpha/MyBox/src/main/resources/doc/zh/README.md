@@ -17,7 +17,7 @@
 * 解决问题：                                     
      - 对数据库表的所有数据执行“赋值”可能会写错数据。                                 
      - 文件另存时选择的目录失效。                                 
-     - 从6.8升级到6.8.1或6.8.2后数据列类型错位导致数据加载异常。                                 
+     - 从低版本升级到6.8.1或6.8.2后，[“数据处理”不能正确加载已存在的数据](https://github.com/Mararsh/MyBox/issues/1979) 。                                 
                                                                                                            
                                                                                                                       
 [此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.8.3)                         

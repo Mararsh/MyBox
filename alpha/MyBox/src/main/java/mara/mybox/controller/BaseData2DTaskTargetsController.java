@@ -255,7 +255,7 @@ public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskCont
             tableData.addAll(dataController.tableData);
             if (targetController.replaceRadio.isSelected()) {
                 for (int r = row; r < Math.min(row + outputData.size(), rowsNumber); r++) {
-                    List<String> tableRow = dataController.tableData.get(r);
+                    List<String> tableRow = dataController.data2D.pageRow(r, true);
                     List<String> dataRow = outputData.get(r - row);
                     for (int c = col; c < Math.min(col + dataRow.size(), colsNumber); c++) {
                         tableRow.set(c + 1, dataRow.get(c - col));
@@ -275,8 +275,8 @@ public abstract class BaseData2DTaskTargetsController extends BaseData2DTaskCont
                 int index = targetController.insertRadio.isSelected() ? row : row + 1;
                 tableData.addAll(index, newRows);
             }
-            dataController.updateTable(tableData);
             dataController.isSettingValues = false;
+            dataController.updateTable(tableData);
             dataController.tableChanged(true);
             dataController.requestMouse();
             dataController.popDone();

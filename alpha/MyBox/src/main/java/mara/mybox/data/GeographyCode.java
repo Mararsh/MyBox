@@ -14,25 +14,32 @@ public class GeographyCode implements Cloneable {
 
     protected double area;
     protected long population;
-    protected short level;
-    protected GeographyCodeLevel levelCode;
+    protected AddressLevel level;
     protected String name, fullName, chineseName, englishName, levelName,
             code1, code2, code3, code4, code5, alias1, alias2, alias3, alias4, alias5,
             continent, country, province, city, county, town, village,
             building, poi, label, info, description;
     protected double longitude, latitude, altitude, precision;
-    protected GeoCoordinateSystem coordinateSystem;
+    protected CoordinateSystem coordinateSystem;
     protected int markSize;
 
+    public static CoordinateSystem defaultCoordinateSystem = CoordinateSystem.CGCS2000;
+    public static AddressLevel defaultAddressLevel = AddressLevel.PointOfInterest;
+
     public static enum AddressLevel {
-        Global, Continent, Country, Province, City, County, Town, Village, Building, InterestOfLocation
+        Global, Continent, Country, Province, City, County,
+        Town, Village, Building, PointOfInterest
+    }
+
+    public static enum CoordinateSystem {
+        CGCS2000, GCJ_02, WGS_84, BD_09, Mapbar
     }
 
     public GeographyCode() {
         area = -1;
         population = -1;
-        level = 10;
-        levelCode = null;
+        level = defaultAddressLevel;
+        coordinateSystem = defaultCoordinateSystem;
         longitude = latitude = -200;
         altitude = precision = AppValues.InvalidDouble;
         markSize = -1;
@@ -42,12 +49,8 @@ public class GeographyCode implements Cloneable {
     public Object clone() throws CloneNotSupportedException {
         try {
             GeographyCode newCode = (GeographyCode) super.clone();
-            if (levelCode != null) {
-                newCode.setLevelCode((GeographyCodeLevel) levelCode.clone());
-            }
-            if (coordinateSystem != null) {
-                newCode.setCoordinateSystem((GeoCoordinateSystem) coordinateSystem.clone());
-            }
+            newCode.setLevel(level);
+            newCode.setCoordinateSystem(coordinateSystem);
             return newCode;
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -65,35 +68,14 @@ public class GeographyCode implements Cloneable {
             name = englishName != null ? englishName : chineseName;
         }
         if (name == null) {
-            switch (level) {
-                case 1:
-                    return message("Earth");
-                case 2:
-                    return continent;
-                case 3:
-                    return country;
-                case 4:
-                    return province;
-                case 5:
-                    return city;
-                case 6:
-                    return county;
-                case 7:
-                    return town;
-                case 8:
-                    return village;
-                case 9:
-                    return building;
-                case 10:
-                    return poi;
-            }
+            return message(level.name());
         }
         return name;
     }
 
     public String getFullName() {
         getName();
-        if (levelCode == null || getLevel() <= 3) {
+        if (level == null || level.ordinal() <= 3) {
             fullName = name;
         } else {
             if (Languages.isChinese()) {
@@ -155,33 +137,21 @@ public class GeographyCode implements Cloneable {
         return fullName;
     }
 
-    public GeographyCodeLevel getLevelCode() {
-        if (levelCode == null) {
-            levelCode = new GeographyCodeLevel(level);
-        }
-        return levelCode;
-    }
-
-    public short getLevel() {
-        if (levelCode != null) {
-            level = levelCode.getLevel();
-        }
-        if (level > 10 || level < 1) {
-            level = 10;
+    public AddressLevel getLevel() {
+        if (level == null) {
+            level = defaultAddressLevel;
         }
         return level;
     }
 
     public String getLevelName() {
-        if (getLevelCode() != null) {
-            levelName = levelCode.getName();
-        }
+        levelName = message(getLevel().name());
         return levelName;
     }
 
-    public GeoCoordinateSystem getCoordinateSystem() {
+    public CoordinateSystem getCoordinateSystem() {
         if (coordinateSystem == null) {
-            coordinateSystem = GeoCoordinateSystem.defaultCode();
+            coordinateSystem = defaultCoordinateSystem;
         }
         return coordinateSystem;
     }
@@ -387,8 +357,8 @@ public class GeographyCode implements Cloneable {
         this.continent = continent;
     }
 
-    public void setLevelCode(GeographyCodeLevel levelCode) {
-        this.levelCode = levelCode;
+    public void setLevel(AddressLevel level) {
+        this.level = level;
     }
 
     public double getArea() {
@@ -411,10 +381,6 @@ public class GeographyCode implements Cloneable {
         this.levelName = levelName;
     }
 
-    public void setLevel(short level) {
-        this.level = level;
-    }
-
     public double getAltitude() {
         return altitude;
     }
@@ -432,7 +398,7 @@ public class GeographyCode implements Cloneable {
         this.precision = precision;
     }
 
-    public GeographyCode setCoordinateSystem(GeoCoordinateSystem coordinateSystem) {
+    public GeographyCode setCoordinateSystem(CoordinateSystem coordinateSystem) {
         this.coordinateSystem = coordinateSystem;
         return this;
     }

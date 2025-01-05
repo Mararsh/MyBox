@@ -26,7 +26,7 @@ public abstract class Data2DReader {
     protected Data2D sourceData;
     protected File sourceFile;
     protected Data2DOperate operate;
-    protected long sourceIndex; // 1-based 
+    protected long sourceIndex; // 1-based
     protected long pageStartIndex, pageEndIndex; //  0-based
     protected List<String> sourceRow, names;
     protected List<List<String>> rows = new ArrayList<>();
@@ -93,7 +93,7 @@ public abstract class Data2DReader {
                 if (isStopped()) {
                     return;
                 }
-                sourceRow = sourceData.tableRow(r);
+                sourceRow = sourceData.dataRow(r);
                 if (sourceRow == null || sourceRow.isEmpty()) {
                     continue;
                 }

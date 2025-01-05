@@ -1,9 +1,7 @@
 package mara.mybox.db.table;
 
 import java.sql.Connection;
-import mara.mybox.data.GeoCoordinateSystem;
 import mara.mybox.data.GeographyCode;
-import mara.mybox.data.GeographyCodeLevel;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.DataNode;
@@ -36,9 +34,9 @@ public class TableNodeGeographyCode extends BaseNodeTable {
         addColumn(new ColumnDefinition("chinese_name", ColumnType.String));
         addColumn(new ColumnDefinition("english_name", ColumnType.String));
         addColumn(new ColumnDefinition("level", ColumnType.EnumeratedShort)
-                .setFormat(GeographyCodeLevel.messageNames()));
+                .setFormat(GeographyCodeTools.addressLevelMessageNames()));
         addColumn(new ColumnDefinition("coordinate_system", ColumnType.EnumeratedShort)
-                .setFormat(GeoCoordinateSystem.messageNames()));
+                .setFormat(GeographyCodeTools.coordinateSystemMessageNames()));
         addColumn(new ColumnDefinition("longitude", ColumnType.Longitude));
         addColumn(new ColumnDefinition("latitude", ColumnType.Latitude));
         addColumn(new ColumnDefinition("altitude", ColumnType.Double));
@@ -168,10 +166,6 @@ public class TableNodeGeographyCode extends BaseNodeTable {
             return null;
         }
         switch (column.getColumnName().toLowerCase()) {
-            case "level":
-                return GeographyCodeLevel.name((short) v);
-            case "coordinate_system":
-                return GeoCoordinateSystem.messageName((short) v);
             case "area":
                 double area = (double) v;
                 if (area <= 0 || DoubleTools.invalidDouble(area)) {
@@ -189,11 +183,11 @@ public class TableNodeGeographyCode extends BaseNodeTable {
             case "image":
                 return null;
         }
-        return column.displayValue(v);
+        return column.formatValue(v);
     }
 
     @Override
-    public String exportValue(ColumnDefinition column, Object v) {
+    public String exportValue(ColumnDefinition column, Object v, boolean format) {
         return displayValue(column, v);
     }
 
@@ -203,10 +197,6 @@ public class TableNodeGeographyCode extends BaseNodeTable {
             return null;
         }
         switch (column.getColumnName().toLowerCase()) {
-            case "level":
-                return GeographyCodeLevel.level(v);
-            case "coordinate_system":
-                return GeoCoordinateSystem.value(v);
             case "area":
                 return area(v);
             case "population":

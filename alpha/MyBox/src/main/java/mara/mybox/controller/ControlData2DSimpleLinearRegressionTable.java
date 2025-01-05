@@ -116,7 +116,7 @@ public class ControlData2DSimpleLinearRegressionTable extends ControlData2DView 
             return;
         }
         Data2DManufactureController.openData(data2D.getName(),
-                data2D.getColumns(), data2D.tableRows());
+                data2D.getColumns(), data2D.pageData());
     }
 
     @FXML

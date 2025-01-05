@@ -14,8 +14,8 @@ import mara.mybox.value.AppValues;
  */
 public class ShortTools {
 
-    public static boolean invalidShort(short value) {
-        return value == AppValues.InvalidShort;
+    public static boolean invalidShort(Short value) {
+        return value == null || value == AppValues.InvalidShort;
     }
 
     // invalid values are always in the end

@@ -232,10 +232,6 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
         return pageData;
     }
 
-    public void setPageData(ObservableList<List<String>> pageData) {
-        this.pageData = pageData;
-    }
-
     public List<Data2DColumn> getSavedColumns() {
         return savedColumns;
     }

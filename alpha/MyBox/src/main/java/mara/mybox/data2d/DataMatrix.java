@@ -117,7 +117,7 @@ public class DataMatrix extends Data2D {
 
     @Override
     public long savePageData(FxTask task) {
-        rowsNumber = save(null, this, columns, tableRows());
+        rowsNumber = save(null, this, columns, pageData());
         return rowsNumber;
     }
 
@@ -149,7 +149,7 @@ public class DataMatrix extends Data2D {
         }
         double[][] data = new double[(int) rowsNumber][(int) colsNumber];
         for (int r = 0; r < rowsNumber; r++) {
-            List<String> row = tableRow(r);
+            List<String> row = dataRow(r);
             for (int c = 0; c < row.size(); c++) {
                 data[r][c] = toDouble(row.get(c));
             }

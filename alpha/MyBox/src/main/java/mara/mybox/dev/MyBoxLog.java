@@ -153,7 +153,7 @@ public class MyBoxLog extends BaseData {
         if ("log_type".equals(column.getColumnName())) {
             return Languages.message(data.getLogType().name());
         }
-        return column.displayValue(value);
+        return column.formatValue(value);
     }
 
     public static short logType(LogType logType) {

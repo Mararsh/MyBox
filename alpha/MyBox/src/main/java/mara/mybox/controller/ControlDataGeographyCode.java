@@ -12,13 +12,15 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
-import mara.mybox.data.GeoCoordinateSystem;
 import mara.mybox.data.GeographyCode;
+import mara.mybox.data.GeographyCode.CoordinateSystem;
 import mara.mybox.db.data.DataNode;
 import mara.mybox.db.table.TableNodeGeographyCode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.DoubleTools;
+import static mara.mybox.tools.GeographyCodeTools.coordinateSystemByName;
+import static mara.mybox.tools.GeographyCodeTools.coordinateSystemName;
 import mara.mybox.tools.LongTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -101,7 +103,7 @@ public class ControlDataGeographyCode extends BaseDataValuesController {
 
             manageWrapped(wrapCheck, descArea);
 
-            for (GeoCoordinateSystem.Value item : GeoCoordinateSystem.Value.values()) {
+            for (CoordinateSystem item : CoordinateSystem.values()) {
                 coordinateSystemSelector.getItems().add(message(item.name()));
             }
             coordinateSystemSelector.getSelectionModel().select(
@@ -214,7 +216,7 @@ public class ControlDataGeographyCode extends BaseDataValuesController {
             }
 
             coordinateSystemSelector.getSelectionModel()
-                    .select(GeoCoordinateSystem.messageName(node.getShortValue("coordinate_system")));
+                    .select(coordinateSystemName(node.getShortValue("coordinate_system")));
             chineseInput.setText(node.getStringValue("chinese_name"));
             englishInput.setText(node.getStringValue("english_name"));
             continentInput.setText(node.getStringValue("continent"));
@@ -319,9 +321,8 @@ public class ControlDataGeographyCode extends BaseDataValuesController {
             }
             node.setValue("level", level);
 
-            GeoCoordinateSystem cs
-                    = new GeoCoordinateSystem(coordinateSystemSelector.getValue());
-            node.setValue("coordinate_system", cs.shortValue());
+            CoordinateSystem cs = coordinateSystemByName(coordinateSystemSelector.getValue());
+            node.setValue("coordinate_system", (short) cs.ordinal());
 
             String s = code1Input.getText();
             node.setValue("code1", s != null ? s.trim() : null);

@@ -16,8 +16,9 @@ import mara.mybox.value.AppValues;
  */
 public class FloatTools {
 
-    public static boolean invalidFloat(float value) {
-        return Float.isNaN(value)
+    public static boolean invalidFloat(Float value) {
+        return value == null
+                || Float.isNaN(value)
                 || Float.isInfinite(value)
                 || value == AppValues.InvalidFloat;
     }

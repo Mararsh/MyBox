@@ -16,8 +16,8 @@ import mara.mybox.value.AppValues;
  */
 public class IntTools {
 
-    public static boolean invalidInt(int value) {
-        return value == AppValues.InvalidInteger;
+    public static boolean invalidInt(Integer value) {
+        return value == null || value == AppValues.InvalidInteger;
     }
 
     public static int compare(String s1, String s2, boolean desc) {

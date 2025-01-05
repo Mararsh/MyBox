@@ -1,4 +1,4 @@
-package mara.mybox.data;
+package mara.mybox.db.migration;
 
 import static mara.mybox.value.Languages.message;
 

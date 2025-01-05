@@ -15,8 +15,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
-import mara.mybox.data.GeoCoordinateSystem;
 import mara.mybox.data.GeographyCode;
+import mara.mybox.data.GeographyCode.CoordinateSystem;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
@@ -364,7 +364,7 @@ public class ConvertCoordinateController extends BaseController {
                 wgs84 = CoordinateConverter.GCJ02ToWGS84(gcj02[0], gcj02[1]);
             } else if (mapbarRadio.isSelected()) {
                 mapbar = inputted;
-                gcj02 = toGCJ02ByWebService(GeoCoordinateSystem.Mapbar(), mapbar[0], mapbar[1]);
+                gcj02 = toGCJ02ByWebService(CoordinateSystem.Mapbar, mapbar[0], mapbar[1]);
                 wgs84 = CoordinateConverter.GCJ02ToWGS84(gcj02[0], gcj02[1]);
                 db09 = CoordinateConverter.GCJ02ToBD09(gcj02[0], gcj02[1]);
             } else if (wgs84Radio.isSelected()) {

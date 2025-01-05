@@ -57,7 +57,6 @@ public class BaseData2DLoadController extends BaseData2DTableController {
         if (!isValidData() || tableData == null) {
             return false;
         }
-        data2D.setPageData(tableData);
         return true;
     }
 
@@ -302,10 +301,9 @@ public class BaseData2DLoadController extends BaseData2DTableController {
         try {
             isSettingValues = true;
             tableData.setAll(data);
-            isSettingValues = false;
-
             data2D.setPageData(tableData);
-
+            isSettingValues = false;
+            tableView.refresh();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -879,8 +877,8 @@ public class BaseData2DLoadController extends BaseData2DTableController {
         try {
             StringTable stringTable = new StringTable(Data2DVerify.columnNames(), data2D.displayName());
             for (int r = 0; r < tableData.size(); r++) {
-                List<String> row = tableData.get(r);
-                List<List<String>> invalids = Data2DVerify.verify(data2D, r, row.subList(1, row.size()));
+                List<String> row = data2D.dataRow(r);
+                List<List<String>> invalids = Data2DVerify.verify(data2D, r, row);
                 if (invalids != null) {
                     for (List<String> invalid : invalids) {
                         stringTable.add(invalid);

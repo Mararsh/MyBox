@@ -14,15 +14,16 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.FlowPane;
-import mara.mybox.data.GeoCoordinateSystem;
 import mara.mybox.data.GeographyCode;
-import mara.mybox.tools.GeographyCodeTools;
+import mara.mybox.data.GeographyCode.CoordinateSystem;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.tools.GeographyCodeTools;
+import static mara.mybox.tools.GeographyCodeTools.coordinateSystemByName;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
@@ -67,7 +68,7 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
             mapController.initMap();
 
             csGroup = new ToggleGroup();
-            for (GeoCoordinateSystem.Value item : GeoCoordinateSystem.Value.values()) {
+            for (CoordinateSystem item : CoordinateSystem.values()) {
                 RadioButton rb = new RadioButton(message(item.name()));
                 csPane.getChildren().add(rb);
                 csGroup.getToggles().add(rb);
@@ -314,8 +315,8 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
                 return false;
             }
             dataPoints = new ArrayList<>();
-            GeoCoordinateSystem cs
-                    = new GeoCoordinateSystem(((RadioButton) csGroup.getSelectedToggle()).getText());
+            CoordinateSystem cs = coordinateSystemByName(
+                    ((RadioButton) csGroup.getSelectedToggle()).getText());
             GeographyCode code;
             int longIndex = csvData.colOrder(longCol);
             int laIndex = csvData.colOrder(laCol);

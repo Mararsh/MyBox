@@ -127,8 +127,8 @@ public class Data2DManufactureController extends BaseData2DViewController {
                 if (ok && rows != null) {
                     isSettingValues = true;
                     tableData.setAll(rows);
-                    isSettingValues = false;
                     data2D.setPageData(tableData);
+                    isSettingValues = false;
                     switchFormat();
                 } else {
                     isSettingValues = true;
@@ -229,7 +229,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
 
             @Override
             protected boolean handle() {
-                text = data2D.encodeCSV(this, delimiterName, false, false);
+                text = data2D.encodeCSV(this, delimiterName, false, false, false);
                 return text != null;
             }
 

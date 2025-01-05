@@ -18,8 +18,9 @@ public class DoubleTools {
 
     public static NumberFormat numberFormat;
 
-    public static boolean invalidDouble(double value) {
-        return Double.isNaN(value)
+    public static boolean invalidDouble(Double value) {
+        return value == null
+                || Double.isNaN(value)
                 || Double.isInfinite(value)
                 || value == AppValues.InvalidDouble;
     }

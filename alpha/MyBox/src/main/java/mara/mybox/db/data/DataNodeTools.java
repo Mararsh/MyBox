@@ -8,8 +8,8 @@ import mara.mybox.controller.BaseController;
 import static mara.mybox.db.data.DataNode.TagsSeparater;
 import mara.mybox.db.table.BaseNodeTable;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.image.FxColorTools;
 import mara.mybox.fxml.FxTask;
+import mara.mybox.fxml.image.FxColorTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.JsonTools;
 import static mara.mybox.value.AppValues.Indent;
@@ -158,7 +158,8 @@ public class DataNodeTools {
             BaseController controller, BaseNodeTable dataTable,
             String prefix, String parentName, String hierarchyNumber,
             DataNode node, List<DataNodeTag> tags,
-            boolean withId, boolean withTime, boolean withOrder, boolean withData) {
+            boolean withId, boolean withTime, boolean withOrder,
+            boolean withData, boolean formatData) {
         try {
             StringBuilder s = new StringBuilder();
             String prefix2 = prefix + Indent;
@@ -194,7 +195,7 @@ public class DataNodeTools {
                         .append("</update_time>\n");
             }
             if (withData) {
-                String valuesXml = dataTable.valuesXml(prefix2, node);
+                String valuesXml = dataTable.valuesXml(prefix2, node, formatData);
                 if (valuesXml != null && !valuesXml.isBlank()) {
                     s.append(valuesXml);
                 }
@@ -222,7 +223,8 @@ public class DataNodeTools {
             BaseController controller, BaseNodeTable dataTable,
             String prefix, String parentName, String hierarchyNumber,
             DataNode node, List<DataNodeTag> tags,
-            boolean withId, boolean withTime, boolean withOrder, boolean withData) {
+            boolean withId, boolean withTime, boolean withOrder,
+            boolean withData, boolean formatData) {
         try {
             StringBuilder s = new StringBuilder();
             if (withId) {
@@ -291,7 +293,7 @@ public class DataNodeTools {
                         .append("[").append(t).append("]");
             }
             if (withData) {
-                String valuesJson = dataTable.valuesJson(prefix, node);
+                String valuesJson = dataTable.valuesJson(prefix, node, formatData);
                 if (valuesJson != null && !valuesJson.isBlank()) {
                     s.append(",\n").append(valuesJson);
                 }
@@ -311,7 +313,8 @@ public class DataNodeTools {
             BaseController controller, BaseNodeTable dataTable,
             String parentName, String hierarchyNumber,
             DataNode node, List<DataNodeTag> tags,
-            boolean withId, boolean withTime, boolean withOrder, boolean withData) {
+            boolean withId, boolean withTime, boolean withOrder,
+            boolean withData, boolean formatData) {
         try {
             List<String> row = new ArrayList<>();
             if (withId) {
@@ -347,8 +350,9 @@ public class DataNodeTools {
             if (withData) {
                 for (String name : dataTable.dataColumnNames()) {
                     Object value = node.getValue(name);
-                    String v = dataTable.column(name).toString(value);
-                    row.add(v);
+                    ColumnDefinition column = dataTable.column(name);
+                    String sValue = dataTable.exportValue(column, value, formatData);
+                    row.add(sValue);
                 }
             }
             return row;

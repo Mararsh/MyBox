@@ -139,7 +139,7 @@ public class DataMigrationFrom68 {
                                 .setNodeid(-1).setParentid(RootID)
                                 .setOrderNumber(++orderNum)
                                 .setTitle(name);
-                        node.setValue("level", result.getShort("level"));
+                        node.setValue("level", result.getShort("level") - 1);
                         node.setValue("coordinate_system", result.getShort("coordinate_system"));
                         node.setValue("longitude", result.getDouble("longitude"));
                         node.setValue("latitude", result.getDouble("latitude"));

@@ -1200,14 +1200,14 @@ public abstract class BaseTable<D> {
         if (column == null || v == null) {
             return null;
         }
-        return column.displayValue(v);
+        return column.formatValue(v);
     }
 
-    public String exportValue(ColumnDefinition column, Object v) {
+    public String exportValue(ColumnDefinition column, Object v, boolean format) {
         if (column == null || v == null) {
             return null;
         }
-        return column.exportValue(v);
+        return column.exportValue(v, format);
     }
 
     public Object importValue(ColumnDefinition column, String v) {

@@ -14,8 +14,8 @@ import mara.mybox.value.AppValues;
  */
 public class LongTools {
 
-    public static boolean invalidLong(long value) {
-        return value == AppValues.InvalidLong;
+    public static boolean invalidLong(Long value) {
+        return value == null || value == AppValues.InvalidLong;
     }
 
     public static int compare(String s1, String s2, boolean desc) {

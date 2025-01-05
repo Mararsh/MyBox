@@ -1,4 +1,4 @@
-package mara.mybox.data;
+package mara.mybox.db.migration;
 
 import java.util.ArrayList;
 import java.util.List;
