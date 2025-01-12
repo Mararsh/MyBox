@@ -24,14 +24,14 @@ import mara.mybox.db.data.ColorDataTools;
 import mara.mybox.db.data.DataNode;
 import mara.mybox.db.table.BaseNodeTable;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.image.FxColorTools;
-import mara.mybox.fxml.image.PaletteTools;
 import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.FxTask;
 import mara.mybox.fxml.HelpTools;
 import static mara.mybox.fxml.HelpTools.imageStories;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.image.FxColorTools;
+import mara.mybox.fxml.image.PaletteTools;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleData;
@@ -345,6 +345,8 @@ public class MyBoxDocumentsController extends BaseTaskController {
             cases.add(new TreeCase("RowExpression", "en"));
             cases.add(new TreeCase("DataColumn", "zh"));
             cases.add(new TreeCase("DataColumn", "en"));
+            cases.add(new TreeCase("GeographyCode", "zh"));
+            cases.add(new TreeCase("GeographyCode", "en"));
 
             index = 0;
             finishNotify.addListener(new ChangeListener<Boolean>() {
@@ -378,8 +380,13 @@ public class MyBoxDocumentsController extends BaseTaskController {
             CurrentBundle = "zh".equals(lang) ? Languages.BundleZhCN : Languages.BundleEn;
             BaseNodeTable nodeTable = BaseNodeTable.create(tableName);
             nodeTable.truncate();
-            DataTreeController treeController = (DataTreeController) WindowTools.openStage(Fxmls.DataTreeFxml);
-            treeController.initDataTree(nodeTable);
+            DataTreeController treeController;
+            if (tableName.equals("GeographyCode")) {
+                treeController = (DataTreeController) WindowTools.openStage(Fxmls.DataTreeFxml);
+                treeController.initDataTree(nodeTable);
+            } else {
+                treeController = (GeographyCodeController) WindowTools.openStage(Fxmls.GeographyCodeFxml);
+            }
             DataNode rootNode = nodeTable.getRoot();
             if (rootNode == null) {
                 return false;

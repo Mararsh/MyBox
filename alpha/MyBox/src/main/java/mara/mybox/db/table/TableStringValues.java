@@ -227,12 +227,11 @@ public class TableStringValues extends BaseTable<StringValues> {
                 || value == null || value.isBlank()) {
             return false;
         }
-
-        try (Statement statement = conn.createStatement()) {
+        try {
             boolean existed = false;
             String sql = " SELECT * FROM String_Values WHERE "
                     + "key_name='" + stringValue(name) + "' AND string_value='" + stringValue(value) + "'";
-            try (ResultSet results = statement.executeQuery(sql)) {
+            try (ResultSet results = conn.createStatement().executeQuery(sql)) {
                 if (results.next()) {
                     existed = true;
                 }
@@ -246,7 +245,7 @@ public class TableStringValues extends BaseTable<StringValues> {
                         + stringValue(name) + "', '" + stringValue(value) + "', '"
                         + DateTools.datetimeToString(new Date()) + "')";
             }
-            statement.executeUpdate(sql);
+            conn.createStatement().executeUpdate(sql);
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);

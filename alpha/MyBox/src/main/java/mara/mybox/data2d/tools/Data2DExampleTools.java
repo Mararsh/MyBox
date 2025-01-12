@@ -164,8 +164,6 @@ public class Data2DExampleTools {
 
     public static Menu statisticDataOfChina(String lang, BaseData2DLoadController controller) {
         try {
-            boolean isChinese = Languages.isChinese(lang);
-
             // https://data.stats.gov.cn/index.htm
             Menu chinaMenu = new Menu(message(lang, "StatisticDataOfChina"), StyleTools.getIconImageView("iconChina.png"));
 
@@ -295,8 +293,6 @@ public class Data2DExampleTools {
 
     public static Menu regression(String lang, BaseData2DLoadController controller) {
         try {
-            boolean isChinese = Languages.isChinese(lang);
-
             Menu regressionMenu = new Menu(message(lang, "RegressionData"),
                     StyleTools.getIconImageView("iconLinearPgression.png"));
 
@@ -417,7 +413,6 @@ public class Data2DExampleTools {
 
     public static Menu location(String lang, BaseData2DLoadController controller) {
         try {
-            boolean isChinese = Languages.isChinese(lang);
 
             Menu locationMenu = new Menu(message(lang, "LocationData"),
                     StyleTools.getIconImageView("iconLocation.png"));
@@ -467,7 +462,6 @@ public class Data2DExampleTools {
 
     public static Menu projectManagement(String lang, BaseData2DLoadController controller) {
         try {
-            boolean isChinese = Languages.isChinese(lang);
 
             Menu pmMenu = new Menu(message(lang, "ProjectManagement"),
                     StyleTools.getIconImageView("iconCalculator.png"));
@@ -580,7 +574,6 @@ public class Data2DExampleTools {
 
     public static Menu SoftwareTesting(String lang, BaseData2DLoadController controller) {
         try {
-            boolean isChinese = Languages.isChinese(lang);
 
             Menu stMenu = new Menu(message(lang, "SoftwareTesting"), StyleTools.getIconImageView("iconVerify.png"));
 
