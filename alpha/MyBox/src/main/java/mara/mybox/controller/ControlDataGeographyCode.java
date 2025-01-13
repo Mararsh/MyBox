@@ -175,34 +175,34 @@ public class ControlDataGeographyCode extends BaseDataValuesController {
             }
             isSettingValues = true;
             switch (node.getShortValue("level")) {
-                case 1:
+                case 0:
                     globalRadio.setSelected(true);
                     break;
-                case 2:
+                case 1:
                     continentRadio.setSelected(true);
                     break;
-                case 3:
+                case 2:
                     countryRadio.setSelected(true);
                     break;
-                case 4:
+                case 3:
                     provinceRadio.setSelected(true);
                     break;
-                case 5:
+                case 4:
                     cityRadio.setSelected(true);
                     break;
-                case 6:
+                case 5:
                     countyRadio.setSelected(true);
                     break;
-                case 7:
+                case 6:
                     townRadio.setSelected(true);
                     break;
-                case 8:
+                case 7:
                     villageRadio.setSelected(true);
                     break;
-                case 9:
+                case 8:
                     buildingRadio.setSelected(true);
                     break;
-                case 10:
+                case 9:
                 default:
                     pointOfInterestRadio.setSelected(true);
             }
@@ -299,25 +299,25 @@ public class ControlDataGeographyCode extends BaseDataValuesController {
 
             short level;
             if (globalRadio.isSelected()) {
-                level = 1;
+                level = 0;
             } else if (continentRadio.isSelected()) {
-                level = 2;
+                level = 1;
             } else if (countryRadio.isSelected()) {
-                level = 3;
+                level = 2;
             } else if (provinceRadio.isSelected()) {
-                level = 4;
+                level = 3;
             } else if (cityRadio.isSelected()) {
-                level = 5;
+                level = 4;
             } else if (countyRadio.isSelected()) {
-                level = 6;
+                level = 5;
             } else if (townRadio.isSelected()) {
-                level = 7;
+                level = 6;
             } else if (villageRadio.isSelected()) {
-                level = 8;
+                level = 7;
             } else if (buildingRadio.isSelected()) {
-                level = 9;
+                level = 8;
             } else {
-                level = 10;
+                level = 9;
             }
             node.setValue("level", level);
 

@@ -108,6 +108,7 @@ public class WebAddressController extends BaseWebViewController {
                     conn.setAutoCommit(false);
 
                     TableStringValues.add(conn, "WebAddressHistories", address);
+                    conn.commit();
 
                     WebHistory his = new WebHistory();
                     his.setAddress(address);

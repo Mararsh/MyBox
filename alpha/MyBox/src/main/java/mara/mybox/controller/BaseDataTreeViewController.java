@@ -653,7 +653,7 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
     }
 
     public void unfoldAncestors(DataNode node) {
-        if (node == null || node.isRoot()) {
+        if (node == null) {
             return;
         }
         if (task != null) {
@@ -673,18 +673,27 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
                 try (Connection conn = DerbyBase.getConnection()) {
                     conn.setAutoCommit(true);
                     List<DataNode> ancestors = nodeTable.ancestors(conn, node.getNodeid());
-                    if (ancestors == null || ancestors.isEmpty()) {
-                        return false;
-                    }
                     item = rootItem;
-                    for (DataNode ancestor : ancestors) {
-                        item = findChild(item, ancestor);
-                        if (item == null) {
-                            return false;
+                    if (ancestors != null) {
+                        for (DataNode ancestor : ancestors) {
+                            item = findChild(item, ancestor);
+                            if (item == null) {
+                                return false;
+                            }
+                            unfold(this, conn, item, false);
                         }
-                        unfold(this, conn, item, false);
                     }
                     item = findChild(item, node);
+                    if (item.isLeaf() && nodeTable.hasChildren(conn, node.getNodeid())) {
+                        item.expandedProperty().addListener(
+                                (ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) -> {
+                                    if (newVal && !item.isLeaf() && !isLoaded(item)) {
+                                        unfold(item, false);
+                                    }
+                                });
+                        TreeItem<DataNode> dummyItem = new TreeItem(new DataNode());
+                        item.getChildren().add(dummyItem);
+                    }
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
