@@ -43,7 +43,6 @@ import mara.mybox.value.UserConfig;
 public abstract class BaseTreeTableViewController<NodeP> extends BaseController {
 
     protected final SimpleBooleanProperty loadedNotify;
-    protected NodeP focusNode;
     protected List<TreeItem<NodeP>> selectedItems;
 
     @FXML
@@ -191,11 +190,7 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
         treeView.refresh();
         if (root != null) {
             root.setExpanded(true);
-            if (focusNode != null) {
-                focusNode(focusNode);
-            }
         }
-        focusNode = null;
         loadedNotify.set(!loadedNotify.get());
     }
 
@@ -245,7 +240,6 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
                 focusItem(item);
             }
         }
-        focusNode = null;
         return found;
     }
 

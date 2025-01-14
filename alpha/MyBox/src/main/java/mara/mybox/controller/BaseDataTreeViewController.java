@@ -184,7 +184,7 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
         clearTree();
         task = new FxSingletonTask<Void>(this) {
 
-            private TreeItem<DataNode> rootItem;
+            private TreeItem<DataNode> rootItem, selectItem;
             private int size;
 
             @Override
@@ -206,6 +206,9 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
                         conn.setAutoCommit(true);
                         unfold(this, conn, rootItem, size < AutoExpandThreshold);
                     }
+                    if (selectNode != null) {
+                        selectItem = unfoldAncestors(this, conn, rootItem, selectNode);
+                    }
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -215,8 +218,10 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
 
             @Override
             protected void whenSucceeded() {
-                focusNode = selectNode;
                 setRoot(rootItem);
+                if (selectItem != null) {
+                    focusItem(selectItem);
+                }
                 if (size <= 1) {
                     whenTreeEmpty();
                 }
@@ -435,7 +440,7 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
             @Override
             protected void whenSucceeded() {
                 viewController.loadContents(html);
-                currentNode = node;
+                currentNode = savedNode;
                 if (editButton != null) {
                     editButton.setVisible(true);
                 }
@@ -671,34 +676,13 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
             @Override
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
-                    conn.setAutoCommit(true);
-                    List<DataNode> ancestors = nodeTable.ancestors(conn, node.getNodeid());
-                    item = rootItem;
-                    if (ancestors != null) {
-                        for (DataNode ancestor : ancestors) {
-                            item = findChild(item, ancestor);
-                            if (item == null) {
-                                return false;
-                            }
-                            unfold(this, conn, item, false);
-                        }
-                    }
-                    item = findChild(item, node);
-                    if (item.isLeaf() && nodeTable.hasChildren(conn, node.getNodeid())) {
-                        item.expandedProperty().addListener(
-                                (ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) -> {
-                                    if (newVal && !item.isLeaf() && !isLoaded(item)) {
-                                        unfold(item, false);
-                                    }
-                                });
-                        TreeItem<DataNode> dummyItem = new TreeItem(new DataNode());
-                        item.getChildren().add(dummyItem);
-                    }
+                    item = unfoldAncestors(this, conn, rootItem, node);
+                    return true;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
                 }
-                return item != null;
+
             }
 
             @Override
@@ -719,31 +703,82 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
         start(task, thisPane);
     }
 
+    protected TreeItem<DataNode> unfoldAncestors(FxTask ptask, Connection conn,
+            TreeItem<DataNode> rootItem, DataNode node) {
+        try {
+            if (conn == null || rootItem == null || node == null) {
+                return null;
+            }
+            TreeItem<DataNode> parent, item;
+            conn.setAutoCommit(true);
+            List<DataNode> ancestors = nodeTable.ancestors(conn, node.getNodeid());
+            parent = rootItem;
+            parent.setExpanded(true);
+            if (ancestors != null) {
+                for (DataNode ancestor : ancestors) {
+                    item = findChild(parent, ancestor);
+                    if (item == null) {
+                        item = new TreeItem(ancestor);
+                        parent.getChildren().add(item);
+                    }
+                    unfold(ptask, conn, item, false);
+                    parent = item;
+                    parent.setExpanded(true);
+                }
+            }
+            item = findChild(parent, node);
+            if (item == null) {
+                item = new TreeItem(node);
+                parent.getChildren().add(item);
+            }
+            if (item.isLeaf() && nodeTable.hasChildren(conn, node.getNodeid())) {
+                TreeItem<DataNode> unloadItem = item;
+                unloadItem.expandedProperty().addListener(
+                        (ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) -> {
+                            if (newVal && !unloadItem.isLeaf() && !isLoaded(unloadItem)) {
+                                unfold(unloadItem, false);
+                            }
+                        });
+                TreeItem<DataNode> dummyItem = new TreeItem(new DataNode());
+                unloadItem.getChildren().add(dummyItem);
+            }
+            return item;
+        } catch (Exception e) {
+            error = e.toString();
+            return null;
+        }
+    }
+
     @Override
     public boolean focusNode(DataNode node) {
         if (treeView == null || node == null) {
             return false;
         }
-        focusNode = null;
         unfoldAncestors(node);
         return treeView.getRoot() != null;
     }
 
-    public void updateNode(DataNode parent, DataNode node) {
+    public void nodeSaved(DataNode parent, DataNode node) {
         try {
             checkCurrent(node);
             TreeItem<DataNode> nodeItem = find(node);
             if (nodeItem != null) {
                 try {
-                    nodeItem.getParent().getChildren().remove(nodeItem);
+                    nodeItem.setValue(node);
+                    TreeItem<DataNode> currentParentItem = nodeItem.getParent();
+                    if (currentParentItem.getValue().equals(parent)) {
+                        node.setHierarchyNumber(nodeItem.getValue().getHierarchyNumber());
+                        return;
+                    }
+                    currentParentItem.getChildren().remove(nodeItem);
+                    TreeItem<DataNode> newParentItem = find(parent);
+                    if (newParentItem != null) {
+                        newParentItem.getChildren().add(nodeItem);
+                        reorderChildlren(newParentItem);
+                        return;
+                    }
                 } catch (Exception e) {
                 }
-            }
-            TreeItem<DataNode> parentItem = find(parent);
-            if (parentItem != null) {
-                nodeItem = new TreeItem(node);
-                parentItem.getChildren().add(nodeItem);
-                reorderChildlren(parentItem);
             }
             unfoldAncestors(node);
         } catch (Exception e) {

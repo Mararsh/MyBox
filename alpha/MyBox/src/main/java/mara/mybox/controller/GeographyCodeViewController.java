@@ -1,14 +1,12 @@
 package mara.mybox.controller;
 
 import java.sql.Connection;
+import mara.mybox.data.GeographyCode;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.DataNode;
-import mara.mybox.data.GeographyCode;
-import mara.mybox.tools.GeographyCodeTools;
-import static mara.mybox.tools.GeographyCodeTools.validCoordinate;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxSingletonTask;
-import static mara.mybox.value.Languages.message;
+import mara.mybox.tools.GeographyCodeTools;
 
 /**
  * @Author Mara
@@ -39,25 +37,22 @@ public class GeographyCodeViewController extends BaseMapController {
         }
         task = new FxSingletonTask<Void>(this) {
             GeographyCode geoCode;
+            DataNode savedNode;
 
             @Override
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
-                    DataNode savedNode = treeController.nodeTable.query(conn, node.getNodeid());
+                    savedNode = treeController.nodeTable.query(conn, node.getNodeid());
                     if (savedNode == null) {
                         return false;
                     }
                     geoCode = GeographyCodeTools.fromNode(savedNode);
-                    if (!validCoordinate(geoCode)) {
-                        error = message("Invalid");
-                        return false;
-                    }
                     if (isGaoDeMap()) {
                         geoCode = GeographyCodeTools.toGCJ02(geoCode);
                     } else {
                         geoCode = GeographyCodeTools.toCGCS2000(geoCode, false);
                     }
-                    return geoCode != null;
+                    return true;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -67,8 +62,9 @@ public class GeographyCodeViewController extends BaseMapController {
             @Override
             protected void whenSucceeded() {
                 drawCode(geoCode);
-                treeController.currentNode = node;
-                treeController.setButtonsDisable(false);
+                treeController.currentNode = savedNode;
+                treeController.infoButton.setDisable(false);
+                treeController.editButton.setDisable(false);
             }
 
             @Override

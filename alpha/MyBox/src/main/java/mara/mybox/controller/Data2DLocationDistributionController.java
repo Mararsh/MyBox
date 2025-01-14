@@ -353,7 +353,7 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
                     }
                     code.setMarkSize(markSize(v));
                 }
-                code.setLabel(row.get(labelIndex));
+                code.setTitle(row.get(labelIndex));
                 dataPoints.add(code);
             }
             outputData = null;
@@ -460,7 +460,7 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
                     if (range != null) {
                         List<String> labels = new ArrayList<>();
                         for (int i = range.getStart(); i < range.getEnd(); i++) {
-                            labels.add((i + 1) + "  " + mapController.geoCodes.get(i).getLabel());
+                            labels.add((i + 1) + "  " + mapController.geoCodes.get(i).getTitle());
                         }
                         playController.setList(labels);
                     } else {

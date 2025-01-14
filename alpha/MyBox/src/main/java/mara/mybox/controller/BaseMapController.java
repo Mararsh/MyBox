@@ -288,6 +288,7 @@ public class BaseMapController extends BaseController {
 
     public void drawCode(GeographyCode code) {
         if (code == null) {
+            clearCodes();
             return;
         }
         geoCodes = new ArrayList<>();
@@ -305,7 +306,7 @@ public class BaseMapController extends BaseController {
             if (!GeographyCodeTools.validCoordinate(lo, la)) {
                 return;
             }
-            String label = code.getLabel();
+            String label = code.getTitle();
             String pLabel = "";
             if (isMarkLabel) {
                 pLabel += label;

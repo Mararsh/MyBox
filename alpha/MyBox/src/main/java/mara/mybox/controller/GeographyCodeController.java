@@ -46,12 +46,9 @@ public class GeographyCodeController extends DataTreeController {
     @Override
     protected void nullCurrent() {
         currentNode = null;
-        setButtonsDisable(true);
-    }
-
-    protected void setButtonsDisable(boolean disable) {
-        infoButton.setDisable(disable);
-        editButton.setDisable(disable);
+        infoButton.setDisable(true);
+        editButton.setDisable(true);
+        mapController.clearMap();
     }
 
     @FXML

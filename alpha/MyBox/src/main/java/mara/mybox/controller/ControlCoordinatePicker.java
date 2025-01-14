@@ -2,9 +2,6 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -37,7 +34,6 @@ public class ControlCoordinatePicker extends BaseMapController {
 
     protected List<GeographyCode> geographyCodes;
     protected GeographyCode geographyCode;
-    protected boolean needQeury;
 
     @FXML
     protected TextField locateInput;
@@ -118,14 +114,6 @@ public class ControlCoordinatePicker extends BaseMapController {
     }
 
     @Override
-    public void mapLoaded() {
-        super.mapLoaded();
-        if (needQeury) {
-            queryAction();
-        }
-    }
-
-    @Override
     protected void mouseClick(double longitude, double latitude) {
         if (clickMapRadio.isSelected()) {
             showCoordinate(longitude, latitude);
@@ -133,18 +121,10 @@ public class ControlCoordinatePicker extends BaseMapController {
     }
 
     public void loadCoordinate(double longitude, double latitude) {
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
-                Platform.runLater(() -> {
-                    isSettingValues = true;
-                    clickMapRadio.setSelected(true);
-                    isSettingValues = false;
-                    showCoordinate(longitude, latitude);
-                });
-                Platform.requestNextPulse();
-            }
-        }, 1000);
+        isSettingValues = true;
+        clickMapRadio.setSelected(true);
+        isSettingValues = false;
+        showCoordinate(longitude, latitude);
     }
 
     public void showCoordinate(double longitude, double latitude) {
@@ -152,16 +132,25 @@ public class ControlCoordinatePicker extends BaseMapController {
             return;
         }
         locateInput.setText(longitude + "," + latitude);
-        queryAction();
+        if (mapLoaded) {
+            queryAction();
+        } else {
+            ChangeListener listener = new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                    loadNotify.removeListener(this);
+                    queryAction();
+                }
+            };
+            loadNotify.addListener(listener);
+        }
     }
 
     @FXML
     public void queryAction() {
         if (!mapLoaded) {
-            needQeury = true;
             return;
         }
-        needQeury = false;
         clearCodeAction();
         String value = locateInput.getText().trim();
         if (value.isBlank()) {
@@ -174,6 +163,24 @@ public class ControlCoordinatePicker extends BaseMapController {
 
             @Override
             protected boolean handle() {
+                try {
+                    GeographyCode code = query();
+                    if (code == null) {
+                        Thread.sleep(1000);
+                        code = query();  // try again
+                    }
+                    if (code == null) {
+                        return false;
+                    }
+                    geographyCode = code;
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            protected GeographyCode query() {
                 GeographyCode code;
                 if (!addressRadio.isSelected()) {
                     try {
@@ -183,16 +190,12 @@ public class ControlCoordinatePicker extends BaseMapController {
                         code = GeographyCodeTools.geoCode(coordinateSystem, longitude, latitude);
                     } catch (Exception e) {
                         MyBoxLog.error(e);
-                        return false;
+                        return null;
                     }
                 } else {
                     code = GeographyCodeTools.geoCode(coordinateSystem, value);
                 }
-                if (code == null) {
-                    return false;
-                }
-                geographyCode = code;
-                return geographyCode != null;
+                return code;
             }
 
             @Override

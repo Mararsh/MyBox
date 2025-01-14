@@ -687,6 +687,7 @@ public class GeographyCodeTools {
             return null;
         }
         GeographyCode code = new GeographyCode();
+        code.setTitle(node.getTitle());
         code.setLevel(addressLevelByValue(node.getShortValue("level")));
         code.setCoordinateSystem(coordinateSystemByValue(node.getShortValue("coordinate_system")));
         double d = node.getDoubleValue("longitude");
@@ -729,7 +730,7 @@ public class GeographyCodeTools {
             return null;
         }
         DataNode node = new DataNode();
-        node.setTitle(code.getName());
+        node.setTitle(code.getTitle());
         node.setValue("level", addressLevelValue(code.getLevel()));
         node.setValue("coordinate_system", coordinateSystemValue(code.getCoordinateSystem()));
         node.setValue("longitude", code.getLongitude());

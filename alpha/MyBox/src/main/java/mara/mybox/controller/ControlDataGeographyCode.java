@@ -217,8 +217,10 @@ public class ControlDataGeographyCode extends BaseDataValuesController {
 
             coordinateSystemSelector.getSelectionModel()
                     .select(coordinateSystemName(node.getShortValue("coordinate_system")));
-            chineseInput.setText(node.getStringValue("chinese_name"));
-            englishInput.setText(node.getStringValue("english_name"));
+            String cname = node.getStringValue("chinese_name");
+            chineseInput.setText(cname != null && !cname.isBlank() ? cname : nodeEditor.titleInput.getText());
+            String ename = node.getStringValue("english_name");
+            englishInput.setText(ename != null && !ename.isBlank() ? ename : nodeEditor.titleInput.getText());
             continentInput.setText(node.getStringValue("continent"));
             countryInput.setText(node.getStringValue("country"));
             provinceInput.setText(node.getStringValue("province"));
@@ -260,25 +262,25 @@ public class ControlDataGeographyCode extends BaseDataValuesController {
         try {
             String chinese_name = chineseInput.getText();
             String english_name = englishInput.getText();
-            if ((chinese_name == null || chinese_name.isBlank())
-                    && (english_name == null || english_name.isBlank())) {
-                popError(message("GeographyCodeNameNeed"));
-                return null;
-            }
+//            if ((chinese_name == null || chinese_name.isBlank())
+//                    && (english_name == null || english_name.isBlank())) {
+//                popError(message("GeographyCodeNameNeed"));
+//                return null;
+//            }
             node.setValue("chinese_name", chinese_name != null ? chinese_name.trim() : null);
             node.setValue("english_name", english_name != null ? english_name.trim() : null);
 
             double longitude = pickLongitude();
-            if (longitude > 180 || longitude < -180) {
-                popError(message("InvalidValue") + ": " + message("Longitude"));
-                return null;
-            }
+//            if (longitude > 180 || longitude < -180) {
+//                popError(message("InvalidValue") + ": " + message("Longitude"));
+//                return null;
+//            }
 
             double latitude = pickLatitude();
-            if (latitude > 90 || latitude < -90) {
-                popError(message("InvalidValue") + ": " + message("Latitude"));
-                return null;
-            }
+//            if (latitude > 90 || latitude < -90) {
+//                popError(message("InvalidValue") + ": " + message("Latitude"));
+//                return null;
+//            }
 
             double area = pickArea();
 //            if (area < 0) {
@@ -540,11 +542,7 @@ public class ControlDataGeographyCode extends BaseDataValuesController {
             return;
         }
         loadNode(geoTable.toNode(code));
-        String title = code.getName();
-        if (title == null || title.isBlank()) {
-            title = code.getLabel();
-        }
-        nodeEditor.titleInput.setText(title);
+        nodeEditor.titleInput.setText(code.getTitle());
     }
 
     /*

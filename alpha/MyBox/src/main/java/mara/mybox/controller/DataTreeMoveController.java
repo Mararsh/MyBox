@@ -71,9 +71,9 @@ public class DataTreeMoveController extends BaseDataTreeHandleController {
                     }
                     long targetid = targetNode.getNodeid();
                     for (DataNode sourceNode : sourceNodes) {
-                        sourceNode.setParentid(targetid).setUpdateTime(new Date());
-                        sourceNode = nodeTable.updateData(conn, sourceNode);
-                        if (nodeTable.updateData(conn, sourceNode) == null) {
+                        DataNode nodeValues = nodeTable.query(conn, sourceNode.getNodeid());
+                        nodeValues.setParentid(targetid).setUpdateTime(new Date());
+                        if (nodeTable.updateData(conn, nodeValues) == null) {
                             return false;
                         }
                         count++;

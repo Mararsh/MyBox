@@ -18,7 +18,7 @@ public class GeographyCode implements Cloneable {
     protected String name, fullName, chineseName, englishName, levelName,
             code1, code2, code3, code4, code5, alias1, alias2, alias3, alias4, alias5,
             continent, country, province, city, county, town, village,
-            building, poi, label, info, description;
+            building, poi, title, info, description;
     protected double longitude, latitude, altitude, precision;
     protected CoordinateSystem coordinateSystem;
     protected int markSize;
@@ -156,8 +156,8 @@ public class GeographyCode implements Cloneable {
         return coordinateSystem;
     }
 
-    public String getLabel() {
-        return label != null ? label : getName();
+    public String getTitle() {
+        return title != null ? title : getName();
     }
 
     /*
@@ -412,8 +412,8 @@ public class GeographyCode implements Cloneable {
         return this;
     }
 
-    public GeographyCode setLabel(String label) {
-        this.label = label;
+    public GeographyCode setTitle(String label) {
+        this.title = label;
         return this;
     }
 

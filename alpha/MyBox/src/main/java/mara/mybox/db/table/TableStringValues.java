@@ -227,32 +227,23 @@ public class TableStringValues extends BaseTable<StringValues> {
                 || value == null || value.isBlank()) {
             return false;
         }
-        boolean existed = false;
-        String sql = " SELECT * FROM String_Values WHERE "
-                + "key_name='" + stringValue(name) + "' AND string_value='" + stringValue(value) + "'";
-        try (ResultSet results = conn.createStatement().executeQuery(sql)) {
-            if (results.next()) {
-                existed = true;
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e + ": " + sql);
-            return false;
-        }
         try {
-            if (existed) {
-                sql = "UPDATE String_Values SET  create_time='"
-                        + DateTools.datetimeToString(new Date()) + "' WHERE "
-                        + "key_name='" + stringValue(name) + "' AND string_value='" + stringValue(value) + "'";
-            } else {
-                sql = "INSERT INTO String_Values(key_name, string_value , create_time) VALUES('"
-                        + stringValue(name) + "', '" + stringValue(value) + "', '"
-                        + DateTools.datetimeToString(new Date()) + "')";
-            }
+            String sql = "INSERT INTO String_Values (key_name, string_value , create_time) VALUES('"
+                    + stringValue(name) + "', '" + stringValue(value) + "', '"
+                    + DateTools.datetimeToString(new Date()) + "')";
             conn.createStatement().executeUpdate(sql);
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e + ": " + sql);
-            return false;
+            try {
+                String sql = "UPDATE String_Values SET  create_time='"
+                        + DateTools.datetimeToString(new Date()) + "' WHERE "
+                        + "key_name='" + stringValue(name) + "' AND string_value='" + stringValue(value) + "'";
+                conn.createStatement().executeUpdate(sql);
+                return true;
+            } catch (Exception ex) {
+                MyBoxLog.error(ex);
+                return false;
+            }
         }
     }
 

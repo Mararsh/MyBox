@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.io.File;
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -201,7 +202,14 @@ public class DataTreeController extends BaseDataTreeViewController {
 
         Menu deleteMenu = new Menu(message("Delete"));
 
-        if (!isLeaf) {
+        if (isLeaf) {
+            menu = new MenuItem(message("DeleteNode"), StyleTools.getIconImageView("iconDelete.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                deleteNodeAndDescendants(treeItem);
+            });
+            deleteMenu.getItems().add(menu);
+
+        } else {
             menu = new MenuItem(message("DeleteNodeAndDescendants"), StyleTools.getIconImageView("iconDelete.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 deleteNodeAndDescendants(treeItem);
@@ -380,14 +388,16 @@ public class DataTreeController extends BaseDataTreeViewController {
             return;
         }
         boolean isRoot = isRoot(node);
-        if (isRoot) {
-            if (!PopTools.askSure(getTitle(), message("DeleteNodeAndDescendants"), message("SureDeleteAll"))) {
-                return;
-            }
-        } else {
-            String chainName = chainName(item);
-            if (!PopTools.askSure(getTitle(), chainName, message("DeleteNodeAndDescendants"))) {
-                return;
+        if (!item.isLeaf()) {
+            if (isRoot) {
+                if (!PopTools.askSure(getTitle(), message("DeleteNodeAndDescendants"), message("SureDeleteAll"))) {
+                    return;
+                }
+            } else {
+                String chainName = chainName(item);
+                if (!PopTools.askSure(getTitle(), chainName, message("DeleteNodeAndDescendants"))) {
+                    return;
+                }
             }
         }
         if (task != null) {
@@ -516,14 +526,14 @@ public class DataTreeController extends BaseDataTreeViewController {
             popError(message("SelectToHandle"));
             return;
         }
-        DataNode nodeValue = item.getValue();
-        if (nodeValue == null || isRoot(nodeValue)) {
+        DataNode dataNode = item.getValue();
+        if (dataNode == null || isRoot(dataNode)) {
             popError(message("SelectToHandle"));
             return;
         }
         String chainName = chainName(item);
         String name = PopTools.askValue(getBaseTitle(), chainName,
-                message("ChangeNodeTitle"), nodeValue.getTitle() + "m");
+                message("ChangeNodeTitle"), dataNode.getTitle() + "m");
         if (name == null || name.isBlank()) {
             return;
         }
@@ -531,20 +541,36 @@ public class DataTreeController extends BaseDataTreeViewController {
             task.cancel();
         }
         task = new FxSingletonTask<Void>(this) {
-            private DataNode updatedNode;
+            private DataNode savedNode;
 
             @Override
             protected boolean handle() {
-                nodeValue.setTitle(name);
-                updatedNode = nodeTable.updateData(nodeValue);
-                return updatedNode != null;
+                try (Connection conn = DerbyBase.getConnection()) {
+                    savedNode = nodeTable.query(conn, dataNode.getNodeid());
+                    if (savedNode == null) {
+                        return false;
+                    }
+                    savedNode.setUpdateTime(new Date());
+                    savedNode.setTitle(name);
+                    savedNode = nodeTable.updateData(conn, savedNode);
+                    if (savedNode == null) {
+                        return false;
+                    }
+                    conn.commit();
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    MyBoxLog.error(e);
+                    return false;
+                }
             }
 
             @Override
             protected void whenSucceeded() {
-                item.setValue(updatedNode);
+                savedNode.setHierarchyNumber(dataNode.getHierarchyNumber());
+                item.setValue(savedNode);
                 treeView.refresh();
-                checkCurrent(updatedNode);
+                checkCurrent(savedNode);
                 popSuccessful();
             }
         };
@@ -576,19 +602,32 @@ public class DataTreeController extends BaseDataTreeViewController {
             task.cancel();
         }
         task = new FxSingletonTask<Void>(this) {
-            private DataNode updatedNode;
+            private DataNode savedNode;
 
             @Override
             protected boolean handle() {
-                nodeValue.setOrderNumber(fvalue);
-                updatedNode = nodeTable.updateData(nodeValue);
-                return updatedNode != null;
+                try (Connection conn = DerbyBase.getConnection()) {
+                    savedNode = nodeTable.query(conn, nodeValue.getNodeid());
+                    if (savedNode == null) {
+                        return false;
+                    }
+                    savedNode.setUpdateTime(new Date());
+                    savedNode.setOrderNumber(fvalue);
+                    savedNode = nodeTable.updateData(conn, savedNode);
+                    return savedNode != null;
+                } catch (Exception e) {
+                    error = e.toString();
+                    MyBoxLog.error(e);
+                    return false;
+                }
+
             }
 
             @Override
             protected void whenSucceeded() {
+                item.setValue(savedNode);
                 reorderChildlren(item.getParent());
-                checkCurrent(updatedNode);
+                checkCurrent(savedNode);
                 popSuccessful();
             }
         };
