@@ -52,7 +52,7 @@ public class Data2DColumnEditController extends BaseChildController {
     @Override
     public void okAction() {
         try {
-            Data2DColumn column = columnEditController.pickValues();
+            Data2DColumn column = columnEditController.pickValues(true);
             if (column == null) {
                 return;
             }
@@ -83,7 +83,7 @@ public class Data2DColumnEditController extends BaseChildController {
     @FXML
     @Override
     public void saveAction() {
-        Data2DColumn column = columnEditController.pickValues();
+        Data2DColumn column = columnEditController.pickValues(true);
         if (column == null) {
             return;
         }

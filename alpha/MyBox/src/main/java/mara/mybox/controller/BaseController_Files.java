@@ -47,7 +47,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
             sourceFileInput.setStyle(UserConfig.badStyle());
             return;
         }
-        UserConfig.setString(baseName + "SourceFile", file.getAbsolutePath());
+        UserConfig.setString(interfaceName + "SourceFile", file.getAbsolutePath());
         sourceFileInput.setStyle(null);
         recordFileOpened(file);
         sourceFileChanged(file);
@@ -69,7 +69,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
             }
             sourcePath = file;
             sourcePathInput.setStyle(null);
-            UserConfig.setString(baseName + "SourcePath", file.getAbsolutePath());
+            UserConfig.setString(interfaceName + "SourcePath", file.getAbsolutePath());
         } catch (Exception e) {
         }
     }

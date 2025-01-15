@@ -51,7 +51,11 @@ public class GeographyCodeTools {
         try {
             return CoordinateSystem.valueOf(name);
         } catch (Exception e) {
-            return GeographyCode.defaultCoordinateSystem;
+            try {
+                return CoordinateSystem.valueOf(name);
+            } catch (Exception ex) {
+                return GeographyCode.defaultCoordinateSystem;
+            }
         }
     }
 

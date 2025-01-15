@@ -96,7 +96,7 @@ License:    Apache License Version 2.0
                 <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
                     <children>
                   <Label alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" HBox.hgrow="ALWAYS" />
-                  <CheckBox fx:id="miaoRecordCheck" mnemonicParsing="false" selected="true">
+                  <CheckBox fx:id="miaoCheck" mnemonicParsing="false" selected="true">
                      <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                            <image>

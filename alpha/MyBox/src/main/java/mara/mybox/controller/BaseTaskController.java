@@ -14,7 +14,6 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Tab;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
@@ -44,40 +43,9 @@ public class BaseTaskController extends BaseLogsController {
 
     @FXML
     protected Tab logsTab;
-    @FXML
-    protected CheckBox miaoCheck, openCheck;
 
     public BaseTaskController() {
         taskClosedNotify = new SimpleBooleanProperty(false);
-    }
-
-    @Override
-    public void initControls() {
-        try {
-            super.initControls();
-
-            if (miaoCheck != null) {
-                miaoCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                    @Override
-                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        UserConfig.setBoolean("Miao", newValue);
-                    }
-                });
-                miaoCheck.setSelected(UserConfig.getBoolean("Miao", true));
-            }
-            if (openCheck != null) {
-                openCheck.setSelected(UserConfig.getBoolean(baseName + "OpenTargetPath", true));
-                openCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                    @Override
-                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        UserConfig.setBoolean(baseName + "OpenTargetPath", openCheck.isSelected());
-                    }
-                });
-            }
-
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
     }
 
     public boolean checkOptions() {

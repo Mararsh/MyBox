@@ -211,7 +211,6 @@ public class ControlData2DColumnEdit extends BaseChildController {
                 columnIndex = -1;
                 column = new Data2DColumn();
             }
-            MyBoxLog.console(column.getColumnName() + " " + column.getType());
             isSettingValues = true;
             switch (column.getType()) {
                 case String:
@@ -321,7 +320,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
         }
     }
 
-    public Data2DColumn pickValues() {
+    public Data2DColumn pickValues(boolean checkValue) {
         try {
             String name = nameInput.getText();
             if (columnsController != null
@@ -330,10 +329,12 @@ public class ControlData2DColumnEdit extends BaseChildController {
                 name = DerbyBase.fixedIdentifier(name);
             }
             if (name == null || name.isBlank()) {
-                popError(message("InvalidParameter") + ": " + message("Name"));
-                return null;
+                if (checkValue) {
+                    popError(message("InvalidParameter") + ": " + message("Name"));
+                    return null;
+                }
             }
-            if (columnsController != null) {
+            if (checkValue && columnsController != null) {
                 for (int i = 0; i < columnsController.tableData.size(); i++) {
                     Data2DColumn col = columnsController.tableData.get(i);
                     if (i != columnIndex && name.equalsIgnoreCase(col.getColumnName())) {
@@ -347,26 +348,51 @@ public class ControlData2DColumnEdit extends BaseChildController {
             if (clobRadio.isSelected()) {
                 length = Integer.MAX_VALUE;
             } else {
+                length = BaseTable.StringMaxLength;
                 try {
-                    length = Integer.parseInt(lengthInput.getText());
-                    if (length < 0 || length > BaseTable.StringMaxLength) {
-                        length = BaseTable.StringMaxLength;
+                    String s = lengthInput.getText();
+                    if (s == null || s.isBlank()) {
+                        if (checkValue) {
+                            popError(message("InvalidParameter") + ": " + message("Length"));
+                            return null;
+                        }
+                    } else {
+                        length = Integer.parseInt(s);
+                        if (length < 0 || length > BaseTable.StringMaxLength) {
+                            length = BaseTable.StringMaxLength;
+                        }
                     }
                 } catch (Exception ee) {
                     popError(message("InvalidParameter") + ": " + message("Length"));
                     return null;
                 }
             }
-            int width;
+            int width = 100;
             try {
-                width = Integer.parseInt(widthInput.getText());
+                String s = widthInput.getText();
+                if (s == null || s.isBlank()) {
+                    if (checkValue) {
+                        popError(message("InvalidParameter") + ": " + message("Width"));
+                        return null;
+                    }
+                } else {
+                    width = Integer.parseInt(s);
+                }
             } catch (Exception ee) {
                 popError(message("InvalidParameter") + ": " + message("Width"));
                 return null;
             }
-            int scale;
+            int scale = 2;
             try {
-                scale = Integer.parseInt(scaleInput.getText());
+                String s = scaleInput.getText();
+                if (s == null || s.isBlank()) {
+                    if (checkValue) {
+                        popError(message("InvalidParameter") + ": " + message("DecimialScale"));
+                        return null;
+                    }
+                } else {
+                    scale = Integer.parseInt(s);
+                }
             } catch (Exception ee) {
                 popError(message("InvalidParameter") + ": " + message("DecimialScale"));
                 return null;

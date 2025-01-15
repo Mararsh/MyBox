@@ -24,15 +24,15 @@ public class GeographyCode implements Cloneable {
     protected int markSize;
 
     public static CoordinateSystem defaultCoordinateSystem = CoordinateSystem.CGCS2000;
-    public static AddressLevel defaultAddressLevel = AddressLevel.PointOfInterest;
+    public static AddressLevel defaultAddressLevel = AddressLevel.Other;
 
     public static enum AddressLevel {
         Global, Continent, Country, Province, City, County,
-        Town, Village, Building, PointOfInterest
+        Town, Village, Building, PointOfInterest, Other
     }
 
     public static enum CoordinateSystem {
-        CGCS2000, GCJ_02, WGS_84, BD_09, Mapbar
+        CGCS2000, GCJ_02, WGS_84, BD_09, Mapbar, Other
     }
 
     public GeographyCode() {

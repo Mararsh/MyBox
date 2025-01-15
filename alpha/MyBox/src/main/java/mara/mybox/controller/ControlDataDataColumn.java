@@ -25,9 +25,14 @@ public class ControlDataDataColumn extends BaseDataValuesController {
         }
     }
 
-    protected void load(Data2DColumn column) {
+    protected void editColumn(Data2DColumn column) {
         if (column != null) {
-            nodeEditor.titleInput.setText(column.getColumnName());
+            String s = nodeEditor.titleInput.getText();
+            if (s == null || s.isBlank()) {
+                isSettingValues = true;
+                nodeEditor.titleInput.setText(column.getColumnName());
+                isSettingValues = false;
+            }
         }
         columnController.loadColumn(column);
     }
@@ -39,7 +44,7 @@ public class ControlDataDataColumn extends BaseDataValuesController {
             if (nodeEditor.currentNode != null) {
                 column = TableNodeDataColumn.toColumn(nodeEditor.currentNode);
             }
-            load(column);
+            editColumn(column);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -50,7 +55,7 @@ public class ControlDataDataColumn extends BaseDataValuesController {
         if (node == null) {
             return null;
         }
-        Data2DColumn column = columnController.pickValues();
+        Data2DColumn column = columnController.pickValues(false);
         if (column == null) {
             return null;
         }
@@ -65,7 +70,7 @@ public class ControlDataDataColumn extends BaseDataValuesController {
         try {
             DataTreeNodeEditorController controller = DataTreeNodeEditorController.open(parent);
             controller.setTable(new TableNodeDataColumn());
-            ((ControlDataDataColumn) controller.dataController).load(column);
+            ((ControlDataDataColumn) controller.dataController).editColumn(column);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e);

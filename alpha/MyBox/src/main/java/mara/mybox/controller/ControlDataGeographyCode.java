@@ -19,11 +19,9 @@ import mara.mybox.db.table.TableNodeGeographyCode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.DoubleTools;
-import static mara.mybox.tools.GeographyCodeTools.coordinateSystemByName;
-import static mara.mybox.tools.GeographyCodeTools.coordinateSystemName;
+import static mara.mybox.tools.GeographyCodeTools.coordinateSystemMessageName;
 import mara.mybox.tools.LongTools;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -45,7 +43,7 @@ public class ControlDataGeographyCode extends BaseDataValuesController {
     protected ComboBox<String> coordinateSystemSelector;
     @FXML
     protected RadioButton globalRadio, continentRadio, countryRadio, provinceRadio, cityRadio,
-            countyRadio, townRadio, villageRadio, buildingRadio, pointOfInterestRadio;
+            countyRadio, townRadio, villageRadio, buildingRadio, pointOfInterestRadio, otherRadio;
     @FXML
     protected Button locationButton;
     @FXML
@@ -106,8 +104,7 @@ public class ControlDataGeographyCode extends BaseDataValuesController {
             for (CoordinateSystem item : CoordinateSystem.values()) {
                 coordinateSystemSelector.getItems().add(message(item.name()));
             }
-            coordinateSystemSelector.getSelectionModel().select(
-                    UserConfig.getString("GeographyCodeCoordinateSystem", message("CGCS2000")));
+            coordinateSystemSelector.getSelectionModel().select(message("CGCS2000"));
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -203,8 +200,10 @@ public class ControlDataGeographyCode extends BaseDataValuesController {
                     buildingRadio.setSelected(true);
                     break;
                 case 9:
-                default:
                     pointOfInterestRadio.setSelected(true);
+                    break;
+                default:
+                    otherRadio.setSelected(true);
             }
             double d = node.getDoubleValue("longitude");
             if (d >= -180 && d <= 180) {
@@ -216,7 +215,7 @@ public class ControlDataGeographyCode extends BaseDataValuesController {
             }
 
             coordinateSystemSelector.getSelectionModel()
-                    .select(coordinateSystemName(node.getShortValue("coordinate_system")));
+                    .select(coordinateSystemMessageName(node.getShortValue("coordinate_system")));
             String cname = node.getStringValue("chinese_name");
             chineseInput.setText(cname != null && !cname.isBlank() ? cname : nodeEditor.titleInput.getText());
             String ename = node.getStringValue("english_name");
@@ -318,13 +317,15 @@ public class ControlDataGeographyCode extends BaseDataValuesController {
                 level = 7;
             } else if (buildingRadio.isSelected()) {
                 level = 8;
-            } else {
+            } else if (pointOfInterestRadio.isSelected()) {
                 level = 9;
+            } else {
+                level = 10;
             }
             node.setValue("level", level);
 
-            CoordinateSystem cs = coordinateSystemByName(coordinateSystemSelector.getValue());
-            node.setValue("coordinate_system", (short) cs.ordinal());
+            node.setValue("coordinate_system",
+                    (short) coordinateSystemSelector.getSelectionModel().getSelectedIndex());
 
             String s = code1Input.getText();
             node.setValue("code1", s != null ? s.trim() : null);

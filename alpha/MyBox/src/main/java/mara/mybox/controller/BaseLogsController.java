@@ -87,6 +87,16 @@ public class BaseLogsController extends BaseController {
                 });
             }
 
+            if (verboseCheck != null) {
+                verboseCheck.setSelected(UserConfig.getBoolean(interfaceName + "LogVerbose", true));
+                verboseCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue v, Boolean ov, Boolean nv) {
+                        UserConfig.setBoolean(interfaceName + "LogVerbose", verboseCheck.isSelected());
+                    }
+                });
+            }
+
             clearLogs();
         } catch (Exception e) {
             MyBoxLog.debug(e);

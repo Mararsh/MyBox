@@ -101,6 +101,14 @@ public class DataTreeExportController extends BaseDataTreeHandleController {
 
             nodeLabel.setText(message("Node") + ": " + chainName);
 
+            dataFormatCheck.setSelected(UserConfig.getBoolean(baseName + "Format", true));
+            dataFormatCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
+                    UserConfig.setBoolean(baseName + "Format", dataFormatCheck.isSelected());
+                }
+            });
+
             idCheck.setSelected(UserConfig.getBoolean(baseName + "ID", false));
             idCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override

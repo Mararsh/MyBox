@@ -238,6 +238,15 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
     public void afterTreeLoaded() {
     }
 
+    @Override
+    public void focusItem(TreeItem<DataNode> nodeitem) {
+        super.focusItem(nodeitem);
+        try {
+            nodeitem.getValue().getSelected().set(true);
+        } catch (Exception e) {
+        }
+    }
+
     /*
         values
      */

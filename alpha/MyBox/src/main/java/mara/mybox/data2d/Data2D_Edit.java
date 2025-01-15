@@ -330,7 +330,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
             if (!isValidData() || cols == null || cols.isEmpty()) {
                 return -1;
             }
-            Data2DOperate operate = isUserTable()
+            Data2DOperate operate = isTable()
                     ? new DataTableSetValue((DataTable) this, setValue)
                     : Data2DSetValue.create(this, setValue);
             if (operate == null) {
@@ -357,7 +357,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
             if (!isValidData()) {
                 return -1;
             }
-            Data2DOperate operate = isUserTable()
+            Data2DOperate operate = isTable()
                     ? new DataTableDelete((DataTable) this)
                     : Data2DDelete.create(this);
             if (operate == null) {
@@ -382,7 +382,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
             if (!isValidData()) {
                 return -1;
             }
-            Data2DOperate operate = isUserTable()
+            Data2DOperate operate = isTable()
                     ? new DataTableClear((DataTable) this)
                     : Data2DClear.create(this);
 

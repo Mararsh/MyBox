@@ -110,7 +110,8 @@ public abstract class BaseController_Attributes {
     @FXML
     protected ImageView tipsView, rightTipsView, linksView, leftPaneControl, rightPaneControl;
     @FXML
-    protected CheckBox rightPaneCheck, leftPaneCheck, toolbarCheck, onTopCheck, closeAfterCheck;
+    protected CheckBox rightPaneCheck, leftPaneCheck, toolbarCheck, onTopCheck,
+            closeAfterCheck, miaoCheck, openCheck;
     @FXML
     protected ToggleGroup saveAsGroup, fileTypeGroup;
     @FXML

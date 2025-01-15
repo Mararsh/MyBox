@@ -9,8 +9,6 @@ import java.util.List;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -337,27 +335,6 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
                 if (previewButton != null) {
                     previewButton.disableProperty().bind(startButton.disableProperty());
                 }
-            }
-
-            if (openCheck != null) {
-                openCheck.setSelected(UserConfig.getBoolean("OpenWhenComplete"));
-                openCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                    @Override
-                    public void changed(ObservableValue v, Boolean ov, Boolean nv) {
-                        UserConfig.setBoolean("OpenWhenComplete", nv);
-
-                    }
-                });
-            }
-
-            if (verboseCheck != null) {
-                verboseCheck.setSelected(UserConfig.getBoolean("BatchLogVerbose", true));
-                verboseCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                    @Override
-                    public void changed(ObservableValue v, Boolean ov, Boolean nv) {
-                        UserConfig.setBoolean("BatchLogVerbose", nv);
-                    }
-                });
             }
 
         } catch (Exception e) {

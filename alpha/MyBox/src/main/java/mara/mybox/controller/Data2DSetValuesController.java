@@ -323,14 +323,15 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
             boolean valueInvalid;
             boolean validateColumn = rejectInvalid || !useInvalidRadio.isSelected();
             boolean skipInvalid = skipInvalidRadio.isSelected();
-            for (int row : sourceController.filteredRowsIndices) {
-                List<String> values = sourceController.tableData.get(row);
+            for (int rowIndex : sourceController.filteredRowsIndices) {
+                List<String> tableRow = sourceController.tableData.get(rowIndex);
                 rowChanged = false;
                 for (int col : checkedColsIndices) {
-                    currentValue = values.get(col + 1);
+                    currentValue = tableRow.get(col + 1);
                     Data2DColumn column = data2D.columns.get(col);
                     newValue = valueController.setValue.makeValue(data2D,
-                            column, currentValue, values, row,
+                            column, currentValue,
+                            tableRow.subList(1, tableRow.size()), rowIndex,
                             numberIndex, digit, random);
                     valueInvalid = valueController.setValue.valueInvalid;
                     if (!valueInvalid && validateColumn) {
@@ -355,12 +356,12 @@ public class Data2DSetValuesController extends BaseData2DTaskTargetsController {
                     if ((currentValue == null && newValue != null)
                             || (currentValue != null && !currentValue.equals(newValue))) {
                         rowChanged = true;
-                        values.set(col + 1, newValue);
+                        tableRow.set(col + 1, newValue);
                     }
                 }
                 if (rowChanged) {
                     numberIndex++;
-                    outputData.set(row, values);
+                    outputData.set(rowIndex, tableRow);
                 }
             }
             return true;

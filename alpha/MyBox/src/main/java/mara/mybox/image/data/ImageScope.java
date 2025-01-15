@@ -1,6 +1,5 @@
 package mara.mybox.image.data;
 
-import mara.mybox.image.tools.ImageScopeTools;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -15,6 +14,7 @@ import mara.mybox.data.IntPoint;
 import mara.mybox.db.data.BaseData;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxTask;
+import mara.mybox.image.tools.ImageScopeTools;
 import mara.mybox.value.Colors;
 import static mara.mybox.value.Languages.message;
 

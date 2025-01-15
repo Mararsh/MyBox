@@ -83,8 +83,10 @@ public class BaseMapController extends BaseController {
         setFileType(VisitHistory.FileType.Html);
     }
 
-    public void initMap() {
-        try (Connection conn = DerbyBase.getConnection()) {
+    @Override
+    public void initControls() {
+        try {
+            super.initControls();
 
             nodeTable = new TableNodeGeographyCode();
 
@@ -103,6 +105,14 @@ public class BaseMapController extends BaseController {
             loadNotify = new SimpleBooleanProperty();
             mapLoaded = false;
             geoCodes = null;
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    public void initMap() {
+        try (Connection conn = DerbyBase.getConnection()) {
 
             readMapType(conn);
 

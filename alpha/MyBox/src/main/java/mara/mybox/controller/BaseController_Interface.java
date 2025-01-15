@@ -78,26 +78,25 @@ public abstract class BaseController_Interface extends BaseController_Files {
             }
 
             if (sourcePathInput != null) {
+                sourcePathInput.setText(UserConfig.getString(interfaceName + "SourcePath", AppPaths.getGeneratedPath()));
                 sourcePathInput.textProperty().addListener(new ChangeListener<String>() {
                     @Override
-                    public void changed(
-                            ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                    public void changed(ObservableValue<? extends String> o, String ov, String nv) {
                         checkSourcetPathInput();
                     }
                 });
-                sourcePathInput.setText(UserConfig.getString(interfaceName + "SourcePath", AppPaths.getGeneratedPath()));
             }
 
             if (targetPrefixInput != null) {
+                targetPrefixInput.setText(UserConfig.getString(interfaceName + "TargetPrefix", "mm"));
                 targetPrefixInput.textProperty().addListener(new ChangeListener<String>() {
                     @Override
-                    public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                        if (newValue != null && !newValue.isBlank()) {
-                            UserConfig.setString(interfaceName + "TargetPrefix", newValue);
+                    public void changed(ObservableValue<? extends String> o, String ov, String nv) {
+                        if (nv != null && !nv.isBlank()) {
+                            UserConfig.setString(interfaceName + "TargetPrefix", nv);
                         }
                     }
                 });
-                targetPrefixInput.setText(UserConfig.getString(interfaceName + "TargetPrefix", "mm"));
             }
 
             if (targetFileController != null) {
@@ -203,22 +202,44 @@ public abstract class BaseController_Interface extends BaseController_Files {
             initMainArea();
 
             if (onTopCheck != null) {
+                onTopCheck.setSelected(UserConfig.getBoolean(interfaceName + "AlwaysTop", false));
                 onTopCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
                         if (isSettingValues || myStage == null) {
                             return;
                         }
+                        UserConfig.setBoolean(interfaceName + "AlwaysTop", onTopCheck.isSelected());
                         setAlwaysTop(onTopCheck.isSelected(), true);
                     }
                 });
             }
             if (closeAfterCheck != null) {
-                closeAfterCheck.setSelected(UserConfig.getBoolean(interfaceName + "SaveClose", false));
+                closeAfterCheck.setSelected(UserConfig.getBoolean(interfaceName + "CloseAfterOperation", false));
                 closeAfterCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
-                        UserConfig.setBoolean(interfaceName + "SaveClose", closeAfterCheck.isSelected());
+                        UserConfig.setBoolean(interfaceName + "CloseAfterOperation", closeAfterCheck.isSelected());
+                    }
+                });
+            }
+
+            if (miaoCheck != null) {
+                miaoCheck.setSelected(UserConfig.getBoolean(interfaceName + "Miao", true));
+                miaoCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                        UserConfig.setBoolean(interfaceName + "Miao", miaoCheck.isSelected());
+                    }
+                });
+
+            }
+            if (openCheck != null) {
+                openCheck.setSelected(UserConfig.getBoolean(interfaceName + "OpenTargetPath", true));
+                openCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                        UserConfig.setBoolean(interfaceName + "OpenTargetPath", openCheck.isSelected());
                     }
                 });
             }

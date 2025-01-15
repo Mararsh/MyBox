@@ -95,7 +95,7 @@ public class SetValue {
     }
 
     public String makeValue(Data2D data2D, Data2DColumn column,
-            String currentValue, List<String> row, long rowIndex,
+            String currentValue, List<String> dataRow, long rowIndex,
             int dataIndex, int ddigit, Random random) {
         try {
             error = null;
@@ -148,7 +148,7 @@ public class SetValue {
                     return parameter == null ? sprefix : (sprefix + parameter);
 
                 case Expression:
-                    if (data2D.calculateDataRowExpression(parameter, row, rowIndex)) {
+                    if (data2D.calculateDataRowExpression(parameter, dataRow, rowIndex)) {
                         return data2D.expressionResult();
                     } else {
                         valueInvalid = true;

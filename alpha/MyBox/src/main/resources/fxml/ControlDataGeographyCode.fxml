@@ -22,7 +22,7 @@ License:    Apache License Version 2.0
 
 <VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlDataGeographyCode">
 <children>
-              <FlowPane fx:id="levelPane" hgap="5.0" maxWidth="1.7976931348623157E308" vgap="5.0" VBox.vgrow="NEVER">
+              <FlowPane fx:id="levelPane" hgap="5.0" maxWidth="1.7976931348623157E308" prefWrapLength="0.0" vgap="5.0" VBox.vgrow="NEVER">
                   <children>
             <Label minWidth="-Infinity" text="%Level" wrapText="true" />
                       <RadioButton fx:id="globalRadio" mnemonicParsing="false" text="%Global" wrapText="true">
@@ -38,7 +38,8 @@ License:    Apache License Version 2.0
                       <RadioButton fx:id="townRadio" mnemonicParsing="false" text="%Town" toggleGroup="$levelGroup" wrapText="true" />
                       <RadioButton fx:id="villageRadio" mnemonicParsing="false" text="%Village" toggleGroup="$levelGroup" wrapText="true" />
                       <RadioButton fx:id="buildingRadio" mnemonicParsing="false" text="%Building" toggleGroup="$levelGroup" wrapText="true" />
-                      <RadioButton fx:id="pointOfInterestRadio" layoutX="620.0" layoutY="51.0" mnemonicParsing="false" selected="true" text="%PointOfInterest" toggleGroup="$levelGroup" />
+                      <RadioButton fx:id="pointOfInterestRadio" layoutX="620.0" layoutY="51.0" mnemonicParsing="false" text="%PointOfInterest" toggleGroup="$levelGroup" />
+            <RadioButton fx:id="otherRadio" layoutX="467.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%Other" toggleGroup="$levelGroup" />
                       <!--<RadioButton fx:id="pointOfInterestRadio" mnemonicParsing="false" text="%PointOfInterest" toggleGroup="$levelGroup" />-->
                   </children>
               </FlowPane>
