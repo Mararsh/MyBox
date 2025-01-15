@@ -264,7 +264,7 @@ public class BaseData2DListController extends BaseSysTableController<Data2DDefin
                 if (currentTask == null || !currentTask.isWorking()) {
                     break;
                 }
-                if (item.isTable() && item.getSheet() != null) {
+                if (item.isUserTable() && item.getSheet() != null) {
                     String referName = DerbyBase.fixedIdentifier(item.getSheet());
                     try {
                         statement.executeUpdate("DROP TABLE " + referName);
