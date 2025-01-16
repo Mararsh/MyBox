@@ -658,7 +658,7 @@ public abstract class BaseHtmlFormat extends BaseWebViewController {
     public void loadView(String html, boolean updated) {
         try {
             isSettingValues = true;
-            webViewController.writeContents(html);
+            webViewController.writeContent(html);
             isSettingValues = false;
             htmlChanged(updated);
         } catch (Exception e) {
@@ -904,8 +904,8 @@ public abstract class BaseHtmlFormat extends BaseWebViewController {
     public void refreshAction() {
         if (webViewController.address != null) {
             loadAddress(webViewController.address);
-        } else if (webViewController.contents != null) {
-            loadContents(webViewController.contents);
+        } else if (webViewController.content != null) {
+            loadContents(webViewController.content);
         }
         updateStatus(false);
     }

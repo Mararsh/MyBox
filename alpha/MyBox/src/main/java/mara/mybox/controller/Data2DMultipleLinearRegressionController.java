@@ -253,7 +253,7 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DRegressi
 
             s.append(table.div());
             s.append("</BODY>\n");
-            modelController.loadContents(HtmlWriteTools.html(s.toString()));
+            modelController.loadContent(HtmlWriteTools.html(s.toString()));
 
             if (invalid) {
                 alertError(message("InvalidData") + "\n" + message("RegressionFailedNotice"));

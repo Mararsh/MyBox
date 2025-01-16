@@ -95,7 +95,10 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
                                 setText(null);
                                 return;
                             }
-                            setText(makeHierarchyNumber(getTreeTableView().getTreeItem(getIndex())));
+                            TreeItem<NodeP> treeItem = getTreeTableView().getTreeItem(getIndex());
+                            String hierarchyNumber = makeHierarchyNumber(treeItem);
+                            setText(hierarchyNumber);
+//                            setHierarchyNumber(treeItem.getValue(), hierarchyNumber);
                         }
                     };
                     return cell;
@@ -295,14 +298,14 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
         }
         String h = "";
         TreeItem<NodeP> parent = item.getParent();
-        TreeItem<NodeP> citem = item;
+        TreeItem<NodeP> child = item;
         while (parent != null) {
-            int index = parent.getChildren().indexOf(citem);
+            int index = parent.getChildren().indexOf(child);
             if (index < 0) {
                 return "";
             }
             h = "." + (index + 1) + h;
-            citem = parent;
+            child = parent;
             parent = parent.getParent();
         }
         if (h.startsWith(".")) {

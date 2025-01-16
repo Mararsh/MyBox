@@ -84,6 +84,7 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
             super.initValues();
 
             if (viewController != null) {
+                viewController.setParent(this);
                 viewController.initStyle = HtmlStyles.styleValue("Table");
             }
 
@@ -448,7 +449,7 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
 
             @Override
             protected void whenSucceeded() {
-                viewController.loadContents(html);
+                viewController.loadContent(html);
                 currentNode = savedNode;
                 if (editButton != null) {
                     editButton.setVisible(true);
@@ -773,10 +774,10 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
             TreeItem<DataNode> nodeItem = find(node);
             if (nodeItem != null) {
                 try {
+                    node.setHierarchyNumber(nodeItem.getValue().getHierarchyNumber());
                     nodeItem.setValue(node);
                     TreeItem<DataNode> currentParentItem = nodeItem.getParent();
                     if (currentParentItem.getValue().equals(parent)) {
-                        node.setHierarchyNumber(nodeItem.getValue().getHierarchyNumber());
                         return;
                     }
                     currentParentItem.getChildren().remove(nodeItem);
@@ -856,7 +857,7 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
             goButton.setVisible(false);
         }
         if (viewController != null) {
-            viewController.loadContents("");
+            viewController.loadContent("");
         }
     }
 

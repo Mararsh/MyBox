@@ -414,7 +414,7 @@ public class ControlDataMathFunction extends BaseDataValuesController {
                     + HtmlWriteTools.stringToHtml(functionName() + "=" + ret)
                     + "</div><br><br>";
             String html = HtmlWriteTools.html(null, HtmlStyles.DefaultStyle, "<body>" + outputs + "</body>");
-            outputController.loadContents(html);
+            outputController.loadContent(html);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

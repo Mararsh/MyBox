@@ -802,6 +802,52 @@ public class BaseNodeTable extends BaseTable<DataNode> {
         return s;
     }
 
+    public String makeHierarchyNumber(Connection conn, DataNode node) {
+        if (node == null || node.getNodeid() == node.getParentid()) {
+            return "";
+        }
+        String h = "";
+        DataNode parent = query(conn, node.getParentid());
+        DataNode child = node;
+        long parentid, childid;
+        while (parent != null) {
+            parentid = parent.getNodeid();
+            childid = child.getNodeid();
+            String sql = "SELECT nodeid FROM " + tableName
+                    + " WHERE parentid=? AND parentid<>nodeid  ORDER BY " + orderColumns;
+            int index = -1;
+            try (PreparedStatement statement = conn.prepareStatement(sql)) {
+                statement.setLong(1, parentid);
+                try (ResultSet results = statement.executeQuery()) {
+                    while (results != null && results.next()) {
+                        index++;
+                        long itemid = results.getLong("nodeid");
+                        if (itemid == childid) {
+                            break;
+                        }
+                    }
+                } catch (Exception e) {
+                    MyBoxLog.console(e);
+                    return null;
+                }
+            } catch (Exception e) {
+                MyBoxLog.console(e);
+                return null;
+            }
+            if (index < 0) {
+                return "";
+            }
+            h = "." + (index + 1) + h;
+            child = parent;
+            parent = query(conn, child.getParentid());
+        }
+        if (h.startsWith(".")) {
+            h = h.substring(1, h.length());
+        }
+        node.setHierarchyNumber(h);
+        return h;
+    }
+
     /*
         get/set
      */

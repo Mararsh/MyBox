@@ -45,7 +45,7 @@ import mara.mybox.value.UserConfig;
 // https://slhck.info/video/2017/03/01/rate-control.html
 // https://www.cnblogs.com/sunny-li/p/9979796.html
 // http://www.luyixian.cn/news_show_306225.aspx
-public class ControlFFmpegOptions extends BaseController {
+public class ControlFFmpegOptions extends BaseTaskController {
 
     protected BaseTaskController ffmpegController;
     protected String executableName, executableDefault;

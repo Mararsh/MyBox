@@ -81,7 +81,7 @@ public class ControlWebView extends BaseController {
     protected double scrollTop, scrollLeft;
     protected ScrollType scrollType;
     protected float zoomScale;
-    protected String address, contents, style, defaultStyle, initStyle;
+    protected String address, content, style, defaultStyle, initStyle;
     protected Charset charset;
     protected Map<Integer, Document> framesDoc;
     protected EventListener docListener;
@@ -434,7 +434,7 @@ public class ControlWebView extends BaseController {
         status
      */
     public void clear() {
-        loadContents("");
+        loadContent("");
     }
 
     private void reset() {
@@ -677,8 +677,8 @@ public class ControlWebView extends BaseController {
     }
 
     public String loadedHtml() {
-        if (contents != null) {
-            return contents;
+        if (content != null) {
+            return content;
         } else {
             return currentHtml();
         }
@@ -729,21 +729,21 @@ public class ControlWebView extends BaseController {
         return true;
     }
 
-    public boolean loadContents(String contents) {
-        return loadContents(null, contents);
+    public boolean loadContent(String contents) {
+        return loadContent(null, contents);
     }
 
-    public boolean loadContents(String address, String contents) {
+    public boolean loadContent(String address, String content) {
         setAddress(address);
-        writeContents(contents);
+        writeContent(content);
         return true;
     }
 
-    public void writeContents(String contents) {
+    public void writeContent(String content) {
         reset();
-        this.contents = contents;
+        this.content = content;
         webEngine.getLoadWorker().cancel();
-        webEngine.loadContent(contents == null ? "" : contents);
+        webEngine.loadContent(content == null ? "" : content);
     }
 
     private boolean setAddress(String value) {
@@ -778,7 +778,7 @@ public class ControlWebView extends BaseController {
                 return;
             }
             reset();
-            contents = null;
+            content = null;
             setWebViewLabel(message("Loading..."));
             webEngine.getLoadWorker().cancel();
             webEngine.load(address);
@@ -1074,7 +1074,7 @@ public class ControlWebView extends BaseController {
         if (address != null) {
             goAddress(address);
         } else {
-            loadContents(loadedHtml());
+            loadContent(loadedHtml());
         }
     }
 
@@ -1958,7 +1958,7 @@ public class ControlWebView extends BaseController {
     @FXML
     @Override
     public boolean menuAction() {
-        MenuWebviewController.webviewMenu(this, webView);
+        MenuWebviewController.webviewMenu(this);
         return true;
     }
 

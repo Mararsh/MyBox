@@ -167,8 +167,8 @@ public class NetworkQueryAddressController extends BaseController {
 
             @Override
             protected void whenSucceeded() {
-                infoController.loadContents(info);
-                headerController.loadContents(headerTable);
+                infoController.loadContent(info);
+                headerController.loadContent(headerTable);
                 ipaddressController.loadAddress("https://www.ipaddress.com/site/" + ip);
                 certArea.setText(certString);
             }

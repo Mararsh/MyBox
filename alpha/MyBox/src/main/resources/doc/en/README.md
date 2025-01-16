@@ -8,18 +8,26 @@ This is compute application to provide simple and easy functions. It's free and 
        
 * Add:                                      
      - Read/write WebP image.                                                                                                                       
-     - Data column type "Enumerated Short": Data are displayed as String while saved as Short.                                                                                                                       
+     - Data column type "Enumerated Short": Data are displayed as String while saved as Short.  
+       Its benefit is saved storage while its disadvantage is lost independence and need other data to explain its values.                                                                                                                     
 * Improve:                                      
-     - Change "Geography Code" as data tree.                                                                                                             
      - Data Manufacture:                                                                                                         
-         - Remove "Handle invalid value" from column definition.                                                                                                             
-         - When check row expression/filter and judge it may be invalid, ask user rather than prevent the operation directly.                                                                                                             
+         - Remove "Handle invalid value" from column definition. Operations handle invalid values as their judgement and logic.                                                                                                             
+         - Clear how apply or remove "format" when read, display, edit, save, export, or convert data.                                                                                                             
+     - Data Tree:                                                                                                         
+         - Change "Geography Code" as data tree.                                                                                                                
+         - Option to apply data format when export.                                                                                                                                                                                                                       
 * Solved problems:                                
-     - Wrong values may be written when do "Set Values" for all pages of database table.                                                                                                                       
-     - In many interfaces, when save as file, the selected path does not work.                                                                                                                       
+     - Tree: Values are lost after save/move/rename/reorder node.                                                                                                                       
      - After migrated to 6.8.1 or 6.8.2, ["Data Manufacture" loads existed data incorrectly](https://github.com/Mararsh/MyBox/issues/1979).                                                                                                           
+     - "Set Values"  of Data Manufacture may write wrong values.                                                                                                                       
+     - Data should be converted as their types when row expression binds variables.                                                                                                                       
+     - In many interfaces, when save as file, the selected path does not work.                                                                                                                       
      - When change image size, interface works abnormally after user inputs wrong value of width/height.                                                                                                           
-                                                          
+     - When open interface "Image Options" independently, some controls are not initialized.                                                                                                                       
+     - Values of XYZ and Adobe CMYK are displayed wrongly in html of color.          
+     - "FFmpeg information" and "FFmpeg media information" do not work.                           
+                      
 [Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.8.3)                                                
 
 ## Notice         

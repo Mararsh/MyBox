@@ -679,7 +679,7 @@ public class GameEliminationController extends BaseController {
         if (comments != null && !comments.isBlank()) {
             body += "<BR>" + message(comments);
         }
-        imageInfoController.loadContents(HtmlWriteTools.html(body));
+        imageInfoController.loadContent(HtmlWriteTools.html(body));
     }
 
     @Override

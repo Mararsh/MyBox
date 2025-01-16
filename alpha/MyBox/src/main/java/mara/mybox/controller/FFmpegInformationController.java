@@ -19,8 +19,8 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.FxTask;
+import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.cell.TableBooleanCell;
 import mara.mybox.tools.StringTools;
 import mara.mybox.tools.SystemTools;
@@ -93,6 +93,8 @@ public class FFmpegInformationController extends ControlFFmpegOptions {
     public void initControls() {
         try {
             super.initControls();
+
+            setParameters(this);
 
             initColumns();
 

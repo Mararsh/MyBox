@@ -426,6 +426,7 @@ public class DataTreeNodeEditorController extends BaseDataTreeHandleController {
                     nodeTagsTable.setAll(conn, nodeid,
                             tagsController.selectedItems());
                     conn.commit();
+
                     return true;
                 } catch (Exception e) {
                     error = e.toString();

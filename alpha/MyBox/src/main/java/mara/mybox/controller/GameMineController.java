@@ -407,7 +407,7 @@ public class GameMineController extends BaseWebViewController {
     }
 
     protected void loadRecords() {
-        webViewController.loadContents(null);
+        webViewController.loadContent(null);
         if (task != null) {
             task.cancel();
         }
@@ -442,7 +442,7 @@ public class GameMineController extends BaseWebViewController {
 
             @Override
             protected void whenSucceeded() {
-                webViewController.loadContents(html);
+                webViewController.loadContent(html);
             }
         };
         start(task);
@@ -462,7 +462,7 @@ public class GameMineController extends BaseWebViewController {
 
             @Override
             protected void whenSucceeded() {
-                webViewController.loadContents(null);
+                webViewController.loadContent(null);
             }
         };
         start(task);

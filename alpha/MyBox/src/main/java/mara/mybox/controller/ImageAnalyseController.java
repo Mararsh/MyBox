@@ -244,7 +244,7 @@ public class ImageAnalyseController extends BaseController {
             s.append(indent).append(indent).append("</DIV>\n");
 
             String html = HtmlWriteTools.html(null, HtmlStyles.styleValue("Default"), s.toString());
-            statisticController.loadContents(html);
+            statisticController.loadContent(html);
 
         } catch (Exception e) {
             MyBoxLog.error(e);

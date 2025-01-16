@@ -187,7 +187,7 @@ public abstract class BaseDataManageController<P> extends BaseSysTableController
             timer.cancel();
             timer = null;
         }
-        infoViewController.loadContents​(null);
+        infoViewController.loadContent(null);
         finalTitle = StringTools.replaceLineBreak(queryCondition.getTitle());
         setQuerySQL();
         return true;
@@ -397,7 +397,7 @@ public abstract class BaseDataManageController<P> extends BaseSysTableController
                 html += loadMoreInfo();
             }
             html = HtmlWriteTools.html(null, html, HtmlStyles.DefaultStyle);
-            infoViewController.loadContents​(html);
+            infoViewController.loadContent(html);
 
         } catch (Exception e) {
             MyBoxLog.error(e);

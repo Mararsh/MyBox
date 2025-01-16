@@ -147,7 +147,7 @@ public class BaseWebViewController extends BaseFileController {
             return false;
         }
         sourceFile = null;
-        return webViewController.loadContents(contents);
+        return webViewController.loadContent(contents);
     }
 
     public boolean loadContents(String address, String contents) {
@@ -155,7 +155,7 @@ public class BaseWebViewController extends BaseFileController {
             return false;
         }
         sourceFile = null;
-        boolean ret = webViewController.loadContents(address, contents);
+        boolean ret = webViewController.loadContent(address, contents);
         if (ret) {
             sourceFile = webViewController.sourceFile;
         }

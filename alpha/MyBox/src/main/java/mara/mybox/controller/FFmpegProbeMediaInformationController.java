@@ -27,9 +27,9 @@ import javafx.scene.control.ToggleGroup;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.fxml.FxSingletonTask;
 import mara.mybox.fxml.FxTask;
+import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.tools.SystemTools;
@@ -79,6 +79,8 @@ public class FFmpegProbeMediaInformationController extends ControlFFmpegOptions 
     public void initControls() {
         try {
             super.initControls();
+
+            setParameters(this);
 
             formatArea.setStyle("-fx-font-family: monospace");
             streamsArea.setStyle("-fx-font-family: monospace");

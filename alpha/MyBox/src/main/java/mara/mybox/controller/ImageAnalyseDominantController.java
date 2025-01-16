@@ -179,7 +179,7 @@ public class ImageAnalyseDominantController extends BaseController {
                 }
             }
 
-            colorsController.loadContents​(html);
+            colorsController.loadContent(html);
             if (quantizationController.algorithm == QuantizationAlgorithm.KMeansClustering) {
                 quantizationController.resultsLabel.setText(message("ActualLoop") + ":"
                         + ((KMeansClusteringQuantization) quantization).getKmeans().getLoopCount());

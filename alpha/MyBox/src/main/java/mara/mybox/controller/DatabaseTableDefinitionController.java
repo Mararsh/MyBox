@@ -105,7 +105,7 @@ public class DatabaseTableDefinitionController extends BaseController {
         if (name == null || name.isBlank()) {
             return;
         }
-        viewController.loadContents("");
+        viewController.loadContent("");
         FxTask loadTask = new FxSingletonTask<Void>(this) {
 
             String html;
@@ -124,7 +124,7 @@ public class DatabaseTableDefinitionController extends BaseController {
             @Override
             protected void whenSucceeded() {
                 if (html != null && !html.isBlank()) {
-                    viewController.loadContents(html);
+                    viewController.loadContent(html);
                 }
             }
 

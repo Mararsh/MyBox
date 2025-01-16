@@ -242,7 +242,7 @@ public class PdfViewController extends PdfViewController_Html {
             textsArea.clear();
             textsLabel.setText("");
             if (webViewController != null) {
-                webViewController.loadContents(null);
+                webViewController.loadContent(null);
             }
             if (file == null) {
                 return;
