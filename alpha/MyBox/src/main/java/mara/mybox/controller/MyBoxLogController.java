@@ -5,11 +5,19 @@ import java.util.Date;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
+import javafx.scene.control.CheckMenuItem;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
+import javafx.scene.control.Toggle;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Window;
 import mara.mybox.db.table.TableMyBoxLog;
@@ -17,10 +25,13 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.dev.MyBoxLog.LogType;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.cell.TableDateCell;
+import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.fxml.style.NodeStyleTools;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -28,10 +39,8 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2020-2-3
  * @License Apache License Version 2.0
  */
-public class MyBoxLogController extends BaseDataManageController<MyBoxLog> {
+public class MyBoxLogController extends BaseSysTableController<MyBoxLog> {
 
-    @FXML
-    protected MyBoxLogTypeController typeController;
     @FXML
     protected TableColumn<MyBoxLog, String> typeColumn, logColumn, fileColumn,
             classColumn, methodColumn, callersColumn, commentsColumn;
@@ -42,7 +51,11 @@ public class MyBoxLogController extends BaseDataManageController<MyBoxLog> {
     @FXML
     protected TableColumn<MyBoxLog, Date> timeColumn;
     @FXML
-    protected CheckBox popCheck, debugSaveCheck, debugDetailedCheck;
+    protected ToggleGroup typeGroup;
+    @FXML
+    protected RadioButton errorRadio, debugRadio, infoRadio, allRadio;
+    @FXML
+    protected ControlWebView viewController;
 
     public MyBoxLogController() {
         baseTitle = Languages.message("MyBoxLogs");
@@ -104,80 +117,48 @@ public class MyBoxLogController extends BaseDataManageController<MyBoxLog> {
         try {
             super.initControls();
 
-            AppVariables.popErrorLogs = UserConfig.getBoolean("PopErrorLogs", true);
-            popCheck.setSelected(AppVariables.popErrorLogs);
-            popCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            viewController.setParent(this);
+            viewController.initStyle = HtmlStyles.styleValue("Table");
+
+            typeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
-                public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                    AppVariables.popErrorLogs = popCheck.isSelected();
-                    UserConfig.setBoolean("PopErrorLogs", popCheck.isSelected());
+                public void changed(ObservableValue<? extends Toggle> v, Toggle ov, Toggle nv) {
+                    loadLogs();
                 }
             });
 
-            debugSaveCheck.setSelected(AppVariables.saveDebugLogs);
-            debugSaveCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                    AppVariables.saveDebugLogs = debugSaveCheck.isSelected();
-                    UserConfig.setBoolean("SaveDebugLogs", AppVariables.saveDebugLogs);
-                }
-            });
+            loadLogs();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
 
-            debugDetailedCheck.setSelected(AppVariables.detailedDebugLogs);
-            debugDetailedCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                    AppVariables.detailedDebugLogs = debugDetailedCheck.isSelected();
-                    UserConfig.setBoolean("DetailedDebugLogs", AppVariables.detailedDebugLogs);
-                }
-            });
+    public void loadLogs() {
+        try {
+            if (errorRadio.isSelected()) {
+                queryConditions = " log_type=" + LogType.Error.ordinal();
+            } else if (debugRadio.isSelected()) {
+                queryConditions = " log_type=" + LogType.Debug.ordinal();
+            } else if (infoRadio.isSelected()) {
+                queryConditions = " log_type=" + LogType.Info.ordinal();
+            } else {
+                queryConditions = null;
+            }
 
-            typeController.loadTree();
+            loadTableData();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
     @Override
-    public void afterSceneLoaded() {
-        try {
-            super.afterSceneLoaded();
-
-            errors();
-        } catch (Exception e) {
-            System.out.println(e.toString());
-        }
-    }
-
-    @Override
-    protected String checkWhere() {
-        if (typeController == null) {
-            return null;
-        }
-        String where = typeController.check();
-        if (where == null) {
-            popError(Languages.message("SetConditionsComments"));
-            return null;
-        }
-        return where;
-    }
-
-    @Override
-    protected String checkTitle() {
-        if (typeController == null) {
-            return null;
-        }
-        String title = typeController.getFinalTitle();
-        if (title == null) {
-            popError(Languages.message("SetConditionsComments"));
-            return null;
-        }
-        return title;
+    public void itemClicked() {
+        loadItem();
     }
 
     @Override
     public void itemDoubleClicked() {
-        viewAction();
+        popAction();
     }
 
     @FXML
@@ -191,25 +172,88 @@ public class MyBoxLogController extends BaseDataManageController<MyBoxLog> {
         controller.setLogs(selected);
     }
 
-    @FXML
-    public void messageAction() {
-        List<MyBoxLog> selected = selectedItems();
-        if (selected == null || selected.isEmpty()) {
+    public void loadItem() {
+        MyBoxLog selected = selectedItem();
+        if (selected == null) {
             return;
         }
-        MyBoxLogViewerController controller = (MyBoxLogViewerController) WindowTools.openStage(Fxmls.MyBoxLogViewerFxml);
-        controller.setLogs(selected);
+        viewController.loadContent(tableDefinition.htmlTable(selected));
     }
 
-    public void errors() {
-        typeController.allItem.setSelected(false);
-        typeController.errorItem.setSelected(true);
-        orderByList.getSelectionModel().clearSelection();
-        orderByList.getSelectionModel().select(Languages.message("Time") + " " + Languages.message("Descending"));
-        tabsPane.getSelectionModel().select(dataTab);
-        queryData();
+    @FXML
+    @Override
+    public boolean popAction() {
+        HtmlPopController.openWebView(this, viewController.webView);
+        return true;
     }
 
+    @FXML
+    public void popOptionsMenu(Event event) {
+        if (UserConfig.getBoolean(baseName + "OptionsPopWhenMouseHovering", true)) {
+            showOptionsMenu(event);
+        }
+    }
+
+    @FXML
+    public void showOptionsMenu(Event mevent) {
+        try {
+            List<MenuItem> items = new ArrayList<>();
+
+            CheckMenuItem popErrorLogsItem = new CheckMenuItem(message("PopErrorLogs"));
+            popErrorLogsItem.setSelected(AppVariables.popErrorLogs);
+            popErrorLogsItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    AppVariables.popErrorLogs = popErrorLogsItem.isSelected();
+                    UserConfig.setBoolean("PopErrorLogs", AppVariables.popErrorLogs);
+                }
+            });
+            items.add(popErrorLogsItem);
+
+            CheckMenuItem saveDebugLogsItem = new CheckMenuItem(message("SaveDebugLogs"));
+            saveDebugLogsItem.setSelected(AppVariables.saveDebugLogs);
+            saveDebugLogsItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    AppVariables.saveDebugLogs = saveDebugLogsItem.isSelected();
+                    UserConfig.setBoolean("SaveDebugLogs", AppVariables.saveDebugLogs);
+                }
+            });
+            items.add(saveDebugLogsItem);
+
+            CheckMenuItem detailedDebugLogsItem = new CheckMenuItem(message("DetailedDebugLogs"));
+            detailedDebugLogsItem.setSelected(AppVariables.detailedDebugLogs);
+            detailedDebugLogsItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    AppVariables.detailedDebugLogs = detailedDebugLogsItem.isSelected();
+                    UserConfig.setBoolean("DetailedDebugLogs", AppVariables.detailedDebugLogs);
+                }
+            });
+            items.add(detailedDebugLogsItem);
+
+            items.add(new SeparatorMenuItem());
+
+            CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"),
+                    StyleTools.getIconImageView("iconPop.png"));
+            popItem.setSelected(UserConfig.getBoolean(baseName + "OptionsPopWhenMouseHovering", true));
+            popItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean(baseName + "OptionsPopWhenMouseHovering", popItem.isSelected());
+                }
+            });
+            items.add(popItem);
+
+            popEventMenu(mevent, items);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    /*
+        static
+     */
     public static MyBoxLogController oneOpen() {
         MyBoxLogController controller = null;
         List<Window> windows = new ArrayList<>();

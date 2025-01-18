@@ -34,6 +34,7 @@ public class TableMyBoxLog extends BaseTable<MyBoxLog> {
         addColumn(new ColumnDefinition("line", ColumnType.Integer));
         addColumn(new ColumnDefinition("callers", ColumnType.String).setLength(StringMaxLength));
         addColumn(new ColumnDefinition("comments", ColumnType.String).setLength(StringMaxLength));
+        orderColumns = "time DESC";
         return this;
     }
 

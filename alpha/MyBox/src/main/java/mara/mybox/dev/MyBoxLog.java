@@ -158,31 +158,16 @@ public class MyBoxLog extends BaseData {
 
     public static short logType(LogType logType) {
         if (logType == null) {
-            return 3;
+            return (short) LogType.Info.ordinal();
         }
-        switch (logType) {
-            case Console:
-                return 0;
-            case Error:
-                return 1;
-            case Debug:
-                return 2;
-            case Info:
-            default:
-                return 3;
-        }
+        return (short) logType.ordinal();
     }
 
     public static LogType logType(short logType) {
-        switch (logType) {
-            case 0:
-                return LogType.Console;
-            case 1:
-                return LogType.Error;
-            case 2:
-                return LogType.Debug;
-            default:
-                return LogType.Info;
+        try {
+            return LogType.values()[logType];
+        } catch (Exception e) {
+            return LogType.Info;
         }
     }
 

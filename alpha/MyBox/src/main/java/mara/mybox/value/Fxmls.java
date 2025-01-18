@@ -393,10 +393,6 @@ public class Fxmls {
     public static final String ConvertCoordinateFxml = "/fxml/ConvertCoordinate.fxml";
     public static final String Data2DCoordinatePickerFxml = "/fxml/Data2DCoordinatePicker.fxml";
 
-    public static final String DataQueryFxml = "/fxml/DataQuery.fxml";
-    public static final String DataExportFxml = "/fxml/DataExport.fxml";
-
-
     /*
         file
      */
