@@ -129,6 +129,27 @@ public class Data2DManageQueryController extends BaseChildController {
 
     @FXML
     @Override
+    public void selectAllAction() {
+        selectAll(true);
+    }
+
+    @FXML
+    @Override
+    public void selectNoneAction() {
+        selectAll(false);
+    }
+
+    public void selectAll(boolean select) {
+        csvCheck.setSelected(select);
+        excelCheck.setSelected(select);
+        textsCheck.setSelected(select);
+        matrixCheck.setSelected(select);
+        databaseCheck.setSelected(select);
+        myBoxClipboardCheck.setSelected(select);
+    }
+
+    @FXML
+    @Override
     public void okAction() {
         try {
             String condition = "";

@@ -54,10 +54,10 @@ public abstract class BaseTable<D> {
     public final static int FilenameMaxLength = 32672;
     public final static int StringMaxLength = 32672;
 
-    protected String tableName, idColumnName, orderColumns, tableTitle;
-    protected List<ColumnDefinition> columns, primaryColumns, foreignColumns, referredColumns;
-    protected boolean supportBatchUpdate;
-    protected long newID = -1;
+    public String tableName, idColumnName, orderColumns, tableTitle;
+    public List<ColumnDefinition> columns, primaryColumns, foreignColumns, referredColumns;
+    public boolean supportBatchUpdate;
+    public long newID = -1;
 
     public abstract boolean valid(D data);
 
@@ -1249,7 +1249,7 @@ public abstract class BaseTable<D> {
         }
     }
 
-    public String htmlTable(BaseData data) {
+    public StringTable htmlTable(BaseData data) {
         try {
             if (data == null) {
                 return null;
@@ -1273,7 +1273,7 @@ public abstract class BaseTable<D> {
                 row.addAll(Arrays.asList(column.getColumnName(), display));
                 htmlTable.add(row);
             }
-            return StringTable.tableDiv(htmlTable);
+            return htmlTable;
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;

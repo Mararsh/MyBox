@@ -79,7 +79,7 @@ public class StringTable {
     }
 
     public void htmlTable() {
-        HtmlTableController.open(title, body(this));
+        HtmlTableController.open(tableHtml(this));
     }
 
     public void newLinkRow(String name, String link) {

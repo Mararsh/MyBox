@@ -364,7 +364,6 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             popNode(item.getValue());
         });
-        menu.setDisable(item == null);
         items.add(menu);
 
         if (valueColumn != null) {
@@ -372,7 +371,6 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 TextClipboardTools.copyToSystemClipboard(this, value(item.getValue()));
             });
-            menu.setDisable(item == null);
             items.add(menu);
         }
 
@@ -380,14 +378,21 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             TextClipboardTools.copyToSystemClipboard(this, title(item.getValue()));
         });
-        menu.setDisable(item == null);
+        items.add(menu);
+
+        menu = new MenuItem(message("Locate"), StyleTools.getIconImageView("iconTarget.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            locate();
+        });
         items.add(menu);
 
         items.add(new SeparatorMenuItem());
 
-        items.addAll(foldMenuItems(item));
+        if (!item.isLeaf()) {
+            items.addAll(foldMenuItems(item));
 
-        items.add(new SeparatorMenuItem());
+            items.add(new SeparatorMenuItem());
+        }
 
         menu = new MenuItem(message("Refresh"), StyleTools.getIconImageView("iconRefresh.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
@@ -422,7 +427,7 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
         popNode(item.getValue());
     }
 
-    protected void loadCurrent(DataNode node) {
+    public void loadCurrent(DataNode node) {
         nullCurrent();
         if (viewController == null || node == null) {
             return;
@@ -467,14 +472,14 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
         start(loadTask, rightPane);
     }
 
-    protected void editNode(DataNode node) {
+    public void editNode(DataNode node) {
         if (node == null) {
             return;
         }
         DataTreeNodeEditorController.editNode(this, node);
     }
 
-    protected void executeNode(DataNode node) {
+    public void executeNode(DataNode node) {
         if (node == null) {
             return;
         }
@@ -508,14 +513,14 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
         }
     }
 
-    protected void addChild(DataNode node) {
+    public void addChild(DataNode node) {
         if (node == null) {
             return;
         }
         DataTreeNodeEditorController.addNode(this, node);
     }
 
-    protected void popNode(DataNode node) {
+    public void popNode(DataNode node) {
         if (node == null) {
             return;
         }
@@ -546,6 +551,10 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
 
         };
         start(popTask, false);
+    }
+
+    public void locate() {
+        DataTreeLocateController.open(this);
     }
 
     @Override
@@ -667,7 +676,7 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
         }
     }
 
-    public void unfoldAncestors(DataNode node) {
+    public void unfoldNodeAncestors(DataNode node) {
         if (node == null) {
             return;
         }
@@ -705,7 +714,7 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
                 treeView.setRoot(rootItem);
                 treeView.refresh();
                 if (item != null) {
-                    focusItem(item);
+                    moveToItem(item);
                 }
             }
 
@@ -713,7 +722,7 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
         start(task, thisPane);
     }
 
-    protected TreeItem<DataNode> unfoldAncestors(FxTask ptask, Connection conn,
+    public TreeItem<DataNode> unfoldAncestors(FxTask ptask, Connection conn,
             TreeItem<DataNode> rootItem, DataNode node) {
         try {
             if (conn == null || rootItem == null || node == null) {
@@ -764,7 +773,7 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
         if (treeView == null || node == null) {
             return false;
         }
-        unfoldAncestors(node);
+        unfoldNodeAncestors(node);
         return treeView.getRoot() != null;
     }
 
@@ -790,7 +799,7 @@ public class BaseDataTreeViewController extends BaseTreeTableViewController<Data
                 } catch (Exception e) {
                 }
             }
-            unfoldAncestors(node);
+            unfoldNodeAncestors(node);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

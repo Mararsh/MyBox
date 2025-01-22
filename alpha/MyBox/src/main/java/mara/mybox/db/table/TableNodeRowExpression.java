@@ -18,6 +18,7 @@ public class TableNodeRowExpression extends BaseNodeTable {
         dataName = message("RowExpression");
         dataFxml = Fxmls.ControlDataRowExpressionFxml;
         examplesFileName = "RowExpression";
+        majorColumnName = "script";
         defineColumns();
     }
 

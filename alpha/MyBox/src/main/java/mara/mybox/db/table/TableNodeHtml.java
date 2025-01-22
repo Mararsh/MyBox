@@ -22,6 +22,7 @@ public class TableNodeHtml extends BaseNodeTable {
         dataName = message("Html");
         dataFxml = Fxmls.ControlDataHtmlFxml;
         examplesFileName = "HtmlTree";
+        majorColumnName = "html";
         defineColumns();
     }
 

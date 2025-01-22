@@ -36,12 +36,12 @@ public class BaseNodeTable extends BaseTable<DataNode> {
     public static final long RootID = 1l;
     public static final String NodeFields = "nodeid,title,order_number,update_time,parentid";
 
-    protected String treeName, dataName, dataFxml, examplesFileName;
-    protected boolean nodeExecutable;
+    public String treeName, dataName, dataFxml, examplesFileName, majorColumnName;
+    public boolean nodeExecutable;
 
     public BaseNodeTable() {
         idColumnName = "nodeid";
-        orderColumns = "order_number,nodeid ASC";
+        orderColumns = "order_number ASC,nodeid ASC";
         nodeExecutable = false;
     }
 
@@ -847,6 +847,11 @@ public class BaseNodeTable extends BaseTable<DataNode> {
         node.setHierarchyNumber(h);
         return h;
     }
+
+    public Object majorValue(DataNode node) {
+        return getValue(node, majorColumnName);
+    }
+
 
     /*
         get/set

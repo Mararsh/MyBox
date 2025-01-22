@@ -224,6 +224,14 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
         if (treeView == null || nodeitem == null) {
             return;
         }
+        unfoldItemAncestors(nodeitem);
+        moveToItem(nodeitem);
+    }
+
+    public void moveToItem(TreeItem<NodeP> nodeitem) {
+        if (treeView == null || nodeitem == null) {
+            return;
+        }
         isSettingValues = true;
         treeView.getSelectionModel().select(nodeitem);
         isSettingValues = false;
@@ -244,6 +252,18 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
             }
         }
         return found;
+    }
+
+    public void unfoldItemAncestors(TreeItem<NodeP> nodeitem) {
+        if (treeView == null || nodeitem == null) {
+            return;
+        }
+        TreeItem<NodeP> parent = nodeitem.getParent();
+        if (parent == null) {
+            return;
+        }
+        parent.setExpanded(true);
+        unfoldItemAncestors(parent);
     }
 
     /*
@@ -511,14 +531,18 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
         if (treeItem == null) {
             return null;
         }
-        List<MenuItem> items = foldMenuItems(treeItem);
+
+        List<MenuItem> items = new ArrayList<>();
+        if (!treeItem.isLeaf()) {
+            items.addAll(foldMenuItems(treeItem));
+
+            items.add(new SeparatorMenuItem());
+        }
 
         NodeP node = treeItem.getValue();
         if (node == null) {
             return items;
         }
-        items.add(new SeparatorMenuItem());
-
         MenuItem menu = new MenuItem(message("ViewNode"), StyleTools.getIconImageView("iconPop.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             viewNode(treeItem);
@@ -530,14 +554,12 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             TextClipboardTools.copyToSystemClipboard(this, value(node));
         });
-        menu.setDisable(treeItem == null);
         items.add(menu);
 
         menu = new MenuItem(copyTitleMessage(), StyleTools.getIconImageView("iconCopySystem.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             TextClipboardTools.copyToSystemClipboard(this, title(node));
         });
-        menu.setDisable(treeItem == null);
         items.add(menu);
 
         items.add(new SeparatorMenuItem());

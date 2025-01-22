@@ -214,8 +214,8 @@ public class HtmlTableController extends BaseWebViewController {
         }
     }
 
-    public static HtmlTableController open(String body) {
-        return open(null, body);
+    public static HtmlTableController open(String html) {
+        return open(null, html);
     }
 
     public static HtmlTableController open(String title, String body) {

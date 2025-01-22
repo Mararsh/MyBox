@@ -65,10 +65,11 @@ public class DataMigration {
                             if (file.isDirectory()) {
                                 continue;
                             }
-                            String name = file.getName().toLowerCase();
-                            if (name.contains("mybox") || name.contains("readme")) {
-                                file.delete();
-                            }
+                            file.delete();
+//                            String name = file.getName().toLowerCase();
+//                            if (name.contains("mybox") || name.contains("readme")) {
+//                                file.delete();
+//                            }
                         }
                     }
 
@@ -79,10 +80,11 @@ public class DataMigration {
                             if (file.isDirectory()) {
                                 continue;
                             }
-                            String name = file.getName();
-                            if (name.startsWith("icon") && name.endsWith(".png")) {
-                                file.delete();
-                            }
+                            file.delete();
+//                            String name = file.getName();
+//                            if (name.startsWith("icon") && name.endsWith(".png")) {
+//                                file.delete();
+//                            }
                         }
                     }
 
@@ -93,10 +95,11 @@ public class DataMigration {
                             if (file.isDirectory()) {
                                 continue;
                             }
-                            String name = file.getName();
-                            if (name.startsWith("icon") && name.endsWith(".png")) {
-                                file.delete();
-                            }
+                            file.delete();
+//                            String name = file.getName();
+//                            if (name.startsWith("icon") && name.endsWith(".png")) {
+//                                file.delete();
+//                            }
                         }
                     }
 
@@ -107,10 +110,11 @@ public class DataMigration {
                             if (file.isDirectory()) {
                                 continue;
                             }
-                            String name = file.getName();
-                            if (name.endsWith("_Examples_en.txt") && name.endsWith("_Examples_zh.txt")) {
-                                file.delete();
-                            }
+                            file.delete();
+//                            String name = file.getName();
+//                            if (name.endsWith("_Examples_en.txt") && name.endsWith("_Examples_zh.txt")) {
+//                                file.delete();
+//                            }
                         }
                     }
 

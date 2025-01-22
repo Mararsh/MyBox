@@ -35,7 +35,7 @@ public class GeographyCodeController extends DataTreeController {
     }
 
     @Override
-    protected void loadCurrent(DataNode node) {
+    public void loadCurrent(DataNode node) {
         nullCurrent();
         if (node == null) {
             return;

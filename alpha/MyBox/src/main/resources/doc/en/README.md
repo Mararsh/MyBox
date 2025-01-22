@@ -25,7 +25,7 @@ This is compute application to provide simple and easy functions. It's free and 
      - In many interfaces, when save as file, the selected path does not work.                                                                                                                       
      - When change image size, interface works abnormally after user inputs wrong value of width/height.                                                                                                           
      - When open interface "Image Options" independently, some controls are not initialized.                                                                                                                       
-     - Values of XYZ and Adobe CMYK are displayed wrongly in html of color.          
+     - Values of XYZ and Adobe CMYK are displayed wrongly in html of single color.          
      - "FFmpeg information" and "FFmpeg media information" do not work.                           
                       
 [Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.8.3)                                                
@@ -44,16 +44,16 @@ Without enough testings, MyBox has low reliability and bad stability. When use M
 ## Source Codes          
 | Download | Size | Developement Guide | Packing Steps |           
 | --- | --- | --- | --- | 
-| [MyBox-src.zip](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-src.zip)  |  80M- | [pdf](https://mara-mybox.sourceforge.io/guide/MyBox-DevGuide-en.pdf) | [html](https://mara-mybox.sourceforge.io/pack_steps_en.html) |
+| [MyBox-src.zip](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-src.zip)  |  100M- | [pdf](https://mara-mybox.sourceforge.io/guide/MyBox-DevGuide-en.pdf) | [html](https://mara-mybox.sourceforge.io/pack_steps_en.html) |
            
 ## Self-contain packages
 Self-contain packages include all files and need not java env nor installation.      
 
 | Platform | Link | Size  | Launcher |        
 | --- | --- | ---  | ---  |
-| win10 x64 | [MyBox-win-x64.zip](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-win10-x64.zip)  | 280MB- | MyBox.exe |
-| CentOS 7 x64 | [MyBox-CentOS7-x64.tar.gz](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-CentOS7-x64.tar.gz)  | 320MB-  | MyBox  |
-| mac | [MyBox-mac.dmg](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-mac.dmg)  | 300MB-  |  MyBox.app   |        
+| win10 x64 | [MyBox-win-x64.zip](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-win10-x64.zip)  | 340MB- | MyBox.exe |
+| CentOS 7 x64 | [MyBox-CentOS7-x64.tar.gz](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-CentOS7-x64.tar.gz)  | 340MB-  | MyBox  |
+| mac | [MyBox-mac.dmg](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-mac.dmg)  | 340MB-  |  MyBox.app   |        
 
 User can double click the launcher to start MyBox or run it by command line. The default "Open Method" of image/text/PDF files can be associated to MyBox and a file can be opened directly by MyBox by double clicking the file's name.        
 
@@ -64,9 +64,9 @@ Notice: Due to compile failure, env on Linux is still Java 21 + JavaFX 21.
 
 | Platform | Link | Size  | Requirements |        
 | --- | --- | ---  | ---  |
-| win | [MyBox-win-jar.zip](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-win-jar.zip)  | 240MB- | Java 23 or higher |
-| linux | [MyBox-linux.jar.gz](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-linux.jar.gz)  | 240MB-  | Java 23 or higher |
-| mac | [MyBox-mac.jar.gz](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-mac.jar.gz)  |  240MB-  | Java 23 or higher |        
+| win | [MyBox-win-jar.zip](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-win-jar.zip)  | 260MB- | Java 23 or higher |
+| linux | [MyBox-linux.jar.gz](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-linux.jar.gz)  | 260MB-  | Java 23 or higher |
+| mac | [MyBox-mac.jar.gz](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-mac.jar.gz)  |  260MB-  | Java 23 or higher |        
 
 
 Run following command to launch this program with Jar package:        

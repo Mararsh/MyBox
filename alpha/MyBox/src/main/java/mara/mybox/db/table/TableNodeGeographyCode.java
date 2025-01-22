@@ -10,6 +10,7 @@ import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.GeographyCodeTools;
 import mara.mybox.tools.LongTools;
 import mara.mybox.value.Fxmls;
+import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -25,6 +26,7 @@ public class TableNodeGeographyCode extends BaseNodeTable {
         dataName = message("GeographyCode");
         dataFxml = Fxmls.ControlDataGeographyCodeFxml;
         examplesFileName = "GeographyCode";
+        majorColumnName = Languages.isChinese() ? "chinese_name" : "english_name";
         nodeExecutable = true;
         defineColumns();
     }

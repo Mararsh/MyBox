@@ -19,6 +19,7 @@ public class TableNodeMathFunction extends BaseNodeTable {
         tableTitle = message("MathFunction");
         dataFxml = Fxmls.ControlDataMathFunctionFxml;
         examplesFileName = "MathFunction";
+        majorColumnName = "expression";
         defineColumns();
     }
 

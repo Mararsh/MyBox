@@ -22,6 +22,7 @@ public class TableNodeText extends BaseNodeTable {
         dataName = message("Texts");
         dataFxml = Fxmls.ControlDataTextFxml;
         examplesFileName = "TextTree";
+        majorColumnName = "text";
         defineColumns();
     }
 

@@ -20,6 +20,8 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Window;
+import mara.mybox.data2d.DataInternalTable;
+import mara.mybox.data2d.DataTable;
 import mara.mybox.db.table.TableMyBoxLog;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.dev.MyBoxLog.LogType;
@@ -177,7 +179,7 @@ public class MyBoxLogController extends BaseSysTableController<MyBoxLog> {
         if (selected == null) {
             return;
         }
-        viewController.loadContent(tableDefinition.htmlTable(selected));
+        viewController.loadContent(tableDefinition.htmlTable(selected).html());
     }
 
     @FXML
@@ -249,6 +251,13 @@ public class MyBoxLogController extends BaseSysTableController<MyBoxLog> {
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+    }
+
+    @FXML
+    public void dataManufacture() {
+        DataTable dataTable = new DataInternalTable();
+        dataTable.setDataName("MyBox_Log").setSheet("MyBox_Log");
+        Data2DManufactureController.openDef(dataTable);
     }
 
     /*

@@ -21,6 +21,7 @@ public class TableNodeDataColumn extends BaseNodeTable {
         tableTitle = message("DataColumn");
         dataFxml = Fxmls.ControlDataDataColumnFxml;
         examplesFileName = "DataColumn";
+        majorColumnName = "column_name";
         defineColumns();
     }
 

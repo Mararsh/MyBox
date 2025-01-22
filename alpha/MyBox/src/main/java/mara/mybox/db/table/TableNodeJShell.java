@@ -22,6 +22,7 @@ public class TableNodeJShell extends BaseNodeTable {
         dataName = message("Codes");
         dataFxml = Fxmls.ControlDataJShellFxml;
         examplesFileName = "JShell";
+        majorColumnName = "codes";
         nodeExecutable = true;
         defineColumns();
     }

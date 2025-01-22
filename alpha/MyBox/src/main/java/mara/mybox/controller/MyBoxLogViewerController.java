@@ -106,14 +106,14 @@ public class MyBoxLogViewerController extends HtmlTableController {
 
     public void addLog(MyBoxLog myboxLog) {
         body = (body != null ? body : "")
-                + "</br><hr></br>\n" + logTable.htmlTable(myboxLog);
+                + "</br><hr></br>\n" + logTable.htmlTable(myboxLog).div();
         loadBody(body);
     }
 
     public void setLogs(List<MyBoxLog> logs) {
         body = "";
         for (MyBoxLog log : logs) {
-            body += "</br><hr></br>\n" + logTable.htmlTable(log);
+            body += "</br><hr></br>\n" + logTable.htmlTable(log).div();
         }
         loadBody(body);
     }
