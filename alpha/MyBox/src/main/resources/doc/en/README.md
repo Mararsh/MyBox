@@ -17,6 +17,7 @@ This is compute application to provide simple and easy functions. It's free and 
      - Data Tree:                                                                                                         
          - Change "Geography Code" as data tree.                                                                                                                
          - Option to apply data format when export.                                                                                                                                                                                                                       
+         - Locate node by title/id/time/value in tree.                                                                                                                                                                                                                       
 * Solved problems:                                
      - Tree: Values are lost after save/move/rename/reorder node.                                                                                                                       
      - After migrated to 6.8.1 or 6.8.2, ["Data Manufacture" loads existed data incorrectly](https://github.com/Mararsh/MyBox/issues/1979).                                                                                                           
