@@ -27,7 +27,7 @@ public class DoubleTools {
 
     public static double value(InvalidAs invalidAs) {
         if (invalidAs == InvalidAs.Zero) {
-            return 0;
+            return 0d;
         } else {
             return Double.NaN;
         }

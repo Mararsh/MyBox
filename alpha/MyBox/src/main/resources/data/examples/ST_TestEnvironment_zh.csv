@@ -1,5 +1,5 @@
 标题,硬件,CPU,内存,操作系统,软件,语言,目标,说明
-win环境,台式机,Intel(R) Core(TM) i7-7700 3.60GHz,8 GB,Windows 10,JDK 23 + JavaFx 24 + Derby 10.17.1.0,中文,MyBox 6.8.2,
-linux环境,笔记本,Intel(R) Core i5 2.40GHz,4 GB,CentOS 7,JDK 21 + JavaFx 21 + Derby 10.17.1.0,英文,MyBox 6.8.2,"以下组合在Linux上编译失败：
+win环境,台式机,Intel(R) Core(TM) i7-7700 3.60GHz,24 GB,Windows 10,JDK 23 + JavaFx 24 + Derby 10.17.1.0,中文,MyBox 6.8.3,
+linux环境,笔记本,Intel(R) Core i5 2.40GHz,4 GB,CentOS 7,JDK 21 + JavaFx 21 + Derby 10.17.1.0,英文,MyBox 6.8.3,"以下组合在Linux上编译失败：
 JDK 22/23 + JavaFx 23/24。"
-mac环境,Mac mini,Intel(R) Core i5 2.60GHz,8 GB,macOS Monterey 12.7.6,JDK 23 + JavaFx 24 + Derby 10.17.1.0,中文,MyBox 6.8.2,
+mac环境,Mac mini,Intel(R) Core i5 2.60GHz,8 GB,macOS Monterey 12.7.6,JDK 23 + JavaFx 24 + Derby 10.17.1.0,中文,MyBox 6.8.3,

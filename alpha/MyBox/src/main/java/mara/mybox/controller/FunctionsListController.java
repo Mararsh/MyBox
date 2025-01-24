@@ -21,6 +21,7 @@ import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.TextFileTools;
+import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
@@ -145,7 +146,7 @@ public class FunctionsListController extends ControlWebView {
                                 htmlRow.add(v);
                             }
                             htmlRow.set(col1, message(lang, "Success"));
-                            htmlRow.set(col2, "2024-12-24");
+                            htmlRow.set(col2, AppValues.AppVersionDate);
                             table.add(htmlRow);
                         }
                     } catch (Exception e) {

@@ -106,13 +106,13 @@ License:    Apache License Version 2.0
                 <TextField fx:id="scaleInput" prefWidth="100.0" text="8" />
                 <FlowPane fx:id="lengthPane" hgap="2.0" vgap="2.0">
                     <children>
-                        <Label fx:id="lengthLabel" text="%Length">
+                        <Label text="%Length">
                             <padding>
                                 <Insets left="10.0" />
                             </padding>
                         </Label>
                         <TextField fx:id="lengthInput" prefWidth="100.0" text="32672" />
-                        <Label text="(&lt;= 32672)" />
+                        <Label fx:id="lengthLabel" text="(&lt;= 32672)" />
                     </children>
                 </FlowPane>
             </children>

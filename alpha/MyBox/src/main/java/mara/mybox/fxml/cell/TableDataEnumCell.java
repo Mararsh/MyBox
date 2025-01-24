@@ -103,7 +103,7 @@ public class TableDataEnumCell<S, T> extends ComboBoxTableCell<S, T> {
         if (dataColumn.getType() == ColumnType.EnumeratedShort) {
             setText(dataColumn.formatValue(item));
         } else {
-            setText(item + "");
+            setText(item != null ? item + "" : null);
         }
     }
 

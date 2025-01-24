@@ -464,6 +464,7 @@ public abstract class Data2D_Edit extends Data2D_Filter {
                 } else {
                     MyBoxLog.error(e);
                 }
+                data = null;
             }
             FileDeleteTools.delete(tmpFile);
             return data;

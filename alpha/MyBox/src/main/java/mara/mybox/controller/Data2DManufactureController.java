@@ -68,10 +68,10 @@ public class Data2DManufactureController extends BaseData2DViewController {
         try {
             super.initControls();
 
-            csvArea.focusedProperty().addListener(new ChangeListener<Boolean>() {
+            csvArea.textProperty().addListener(new ChangeListener<String>() {
                 @Override
-                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
-                    if (isSettingValues || nv) {
+                public void changed(ObservableValue<? extends String> v, String ov, String nv) {
+                    if (isSettingValues) {
                         return;
                     }
                     isCSVpicked = false;
@@ -345,7 +345,11 @@ public class Data2DManufactureController extends BaseData2DViewController {
             if (rows == null) {
                 return false;
             }
-            super.updateTable(rows);
+            isSettingValues = true;
+            tableData.setAll(rows);
+            data2D.setPageData(tableData);
+            isSettingValues = false;
+            tableView.refresh();
             isCSVpicked = true;
         }
         return true;
@@ -739,6 +743,7 @@ public class Data2DManufactureController extends BaseData2DViewController {
                         backup = addBackup(this, data2D.getFile());
                     }
                     data2D.startTask(this, null);
+
                     dataSize = data2D.savePageData(this);
                     return dataSize >= 0;
                 } catch (Exception e) {

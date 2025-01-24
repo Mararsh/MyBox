@@ -11,7 +11,7 @@ public class AppValues {
 
     public static final boolean Alpha = true;
     public static final String AppVersion = "6.8.3";
-    public static final String AppVersionDate = "2025-1-31";
+    public static final String AppVersionDate = "2025-1-27";
     public static final String AppDerbyUser = "mara";
     public static final String AppDerbyPassword = "mybox";
     public static final int AppYear = 2025;

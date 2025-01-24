@@ -144,9 +144,10 @@ public class ControlData2DColumnEdit extends BaseChildController {
                     || enumShortRadio.isSelected()) {
                 optionsBox.getChildren().add(enumBox);
                 if (enumShortRadio.isSelected()) {
-                    enumLabel.setText(message("EnumInputComments"));
-                } else {
                     enumLabel.setText(message("EnumShortComments"));
+
+                } else {
+                    enumLabel.setText(message("EnumInputComments"));
                 }
 
             } else if (datetimeRadio.isSelected()) {
@@ -171,7 +172,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
             if (clobRadio.isSelected()) {
                 lengthInput.setText("2G");
                 lengthInput.setDisable(true);
-                lengthLabel.setText("(<= 2G)");
+                lengthLabel.setText("");
             } else {
                 lengthInput.setText("32672");
                 lengthInput.setDisable(false);
