@@ -78,26 +78,26 @@ public class DataMigrationFrom68 {
 
             TableNodeGeographyCode gcTable = new TableNodeGeographyCode();
             String tname = gcTable.getTableName();
+            controller.info("Moving data: " + gcTable.getTreeName());
 
             // for debug.Remove this block later
-            try (Statement statement = conn.createStatement()) {
-                conn.setAutoCommit(true);
-                statement.executeUpdate("DROP TABLE " + tname + "_Node_Tag");
-                statement.executeUpdate("DROP TABLE " + tname + "_Tag");
-            } catch (Exception e) {
-                MyBoxLog.console(e);
-            }
-            controller.info("Moving data: " + gcTable.getTreeName());
-            try (Statement statement = conn.createStatement()) {
-                statement.executeUpdate("DROP TABLE " + tname);
-            } catch (Exception e) {
+//            try (Statement statement = conn.createStatement()) {
+//                conn.setAutoCommit(true);
+//                statement.executeUpdate("DROP TABLE " + tname + "_Node_Tag");
+//                statement.executeUpdate("DROP TABLE " + tname + "_Tag");
+//            } catch (Exception e) {
 //                MyBoxLog.console(e);
-            }
-            try {
-                gcTable.createTable(conn);
-            } catch (Exception e) {
-//                MyBoxLog.console(e);
-            }
+//            }
+//            try (Statement statement = conn.createStatement()) {
+//                statement.executeUpdate("DROP TABLE " + tname);
+//            } catch (Exception e) {
+            ////                MyBoxLog.console(e);
+//            }
+//            try {
+//                gcTable.createTable(conn);
+//            } catch (Exception e) {
+////                MyBoxLog.console(e);
+//            }
 
             String tmpTreeTable = TmpTable.TmpTablePrefix + "TREE_Migration683";
             try (Statement statement = conn.createStatement()) {
@@ -216,13 +216,13 @@ public class DataMigrationFrom68 {
                 MyBoxLog.error(e);
             }
 
-//            try (Statement statement = conn.createStatement()) {
-//                conn.setAutoCommit(true);
-//                statement.executeUpdate("DROP TABLE "+ tmpTreeTable);
-//                statement.executeUpdate("DROP TABLE Geography_Code");
-//            } catch (Exception e) {
-//                MyBoxLog.console(e);
-//            }
+            try (Statement statement = conn.createStatement()) {
+                conn.setAutoCommit(true);
+                statement.executeUpdate("DROP TABLE " + tmpTreeTable);
+                statement.executeUpdate("DROP TABLE Geography_Code");
+            } catch (Exception e) {
+                MyBoxLog.console(e);
+            }
         } catch (Exception e) {
 //            MyBoxLog.console(e);
         }

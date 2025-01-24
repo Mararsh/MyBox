@@ -29,7 +29,6 @@ public class DataMigration {
                 reloadInternalResources();
             }
             SystemConfig.setBoolean("IsAlpha", AppValues.Alpha);
-//            DataMigrationFrom68.updateIn683(controller, conn, lang);
             if (lastVersion == currentVersion) {
                 return true;
             }
